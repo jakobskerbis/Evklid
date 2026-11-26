@@ -116,10 +116,14 @@ theorem simetrija (n k : ℕ) (hk : k ≤ n) : Nat.choose n k = Nat.choose n (n 
 - Izrek s predpostavkami ima primer izpolnljivosti. Predpostavka je binder (npr. `(hk : k ≤ n)`,
   `(hf : HasDerivAt f f' x)`; ne spremenljivke in razredi, kot `(n : ℕ)` ali `[CommRing R]`) ali »→« v sklepu (v enem
   od veznikov »∧« na vrhu, za začetnimi »∀ …,«, npr. `… ∧ ∀ x, 0 < x → …`; »¬ …«, »∃ …« in »let …« ne štejejo).
-  Šteje tudi »→« v oklepaju (`(1 < a → …) ∧ …`), ASCII `->`, omejeni `∀ x > 0,` / `∀ x ∈ S,` in binder s strukturo, ki
-  nosi dokaz (`Affine.Triangle`, `Affine.Simplex`, podtip `{x // p x}`).
+  Šteje tudi »→« v oklepaju (`(1 < a → …) ∧ …`, tudi v `∨` in `↔`), ASCII `->`, omejeni `∀ x > 0,` / `∀ x ∈ S,`,
+  `∀ _ : a = b,`, binder s strukturo, ki nosi dokaz (`Affine.Triangle`, `Affine.Simplex`, podtip `{x // p x}`), `False`,
+  `IsEmpty`, `Nonempty`, `Convex…`, `NeZero` in razred brez spremenljivke izreka (`[Fintype ℝ]`); `(x : ℝ≥0)` in
+  `(n : ℕ) → …` nista predpostavki. `variable` s predpostavko in `include` v datoteki lekcije sta napaka.
   Primer je `example` (ali izrek `<izrek>_izpolnljivo`) brez lastnih predpostavk, ki izrek **uporabi** na konkretnih
-  vrednostih (z argumenti: golo ime `example := izrek`, `@izrek` brez argumentov ali `#check` za primerom ne štejejo;
+  vrednostih in poda vse eksplicitne predpostavke (po mestu ali z imenom `(hx := …)`, z `@izrek` vse binderje do zadnje
+  predpostavke; ime se razreši po imenskem prostoru ali polnem imenu). Golo ime `example := izrek`, delna uporaba,
+  `example := fun (h : …) => …` in ukaz za primerom (vsaka vrstica v stolpcu 0, npr. `#check`, `macro_rules`) ne štejejo;
   `<izrek>_izpolnljivo` je priča le za `<izrek>` in ga mora uporabiti, sicer je navaden izrek z obveznimi oznakami), npr. `example := koren_pot (n := 2) (a := 4) (by norm_num) (by norm_num)` ali
   `example := preizkus2.2.2 0 (by norm_num) (by norm_num)`. Lean tako preveri, da iste vrednosti izpolnijo vse
   predpostavke hkrati. Kjer primer ni preprost, docstring izreka pove `izpolnljivo: ročno – <razlog>`. Pomožne
@@ -131,15 +135,20 @@ izreka ne spremeni, seznam se sme le krčiti (`lean-lekcije.yml` ga primerja z o
 primer. `private` je dovoljen le pri `pomozno` (kazalo in `lean-aksiomi.mjs` privatnega imena ne vidita);
 `lean-aksiomi.mjs` uporablja isti razčlenjevalnik (zamaknjeni izreki, atributi, `noncomputable section`, znakovni
 literali in surovi nizi) in v `#print axioms` vzame tudi vsak `izrek` iz `lean/trditve.json`, zato Lean zavrne kazalo z
-neobstoječim imenom. Besedilno ni mogoče preveriti, da primer poda **vse** predpostavke in tudi predpostavke v sklepu
-(primer `have w : … := by norm_num; izrek (hx := w.1)` pusti »→« v sklepu nedokazan; dolg zgoraj): to preveri Lean
-sam (tip primera brez preostalih `∀`/`→`), PV-13.
+neobstoječim imenom. Besedilno ni mogoče preveriti, da je priča zaprt člen: argumenti so lahko iz protislovnega
+lokalnega konteksta (`(fun (w : 1 = 0) => izrek 0 (absurd w …)) …`, `¬ P := fun w => …`), ime je lahko zasenčeno (`let`),
+predpostavke v sklepu ostanejo nedokazane (`have w : … := by norm_num; izrek (hx := w.1)`; dolg zgoraj). **PV-13**:
+Lean-native preverjanje mora za vsak izrek s predpostavkami elaborirati zaprt člen `T a₁ … aₙ` v **praznem** lokalnem
+kontekstu (npr. generiran `example : <sklep[aᵢ]> := T a₁ … aₙ` iz argumentov priče), ne le preveriti tipa primera.
 
 Datoteke z dokazi lekcij, ki so prišle na main pred PV-09 brez oznak (MAT-SS-1 iz #1145 in MAT-OŠ-9), čakajo ročne
 navedke v ločenem PR (j, 26. 11. 2026). Njihove poti so v `lean/oznake-dolg.json`: oznake `trditev:`/`besedilo:`/`pomozno`
 se tam ne preverjajo in izreki ne gredo v `lean/trditve.json`; aksiomi, prepovedane besede, razčlenjevalnik in primeri
-izpolnljivosti (izreki brez primera so v `lean/izpolnljivo-dolg.json`) veljajo. Seznam se sme le krčiti (`lean-lekcije.yml`,
-`--osnova-oznak`), nova datoteka mora biti označena.
+izpolnljivosti (izreki brez primera so v `lean/izpolnljivo-dolg.json`) veljajo. Vnos zaklene `vir` in podpise
+neoznačenih izrekov (`{ pot, vir, izreki: { ime: podpis } }`): nov ali spremenjen neoznačen izrek je napaka, označen
+izrek se preveri kot drugod in gre v kazalo. Seznama se smeta le krčiti (`lean-lekcije.yml` ob PR proti ciljni veji in
+ob pushu na main proti prejšnjemu stanju; če osnova seznam ima, ga PR ne sme odstraniti), nova datoteka mora biti
+označena. Izrek iz »Preveri se« (docstring ali ime `kviz…`/`preveri…`) je `pomozno` le z razlogom (`pomozno – <zakaj>`).
 
 `scripts/lean-lekcije.mjs` (in `.github/workflows/lean-lekcije.yml`) javi, ko se lekcija spremeni po dokazu, ko
 izreku manjka `trditev:`/`besedilo:` (ali `pomozno`), ko je id podvojen ali citata ni v lekciji in ko predpostavke

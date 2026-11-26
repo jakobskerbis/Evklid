@@ -702,7 +702,7 @@ theorem primer5_razvoj :
 /-- Primer 5 (enoličnost): edini polinom tretje stopnje z realnimi koeficienti in vodilnim koeficientom 1 z
 ničlama 2 in `1 + i` je `x³ − 4x² + 6x − 4` (ničle so 2, `1 + i`, `1 − i` in več jih ni).
 trditev: MAT-SS-3/polinomi#primer5-enolicnost
-besedilo: »Ničle so $2$, $1 + i$ in $1 - i$. Več jih ni, ker ima polinom stopnje $3$ natanko tri.« -/
+besedilo: »Odgovor: $p(x) = x^3 - 4x^2 + 6x - 4$.« -/
 theorem primer5_enolicnost (p : ℝ[X]) (hm : p.Monic) (hd : p.natDegree = 3)
     (h2 : aeval (2 : ℂ) p = 0) (hi : aeval (1 + Complex.I) p = 0) :
     p = X ^ 3 - 4 * X ^ 2 + 6 * X - 4 := by

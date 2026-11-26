@@ -142,7 +142,7 @@ theorem razteg_koordinate (xS yS k x y : ℝ) :
 /-- Razlaga 8 in Povzetek: pri središčnem raztegu s koeficientom k se ploščina trikotnika pomnoži s k² (tudi za
 negativen k).
 trditev: MAT-SS-2/podobnost#ploscina-trikotnika-razteg
-besedilo: »Zato je slika lika podobna liku s koeficientom podobnosti $|k|$, ploščina pa se pomnoži s $k^2$.« -/
+besedilo: »ploščina pa se pomnoži s $k^2$.« -/
 theorem ploscina_trikotnika_razteg (S A B C : ℝ × ℝ) (k : ℝ) :
     pl (AffineMap.homothety S k A) (AffineMap.homothety S k B) (AffineMap.homothety S k C) = k ^ 2 * pl A B C := by
   simp only [pl, AffineMap.homothety_apply, vsub_eq_sub, vadd_eq_add, Prod.fst_add, Prod.snd_add, Prod.smul_fst,

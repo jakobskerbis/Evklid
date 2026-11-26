@@ -130,7 +130,7 @@ theorem sinus_vsote (α β : ℝ) : sin (α + β) = sin α * cos β + cos α * s
 
 /-- Razlaga 2, Premisli: sin(90° + β) = sin 90° cos β + cos 90° sin β = 1·cos β + 0·sin β = cos β.
 trditev: MAT-SS-3/adicijski-izreki#sinus-90-plus
-besedilo: »$\sin 90^\circ\cos\beta + \cos 90^\circ\sin\beta = 1 \cdot \cos\beta + 0 \cdot \sin\beta = \cos\beta$« -/
+besedilo: »Graf sinusa, premaknjen za $90^\circ$ v levo, je ravno graf kosinusa.« -/
 theorem sinus_90_plus (β : ℝ) : sin (π / 2 + β) = cos β := by
   calc sin (π / 2 + β) = sin (π / 2) * cos β + cos (π / 2) * sin β := sin_add _ _
     _ = 1 * cos β + 0 * sin β := by rw [sin_pi_div_two, cos_pi_div_two]

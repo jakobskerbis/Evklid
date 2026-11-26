@@ -421,7 +421,8 @@ theorem ustno3 : (∀ n : ℕ, 4 ≤ n → 2 ^ n < n.factorial) ∧ (3).factoria
 /-! ## Preveri se -/
 
 /-- Preveri se 3: baza pri 5 in korak za n ≥ 3 dasta veljavnost za vse n ≥ 5.
-pomozno -/
+trditev: MAT-SS-4/matematicna-indukcija#kviz3
+besedilo: »baza pri $5$ in korak za $n \ge 3$ (torej tudi za $n \ge 5$) dasta veljavnost za vse $n \ge 5$.« -/
 theorem kviz3 (P : ℕ → Prop) (h5 : P 5) (hk : ∀ n, 3 ≤ n → P n → P (n + 1)) : ∀ n, 5 ≤ n → P n :=
   nacelo_n0 P 5 h5 (fun n hn => hk n (by omega))
 
@@ -447,7 +448,8 @@ example : True :=
 
 /-- Preveri se 4: za napačno trditev 1 + … + n = (n² + n + 2)/2 je korak pravilen (obe strani sta
 (n² + 3n + 4)/2), baza pa ne (pri n = 1 je leva stran 1, desna 2).
-pomozno -/
+trditev: MAT-SS-4/matematicna-indukcija#kviz4
+besedilo: »Korak je pravilen: obe strani sta $\frac{n^2 + 3n + 4}{2}$.« -/
 theorem kviz4 (n : ℝ) :
     (n ^ 2 + n + 2) / 2 + (n + 1) = ((n + 1) ^ 2 + (n + 1) + 2) / 2 ∧
     (n ^ 2 + n + 2) / 2 + (n + 1) = (n ^ 2 + 3 * n + 4) / 2 ∧
@@ -456,7 +458,8 @@ theorem kviz4 (n : ℝ) :
 
 /-- Preveri se 5: domine 1, …, 500; prva pade, korak velja pri vseh prehodih razen 120 → 121; padejo
 vse domine od 1. do 120.
-pomozno -/
+trditev: MAT-SS-4/matematicna-indukcija#kviz5
+besedilo: »Padejo domine od $1.$ do $120.$ Indukcija potrebuje korak za vsak $n$; kjer manjka, se veriga ustavi.« -/
 theorem kviz5 (P : ℕ → Prop) (h1 : P 1) (hk : ∀ n, 1 ≤ n → n < 500 → n ≠ 120 → P n → P (n + 1)) :
     ∀ n, 1 ≤ n → n ≤ 120 → P n := by
   intro n hn

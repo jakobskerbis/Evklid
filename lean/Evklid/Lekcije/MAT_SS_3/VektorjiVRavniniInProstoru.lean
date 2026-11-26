@@ -322,7 +322,7 @@ example : (!₂[1, 0] : R2) ≠ 0 ∧ inner ℝ (!₂[1, 0] : R2) !₂[0, 1] = 0
 /-! ## Uganka s sanmi in sile pod kotom -/
 
 /-- Pomožno za sani in Preveri se 2: |x⃗ + y⃗|² = |x⃗|² + |y⃗|² + 2|x⃗||y⃗| cos φ, φ kot med vektorjema.
-pomozno -/
+pomozno – splošne formule za dolžino vsote razlaga kviza ne zapiše (navede le skupne sile) -/
 theorem vsota_pod_kotom (x y : R2) :
     ‖x + y‖ = √(‖x‖ ^ 2 + ‖y‖ ^ 2 + 2 * ‖x‖ * ‖y‖ * Real.cos (angle x y)) := by
   rw [← Real.sqrt_sq (norm_nonneg (x + y)), norm_add_sq_real, ← cos_angle_mul_norm_mul_norm]

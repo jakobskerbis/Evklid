@@ -1450,7 +1450,7 @@ example :=
 /-- Preveri se 4: splošno rešitev `x = ±60° + k·360°` ima `cos x = 1/2`; pri `−60°` je sinus negativen
 (`sin x = √3/2` ne velja), `tan(−60°) = −√3 ≠ √3`.
 trditev: MAT-SS-3/trigonometrijske-enacbe#kviz4
-besedilo: »b) $\cos x = \frac{1}{2}$: $x = \pm 60^\circ + k \cdot 360^\circ$.« -/
+besedilo: »Zapis $\pm x_1$ je značilen za kosinus. $\cos 60^\circ = \cos(-60^\circ) = \frac{1}{2}$.« -/
 theorem kviz4 :
     (∀ x : ℝ, Real.cos x = 1 / 2 ↔ ∃ k : ℤ, x = π / 3 + k * (2 * π) ∨ x = -(π / 3) + k * (2 * π)) ∧
     Real.sin (-(π / 3)) < 0 ∧ Real.tan (-(π / 3)) = -Real.sqrt 3 := by
@@ -1540,7 +1540,7 @@ theorem preizkus_126_87 : |Real.sin (126.87 * π / 180) - 0.8| < 0.05 := by
 
 /-- Preveri se 2, razlaga napačnega odgovora 6°: najmanjša pozitivna rešitev `sin x = 0,1` je `arcsin 0,1 ≈ 6°`
 (natančneje med 5,7° in 5,8°).
-pomozno -/
+pomozno – razlaga napačnega odgovora (»To bi veljalo za sin x = 0,1«) števila 6° ne navede -/
 theorem kviz2_napacni : 5.7 < Real.arcsin 0.1 * 180 / π ∧ Real.arcsin 0.1 * 180 / π < 5.8 ∧
     |Real.arcsin 0.1 * 180 / π - 6| < 0.5 := by
   obtain ⟨-, u1⟩ := sin_meja 5.7 (-1) 0.0994 (by norm_num) (by norm_num) (by norm_num) (by norm_num)

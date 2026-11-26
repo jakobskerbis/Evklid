@@ -6,10 +6,10 @@ name: lean-lekcije
 
 on:
   pull_request:
-    paths: ["content/lessons/**", "lean/Evklid/Lekcije/**", "scripts/lean-lekcije.mjs", ".github/workflows/lean-lekcije.yml", "lean/trditve.json", "lean/izpolnljivo-dolg.json", "lean/oznake-dolg.json", "test/lean-lekcije.test.js"]
+    paths: ["content/lessons/**", "lean/Evklid/Lekcije/**", "scripts/lean-lekcije.mjs", "scripts/lean-aksiomi.mjs", ".github/workflows/lean-lekcije.yml", "lean/trditve.json", "lean/izpolnljivo-dolg.json", "lean/oznake-dolg.json", "test/lean-lekcije.test.js"]
   push:
     branches: [main]
-    paths: ["content/lessons/**", "lean/Evklid/Lekcije/**", "scripts/lean-lekcije.mjs", ".github/workflows/lean-lekcije.yml", "lean/trditve.json", "lean/izpolnljivo-dolg.json", "lean/oznake-dolg.json", "test/lean-lekcije.test.js"]
+    paths: ["content/lessons/**", "lean/Evklid/Lekcije/**", "scripts/lean-lekcije.mjs", "scripts/lean-aksiomi.mjs", ".github/workflows/lean-lekcije.yml", "lean/trditve.json", "lean/izpolnljivo-dolg.json", "lean/oznake-dolg.json", "test/lean-lekcije.test.js"]
   workflow_dispatch:
 
 permissions:
@@ -26,14 +26,20 @@ jobs:
           node-version: 22
       - run: node scripts/lean-lekcije.mjs
       - name: Seznama dolga (lean/izpolnljivo-dolg.json, lean/oznake-dolg.json) se smeta le krčiti
-        if: github.event_name == 'pull_request'
+        if: github.event_name != 'workflow_dispatch'
         env:
+          DOGODEK: ${{ github.event_name }}
           BASE: ${{ github.base_ref }}
+          PREJ: ${{ github.event.before }}
         run: |
-          git fetch --depth=1 origin "$BASE"
-          # seznam, ki ga osnovna veja še nima, se uvede prvič (PV-09) in ga ni s čim primerjati
+          # osnova: ciljna veja PR-ja ali stanje main pred tem pushem
+          if [ "$DOGODEK" = pull_request ]; then git fetch --depth=1 origin "$BASE"; REF="origin/$BASE"; else git fetch --depth=1 origin "$PREJ"; REF="$PREJ"; fi
+          git rev-parse --verify "$REF^{commit}" > /dev/null || { echo "::error::osnova $REF ni dosegljiva"; exit 1; }
+          # seznam, ki ga osnova še nima, se uvede prvič (PV-09); če ga osnova ima, ga skripta primerja (manjkajoč v PR = napaka)
           args=()
-          if git show "origin/$BASE:lean/izpolnljivo-dolg.json" > "$RUNNER_TEMP/dolg.json" 2>/dev/null; then args+=(--osnova-dolga "$RUNNER_TEMP/dolg.json"); fi
-          if git show "origin/$BASE:lean/oznake-dolg.json" > "$RUNNER_TEMP/oznake.json" 2>/dev/null; then args+=(--osnova-oznak "$RUNNER_TEMP/oznake.json"); fi
+          for par in izpolnljivo-dolg.json:--osnova-dolga oznake-dolg.json:--osnova-oznak; do
+            f="${par%%:*}"; opt="${par##*:}"
+            if git cat-file -e "$REF:lean/$f" 2>/dev/null; then git show "$REF:lean/$f" > "$RUNNER_TEMP/$f"; args+=("$opt" "$RUNNER_TEMP/$f"); fi
+          done
           node scripts/lean-lekcije.mjs "${args[@]}"
       - run: node --test test/lean-lekcije.test.js

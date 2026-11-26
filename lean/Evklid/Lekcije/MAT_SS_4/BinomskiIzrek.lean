@@ -450,12 +450,14 @@ theorem enajst :
 /-! ## Preveri se -/
 
 /-- Preveri se 1: do C (2 vzhodno, 2 severno) vodi `C(4,2) = 6` najkrajših poti.
-pomozno -/
+trditev: MAT-SS-4/binomski-izrek#kviz1
+besedilo: »Pot do $C$ ima $4$ korake, od tega $2$ severna: $\binom{4}{2} = 6$.« -/
 theorem kviz1 : #((range 4).powersetCard 2) = 6 := by rw [card_powersetCard, card_range]; rfl
 
 /-- Preveri se 2: splošni člen (x + 1/x²)⁹ je `C(9,k)·x^(9−k)·(1/x²)^k = C(9,k)·x^(9−3k)`; eksponent 0 da
 k = 3 in člen `C(9,3) = 9!/(3!·6!) = 84`.
-pomozno -/
+trditev: MAT-SS-4/binomski-izrek#kviz2
+besedilo: »Najprej splošni člen, nato skupni eksponent $x$, iz pogoja »eksponent $0$« dobiš $k$ in šele na koncu število $\binom{9}{3} = 84$.« -/
 theorem kviz2 (x : ℝ) (hx : x ≠ 0) (k : ℕ) (hk : k ≤ 9) :
     (Nat.choose 9 k : ℝ) * x ^ (9 - k) * (1 / x ^ 2) ^ k = (Nat.choose 9 k : ℝ) * x ^ ((9 : ℤ) - 3 * k) ∧
     ((9 : ℤ) - 3 * k = 0 ↔ k = 3) ∧ Nat.choose 9 3 = 84 ∧
@@ -474,20 +476,23 @@ example :=
   kviz2 (hx := w.1) (hk := w.2)
 
 /-- Preveri se 3: (a−b)⁶ = a⁶ − 6a⁵b + 15a⁴b² − 20a³b³ + 15a²b⁴ − 6ab⁵ + b⁶ (predznaki se izmenjujejo).
-pomozno -/
+trditev: MAT-SS-4/binomski-izrek#kviz3
+besedilo: »$(a-b)^6 = a^6 - 6a^5b + 15a^4b^2 - 20a^3b^3 + 15a^2b^4 - 6ab^5 + b^6$: predznaki se izmenjujejo.« -/
 theorem kviz3 {R : Type*} [CommRing R] (a b : R) :
     (a - b) ^ 6 = a ^ 6 - 6 * a ^ 5 * b + 15 * a ^ 4 * b ^ 2 - 20 * a ^ 3 * b ^ 3 + 15 * a ^ 2 * b ^ 4 -
       6 * a * b ^ 5 + b ^ 6 := by ring
 
 /-- Preveri se 4: koeficient pri x³ v (x+3)⁵: 5 − k = 3 da k = 2, `C(5,2)·3² = 90`; napačni odgovori:
 10 = C(5,2), 30 = C(5,2)·3, 270 = C(5,3)·3³.
-pomozno -/
+trditev: MAT-SS-4/binomski-izrek#kviz4
+besedilo: »$x^3$ pomeni $5 - k = 3$, torej $k = 2$: $\binom{5}{2} \cdot 3^2 = 10 \cdot 9 = 90$.« -/
 theorem kviz4 : (Nat.choose 5 2 : ℤ) * 3 ^ 2 = 90 ∧ (Nat.choose 5 2 : ℤ) * 3 = 30 ∧
     (Nat.choose 5 3 : ℤ) * 3 ^ 3 = 270 := by decide
 
 /-- Preveri se 5: splošni člen (2x − 1/x)⁶ je `C(6,k)·(2x)^(6−k)·(−1/x)^k = C(6,k)·2^(6−k)·(−1)^k·x^(6−2k)`;
 6 − 2k = 0 da k = 3, člen `20·8·(−1) = −160`.
-pomozno -/
+trditev: MAT-SS-4/binomski-izrek#kviz5
+besedilo: »Splošni člen $\binom{6}{k}2^{6-k}(-1)^k x^{6-2k}$; $6 - 2k = 0$ da $k = 3$, člen pa je $20 \cdot 8 \cdot (-1) = -160$.« -/
 theorem kviz5 (x : ℝ) (hx : x ≠ 0) (k : ℕ) (hk : k ≤ 6) :
     (Nat.choose 6 k : ℝ) * (2 * x) ^ (6 - k) * (-1 / x) ^ k =
       (Nat.choose 6 k : ℝ) * 2 ^ (6 - k) * (-1) ^ k * x ^ ((6 : ℤ) - 2 * k) ∧
@@ -507,7 +512,7 @@ example :=
   kviz5 (hx := w.1) (hk := w.2)
 
 /-- Preveri se 5: celoten razvoj (2x − 1/x)⁶ = 64x⁶ − 192x⁴ + 240x² − 160 + 60/x² − 12/x⁴ + 1/x⁶ (x ≠ 0).
-pomozno -/
+pomozno – celotnega razvoja razlaga kviza ne zapiše (le splošni člen in člen brez x) -/
 theorem kviz5_razvoj (x : ℝ) (hx : x ≠ 0) :
     (2 * x - 1 / x) ^ 6 = 64 * x ^ 6 - 192 * x ^ 4 + 240 * x ^ 2 - 160 + 60 / x ^ 2 - 12 / x ^ 4 + 1 / x ^ 6 := by
   field_simp

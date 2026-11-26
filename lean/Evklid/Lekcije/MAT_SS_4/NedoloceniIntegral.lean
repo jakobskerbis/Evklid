@@ -123,7 +123,7 @@ theorem bobnar_N2 : (60 : ℝ) * 2 + 6 * 2 ^ 2 + 0 = 144 := by
 
 /-- Enoličnost (uporabljeno pri bobnarju, primeru 3, maturi 3 b) in kvizu 5): če imata f in F na ℝ isti
 odvod in se ujemata v eni točki a, sta enaki povsod.
-pomozno -/
+pomozno – orodje (enoličnost primitivne funkcije z začetno vrednostjo); lekcija ga ne izreče -/
 theorem enolicnost (f F g : ℝ → ℝ) (a : ℝ) (hf : ∀ x, HasDerivAt f (g x) x)
     (hF : ∀ x, HasDerivAt F (g x) x) (ha : f a = F a) : ∀ x, f x = F x := by
   have hd : ∀ x, HasDerivAt (fun x => f x - F x) 0 x := fun x => by

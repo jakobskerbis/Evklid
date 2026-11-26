@@ -205,7 +205,7 @@ example : (40 : ℝ) - 2 * (40 / 4) = 2 * (40 / 4) := (ograja_ob_steni 40 (by no
 /-- Pomožno (Primer 2, Preveri se 4): pravokotnik s stranico x na kateti a in ogliščem na hipotenuzi
 pravokotnega trikotnika s katetama a, b > 0 ima ploščino b·x·(1 − x/a) ≤ ab/4 = polovica ploščine
 trikotnika; največja je pri x = a/2 (druga stranica b/2).
-pomozno -/
+pomozno – splošna lema za kateti a in b; lekcija in razlaga kviza jo uporabita le na konkretnih številih -/
 theorem pravokotnik_v_trikotniku (a b : ℝ) (ha : 0 < a) (hb : 0 < b) :
     (∀ x : ℝ, b * x * (1 - x / a) ≤ a * b / 4) ∧ b * (a / 2) * (1 - a / 2 / a) = a * b / 4 ∧
       b * (1 - a / 2 / a) = b / 2 ∧ a * b / 4 = (a * b / 2) / 2 := by
@@ -559,7 +559,8 @@ theorem vstopnice : (0 : ℝ) * (460 - 20 * 0) = 0 ∧ (460 : ℝ) - 20 * 23 = 0
 
 /-- Preveri se 2: Z(x) = −(x − 8)² + 64 na [2, 6] narašča (levo od temena 8, ki ni dovoljen); največ je
 Z(6) = 60, Z(2) = 28 je najmanj, Z(8) = 64.
-pomozno -/
+trditev: MAT-SS-2/ekstremalni-problemi-s-kvadratno-funkcijo#preveri2
+besedilo: »Interval $[2, 6]$ leži levo od temena, kjer parabola, odprta navzdol, narašča. Največji zaslužek je v desnem krajišču: $Z(6) = 60$.« -/
 theorem preveri2 : (8 : ℝ) ∉ Icc 2 6 ∧ (∀ x ∈ Icc (2 : ℝ) 6, 28 ≤ -(x - 8) ^ 2 + 64 ∧ -(x - 8) ^ 2 + 64 ≤ 60) ∧
     -((6 : ℝ) - 8) ^ 2 + 64 = 60 ∧ -((2 : ℝ) - 8) ^ 2 + 64 = 28 ∧ -((8 : ℝ) - 8) ^ 2 + 64 = 64 := by
   refine ⟨fun h => by norm_num at h, fun x hx => ⟨?_, ?_⟩, by norm_num, by norm_num, by norm_num⟩
@@ -569,7 +570,8 @@ theorem preveri2 : (8 : ℝ) ∉ Icc 2 6 ∧ (∀ x ∈ Icc (2 : ℝ) 6, 28 ≤ 
 /-- Preveri se 3: največjo ploščino ima kvadrat; x² = 81, x > 0 ⇔ x = 9; obseg 4·9 = 36 = 4√81. Po
 `kvadrat_najvecji` (obseg 2s, največja ploščina s²/4): s²/4 = 81 pri s > 0 ⇔ s = 18, obseg 2·18 = 36;
 pri s = 18 je x(18 − x) ≤ 81, enakost le pri x = 9.
-pomozno -/
+trditev: MAT-SS-2/ekstremalni-problemi-s-kvadratno-funkcijo#preveri3
+besedilo: »Največjo ploščino ima kvadrat: $x^2 = 81$, $x = 9\,\text{cm}$, obseg je $4 \cdot 9 = 36\,\text{cm}$.« -/
 theorem preveri3 (x : ℝ) (hx : 0 < x) : (x ^ 2 = 81 ↔ x = 9) ∧ 4 * Real.sqrt 81 = 36 ∧ (4 : ℝ) * 9 = 36 ∧
     (∀ s : ℝ, 0 < s → (s ^ 2 / 4 = 81 ↔ s = 18)) ∧ 2 * (18 : ℝ) = 36 ∧
     (∀ y : ℝ, y * (18 - y) ≤ 18 ^ 2 / 4 ∧ (y * (18 - y) = 18 ^ 2 / 4 ↔ y = 18 / 2)) ∧
@@ -585,7 +587,8 @@ example : (9 : ℝ) ^ 2 = 81 ↔ (9 : ℝ) = 9 := (preveri3 9 (by norm_num)).1
 
 /-- Preveri se 4: kateti 1,5 m in 0,9 m: stranici 0,75 in 0,45, ploščina 0,75·0,45 = 0,3375 = 1,5·0,9/4 ≈ 0,34
 je največja; cel trikotnik ima 0,675 ≈ 0,68, zmnožek katet 1,35.
-pomozno -/
+trditev: MAT-SS-2/ekstremalni-problemi-s-kvadratno-funkcijo#preveri4
+besedilo: »stranici sta polovici katet, $0{,}75\,\text{m}$ in $0{,}45\,\text{m}$, ploščina je $0{,}75 \cdot 0{,}45 = 0{,}3375$, približno $0{,}34\,\text{m}^2$.« -/
 theorem preveri4 : (∀ x : ℝ, 0.9 * x * (1 - x / 1.5) ≤ 1.5 * 0.9 / 4) ∧ (1.5 : ℝ) / 2 = 0.75 ∧
     (0.9 : ℝ) / 2 = 0.45 ∧ (0.75 : ℝ) * 0.45 = 0.3375 ∧ (1.5 : ℝ) * 0.9 / 4 = 0.3375 ∧
     |(0.3375 : ℝ) - 0.34| < 0.005 ∧ (1.5 : ℝ) * 0.9 / 2 = 0.675 ∧ (1.5 : ℝ) * 0.9 = 1.35 := by
@@ -594,7 +597,8 @@ theorem preveri4 : (∀ x : ℝ, 0.9 * x * (1 - x / 1.5) ≤ 1.5 * 0.9 / 4) ∧ 
 
 /-- Preveri se 5: x² + (10 − x)² = 2x² − 20x + 100 = 2(x − 5)² + 50; najmanjša vrednost 50 pri x = 5, v
 x = 0 in x = 10 je 100.
-pomozno -/
+trditev: MAT-SS-2/ekstremalni-problemi-s-kvadratno-funkcijo#preveri5
+besedilo: »$x^2 + (10 - x)^2 = 2x^2 - 20x + 100 = 2(x - 5)^2 + 50$, najmanjša vrednost je $50$ pri $x = 5$.« -/
 theorem preveri5 (x : ℝ) : x ^ 2 + (10 - x) ^ 2 = 2 * x ^ 2 - 20 * x + 100 ∧
     2 * x ^ 2 - 20 * x + 100 = 2 * (x - 5) ^ 2 + 50 ∧ 50 ≤ x ^ 2 + (10 - x) ^ 2 ∧
     (5 : ℝ) ^ 2 + (10 - 5) ^ 2 = 50 ∧ (0 : ℝ) ^ 2 + (10 - 0) ^ 2 = 100 ∧ (10 : ℝ) ^ 2 + (10 - 10) ^ 2 = 100 := by

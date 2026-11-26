@@ -233,7 +233,7 @@ theorem prelaz_1700 : (∀ x : ℝ, 1600 - 25 * x ^ 2 > 1700 ↔ -25 * x ^ 2 - 1
 /-- Razlaga 7 (simulacija, a = 1, b = −4): pri c = 3 je rešitev x² − 4x + 3 < 0 interval (1, 3); pri
 c = 4 (D = 0) je x² − 4x + 4 < 0 brez rešitve, x² − 4x + 4 ≤ 0 pa velja le za x = 2.
 trditev: MAT-SS-2/kvadratna-neenacba#simulacija
-besedilo: »pri $c = 3$ je to interval $(1, 3)$, z večjim $c$ se krči, pri $c = 4$ (ko je $D = 0$) izgine. Pri znaku »$\le 0$« ostane pri $c = 4$ ena sama točka.« -/
+besedilo: »pri $c = 4$ (ko je $D = 0$) izgine. Pri znaku »$\le 0$« ostane pri $c = 4$ ena sama točka.« -/
 theorem simulacija (x : ℝ) : (x ^ 2 - 4 * x + 3 < 0 ↔ 1 < x ∧ x < 3) ∧ (-4 : ℝ) ^ 2 - 4 * 1 * 4 = 0 ∧
     ¬ x ^ 2 - 4 * x + 4 < 0 ∧ (x ^ 2 - 4 * x + 4 ≤ 0 ↔ x = 2) := by
   have e3 : x ^ 2 - 4 * x + 3 = 1 * (x - 1) * (x - 3) := by ring

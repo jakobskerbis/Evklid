@@ -1186,12 +1186,14 @@ theorem korak_7_2s5 : 7 / (2 * √5) = 7 * √5 / (2 * √5 * √5) ∧ 2 * √(
 /-! ## Preveri se -/
 
 /-- Preveri se, 1: √4 = 2, √9 = 3, √16 = 4.
-pomozno -/
+trditev: MAT-SS-2/koreni#preveri1
+besedilo: »$2^2 = 4$, $3^2 = 9$ in $4^2 = 16$, zato je $\sqrt{4} = 2$, $\sqrt{9} = 3$ in $\sqrt{16} = 4$.« -/
 theorem preveri1 : √(4:ℝ) = 2 ∧ √(9:ℝ) = 3 ∧ √(16:ℝ) = 4 := ⟨sqrt4, sqrt9, sqrt16⟩
 
 /-- Preveri se, 2: 5√3 = √(25 · 3) = √75 in 8² = 64 < 75 < 81 = 9², zato 8 < 5√3 < 9 (5√3 ≈ 8,66); napačni
 odgovori: 3 < √15 < 4 in 5 + √3 ≈ 6,73.
-pomozno -/
+trditev: MAT-SS-2/koreni#preveri2
+besedilo: »$5\sqrt{3} = \sqrt{75}$ in $8^2 = 64 < 75 < 81 = 9^2$, zato je $8 < 5\sqrt{3} < 9$ (natančneje $5\sqrt{3} \approx 8{,}66$).« -/
 theorem preveri2 : 5 * √3 = √((25:ℝ) * 3) ∧ √((25:ℝ) * 3) = √75 ∧ 8 < 5 * √(3:ℝ) ∧ 5 * √(3:ℝ) < 9 ∧
     8.655 < 5 * √(3:ℝ) ∧ 5 * √(3:ℝ) < 8.665 ∧ 3 < √(15:ℝ) ∧ √(15:ℝ) < 4 ∧
     6.725 < 5 + √(3:ℝ) ∧ 5 + √(3:ℝ) < 6.735 := by
@@ -1201,7 +1203,8 @@ theorem preveri2 : 5 * √3 = √((25:ℝ) * 3) ∧ √((25:ℝ) * 3) = √75 �
   rw [show (25:ℝ) = 5 ^ 2 by norm_num, delno_korenjenje (by norm_num) (by norm_num)]
 
 /-- Preveri se, 3: 1/(√5 − √2) = (√5 + √2)/3, (√5 − √2)² = 7 − 2√10, √5 + √2 ≠ √7 (≈ 3,65 proti 2,65).
-pomozno -/
+trditev: MAT-SS-2/koreni#preveri3
+besedilo: »Konjugirani izraz da razliko kvadratov, v kateri korena izgineta: $\dfrac{1}{\sqrt{5} - \sqrt{2}} = \dfrac{\sqrt{5} + \sqrt{2}}{3}$.« -/
 theorem preveri3 : 1 / (√5 - √(2:ℝ)) = (√5 + √2) / 3 ∧ (√5 - √(2:ℝ)) ^ 2 = 7 - 2 * √10 ∧
     √5 + √(2:ℝ) ≠ √7 ∧ 3.645 < √5 + √(2:ℝ) ∧ √5 + √(2:ℝ) < 3.655 ∧ 2.645 < √(7:ℝ) ∧ √(7:ℝ) < 2.655 := by
   have h10 : √(5:ℝ) * √2 = √10 := by rw [← Real.sqrt_mul (by norm_num)]; norm_num
@@ -1211,7 +1214,8 @@ theorem preveri3 : 1 / (√5 - √(2:ℝ)) = (√5 + √2) / 3 ∧ (√5 - √(2
   rw [racionalizacija_razlike (by norm_num) (by norm_num) (by norm_num)]; norm_num
 
 /-- Preveri se, 4: 3√5 = √9 · √5 = √45 (in ne √15 ali √75); √75 = √(25 · 3) = 5√3.
-pomozno -/
+trditev: MAT-SS-2/koreni#preveri4
+besedilo: »$3\sqrt{5} = \sqrt{9} \cdot \sqrt{5} = \sqrt{45}$.« -/
 theorem preveri4 : 3 * √5 = √9 * √(5:ℝ) ∧ √(9:ℝ) * √5 = √45 ∧ √(45:ℝ) ≠ √15 ∧ √(45:ℝ) ≠ √75 ∧
     √(75:ℝ) = 5 * √3 := by
   have i : ∀ x y : ℝ, 0 ≤ x → 0 ≤ y → x ≠ y → √x ≠ √y := fun x y hx hy h e => h ((Real.sqrt_inj hx hy).mp e)
@@ -1221,7 +1225,8 @@ theorem preveri4 : 3 * √5 = √9 * √(5:ℝ) ∧ √(9:ℝ) * √5 = √45 �
 
 /-- Preveri se, 5: diagonala deske √(30² + 30²) = √(900 · 2) = 30√2 ≈ 42,4 cm; napačni odgovori:
 30² + 30² = 1800, √60 ≈ 7,7, √900 = 30.
-pomozno -/
+trditev: MAT-SS-2/koreni#preveri5
+besedilo: »$\sqrt{30^2 + 30^2} = \sqrt{900 \cdot 2} = 30\sqrt{2} \approx 42{,}4\,\text{cm}$.« -/
 theorem preveri5 : √((30:ℝ) ^ 2 + 30 ^ 2) = √(900 * 2) ∧ √((900:ℝ) * 2) = 30 * √2 ∧ 42.35 < 30 * √(2:ℝ) ∧
     30 * √(2:ℝ) < 42.45 ∧ (30:ℝ) ^ 2 + 30 ^ 2 = 1800 ∧ 7.65 < √(60:ℝ) ∧ √(60:ℝ) < 7.75 ∧ √(900:ℝ) = 30 := by
   obtain ⟨a, b⟩ := s2
@@ -1230,7 +1235,8 @@ theorem preveri5 : √((30:ℝ) ^ 2 + 30 ^ 2) = √(900 * 2) ∧ √((900:ℝ) *
   refine ⟨by norm_num, by rw [Real.sqrt_mul (by norm_num), h900], by linarith, by linarith, by norm_num, c, d, h900⟩
 
 /-- Preveri se, 6: kateti 1 in 4 dasta hipotenuzo √(1² + 4²) = √17, torej n = 17 (napačno 1 + 4 = 5 in 16 − 1 = 15).
-pomozno -/
+trditev: MAT-SS-2/koreni#preveri6
+besedilo: »Hipotenuza je $\sqrt{1^2 + 4^2} = \sqrt{17}$, torej $n = 17$.« -/
 theorem preveri6 (n : ℝ) (hn : 0 ≤ n) : (√((1:ℝ) ^ 2 + 4 ^ 2) = √n ↔ n = 17) ∧ (1:ℝ) ^ 2 + 4 ^ 2 = 17 ∧
     (1:ℝ) + 4 = 5 ∧ (4:ℝ) ^ 2 - 1 ^ 2 = 15 := by
   refine ⟨⟨fun h => ?_, fun h => by rw [h]; norm_num⟩, by norm_num, by norm_num, by norm_num⟩
@@ -1246,7 +1252,8 @@ example :=
 
 /-- Preveri se, 7: ⁵√300 ≈ 3,129 ≈ 3,13; preverjanje 3,129⁵ ≈ 300 (RACUN: ≈ 299,94); 3⁵ = 243 < 300 < 1024 = 4⁵;
 napačni odgovori 300 : 5 = 60 in √300 ≈ 17,32.
-pomozno -/
+trditev: MAT-SS-2/koreni#preveri7
+besedilo: »$\sqrt[5]{300} \approx 3{,}129$, zaokroženo $3{,}13$. Preverjanje: $3{,}129^5 \approx 300$, ocena: $3^5 = 243 < 300 < 1024 = 4^5$.« -/
 theorem preveri7 : 3.1285 < koren 5 300 ∧ koren 5 300 < 3.1295 ∧ 3.125 < koren 5 300 ∧ koren 5 300 < 3.135 ∧
     299.935 < (3.129:ℝ) ^ 5 ∧ (3.129:ℝ) ^ 5 < 299.945 ∧ (3:ℝ) ^ 5 = 243 ∧ (4:ℝ) ^ 5 = 1024 ∧
     (300:ℝ) / 5 = 60 ∧ 17.315 < √(300:ℝ) ∧ √(300:ℝ) < 17.325 := by

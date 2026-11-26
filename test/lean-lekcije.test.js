@@ -159,13 +159,13 @@ theorem nima_docstringa : (1 : ℕ) = 1 := rfl
   ima(/brez: docstring nima »trditev/);
   ima(/nima_docstringa: docstring nima »trditev/);
   ima(/a2: id MAT-SS-4\/primer#ena je že pri a1/);
-  ima(/a2: besedilo »To v lekciji ne piše\.…« ni v vidnem besedilu/);
+  ima(/a2: besedilo »To v lekciji ne piše\.« ni v vidnem besedilu/);
   ima(/a3: id MAT-SS-4\/druga#ena ni oblike MAT-SS-4\/primer#/);
   ima(/hip: predpostavke hx brez primera izpolnljivosti/);
   ima(/sklep: predpostavke »→« v sklepu brez primera/);
   ima(/kratek: besedilo »\$k \\le n\$« je krajše od 15 znakov/);
   assert.equal(r.napake.length, 8);
-  assert.ok(r.opozorila.some((o) => /isti citat .* ima 4 izrekov/.test(o)), r.opozorila.join(" | "));
+  assert.ok(r.opozorila.some((o) => /isti citat .* ima 4 izreke /.test(o)), r.opozorila.join(" | "));
 });
 
 test("implikacija: »→« v vezniku na vrhu za »∀ …,« (tudi v oklepaju, »->« in omejen ∀), ne v ¬, ∃ ali let", () => {
@@ -454,7 +454,7 @@ test("lean-aksiomi: vsak izrek iz kazala gre v #print axioms (napačno ime v kaz
   assert.deepEqual(imenaZaPreverjanje(["A.x", "A.y"], [{ izrek: "A.x" }, { izrek: "A.napacno" }]), ["A.x", "A.y", "A.napacno"]);
 });
 
-test("lean/oznake-dolg.json: datoteka na seznamu brez oznak (priče še veljajo), nova neoznačena pade, seznam se le krči", () => {
+test("lean/oznake-dolg.json: zaklenjena datoteka brez oznak, nov ali spremenjen neoznačen izrek pade, seznam se le krči", () => {
   const koren = fs.mkdtempSync(path.join(os.tmpdir(), "lean-oznake-"));
   fs.mkdirSync(path.join(koren, "content/lessons/MAT-SS-4"), { recursive: true });
   fs.mkdirSync(path.join(koren, "lean/Evklid/Lekcije/MAT_SS_4"), { recursive: true });
@@ -463,35 +463,205 @@ test("lean/oznake-dolg.json: datoteka na seznamu brez oznak (priče še veljajo)
     fs.writeFileSync(path.join(koren, `content/lessons/MAT-SS-4/${ime}.md`), LEKCIJA);
     return `/-\nvir: content/lessons/MAT-SS-4/${ime}.md\nsha256: ${pravi}\n-/\nmodule\n\npublic import Mathlib\n\nnamespace Evklid.Lekcije.MAT_SS_4.X\n`;
   };
-  const neoznacena = (ime) => `${lekcija(ime)}
+  const neoznacena = (ime, dodatek = "") => `${lekcija(ime)}
 /-- Razlaga brez oznak. -/
 theorem brez (x : ℝ) : x = x := rfl
 
 theorem s_predpostavko (x : ℝ) (hx : 0 < x) : 0 ≤ x := hx.le
-
+${dodatek}
 end Evklid.Lekcije.MAT_SS_4.X
 `;
   const pot = "lean/Evklid/Lekcije/MAT_SS_4/Stara.lean";
+  const vir = "content/lessons/MAT-SS-4/stara.md";
   fs.writeFileSync(path.join(koren, pot), neoznacena("stara"));
   const dir = path.join(koren, "lean/Evklid/Lekcije");
+  const podpisi = Object.fromEntries(deklaracije(fs.readFileSync(path.join(koren, pot), "utf8")).filter((d) => d.vrsta === "theorem").map((d) => [d.polnoIme, zgostiPodpis(d.podpis)]));
+  const vnos = { pot, vir, izreki: podpisi };
   const zapisi = (x) => fs.writeFileSync(path.join(koren, "lean/oznake-dolg.json"), JSON.stringify(x));
+  const brezPric = (r) => r.napake.filter((n) => !/brez primera izpolnljivosti/.test(n));
 
   // brez seznama: oznake manjkajo
   assert.ok(preveri({ dir, root: koren }).napake.some((n) => /Stara\.lean:\d+ brez: docstring nima/.test(n)));
   // na seznamu: oznake se ne preverjajo, kazala ni, pravilo za priče pa velja
-  zapisi([pot]);
-  let r = preveri({ dir, root: koren, osnovaOznak: [pot] });
+  zapisi([vnos]);
+  let r = preveri({ dir, root: koren, osnovaOznak: [vnos] });
   assert.deepEqual(r.trditve, []);
   assert.deepEqual(r.napake.map((n) => n.replace(/^.*?\.lean:\d+ /, "")), ["s_predpostavko: predpostavke hx brez primera izpolnljivosti, ki izrek uporabi (docs/lean.md, »Lekcije (L2)«)"]);
+  // nov neoznačen izrek v zaklenjeni datoteki pade; označen se preveri in gre v kazalo
+  fs.writeFileSync(path.join(koren, pot), neoznacena("stara", "theorem nov_izrek : (1 : ℕ) = 1 := rfl\n\n/-- R.\ntrditev: MAT-SS-4/stara#ozn\nbesedilo: »Pri deljenju je $\\frac{6}{2}\\,=\\,3$.« -/\ntheorem oznacen : (6 : ℝ) / 2 = 3 := by norm_num\n"));
+  r = preveri({ dir, root: koren });
+  assert.deepEqual(brezPric(r).map((n) => n.replace(/^.*?\.lean:\d+ /, "")), ["nov_izrek: nov ali spremenjen neoznačen izrek v datoteki z lean/oznake-dolg.json; označi ga (»trditev:«/»besedilo:« ali »pomozno«)"]);
+  assert.deepEqual(r.trditve.map((t) => t.id), ["MAT-SS-4/stara#ozn"]);
+  // spremenjen podpis zaklenjenega izreka pade (in vnos je zastarel)
+  fs.writeFileSync(path.join(koren, pot), neoznacena("stara").replace("theorem brez (x : ℝ) : x = x", "theorem brez (x : ℝ) : x + 0 = x"));
+  r = preveri({ dir, root: koren });
+  assert.ok(r.napake.some((n) => /brez: nov ali spremenjen neoznačen izrek/.test(n)));
+  assert.ok(r.napake.some((n) => /oznake-dolg\.json: .*\.brez ni \(več\) neoznačen/.test(n)));
+  fs.writeFileSync(path.join(koren, pot), neoznacena("stara"));
+  // sprememba »vir:« pade
+  zapisi([{ ...vnos, vir: "content/lessons/MAT-SS-4/druga.md" }]);
+  assert.ok(preveri({ dir, root: koren }).napake.some((n) => /ni zaklenjeni content\/lessons\/MAT-SS-4\/druga\.md/.test(n)));
   // nova neoznačena datoteka, ki ni na seznamu, pade
+  zapisi([vnos]);
   fs.writeFileSync(path.join(koren, "lean/Evklid/Lekcije/MAT_SS_4/Nova.lean"), neoznacena("nova"));
-  r = preveri({ dir, root: koren, osnovaOznak: [pot] });
+  r = preveri({ dir, root: koren, osnovaOznak: [vnos] });
   assert.ok(r.napake.some((n) => /Nova\.lean:\d+ brez: docstring nima/.test(n)));
   assert.ok(!r.napake.some((n) => /Stara\.lean:\d+ brez: docstring nima/.test(n)));
-  // seznam se ne sme večati glede na osnovno vejo; vnos za neobstoječo datoteko je napaka
-  zapisi([pot, "lean/Evklid/Lekcije/MAT_SS_4/Nova.lean"]);
-  assert.ok(preveri({ dir, root: koren, osnovaOznak: [pot] }).napake.some((n) => /oznake-dolg\.json: nov vnos .*Nova\.lean/.test(n)));
-  zapisi([pot, "lean/Evklid/Lekcije/MAT_SS_4/Ni.lean"]);
+  fs.rmSync(path.join(koren, "lean/Evklid/Lekcije/MAT_SS_4/Nova.lean"));
+  // seznam se ne sme večati: nova pot, nov izrek v vnosu, spremenjen vir glede na osnovo; podvojen vnos; neobstoječa pot
+  const osnova = [{ ...vnos, izreki: { [Object.keys(podpisi)[0]]: Object.values(podpisi)[0] } }];
+  assert.ok(preveri({ dir, root: koren, osnovaOznak: osnova }).napake.some((n) => /nov ali spremenjen izrek .*s_predpostavko \(dovoljeno le odstranjevanje\)/.test(n)));
+  assert.ok(preveri({ dir, root: koren, osnovaOznak: [] }).napake.some((n) => /oznake-dolg\.json: nov vnos .*Stara\.lean/.test(n)));
+  assert.ok(preveri({ dir, root: koren, osnovaOznak: [{ ...vnos, vir: "x.md" }] }).napake.some((n) => /Stara\.lean spremenjen vir/.test(n)));
+  zapisi([vnos, vnos]);
+  assert.ok(preveri({ dir, root: koren }).napake.some((n) => /oznake-dolg\.json: podvojena pot/.test(n)));
+  zapisi([vnos, { pot: "lean/Evklid/Lekcije/MAT_SS_4/Ni.lean", vir: "x", izreki: {} }]);
   assert.ok(preveri({ dir, root: koren }).napake.some((n) => /Ni\.lean ne obstaja/.test(n)));
+  // osnova ima seznam, PR ga nima
+  fs.rmSync(path.join(koren, "lean/oznake-dolg.json"));
+  assert.ok(preveri({ dir, root: koren, osnovaOznak: [vnos] }).napake.some((n) => /oznake-dolg\.json manjka, osnovna veja pa ga ima/.test(n)));
+  assert.ok(preveri({ dir, root: koren, osnovaDolga: [{ izrek: "X.y", podpis: "0" }] }).napake.some((n) => /izpolnljivo-dolg\.json manjka/.test(n)));
+  fs.rmSync(koren, { recursive: true });
+});
+
+// --- Pregledi 1, 2, 4 (HEAD 20c8a6c0): obvozi in lažne zavrnitve -------------------------------------------------
+
+const naloga = (ime, telo = "(x : ℝ) (h1 : x > 1) (h2 : x < 0) : (2 : ℝ) = 3 := by linarith") => `/-- Razlaga.
+trditev: MAT-SS-4/primer#${ime.replaceAll("_", "-").toLowerCase()}
+besedilo: »Pri deljenju je $\\frac{6}{2}\\,=\\,3$.« -/
+theorem ${ime} ${telo}
+`;
+const napakePri = (telo) => preveriDatoteko("x.lean", datoteka(telo), LEKCIJA, VIR, SHA).napake;
+const brezPrimera = (telo) => napakePri(telo).filter((n) => /brez primera izpolnljivosti/.test(n)).map((n) => n.match(/ ([^\s:]+): predpostavke/)[1]);
+
+test("»variable« s predpostavko in »include« sta napaka; »variable« s tipi in razredi ne", () => {
+  const n = napakePri(`section
+variable (w : (1 : ℕ) = 0)
+include w
+variable {R : Type*} [CommRing R] (n : ℕ)
+${naloga("lazna", ": (2 : ℕ) = 3 := by omega")}
+end`);
+  assert.ok(n.some((x) => /»variable« s predpostavko w/.test(x)), n.join(" | "));
+  assert.ok(n.some((x) => /»include« v datoteki lekcije/.test(x)));
+  assert.equal(n.filter((x) => /variable|include/.test(x)).length, 2);
+});
+
+test("ime v «…»: znotraj ni komentarja ali niza; ime gre v kazalo in aksiome", () => {
+  for (const telo of [naloga("lazna", "(«a--» : ℕ) (w : (1 : ℕ) = 0) :\n    «a--» = «a--» + 1\n    := by omega"), naloga("lazna", "(«x\"» : ℕ) (w : (1 : ℕ) = 0) («y\"» : ℕ) : «x\"» = «x\"» := rfl")]) {
+    assert.deepEqual(brezPrimera(telo), ["lazna"], telo);
+  }
+  const txt = datoteka("theorem «moj izrek» : True := trivial\n");
+  assert.deepEqual(deklaracije(txt).map((d) => d.polnoIme), ["Evklid.Lekcije.MAT_SS_4.Primer.«moj izrek»"]);
+  assert.deepEqual(aksiomiIzreki(txt), ["Evklid.Lekcije.MAT_SS_4.Primer.«moj izrek»"]);
+});
+
+test("delna uporaba: primer mora podati vse eksplicitne predpostavke (po mestu ali z imenom, z @ vse do zadnje)", () => {
+  assert.deepEqual(brezPrimera(`${naloga("nemogoce")}\nexample := nemogoce 0\n`), ["nemogoce"]);
+  assert.deepEqual(brezPrimera(`${naloga("nemogoce")}\nexample := nemogoce 0 (by simp)\n`), ["nemogoce"]);
+  assert.deepEqual(brezPrimera(`${naloga("polna")}\nexample := polna 0 (by simp) (by simp)\n`), []);
+  assert.deepEqual(brezPrimera(`${naloga("imenovani")}\nexample := imenovani (h1 := w.1) (h2 := w.2)\n`), []);
+  assert.deepEqual(brezPrimera(`${naloga("en_imenovan")}\nexample := en_imenovan (h1 := w.1)\n`), ["en_imenovan"]);
+  assert.deepEqual(brezPrimera(`${naloga("afna", "{x : ℝ} (h1 : x > 1) : x = x := rfl")}\nexample := @afna 2\n`), ["afna"]);
+  assert.deepEqual(brezPrimera(`${naloga("afna2", "{x : ℝ} (h1 : x > 1) : x = x := rfl")}\nexample := @afna2 2 (by norm_num)\n`), []);
+  assert.deepEqual(brezPrimera(`${naloga("vrstica")}\nexample :=\n  vrstica 0\n    (by simp) (by simp)\n`), [], "argumenti v bolj zamaknjeni naslednji vrstici");
+  // »fun«/»λ« takoj za »:=« predpostavko le prestavi v primer
+  assert.deepEqual(brezPrimera(`${naloga("fun_h")}\nexample := fun (h : (1 : ℕ) = 0) => fun_h 0 (absurd h (by simp)) (absurd h (by simp))\n`), ["fun_h"]);
+  assert.deepEqual(brezPrimera(`${naloga("lam_h")}\nexample := λ (h : (1 : ℕ) = 0) => lam_h 0 (absurd h (by simp)) (absurd h (by simp))\n`), ["lam_h"]);
+});
+
+test("predpostavka v sklepu: »∀ _ : P,«, »→« v oklepaju v »∨« in »↔«; »(n : ℕ) → …« ni predpostavka", () => {
+  assert.ok(implikacija("∀ _w : (1:ℕ) = 0, (2:ℕ) = 3"));
+  assert.ok(implikacija("x = x ∨ ((1:ℕ) = 0 → (2:ℕ) = 3)"));
+  assert.ok(implikacija("(2:ℕ) = 3 ↔ ((1:ℕ) = 0 → (2:ℕ) = 3)"));
+  assert.ok(!implikacija("(n : ℕ) → n = n"));
+  assert.ok(implikacija("(h : (1:ℕ) = 0) → (2:ℕ) = 3"));
+  assert.ok(!implikacija("∀ f : ℝ → ℝ, f = f"));
+  assert.deepEqual(brezPrimera(naloga("pi", ": (n : ℕ) → n = n := fun _ => rfl")), []);
+  // primer s predpostavko »∀ _ : P,« v tipu ni priča
+  assert.deepEqual(brezPrimera(`${naloga("t_vt")}\nexample : ∀ _w : (1 : ℕ) = 0, (2 : ℝ) = 3 := fun w => t_vt 0 (absurd w (by simp)) (absurd w (by simp))\n`), ["t_vt"]);
+});
+
+test("jePredpostavka: False, IsEmpty, Nonempty, Convex…, NeZero, razred brez spremenljivke izreka; ℝ≥0 je tip", () => {
+  for (const tip of ["False", "IsEmpty ℝ", "Nonempty S", "ConvexOn ℝ Set.univ f", "Convex ℝ D", "NeZero n"]) assert.ok(jePredpostavka({ oklep: "(", imena: ["w"], tip }), tip);
+  assert.ok(!jePredpostavka({ oklep: "(", imena: ["x"], tip: "ℝ≥0" }));
+  assert.ok(!jePredpostavka({ oklep: "(", imena: ["x"], tip: "ℝ≥0∞" }));
+  assert.deepEqual(brezPrimera(naloga("nnreal", "(x : ℝ≥0) : x = x := rfl")), [], "ℝ≥0 ni predpostavka (lažna zavrnitev)");
+  assert.deepEqual(brezPrimera(naloga("fintype", "[Fintype ℝ] : (2 : ℕ) = 3 := by sorry")), ["fintype"]);
+  assert.deepEqual(brezPrimera(naloga("razred", "{R : Type*} [CommRing R] (a : R) : a = a := rfl")), []);
+  assert.deepEqual(brezPrimera(`section\nvariable {V : Type*}\n${naloga("razred_var", "[AddCommGroup V] (a : V) : a = a := rfl")}\nend`), [], "spremenljivka iz »variable«");
+});
+
+test("konec ukaza: vrstica v stolpcu 0 (»macro_rules«, »#check«) konča primer; »#s« v dokazu ne; »mutual … end« ne zapre prostora", () => {
+  assert.deepEqual(brezPrimera(`${naloga("makro")}\nexample : True := trivial\nmacro_rules | \`(zz) => \`(makro 0 (by simp) (by simp))\n`), ["makro"]);
+  assert.deepEqual(brezPrimera(`${naloga("check")}\nexample : True := trivial\n#check check 0 (by simp) (by simp)\n`), ["check"]);
+  assert.deepEqual(brezPrimera(`${naloga("kard")}\nexample : True := by\n  have := #s\n  exact (fun _ => trivial) (kard 0 (by simp) (by simp))\n`), [], "»#s« ni ukaz");
+  const d = deklaracije(datoteka("mutual\ntheorem m1 : True := trivial\nend\ntheorem po : True := trivial\n"));
+  assert.deepEqual(d.map((x) => x.polnoIme), ["Evklid.Lekcije.MAT_SS_4.Primer.m1", "Evklid.Lekcije.MAT_SS_4.Primer.po"]);
+});
+
+test("priča po polnem imenu: istoimenski izrek v drugem prostoru ne šteje, polno ime šteje", () => {
+  const txt = `namespace A\n${naloga("t")}\nend A\nnamespace B\n${naloga("u", "(x : ℝ) (h1 : x > 1) : x = x := rfl").replace("theorem u ", "theorem t ")}\nexample := t 2 (by norm_num)\nend B\n`;
+  assert.deepEqual(napakePri(txt).filter((n) => /brez primera/.test(n)).map((n) => n.replace(/^x\.lean:\d+ /, "").slice(0, 25)), ["t: predpostavke h1, h2 br"], "A.t nima priče, B.t jo ima");
+  assert.deepEqual(brezPrimera(`${naloga("polno", "(x : ℝ) (h1 : x > 1) : x = x := rfl")}\nexample := Evklid.Lekcije.MAT_SS_4.Primer.polno 2 (by norm_num)\n`), [], "polno ime (lažna zavrnitev)");
+});
+
+test("robni primeri: '\"' brez surovega niza, glava tabele, foo_izpolnljivo z def, pomozno+trditev, velike črke v id, gnezdeni komentar", () => {
+  assert.ok(deklaracije("def c : Char := '\"'\ntheorem skrit : True := trivial\n").some((d) => d.ime === "skrit"));
+  assert.ok(!deklaracije("/- a /- b -/ theorem skrit : True := trivial -/\ntheorem z : True := trivial").some((d) => d.ime === "skrit"));
+  const md = `${LEKCIJA}\n| kvadrant | sin | cos |\n|---|---|---|\n| I. | $+$ | $+$ |\n`;
+  const tab = preveriDatoteko("x.lean", datoteka(`/-- R.\ntrditev: MAT-SS-4/primer#tab\nbesedilo: »| kvadrant | sin | cos |« -/\ntheorem tab : (1 : ℕ) = 1 := rfl\n`), md, VIR, SHA).napake;
+  assert.ok(tab.some((n) => /je glava tabele/.test(n)), tab.join(" | "));
+  const defIzp = napakePri("def foo : ℕ := 1\ntheorem foo_izpolnljivo : foo = 1 := rfl\n");
+  assert.ok(defIzp.some((n) => /foo_izpolnljivo: docstring nima .*ni primer izpolnljivosti za foo/.test(n)), defIzp.join(" | "));
+  assert.ok(napakePri("/-- R.\ntrditev: MAT-SS-4/primer#x\npomozno -/\ntheorem obe : (1 : ℕ) = 1 := rfl\n").some((n) => /»pomozno« in »trditev:« hkrati/.test(n)));
+  assert.ok(napakePri("/-- R.\ntrditev: MAT-SS-4/primer#Velike\nbesedilo: »Pri deljenju je $\\frac{6}{2}\\,=\\,3$.« -/\ntheorem velike : (1 : ℕ) = 1 := rfl\n").some((n) => /id MAT-SS-4\/primer#Velike ni oblike/.test(n)));
+});
+
+test("»pomozno« pri izreku iz »Preveri se« je napaka brez razloga; z »pomozno – razlog« ne", () => {
+  assert.ok(napakePri("/-- Preveri se 2: 2 = 2.\npomozno -/\ntheorem kv : (2 : ℕ) = 2 := rfl\n").some((n) => /»pomozno« pri izreku iz »Preveri se«/.test(n)));
+  assert.ok(napakePri("/-- Orodje.\npomozno -/\ntheorem kviz9 : (2 : ℕ) = 2 := rfl\n").some((n) => /»pomozno« pri izreku iz »Preveri se«/.test(n)), "po imenu");
+  assert.deepEqual(napakePri("/-- Preveri se 2: 2 = 2.\npomozno – razlaga kviza števila ne navede -/\ntheorem kv : (2 : ℕ) = 2 := rfl\n"), []);
+});
+
+test("preveri(): sha256 lekcije, podvojen vnos v dolgu", () => {
+  const koren = fs.mkdtempSync(path.join(os.tmpdir(), "lean-sha-"));
+  fs.mkdirSync(path.join(koren, "content/lessons/MAT-SS-4"), { recursive: true });
+  fs.mkdirSync(path.join(koren, "lean/Evklid/Lekcije/MAT_SS_4"), { recursive: true });
+  fs.writeFileSync(path.join(koren, VIR), LEKCIJA);
+  fs.writeFileSync(path.join(koren, "lean/Evklid/Lekcije/MAT_SS_4/Primer.lean"), datoteka(""));
+  const dir = path.join(koren, "lean/Evklid/Lekcije");
+  assert.ok(preveri({ dir, root: koren }).napake.some((n) => /spremenjena po dokazu/.test(n)));
+  fs.writeFileSync(path.join(koren, "lean/izpolnljivo-dolg.json"), JSON.stringify([{ izrek: "A.b", podpis: "1" }, { izrek: "A.b", podpis: "1" }]));
+  assert.ok(preveri({ dir, root: koren }).napake.some((n) => /izpolnljivo-dolg\.json: podvojen izrek/.test(n)));
+  fs.rmSync(koren, { recursive: true });
+});
+
+test("sporočila: sklanjanje »izrekov«, »…« le pri prirezanem citatu, dolžina v kodnih točkah", async () => {
+  const { izrekov, prirezi } = await import("../scripts/lean-lekcije.mjs");
+  assert.deepEqual([1, 2, 3, 4, 5, 101, 102, 104].map(izrekov), ["1 izrek", "2 izreka", "3 izreke", "4 izreke", "5 izrekov", "101 izrek", "102 izreka", "104 izreke"]);
+  assert.equal(prirezi("kratko", 60), "kratko");
+  assert.equal(prirezi("𝔸".repeat(61), 60), `${"𝔸".repeat(60)}…`);
+  // 8 kodnih točk je 16 enot UTF-16 (𝔸 je par nadomestkov): še vedno prekratko
+  const n = preveriDatoteko("x.lean", datoteka("/-- R.\ntrditev: MAT-SS-4/primer#k\nbesedilo: »𝔸𝔸𝔸𝔸𝔸𝔸𝔸𝔸« -/\ntheorem k : (1 : ℕ) = 1 := rfl\n"), `${LEKCIJA}\n𝔸𝔸𝔸𝔸𝔸𝔸𝔸𝔸\n`, VIR, SHA).napake;
+  assert.deepEqual(n.map((x) => x.replace(/^.*?: /, "")), ["besedilo »𝔸𝔸𝔸𝔸𝔸𝔸𝔸𝔸« je krajše od 15 znakov (daljši citat ali »besedilo-kratko: <razlog>«)"]);
+});
+
+test("robni primeri 2: opozorilo pri »pomozno« s primerom, vzorci »| …«, primer konča pri naslednji deklaraciji v isti vrstici, glava in podvojen vir", () => {
+  const r = preveriDatoteko("x.lean", datoteka("/-- Pomožno za Primer 2.\npomozno -/\ntheorem orodje : (1 : ℕ) = 1 := rfl\n"), LEKCIJA, VIR, SHA);
+  assert.ok(r.opozorila.some((o) => /orodje: »pomozno«, docstring pa omenja primer/.test(o)));
+  const vz = deklaracije(datoteka("theorem rek : ℕ → ℕ\n  | 0 => 0\n  | n + 1 => n\n"));
+  assert.equal(vz[0].izjava, "ℕ → ℕ");
+  assert.deepEqual(brezPrimera(`${naloga("ista")}\nexample : True := trivial theorem drugi : True := (fun _ => trivial) (ista 0 (by simp) (by simp))\n`).filter((x) => x === "ista"), ["ista"]);
+  const koren = fs.mkdtempSync(path.join(os.tmpdir(), "lean-vir-"));
+  fs.mkdirSync(path.join(koren, "content/lessons/MAT-SS-4"), { recursive: true });
+  fs.mkdirSync(path.join(koren, "lean/Evklid/Lekcije/MAT_SS_4"), { recursive: true });
+  fs.writeFileSync(path.join(koren, VIR), LEKCIJA);
+  const pravi = crypto.createHash("sha256").update(LEKCIJA).digest("hex");
+  fs.writeFileSync(path.join(koren, "lean/Evklid/Lekcije/MAT_SS_4/A.lean"), datoteka("").replace(SHA, pravi));
+  fs.writeFileSync(path.join(koren, "lean/Evklid/Lekcije/MAT_SS_4/B.lean"), datoteka("").replace(SHA, pravi));
+  fs.writeFileSync(path.join(koren, "lean/Evklid/Lekcije/MAT_SS_4/C.lean"), "theorem brez_glave : True := trivial\n");
+  const n = preveri({ dir: path.join(koren, "lean/Evklid/Lekcije"), root: koren }).napake;
+  assert.ok(n.some((x) => /B\.lean: lekcija .* ima že drugo datoteko/.test(x)), n.join(" | "));
+  assert.ok(n.some((x) => /C\.lean: v glavi manjka »vir:«/.test(x)));
   fs.rmSync(koren, { recursive: true });
 });

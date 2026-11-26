@@ -643,7 +643,7 @@ theorem kviz5 : Pp (range 20) (range 6 ∪ Ico 10 13) (range 10) = 6 / 10 ∧ (6
 
 /-- Preveri se 6: brez vračanja 10/12·9/11 = 15/22, ne 10/12·10/12.
 trditev: MAT-SS-4/verjetnost#kviz6
-besedilo: »**Množenje, kot da sta dogodka neodvisna (višja raven).** »Dve celi jajci: $\frac{10}{12} \cdot \frac{10}{12}$.« Brez vračanja se vsebina škatle po prvem jemanju spremeni. Popravek: drugi faktor je pogojna verjetnost $\frac{9}{11}$; $P(A) \cdot P(B)$ velja le za neodvisna dogodka.« -/
+besedilo: »Prvo jemanje spremeni škatlo, zato je drugi faktor pogojna verjetnost $\frac{9}{11}$: $P = \frac{10}{12} \cdot \frac{9}{11} = \frac{15}{22}$.« -/
 theorem kviz6 : (10 : ℚ) / 12 * (9 / 11) = 15 / 22 ∧ (10 : ℚ) / 12 * (10 / 12) ≠ 15 / 22 := by norm_num
 
 /-- Preveri se 7: kruh pade trikrat neodvisno, P(namaz navzdol) = 0,6: nasprotni dogodek 0,4³ = 0,064,

@@ -1572,7 +1572,7 @@ pomozno -/
 theorem r₃₀_pow : r₃₀ ^ 12 = 1.032 := by
   unfold r₃₀; rw [← Real.rpow_natCast, ← Real.rpow_mul (by norm_num)]; norm_num
 
-/-- Pomožna trditev: `1,00262833695 < r₁₂ < 1,00262833697`.
+/-- Pomožna trditev: `1,00262833695 < r₃₀ < 1,00262833697` (r₃₀ = ¹²√1,032).
 pomozno -/
 theorem r₃₀_meje : (1.00262833695:ℝ) < r₃₀ ∧ r₃₀ < 1.00262833697 :=
   koren_meje _ _ _ _ 12 (Real.rpow_nonneg (by norm_num) _) (by norm_num) r₃₀_pow (by norm_num) (by norm_num)

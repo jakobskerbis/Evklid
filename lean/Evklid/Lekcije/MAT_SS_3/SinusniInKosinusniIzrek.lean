@@ -929,7 +929,8 @@ theorem matura2c :
 
 /-- Preveri se 2: `cos 60° = 0,5`, `cos 120° = −0,5`; pri istih `a, b > 0` je stranica pri 120° daljša:
 `a² + b² − 2ab·cos 120° > a² + b² − 2ab·cos 60°`.
-pomozno -/
+trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#kviz2
+besedilo: »Pri $\gamma = 120^\circ$ je $\cos\gamma < 0$, zato je $c^2 = a^2 + b^2 + 2ab \cdot 0{,}5$, kar je več kot pri $60^\circ$.« -/
 theorem kviz2 (a b : ℝ) (ha : 0 < a) (hb : 0 < b) :
     a ^ 2 + b ^ 2 - 2 * a * b * Real.cos (60 * π / 180) <
       a ^ 2 + b ^ 2 - 2 * a * b * Real.cos (120 * π / 180) := by
@@ -945,7 +946,8 @@ example :=
 
 /-- Preveri se 3 (in `<<RACUN`): `a = 5`, `b = 7`, `γ = 60°`: `c² = 25 + 49 − 2·5·7·0,5 = 39`,
 `c = √39 ≈ 6,24 cm`; napačni `√74 ≈ 8,60` (Pitagora), `√109 ≈ 10,44` (popravek prištet).
-pomozno -/
+trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#kviz3
+besedilo: »$c^2 = 25 + 49 - 2 \cdot 5 \cdot 7 \cdot 0{,}5 = 39$, torej $c = \sqrt{39}\,\mathrm{cm} \approx 6{,}24\,\mathrm{cm}$.« -/
 theorem kviz3 :
     (5:ℝ) ^ 2 + 7 ^ 2 - 2 * 5 * 7 * Real.cos (60 * π / 180) = 39 ∧
     |Real.sqrt 39 - 6.24| < 0.005 ∧ |Real.sqrt (25 + 49) - 8.60| < 0.005 ∧
@@ -958,7 +960,8 @@ theorem kviz3 :
 
 /-- Preveri se 4: `a = 9`, `b = 5`, `β = 30°`: `sin α = 9·0,5/5 = 0,9`; poleg `α ≈ 64,2°` je rešitev tudi
 `α ≈ 115,8°` z `γ ≈ 34,2°`, obe vsoti z β sta pod 180°, trikotnika sta dva.
-pomozno -/
+trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#kviz4
+besedilo: »Tudi $\alpha \approx 115{,}8^\circ$ ima sinus $0{,}9$, z $\beta = 30^\circ$ pa je vsota še pod $180^\circ$ ($\gamma \approx 34{,}2^\circ$). Trikotnika sta dva.« -/
 theorem kviz4 :
     (9:ℝ) * 0.5 / 5 = 0.9 ∧
     Real.arcsin 0.9 * 180 / π + 30 < 180 ∧ (π - Real.arcsin 0.9) * 180 / π + 30 < 180 ∧
@@ -970,7 +973,8 @@ theorem kviz4 :
 
 /-- Preveri se 5 (in `<<RACUN`): notranji kot 130°, `c² = 9 + 4 − 12 cos 130° ≈ 20,71`, `c ≈ 4,55 km`; napačni:
 s kotom 50° `≈ 2,30`, naravnost 5, Pitagora `√13 ≈ 3,61`.
-pomozno -/
+trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#kviz5
+besedilo: »Notranji kot je $180^\circ - 50^\circ = 130^\circ$. Torej $c^2 = 9 + 4 - 12\cos 130^\circ \approx 20{,}71$ in $c \approx 4{,}55\,\mathrm{km}$.« -/
 theorem kviz5 :
     |9 + 4 - 12 * Real.cos (130 * π / 180) - 20.71| < 0.005 ∧
     |Real.sqrt (9 + 4 - 12 * Real.cos (130 * π / 180)) - 4.55| < 0.005 ∧
@@ -991,7 +995,8 @@ theorem kviz5 :
 
 /-- Preveri se 5, razlaga napačnega odgovora 5: zaradi zavoja je razdalja `≈ 4,55` strogo krajša od vsote
 odsekov `3 + 2`.
-pomozno -/
+trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#kviz5-krajse
+besedilo: »To bi veljalo le, če bi tekel naravnost. Zaradi zavoja je razdalja krajša od vsote odsekov.« -/
 theorem kviz5_krajse : Real.sqrt (9 + 4 - 12 * Real.cos (130 * π / 180)) < 3 + 2 := by
   obtain ⟨-, h, -⟩ := kviz5
   rw [abs_lt] at h
@@ -999,7 +1004,8 @@ theorem kviz5_krajse : Real.sqrt (9 + 4 - 12 * Real.cos (130 * π / 180)) < 3 + 
 
 /-- Preveri se 6 (in `<<RACUN`): `a = 7`, `b = 8`, `γ = 120°`: `c² = 49 + 64 − 2·7·8·(−1/2) = 113 + 56 = 169`,
 `c = 13 cm`; napačni `√57 ≈ 7,55`, `√113 ≈ 10,63`, 169 (`c²`).
-pomozno -/
+trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#kviz6
+besedilo: »$c^2 = 49 + 64 - 2 \cdot 7 \cdot 8 \cdot \left(-\frac{1}{2}\right) = 113 + 56 = 169$, torej $c = 13\,\mathrm{cm}$.« -/
 theorem kviz6 :
     (7:ℝ) ^ 2 + 8 ^ 2 - 2 * 7 * 8 * Real.cos (120 * π / 180) = 113 + 56 ∧ (113:ℝ) + 56 = 169 ∧
     Real.sqrt 169 = 13 ∧ |Real.sqrt 57 - 7.55| < 0.005 ∧ |Real.sqrt 113 - 10.63| < 0.005 := by

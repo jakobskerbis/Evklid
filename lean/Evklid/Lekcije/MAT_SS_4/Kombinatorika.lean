@@ -373,43 +373,50 @@ theorem letalisca_rim : Fintype.card (Fin 3 → Fin 26) = 17576 ∧ Nat.choose 7
 /-! ## Preveri se -/
 
 /-- Preveri se 1: izborov 4 od 12 mest je `C(12,4) = 495`.
-pomozno -/
+trditev: MAT-SS-4/kombinatorika#kviz1
+besedilo: »Izbiramo $4$ od $12$ brez vrstnega reda in brez ponavljanja: to je kombinacija. Vseh izborov je $\binom{12}{4}$.« -/
 theorem kviz1 : #((range 12).powersetCard 4) = Nat.choose 12 4 ∧ Nat.choose 12 4 = 495 := by
   refine ⟨by rw [card_powersetCard, card_range], by decide⟩
 
 /-- Preveri se 2: `P_4 = 24 < C(7,3) = 35 < V_7^3 = 210 < 7³ = 343`, in `V_7^3 = 6·C(7,3)`.
-pomozno -/
+trditev: MAT-SS-4/kombinatorika#kviz2
+besedilo: »$P_4 = 24$, $\binom{7}{3} = 35$, $V_7^3 = 210$, $7^3 = 343$.« -/
 theorem kviz2 :
     Nat.factorial 4 = 24 ∧ Nat.choose 7 3 = 35 ∧ Nat.descFactorial 7 3 = 210 ∧ 7 ^ 3 = 343 ∧
     Nat.factorial 4 < Nat.choose 7 3 ∧ Nat.choose 7 3 < Nat.descFactorial 7 3 ∧
     Nat.descFactorial 7 3 < 7 ^ 3 ∧ Nat.descFactorial 7 3 = 6 * Nat.choose 7 3 := by decide
 
 /-- Preveri se 3: 6! = 720, 7! = 7·6! = 5040, torej sedemkrat več.
-pomozno -/
+trditev: MAT-SS-4/kombinatorika#kviz3
+besedilo: »$6! = 720$, $7! = 7 \cdot 6! = 5040$.« -/
 theorem kviz3 : Nat.factorial 6 = 720 ∧ Nat.factorial 7 = 7 * Nat.factorial 6 ∧ Nat.factorial 7 = 5040 := by
   decide
 
 /-- Preveri se 4: 10⁴ = 10 000 kod; napačni odgovori 10·9·8·7 = 5040, C(10,4) = 210, 4·10 = 40.
-pomozno -/
+trditev: MAT-SS-4/kombinatorika#kviz4
+besedilo: »Vsako kolesce ima $10$ možnosti, vrstni red je pomemben in ponavljanje je dovoljeno: $10^4 = 10\,000$ kod.« -/
 theorem kviz4 : Fintype.card (Fin 4 → Fin 10) = 10000 ∧ 10 * 9 * 8 * 7 = 5040 ∧ Nat.choose 10 4 = 210 ∧
     4 * 10 = 40 := by
   refine ⟨by simp, by decide, by decide, by decide⟩
 
 /-- Preveri se 5: `V_10^3 = 10·9·8 = 720`; napačni odgovori C(10,3) = 120, 10³ = 1000, 10·3 = 30.
-pomozno -/
+trditev: MAT-SS-4/kombinatorika#kviz5
+besedilo: »Izbiramo $3$ od $10$, vrstni red je pomemben, brez ponavljanja: $V_{10}^3 = 10 \cdot 9 \cdot 8 = 720$.« -/
 theorem kviz5 : Fintype.card (Fin 3 ↪ Fin 10) = 10 * 9 * 8 ∧ 10 * 9 * 8 = 720 ∧ Nat.choose 10 3 = 120 ∧
     10 ^ 3 = 1000 ∧ 10 * 3 = 30 := by
   rw [Fintype.card_embedding_eq, Fintype.card_fin, Fintype.card_fin]; decide
 
 /-- Preveri se 6: besed iz črk MAMA je 4!/(2!·2!) = 24/4 = 6 (besede dolžine 4 z dvema M in dvema A);
 napačna sta 4! = 24 in 4!/2! = 12.
-pomozno -/
+trditev: MAT-SS-4/kombinatorika#kviz6
+besedilo: »Permutacije s ponavljanjem: $\frac{4!}{2! \cdot 2!} = \frac{24}{4} = 6$ (AAMM, AMAM, AMMA, MAAM, MAMA, MMAA).« -/
 theorem kviz6 : #(univ.filter (fun f : Fin 4 → Fin 2 => #(univ.filter (fun i => f i = 0)) = 2)) = 6 ∧
     Nat.factorial 4 / (Nat.factorial 2 * Nat.factorial 2) = 24 / 4 ∧ 24 / 4 = 6 ∧
     Nat.factorial 4 = 24 ∧ Nat.factorial 4 / Nat.factorial 2 = 12 := by decide
 
 /-- Preveri se 7: sladoled (5) ali torta (3): 5 + 3 = 8 možnosti (napačno 5·3 = 15).
-pomozno -/
+trditev: MAT-SS-4/kombinatorika#kviz7
+besedilo: »Pravilo vsote: primera se ne prekrivata, zato možnosti seštejemo: $5 + 3 = 8$.« -/
 theorem kviz7 : #(range 5 ∪ ((range 8) \ (range 5))) = 5 + 3 ∧ 5 + 3 = 8 ∧ 5 * 3 = 15 := by decide
 
 end Evklid.Lekcije.MAT_SS_4.Kombinatorika

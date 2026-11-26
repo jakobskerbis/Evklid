@@ -639,7 +639,7 @@ example : True :=
 /-- Preveri se 2: pri f(x) = x² so smerni koeficienti tangent v −1, 0, 2 enaki −2, 0, 4 (vrstni red
 −1, 0, 2).
 trditev: MAT-SS-4/uporaba-odvoda#kviz2
-besedilo: »$f'(x) = 2x$ da koeficiente $-2$, $0$ in $4$.« -/
+besedilo: »da koeficiente $-2$, $0$ in $4$.« -/
 theorem kviz2 : (2:ℝ) * (-1) = -2 ∧ (2:ℝ) * 0 = 0 ∧ (2:ℝ) * 2 = 4 ∧ (-2:ℝ) < 0 ∧ (0:ℝ) < 4 := by norm_num
 
 /-- Preveri se 3: desno od 1,25 je R' < 0, R(1,40) = 1,40 · 220 = 308 < 312,50.

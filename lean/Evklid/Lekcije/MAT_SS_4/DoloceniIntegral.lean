@@ -338,7 +338,7 @@ example : True :=
 /-- Razlaga, blok 7, in »Pogoste napake«: če je g ≥ f na [a, b], je ∫ₐᵇ (g − f) ≥ 0, obratna razlika
 (spodnja minus zgornja) pa da ∫ₐᵇ (f − g) = −∫ₐᵇ (g − f) ≤ 0.
 trditev: MAT-SS-4/doloceni-integral#med-krivuljama
-besedilo: »Če je na intervalu $[a, b]$ graf $g$ ves čas nad grafom $f$, je ploščina vmes $\int_a^b \bigl(g(x) - f(x)\bigr)\,dx$: zgornja minus spodnja.« -/
+besedilo: »**Pri ploščini med krivuljama spodnja minus zgornja.** Rezultat je negativen.« -/
 theorem med_krivuljama (f g : ℝ → ℝ) (a b : ℝ) (hab : a ≤ b) (h : ∀ x ∈ Set.Icc a b, f x ≤ g x) :
     0 ≤ ∫ x in a..b, (g x - f x) ∧ ∫ x in a..b, (f x - g x) ≤ 0 := by
   have h1 : 0 ≤ ∫ x in a..b, (g x - f x) := integral_nonneg hab (fun x hx => by linarith [h x hx])
@@ -860,7 +860,7 @@ theorem kviz5 : ∫ x in (0:ℝ)..1, (x ^ 2 - 1) = -2 / 3 ∧ ∫ x in (1:ℝ)..
 /-- Preveri se, vprašanje 6 (in vrstica `vrednost: -(10-3)`): iz ∫₀⁴ f = 10 in ∫₀¹ f = 3 sledi
 ∫₁⁴ f = 10 − 3 = 7 in ∫₄¹ f = −7 (f zvezna).
 trditev: MAT-SS-4/doloceni-integral#kviz6
-besedilo: »Aditivnost: $\int_1^4 f(x) dx = 10 - 3 = 7$. Zamenjava mej: $\int_4^1 f(x) dx = -7$.« -/
+besedilo: »Zamenjava mej: $\int_4^1 f(x)\,dx = -7$.« -/
 theorem kviz6 (f : ℝ → ℝ) (hf : Continuous f) (h4 : ∫ x in (0:ℝ)..4, f x = 10)
     (h1 : ∫ x in (0:ℝ)..1, f x = 3) : ∫ x in (4:ℝ)..1, f x = -7 := by
   have h := aditivnost f hf 0 1 4

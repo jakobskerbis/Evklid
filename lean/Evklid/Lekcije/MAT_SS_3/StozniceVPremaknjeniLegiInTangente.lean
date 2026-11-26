@@ -1103,7 +1103,7 @@ theorem naloga1 (x y : ℝ) :
 /-- Naloga 2 a): 25x² + 9y² − 50x + 36y − 164 = 0 ↔ 25(x² − 2x) + 9(y² + 4y) = 164 ↔
 25(x − 1)² − 25 + 9(y + 2)² − 36 = 164 ↔ 25(x − 1)² + 9(y + 2)² = 225 ↔ (x − 1)²/9 + (y + 2)²/25 = 1.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#naloga2a
-besedilo: »Združimo člene z isto spremenljivko in izpostavimo koeficienta: $25(x^2 - 2x) + 9(y^2 + 4y) = 164$. 2. a) Dopolnimo do popolnih kvadratov in dodano odštejemo, pomnoženo s koeficientom: $25(x - 1)^2 - 25 + 9(y + 2)^2 - 36 = 164$, torej $25(x - 1)^2 + 9(y + 2)^2 = 225$. 3. a) Delimo z $225$: $\frac{(x - 1)^2}{9} + \frac{(y + 2)^2}{25} = 1$.« -/
+besedilo: »Delimo z $225$: $\frac{(x - 1)^2}{9} + \frac{(y + 2)^2}{25} = 1$.« -/
 theorem naloga2a (x y : ℝ) :
     25 * x ^ 2 + 9 * y ^ 2 - 50 * x + 36 * y - 164 = 0 ↔ (x - 1) ^ 2 / 9 + (y + 2) ^ 2 / 25 = 1 :=
   calc 25 * x ^ 2 + 9 * y ^ 2 - 50 * x + 36 * y - 164 = 0
@@ -1286,7 +1286,7 @@ theorem kviz1_oblike (x y : ℝ) :
 /-- Preveri se, vprašanje 1 (pravilni odgovor): krivulja 4x² − y² + 8x = 0 ni nobena elipsa (in zato tudi ne
 krožnica): ima točke s poljubno veliko absciso, elipsa pa je omejena.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#kviz1-ni-elipsa
-besedilo: »oziroma $(x + 1)^2 - \frac{y^2}{4} = 1$. Kvadrata imata nasprotna predznaka, zato je to hiperbola.« -/
+besedilo: »Kvadrata imata nasprotna predznaka, zato je to hiperbola.« -/
 theorem kviz1_ni_elipsa : ¬ ∃ x₀ y₀ a b : ℝ, a ≠ 0 ∧ ∀ x y : ℝ,
     (4 * x ^ 2 - y ^ 2 + 8 * x = 0 ↔ (x - x₀) ^ 2 / a ^ 2 + (y - y₀) ^ 2 / b ^ 2 = 1) := by
   rintro ⟨x₀, y₀, a, b, ha, h⟩
