@@ -99,6 +99,6 @@ test("popis celotne vsebine (brez SymPy): vsa statična mesta imajo trditve, por
   const p1 = VIDNA.reduce((a, k) => a + polno(m[k]), 0);
   const n = VIDNA.reduce((a, k) => a + m[k].nepreverjeno, 0);
   // sklon sledi številu (12.602 trditvi, 12.603 trditve, 12.605 trditev)
-  assert.ok(new RegExp(`${tocke(p1).replace(/\./g, "\\.")} trditv(?:ev|i|e|a) od ${tocke(vse).replace(/\./g, "\\.")}`).test(p), "glavna številka");
+  assert.ok(new RegExp(`${tocke(p1).replace(/\./g, "\\.")} trdit(?:ev|vi|ve|va) od ${tocke(vse).replace(/\./g, "\\.")}`).test(p), "glavna številka");
   assert.ok(p.includes(`Brez statusa (»Nepreverjeno«): ${tocke(n)}`));
 });
