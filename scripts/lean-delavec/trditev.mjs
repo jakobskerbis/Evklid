@@ -27,7 +27,7 @@
 export const NAJVEC_ZNAKOV = 1000;
 
 // Dovoljeni znaki poleg črk, števk in presledka (brez ».«: pika je samo v imenu ali decimalnem številu).
-const ZNAKI = new Set([..."()[]{}+-*/^=<>,:|!%", ..."ℝℕℤℚℂ∀∃¬∧∨→↔≤≥≠•∑∈∉⊆⊂⊇⊃∩∪∅√∣⌊⌋⌈⌉∘×⁻¹²³↑↦‖∞π"]);
+const ZNAKI = new Set([..."()[]{}+-*/^=<>,:|!", ..."ℝℕℤℚℂ∀∃¬∧∨→↔≤≥≠•∑∈∉⊆⊂⊇⊃∩∪∅√∣⌊⌋⌈⌉∘⁻¹²³↑↦‖∞π"]);
 const GRSKE = "αβγδεζηθικμνξοπρστυφχψωΓΔΘΛΞΠΣΦΨΩ"; // brez λ (to je »fun«)
 const INDEKSI = "₀₁₂₃₄₅₆₇₈₉";
 
@@ -42,10 +42,13 @@ export const BESEDE = new Set([
 export const IMENA = new Set([
   "Real.sqrt", "Real.exp", "Real.log", "Real.logb", "Real.sin", "Real.cos", "Real.tan", "Real.cot", "Real.arctan",
   "Real.arcsin", "Real.arccos", "Real.sinh", "Real.cosh", "Real.pi",
-  "Nat.Prime", "Nat.Coprime", "Nat.gcd", "Nat.lcm", "Nat.sqrt", "Nat.succ", "Nat.pred", "Nat.floor", "Nat.ceil",
-  "Int.gcd", "Int.lcm", "Int.natAbs", "Int.toNat", "Int.floor", "Int.ceil", "Int.fract",
+  // brez Nat.sqrt, Nat.floor, Nat.ceil, Int.toNat, Nat.pred: v Leanu zaokrožijo ali odrežejo (Nat.sqrt 8 = 2, Nat.pred 0 = 0)
+  "Nat.Prime", "Nat.Coprime", "Nat.gcd", "Nat.lcm", "Nat.succ",
+  "Int.gcd", "Int.lcm", "Int.natAbs", "Int.floor", "Int.ceil", "Int.fract",
   "Complex.I", "Complex.re", "Complex.im", "Complex.abs", "Complex.exp",
   "Finset.range", "Finset.Icc", "Finset.Ico", "Finset.Ioc", "Finset.Ioo", "Finset.card",
+  // intervali v ℝ (množice, ne naštevanje: brez meje)
+  "Set.Icc", "Set.Ico", "Set.Ioc", "Set.Ioo", "Set.Ici", "Set.Ioi", "Set.Iic", "Set.Iio",
 ]);
 // Imena, katerih argumenti (število jih je zraven) so meje naštevanja: samo število ≤ NAJVEC_MEJA, spremenljivka ali
 // oklepaj s spremenljivkami, takimi števili, + in -. Sicer `decide`/`simp` razpiše 10^12 členov.
@@ -93,6 +96,9 @@ export function preveriTrditev(vhod) {
     ["--", "komentar ni dovoljen"],
     ["/-", "komentar ni dovoljen"],
     ["-/", "komentar ni dovoljen"],
+    // Lean bi ju zavrnil šele po polnem zagonu (minute): x % 0 = x, (a, b) - (c, d) po komponentah v ℕ
+    ["%", "ostanek % ni dovoljen (Lean: x % 0 = x); piši Even n, Odd n ali 2 ∣ n"],
+    ["×", "par in × (ℕ × ℕ) nista dovoljena (Lean računa po komponentah, v ℕ 2 - 3 = 0)"],
   ]) {
     if (s.includes(vzorec)) return { ok: false, razlog };
   }
@@ -249,8 +255,11 @@ function preveriPotence(z) {
 }
 // (n + 1), (2*n - 1): vsaj ena spremenljivka, samo spremenljivke, cela števila in + - *, ∏(1 + število) ≤ 1001 (to omeji
 // vsako vrednost, ki jo števila sestavijo s + in *, ko so spremenljivke 0). (1/2 : ℝ): realni eksponent (rpow se ne
-// računa), p in q cela števila ≤ 1000, q ≠ 0.
+// računa), p in q cela števila ≤ 1000, q ≠ 0. (-2 : ℤ): eksponent v ℤ.
 function eksponentVOklepaju(g) {
+  // (-2 : ℤ), (3 : ℤ): celoštevilski eksponent (zpow v ℝ; v ℕ in ℤ ga Lean ne elaborira)
+  const cel = g[0]?.v === "-" ? g.slice(1) : g;
+  if (cel.length === 3 && celo(cel[0], NAJVEC_EKSPONENT) && cel[1].v === ":" && ["ℤ", "Int"].includes(cel[2].v)) return true;
   if (g.length === 5 && celo(g[0], NAJVEC_EKSPONENT) && g[1].v === "/" && celo(g[2], NAJVEC_EKSPONENT) && !nic(g[2].v) && g[3].v === ":" && ["ℝ", "Real"].includes(g[4].v)) return true;
   if (!g.some(jeSpr)) return false;
   let produkt = 1;
@@ -263,7 +272,7 @@ function eksponentVOklepaju(g) {
   return true;
 }
 
-// Delitelj (/, %) in osnova za ⁻¹: izraz s spremenljivko (x / (x + 1), (x^2 + 1)⁻¹), število ≠ 0 ali (število ≠ 0 : tip).
+// Delitelj (/) in osnova za ⁻¹: izraz s spremenljivko (x / (x + 1), (x^2 + 1)⁻¹), število ≠ 0 ali (število ≠ 0 : tip).
 // Brez spremenljivke je delitelj lahko 0 (Lean: x / 0 = 0, 0⁻¹ = 0), zato bi bila »x / 0.0 = 0« ali »x / (1 - 1) = 0«
 // dokazana. Izraz s spremenljivko je lahko 0 za nekatere vrednosti (x / x ≤ 1 »drži«); L6 doda predpostavke.
 function varenDelitelj(g) {
@@ -274,7 +283,7 @@ function varenDelitelj(g) {
 function preveriDeljenje(z) {
   const napaka = "delitelj brez spremenljivke je samo število ≠ 0 (x / (1 - 1) = 0 v Leanu)";
   for (let k = 0; k < z.length; k++) {
-    if (z[k].v === "/" || z[k].v === "%") {
+    if (z[k].v === "/") {
       const n = z[k + 1];
       if (!n) return napaka;
       const g = n.v === "(" ? z.slice(k + 2, zaklepaj(z, k + 1)) : [n];

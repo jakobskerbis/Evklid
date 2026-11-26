@@ -145,36 +145,52 @@ beremo). Vseh klicev delavca največ 120 na minuto; telo največ 16 kB (413), po
    sme biti črka, `_` ali pika (`0x…`, `0b…`, `1e5`, `2.5e3`, `2x`; Lean bi `1e999999999999` prebral kot 10^…); decimalno
    število `0.5` je dovoljeno. Eksponent za `^` je celo število ≤ 1000, spremenljivka ali oklepaj s spremenljivko,
    celimi števili in `+ - *` (`x ^ (n + 1)`, `x ^ (2 * n)`; števila skupaj ∏(1 + število) ≤ 1001, zato ne
-   `(1000 * n + 1000)` ali `(1000*1000*1000)`) ali `(p/q : ℝ)` (`x ^ (1/2 : ℝ)`; `rpow` se ne računa); nobena potenca
+   `(1000 * n + 1000)` ali `(1000*1000*1000)`), `(p/q : ℝ)` (`x ^ (1/2 : ℝ)`; `rpow` se ne računa) ali `(k : ℤ)`,
+   `(-k : ℤ)` (`(3:ℝ)^(-2:ℤ)`, k ≤ 1000); nobena potenca
    potence (`a^b^c`, `(a^b)^c`, `(a^b)²`, `x²²`). `fun` je dovoljen samo kot argument `deriv` (`deriv (fun x : ℝ => x ^ 2) 3`),
    v njegovem telesu je eksponent samo število (sicer `(fun n : ℕ => 2^n) 999999999999` ali `deriv (fun x : ℝ => 2^x)
    999999999999` izračuna ogromno potenco); največ dva `deriv` in dve vsoti `∑`; meje `Finset.range`, `Finset.Icc` …
    in `Fin` so število ≤ 100, spremenljivka ali oklepaj s takimi in `+`, `-`. Te meje NISO popolne: priča v `∃`
    (`∃ n : ℕ, n = 999999999999 ∧ ∑ i ∈ Finset.range n, i = 0`; `simp` jo vstavi z `exists_eq_left`) jih obide. Pravo
    varovalo sta trda meja pomnilnika in rok (3., (b)); test to preveri z lažnim Leanom (izid `timeout`).
-   **Tipi.** Lean števila brez tipa privzame v ℕ, kjer je `2 - 3 = 0` in `7 / 2 = 3` (tudi ∑-indeks in `{x | …}` sta
-   ℕ), in ima »smetne« vrednosti `x / 0 = 0`, `0⁻¹ = 0`, `x % 0 = x`, `Real.sqrt (-4) = 0`, `Real.log 0 = 0`. Šolsko
-   napačne trditve bi bile »dokazane«. Tipov iz besedila ni mogoče zanesljivo uganiti (pregledi so našli ∑-indeks,
-   `↑`, `(7 / 2) ^ n`, množice …), zato jih preveri **Lean sam**: prva vrstica za glavo predloge elaborira trditev z
-   izpisom vseh implicitnih argumentov (`pp.explicit`, brez zapisov `∑`/`↑` in skrajšav `⋯`), delavec izpis prebere
-   (`preveriElaboracijo` v `lean.mjs`) in vrne `rejected` z razlogom, če vsebuje odštevanje v ℕ (`@HSub.hSub Nat`),
-   deljenje v ℕ ali ℤ (`@HDiv.hDiv Nat`/`Int`), ostanek (`@HMod.hMod`, vsak tip), `Nat.sub`/`div`/`mod`/`pred`,
-   `Int.div`/`ediv`/`emod`/`tdiv`/`tmod`/`fdiv`/`fmod`/`bdiv`/`bmod`/`toNat`, računanje v `Fin` (po modulu), `Float`
-   (`0.5` brez tipa) ali `⋯`. `Nat.cast` takega izraza (`((n - 1 : ℕ) : ℝ)`) vsebuje operacijo v ℕ in je zavrnjen.
-   Brez izpisa tipov izid nikoli ni `proved`; `rejected` iz preverbe velja tudi, če Lean pozneje preseže rok.
-   Preverjeno z resničnim Leanom na vseh primerih iz pregledov PR #1172 (`∑ i ∈ Finset.range 4, (i - 2) = 1`,
-   `(7 / 2) ^ n`, `7 / 2 + 0 ^ n`, `(7 / 2 = 3) = (x = x)`, `∀ n : ℕ, n = 999999999999 → (2:ℕ)^n % 7 = 1` … →
-   `rejected`; `↑(7 / 2)` ob `x : ℝ` Lean elaborira v ℝ kot 3,5, zato ni zavrnjen, a tudi ni dokazan).
+   **Tipi.** Lean števila brez tipa privzame v ℕ, kjer je `2 - 3 = 0` in `7 / 2 = 3` (tudi ∑-indeks, `{x | …}` in pari
+   `(5, 2) - (7, 1)` so v ℕ), `Fin 5` računa po modulu (`(7 : Fin 5) = 2`), `Nat.sqrt 8 = 2`, `Nat.pred 0 = 0`,
+   `Int.toNat (-3) = 0`. Šolsko napačne trditve bi bile »dokazane«. Tipov iz besedila ni mogoče zanesljivo uganiti,
+   zato jih preveri **Lean sam**: prva vrstica za glavo predloge elaborira trditev (`#check (<trditev> : Prop)` z
+   `pp.explicit`, `pp.notation false`, `pp.fieldNotation false` (sicer `z.toNat` namesto `Int.toNat z`),
+   `pp.funBinderTypes`, `pp.proofs`, `pp.deepTerms`, `format.width 1000000`). Delavec (`preveriElaboracijo` v
+   `lean.mjs`) presledke in nove vrstice zreducira na en presledek (Lean dolg izpis lomi kljub `format.width`) in
+   preveri po **belem seznamu** vsako `@HAdd.hAdd`, `@HSub.hSub`, `@HMul.hMul`, `@HDiv.hDiv`, `@HMod.hMod`,
+   `@HPow.hPow`, `@HSMul.hSMul`, `@Neg.neg`, `@Inv.inv`, `@OfNat.ofNat`, `@OfScientific.ofScientific` in njihove tipe:
+   `+ * •` v ℕ, ℤ, ℝ, ℚ, ℂ; `- / ⁻¹` in negacija samo v ℝ, ℚ, ℂ (v ℤ samo negativno število, npr. `(-2:ℤ)`; zato je
+   tudi `(2 : ℤ) - 3 = -1` zavrnjen, L6 piše ℝ); `%` nikoli; `^` z eksponentom v ℕ, v ℝ/ℚ/ℂ tudi ℤ, v ℝ tudi ℝ;
+   števila samo v ℕ, ℤ, ℝ, ℚ, ℂ (decimalna samo v ℝ, ℚ, ℂ). Poleg tega mora biti vsak tip v izpisu (tip vsake vezave
+   in prvi argument vsake `@`-aplikacije, ki je tip) sestavljen samo iz ℕ ℤ ℝ ℚ ℂ, `Prop`, `Set`, `Finset` in `→`:
+   `Prod`, `Fin`, `ZMod`, `Float`, `Bool` … kjerkoli → `rejected`. Druga varovalka: imena `instSubNat`,
+   `Nat.instDiv`, `Nat.instMod`, `Int.instDiv(Int)`, `Int.instMod(Int)`, `Int.instSub`, `Fin.instOfNat`,
+   `Nat.sub/div/mod/pred/sqrt/floor/ceil/log`, `Int.div/ediv/emod/…/toNat` kjerkoli v izpisu, in `⋯` (skrajšan izpis).
+   Brez izpisa tipov ali ob napaki v vrstici preverbe (npr. neznano ime, del izpisa je `sorry`) izid nikoli ni
+   `proved`; `rejected` iz preverbe velja tudi, če Lean pozneje preseže rok. Resnični izpisi za vse primere iz pregledov
+   PR #1172 (pari, Fin, `toNat`/`pred`, ∑-indeks, `(7 / 2) ^ n`, `↑(7 / 2)` …) so v `test/fixtures/lean-check.json`;
+   ponovna izdelava: vrstice `vrsticaPreverbe(t)` za `GLAVA` v datoteko, `lake env lean --json` v `lean/`, sporočilo
+   vrstice → izpis (pozor: Mathlib ali Lean nove različice lahko spremeni imena primerkov, npr. `Int.instDiv` je bil
+   `Int.instDivInt`; po posodobitvi `lean/` fixtures izdelaj znova in poženi teste).
+   **Smetne vrednosti, ki jih preverba NE zavrne** (vse v ℝ; L6 mora prevod zapisati s predpostavkami, drug model to
+   preveri): `x / 0 = 0` in `0⁻¹ = 0` (predpostavka `x ≠ 0`; `∀ x : ℝ, x / x ≤ 1` »drži«), `Real.sqrt (-4) = 0` in
+   `Real.log 0 = 0`, `Real.log (-1) = 0` (`x ≥ 0`, `x > 0`), `Real.logb 1 8 = 0` (osnova `b > 0`, `b ≠ 1`),
+   `tan (π / 2) = 0` (`cos x ≠ 0`), negativna osnova z realnim eksponentom (`(-8 : ℝ) ^ (1/3 : ℝ)` ni −2, ni šolski
+   koren; osnova `x > 0` ali `x ≥ 0`). `Int.floor`/`Int.ceil` sta pravilna. `↑(7 / 2)` ob `x : ℝ` Lean elaborira v ℝ kot 3,5
+   (ni zavrnjen, a `x + ↑(7 / 2) = x + 3` tudi ni dokazan).
    Filter besedila zato zahteva samo: tip pri vsaki vezavi `∀`/`∃`/`fun` (`∀ x : ℝ, …`, `∀ (x : ℝ) (n : ℕ), …`; ne
    `∀ x, …`, `∀ x > 0, …`, `∃ x ∈ S, …`, `∀ x : _, …`) in v množici (`{x : ℝ | …}`, ne `{x | …}`: `{x | x + 3 = 1} = ∅`
-   je v ℕ resnična brez odštevanja) ter delitelj (`/`, `%`, osnova `⁻¹`), ki je izraz s spremenljivko (`x / (x + 1)`,
+   je v ℕ resnična brez odštevanja) ter delitelj (`/`, osnova `⁻¹`), ki je izraz s spremenljivko (`x / (x + 1)`,
    `(x ^ 2 + 1)⁻¹`), število ≠ 0 ali `(število ≠ 0 : tip)`: `x / 0.0`, `x / (1 - 1)`, `(0:ℝ)⁻¹` so zavrnjeni, ker
-   preverba tipov deljenja v ℝ ne zavrne. `Real.sqrt 16 = 4`, `Nat.gcd 12 18 = 6`, `Nat.Prime 7`, `1 + 1 = 2` so
-   dovoljeni (tip pove Lean). Namerno NI zavrnjeno (L6 mora zapisati predpostavke `x ≠ 0`, `x ≥ 0`, drug model to
-   preveri): deljenje v ℝ z izrazom, ki je lahko 0 (`∀ x : ℝ, x / x ≤ 1` »drži«), `Real.sqrt` in `Real.log`
-   negativnega ali 0 (Lean: 0). Pripisan ℕ z odštevanjem (`∀ n : ℕ, n - 1 ≤ n`) je zdaj zavrnjen; L6 piše
-   `(n : ℝ) - 1` ali ℤ. Preverba elaborira `(<trditev> : Prop)`, izrek isto besedilo kot svoj tip (ista elaboracija,
-   pričakovan tip `Prop` oziroma `Sort`).
+   preverba tipov deljenja v ℝ ne zavrne. `%` in `×` zavrne že filter (z razlogom; Lean bi ju zavrnil šele po polnem
+   zagonu, minute): namesto `n % 2 = 0` L6 piše `Even n` ali `2 ∣ n`. Imena `Nat.sqrt`, `Nat.floor`, `Nat.ceil`,
+   `Int.toNat`, `Nat.pred` niso na belem seznamu; intervali `Set.Icc/Ico/Ioc/Ioo/Ici/Ioi/Iic/Iio` so. `Real.sqrt 16 = 4`,
+   `Nat.gcd 12 18 = 6`, `Nat.Prime 7`, `1 + 1 = 2` so dovoljeni (tip pove Lean). Pripisan ℕ z odštevanjem
+   (`∀ n : ℕ, n - 1 ≤ n`) je zavrnjen; L6 piše `(n : ℝ) - 1`. Preverba elaborira `(<trditev> : Prop)`, izrek isto
+   besedilo kot svoj tip (ista elaboracija, pričakovan tip `Prop` oziroma `Sort`).
 3. Lean teče neposredno (`lean.exe`, ne `lake`): ob namestitvi (kot skrbnik) `zazeni.bat` v `projekt\` požene
    `lake env node delavec.mjs --shrani-lean orodja\lean.json`, ki zapiše absolutno pot do Leana (`LEAN`) in `LEAN_PATH`
    (Windows nima `printenv`, zato Node). Delavec kot `evklid-lean` nato zažene samo ta `lean` z `LEAN_PATH` iz

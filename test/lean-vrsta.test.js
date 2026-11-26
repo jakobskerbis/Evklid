@@ -30,7 +30,6 @@ test("lean filter: spusti matematične trditve", () => {
     "∀ x₁ x_2 : ℚ, x₁ + x_2 = x_2 + x₁",
     "deriv (fun x : ℝ => x ^ 2) 3 = 6",
     "∀ x : ℝ, sin x ^ 2 + cos x ^ 2 = 1",
-    "(10 : ℕ) % 3 = 1",
     "  (1:ℕ) + 1 = 2  ",
     "∀ (x : ℝ) (n : ℕ), x ^ n * x = x * x ^ n",
     "∀ n : ℕ, n - 1 ≤ n", // pripisan ℕ je namerno
@@ -61,6 +60,11 @@ test("lean filter: spusti matematične trditve", () => {
     "1 + 1 = 2",
     "{x : ℝ | x > 0} = {x : ℝ | 0 < x}",
     "∀ x : ℝ, |x| = |x| ∧ {y : ℝ | y = |x|} = {y : ℝ | y = |x|}",
+    // pregled r3fun 4: intervali in celoštevilski eksponent
+    "Set.Icc (0:ℝ) 1 ⊆ Set.Ici 0",
+    "∀ x : ℝ, x ∈ Set.Ioo (0:ℝ) 1 ∨ x ∈ Set.Iic 0 ∨ x ∈ Set.Ici 1",
+    "(3:ℝ)^(-2:ℤ) = 1/9",
+    "∀ x : ℝ, x ≠ 0 → x ^ (2:ℤ) > 0",
   ])
     assert.equal(preveriTrditev(s).ok, true, s);
   assert.equal(preveriTrditev("  (1:ℕ) + 1 = 2 ").trditev, "(1:ℕ) + 1 = 2");
@@ -95,9 +99,19 @@ test("lean filter: tipi vezav in števil, deljenje z 0, meje števil in potenc, 
     ["∀ x : ℝ, x / 0.0 = 0", /delitelj/],
     ["(0:ℝ)⁻¹ = 0", /delitelj/],
     ["∀ x : ℝ, x / (1 - 1) = 0", /delitelj/],
-    ["(2:ℝ) % 0 = 0", /delitelj/],
+    ["(2:ℝ) % 0 = 0", /ostanek/],
+    ["(10 : ℕ) % 3 = 1", /ostanek/],
+    ["∀ n : ℕ, n % 2 = 0 ∨ n % 2 = 1", /ostanek/],
+    // pari: Lean računa po komponentah v ℕ; imena, ki zaokrožijo ali odrežejo (pregleda r3var, r3fun)
+    ["∀ p : ℕ × ℕ, p - p = (0, 0)", /×/],
+    ["Nat.sqrt 8 = 2", /Nat\.sqrt/],
+    ["Nat.floor (-2.5 : ℝ) = 0", /Nat\.floor/],
+    ["Nat.ceil (0.5 : ℝ) = 1", /Nat\.ceil/],
+    ["Int.toNat (2 - 5) = 0", /Int\.toNat/],
+    ["∀ n : ℕ, n = 0 → Nat.pred n = 0", /Nat\.pred/],
+    ["∀ x : ℝ, x ^ (-2:ℕ) = 1", /eksponent/],
     // pomnilnik: GMP pri potenci ne upošteva -M
-    ["(2^16777215)^5000 % 7 = (2:ℕ)", /eksponent/],
+    ["(2^16777215)^5000 = (2:ℕ)", /eksponent/],
     ["(2:ℕ) ^ 1001 = 0", /eksponent/],
     ["(1234567890123 : ℕ) = 1", /števkami/],
     ["(2:ℕ) ^ 3 ^ 2 = 512", /potenca potence/],
@@ -108,12 +122,12 @@ test("lean filter: tipi vezav in števil, deljenje z 0, meje števil in potenc, 
     ["(2:ℕ) ^ Nat.factorial 20 = 1", /ni dovoljeno/],
     ["(2:ℕ) ^ (Nat.factorial 20) = 1", /ni dovoljeno/],
     // pregledi PR #1172: eksponent je eno število ≤ 1000 ali ena spremenljivka
-    ["(7:ℕ)^(1000*1000*1000*1000) % 5 = 1", /eksponent/],
-    ["(2:ℕ)^(1000*1000*1000*1000) % 7 = 2", /eksponent/],
+    ["(7:ℕ)^(1000*1000*1000*1000) = 1", /eksponent/],
+    ["(2:ℕ)^(1000*1000*1000*1000) = 2", /eksponent/],
     ["(2:ℕ) ^ 2.5 = 0", /eksponent/],
     ["∀ x : ℝ, x ^ 2⁻¹ = x", /potenca potence/],
     // črka, »_« ali pika za številom: Lean prebere 0x…, 1e…, 0b…, 0o…, 2.5e3 kot eno število
-    ["(2:ℕ)^0x1000000000 % 7 = 2", /za številom/],
+    ["(2:ℕ)^0x1000000000 = 2", /za številom/],
     ["(1e999999999999 : ℝ) > 0", /za številom/],
     ["(1:ℝ) = 1e-999999999999", /za številom/],
     ["(0b101 : ℕ) = 5", /za številom/],
@@ -123,18 +137,18 @@ test("lean filter: tipi vezav in števil, deljenje z 0, meje števil in potenc, 
     ["(1_000 : ℕ) = 1000", /za številom/],
     ["(2:ℕ).succ = 3", /U\+002E/],
     // beli seznam imen: nič, kar sestavi ogromno število
-    ["Nat.pow 7 999999999999 % 5 = (1:ℕ)", /Nat\.pow/],
-    ["Nat.pow 2 (Nat.pow 10 12) % 7 = (2:ℕ)", /Nat\.pow/],
-    ["Nat.shiftLeft 1 999999999999 % 7 = (2:ℕ)", /Nat\.shiftLeft/],
-    ["Nat.factorial 999999999999 % 7 = (0:ℕ)", /Nat\.factorial/],
-    ["Nat.iterate (fun n : ℕ => n * n) 40 2 % 7 = (2:ℕ)", /Nat\.iterate/],
+    ["Nat.pow 7 999999999999 = (1:ℕ)", /Nat\.pow/],
+    ["Nat.pow 2 (Nat.pow 10 12) = (2:ℕ)", /Nat\.pow/],
+    ["Nat.shiftLeft 1 999999999999 = (2:ℕ)", /Nat\.shiftLeft/],
+    ["Nat.factorial 999999999999 = (0:ℕ)", /Nat\.factorial/],
+    ["Nat.iterate (fun n : ℕ => n * n) 40 2 = (2:ℕ)", /Nat\.iterate/],
     ["Nat.choose 999999999999 500000000000 = (0:ℕ)", /Nat\.choose/],
-    ["Nat.fib 999999999999 % 7 = (0:ℕ)", /Nat\.fib/],
+    ["Nat.fib 999999999999 = (0:ℕ)", /Nat\.fib/],
     ["Real.rpow 2 999999999999 > 0", /Real\.rpow/],
     ["List.replicate 999999999999 (1:ℕ) = []", /List\.replicate/],
     // fun samo kot argument deriv (brez beta-redukcije na velikem številu); v fun eksponent samo število
     ["(fun n : ℕ => n ^ 1000) ((fun m : ℕ => m ^ 1000) 9) = (0:ℕ)", /fun/],
-    ["(fun n : ℕ => (2:ℕ)^n) 999999999999 % 7 = 2", /fun/],
+    ["(fun n : ℕ => (2:ℕ)^n) 999999999999 = 2", /fun/],
     ["abs (fun n : ℤ => (2:ℤ)^n) 999999999999 = 0", /fun/],
     ["deriv (fun x : ℝ => (2:ℝ) ^ x) 999999999999 > 0", /v fun/],
     ["deriv (deriv (deriv (fun x : ℝ => x ^ 3))) 1 = 6", /deriv/],
@@ -276,67 +290,146 @@ test("lean izpis: prvi izrek brez napake in z dovoljenimi aksiomi zmaga; sorry i
   assert.match(nat.sporocilo, /odštevanje v ℕ/);
 });
 
-// Pregledi r2var 1-2 in r2fun 2, 6 (PR #1172): trditev → filter → izpis tipov iz Leana (skrajšan resnični izpis s
-// pp.explicit in pp.notation false; preverjeno z resničnim Leanom, glej docs/lean.md) → izid.
-const N = (k) => `@OfNat.ofNat Nat (nat_lit ${k}) (instOfNatNat (nat_lit ${k}))`;
-const SUB_N = (a, b) => `@HSub.hSub Nat Nat Nat (@instHSub Nat instSubNat) ${a} ${b}`;
-const DIV_N = (a, b) => `@HDiv.hDiv Nat Nat Nat (@instHDiv Nat Nat.instDiv) ${a} ${b}`;
-const MOD_N = (a, b) => `@HMod.hMod Nat Nat Nat (@instHMod Nat Nat.instMod) ${a} ${b}`;
+// Pregledi PR #1172 (r2var, r2fun, r3var, r3fun): trditev → filter → RESNIČEN izpis #check iz Leana
+// (test/fixtures/lean-check.json, z Leanom in Mathlibom iz lean/; ponovna izdelava v docs/lean.md) → izid.
+const IZPISI = JSON.parse(fs.readFileSync(new URL("./fixtures/lean-check.json", import.meta.url), "utf8")).izpisi;
 const PRIMERI = [
-  // [trditev, razlog filtra ali null, izpis tipov, pričakovan izid]
-  ["∑ i ∈ Finset.range 4, (i - 2) = 1", null, `@Eq Nat (@Finset.sum Nat Nat Nat.instAddCommMonoid (Finset.range ${N(4)}) fun i => ${SUB_N("i", N(2))}) ${N(1)}`, "rejected"],
-  ["∑ i ∈ Finset.range 3, (7 / 2) ^ i = 13", null, `@Eq Nat (@Finset.sum Nat Nat _ (Finset.range ${N(3)}) fun i => @HPow.hPow Nat Nat Nat _ (${DIV_N(N(7), N(2))}) i) ${N(13)}`, "rejected"],
-  ["∑ i ∈ Finset.range 3, (i + 7) / 2 = 7", null, `@Eq Nat (@Finset.sum Nat Nat _ (Finset.range ${N(3)}) fun i => ${DIV_N("(@HAdd.hAdd Nat Nat Nat _ i 7)", N(2))}) ${N(7)}`, "rejected"],
-  ["∑ i ∈ Finset.range 4, i / 2 = 2", null, `@Eq Nat (@Finset.sum Nat Nat _ (Finset.range ${N(4)}) fun i => ${DIV_N("i", N(2))}) ${N(2)}`, "rejected"],
-  ["∀ n : ℕ, (7 / 2) ^ n = 3 ^ n", null, `∀ (n : Nat), @Eq Nat (@HPow.hPow Nat Nat Nat _ (${DIV_N(N(7), N(2))}) n) (@HPow.hPow Nat Nat Nat _ ${N(3)} n)`, "rejected"],
-  ["∀ n : ℕ, 7 / 2 + 0 ^ n = 3 + 0 ^ n", null, `∀ (n : Nat), @Eq Nat (@HAdd.hAdd Nat Nat Nat _ (${DIV_N(N(7), N(2))}) _) _`, "rejected"],
-  ["∀ x : ℝ, (7 / 2 = 3) = (x = x)", null, `∀ (x : Real), @Eq Prop (@Eq Nat (${DIV_N(N(7), N(2))}) ${N(3)}) (@Eq Real x x)`, "rejected"],
+  // [trditev, razlog filtra ali null, razlog preverbe tipov (regex) ali null; null = sprejeto]
+  ["∑ i ∈ Finset.range 4, (i - 2) = 1", null, /odštevanje v ℕ/],
+  ["∑ i ∈ Finset.range 3, (7 / 2) ^ i = 13", null, /deljenje v ℕ/],
+  ["∑ i ∈ Finset.range 3, (i + 7) / 2 = 7", null, /deljenje v ℕ/],
+  ["∑ i ∈ Finset.range 4, i / 2 = 2", null, /deljenje v ℕ/],
+  ["∀ n : ℕ, (7 / 2) ^ n = 3 ^ n", null, /deljenje v ℕ/],
+  ["∀ n : ℕ, 7 / 2 + 0 ^ n = 3 + 0 ^ n", null, /deljenje v ℕ/],
+  ["∀ x : ℝ, (7 / 2 = 3) = (x = x)", null, /deljenje v ℕ/],
+  ["∀ n : ℕ, ∑ i ∈ Finset.range (n + 1), i = n * (n + 1) / 2", null, /deljenje v ℕ/],
+  ["(7 : ℤ) / 2 = 3", null, /deljenje v ℤ/],
+  ["0.1 + 0.2 = 0.3", null, /Float/],
+  ["∀ n : ℕ, n - 1 ≤ n", null, /odštevanje v ℕ/],
+  ["∃ n : ℕ, n = 999999999999 ∧ 2 ^ n - 1 = 0", null, /odštevanje v ℕ/],
+  // ℤ: samo + * ^ in primerjave (pregled r3: beli seznam)
+  ["(2 : ℤ) - 3 = -1", null, /odštevanje v ℤ/],
+  ["∀ n : ℤ, n - 1 < n", null, /odštevanje v ℤ/],
+  // r3var 1: pari v ℕ (instSubNat v Prod.instSub); r3var 2: Fin brez operacije; r3var 3, r3fun 1-2: pred, toNat, sqrt
+  ["(5, 2) - (7, 1) = (0, 1)", null, /računanje v tipu Prod/],
+  ["∀ p : ℕ × ℕ, p - p = (0, 0)", /×/, /računanje v tipu Prod/],
+  ["(7 : Fin 5) = 2", null, /število v tipu Fin/],
+  ["(4 : Fin 3) < 2", null, /število v tipu Fin/],
+  ["((7 : Fin 5) : ℕ) = 2", null, /število v tipu Fin/],
+  ["∀ x : Fin 5, x + 1 ≠ 0", null, /računanje v tipu Fin/],
+  ["Int.toNat (2 - 5) = 0", /Int\.toNat/, /odštevanje v ℤ/],
+  ["∀ z : ℤ, Int.toNat z ≥ 0", /Int\.toNat/, /Int\.toNat/],
+  ["∀ n : ℕ, n = 0 → Nat.pred n = 0", /Nat\.pred/, /Nat\.pred/],
+  ["Nat.pred 0 = 0", /Nat\.pred/, /Nat\.pred/],
+  ["Nat.sqrt 8 = 2", /Nat\.sqrt/, /Nat\.sqrt/],
+  ["Nat.floor (-2.5 : ℝ) = 0", /Nat\.floor/, /Nat\.floor/],
+  ["(10 : ℕ) % 3 = 1", /ostanek/, /ostanek/],
   ["5 ∈ {x | x - 7 = 0} ∧ 1 ∈ {y | y = 1}", /množica brez tipa/],
   ["{x | x - 7 = 0} = {x | x ≤ 7}", /množica brez tipa/],
-  // ↑(7 / 2) Lean elaborira v ℝ (7/2 = 3,5): ni zavrnjeno, a trditev x + 3,5 = x + 3 ni dokazana
-  ["∀ x : ℝ, x + ↑(7 / 2) = x + 3", null, "∀ (x : Real), @Eq Real (@HAdd.hAdd Real Real Real _ x (@HDiv.hDiv Real Real Real (@instHDiv Real (@DivInvMonoid.toDiv Real instDivInvMonoid)) _ _)) _ : Prop", "failed"],
-  ["(10 : ℕ) % 3 = 1", null, `@Eq Nat (${MOD_N(N(10), N(3))}) ${N(1)} : Prop`, "rejected"],
-  ["(7 : ℤ) / 2 = 3", null, "@Eq Int (@HDiv.hDiv Int Int Int (@instHDiv Int Int.instDivInt) _ _) _ : Prop", "rejected"],
-  ["∀ x : Fin 5, x + 1 ≠ 0", null, "∀ (x : Fin (@OfNat.ofNat Nat (nat_lit 5) _)), Not (@Eq (Fin _) (@HAdd.hAdd (Fin (@OfNat.ofNat Nat (nat_lit 5) _)) _ _ _ x _) _) : Prop", "rejected"],
-  ["0.1 + 0.2 = 0.3", null, "@Eq Float (@HAdd.hAdd Float Float Float (@instHAdd Float instAddFloat) _ _) _ : Prop", "rejected"],
-  ["∀ n : ℕ, n - 1 ≤ n", null, `∀ (n : Nat), @LE.le Nat instLENat (${SUB_N("n", N(1))}) n : Prop`, "rejected"],
-  // priča v ∃ obide meje filtra; ostanek % zavrne preverba tipov (r2var 2, r2fun 6)
-  ["∃ n : ℕ, n = 999999999999 ∧ 2 ^ n % 7 = 2", null, `@Exists Nat fun n => And (@Eq Nat n _) (@Eq Nat (${MOD_N("(@HPow.hPow Nat Nat Nat _ 2 n)", N(7))}) ${N(2)}) : Prop`, "rejected"],
-  ["∃ n : ℕ, n = 1000 ∧ ∃ m : ℕ, m = (999999999999:ℕ)^n ∧ (7:ℕ) ^ m % 5 = 1", null, `@Exists Nat fun n => And _ (@Exists Nat fun m => And _ (@Eq Nat (${MOD_N("_", N(5))}) _)) : Prop`, "rejected"],
-  ["∀ n : ℕ, n = 999999999999 → (2:ℕ)^n % 7 = 1", null, `∀ (n : Nat), @Eq Nat n _ → @Eq Nat (${MOD_N("_", N(7))}) _ : Prop`, "rejected"],
-  // dovoljeno: ℝ, ℤ odštevanje, Real.sqrt, Nat.Prime, Nat.gcd, (n : ℝ) - 1
-  ["∀ x : ℝ, (x + 1) ^ 2 = x ^ 2 + 2 * x + 1", null, "∀ (x : Real), @Eq Real (@HPow.hPow Real Nat Real _ (@HAdd.hAdd Real Real Real _ x _) _) _ : Prop", "proved"],
-  ["(2 : ℤ) - 3 = -1", null, "@Eq Int (@HSub.hSub Int Int Int (@instHSub Int Int.instSubInt) _ _) (@Neg.neg Int Int.instNegInt _) : Prop", "proved"],
-  ["Real.sqrt 16 = 4", null, "@Eq Real (Real.sqrt (@OfNat.ofNat Real (nat_lit 16) _)) _ : Prop", "proved"],
-  ["Nat.Prime 7", null, `Nat.Prime ${N(7)} : Prop`, "proved"],
-  ["Nat.gcd 12 18 = 6", null, `@Eq Nat (Nat.gcd ${N(12)} ${N(18)}) ${N(6)} : Prop`, "proved"],
-  ["∀ n : ℕ, (n : ℝ) - 1 < n", null, "∀ (n : Nat), @LT.lt Real instLT (@HSub.hSub Real Real Real (@instHSub Real instSub) (@Nat.cast Real instNatCast n) _) (@Nat.cast Real instNatCast n) : Prop", "proved"],
+  ["∃ n : ℕ, n = 999999999999 ∧ 2 ^ n % 7 = 2", /ostanek/],
+  // sprejeto: ↑(7 / 2) ob x : ℝ je deljenje v ℝ (3,5), ni dokazano; smetne vrednosti v ℝ ostanejo L6 (docs/lean.md)
+  ["∀ x : ℝ, x + ↑(7 / 2) = x + 3", null, null],
+  ["∀ x : ℝ, (x + 1) ^ 2 = x ^ 2 + 2 * x + 1", null, null],
+  ["Real.sqrt 16 = 4", null, null],
+  ["Nat.Prime 7", null, null],
+  ["Nat.gcd 12 18 = 6", null, null],
+  ["∀ n : ℕ, (n : ℝ) - 1 < n", null, null],
+  ["(3:ℝ)^(-2:ℤ) = 1/9", null, null],
+  ["Set.Icc (0:ℝ) 1 ⊆ Set.Ici 0", null, null],
+  ["(1:ℝ) ∈ Set.Ioo 0 2", null, null],
+  ["∀ x : ℝ, x ∈ Set.Icc (0:ℝ) 1 → x ≤ 1", null, null],
+  ["(1.5 : ℝ) * 2 = 3", null, null],
+  ["(2:ℝ) / 0.5 = 4", null, null],
+  ["∃ x : ℤ, 3 * x = 12", null, null],
+  ["∀ x : ℝ, x - 1 < x", null, null],
+  ["∀ (x : ℝ) (n : ℕ), x ^ (n + 1) = x * x ^ n", null, null],
+  ["∀ x : ℝ, x ≥ 0 → x ^ (1/2 : ℝ) ≥ 0", null, null],
+  ["deriv (fun x : ℝ => x ^ 2) 3 = 6", null, null],
+  ["∀ x : ℝ, sin x ^ 2 + cos x ^ 2 = 1", null, null],
+  ["∀ x : ℝ, |x| ≥ 0", null, null],
+  ["∀ x : ℝ, x ≠ 0 → x⁻¹ * x = 1", null, null],
+  ["∀ x : ℝ, x = -3 → x + 3 = 0", null, null],
+  ["∀ x : ℝ, x > 0 → x / (x + 1) < 1", null, null],
+  ["{x : ℝ | x > 0} = {x : ℝ | 0 < x}", null, null],
+  ["∀ x : ℝ, |x| = |x| ∧ {y : ℝ | y = |x|} = {y : ℝ | y = |x|}", null, null],
+  ["∀ x₁ x_2 : ℚ, x₁ + x_2 = x_2 + x₁", null, null],
+  ["(2:ℚ) / 4 = 1/2", null, null],
+  ["∀ x : ℂ, x - x = 0", null, null],
+  ["Complex.I ^ 2 = -1", null, null],
+  ["π > (3:ℝ)", null, null],
+  ["∃! x : ℝ, 2 * x = 4", null, null],
+  ["(2:ℕ) ^ 1000 > 0", null, null],
+  ["∀ n : ℕ, n ≥ 0", null, null],
+  ["1 + 1 = 2", null, null],
+  ["True", null, null],
+  ["Even (4:ℕ)", null, null],
+  ["(3:ℤ) ∣ 12", null, null],
+  ["Int.floor (2.5 : ℝ) = 2", null, null],
+  ["Int.natAbs (-3) = 3", null, null],
+  ["∀ x : ℝ, max x 0 ≥ 0", null, null],
+  ["(2:ℝ) • (3:ℝ) = 6", null, null],
+  ["Finset.card (Finset.range 3) = 3", null, null],
+  ["∑ i ∈ Finset.range 5, i = (10:ℕ)", null, null],
+  ["∀ a b : ℝ, 0 ≤ a → 0 ≤ b → a * b ≥ 0", null, null],
+  ["Irrational (Real.sqrt 2)", null, null],
+  ["∀ x : ℝ, exp (log x) = x", null, null],
+  // smetne vrednosti, ki jih preverba NE zavrne (L6: predpostavke)
+  ["Real.logb 1 8 = 0", null, null],
+  ["tan (π / 2) = 0", null, null],
+  ["(-8 : ℝ) ^ (1/3 : ℝ) = 1", null, null],
 ];
-test("lean preverba tipov: primeri iz pregledov (trditev → filter → izpis Leana → izid)", () => {
-  for (const [t, razlogFiltra, tipi, izid] of PRIMERI) {
+test("lean preverba tipov: resnični izpisi Leana iz pregledov (trditev → filter → izpis → izid)", () => {
+  for (const [t, razlogFiltra, razlogTipov] of PRIMERI) {
     const f = preveriTrditev(t);
     if (razlogFiltra) {
       assert.equal(f.ok, false, t);
       assert.match(f.razlog, razlogFiltra, t);
+    } else assert.equal(f.ok, true, `${t}: ${f.razlog}`);
+    const izpis = IZPISI[t];
+    if (izpis === undefined) {
+      assert.ok(razlogFiltra, `${t}: manjka izpis v fixtures/lean-check.json`);
       continue;
     }
-    assert.equal(f.ok, true, `${t}: ${f.razlog}`);
-    // lažen Lean: izpis tipov; »failed« = taktike ne dokažejo, sicer prva taktika dokaže
-    const dokaz = izid === "failed" ? [sp(5, "error", "linarith failed"), sp(6, "information", `'${ime(0)}' depends on axioms: [sorryAx]`)] : [BREZ_AKSIOMOV(0)];
-    assert.equal(preberiIzpis([sp(4, "information", tipi), ...dokaz].join("\n")).izid, izid, t);
+    const r = preveriElaboracijo(izpis);
+    if (razlogTipov) assert.match(r ?? "", razlogTipov, t);
+    else assert.equal(r, null, t);
+    // celotna pot z lažnim Leanom: prva taktika »dokaže«; izid je rejected ali proved
+    const izid = preberiIzpis([sp(4, "information", izpis), BREZ_AKSIOMOV(0)].join("\n"));
+    assert.equal(izid.izid, razlogTipov ? "rejected" : "proved", t);
   }
+  for (const t of Object.keys(IZPISI)) assert.ok(PRIMERI.some((p) => p[0] === t), `${t}: izpis brez primera`);
+  // Lean izpis lomi v vrstice; preverba gleda normalizirane presledke
+  assert.ok(IZPISI["(5, 2) - (7, 1) = (0, 1)"].includes("\n"));
   assert.equal(preveriElaboracijo(""), "ni izpisa tipov");
   assert.match(preveriElaboracijo("@Eq Real (f ⋯) 0"), /skrajšan/);
-  assert.equal(preveriElaboracijo("instSubNat Nat.cast Int.natAbs Nat.sqrt Real.log Real.sqrt"), null, "imena, ki niso operacije v ℕ");
-  for (const ime of ["Nat.sub", "Nat.div", "Nat.mod", "Nat.pred", "Int.ediv", "Int.emod", "Int.tdiv", "Int.fdiv", "Int.toNat"]) assert.ok(preveriElaboracijo(`@Eq Nat (${ime} a b) 0`), ime);
+  assert.equal(preveriElaboracijo("Nat.cast Int.natAbs Real.log Real.sqrt Nat.gcd"), null, "imena brez operacij v ℕ");
+  // druga varovalka: imena primerkov in funkcij kjerkoli (tudi brez operacije)
+  for (const ime of ["instSubNat", "Nat.instDiv", "Nat.instMod", "Int.instDivInt", "Int.instModInt", "Int.instDiv", "Fin.instOfNat", "Nat.sub", "Nat.div", "Nat.mod", "Nat.pred", "Nat.sqrt", "Int.ediv", "Int.emod", "Int.tdiv", "Int.fdiv", "Int.toNat"])
+    assert.ok(preveriElaboracijo(`@Eq Nat (${ime} a b) 0`), ime);
+  // beli seznam: vsak drug tip kjerkoli
+  for (const [izpis, razlog] of [
+    ["@Eq (ZMod (@OfNat.ofNat Nat (nat_lit 5) (instOfNatNat (nat_lit 5)))) a b : Prop", /tip ZMod/],
+    ["∀ (b : Bool), @Eq Bool b b : Prop", /vezava v tipu Bool/],
+    ["@HMul.hMul (Prod Nat Nat) (Prod Nat Nat) (Prod Nat Nat) inst a b", /računanje v tipu Prod/],
+    ["@HPow.hPow Nat Int Nat inst a b", /eksponent v ℤ/],
+    ["@Neg.neg Int Int.instNegInt x", /negacija v ℤ/],
+    ["@Inv.inv Nat inst x", /⁻¹ v ℕ/],
+    ["@OfScientific.ofScientific Nat inst (nat_lit 15) true (nat_lit 1)", /decimalno število/],
+  ])
+    assert.match(preveriElaboracijo(izpis) ?? "", razlog, izpis);
+  // napaka v preverbi (neznano ime, delno sorry): nikoli »proved« in ne »rejected«
+  const nap = preberiIzpis([sp(4, "error", "Unknown constant `Complex.abs`"), sp(4, "information", "@Eq Nat (sorryAx Nat true) 1 : Prop"), sp(5, "error", "Unknown constant"), BREZ_AKSIOMOV(0)].join("\n"));
+  assert.equal(nap.izid, "failed");
 });
 
 // Ena resnična pot z Leanom (počasno, ~1 min na trditev): EVKLID_LEAN_E2E=<lean.json> (zapiše ga
 // `lake env node scripts/lean-delavec/delavec.mjs --shrani-lean <pot>`).
-test("lean delavec: resničen Lean – preverba tipov zavrne ℕ, dokaz v ℝ", { skip: !process.env.EVKLID_LEAN_E2E && "EVKLID_LEAN_E2E ni nastavljen" }, async () => {
+test("lean delavec: resničen Lean – preverba tipov zavrne ℕ in pare, dokaz v ℝ", { skip: !process.env.EVKLID_LEAN_E2E && "EVKLID_LEAN_E2E ni nastavljen" }, async () => {
   const n = { leanJson: process.env.EVKLID_LEAN_E2E, projekt: "/tmp", pomnilnikMB: 6144, trdaMejaMB: 24576, rokS: 300 };
   const r = await preveriZLean("∑ i ∈ Finset.range 4, (i - 2) = 1", n);
-  assert.deepEqual([r.izid, r.sporocilo], ["rejected", "Lean trditev razume drugače kot šola: odštevanje v ℕ (Lean: 2 - 3 = 0); piši v ℝ ali ℤ"]);
+  assert.deepEqual([r.izid, r.sporocilo], ["rejected", "Lean trditev razume drugače kot šola: odštevanje v ℕ (Lean: 2 - 3 = 0); piši v ℝ"]);
+  const p = await preveriZLean("(5, 2) - (7, 1) = (0, 1)", n);
+  assert.deepEqual([p.izid, p.sporocilo], ["rejected", "Lean trditev razume drugače kot šola: računanje v tipu Prod Nat Nat"]);
   const d = await preveriZLean("∀ x : ℝ, (x + 1) ^ 2 = x ^ 2 + 2 * x + 1", n);
   assert.equal(d.izid, "proved", d.sporocilo);
 });
@@ -420,7 +513,8 @@ test("lean namestitev (Windows skripte): vrstni red in zaščite", () => {
   for (const v of ["windir", "SystemDrive", "ComSpec", "PSModulePath", "PROCESSOR_ARCHITECTURE", "NUMBER_OF_PROCESSORS"]) assert.ok(r("delavec.mjs").includes(`"${v}"`), v);
   const nav = r("NAVODILA.md");
   assert.match(nav, /Počakaj 2–5 minut/);
-  assert.match(nav, /preizkus Lean: napaka/);
+  assert.match(nav, /ni točno »preizkus Lean: proved«/);
+  assert.match(nav, /rdeče besedilo .*Remove-CimInstance/s);
   assert.match(nav, /Win32_UserProfile .*Remove-CimInstance/);
 });
 

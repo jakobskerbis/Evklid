@@ -49,8 +49,8 @@ Potrebuješ: Windows 10 ali 11, okoli 10 GB prostora na disku C:, internet. Prvi
   zadnjega klica.
 - Ob vsakem zagonu delavec enkrat preizkusi Lean: vrstica »preizkus Lean: proved« v `dnevnik.txt` pomeni, da Lean
   deluje. Pojavi se 2–5 minut po zagonu.
-- Če je vrstica **»preizkus Lean: napaka …«** ali **»preizkus Lean: timeout …«** (male črke), Lean ne deluje:
-  pošlji Claudu `dnevnik.txt`.
+- Če zadnja vrstica »preizkus Lean: …« **ni točno »preizkus Lean: proved«** (npr. »napaka«, »timeout«, »failed«,
+  »rejected«), Lean ne deluje prav: pošlji Claudu `dnevnik.txt`.
 - Claude lahko preveri na strežniku: `/healthz/stanje` → `leanDelavec.naVoljo: true`.
 
 ## Kako ga ustavim
@@ -74,12 +74,14 @@ Dokler delavec teče, prenosnik ne zaspi sam od sebe (zaslon sme ugasniti).
 3. V modro okno prilepi to vrstico in pritisni **Enter** (izbriše opravilo, mapo profila `C:\Users\evklid-lean`,
    uporabnika, pravilo požarnega zidu in `C:\Evklid`):
    `schtasks /Delete /TN "Evklid Lean delavec" /F; Get-CimInstance Win32_UserProfile | Where-Object LocalPath -like '*\evklid-lean' | Remove-CimInstance; net user evklid-lean /delete; Remove-NetFirewallRule -DisplayName "Evklid Lean brez omrezja"; cmd /c rmdir /s /q C:\Evklid`
+   Če okno izpiše rdeče besedilo (npr. pri `Remove-CimInstance`: profil je še v uporabi), znova zaženi računalnik in
+   vrstico prilepi še enkrat (v skrbniškem PowerShellu).
 4. Na Renderju izbriši `EVKLID_LEAN_TOKEN` (Environment → koš ob vrstici → **Save Changes**).
 
 ## Če gre kaj narobe
 
 - Okno izpiše **NAPAKA**: naredi sliko okna in jo pošlji Claudu, nato znova dvakrat klikni `zazeni.bat`.
-- V `delo\dnevnik.txt` je vrstica **NAPAKA** ali »preizkus Lean: napaka« ali »preizkus Lean: timeout«: pošlji
+- V `delo\dnevnik.txt` je vrstica **NAPAKA** ali vrstica »preizkus Lean: …«, ki ni »preizkus Lean: proved«: pošlji
   Claudu `dnevnik.txt` (razen »HTTP 404« pred 5. korakom).
 - Delavec se sam znova zažene, če se kdaj ustavi; ob izpadu interneta počaka in poskusi znova.
 - Nov žeton: zaženi `ustavi.bat`, izbriši `C:\Evklid\lean-delavec\nastavitve.json`, zaženi `zazeni.bat` in nov
