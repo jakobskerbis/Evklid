@@ -53,6 +53,9 @@ test("zaokroževanje: velja zadnje navodilo v besedilu", () => {
   assert.equal(decimalkeBesedila("Give the answer to 3 decimal places."), 3);
   assert.equal(decimalkeBesedila("Around 5 people. Round to the nearest tenth."), 1);
   assert.equal(decimalkeBesedila("Zaokroži na centimeter."), null); // odvisno od enote odgovora
+  // opis ni navodilo; »zaokroži« ima prednost
+  assert.equal(decimalkeBesedila("Zaokroži na cele evre (cene so zapisane na dve decimalki)."), 0);
+  assert.equal(decimalkeBesedila("Meritve so podane na dve decimalki natančno."), null);
 });
 
 test("pregled PV-07: brez dimenzije ni potrditve, vrednost ne gre v formulo, definicija je pogojna", { skip: !HAVE && "SymPy ni na voljo" }, async () => {
@@ -73,6 +76,12 @@ test("pregled PV-07: brez dimenzije ni potrditve, vrednost ne gre v formulo, def
   const u = ["\\omega = 2\\ \\mathrm{s^{-1}}", "t = 3\\ \\mathrm{s}", "U_0 = 5\\ \\mathrm{V}"];
   assert.deepEqual(await st(T(u, ["U"], "V", "U = U_0 \\sin(t)")), ["napaka"]);
   assert.deepEqual(await st(T(u, ["U"], "V", "U = U_0 \\sin(\\omega t)")), ["izracunano"]);
+  // različica količine iz definicije (F_max ← F = m a s) je tudi le delno potrjena
+  assert.deepEqual(await st(T(["m = 2\\ \\mathrm{kg}", "a = 3\\ \\mathrm{m/s^2}", "s = 4\\ \\mathrm{m}"], ["W"], "J", "F = m a s \\Rightarrow W = 2 F_{max}")), ["nepreverjeno", "delno"]);
+  // koeficienta ne izničita člena: 3a² − 2b² + a ni dolžina
+  assert.deepEqual(await st(T(["a = 2\\ \\mathrm{m}", "b = 3\\ \\mathrm{m}"], ["x"], "m", "x = 3a^2 - 2b^2 + a")), ["napaka"]);
+  // enota iz imena (F_tr ← F): primerjava ne pove ničesar
+  assert.deepEqual(await st(T(["F = 5\\ \\mathrm{N}"], ["F_{tr}"], "", "F_{tr} = F")), ["nepreverjeno"]);
   assert.deepEqual(brezVrednosti("6.67*10^(-11)*(N*m^2/kg^2)"), "(N*m^2/kg^2)");
   assert.deepEqual(brezVrednosti("40"), "1");
 });

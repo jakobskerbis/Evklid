@@ -324,14 +324,20 @@ export function enoteNaloge(t) {
       return ind == null || /^\d+$/.test(ind) || ind.replace(/\\[a-z]+/g, "").replace(/[^A-Za-z0-9]/g, "").length >= 2;
     };
     if (!varna(ime)) return false;
-    if (osnova !== ime && enote.has(osnova)) return enote.set(ime, enote.get(osnova)), izpeljane.add(ime), true;
+    if (osnova !== ime && enote.has(osnova)) {
+      if (definicije.has(osnova)) definicije.add(ime); // F_{max} iz F = m a: enota je še vedno iz definicije
+      return enote.set(ime, enote.get(osnova)), izpeljane.add(ime), true;
+    }
     // sorodnik z isto osnovo iz podatkov (t_0 ↔ t_1, \Delta t ↔ t_2): le, če imajo vsi znani sorodniki isto enoto
-    const sorodni = [...enote].filter(([k]) => k !== ime && osn(k) === osnova && varna(k) && !izpeljane.has(k)).map(([, e]) => e.replace(/^[\d.*^()\-]+\*/, ""));
+    const sorodniImena = [...enote.keys()].filter((k) => k !== ime && osn(k) === osnova && varna(k) && !izpeljane.has(k));
+    const sorodni = sorodniImena.map((k) => enote.get(k).replace(/^[\d.*^()\-]+\*/, ""));
+    if (sorodniImena.some((k) => definicije.has(k))) definicije.add(ime);
     if (/_/.test(ime) && sorodni.length && sorodni.every((e) => e === sorodni[0]) && /[A-Za-z]/.test(sorodni[0])) return enote.set(ime, sorodni[0]), izpeljane.add(ime), true;
     return false;
   };
   // vsaka količina dobi svoj iracionalni faktor: m_1 + v − v_0 se ne sme odšteti v m_1 (pregled PV-07)
-  const faktor = (ime) => `sqrt(${PRASTEVILA[[...enote.keys()].indexOf(ime) % PRASTEVILA.length]})`;
+  // e^(1/p): potence različnih količin se z malimi celimi koeficienti ne izničijo (√2 in √3 bi se: 3a² − 2b²)
+  const faktor = (ime) => `exp(1/${PRASTEVILA[[...enote.keys()].indexOf(ime) % PRASTEVILA.length]})`;
   const zamenjaj = (zapis, kol) => zapis.replace(/§(\d+)§/g, (_, k) => `(${faktor(kol[Number(k)])}*(${enote.get(kol[Number(k)])}))`);
   for (let krog = 0; krog < 6; krog++) {
     let novo = false;
@@ -361,6 +367,9 @@ export function enoteNaloge(t) {
       // formula, iz katere je enota vmesne količine, se z njo ujema po konstrukciji: ni preverjanje
       if (f.definira) return { tex: f.tex, deli: null, razlog: `definicija enote za ${f.definira}` };
       const izDef = f.z.kolicine.filter((k) => definicije.has(k));
+      // F = F_{tr}, P_1 = P_2: same količine, enota vsaj ene je iz imena druge; preverjanje ne pove ničesar (pregled PV-07)
+      if (f.z.deli.every((d) => /^§\d+§$/.test(d)) && f.z.kolicine.some((k) => izpeljane.has(k) && !definicije.has(k)))
+        return { tex: f.tex, deli: null, razlog: "enota iz imena količine, primerjava ne pove ničesar" };
       const manjka = f.z.kolicine.filter((k) => !enote.has(k));
       if (manjka.length) return { tex: f.tex, deli: null, razlog: `brez enote: ${manjka.join(", ")}` };
       return { tex: f.tex, deli: f.z.deli.map((d) => zamenjaj(d, f.z.kolicine)), brezKolicin: !f.z.kolicine.length, kolicine: f.z.kolicine, izDef };
@@ -378,24 +387,33 @@ export function decimalkeBesedila(besedilo) {
   const s = String(besedilo || "")
     .replace(/\$[^$]*\$/g, " ")
     .toLowerCase();
-  let zadnje = null;
-  for (const [re, vrednost] of NAVODILA)
-    for (const m of s.matchAll(re)) {
-      const d = vrednost(m);
-      if (d != null && (!zadnje || m.index >= zadnje.i)) zadnje = { i: m.index, d };
-    }
-  return zadnje ? zadnje.d : null;
+  // navodilo z »zaokroži« ali »round« ima prednost pred »na dve decimalki« ob drugem glagolu (pregled PV-07)
+  for (const skupina of [NAVODILA, NAVODILA_BREZ_ZAOKROZI]) {
+    let zadnje = null;
+    for (const [re, vrednost] of skupina)
+      for (const m of s.matchAll(re)) {
+        const d = vrednost(m);
+        if (d != null && (!zadnje || m.index >= zadnje.i)) zadnje = { i: m.index, d };
+      }
+    if (zadnje) return zadnje.d;
+  }
+  return null;
 }
 
 const stevilo = (x) => (x in BESEDE ? BESEDE[x] : /^\d+$/.test(x) ? Number(x) : null);
 const ZAOKROZI = String.raw`zaokro[žz]\w*(?:\s+(?:rezultat|odgovor|ga|jo|ju|jih|vrednost|število))?\s+`;
 // pregled PV-07: tudi »na dve decimalki« brez »zaokroži«, »na cente«, »na cel mililiter«, »zaokroži ga na«,
 // »to 2 decimal places« brez »round« in »nearest tenth«; »na centimeter« ostane brez statusa (odvisno od enote)
+const NAVODILA_BREZ_ZAOKROZI = [
+  // »Rezultat zapiši na dve decimalki«; ne »cene so zapisane na dve decimalki« ali »meritve so podane na …«
+  [/(?:izračunaj|zapiši|izrazi|podaj|navedi|vpiši|odgovori)\b[^.]{0,40}?\bna\s+(\d+|[a-zšč]+)\s+(?:decimal|mest)/g, (m) => stevilo(m[1])],
+  [/\bgive\b[^.]{0,40}?\bto\s+(\d+|one|two|three|four|five)\s+decimal/g, (m) => stevilo(m[1])],
+];
 const NAVODILA = [
-  [/(?:^|[^a-zšžč])na\s+(\d+|[a-zšč]+)\s+(?:decimal|mest)/g, (m) => stevilo(m[1])],
+  [new RegExp(ZAOKROZI + String.raw`na\s+(\d+|[a-zšč]+)\s+(?:decimal|mest)`, "g"), (m) => stevilo(m[1])],
   [new RegExp(ZAOKROZI + String.raw`na\s+(?:celo|cela|celi|celih|cele|cel)\b`, "g"), () => 0],
   [new RegExp(ZAOKROZI + String.raw`na\s+(desetink|stotink|tisočink|cent(?:e|ov)?\b)`, "g"), (m) => ({ desetink: 1, stotink: 2, tisočink: 3 })[m[1]] ?? 2],
-  [/\bto\s+(\d+|one|two|three|four|five)\s+decimal/g, (m) => stevilo(m[1])],
+  [/\bround\w*(?:\s+\w+){0,4}?\s+to\s+(\d+|one|two|three|four|five)\s+decimal/g, (m) => stevilo(m[1])],
   [/\bnearest\s+(whole|integer|tenth|hundredth|thousandth|cent)\b/g, (m) => ({ whole: 0, integer: 0, tenth: 1, hundredth: 2, thousandth: 3, cent: 2 })[m[1]]],
 ];
 
