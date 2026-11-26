@@ -113,10 +113,12 @@ export function unitSI(unit, base = UNIT_BASES[0]) {
   return Number.isFinite(v) && v > 0 ? v : null;
 }
 // Vrednost dela z enotami v SI pri obeh izbirah osnov ali null (kakšne enote ni mogoče prebrati).
-function siValues(x) {
+// SI_ONE: vse osnove 1, vrednost količine v koherentnih enotah SI (2,58 kN → 2580, 0,3638 mmol → 0,0003638)
+const SI_ONE = [1, 1, 1, 1, 1, 1];
+function siValues(x, bases = UNIT_BASES) {
   if (!x.units.length || x.units.some((u) => u === "%" || u === "°")) return null;
   const out = [];
-  for (const base of UNIT_BASES) {
+  for (const base of bases) {
     const n = normalizeTex(x.tex, x.pct, { unitSub: (u) => unitSI(u, base) });
     if (!n || n.unitFail) return null;
     const v = evaluate(n.expr);
@@ -126,14 +128,15 @@ function siValues(x) {
   return out;
 }
 const sameRatio = (p, q) => Math.abs(p / q - 1) < 1e-6;
-function conversionFactorWritten(a, b) {
+function conversionFactorWritten(a, b, relTol = 1e-6) {
   const sa = siValues(a);
   const sb = siValues(b);
   if (!sa || !sb) return false;
   const r = sa[0] / sb[0];
   if (Math.abs(sa[1] / sb[1] / r - 1) > 1e-6) return false;
   const lits = [a, b].filter((x) => !x.bare).flatMap((x) => (x.expr.match(/\d+(?:\.\d+)?/g) || []).map(Number)).filter((n) => n > 1);
-  return lits.some((n) => Math.abs(r * n - 1) < 1e-6 || Math.abs(r / n - 1) < 1e-6);
+  // relTol: zaokrožen rezultat (4756,7 s / 60 ≈ 79,3 min) je še vedno zapisan pretvorbeni faktor
+  return lits.some((n) => Math.abs(r * n - 1) <= relTol || Math.abs(r / n - 1) <= relTol);
 }
 
 /**
@@ -157,6 +160,9 @@ function unitStep(a, b, relTol, chainUnits) {
   const [bare, withU, si] = sa ? [b, a, sa] : [a, b, sb];
   const cands = [withU.value];
   if (sameRatio(si[0], si[1])) cands.push(si[0]); // brezdimenzijsko: 1000 m / 1 km = 1
+  // račun brez enot v koherentnih enotah SI, rezultat s predpono (1000 · 9,81 · 0,25 · 1,05 ≈ 2,58 kN; 0,8²/800 = 0,8 mW)
+  const one = siValues(withU, [SI_ONE]);
+  if (one) cands.push(one[0]);
   for (const u of chainUnits) {
     const us = UNIT_BASES.map((base) => unitSI(u, base));
     if (us.some((v) => v === null)) return undefined;
@@ -366,7 +372,9 @@ function compare(a, b, approx, loose, afterData = false, chainUnits = []) {
   // Dve goli števili (»0 = 8« ni res) ostaneta izjava kot prej.
   if (!approx && !loose && !(a.bare && b.bare) && exactExpr(a) && exactExpr(b) && a.units.join() === b.units.join()) {
     // pol zadnjega mesta: zapisanega rezultata ali zaokroženega vmesnega števila (20 + 1,5 · 5,71 = 20 + 8,57)
-    const dec = Math.max(0, ...[a, b].flatMap((x) => (x.expr.match(/\d+\.\d+/g) || []).map((n) => n.split(".")[1].length)));
+    const decOf = (xs) => Math.max(0, ...xs.flatMap((x) => (x.expr.match(/\d+\.\d+/g) || []).map((n) => n.split(".")[1].length)));
+    // zaokrožen vmesni korak z decimalkami (10 · 3 − 4,905 · 3² = 30 − 44,1): šteje natančnost zapisa na desni
+    const dec = !b.bare && decOf([b]) > 0 ? decOf([b]) : decOf([a, b]);
     // Z decimalnim podatkom je rezultat lahko zaokrožen na desetice ali tisočice (9,81 · 125 = 1230, 0,5 · 1500 · 25² =
     // 469 000): ničle na koncu golega rezultata takrat štejejo kot zaokrožitev (pregled #1011).
     const rounded = dec > 0;
@@ -385,7 +393,7 @@ function compare(a, b, approx, loose, afterData = false, chainUnits = []) {
     const u0 = unitStep(a, b, rel0, chainUnits);
     if (u0 === null) return null;
     // Razlika enot je enaka golemu številu v računu (0,6 cm/min · 60 = 36 cm/h: 60 je min → h): pretvorba, ne napaka.
-    if (typeof u0 === "number" && !conversionFactorWritten(a, b)) return u0;
+    if (typeof u0 === "number" && !conversionFactorWritten(a, b, rel0)) return u0;
   }
   if (diff <= tol + 1e-12) return null;
   if (a.units.includes("%") !== b.units.includes("%")) return "skip"; // 20 % = 60 €
