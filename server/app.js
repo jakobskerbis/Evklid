@@ -121,6 +121,7 @@ import { startBackupChecks } from "./kopije-preveri.js";
 import { startAiCostAlert } from "./opozorilo-ai.js";
 import { createZdravje, razlogiAlarma } from "./zdravje.js";
 import { casStanje } from "./cas.js";
+import { stanjePreverjevalnikov } from "./preverjevalniki.js";
 import { startStiskaObvestila, mountStiske, prejemnikStarsa } from "./stiska-obvestilo.js";
 import { AI_JSON } from "./ai-oznaka.js";
 import { createVrsta } from "./vrsta-ai.js";
@@ -331,7 +332,7 @@ export function createApp(store, opts = {}) {
   // Pomnilnik (točka D4): vzorci RSS po 10 s, Straža opozori nad 85 % meje gostovanja (server/pomnilnik.js).
   const pomnilnik = createPomnilnik({ zacni: opts.pomnilnik !== false });
   app.locals.pomnilnik = pomnilnik;
-  const stanje = () => ({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null, pomnilnik: pomnilnik.stanje(), aiStrosek: aiCostAlert?.status() ?? null, varnostniPregled: varnostStanje(app.locals.usage), sifriranje: encryptionOn(), mock: isMockMode(), ai: zdravje?.ai() ?? null, zagoni: zdravje?.zagoni() ?? null, disk: zdravje?.disk() ?? null, cas: casStanje() });
+  const stanje = () => ({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null, pomnilnik: pomnilnik.stanje(), aiStrosek: aiCostAlert?.status() ?? null, varnostniPregled: varnostStanje(app.locals.usage), sifriranje: encryptionOn(), mock: isMockMode(), ai: zdravje?.ai() ?? null, zagoni: zdravje?.zagoni() ?? null, disk: zdravje?.disk() ?? null, cas: casStanje(), preverjevalniki: stanjePreverjevalnikov({ ai: zdravje?.ai() ?? null }) });
   app.get("/healthz/stanje", (_req, res) => {
     res.set("Cache-Control", "no-store");
     res.json(stanje());

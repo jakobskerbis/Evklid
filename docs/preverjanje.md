@@ -222,6 +222,30 @@ Ostaja:
 - Generator: `binomial(10,3)` brez presledka worker prebere kot `binomial(10.3)` (decimalna vejica), zato nabor piše
   `binomial(10, 3)`.
 
+## Odpoved preverjevalnikov (K-04)
+
+Ob izpadu preverjevalnika status nobene trditve ne sme biti višji, kot ga dovoljujejo preostali dokazi.
+`test/odpoved-preverjevalnikov.test.js` to preveri na vseh 939 trditvah nabora v2, ki jih zna skener:
+
+| Izpad | Kako ga test povzroči | Pričakovano |
+| --- | --- | --- |
+| SymPy izklopljen | `EVKLID_CAS=0` | status vsake trditve enak kot brez SymPy (skener-lokalno) |
+| SymPy manjka | `EVKLID_PYTHON` kaže na neobstoječ program | isto |
+| SymPy se sesuje | lažni worker ob vsaki zahtevi konča (`test/fixtures/odpoved/sesutje.sh`) | isto |
+| SymPy se zatika | lažni worker ne odgovori, rok 25 ms (`rok.sh`) | isto |
+| SymPy izpisuje nesmisel | ne JSON in napačen id (`smeti.sh`) | isto |
+| Lean | ni mape z dokazi, dokaz zastarel ali brez izrekov | nobena lekcija ni »Formalno dokazano« |
+| Model | reševanje vrne 529; ponovitev pade po prvem poskusu | brez rešitve ni statusa; status prvega poskusa ostane izid kode |
+
+V vseh izpadih SymPy je napačno potrjenih 0 in nobena trditev ni »dokazano«. Kontrola: lažni worker, ki vse potrdi
+(`lazniv.sh`), spremeni status več kot 100 trditvam, zato primerjava res meri. (Pokvarjen, a delujoč SymPy, ki vse
+potrdi, ni izpad: pred njim varujeta testi workerja in točna lokalna algebra, ki ima pri ovržbi prednost.)
+
+`/healthz/stanje` → `preverjevalniki` pove, kateri ne dela (`nedelujejo`: `sympy`, `lean`, `model`). SymPy ne dela,
+ko je izklopljen, zagon ni uspel ali je bilo vsaj 3 zahteve zapored brez odgovora (`neuspesnih`, `razlog`: rok ali
+sesutje); ena prepočasna naloga ni izpad. Lean ne teče na strežniku: »ne dela« pomeni, da ni nobenega dokaza lekcije.
+Straža (`scripts/straza.mjs`) ostaja pri `cas.deluje`.
+
 ## Pravilo za nove dele aplikacije
 
 Vsak nov del aplikacije, ki prikaže matematično trditev, jo odda v zapisu trditve in prikaže status iz

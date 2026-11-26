@@ -21,6 +21,10 @@ let ready = null; // Promise<boolean>
 let lastStart = null; // izid zadnjega zagona (true/false), null = še ni bil zagnan (casStanje)
 let failedAt = 0; // po neuspelem zagonu nekaj časa ne poskušamo znova
 let seq = 0;
+// Zahteve brez odgovora zapored (K-04, /healthz/stanje): proces lahko teče in se vseeno zatika ali sesuje ob vsaki
+// zahtevi. Ena sama prepočasna naloga (ogromen izraz) ni izpad, zato šteje šele niz (server/preverjevalniki.js).
+const zahteve = { zapored: 0, razlog: "" };
+const neuspeh = (razlog) => Object.assign(zahteve, { zapored: zahteve.zapored + 1, razlog });
 const waiting = new Map(); // id → { resolve, timer }
 let buf = "";
 
@@ -75,6 +79,7 @@ function start() {
         clearTimeout(w.timer);
         w.resolve({ ok: null, why: "preverjevalnik se je ustavil" });
       }
+      if (waiting.size) neuspeh("sesutje");
       waiting.clear();
     });
     p.stdout.setEncoding("utf8");
@@ -99,6 +104,7 @@ function start() {
         if (w) {
           waiting.delete(msg.id);
           clearTimeout(w.timer);
+          zahteve.zapored = 0;
           // how (PV-03): symbolic | numeric | sampled; samo, kadar ga worker pošlje
           w.resolve({ ok: msg.ok, why: msg.why || "", ...(typeof msg.how === "string" ? { how: msg.how } : {}) });
         }
@@ -139,6 +145,7 @@ async function casCheckNow(op, args) {
         proc = null;
         ready = null;
       }
+      neuspeh("rok");
       resolve({ ok: null, why: "prepočasno" });
     }, TIMEOUT_MS());
     waiting.set(id, { resolve, timer });
@@ -161,11 +168,13 @@ export async function casAvailable() {
 // Ne čaka. Proces teče → deluje: true. Sicer ga zažene v ozadju (po neuspehu največ enkrat na minuto) in vrne izid
 // zadnjega zagona: false, če zadnji zagon ni uspel (alarm Straže), null, če še ni bil zagnan ali se je proces ustavil
 // po uspešnem zagonu (naslednji klic ve več). Ko popravljen zagon uspe, alarm sam izgine.
+// »neuspesnih« = zahteve brez odgovora zapored (rok ali sesutje) z razlogom zadnje; ob uspehu 0 (K-04).
 export function casStanje() {
   if (!casOn()) return { vklopljen: false, deluje: null };
-  if (proc && lastStart === true) return { vklopljen: true, deluje: true };
+  const niz = zahteve.zapored ? { neuspesnih: zahteve.zapored, razlog: zahteve.razlog } : {};
+  if (proc && lastStart === true) return { vklopljen: true, deluje: true, ...niz };
   start().catch(() => {});
-  return { vklopljen: true, deluje: lastStart === false ? false : null };
+  return { vklopljen: true, deluje: lastStart === false ? false : null, ...niz };
 }
 
 export function casStop() {
