@@ -223,6 +223,68 @@ pri 3.204 od 3.205 nalog z zahtevo. Dve formuli s številom brez enote, ki ju je
 Kodo in rezultate sta pregledala dva neodvisna modela AI (ne človek); ugotovitve in popravki so v
 `docs/meritve/enote-2026-11-26-pregled.md`.
 
+## Prevod v Lean (PV-13)
+
+`node scripts/lean-prevod.mjs [--lekcije] [--projekt lean] [--json p.json] [--porocilo p.md] [--strogo]
+[--samo-prevod]` (brez modela AI; Lean 4.36 z Mathlib, lokalno okoli 4 minute) trditev iz zapisa RACUN (`[op, args]`, kot ga
+bere `server/racun.js`) deterministično prevede v izrek Lean, preveri, da izrek pove isto kot trditev, in ga poskusi
+dokazati s predlogami. GitHub (`.github/workflows/lean-prevod.yml`) to požene ob vsaki spremembi prevajalnika, nabora
+ali lekcij; z objavo na evklid.app ni povezan.
+
+Prevajalnik (`server/preverjanje/lean-prevod.js`, `lean-izraz.js`):
+
+- **obseg**: račun z zaprto vrednostjo (`equal`, `value` z »=«), identiteta, enačba z eno neznanko (polinomska,
+  racionalna, z absolutno vrednostjo, s korenom), neenačba (tudi unija intervalov in ulomek proti 0) in linearni sistem.
+  Zunaj obsega ostanejo odvodi, integrali, limite, enote, kemija, »≈«, periodične rešitve (`k`), »vsa realna števila«,
+  koren spremenljivega izraza v identiteti in identiteta s prazno definicijsko množico (tam bi bil dokaz prazen);
+- **zapis**: vsako število je `(n : ℝ)`, vsaka operacija v oklepaju, da Lean ne more izbrati naravnih števil ali
+  drugačnega vrstnega reda. Pogoji definicijske množice (imenovalec ≠ 0, argument korena ≥ 0) so pri identiteti
+  predpostavke, pri enačbi in neenačbi pa del leve strani: `∀ x : ℝ, (pogoji ∧ enačba) ↔ (x = a ∨ x = b)`, brez
+  rešitev `↔ False`; sistem `∀ x y : ℝ, (enačbe) ↔ (x = a ∧ y = b)`;
+- **predloge dokazov** (vsaka svoj izrek, velja prva, ki gre skozi): razcep polinoma z `linear_combination`, pari
+  korenov prek `sq_eq_sq_iff_eq_or_eq_neg`, izključene ničle (imenovalec 0), kvadratni ostanek brez realnih ničel
+  (`nlinarith`), absolutna vrednost po primerih, neenačbe z `nlinarith`, ulomek proti 0 (`div_pos_iff` …), enačba
+  √A = B (kvadriranje, tuje rešitve imajo B < 0), sistem z `linarith`, računi z `norm_num` in prepisom korenov,
+  identitete z `ring` in `field_simp`.
+
+Skladnost (`server/preverjanje/lean-obratno.js`) ne zaupa prevajalniku: izrek prebere nazaj z ozkim razčlenjevalnikom,
+ki pozna le zgornji del jezika Lean (kvantifikator `∀` nad ℝ, ↔, ∧, ∨, ¬, relacije, aritmetika, `Real.sqrt`, |…|);
+vse drugo (∃, →, `:=`, `sorry`, ℕ, ℤ, ℚ razen v eksponentu, eksponent nad 64) je neskladno. Vsaka relacija mora imeti
+realen list. Atome primerja s trditvijo pomensko: razlika obeh strani mora biti do konstantnega faktorja (pri neenačbi
+pozitivnega) enaka v 48 racionalnih točkah na več merilih (1, 1/1000, 10⁶), računano točno na 80 mest; obe strani
+morata imeti iste funkcije (abs, koren). Pogoji in glavni atomi morajo biti v bijekciji, množica rešitev se primerja
+točno, intervali po krajiščih in zaprtosti. `leanDokaz` vrne `holds: true, how: "formal"` le, če je izrek skladen,
+dokazan in stoji samo na `propext`, `Classical.choice` in `Quot.sound`. Vsako neskladje ustavi status pri »Računsko
+preverjeno« (načrt §3.5).
+
+Napačne formalizacije meri `test/fixtures/preverjanje/lean-formalizacije-v1.json` (188 parov trditev in izrek, sestavil
+drug model AI brez dostopa do kode preverjanja: 75 zvestih, 113 nezvestih: ℕ namesto ℝ, implikacija namesto
+ekvivalence, manjkajoča ali odvečna rešitev, manjkajoči pogoj imenovalca, odvečna predpostavka, ∃, `sorry`, |x − 2000|
+namesto x − 2000 …).
+
+Izhodišče `docs/meritve/lean-prevod-2026-11-26.md`:
+
+| Merilo | k/n | 95 % interval |
+| --- | --- | --- |
+| nabor v2: prevedene (v obsegu) / vse | 564/1.020 | 52,2–58,3 % |
+| nabor v2: dokazane / prevedene pravilne točne | 273/275 | 97,4–99,8 % |
+| nabor v2: napačno dokazane / prevedene napačne | **0/282** | 0,0–1,3 % |
+| nabor v2: neskladni prevodi, tuji aksiomi | 0/564, 0/564 | 0,0–0,7 % |
+| napačne formalizacije: zaznane | **113/113** | 96,7–100 % |
+| zveste formalizacije: sprejete | 72/75 | |
+| lekcije: prevedene / trditve RACUN | 4.504/5.629 | |
+| lekcije: dokazane / prevedene | 3.811/4.504 | |
+| lekcije: neskladni prevodi, tuji aksiomi | 0, 0 | |
+
+Pravilen zaokrožen odgovor (meja `najvec` pod »dokazano«) se prevede točno in ostane nedokazan (0/7), zato ni štet med
+točnimi. Nedokazana pravilna v naboru sta dva odgovora v enakovredni obliki (npr. 2√2 in −√8 kot rešitvi x² = 8);
+zavrnjene zveste formalizacije so izrek nad ℚ, koren kot potenca 1/2 in pogoj x(x + 1) ≠ 0 namesto dveh pogojev
+(zavrnitev je varna smer: status ostane nižji). `--strogo` (in GitHub) pade ob napačno dokazani trditvi, neskladnem
+prevodu, tujem aksiomu, zdrsnjeni napačni formalizaciji ali manj kot 95 % dokazanih točnih pravilnih trditev.
+
+Ostaja: zaprte priče izpolnljivosti iz `docs/lean.md` (L5, člen brez spremenljivk v praznem kontekstu) so ločen korak,
+ker spreminjajo varovala; izrek še ni vezan na status v aplikaciji (PV-14 doda rok in »v teku«).
+
 ## Meritev (PV-02, N-01)
 
 Prvi referenčni nabor `test/fixtures/preverjanje/nabor-v1.json` (384 trditev, 191 pravilnih; od N-01 začetek nabora v2) ustvari

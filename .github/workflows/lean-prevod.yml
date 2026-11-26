@@ -1,0 +1,64 @@
+# Prevod trditev v Lean (PV-13, docs/preverjanje.md »Prevod v Lean«): vsako trditev iz nabora in lekcij prevede v
+# izrek, preveri skladnost z obratnim prevodom in jo poskusi dokazati. Strogo: napaka, če je dokazana napačna
+# trditev, če je kakšen prevod neskladen, če dokaz uporabi tuj aksiom, če zdrsne napačna formalizacija iz
+# test/fixtures/preverjanje/lean-formalizacije-v1.json ali če je dokazanih manj kot 95 % točnih pravilnih trditev.
+# Teče v GitHubu, brez strežnika in brez stroška AI. Ni med testi, ki jih čaka objava (scripts/render-objava.js).
+name: lean-prevod
+
+on:
+  pull_request:
+    paths:
+      - "server/preverjanje/lean-*.js"
+      - "scripts/lean-prevod.mjs"
+      - "test/fixtures/preverjanje/nabor-v2.json"
+      - "test/fixtures/preverjanje/lean-formalizacije-v1.json"
+      - "content/lessons/**"
+      - "server/racun.js"
+      - "lean/lean-toolchain"
+      - "lean/lake-manifest.json"
+      - ".github/workflows/lean-prevod.yml"
+  push:
+    branches: [main]
+    paths:
+      - "server/preverjanje/lean-*.js"
+      - "scripts/lean-prevod.mjs"
+      - "test/fixtures/preverjanje/nabor-v2.json"
+      - "test/fixtures/preverjanje/lean-formalizacije-v1.json"
+      - "content/lessons/**"
+      - "server/racun.js"
+      - "lean/lean-toolchain"
+      - "lean/lake-manifest.json"
+      - ".github/workflows/lean-prevod.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lean-prevod-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  prevod:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Namesti elan v4.4.0 (preverjen sha256; Lean iz lean/lean-toolchain)
+        run: |
+          curl -sSfL -o /tmp/elan.tgz https://github.com/leanprover/elan/releases/download/v4.4.0/elan-x86_64-unknown-linux-gnu.tar.gz
+          echo "0e8250aa2be86c7af929ade68db617af9edc8b9ccf6eaf5ece228250d0d032e2  /tmp/elan.tgz" | sha256sum -c -
+          tar xzf /tmp/elan.tgz -C /tmp
+          /tmp/elan-init -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Prenesi prevedeno knjižnico Mathlib
+        working-directory: lean
+        run: lake exe cache get
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - name: Prevedi, preveri skladnost in dokaži (nabor, lekcije, napačne formalizacije)
+        run: node scripts/lean-prevod.mjs --projekt lean --lekcije --strogo --porocilo "$RUNNER_TEMP/lean-prevod.md"
+      - name: Poročilo v povzetek
+        if: always()
+        run: if [ -f "$RUNNER_TEMP/lean-prevod.md" ]; then cat "$RUNNER_TEMP/lean-prevod.md" >> "$GITHUB_STEP_SUMMARY"; fi
