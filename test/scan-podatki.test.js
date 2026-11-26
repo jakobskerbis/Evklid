@@ -225,6 +225,9 @@ test("poziv zahteva check le pri nalogi s podatki in iskano količino", () => {
   assert.equal(R("y=?", ["y = kx + 2", "k = 2", "x = 1"], { y: "4", k: "2", x: "1" }, ["y=k*x+2"], "4").why, "formula in data");
   assert.equal(R("c=?", ["a = 3\\ \\mathrm{cm},\\ b = 4\\ \\mathrm{cm}"], { a: "3", b: "4", c: "5" }, ["c^2=a^2+b^2"], "5").status, "partial");
   assert.equal(R("y=?", ["A = 5\\,\\mathrm{cm}", "\\omega = 2\\,\\mathrm{s^{-1}}", "t = 1\\,\\mathrm{s}"], { A: "5", omega: "2", t: "1", y: "4.55" }, ["y=A*sin(omega*t)"], "4.55").status, "partial");
+  assert.equal(R("s=?", ["s = 5t^2", "t = 2\\,\\mathrm{s}"], { s: "15", k: "5", t: "2" }, ["s=k*t+5"], "15").why, "formula in data");
+  assert.equal(R("s=?", ["s = 5\\,t^{2}", "t = 2\\,\\mathrm{s}"], { s: "15", k: "5", t: "2" }, ["s=k*t+5"], "15").why, "formula in data");
+  assert.equal(R("h=?", ["h = 20t", "t = 3\\,\\mathrm{s}"], { h: "23", k: "20", t: "3" }, ["h=k+t"], "23").why, "formula in data");
   // druga, negativna ničla, ki ni zrcalna (x = −4 ob x = 2), ni prikazana → nepreverjeno
   assert.equal(R("x=?", ["a = 1", "b = 2", "c = -8"], { a: "1", b: "2", c: "-8", x: "2" }, ["a*x^2+b*x+c=0"], "2").why, "another solution");
 });

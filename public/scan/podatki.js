@@ -200,6 +200,12 @@ function zapisPodatka(g) {
 // Podatek, ki je formula ali enačba (f(x) = a·2^x, y = kx + 2, 2x + y = 5, f(1) = 5): koda ne preveri, ali jo AI
 // upošteva, zato naloga ostane nepreverjena. Podatek je le »ime = število enota« (AB = 12 cm, T_1 = 20 °C) ali besedilo.
 export function jeFormula(g) {
+  // črka tik za številom je spremenljivka, ne enota: »s = 5t^2«, »h = 20t« (t, s, m, h so tudi enote)
+  const raw = String(g ?? "");
+  const desno = raw.includes("=") ? raw.slice(raw.indexOf("=")) : "";
+  if (/\d[A-Za-zα-ωΑ-Ω]/.test(desno)) return true;
+  // potenca črke, ki ni smiselna enota (t² ni enota): »s = 5\,t^2«; m² in s² ostaneta enoti
+  if (/(?<![A-Za-z\\])[tghANJVKCLlWT]\s*\^/.test(desno.replace(/\\(?:text|mathrm|textrm|mbox)\s*\{[^{}]*\}/g, " "))) return true;
   // več podatkov v enem zapisu: »a = 3 cm, b = 4 cm«
   return zapisPodatka(g).split(/[,;]\s*(?=[A-Za-z\\α-ωΑ-Ω])/).some(jeFormulaDel);
 }
