@@ -77,7 +77,7 @@ export function upgradeZapis(state, comma = true) {
 // Pri zapisu 2 je to ista priprava kot v znanstvenem kalkulatorju (calcText: tisočice, nejasna števila, znanstveni
 // zapis 2e3, ∫(f; a; b)); names: imena, ki jih graf definira (E = … → »3E-2« je 3·E − 2).
 // Zapis 2 (še ne pretvorjen graf): le decimalna vejica in »;«.
-const lineText = (text, v, comma, names) => (v >= 3 ? calcText(String(text ?? ""), { comma, names }) : v === 2 ? argSeparators(String(text ?? ""), comma) : String(text ?? ""));
+const lineText = (text, v, comma, names) => (v >= 3 ? calcText(String(text ?? ""), { comma, names, freeInt: false }) : v === 2 ? argSeparators(String(text ?? ""), comma) : String(text ?? ""));
 // »(2,3)« v slovenskem zapisu je število 2,3 v oklepaju; morda je mišljena točka (2; 3): namig, pomen ostane.
 const POINT_LIKE = /^\s*\(\s*([+\-−]?\d+),(\d+)\s*\)\s*$/;
 // »2e3x«: e za številom, ki mu sledi črka ali oklepaj, je Eulerjevo število (calcText), ne znanstveni zapis.

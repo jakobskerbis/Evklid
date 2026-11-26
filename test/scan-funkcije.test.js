@@ -40,6 +40,20 @@ test("verifyAi: pravilno ni »Napačno«, napačno ni potrjeno", () => {
   assert.notEqual(st("factorial(n)/factorial(n-2)", { kind: "expression", value: "n*(n-1)" }), "wrong");
   assert.equal(st("factorial(n)/factorial(n-2)", { kind: "expression", value: "n*(n-1)*(n-2)" }), "wrong");
   assert.equal(st("log(8, 2, 3)", { kind: "arith", value: "3" }), "unverified");
+  // decimalna vejica v klicu funkcije (AUDIT-096): »arcsin(0,5)« = 30° ni »Napačno«; »log(0,5)« je lahko log 0,5
+  // ali log z osnovo 5, zato brez sodbe; s presledkom (»log(15625, 5)«) in pri kombinatoriki sta to dva argumenta
+  assert.equal(st("arcsin(0,5)", { kind: "arith", value: "30°" }), "unverified");
+  assert.equal(st("sqrt(2,25)", { kind: "arith", value: "1,5" }), "unverified");
+  assert.equal(st("log(0,5)", { kind: "arith", value: "-0,30103" }), "unverified");
+  for (const [t, v] of [["(2,5+1)*2", "7"], ["(0,5)^2", "0,25"], ["√(2,25)", "1,5"], ["e^(0,5)", "1,6487"], ["sin²(0,5)", "0,2298"], ["sin^2(0,5)", "0,2298"], ["arcsin(0, 5)", "30°"]])
+    assert.equal(st(t, { kind: "arith", value: v }), "unverified", t);
+  assert.equal(st("C(5,2)", { kind: "arith", value: "11" }), "wrong");
+  assert.equal(st("(2+3)*4", { kind: "arith", value: "21" }), "wrong");
+  // sistem: rešitev kot par ali brez ene neznanke ni »Napačno«; napačen par z imeni je
+  for (const sol of [["(2,1)"], ["2,1"], ["x=2"]]) assert.equal(st("2x+y=5; x-y=1", { kind: "system", solutions: sol }), "unverified", sol[0]);
+  assert.equal(st("2x+y=5; x-y=1", { kind: "system", solutions: ["x=3; y=1"] }), "wrong");
+  assert.equal(st("atan2(1, 1)", { kind: "arith", value: "π/4" }), "unverified");
+  assert.equal(st("2,5+1", { kind: "arith", value: "3,5" }), "verified");
   // veljaven zapis ni »neznana funkcija«: d/dx(…), produkt črk pred oklepajem
   assert.equal(st("d/dx(x^2)", { kind: "derivative", value: "3x" }), "wrong");
   assert.equal(st("a^2b+ab^2", { kind: "expression", value: "ab(a+2b)" }), "wrong");

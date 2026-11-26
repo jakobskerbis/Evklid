@@ -770,6 +770,12 @@ export function commandStart(text) {
   return !!m && m[1].toLowerCase() in CMDS;
 }
 
+/** Je ukaz CAS sredi izraza (1 + razstavi(x² − 1), 2·limita(…))? Izračunaj ga ne zna; ni zmnožek črk r·a·z·s·t·a·v·i. */
+export function commandInside(text) {
+  for (const m of String(text ?? "").matchAll(/(?<![A-Za-zčšžČŠŽ])([A-Za-zčšž]+)\s*\(/g)) if (m[1].toLowerCase() in CMDS) return true;
+  return false;
+}
+
 /** Je besedilo ukaz CAS? Vrne { op, name, inner, v } ali null. */
 export function parseCommand(text) {
   const m = /^\s*([A-Za-zčšž]+)\s*\(/.exec(String(text ?? ""));
