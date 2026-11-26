@@ -254,6 +254,22 @@ preverjanje (preizkus: SymPy, ki se sesuje sredi meritve, da skenerju 40 lažnih
 pravila). Ob spremembi trditev nabora nova meritev v `docs/meritve` (test `test/preverjanje-porocilo.test.js` pade
 brez nje). Izhodišče: `docs/meritve/preverjanje-2026-11-26.md`.
 
+## Popis pokritosti (PV-04)
+
+`node scripts/popis-pokritosti.mjs [--json p.json] [--porocilo p.md] [--brez-sympy]` (brez modela AI, z SymPy okoli
+40 s, brez njega 4 s) za vsako od 19 mest iz načrta PV pove, ali trditve tam dobijo status. Za vnaprej znano vsebino
+(lekcije, rešeni primeri, bloki RACUN, pole, rešitve generatorjev na ravneh 1–3 s semenom 1, tekmovalne naloge,
+fakultetne lekcije) zašteje formule z relacijo in status, ki jim ga dajo obstoječi preverjevalniki: preračun
+`server/lesson-math.js` (numerično, delno, napaka), za RACUN SymPy z načinom ali točna kemija (izračunano, numerično,
+napaka); ostale so nepreverjene. Namerno napačne trditve (»Pogoste napake«, napačne možnosti v »Preveri se«, `mistake`
+in izbire na polah) so izločene. Za mesta, kjer trditve nastanejo ob uporabi (inštruktor, kalkulatorji, skener,
+laboratorij …), poročilo pove, ali imajo danes status po trditvi. Štetje celote, ne vzorec, zato brez intervala.
+
+Izhodišče `docs/meritve/pokritost-2026-11-26.md`: 25.594 od 90.115 trditev (28,4 %) ima status; bloki RACUN
+5.623 od 5.626, razlaga lekcij 22 %, fakultetne lekcije 18 %. Vseh 9 »napak« je ročno pregledanih: nobena ni napačen
+rezultat (lažni alarmi preračuna, AUDIT-087, in dva zapisa s skrito pretvorbo enote v naših generatorjih). Višji delež je
+boljši; trditev brez statusa ni napačna, le noben program je ne preveri.
+
 ## Odpoved preverjevalnikov (K-04)
 
 Ob izpadu preverjevalnika status nobene trditve ne sme biti višji, kot ga dovoljujejo preostali dokazi.
