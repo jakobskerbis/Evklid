@@ -31,6 +31,11 @@ test("določeni integral: meje pi, 10 in v oklepajih se preberejo cele", () => {
   assert.equal(int("∫_0^3 x^2 dx", "9"), "numeric");
   assert.equal(int("∫_0^3 x^2 dx", "27"), "wrong");
   assert.equal(int("∫_-1^1 -1+1*x dx", "-2"), "numeric");
+  // brez presledka za zgornjo mejo
+  assert.equal(int("∫_0^1x^2 dx", "1/3"), "numeric");
+  assert.equal(int("∫_0^2x dx", "2"), "numeric");
+  assert.equal(int("∫_0^2x dx", "4"), "wrong");
+  assert.equal(int("∫_0^1e^x dx", "e-1"), "numeric");
 });
 
 test("račun z zaokroženim decimalnim rezultatom je numerično pravilen, ne napaka", () => {
@@ -41,8 +46,19 @@ test("račun z zaokroženim decimalnim rezultatom je numerično pravilen, ne nap
   assert.equal(ar("1/3+1/7", "0.477"), "wrong");
   assert.equal(ar("sqrt(2)", "1.414"), "numeric");
   assert.equal(ar("sqrt(2)", "1.415"), "wrong");
+  assert.equal(ar("1/3", "0,33"), "numeric");
+  assert.equal(ar("pi", "3.14"), "numeric");
   // točna decimalna vrednost ostane točno preverjena
   assert.equal(ar("1.2*0.3", "0.36"), "verified");
+  // pregled: zaokrožitev ni sprejeta pri kratkem točnem decimalnem zapisu, pri eni sami števki in pri velikih številih
+  assert.equal(ar("1.2*0.3", "0.4"), "wrong");
+  assert.equal(ar("1/2+1/4", "0.8"), "wrong");
+  assert.equal(ar("1/2+1/4", "0.7"), "wrong");
+  assert.equal(ar("0.1*0.2", "0.0"), "wrong");
+  assert.equal(ar("1/30000", "0.000"), "wrong");
+  assert.equal(ar("1/3", "0.3"), "wrong");
+  assert.equal(ar("12345678.9*1234.5", "15240740602.07"), "wrong");
+  assert.equal(ar("1/3+10^10", "10000000000.34"), "wrong");
   assert.equal(ar("1/(4/3)", "4/3"), "wrong");
 });
 
@@ -77,6 +93,11 @@ test("strežnik: zaokrožen račun SymPy sprejme le numerično, znanstveni zapis
   assert.equal(await ar("1/3+1/7", "0.477"), "wrong");
   assert.equal(await ar("sqrt(2)", "1.414"), "numeric");
   assert.equal(await ar("1.2*0.3", "0.36"), "verified");
+  // relativna rezerva workerja (1e-12·|v|) ne sme spraviti napačne zadnje števke velikega števila v toleranco
+  assert.equal(await ar("12345678.9*1234.5", "15240740602.07"), "wrong");
+  assert.equal(await ar("1/3+10^14", "100000000000099.33"), "wrong");
+  assert.equal(await ar("123456789*987654321", "121932631112635300.0"), "wrong");
+  assert.equal(await ar("1/2+1/4", "0.8"), "wrong");
   // napačna zadnja števka v znanstvenem zapisu: 53-bitni Float bi jo spravil v toleranco, zato tu »equal«
   assert.notEqual(await ar("123456789*987654321", "1.2193263111263526*10^17"), "numeric");
   assert.notEqual(await ar("123456789*987654321", "1.2193263111263526*10^17"), "verified");

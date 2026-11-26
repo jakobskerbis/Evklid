@@ -155,6 +155,30 @@ function decimalTol(text) {
   return /\d\.\d/.test(t) ? 1e-12 : 0;
 }
 
+// Račun brez neznank z zaokroženim decimalnim rezultatom (1/3 → 0.33, √2 → 1.414): dovoljeno odstopanje (pol zadnjega
+// mesta) ali 0, kadar zaokrožitve ne smemo sprejeti (pregled N-01 popravka):
+//  - vsaj dve veljavni števki (»0.0« za 1/30000 in »0.3« za 1/3 nista preverljiva zaokrožitev);
+//  - točna vrednost nima kratkega decimalnega zapisa: 1/2 + 1/4 = 0.75 ni »0.8« (naloga ne pove, da zaokrožimo);
+//  - toleranca je velika v primerjavi s 53-bitno natančnostjo (15240740602.07 ni preverljiv s plavajočo vejico).
+export function zaokrozenRacun(problemText, value) {
+  const t = stevilo(String(value)).trim();
+  const m = /^[+-]?(\d*)[.,](\d+)$/.exec(t);
+  if (!m || (m[1] + m[2]).replace(/^0+/, "").length < 2) return 0;
+  const tol = 0.5 * 10 ** -m[2].length;
+  let v;
+  try {
+    v = compile(parse(prep(problemText)))({});
+  } catch {
+    return 0;
+  }
+  if (!fin(v) || tol < 1e-9 * Math.abs(v)) return 0;
+  for (let k = 0; k <= 12; k++) {
+    const w = v * 10 ** k;
+    if (Math.abs(w - Math.round(w)) <= Math.max(1e-7, 1e-15 * Math.abs(w))) return 0; // kratek decimalni zapis
+  }
+  return tol;
+}
+
 // »2«, »-1/3«, »(1+sqrt(5))/2« → točno (Surd); sicer null
 function exactValue(text) {
   try {
@@ -353,12 +377,14 @@ function check(problemText, ai) {
         const pb = tryPoly(b);
         return pa && pb ? pa.eq(pb) : null;
       });
-      // Zaokroženo decimalno število kot vrednost števila (1/3 → 0.33, √2 → 1.414): drži numerično, če je razlika največ
-      // pol zadnjega mesta. Točna primerjava (ostane, kadar drži: 1.2·0.3 = 0.36) bi ga označila kot napačnega (N-01, skoraj-016/018/022).
-      const tol = kind === "arith" ? decimalTol(ai.value) : 0;
-      if (tol > 1e-12 && ok !== true) {
+      // Zaokroženo decimalno število kot vrednost števila (1/3 → 0.33, √2 → 1.414; pogoji v zaokrozenRacun): drži numerično,
+      // če je razlika največ pol zadnjega mesta. Točna primerjava (ostane, kadar drži: 1.2·0.3 = 0.36) bi ga označila kot
+      // napačnega (N-01, skoraj-016/018/022).
+      const tol = kind === "arith" && ok !== true ? zaokrozenRacun(problemText, ai.value) : 0;
+      if (tol) {
         const d = Math.abs(compile(a)({}) - compile(b)({}));
-        if (fin(d)) return { verified: d <= tol, reason: "wrong", evidence: { holds: d <= tol, how: "numeric", complete: "na" } };
+        const drzi = d <= tol + 1e-12 * Math.abs(compile(a)({}));
+        if (fin(d)) return { verified: drzi, reason: "wrong", evidence: { holds: drzi, how: "numeric", complete: "na" } };
       }
       if (ok !== null) return { verified: ok, reason: "wrong", evidence: { holds: ok, how: "exact", complete: "na" } };
       return { verified: equalNumerically(a, b), reason: "wrong" };
@@ -386,8 +412,8 @@ function check(problemText, ai) {
     if (kind === "integral") {
       // Meja je v oklepaju ali zaviti oklepaj, sicer cel žeton do presledka (»∫_0^pi«, »∫_1^10«; leno ujemanje je
       // prej prebralo meji »p« in »1«, N-01 integral-019/021), brez presledka pa število ali π.
-      const MEJA = String.raw`\([^()]*\)|\{[^{}]*\}|[^\s^(){}]+(?=\^)|[^\s(){}]+(?=\s)|-?\d+(?:[.,]\d+)?|π`;
-      const m = new RegExp(String.raw`∫\s*(?:_(${MEJA})\^(${MEJA}))?\s*(.+?)\s*d([a-z])\s*$`).exec(String(problemText).replace(/\\int/g, "∫"));
+      const MEJA = String.raw`\([^()]*\)|\{[^{}]*\}|[^\s(){}]+(?=\s)|-?\d+(?:[.,]\d+)?|π`;
+      const m = new RegExp(String.raw`∫\s*(?:_(\([^()]*\)|\{[^{}]*\}|[^\s^(){}]+)\^(${MEJA}))?\s*(\S.*?)\s*d([a-z])\s*$`).exec(String(problemText).replace(/\\int/g, "∫"));
       const g = fnOf(ai.value);
       if (!m || !g) return { verified: false, reason: "parse" };
       const f = fnOf(m[3]);

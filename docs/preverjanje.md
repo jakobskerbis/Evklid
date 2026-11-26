@@ -195,14 +195,21 @@ Popravljeno (lažni alarmi skenerja, `test/scan-lazni-alarmi.test.js`):
   »factorize« sta ukaza.
 - Določeni integral: meji `∫_0^pi` in `∫_1^10` sta se prebrali kot `p` in `1`. Meja je zdaj v oklepaju, zavitem
   oklepaju ali cel žeton.
-- Račun z zaokroženim decimalnim rezultatom (1/3 = 0.33, √2 = 1.414): lokalno in s SymPy (`value` namesto `equal`,
-  le za golo decimalno število) je »Numerično preverjeno« v mejah pol zadnjega mesta, ne »Zaznana napaka«.
+- Račun z zaokroženim decimalnim rezultatom (1/3 = 0.33, √2 = 1.414): lokalno in s SymPy (`value` namesto `equal`)
+  je »Numerično preverjeno« v mejah pol zadnjega mesta, ne »Zaznana napaka«. Le pri golem decimalnem številu z vsaj
+  dvema števkama, točni vrednosti brez kratkega decimalnega zapisa (1/2 + 1/4 = »0.8« ostane napaka) in toleranci, ki
+  jo plavajoča vejica in relativna rezerva workerja ne prekrijeta (15240740602.07 ostane napaka;
+  `verify.js zaokrozenRacun`).
 - Enačba z odpravljivo vrzeljo ((x² − 1)/(x + 1) = −2): iskanje ničel je točko vrzeli štelo za manjkajočo rešitev.
   Hkrati je iskanje zgrešilo rešitev tik ob polu, ki leži točno na mreži (1/(x − 1) = 1000 brez rešitve je dobil
   »Numerično preverjeno«); okoli takih polov so zdaj dodatne točke.
 - Odvod hitro nihajoče funkcije (cos(x⁶)): numerični odvod s petimi točkami in Richardsonovo ekstrapolacijo.
 
 Ostaja:
+
+- SymPy `equal` bere decimalke kot 53-bitna števila, zato pravilen velik decimalni rezultat (12345678.9 · 1234.5 =
+  15240740602.05) dobi »Zaznana napaka« (s SymPy; lokalno »Preverjeno«). Bilo je že prej; popravek v workerju
+  (decimalke kot ulomki, kot `_z_ulomki`) je naslednji korak.
 
 - Skener brez SymPy: `log(u, a)` z osnovo (20 trditev), `binomial(n, k)` (9) in `factorial(n)` (11) dobijo
   »Zaznana napaka«, ker jih kalkulatorjev razčlenjevalnik (`public/graph/math.js`, profil B) ne pozna. Skenerjev
