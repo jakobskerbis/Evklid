@@ -317,7 +317,16 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   } catch {
     commit ||= "neznan";
   }
-  const meta = { datum: new Date().toISOString().slice(0, 10), commit, ukaz: ["node scripts/popis-pokritosti.mjs", ...a].join(" "), okolje: `Node ${process.version}` };
+  let okolje = `Node ${process.version}`;
+  if (cas) {
+    try {
+      const pp = [join(ROOT, ".pylib"), process.env.PYTHONPATH].filter(Boolean).join(":");
+      okolje += `, SymPy ${execFileSync("python3", ["-c", "import sympy; print(sympy.__version__)"], { encoding: "utf8", env: { ...process.env, PYTHONPATH: pp } }).trim()}`;
+    } catch {
+      okolje += ", SymPy (različica neznana)";
+    }
+  }
+  const meta = { datum: new Date().toISOString().slice(0, 10), commit, ukaz: ["node scripts/popis-pokritosti.mjs", ...a].join(" "), okolje };
   if (arg("--json")) writeFileSync(arg("--json"), JSON.stringify({ ...meta, mesta: m }, null, 1) + "\n");
   if (arg("--porocilo")) writeFileSync(arg("--porocilo"), porocilo(m, meta));
   casStop();
