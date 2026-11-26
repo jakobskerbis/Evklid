@@ -21,7 +21,7 @@ test("texGovor: ulomki, potence, koreni, indeksi", () => {
   assert.equal(texGovor("\\dfrac{3}{4}"), "3 skozi 4");
   assert.equal(texGovor("-\\frac{1}{2}"), "minus 1 skozi 2");
   assert.equal(texGovor("\\sqrt{16}=4"), "kvadratni koren iz 16 je enako 4");
-  assert.equal(texGovor("\\sqrt[3]{x^2+1}"), "3. koren iz x na kvadrat plus 1, konec korena");
+  assert.equal(texGovor("\\sqrt[3]{x^2+1}"), "tretji koren iz x na kvadrat plus 1, konec korena");
   assert.equal(texGovor("3{,}5\\cdot 10^{-3}"), "3,5 krat 10 na minus 3");
   assert.equal(texGovor("x^{n+1}"), "x na potenco n plus 1, konec potence");
   assert.equal(texGovor("a^3"), "a na kub");
@@ -36,7 +36,7 @@ test("texGovor: funkcije, absolutna vrednost, množice, stopinje, besedilo", () 
   assert.equal(texGovor("\\sin^2\\alpha+\\cos^2\\alpha=1"), "sinus na kvadrat alfa plus kosinus na kvadrat alfa je enako 1");
   assert.equal(texGovor("\\log_2 8 = 3"), "logaritem z osnovo 2, 8 je enako 3");
   assert.equal(texGovor("\\lim_{x\\to 0}\\frac{\\sin x}{x}"), "limita, x gre proti 0, ulomek, števec sinus x, imenovalec x, konec ulomka");
-  assert.equal(texGovor("\\int_0^1 x\\,dx"), "integral od 0 do 1 x d x");
+  assert.equal(texGovor("\\int_0^1 x\\,dx"), "integral od 0 do 1, x d x");
   assert.equal(texGovor("45^\\circ"), "45 stopinj");
   assert.equal(texGovor("20\\,\\%"), "20 odstotkov");
   assert.equal(texGovor("\\{x \\mid x>0\\}"), "zaviti oklepaj x za katere velja x je večje od 0 zaviti zaklepaj");
@@ -48,6 +48,67 @@ test("texGovor: funkcije, absolutna vrednost, množice, stopinje, besedilo", () 
 
 test("texGovor: oznake formul (\\htmlData) se ne slišijo, le označena črka", () => {
   assert.equal(texGovor("\\htmlData{fx=s.3A.40.3Av}{v}=\\frac{\\htmlData{fx=s.3A.40.3As}{s}}{t}"), "v je enako s skozi t");
+});
+
+test("texGovor: vejica med števkami (pregled 2 in 3): v oklepajih, indeksih in seznamih loči, sicer je decimalna", () => {
+  assert.equal(texGovor("[-1,1]"), "oglati oklepaj minus 1, 1 oglati zaklepaj");
+  assert.equal(texGovor("[0,1]"), "oglati oklepaj 0, 1 oglati zaklepaj");
+  assert.equal(texGovor("(0,10)"), "oklepaj 0, 10 zaklepaj");
+  assert.equal(texGovor("\\{1,2,3\\}"), "zaviti oklepaj 1, 2, 3 zaviti zaklepaj");
+  assert.equal(texGovor("x_{1,2}"), "x indeks 1, 2");
+  assert.equal(texGovor("1,2,3"), "1, 2, 3");
+  assert.equal(texGovor("3,5"), "3,5");
+  assert.equal(texGovor("3{,}5"), "3,5");
+  assert.equal(texGovor("(3{,}5, 2)"), "oklepaj 3,5, 2 zaklepaj");
+  assert.equal(texGovor("0.25"), "0,25");
+  assert.equal(texGovor("2{,}5\\,\\%", "en"), "2.5 percent");
+  assert.equal(texGovor("0{,}\\overline{3}"), "0 cela 3 periodično");
+  assert.equal(texGovor("0{,}1\\overline{6}", "en"), "0 point 1, 6 repeating");
+});
+
+test("texGovor: argument brez zavitih oklepajev je en znak (\\frac12), kot ga izriše KaTeX", () => {
+  assert.equal(texGovor("\\frac12"), "1 skozi 2");
+  assert.equal(texGovor("\\dfrac35"), "3 skozi 5");
+  assert.equal(texGovor("\\cos 60^\\circ=\\frac12"), "kosinus 60 stopinj je enako 1 skozi 2");
+  assert.equal(texGovor("x^{\\frac12}"), "x na potenco 1 skozi 2, konec potence");
+  assert.equal(texGovor("x^23"), "x na kvadrat 3");
+  assert.equal(texGovor("\\sqrt 2"), "kvadratni koren iz 2");
+});
+
+test("texGovor: pavza za preprostim korenom, potenco in ulomkom, ko sledi še kaj (ne pred relacijo ali zaklepajem)", () => {
+  assert.equal(texGovor("\\sqrt{x}+1"), "kvadratni koren iz x, plus 1");
+  assert.equal(texGovor("\\sqrt{x+1}"), "kvadratni koren iz x plus 1, konec korena");
+  assert.equal(texGovor("x^n+1"), "x na n, plus 1");
+  assert.equal(texGovor("x^{n+1}"), "x na potenco n plus 1, konec potence");
+  assert.equal(texGovor("\\frac{1}{2}x"), "1 skozi 2, x");
+  assert.equal(texGovor("\\frac{1}{2x}"), "ulomek, števec 1, imenovalec 2 x, konec ulomka");
+  assert.equal(texGovor("\\sqrt{16}=4"), "kvadratni koren iz 16 je enako 4");
+  assert.equal(texGovor("\\sum_{k=1}^n k"), "vsota od k je enako 1 do n, k");
+});
+
+test("texGovor: fakulteta, binomski simbol, limita z ene strani, daljica, ločne funkcije, sistemi, množice, velike grške črke", () => {
+  assert.equal(texGovor("n!"), "n fakulteta");
+  assert.equal(texGovor("\\binom{n}{k}"), "n nad k");
+  assert.equal(texGovor("\\binom{n}{k}", "en"), "n choose k");
+  assert.equal(texGovor("\\lim_{x\\to 0^+}\\frac{1}{x}"), "limita, x gre proti 0 z desne, 1 skozi x");
+  assert.equal(texGovor("\\overline{AB}"), "daljica A B");
+  assert.equal(texGovor("\\overline{z}"), "z");
+  assert.equal(texGovor("\\arcsin x"), "arkus sinus x");
+  assert.equal(texGovor("\\begin{cases}x+y=1\\\\x-y=3\\end{cases}"), "x plus y je enako 1, x minus y je enako 3");
+  assert.equal(texGovor("\\{x | x>0\\}"), "zaviti oklepaj x za katere velja x je večje od 0 zaviti zaklepaj");
+  assert.equal(texGovor("\\Delta x"), "velika delta x");
+  assert.equal(texGovor("\\xi+\\rho"), "ksi plus ro");
+  assert.equal(texGovor("\\mathrm{cm}"), "cm");
+  assert.equal(texGovor("\\sqrt[3]{8}"), "tretji koren iz 8");
+  assert.equal(texGovor("\\sqrt[n]{x}"), "n-ti koren iz x");
+  assert.equal(texGovor("\\sqrt[3]{8}", "en"), "cube root of 8");
+  assert.equal(texGovor("\\sqrt[3]{8}", "hu"), "köbgyök 8");
+});
+
+test("texGovor: zelo dolg zapis je hiter (linearno)", () => {
+  const t0 = Date.now();
+  assert.equal(typeof texGovor("a+".repeat(20000) + "a"), "string");
+  assert.ok(Date.now() - t0 < 1000, `${Date.now() - t0} ms`);
 });
 
 test("texGovor: pokvarjen ali prazen zapis ne vrže napake", () => {
@@ -63,7 +124,9 @@ test("vsak živi jezik ima izgovor z vsemi besedami; drugi jeziki vzamejo prvega
     assert.deepEqual(kljuci(d), kljuci(sl), j);
     assert.deepEqual(kljuci(d.fun), kljuci(sl.fun), `${j} fun`);
     for (const [k, v] of Object.entries(d)) if (typeof v === "string") assert.ok(v.trim(), `${j}.${k} prazen`);
-    assert.match(d.nKoren("3"), /3/, `${j} nKoren`);
+    assert.match(d.nKoren("7"), /7/, `${j} nKoren`);
+    assert.ok(d.nKoren("3").trim() && d.nKoren("n").includes("n"), `${j} nKoren`);
+    assert.ok(d.velika("delta").includes("delta"), `${j} velika`);
   }
   assert.equal(slovarGovora("sr", uiChain("sr")), slovarGovora("hr"));
   assert.equal(slovarGovora("fr", uiChain("fr")), slovarGovora("en"));
@@ -71,7 +134,7 @@ test("vsak živi jezik ima izgovor z vsemi besedami; drugi jeziki vzamejo prvega
   assert.equal(texGovor("\\frac{a}{b}", "de"), "a durch b");
   assert.equal(texGovor("\\sqrt{2}", "hr"), "drugi korijen iz 2");
   assert.equal(texGovor("x \\ne 0", "it"), "x diverso da 0");
-  assert.equal(texGovor("x \\le 2", "hu"), "x kisebb vagy egyenlő 2");
+  assert.equal(texGovor("x \\le 2", "hu"), "x kisebb vagy egyenlő, mint 2");
 });
 
 test("aplikacija naloži izgovor po prvem izrisu (ne v prvem odprtju)", () => {
@@ -146,5 +209,15 @@ test("brskalnik: gumb s samo formulo dobi ime, ki ga Chrome prebere; lastno ime 
   // Nov gumb, dodan pozneje.
   await page.evaluate(() => document.getElementById("m").insertAdjacentHTML("beforeend", `<button id="b5" type="button">${window.k("\\frac{1}{2}")}</button>`));
   await page.waitForFunction(() => document.getElementById("b5").getAttribute("aria-label") === "1 skozi 2");
+  // Odstranjena formula brez nove vsebine (replaceChildren): naše ime izgine.
+  await page.evaluate(() => document.getElementById("b5").replaceChildren());
+  await page.waitForFunction(() => !document.getElementById("b5").hasAttribute("aria-label"));
+  // Ime, ki ga aplikacija pozneje sama nastavi gumbu, ki smo ga poimenovali, ostane ob naslednji spremembi.
+  await page.evaluate(() => (document.getElementById("b1").innerHTML = window.k("x^2")));
+  await page.waitForFunction(() => document.getElementById("b1").getAttribute("aria-label") === "x na kvadrat");
+  await page.evaluate(() => document.getElementById("b1").setAttribute("aria-label", "Ime aplikacije"));
+  await page.evaluate(() => document.getElementById("b1").insertAdjacentHTML("beforeend", window.k("+1")));
+  await page.waitForTimeout(200);
+  assert.equal(await label("b1"), "Ime aplikacije");
   assert.deepEqual(errors, []);
 });

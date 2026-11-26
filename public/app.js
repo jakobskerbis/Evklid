@@ -2823,7 +2823,7 @@ initKeyboard();
 initDrsniki();
 // Izgovor formul (public/mat/govor.js): gumb, ki je samo formula (izbira odgovora), dobi ime za bralnik zaslona.
 // Naloži se po prvem izrisu (ni del prvega odprtja Učne poti).
-setTimeout(() => import("./mat/govor.js").then((m) => m.initIzgovor(currentLang, uiChain)).catch(() => {}), 0);
+poZagonu(() => import("./mat/govor.js").then((m) => m.initIzgovor(currentLang, uiChain)).catch(() => {}));
 document.addEventListener("input", (e) => hasFormula(e.target.value || "") && import("./predogled-vnosa.js").then((m) => m.initPredogledVnosa(e.target)), true);
 setKeyboardContext({ settings: () => state.student?.settings, chapter: calcChapter });
 mountKeyboardSettings($("#tipkovnica-card"));
