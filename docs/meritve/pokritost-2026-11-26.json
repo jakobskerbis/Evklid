@@ -1,6 +1,6 @@
 {
  "datum": "2026-11-26",
- "commit": "2423230859708ba7dc35f1d8a79d1e6f6050c6e6",
+ "commit": "67fd514b17caccf3a1568c6a31e280249d15fdad",
  "ukaz": "node scripts/popis-pokritosti.mjs --strogo --dodatek docs/meritve/pokritost-2026-11-26-pregled.md --json docs/meritve/pokritost-2026-11-26.json --porocilo docs/meritve/pokritost-2026-11-26.md",
  "okolje": "Node v22.23.5, SymPy 1.14.0",
  "mesta": {

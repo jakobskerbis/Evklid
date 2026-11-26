@@ -2,7 +2,7 @@
 
 ## Povzetek
 - Glavna številka: 12.032 trditev od 85.437 v vsebini, ki jo učenec vidi (14,1 %), je program v celoti preračunal (izračunano ali numerično). Delno (le del verige): 9.836 (11,5 %). Brez statusa (»Nepreverjeno«): 63.560 (74,4 %). Cilj: višje je bolje. Štetje celote, ne vzorec, zato brez intervala.
-- Strojni bloki RACUN, ločeno: 5.623 trditev od 5.626 (99,9 %) preveri SymPy ali točna kemija. Ponovijo rezultate vidne vsebine, zato niso v glavni številki.
+- Strojni bloki RACUN, ločeno: 5.623 trditev od 5.626 (99,9 %) v celoti preveri SymPy ali kemijski preizkus. Ponovijo rezultate vidne vsebine, zato niso v glavni številki.
 - Pomeni: koliko formul z relacijo v lekcijah, rešenih primerih, polah in rešitvah generatorjev dobi status, ko obstoječe preverjevalnike (lesson-math, preizkus identitet, SymPy) uporabimo na vsaki formuli posebej. Zaznanih napak: 9.
 - Ne pomeni: da so formule brez statusa napačne, niti da je »numerično« dokaz. Tudi ne, da vse te statuse danes izračuna CI ali vidi učenec: stolpec »Preverjanje danes« pove, kaj se preračuna ob vsaki spremembi (koraki rešitev generatorjev in računi v »Preveri se« se ne). Oznaka lekcije »Strojno preverjeno« pomeni, da program preračuna vsaj en račun brez napake, ne da ima vsaka trditev status.
 
@@ -12,7 +12,7 @@
 
 ## Metoda
 - Ukaz: `node scripts/popis-pokritosti.mjs --strogo --dodatek docs/meritve/pokritost-2026-11-26-pregled.md --json docs/meritve/pokritost-2026-11-26.json --porocilo docs/meritve/pokritost-2026-11-26.md`
-- Commit: `2423230859708ba7dc35f1d8a79d1e6f6050c6e6` (veja PR; vsebina je enaka kot na `main` po združitvi); skripta ne kliče modela AI; Node v22.23.5, SymPy 1.14.0
+- Commit: `67fd514b17caccf3a1568c6a31e280249d15fdad` (veja PR; vsebina je enaka kot na `main` po združitvi); skripta ne kliče modela AI; Node v22.23.5, SymPy 1.14.0
 - Trditev = formula $…$ ali $$…$$ z relacijo (=, ≈, <, >, ≤, ≥, ≠, ∈, ⇒ …); vrstica RACUN = ena trditev. Status: preračun server/lesson-math.js (numerično, delno, napaka); simbolna enakost, ki jo potrdi preizkus z naključnimi števili server/lesson-identity.js, je numerično (neujemanje brez okolice lekcije ne šteje kot napaka, ker je lahko enačba); RACUN: SymPy z načinom (izračunano ali numerično), uravnotežena enačba izračunano, molska masa z dopustom numerično.
 - Izločeno in našteto posebej: namerno napačne (»Pogoste napake« v celoti, napačne možnosti v »Preveri se« in njihova pojasnila ~, »mistake« in napačne izbire na polah) in vprašanja (? v »Preveri se«: podatek naloge, ne trditev).
 
