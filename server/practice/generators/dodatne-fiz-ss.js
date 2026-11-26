@@ -2370,7 +2370,7 @@ export const DODATNE_FIZ_SS = [
         [`N = ${N}`, dat("S", S, "cm^2"), dat("B", tx(B), "T"), dat("\\nu", nn, "obr/min")],
         ["U_0"],
         ["\\omega = 2\\pi\\nu", "U_0 = N B S \\omega"],
-        [`$\\nu = \\dfrac{${nn}}{60}\\ \\mathrm{s^{-1}} ${res(nn / 60, 3, "s^{-1}")},\\ \\omega = 2\\pi\\nu ${res(w, 2, "s^{-1}")}$`, `$S = ${qty(sci(S * 1e-4, 1), "m^2")}$`, `$U_0 = ${N} \\cdot ${tx(B)} \\cdot ${sci(S * 1e-4, 1)} \\cdot ${tx(w, 2)}\\ \\mathrm{V} ${res(U0, 2, "V")}$`],
+        [`$\\nu = \\dfrac{${nn}}{60}\\ \\mathrm{s^{-1}} ${res(nn / 60, 3, "s^{-1}")},\\ \\omega = 2\\pi\\nu ${res(w, 2, "s^{-1}")}$`, `$S = ${qty(sci(S * 1e-4, 2), "m^2")}$`, `$U_0 = ${N} \\cdot ${tx(B)} \\cdot ${sci(S * 1e-4, 2)} \\cdot ${tx(w, 2)}\\ \\mathrm{V} ${res(U0, 2, "V")}$`],
       );
     },
   },

@@ -3612,7 +3612,7 @@ export const DODATNE_OS_FIZ_KEM = [
           answer: askFood ? num(mFood, "g", 0, [[need, "To je potrebna masa beljakovin, ne živila."], [(need * p) / 100, "Živilo vsebuje le del beljakovin: deli z deležem, ne množi."]]) : num(need, "g", 1, [[kg / 0.8, "Pomnoži maso z 0,8 g/kg, ne deli."], [0.8, "To je potreba na kilogram; pomnoži s telesno maso."]]),
           hint: askFood ? "Najprej izračunaj dnevno potrebo, nato koliko živila vsebuje toliko beljakovin." : "Potreba je sorazmerna s telesno maso.",
           data: { given: askFood ? ["p = 0{,}8\\ \\mathrm{g/kg}", dat("m", kg, "kg"), `${T("beljakovine v živilu")} = ${tx(p)}\\ \\mathrm{g}/100\\ \\mathrm{g}`] : ["p = 0{,}8\\ \\mathrm{g/kg}", dat("m", kg, "kg")], find: [askFood ? "m_{\\check{z}}" : "m_b"] },
-          formula: askFood ? ["m_b = p \\cdot m", "m_{\\check{z}} = \\dfrac{m_b}{" + tx(p) + "} \\cdot 100\\ \\mathrm{g}"] : ["m_b = p \\cdot m"],
+          formula: askFood ? ["m_b = p \\cdot m", "m_{\\check{z}} = \\dfrac{m_b}{" + tx(p) + "\\ \\mathrm{g}} \\cdot 100\\ \\mathrm{g}"] : ["m_b = p \\cdot m"],
           solution: `$m_b = 0{,}8 \\cdot ${kg}\\ \\mathrm{g} = ${qty(tx(need), "g")}$${askFood ? `\n$m_{\\check{z}} = \\dfrac{${tx(need)}}{${tx(p)}} \\cdot 100\\ \\mathrm{g} ${res(mFood, 0, "g")}$` : ""}`,
         };
       }
