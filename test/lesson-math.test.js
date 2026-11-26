@@ -309,6 +309,24 @@ test("AUDIT-058 + 061 po združitvi: račun v SI brez enot, zaokrožen faktor, z
     R`$y = 10 \cdot 3 - 4{,}905 \cdot 3^2 = 30 - 44{,}1 = -14{,}1\,\text{m}$`,
   ])
     assert.deepEqual(checkArithmetic(t).mismatches, [], t);
-  for (const t of [R`$F = 1000\cdot 9{,}81\cdot 0{,}25\cdot 1{,}05 \approx 25{,}8\ \mathrm{kN}$`, R`$n = 0{,}02\cdot 0{,}01819 = 3{,}638\ \mathrm{mmol}$`, R`$4{,}905 \cdot 2 + 1 = 10 + 1$`])
+  for (const t of [R`$n = 0{,}02\cdot 0{,}01819 = 3{,}638\ \mathrm{mmol}$`, R`$4{,}905 \cdot 2 + 1 = 10 + 1$`])
+    assert.equal(checkArithmetic(t).mismatches.length, 1, t);
+});
+
+test("AUDIT-058 (pregled prevzema): račun brez enot v običajni enoti iste količine ni napaka", () => {
+  const R = String.raw;
+  for (const t of [
+    R`$m = 0{,}002 \cdot 180 = 360\ \mathrm{mg}$`,
+    R`$V = 0{,}25 \cdot 2 = 500\ \mathrm{mL}$`,
+    R`$c = \dfrac{0{,}05}{250} = 0{,}2\ \mathrm{mol/L}$`,
+    R`$E = 2000 \cdot 3 = 6\ \mathrm{kWh}$`,
+    R`$t = \dfrac{120}{80} = 90\ \mathrm{min}$`,
+    R`$\rho = \dfrac{540}{200} = 2700\ \mathrm{kg/m^3}$`,
+    R`$s = 4 \cdot 25 = 1\ \mathrm{m}$`,
+    R`$m(\mathrm{SO_4^{2-}}) = 0{,}000934 \cdot 96{,}06 \approx 89{,}73\ \mathrm{mg}$`,
+    R`$m = 3 \cdot 0{,}6138 \cdot 44{,}01 = 81{,}03$`, // zaokrožen vmesni rezultat ξ
+  ])
+    assert.deepEqual(checkArithmetic(t).mismatches, [], t);
+  for (const t of [R`$m = 0{,}002 \cdot 180 = 36\ \mathrm{mg}$`, R`$72\ \mathrm{km/h} = \frac{72}{3{,}6} = 200\ \mathrm{m/s}$`, R`$2{,}5 \cdot 4 = 10{,}05$`])
     assert.equal(checkArithmetic(t).mismatches.length, 1, t);
 });

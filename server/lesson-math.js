@@ -169,7 +169,23 @@ function unitStep(a, b, relTol, chainUnits) {
     const c = [si[0] / us[0], si[1] / us[1]];
     if (sameRatio(c[0], c[1])) cands.push(c[0]);
   }
-  const ok = cands.some((c) => Math.abs(bare.value - c) <= relTol * Math.max(Math.abs(bare.value), Math.abs(c), 1e-12));
+  // Račun brez enot je lahko v kateri koli običajni enoti iste količine (0,002 · 180 = 360 mg: g; 0,25 · 2 = 500 mL: L;
+  // 2000 · 3 = 6 kWh: Wh; 120/80 = 90 min: h; pregled): rezultat × 10³ᵏ, × 60 ali × 3600. Pri enotah z dolžino tudi
+  // 10ⁿ (4 · 25 = 1 m: cm; 540/200 = 2700 kg/m³: g/cm³), kot pred AUDIT-058; napaka ×10ⁿ med zapisanimi enotami
+  // (72 km/h = 200 m/s) se še vedno ujame na poti z enotami na obeh straneh.
+  const len = (() => {
+    const p = siValues(withU, [SI_ONE]);
+    const q = siValues(withU, [[2, 1, 1, 1, 1, 1]]);
+    return p && q && !sameRatio(p[0], q[0]);
+  })();
+  const pows = len ? Array.from({ length: 19 }, (_, i) => 10 ** (i - 9)) : [-3, -2, -1, 1, 2, 3].map((k) => 10 ** (3 * k));
+  const scale = [];
+  for (const p of pows) for (const t of [1, 60, 3600, 1 / 60, 1 / 3600]) scale.push(p * t);
+  for (const t of [60, 3600, 1 / 60, 1 / 3600]) scale.push(t);
+  const near = (c) => Math.abs(bare.value - c) <= relTol * Math.max(Math.abs(bare.value), Math.abs(c), 1e-12);
+  // le, ko veriga nima druge enote (72 km/h = 72/3,6 = 200 m/s: golo število je v eni od enot verige, ne poljubno)
+  const only = chainUnits.every((u) => withU.units.length === 1 && u === withU.units[0]);
+  const ok = cands.some(near) || (only && scale.some((f) => near(withU.value * f)));
   return ok ? null : Math.abs(bare.value - withU.value) / Math.max(Math.abs(bare.value), Math.abs(withU.value), 1e-12);
 }
 
@@ -379,7 +395,11 @@ function compare(a, b, approx, loose, afterData = false, chainUnits = []) {
     // 469 000): ničle na koncu golega rezultata takrat štejejo kot zaokrožitev (pregled #1011).
     const rounded = dec > 0;
     const t = Math.max(...[a, b].map((x) => (x.bare ? halfUlp(x, rounded) : 0)), 0.5 * 10 ** -dec * (a.bare && b.bare ? 0 : 1), 1e-9 * scale);
-    if (diff <= t * (1 + 1e-9) + 1e-12) return null; // 8,565 → 8,57 (zaokroženo navzgor)
+    // decimalka s 4 veljavnimi mesti (0,6138) je pogosto zaokrožen vmesni rezultat: njena zaokrožitev se prenese v
+    // rezultat (3 · 0,6138 · 44,01 = 81,03 pri ξ = 0,61377…; pregled); 2,5 · 4 = 10,05 ostane napaka
+    const r4 = [a, b].flatMap((x) => (x.expr.match(/\d+\.\d+/g) || []).filter((n) => sig(n) === 4).map((n) => (0.5 * 10 ** -n.split(".")[1].length) / Number(n)));
+    const t4 = r4.reduce((p, q) => p + q, 0) * scale;
+    if (diff <= (t + t4) * (1 + 1e-9) + 1e-12) return null; // 8,565 → 8,57 (zaokroženo navzgor)
     return diff / scale;
   }
   const ua = a.units.join();
