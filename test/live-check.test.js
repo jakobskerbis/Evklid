@@ -1142,3 +1142,43 @@ test("live check: OŠ review (EVKLID_LIVE_REVIEW_OS=1) is reserved in the pupil'
   }
   assert.equal((await run(null)).calls, 0, "brez stikala (privzeto v kodi) OŠ nima pregleda");
 });
+
+// AUDIT-066: »če«, »ali« in »?« v razlagi ne izklopijo preverjanja računa in končne vrednosti.
+const R = String.raw;
+test("AUDIT-066: »Če najprej množimo: 7 · 8 = 54« dobi popravek, učenčev zapis in vprašanje ne", () => {
+  const q = "Koliko je 7 krat 8 plus 2?";
+  for (const a of [R`Če najprej množimo: $7 \cdot 8 = 54$. Zdaj prištej še $2$.`, R`Ali veš, zakaj? Velja $7 \cdot 8 + 2 = 59$.`, R`Če računamo po vrsti: $3 + 4 \cdot 2 = 14$.`]) {
+    assert.match(codeFindings(a, presolve(q, { first: true }), q).issue || "", /does not hold/, a);
+  }
+  const eq = "Reši 2x + 3 = 11";
+  assert.ok(codeFindings(R`Če odštejemo 3, dobimo $2x = 8$, torej $x = 5$.`, presolve(eq, { first: true }), eq).issue, "x = 5");
+  for (const a of [R`Ti si napisal $7 \cdot 8 = 54$, prav pa je $7 \cdot 8 = 56$.`, R`Ali je $7 \cdot 8 = 54$?`, R`Če bi pozabil na vrstni red, bi dobil $3 + 4 \cdot 2 = 14$.`, R`Kaj pa, če je $x = 5$? Preveri: $2 \cdot 4 + 3 = 11$.`]) {
+    assert.equal(codeFindings(a, presolve(q, { first: true }), q).issue, null, a);
+  }
+});
+
+// AUDIT-066, pregled: »?« izklopi le stavek, ki se z njim konča; citat iz učenčevega sporočila, pogoj »za x = 3«,
+// preizkus in predpostavka niso trditve odgovora.
+test("AUDIT-066 (pregled): vprašanja, citati in pogoji ostanejo brez popravka", () => {
+  const R = String.raw;
+  const EQ = "Reši 2x + 3 = 11";
+  const AR = "Koliko je 7 krat 8 plus 2?";
+  const none = [
+    [EQ, R`Če je $x = 3$, kaj dobiš na levi strani?`],
+    [EQ, R`Preizkusimo $x = 3$: $2 \cdot 3 + 3 = 9 \neq 11$.`],
+    [EQ, R`Ali je $x = 3$ rešitev? Preveri z vstavljanjem.`],
+    [EQ, R`Predpostavimo $x = 2$: $2 \cdot 2 + 3 = 7$, torej je $x$ večji.`],
+    [EQ, R`Za $x = 3$ je leva stran $9$. Kaj pa za $x = 4$?`],
+    [AR, R`Rekel si $7 \cdot 8 = 54$. Preštej še enkrat po osmicah.`],
+    [AR, R`Imaš $7 \cdot 8 = 54$. Koliko je $7 \cdot 8$ v resnici?`],
+    [AR, R`Poglej: $7 \cdot 8 = 54$. Je to res?`],
+    [AR, R`Na listu imaš $7 \cdot 8 + 2 = 54$. Kje je napaka?`],
+  ];
+  for (const [q, a] of none) assert.equal(codeFindings(a, presolve(q, { first: true }), q).issue, null, a);
+  // citat iz učenčevega sporočila (question je učenčevo besedilo)
+  const st = "Izračunal sem 7 · 8 = 54, ali je prav?";
+  assert.equal(codeFindings(R`Pri $7 \cdot 8 = 54$ si se zmotil za 2.`, null, st).issue, null);
+  assert.equal(codeFindings(R`Velja $7 \cdot 8 = 54$.`, null, "Koliko je 7 · 8?").issue !== null, true, "isti račun brez citata je napaka");
+  // prave napake z »če«/»ali«/»?« drugje v vrstici ostanejo ujete
+  for (const a of [R`Če najprej množimo: $7 \cdot 8 = 54$. Zdaj prištej še $2$.`, R`Ali veš, zakaj? Velja $7 \cdot 8 + 2 = 59$.`]) assert.ok(codeFindings(a, presolve(AR, { first: true }), AR).issue, a);
+});
