@@ -36,6 +36,12 @@ test("tema z vajo: ime teme učenčeve stopnje najde temo z generatorjem", () =>
   assert.equal(temaZVajo("množina snovi", SS1K)?.topicId, "KEM-SS-1/mnozina-snovi");
   assert.equal(temaZVajo("logaritemska enačba", SS2)?.topicId, "MAT-SS-2/logaritemska-funkcija-in-enacbe");
   assert.ok(temaZVajo("kvadratna enačba", SS2).title.length > 3);
+  // Brez strešic (učenec jih pogosto ne piše, inštruktor ga lahko ponovi) in v obliki NFD: ista tema.
+  const OS7 = st("OSNOVNA_SOLA", "7. razred", "MAT");
+  const s = temaZVajo("seštevanje in odštevanje ulomkov", OS7)?.topicId;
+  assert.equal(s, "MAT-OS-7/sestevanje-in-odstevanje-ulomkov");
+  assert.equal(temaZVajo("sestevanje in odstevanje ulomkov", OS7)?.topicId, s);
+  assert.equal(temaZVajo("seštevanje in odštevanje ulomkov".normalize("NFD"), OS7)?.topicId, s);
 });
 
 test("tema z vajo: dvoumna ali neznana poizvedba ne da gumba (nikoli napačna tema)", () => {

@@ -21,7 +21,8 @@ const MIN_LEAD = 1.2; // kot server/lekcija-za-vprasanje.js topicForName
 // Cele besede: koren iz terms() je za ime teme prekratek (»elektrika« in »Elektromagnet« imata isti koren »elekt«,
 // meritev K-08). Beseda poizvedbe ustreza besedi imena, če se ujemata vsaj do zadnjih treh črk daljše (sklon ali
 // število: »enačba« in »enačbe«, »ulomkov« in »ulomki«, »logaritma« in »logaritem«).
-const besedeIzBesedila = (s) => String(s || "").toLowerCase().match(/\p{L}+/gu) || [];
+// Brez strešic kot terms() (»sestevanje« je »seštevanje«); NFD razstavi č v c + kvačico, ki jo odstranimo.
+const besedeIzBesedila = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/\p{M}/gu, "").match(/\p{L}+/gu) || [];
 const skupniZacetek = (a, b) => {
   let i = 0;
   while (i < a.length && i < b.length && a[i] === b[i]) i++;

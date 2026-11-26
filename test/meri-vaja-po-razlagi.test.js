@@ -21,6 +21,12 @@ test("0 gumbov z napačno temo učenčeve poti", () => {
   assert.deepEqual(napacne, []);
 });
 
+// Tema nižjega razreda iste šole se šteje posebej (j 26. 11.: ponovitev da, OŠ za dijaka ne). Seznam je pripet, da nova
+// napačna tema iz nižjega razreda ne gre skozi neopažena; vsako spremembo je treba pregledati in vpisati v poročilo.
+test("teme nižjega razreda: samo pregledani primeri", () => {
+  assert.deepEqual(v.filter((x) => x.izid === "tema nizjega razreda").map((x) => `${x.id} → ${x.tema}`), ["V090 → MAT-SS-2/logaritem"]);
+});
+
 test("vsaka naloga za gumb (ravni 1–3) ima odgovor, ki ga koda sprejme", () => {
   for (const x of v) for (const n of x.naloge) assert.ok(n.samopreverba == null || n.samopreverba === "correct", `${x.id}/${n.raven}: ${n.samopreverba}`);
 });
