@@ -256,19 +256,25 @@ brez nje). Izhodišče: `docs/meritve/preverjanje-2026-11-26.md`.
 
 ## Popis pokritosti (PV-04)
 
-`node scripts/popis-pokritosti.mjs [--json p.json] [--porocilo p.md] [--brez-sympy]` (brez modela AI, z SymPy okoli
-40 s, brez njega 4 s) za vsako od 19 mest iz načrta PV pove, ali trditve tam dobijo status. Za vnaprej znano vsebino
-(lekcije, rešeni primeri, bloki RACUN, pole, rešitve generatorjev na ravneh 1–3 s semenom 1, tekmovalne naloge,
-fakultetne lekcije) zašteje formule z relacijo in status, ki jim ga dajo obstoječi preverjevalniki: preračun
-`server/lesson-math.js` (numerično, delno, napaka), za RACUN SymPy z načinom ali točna kemija (izračunano, numerično,
-napaka); ostale so nepreverjene. Namerno napačne trditve (»Pogoste napake«, napačne možnosti v »Preveri se«, `mistake`
-in izbire na polah) so izločene. Za mesta, kjer trditve nastanejo ob uporabi (inštruktor, kalkulatorji, skener,
-laboratorij …), poročilo pove, ali imajo danes status po trditvi. Štetje celote, ne vzorec, zato brez intervala.
+`node scripts/popis-pokritosti.mjs [--json p.json] [--porocilo p.md] [--brez-sympy] [--strogo] [--dodatek f.md]`
+(skripta ne kliče modela AI; z SymPy okoli 40 s, brez njega 6 s) za vsako od 19 mest iz načrta PV pove, ali trditve
+tam dobijo status. Za vnaprej znano vsebino (razlaga lekcij, »Preveri se«, rešeni primeri, bloki RACUN, pole z
+rešitvami in točkovniki, rešitve generatorjev na ravneh 1–3 s semenom 1, tekmovalne naloge, fakultetne lekcije)
+zašteje formule z relacijo in status, ki ga dajo obstoječi preverjevalniki, uporabljeni na vsaki formuli posebej:
+preračun `server/lesson-math.js` (numerično, delno, napaka), preizkus identitet z naključnimi števili
+`server/lesson-identity.js` (le potrditev: numerično), za RACUN SymPy z načinom ali kemijski preizkus. Ostale so
+nepreverjene. Namerno napačne trditve (»Pogoste napake«, napačne možnosti in njihova pojasnila ~ v »Preveri se«,
+`mistake` in napačne izbire na polah) in vprašanja (?) so izločeni in našteti posebej. Stolpec »Preverjanje danes«
+pove, kaj od tega preračuna CI ob vsaki spremembi (koraki rešitev generatorjev, računi v »Preveri se« in poti rešitev
+na polah ne) in kaj preverijo mesta, kjer trditve nastanejo ob uporabi (inštruktor, kalkulatorji, skener …). Štetje
+celote, ne vzorec, zato brez intervala. `--strogo` vrne napako, če SymPy ni tekel ali ni odgovoril na zahtevo.
 
-Izhodišče `docs/meritve/pokritost-2026-11-26.md`: 25.594 od 90.115 trditev (28,4 %) ima status; bloki RACUN
-5.623 od 5.626, razlaga lekcij 22 %, fakultetne lekcije 18 %. Vseh 9 »napak« je ročno pregledanih: nobena ni napačen
-rezultat (lažni alarmi preračuna, AUDIT-087, in dva zapisa s skrito pretvorbo enote v naših generatorjih). Višji delež je
-boljši; trditev brez statusa ni napačna, le noben program je ne preveri.
+Izhodišče `docs/meritve/pokritost-2026-11-26.md`: v vsebini, ki jo učenec vidi, je 12.032 od 85.437 formul z relacijo
+(14,1 %) v celoti preračunanih, 9.836 (11,5 %) delno, 63.560 (74,4 %) brez statusa; razlaga lekcij 16,7 %, fakultetne
+lekcije 8,7 % v celoti. Strojni bloki RACUN, ki ponovijo rezultate lekcij, so ločeni: 5.623 od 5.626. Vseh 9 zaznanih
+»napak« je pregledal model AI (ne človek): nobena ni napačen rezultat (napačen preračun lesson-math, AUDIT-087;
+zapisi, ki jih preračun ne pozna; trije nenatančni zapisi v naših generatorjih, popravljeni v ločenem PR). Višji
+delež je boljši; formula brez statusa ni napačna, le noben program je ne preveri.
 
 ## Odpoved preverjevalnikov (K-04)
 
