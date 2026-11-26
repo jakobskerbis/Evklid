@@ -40,7 +40,9 @@ variable {V P : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [MetricS
   [NormedAddTorsor V P]
 
 /-- Razlaga 4, Povzetek, Zakaj se tega učimo in Bolj natančno: vsota notranjih kotov trikotnika je
-α + β + γ = 180° (B ≠ A). -/
+α + β + γ = 180° (B ≠ A).
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#vsota-notranjih
+besedilo: »Vsota notranjih kotov: $\alpha + \beta + \gamma = 180^\circ$.« -/
 theorem vsota_notranjih (A B C : P) (h : B ≠ A) : deg (∠ B A C) + deg (∠ A B C) + deg (∠ A C B) = 180 := by
   have e := angle_add_angle_add_angle_eq_pi C h
   rw [angle_comm B C A, angle_comm C A B] at e
@@ -50,7 +52,9 @@ theorem vsota_notranjih (A B C : P) (h : B ≠ A) : deg (∠ B A C) + deg (∠ A
     _ = 180 := by rw [e']; field_simp
 
 /-- Razlaga 6, 7 in Povzetek: zunanji kot γ' = ∠ACD (D na podaljšku BC čez C) in notranji kot γ sta sokota
-(γ + γ' = 180°), zunanji kot pa je vsota nesosednjih notranjih kotov: γ' = α + β (B ≠ A). -/
+(γ + γ' = 180°), zunanji kot pa je vsota nesosednjih notranjih kotov: γ' = α + β (B ≠ A).
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#zunanji-kot
+besedilo: »Zunanji kot je vsota nesosednjih notranjih kotov: $\gamma' = \alpha + \beta$.« -/
 theorem zunanji_kot (A B C D : P) (h : B ≠ A) (hD : ∠ B C D = π) :
     deg (∠ A C B) + deg (∠ A C D) = 180 ∧ deg (∠ A C D) = deg (∠ B A C) + deg (∠ A B C) := by
   have s := angle_add_angle_eq_pi_of_angle_eq_pi A hD
@@ -61,7 +65,9 @@ theorem zunanji_kot (A B C D : P) (h : B ≠ A) (hD : ∠ B C D = π) :
   exact ⟨s', by linarith⟩
 
 /-- Razlaga 8, Povzetek in Bolj natančno: pri vsakem oglišču vzamemo en zunanji kot (E na podaljšku CA čez A,
-F na podaljšku AB čez B, D na podaljšku BC čez C); vsota α' + β' + γ' = 3·180° − 180° = 360° (B ≠ A). -/
+F na podaljšku AB čez B, D na podaljšku BC čez C); vsota α' + β' + γ' = 3·180° − 180° = 360° (B ≠ A).
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#vsota-zunanjih
+besedilo: »Vsota zunanjih kotov (po eden pri vsakem oglišču) je $360^\circ$.« -/
 theorem vsota_zunanjih (A B C D E F : P) (h : B ≠ A) (hE : ∠ C A E = π) (hF : ∠ A B F = π)
     (hD : ∠ B C D = π) : deg (∠ B A E) + deg (∠ C B F) + deg (∠ A C D) = 360 := by
   have sA := angle_add_angle_eq_pi_of_angle_eq_pi B hE
@@ -75,16 +81,22 @@ theorem vsota_zunanjih (A B C D E F : P) (h : B ≠ A) (hE : ∠ C A E = π) (hF
         unfold deg; ring
     _ = 360 := by rw [t]; field_simp; ring
 
-/-- Razlaga 2 in Povzetek: v enakokrakem trikotniku (kraka CA = CB) sta kota ob osnovnici enaka. -/
+/-- Razlaga 2 in Povzetek: v enakokrakem trikotniku (kraka CA = CB) sta kota ob osnovnici enaka.
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#enakokraki-koti
+besedilo: »Kota ob osnovnici sta enaka.« -/
 theorem enakokraki_koti (A B C : P) (h : dist C A = dist C B) : ∠ C A B = ∠ C B A :=
   angle_eq_angle_of_dist_eq h
 
-/-- Razlaga 2 (obrat): če sta kota ob AB enaka in kot pri C ni 180°, je trikotnik enakokrak (CA = CB). -/
+/-- Razlaga 2 (obrat): če sta kota ob AB enaka in kot pri C ni 180°, je trikotnik enakokrak (CA = CB).
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#enaka-kota-enaka-kraka
+besedilo: »Velja tudi obratno: če sta v trikotniku dva kota enaka, je trikotnik enakokrak.« -/
 theorem enaka_kota_enaka_kraka (A B C : P) (h : ∠ C A B = ∠ C B A) (hpi : ∠ A C B ≠ π) : dist C A = dist C B :=
   dist_eq_of_angle_eq_angle_of_angle_ne_pi h hpi
 
 /-- Razlaga 2 (tabela): v raznostraničnem trikotniku (vse stranice različno dolge, noben kot 180°) so vsi koti
-različni. -/
+različni.
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#raznostranicni-koti
+besedilo: »| raznostranični | vse različno dolge | vsi različni |« -/
 theorem raznostranicni_koti (A B C : P) (hab : dist A B ≠ dist A C) (hbc : dist B A ≠ dist B C)
     (hca : dist C A ≠ dist C B) (hA : ∠ B A C ≠ π) (hB : ∠ A B C ≠ π) (hC : ∠ A C B ≠ π) :
     ∠ B A C ≠ ∠ A B C ∧ ∠ A B C ≠ ∠ A C B ∧ ∠ A C B ≠ ∠ B A C := by
@@ -96,7 +108,9 @@ theorem raznostranicni_koti (A B C : P) (hab : dist A B ≠ dist A C) (hbc : dis
     rw [angle_comm B C A]; exact e.symm
 
 /-- Razlaga 5 in Povzetek: enakostranični trikotnik (AB = BC = CA, A ≠ B) ima vse kote po 60°; je tudi
-enakokrak (CA = CB). -/
+enakokrak (CA = CB).
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#enakostranicni
+besedilo: »Enakostranični trikotnik ima vse kote po $60^\circ$.« -/
 theorem enakostranicni (A B C : P) (h1 : dist A B = dist B C) (h2 : dist B C = dist C A) (h : B ≠ A) :
     deg (∠ B A C) = 60 ∧ deg (∠ A B C) = 60 ∧ deg (∠ A C B) = 60 ∧ dist C A = dist C B := by
   have hCAB : dist C A = dist C B := by rw [dist_comm C B]; exact h2.symm
@@ -111,13 +125,15 @@ theorem enakostranicni (A B C : P) (h1 : dist A B = dist B C) (h2 : dist B C = d
 
 end Geometrija
 
-/-- Pomožno (ℂ kot ravnina): če je r − q = −(p − q) in p ≠ q, je ∠ p q r = 180° (q leži med p in r). -/
+/-- Pomožno (ℂ kot ravnina): če je r − q = −(p − q) in p ≠ q, je ∠ p q r = 180° (q leži med p in r).
+pomozno -/
 theorem kot_pi_C (p q r : ℂ) (h : r - q = -(p - q)) (hne : p ≠ q) : ∠ p q r = π := by
   unfold EuclideanGeometry.angle
   rw [vsub_eq_sub, vsub_eq_sub, h]
   exact InnerProductGeometry.angle_self_neg_of_ne_zero (sub_ne_zero.mpr hne)
 
-/-- Pomožno (ℂ kot ravnina): če p, q, r niso na premici (vektorski produkt ≠ 0), ∠ p q r ni 180°. -/
+/-- Pomožno (ℂ kot ravnina): če p, q, r niso na premici (vektorski produkt ≠ 0), ∠ p q r ni 180°.
+pomozno -/
 theorem kot_ne_pi_C (p q r : ℂ)
     (h : (p - q).re * (r - q).im - (p - q).im * (r - q).re ≠ 0) : ∠ p q r ≠ π := by
   intro e
@@ -129,139 +145,160 @@ theorem kot_ne_pi_C (p q r : ℂ)
   simp only [Complex.real_smul, Complex.mul_re, Complex.mul_im, Complex.ofReal_re, Complex.ofReal_im]
   ring
 
-/-- Predpostavke `vsota_notranjih` in `zunanji_kot` se dajo izpolniti: A = i, B = 0, C = 1, D = 2 v ℂ. -/
-example : (0 : ℂ) ≠ Complex.I ∧ ∠ (0 : ℂ) 1 2 = π := by
-  refine ⟨fun h => Complex.I_ne_zero h.symm, kot_pi_C 0 1 2 (by ring) (by norm_num)⟩
+example := vsota_notranjih Complex.I 0 1 (fun h => Complex.I_ne_zero h.symm)
 
-/-- Predpostavke `vsota_zunanjih` se dajo izpolniti: A = i, B = 0, C = 1, E = 2i − 1, F = −i, D = 2 v ℂ. -/
-example : (0 : ℂ) ≠ Complex.I ∧ ∠ (1 : ℂ) Complex.I (2 * Complex.I - 1) = π ∧
-    ∠ Complex.I (0 : ℂ) (-Complex.I) = π ∧ ∠ (0 : ℂ) 1 2 = π := by
-  refine ⟨fun h => Complex.I_ne_zero h.symm, kot_pi_C _ _ _ (by ring) ?_,
-    kot_pi_C _ _ _ (by ring) Complex.I_ne_zero, kot_pi_C 0 1 2 (by ring) (by norm_num)⟩
-  intro h
-  have := congrArg Complex.im h
-  simp at this
+example := zunanji_kot Complex.I 0 1 2 (fun h => Complex.I_ne_zero h.symm)
+  (kot_pi_C 0 1 2 (by ring) (by norm_num))
 
-/-- Predpostavke `enakokraki_koti` in `enaka_kota_enaka_kraka` se dajo izpolniti: A = −1, B = 1, C = i v ℂ
-(CA = CB = √2, kot pri C ni 180°). -/
-example : dist Complex.I (-1) = dist Complex.I 1 ∧ ∠ (-1 : ℂ) Complex.I 1 ≠ π ∧
-    ∠ Complex.I (-1 : ℂ) 1 = ∠ Complex.I (1 : ℂ) (-1) := by
-  have hd : dist Complex.I (-1) = dist Complex.I 1 := by
+example := vsota_zunanjih Complex.I 0 1 2 (2 * Complex.I - 1) (-Complex.I)
+  (fun h => Complex.I_ne_zero h.symm)
+  (kot_pi_C _ _ _ (by ring) (fun h => by have := congrArg Complex.im h; simp at this))
+  (kot_pi_C _ _ _ (by ring) Complex.I_ne_zero) (kot_pi_C 0 1 2 (by ring) (by norm_num))
+
+example := enakokraki_koti (-1 : ℂ) 1 Complex.I
+  (by simp [Complex.dist_eq, Complex.norm_eq_sqrt_sq_add_sq])
+
+example := enaka_kota_enaka_kraka (-1 : ℂ) 1 Complex.I
+  (angle_eq_angle_of_dist_eq (by simp [Complex.dist_eq, Complex.norm_eq_sqrt_sq_add_sq]))
+  (kot_ne_pi_C _ _ _ (by simp))
+
+example := raznostranicni_koti (0 : ℂ) 2 Complex.I (by simp [Complex.dist_eq])
+  (by
+    have s5 : Real.sqrt 5 ≠ 2 := by
+      intro h; have := Real.sq_sqrt (show (0 : ℝ) ≤ 5 by norm_num); rw [h] at this; norm_num at this
     simp [Complex.dist_eq, Complex.norm_eq_sqrt_sq_add_sq]
-  refine ⟨hd, kot_ne_pi_C _ _ _ (by simp), angle_eq_angle_of_dist_eq hd⟩
-
-/-- Predpostavke `raznostranicni_koti` se dajo izpolniti: A = 0, B = 2, C = i v ℂ (stranice 2, 1, √5). -/
-example : dist (0 : ℂ) 2 ≠ dist (0 : ℂ) Complex.I ∧ dist (2 : ℂ) 0 ≠ dist (2 : ℂ) Complex.I ∧
-    dist Complex.I (0 : ℂ) ≠ dist Complex.I (2 : ℂ) ∧ ∠ (2 : ℂ) 0 Complex.I ≠ π ∧ ∠ (0 : ℂ) 2 Complex.I ≠ π ∧
-    ∠ (0 : ℂ) Complex.I 2 ≠ π := by
-  have s5 : Real.sqrt 5 ≠ 2 := by
-    intro h; have := Real.sq_sqrt (show (0 : ℝ) ≤ 5 by norm_num); rw [h] at this; norm_num at this
-  have s5' : Real.sqrt 5 ≠ 1 := by
-    intro h; have := Real.sq_sqrt (show (0 : ℝ) ≤ 5 by norm_num); rw [h] at this; norm_num at this
-  refine ⟨?_, ?_, ?_, kot_ne_pi_C _ _ _ (by simp), kot_ne_pi_C _ _ _ (by simp), kot_ne_pi_C _ _ _ (by simp)⟩
-  · simp [Complex.dist_eq]
-  · simp [Complex.dist_eq, Complex.norm_eq_sqrt_sq_add_sq]
     norm_num
-    exact fun h => s5 h.symm
-  · simp [Complex.dist_eq, Complex.norm_eq_sqrt_sq_add_sq]
+    exact fun h => s5 h.symm)
+  (by
+    have s5' : Real.sqrt 5 ≠ 1 := by
+      intro h; have := Real.sq_sqrt (show (0 : ℝ) ≤ 5 by norm_num); rw [h] at this; norm_num at this
+    simp [Complex.dist_eq, Complex.norm_eq_sqrt_sq_add_sq]
     norm_num
-    exact fun h => s5' h.symm
+    exact fun h => s5' h.symm)
+  (kot_ne_pi_C _ _ _ (by simp)) (kot_ne_pi_C _ _ _ (by simp)) (kot_ne_pi_C _ _ _ (by simp))
 
-/-- Predpostavke `enakostranicni` se dajo izpolniti: A = 0, B = 1, C = 1/2 + (√3/2)i v ℂ (vse stranice 1). -/
-example : dist (0 : ℂ) 1 = dist (1 : ℂ) (1 / 2 + (Real.sqrt 3 / 2 : ℝ) * Complex.I) ∧
-    dist (1 : ℂ) (1 / 2 + (Real.sqrt 3 / 2 : ℝ) * Complex.I) =
-      dist (1 / 2 + (Real.sqrt 3 / 2 : ℝ) * Complex.I) (0 : ℂ) ∧ (1 : ℂ) ≠ 0 := by
-  have h3 : (Real.sqrt 3 / 2) ^ 2 = 3 / 4 := by
-    rw [div_pow, Real.sq_sqrt (by norm_num)]; norm_num
-  refine ⟨?_, ?_, one_ne_zero⟩
-  · simp only [Complex.dist_eq, Complex.norm_eq_sqrt_sq_add_sq]
+example := enakostranicni (0 : ℂ) 1 (1 / 2 + (Real.sqrt 3 / 2 : ℝ) * Complex.I)
+  (by
+    have h3 : (Real.sqrt 3 / 2) ^ 2 = 3 / 4 := by
+      rw [div_pow, Real.sq_sqrt (by norm_num)]; norm_num
+    simp only [Complex.dist_eq, Complex.norm_eq_sqrt_sq_add_sq]
     simp
-    rw [h3]; norm_num
-  · simp only [Complex.dist_eq, Complex.norm_eq_sqrt_sq_add_sq]
+    rw [h3]; norm_num)
+  (by
+    have h3 : (Real.sqrt 3 / 2) ^ 2 = 3 / 4 := by
+      rw [div_pow, Real.sq_sqrt (by norm_num)]; norm_num
+    simp only [Complex.dist_eq, Complex.norm_eq_sqrt_sq_add_sq]
     simp
-    rw [h3]; norm_num
+    rw [h3]; norm_num)
+  one_ne_zero
 
 /-! ## Računanje s koti (stopinje) -/
 
 /-- Trikotnik s koti α, β, γ (v stopinjah): vsi koti so pozitivni in α + β + γ = 180. -/
 def Trikotnik (α β γ : ℝ) : Prop := 0 < α ∧ 0 < β ∧ 0 < γ ∧ α + β + γ = 180
 
-/-- Razlaga 4: tretji kot dobiš z odštevanjem: α + β + γ = 180° ⇔ γ = 180° − α − β. -/
+/-- Razlaga 4: tretji kot dobiš z odštevanjem: α + β + γ = 180° ⇔ γ = 180° − α − β.
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#tretji-kot
+besedilo: »Iz dveh znanih kotov tretjega dobiš z odštevanjem: $\gamma = 180^\circ - \alpha - \beta$.« -/
 theorem tretji_kot (α β γ : ℝ) : α + β + γ = 180 ↔ γ = 180 - α - β := by
   constructor <;> intro h <;> linarith
 
 /-- Razlaga 4 (premisli), Povzetek in kviz 3: trikotnik ima največ en pravi ali topi kot (dva kota ≥ 90° bi skupaj
-merila vsaj 180°, za tretjega ne bi ostalo nič). -/
+merila vsaj 180°, za tretjega ne bi ostalo nič).
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#najvec-en-neostri
+besedilo: »Trikotnik ima največ en pravi ali topi kot.« -/
 theorem najvec_en_neostri (α β γ : ℝ) (t : Trikotnik α β γ) :
     ¬ (90 ≤ α ∧ 90 ≤ β) ∧ ¬ (90 ≤ β ∧ 90 ≤ γ) ∧ ¬ (90 ≤ α ∧ 90 ≤ γ) := by
   obtain ⟨ha, hb, hc, s⟩ := t
   refine ⟨fun ⟨h1, h2⟩ => ?_, fun ⟨h1, h2⟩ => ?_, fun ⟨h1, h2⟩ => ?_⟩ <;> linarith
 
-/-- Predpostavka `Trikotnik` se da izpolniti (55°, 70°, 55° iz Primera 1). -/
-example : Trikotnik 55 70 55 := by unfold Trikotnik; norm_num
+example := najvec_en_neostri 55 70 55 (by unfold Trikotnik; norm_num)
 
-/-- Razlaga 3: trikotnik s koti 30°, 60°, 90° je pravokotni (en pravi kot, ostala ostra). -/
+/-- Razlaga 3: trikotnik s koti 30°, 60°, 90° je pravokotni (en pravi kot, ostala ostra).
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#preveri-30-60-90
+besedilo: »(Pravokotni.)«
+besedilo-kratko: odgovor na »Preveri v eni vrstici« je ena beseda -/
 theorem preveri_30_60_90 : Trikotnik 30 60 90 ∧ (90 : ℝ) = 90 ∧ (30 : ℝ) < 90 ∧ (60 : ℝ) < 90 := by
   unfold Trikotnik; norm_num
 
-/-- Razlaga 5 in Povzetek: enakostranični trikotnik (trije enaki koti) ima vse kote 180° : 3 = 60°. -/
+/-- Razlaga 5 in Povzetek: enakostranični trikotnik (trije enaki koti) ima vse kote 180° : 3 = 60°.
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#enakostranicni-60
+besedilo: »Enakostranični: trije enaki koti dajo $180^\circ$, zato vsak meri $180^\circ : 3 = 60^\circ$.« -/
 theorem enakostranicni_60 (α : ℝ) : α + α + α = 180 ↔ α = 60 := by
   constructor <;> intro h <;> linarith
 
-/-- Razlaga 5, Povzetek in Primer 2: v enakokrakem trikotniku (α = β) sta kota ob osnovnici (180° − γ) : 2. -/
+/-- Razlaga 5, Povzetek in Primer 2: v enakokrakem trikotniku (α = β) sta kota ob osnovnici (180° − γ) : 2.
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#enakokraki-osnovnica
+besedilo: »Enakokraki: če poznaš kot ob vrhu $\gamma$, sta kota ob osnovnici $(180^\circ - \gamma) : 2$.« -/
 theorem enakokraki_osnovnica (α β γ : ℝ) (hab : α = β) (s : α + β + γ = 180) : α = (180 - γ) / 2 := by
   subst hab; linarith
 
-/-- Predpostavke `enakokraki_osnovnica` se dajo izpolniti (40°, 40°, 100°). -/
-example : (40 : ℝ) = 40 ∧ (40 : ℝ) + 40 + 100 = 180 := by norm_num
+example := enakokraki_osnovnica 40 40 100 (by norm_num) (by norm_num)
 
-/-- Razlaga 5 in Povzetek: v pravokotnem trikotniku (γ = 90°) sta ostra kota komplementarna: α + β = 90°. -/
+/-- Razlaga 5 in Povzetek: v pravokotnem trikotniku (γ = 90°) sta ostra kota komplementarna: α + β = 90°.
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#pravokotni-komplementarna
+besedilo: »Pravokotni: ostra kota skupaj merita $180^\circ - 90^\circ = 90^\circ$. Sta torej komplementarna.« -/
 theorem pravokotni_komplementarna (α β γ : ℝ) (hg : γ = 90) (s : α + β + γ = 180) : α + β = 90 := by
   linarith
 
-/-- Predpostavke `pravokotni_komplementarna` se dajo izpolniti (37°, 53°, 90°). -/
-example : (90 : ℝ) = 90 ∧ (37 : ℝ) + 53 + 90 = 180 := by norm_num
+example := pravokotni_komplementarna 37 53 90 (by norm_num) (by norm_num)
 
 /-- Razlaga 5 (preveri) in kviz 1: v pravokotnem trikotniku z ostrim kotom 45° je drugi 45° (trikotnik je
-enakokrak); 90°, 45°, 45° je trikotnik. -/
+enakokrak); 90°, 45°, 45° je trikotnik.
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#preveri-45
+besedilo: »($45^\circ$, trikotnik je enakokrak.)« -/
 theorem preveri_45 (β : ℝ) : 45 + β + 90 = 180 ↔ β = 45 := by
   constructor <;> intro h <;> linarith
 
-/-- Razlaga 6 in Povzetek: zunanji kot α' = 180° − α; pri α = 70° je α' = 110°. -/
+/-- Razlaga 6 in Povzetek: zunanji kot α' = 180° − α; pri α = 70° je α' = 110°.
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#zunanji-70
+besedilo: »($110^\circ$.)«
+besedilo-kratko: odgovor na »Preveri v eni vrstici« je eno število -/
 theorem zunanji_70 : (180 : ℝ) - 70 = 110 := by norm_num
 
-/-- Razlaga 7 (izrek o zunanjem kotu, računsko): iz γ' = 180° − γ in α + β + γ = 180° sledi γ' = α + β. -/
+/-- Razlaga 7 (izrek o zunanjem kotu, računsko): iz γ' = 180° − γ in α + β + γ = 180° sledi γ' = α + β.
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#zunanji-racun
+besedilo: »Zunanji kot je enak vsoti tistih dveh notranjih kotov, ki **nista** pri istem oglišču.« -/
 theorem zunanji_racun (α β γ γ' : ℝ) (h : γ' = 180 - γ) (s : α + β + γ = 180) : γ' = α + β := by linarith
 
-/-- Predpostavke `zunanji_racun` se dajo izpolniti (40°, 60°, 80°, 100°). -/
-example : (100 : ℝ) = 180 - 80 ∧ (40 : ℝ) + 60 + 80 = 180 := by norm_num
+example := zunanji_racun 40 60 80 100 (by norm_num) (by norm_num)
 
 /-- Razlaga 7 (premisli): zunanji kot je večji od vsakega od nesosednjih notranjih kotov (oba > 0°); pri
-α = 40°, β = 60° je γ' = 100°. -/
+α = 40°, β = 60° je γ' = 100°.
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#zunanji-vecji
+besedilo: »Ker je njuna vsota, oba pa sta večja od $0^\circ$.« -/
 theorem zunanji_vecji (α β : ℝ) (ha : 0 < α) (hb : 0 < β) : α < α + β ∧ β < α + β := by
   constructor <;> linarith
 
-/-- Predpostavke `zunanji_vecji` se dajo izpolniti; primer 40° + 60° = 100°. -/
-example : (0 : ℝ) < 40 ∧ (0 : ℝ) < 60 ∧ (40 : ℝ) + 60 = 100 := by norm_num
+example := zunanji_vecji 40 60 (by norm_num) (by norm_num)
 
-/-- Bolj natančno (računsko): α' + β' + γ' = (180° − α) + (180° − β) + (180° − γ) = 540° − 180° = 360°. -/
+/-- Bolj natančno (računsko): α' + β' + γ' = (180° − α) + (180° − β) + (180° − γ) = 540° − 180° = 360°.
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#zunanji-vsota-racun
+besedilo: »To je $3 \cdot 180^\circ - (\alpha + \beta + \gamma) = 540^\circ - 180^\circ = 360^\circ$.« -/
 theorem zunanji_vsota_racun (α β γ : ℝ) (s : α + β + γ = 180) :
     (180 - α) + (180 - β) + (180 - γ) = 3 * 180 - (α + β + γ) ∧ 3 * 180 - (α + β + γ) = 540 - 180 ∧
       (540 : ℝ) - 180 = 360 := by
   refine ⟨by ring, by rw [s]; norm_num, by norm_num⟩
 
-/-- Pogoste napake 3: 180° − (α + β) je notranji kot γ; enak zunanjemu γ' = α + β je le pri γ = 90°. -/
+example := zunanji_vsota_racun 55 70 55 (by norm_num)
+
+/-- Pogoste napake 3: 180° − (α + β) je notranji kot γ; enak zunanjemu γ' = α + β je le pri γ = 90°.
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#napaka-napacna-kota
+besedilo: »Kdor $\alpha + \beta$ odšteje od $180^\circ$, dobi notranji kot $\gamma$, ne zunanjega.« -/
 theorem napaka_napacna_kota (α β γ : ℝ) (h : α + β + γ = 180) :
     180 - (α + β) = γ ∧ (180 - (α + β) = α + β ↔ γ = 90) := by
   refine ⟨by linarith, ⟨fun e => by linarith, fun e => by linarith⟩⟩
 
-/-- Predpostavka `napaka_napacna_kota` se da izpolniti (55°, 70°, 55°). -/
-example : (55 : ℝ) + 70 + 55 = 180 := by norm_num
+example := napaka_napacna_kota 55 70 55 (by norm_num)
 
-/-- Pogoste napake 4: kot ob vrhu je lahko drugačen od kotov ob osnovnici (40°, 40°, 100° iz Primera 2). -/
+/-- Pogoste napake 4: kot ob vrhu je lahko drugačen od kotov ob osnovnici (40°, 40°, 100° iz Primera 2).
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#napaka-kot-ob-vrhu
+besedilo: »Kot ob vrhu je lahko drugačen.« -/
 theorem napaka_kot_ob_vrhu : Trikotnik 40 40 100 ∧ (100 : ℝ) ≠ 40 := by unfold Trikotnik; norm_num
 
-/-- Pogoste napake 2: zunanji in notranji kot pri istem oglišču sta enaka le pri pravem kotu. -/
+/-- Pogoste napake 2: zunanji in notranji kot pri istem oglišču sta enaka le pri pravem kotu.
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#zunanji-enak-notranjemu
+besedilo: »Enaka sta le pri pravem kotu.« -/
 theorem zunanji_enak_notranjemu (α : ℝ) : 180 - α = α ↔ α = 90 := by
   constructor <;> intro h <;> linarith
 
@@ -269,7 +306,9 @@ theorem zunanji_enak_notranjemu (α : ℝ) : 180 - α = α ↔ α = 90 := by
 
 /-- Primer 1: γ = 180° − 55° − 70° = 55° (edina rešitev: Trikotnik 55 70 γ ⇔ γ = 55, torej γ = α); vsi koti
 < 90° (ostrokotni); preverimo 55° + 70° + 55° = 180°. Da iz α = γ sledi enakokrak, je splošni
-`enaka_kota_enaka_kraka`. -/
+`enaka_kota_enaka_kraka`.
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#primer-1
+besedilo: »$\gamma = 180^\circ - 55^\circ - 70^\circ = 55^\circ$.« -/
 theorem primer1 :
     (∀ γ : ℝ, Trikotnik 55 70 γ ↔ γ = 55) ∧ (180 : ℝ) - 55 - 70 = 55 ∧ (55 : ℝ) < 90 ∧ (70 : ℝ) < 90 ∧
       (55 : ℝ) + 70 + 55 = 180 := by
@@ -277,26 +316,34 @@ theorem primer1 :
     unfold Trikotnik; subst h; norm_num⟩, by norm_num, by norm_num, by norm_num, by norm_num⟩
 
 /-- Primer 2: kota ob osnovnici skupaj merita 180° − 100° = 80°, vsak 80° : 2 = 40°; preverimo
-40° + 40° + 100° = 180°. Rešitev je ena sama: α = β in α + β + 100° = 180° ⇔ α = β = 40°. -/
+40° + 40° + 100° = 180°. Rešitev je ena sama: α = β in α + β + 100° = 180° ⇔ α = β = 40°.
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#primer-2
+besedilo: »Odgovor: špirovec se stika s stropnim tramom pod kotom $40^\circ$.« -/
 theorem primer2 (α β : ℝ) : (α = β ∧ α + β + 100 = 180) ↔ (α = 40 ∧ β = 40) := by
   constructor
   · rintro ⟨h1, h2⟩; constructor <;> linarith
   · rintro ⟨rfl, rfl⟩; norm_num
 
-/-- Primer 2 (koraki): 180 − 100 = 80, 80 : 2 = 40, 40 + 40 + 100 = 180. -/
+/-- Primer 2 (koraki): 180 − 100 = 80, 80 : 2 = 40, 40 + 40 + 100 = 180.
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#primer-2-koraki
+besedilo: »Vsak kot je polovica: $80^\circ : 2 = 40^\circ$.« -/
 theorem primer2_koraki : (180 : ℝ) - 100 = 80 ∧ (80 : ℝ) / 2 = 40 ∧ (40 : ℝ) + 40 + 100 = 180 := by norm_num
 
 /-- Kot s° m' v stopinjah: s + m/60. -/
 def st (s m : ℚ) : ℚ := s + m / 60
 
 /-- Primer 3: γ' = 116°15' = 115°75', β = γ' − α = 115°75' − 48°25' = 67°50'; γ = 180° − 116°15' = 179°60' − 116°15'
-= 63°45'; preverimo 48°25' + 67°50' + 63°45' = 178°120' = 180°. -/
+= 63°45'; preverimo 48°25' + 67°50' + 63°45' = 178°120' = 180°.
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#primer-3
+besedilo: »Preverimo vsoto: $48^\circ 25' + 67^\circ 50' + 63^\circ 45' = 178^\circ 120' = 180^\circ$.« -/
 theorem primer3 :
     st 116 15 = st 115 75 ∧ st 115 75 - st 48 25 = st 67 50 ∧ 180 - st 116 15 = st 179 60 - st 116 15 ∧
       st 179 60 - st 116 15 = st 63 45 ∧ st 48 25 + st 67 50 + st 63 45 = st 178 120 ∧ st 178 120 = 180 := by
   unfold st; norm_num
 
-/-- Primer 3: iz γ' = α + β in γ + γ' = 180° pri γ' = 116°15', α = 48°25' sledi natanko β = 67°50', γ = 63°45'. -/
+/-- Primer 3: iz γ' = α + β in γ + γ' = 180° pri γ' = 116°15', α = 48°25' sledi natanko β = 67°50', γ = 63°45'.
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#primer-3-resitev
+besedilo: »Odgovor: $\beta = 67^\circ 50'$ in $\gamma = 63^\circ 45'$.« -/
 theorem primer3_resitev (β γ : ℚ) :
     (st 116 15 = st 48 25 + β ∧ γ + st 116 15 = 180) ↔ (β = st 67 50 ∧ γ = st 63 45) := by
   unfold st
@@ -304,31 +351,41 @@ theorem primer3_resitev (β γ : ℚ) :
   · rintro ⟨h1, h2⟩; constructor <;> linarith
   · rintro ⟨rfl, rfl⟩; norm_num
 
-/-- Primer 4: β = 90° − 37° = 53°, α' = 180° − 37° = 143°; preverba z izrekom o zunanjem kotu 53° + 90° = 143°. -/
+/-- Primer 4: β = 90° − 37° = 53°, α' = 180° − 37° = 143°; preverba z izrekom o zunanjem kotu 53° + 90° = 143°.
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#primer-4
+besedilo: »$\beta = 90^\circ - 37^\circ = 53^\circ$ in $\alpha' = 180^\circ - 37^\circ = 143^\circ$.« -/
 theorem primer4 : (90 : ℝ) - 37 = 53 ∧ (180 : ℝ) - 37 = 143 ∧ (53 : ℝ) + 90 = 143 := by norm_num
 
 /-! ## Pogoste napake in Preveri se -/
 
 /-- Pogoste napake 1 in kviz 2: pri kotih 89° in 88° je tretji 180° − 177° = 3° (ne 360° − 177° = 183°, ne
-približno 90°). -/
+približno 90°).
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#napaka-360
+besedilo: »V trikotniku je vsota $180^\circ$, tretji kot meri le $3^\circ$.« -/
 theorem napaka_360 (γ : ℝ) :
     (89 + 88 + γ = 180 ↔ γ = 3) ∧ (89 : ℝ) + 88 = 177 ∧ (360 : ℝ) - 177 = 183 ∧ (183 : ℝ) ≠ 3 := by
   refine ⟨⟨fun h => by linarith, fun h => by rw [h]; norm_num⟩, by norm_num, by norm_num, by norm_num⟩
 
 /-- Pogoste napake 5 in kviz 5: pri vrhu 110° ostane za osnovnico 180° − 110° = 70°, vsak kot 70° : 2 = 35°
-(ne 70°, 110° ali (360° − 110°) : 2 = 125°). -/
+(ne 70°, 110° ali (360° − 110°) : 2 = 125°).
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#napaka-deljenje
+besedilo: »To je vsota obeh kotov ob osnovnici, vsak meri $35^\circ$.« -/
 theorem napaka_deljenje (α : ℝ) :
     (α + α + 110 = 180 ↔ α = 35) ∧ (180 : ℝ) - 110 = 70 ∧ (70 : ℝ) / 2 = 35 ∧ ((360 : ℝ) - 110) / 2 = 125 := by
   refine ⟨⟨fun h => by linarith, fun h => by rw [h]; norm_num⟩, by norm_num, by norm_num, by norm_num⟩
 
 /-- Kviz 1: 90°, 45°, 45° je pravokoten in enakokrak trikotnik; 90°, 60°, 30° nima enakih kotov; 60°, 60°, 60°
-nima pravega kota; 90°, 90°, 0° ni trikotnik (kot 0°). -/
+nima pravega kota; 90°, 90°, 0° ni trikotnik (kot 0°).
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#kviz-1
+besedilo: »Pravi kot je eden, ostala dva sta enaka in skupaj merita $90^\circ$, zato vsak $45^\circ$.« -/
 theorem kviz1 :
     Trikotnik 90 45 45 ∧ ((90 : ℝ) ≠ 60 ∧ (60 : ℝ) ≠ 30 ∧ (90 : ℝ) ≠ 30) ∧ (60 : ℝ) ≠ 90 ∧ ¬ Trikotnik 90 90 0 := by
   unfold Trikotnik; norm_num
 
 /-- Kviz 4: γ' = α + β, zato pri γ' = 130°, α = 50° velja natanko β = 80°; preverba γ = 180° − 130° = 50°,
-50° + 80° + 50° = 180°; napačni 50°, 180°, 130° niso β. -/
+50° + 80° + 50° = 180°; napačni 50°, 180°, 130° niso β.
+trditev: MAT-OS-7/vrste-trikotnikov-in-notranji-koti#kviz-4
+besedilo: »$\gamma' = \alpha + \beta$, zato $\beta = 130^\circ - 50^\circ = 80^\circ$.« -/
 theorem kviz4 (β : ℝ) :
     (130 = 50 + β ↔ β = 80) ∧ (180 : ℝ) - 130 = 50 ∧ (50 : ℝ) + 80 + 50 = 180 ∧ (50 : ℝ) ≠ 80 ∧
       (180 : ℝ) ≠ 80 ∧ (130 : ℝ) ≠ 80 := by

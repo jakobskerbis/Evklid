@@ -37,20 +37,22 @@ variable {V P : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [MetricS
 
 /-! ## Pomožno: koordinate v ℂ -/
 
-/-- Pomožno: razdalja v ℂ iz koordinat. -/
+/-- Pomožno: razdalja v ℂ iz koordinat.
+pomozno – razdalja v ℂ iz koordinat -/
 theorem dist_c {z w : ℂ} {d : ℝ} (hd : 0 ≤ d) (h : (z.re - w.re) ^ 2 + (z.im - w.im) ^ 2 = d ^ 2) :
     dist z w = d := by
   rw [Complex.dist_eq_re_im, h, Real.sqrt_sq hd]
 
-/-- Predpostavke trditve `dist_c` se dajo izpolniti (z = 3, w = 0, d = 3). -/
-example : (0 : ℝ) ≤ 3 ∧ ((3 : ℂ).re - (0 : ℂ).re) ^ 2 + ((3 : ℂ).im - (0 : ℂ).im) ^ 2 = 3 ^ 2 := by
-  constructor <;> simp
+/-- Predpostavke trditve `dist_c` se dajo izpolniti: izrek, uporabljen na primeru (z = 3, w = 0, d = 3). -/
+example := @dist_c 3 0 3 (by norm_num) (by simp)
 
-/-- Pomožno: kvadrat razdalje v ℂ iz koordinat. -/
+/-- Pomožno: kvadrat razdalje v ℂ iz koordinat.
+pomozno – kvadrat razdalje v ℂ iz koordinat -/
 theorem dist_c_sq (z w : ℂ) : dist z w ^ 2 = (z.re - w.re) ^ 2 + (z.im - w.im) ^ 2 := by
   rw [Complex.dist_eq_re_im, Real.sq_sqrt (by positivity)]
 
-/-- Pomožno: kot med realnim r > 0 in z v ℂ je arccos (Re z / |z|). -/
+/-- Pomožno: kot med realnim r > 0 in z v ℂ je arccos (Re z / |z|).
+pomozno – kot z realno osjo v ℂ -/
 theorem kot_os {r : ℝ} (hr : 0 < r) (z : ℂ) :
     InnerProductGeometry.angle (r : ℂ) z = Real.arccos (z.re / ‖z‖) := by
   unfold InnerProductGeometry.angle
@@ -58,10 +60,11 @@ theorem kot_os {r : ℝ} (hr : 0 < r) (z : ℂ) :
   have hi : inner ℝ (r : ℂ) z = r * z.re := by simp [Complex.inner, mul_comm]
   rw [hi, Complex.norm_real, Real.norm_of_nonneg hr.le, mul_div_mul_left _ _ hr.ne']
 
-/-- Predpostavka trditve `kot_os` se da izpolniti (r = 1). -/
-example : (0 : ℝ) < 1 := one_pos
+/-- Predpostavka trditve `kot_os` se da izpolniti: izrek, uporabljen na primeru (r = 1). -/
+example := kot_os (r := 1) one_pos 1
 
-/-- Pomožno: točka t(cos θ + i sin θ) s t > 0 in 0 ≤ θ ≤ π oklepa z realnim r > 0 kot θ. -/
+/-- Pomožno: točka t(cos θ + i sin θ) s t > 0 in 0 ≤ θ ≤ π oklepa z realnim r > 0 kot θ.
+pomozno – kot točke na poltraku z realno osjo v ℂ -/
 theorem kot_zarek {r t θ : ℝ} (hr : 0 < r) (ht : 0 < t) (h0 : 0 ≤ θ) (hπ : θ ≤ π) :
     InnerProductGeometry.angle (r : ℂ) ⟨t * cos θ, t * sin θ⟩ = θ := by
   rw [kot_os hr]
@@ -73,12 +76,12 @@ theorem kot_zarek {r t θ : ℝ} (hr : 0 < r) (ht : 0 < t) (h0 : 0 ≤ θ) (hπ 
   show Real.arccos (t * cos θ / t) = θ
   rw [mul_div_cancel_left₀ _ ht.ne', Real.arccos_cos h0 hπ]
 
-/-- Predpostavke trditve `kot_zarek` se dajo izpolniti (r = t = 1, θ = π/3). -/
-example : (0 : ℝ) < 1 ∧ (0 : ℝ) < 1 ∧ 0 ≤ π / 3 ∧ π / 3 ≤ π :=
-  ⟨one_pos, one_pos, by positivity, by linarith [pi_pos]⟩
+/-- Predpostavke trditve `kot_zarek` se dajo izpolniti: izrek, uporabljen na primeru (r = t = 1, θ = π/3). -/
+example := kot_zarek (r := 1) (t := 1) (θ := π / 3) one_pos one_pos (by positivity) (by linarith [pi_pos])
 
 /-- Pomožno (obstoj podatkov sks): za b, c > 0 in 0 ≤ θ ≤ π je v ℂ trikotnik A = 0, B = c,
-C = b(cos θ + i sin θ) z |AB| = c, |AC| = b in ∠ B A C = θ. -/
+C = b(cos θ + i sin θ) z |AB| = c, |AC| = b in ∠ B A C = θ.
+pomozno – konkretni trikotnik v ℂ za primere izpolnljivosti -/
 theorem obstoj_sks {b c θ : ℝ} (hb : 0 < b) (hc : 0 < c) (h0 : 0 ≤ θ) (hπ : θ ≤ π) :
     dist (0 : ℂ) (c : ℂ) = c ∧ dist (0 : ℂ) ⟨b * cos θ, b * sin θ⟩ = b ∧
       ∠ (c : ℂ) 0 ⟨b * cos θ, b * sin θ⟩ = θ := by
@@ -88,11 +91,12 @@ theorem obstoj_sks {b c θ : ℝ} (hb : 0 < b) (hc : 0 < c) (h0 : 0 ≤ θ) (hπ
   · simp only [EuclideanGeometry.angle, vsub_eq_sub, sub_zero]
     exact kot_zarek hc hb h0 hπ
 
-/-- Predpostavke trditve `obstoj_sks` se dajo izpolniti (b = 4, c = 5, θ = π/3: Primer 2). -/
-example : (0 : ℝ) < 4 ∧ (0 : ℝ) < 5 ∧ 0 ≤ π / 3 ∧ π / 3 ≤ π :=
-  ⟨by norm_num, by norm_num, by positivity, by linarith [pi_pos]⟩
+/-- Predpostavke trditve `obstoj_sks` se dajo izpolniti: izrek, uporabljen na primeru (b = 4, c = 5, θ = π/3: Primer 2). -/
+example := obstoj_sks (b := 4) (c := 5) (θ := π / 3) (by norm_num) (by norm_num) (by positivity)
+    (by linarith [pi_pos])
 
-/-- Pomožno: trikotnik z A, B na realni osi (A ≠ B) in C zunaj nje (Im C ≠ 0) ni izrojen. -/
+/-- Pomožno: trikotnik z A, B na realni osi (A ≠ B) in C zunaj nje (Im C ≠ 0) ni izrojen.
+pomozno – nesploščenost trikotnika v ℂ -/
 theorem nekolinearni_c {A B C : ℂ} (hA : A.im = 0) (hB : B.im = 0) (hAB : A ≠ B) (hC : C.im ≠ 0) :
     ¬ Collinear ℝ ({A, B, C} : Set ℂ) := by
   rw [collinear_iff_of_mem (p₀ := A) (by simp)]
@@ -114,18 +118,20 @@ theorem nekolinearni_c {A B C : ℂ} (hA : A.im = 0) (hB : B.im = 0) (hAB : A �
   rw [hv0, mul_zero] at i₂
   exact hC i₂
 
-/-- Predpostavke trditve `nekolinearni_c` se dajo izpolniti (A = 0, B = 1, C = i). -/
-example : (0 : ℂ).im = 0 ∧ (1 : ℂ).im = 0 ∧ (0 : ℂ) ≠ 1 ∧ Complex.I.im ≠ 0 := by
-  refine ⟨by simp, by simp, zero_ne_one, by simp⟩
+/-- Predpostavke trditve `nekolinearni_c` se dajo izpolniti: izrek, uporabljen na primeru (A = 0, B = 1, C = i). -/
+example := nekolinearni_c (A := 0) (B := 1) (C := Complex.I) (by simp) (by simp) zero_ne_one (by simp)
 
-/-- Pomožno: trikotnik 0, 1, i v ℂ ni izrojen. -/
+/-- Pomožno: trikotnik 0, 1, i v ℂ ni izrojen.
+pomozno – nesploščen trikotnik 0, 1, i za primere izpolnljivosti -/
 theorem nekolinearni : ¬ Collinear ℝ ({(0 : ℂ), 1, Complex.I} : Set ℂ) :=
   nekolinearni_c (by simp) (by simp) zero_ne_one (by simp)
 
 /-! ## 1.–3. Skladnost -/
 
 /-- Razlaga 3 (sss), Zakaj se tega učimo (tog trikotnik), Iz vsakdanjega življenja: trikotnika, ki se ujemata v
-vseh treh stranicah, sta skladna (tudi istoležni koti so enaki). -/
+vseh treh stranicah, sta skladna (tudi istoležni koti so enaki).
+trditev: MAT-OS-7/konstrukcije-trikotnikov#sss
+besedilo: »Stojalo za telefon iz poskusa ostane trdno, ker je trikotnik iz treh danih stranic tog (izrek sss).« -/
 theorem sss {A B C A₁ B₁ C₁ : P} (h1 : dist A B = dist A₁ B₁) (h2 : dist B C = dist B₁ C₁)
     (h3 : dist C A = dist C₁ A₁) : (![A, B, C] ≅ ![A₁, B₁, C₁]) ∧ ∠ C A B = ∠ C₁ A₁ B₁ ∧
       ∠ A B C = ∠ A₁ B₁ C₁ ∧ ∠ B C A = ∠ B₁ C₁ A₁ := by
@@ -134,14 +140,18 @@ theorem sss {A B C A₁ B₁ C₁ : P} (h1 : dist A B = dist A₁ B₁) (h2 : di
     by simpa using angle_eq_of_congruent hc 1 2 0⟩
 
 /-- Razlaga 3 in 4 (sks), Primer 2, Preveri se 1: dve stranici b = |AC|, c = |AB| in kot α med njima (pri A) določajo
-trikotnik: trikotnika z enakimi b, c, α sta skladna. -/
+trikotnik: trikotnika z enakimi b, c, α sta skladna.
+trditev: MAT-OS-7/konstrukcije-trikotnikov#sks
+besedilo: »Pri sks kot leži med danima stranicama in natanko določi razdaljo med njunima koncema.« -/
 theorem sks {A B C A₁ B₁ C₁ : P} (h : ∠ B A C = ∠ B₁ A₁ C₁) (hc : dist A B = dist A₁ B₁)
     (hb : dist A C = dist A₁ C₁) : ![A, B, C] ≅ ![A₁, B₁, C₁] := by
   have k := side_angle_side h (by rwa [dist_comm B A, dist_comm B₁ A₁]) hb
   exact side_side_side hc (by simpa using k.dist_eq 0 2) (by rw [dist_comm, hb, dist_comm])
 
 /-- Razlaga 3 (ksk), Primer 3: stranica c = |AB| in oba kota ob njej (α pri A, β pri B) določajo trikotnik
-(trikotnik ni izrojen). -/
+(trikotnik ni izrojen).
+trditev: MAT-OS-7/konstrukcije-trikotnikov#ksk
+besedilo: »**ksk** | stranici in **obeh kotih ob njej** | $c$, $\alpha$, $\beta$« -/
 theorem ksk {A B C A₁ B₁ C₁ : P} (hn : ¬ Collinear ℝ ({A, B, C} : Set P)) (hα : ∠ C A B = ∠ C₁ A₁ B₁)
     (hc : dist A B = dist A₁ B₁) (hβ : ∠ A B C = ∠ A₁ B₁ C₁) : ![A, B, C] ≅ ![A₁, B₁, C₁] := by
   have hn' : ¬ Collinear ℝ ({C, A, B} : Set P) := by
@@ -151,7 +161,9 @@ theorem ksk {A B C A₁ B₁ C₁ : P} (hn : ¬ Collinear ℝ ({A, B, C} : Set P
 
 /-- Razlaga 3 in 4 (ssk): dve stranici a = |BC|, b = |AC| in kot α pri A, ki leži nasproti daljše od njiju (a > b),
 določajo trikotnik (A ≠ B in A₁ ≠ B₁ sledita iz |AC| < |BC|). Dokaz: po kosinusnem izreku je c = |AB| pozitivna rešitev
-c² − 2bc·cos α + (b² − a²) = 0; zmnožek rešitev je b² − a² < 0, zato je pozitivna rešitev ena sama. -/
+c² − 2bc·cos α + (b² − a²) = 0; zmnožek rešitev je b² − a² < 0, zato je pozitivna rešitev ena sama.
+trditev: MAT-OS-7/konstrukcije-trikotnikov#ssk
+besedilo: »**ssk** | dveh stranicah in kotu **nasproti daljše** | $a$, $b$, $\alpha$; $a > b$« -/
 theorem ssk {A B C A₁ B₁ C₁ : P} (h : ∠ C A B = ∠ C₁ A₁ B₁)
     (hb : dist A C = dist A₁ C₁) (ha : dist B C = dist B₁ C₁) (hdalj : dist A C < dist B C) :
     ![A, B, C] ≅ ![A₁, B₁, C₁] := by
@@ -179,36 +191,44 @@ theorem ssk {A B C A₁ B₁ C₁ : P} (h : ∠ C A B = ∠ C₁ A₁ B₁)
     nlinarith [mul_pos hc hc₁]
   exact side_side_side hc_eq ha (by rw [dist_comm C A, dist_comm C₁ A₁]; exact hb)
 
-/-- Predpostavke trditev `sss`, `sks`, `ksk`, `ssk` se dajo izpolniti (isti trikotnik A = 0, B = 1, C = i dvakrat:
-nekolinearen, |AC| = 1 < |BC| = √2). -/
-example : ¬ Collinear ℝ ({(0 : ℂ), 1, Complex.I} : Set ℂ) ∧ (0 : ℂ) ≠ 1 ∧
-    dist (0 : ℂ) Complex.I < dist (1 : ℂ) Complex.I := by
-  refine ⟨nekolinearni, zero_ne_one, ?_⟩
-  rw [Complex.dist_eq_re_im, Complex.dist_eq_re_im]; simp
-  rw [Real.lt_sqrt (by norm_num)]; norm_num
+/-- Predpostavke trditve `sss` se dajo izpolniti: izrek, uporabljen na primeru (trikotnik 0, 1, i dvakrat). -/
+example := sss (A := (0 : ℂ)) (B := 1) (C := Complex.I) (A₁ := 0) (B₁ := 1) (C₁ := Complex.I) rfl rfl rfl
+
+/-- Predpostavke trditve `sks` se dajo izpolniti: izrek, uporabljen na primeru (trikotnik 0, 1, i dvakrat). -/
+example := sks (A := (0 : ℂ)) (B := 1) (C := Complex.I) (A₁ := 0) (B₁ := 1) (C₁ := Complex.I) rfl rfl rfl
+
+/-- Predpostavke trditve `ksk` se dajo izpolniti: izrek, uporabljen na primeru (nekolinearni 0, 1, i dvakrat). -/
+example := ksk (A := (0 : ℂ)) (B := 1) (C := Complex.I) (A₁ := 0) (B₁ := 1) (C₁ := Complex.I) nekolinearni rfl rfl rfl
+
+/-- Predpostavke trditve `ssk` se dajo izpolniti: izrek, uporabljen na primeru (0, 1, i dvakrat: |AC| = 1 < |BC| = √2). -/
+example := ssk (A := (0 : ℂ)) (B := 1) (C := Complex.I) (A₁ := 0) (B₁ := 1) (C₁ := Complex.I) rfl rfl rfl
+    (by rw [Complex.dist_eq_re_im, Complex.dist_eq_re_im]; simp; rw [Real.lt_sqrt (by norm_num)]; norm_num)
 
 /-- Razlaga 1, premisli 1 (dve stranici nista dovolj): trikotnika z enakima b = |AC|, c = |AB|, a različnima kotoma
-med njima, nista skladna. -/
+med njima, nista skladna.
+trditev: MAT-OS-7/konstrukcije-trikotnikov#dve-stranici-ne
+besedilo: »Ne. Trakova lahko spneš pod različnimi koti in vsakič dobiš drug trikotnik.« -/
 theorem dve_stranici_ne {A B C A₁ B₁ C₁ : P} (_hc : dist A B = dist A₁ B₁)
     (_hb : dist A C = dist A₁ C₁) (h : ∠ B A C ≠ ∠ B₁ A₁ C₁) : ¬ (![A, B, C] ≅ ![A₁, B₁, C₁]) := by
   intro hc
   exact h (by simpa using angle_eq_of_congruent hc 1 0 2)
 
-/-- Predpostavke trditve `dve_stranici_ne` se dajo izpolniti: b = 10, c = 8 pri kotih π/3 in π/2 (`obstoj_sks`). -/
-example : dist (0 : ℂ) ((8 : ℝ) : ℂ) = dist (0 : ℂ) ((8 : ℝ) : ℂ) ∧
-    dist (0 : ℂ) ⟨10 * cos (π / 3), 10 * sin (π / 3)⟩ = dist (0 : ℂ) ⟨10 * cos (π / 2), 10 * sin (π / 2)⟩ ∧
-    ∠ ((8 : ℝ) : ℂ) 0 ⟨10 * cos (π / 3), 10 * sin (π / 3)⟩ ≠
-    ∠ ((8 : ℝ) : ℂ) 0 ⟨10 * cos (π / 2), 10 * sin (π / 2)⟩ := by
-  have k1 := obstoj_sks (b := 10) (c := 8) (θ := π / 3) (by norm_num) (by norm_num) (by positivity)
-    (by linarith [pi_pos])
-  have k2 := obstoj_sks (b := 10) (c := 8) (θ := π / 2) (by norm_num) (by norm_num) (by positivity)
-    (by linarith [pi_pos])
-  refine ⟨rfl, k1.2.1.trans k2.2.1.symm, ?_⟩
-  rw [k1.2.2, k2.2.2]
-  intro h; have := pi_pos; linarith
+/-- Predpostavke trditve `dve_stranici_ne` se dajo izpolniti: izrek, uporabljen na primeru: b = 10, c = 8 pri kotih π/3 in π/2 (`obstoj_sks`). -/
+example := dve_stranici_ne (A := (0 : ℂ)) (B := ((8 : ℝ) : ℂ)) (C := ⟨10 * cos (π / 3), 10 * sin (π / 3)⟩)
+    (A₁ := 0) (B₁ := ((8 : ℝ) : ℂ)) (C₁ := ⟨10 * cos (π / 2), 10 * sin (π / 2)⟩) rfl
+    (by rw [(obstoj_sks (b := 10) (c := 8) (θ := π / 3) (by norm_num) (by norm_num) (by positivity)
+      (by linarith [pi_pos])).2.1,
+      (obstoj_sks (b := 10) (c := 8) (θ := π / 2) (by norm_num) (by norm_num) (by positivity)
+      (by linarith [pi_pos])).2.1])
+    (by rw [(obstoj_sks (b := 10) (c := 8) (θ := π / 3) (by norm_num) (by norm_num) (by positivity)
+      (by linarith [pi_pos])).2.2,
+      (obstoj_sks (b := 10) (c := 8) (θ := π / 2) (by norm_num) (by norm_num) (by positivity)
+      (by linarith [pi_pos])).2.2]; intro h; have := pi_pos; linarith)
 
 /-- Razlaga 2, Povzetek 1: skladna trikotnika (△ABC ≅ △A₁B₁C₁) imata enako dolge istoležne stranice in enako velike
-istoležne kote. -/
+istoležne kote.
+trditev: MAT-OS-7/konstrukcije-trikotnikov#skladna
+besedilo: »Skladna trikotnika imata enako dolge istoležne stranice in enako velike istoležne kote.« -/
 theorem skladna {A B C A₁ B₁ C₁ : P} (h : ![A, B, C] ≅ ![A₁, B₁, C₁]) :
     dist B C = dist B₁ C₁ ∧ dist C A = dist C₁ A₁ ∧ dist A B = dist A₁ B₁ ∧ ∠ C A B = ∠ C₁ A₁ B₁ ∧
       ∠ A B C = ∠ A₁ B₁ C₁ ∧ ∠ B C A = ∠ B₁ C₁ A₁ := by
@@ -216,12 +236,15 @@ theorem skladna {A B C A₁ B₁ C₁ : P} (h : ![A, B, C] ≅ ![A₁, B₁, C�
     by simpa using angle_eq_of_congruent h 2 0 1, by simpa using angle_eq_of_congruent h 0 1 2,
     by simpa using angle_eq_of_congruent h 1 2 0⟩
 
-/-- Predpostavka trditve `skladna` se da izpolniti (trikotnik 0, 1, i je skladen sam s sabo). -/
-example : ![(0 : ℂ), 1, Complex.I] ≅ ![(0 : ℂ), 1, Complex.I] := Congruent.refl _
+/-- Predpostavka trditve `skladna` se da izpolniti: izrek, uporabljen na primeru (trikotnik 0, 1, i je skladen sam s sabo). -/
+example := skladna (A := (0 : ℂ)) (B := 1) (C := Complex.I) (A₁ := 0) (B₁ := 1) (C₁ := Complex.I)
+    (Congruent.refl _)
 
 /-- Razlaga 1, Pogoste napake 5, Preveri se 3 (trije koti ne določajo trikotnika): trikotnik, raztegnjen s faktorjem
 r > 0, r ≠ 1, ima enake vse tri kote, a drugačne stranice, zato ni skladen s prvotnim; koti 50°, 60°, 70° dajo
-180°. -/
+180°.
+trditev: MAT-OS-7/konstrukcije-trikotnikov#kkk-ne
+besedilo: »Koti določijo obliko, velikosti pa ne.« -/
 theorem kkk_ne (A B C : V) {r : ℝ} (hr : 0 < r) (hr1 : r ≠ 1) (hAB : A ≠ B) :
     ∠ (r • C) (r • A) (r • B) = ∠ C A B ∧ ∠ (r • A) (r • B) (r • C) = ∠ A B C ∧
       ∠ (r • B) (r • C) (r • A) = ∠ B C A ∧ dist (r • A) (r • B) ≠ dist A B ∧
@@ -240,20 +263,22 @@ theorem kkk_ne (A B C : V) {r : ℝ} (hr : 0 < r) (hr1 : r ≠ 1) (hAB : A ≠ B
     · linarith
   refine ⟨hk C A B, hk A B C, hk B C A, hd, fun h => hd (by simpa using h.dist_eq 0 1), by norm_num⟩
 
-/-- Predpostavke trditve `kkk_ne` se dajo izpolniti (r = 2, A = 0, B = 1 v ℂ). -/
-example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℂ) ≠ 1 := ⟨by norm_num, by norm_num, zero_ne_one⟩
+/-- Predpostavke trditve `kkk_ne` se dajo izpolniti: izrek, uporabljen na primeru (r = 2, A = 0, B = 1 v ℂ). -/
+example := kkk_ne (0 : ℂ) 1 Complex.I (r := 2) (by norm_num) (by norm_num) zero_ne_one
 
 /-! ## 5. Kdaj trikotnik obstaja -/
 
-/-- Pomožno: nekolinearnost ni odvisna od vrstnega reda točk. -/
+/-- Pomožno: nekolinearnost ni odvisna od vrstnega reda točk.
+pomozno – nesploščenost ni odvisna od vrstnega reda točk -/
 theorem nk {A B C X Y Z : P} (h : ¬ Collinear ℝ ({A, B, C} : Set P))
     (e : ({X, Y, Z} : Set P) = {A, B, C}) : ¬ Collinear ℝ ({X, Y, Z} : Set P) := e ▸ h
 
-/-- Predpostavki trditve `nk` se dajo izpolniti (nekolinearni 0, 1, i in ista množica). -/
-example : ¬ Collinear ℝ ({(0 : ℂ), 1, Complex.I} : Set ℂ) ∧
-    ({(0 : ℂ), 1, Complex.I} : Set ℂ) = {(0 : ℂ), 1, Complex.I} := ⟨nekolinearni, rfl⟩
+/-- Predpostavki trditve `nk` se dajo izpolniti: izrek, uporabljen na primeru (nekolinearni 0, 1, i in ista množica). -/
+example := nk (A := (0 : ℂ)) (B := 1) (C := Complex.I) (X := 0) (Y := 1) (Z := Complex.I) nekolinearni rfl
 
-/-- Razlaga 5 (trikotniška neenakost), Povzetek 4: v trikotniku je vsaka stranica krajša od vsote drugih dveh. -/
+/-- Razlaga 5 (trikotniška neenakost), Povzetek 4: v trikotniku je vsaka stranica krajša od vsote drugih dveh.
+trditev: MAT-OS-7/konstrukcije-trikotnikov#trikotniska-neenakost
+besedilo: »Za stranice velja **trikotniška neenakost**: krajši stranici sta skupaj daljši od najdaljše.« -/
 theorem trikotniska_neenakost {A B C : P} (h : ¬ Collinear ℝ ({A, B, C} : Set P)) :
     dist B C < dist C A + dist A B ∧ dist C A < dist B C + dist A B ∧ dist A B < dist B C + dist C A := by
   have hw : ∀ X Y Z : P, ¬ Collinear ℝ ({X, Y, Z} : Set P) → dist X Z < dist X Y + dist Y Z :=
@@ -266,17 +291,24 @@ theorem trikotniska_neenakost {A B C : P} (h : ¬ Collinear ℝ ({A, B, C} : Set
   · linarith [dist_comm C B, dist_comm B A]
   · linarith [dist_comm C B, dist_comm A C, dist_comm C A]
 
-/-- Razlaga 5, premisli 2: pri znanih stranicah a = |BC|, b = |CA| je tretja med |a − b| in a + b. -/
+/-- Razlaga 5, premisli 2: pri znanih stranicah a = |BC|, b = |CA| je tretja med |a − b| in a + b.
+trditev: MAT-OS-7/konstrukcije-trikotnikov#meje-tretje
+besedilo: »Več kot $4 - 3 = 1\,\text{cm}$ in manj kot $3 + 4 = 7\,\text{cm}$.« -/
 theorem meje_tretje {A B C : P} (h : ¬ Collinear ℝ ({A, B, C} : Set P)) :
     |dist B C - dist C A| < dist A B ∧ dist A B < dist B C + dist C A := by
   obtain ⟨h1, h2, h3⟩ := trikotniska_neenakost h
   exact ⟨abs_sub_lt_iff.mpr ⟨by linarith, by linarith⟩, h3⟩
 
-/-- Predpostavka trditev `trikotniska_neenakost` in `meje_tretje` se da izpolniti (0, 1, i). -/
-example : ¬ Collinear ℝ ({(0 : ℂ), 1, Complex.I} : Set ℂ) := nekolinearni
+/-- Predpostavka trditve `trikotniska_neenakost` se da izpolniti: izrek, uporabljen na primeru (0, 1, i). -/
+example := trikotniska_neenakost nekolinearni
+
+/-- Predpostavka trditve `meje_tretje` se da izpolniti: izrek, uporabljen na primeru (0, 1, i). -/
+example := meje_tretje nekolinearni
 
 /-- Razlaga 5 (krožnici se ne sekata), Zakaj se tega učimo (3, 4, 8), Preveri se 5: če je |AB| > b + a, ni točke C,
-ki bi bila od A oddaljena b in od B oddaljena a. -/
+ki bi bila od A oddaljena b in od B oddaljena a.
+trditev: MAT-OS-7/konstrukcije-trikotnikov#kroznici-se-ne-sekata
+besedilo: »Če je $a + b$ premalo v primerjavi s $c$, krožnici ne sežeta druga do druge, se ne sekata in trikotnika ni.« -/
 theorem kroznici_se_ne_sekata {A B : P} {a b : ℝ} (h : a + b < dist A B) :
     ¬ ∃ C : P, dist A C = b ∧ dist B C = a := by
   rintro ⟨C, h1, h2⟩
@@ -284,24 +316,27 @@ theorem kroznici_se_ne_sekata {A B : P} {a b : ℝ} (h : a + b < dist A B) :
   rw [dist_comm C B] at this
   linarith
 
-/-- Predpostavka trditve `kroznici_se_ne_sekata` se da izpolniti (A = 0, B = 8, a = 4, b = 3 v ℂ). -/
-example : (4 : ℝ) + 3 < dist (0 : ℂ) 8 := by
-  rw [dist_c (show (0 : ℝ) ≤ 8 by norm_num) (by simp)]; norm_num
+/-- Predpostavka trditve `kroznici_se_ne_sekata` se da izpolniti: izrek, uporabljen na primeru (A = 0, B = 8, a = 4, b = 3 v ℂ). -/
+example := kroznici_se_ne_sekata (A := (0 : ℂ)) (B := 8) (a := 4) (b := 3)
+    (by rw [dist_c (show (0 : ℝ) ≤ 8 by norm_num) (by simp)]; norm_num)
 
 /-- Razlaga 5, premisli 2 (sploščen trikotnik): če je c = b + a (|AB| = |AC| + |CB|), C leži na daljici AB, točke so
-na premici in trikotnika ni. -/
+na premici in trikotnika ni.
+trditev: MAT-OS-7/konstrukcije-trikotnikov#splosceni
+besedilo: »Pri točno $1\,\text{cm}$ ali $7\,\text{cm}$ se »trikotnik« splošči v daljico.« -/
 theorem splosceni {A B C : P} (h : dist A B = dist A C + dist C B) :
     Wbtw ℝ A C B ∧ Collinear ℝ ({A, C, B} : Set P) :=
   ⟨dist_add_dist_eq_iff.mp h.symm, (dist_add_dist_eq_iff.mp h.symm).collinear⟩
 
-/-- Predpostavka trditve `splosceni` se da izpolniti (0, 3, 7 na premici: 7 = 3 + 4). -/
-example : dist (0 : ℂ) 7 = dist (0 : ℂ) 3 + dist (3 : ℂ) 7 := by
-  rw [dist_c (show (0 : ℝ) ≤ 7 by norm_num) (by simp), dist_c (show (0 : ℝ) ≤ 3 by norm_num) (by simp),
-    dist_c (show (0 : ℝ) ≤ 4 by norm_num) (by simp; norm_num)]
-  norm_num
+/-- Predpostavka trditve `splosceni` se da izpolniti: izrek, uporabljen na primeru (0, 3, 7 na premici: 7 = 3 + 4). -/
+example := splosceni (A := (0 : ℂ)) (B := 7) (C := 3)
+    (by rw [dist_c (show (0 : ℝ) ≤ 7 by norm_num) (by simp), dist_c (show (0 : ℝ) ≤ 3 by norm_num) (by simp),
+      dist_c (show (0 : ℝ) ≤ 4 by norm_num) (by simp; norm_num)]; norm_num)
 
 /-- Razlaga 5 (obstoj): za a, b, c > 0, ki zadoščajo trikotniški neenakosti, v ℂ obstaja trikotnik z |BC| = a,
-|CA| = b, |AB| = c, ki ni izrojen (A, B na realni osi, Im C > 0). -/
+|CA| = b, |AB| = c, ki ni izrojen (A, B na realni osi, Im C > 0).
+trditev: MAT-OS-7/konstrukcije-trikotnikov#obstoj-trikotnika
+besedilo: »Obstoj: krajši stranici skupaj daljši od najdaljše; dva kota skupaj manj kot $180^\circ$.« -/
 theorem obstoj_trikotnika (a b c : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) (h1 : a < b + c) (h2 : b < a + c)
     (h3 : c < a + b) :
     ∃ A B C : ℂ, dist B C = a ∧ dist C A = b ∧ dist A B = c ∧ ¬ Collinear ℝ ({A, B, C} : Set ℂ) := by
@@ -330,20 +365,24 @@ theorem obstoj_trikotnika (a b c : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) (
     simp at this
     linarith
 
-/-- Predpostavke trditve `obstoj_trikotnika` se dajo izpolniti (a = 5, b = 4, c = 6: Primer 1). -/
-example : (0 : ℝ) < 5 ∧ (0 : ℝ) < 4 ∧ (0 : ℝ) < 6 ∧ (5 : ℝ) < 4 + 6 ∧ (4 : ℝ) < 5 + 6 ∧ (6 : ℝ) < 5 + 4 := by
-  norm_num
+/-- Predpostavke trditve `obstoj_trikotnika` se dajo izpolniti: izrek, uporabljen na primeru (a = 5, b = 4, c = 6: Primer 1). -/
+example := obstoj_trikotnika 5 4 6 (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
 
-/-- Razlaga 1 in 6, Povzetek 5: vsota notranjih kotov je π (180°), zato je β = π − α − γ. -/
+/-- Razlaga 1 in 6, Povzetek 5: vsota notranjih kotov je π (180°), zato je β = π − α − γ.
+trditev: MAT-OS-7/konstrukcije-trikotnikov#vsota-kotov
+besedilo: »Najprej izračunaj tretji kot: $$\beta = 180^\circ - \alpha - \gamma$$« -/
 theorem vsota_kotov {A B C : P} (h : B ≠ A) :
     ∠ C A B + ∠ A B C + ∠ B C A = π ∧ ∠ A B C = π - ∠ C A B - ∠ B C A := by
   have := EuclideanGeometry.angle_add_angle_add_angle_eq_pi C h
   exact ⟨by linarith, by linarith⟩
 
-/-- Predpostavka trditve `vsota_kotov` se da izpolniti (B = 1 ≠ A = 0 v ℂ). -/
-example : (1 : ℂ) ≠ 0 := one_ne_zero
+/-- Predpostavka trditve `vsota_kotov` se da izpolniti: izrek, uporabljen na primeru (B = 1 ≠ A = 0 v ℂ). -/
+example := vsota_kotov (A := (0 : ℂ)) (B := 1) (C := Complex.I) one_ne_zero
 
-/-- Razlaga 5, Povzetek 4 (pogoj za kote): v trikotniku dva kota skupaj merita manj kot π (180°). -/
+/-- Razlaga 5, Povzetek 4 (pogoj za kote): v trikotniku dva kota skupaj merita manj kot π (180°).
+trditev: MAT-OS-7/konstrukcije-trikotnikov#dva-kota
+besedilo: »Za kote že poznaš pogoj: dva dana kota skupaj merita manj kot $180^\circ$.« -/
 theorem dva_kota {A B C : P} (h : ¬ Collinear ℝ ({A, B, C} : Set P)) : ∠ C A B + ∠ A B C < π := by
   have hBA : B ≠ A := (ne₁₂_of_not_collinear h).symm
   have hs := (vsota_kotov (C := C) hBA).1
@@ -355,13 +394,15 @@ theorem dva_kota {A B C : P} (h : ¬ Collinear ℝ ({A, B, C} : Set P)) : ∠ C 
   have : 0 < ∠ B C A := lt_of_le_of_ne this (Ne.symm hγ)
   linarith
 
-/-- Predpostavka trditve `dva_kota` se da izpolniti (0, 1, i). -/
-example : ¬ Collinear ℝ ({(0 : ℂ), 1, Complex.I} : Set ℂ) := nekolinearni
+/-- Predpostavka trditve `dva_kota` se da izpolniti: izrek, uporabljen na primeru (0, 1, i). -/
+example := dva_kota nekolinearni
 
 /-! ## 8. Koti s šestilom -/
 
 /-- Razlaga 8, Primer 2 korak 3: kot enakostraničnega trikotnika (teme V, T in presečišče lokov S z
-|VT| = |VS| = |TS|) meri π/3 (60°). -/
+|VT| = |VS| = |TS|) meri π/3 (60°).
+trditev: MAT-OS-7/konstrukcije-trikotnikov#kot60
+besedilo: »Poltrak skozi presečišče lokov oklepa s krakom $60^\circ$, saj teme, $T$ in presečišče tvorijo enakostranični trikotnik.« -/
 theorem kot60 {Vv T S : P} (hT : T ≠ Vv) (h1 : dist Vv T = dist Vv S) (h2 : dist T S = dist T Vv) :
     ∠ T Vv S = π / 3 := by
   have e1 := EuclideanGeometry.angle_eq_angle_of_dist_eq h1
@@ -371,27 +412,31 @@ theorem kot60 {Vv T S : P} (hT : T ≠ Vv) (h1 : dist Vv T = dist Vv S) (h2 : di
   linarith [EuclideanGeometry.angle_comm Vv S T, EuclideanGeometry.angle_comm S T Vv,
     EuclideanGeometry.angle_comm T Vv S, EuclideanGeometry.angle_comm S Vv T]
 
-/-- Predpostavke trditve `kot60` se dajo izpolniti: V = 0, T = 2, S = 1 + √3·i v ℂ. -/
-example : (2 : ℂ) ≠ 0 ∧ dist (0 : ℂ) 2 = dist (0 : ℂ) ⟨1, √3⟩ ∧ dist (2 : ℂ) ⟨1, √3⟩ = dist (2 : ℂ) 0 := by
-  have h3 : (√3 : ℝ) ^ 2 = 3 := Real.sq_sqrt (by norm_num)
-  have e1 : dist (0 : ℂ) 2 = 2 := dist_c (by norm_num) (by simp)
-  have e2 : dist (0 : ℂ) ⟨1, √3⟩ = 2 := dist_c (by norm_num) (by simp; norm_num [h3])
-  have e3 : dist (2 : ℂ) ⟨1, √3⟩ = 2 := dist_c (by norm_num) (by simp; norm_num [h3])
-  have e4 : dist (2 : ℂ) 0 = 2 := dist_c (by norm_num) (by simp)
-  exact ⟨two_ne_zero, e1.trans e2.symm, e3.trans e4.symm⟩
+/-- Predpostavke trditve `kot60` se dajo izpolniti: izrek, uporabljen na primeru: V = 0, T = 2, S = 1 + √3·i v ℂ. -/
+example := kot60 (Vv := (0 : ℂ)) (T := 2) (S := ⟨1, √3⟩) two_ne_zero
+    (by rw [dist_c (z := 0) (w := 2) (d := 2) (by norm_num) (by simp),
+      dist_c (z := 0) (w := ⟨1, √3⟩) (d := 2) (by norm_num) (by simp; norm_num [Real.sq_sqrt (show (0 : ℝ) ≤ 3 by norm_num)])])
+    (by rw [dist_c (z := 2) (w := ⟨1, √3⟩) (d := 2) (by norm_num) (by simp; norm_num [Real.sq_sqrt (show (0 : ℝ) ≤ 3 by norm_num)]),
+      dist_c (z := 2) (w := 0) (d := 2) (by norm_num) (by simp)])
 
 /-- Razlaga 8, Primer 3 korak 3: z razpolavljanjem 60 : 2 = 30 in 90 : 2 = 45 (v radianih (π/3)/2 = π/6,
-(π/2)/2 = π/4). -/
+(π/2)/2 = π/4).
+trditev: MAT-OS-7/konstrukcije-trikotnikov#razpolavljanje
+besedilo: »Z razpolavljanjem dobiš $30^\circ$ iz $60^\circ$ in $45^\circ$ iz pravega kota.« -/
 theorem razpolavljanje : (60 : ℝ) / 2 = 30 ∧ (90 : ℝ) / 2 = 45 ∧ π / 3 / 2 = π / 6 ∧ π / 2 / 2 = π / 4 := by
   refine ⟨by norm_num, by norm_num, by ring, by ring⟩
 
 /-! ## Rešeni primeri -/
 
-/-- Primer 1, korak 1 in `RACUN`: najdaljša je c = 6, a + b = 5 + 4 = 9 > 6, trikotnik obstaja. -/
+/-- Primer 1, korak 1 in `RACUN`: najdaljša je c = 6, a + b = 5 + 4 = 9 > 6, trikotnik obstaja.
+trditev: MAT-OS-7/konstrukcije-trikotnikov#primer1-obstoj
+besedilo: »Obstoj: najdaljša je $c = 6\,\text{cm}$, $a + b = 5 + 4 = 9\,\text{cm} > 6\,\text{cm}$. Trikotnik obstaja.« -/
 theorem primer1_obstoj : (5 : ℝ) + 4 = 9 ∧ (9 : ℝ) > 6 ∧ (5 : ℝ) < 4 + 6 ∧ (4 : ℝ) < 5 + 6 := by norm_num
 
 /-- Primer 1, korak 2–6 (vse rešitve): pri A = 0, B = 6 so točke C, oddaljene 4 od A in 5 od B, natanko dve:
-C = 9/4 ± (5√7/4)·i (zrcalni glede na AB; 9/4 = 2,25, 5√7/4 ≈ 3,31 kot na risbi). -/
+C = 9/4 ± (5√7/4)·i (zrcalni glede na AB; 9/4 = 2,25, 5√7/4 ≈ 3,31 kot na risbi).
+trditev: MAT-OS-7/konstrukcije-trikotnikov#primer1
+besedilo: »Loka se sekata v dveh točkah, $C$ nad daljico in $C'$ pod njo.« -/
 theorem primer1 (z : ℂ) :
     (dist z 0 = 4 ∧ dist z 6 = 5) ↔ (z = ⟨9 / 4, 5 * √7 / 4⟩ ∨ z = ⟨9 / 4, -(5 * √7 / 4)⟩) := by
   have h7 : (√7 : ℝ) ^ 2 = 7 := Real.sq_sqrt (by norm_num)
@@ -415,7 +460,9 @@ theorem primer1 (z : ℂ) :
     · exact ⟨dist_c (by norm_num) (by simp; nlinarith [h7]), dist_c (by norm_num) (by simp; nlinarith [h7])⟩
 
 /-- Primer 1, korak 5, Razlaga 7 (diskusija): trikotnik ABC in njegova zrcalna slika ABC' (A, B na realni osi,
-C' = C̄) sta skladna (sss), zato podatki sss dajo en sam trikotnik. -/
+C' = C̄) sta skladna (sss), zato podatki sss dajo en sam trikotnik.
+trditev: MAT-OS-7/konstrukcije-trikotnikov#zrcalni
+besedilo: »Trikotnika $ABC$ in $ABC'$ sta skladna (zrcalna).« -/
 theorem zrcalni (A B C : ℂ) (hA : A.im = 0) (hB : B.im = 0) : ![A, B, C] ≅ ![A, B, conj C] := by
   have key : ∀ w : ℂ, w.im = 0 → dist w C = dist w (conj C) := by
     intro w hw
@@ -424,11 +471,13 @@ theorem zrcalni (A B C : ℂ) (hA : A.im = 0) (hB : B.im = 0) : ![A, B, C] ≅ !
     ring_nf
   exact side_side_side rfl (key B hB) (by rw [dist_comm, key A hA, dist_comm])
 
-/-- Predpostavke trditve `zrcalni` se dajo izpolniti (A = 0, B = 6). -/
-example : (0 : ℂ).im = 0 ∧ (6 : ℂ).im = 0 := by simp
+/-- Predpostavke trditve `zrcalni` se dajo izpolniti: izrek, uporabljen na primeru (A = 0, B = 6). -/
+example := zrcalni 0 6 Complex.I (by simp) (by simp)
 
 /-- Primer 2 (sks): v vsakem trikotniku z b = |AC| = 4, c = |AB| = 5 in α = ∠ B A C = π/3 (60°) je
-a = |BC| = √(4² + 5² − 2 · 4 · 5 · cos 60°) = √21 (kosinusni izrek). -/
+a = |BC| = √(4² + 5² − 2 · 4 · 5 · cos 60°) = √21 (kosinusni izrek).
+trditev: MAT-OS-7/konstrukcije-trikotnikov#primer2
+besedilo: »Analiza: kot $\alpha$ leži pri $A$, kjer se stikata $b$ in $c$, torej med danima stranicama. To je izrek sks, rešitev je ena.« -/
 theorem primer2 {A B C : P} (hb : dist A C = 4) (hc : dist A B = 5) (hα : ∠ B A C = π / 3) :
     dist B C = √21 := by
   have l := EuclideanGeometry.law_cos B A C
@@ -436,24 +485,33 @@ theorem primer2 {A B C : P} (hb : dist A C = 4) (hc : dist A B = 5) (hα : ∠ B
   rw [← Real.sqrt_mul_self dist_nonneg, l]
   norm_num
 
-/-- Predpostavke trditve `primer2` se dajo izpolniti (`obstoj_sks` z b = 4, c = 5, θ = π/3). -/
-example : ∃ A B C : ℂ, dist A C = 4 ∧ dist A B = 5 ∧ ∠ B A C = π / 3 := by
-  obtain ⟨h1, h2, h3⟩ := obstoj_sks (b := 4) (c := 5) (θ := π / 3) (by norm_num) (by norm_num) (by positivity)
-    (by linarith [pi_pos])
-  exact ⟨0, (5 : ℝ), ⟨4 * cos (π / 3), 4 * sin (π / 3)⟩, h2, h1, h3⟩
+/-- Predpostavke trditve `primer2` se dajo izpolniti: izrek, uporabljen na primeru (`obstoj_sks` z b = 4, c = 5, θ = π/3). -/
+example := primer2 (A := (0 : ℂ)) (B := ((5 : ℝ) : ℂ)) (C := ⟨4 * cos (π / 3), 4 * sin (π / 3)⟩)
+    (hb := (obstoj_sks (b := 4) (c := 5) (θ := π / 3) (by norm_num) (by norm_num) (by positivity)
+        (by linarith [pi_pos])).2.1)
+    (hc := (obstoj_sks (b := 4) (c := 5) (θ := π / 3) (by norm_num) (by norm_num) (by positivity)
+        (by linarith [pi_pos])).1)
+    (hα := (obstoj_sks (b := 4) (c := 5) (θ := π / 3) (by norm_num) (by norm_num) (by positivity)
+        (by linarith [pi_pos])).2.2)
 
-/-- Primer 2, korak 5 in `RACUN`: 4² + 5² − 2 · 4 · 5 · cos 60° = 21 in a = √21 ≈ 4,6. -/
+/-- Primer 2, korak 5 in `RACUN`: 4² + 5² − 2 · 4 · 5 · cos 60° = 21 in a = √21 ≈ 4,6.
+trditev: MAT-OS-7/konstrukcije-trikotnikov#primer2-racun
+besedilo: »Odgovor: dobimo en trikotnik; z merjenjem je $a \approx 4{,}6\,\text{cm}$.« -/
 theorem primer2_racun : (4 : ℝ) ^ 2 + 5 ^ 2 - 2 * 4 * 5 * cos (π / 3) = 21 ∧ |√21 - 4.6| < 0.05 := by
   refine ⟨by rw [cos_pi_div_three]; norm_num, ?_⟩
   have l : (4.55 : ℝ) < √21 := (Real.lt_sqrt (by norm_num)).mpr (by norm_num)
   have u : √21 < (4.65 : ℝ) := (Real.sqrt_lt' (by norm_num)).mpr (by norm_num)
   rw [abs_lt]; constructor <;> linarith
 
-/-- Primer 3, korak 1–4 (premisli): β = 180° − 45° − 75° = 60°, α + β = 45° + 60° = 105° < 180°. -/
+/-- Primer 3, korak 1–4 (premisli): β = 180° − 45° − 75° = 60°, α + β = 45° + 60° = 105° < 180°.
+trditev: MAT-OS-7/konstrukcije-trikotnikov#primer3-racun
+besedilo: »$\beta = 180^\circ - 45^\circ - 75^\circ = 60^\circ$. Ker je $\alpha + \beta = 105^\circ < 180^\circ$, trikotnik obstaja.« -/
 theorem primer3_racun : (180 : ℝ) - 45 - 75 = 60 ∧ (45 : ℝ) + 60 = 105 ∧ (105 : ℝ) < 180 := by norm_num
 
 /-- Primer 3: v vsakem trikotniku s c = |AB| = 6, α = π/4 (45°) in γ = 5π/12 (75°) je β = π/3 (60°), po sinusnem
-izreku a = 6 · sin 45°/sin 75° in b = 6 · sin 60°/sin 75°. -/
+izreku a = 6 · sin 45°/sin 75° in b = 6 · sin 60°/sin 75°.
+trditev: MAT-OS-7/konstrukcije-trikotnikov#primer3
+besedilo: »V $B$ konstruiraš $60^\circ$ na isto stran $AB$; kraka se sekata v $C$. Preizkus s kotomerom: kot pri $C$ meri $75^\circ$.« -/
 theorem primer3 {A B C : P} (hn : ¬ Collinear ℝ ({A, B, C} : Set P)) (hc : dist A B = 6)
     (hα : ∠ C A B = π / 4) (hγ : ∠ B C A = 5 * π / 12) :
     ∠ A B C = π / 3 ∧ dist B C = 6 * sin (π / 4) / sin (5 * π / 12) ∧
@@ -470,12 +528,15 @@ theorem primer3 {A B C : P} (hn : ¬ Collinear ℝ ({A, B, C} : Set P)) (hc : di
       (nk hn (by ext; simp only [Set.mem_insert_iff, Set.mem_singleton_iff]; tauto))
     rw [dist_comm C A, this, dist_comm B A, hc, angle_comm C B A, hβ, angle_comm A C B, hγ]
 
-/-- Pomožno: sin 75° = sin(45° + 30°) = (√2/2)(√3/2) + (√2/2)(1/2). -/
+/-- Pomožno: sin 75° = sin(45° + 30°) = (√2/2)(√3/2) + (√2/2)(1/2).
+pomozno – vrednost sin 75° za račun meritev -/
 theorem sin75 : sin (5 * π / 12) = √2 / 2 * (√3 / 2) + √2 / 2 * (1 / 2) := by
   rw [show 5 * π / 12 = π / 4 + π / 6 by ring, sin_add, sin_pi_div_four, cos_pi_div_four, sin_pi_div_six,
     cos_pi_div_six]
 
-/-- Primer 3 (premisli) in `RACUN`: a = 6 · sin 45°/sin 75° ≈ 4,4 in b = 6 · sin 60°/sin 75° ≈ 5,4. -/
+/-- Primer 3 (premisli) in `RACUN`: a = 6 · sin 45°/sin 75° ≈ 4,4 in b = 6 · sin 60°/sin 75° ≈ 5,4.
+trditev: MAT-OS-7/konstrukcije-trikotnikov#primer3-meritve
+besedilo: »Izmeriš še $a \approx 4{,}4\,\text{cm}$ in $b \approx 5{,}4\,\text{cm}$.« -/
 theorem primer3_meritve :
     |6 * sin (π / 4) / sin (5 * π / 12) - 4.4| < 0.05 ∧ |6 * sin (π / 3) / sin (5 * π / 12) - 5.4| < 0.05 := by
   rw [sin75, sin_pi_div_four, sin_pi_div_three]
@@ -495,7 +556,8 @@ theorem primer3_meritve :
     · rw [sub_lt_iff_lt_add, div_lt_iff₀ hD]; nlinarith
 
 /-- Pomožno za `example` k Primeru 3: v ℂ je trikotnik A = 0, B = 6, C = s(1 + i) s s = 9 − 3√3 nesploščen in ima
-|AB| = 6, α = π/4, β = π/3, γ = 5π/12. -/
+|AB| = 6, α = π/4, β = π/3, γ = 5π/12.
+pomozno – konkretni trikotnik v ℂ, priča za primer izpolnljivosti -/
 theorem primer3_trikotnik :
     ¬ Collinear ℝ ({(0 : ℂ), 6, ⟨9 - 3 * √3, 9 - 3 * √3⟩} : Set ℂ) ∧ dist (0 : ℂ) 6 = 6 ∧
       ∠ (⟨9 - 3 * √3, 9 - 3 * √3⟩ : ℂ) 0 6 = π / 4 ∧ ∠ (⟨9 - 3 * √3, 9 - 3 * √3⟩ : ℂ) 6 0 = π / 3 ∧
@@ -542,34 +604,35 @@ theorem primer3_trikotnik :
   refine ⟨nekolinearni_c (by simp) (by simp) (by norm_num) (show s ≠ 0 from hs0.ne'),
     dist_c (by norm_num) (by simp), hα, hβ, hγ⟩
 
-/-- Predpostavke trditve `primer3` se dajo izpolniti (`primer3_trikotnik`). -/
-example : ∃ A B C : ℂ, ¬ Collinear ℝ ({A, B, C} : Set ℂ) ∧ dist A B = 6 ∧ ∠ C A B = π / 4 ∧
-    ∠ B C A = 5 * π / 12 := by
-  obtain ⟨h1, h2, h3, -, h5⟩ := primer3_trikotnik
-  exact ⟨_, _, _, h1, h2, h3, h5⟩
+/-- Predpostavke trditve `primer3` se dajo izpolniti: izrek, uporabljen na primeru (`primer3_trikotnik`). -/
+example := primer3 primer3_trikotnik.1 primer3_trikotnik.2.1 primer3_trikotnik.2.2.1 primer3_trikotnik.2.2.2.2
 
 /-! ## Drugače: Na sliki (ssk s kotom nasproti krajše stranice) -/
 
 /-- Točka na kraku kota 30° iz A = 0: t(cos 30° + i sin 30°) = t(√3/2 + i/2). -/
 noncomputable def krak30 (t : ℝ) : ℂ := ⟨t * (√3 / 2), t * (1 / 2)⟩
 
-/-- Pomožno: |krak30 t − 6|² = (t − 3√3)² + 9. -/
+/-- Pomožno: |krak30 t − 6|² = (t − 3√3)² + 9.
+pomozno – razdalja točke na kraku 30° od B -/
 theorem krak30_razdalja (t : ℝ) : dist (krak30 t) 6 ^ 2 = (t - 3 * √3) ^ 2 + 9 := by
   have h3 : (√3 : ℝ) ^ 2 = 3 := Real.sq_sqrt (by norm_num)
   rw [dist_c_sq]; simp [krak30]; linear_combination (t ^ 2 / 4 - 9) * h3
 
-/-- Pomožno: za t > 0 je ∠ B A C = π/6 (30°) pri A = 0, B = 6, C = krak30 t. -/
+/-- Pomožno: za t > 0 je ∠ B A C = π/6 (30°) pri A = 0, B = 6, C = krak30 t.
+pomozno – kot 30° pri točkah na kraku -/
 theorem krak30_kot {t : ℝ} (ht : 0 < t) : ∠ (6 : ℂ) 0 (krak30 t) = π / 6 := by
   simp only [EuclideanGeometry.angle, vsub_eq_sub, sub_zero]
   rw [show (6 : ℂ) = ((6 : ℝ) : ℂ) by simp, krak30, ← cos_pi_div_six, ← sin_pi_div_six]
   exact kot_zarek (by norm_num) ht (by positivity) (by linarith [pi_pos])
 
-/-- Predpostavka trditve `krak30_kot` se da izpolniti (t = 1). -/
-example : (0 : ℝ) < 1 := one_pos
+/-- Predpostavka trditve `krak30_kot` se da izpolniti: izrek, uporabljen na primeru (t = 1). -/
+example := krak30_kot one_pos
 
 /-- Drugače: Na sliki, Razlaga 4: pri c = 6, α = 30° in a = 4 < c sta na kraku dve točki C₁ = krak30 (3√3 − √7) in
 C₂ = krak30 (3√3 + √7) z |BC| = 4; trikotnika ABC₁ in ABC₂ imata enake tri podatke, a nista skladna; kot pri C₁ je
-top, pri C₂ oster. Drugih točk z |BC| = 4 ni: `ssk_dva_vse`. -/
+top, pri C₂ oster. Drugih točk z |BC| = 4 ni: `ssk_dva_vse`.
+trditev: MAT-OS-7/konstrukcije-trikotnikov#ssk-dva
+besedilo: »Trikotnika $ABC_1$ in $ABC_2$ imata enake tri podatke, a nista skladna: kot pri $C_1$ je top, pri $C_2$ pa oster.« -/
 theorem ssk_dva :
     let C₁ := krak30 (3 * √3 - √7)
     let C₂ := krak30 (3 * √3 + √7)
@@ -614,7 +677,9 @@ theorem ssk_dva :
     nlinarith [mul_pos t2 p7]
 
 /-- Drugače: Na sliki: krožnica s središčem B = 6 in polmerom 4 seka premico kraka v natanko dveh točkah,
-t = 3√3 − √7 in t = 3√3 + √7; obe sta na kraku (t > 0, `ssk_dva`). -/
+t = 3√3 − √7 in t = 3√3 + √7; obe sta na kraku (t > 0, `ssk_dva`).
+trditev: MAT-OS-7/konstrukcije-trikotnikov#ssk-dva-vse
+besedilo: »Krožnica seka krak v **dveh** točkah.« -/
 theorem ssk_dva_vse (t : ℝ) :
     dist (krak30 t) 6 = 4 ↔ (t = 3 * √3 - √7 ∨ t = 3 * √3 + √7) := by
   have h7 : (√7 : ℝ) ^ 2 = 7 := Real.sq_sqrt (by norm_num)
@@ -631,7 +696,8 @@ theorem ssk_dva_vse (t : ℝ) :
     rw [show (t - 3 * √3) ^ 2 + 9 = (4 : ℝ) ^ 2 by rcases h with rfl | rfl <;> linear_combination h7]
     exact Real.sqrt_sq (by norm_num)
 
-/-- Pomožno za `ssk_a7`: točka na kraku (t > 0) z |BC| = 7 je največ ena. -/
+/-- Pomožno za `ssk_a7`: točka na kraku (t > 0) z |BC| = 7 je največ ena.
+pomozno – enoličnost točke na kraku, orodje za `ssk_a7` -/
 theorem ssk_a7_enolicno {t₁ t₂ : ℝ} (h1 : 0 < t₁) (h2 : 0 < t₂) (e1 : dist (krak30 t₁) 6 = 7)
     (e2 : dist (krak30 t₂) 6 = 7) : t₁ = t₂ := by
   have q1 := krak30_razdalja t₁
@@ -652,15 +718,16 @@ theorem ssk_a7_enolicno {t₁ t₂ : ℝ} (h1 : 0 < t₁) (h2 : 0 < t₂) (e1 : 
     linear_combination q1 + 9 * h3
   nlinarith [mul_pos h1 h2]
 
-/-- Predpostavke trditve `ssk_a7_enolicno` se dajo izpolniti: t = 3√3 + √40 > 0 da |BC| = 7. -/
-example : 0 < 3 * √3 + √40 ∧ dist (krak30 (3 * √3 + √40)) 6 = 7 := by
-  have h40 : (√40 : ℝ) ^ 2 = 40 := Real.sq_sqrt (by norm_num)
-  refine ⟨by positivity, ?_⟩
-  rw [← Real.sqrt_sq dist_nonneg, krak30_razdalja,
-    show (3 * √3 + √40 - 3 * √3) ^ 2 + 9 = (7 : ℝ) ^ 2 by linear_combination h40]
-  exact Real.sqrt_sq (by norm_num)
+/-- Predpostavke trditve `ssk_a7_enolicno` se dajo izpolniti: izrek, uporabljen na primeru: t = 3√3 + √40 > 0 da |BC| = 7. -/
+example := ssk_a7_enolicno (t₁ := 3 * √3 + √40) (t₂ := 3 * √3 + √40) (by positivity) (by positivity)
+    (by rw [← Real.sqrt_sq dist_nonneg, krak30_razdalja, show (3 * √3 + √40 - 3 * √3) ^ 2 + 9 = (7 : ℝ) ^ 2 by
+      linear_combination Real.sq_sqrt (show (0 : ℝ) ≤ 40 by norm_num)]; exact Real.sqrt_sq (by norm_num))
+    (by rw [← Real.sqrt_sq dist_nonneg, krak30_razdalja, show (3 * √3 + √40 - 3 * √3) ^ 2 + 9 = (7 : ℝ) ^ 2 by
+      linear_combination Real.sq_sqrt (show (0 : ℝ) ≤ 40 by norm_num)]; exact Real.sqrt_sq (by norm_num))
 
-/-- Drugače: Na sliki: pri a = 7 > c = 6 je na kraku (t > 0) natanko ena točka C z |BC| = 7 (t = 3√3 + √40). -/
+/-- Drugače: Na sliki: pri a = 7 > c = 6 je na kraku (t > 0) natanko ena točka C z |BC| = 7 (t = 3√3 + √40).
+trditev: MAT-OS-7/konstrukcije-trikotnikov#ssk-a7
+besedilo: »Če je $a$ daljša od $c$, na primer $7\,\text{cm}$, krožnica seka krak le v eni točki in trikotnik je en sam.« -/
 theorem ssk_a7 : ∃! t : ℝ, 0 < t ∧ dist (krak30 t) 6 = 7 := by
   have h40 : (√40 : ℝ) ^ 2 = 40 := Real.sq_sqrt (by norm_num)
   refine ⟨3 * √3 + √40, ⟨by positivity, ?_⟩, fun t ht => ?_⟩
@@ -674,7 +741,9 @@ theorem ssk_a7 : ∃! t : ℝ, 0 < t ∧ dist (krak30 t) 6 = 7 := by
     exact ssk_a7_enolicno ht.1 (by positivity) ht.2 e
 
 /-- Drugače: Na sliki in `RACUN`: točka B je od kraka oddaljena 6 · sin 30° = 3: vsaka točka kraka je od B oddaljena
-vsaj 3 (najbližja je krak30 (3√3)), zato pri a < 3 krožnica kraka ne doseže in trikotnika ni. -/
+vsaj 3 (najbližja je krak30 (3√3)), zato pri a < 3 krožnica kraka ne doseže in trikotnika ni.
+trditev: MAT-OS-7/konstrukcije-trikotnikov#ssk-premalo
+besedilo: »Če je $a$ krajša od $3\,\text{cm}$, kolikor je $B$ oddaljena od kraka, krožnica kraka ne doseže in trikotnika ni.« -/
 theorem ssk_premalo : 6 * sin (π / 6) = 3 ∧ (∀ t : ℝ, 3 ≤ dist (krak30 t) 6) ∧ dist (krak30 (3 * √3)) 6 = 3 ∧
     ∀ a : ℝ, a < 3 → ¬ ∃ t : ℝ, dist (krak30 t) 6 = a := by
   have hmin : ∀ t : ℝ, 3 ≤ dist (krak30 t) 6 := by
@@ -685,10 +754,15 @@ theorem ssk_premalo : 6 * sin (π / 6) = 3 ∧ (∀ t : ℝ, 3 ≤ dist (krak30 
   rw [← Real.sqrt_sq dist_nonneg, krak30_razdalja, show (3 * √3 - 3 * √3) ^ 2 + 9 = (3 : ℝ) ^ 2 by ring]
   exact Real.sqrt_sq (by norm_num)
 
+/-- Predpostavka trditve `ssk_premalo` se da izpolniti: izrek, uporabljen na primeru (a = 2 < 3). -/
+example := ssk_premalo.2.2.2 2 (by norm_num)
+
 /-! ## Preveri se -/
 
 /-- Preveri se 2 (sks, stojalo iz poskusa): v vsakem trikotniku z b = |AC| = 6, c = |AB| = 8 in α = π/2 (90°) je
-a = |BC| = 10 = √(6² + 8²) (ne 14 = 6 + 8, ne 2 = 8 − 6). -/
+a = |BC| = 10 = √(6² + 8²) (ne 14 = 6 + 8, ne 2 = 8 − 6).
+trditev: MAT-OS-7/konstrukcije-trikotnikov#kviz2
+besedilo: »Pri pravem kotu med $6\,\text{cm}$ in $8\,\text{cm}$ izmeriš $a = 10\,\text{cm}$« -/
 theorem kviz2 {A B C : P} (hb : dist A C = 6) (hc : dist A B = 8) (hα : ∠ B A C = π / 2) :
     dist B C = 10 ∧ √((6 : ℝ) ^ 2 + 8 ^ 2) = 10 ∧ dist B C ≠ 14 ∧ dist B C ≠ 2 := by
   have l := EuclideanGeometry.law_cos B A C
@@ -700,14 +774,19 @@ theorem kviz2 {A B C : P} (hb : dist A C = 6) (hc : dist A B = 8) (hα : ∠ B A
   rw [show ((6 : ℝ) ^ 2 + 8 ^ 2) = 10 ^ 2 by norm_num]
   exact Real.sqrt_sq (by norm_num)
 
-/-- Predpostavke trditve `kviz2` se dajo izpolniti (`obstoj_sks` z b = 6, c = 8, θ = π/2). -/
-example : ∃ A B C : ℂ, dist A C = 6 ∧ dist A B = 8 ∧ ∠ B A C = π / 2 := by
-  obtain ⟨h1, h2, h3⟩ := obstoj_sks (b := 6) (c := 8) (θ := π / 2) (by norm_num) (by norm_num) (by positivity)
-    (by linarith [pi_pos])
-  exact ⟨0, (8 : ℝ), ⟨6 * cos (π / 2), 6 * sin (π / 2)⟩, h2, h1, h3⟩
+/-- Predpostavke trditve `kviz2` se dajo izpolniti: izrek, uporabljen na primeru (`obstoj_sks` z b = 6, c = 8, θ = π/2). -/
+example := kviz2 (A := (0 : ℂ)) (B := ((8 : ℝ) : ℂ)) (C := ⟨6 * cos (π / 2), 6 * sin (π / 2)⟩)
+    (hb := (obstoj_sks (b := 6) (c := 8) (θ := π / 2) (by norm_num) (by norm_num) (by positivity)
+        (by linarith [pi_pos])).2.1)
+    (hc := (obstoj_sks (b := 6) (c := 8) (θ := π / 2) (by norm_num) (by norm_num) (by positivity)
+        (by linarith [pi_pos])).1)
+    (hα := (obstoj_sks (b := 6) (c := 8) (θ := π / 2) (by norm_num) (by norm_num) (by positivity)
+        (by linarith [pi_pos])).2.2)
 
 /-- Preveri se 4 (meja): v trikotniku s stranicama 4 in 7 je celoštevilska tretja stranica n ≤ 10 (n < 4 + 7 = 11);
-spodnja meja je 7 − 4 = 3, zato n ≥ 4. -/
+spodnja meja je 7 − 4 = 3, zato n ≥ 4.
+trditev: MAT-OS-7/konstrukcije-trikotnikov#kviz4-meja
+besedilo: »Tretja stranica mora biti krajša od $4 + 7 = 11\,\text{cm}$, zato je največja cela dolžina $10\,\text{cm}$.« -/
 theorem kviz4_meja {A B C : P} (hn : ¬ Collinear ℝ ({A, B, C} : Set P)) (ha : dist B C = 4) (hb : dist C A = 7)
     (n : ℕ) (hc : dist A B = n) : n ≤ 10 ∧ 4 ≤ n ∧ (4 : ℝ) + 7 = 11 ∧ (7 : ℝ) - 4 = 3 := by
   have h2 := (meje_tretje hn).2
@@ -720,7 +799,17 @@ theorem kviz4_meja {A B C : P} (hn : ¬ Collinear ℝ ({A, B, C} : Set P)) (ha :
   · have : (3 : ℝ) < n := h1
     exact_mod_cast this
 
-/-- Preveri se 4 (dosežena meja) in predpostavke `kviz4_meja`: trikotnik s stranicami 4, 7, 10 obstaja. -/
+/-- Predpostavke trditve `kviz4_meja` se dajo izpolniti: izrek, uporabljen na primeru (A = 0, B = 10,
+C = 133/20 + (√1911/20)·i: stranice 4, 7, 10). -/
+example := kviz4_meja (A := (0 : ℂ)) (B := 10) (C := ⟨133 / 20, √1911 / 20⟩)
+    (nekolinearni_c (by simp) (by simp) (by norm_num) (div_ne_zero (Real.sqrt_pos.mpr (by norm_num)).ne' (by norm_num)))
+    (dist_c (by norm_num) (by simp; nlinarith [Real.sq_sqrt (show (0 : ℝ) ≤ 1911 by norm_num)]))
+    (dist_c (by norm_num) (by simp; nlinarith [Real.sq_sqrt (show (0 : ℝ) ≤ 1911 by norm_num)])) 10
+    (dist_c (by norm_num) (by simp))
+
+/-- Preveri se 4 (dosežena meja) in predpostavke `kviz4_meja`: trikotnik s stranicami 4, 7, 10 obstaja.
+trditev: MAT-OS-7/konstrukcije-trikotnikov#kviz4-obstoj
+besedilo: »zato je največja cela dolžina $10\,\text{cm}$.« -/
 theorem kviz4_obstoj : ∃ A B C : ℂ, dist B C = 4 ∧ dist C A = 7 ∧ dist A B = ((10 : ℕ) : ℝ) ∧
     ¬ Collinear ℝ ({A, B, C} : Set ℂ) := by
   obtain ⟨A, B, C, h1, h2, h3, h4⟩ := obstoj_trikotnika 4 7 10 (by norm_num) (by norm_num) (by norm_num)
@@ -728,15 +817,19 @@ theorem kviz4_obstoj : ∃ A B C : ℂ, dist B C = 4 ∧ dist C A = 7 ∧ dist A
   exact ⟨A, B, C, h1, h2, by rw [h3]; norm_num, h4⟩
 
 /-- Preveri se 5 in Zakaj se tega učimo: 3 + 4 = 7 < 8, zato ni točke, ki bi bila 3 km od A in 4 km od B, če sta
-A in B 8 km narazen (enako trakovi 3, 4, 8 cm). -/
+A in B 8 km narazen (enako trakovi 3, 4, 8 cm).
+trditev: MAT-OS-7/konstrukcije-trikotnikov#kviz5
+besedilo: »$3 + 4 = 7 < 8$: krožnici okoli $A$ in $B$ se ne sekata, trikotnik ne obstaja.« -/
 theorem kviz5 {A B : P} (h : dist A B = 8) : (3 : ℝ) + 4 = 7 ∧ ¬ ∃ C : P, dist A C = 3 ∧ dist B C = 4 :=
   ⟨by norm_num, kroznici_se_ne_sekata (by rw [h]; norm_num)⟩
 
-/-- Predpostavka trditve `kviz5` se da izpolniti (A = 0, B = 8 v ℂ). -/
-example : dist (0 : ℂ) 8 = 8 := dist_c (by norm_num) (by simp)
+/-- Predpostavka trditve `kviz5` se da izpolniti: izrek, uporabljen na primeru (A = 0, B = 8 v ℂ). -/
+example := kviz5 (A := (0 : ℂ)) (B := 8) (dist_c (by norm_num) (by simp))
 
 /-- Preveri se 3, Pogoste napake 5 in `RACUN`: 50 + 60 + 70 = 180 (tak trikotnik obstaja, a ga koti ne določajo:
-`kkk_ne`); `RACUN`: 5 + 4 = 9, 180 − 45 − 75 = 60, 45 + 60 = 105, 3 + 4 = 7, 4 + 7 = 11, 7 − 4 = 3. -/
+`kkk_ne`); `RACUN`: 5 + 4 = 9, 180 − 45 − 75 = 60, 45 + 60 = 105, 3 + 4 = 7, 4 + 7 = 11, 7 − 4 = 3.
+trditev: MAT-OS-7/konstrukcije-trikotnikov#racun
+besedilo: »Seštej: $50^\circ + 60^\circ + 70^\circ = 180^\circ$, tak trikotnik obstaja.« -/
 theorem racun : (50 : ℝ) + 60 + 70 = 180 ∧ (5 : ℝ) + 4 = 9 ∧ (180 : ℝ) - 45 - 75 = 60 ∧ (45 : ℝ) + 60 = 105 ∧
     (3 : ℝ) + 4 = 7 ∧ (4 : ℝ) + 7 = 11 ∧ (7 : ℝ) - 4 = 3 := by norm_num
 

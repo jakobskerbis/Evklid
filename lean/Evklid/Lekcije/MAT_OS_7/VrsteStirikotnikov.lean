@@ -67,10 +67,12 @@ def deltoid (A B C D : V) : Prop := dist A B = dist A D ∧ dist C B = dist C D
 
 /-! ## Pomožne trditve -/
 
-/-- Pomožno: kot ∠ABC je kot med vektorjema A − B in C − B. -/
+/-- Pomožno: kot ∠ABC je kot med vektorjema A − B in C − B.
+pomozno -/
 theorem kot (A B C : V) : ∠ A B C = angle (A - B) (C - B) := rfl
 
-/-- Pomožno (izrek sss za kote): če se ujemajo dolžine x, y in x − y, se ujema kot med x in y. -/
+/-- Pomožno (izrek sss za kote): če se ujemajo dolžine x, y in x − y, se ujema kot med x in y.
+pomozno -/
 theorem sss (x y x' y' : V) (hx : ‖x‖ = ‖x'‖) (hy : ‖y‖ = ‖y'‖) (hxy : ‖x - y‖ = ‖x' - y'‖) :
     angle x y = angle x' y' := by
   have h1 := norm_sub_sq_real x y
@@ -82,12 +84,14 @@ theorem sss (x y x' y' : V) (hx : ‖x‖ = ‖x'‖) (hy : ‖y‖ = ‖y'‖) 
 example : ‖(1:ℂ)‖ = ‖(1:ℂ)‖ ∧ ‖Complex.I‖ = ‖Complex.I‖ ∧ ‖(1:ℂ) - Complex.I‖ = ‖(1:ℂ) - Complex.I‖ :=
   ⟨rfl, rfl, rfl⟩
 
-/-- Pomožno: ‖a + c·b‖² = ‖a‖² + 2c⟨a, b⟩ + c²‖b‖². -/
+/-- Pomožno: ‖a + c·b‖² = ‖a‖² + 2c⟨a, b⟩ + c²‖b‖².
+pomozno -/
 theorem norma_sq (a b : V) (c : ℝ) :
     ‖a + c • b‖ ^ 2 = ‖a‖ ^ 2 + 2 * c * inner ℝ a b + c ^ 2 * ‖b‖ ^ 2 := by
   rw [norm_add_sq_real, real_inner_smul_right, norm_smul, mul_pow, Real.norm_eq_abs, sq_abs]; ring
 
-/-- Pomožno: ⟨x + y, x − y⟩ = ‖x‖² − ‖y‖². -/
+/-- Pomožno: ⟨x + y, x − y⟩ = ‖x‖² − ‖y‖².
+pomozno -/
 theorem inner_vsota_razlika (x y : V) : inner ℝ (x + y) (x - y) = ‖x‖ ^ 2 - ‖y‖ ^ 2 := by
   rw [inner_add_left, inner_sub_right, inner_sub_right, real_inner_self_eq_norm_sq, real_inner_self_eq_norm_sq,
     real_inner_comm x y]
@@ -95,8 +99,10 @@ theorem inner_vsota_razlika (x y : V) : inner ℝ (x + y) (x - y) = ‖x‖ ^ 2 
 
 /-! ## Paralelogram -/
 
-omit [InnerProductSpace ℝ V] in
-/-- Razlaga, Povzetek, tabela: v paralelogramu sta nasprotni stranici enako dolgi (|AB| = |DC|, |BC| = |AD|). -/
+set_option linter.unusedSectionVars false in
+/-- Razlaga, Povzetek, tabela: v paralelogramu sta nasprotni stranici enako dolgi (|AB| = |DC|, |BC| = |AD|).
+trditev: MAT-OS-7/vrste-stirikotnikov#par-stranice
+besedilo: »Na sliki zgoraj levo vidiš njegove lastnosti: nasprotni stranici sta enako dolgi« -/
 theorem par_stranice (A B C D : V) (h : paralelogram A B C D) : dist A B = dist D C ∧ dist B C = dist A D := by
   unfold paralelogram at h
   have hC : C = B - A + D := by rw [h]; abel
@@ -106,10 +112,13 @@ theorem par_stranice (A B C D : V) (h : paralelogram A B C D) : dist A B = dist 
   · rw [show D - (B - A + D) = -(B - A) by abel, norm_neg, norm_sub_rev]
   · rw [show B - (B - A + D) = -(D - A) by abel, norm_neg, norm_sub_rev]
 
-/-- Predpostavka paralelograma se da izpolniti (A = 0, B = 1, C = 3 + i, D = 2 + i v ℂ). -/
-example : paralelogram (0:ℂ) 1 (3 + Complex.I) (2 + Complex.I) := by unfold paralelogram; ring
+/-- Predpostavka `par_stranice` se da izpolniti (A = 0, B = 1, C = 3 + i, D = 2 + i v ℂ). -/
+example :=
+  par_stranice (0:ℂ) 1 (3 + Complex.I) (2 + Complex.I) (by unfold paralelogram; ring)
 
-/-- Razlaga, Povzetek, tabela: diagonali paralelograma se razpolavljata (sredina AC je sredina BD). -/
+/-- Razlaga, Povzetek, tabela: diagonali paralelograma se razpolavljata (sredina AC je sredina BD).
+trditev: MAT-OS-7/vrste-stirikotnikov#par-diagonali
+besedilo: »Diagonali paralelograma se **razpolavljata**: sekata se v točki, ki je sredina obeh.« -/
 theorem par_diagonali (A B C D : V) (h : paralelogram A B C D) : midpoint ℝ A C = midpoint ℝ B D := by
   unfold paralelogram at h
   have hC : C = B - A + D := by rw [h]; abel
@@ -117,8 +126,14 @@ theorem par_diagonali (A B C D : V) (h : paralelogram A B C D) : midpoint ℝ A 
   rw [midpoint_eq_smul_add, midpoint_eq_smul_add]
   congr 1; abel
 
+/-- Predpostavka `par_diagonali` se da izpolniti (isti paralelogram v ℂ). -/
+example :=
+  par_diagonali (0:ℂ) 1 (3 + Complex.I) (2 + Complex.I) (by unfold paralelogram; ring)
+
 /-- Razlaga, Povzetek, tabela: v paralelogramu sta nasprotna kota enaka (α = γ, β = δ), sosednja kota skupaj
-merita 180° (α + β = π). -/
+merita 180° (α + β = π).
+trditev: MAT-OS-7/vrste-stirikotnikov#par-koti
+besedilo: »V paralelogramu je $\alpha = \gamma$, $\beta = \delta$ in $\alpha + \beta = 180^\circ$.« -/
 theorem par_koti (A B C D : V) (h : paralelogram A B C D) :
     ∠ D A B = ∠ B C D ∧ ∠ A B C = ∠ C D A ∧ ∠ D A B + ∠ A B C = π := by
   unfold paralelogram at h
@@ -131,18 +146,30 @@ theorem par_koti (A B C D : V) (h : paralelogram A B C D) :
     angle_neg_neg, angle_neg_left, angle_neg_right, angle_comm (D - A) (B - A)]
   exact ⟨rfl, rfl, by ring⟩
 
-/-- Razlaga (oznake), Povzetek: v paralelogramu je α + β + γ + δ = 360° (2π). -/
+/-- Predpostavka `par_koti` se da izpolniti (isti paralelogram v ℂ). -/
+example :=
+  par_koti (0:ℂ) 1 (3 + Complex.I) (2 + Complex.I) (by unfold paralelogram; ring)
+
+/-- Razlaga (oznake), Povzetek: v paralelogramu je α + β + γ + δ = 360° (2π).
+pomozno – velja le za paralelogram; splošne vsote kotov štirikotnika iz Povzetka Lean še ne dokaže (glava). -/
 theorem par_vsota (A B C D : V) (h : paralelogram A B C D) : ∠ D A B + ∠ A B C + ∠ B C D + ∠ C D A = 2 * π := by
   obtain ⟨h1, h2, h3⟩ := par_koti A B C D h
   linarith
 
-/-- Razlaga, premisli: v paralelogramu s kotom 70° merijo drugi trije koti 110°, 70° in 110°. -/
+/-- Predpostavka `par_vsota` se da izpolniti (isti paralelogram v ℂ). -/
+example :=
+  par_vsota (0:ℂ) 1 (3 + Complex.I) (2 + Complex.I) (by unfold paralelogram; ring)
+
+/-- Razlaga, premisli: v paralelogramu s kotom 70° merijo drugi trije koti 110°, 70° in 110°.
+trditev: MAT-OS-7/vrste-stirikotnikov#premisli-70
+besedilo: »$110^\circ$, $70^\circ$ in $110^\circ$. Sosednji kot je $180^\circ - 70^\circ = 110^\circ$, nasprotna kota pa sta enaka.« -/
 theorem premisli_70 (A B C D : V) (h : paralelogram A B C D) (hα : ∠ D A B = 70 * π / 180) :
     ∠ A B C = 110 * π / 180 ∧ ∠ B C D = 70 * π / 180 ∧ ∠ C D A = 110 * π / 180 ∧ (180:ℝ) - 70 = 110 := by
   obtain ⟨h1, h2, h3⟩ := par_koti A B C D h
   refine ⟨by linarith, by linarith, by linarith, by norm_num⟩
 
-/-- Pomožno: v ℂ je kot med e^{it} in pozitivnim realnim b natanko t (0 ≤ t ≤ π). -/
+/-- Pomožno: v ℂ je kot med e^{it} in pozitivnim realnim b natanko t (0 ≤ t ≤ π).
+pomozno -/
 theorem kot_exp (t b : ℝ) (hb : 0 < b) (h0 : 0 ≤ t) (hπ : t ≤ π) :
     ∠ (Complex.exp (t * Complex.I)) (0:ℂ) (b:ℂ) = t := by
   rw [kot, sub_zero, sub_zero, show (b:ℂ) = b • (1:ℂ) by rw [Complex.real_smul, mul_one],
@@ -156,7 +183,8 @@ theorem kot_exp (t b : ℝ) (hb : 0 < b) (h0 : 0 ≤ t) (hπ : t ≤ π) :
 example : (0:ℝ) < 1 ∧ (0:ℝ) ≤ π / 2 ∧ π / 2 ≤ π := ⟨one_pos, by positivity, by linarith [Real.pi_pos]⟩
 
 /-- Pomožno: za vsak kot t ∈ [0, π] obstaja paralelogram (v ℂ: A = 0, B = 1, D = e^{it}, C = 1 + e^{it}) s kotom
-t pri A. -/
+t pri A.
+pomozno -/
 theorem par_obstaja (t : ℝ) (h0 : 0 ≤ t) (hπ : t ≤ π) :
     paralelogram (0:ℂ) 1 (1 + Complex.exp (t * Complex.I)) (Complex.exp (t * Complex.I)) ∧
     ∠ (Complex.exp (t * Complex.I)) (0:ℂ) 1 = t := by
@@ -167,18 +195,27 @@ theorem par_obstaja (t : ℝ) (h0 : 0 ≤ t) (hπ : t ≤ π) :
 /-- Predpostavke `par_obstaja` se dajo izpolniti (t = π/2). -/
 example : (0:ℝ) ≤ π / 2 ∧ π / 2 ≤ π := ⟨by positivity, by linarith [Real.pi_pos]⟩
 
-/-- Predpostavke `premisli_70` se dajo izpolniti (paralelogram v ℂ s kotom 70° pri A). -/
-example : ∃ A B C D : ℂ, paralelogram A B C D ∧ ∠ D A B = 70 * π / 180 :=
-  ⟨_, _, _, _, par_obstaja (70 * π / 180) (by positivity) (by linarith [Real.pi_pos])⟩
+/-- Predpostavke `premisli_70` se dajo izpolniti (paralelogram v ℂ s kotom 70° pri A, `par_obstaja`). -/
+example :=
+  premisli_70 (0:ℂ) 1 (1 + (Complex.exp ((70 * π / 180 : ℝ) * Complex.I))) (Complex.exp ((70 * π / 180 : ℝ) * Complex.I)) ((par_obstaja (70 * π / 180) (by positivity) (by linarith [Real.pi_pos])).1)
+    ((par_obstaja (70 * π / 180) (by positivity) (by linarith [Real.pi_pos])).2)
 
 /-! ## Trapez -/
 
-/-- Paralelogram je poseben trapez (k = 1). -/
+/-- Paralelogram je poseben trapez (k = 1).
+trditev: MAT-OS-7/vrste-stirikotnikov#par-je-trapez
+besedilo: »Paralelogram je poseben trapez, saj ima celo dva para vzporednih stranic.« -/
 theorem par_je_trapez (A B C D : V) (h : paralelogram A B C D) : trapez A B C D :=
   ⟨1, one_pos, by rw [one_smul]; exact h.symm⟩
 
+/-- Predpostavka `par_je_trapez` se da izpolniti (isti paralelogram v ℂ). -/
+example :=
+  par_je_trapez (0:ℂ) 1 (3 + Complex.I) (2 + Complex.I) (by unfold paralelogram; ring)
+
 /-- Razlaga (trapez), Povzetek, tabela, Pogoste napake 3: kota ob istem kraku se dopolnjujeta do 180°:
-α + δ = π in β + γ = π; zato je vsota vseh štirih 2π. -/
+α + δ = π in β + γ = π; zato je vsota vseh štirih 2π.
+trditev: MAT-OS-7/vrste-stirikotnikov#trapez-koti
+besedilo: »Trapez: vsaj en par vzporednih stranic (osnovnici); kota ob kraku skupaj $180^\circ$: $\alpha + \delta = 180^\circ$, $\beta + \gamma = 180^\circ$.« -/
 theorem trapez_koti (A B C D : V) (h : trapez A B C D) :
     ∠ D A B + ∠ C D A = π ∧ ∠ A B C + ∠ B C D = π ∧
     ∠ D A B + ∠ A B C + ∠ B C D + ∠ C D A = 2 * π := by
@@ -194,11 +231,13 @@ theorem trapez_koti (A B C D : V) (h : trapez A B C D) :
     ring
   exact ⟨e1, e2, by linarith⟩
 
-/-- Predpostavka trapeza se da izpolniti (A = 0, B = 4, C = 3 + i, D = 1 + i, k = 1/2). -/
-example : trapez (0:ℂ) 4 (3 + Complex.I) (1 + Complex.I) :=
-  ⟨1 / 2, by norm_num, by rw [Complex.real_smul]; push_cast; ring⟩
+/-- Predpostavka `trapez_koti` se da izpolniti (A = 0, B = 4, C = 3 + i, D = 1 + i, k = 1/2). -/
+example :=
+  trapez_koti (0:ℂ) 4 (3 + Complex.I) (1 + Complex.I) ⟨1 / 2, by norm_num, by rw [Complex.real_smul]; push_cast; ring⟩
 
-/-- Razlaga (pravokotni trapez): če je krak AD pravokoten na osnovnico AB, ima trapez dva prava kota (α = δ = π/2). -/
+/-- Razlaga (pravokotni trapez): če je krak AD pravokoten na osnovnico AB, ima trapez dva prava kota (α = δ = π/2).
+trditev: MAT-OS-7/vrste-stirikotnikov#pravokotni-trapez
+besedilo: »**Pravokotni trapez** ima krak, ki je pravokoten na osnovnici, zato ima dva prava kota.« -/
 theorem pravokotni_trapez (A B C D : V) (h : trapez A B C D) (hp : inner ℝ (B - A) (D - A) = 0) :
     ∠ D A B = π / 2 ∧ ∠ C D A = π / 2 := by
   have hα : ∠ D A B = π / 2 := by
@@ -206,12 +245,14 @@ theorem pravokotni_trapez (A B C D : V) (h : trapez A B C D) (hp : inner ℝ (B 
   exact ⟨hα, by linarith [(trapez_koti A B C D h).1]⟩
 
 /-- Predpostavki `pravokotni_trapez` se dajo izpolniti (A = 0, B = 2, C = 1 + i, D = i). -/
-example : trapez (0:ℂ) 2 (1 + Complex.I) Complex.I ∧ inner ℝ ((2:ℂ) - 0) (Complex.I - 0) = 0 := by
-  refine ⟨⟨1 / 2, by norm_num, by rw [Complex.real_smul]; push_cast; ring⟩, ?_⟩
-  rw [Complex.inner]; simp
+example :=
+  pravokotni_trapez (0:ℂ) 2 (1 + Complex.I) Complex.I ⟨1 / 2, by norm_num, by rw [Complex.real_smul]; push_cast; ring⟩
+    (by rw [Complex.inner]; simp)
 
 /-- Razlaga (enakokraki trapez), Povzetek, tabela: v enakokrakem trapezu (|AD| = |BC|, kraka nevzporedna, k ≠ 1)
-sta kota ob isti osnovnici enaka (α = β, γ = δ) in diagonali sta enako dolgi (e = f). -/
+sta kota ob isti osnovnici enaka (α = β, γ = δ) in diagonali sta enako dolgi (e = f).
+trditev: MAT-OS-7/vrste-stirikotnikov#enakokraki-trapez
+besedilo: »Enakokraki trapez: kraka enaka in nevzporedna; $\alpha = \beta$, $\gamma = \delta$, $e = f$.« -/
 theorem enakokraki_trapez (A B C D : V) (k : ℝ) (hk : 0 < k) (hk1 : k ≠ 1) (h : C - D = k • (B - A))
     (hkr : dist A D = dist B C) :
     ∠ D A B = ∠ A B C ∧ ∠ B C D = ∠ C D A ∧ dist A C = dist B D := by
@@ -247,17 +288,19 @@ theorem enakokraki_trapez (A B C D : V) (k : ℝ) (hk : 0 < k) (hk1 : k ≠ 1) (
   nlinarith [key]
 
 /-- Predpostavke `enakokraki_trapez` se dajo izpolniti (A = 0, B = 4, C = 3 + i, D = 1 + i, k = 1/2). -/
-example : (0:ℝ) < 1 / 2 ∧ (1 / 2 : ℝ) ≠ 1 ∧ (3 + Complex.I) - (1 + Complex.I) = (1 / 2 : ℝ) • ((4:ℂ) - 0) ∧
-    dist (0:ℂ) (1 + Complex.I) = dist (4:ℂ) (3 + Complex.I) := by
-  refine ⟨by norm_num, by norm_num, by rw [Complex.real_smul]; push_cast; ring, ?_⟩
-  rw [Complex.dist_eq, Complex.dist_eq,
-    show (0:ℂ) - (1 + Complex.I) = ((-1:ℝ):ℂ) + ((-1:ℝ):ℂ) * Complex.I by push_cast; ring,
-    show (4:ℂ) - (3 + Complex.I) = ((1:ℝ):ℂ) + ((-1:ℝ):ℂ) * Complex.I by push_cast; ring,
-    Complex.norm_add_mul_I, Complex.norm_add_mul_I]
-  norm_num
+example :=
+  enakokraki_trapez (0:ℂ) 4 (3 + Complex.I) (1 + Complex.I) (1 / 2) (by norm_num) (by norm_num)
+    (by rw [Complex.real_smul]; push_cast; ring)
+    (by
+      rw [Complex.dist_eq, Complex.dist_eq,
+        show (0:ℂ) - (1 + Complex.I) = ((-1:ℝ):ℂ) + ((-1:ℝ):ℂ) * Complex.I by push_cast; ring,
+        show (4:ℂ) - (3 + Complex.I) = ((1:ℝ):ℂ) + ((-1:ℝ):ℂ) * Complex.I by push_cast; ring,
+        Complex.norm_add_mul_I, Complex.norm_add_mul_I]
+      norm_num)
 
 /-- Pomožno: za vsak kot t, 0 < t < π/2, obstaja enakokraki trapez (v ℂ: A = 0, B = 4, D = e^{it},
-C = 4 − cos t + i·sin t) s kotom t pri A. -/
+C = 4 − cos t + i·sin t) s kotom t pri A.
+pomozno -/
 theorem enakokraki_obstaja (t : ℝ) (h0 : 0 < t) (h1 : t < π / 2) :
     ∃ C D : ℂ, ∃ k : ℝ, 0 < k ∧ k ≠ 1 ∧ C - D = k • ((4:ℂ) - 0) ∧ dist (0:ℂ) D = dist (4:ℂ) C ∧
       ∠ D (0:ℂ) 4 = t := by
@@ -279,7 +322,9 @@ example : (0:ℝ) < π / 4 ∧ π / 4 < π / 2 := ⟨by positivity, by linarith 
 /-! ## Pravokotnik, romb, kvadrat -/
 
 /-- Razlaga, Povzetek, tabela, Iz vsakdanjega življenja (okvir vrat): paralelogram ima pravi kot natanko tedaj,
-ko sta diagonali enako dolgi (e = f); takrat so vsi štirje koti pravi. -/
+ko sta diagonali enako dolgi (e = f); takrat so vsi štirje koti pravi.
+trditev: MAT-OS-7/vrste-stirikotnikov#pravokotnik-diagonali
+besedilo: »**Pravokotnik** ima štiri prave kote; njegovi diagonali sta enako dolgi.« -/
 theorem pravokotnik_diagonali (A B C D : V) (h : paralelogram A B C D) :
     (∠ D A B = π / 2 ↔ dist A C = dist B D) ∧
     (∠ D A B = π / 2 → ∠ A B C = π / 2 ∧ ∠ B C D = π / 2 ∧ ∠ C D A = π / 2) := by
@@ -291,8 +336,15 @@ theorem pravokotnik_diagonali (A B C D : V) (h : paralelogram A B C D) :
     show B - A + D - A = (D - A) + (B - A) by abel, show D - B = (D - A) - (B - A) by abel,
     norm_add_eq_norm_sub_iff_angle_eq_pi_div_two]
 
+/-- Predpostavka `pravokotnik_diagonali` se da izpolniti (kvadrat A = 0, B = 1, C = 1 + i, D = i), in pravi kot pri A tudi. -/
+example :=
+  (pravokotnik_diagonali (0:ℂ) 1 (1 + Complex.I) Complex.I (by unfold paralelogram; ring)).2
+    (by rw [kot, ← inner_eq_zero_iff_angle_eq_pi_div_two, Complex.inner]; simp)
+
 /-- Razlaga (romb), Povzetek, tabela, Preveri se 3: v rombu so vse štiri stranice enako dolge; paralelogram ima
-pravokotni diagonali natanko tedaj, ko je romb. -/
+pravokotni diagonali natanko tedaj, ko je romb.
+trditev: MAT-OS-7/vrste-stirikotnikov#romb-diagonali
+besedilo: »**Romb** ima štiri enako dolge stranice; njegovi diagonali sta pravokotni in razpolavljata notranje kote.« -/
 theorem romb_diagonali (A B C D : V) (h : paralelogram A B C D) :
     (dist A B = dist A D ↔ inner ℝ (C - A) (D - B) = 0) ∧
     (dist A B = dist A D → dist A B = dist B C ∧ dist B C = dist C D ∧ dist C D = dist D A) := by
@@ -313,7 +365,9 @@ theorem romb_diagonali (A B C D : V) (h : paralelogram A B C D) :
 
 /-- Razlaga (deltoid), premisli, Povzetek, tabela, Primer 2, Pogoste napake 4: v deltoidu z |AB| = |AD|,
 |CB| = |CD| je β = δ (trikotnika ABC in ADC sta skladna po sss), diagonala AC razpolavlja kota pri A in C, in
-diagonali sta pravokotni. -/
+diagonali sta pravokotni.
+trditev: MAT-OS-7/vrste-stirikotnikov#deltoid-lastnosti
+besedilo: »V deltoidu z $|AB| = |AD|$ in $|CB| = |CD|$ je $\beta = \delta$.« -/
 theorem deltoid_lastnosti (A B C D : V) (h : deltoid A B C D) :
     ∠ A B C = ∠ C D A ∧ ∠ B A C = ∠ D A C ∧ ∠ B C A = ∠ D C A ∧ inner ℝ (C - A) (D - B) = 0 := by
   obtain ⟨h1, h2⟩ := h
@@ -336,19 +390,22 @@ theorem deltoid_lastnosti (A B C D : V) (h : deltoid A B C D) :
     rw [show D - B = (A - B) - (A - D) by abel, inner_sub_right]
     linarith
 
-/-- Predpostavka deltoida se da izpolniti (A = −2, B = −i, C = 1, D = i). -/
-example : deltoid (-2:ℂ) (-Complex.I) 1 Complex.I := by
-  unfold deltoid
-  rw [Complex.dist_eq, Complex.dist_eq, Complex.dist_eq, Complex.dist_eq,
-    show (-2:ℂ) - -Complex.I = ((-2:ℝ):ℂ) + ((1:ℝ):ℂ) * Complex.I by push_cast; ring,
-    show (-2:ℂ) - Complex.I = ((-2:ℝ):ℂ) + ((-1:ℝ):ℂ) * Complex.I by push_cast; ring,
-    show (1:ℂ) - -Complex.I = ((1:ℝ):ℂ) + ((1:ℝ):ℂ) * Complex.I by push_cast; ring,
-    show (1:ℂ) - Complex.I = ((1:ℝ):ℂ) + ((-1:ℝ):ℂ) * Complex.I by push_cast; ring]
-  simp only [Complex.norm_add_mul_I]
-  norm_num
+/-- Predpostavka `deltoid_lastnosti` se da izpolniti (A = −2, B = −i, C = 1, D = i). -/
+example :=
+  deltoid_lastnosti (-2:ℂ) (-Complex.I) 1 Complex.I (by
+    unfold deltoid
+    rw [Complex.dist_eq, Complex.dist_eq, Complex.dist_eq, Complex.dist_eq,
+      show (-2:ℂ) - -Complex.I = ((-2:ℝ):ℂ) + ((1:ℝ):ℂ) * Complex.I by push_cast; ring,
+      show (-2:ℂ) - Complex.I = ((-2:ℝ):ℂ) + ((-1:ℝ):ℂ) * Complex.I by push_cast; ring,
+      show (1:ℂ) - -Complex.I = ((1:ℝ):ℂ) + ((1:ℝ):ℂ) * Complex.I by push_cast; ring,
+      show (1:ℂ) - Complex.I = ((1:ℝ):ℂ) + ((-1:ℝ):ℂ) * Complex.I by push_cast; ring]
+    simp only [Complex.norm_add_mul_I]
+    norm_num)
 
 /-- Preveri se 1: deltoid v splošnem nima vzporednih stranic: deltoid A = −2, B = −i, C = 1, D = i nima ne
-AB ∥ CD ne AD ∥ BC (zato ni paralelogram). -/
+AB ∥ CD ne AD ∥ BC (zato ni paralelogram).
+trditev: MAT-OS-7/vrste-stirikotnikov#deltoid-brez-vzporednih
+besedilo: »Deltoid ima dva para enakih *sosednjih* stranic, vzporednih pa v splošnem nima.« -/
 theorem deltoid_brez_vzporednih :
     (¬ ∃ k : ℝ, (1:ℂ) - Complex.I = k • (-Complex.I - (-2))) ∧
     (¬ ∃ k : ℝ, Complex.I - (-2:ℂ) = k • ((1:ℂ) - (-Complex.I))) := by
@@ -367,7 +424,9 @@ theorem deltoid_brez_vzporednih :
 /-! ## Družina likov -/
 
 /-- Razlaga (družina), Povzetek, Z analogijo, Pogoste napake 2, Iz vsakdanjega življenja: kvadrat je pravokotnik
-in romb; romb je paralelogram in deltoid; paralelogram je trapez; paralelogram, ki je deltoid, je romb. -/
+in romb; romb je paralelogram in deltoid; paralelogram je trapez; paralelogram, ki je deltoid, je romb.
+trditev: MAT-OS-7/vrste-stirikotnikov#druzina
+besedilo: »Kvadrat je romb in pravokotnik; romb je paralelogram in deltoid.« -/
 theorem druzina (A B C D : V) :
     (kvadrat A B C D → pravokotnik A B C D ∧ romb A B C D) ∧
     (romb A B C D → paralelogram A B C D ∧ deltoid A B C D) ∧
@@ -378,7 +437,9 @@ theorem druzina (A B C D : V) :
   rw [dist_comm C B, hs.2, dist_comm C D, ← hs.1, hr]
 
 /-- Razlaga (družina), Z analogijo: »vsak romb je kvadrat« ne velja: romb A = 0, B = 5, C = 8 + 4i, D = 3 + 4i
-nima pravega kota. -/
+nima pravega kota.
+trditev: MAT-OS-7/vrste-stirikotnikov#romb-ni-kvadrat
+besedilo: »Prav tako je vsak kvadrat romb, ni pa vsak romb kvadrat.« -/
 theorem romb_ni_kvadrat : romb (0:ℂ) 5 (8 + 4 * Complex.I) (3 + 4 * Complex.I) ∧
     ¬ kvadrat (0:ℂ) 5 (8 + 4 * Complex.I) (3 + 4 * Complex.I) := by
   have hr : romb (0:ℂ) 5 (8 + 4 * Complex.I) (3 + 4 * Complex.I) := by
@@ -392,8 +453,19 @@ theorem romb_ni_kvadrat : romb (0:ℂ) 5 (8 + 4 * Complex.I) (3 + 4 * Complex.I)
   rw [kot, ← inner_eq_zero_iff_angle_eq_pi_div_two, Complex.inner] at hα
   simp at hα
 
+/-- Predpostavki `romb_diagonali` se dajo izpolniti (romb A = 0, B = 5, C = 8 + 4i, D = 3 + 4i). -/
+example :=
+  (romb_diagonali (0:ℂ) 5 (8 + 4 * Complex.I) (3 + 4 * Complex.I) romb_ni_kvadrat.1.1).2 romb_ni_kvadrat.1.2
+
+/-- Predpostavke v sklepu `druzina` se dajo izpolniti (romb A = 0, B = 5, C = 8 + 4i, D = 3 + 4i). -/
+example :=
+  (druzina (0:ℂ) 5 (8 + 4 * Complex.I) (3 + 4 * Complex.I)).2.2.2 romb_ni_kvadrat.1.1
+    ((druzina (0:ℂ) 5 (8 + 4 * Complex.I) (3 + 4 * Complex.I)).2.1 romb_ni_kvadrat.1).2
+
 /-- Razlaga (romb), Povzetek: diagonali romba razpolavljata vse štiri notranje kote (AC kota pri A in C, BD kota
-pri B in D), ker je romb deltoid glede na obe diagonali. -/
+pri B in D), ker je romb deltoid glede na obe diagonali.
+trditev: MAT-OS-7/vrste-stirikotnikov#romb-razpolavlja
+besedilo: »Romb: vse stranice enake, diagonali pravokotni in razpolavljata kote.« -/
 theorem romb_razpolavlja (A B C D : V) (h : romb A B C D) :
     ∠ B A C = ∠ D A C ∧ ∠ B C A = ∠ D C A ∧ ∠ C B D = ∠ A B D ∧ ∠ C D B = ∠ A D B := by
   obtain ⟨hp, hr⟩ := h
@@ -405,11 +477,13 @@ theorem romb_razpolavlja (A B C D : V) (h : romb A B C D) :
   have k2 := deltoid_lastnosti B C D A hd2
   exact ⟨k1.2.1, k1.2.2.1, k2.2.1, k2.2.2.1⟩
 
-/-- Predpostavka `romb_razpolavlja` se da izpolniti (`romb_ni_kvadrat`: romb A = 0, B = 5, C = 8 + 4i,
-D = 3 + 4i). -/
-example : romb (0:ℂ) 5 (8 + 4 * Complex.I) (3 + 4 * Complex.I) := romb_ni_kvadrat.1
+/-- Predpostavka `romb_razpolavlja` se da izpolniti (`romb_ni_kvadrat`: romb A = 0, B = 5, C = 8 + 4i, D = 3 + 4i). -/
+example :=
+  romb_razpolavlja (0:ℂ) 5 (8 + 4 * Complex.I) (3 + 4 * Complex.I) romb_ni_kvadrat.1
 
-/-- Razlaga (romb), Povzetek, Primer 4: diagonala AC romba razpolavlja kot α in α = 2 · ∠BAC (B ≠ A, C ≠ A). -/
+/-- Razlaga (romb), Povzetek, Primer 4: diagonala AC romba razpolavlja kot α in α = 2 · ∠BAC (B ≠ A, C ≠ A).
+trditev: MAT-OS-7/vrste-stirikotnikov#romb-kot
+besedilo: »Diagonala romba razpolavlja kota, skozi katera gre« -/
 theorem romb_kot (A B C D : V) (h : romb A B C D) (hB : B ≠ A) (hCA : C ≠ A) :
     ∠ B A C = ∠ C A D ∧ ∠ D A B = 2 * ∠ B A C := by
   obtain ⟨hp, hr⟩ := h
@@ -447,12 +521,13 @@ theorem romb_kot (A B C D : V) (h : romb A B C D) (hB : B ≠ A) (hCA : C ≠ A)
     ⟨by linarith [angle_nonneg u (u + v)], by linarith⟩ h2.symm
 
 /-- Predpostavke `romb_kot` se dajo izpolniti (romb A = 0, B = 5, C = 8 + 4i, D = 3 + 4i). -/
-example : romb (0:ℂ) 5 (8 + 4 * Complex.I) (3 + 4 * Complex.I) ∧ (5:ℂ) ≠ 0 ∧ (8 + 4 * Complex.I : ℂ) ≠ 0 := by
-  refine ⟨romb_ni_kvadrat.1, by norm_num, fun h => ?_⟩
-  have := congrArg Complex.re h
-  simp at this
+example :=
+  romb_kot (0:ℂ) 5 (8 + 4 * Complex.I) (3 + 4 * Complex.I) romb_ni_kvadrat.1 (by norm_num)
+    (fun h => by have := congrArg Complex.re h; simp at this)
 
-/-- Razlaga (kvadrat), Povzetek, tabela: kvadrat ima vse kote prave, enako dolgi in pravokotni diagonali. -/
+/-- Razlaga (kvadrat), Povzetek, tabela: kvadrat ima vse kote prave, enako dolgi in pravokotni diagonali.
+trditev: MAT-OS-7/vrste-stirikotnikov#kvadrat-lastnosti
+besedilo: »| kvadrat | vse enake | vsi $90^\circ$ | enako dolgi, pravokotni |« -/
 theorem kvadrat_lastnosti (A B C D : V) (h : kvadrat A B C D) :
     (∠ A B C = π / 2 ∧ ∠ B C D = π / 2 ∧ ∠ C D A = π / 2) ∧ dist A C = dist B D ∧
     inner ℝ (C - A) (D - B) = 0 := by
@@ -460,42 +535,53 @@ theorem kvadrat_lastnosti (A B C D : V) (h : kvadrat A B C D) :
   exact ⟨(pravokotnik_diagonali A B C D hp).2 hα, (pravokotnik_diagonali A B C D hp).1.mp hα,
     (romb_diagonali A B C D hp).1.mp hr⟩
 
-/-- Predpostavka kvadrata se da izpolniti (A = 0, B = 1, C = 1 + i, D = i). -/
-example : kvadrat (0:ℂ) 1 (1 + Complex.I) Complex.I := by
-  refine ⟨⟨by unfold paralelogram; ring, ?_⟩, ⟨by unfold paralelogram; ring, ?_⟩⟩
-  · rw [kot, ← inner_eq_zero_iff_angle_eq_pi_div_two, Complex.inner]; simp
-  · rw [Complex.dist_eq, Complex.dist_eq]; simp
+/-- Predpostavka `kvadrat_lastnosti` se da izpolniti (A = 0, B = 1, C = 1 + i, D = i). -/
+example :=
+  kvadrat_lastnosti (0:ℂ) 1 (1 + Complex.I) Complex.I (by
+    refine ⟨⟨by unfold paralelogram; ring, ?_⟩, ⟨by unfold paralelogram; ring, ?_⟩⟩
+    · rw [kot, ← inner_eq_zero_iff_angle_eq_pi_div_two, Complex.inner]; simp
+    · rw [Complex.dist_eq, Complex.dist_eq]; simp)
 
 /-! ## Rešeni primeri -/
 
 /-- Primer 1: paralelogram z α = 65°: β = 180° − 65° = 115°, γ = 65°, δ = 115°; preizkus vsote
-65 + 115 + 65 + 115 = 360. -/
+65 + 115 + 65 + 115 = 360.
+trditev: MAT-OS-7/vrste-stirikotnikov#primer1
+besedilo: »Odgovor: kot pri $B$ meri $115^\circ$, pri $C$ $65^\circ$ in pri $D$ $115^\circ$.« -/
 theorem primer1 (A B C D : V) (h : paralelogram A B C D) (hα : ∠ D A B = 65 * π / 180) :
     ∠ A B C = 115 * π / 180 ∧ ∠ B C D = 65 * π / 180 ∧ ∠ C D A = 115 * π / 180 ∧ (180:ℝ) - 65 = 115 ∧
     (65:ℝ) + 115 + 65 + 115 = 360 := by
   obtain ⟨h1, h2, h3⟩ := par_koti A B C D h
   refine ⟨by linarith, by linarith, by linarith, by norm_num, by norm_num⟩
 
-/-- Predpostavke `primer1` se dajo izpolniti (paralelogram v ℂ s kotom 65° pri A). -/
-example : ∃ A B C D : ℂ, paralelogram A B C D ∧ ∠ D A B = 65 * π / 180 :=
-  ⟨_, _, _, _, par_obstaja (65 * π / 180) (by positivity) (by linarith [Real.pi_pos])⟩
+/-- Predpostavke `primer1` se dajo izpolniti (paralelogram v ℂ s kotom 65° pri A, `par_obstaja`). -/
+example :=
+  primer1 (0:ℂ) 1 (1 + (Complex.exp ((65 * π / 180 : ℝ) * Complex.I))) (Complex.exp ((65 * π / 180 : ℝ) * Complex.I)) ((par_obstaja (65 * π / 180) (by positivity) (by linarith [Real.pi_pos])).1)
+    ((par_obstaja (65 * π / 180) (by positivity) (by linarith [Real.pi_pos])).2)
 
 /-- Primer 2: v deltoidu je β = δ (`deltoid_lastnosti`); z vsoto kotov 360° in α = 80°, γ = 40° je
-β = δ natanko 120° (360 − 80 − 40 = 240, 240 : 2 = 120; preizkus 80 + 120 + 40 + 120 = 360). -/
+β = δ natanko 120° (360 − 80 − 40 = 240, 240 : 2 = 120; preizkus 80 + 120 + 40 + 120 = 360).
+trditev: MAT-OS-7/vrste-stirikotnikov#primer2
+besedilo: »Kota sta enaka, zato vsak meri $240^\circ : 2 = 120^\circ$.« -/
 theorem primer2 (β δ : ℝ) (hbd : β = δ) : 80 + β + 40 + δ = 360 ↔ β = 120 ∧ δ = 120 := by
   constructor
   · intro h; constructor <;> linarith
   · rintro ⟨rfl, rfl⟩; norm_num
 
-/-- Primer 2, koraki 3–5 (in `<<RACUN`). -/
+/-- Primer 2, koraki 3–5 (in `<<RACUN`).
+trditev: MAT-OS-7/vrste-stirikotnikov#primer2-koraki
+besedilo: »Za kota $\beta$ in $\delta$ skupaj ostane $360^\circ - 80^\circ - 40^\circ = 240^\circ$.« -/
 theorem primer2_koraki : (360:ℝ) - 80 - 40 = 240 ∧ (240:ℝ) / 2 = 120 ∧ (80:ℝ) + 120 + 40 + 120 = 360 := by
   norm_num
 
 /-- Predpostavka `primer2` se da izpolniti (β = δ = 120). -/
-example : (120:ℝ) = 120 ∧ (80:ℝ) + 120 + 40 + 120 = 360 := by norm_num
+example :=
+  primer2 120 120 rfl
 
 /-- Primer 3: enakokraki trapez z δ = 3α: α = 45°, δ = 3 · 45° = 135°, β = α = 45°, γ = δ = 135°
-(α + 3α = 180°, 4α = 180°). -/
+(α + 3α = 180°, 4α = 180°).
+trditev: MAT-OS-7/vrste-stirikotnikov#primer3
+besedilo: »Odgovor: kota ob cesti $AB$ merita po $45^\circ$, kota ob cesti $CD$ pa po $135^\circ$.« -/
 theorem primer3 (A B C D : V) (k : ℝ) (hk : 0 < k) (hk1 : k ≠ 1) (h : C - D = k • (B - A))
     (hkr : dist A D = dist B C) (h3 : ∠ C D A = 3 * ∠ D A B) :
     ∠ D A B = 45 * π / 180 ∧ ∠ C D A = 135 * π / 180 ∧ ∠ A B C = 45 * π / 180 ∧ ∠ B C D = 135 * π / 180 := by
@@ -504,20 +590,24 @@ theorem primer3 (A B C D : V) (k : ℝ) (hk : 0 < k) (hk1 : k ≠ 1) (h : C - D 
   have hα : ∠ D A B = 45 * π / 180 := by linarith
   refine ⟨hα, by linarith, by linarith, by linarith⟩
 
-/-- Primer 3 in `<<RACUN`: α + 3α = 180 natanko pri α = 45; 3 · 45 = 135; vsota 45 + 45 + 135 + 135 = 360. -/
+/-- Primer 3 in `<<RACUN`: α + 3α = 180 natanko pri α = 45; 3 · 45 = 135; vsota 45 + 45 + 135 + 135 = 360.
+trditev: MAT-OS-7/vrste-stirikotnikov#primer3-racun
+besedilo: »Delimo s $4$: $\alpha = 45^\circ$.« -/
 theorem primer3_racun (x : ℝ) : (x + 3 * x = 180 ↔ x = 45) ∧ (3:ℝ) * 45 = 135 ∧ (45:ℝ) + 45 + 135 + 135 = 360 := by
   refine ⟨⟨fun h => by linarith, fun h => by rw [h]; norm_num⟩, by norm_num, by norm_num⟩
 
-/-- Predpostavke `primer3` se dajo izpolniti: enakokraki trapez s kotom α = 45° (`enakokraki_obstaja`) ima
-δ = 180° − 45° = 135° = 3α. -/
-example : ∃ A B C D : ℂ, ∃ k : ℝ, 0 < k ∧ k ≠ 1 ∧ C - D = k • (B - A) ∧ dist A D = dist B C ∧
-    ∠ C D A = 3 * ∠ D A B := by
-  obtain ⟨C, D, k, hk, hk1, h, hkr, hα⟩ := enakokraki_obstaja (π / 4) (by positivity) (by linarith [Real.pi_pos])
+/-- Predpostavke `primer3` se dajo izpolniti: enakokraki trapez iz `enakokraki_obstaja` (A = 0, B = 4) s kotom 45° pri A. -/
+example : True := by
+  obtain ⟨C, D, k, hk, hk1, h, hkr, hα⟩ :=
+    enakokraki_obstaja (45 * π / 180) (by positivity) (by linarith [Real.pi_pos])
   have hs := (trapez_koti (0:ℂ) 4 C D ⟨k, hk, h⟩).1
-  exact ⟨0, 4, C, D, k, hk, hk1, h, hkr, by linarith⟩
+  have := primer3 (0:ℂ) 4 C D k hk hk1 h hkr (by linarith)
+  trivial
 
 /-- Primer 4 (romb, kot med AC in AB 35°): α = 2 · 35° = 70°, γ = α = 70°, β = δ = 180° − 70° = 110°
-(B ≠ A, C ≠ A); preizkus 70 + 110 + 70 + 110 = 360. -/
+(B ≠ A, C ≠ A); preizkus 70 + 110 + 70 + 110 = 360.
+trditev: MAT-OS-7/vrste-stirikotnikov#primer4
+besedilo: »$\beta = 180^\circ - 70^\circ = 110^\circ$ in $\delta = \beta = 110^\circ$.« -/
 theorem primer4 (A B C D : V) (h : romb A B C D) (hB : B ≠ A) (hCA : C ≠ A) (h35 : ∠ B A C = 35 * π / 180) :
     ∠ D A B = 70 * π / 180 ∧ ∠ B C D = 70 * π / 180 ∧ ∠ A B C = 110 * π / 180 ∧ ∠ C D A = 110 * π / 180 ∧
     (2:ℝ) * 35 = 70 ∧ (180:ℝ) - 70 = 110 ∧ (70:ℝ) + 110 + 70 + 110 = 360 := by
@@ -527,7 +617,7 @@ theorem primer4 (A B C D : V) (h : romb A B C D) (hB : B ≠ A) (hCA : C ≠ A) 
     by norm_num⟩
 
 /-- Predpostavke `primer4` se dajo izpolniti: romb A = 0, B = 1, D = e^{i·70°}, C = 1 + D ima ∠BAC = 35°. -/
-example : ∃ A B C D : ℂ, romb A B C D ∧ B ≠ A ∧ C ≠ A ∧ ∠ B A C = 35 * π / 180 := by
+example : True := by
   set t : ℝ := 70 * π / 180 with ht
   have h0 : 0 ≤ t := by rw [ht]; positivity
   have hπ : t ≤ π := by rw [ht]; linarith [Real.pi_pos]
@@ -541,20 +631,25 @@ example : ∃ A B C D : ℂ, romb A B C D ∧ B ≠ A ∧ C ≠ A ∧ ∠ B A C 
     have := congrArg Complex.re e
     rw [Complex.add_re, Complex.one_re, Complex.exp_ofReal_mul_I_re, Complex.zero_re] at this
     linarith
-  refine ⟨0, 1, _, _, hr, one_ne_zero, hC, ?_⟩
-  have := (romb_kot _ _ _ _ hr one_ne_zero hC).2
-  rw [hα] at this
-  linarith
+  have h35 : ∠ (1:ℂ) 0 (1 + Complex.exp (t * Complex.I)) = 35 * π / 180 := by
+    have := (romb_kot _ _ _ _ hr one_ne_zero hC).2
+    rw [hα] at this
+    linarith
+  have := primer4 (0:ℂ) 1 (1 + Complex.exp (t * Complex.I)) (Complex.exp (t * Complex.I)) hr one_ne_zero hC h35
+  trivial
 
 /-! ## Pogoste napake in Preveri se -/
 
 /-- Pogoste napake 1: vsota kotov štirikotnika ni 180°, ampak 2 · 180° = 360° (dokazano za trapez in paralelogram,
-`trapez_koti`, `par_vsota`). -/
+`trapez_koti`, `par_vsota`).
+pomozno – le račun 2 · 180 = 360; razrez štirikotnika na dva trikotnika ni dokazan (glava). -/
 theorem dva_trikotnika : (2:ℝ) * 180 = 360 := by norm_num
 
 /-- Preveri se 2: z vsoto kotov 360° in α = 90°, β = 75°, γ = 110° je δ natanko 85°; napačni odgovori
 275 (vsota danih), 75 (δ = β kot v paralelogramu) in 70 (γ + δ = 180° kot v trapezu: 180 − 110 = 70) ne
-ustrezajo. -/
+ustrezajo.
+trditev: MAT-OS-7/vrste-stirikotnikov#preveri2
+besedilo: »$\delta = 360^\circ - 90^\circ - 75^\circ - 110^\circ = 85^\circ$.« -/
 theorem preveri2 (δ : ℝ) : (90 + 75 + 110 + δ = 360 ↔ δ = 85) ∧ (360:ℝ) - 90 - 75 - 110 = 85 ∧
     (90:ℝ) + 75 + 110 = 275 ∧ (180:ℝ) - 110 = 70 ∧ (90:ℝ) + 75 + 110 + 75 ≠ 360 ∧
     (90:ℝ) + 75 + 110 + 70 ≠ 360 := by
@@ -562,13 +657,21 @@ theorem preveri2 (δ : ℝ) : (90 + 75 + 110 + δ = 360 ↔ δ = 85) ∧ (360:�
     by norm_num⟩
 
 /-- Preveri se 3: paralelogram z enakimi stranicami je romb: diagonali sta pravokotni, se še vedno razpolavljata,
-enako dolgi pa sta le, če je kot pravi (kvadrat). -/
+enako dolgi pa sta le, če je kot pravi (kvadrat).
+trditev: MAT-OS-7/vrste-stirikotnikov#preveri3
+besedilo: »Lik z vsemi stranicami enakimi je romb. Diagonali romba sta pravokotni in se razpolavljata.« -/
 theorem preveri3 (A B C D : V) (h : romb A B C D) :
     inner ℝ (C - A) (D - B) = 0 ∧ midpoint ℝ A C = midpoint ℝ B D ∧ (dist A C = dist B D ↔ ∠ D A B = π / 2) :=
   ⟨(romb_diagonali A B C D h.1).1.mp h.2, par_diagonali A B C D h.1, (pravokotnik_diagonali A B C D h.1).1.symm⟩
 
+/-- Predpostavka `preveri3` se da izpolniti (romb A = 0, B = 5, C = 8 + 4i, D = 3 + 4i). -/
+example :=
+  preveri3 (0:ℂ) 5 (8 + 4 * Complex.I) (3 + 4 * Complex.I) romb_ni_kvadrat.1
+
 /-- Preveri se 4: v enakokrakem trapezu z α = 50° je β = 50°, γ = δ = 180° − 50° = 130° (vsota 360°); Nikini koti
-dajo 50 · 4 = 200 ≠ 360, napaka je v 2. koraku (γ ≠ α). -/
+dajo 50 · 4 = 200 ≠ 360, napaka je v 2. koraku (γ ≠ α).
+trditev: MAT-OS-7/vrste-stirikotnikov#preveri4
+besedilo: »Pravilno: $\gamma = 180^\circ - 50^\circ = 130^\circ$ (kota ob kraku $BC$), zato $\delta = 130^\circ$.« -/
 theorem preveri4 (A B C D : V) (k : ℝ) (hk : 0 < k) (hk1 : k ≠ 1) (h : C - D = k • (B - A))
     (hkr : dist A D = dist B C) (h50 : ∠ D A B = 50 * π / 180) :
     ∠ A B C = 50 * π / 180 ∧ ∠ B C D = 130 * π / 180 ∧ ∠ C D A = 130 * π / 180 ∧ ∠ B C D ≠ ∠ D A B ∧
@@ -579,15 +682,17 @@ theorem preveri4 (A B C D : V) (k : ℝ) (hk : 0 < k) (hk1 : k ≠ 1) (h : C - D
   refine ⟨by linarith, hγ, by linarith [hs.1], ?_, by norm_num, by norm_num, by norm_num⟩
   rw [hγ, h50]; intro e; have := Real.pi_pos; nlinarith
 
-/-- Predpostavke `preveri4` se dajo izpolniti (enakokraki trapez s kotom 50° pri A, `enakokraki_obstaja`). -/
-example : ∃ A B C D : ℂ, ∃ k : ℝ, 0 < k ∧ k ≠ 1 ∧ C - D = k • (B - A) ∧ dist A D = dist B C ∧
-    ∠ D A B = 50 * π / 180 := by
+/-- Predpostavke `preveri4` se dajo izpolniti: enakokraki trapez iz `enakokraki_obstaja` (A = 0, B = 4) s kotom 50° pri A. -/
+example : True := by
   obtain ⟨C, D, k, hk, hk1, h, hkr, hα⟩ :=
     enakokraki_obstaja (50 * π / 180) (by positivity) (by linarith [Real.pi_pos])
-  exact ⟨0, 4, C, D, k, hk, hk1, h, hkr, hα⟩
+  have := preveri4 (0:ℂ) 4 C D k hk hk1 h hkr hα
+  trivial
 
 /-- Preveri se 5 in `<<RACUN`: enakokraki trapez z δ = 2α: α + 2α = 180° da α = 60°, δ = 2 · 60° = 120°,
-β = α = 60°, γ = δ = 120°. -/
+β = α = 60°, γ = δ = 120°.
+trditev: MAT-OS-7/vrste-stirikotnikov#preveri5
+besedilo: »$\alpha = \beta = 60^\circ$, $\gamma = \delta = 120^\circ$.« -/
 theorem preveri5 (A B C D : V) (k : ℝ) (hk : 0 < k) (hk1 : k ≠ 1) (h : C - D = k • (B - A))
     (hkr : dist A D = dist B C) (h2 : ∠ C D A = 2 * ∠ D A B) :
     ∠ D A B = 60 * π / 180 ∧ ∠ C D A = 120 * π / 180 ∧ ∠ A B C = 60 * π / 180 ∧ ∠ B C D = 120 * π / 180 := by
@@ -596,14 +701,16 @@ theorem preveri5 (A B C D : V) (k : ℝ) (hk : 0 < k) (hk1 : k ≠ 1) (h : C - D
   have hα : ∠ D A B = 60 * π / 180 := by linarith
   refine ⟨hα, by linarith, by linarith, by linarith⟩
 
-/-- Predpostavke `preveri5` se dajo izpolniti: enakokraki trapez s kotom α = 60° ima δ = 120° = 2α. -/
-example : ∃ A B C D : ℂ, ∃ k : ℝ, 0 < k ∧ k ≠ 1 ∧ C - D = k • (B - A) ∧ dist A D = dist B C ∧
-    ∠ C D A = 2 * ∠ D A B := by
-  obtain ⟨C, D, k, hk, hk1, h, hkr, hα⟩ := enakokraki_obstaja (π / 3) (by positivity) (by linarith [Real.pi_pos])
+/-- Predpostavke `preveri5` se dajo izpolniti: enakokraki trapez iz `enakokraki_obstaja` (A = 0, B = 4) s kotom 60° pri A. -/
+example : True := by
+  obtain ⟨C, D, k, hk, hk1, h, hkr, hα⟩ :=
+    enakokraki_obstaja (60 * π / 180) (by positivity) (by linarith [Real.pi_pos])
   have hs := (trapez_koti (0:ℂ) 4 C D ⟨k, hk, h⟩).1
-  exact ⟨0, 4, C, D, k, hk, hk1, h, hkr, by linarith⟩
+  have := preveri5 (0:ℂ) 4 C D k hk hk1 h hkr (by linarith)
+  trivial
 
-/-- Preveri se 5 in `<<RACUN`: x + 2x = 180 natanko pri x = 60; 2 · 60 = 120. Ostale vrstice `<<RACUN`. -/
+/-- Preveri se 5 in `<<RACUN`: x + 2x = 180 natanko pri x = 60; 2 · 60 = 120. Ostale vrstice `<<RACUN`.
+pomozno – strojni preizkus vrstic <<RACUN (vsak račun je citiran pri izreku svoje razlage) -/
 theorem racun (x : ℝ) : (x + 2 * x = 180 ↔ x = 60) ∧ (2:ℝ) * 60 = 120 ∧ (180:ℝ) - 65 = 115 ∧
     (65:ℝ) + 115 + 65 + 115 = 360 ∧ (360:ℝ) - 80 - 40 = 240 ∧ (240:ℝ) / 2 = 120 ∧ (3:ℝ) * 45 = 135 ∧
     (2:ℝ) * 35 = 70 ∧ (180:ℝ) - 70 = 110 ∧ (360:ℝ) - 90 - 75 - 110 = 85 ∧ (180:ℝ) - 50 = 130 := by

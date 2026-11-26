@@ -47,7 +47,9 @@ noncomputable def obseg (a h s : ℝ) : ℝ := a + √(h ^ 2 + s ^ 2) + √(h ^ 
 /-! ## Splošna pravila -/
 
 /-- Razlaga (Ploščina), Povzetek, simulacija, Preveri se 3: ploščina trikotnika z osnovnico a in višino h je
-a · h/2, za vsak zamik vrha s (tudi pri topokotnem trikotniku, ko višina pade na podaljšek osnovnice). -/
+a · h/2, za vsak zamik vrha s (tudi pri topokotnem trikotniku, ko višina pade na podaljšek osnovnice).
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#ploscina
+besedilo: »$$p = \frac{a \cdot v_a}{2}$$« -/
 theorem ploscina (a h s : ℝ) (ha : 0 < a) (hh : 0 < h) :
     volume (trikotnik a h s) = ENNReal.ofReal (a * h / 2) := by
   unfold trikotnik
@@ -71,10 +73,12 @@ theorem ploscina (a h s : ℝ) (ha : 0 < a) (hh : 0 < h) :
   ring
 
 /-- Predpostavki `ploscina` se dajo izpolniti (a = 6, h = 4). -/
-example : (0:ℝ) < 6 ∧ (0:ℝ) < 4 := by norm_num
+example := ploscina 6 4 3 (by norm_num) (by norm_num)
 
 /-- Razlaga (Ploščina), Pogoste napake 2: pravokotnik okoli trikotnika (stranici a in h) ima ploščino a · h;
-trikotnik ima pol te ploščine. -/
+trikotnik ima pol te ploščine.
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#pol-pravokotnika
+besedilo: »Zmnožek $a \cdot v_a$ je ploščina celega pravokotnika okoli trikotnika. Trikotnik je le njegova polovica.« -/
 theorem pol_pravokotnika (a h s : ℝ) (ha : 0 < a) (hh : 0 < h) :
     volume (Icc (0:ℝ) h ×ˢ Icc (0:ℝ) a) = ENNReal.ofReal (a * h) ∧
     volume (trikotnik a h s) = ENNReal.ofReal (a * h / 2) := by
@@ -84,15 +88,19 @@ theorem pol_pravokotnika (a h s : ℝ) (ha : 0 < a) (hh : 0 < h) :
   congr 1; ring
 
 /-- Predpostavki `pol_pravokotnika` se dajo izpolniti (a = 10, h = 12). -/
-example : (0:ℝ) < 10 ∧ (0:ℝ) < 12 := by norm_num
+example := pol_pravokotnika 10 12 5 (by norm_num) (by norm_num)
 
 /-- Razlaga (Ploščina): višina razdeli osnovnico na dela s in a − s; polovici pravokotnikov s · h in (a − s) · h
-skupaj data a · h/2. -/
+skupaj data a · h/2.
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#razrez-z-visino
+besedilo: »Skupaj je trikotnik torej polovica pravokotnika:« -/
 theorem razrez_z_visino (a h s : ℝ) : s * h / 2 + (a - s) * h / 2 = a * h / 2 := by ring
 
 /-- Razlaga (Pravokotni trikotnik), Povzetek, Pogoste napake 1: pri s = 0 je stranica od (0, 0) do vrha (h, 0)
 pravokotna na osnovnico in dolga h, zato je ploščina polovica zmnožka katet a · h/2. Zmnožek osnovnice in poševne
-stranice √(h² + s²) ob istem oglišču da ploščino natanko tedaj, ko je s = 0 (kot pri (0, 0) je pravi). -/
+stranice √(h² + s²) ob istem oglišču da ploščino natanko tedaj, ko je s = 0 (kot pri (0, 0) je pravi).
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#pravokotni
+besedilo: »Samo tu smeš množiti dve stranici: $p = \dfrac{a \cdot b}{2}$, kjer sta $a$ in $b$ kateti.« -/
 theorem pravokotni (a h s : ℝ) (ha : 0 < a) (hh : 0 < h) :
     volume (trikotnik a h 0) = ENNReal.ofReal (a * h / 2) ∧ √(h ^ 2 + 0 ^ 2) = h ∧
     (a * √(h ^ 2 + s ^ 2) / 2 = a * h / 2 ↔ s = 0) := by
@@ -109,19 +117,23 @@ theorem pravokotni (a h s : ℝ) (ha : 0 < a) (hh : 0 < h) :
   · rintro rfl; simp [Real.sqrt_sq hh.le]
 
 /-- Predpostavki `pravokotni` se dajo izpolniti (a = 96, h = 96). -/
-example : (0:ℝ) < 96 ∧ (0:ℝ) < 96 := by norm_num
+example := pravokotni 96 96 0 (by norm_num) (by norm_num)
 
 /-- Razlaga (Topokotni trikotnik): pri s > a pade višina iz vrha zunaj osnovnice [0, a] in kot pri (0, a) je top
-(skalarni produkt stranic iz (0, a), (0, −a) · (h, s − a) = −a(s − a), je negativen). -/
+(skalarni produkt stranic iz (0, a), (0, −a) · (h, s − a) = −a(s − a), je negativen).
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#topokotni
+besedilo: »Pri topokotnem trikotniku lahko višina pade na podaljšek stranice.« -/
 theorem topokotni (a h s : ℝ) (ha : 0 < a) (hs : a < s) : s ∉ Icc 0 a ∧ 0 * h + (-a) * (s - a) < 0 := by
   refine ⟨fun h' => by linarith [h'.2], by nlinarith⟩
 
 /-- Predpostavki `topokotni` se dajo izpolniti (a = 5, s = 32/5 iz Primera 2). -/
-example : (0:ℝ) < 5 ∧ (5:ℝ) < 32 / 5 := by norm_num
+example := topokotni 5 (24 / 5) (32 / 5) (by norm_num) (by norm_num)
 
 /-- Razlaga (Topokotni trikotnik), obrat: če je kot ob oglišču osnovnice top (pri (0, a): skalarni produkt
 (0, −a) · (h, s − a) < 0; pri (0, 0): (0, a) · (h, s) < 0), višina na osnovnico pade zunaj [0, a]. Ker je
-osnovnica stranica ob tem topem kotu, je to trditev »višina na stranico ob topem kotu pade zunaj«. -/
+osnovnica stranica ob tem topem kotu, je to trditev »višina na stranico ob topem kotu pade zunaj«.
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#topokotni-obrat
+besedilo: »Višini na stranici ob topem kotu padeta zunaj trikotnika, na podaljšek stranice.« -/
 theorem topokotni_obrat (a h s : ℝ) (ha : 0 < a) :
     (0 * h + (-a) * (s - a) < 0 → a < s ∧ s ∉ Icc 0 a) ∧
     (0 * h + a * s < 0 → s < 0 ∧ s ∉ Icc 0 a) := by
@@ -134,10 +146,12 @@ theorem topokotni_obrat (a h s : ℝ) (ha : 0 < a) :
     exact ⟨this, fun h' => by linarith [h'.1]⟩
 
 /-- Predpostavka `topokotni_obrat` se da izpolniti (a = 5); top kot ob (0, 5) pri s = 32/5 iz Primera 2. -/
-example : (0:ℝ) < 5 ∧ 0 * (24 / 5) + (-5) * (32 / 5 - 5) < (0:ℝ) := by norm_num
+example := (topokotni_obrat 5 (24 / 5) (32 / 5) (by norm_num)).1 (by norm_num)
 
 /-- Razlaga (simulacija), Korak za korakom, Preveri se 3: obseg je najmanjši, ko je vrh nad sredino osnovnice
-(s = a/2); pri ostalih legah vrha je obseg enak ali večji. -/
+(s = a/2); pri ostalih legah vrha je obseg enak ali večji.
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#obseg-najmanjsi
+besedilo: »| nad sredino | $6 \cdot 4 = 24$ | $12\,\text{cm}^2$ | najmanjši |« -/
 theorem obseg_najmanjsi (a h s : ℝ) : obseg a h (a / 2) ≤ obseg a h s := by
   simp only [obseg]
   have hm : √(h ^ 2 + (a / 2) ^ 2) + √(h ^ 2 + (a - a / 2) ^ 2) = √(4 * h ^ 2 + a ^ 2) := by
@@ -164,14 +178,18 @@ theorem obseg_najmanjsi (a h s : ℝ) : obseg a h (a / 2) ≤ obseg a h s := by
 /-! ## Zakaj se tega učimo in razlaga -/
 
 /-- Uvod, Razlaga (preglednica): ozek obliž (osnovnica 10, višina 12, vrh nad sredino) ima stranici 13 in 13;
-širok obliž (osnovnica 24, višina 5) ima stranici 13 in 13; drugi ima za 24 − 10 = 14 daljši rob. -/
+širok obliž (osnovnica 24, višina 5) ima stranici 13 in 13; drugi ima za 24 − 10 = 14 daljši rob.
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#oblizi-stranice
+besedilo: »Prvi obliž ima nad stranico $10\,\text{cm}$ višino $12\,\text{cm}$, drugi nad stranico $24\,\text{cm}$ višino $5\,\text{cm}$:« -/
 theorem oblizi_stranice : √((12:ℝ) ^ 2 + 5 ^ 2) = 13 ∧ √((12:ℝ) ^ 2 + (10 - 5) ^ 2) = 13 ∧
     √((5:ℝ) ^ 2 + 12 ^ 2) = 13 ∧ √((5:ℝ) ^ 2 + (24 - 12) ^ 2) = 13 ∧ (24:ℝ) - 10 = 14 := by
   refine ⟨?_, ?_, ?_, ?_, by norm_num⟩ <;>
   · rw [Real.sqrt_eq_iff_mul_self_eq_of_pos (by norm_num)]; norm_num
 
 /-- Uvod, Razlaga (preglednica), Pogoste napake 3: oba obliža pokrijeta natanko 60 cm² (10 · 12/2 = 24 · 5/2 = 60),
-obseg prvega je 10 + 13 + 13 = 36 cm, drugega 24 + 13 + 13 = 50 cm: daljši rob, enaka ploščina. -/
+obseg prvega je 10 + 13 + 13 = 36 cm, drugega 24 + 13 + 13 = 50 cm: daljši rob, enaka ploščina.
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#oblizi-enaka-ploscina
+besedilo: »Presenečenje: oba pokrijeta **natanko enako** kože, po $60\,\text{cm}^2$.« -/
 theorem oblizi : volume (trikotnik 10 12 5) = ENNReal.ofReal 60 ∧ volume (trikotnik 24 5 12) = ENNReal.ofReal 60 ∧
     obseg 10 12 5 = 10 + 13 + 13 ∧ (10:ℝ) + 13 + 13 = 36 ∧ obseg 24 5 12 = 24 + 13 + 13 ∧
     (24:ℝ) + 13 + 13 = 50 := by
@@ -182,18 +200,24 @@ theorem oblizi : volume (trikotnik 10 12 5) = ENNReal.ofReal 60 ∧ volume (trik
   · simp only [obseg]; rw [h1, h2]
   · simp only [obseg]; rw [h3, h4]
 
-/-- Razlaga (mamljiva napačna ideja), Pogoste napake 1: 13 · 13/2 = 84,5 ni 60. -/
+/-- Razlaga (mamljiva napačna ideja), Pogoste napake 1: 13 · 13/2 = 84,5 ni 60.
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#napacna-ideja
+besedilo: »Preizkusimo to na prvem obližu: $\dfrac{13 \cdot 13}{2} = 84{,}5$.« -/
 theorem napacna_ideja : (13:ℝ) * 13 / 2 = 169 / 2 ∧ (169:ℝ) / 2 ≠ 60 := by norm_num
 
 /-- Razlaga, premisli 1: kos, prerezan vzdolž višine, ima osnovnico 5 in višino 12, je pravokotni trikotnik
-(vrh nad ogliščem, s = 0) s ploščino 5 · 12/2 = 30 = 60/2. -/
+(vrh nad ogliščem, s = 0) s ploščino 5 · 12/2 = 30 = 60/2.
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#polovica-obliza
+besedilo: »zato ploščino $\dfrac{5 \cdot 12}{2} = 30\,\text{cm}^2$, pol od $60\,\text{cm}^2$. Kosa sta pravokotna trikotnika.« -/
 theorem polovica_obliza : volume (trikotnik 5 12 0) = ENNReal.ofReal 30 ∧ (5:ℝ) * 12 / 2 = 30 ∧
     (60:ℝ) / 2 = 30 := by
   refine ⟨?_, by norm_num, by norm_num⟩
   rw [ploscina 5 12 0 (by norm_num) (by norm_num)]; norm_num
 
 /-- Razlaga (simulacija), Korak za korakom (preglednica): a = 6, v = 4: ploščina je 6 · 4/2 = 12 za vsak zamik
-vrha s; obseg nad sredino je 6 + 5 + 5 = 16, nad ogliščem 6 + 4 + √52, kar je več kot 16 (obseg se spremeni). -/
+vrha s; obseg nad sredino je 6 + 5 + 5 = 16, nad ogliščem 6 + 4 + √52, kar je več kot 16 (obseg se spremeni).
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#simulacija
+besedilo: »Opazuj: poševni stranici se daljšata ali krajšata, obseg se spreminja, ploščina pa ostane $12$.« -/
 theorem simulacija (s : ℝ) : volume (trikotnik 6 4 s) = ENNReal.ofReal 12 ∧ (6:ℝ) * 4 = 24 ∧
     obseg 6 4 3 = 16 ∧ obseg 6 4 0 = 6 + 4 + √52 ∧ obseg 6 4 3 < obseg 6 4 0 := by
   have h5 : √((4:ℝ) ^ 2 + 3 ^ 2) = 5 := by
@@ -213,14 +237,18 @@ theorem simulacija (s : ℝ) : volume (trikotnik 6 4 s) = ENNReal.ofReal 12 ∧ 
 /-! ## Rešeni primeri -/
 
 /-- Primer 1 (ruta): kateti 96 in 96: o = 96 + 96 + 136 = 328 cm (s hipotenuzo, zaokroženo na 136),
-p = 96 · 96/2 = 4608 cm²; ruta je pravokotni trikotnik modela z a = h = 96, s = 0. -/
+p = 96 · 96/2 = 4608 cm²; ruta je pravokotni trikotnik modela z a = h = 96, s = 0.
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#primer1-ruta
+besedilo: »Odgovor: potrebuješ $328\,\text{cm}$ traku, v ruti je $4608\,\text{cm}^2$ blaga.« -/
 theorem primer1 : (96:ℝ) + 96 + 136 = 328 ∧ (96:ℝ) * 96 / 2 = 4608 ∧
     volume (trikotnik 96 96 0) = ENNReal.ofReal 4608 := by
   refine ⟨by norm_num, by norm_num, ?_⟩
   rw [ploscina 96 96 0 (by norm_num) (by norm_num)]; norm_num
 
 /-- Primer 1: hipotenuza √(96² + 96²) = √18432 je približno 136 (135,5 < √18432 < 136,5), zato se točni obseg
-96 + 96 + √18432 od 328 razlikuje za manj kot 1/2. -/
+96 + 96 + √18432 od 328 razlikuje za manj kot 1/2.
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#primer1-obseg
+besedilo: »Trak gre po robu, zato računamo obseg: $o = 96 + 96 + 136 = 328\,\text{cm}$.« -/
 theorem primer1_hipotenuza : (96:ℝ) ^ 2 + 96 ^ 2 = 18432 ∧ 271 / 2 < √(18432:ℝ) ∧ √(18432:ℝ) < 273 / 2 ∧
     |obseg 96 96 0 - 328| < 1 / 2 := by
   have h1 : (271:ℝ) / 2 < √18432 := Real.lt_sqrt_of_sq_lt (by norm_num)
@@ -232,13 +260,17 @@ theorem primer1_hipotenuza : (96:ℝ) ^ 2 + 96 ^ 2 = 18432 ∧ 271 / 2 < √(184
   simp only [obseg]; rw [h96, hh, abs_lt]; constructor <;> linarith
 
 /-- Primer 2 (obliž za komolec): o = 5 + 5 + 8 = 18 cm; p = 5 · 4,8/2 = 12 cm²; preizkus z osnovnico c = 8 in
-v_c = 3: 8 · 3/2 = 12. Trikotnik je topokoten (5² + 5² < 8²). -/
+v_c = 3: 8 · 3/2 = 12. Trikotnik je topokoten (5² + 5² < 8²).
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#primer2-komolec
+besedilo: »Odgovor: obseg je $18\,\text{cm}$, ploščina $12\,\text{cm}^2$.« -/
 theorem primer2 : (5:ℝ) + 5 + 8 = 18 ∧ (5:ℝ) * (24 / 5) / 2 = 12 ∧ (8:ℝ) * 3 / 2 = 12 ∧
     (5:ℝ) ^ 2 + 5 ^ 2 < 8 ^ 2 := by norm_num
 
 /-- Primer 2 v modelu: na osnovnici a = 5 z višino v_a = 4,8 in zamikom vrha 6,4 (> 5: višina pade zunaj) ima
 trikotnik stranici 8 in 5 in ploščino 12; na osnovnici c = 8 z višino 3 (vrh nad sredino) stranici 5 in 5 in
-ploščino 12. -/
+ploščino 12.
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#primer2-preizkus
+besedilo: »Preizkus: višina na $c$ meri $3\,\text{cm}$, in res $\dfrac{8 \cdot 3}{2} = 12$.« -/
 theorem primer2_model :
     √((24 / 5 : ℝ) ^ 2 + (32 / 5) ^ 2) = 8 ∧ √((24 / 5 : ℝ) ^ 2 + (5 - 32 / 5) ^ 2) = 5 ∧ (5:ℝ) < 32 / 5 ∧
     volume (trikotnik 5 (24 / 5) (32 / 5)) = ENNReal.ofReal 12 ∧
@@ -252,7 +284,9 @@ theorem primer2_model :
   · rw [show (3:ℝ) ^ 2 + (8 - 4) ^ 2 = 5 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
   · rw [ploscina 8 3 4 (by norm_num) (by norm_num)]; norm_num
 
-/-- Primer 3, formula, Povzetek: iz p = a · v_a/2 sledi natanko v_a = 2p/a (a ≠ 0), oziroma a · v_a = 2p. -/
+/-- Primer 3, formula, Povzetek: iz p = a · v_a/2 sledi natanko v_a = 2p/a (a ≠ 0), oziroma a · v_a = 2p.
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#visina-iz-ploscine
+besedilo: »Neznano višino ali osnovnico dobiš iz $a \cdot v_a = 2p$.« -/
 theorem visina_iz_ploscine (a p v : ℝ) (ha : a ≠ 0) :
     (p = a * v / 2 ↔ v = 2 * p / a) ∧ (p = a * v / 2 ↔ a * v = 2 * p) := by
   refine ⟨⟨fun h => ?_, fun h => ?_⟩, ⟨fun h => by linarith, fun h => by linarith⟩⟩
@@ -260,10 +294,12 @@ theorem visina_iz_ploscine (a p v : ℝ) (ha : a ≠ 0) :
   · rw [h]; field_simp
 
 /-- Predpostavka `visina_iz_ploscine` se da izpolniti (a = 50). -/
-example : (50:ℝ) ≠ 0 := by norm_num
+example := visina_iz_ploscine 50 750 30 (by norm_num)
 
 /-- Primer 3 (blazina): 0,5 m = 50 cm; 2 · 750 = 1500; v_a = 1500 : 50 = 30 cm; preizkus 50 · 30/2 = 750; edina
-višina z 750 = 50 · v/2 je 30. -/
+višina z 750 = 50 · v/2 je 30.
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#primer3-blazina
+besedilo: »Odgovor: blazina mora biti visoka $30\,\text{cm}$.« -/
 theorem primer3 (v : ℝ) : (1 / 2 : ℝ) * 100 = 50 ∧ (2:ℝ) * 750 = 1500 ∧ (1500:ℝ) / 50 = 30 ∧
     (50:ℝ) * 30 / 2 = 750 ∧ ((750:ℝ) = 50 * v / 2 ↔ v = 30) := by
   refine ⟨by norm_num, by norm_num, by norm_num, by norm_num, ?_⟩
@@ -272,7 +308,9 @@ theorem primer3 (v : ℝ) : (1 / 2 : ℝ) * 100 = 50 ∧ (2:ℝ) * 750 = 1500 �
   · rintro rfl; norm_num
 
 /-- Primer 4 (enakokraki obliž): 16 = 6 + 2a natanko pri a = 5 (16 − 6 = 10, 10 : 2 = 5); p = 6 · 4/2 = 12 cm².
-V modelu (osnovnica 6, višina 4, vrh nad sredino) sta kraka res 5, obseg 16 in ploščina 12. -/
+V modelu (osnovnica 6, višina 4, vrh nad sredino) sta kraka res 5, obseg 16 in ploščina 12.
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#primer4-krak
+besedilo: »Krak: $10 : 2 = 5\,\text{cm}$. Ploščina: $p = \dfrac{6 \cdot 4}{2} = 12\,\text{cm}^2$.« -/
 theorem primer4 (a : ℝ) : ((16:ℝ) = 6 + 2 * a ↔ a = 5) ∧ (16:ℝ) - 6 = 10 ∧ (10:ℝ) / 2 = 5 ∧
     (6:ℝ) * 4 / 2 = 12 ∧ obseg 6 4 3 = 16 ∧ volume (trikotnik 6 4 3) = ENNReal.ofReal 12 := by
   obtain ⟨h12, -, h16, -, -⟩ := simulacija 3
@@ -281,7 +319,9 @@ theorem primer4 (a : ℝ) : ((16:ℝ) = 6 + 2 * a ↔ a = 5) ∧ (16:ℝ) - 6 = 
 /-! ## Pogoste napake in zgodba -/
 
 /-- Pogoste napake 3: širok, nizek obliž ima lahko daljši rob in celo manjšo ploščino: osnovnica 24, višina 4,
-vrh nad sredino: ploščina 48 < 60, obseg 24 + 2√160 > 36. -/
+vrh nad sredino: ploščina 48 < 60, obseg 24 + 2√160 > 36.
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#daljsi-rob-manjsa
+besedilo: »širok, nizek obliž ima lahko daljši rob in enako ali celo manjšo ploščino« -/
 theorem daljsi_rob_manjsa : volume (trikotnik 24 4 12) = ENNReal.ofReal 48 ∧ (48:ℝ) < 60 ∧
     obseg 24 4 12 = 24 + 2 * √160 ∧ (36:ℝ) < 24 + 2 * √160 := by
   have h12 : (12:ℝ) < √160 := Real.lt_sqrt_of_sq_lt (by norm_num)
@@ -289,30 +329,40 @@ theorem daljsi_rob_manjsa : volume (trikotnik 24 4 12) = ENNReal.ofReal 48 ∧ (
   · rw [ploscina 24 4 12 (by norm_num) (by norm_num)]; norm_num
   · simp only [obseg]; norm_num; ring
 
-/-- Kot zgodba: kvadrat 96 · 96 = 9216 cm², polovica 9216 : 2 = 4608 cm² (ruta iz Primera 1). -/
+/-- Kot zgodba: kvadrat 96 · 96 = 9216 cm², polovica 9216 : 2 = 4608 cm² (ruta iz Primera 1).
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#zgodba-ruta
+besedilo: »Nika je pomislila: kvadrat ima $96 \cdot 96 = 9216\,\text{cm}^2$ blaga. Ruti sta enaki, torej ima vsaka polovico, $4608\,\text{cm}^2$.« -/
 theorem zgodba : (96:ℝ) * 96 = 9216 ∧ (9216:ℝ) / 2 = 4608 := by norm_num
 
 /-! ## Preveri se -/
 
-/-- Preveri se 2: ploščine 9 · 2/2 = 9, 4 · 6/2 = 12, 6 · 5/2 = 15, torej A < B < C. -/
+/-- Preveri se 2: ploščine 9 · 2/2 = 9, 4 · 6/2 = 12, 6 · 5/2 = 15, torej A < B < C.
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#preveri2
+besedilo: »Ploščine so $\dfrac{9 \cdot 2}{2} = 9$, $\dfrac{4 \cdot 6}{2} = 12$ in $\dfrac{6 \cdot 5}{2} = 15\,\text{cm}^2$, torej A, B, C.« -/
 theorem preveri2 : (9:ℝ) * 2 / 2 = 9 ∧ (4:ℝ) * 6 / 2 = 12 ∧ (6:ℝ) * 5 / 2 = 15 ∧ (9:ℝ) < 12 ∧ (12:ℝ) < 15 := by
   norm_num
 
 /-- Preveri se 3: premik vrha ne spremeni ploščine (`ploscina` velja za vsak s), obseg pa se lahko spremeni
-(`simulacija`: obseg 6 4 3 < obseg 6 4 0). -/
+(`simulacija`: obseg 6 4 3 < obseg 6 4 0).
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#preveri3
+besedilo: »Osnovnica in višina ostaneta enaki, zato $p = \dfrac{a \cdot v_a}{2}$ ostane enaka. Stranici se spremenita, zato se spremeni obseg.« -/
 theorem preveri3 (a h s t : ℝ) (ha : 0 < a) (hh : 0 < h) :
     volume (trikotnik a h s) = volume (trikotnik a h t) ∧ obseg 6 4 3 ≠ obseg 6 4 0 := by
   refine ⟨by rw [ploscina a h s ha hh, ploscina a h t ha hh], ?_⟩
   exact ne_of_lt (simulacija 0).2.2.2.2
 
 /-- Predpostavki `preveri3` se dajo izpolniti (a = 6, h = 4). -/
-example : (0:ℝ) < 6 ∧ (0:ℝ) < 4 := by norm_num
+example := preveri3 6 4 0 3 (by norm_num) (by norm_num)
 
-/-- Preveri se 4: p = 8 · 3/2 = 12 cm²; napačni odgovori: 8 · 3 = 24, 5 · 8/2 = 20, 5 + 5 + 8 = 18. -/
+/-- Preveri se 4: p = 8 · 3/2 = 12 cm²; napačni odgovori: 8 · 3 = 24, 5 · 8/2 = 20, 5 + 5 + 8 = 18.
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#preveri4
+besedilo: »$p = \dfrac{8 \cdot 3}{2} = 12\,\text{cm}^2$: osnovnica $8\,\text{cm}$ in njena višina $3\,\text{cm}$ sta par.« -/
 theorem preveri4 : (8:ℝ) * 3 / 2 = 12 ∧ (8:ℝ) * 3 = 24 ∧ (5:ℝ) * 8 / 2 = 20 ∧ (5:ℝ) + 5 + 8 = 18 := by norm_num
 
 /-- Preveri se 5: 21 = 7 · v/2 natanko pri v = 6 (a · v_a = 2 · 21 = 42, 42 : 7 = 6; preizkus 7 · 6/2 = 21);
-napačni odgovori 21 : 7 = 3, 21 : 2 = 10,5, 21 · 7 = 147. -/
+napačni odgovori 21 : 7 = 3, 21 : 2 = 10,5, 21 · 7 = 147.
+trditev: MAT-OS-7/obseg-in-ploscina-trikotnika#preveri5
+besedilo: »$a \cdot v_a = 2 \cdot 21 = 42$, zato $v_a = 42 : 7 = 6\,\text{cm}$. Preizkus: $\dfrac{7 \cdot 6}{2} = 21$.« -/
 theorem preveri5 (v : ℝ) : ((21:ℝ) = 7 * v / 2 ↔ v = 6) ∧ (2:ℝ) * 21 = 42 ∧ (42:ℝ) / 7 = 6 ∧
     (7:ℝ) * 6 / 2 = 21 ∧ (21:ℝ) / 7 = 3 ∧ (21:ℝ) / 2 = 10 + 1 / 2 ∧ (21:ℝ) * 7 = 147 := by
   refine ⟨⟨fun h => by linarith, fun h => by rw [h]; norm_num⟩, by norm_num, by norm_num, by norm_num, by norm_num,

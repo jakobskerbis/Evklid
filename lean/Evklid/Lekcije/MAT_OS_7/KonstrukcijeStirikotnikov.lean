@@ -36,14 +36,17 @@ namespace Evklid.Lekcije.MAT_OS_7.KonstrukcijeStirikotnikov
 open EuclideanGeometry Complex Real
 open scoped InnerProductSpace
 
-/-- Pomožna trditev za primere: √a = b, če je b ≥ 0 in a = b². -/
+/-- Pomožna trditev za primere: √a = b, če je b ≥ 0 in a = b².
+pomozno -/
 theorem koren (a b : ℝ) (hb : 0 ≤ b) (h : a = b ^ 2) : √a = b := by
   rw [h, Real.sqrt_sq hb]
 
 /-! ## Obstoj pomožnega trikotnika (trikotniška neenakost) -/
 
 /-- Razlaga 4 (preverjanje obstoja): če trikotnik s stranicami x, y, z obstaja (tri točke v metričnem
-prostoru), je z ≤ x + y; zato pri x + y < z ne obstaja. -/
+prostoru), je z ≤ x + y; zato pri x + y < z ne obstaja.
+trditev: MAT-OS-7/konstrukcije-stirikotnikov#trikotniska-neenakost
+besedilo: »Za pomožni trikotnik preveri trikotniško neenakost (krajši stranici skupaj sta daljši od najdaljše)« -/
 theorem ni_trikotnika {M : Type*} [MetricSpace M] (x y z : ℝ) (h : x + y < z) :
     ¬ ∃ A B C : M, dist A B = x ∧ dist B C = y ∧ dist A C = z := by
   rintro ⟨A, B, C, hAB, hBC, hAC⟩
@@ -51,31 +54,32 @@ theorem ni_trikotnika {M : Type*} [MetricSpace M] (x y z : ℝ) (h : x + y < z) 
   linarith
 
 /-- Predpostavka trditve `ni_trikotnika` se da izpolniti (5 + 3 < 9). -/
-example : (5 : ℝ) + 3 < 9 := by norm_num
+example := ni_trikotnika (M := ℝ) 5 3 9 (by norm_num)
 
 /-- Razlaga 4 (premisli): paralelogram z a = 5, b = 3, e = 9 ne obstaja, ker pomožni trikotnik ABC
-ne obstaja (5 + 3 = 8 < 9). -/
+ne obstaja (5 + 3 = 8 < 9).
+trditev: MAT-OS-7/konstrukcije-stirikotnikov#premisli-5-3-9
+besedilo: »Trikotnik $ABC$ ne obstaja, zato tak paralelogram ne obstaja.« -/
 theorem premisli_5_3_9 {M : Type*} [MetricSpace M] :
     (5 : ℝ) + 3 = 8 ∧ (8 : ℝ) < 9 ∧ ¬ ∃ A B C : M, dist A B = 5 ∧ dist B C = 3 ∧ dist A C = 9 :=
   ⟨by norm_num, by norm_num, ni_trikotnika 5 3 9 (by norm_num)⟩
 
-/-- Pogoste napake 3 in Preveri se 3: paralelogram z a = 6, b = 2, e = 9 ne obstaja (6 + 2 < 9). -/
+/-- Pogoste napake 3 in Preveri se 3: paralelogram z a = 6, b = 2, e = 9 ne obstaja (6 + 2 < 9).
+trditev: MAT-OS-7/konstrukcije-stirikotnikov#kviz3
+besedilo: »Paralelogram z $a = 6\,\text{cm}$, $b = 2\,\text{cm}$ in $e = 9\,\text{cm}$ ne obstaja, ker $6 + 2 < 9$.« -/
 theorem kviz3 {M : Type*} [MetricSpace M] :
     (6 : ℝ) + 2 < 9 ∧ ¬ ∃ A B C : M, dist A B = 6 ∧ dist B C = 2 ∧ dist A C = 9 :=
   ⟨by norm_num, ni_trikotnika 6 2 9 (by norm_num)⟩
 
 /-! ## Paralelogram -/
 
-section Vektorji
-
-variable {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
-
-omit [InnerProductSpace ℝ V] in
 /-- Primer 1 (formula) in Na sliki: v paralelogramu (B − A = C − D) sta nasprotni stranici enaki,
 |CD| = |AB| in |DA| = |BC|; zrcaljenje čez razpolovišče diagonale BD (X ↦ B + D − X) preslika A v C,
 B v D in D v B in ohranja razdalje (‖(B + D − X) − (B + D − Y)‖ = ‖X − Y‖), zato sta trikotnika ABD in
-CDB skladna. -/
-theorem paralelogram (A B C D : V) (h : B - A = C - D) :
+CDB skladna.
+trditev: MAT-OS-7/konstrukcije-stirikotnikov#paralelogram
+besedilo: »V paralelogramu sta nasprotni stranici enaki: $|CD| = a$, $|DA| = b$.« -/
+theorem paralelogram {V : Type*} [NormedAddCommGroup V] (A B C D : V) (h : B - A = C - D) :
     ‖C - D‖ = ‖B - A‖ ∧ ‖D - A‖ = ‖C - B‖ ∧ B + D - A = C ∧ B + D - B = D ∧ B + D - D = B ∧
       ∀ X Y : V, ‖(B + D - X) - (B + D - Y)‖ = ‖X - Y‖ := by
   have hC : C = B - A + D := by rw [h]; abel
@@ -84,10 +88,16 @@ theorem paralelogram (A B C D : V) (h : B - A = C - D) :
   rw [show (B + D - X) - (B + D - Y) = -(X - Y) by abel, norm_neg]
 
 /-- Predpostavka trditve `paralelogram` se da izpolniti (A = 0, B = 1, C = 1 + i, D = i v ℂ). -/
-example : (1 : ℂ) - 0 = (1 + I) - I := by ring
+example := paralelogram (V := ℂ) 0 1 (1 + I) I (by ring)
+
+section Vektorji
+
+variable {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
 
 /-- Primer 1, korak 6: v paralelogramu (B − A = C − D) je vsota sosednjih kotov 180°:
-∠DAB + ∠ABC = π. -/
+∠DAB + ∠ABC = π.
+trditev: MAT-OS-7/konstrukcije-stirikotnikov#sosednja-kota
+besedilo: »ker je vsota sosednjih kotov paralelograma $180^\circ$.« -/
 theorem sosednja_kota (A B C D : V) (h : B - A = C - D) : ∠ D A B + ∠ A B C = π := by
   have hC : C = B - A + D := by rw [h]; abel
   subst hC
@@ -98,13 +108,17 @@ theorem sosednja_kota (A B C D : V) (h : B - A = C - D) : ∠ D A B + ∠ A B C 
   ring
 
 /-- Predpostavka trditve `sosednja_kota` se da izpolniti (A = 0, B = 1, C = 1 + i, D = i v ℂ). -/
-example : (1 : ℂ) - 0 = (1 + I) - I := by ring
+example := sosednja_kota (V := ℂ) 0 1 (1 + I) I (by ring)
 
-/-- Primer 1, korak 6: β = 180° − 60° = 120°. -/
+/-- Primer 1, korak 6: β = 180° − 60° = 120°.
+trditev: MAT-OS-7/konstrukcije-stirikotnikov#primer1-beta
+besedilo: »kot $\beta$ mora meriti $180^\circ - 60^\circ = 120^\circ$« -/
 theorem primer1_beta : (180 : ℝ) - 60 = 120 := by norm_num
 
 /-- Primer 2 (formula): v rombu (paralelogram B − A = C − D z |AB| = |BC|) se diagonali razpolavljata
-(A + C = B + D, skupno razpolovišče S) in sta pravokotni (⟪C − A, D − B⟫ = 0). -/
+(A + C = B + D, skupno razpolovišče S) in sta pravokotni (⟪C − A, D − B⟫ = 0).
+trditev: MAT-OS-7/konstrukcije-stirikotnikov#romb-diagonali
+besedilo: »Diagonali romba sta pravokotni in se razpolavljata v točki $S$:« -/
 theorem romb_diagonali (A B C D : V) (h : B - A = C - D) (hab : ‖B - A‖ = ‖C - B‖) :
     A + C = B + D ∧ ⟪C - A, D - B⟫_ℝ = 0 := by
   have hC : C = B - A + D := by rw [h]; abel
@@ -115,12 +129,12 @@ theorem romb_diagonali (A B C D : V) (h : B - A = C - D) (hab : ‖B - A‖ = �
   congr 1; abel
 
 /-- Predpostavke trditve `romb_diagonali` se dajo izpolniti (kvadrat A = 0, B = 1, C = 1 + i, D = i v ℂ). -/
-example : (1 : ℂ) - 0 = (1 + I) - I ∧ ‖(1 : ℂ) - 0‖ = ‖(1 + I) - 1‖ := by
-  refine ⟨by ring, ?_⟩
-  simp
+example := romb_diagonali (V := ℂ) 0 1 (1 + I) I (by ring) (by simp)
 
 /-- Primer 2 (konstrukcija): če se diagonali AC in BD razpolavljata v S (A = S − u, C = S + u, B = S − v,
-D = S + v) in sta pravokotni (⟪u, v⟫ = 0), so vse štiri stranice enako dolge, √(|u|² + |v|²) (lik je romb). -/
+D = S + v) in sta pravokotni (⟪u, v⟫ = 0), so vse štiri stranice enako dolge, √(|u|² + |v|²) (lik je romb).
+trditev: MAT-OS-7/konstrukcije-stirikotnikov#romb-iz-diagonal
+besedilo: »Povežemo $A$, $B$, $C$, $D$. Preverimo z merjenjem: vse štiri stranice so enako dolge« -/
 theorem romb_iz_diagonal (S u v : V) (h : ⟪u, v⟫_ℝ = 0) :
     ‖(S - v) - (S - u)‖ = √(‖u‖ ^ 2 + ‖v‖ ^ 2) ∧ ‖(S + u) - (S - v)‖ = √(‖u‖ ^ 2 + ‖v‖ ^ 2) ∧
       ‖(S + v) - (S + u)‖ = √(‖u‖ ^ 2 + ‖v‖ ^ 2) ∧ ‖(S - u) - (S + v)‖ = √(‖u‖ ^ 2 + ‖v‖ ^ 2) := by
@@ -135,10 +149,12 @@ theorem romb_iz_diagonal (S u v : V) (h : ⟪u, v⟫_ℝ = 0) :
   · rw [show (S - u) - (S + v) = -(u + v) by abel, norm_neg, hp]
 
 /-- Predpostavka trditve `romb_iz_diagonal` se da izpolniti (u = 3, v = 2i v ℂ, e = 6, f = 4). -/
-example : ⟪(3 : ℂ), 2 * I⟫_ℝ = 0 := by simp [Complex.inner]
+example := romb_iz_diagonal (V := ℂ) 0 3 (2 * I) (by simp [Complex.inner])
 
 /-- Korak za korakom (preveri) in Pogoste napake 2: v pravokotniku (paralelogram B − A = C − D s pravim
-kotom pri B) sta diagonali enako dolgi, |AC| = |BD| (f = e), in |AC|² = |AB|² + |BC|². -/
+kotom pri B) sta diagonali enako dolgi, |AC| = |BD| (f = e), in |AC|² = |AB|² + |BC|².
+trditev: MAT-OS-7/konstrukcije-stirikotnikov#pravokotnik-diagonali
+besedilo: »izmeri $|BD|$; v pravokotniku mora biti $f = e = 5\,\text{cm}$.« -/
 theorem pravokotnik_diagonali (A B C D : V) (h : B - A = C - D) (hp : ⟪B - A, C - B⟫_ℝ = 0) :
     ‖C - A‖ = ‖D - B‖ ∧ ‖C - A‖ ^ 2 = ‖B - A‖ ^ 2 + ‖C - B‖ ^ 2 := by
   have hC : C = B - A + D := by rw [h]; abel
@@ -154,13 +170,13 @@ theorem pravokotnik_diagonali (A B C D : V) (h : B - A = C - D) (hp : ⟪B - A, 
   exact (pow_left_inj₀ (norm_nonneg _) (norm_nonneg _) two_ne_zero).mp (by rw [h1, h2]; ring)
 
 /-- Predpostavke trditve `pravokotnik_diagonali` se dajo izpolniti (A = 0, B = 4, C = 4 + 3i, D = 3i). -/
-example : (4 : ℂ) - 0 = (4 + 3 * I) - 3 * I ∧ ⟪(4 : ℂ) - 0, (4 + 3 * I) - 4⟫_ℝ = 0 := by
-  refine ⟨by ring, ?_⟩
-  simp [Complex.inner]
+example := pravokotnik_diagonali (V := ℂ) 0 4 (4 + 3 * I) (3 * I) (by ring) (by simp [Complex.inner])
 
 /-- Primer 3 (formula) in Povzetek: v trapezu z AB ∥ CD (C − D = (c/a)·(B − A), |AB| = a > 0, c ≤ a)
 in točko E = B − (C − D) je EBCD paralelogram (B − E = C − D), |ED| = |BC| = b in |AE| = a − c.
-Trapez je pri 0 < c; trditev velja za vsak c ≤ a (pogoj c ≥ 0 ni potreben). -/
+Trapez je pri 0 < c; trditev velja za vsak c ≤ a (pogoj c ≥ 0 ni potreben).
+trditev: MAT-OS-7/konstrukcije-stirikotnikov#trapez-pomozni
+besedilo: »Pomožni trikotnik $AED$ ima stranice $|AE| = a - c$, $|ED| = b$, $|AD| = d$.« -/
 theorem trapez (A B C D : V) (a c : ℝ) (ha : 0 < a) (hca : c ≤ a) (hAB : ‖B - A‖ = a)
     (hpar : C - D = (c / a) • (B - A)) :
     B - (B - (C - D)) = C - D ∧ ‖(B - (C - D)) - D‖ = ‖B - C‖ ∧ ‖(B - (C - D)) - A‖ = a - c := by
@@ -171,17 +187,17 @@ theorem trapez (A B C D : V) (a c : ℝ) (ha : 0 < a) (hca : c ≤ a) (hAB : ‖
   field_simp
 
 /-- Predpostavke trditve `trapez` se dajo izpolniti (A = 0, B = 7, D = i, C = 3 + i v ℂ, a = 7, c = 3). -/
-example : (0 : ℝ) < 7 ∧ (3 : ℝ) ≤ 7 ∧ ‖(7 : ℂ) - 0‖ = 7 ∧
-    (3 + I) - I = ((3 : ℝ) / 7) • ((7 : ℂ) - 0) := by
-  refine ⟨by norm_num, by norm_num, by simp, ?_⟩
-  rw [Complex.real_smul]; push_cast; ring
+example := trapez (V := ℂ) 0 7 (3 + I) I 7 3 (by norm_num) (by norm_num) (by simp)
+  (by rw [Complex.real_smul]; push_cast; ring)
 
 end Vektorji
 
 /-! ## Deltoid -/
 
 /-- Primer 4 (premisli) in Na sliki: zrcalna slika D točke B čez premico AC je od A in C enako oddaljena
-kot B (|AD| = |AB|, |CD| = |CB|), zato je ABCD deltoid z osjo AC. -/
+kot B (|AD| = |AB|, |CD| = |CB|), zato je ABCD deltoid z osjo AC.
+trditev: MAT-OS-7/konstrukcije-stirikotnikov#deltoid-zrcaljenje
+besedilo: »$D$ je zrcalna slika $B$ čez diagonalo $AC$, ker je $e$ os simetrije.« -/
 theorem deltoid (A B C : ℂ) :
     dist A (EuclideanGeometry.reflection line[ℝ, A, C] B) = dist A B ∧
       dist C (EuclideanGeometry.reflection line[ℝ, A, C] B) = dist C B :=
@@ -192,7 +208,9 @@ theorem deltoid (A B C : ℂ) :
 
 /-- Pogoste napake 1, Preveri se 2 in Povzetek: kvadrat 0, 4, 4 + 4i, 4i in romb 0, 4, 6 + 2√3·i, 2 + 2√3·i
 imata vse stranice 4 cm, diagonali AC pa sta različni (√32 ≠ √48), zato štiri stranice ne določajo
-štirikotnika (in štirikotnik s stranicami 4, 4, 4, 4 ni nujno kvadrat). -/
+štirikotnika (in štirikotnik s stranicami 4, 4, 4, 4 ni nujno kvadrat).
+trditev: MAT-OS-7/konstrukcije-stirikotnikov#stiri-stranice
+besedilo: »Štiri stranice ne določajo štirikotnika; potreben je še kot ali diagonala.« -/
 theorem stiri_stranice :
     (‖(4 : ℂ) - 0‖ = 4 ∧ ‖(4 + 4 * I) - 4‖ = 4 ∧ ‖4 * I - (4 + 4 * I)‖ = 4 ∧ ‖(0 : ℂ) - 4 * I‖ = 4) ∧
       (‖(4 : ℂ) - 0‖ = 4 ∧ ‖((6 : ℂ) + (2 * √3 : ℝ) * I) - 4‖ = 4 ∧
@@ -215,7 +233,9 @@ theorem stiri_stranice :
 
 /-! ## Rešeni primeri: računi -/
 
-/-- Primer 2: f/2 = 4/2 = 2; stranica romba je √(3² + 2²) = √13 ≈ 3,6 cm. -/
+/-- Primer 2: f/2 = 4/2 = 2; stranica romba je √(3² + 2²) = √13 ≈ 3,6 cm.
+trditev: MAT-OS-7/konstrukcije-stirikotnikov#primer2
+besedilo: »vse štiri stranice so enako dolge, približno $3{,}6\,\text{cm}$.« -/
 theorem primer2 : (4 : ℝ) / 2 = 2 ∧ (6 : ℝ) / 2 = 3 ∧ (3 : ℝ) ^ 2 + 2 ^ 2 = 13 ∧ |√13 - 3.6| < 0.05 := by
   refine ⟨by norm_num, by norm_num, by norm_num, ?_⟩
   rw [abs_lt]
@@ -228,12 +248,16 @@ theorem primer2 : (4 : ℝ) / 2 = 2 ∧ (6 : ℝ) / 2 = 3 ∧ (3 : ℝ) ^ 2 + 2 
     linarith
 
 /-- Primer 3: merilo 1 : 10: 70/10 = 7, 30/10 = 3, 40/10 = 4, 50/10 = 5; |AE| = 7 − 3 = 4; obstoj
-pomožnega trikotnika 4 + 4 = 8 > 5 (in 4 + 5 > 4). -/
+pomožnega trikotnika 4 + 4 = 8 > 5 (in 4 + 5 > 4).
+trditev: MAT-OS-7/konstrukcije-stirikotnikov#primer3
+besedilo: »Stranice pomožnega trikotnika: $|AE| = a - c = 7\,\text{cm} - 3\,\text{cm} = 4\,\text{cm}$« -/
 theorem primer3 : (70 : ℝ) / 10 = 7 ∧ (30 : ℝ) / 10 = 3 ∧ (40 : ℝ) / 10 = 4 ∧ (50 : ℝ) / 10 = 5 ∧
     (7 : ℝ) - 3 = 4 ∧ (4 : ℝ) + 4 = 8 ∧ (8 : ℝ) > 5 ∧ (4 : ℝ) + 5 > 4 := by norm_num
 
 /-- Primer 3, korak 4: pomožni trikotnik AED s stranicami |AE| = 4, |ED| = 4, |AD| = 5 obstaja
-(A = 0, E = 4, D = 25/8 + (√975/8)·i v ℂ). -/
+(A = 0, E = 4, D = 25/8 + (√975/8)·i v ℂ).
+trditev: MAT-OS-7/konstrukcije-stirikotnikov#primer3-obstoj
+besedilo: »Preverimo obstoj: $4 + 4 = 8 > 5$, zato trikotnik $AED$ obstaja.« -/
 theorem primer3_obstoj :
     ‖(4 : ℂ) - 0‖ = 4 ∧ ‖((25 / 8 : ℂ) + (√975 / 8 : ℝ) * I) - 4‖ = 4 ∧
       ‖((25 / 8 : ℂ) + (√975 / 8 : ℝ) * I) - 0‖ = 5 := by
@@ -243,7 +267,9 @@ theorem primer3_obstoj :
   · rw [Complex.norm_eq_sqrt_sq_add_sq]; apply koren _ _ (by norm_num); simp; nlinarith
 
 /-- Primer 4, korak 1: 5 + 3 = 8 > 6; pomožni trikotnik ABC (|AC| = 6, |AB| = 5, |CB| = 3) obstaja
-(A = 0, C = 6, B = 13/3 + (√56/3)·i v ℂ). -/
+(A = 0, C = 6, B = 13/3 + (√56/3)·i v ℂ).
+trditev: MAT-OS-7/konstrukcije-stirikotnikov#primer4
+besedilo: »Preverimo obstoj trikotnika $ABC$: $5 + 3 = 8 > 6$, zato obstaja.« -/
 theorem primer4 : (5 : ℝ) + 3 = 8 ∧ (8 : ℝ) > 6 ∧ ‖(6 : ℂ) - 0‖ = 6 ∧
     ‖((13 / 3 : ℂ) + (√56 / 3 : ℝ) * I) - 0‖ = 5 ∧ ‖(6 : ℂ) - ((13 / 3 : ℂ) + (√56 / 3 : ℝ) * I)‖ = 3 := by
   have h : (√56 : ℝ) ^ 2 = 56 := Real.sq_sqrt (by norm_num)
@@ -252,7 +278,9 @@ theorem primer4 : (5 : ℝ) + 3 = 8 ∧ (8 : ℝ) > 6 ∧ ‖(6 : ℂ) - 0‖ = 
   · rw [Complex.norm_eq_sqrt_sq_add_sq]; apply koren _ _ (by norm_num); simp; nlinarith
 
 /-- Korak za korakom: pravokotnik z a = 4 in e = 5: e > a; |BC| = b > 0 z 4² + b² = 5² je natanko b = 3;
-Pogoste napake 2: b = 5 bi dal diagonalo √41 ≠ 5. (Da je f = e, dokazuje `pravokotnik_diagonali`.) -/
+Pogoste napake 2: b = 5 bi dal diagonalo √41 ≠ 5. (Da je f = e, dokazuje `pravokotnik_diagonali`.)
+trditev: MAT-OS-7/konstrukcije-stirikotnikov#korak-bc
+besedilo: »izmeriš $|BC| = 3\,\text{cm}$« -/
 theorem korak (b : ℝ) (hb : 0 < b) : (5 : ℝ) > 4 ∧ ((4 : ℝ) ^ 2 + b ^ 2 = 5 ^ 2 ↔ b = 3) ∧
     √((4 : ℝ) ^ 2 + 5 ^ 2) ≠ 5 := by
   refine ⟨by norm_num, ⟨fun h => by nlinarith, fun h => by rw [h]; norm_num⟩, ?_⟩
@@ -262,11 +290,13 @@ theorem korak (b : ℝ) (hb : 0 < b) : (5 : ℝ) > 4 ∧ ((4 : ℝ) ^ 2 + b ^ 2 
   norm_num at this
 
 /-- Predpostavka trditve `korak` se da izpolniti (b = 3). -/
-example : (0 : ℝ) < 3 := by norm_num
+example := korak 3 (by norm_num)
 
 /-- Preveri se 5 (zgled v ℂ, A = 0, B = 4, a = 4, e = 5): C = 4 + 3i leži na pravokotnici na AB v B in je
 od A oddaljen 5; napačno: točka 5i (5 cm na pravokotnico v A) je od A oddaljena 5, a ni C; točka 4 + 5i
-(5 cm na pravokotnico v B) je od A oddaljena √41 ≠ 5. -/
+(5 cm na pravokotnico v B) je od A oddaljena √41 ≠ 5.
+trditev: MAT-OS-7/konstrukcije-stirikotnikov#kviz5
+besedilo: »$C$ leži na pravokotnici v $B$ (pravi kot) in je od $A$ oddaljen $e = 5\,\text{cm}$, zato je presečišče loka in pravokotnice.« -/
 theorem kviz5 :
     ⟪(4 : ℂ) - 0, (4 + 3 * I) - 4⟫_ℝ = 0 ∧ ‖(4 + 3 * I : ℂ) - 0‖ = 5 ∧
       ⟪(4 : ℂ) - 0, 5 * I - 0⟫_ℝ = 0 ∧ ‖(5 * I : ℂ) - 0‖ = 5 ∧ (5 * I : ℂ) ≠ 4 + 3 * I ∧
@@ -283,12 +313,16 @@ theorem kviz5 :
     norm_num at this
 
 /-- Preveri se 4 in Pogoste napake 4: trapez a = 8, c = 5, b = 4, d = 3: pomožni trikotnik ima stranice
-a − c = 3, 4, 3 (obstaja: 3 + 3 > 4); napačni sta 8 (cela osnovnica) in 13 = 8 + 5. -/
+a − c = 3, 4, 3 (obstaja: 3 + 3 > 4); napačni sta 8 (cela osnovnica) in 13 = 8 + 5.
+trditev: MAT-OS-7/konstrukcije-stirikotnikov#kviz4
+besedilo: »$a - c = 8\,\text{cm} - 5\,\text{cm} = 3\,\text{cm}$, ostali stranici sta kraka $b = 4\,\text{cm}$ in $d = 3\,\text{cm}$.« -/
 theorem kviz4 : (8 : ℝ) - 5 = 3 ∧ (3 : ℝ) + 3 > 4 ∧ (8 : ℝ) ≠ 3 ∧ (8 : ℝ) + 5 = 13 ∧ (13 : ℝ) ≠ 3 := by
   norm_num
 
 /-- Bolj natančno: štetje podatkov 3 + 2 = 5; paralelogram 5 − 2 = 3; romb 5 − 3 = 2; pravokotnik
-5 − 3 = 2; kvadrat 5 − 4 = 1. -/
+5 − 3 = 2; kvadrat 5 − 4 = 1.
+trditev: MAT-OS-7/konstrukcije-stirikotnikov#stetje
+besedilo: »Pri paralelogramu sta to $c = a$ in $d = b$, zato $5 - 2 = 3$.« -/
 theorem stetje : (3 : ℕ) + 2 = 5 ∧ (5 : ℕ) - 2 = 3 ∧ (5 : ℕ) - 3 = 2 ∧ (5 : ℕ) - 4 = 1 := by decide
 
 end Evklid.Lekcije.MAT_OS_7.KonstrukcijeStirikotnikov
