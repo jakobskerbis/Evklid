@@ -57,3 +57,12 @@ test("K-10 skripta: preizkusni način prehodi komplet (teme, 6 nalog kviza s klj
     fs.rmSync(out, { recursive: true, force: true });
   }
 });
+
+test("K-10 skripta: privzeti izid je med datotekami, ki jih Meritev naloži kot artefakt", () => {
+  // Meritev (.github/workflows/meri.yml) naloži samo meri.log in data/meri-*.json; drugje bi se plačane razlage izgubile.
+  const wf = fs.readFileSync(path.join(ROOT, ".github/workflows/meri.yml"), "utf8");
+  assert.match(wf, /^\s+data\/meri-\*\.json$/m);
+  const skripta = fs.readFileSync(path.join(ROOT, "scripts/meri-k10-priprava.mjs"), "utf8");
+  const privzeto = /EVKLID_MERI_IZID \|\| path\.join\(ROOT, "([^"]+)"\)/.exec(skripta)?.[1];
+  assert.match(privzeto, /^data\/meri-[a-z0-9-]+\.json$/);
+});
