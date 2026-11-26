@@ -232,12 +232,28 @@ export function stevilaOdgovora(sol) {
 }
 export const steviloOdgovora = (sol) => stevilaOdgovora(sol)[0] ?? stevilaZapisa(sol?.answer_tex)[0] ?? null;
 
-// Števila v zapisu odgovora na zaslonu (answer_tex) za vsakim »=« ali »≈«: »t = 189\,s \approx 3{,}15\,min« → 189, 3,15.
-// Zapis sme odgovor pokazati še v drugi enoti, zato zadošča, da je ena od vrednosti preverjena; »S = 23« pri preverjeni 32 ne.
+// Deli zapisa odgovora na zaslonu (answer_tex) za vsakim »=« ali »≈«: »t = 189\,s \approx 3{,}15\,min« → 189, 3,15.
 export function stevilaZapisa(tex) {
   if (typeof tex !== "string" || !tex.trim()) return [];
   const deli = tex.split(DELI);
   return (deli.length > 1 ? deli.slice(1) : deli).map(steviloDela).filter((x) => x !== null);
+}
+
+// Ali zapis odgovora pokaže preverjeno vrednost q kot končni rezultat: en del je q (enako(x)), vsak del za njim pa je
+// le ista količina v drugi enoti (189 s ≈ 3,15 min), v okviru zaokrožitve prikazanih decimalk. »P = 32 ali P = 48«,
+// »32 cm² = 0,32 m²« in »32 ≈ 30« ne (pregled: drugače bi prikazan, nepreverjen končni rezultat dobil »partial«).
+function zapisPokaze(tex, q, enako) {
+  const deli = tex.split(DELI);
+  const vsi = (deli.length > 1 ? deli.slice(1) : deli).map((d) => ({ x: steviloDela(d), p: podatkiNaloge([d])[0] })).filter((d) => d.x !== null);
+  const i = vsi.findIndex((d) => enako(d.x));
+  if (i < 0) return false;
+  const si = (d) => (d.p && d.p.f.length > 1 ? d.p.f[1][0] : 1);
+  const qSI = q * si(vsi[i]);
+  return vsi.slice(i + 1).every((d) => {
+    const dec = (/\.(\d+)/.exec(String(d.x)) || [null, ""])[1].length;
+    const tol = 0.5 * 10 ** -dec * 1.0001;
+    return (d.p?.f || [[1, 0]]).some(([f]) => Math.abs(d.x * f - qSI) <= tol * f + 1e-9 * Math.abs(qSI));
+  });
 }
 
 // AI »check« → {values: Map(ime → vrednost), equations} ali razlog, zakaj ga ni mogoče prebrati. Vsaka formula je
@@ -444,11 +460,10 @@ export function preveriPodatke(text, given, sol) {
   // 2. vrednost iskane količine je vsako število v končnem odgovoru (ista enota). Pred preizkusom formul: »wrong«
   // sme reči le račun, ki pripelje do prikazanega odgovora; neskladen pomožni zapis ne skrije morda pravilne rešitve.
   const odg = stevilaOdgovora(sol);
-  const zapis = stevilaZapisa(sol?.answer_tex);
   const Q = values.get(iskana);
   const enako = (x) => Math.abs(x - Q.n) <= Math.max(Q.d, 1e-9 * Math.abs(Q.n));
-  if (!odg.length && !zapis.length) return nic("answer differs");
-  if (!odg.every(enako) || (zapis.length && !zapis.some(enako)) || (typeof sol?.answer_tex === "string" && sol.answer_tex.trim() && !zapis.length)) return nic("answer differs");
+  if (!odg.length && !stevilaZapisa(sol?.answer_tex).length) return nic("answer differs");
+  if (!odg.every(enako) || (typeof sol?.answer_tex === "string" && sol.answer_tex.trim() && !zapisPokaze(sol.answer_tex, Q.n, enako))) return nic("answer differs");
 
   // 3. vsaka formula drži. Podatek naloge (in število v formuli, ki je podatek) je točen: zaokrožitve nima, sicer bi
   // napačen rezultat prešel (m = 1,2 kg z ±0,05 kg). Strogo (pol zadnjega mesta) → drži; ohlapno (tudi cela števila

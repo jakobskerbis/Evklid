@@ -137,6 +137,13 @@ test("meritev 26. 11.: odgovori AI, kot jih je dal pravi zagon (zapis z dvema en
   assert.equal(status("α=?", TRI, sol({ a: "5", b: "12", alpha: "22.62°" }, ["tan(alpha)=a/b"], { value: "atan(5/12)*180/pi", solutions: ["atan(5/12)*180/pi"], answer_tex: "\\alpha\\approx 22{,}62^\\circ" })), "partial");
   // o03: zapis z izračunom pred rezultatom
   assert.equal(status("P=?", TRAPEZ, sol({ a: "10", c: "6", v: "4", P: "32" }, ["P=(a+c)/2*v"], { value: "32", answer_tex: "P = \\frac{(10+6)\\cdot 4}{2} = 32\\ \\mathrm{cm^2}" })), "partial");
+  // pregled: drug, nepreverjen končni rezultat v zapisu ni »partial«
+  const TRP = (tex, extra = {}) => status("P=?", TRAPEZ, sol({ a: "10", c: "6", v: "4", P: "32" }, ["P=(a+c)/2*v"], { value: "32", answer_tex: tex, ...extra }));
+  assert.equal(TRP("P = 32\\ \\mathrm{cm^2} \\text{ ali } P = 48\\ \\mathrm{cm^2}"), "unverified");
+  assert.equal(TRP("P_1 = 32,\\ P_2 = 48", { value: "", solutions: ["32"] }), "unverified");
+  assert.equal(TRP("P = 32\\ \\mathrm{cm^2} = 0{,}32\\ \\mathrm{m^2}"), "unverified");
+  assert.equal(TRP("P = 32 \\approx 30\\ \\mathrm{cm^2}"), "unverified");
+  assert.equal(TRP("P = 32\\ \\mathrm{cm^2} = 0{,}0032\\ \\mathrm{m^2}"), "partial");
   // s15: odstotki v besedilu podatka
   assert.equal(status("x=?", ["\\text{cena se je zvišala za } 20\\ \\%", "\\text{cena se je znižala za } 15\\ \\%", "\\text{končna cena } 408\\ €"], sol({ p: "20", q: "15", y: "408", x: "400" }, ["x*(1+p/100)*(1-q/100)=y"], { value: "400", solutions: ["400"], answer_tex: "x=400\\ €" })), "partial");
 });
