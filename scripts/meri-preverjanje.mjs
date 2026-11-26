@@ -320,7 +320,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
       return "";
     }
   };
-  const py = ukaz(process.env.EVKLID_PYTHON || "python3", ["-c", "import sys, sympy; print(sys.version.split()[0], sympy.__version__)"], { PYTHONPATH: join(ROOT, ".pylib") }).split(" ");
+  // isti PYTHONPATH kot server/cas.js (.pylib spredaj): poročilo navede SymPy, ki ga je uporabil worker
+  const py = ukaz(process.env.EVKLID_PYTHON || "python3", ["-c", "import sys, sympy; print(sys.version.split()[0], sympy.__version__)"], { PYTHONPATH: [join(ROOT, ".pylib"), process.env.PYTHONPATH].filter(Boolean).join(":") }).split(" ");
   const meta = {
     vseh: primeri.length,
     datum: new Date().toISOString().slice(0, 10),
