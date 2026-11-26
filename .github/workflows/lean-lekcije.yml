@@ -1,14 +1,15 @@
 # Ali Lean dokazi lekcij (lean/Evklid/Lekcije) še veljajo za trenutno besedilo lekcij (docs/lean.md, L2).
-# Hitro, brez Leana: primerja sha256 v glavi dokaza z lekcijo. Ni med testi za objavo: spremenjena lekcija
+# Hitro, brez Leana: primerja sha256 v glavi dokaza z lekcijo, preveri id in citat vsake trditve, primere
+# izpolnljivosti predpostavk in kazalo lean/trditve.json (PV-09). Ni med testi za objavo: spremenjena lekcija
 # ne zadrži objave na evklid.app, le opozori, da je treba dokaz pregledati.
 name: lean-lekcije
 
 on:
   pull_request:
-    paths: ["content/lessons/**", "lean/Evklid/Lekcije/**", "scripts/lean-lekcije.mjs", ".github/workflows/lean-lekcije.yml"]
+    paths: ["content/lessons/**", "lean/Evklid/Lekcije/**", "scripts/lean-lekcije.mjs", ".github/workflows/lean-lekcije.yml", "lean/trditve.json"]
   push:
     branches: [main]
-    paths: ["content/lessons/**", "lean/Evklid/Lekcije/**", "scripts/lean-lekcije.mjs", ".github/workflows/lean-lekcije.yml"]
+    paths: ["content/lessons/**", "lean/Evklid/Lekcije/**", "scripts/lean-lekcije.mjs", ".github/workflows/lean-lekcije.yml", "lean/trditve.json"]
   workflow_dispatch:
 
 permissions:

@@ -31,7 +31,8 @@ open Real EuclideanGeometry
 /-! ## Numerično orodje: meje za sin in cos na [0, 1] -/
 
 open Complex Finset in
-/-- Taylorjev polinom za cos in sin do x⁸ z ostankom (iz `Complex.exp_bound`, n = 9). -/
+/-- Taylorjev polinom za cos in sin do x⁸ z ostankom (iz `Complex.exp_bound`, n = 9).
+pomozno -/
 theorem sc_bound (x : ℝ) (hx : |x| ≤ 1) :
     |Real.cos x - (1 - x^2/2 + x^4/24 - x^6/720 + x^8/40320)| ≤ |x|^9 * (10 / (362880 * 9)) ∧
     |Real.sin x - (x - x^3/6 + x^5/120 - x^7/5040)| ≤ |x|^9 * (10 / (362880 * 9)) := by
@@ -73,7 +74,8 @@ theorem sc_bound (x : ℝ) (hx : |x| ≤ 1) :
 /-- Zgornja meja za cos. -/
 @[expose] noncomputable def cZg (x : ℝ) : ℝ := 1 - x^2/2 + x^4/24 - x^6/720 + x^8/40320 + x^9/326592
 
-/-- Meje sSp ≤ sin ≤ sZg, cSp ≤ cos ≤ cZg na [0, 1]. -/
+/-- Meje sSp ≤ sin ≤ sZg, cSp ≤ cos ≤ cZg na [0, 1].
+pomozno -/
 theorem meje (x : ℝ) (h0 : 0 ≤ x) (h1 : x ≤ 1) :
     sSp x ≤ sin x ∧ sin x ≤ sZg x ∧ cSp x ≤ cos x ∧ cos x ≤ cZg x := by
   have hx : |x| = x := abs_of_nonneg h0
@@ -83,7 +85,8 @@ theorem meje (x : ℝ) (h0 : 0 ≤ x) (h1 : x ≤ 1) :
   refine ⟨?_, ?_, ?_, ?_⟩ <;> nlinarith [hc.1, hc.2, hs.1, hs.2]
 
 /-- Kot v stopinjah iz arcsin: če je y₁ ≤ y ≤ y₂ in sZg a ≤ y₁, y₂ < sSp b za točki a, b tik ob
-(D ∓ e)·π/180, je |arcsin y · 180/π − D| < e. -/
+(D ∓ e)·π/180, je |arcsin y · 180/π − D| < e.
+pomozno -/
 theorem arcsin_stopinje {y D e y₁ y₂ : ℝ} (a b : ℝ) (hDe : 0 < D - e)
     (ha : (D - e) * 3.141593 / 180 ≤ a) (hb : b ≤ (D + e) * 3.141592 / 180) (ha1 : a ≤ 1)
     (hb0 : 0 ≤ b) (hb1 : b ≤ 1) (hy₁ : y₁ ≤ y) (hy₂ : y ≤ y₂) (hy1 : y ≤ 1)
@@ -105,7 +108,8 @@ theorem arcsin_stopinje {y D e y₁ y₂ : ℝ} (a b : ℝ) (hDe : 0 < D - e)
   · rw [sub_lt_iff_lt_add, div_lt_iff₀ hpi]; nlinarith
   · rw [sub_lt_comm, lt_div_iff₀ hpi]; nlinarith
 
-/-- Kot v stopinjah iz arctan: q₁ ≤ q ≤ q₂ in numerične meje za sin, cos v točkah a, b. -/
+/-- Kot v stopinjah iz arctan: q₁ ≤ q ≤ q₂ in numerične meje za sin, cos v točkah a, b.
+pomozno -/
 theorem arctan_stopinje {q D e q₁ q₂ : ℝ} (a b : ℝ) (hDe : 0 < D - e)
     (ha : (D - e) * 3.141593 / 180 ≤ a) (hb : b ≤ (D + e) * 3.141592 / 180) (ha1 : a ≤ 1)
     (hb0 : 0 ≤ b) (hb1 : b ≤ 1) (hq₁ : q₁ ≤ q) (hq₂ : q ≤ q₂) (hq0 : 0 ≤ q₁)
@@ -134,7 +138,8 @@ theorem arctan_stopinje {q D e q₁ q₂ : ℝ} (a b : ℝ) (hDe : 0 < D - e)
   · rw [sub_lt_iff_lt_add, div_lt_iff₀ hpi]; nlinarith
   · rw [sub_lt_comm, lt_div_iff₀ hpi]; nlinarith
 
-/-- Meje za sin in cos kota k° (k·π/180 ≤ 1) prek mej za π (`pi_gt_d6`, `pi_lt_d6`). -/
+/-- Meje za sin in cos kota k° (k·π/180 ≤ 1) prek mej za π (`pi_gt_d6`, `pi_lt_d6`).
+pomozno -/
 theorem meje_stopinj (k : ℝ) (hk : 0 ≤ k) (hk1 : k * 3.141593 / 180 ≤ 1) :
     sSp (k * 3.141592 / 180) ≤ sin (k * π / 180) ∧ sin (k * π / 180) ≤ sZg (k * 3.141593 / 180) ∧
     cSp (k * 3.141593 / 180) ≤ cos (k * π / 180) ∧ cos (k * π / 180) ≤ cZg (k * 3.141592 / 180) := by
@@ -158,15 +163,18 @@ example : |(1 / 2 : ℝ)| ≤ 1 ∧ (0 : ℝ) ≤ 1 / 2 ∧ (1 / 2 : ℝ) ≤ 1 
 /-- Predpostavke trditve `meje_stopinj` se dajo izpolniti (k = 35). -/
 example : (0 : ℝ) ≤ 35 ∧ (35 : ℝ) * 3.141593 / 180 ≤ 1 := by norm_num
 
-/-- Meje za √2. -/
+/-- Meje za √2.
+pomozno -/
 theorem sqrt2_meje : (1.41421356 : ℝ) < √2 ∧ √2 < 1.41421357 :=
   ⟨by rw [Real.lt_sqrt (by norm_num)]; norm_num, by rw [Real.sqrt_lt' (by norm_num)]; norm_num⟩
 
-/-- Meje za √3. -/
+/-- Meje za √3.
+pomozno -/
 theorem sqrt3_meje : (1.73205080 : ℝ) < √3 ∧ √3 < 1.73205081 :=
   ⟨by rw [Real.lt_sqrt (by norm_num)]; norm_num, by rw [Real.sqrt_lt' (by norm_num)]; norm_num⟩
 
-/-- Meje za sin 40° in cos 40°. -/
+/-- Meje za sin 40° in cos 40°.
+pomozno -/
 theorem meje_40 : (0.64278726 : ℝ) < sin (40 * π / 180) ∧ sin (40 * π / 180) < 0.64278769 ∧
     (0.76604428 : ℝ) < cos (40 * π / 180) ∧ cos (40 * π / 180) < 0.76604467 := by
   obtain ⟨h1, h2, h3, h4⟩ := meje_stopinj 40 (by norm_num) (by norm_num)
@@ -176,7 +184,9 @@ theorem meje_40 : (0.64278726 : ℝ) < sin (40 * π / 180) ∧ sin (40 * π / 18
 /-! ## Razlaga 1, 2: Cavalierijevo načelo -/
 
 /-- Razlaga 2, Povzetek, Ustno vprašanje 1 (Cavalierijevo načelo v modelu presekov): telesi z enako
-ploščino presekov na vsaki višini h ∈ [0, v] imata enako prostornino ∫₀ᵛ A(h) dh. -/
+ploščino presekov na vsaki višini h ∈ [0, v] imata enako prostornino ∫₀ᵛ A(h) dh.
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#cavalieri
+besedilo: »Cavalierijevo načelo:** telesi z enako ploščino prerezov na vsaki višini imata enako prostornino.« -/
 theorem cavalieri (A₁ A₂ : ℝ → ℝ) (v : ℝ) (hv : 0 ≤ v) (h : ∀ x ∈ Set.Icc 0 v, A₁ x = A₂ x) :
     ∫ x in (0:ℝ)..v, A₁ x = ∫ x in (0:ℝ)..v, A₂ x := by
   apply intervalIntegral.integral_congr
@@ -189,11 +199,15 @@ example : (0:ℝ) ≤ 1 ∧ ∀ x ∈ Set.Icc (0:ℝ) 1, (fun _ => (1:ℝ)) x = 
   ⟨zero_le_one, fun _ _ => rfl⟩
 
 /-- Razlaga 2, Povzetek: prerezi poševne (in pokončne) prizme ali valja so skladni z osnovno ploskvijo
-(A(h) = O), zato V = ∫₀ᵛ O dh = O·v. -/
+(A(h) = O), zato V = ∫₀ᵛ O dh = O·v.
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#prizma-v
+besedilo: »Poševno prizmo primerjamo s pokončno prizmo z enako osnovno ploskvijo in enako višino; njuni prerezi so skladni z osnovno ploskvijo.« -/
 theorem prizma_V (O v : ℝ) : ∫ _ in (0:ℝ)..v, O = O * v := by simp; ring
 
 /-- Razlaga 2, Povzetek: pri poševni piramidi ali stožcu je prerez na višini h osnovna ploskev, pomanjšana
-v razmerju (v − h)/v, zato V = ∫₀ᵛ O((v − h)/v)² dh = O·v/3 (enako kot pri pokončni). -/
+v razmerju (v − h)/v, zato V = ∫₀ᵛ O((v − h)/v)² dh = O·v/3 (enako kot pri pokončni).
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#piramida-v
+besedilo: »Tudi poševno piramido primerjamo s pokončno z enako osnovno ploskvijo in višino: na isti višini sta prereza osnovna ploskev, pomanjšana v istem razmerju, torej imata enako ploščino.« -/
 theorem piramida_V (O v : ℝ) (hv : 0 < v) : ∫ h in (0:ℝ)..v, O * ((v - h) / v) ^ 2 = O * v / 3 := by
   have hF : ∀ x ∈ Set.uIcc (0:ℝ) v, HasDerivAt (fun h : ℝ => -(O * (v - h) ^ 3 / (3 * v ^ 2)))
       (O * ((v - x) / v) ^ 2) x := by
@@ -214,7 +228,9 @@ example : (0:ℝ) < 1 := one_pos
 
 /-- Razlaga 1 (tabela), premisli: kup 16 palačink debeline 0,5 cm ima višino 8 cm in ploščino π·10² = 100π;
 prerezi pokončnega, nagnjenega in cik-cak kupa imajo isto ploščino 100π na vsaki višini, zato vsi
-∫₀⁸ 100π = 800π, ne glede na dolžino stranskega roba. -/
+∫₀⁸ 100π = 800π, ne glede na dolžino stranskega roba.
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#palacinke
+besedilo: »Kup $16$ palačink s premerom $20\,\mathrm{cm}$ in debelino $0{,}5\,\mathrm{cm}$ je nagnjen tako, da je njegov stranski rob dolg $10\,\mathrm{cm}$.« -/
 theorem palacinke (A : ℝ → ℝ) (hA : ∀ x ∈ Set.Icc (0:ℝ) 8, A x = 100 * π) :
     (16 : ℝ) * 0.5 = 8 ∧ π * 10 ^ 2 = 100 * π ∧ ∫ x in (0:ℝ)..8, A x = 800 * π := by
   refine ⟨by norm_num, by ring, ?_⟩
@@ -226,7 +242,9 @@ example : ∀ x ∈ Set.Icc (0:ℝ) 8, (fun _ => 100 * π) x = 100 * π := fun _
 /-! ## Razlaga 3: višina ni stranski rob -/
 
 /-- Razlaga 3, Povzetek, Ponovitev: stranski rob XK z nožiščem N (pravi kot pri N) in kotom α = ∠ N X K
-med robom in osnovno ploskvijo: višina v = KN = s·sin α ≤ s. -/
+med robom in osnovno ploskvijo: višina v = KN = s·sin α ≤ s.
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#visina
+besedilo: »Višina** je razdalja med ravninama osnovnih ploskev, ne stranski rob: $v = s\sin\alpha$.« -/
 theorem visina {V P : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [MetricSpace P]
     [NormedAddTorsor V P] {X N K : P} (h : ∠ K N X = π / 2) (_hX : X ≠ N) (_hK : K ≠ N) :
     dist K N = dist K X * sin (∠ N X K) ∧ dist K N ≤ dist K X := by
@@ -244,7 +262,9 @@ example : ∠ (!₂[(0:ℝ), 1] : EuclideanSpace ℝ (Fin 2)) !₂[0, 0] !₂[1,
   · intro h; have := congrFun (congrArg (⇑) h) 0; simp at this
   · intro h; have := congrFun (congrArg (⇑) h) 1; simp at this
 
-/-- Preveri se (2): pri enaki višini v in kotu 0 < α < 90° je stranski rob s = v/sin α daljši od v. -/
+/-- Preveri se (2): pri enaki višini v in kotu 0 < α < 90° je stranski rob s = v/sin α daljši od v.
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#rob-daljsi
+besedilo: »Stranska roba nista enaka: pri enaki višini je rob poševne prizme daljši, $s = \frac{v}{\sin\alpha}$.« -/
 theorem rob_daljsi (v α : ℝ) (hv : 0 < v) (h0 : 0 < α) (h1 : α < π / 2) : v < v / sin α := by
   have hs : 0 < sin α := sin_pos_of_pos_of_lt_pi h0 (by linarith [pi_pos])
   have hs1 : sin α < 1 := by
@@ -256,7 +276,9 @@ theorem rob_daljsi (v α : ℝ) (hv : 0 < v) (h0 : 0 < α) (h1 : α < π / 2) : 
 example : (0:ℝ) < 5 ∧ (0:ℝ) < π / 6 ∧ π / 6 < π / 2 := ⟨by norm_num, by positivity, by linarith [pi_pos]⟩
 
 /-- Ustno vprašanje 3 (ena stranska ploskev): če je stranska ploskev nagnjena proti osnovni za kot β, je
-višina prizme v = h·sin β ≤ h (h višina paralelograma na rob e), zato e·v ≤ e·h; enakost pri sin β = 1. -/
+višina prizme v = h·sin β ≤ h (h višina paralelograma na rob e), zato e·v ≤ e·h; enakost pri sin β = 1.
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#stranska-ploskev
+besedilo: »Pri pokončni prizmi je stranska ploskev nad osnovnim robom $e$ pravokotnik s ploščino $e\,v$, pri poševni pa paralelogram s ploščino $e\,h$, kjer je $h$ njegova višina na rob $e$.« -/
 theorem stranska_ploskev (e h β : ℝ) (he : 0 < e) (hh : 0 < h) :
     e * (h * sin β) ≤ e * h ∧ (e * (h * sin β) = e * h ↔ sin β = 1) := by
   refine ⟨mul_le_mul_of_nonneg_left (mul_le_of_le_one_right hh.le (sin_le_one β)) he.le, ?_⟩
@@ -272,13 +294,17 @@ example : (0:ℝ) < 1 := one_pos
 /-! ## Razlaga 4: vrtenine (računi) -/
 
 /-- Razlaga 4, premisli: trikotnik 3, 4 okoli krajše katete (os 3, polmer 4) da π·16·3/3 = 16π, okoli
-daljše (os 4, polmer 3) π·9·4/3 = 12π; 16π > 12π. -/
+daljše (os 4, polmer 3) π·9·4/3 = 12π; 16π > 12π.
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#premisli-stozca
+besedilo: »Okoli krajše katete. Os $3$, polmer $4$: $V = \frac{\pi \cdot 16 \cdot 3}{3} = 16\pi$. Os $4$, polmer $3$: $V = \frac{\pi \cdot 9 \cdot 4}{3} = 12\pi$. Polmer je v formuli na kvadrat, višina ne, zato zmaga večji polmer.« -/
 theorem premisli_stozca : π * 16 * 3 / 3 = 16 * π ∧ π * 9 * 4 / 3 = 12 * π ∧ 12 * π < 16 * π := by
   have := pi_pos
   exact ⟨by ring, by ring, by linarith⟩
 
 /-- Razlaga 4 (simulacija): valj r = 2, v = 4 ima π·4·4 = 16π ≈ 50,3, stožec 16π/3 ≈ 16,8, natanko
-tretjino: (π·2²·4/3)/(π·2²·4) = 1/3. -/
+tretjino: (π·2²·4/3)/(π·2²·4) = 1/3.
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#simulacija
+besedilo: »V simulaciji spodaj (»Valj, stožec in krogla«) izberi valj z r = 2 in v = 4, nato stožec z enakima r in v. Primerjaj prostornini (približno $50{,}3$ in $16{,}8$): stožec ima natanko tretjino prostornine valja z isto osnovno ploskvijo in višino.« -/
 theorem simulacija : π * 2 ^ 2 * 4 = 16 * π ∧ |16 * π - 50.3| < 0.05 ∧ |16 * π / 3 - 16.8| < 0.05 ∧
     (π * 2 ^ 2 * 4 / 3) / (π * 2 ^ 2 * 4) = 1 / 3 := by
   have p1 := pi_gt_d6; have p2 := pi_lt_d6
@@ -286,7 +312,9 @@ theorem simulacija : π * 2 ^ 2 * 4 = 16 * π ∧ |16 * π - 50.3| < 0.05 ∧ |1
   refine ⟨by ring, ?_, ?_, by field_simp⟩ <;> rw [abs_lt] <;> constructor <;> linarith
 
 /-- Povzetek, Ponovitev, Pogoste napake (3), Ustno vprašanje 2: ploščina trikotnika na dva načina
-ab/2 = cr/2 da polmer dvojnega stožca r = ab/c. -/
+ab/2 = cr/2 da polmer dvojnega stožca r = ab/c.
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#polmer-dvojnega
+besedilo: »Pravokotni trikotnik okoli hipotenuze: dvojni stožec z $r = \frac{a\,b}{c}$.« -/
 theorem polmer_dvojnega (a b c r : ℝ) (hc : 0 < c) : a * b / 2 = c * r / 2 ↔ r = a * b / c := by
   rw [eq_div_iff hc.ne']; constructor <;> intro h <;> linarith
 
@@ -294,14 +322,18 @@ theorem polmer_dvojnega (a b c r : ℝ) (hc : 0 < c) : a * b / 2 = c * r / 2 ↔
 example : (0:ℝ) < 10 := by norm_num
 
 /-- Primer 3 (korak 4), naloga 2 c): dvojni stožec – prostornini stožcev z višinama c₁ in c₂ (c₁ + c₂ = c)
-seštejemo in izpostavimo πr²/3: πr²c₁/3 + πr²c₂/3 = πr²c/3. -/
+seštejemo in izpostavimo πr²/3: πr²c₁/3 + πr²c₂/3 = πr²c/3.
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#dvojni-stozec
+besedilo: »Prostornini stožcev seštejemo in izpostavimo $\frac{\pi r^2}{3}$; višini obeh stožcev skupaj dasta $c$, zato $V = \dfrac{\pi \cdot 4{,}8^2 \cdot 10}{3} = 76{,}8\pi \approx 241{,}3\,\mathrm{cm^3}$.« -/
 theorem dvojni_stozec (r c₁ c₂ : ℝ) : π * r ^ 2 * c₁ / 3 + π * r ^ 2 * c₂ / 3 = π * r ^ 2 * (c₁ + c₂) / 3 := by
   ring
 
 /-! ## Rešeni primeri -/
 
 /-- Primer 1: v = 16·0,5 = 8, r = 10, O = 100π, V = 100π·8 = 800π ≈ 2513 cm³; sin α = 8/10 = 0,8,
-α ≈ 53,13° ≈ 53,1°. -/
+α ≈ 53,13° ≈ 53,1°.
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#primer1
+besedilo: »$\sin\alpha = \dfrac{8}{10} = 0{,}8$, torej $\alpha \approx 53{,}13^\circ$.« -/
 theorem primer1 :
     (16 : ℝ) * 0.5 = 8 ∧ (20 : ℝ) / 2 = 10 ∧ π * 10 ^ 2 = 100 * π ∧ 100 * π * 8 = 800 * π ∧
     |800 * π - 2513| < 0.5 ∧ (8 : ℝ) / 10 = 0.8 ∧ |arcsin 0.8 * 180 / π - 53.13| < 0.005 ∧
@@ -316,7 +348,9 @@ theorem primer1 :
   rw [abs_lt] at h ⊢; constructor <;> linarith [h.1, h.2]
 
 /-- Primer 2 (kornet, kateti 3 in 12, os 12): V = π·9·12/3 = 36π ≈ 113,1 (≈ 113), s = √(9 + 144) = √153
-≈ 12,37, P_pl = π·3·12,37 ≈ 116,6 (tudi z nezaokroženim √153). -/
+≈ 12,37, P_pl = π·3·12,37 ≈ 116,6 (tudi z nezaokroženim √153).
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#primer2
+besedilo: »$P_{pl} = \pi \cdot 3 \cdot 12{,}37 \approx 116{,}6\,\mathrm{cm^2}$« -/
 theorem primer2 :
     π * 9 * 12 / 3 = 36 * π ∧ |36 * π - 113.1| < 0.05 ∧ |36 * π - 113| < 0.5 ∧
     √((3 : ℝ) ^ 2 + 12 ^ 2) = √153 ∧ |√153 - 12.37| < 0.005 ∧ |π * 3 * 12.37 - 116.6| < 0.05 ∧
@@ -329,7 +363,9 @@ theorem primer2 :
 
 /-- Primer 3 (kalup, kateti 6 in 8, os hipotenuza): c = √(36 + 64) = 10; polmer je razdalja oglišča s
 pravim kotom (0,0) od hipotenuze 8x + 6y = 48: |0 + 0 − 48|/√(8² + 6²) = 4,8 = 6·8/10;
-V = π·4,8²·10/3 = 76,8π ≈ 241,3 (≈ 241), P = π·4,8·14 = 67,2π ≈ 211,1 (≈ 211). -/
+V = π·4,8²·10/3 = 76,8π ≈ 241,3 (≈ 241), P = π·4,8·14 = 67,2π ≈ 211,1 (≈ 211).
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#primer3
+besedilo: »$V = \dfrac{\pi \cdot 4{,}8^2 \cdot 10}{3} = 76{,}8\pi \approx 241{,}3\,\mathrm{cm^3}$« -/
 theorem primer3 :
     √((36 : ℝ) + 64) = 10 ∧ |8 * 0 + 6 * 0 - 48| / √((8 : ℝ) ^ 2 + 6 ^ 2) = 4.8 ∧ (6 : ℝ) * 8 / 10 = 4.8 ∧
     π * 4.8 ^ 2 * 10 / 3 = 76.8 * π ∧ |76.8 * π - 241.3| < 0.05 ∧ |76.8 * π - 241| < 0.5 ∧
@@ -342,7 +378,9 @@ theorem primer3 :
   all_goals rw [abs_lt]; constructor <;> linarith
 
 /-- Primer 4 (trapez okoli daljše osnovnice): r = 4, V_valj = π·16·3 = 48π, v₂ = 6 − 3 = 3,
-V_stožec = π·16·3/3 = 16π, V = 64π ≈ 201,1. -/
+V_stožec = π·16·3/3 = 16π, V = 64π ≈ 201,1.
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#primer4
+besedilo: »$V_{stožec} = \frac{\pi \cdot 16 \cdot 3}{3} = 16\pi\,\mathrm{cm^3}$, zato $V = 48\pi + 16\pi = 64\pi \approx 201{,}1\,\mathrm{cm^3}$.« -/
 theorem primer4 :
     π * 4 ^ 2 * 3 = 48 * π ∧ (6 : ℝ) - 3 = 3 ∧ π * 16 * 3 / 3 = 16 * π ∧ 48 * π + 16 * π = 64 * π ∧
     |64 * π - 201.1| < 0.05 := by
@@ -351,7 +389,9 @@ theorem primer4 :
   rw [abs_lt]; constructor <;> linarith
 
 /-- Drugače (trapez okoli krajše osnovnice): V = π·16·6 − π·16·3/3 = 96π − 16π = 80π ≈ 251,3; okoli daljše
-64π. -/
+64π.
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#trapez-krajsa
+besedilo: »$V = \pi \cdot 16 \cdot 6 - \dfrac{\pi \cdot 16 \cdot 3}{3} = 96\pi - 16\pi = 80\pi \approx 251{,}3\,\mathrm{cm^3}$« -/
 theorem trapez_krajsa :
     π * 16 * 6 - π * 16 * 3 / 3 = 96 * π - 16 * π ∧ 96 * π - 16 * π = 80 * π ∧ |80 * π - 251.3| < 0.05 ∧
     64 * π ≠ 80 * π := by
@@ -361,7 +401,9 @@ theorem trapez_krajsa :
 /-! ## Pogoste napake -/
 
 /-- Pogoste napake: rob s = 10 pod 30° da v = 10 sin 30° = 5; z v = 10 je prostornina dvakrat prevelika.
-Pravokotnik 2 × 4 okoli stranice 4 ima polmer 2: π·2²·4 = 16π, ne π·4²·2 = 32π. -/
+Pravokotnik 2 × 4 okoli stranice 4 ima polmer 2: π·2²·4 = 16π, ne π·4²·2 = 32π.
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#pogoste-napake
+besedilo: »Stranski rob namesto višine.** Pri poševnem valju z robom $s = 10\,\mathrm{cm}$ pod kotom $30^\circ$ nekdo računa z $v = 10\,\mathrm{cm}$ in dobi dvakrat preveč. Višina je razdalja med osnovnima ploskvama: $v = s\sin\alpha$.« -/
 theorem pogoste_napake (O : ℝ) :
     10 * sin (30 * π / 180) = 5 ∧ O * 10 = 2 * (O * 5) ∧ π * 2 ^ 2 * 4 = 16 * π ∧ π * 4 ^ 2 * 2 = 32 * π := by
   refine ⟨?_, by ring, by ring, by ring⟩
@@ -371,7 +413,9 @@ theorem pogoste_napake (O : ℝ) :
 
 /-- Preveri se (3): piškoti r = 5, rob 10 pod 30°: v = 10 sin 30° = 5, V ≈ 3·25·5 = 375 (π ≈ 3), natančno
 125π ≈ 393 (392,7); oba v pasu 390 ± 20. Napačni: 3·25·10 = 750, π·25·10 ≈ 785, s kosinusom
-3·25·10·cos 30° ≈ 650 in π·25·10·cos 30° ≈ 680. -/
+3·25·10·cos 30° ≈ 650 in π·25·10·cos 30° ≈ 680.
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#piskoti
+besedilo: »$v = 10 \cdot \frac{1}{2} = 5\,\mathrm{cm}$, $V \approx 3 \cdot 25 \cdot 5 = 375\,\mathrm{cm^3}$ (natančno $125\pi \approx 393\,\mathrm{cm^3}$).« -/
 theorem piskoti :
     10 * sin (30 * π / 180) = 5 ∧ (3 : ℝ) * 25 * 5 = 375 ∧ π * 5 ^ 2 * 5 = 125 * π ∧ |125 * π - 393| < 0.5 ∧
     |125 * π - 392.7| < 0.05 ∧ |(375 : ℝ) - 390| ≤ 20 ∧ |125 * π - 390| ≤ 20 ∧ (3 : ℝ) * 25 * 10 = 750 ∧
@@ -389,7 +433,9 @@ theorem piskoti :
     | (rw [abs_le]; constructor <;> nlinarith)
 
 /-- Preveri se (4): πr²·8/3 = 96π ⇔ r² = 36 ⇔ r = 6 (r > 0); brez 1/3 bi dobil r² = 12, r ≈ 3,46;
-36 je r². RAČUN: √(96·3/8) = 6. -/
+36 je r². RAČUN: √(96·3/8) = 6.
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#kateta-6
+besedilo: »Druga kateta je polmer: $\frac{\pi r^2 \cdot 8}{3} = 96\pi$, zato $r^2 = 36$ in $r = 6\,\mathrm{cm}$.« -/
 theorem kateta_6 (r : ℝ) (hr : 0 < r) :
     (π * r ^ 2 * 8 / 3 = 96 * π ↔ r ^ 2 = 36) ∧ (r ^ 2 = 36 ↔ r = 6) ∧ √(96 * 3 / 8 : ℝ) = 6 ∧
     (π * r ^ 2 * 8 = 96 * π ↔ r ^ 2 = 12) ∧ |√(12 : ℝ) - 3.46| < 0.005 := by
@@ -406,7 +452,9 @@ theorem kateta_6 (r : ℝ) (hr : 0 < r) :
 example : (0:ℝ) < 6 := by norm_num
 
 /-- Preveri se (5): kateti 6, 8: okoli hipotenuze 76,8π, okoli katete 8: π·36·8/3 = 96π, okoli katete 6:
-π·64·6/3 = 128π; 76,8π < 96π < 128π. -/
+π·64·6/3 = 128π; 76,8π < 96π < 128π.
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#razvrsti
+besedilo: »Okoli hipotenuze $76{,}8\pi$ (polmer le $4{,}8$), okoli katete $8$: $\frac{\pi \cdot 36 \cdot 8}{3} = 96\pi$, okoli katete $6$: $\frac{\pi \cdot 64 \cdot 6}{3} = 128\pi$.« -/
 theorem razvrsti :
     π * 36 * 8 / 3 = 96 * π ∧ π * 64 * 6 / 3 = 128 * π ∧ 76.8 * π < 96 * π ∧ 96 * π < 128 * π := by
   have := pi_pos
@@ -415,7 +463,9 @@ theorem razvrsti :
 /-! ## Za maturo -/
 
 /-- Naloga 1: v = 6 sin 60° = 3√3, O = √3/4·4² = 4√3, V = 4√3·3√3 = 36, V' = 4√3·6 = 24√3,
-V/V' = 36/(24√3) = 3/(2√3) = √3/2 = sin 60°. -/
+V/V' = 36/(24√3) = 3/(2√3) = √3/2 = sin 60°.
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#naloga1
+besedilo: »c) $\dfrac{V}{V'} = \dfrac{36}{24\sqrt{3}} = \dfrac{3}{2\sqrt{3}} = \dfrac{\sqrt{3}}{2}$. Razmerje je enako $\sin 60^\circ$, ker se prizmi razlikujeta le v višini.« -/
 theorem naloga1 :
     6 * sin (60 * π / 180) = 6 * (√3 / 2) ∧ 6 * (√3 / 2) = 3 * √3 ∧ √3 / 4 * 4 ^ 2 = 4 * √3 ∧
     4 * √3 * (3 * √3) = 36 ∧ 4 * √3 * 6 = 24 * √3 ∧ 36 / (24 * √3) = 3 / (2 * √3) ∧
@@ -427,7 +477,9 @@ theorem naloga1 :
   · field_simp; ring
   · field_simp; nlinarith
 
-/-- Naloga 2 a): BC² = 7² + 10² − 2·7·10 cos 40° ≈ 41,754, BC ≈ 6,4617 ≈ 6,46. -/
+/-- Naloga 2 a): BC² = 7² + 10² − 2·7·10 cos 40° ≈ 41,754, BC ≈ 6,4617 ≈ 6,46.
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#naloga2a
+besedilo: »a) Kosinusni izrek: $BC^2 = 7^2 + 10^2 - 2 \cdot 7 \cdot 10 \cos 40^\circ \approx 41{,}754$, zato $BC \approx 6{,}4617\,\mathrm{cm} \approx 6{,}46\,\mathrm{cm}$.« -/
 theorem naloga2a :
     |7 ^ 2 + 10 ^ 2 - 2 * 7 * 10 * cos (40 * π / 180) - 41.754| < 0.0005 ∧
     |√(7 ^ 2 + 10 ^ 2 - 2 * 7 * 10 * cos (40 * π / 180)) - 6.4617| < 0.00005 ∧
@@ -441,7 +493,9 @@ theorem naloga2a :
   refine ⟨?_, ?_, ?_⟩ <;> rw [abs_lt] <;> constructor <;> linarith
 
 /-- Naloga 2 b): kota pri A in B sta ostra – pri A je 40°, pri B velja AC² < AB² + BC²; zato nožišče D
-višine iz C leži med A in B: 0 < AD = 7 cos 40° < 10. Polmer r = 7 sin 40° ≈ 4,4995 ≈ 4,50. -/
+višine iz C leži med A in B: 0 < AD = 7 cos 40° < 10. Polmer r = 7 sin 40° ≈ 4,4995 ≈ 4,50.
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#naloga2b
+besedilo: »b) Polmer: $r = AC\sin 40^\circ = 7\sin 40^\circ \approx 4{,}4995\,\mathrm{cm} \approx 4{,}50\,\mathrm{cm}$.« -/
 theorem naloga2b :
     40 * π / 180 < π / 2 ∧
     (7 : ℝ) ^ 2 < 10 ^ 2 + (7 ^ 2 + 10 ^ 2 - 2 * 7 * 10 * cos (40 * π / 180)) ∧
@@ -453,7 +507,9 @@ theorem naloga2b :
     linarith
 
 /-- Naloga 2 c): V = πr²·AD/3 + πr²·DB/3 = πr²·AB/3 ≈ 212,01 ≈ 212,0 (z zaokroženim r = 4,50 pa ≈ 212,1);
-P = πr(AC + BC) ≈ π·4,4995·13,4617 ≈ 190,29 ≈ 190,3. -/
+P = πr(AC + BC) ≈ π·4,4995·13,4617 ≈ 190,29 ≈ 190,3.
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#naloga2c
+besedilo: »$P = \pi r\,(AC + BC) \approx \pi \cdot 4{,}4995 \cdot 13{,}4617 \approx 190{,}29\,\mathrm{cm^2} \approx 190{,}3\,\mathrm{cm^2}$« -/
 theorem naloga2c :
     |π * (7 * sin (40 * π / 180)) ^ 2 * 10 / 3 - 212.01| < 0.005 ∧
     |π * (7 * sin (40 * π / 180)) ^ 2 * 10 / 3 - 212.0| < 0.05 ∧ |π * 4.50 ^ 2 * 10 / 3 - 212.1| < 0.05 ∧
@@ -492,7 +548,9 @@ theorem naloga2c :
   · rw [abs_lt]; constructor <;> linarith
 
 /-- Naloga 2 d): vrtenina okoli premice skozi C, vzporedne z AB, je valj (polmer r, višina AB) brez dveh
-stožcev z višinama AD in DB: V' = πr²·AB − πr²(AD + DB)/3 = 2·πr²·AB/3 = 2V ≈ 424,0. -/
+stožcev z višinama AD in DB: V' = πr²·AB − πr²(AD + DB)/3 = 2·πr²·AB/3 = 2V ≈ 424,0.
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#naloga2d
+besedilo: »$V' = \pi r^2 \cdot AB - \dfrac{\pi r^2 (AD + DB)}{3} = \pi r^2 \cdot AB - \dfrac{\pi r^2 \cdot AB}{3} = 2 \cdot \dfrac{\pi r^2 \cdot AB}{3} = 2V \approx 424{,}0\,\mathrm{cm^3}$« -/
 theorem naloga2d (r AD DB : ℝ) :
     π * r ^ 2 * (AD + DB) - π * r ^ 2 * (AD + DB) / 3 = 2 * (π * r ^ 2 * (AD + DB) / 3) ∧
     |2 * (π * (7 * sin (40 * π / 180)) ^ 2 * 10 / 3) - 424.0| < 0.05 := by
@@ -505,7 +563,9 @@ theorem naloga2d (r AD DB : ℝ) :
   rw [abs_lt]; constructor <;> nlinarith
 
 /-- RAČUN: π·3²·4/3 = 12π, π·4²·3/3 = 16π, √(6² + 8²) = 10, 36/(24√3) = √3/2. (6·8/10 = 4,8 je v
-`primer3`; 6 sin 60° = 3√3, √3/4·4² = 4√3 in 4√3·3√3 = 36 so v `naloga1`.) -/
+`primer3`; 6 sin 60° = 3√3, √3/4·4² = 4√3 in 4√3·3√3 = 36 so v `naloga1`.)
+trditev: MAT-SS-3/posevna-telesa-in-vrtenine#racun
+besedilo: »c) $\dfrac{V}{V'} = \dfrac{36}{24\sqrt{3}} = \dfrac{3}{2\sqrt{3}} = \dfrac{\sqrt{3}}{2}$. Razmerje je enako $\sin 60^\circ$, ker se prizmi razlikujeta le v višini.« -/
 theorem racun :
     π * 3 ^ 2 * 4 / 3 = 12 * π ∧ π * 4 ^ 2 * 3 / 3 = 16 * π ∧ √((6 : ℝ) ^ 2 + 8 ^ 2) = 10 ∧
     36 / (24 * √3) = √3 / 2 := by

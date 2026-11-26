@@ -26,7 +26,8 @@ open Real
 /-! ## Pomožne numerične ocene -/
 
 /-- Pomožna trditev (Taylor z ostankom iz `Complex.exp_bound`, n = 10): za `|x| ≤ 1` sta `cos x` in `sin x`
-oddaljena od Taylorjevih polinomov največ `|x|¹⁰·11/36288000`. -/
+oddaljena od Taylorjevih polinomov največ `|x|¹⁰·11/36288000`.
+pomozno -/
 theorem taylor_sin_cos (x : ℝ) (hx : |x| ≤ 1) :
     |Real.cos x - (1 - x ^ 2 / 2 + x ^ 4 / 24 - x ^ 6 / 720 + x ^ 8 / 40320)| ≤ |x| ^ 10 * (11 / 36288000) ∧
     |Real.sin x - (x - x ^ 3 / 6 + x ^ 5 / 120 - x ^ 7 / 5040 + x ^ 9 / 362880)| ≤
@@ -66,14 +67,16 @@ theorem taylor_sin_cos (x : ℝ) (hx : |x| ≤ 1) :
   · refine le_trans (le_of_eq ?_) ((Complex.abs_im_le_norm _).trans hb)
     rw [Complex.add_im, Complex.ofReal_im, Complex.im_ofReal_mul, Complex.I_im, mul_one, zero_add]
 
-/-- Pomožna trditev: `|π − 3,1415926536| ≤ 10⁻¹⁰` (iz `pi_gt_d20`, `pi_lt_d20`). -/
+/-- Pomožna trditev: `|π − 3,1415926536| ≤ 10⁻¹⁰` (iz `pi_gt_d20`, `pi_lt_d20`).
+pomozno -/
 theorem pi_blizu : |π - 3.1415926536| ≤ 1 / 10 ^ 10 := by
   have h1 := pi_gt_d20
   have h2 := pi_lt_d20
   rw [abs_le]; constructor <;> norm_num at * <;> linarith
 
 /-- Pomožna trditev: `cos` pri kotu `θ°` (`0 ≤ θ ≤ 57`) je blizu Taylorjevega polinoma v
-`q = θ·3,1415926536/180`. -/
+`q = θ·3,1415926536/180`.
+pomozno -/
 theorem cos_stopinj (θ q : ℝ) (hq : q = θ * 3.1415926536 / 180) (h0 : 0 ≤ θ) (h1 : θ ≤ 57) :
     |Real.cos (θ * π / 180) - (1 - q ^ 2 / 2 + q ^ 4 / 24 - q ^ 6 / 720 + q ^ 8 / 40320)| ≤
       θ / 180 * (1 / 10 ^ 10) + q ^ 10 * (11 / 36288000) := by
@@ -90,7 +93,8 @@ theorem cos_stopinj (θ q : ℝ) (hq : q = θ * 3.1415926536 / 180) (h0 : 0 ≤ 
     _ ≤ _ := (abs_add_le _ _).trans (add_le_add ((abs_cos_sub_cos_le _ _).trans hd) ht)
 
 /-- Pomožna trditev: `sin` pri kotu `θ°` (`0 ≤ θ ≤ 57`) je blizu Taylorjevega polinoma v
-`q = θ·3,1415926536/180` (`pi_blizu` in Lipschitzova ocena `|sin x − sin q| ≤ |x − q|`). -/
+`q = θ·3,1415926536/180` (`pi_blizu` in Lipschitzova ocena `|sin x − sin q| ≤ |x − q|`).
+pomozno -/
 theorem sin_stopinj (θ q : ℝ) (hq : q = θ * 3.1415926536 / 180) (h0 : 0 ≤ θ) (h1 : θ ≤ 57) :
     |Real.sin (θ * π / 180) - (q - q ^ 3 / 6 + q ^ 5 / 120 - q ^ 7 / 5040 + q ^ 9 / 362880)| ≤
       θ / 180 * (1 / 10 ^ 10) + q ^ 10 * (11 / 36288000) := by
@@ -106,15 +110,18 @@ theorem sin_stopinj (θ q : ℝ) (hq : q = θ * 3.1415926536 / 180) (h0 : 0 ≤ 
         (Real.sin q - (q - q ^ 3 / 6 + q ^ 5 / 120 - q ^ 7 / 5040 + q ^ 9 / 362880))| := by ring_nf
     _ ≤ _ := (abs_add_le _ _).trans (add_le_add ((abs_sin_sub_sin_le _ _).trans hd) ht)
 
-/-- Pomožna trditev: `cos θ° = sin (90 − θ)°`. -/
+/-- Pomožna trditev: `cos θ° = sin (90 − θ)°`.
+pomozno -/
 theorem cos_v_sin (θ : ℝ) : Real.cos (θ * π / 180) = Real.sin ((90 - θ) * π / 180) := by
   rw [← Real.sin_pi_div_two_sub]; congr 1; ring
 
-/-- Pomožna trditev: `sin θ° = cos (90 − θ)°`. -/
+/-- Pomožna trditev: `sin θ° = cos (90 − θ)°`.
+pomozno -/
 theorem sin_v_cos (θ : ℝ) : Real.sin (θ * π / 180) = Real.cos ((90 - θ) * π / 180) := by
   rw [← Real.cos_pi_div_two_sub]; congr 1; ring
 
-/-- Pomožna trditev: če je `lo² < y < hi²` (`0 ≤ lo`, `0 < hi`), je `lo < √y < hi`. -/
+/-- Pomožna trditev: če je `lo² < y < hi²` (`0 ≤ lo`, `0 < hi`), je `lo < √y < hi`.
+pomozno -/
 theorem sqrt_med (y lo hi : ℝ) (hlo : 0 ≤ lo) (hhi : 0 < hi) (h1 : lo ^ 2 < y) (h2 : y < hi ^ 2) :
     lo < Real.sqrt y ∧ Real.sqrt y < hi :=
   ⟨(Real.lt_sqrt hlo).mpr h1, (Real.sqrt_lt' hhi).mpr h2⟩
@@ -122,7 +129,8 @@ theorem sqrt_med (y lo hi : ℝ) (hlo : 0 ≤ lo) (hhi : 0 < hi) (h1 : lo ^ 2 < 
 /-- Predpostavke trditve `sqrt_med` se dajo izpolniti (`y = 4`, `lo = 1`, `hi = 3`). -/
 example : (0:ℝ) ≤ 1 ∧ (0:ℝ) < 3 ∧ (1:ℝ) ^ 2 < 4 ∧ (4:ℝ) < 3 ^ 2 := by norm_num
 
-/-- Pomožna trditev: če je `cos b < v < cos a` za `0 ≤ a < b ≤ π`, je `a < arccos v < b`. -/
+/-- Pomožna trditev: če je `cos b < v < cos a` za `0 ≤ a < b ≤ π`, je `a < arccos v < b`.
+pomozno -/
 theorem arccos_med (v a b : ℝ) (ha : 0 ≤ a) (hab : a < b) (hb : b ≤ π) (h1 : Real.cos b < v)
     (h2 : v < Real.cos a) : a < Real.arccos v ∧ Real.arccos v < b := by
   have hv1 : -1 ≤ v := (Real.neg_one_le_cos b).trans h1.le
@@ -146,7 +154,8 @@ theorem arccos_med (v a b : ℝ) (ha : 0 ≤ a) (hab : a < b) (hb : b ≤ π) (h
 example : (0:ℝ) ≤ 0 ∧ (0:ℝ) < π ∧ Real.cos π < 0 ∧ (0:ℝ) < Real.cos 0 := by
   refine ⟨le_rfl, Real.pi_pos, by simp, by simp⟩
 
-/-- Pomožna trditev: če je `sin a < v < sin b` za `−π/2 ≤ a < b ≤ π/2`, je `a < arcsin v < b`. -/
+/-- Pomožna trditev: če je `sin a < v < sin b` za `−π/2 ≤ a < b ≤ π/2`, je `a < arcsin v < b`.
+pomozno -/
 theorem arcsin_med (v a b : ℝ) (ha : -(π / 2) ≤ a) (hab : a < b) (hb : b ≤ π / 2)
     (h1 : Real.sin a < v) (h2 : v < Real.sin b) : a < Real.arcsin v ∧ Real.arcsin v < b := by
   have hv1 : -1 ≤ v := (Real.neg_one_le_sin a).trans h1.le
@@ -169,7 +178,8 @@ theorem arcsin_med (v a b : ℝ) (ha : -(π / 2) ≤ a) (hab : a < b) (hb : b �
 /-- Predpostavke trditve `arcsin_med` se dajo izpolniti (`v = 0`, `a = −π/2`, `b = π/2`). -/
 example : Real.sin (-(π / 2)) < 0 ∧ (0:ℝ) < Real.sin (π / 2) := by simp
 
-/-- Pomožna trditev: spodnja in zgornja meja za `cos θ°` iz Taylorjevega polinoma (preverita jih `norm_num`). -/
+/-- Pomožna trditev: spodnja in zgornja meja za `cos θ°` iz Taylorjevega polinoma (preverita jih `norm_num`).
+pomozno -/
 theorem cos_meja (θ lo hi : ℝ) (h0 : 0 ≤ θ) (h1 : θ ≤ 57)
     (hlo : lo ≤ (1 - (θ * 3.1415926536 / 180) ^ 2 / 2 + (θ * 3.1415926536 / 180) ^ 4 / 24 -
       (θ * 3.1415926536 / 180) ^ 6 / 720 + (θ * 3.1415926536 / 180) ^ 8 / 40320) -
@@ -191,7 +201,8 @@ example : (0:ℝ) ≤ (1 - (0 * 3.1415926536 / 180) ^ 2 / 2 + (0 * 3.1415926536 
       (0 / 180 * (1 / 10 ^ 10) + (0 * 3.1415926536 / 180) ^ 10 * (11 / 36288000)) ≤ (2:ℝ) := by
   constructor <;> norm_num
 
-/-- Pomožna trditev: spodnja in zgornja meja za `sin θ°` iz Taylorjevega polinoma. -/
+/-- Pomožna trditev: spodnja in zgornja meja za `sin θ°` iz Taylorjevega polinoma.
+pomozno -/
 theorem sin_meja (θ lo hi : ℝ) (h0 : 0 ≤ θ) (h1 : θ ≤ 57)
     (hlo : lo ≤ ((θ * 3.1415926536 / 180) - (θ * 3.1415926536 / 180) ^ 3 / 6 +
       (θ * 3.1415926536 / 180) ^ 5 / 120 - (θ * 3.1415926536 / 180) ^ 7 / 5040 +
@@ -217,7 +228,8 @@ example : (-1:ℝ) ≤ ((0 * 3.1415926536 / 180) - (0 * 3.1415926536 / 180) ^ 3 
       (0 / 180 * (1 / 10 ^ 10) + (0 * 3.1415926536 / 180) ^ 10 * (11 / 36288000)) ≤ (1:ℝ) := by
   constructor <;> norm_num
 
-/-- Pomožna trditev: iz `a·π/180 < x < b·π/180` sledi `a < x·180/π < b` (pretvorba v stopinje). -/
+/-- Pomožna trditev: iz `a·π/180 < x < b·π/180` sledi `a < x·180/π < b` (pretvorba v stopinje).
+pomozno -/
 theorem v_stopinje (x a b : ℝ) (ha : a * π / 180 < x) (hb : x < b * π / 180) :
     a < x * 180 / π ∧ x * 180 / π < b := by
   have hpi := Real.pi_pos
@@ -230,7 +242,8 @@ example : (0:ℝ) * π / 180 < π / 180 ∧ π / 180 < 2 * π / 180 := by
   constructor <;> nlinarith [Real.pi_pos]
 
 
-/-- Pomožna trditev: celo število `k` z `n − 1 < k < n + 1` je `n`. -/
+/-- Pomožna trditev: celo število `k` z `n − 1 < k < n + 1` je `n`.
+pomozno -/
 theorem int_med (k n : ℤ) (h1 : (n : ℝ) - 1 < k) (h2 : (k : ℝ) < n + 1) : k = n := by
   have a : n - 1 < k := by exact_mod_cast h1
   have b : k < n + 1 := by exact_mod_cast h2
@@ -242,7 +255,9 @@ example : ((0:ℤ) : ℝ) - 1 < ((0:ℤ) : ℝ) ∧ ((0:ℤ) : ℝ) < ((0:ℤ) :
 /-! ## Splošne rešitve (Razlaga 4, 5, Povzetek, Ponovitev) -/
 
 /-- Razlaga 4 in Ustno vprašanje 1: za `−1 ≤ a ≤ 1`, `x₁ = arcsin a`, je `sin x = a` natanko tedaj, ko
-`x = x₁ + k·360°` ali `x = 180° − x₁ + k·360°` (`k ∈ ℤ`; v radianih `360° = 2π`, `180° = π`). -/
+`x = x₁ + k·360°` ali `x = 180° − x₁ + k·360°` (`k ∈ ℤ`; v radianih `360° = 2π`, `180° = π`).
+trditev: MAT-SS-3/trigonometrijske-enacbe#sin-splosna
+besedilo: »Če je $x_1 = \arcsin a$, so vse rešitve $x = x_1 + k \cdot 360^\circ$ ali $x = 180^\circ - x_1 + k \cdot 360^\circ$, kjer je $k$ poljubno celo število.« -/
 theorem sin_splosna (a x : ℝ) (h1 : -1 ≤ a) (h2 : a ≤ 1) :
     Real.sin x = a ↔ ∃ k : ℤ, x = Real.arcsin a + k * (2 * π) ∨ x = π - Real.arcsin a + k * (2 * π) := by
   rw [← Real.sin_arcsin h1 h2, eq_comm, Real.sin_eq_sin_iff, Real.arcsin_sin' ⟨by
@@ -258,7 +273,9 @@ theorem sin_splosna (a x : ℝ) (h1 : -1 ≤ a) (h2 : a ≤ 1) :
 /-- Predpostavke trditve `sin_splosna` se dajo izpolniti (`a = 0`). -/
 example : (-1:ℝ) ≤ 0 ∧ (0:ℝ) ≤ 1 := by norm_num
 
-/-- Razlaga 4: za `−1 ≤ a ≤ 1`, `x₁ = arccos a`, je `cos x = a` natanko tedaj, ko `x = ±x₁ + k·360°`. -/
+/-- Razlaga 4: za `−1 ≤ a ≤ 1`, `x₁ = arccos a`, je `cos x = a` natanko tedaj, ko `x = ±x₁ + k·360°`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#cos-splosna
+besedilo: »Za $\cos x = a$, $-1 \le a \le 1$, $x_1 = \arccos a$:« -/
 theorem cos_splosna (a x : ℝ) (h1 : -1 ≤ a) (h2 : a ≤ 1) :
     Real.cos x = a ↔ ∃ k : ℤ, x = Real.arccos a + k * (2 * π) ∨ x = -Real.arccos a + k * (2 * π) := by
   rw [← Real.cos_arccos h1 h2, eq_comm, Real.cos_eq_cos_iff, Real.arccos_cos (Real.arccos_nonneg _)
@@ -275,7 +292,9 @@ theorem cos_splosna (a x : ℝ) (h1 : -1 ≤ a) (h2 : a ≤ 1) :
 example : (-1:ℝ) ≤ 0 ∧ (0:ℝ) ≤ 1 := by norm_num
 
 /-- Razlaga 4: za vsak `a`, `x₁ = arctan a`, je `tan x = a` (kjer je tangens definiran, `cos x ≠ 0`) natanko
-tedaj, ko `x = x₁ + k·180°`. (V Leanu je `tan x = sin x / cos x` in `x/0 = 0`, zato pogoj `cos x ≠ 0`.) -/
+tedaj, ko `x = x₁ + k·180°`. (V Leanu je `tan x = sin x / cos x` in `x/0 = 0`, zato pogoj `cos x ≠ 0`.)
+trditev: MAT-SS-3/trigonometrijske-enacbe#tan-splosna
+besedilo: »Pri tangensu je $\tan x = \frac{\sin x}{\cos x}$ naklon poltraka od izhodišča do točke. Premica skozi izhodišče z naklonom $a$ zato seka krožnico v dveh nasprotnih točkah, ki sta za $180^\circ$ narazen. Za $\tan x = a$ (vsak $a$), $x_1 = \arctan a$:« -/
 theorem tan_splosna (a x : ℝ) :
     (Real.tan x = a ∧ Real.cos x ≠ 0) ↔ ∃ k : ℤ, x = Real.arctan a + k * π := by
   have hc := Real.cos_arctan_pos a
@@ -295,7 +314,9 @@ theorem tan_splosna (a x : ℝ) :
     rw [Real.cos_add_int_mul_pi]
     exact mul_ne_zero (zpow_ne_zero _ (by norm_num)) hc.ne'
 
-/-- Razlaga 4 in Povzetek: za `a > 1` ali `a < −1` enačbi `sin x = a` in `cos x = a` nimata rešitev. -/
+/-- Razlaga 4 in Povzetek: za `a > 1` ali `a < −1` enačbi `sin x = a` in `cos x = a` nimata rešitev.
+trditev: MAT-SS-3/trigonometrijske-enacbe#brez-resitev
+besedilo: »Če je $a > 1$ ali $a < -1$, enačbi $\sin x = a$ in $\cos x = a$ **nimata rešitev**, saj premica krožnice ne seka.« -/
 theorem brez_resitev (a x : ℝ) (ha : 1 < |a|) : Real.sin x ≠ a ∧ Real.cos x ≠ a := by
   constructor
   · rintro rfl; exact absurd (Real.abs_sin_le_one x) (not_le.mpr ha)
@@ -307,7 +328,9 @@ example : (1:ℝ) < |1.2| := by norm_num [abs_of_pos]
 /-! ## Krožne funkcije (Razlaga 3, Povzetek) -/
 
 /-- Razlaga 3: `arcsin a ∈ [−90°, 90°]`, `arccos a ∈ [0°, 180°]`, `arctan a ∈ (−90°, 90°)`; za `|a| ≤ 1` je
-`sin (arcsin a) = a` in `cos (arccos a) = a`, za vsak `a` pa `tan (arctan a) = a`. -/
+`sin (arcsin a) = a` in `cos (arccos a) = a`, za vsak `a` pa `tan (arctan a) = a`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#krozne-funkcije
+besedilo: »$\arcsin$ in $\arctan$: kot med $-90^\circ$ in $90^\circ$; $\arccos$: kot med $0^\circ$ in $180^\circ$; $\arccos(-a) = 180^\circ - \arccos a$« -/
 theorem krozne_funkcije (a : ℝ) :
     (-(π / 2) ≤ Real.arcsin a ∧ Real.arcsin a ≤ π / 2) ∧ (0 ≤ Real.arccos a ∧ Real.arccos a ≤ π) ∧
     (-(π / 2) < Real.arctan a ∧ Real.arctan a < π / 2) ∧ Real.tan (Real.arctan a) = a ∧
@@ -316,13 +339,17 @@ theorem krozne_funkcije (a : ℝ) :
     ⟨Real.arccos_nonneg a, Real.arccos_le_pi a⟩, ⟨Real.neg_pi_div_two_lt_arctan a, Real.arctan_lt_pi_div_two a⟩,
     Real.tan_arctan a, fun h1 h2 => ⟨Real.sin_arcsin h1 h2, Real.cos_arccos h1 h2⟩⟩
 
-/-- Razlaga 3 in Povzetek: `arcsin(−a) = −arcsin a`, `arctan(−a) = −arctan a`, `arccos(−a) = 180° − arccos a`. -/
+/-- Razlaga 3 in Povzetek: `arcsin(−a) = −arcsin a`, `arctan(−a) = −arctan a`, `arccos(−a) = 180° − arccos a`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#lihost
+besedilo: »Velja $\arcsin(-a) = -\arcsin a$ in $\arctan(-a) = -\arctan a$.« -/
 theorem lihost (a : ℝ) : Real.arcsin (-a) = -Real.arcsin a ∧ Real.arctan (-a) = -Real.arctan a ∧
     Real.arccos (-a) = π - Real.arccos a :=
   ⟨Real.arcsin_neg a, Real.arctan_neg a, Real.arccos_neg a⟩
 
 /-- Razlaga 3 (in `<<RACUN`): `arcsin(√3/2) = 60°`, `arccos 0 = 90°`, `arctan 1 = 45°`, `arcsin(1/2) = 30° = π/6`,
-`arcsin(−1/2) = −30°`, `arctan(−1) = −45°`, `arccos(−1/2) = 180° − 60° = 120° = 2π/3`. -/
+`arcsin(−1/2) = −30°`, `arctan(−1) = −45°`, `arccos(−1/2) = 180° − 60° = 120° = 2π/3`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#znane-vrednosti
+besedilo: »Tako je $\arcsin\frac{\sqrt{3}}{2} = 60^\circ$, $\arccos 0 = 90^\circ$ in $\arctan 1 = 45^\circ$.« -/
 theorem znane_vrednosti :
     Real.arcsin (Real.sqrt 3 / 2) = π / 3 ∧ Real.arccos 0 = π / 2 ∧ Real.arctan 1 = π / 4 ∧
     Real.arcsin (1 / 2) = π / 6 ∧ Real.arcsin (-(1 / 2)) = -(π / 6) ∧ Real.arctan (-1) = -(π / 4) ∧
@@ -338,7 +365,9 @@ theorem znane_vrednosti :
     rw [Real.arctan_neg, Real.arctan_one], by rw [Real.arccos_neg, h3], by ring⟩
 
 /-- Razlaga 3 in `<<RACUN`: v stopinjah `arcsin(√3/2)·180/π = 60`, `arccos 0·180/π = 90`, `arctan 1·180/π = 45`,
-`arcsin(−1/2)·180/π = −30`, `arctan(−1)·180/π = −45`, `arccos(−1/2)·180/π = 120`. -/
+`arcsin(−1/2)·180/π = −30`, `arctan(−1)·180/π = −45`, `arccos(−1/2)·180/π = 120`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#znane-vrednosti-stopinje
+besedilo: »Tako je $\arcsin\frac{\sqrt{3}}{2} = 60^\circ$, $\arccos 0 = 90^\circ$ in $\arctan 1 = 45^\circ$.« -/
 theorem znane_vrednosti_stopinje :
     Real.arcsin (Real.sqrt 3 / 2) * 180 / π = 60 ∧ Real.arccos 0 * 180 / π = 90 ∧
     Real.arctan 1 * 180 / π = 45 ∧ Real.arcsin (-(1 / 2)) * 180 / π = -30 ∧
@@ -349,7 +378,9 @@ theorem znane_vrednosti_stopinje :
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> field_simp <;> ring
 
 /-- Primer 5 (in `<<RACUN`): `arcsin(−√3/2) = −60° = −π/3`, `arccos(−√2/2) = 180° − 45° = 135° = 3π/4`,
-`arctan(−√3/3) = −30° = −π/6`; Preveri se 6: `arccos(−√3/2) = 180° − 30° = 150°`. -/
+`arctan(−√3/3) = −30° = −π/6`; Preveri se 6: `arccos(−√3/2) = 180° − 30° = 150°`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#primer5-tocno
+besedilo: »$\arccos\left(-\frac{\sqrt{2}}{2}\right) = 180^\circ - 45^\circ = 135^\circ = \frac{3\pi}{4}$« -/
 theorem primer5_tocno :
     Real.arcsin (-(Real.sqrt 3 / 2)) = -(π / 3) ∧ Real.arccos (-(Real.sqrt 2 / 2)) = 3 * π / 4 ∧
     Real.arctan (-(Real.sqrt 3 / 3)) = -(π / 6) ∧ Real.arccos (-(Real.sqrt 3 / 2)) = 5 * π / 6 ∧
@@ -372,7 +403,8 @@ theorem primer5_tocno :
 
 /-! ## Rešitve na intervalu -/
 
-/-- Pomožna trditev: član družine `x = c·π + k·p·π` z `l·π ≤ x < h·π` zadošča `l ≤ c + k·p < h`. -/
+/-- Pomožna trditev: član družine `x = c·π + k·p·π` z `l·π ≤ x < h·π` zadošča `l ≤ c + k·p < h`.
+pomozno -/
 theorem druzina_pi (c p l h x : ℝ) (k : ℤ) (hx : x = c * π + k * (p * π)) (h1 : l * π ≤ x)
     (h2 : x < h * π) : l ≤ c + k * p ∧ c + k * p < h := by
   have hpi := Real.pi_pos
@@ -385,7 +417,9 @@ theorem druzina_pi (c p l h x : ℝ) (k : ℤ) (hx : x = c * π + k * (p * π)) 
 example : (0:ℝ) = 0 * π + ((0:ℤ):ℝ) * (2 * π) ∧ (0:ℝ) * π ≤ 0 ∧ (0:ℝ) < 1 * π := by
   refine ⟨by simp, by simp, by simp [Real.pi_pos]⟩
 
-/-- Razlaga 1, 2: `sin x = 1/2` natanko pri `x = 30° + k·360°` ali `x = 150° + k·360°`. -/
+/-- Razlaga 1, 2: `sin x = 1/2` natanko pri `x = 30° + k·360°` ali `x = 150° + k·360°`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#sin-pol
+besedilo: »$\sin 2x = \frac{1}{2}$: $2x = 30^\circ + k \cdot 360^\circ$ ali $2x = 150^\circ + k \cdot 360^\circ$, torej $x = 15^\circ + k \cdot 180^\circ$ ali $x = 75^\circ + k \cdot 180^\circ$.« -/
 theorem sin_pol (x : ℝ) : Real.sin x = 1 / 2 ↔ ∃ k : ℤ, x = π / 6 + k * (2 * π) ∨ x = 5 * π / 6 + k * (2 * π) := by
   rw [sin_splosna _ _ (by norm_num) (by norm_num), znane_vrednosti.2.2.2.1]
   constructor
@@ -397,7 +431,9 @@ theorem sin_pol (x : ℝ) : Real.sin x = 1 / 2 ↔ ∃ k : ℤ, x = π / 6 + k *
     · exact ⟨k, Or.inr (by rw [hk]; ring)⟩
 
 /-- Razlaga 2, tabela: `30°, 390°, 750°, −330°` (prva družina) in `150°, 510°, 870°, −210°` (druga družina) so
-rešitve `sin x = 1/2`. -/
+rešitve `sin x = 1/2`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#tabela-druzin
+besedilo: »To so koti $30^\circ$, $150^\circ$, $390^\circ$ in $510^\circ$, deljeni s $6^\circ$ na sekundo.« -/
 theorem tabela_druzin :
     Real.sin (30 * π / 180) = 1 / 2 ∧ Real.sin (390 * π / 180) = 1 / 2 ∧ Real.sin (750 * π / 180) = 1 / 2 ∧
     Real.sin (-330 * π / 180) = 1 / 2 ∧ Real.sin (150 * π / 180) = 1 / 2 ∧
@@ -408,7 +444,9 @@ theorem tabela_druzin :
     (sin_pol _).mpr ⟨0, Or.inr (by push_cast; ring)⟩, (sin_pol _).mpr ⟨1, Or.inr (by push_cast; ring)⟩,
     (sin_pol _).mpr ⟨2, Or.inr (by push_cast; ring)⟩, (sin_pol _).mpr ⟨-1, Or.inr (by push_cast; ring)⟩⟩
 
-/-- Razlaga 5: v radianih `sin x = 0,5` natanko pri `x = π/6 + 2kπ` ali `x = 5π/6 + 2kπ`. -/
+/-- Razlaga 5: v radianih `sin x = 0,5` natanko pri `x = π/6 + 2kπ` ali `x = 5π/6 + 2kπ`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#sin-pol-radiani
+besedilo: »Za $\sin x = 0{,}5$ dobiš $x = \frac{\pi}{6} + 2k\pi$ ali $x = \frac{5\pi}{6} + 2k\pi$.« -/
 theorem sin_pol_radiani (x : ℝ) :
     Real.sin x = 0.5 ↔ ∃ k : ℤ, x = π / 6 + 2 * k * π ∨ x = 5 * π / 6 + 2 * k * π := by
   rw [show (0.5:ℝ) = 1 / 2 by norm_num, sin_pol]
@@ -416,7 +454,9 @@ theorem sin_pol_radiani (x : ℝ) :
     (rw [hk]; ring)
 
 /-- Zakaj se tega učimo in Razlaga 2, premisli: telefon se vrti s 6° na sekundo; v prvih 120 s pokaže
-`sin x = 0,5` natanko ob 5, 25, 65 in 85 s. -/
+`sin x = 0,5` natanko ob 5, 25, 65 in 85 s.
+trditev: MAT-SS-3/trigonometrijske-enacbe#telefon
+besedilo: »Napovej, ob katerih sekundah v prvih $120\,\text{s}$ telefon iz uvoda pokaže $0{,}5$. Telefon se zavrti za $6^\circ$ na sekundo.« -/
 theorem telefon (t : ℝ) (h0 : 0 ≤ t) (h1 : t < 120) :
     Real.sin (6 * t * π / 180) = 1 / 2 ↔ t = 5 ∨ t = 25 ∨ t = 65 ∨ t = 85 := by
   rw [sin_pol]
@@ -451,7 +491,8 @@ theorem telefon (t : ℝ) (h0 : 0 ≤ t) (h1 : t < 120) :
 /-- Predpostavke trditve `telefon` se dajo izpolniti (`t = 5`). -/
 example : (0:ℝ) ≤ 5 ∧ (5:ℝ) < 120 := by norm_num
 
-/-- Pomožna trditev: na `[0°, 360°)` je `cos x = 0` natanko pri 90° in 270°. -/
+/-- Pomožna trditev: na `[0°, 360°)` je `cos x = 0` natanko pri 90° in 270°.
+pomozno -/
 theorem cos_nic (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 2 * π) : Real.cos x = 0 ↔ x = π / 2 ∨ x = 3 * π / 2 := by
   rw [Real.cos_eq_zero_iff]
   constructor
@@ -469,7 +510,8 @@ theorem cos_nic (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 2 * π) : Real.cos x = 0 ↔ 
 /-- Predpostavke trditve `cos_nic` se dajo izpolniti (`x = 0`). -/
 example : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 2 * π := ⟨le_rfl, by positivity⟩
 
-/-- Pomožna trditev: na `[0°, 360°)` je `sin x = 1/2` natanko pri 30° in 150°. -/
+/-- Pomožna trditev: na `[0°, 360°)` je `sin x = 1/2` natanko pri 30° in 150°.
+pomozno -/
 theorem sin_pol_int (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 2 * π) :
     Real.sin x = 1 / 2 ↔ x = π / 6 ∨ x = 5 * π / 6 := by
   rw [sin_pol]
@@ -488,7 +530,9 @@ theorem sin_pol_int (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 2 * π) :
 /-- Predpostavke trditve `sin_pol_int` se dajo izpolniti (`x = 0`). -/
 example : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 2 * π := ⟨le_rfl, by positivity⟩
 
-/-- Razlaga 5, premisli: `sin x = 1` ima na `[0°, 360°)` eno samo rešitev, 90° (`180° − 90° = 90°`). -/
+/-- Razlaga 5, premisli: `sin x = 1` ima na `[0°, 360°)` eno samo rešitev, 90° (`180° − 90° = 90°`).
+trditev: MAT-SS-3/trigonometrijske-enacbe#sin-ena
+besedilo: »Samo eno, $x = 90^\circ$. Premica $y = 1$ se krožnice le dotakne. Druga družina da $180^\circ - 90^\circ = 90^\circ$, isti kot kot prva.« -/
 theorem sin_ena (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 2 * π) : Real.sin x = 1 ↔ x = π / 2 := by
   constructor
   · intro h
@@ -506,7 +550,9 @@ theorem sin_ena (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 2 * π) : Real.sin x = 1 ↔ 
 example : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 2 * π := ⟨le_rfl, by positivity⟩
 
 /-- Primer 1: `cos x = −1/2` natanko pri `x = ±120° + k·360°`; na `[0°, 360°)` sta rešitvi 120° in
-`−120° + 360° = 240°`. -/
+`−120° + 360° = 240°`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#primer1
+besedilo: »Odgovor: $x = \pm 120^\circ + k \cdot 360^\circ$; na $[0^\circ, 360^\circ)$ sta rešitvi $120^\circ$ in $240^\circ$.« -/
 theorem primer1 :
     (∀ x : ℝ, Real.cos x = -(1 / 2) ↔
       ∃ k : ℤ, x = 2 * π / 3 + k * (2 * π) ∨ x = -(2 * π / 3) + k * (2 * π)) ∧
@@ -531,7 +577,9 @@ theorem primer1 :
     · exact ⟨1, Or.inr (by push_cast; ring)⟩
 
 /-- Primer 3: `325 sin(100πt) = 162,5` za `0 ≤ t < 0,02` natanko pri `t = 1/600 s` in `t = 1/120 s`
-(`sin(100πt) = 162,5/325 = 0,5`, `y = 100πt`); `1/600 ≈ 0,00167`, `1/120 ≈ 0,00833`, perioda `1/50 = 0,02`. -/
+(`sin(100πt) = 162,5/325 = 0,5`, `y = 100πt`); `1/600 ≈ 0,00167`, `1/120 ≈ 0,00833`, perioda `1/50 = 0,02`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#primer3
+besedilo: »Podatki:** $u = 325\,\text{V} \cdot \sin(100\pi t)$; $u = 162{,}5\,\text{V}$; $0 \le t < 0{,}02\,\text{s}$« -/
 theorem primer3 (t : ℝ) (h0 : 0 ≤ t) (h1 : t < 0.02) :
     ((162.5:ℝ) / 325 = 0.5 ∧ (1:ℝ) / 50 = 0.02) ∧
     (325 * Real.sin (100 * π * t) = 162.5 ↔ t = 1 / 600 ∨ t = 1 / 120) ∧
@@ -566,7 +614,9 @@ theorem primer3 (t : ℝ) (h0 : 0 ≤ t) (h1 : t < 0.02) :
 example : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 0.02 := by norm_num
 
 /-- Primer 3, korak 3: iz `y = π/6 + 2kπ` ali `5π/6 + 2kπ` in `y = 100πt` sledi `t = 1/600 + k/50` ali
-`t = 1/120 + k/50`. -/
+`t = 1/120 + k/50`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#primer3-t
+besedilo: »Iz $y$ izračunamo $t$, tako da delimo s $100\pi$: $t = \dfrac{1}{600} + \dfrac{k}{50}$ ali $t = \dfrac{1}{120} + \dfrac{k}{50}$ (v sekundah).« -/
 theorem primer3_t (t : ℝ) (k : ℤ) :
     (100 * π * t = π / 6 + 2 * k * π ↔ t = 1 / 600 + k / 50) ∧
     (100 * π * t = 5 * π / 6 + 2 * k * π ↔ t = 1 / 120 + k / 50) := by
@@ -578,7 +628,9 @@ theorem primer3_t (t : ℝ) (k : ℤ) :
   · rw [h]; ring
 
 /-- Primer 4 (in Pogoste napake): `sin 2x = cos x` je enakovredno `cos x (2 sin x − 1) = 0`; z deljenjem s
-`cos x` bi izgubili 90° in 270°; na `[0°, 360°)` so rešitve 30°, 90°, 150°, 270°. -/
+`cos x` bi izgubili 90° in 270°; na `[0°, 360°)` so rešitve 30°, 90°, 150°, 270°.
+trditev: MAT-SS-3/trigonometrijske-enacbe#primer4
+besedilo: »$\cos x = 0$: $x = 90^\circ$ in $x = 270^\circ$. $\sin x = \frac{1}{2}$: $x = 30^\circ$ in $x = 150^\circ$. Skupaj štiri rešitve: $30^\circ$, $90^\circ$, $150^\circ$, $270^\circ$.« -/
 theorem primer4 (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 2 * π) :
     (Real.sin (2 * x) = Real.cos x ↔ Real.cos x * (2 * Real.sin x - 1) = 0) ∧
     (Real.sin (2 * x) = Real.cos x ↔ x = π / 6 ∨ x = π / 2 ∨ x = 5 * π / 6 ∨ x = 3 * π / 2) := by
@@ -594,7 +646,9 @@ theorem primer4 (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 2 * π) :
 example : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 2 * π := ⟨le_rfl, by positivity⟩
 
 /-- Razlaga 6 in Primer 6, korak 1: vsota v produkt `sin α + sin β = 2 sin((α + β)/2) cos((α − β)/2)`, zato
-`sin 3x + sin x = 2 sin 2x cos x`. -/
+`sin 3x + sin x = 2 sin 2x cos x`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#vsota-v-produkt
+besedilo: »$$\sin\alpha + \sin\beta = 2\sin\frac{\alpha + \beta}{2}\cos\frac{\alpha - \beta}{2}$$« -/
 theorem vsota_v_produkt (α β x : ℝ) :
     Real.sin α + Real.sin β = 2 * Real.sin ((α + β) / 2) * Real.cos ((α - β) / 2) ∧
     Real.sin (3 * x) + Real.sin x = 2 * Real.sin (2 * x) * Real.cos x := by
@@ -609,7 +663,9 @@ theorem vsota_v_produkt (α β x : ℝ) :
   rw [key]; congr 2 <;> ring_nf
 
 /-- Primer 6: `sin 3x + sin x = cos x` je `cos x (2 sin 2x − 1) = 0`; na `[0°, 360°)` je šest rešitev:
-15°, 75°, 90°, 195°, 255°, 270°. -/
+15°, 75°, 90°, 195°, 255°, 270°.
+trditev: MAT-SS-3/trigonometrijske-enacbe#primer6
+besedilo: »Odgovor: enačba ima na intervalu šest rešitev: $15^\circ$, $75^\circ$, $90^\circ$, $195^\circ$, $255^\circ$ in $270^\circ$.« -/
 theorem primer6 (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 2 * π) :
     Real.sin (3 * x) + Real.sin x = Real.cos x ↔
       x = π / 12 ∨ x = 5 * π / 12 ∨ x = π / 2 ∨ x = 13 * π / 12 ∨ x = 17 * π / 12 ∨ x = 3 * π / 2 := by
@@ -649,7 +705,9 @@ example : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 2 * π := ⟨le_rfl, by positivity⟩
 /-! ## Numerične vrednosti krožnih funkcij -/
 
 /-- Razlaga 3, Primer 5 (in `<<RACUN`): `arccos 0,3 ≈ 72,54° ≈ 1,266`, `arccos(−0,3) ≈ 107,46°`, preverba
-`180° − 72,54° = 107,46°`. -/
+`180° − 72,54° = 107,46°`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#arccos-03
+besedilo: »Kalkulator v načinu DEG: $\arccos(-0{,}3) \approx 107{,}46^\circ$. Preverba z zvezo: $180^\circ - \arccos 0{,}3 \approx 180^\circ - 72{,}54^\circ = 107{,}46^\circ$. ✓« -/
 theorem arccos_03 :
     |Real.arccos 0.3 * 180 / π - 72.54| < 0.005 ∧ |Real.arccos 0.3 - 1.266| < 0.0005 ∧
     |Real.arccos (-0.3) * 180 / π - 107.46| < 0.005 ∧ (180:ℝ) - 72.54 = 107.46 := by
@@ -670,7 +728,8 @@ theorem arccos_03 :
     rw [abs_lt]; constructor <;> nlinarith
   · rw [hd, abs_lt]; constructor <;> linarith
 
-/-- Pomožna trditev: `19,471218° < arcsin(1/3) < 19,471223°`. -/
+/-- Pomožna trditev: `19,471218° < arcsin(1/3) < 19,471223°`.
+pomozno -/
 theorem arcsin_tretjina :
     19.471218 * π / 180 < Real.arcsin (1 / 3) ∧ Real.arcsin (1 / 3) < 19.471223 * π / 180 := by
   obtain ⟨l1, u1⟩ := sin_meja 19.471218 0.333333289 0.333333291 (by norm_num) (by norm_num) (by norm_num)
@@ -682,7 +741,9 @@ theorem arcsin_tretjina :
 
 /-- Primer 2 (in Pogoste napake): `3 sin x + 1 = 0` je `sin x = −1/3`; `x₁ = arcsin(−1/3) ≈ −19,47°`; na
 `[0°, 360°)` sta rešitvi natanko `x₁ + 360° ≈ 340,53°` in `180° − x₁ ≈ 199,47°` (napačno bi bilo
-`180° − 19,47° = 160,53°`, kjer je sinus pozitiven). -/
+`180° − 19,47° = 160,53°`, kjer je sinus pozitiven).
+trditev: MAT-SS-3/trigonometrijske-enacbe#primer2
+besedilo: »Minus pri negativni osnovni rešitvi.** Iz $x_1 = -19{,}47^\circ$ nekateri zapišejo $180^\circ - 19{,}47^\circ = 160{,}53^\circ$.« -/
 theorem primer2 :
     (∀ x : ℝ, 3 * Real.sin x + 1 = 0 ↔ Real.sin x = -(1 / 3)) ∧
     |Real.arcsin (-(1 / 3)) * 180 / π - (-19.47)| < 0.005 ∧
@@ -724,7 +785,8 @@ theorem primer2 :
   · apply Real.sin_pos_of_pos_of_lt_pi <;> nlinarith
 
 /-- Pomožna trditev: `arccos(1/3) = 90° − arcsin(1/3)` in `arccos(−1/3) = 180° − arccos(1/3)`, zato
-`109,471218° < arccos(−1/3) < 109,471223°`. -/
+`109,471218° < arccos(−1/3) < 109,471223°`.
+pomozno -/
 theorem arccos_minus_tretjina :
     109.471218 < Real.arccos (-(1 / 3)) * 180 / π ∧ Real.arccos (-(1 / 3)) * 180 / π < 109.471223 := by
   obtain ⟨a1, a2⟩ := arcsin_tretjina
@@ -735,7 +797,9 @@ theorem arccos_minus_tretjina :
 
 /-- Korak za korakom: `sin x = 0,8`, `x₁ = arcsin 0,8 ≈ 53,13°`, druga točka `180° − 53,13° = 126,87°`; na
 `[0°, 720°)` so rešitve natanko `x₁`, `180° − x₁`, `x₁ + 360°`, `540° − x₁` (≈ 53,13°, 126,87°, 413,13°,
-486,87°). -/
+486,87°).
+trditev: MAT-SS-3/trigonometrijske-enacbe#sin-08
+besedilo: »Izberi rešitve na intervalu**, če ga naloga zahteva: na $[0^\circ, 720^\circ)$ so to $53{,}13^\circ$; $126{,}87^\circ$; $413{,}13^\circ$ in $486{,}87^\circ$.« -/
 theorem sin_08 :
     |Real.arcsin 0.8 * 180 / π - 53.13| < 0.005 ∧ |(π - Real.arcsin 0.8) * 180 / π - 126.87| < 0.005 ∧
     |(Real.arcsin 0.8 + 2 * π) * 180 / π - 413.13| < 0.005 ∧
@@ -785,7 +849,9 @@ theorem sin_08 :
       · exact ⟨1, Or.inr (by rw [h]; push_cast; ring)⟩
 
 /-- Preveri se 2: najmanjša pozitivna rešitev `cos x = 0,1` je `arccos 0,1 ≈ 84,26°` (približno 84°, ne 6° ali
-96°). -/
+96°).
+trditev: MAT-SS-3/trigonometrijske-enacbe#arccos-01
+besedilo: »Kosinus je pri $90^\circ$ enak $0$, malo pred tem pa malo pozitiven. Natančno $\arccos 0{,}1 \approx 84{,}26^\circ$.« -/
 theorem arccos_01 : |Real.arccos 0.1 * 180 / π - 84.26| < 0.005 ∧ 0 < Real.arccos 0.1 ∧
     (∀ x : ℝ, 0 < x → Real.cos x = 0.1 → Real.arccos 0.1 ≤ x) ∧
     Real.cos (96 * π / 180) < 0 := by
@@ -813,30 +879,37 @@ theorem arccos_01 : |Real.arccos 0.1 * 180 / π - 84.26| < 0.005 ∧ 0 < Real.ar
       nlinarith [Real.arccos_le_pi 0.1, hb.2]
   · apply Real.cos_neg_of_pi_div_two_lt_of_lt <;> nlinarith
 
-/-- Pomožna trditev: `arccos(1/2) = 60° = π/3`. -/
+/-- Pomožna trditev: `arccos(1/2) = 60° = π/3`.
+pomozno -/
 theorem znane_vrednosti_arccos_pol : Real.arccos (1 / 2) = π / 3 := by
   have hpi := Real.pi_pos
   rw [← Real.cos_pi_div_three]; exact Real.arccos_cos (by linarith) (by linarith)
 
-/-- Pomožna trditev: `arccos(−1/2) = 120° = 2π/3`. -/
+/-- Pomožna trditev: `arccos(−1/2) = 120° = 2π/3`.
+pomozno -/
 theorem znane_vrednosti_arccos_minus_pol : Real.arccos (-(1 / 2)) = 2 * π / 3 := by
   rw [Real.arccos_neg, znane_vrednosti_arccos_pol]; ring
 
 /-! ## Polovični koti (Razlaga 6, Ustno vprašanje 3) -/
 
-/-- Razlaga 6, Naloga 3 c), Ustno vprašanje 3 (in `<<RACUN`): `1 + cos x = 2 cos²(x/2)`. -/
+/-- Razlaga 6, Naloga 3 c), Ustno vprašanje 3 (in `<<RACUN`): `1 + cos x = 2 cos²(x/2)`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#polovicni
+besedilo: »$1 + \cos x = 2\cos^2\frac{x}{2}$« -/
 theorem polovicni (x : ℝ) : 1 + Real.cos x = 2 * Real.cos (x / 2) ^ 2 := by
   have := Real.cos_sq (x / 2)
   rw [show 2 * (x / 2) = x by ring] at this
   linarith
 
-/-- Pomožna trditev: `cos y = 0` natanko pri `y = 90° + k·180°`. -/
+/-- Pomožna trditev: `cos y = 0` natanko pri `y = 90° + k·180°`.
+pomozno -/
 theorem cos_nic_splosna (y : ℝ) : Real.cos y = 0 ↔ ∃ k : ℤ, y = π / 2 + k * π := by
   rw [Real.cos_eq_zero_iff]
   constructor <;> rintro ⟨k, hk⟩ <;> exact ⟨k, by rw [hk]; ring⟩
 
 /-- Razlaga 6 (in `<<RACUN`): `1 + cos x = cos(x/2)` je `cos(x/2)(2cos(x/2) − 1) = 0`, rešitve so
-`x = 180° + k·360°` in `x = ±120° + k·720°`. -/
+`x = 180° + k·360°` in `x = ±120° + k·720°`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#razlaga6
+besedilo: »Iz $\cos\frac{x}{2} = \frac{1}{2}$ sledi $\frac{x}{2} = \pm 60^\circ + k \cdot 360^\circ$, torej $x = \pm 120^\circ + k \cdot 720^\circ$.« -/
 theorem razlaga6 (x : ℝ) :
     (1 + Real.cos x = Real.cos (x / 2) ↔ Real.cos (x / 2) * (2 * Real.cos (x / 2) - 1) = 0) ∧
     (1 + Real.cos x = Real.cos (x / 2) ↔
@@ -858,7 +931,9 @@ theorem razlaga6 (x : ℝ) :
     · exact Or.inr ⟨k, Or.inr (by rw [hk]; ring)⟩
 
 /-- Primer 6 (in `<<RACUN`): splošna rešitev `sin 3x + sin x = cos x` je `x = π/2 + kπ`, `x = π/12 + kπ` ali
-`x = 5π/12 + kπ` (iz `2x = 30° + k·360°` ali `150° + k·360°`). -/
+`x = 5π/12 + kπ` (iz `2x = 30° + k·360°` ali `150° + k·360°`).
+trditev: MAT-SS-3/trigonometrijske-enacbe#primer6-splosna
+besedilo: »$\sin 2x = \frac{1}{2}$: $2x = 30^\circ + k \cdot 360^\circ$ ali $2x = 150^\circ + k \cdot 360^\circ$, torej $x = 15^\circ + k \cdot 180^\circ$ ali $x = 75^\circ + k \cdot 180^\circ$.« -/
 theorem primer6_splosna (x : ℝ) :
     Real.sin (3 * x) + Real.sin x = Real.cos x ↔
       ∃ k : ℤ, x = π / 2 + k * π ∨ x = π / 12 + k * π ∨ x = 5 * π / 12 + k * π := by
@@ -881,7 +956,9 @@ theorem primer6_splosna (x : ℝ) :
 /-! ## Za maturo -/
 
 /-- Naloga 1 (in `<<RACUN`): `2 cos(x − π/6) = 1` je `x − π/6 = ±π/3 + 2kπ`, torej `x = π/2 + 2kπ` ali
-`x = −π/6 + 2kπ`; na `[0, 2π)` natanko `x = π/2` in `x = 11π/6`. -/
+`x = −π/6 + 2kπ`; na `[0, 2π)` natanko `x = π/2` in `x = 11π/6`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#matura1
+besedilo: »Osamimo kosinus: $\cos\left(x - \frac{\pi}{6}\right) = \frac{1}{2}$. Ker je $\cos\frac{\pi}{3} = \frac{1}{2}$, velja $x - \frac{\pi}{6} = \pm\frac{\pi}{3} + 2k\pi$, $k \in \mathbb{Z}$.« -/
 theorem matura1 :
     (∀ x : ℝ, 2 * Real.cos (x - π / 6) = 1 ↔
       ∃ k : ℤ, x = π / 2 + k * (2 * π) ∨ x = -(π / 6) + k * (2 * π)) ∧
@@ -913,7 +990,9 @@ theorem matura1 :
     · exact ⟨0, Or.inl (by simp)⟩
     · exact ⟨1, Or.inr (by push_cast; ring)⟩
 
-/-- Naloga 2 a): `h = 20 − 18 cos 135° = 20 + 9√2 ≈ 32,7279 m ≈ 32,73 m`. -/
+/-- Naloga 2 a): `h = 20 − 18 cos 135° = 20 + 9√2 ≈ 32,7279 m ≈ 32,73 m`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#matura2a
+besedilo: »$h = 20 - 18\cos 135^\circ = 20 + 9\sqrt{2} \approx 32{,}7279\,\mathrm{m} \approx 32{,}73\,\mathrm{m}$« -/
 theorem matura2a :
     20 - 18 * Real.cos (135 * π / 180) = 20 + 9 * Real.sqrt 2 ∧
     |20 + 9 * Real.sqrt 2 - 32.7279| < 0.00005 ∧ |20 + 9 * Real.sqrt 2 - 32.73| < 0.005 := by
@@ -923,7 +1002,9 @@ theorem matura2a :
   refine ⟨by rw [hc]; ring, ?_, ?_⟩ <;> (rw [abs_lt]; constructor <;> linarith)
 
 /-- Naloga 2 b) (in `<<RACUN`): `20 − 18 cos x = 26` je `cos x = −1/3`, splošno `x = ±arccos(−1/3) + 2kπ`;
-v prvem obratu natanko `x₁ = arccos(−1/3) ≈ 109,4712° ≈ 109,47°` in `360° − x₁ ≈ 250,5288° ≈ 250,53°`. -/
+v prvem obratu natanko `x₁ = arccos(−1/3) ≈ 109,4712° ≈ 109,47°` in `360° − x₁ ≈ 250,5288° ≈ 250,53°`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#matura2b
+besedilo: »b) V prvem obratu: $x \approx 109{,}47^\circ$ in $x \approx -109{,}4712^\circ + 360^\circ = 250{,}5288^\circ \approx 250{,}53^\circ$.« -/
 theorem matura2b :
     (∀ x : ℝ, 20 - 18 * Real.cos x = 26 ↔ Real.cos x = -(1 / 3)) ∧
     (∀ x : ℝ, 20 - 18 * Real.cos x = 26 ↔
@@ -970,7 +1051,9 @@ theorem matura2b :
 
 /-- Naloga 2 c): v prvem obratu je sedež više od 26 m (`cos x < −1/3`) natanko med `x₁ = arccos(−1/3)` in
 `360° − x₁`; lok `360° − 2x₁ ≈ 141,0576°`, obrat 720 s (2 s na stopinjo), čas `≈ 282,12 s ≈ 282 s`
-(4 min 42 s). -/
+(4 min 42 s).
+trditev: MAT-SS-3/trigonometrijske-enacbe#matura2c
+besedilo: »c) En obrat ($360^\circ$) traja $720\,\mathrm{s}$, torej $2\,\mathrm{s}$ za vsako stopinjo: $t = 141{,}0576 \cdot 2\,\mathrm{s} \approx 282{,}12\,\mathrm{s}$.« -/
 theorem matura2c :
     (∀ x : ℝ, 0 ≤ x → x < 2 * π → (26 < 20 - 18 * Real.cos x ↔
       Real.arccos (-(1 / 3)) < x ∧ x < 2 * π - Real.arccos (-(1 / 3)))) ∧
@@ -1018,7 +1101,9 @@ theorem matura2c :
 
 /-- Naloga 3 a): z adicijskima izrekoma `cos(2x + x) = cos 2x cos x − sin 2x sin x`,
 `cos(2x − x) = cos 2x cos x + sin 2x sin x`, vsota `cos 3x + cos x = 2 cos 2x cos x`; enako za `x/2`:
-`cos(3x/2) + cos(x/2) = 2 cos x cos(x/2)`. -/
+`cos(3x/2) + cos(x/2) = 2 cos x cos(x/2)`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#matura3a
+besedilo: »a) Zapišemo $3x = 2x + x$ in $x = 2x - x$. Po adicijskem izreku je $\cos(2x + x) = \cos 2x\cos x - \sin 2x\sin x$ in $\cos(2x - x) = \cos 2x\cos x + \sin 2x\sin x$.« -/
 theorem matura3a (x : ℝ) :
     Real.cos (2 * x + x) = Real.cos (2 * x) * Real.cos x - Real.sin (2 * x) * Real.sin x ∧
     Real.cos (2 * x - x) = Real.cos (2 * x) * Real.cos x + Real.sin (2 * x) * Real.sin x ∧
@@ -1037,7 +1122,9 @@ theorem matura3a (x : ℝ) :
   exact this
 
 /-- Naloga 3 b): `cos 3x + cos x = cos 2x` je `cos 2x (2 cos x − 1) = 0`; na `[0°, 360°)` so rešitve
-45°, 60°, 135°, 225°, 300°, 315°. -/
+45°, 60°, 135°, 225°, 300°, 315°.
+trditev: MAT-SS-3/trigonometrijske-enacbe#matura3b
+besedilo: »Odgovor: b) $x \in \{45^\circ, 60^\circ, 135^\circ, 225^\circ, 300^\circ, 315^\circ\}$; c) $x \in \{0^\circ, 180^\circ, 240^\circ, 480^\circ, 540^\circ\}$.« -/
 theorem matura3b (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 2 * π) :
     Real.cos (3 * x) + Real.cos x = Real.cos (2 * x) ↔
       x = π / 4 ∨ x = π / 3 ∨ x = 3 * π / 4 ∨ x = 5 * π / 4 ∨ x = 5 * π / 3 ∨ x = 7 * π / 4 := by
@@ -1075,7 +1162,9 @@ theorem matura3b (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 2 * π) :
 example : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 2 * π := ⟨le_rfl, by positivity⟩
 
 /-- Naloga 3 c), korak 9 (in `<<RACUN`): `2z² − z − 1 = (2z + 1)(z − 1) = 0` natanko pri `z = 1` ali
-`z = −1/2`. -/
+`z = −1/2`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#matura3c-z
+besedilo: »c) Enačba $\cos x = \cos\frac{x}{2}$: s $\cos x = 2\cos^2\frac{x}{2} - 1$ in $z = \cos\frac{x}{2}$ dobimo $2z^2 - z - 1 = (2z + 1)(z - 1) = 0$, torej $z = 1$ ali $z = -\frac{1}{2}$.« -/
 theorem matura3c_z (z : ℝ) : 2 * z ^ 2 - z - 1 = (2 * z + 1) * (z - 1) ∧
     (2 * z ^ 2 - z - 1 = 0 ↔ z = 1 ∨ z = -(1 / 2)) := by
   refine ⟨by ring, ?_⟩
@@ -1088,7 +1177,9 @@ theorem matura3c_z (z : ℝ) : 2 * z ^ 2 - z - 1 = (2 * z + 1) * (z - 1) ∧
   · rintro (rfl | rfl) <;> norm_num
 
 /-- Naloga 3 c): `cos(3x/2) + cos(x/2) = 1 + cos x` je `2cos(x/2)(cos x − cos(x/2)) = 0`; na `[0°, 720°)` so
-rešitve natanko 0°, 180°, 240°, 480°, 540°. -/
+rešitve natanko 0°, 180°, 240°, 480°, 540°.
+trditev: MAT-SS-3/trigonometrijske-enacbe#matura3c
+besedilo: »c) Zvezo iz a) uporabite za kot $\dfrac{x}{2}$ in z zapisom s polovičnim kotom rešite enačbo $\cos\dfrac{3x}{2} + \cos\dfrac{x}{2} = 1 + \cos x$ na intervalu $[0^\circ, 720^\circ)$.« -/
 theorem matura3c (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 4 * π) :
     (Real.cos (3 * x / 2) + Real.cos (x / 2) = 1 + Real.cos x ↔
       2 * Real.cos (x / 2) * (Real.cos x - Real.cos (x / 2)) = 0) ∧
@@ -1141,7 +1232,9 @@ theorem matura3c (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 4 * π) :
 example : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 4 * π := ⟨le_rfl, by positivity⟩
 
 /-- `<<RACUN`: splošna rešitev `cos 3x + cos x = cos 2x` je `x = π/4 + kπ`, `3π/4 + kπ`, `π/3 + 2kπ` ali
-`−π/3 + 2kπ`. -/
+`−π/3 + 2kπ`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#matura3b-splosna
+besedilo: »Osamimo kosinus: $\cos\left(x - \frac{\pi}{6}\right) = \frac{1}{2}$. Ker je $\cos\frac{\pi}{3} = \frac{1}{2}$, velja $x - \frac{\pi}{6} = \pm\frac{\pi}{3} + 2k\pi$, $k \in \mathbb{Z}$.« -/
 theorem matura3b_splosna (x : ℝ) :
     Real.cos (3 * x) + Real.cos x = Real.cos (2 * x) ↔ ∃ k : ℤ, x = π / 4 + k * π ∨
       x = 3 * π / 4 + k * π ∨ x = π / 3 + k * (2 * π) ∨ x = -(π / 3) + k * (2 * π) := by
@@ -1165,7 +1258,9 @@ theorem matura3b_splosna (x : ℝ) :
     · exact Or.inr ⟨k, Or.inr hk⟩
 
 /-- `<<RACUN`: splošna rešitev `cos(3x/2) + cos(x/2) = 1 + cos x` je `x = 4kπ`, `π + 2kπ`, `4π/3 + 4kπ` ali
-`−4π/3 + 4kπ`. -/
+`−4π/3 + 4kπ`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#matura3c-splosna
+besedilo: »Osamimo kosinus: $\cos\left(x - \frac{\pi}{6}\right) = \frac{1}{2}$. Ker je $\cos\frac{\pi}{3} = \frac{1}{2}$, velja $x - \frac{\pi}{6} = \pm\frac{\pi}{3} + 2k\pi$, $k \in \mathbb{Z}$.« -/
 theorem matura3c_splosna (x : ℝ) :
     Real.cos (3 * x / 2) + Real.cos (x / 2) = 1 + Real.cos x ↔ ∃ k : ℤ, x = k * (4 * π) ∨
       x = π + k * (2 * π) ∨ x = 4 * π / 3 + k * (4 * π) ∨ x = -(4 * π / 3) + k * (4 * π) := by
@@ -1202,7 +1297,9 @@ theorem matura3c_splosna (x : ℝ) :
 /-! ## Razlaga 1, ustna vprašanja, pogoste napake -/
 
 /-- Razlaga 1: premica `y = 0,5` seka krožnico pri 30° in `180° − 30° = 150°`; točki sta zrcalni glede na os
-`y` (`cos 150° = −cos 30°`, `sin 150° = sin 30°`). -/
+`y` (`cos 150° = −cos 30°`, `sin 150° = sin 30°`).
+trditev: MAT-SS-3/trigonometrijske-enacbe#dve-tocki
+besedilo: »Enačba $\sin x = 0{,}5$ torej sprašuje, kje vodoravna premica $y = 0{,}5$ seka krožnico.« -/
 theorem dve_tocki :
     Real.sin (30 * π / 180) = 0.5 ∧ Real.sin (150 * π / 180) = 0.5 ∧
     Real.cos (150 * π / 180) = -Real.cos (30 * π / 180) := by
@@ -1213,7 +1310,9 @@ theorem dve_tocki :
   · rw [show 150 * π / 180 = π - 30 * π / 180 by ring, Real.cos_pi_sub]
 
 /-- Ustno vprašanje 2: `sin 2x = sin x` je `sin x (2 cos x − 1) = 0`, torej `sin x = 0` ali `cos x = 1/2`; z
-deljenjem s `sin x` bi izgubili rešitve `x = k·180°`. -/
+deljenjem s `sin x` bi izgubili rešitve `x = k·180°`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#ustno2
+besedilo: »Če jo delimo s $\sin x$, izgubimo vse rešitve, pri katerih je $\sin x = 0$, torej $x = k \cdot 180^\circ$.« -/
 theorem ustno2 (x : ℝ) :
     (Real.sin (2 * x) = Real.sin x ↔ Real.sin x = 0 ∨ Real.cos x = 1 / 2) ∧
     ∀ k : ℤ, Real.sin (2 * (k * π)) = Real.sin (k * π) := by
@@ -1231,7 +1330,9 @@ theorem ustno2 (x : ℝ) :
 
 /-- Pogoste napake (napačna perioda): korak 180° pri sinusu spremeni predznak, `sin(x + 180°) = −sin x`
 (npr. `sin 225° < 0`, `sin 315° < 0`); pri tangensu pa je perioda 180°, `tan(x + 180°) = tan x`
-(Preveri se 3: točki `x₁` in `x₁ + 180°` sta nasprotni). -/
+(Preveri se 3: točki `x₁` in `x₁ + 180°` sta nasprotni).
+trditev: MAT-SS-3/trigonometrijske-enacbe#perioda
+besedilo: »Napačna perioda.** Kdor si zapomni »tangens ima $180^\circ$«, včasih piše $k \cdot 180^\circ$ tudi pri sinusu. Tako dobi kote, kjer ima sinus nasprotni predznak. Pri sinusu in kosinusu je korak $360^\circ$, pri tangensu $180^\circ$.« -/
 theorem perioda (x : ℝ) :
     Real.sin (x + π) = -Real.sin x ∧ Real.cos (x + π) = -Real.cos x ∧ Real.tan (x + π) = Real.tan x ∧
     Real.sin (225 * π / 180) < 0 ∧ Real.sin (315 * π / 180) < 0 := by
@@ -1243,7 +1344,9 @@ theorem perioda (x : ℝ) :
     apply Real.sin_neg_of_neg_of_neg_pi_lt <;> nlinarith
 
 /-- Pogoste napake (deljenje s kotno funkcijo): 90° in 270° rešita `2 sin x cos x = cos x`, a bi se izgubila
-pri deljenju s `cos x` (tam je `cos x = 0`). -/
+pri deljenju s `cos x` (tam je `cos x = 0`).
+trditev: MAT-SS-3/trigonometrijske-enacbe#napaka-deljenje
+besedilo: »Deljenje s kotno funkcijo.** Če enačbo $2\sin x\cos x = \cos x$ deliš s $\cos x$, izgubiš rešitvi $90^\circ$ in $270^\circ$.« -/
 theorem napaka_deljenje :
     2 * Real.sin (π / 2) * Real.cos (π / 2) = Real.cos (π / 2) ∧
     2 * Real.sin (3 * π / 2) * Real.cos (3 * π / 2) = Real.cos (3 * π / 2) ∧
@@ -1254,7 +1357,9 @@ theorem napaka_deljenje :
 
 /-! ## Preveri se -/
 
-/-- Preveri se 1: `sin x = √2/2` ima na `[0°, 720°)` natanko rešitve 45°, 135°, 405°, 495°. -/
+/-- Preveri se 1: `sin x = √2/2` ima na `[0°, 720°)` natanko rešitve 45°, 135°, 405°, 495°.
+trditev: MAT-SS-3/trigonometrijske-enacbe#kviz1
+besedilo: »$45^\circ$, $135^\circ$, $405^\circ$, $495^\circ$« -/
 theorem kviz1 (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 4 * π) :
     Real.sin x = Real.sqrt 2 / 2 ↔ x = π / 4 ∨ x = 3 * π / 4 ∨ x = 9 * π / 4 ∨ x = 11 * π / 4 := by
   have hpi := Real.pi_pos
@@ -1288,7 +1393,9 @@ theorem kviz1 (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 4 * π) :
 example : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 4 * π := ⟨le_rfl, by positivity⟩
 
 /-- Preveri se 4: splošno rešitev `x = ±60° + k·360°` ima `cos x = 1/2`; pri `−60°` je sinus negativen
-(`sin x = √3/2` ne velja), `tan(−60°) = −√3 ≠ √3`. -/
+(`sin x = √3/2` ne velja), `tan(−60°) = −√3 ≠ √3`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#kviz4
+besedilo: »b) $\cos x = \frac{1}{2}$: $x = \pm 60^\circ + k \cdot 360^\circ$.« -/
 theorem kviz4 :
     (∀ x : ℝ, Real.cos x = 1 / 2 ↔ ∃ k : ℤ, x = π / 3 + k * (2 * π) ∨ x = -(π / 3) + k * (2 * π)) ∧
     Real.sin (-(π / 3)) < 0 ∧ Real.tan (-(π / 3)) = -Real.sqrt 3 := by
@@ -1299,7 +1406,9 @@ theorem kviz4 :
   · rw [Real.tan_neg, Real.tan_pi_div_three]
 
 /-- Preveri se 5: telefon s 30° na sekundo pokaže `sin x = −0,5` v prvih 24 s natanko ob 7, 11, 19, 23 s
-(`x = 210°, 330°, 570°, 690°`). -/
+(`x = 210°, 330°, 570°, 690°`).
+trditev: MAT-SS-3/trigonometrijske-enacbe#kviz5
+besedilo: »$\sin x = -0{,}5$ da $x = 210^\circ$, $330^\circ$, $570^\circ$, $690^\circ$. Deljeno s $30^\circ$ na sekundo: $7$, $11$, $19$ in $23\,\text{s}$.« -/
 theorem kviz5 (t : ℝ) (h0 : 0 ≤ t) (h1 : t < 24) :
     Real.sin (30 * t * π / 180) = -(1 / 2) ↔ t = 7 ∨ t = 11 ∨ t = 19 ∨ t = 23 := by
   have hpi := Real.pi_pos
@@ -1338,7 +1447,9 @@ theorem kviz5 (t : ℝ) (h0 : 0 ≤ t) (h1 : t < 24) :
 example : (0:ℝ) ≤ 7 ∧ (7:ℝ) < 24 := by norm_num
 
 /-- Preveri se 7: `tan x = −1` ima splošno rešitev `x = −45° + k·180°`; najmanjša pozitivna je 135°
-(`−45°` ni pozitivna, `315°` ni najmanjša, `tan 45° = 1`). -/
+(`−45°` ni pozitivna, `315°` ni najmanjša, `tan 45° = 1`).
+trditev: MAT-SS-3/trigonometrijske-enacbe#kviz7
+besedilo: »$\arctan(-1) = -45^\circ$, splošna rešitev je $x = -45^\circ + k \cdot 180^\circ$. Najmanjša pozitivna je pri $k = 1$: $x = 135^\circ$.« -/
 theorem kviz7 :
     (∀ x : ℝ, (Real.tan x = -1 ∧ Real.cos x ≠ 0) ↔ ∃ k : ℤ, x = -(π / 4) + k * π) ∧
     IsLeast {x : ℝ | 0 < x ∧ Real.tan x = -1 ∧ Real.cos x ≠ 0} (3 * π / 4) ∧ Real.tan (π / 4) = 1 := by
@@ -1359,14 +1470,18 @@ theorem kviz7 :
 
 /-! ## Razlage napačnih odgovorov -/
 
-/-- Korak za korakom, korak 6 (preizkus): `sin 126,87° = sin 53,13° ≈ 0,8`. -/
+/-- Korak za korakom, korak 6 (preizkus): `sin 126,87° = sin 53,13° ≈ 0,8`.
+trditev: MAT-SS-3/trigonometrijske-enacbe#preizkus-126-87
+besedilo: »$180^\circ - 53{,}13^\circ = 126{,}87^\circ$« -/
 theorem preizkus_126_87 : |Real.sin (126.87 * π / 180) - 0.8| < 0.05 := by
   obtain ⟨l1, u1⟩ := sin_meja 53.13 0.7999985 0.7999993 (by norm_num) (by norm_num) (by norm_num) (by norm_num)
   rw [show 126.87 * π / 180 = π - 53.13 * π / 180 by ring, Real.sin_pi_sub, abs_lt]
   constructor <;> linarith
 
 /-- Preveri se 2, razlaga napačnega odgovora 6°: najmanjša pozitivna rešitev `sin x = 0,1` je `arcsin 0,1 ≈ 6°`
-(natančneje med 5,7° in 5,8°). -/
+(natančneje med 5,7° in 5,8°).
+trditev: MAT-SS-3/trigonometrijske-enacbe#kviz2-napacni
+besedilo: »Brez kalkulatorja oceni najmanjšo pozitivno rešitev enačbe $\cos x = 0{,}1$.« -/
 theorem kviz2_napacni : 5.7 < Real.arcsin 0.1 * 180 / π ∧ Real.arcsin 0.1 * 180 / π < 5.8 ∧
     |Real.arcsin 0.1 * 180 / π - 6| < 0.5 := by
   obtain ⟨-, u1⟩ := sin_meja 5.7 (-1) 0.0994 (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -1378,7 +1493,9 @@ theorem kviz2_napacni : 5.7 < Real.arcsin 0.1 * 180 / π ∧ Real.arcsin 0.1 * 1
   rw [abs_lt]; constructor <;> linarith
 
 /-- Preveri se 4, razlage napačnih odgovorov: `sin x = √3/2` ima rešitvi 60° in 120°; `tan x = √3` ima rešitvi
-60° in 240°. -/
+60° in 240°.
+trditev: MAT-SS-3/trigonometrijske-enacbe#kviz4-napacni
+besedilo: »Sinus ima rešitvi $60^\circ$ in $120^\circ$,« -/
 theorem kviz4_napacni :
     Real.sin (π / 3) = Real.sqrt 3 / 2 ∧ Real.sin (2 * π / 3) = Real.sqrt 3 / 2 ∧
     Real.tan (π / 3) = Real.sqrt 3 ∧ Real.tan (4 * π / 3) = Real.sqrt 3 := by
@@ -1386,7 +1503,9 @@ theorem kviz4_napacni :
   · rw [show 2 * π / 3 = π - π / 3 by ring, Real.sin_pi_sub, Real.sin_pi_div_three]
   · rw [show 4 * π / 3 = π / 3 + π by ring, Real.tan_add_pi, Real.tan_pi_div_three]
 
-/-- Preveri se 6, razlaga napačnega odgovora 210: `cos 210° = −√3/2`, a 210° ni med 0° in 180°. -/
+/-- Preveri se 6, razlaga napačnega odgovora 210: `cos 210° = −√3/2`, a 210° ni med 0° in 180°.
+trditev: MAT-SS-3/trigonometrijske-enacbe#kviz6-napacni
+besedilo: »210 | Tudi $\cos 210^\circ = -\frac{\sqrt{3}}{2}$, a $210^\circ$ ni med $0^\circ$ in $180^\circ$.« -/
 theorem kviz6_napacni : Real.cos (210 * π / 180) = -(Real.sqrt 3 / 2) ∧ ¬(210 * π / 180 ≤ π) := by
   have hpi := Real.pi_pos
   refine ⟨?_, by intro h; nlinarith⟩
