@@ -69,6 +69,8 @@ test("dolga perioda, nelinearna družina in »0k« ne dvignejo statusa", () => {
     ["x^2=900", ["30+0k"]],
     ["sin(x/30)=1/2", ["30π/6+60kπ"]], // perioda 60π: okno se razširi čez ±50
     ["sin(x/100)=1/2", ["100π/6+200kπ"]],
+    ["sin(x/300)=1/2", ["300π/6+600kπ"]], // dve periodi > ±2000: okno ostane ±2000, druga veja 250π je na njem
+    ["cos(x)=0.9999999", ["arccos(0.9999999)+2kπ"]], // −0,00045 ob pokriti +0,00045 ni kopičenje
   ])
     assert.equal(verifyAi(naloga, eq(sol)).status, "wrong", naloga);
   for (const [naloga, sol] of [

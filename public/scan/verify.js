@@ -104,7 +104,7 @@ function manjkajoceDruzine(problemText, v, druzine) {
     const korak = d.vrednosti.length > K_MEJA + 1 ? Math.abs(d.vrednosti[K_MEJA + 1] - sredina) : 0;
     if (fin(korak) && fin(sredina)) okno = Math.max(okno, 2 * korak + Math.abs(sredina));
   }
-  if (okno > OKNO_MAX) return []; // perioda daljša od ~1000: na oknu ne moremo preveriti, odgovor ostane »delno«
+  okno = Math.min(okno, OKNO_MAX); // perioda daljša od ~1000: preverimo vsaj ±2000 (manj ničel, nikoli lažni alarm)
   const ims = imenovalci(problemText);
   const vrzel = (r) => ims.some((d) => {
     const y = d({ [v]: r });
@@ -120,8 +120,9 @@ function manjkajoceDruzine(problemText, v, druzine) {
   });
   const nicle = scanRoots(problemText, v, Math.max(50, okno)).filter((r) => Math.abs(r) <= okno);
   const manjka = nicle.filter((r) => !vrzel(r) && !pokrita(r));
-  // Ničle, ki se kopičijo (sin(1/x) = 0 pri x → 0, k zunaj [−400, 400]): popolnosti ne moremo oceniti, ostane »delno«.
-  if (manjka.some((r) => nicle.some((q) => q !== r && Math.abs(q - r) < 1e-3))) return [];
+  // Manjkajoče ničle, ki se kopičijo (sin(1/x) = 0 pri x → 0, k zunaj [−400, 400]): popolnosti ne moremo oceniti,
+  // ostane »delno«. Ena pokrita soseda (cos x = 0,9999999: ±0,00045) ni kopičenje.
+  if (manjka.some((r) => manjka.some((q) => q !== r && Math.abs(q - r) < 1e-3))) return [];
   return manjka.sort((x, y) => Math.abs(x) - Math.abs(y) || x - y); // najbližje 0 najprej (−π/3 pred 5π/3)
 }
 
