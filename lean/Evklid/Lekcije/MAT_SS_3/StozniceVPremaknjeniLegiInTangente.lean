@@ -1285,8 +1285,8 @@ theorem kviz1_oblike (x y : ℝ) :
 
 /-- Preveri se, vprašanje 1 (pravilni odgovor): krivulja 4x² − y² + 8x = 0 ni nobena elipsa (in zato tudi ne
 krožnica): ima točke s poljubno veliko absciso, elipsa pa je omejena.
-trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#kviz1-ni-elipsa
-besedilo: »Kvadrata imata nasprotna predznaka, zato je to hiperbola.« -/
+pomozno – razlaga kviza trdi »hiperbola«, ta izrek dokaže le, da krivulja ni elipsa; preoblikovanje iz razlage je
+kviz1_preoblikovanje -/
 theorem kviz1_ni_elipsa : ¬ ∃ x₀ y₀ a b : ℝ, a ≠ 0 ∧ ∀ x y : ℝ,
     (4 * x ^ 2 - y ^ 2 + 8 * x = 0 ↔ (x - x₀) ^ 2 / a ^ 2 + (y - y₀) ^ 2 / b ^ 2 = 1) := by
   rintro ⟨x₀, y₀, a, b, ha, h⟩
@@ -1299,6 +1299,15 @@ theorem kviz1_ni_elipsa : ¬ ∃ x₀ y₀ a b : ℝ, a ≠ 0 ∧ ∀ x y : ℝ,
   rw [div_le_one (by positivity)] at h1
   have h2 : |a| + 1 ≤ X - x₀ := by rw [hX]; linarith [le_abs_self x₀]
   nlinarith [abs_nonneg a, sq_abs a]
+
+/-- Preveri se, vprašanje 1, razlaga: 4x² − y² + 8x = 0 ⟺ 4(x + 1)² − y² = 4 ⟺ (x + 1)² − y²/4 = 1.
+trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#kviz1-preoblikovanje
+besedilo: »Iz $4x^2 - y^2 + 8x = 0$ dobiš $4(x + 1)^2 - y^2 = 4$ oziroma $(x + 1)^2 - \frac{y^2}{4} = 1$.« -/
+theorem kviz1_preoblikovanje (x y : ℝ) :
+    (4 * x ^ 2 - y ^ 2 + 8 * x = 0 ↔ 4 * (x + 1) ^ 2 - y ^ 2 = 4) ∧
+    (4 * (x + 1) ^ 2 - y ^ 2 = 4 ↔ (x + 1) ^ 2 - y ^ 2 / 4 = 1) :=
+  ⟨⟨fun h => by linear_combination h, fun h => by linear_combination h⟩,
+    ⟨fun h => by linear_combination h / 4, fun h => by linear_combination 4 * h⟩⟩
 
 /-- Preveri se, vprašanje 2: z grafa a = 5, b = 3 ((5, 0) in (0, 3) ležita na x²/25 + y²/9 = 1),
 e = √(25 − 9) = 4; po premiku za 3 v levo in 2 navzgor je desno gorišče (−3 + 4, 2) = (1, 2), abscisa 1

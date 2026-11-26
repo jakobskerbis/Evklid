@@ -567,6 +567,10 @@ theorem preveri2 : (8 : ℝ) ∉ Icc 2 6 ∧ (∀ x ∈ Icc (2 : ℝ) 6, 28 ≤ 
   · nlinarith [mul_nonneg (sub_nonneg.2 hx.1) (by linarith [hx.2] : (0 : ℝ) ≤ 14 - x)]
   · nlinarith [mul_nonneg (sub_nonneg.2 hx.2) (by linarith [hx.2] : (0 : ℝ) ≤ 10 - x)]
 
+
+/-- Predpostavka v sklepu `preveri2` (x ∈ [2, 6]) se da izpolniti (x = 4). -/
+example := preveri2.2.1 4 ⟨by norm_num, by norm_num⟩
+
 /-- Preveri se 3: največjo ploščino ima kvadrat; x² = 81, x > 0 ⇔ x = 9; obseg 4·9 = 36 = 4√81. Po
 `kvadrat_najvecji` (obseg 2s, največja ploščina s²/4): s²/4 = 81 pri s > 0 ⇔ s = 18, obseg 2·18 = 36;
 pri s = 18 je x(18 − x) ≤ 81, enakost le pri x = 9.

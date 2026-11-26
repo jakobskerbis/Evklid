@@ -1267,7 +1267,7 @@ theorem preveri7 : 3.1285 < koren 5 300 ∧ koren 5 300 < 3.1295 ∧ 3.125 < kor
 /-- RACUN: √13 ≈ 3,61, √7 ≈ 2,65, 1² + 4² = 17, (−1/2)³ = −1/8, (2/3)³ = 8/27, √(2² + 3²) = √13,
 √(4² − 3²) = √7.
 trditev: MAT-SS-2/koreni#racun-ostalo
-besedilo: »Nariši daljico $3\,\text{cm}$ in v enem krajišču pravokotnico. Šestilo odpri na $4\,\text{cm}$, ga zapiči v drugo krajišče daljice in zareži pravokotnico. Odsek pravokotnice do zareze meri $\sqrt{16 - 9} = \sqrt{7}\,\text{cm} \approx 2{,}65\,\text{cm}$.« -/
+besedilo: »Nariši daljico $3\,\text{cm}$ in v enem krajišču pravokotnico. Šestilo odpri na $4\,\text{cm}$, ga zapiči v drugo krajišče daljice in zareži pravokotnico. Odsek pravokotnice do zareze meri $\sqrt{16 - 9} = \sqrt{7}\,\text{cm}« -/
 theorem racun_ostalo : (1:ℝ) ^ 2 + 4 ^ 2 = 17 ∧ ((-1:ℝ) / 2) ^ 3 = -1 / 8 ∧ ((2:ℝ) / 3) ^ 3 = 8 / 27 ∧
     √((4:ℝ) ^ 2 - 3 ^ 2) = √7 := by norm_num
 

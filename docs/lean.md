@@ -140,6 +140,12 @@ lokalnega konteksta (`(fun (w : 1 = 0) => izrek 0 (absurd w …)) …`, `¬ P :=
 predpostavke v sklepu ostanejo nedokazane (`have w : … := by norm_num; izrek (hx := w.1)`; dolg zgoraj). **PV-13**:
 Lean-native preverjanje mora za vsak izrek s predpostavkami elaborirati zaprt člen `T a₁ … aₙ` v **praznem** lokalnem
 kontekstu (npr. generiran `example : <sklep[aᵢ]> := T a₁ … aₙ` iz argumentov priče), ne le preveriti tipa primera.
+Znane omejitve besedilnega preverjanja do PV-13 (priča gre skozi, čeprav ni zaprt člen): lasten predikat kot
+predpostavka (`(q : Pozitiven y)`, ki ga seznam predikatov ne pozna), protisloven lokalni kontekst znotraj primera
+(`have := fun (w : 1 = 0) => T 0 (absurd w …) …; trivial`, `(fun _ => trivial) (fun (w : …) => T …)`), argumenti iz
+`absurd` in ločene priče (`have w : … := by norm_num; T (hx := w.1)`). Zaznano pa je: `{h : …}`/`⦃h : …⦄` brez
+`(h := …)` ali `@`, `variable`/`include`/`omit` kjerkoli, ukaz v zamaknjeni vrstici za primerom, `¬ P` v tipu primera
+(razen če je zanikanje v sklepu izreka) in ime izreka, vezano z `let`/`have`/`fun`/`match`.
 
 Datoteke z dokazi lekcij, ki so prišle na main pred PV-09 brez oznak (MAT-SS-1 iz #1145 in MAT-OŠ-9), čakajo ročne
 navedke v ločenem PR (j, 26. 11. 2026). Njihove poti so v `lean/oznake-dolg.json`: oznake `trditev:`/`besedilo:`/`pomozno`

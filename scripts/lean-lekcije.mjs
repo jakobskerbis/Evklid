@@ -165,7 +165,7 @@ const KLJUC = /(?<![\p{L}\p{N}_.'!?«])(theorem|lemma|example)(?![\p{L}\p{N}_'!?
 const PREDPONA = /(@\[[^\]]*\]|(?<![\p{L}\p{N}_.'])(?:private|protected|noncomputable|public|nonrec|unsafe|partial))\s*$/u;
 // Konec ukaza: naslednja neprazna vrstica v stolpcu 0, ki ni nadaljevanje (»| …« vzorci, zaklepaji, »·«). Primer
 // izpolnljivosti mora izrek uporabiti v sami deklaraciji, ne v ukazu za njo (»#check …«, »def …«, »macro_rules …«).
-const UKAZ = /\n(?=[^\s|)\]}⟩›·,])/g;
+const UKAZ = /\n(?:(?=[^\s|)\]}⟩›·,])|[ \t]+(?=(?:theorem|lemma|example|def|abbrev|instance|structure|inductive|class|axiom|opaque|macro_rules|macro|syntax|elab_rules|elab|notation|infixl|infixr|infix|prefix|postfix|attribute|namespace|section|end|universe|variable|include|omit|mutual|#(?:check|eval|print|reduce|guard\w*|synth|exit|lint|help|find|simp|norm_num|conv|where|time|count_heartbeats|adaptation_note|exit)\b)(?![\p{L}\p{N}_'!?.])))/gu;
 
 /** Izreki in primeri v datoteki Lean: [{ vrsta, ime, polnoIme, vrstica, start, doc, izjava, binderji, privatno, koda }]. */
 export function deklaracije(txt) {
@@ -271,6 +271,23 @@ function odvij(s) {
   return s;
 }
 
+/** Ali je v tipu (primera) zanikanje na vrhu ali v vezniku »∧«: »¬ P« je »P → False«, torej predpostavka. */
+export function negacija(izjava) {
+  let v = String(izjava).trim();
+  for (;;) {
+    v = odvij(v);
+    if (!/^∀/.test(v)) break;
+    const k = globina0(v.slice(1), (t, i) => t[i] === ",");
+    if (k < 0) break;
+    v = v.slice(k + 2);
+  }
+  const deli = [];
+  let rest = v;
+  for (let k; (k = globina0(rest, (t, i) => t[i] === "∧")) >= 0; rest = rest.slice(k + 1)) deli.push(rest.slice(0, k));
+  deli.push(rest);
+  return deli.some((x) => /^¬/.test(odvij(x)));
+}
+
 /** Binder »x y : T« brez oklepaja (za »∀ … ,«). */
 function goliBinder(vez) {
   const k = globina0(vez, (t, i) => t[i] === ":");
@@ -334,6 +351,15 @@ function reIme(ime) {
   return re;
 }
 
+/** Ali koda ime izreka na novo veže (»let t := …«, »have t …«, »fun t =>«, »| t =>« v »match«): tedaj pojavitev ni izrek. */
+export function zasenci(koda, ime) {
+  const I = ubezi(ime);
+  const meja = "(?![\\p{L}\\p{N}_'!?])";
+  return new RegExp(`(?<![\\p{L}\\p{N}_'!?.])(?:let|have|obtain|set)\\s+(?:rec\\s+)?@?${I}${meja}`, "u").test(koda)
+    || new RegExp(`(?<![\\p{L}\\p{N}_'!?.])(?:fun|λ)\\s[^=]*?(?<![\\p{L}\\p{N}_'!?.])${I}${meja}[^=]*=>`, "u").test(koda)
+    || new RegExp(`\\|\\s*[^=|]*?(?<![\\p{L}\\p{N}_'!?.])${I}${meja}[^=|]*=>`, "u").test(koda);
+}
+
 /** Argumenti za pojavitvijo na mestu i: { poz, imenovani, projekcija }; »(t a b).2 x« šteje a, b kot argumenta t. */
 function argumenti(koda, i, vOklepaju) {
   const zamik = /^[ \t]*/.exec(koda.slice(koda.lastIndexOf("\n", i - 1) + 1))[0].length;
@@ -387,6 +413,7 @@ function argumenti(koda, i, vOklepaju) {
  * predpostavke). Golo ime (»example := t«, »@t«, »(t)«) ne šteje: tip je tedaj še »predpostavke → sklep«. */
 export function uporabi(koda, izrek, ns = null, spremenljivke = null) {
   const ime = typeof izrek === "string" ? izrek : izrek.ime;
+  if (zasenci(koda, ime)) return false;
   const re = reIme(ime);
   for (let m; (m = re.exec(koda)); ) {
     if (typeof izrek !== "string" && izrek.polnoIme && ns != null) {
@@ -400,13 +427,20 @@ export function uporabi(koda, izrek, ns = null, spremenljivke = null) {
     const a = argumenti(koda, m.index + m[0].length, koda[pred] === "(");
     if (a.poz + a.imenovani.size + a.po === 0) continue;
     if (typeof izrek === "string") return true;
+    // brez »@« so po mestu le »(…)«; predpostavka v »{…}« ali »⦃…⦄« mora biti podana z imenom (»(h := …)«)
     const vsi = [];
     for (const b of izrek.binderji) {
-      if (!m[1] && b.oklep !== "(") continue;
       const h = jePredpostavka(b, spremenljivke);
-      for (const n of b.imena.length ? b.imena : [null]) vsi.push({ n, h });
+      const mesto = m[1] || b.oklep === "(";
+      if (!mesto && (b.oklep === "[" || !h)) continue;
+      for (const n of b.imena.length ? b.imena : [null]) vsi.push({ n, h, mesto });
     }
-    if (vsi.every((x, k) => !x.h || k < a.poz || (x.n != null && a.imenovani.has(x.n)))) return true;
+    let k = 0;
+    const pokrite = vsi.map((x) => {
+      const poMestu = x.mesto && k++ < a.poz;
+      return !x.h || poMestu || (x.n != null && a.imenovani.has(x.n));
+    });
+    if (pokrite.every(Boolean)) return true;
   }
   return false;
 }
@@ -529,10 +563,23 @@ export function preveriDatoteko(rel, txt, md, vir, sha, dolg = new Map(), { zakl
   // »variable« s predpostavko in »include« bi predpostavko dodala vsem izrekom, ne da bi jo izrek pokazal
   const { mask } = maskiraj(txt);
   const spremDatoteke = new Set();
-  for (const r of mask.matchAll(/^[ \t]*(variable|include|omit)(?![\p{L}\p{N}_'!?])([^\n]*(?:\n[ \t]+[^\n]*)*)/gmu)) {
+  // kjerkoli v kodi (tudi za »open X in« ali drugim ukazom v isti vrstici); binderji »variable« do prvega
+  // žetona, ki ni oklepaj z binderjem (ne po zamiku)
+  for (const r of mask.matchAll(/(?<![\p{L}\p{N}_'!?.])(variable|include|omit)(?![\p{L}\p{N}_'!?])/gu)) {
     const vrstica = mask.slice(0, r.index).split("\n").length;
     if (r[1] !== "variable") { napake.push(`${rel}:${vrstica}: »${r[1]}« v datoteki lekcije (predpostavke naj bodo binderji izreka)`); continue; }
-    const g = binderji(r[2]);
+    let i = r.index + r[0].length;
+    const z = i;
+    for (;;) {
+      const ws = /^\s*/.exec(mask.slice(i))[0].length;
+      if (!ODPRI.includes(mask[i + ws])) break;
+      i += ws;
+      for (let d = 0; i < mask.length; i++) {
+        if (ODPRI.includes(mask[i])) d++;
+        else if (ZAPRI.includes(mask[i]) && --d === 0) { i++; break; }
+      }
+    }
+    const g = binderji(mask.slice(z, i));
     for (const b of g) for (const n of b.imena) spremDatoteke.add(n);
     for (const b of g) if (jePredpostavka(b)) napake.push(`${rel}:${vrstica}: »variable« s predpostavko ${b.imena.join(" ") || b.tip} (predpostavka naj bo binder izreka, da jo primer izpolnljivosti pokaže)`);
   }
@@ -549,17 +596,19 @@ export function preveriDatoteko(rel, txt, md, vir, sha, dolg = new Map(), { zakl
     if (d.vrsta !== "example" && !osnova) continue;
     // primer brez lastnih predpostavk; »example := fun (h : …) => …« ali »λ« takoj za »:=« predpostavko le prestavi
     const telo = d.koda.slice(d.telo - d.start + 2).trimStart();
+    // »¬ P« v tipu primera je »P → False« (predpostavka), razen če je zanikanje že v sklepu izreka
+    const ne = negacija(d.izjava);
     const brez = !d.binderji.some(hip(d)) && !implikacija(d.izjava, ["∧"]) && !/^(?:fun|λ)(?![\p{L}\p{N}_'!?])/u.test(telo);
     if (osnova) {
       const t = izreki.find((x) => x.ime === osnova && x.ns === d.ns);
-      const ok = brez && !!t && uporabi(d.koda, t, d.ns, spremenljivke(t));
+      const ok = brez && !!t && (!ne || negacija(t.izjava)) && uporabi(d.koda, t, d.ns, spremenljivke(t));
       pricaZa.set(d.ime, ok);
       if (ok) izpolnjeni.add(t.polnoIme);
       continue;
     }
     if (!brez) continue;
     const besede = new Set(d.koda.match(/[\p{L}_«][\p{L}\p{N}_'!?»]*/gu) || []);
-    for (const t of izreki) if (t !== d && besede.has(t.ime) && !izpolnjeni.has(t.polnoIme) && uporabi(d.koda, t, d.ns, spremenljivke(t))) izpolnjeni.add(t.polnoIme);
+    for (const t of izreki) if (t !== d && besede.has(t.ime) && !izpolnjeni.has(t.polnoIme) && (!ne || negacija(t.izjava)) && uporabi(d.koda, t, d.ns, spremenljivke(t))) izpolnjeni.add(t.polnoIme);
   }
   const ids = new Map();
   const citati = new Map();

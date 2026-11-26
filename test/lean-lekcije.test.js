@@ -665,3 +665,76 @@ test("robni primeri 2: opozorilo pri »pomozno« s primerom, vzorci »| …«, p
   assert.ok(n.some((x) => /C\.lean: v glavi manjka »vir:«/.test(x)));
   fs.rmSync(koren, { recursive: true });
 });
+
+// --- Zadnji krog pregledov (eb84ee07) ---------------------------------------------------------------------------
+
+test("predpostavka v »{…}« ali »⦃…⦄« mora biti podana z imenom ali z »@«", () => {
+  assert.deepEqual(brezPrimera(`${naloga("strogo", "(x : ℝ) ⦃h1 : x > 1⦄ ⦃h2 : x < 0⦄ : (2 : ℝ) = 3 := by linarith")}\nexample := strogo 0\n`), ["strogo"]);
+  assert.deepEqual(brezPrimera(`${naloga("impl", "(x : ℝ) {h1 : x > 1} {h2 : x < 0} : (2 : ℝ) = 3 := by linarith")}\nexample := impl (x := 0)\n`), ["impl"]);
+  assert.deepEqual(brezPrimera(`${naloga("impl2", "(x : ℝ) {h1 : x > 1} : x = x := rfl")}\nexample := impl2 2 (h1 := by norm_num)\n`), []);
+  assert.deepEqual(brezPrimera(`${naloga("impl3", "(x : ℝ) {h1 : x > 1} : x = x := rfl")}\nexample := @impl3 2 (by norm_num)\n`), []);
+  // »@« s spremenljivkami v »{…}« in razredom: vse po mestu do zadnje predpostavke
+  assert.deepEqual(brezPrimera(`${naloga("afna3", "{R : Type*} [LinearOrder R] (x : R) (h : x < x) : False := lt_irrefl x h")}\nexample := @afna3 ℕ _ 0\n`), ["afna3"]);
+  assert.deepEqual(brezPrimera(`${naloga("afna4", "{R : Type*} [LinearOrder R] (x : R) (h : x ≤ x) : x = x := rfl")}\nexample := @afna4 ℕ _ 0 le_rfl\n`), []);
+});
+
+test("»variable«/»include« kjerkoli (za »open … in«, za drugim ukazom); binderji do naslednjega ukaza", () => {
+  const n = napakePri(`section variable (w : (1 : ℕ) = 0) include w
+open Nat in variable (v : (2 : ℕ) = 0)
+variable (a : ℕ)
+(u : (3 : ℕ) = 0)
+  include u
+${naloga("lazna", ": (2 : ℕ) = 3 := by omega")}
+end`);
+  for (const ime of ["w", "v", "u"]) assert.ok(n.some((x) => new RegExp(`»variable« s predpostavko ${ime} `).test(x)), `${ime}: ${n.join(" | ")}`);
+  assert.equal(n.filter((x) => /»include«/.test(x)).length, 2);
+});
+
+test("konec primera tudi pred zamaknjenim ukazom (»#check«, »macro_rules«)", () => {
+  assert.deepEqual(brezPrimera(`${naloga("zcheck")}\nexample : True := trivial\n  #check zcheck 0 (by simp) (by simp)\n`), ["zcheck"]);
+  assert.deepEqual(brezPrimera(`${naloga("zmakro")}\nexample : True := trivial\n  macro_rules | \`(zz) => \`(zmakro 0 (by simp) (by simp))\n`), ["zmakro"]);
+});
+
+test("»¬« v tipu primera je predpostavka (razen če je zanikanje v sklepu izreka)", () => {
+  assert.deepEqual(brezPrimera(`${naloga("neg1")}\nexample : ¬ (1 : ℕ) = 0 := by intro w; exact neg1 0 (absurd w (by norm_num)) (absurd w (by norm_num))\n`), ["neg1"]);
+  assert.deepEqual(brezPrimera(`${naloga("neg2")}\nexample : ¬ (1 : ℕ) = 0 := (fun w => neg2 0 (absurd w (by norm_num)) (absurd w (by norm_num)))\n`), ["neg2"]);
+  assert.deepEqual(brezPrimera(`${naloga("neg3", "(a : ℝ) (h : a < 0) : ¬ 0 < a := not_lt.2 h.le")}\nexample : ¬ (0 : ℝ) < -1 := neg3 (-1) (by norm_num)\n`), [], "zanikanje v sklepu");
+});
+
+test("ime izreka, vezano v primeru z »let«/»have«/»fun«/»match«, ne šteje", () => {
+  assert.deepEqual(brezPrimera(`${naloga("senca")}\nexample : True := let senca := fun (_ _ _ : ℕ) => trivial; senca 0 0 0\n`), ["senca"]);
+  assert.deepEqual(brezPrimera(`${naloga("senca2")}\nexample : True := by\n  have senca2 : ℕ → ℕ → ℕ → True := fun _ _ _ => trivial\n  exact senca2 0 0 0\n`), ["senca2"]);
+  assert.deepEqual(brezPrimera(`${naloga("senca3")}\nexample : True := (fun senca3 => senca3 0 0 0) (fun (_ _ _ : ℕ) => trivial)\n`), ["senca3"]);
+  assert.deepEqual(brezPrimera(`${naloga("senca4")}\nexample : True := match (fun (_ _ _ : ℕ) => trivial) with | senca4 => senca4 0 0 0\n`), ["senca4"]);
+});
+
+test("preživele mutacije: T_izpolnljivo brez T, imenski prostori, by/fun/λ kot argument, ∨ v tipu primera, _root_", () => {
+  // T_izpolnljivo, ki T ne uporabi, ni priča (in T ostane brez primera)
+  assert.deepEqual(brezPrimera(`${naloga("osn")}\ntheorem osn_izpolnljivo : (2 : ℝ) = 2 := rfl\n`), ["osn"]);
+  // T_izpolnljivo v drugem imenskem prostoru ni priča za T
+  assert.deepEqual(brezPrimera(`${naloga("osn2", "(x : ℝ) (h1 : x > 1) : x = x := rfl")}\nnamespace D\ntheorem osn2_izpolnljivo : (2 : ℝ) = 2 := Evklid.Lekcije.MAT_SS_4.Primer.osn2 2 (by norm_num)\nend D\n`), ["osn2"]);
+  // tuj imenski prostor: »C.t« ne razreši izreka »Primer.t«; nadrejen prostor pa razreši
+  assert.deepEqual(brezPrimera(`${naloga("tt", "(x : ℝ) (h1 : x > 1) : x = x := rfl")}\nexample := C.tt 2 (by norm_num)\n`), ["tt"]);
+  assert.deepEqual(brezPrimera(`${naloga("tt2", "(x : ℝ) (h1 : x > 1) : x = x := rfl")}\nnamespace Pod\nexample := tt2 2 (by norm_num)\nend Pod\n`), []);
+  assert.deepEqual(brezPrimera(`namespace Pod\n${naloga("tt3", "(x : ℝ) (h1 : x > 1) : x = x := rfl")}\nend Pod\nexample := tt3 2 (by norm_num)\n`), ["tt3"], "izrek v podprostoru brez predpone");
+  assert.deepEqual(brezPrimera(`namespace Pod\n${naloga("tt4", "(x : ℝ) (h1 : x > 1) : x = x := rfl")}\nend Pod\nexample := Pod.tt4 2 (by norm_num)\n`), []);
+  // »by …«, »fun …« in »λ …« kot zadnji argument štejejo
+  assert.deepEqual(brezPrimera(`${naloga("zby", "(x : ℝ) (h1 : x > 1) : x = x := rfl")}\nexample := zby 2 by norm_num\n`), []);
+  assert.deepEqual(brezPrimera(`${naloga("zfun", "(f : ℕ → ℕ) (h1 : ∀ n, f n = n) : f 0 = 0 := h1 0")}\nexample := zfun fun n => n\n`), ["zfun"], "fun je en argument (f), h1 manjka");
+  assert.deepEqual(brezPrimera(`${naloga("zlam", "(f : ℕ → ℕ) (h1 : ∀ n, f n = n) : f 0 = 0 := h1 0")}\nexample := zlam (fun n => n) λ _ => rfl\n`), []);
+  // ∨/↔ v tipu primera nista predpostavka (priča za izrek s sklepom »∨«)
+  assert.deepEqual(brezPrimera(`${naloga("ali", "(x : ℝ) (h1 : x ≠ 0) : 0 < x ∨ x < 0 := h1.lt_or_lt.symm")}\nexample : (0 : ℝ) < 1 ∨ (1 : ℝ) < 0 := ali 1 one_ne_zero\n`), []);
+  // _root_.
+  assert.equal(deklaracije(datoteka("theorem _root_.koren_izrek : True := trivial\n"))[0].polnoIme, "koren_izrek");
+});
+
+test("preživele mutacije 2: ključna beseda za imenom ni argument, »<|«, »(t).2 …«, »→« v tipu primera", () => {
+  assert.deepEqual(brezPrimera(`${naloga("zw", "(h1 : (1 : ℕ) = 0) : False := absurd h1 (by simp)")}\nexample : False := by\n  rcases zw with ⟨⟩\n`), ["zw"]);
+  assert.deepEqual(brezPrimera(`${naloga("zd", "(h1 : (1 : ℕ) = 1) : True := trivial")}\nexample := zd <| rfl\n`), []);
+  assert.deepEqual(brezPrimera(`${naloga("zp", ": (1 : ℕ) = 1 ∧ ∀ x : ℝ, 0 < x → 0 ≤ x := ⟨rfl, fun _ h => h.le⟩")}\nexample := (zp).2 1 one_pos\n`), []);
+  assert.deepEqual(brezPrimera(`${naloga("zi")}\nexample : (1 : ℕ) = 0 → (2 : ℝ) = 3 := by\n  intro w\n  exact zi 0 (absurd w (by norm_num)) (absurd w (by norm_num))\n`), ["zi"]);
+});
+
+test("tip primera z »∨« omejenih »∀« (sklep izreka) ni predpostavka primera", () => {
+  assert.deepEqual(brezPrimera(`${naloga("zs", "(S : Set ℝ) (h : S = Set.univ) : (∀ x ∈ S, 0 ≤ x ^ 2) ∨ False := Or.inl fun x _ => sq_nonneg x")}\nexample : (∀ x ∈ (Set.univ : Set ℝ), 0 ≤ x ^ 2) ∨ False := zs Set.univ rfl\n`), []);
+});
