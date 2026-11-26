@@ -54,3 +54,8 @@ import Evklid.Lekcije.MAT_SS_2.KvadratnaFunkcija
 import Evklid.Lekcije.MAT_SS_2.KvadratnaNeenacba
 import Evklid.Lekcije.MAT_SS_2.EkstremalniProblemiSKvadratnoFunkcijo
 import Evklid.Lekcije.MAT_SS_2.PreseciscaParabolInSistemiKvadratnihNeenacb
+import Evklid.Lekcije.MAT_SS_2.KotneFunkcijeVPravokotnemTrikotniku
+import Evklid.Lekcije.MAT_SS_2.Podobnost
+import Evklid.Lekcije.MAT_SS_2.TransformacijeGrafov
+import Evklid.Lekcije.MAT_SS_2.GrafiZAbsolutnoVrednostjoInStopnicasteFunkcije
+import Evklid.Lekcije.MAT_SS_2.MesaneNaloge1In2Letnika
