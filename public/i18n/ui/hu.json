@@ -1182,6 +1182,7 @@
   "sc.memory": "Elmentve",
   "sc.recent": "Legutóbbi",
   "sc.insert": "Beszúrás a számításba",
+  "sc.removeRecent": "Eltávolítás a Legutóbbiak közül: {v}",
   "sc.pressSolve": "Nyomd meg az = gombot a megoldáshoz",
   "sc.fmHint": "Az ismert betűk helyére írj számokat, az ismeretlent hagyd meg, és nyomd meg az = gombot.",
   "sc.fmRad": "A számológép most RAD módban van (szögek radiánban).",
