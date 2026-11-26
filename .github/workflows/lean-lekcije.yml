@@ -6,10 +6,10 @@ name: lean-lekcije
 
 on:
   pull_request:
-    paths: ["content/lessons/**", "lean/Evklid/Lekcije/**", "scripts/lean-lekcije.mjs", ".github/workflows/lean-lekcije.yml", "lean/trditve.json"]
+    paths: ["content/lessons/**", "lean/Evklid/Lekcije/**", "scripts/lean-lekcije.mjs", ".github/workflows/lean-lekcije.yml", "lean/trditve.json", "lean/izpolnljivo-dolg.json", "test/lean-lekcije.test.js"]
   push:
     branches: [main]
-    paths: ["content/lessons/**", "lean/Evklid/Lekcije/**", "scripts/lean-lekcije.mjs", ".github/workflows/lean-lekcije.yml", "lean/trditve.json"]
+    paths: ["content/lessons/**", "lean/Evklid/Lekcije/**", "scripts/lean-lekcije.mjs", ".github/workflows/lean-lekcije.yml", "lean/trditve.json", "lean/izpolnljivo-dolg.json", "test/lean-lekcije.test.js"]
   workflow_dispatch:
 
 permissions:
@@ -25,3 +25,12 @@ jobs:
         with:
           node-version: 22
       - run: node scripts/lean-lekcije.mjs
+      - name: Seznam izrekov brez primera izpolnljivosti (lean/izpolnljivo-dolg.json) se sme le krčiti
+        if: github.event_name == 'pull_request'
+        env:
+          BASE: ${{ github.base_ref }}
+        run: |
+          git fetch --depth=1 origin "$BASE"
+          git show "origin/$BASE:lean/izpolnljivo-dolg.json" > "$RUNNER_TEMP/dolg.json" 2>/dev/null || echo "[]" > "$RUNNER_TEMP/dolg.json"
+          node scripts/lean-lekcije.mjs --osnova-dolga "$RUNNER_TEMP/dolg.json"
+      - run: node --test test/lean-lekcije.test.js

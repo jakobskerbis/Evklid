@@ -106,18 +106,34 @@ theorem simetrija (n k : ℕ) (hk : k ≤ n) : Nat.choose n k = Nat.choose n (n 
 - `besedilo: »…«` je dobesedni izsek iz besedila, ki ga učenec vidi (brez glave, `:::risba`, `:::simboli` in
   `<<RACUN`), v eni vrstici; presledki, prelomi in LaTeX `\,` `\;` `\!` se pri primerjavi štejejo kot en presledek.
   Brez `-/` in `/-` (zaprla bi docstring). Citat je trditev, ki jo izrek dokaže (sklep, odgovor, pravilo), ne besedilo
-  naloge, »Podatki:«, »Točkovanje:«, vprašanje ali glava tabele; pri tabeli citiraj vrstico izreka. Krajši od 15 znakov
+  naloge, »Podatki:«, »Točkovanje:«, vprašanje ali glava tabele; pri tabeli citiraj vrstico izreka. Iz »Preveri se«
+  (j, 26. 11. 2026) sme citat priti le iz razlage odgovora (vrstica `>`) ali povratne informacije (`~`, pri vpiši
+  število brez napačne vrednosti pred `|`), nikoli iz vprašanja ali ponujenih odgovorov (`+`, `-`, `=`, `1.`);
+  `citljivoBesedilo` te vrstice zamenja z zaporo, zato citat ne more segati čeznje. Krajši od 15 znakov
   je dovoljen le z vrstico `besedilo-kratko: <razlog>`; isti citat pri več kot dveh izrekih lekcije je opozorilo.
 - Pomožna trditev, ki ni trditev lekcije (orodje, meje za √2, Taylorjeve ocene), ima namesto tega vrstico `pomozno`.
   `pomozno` z docstringom, ki omenja primer ali nalogo, je opozorilo (morda je to trditev lekcije).
 - Izrek s predpostavkami ima primer izpolnljivosti. Predpostavka je binder (npr. `(hk : k ≤ n)`,
   `(hf : HasDerivAt f f' x)`; ne spremenljivke in razredi, kot `(n : ℕ)` ali `[CommRing R]`) ali »→« v sklepu (v enem
   od veznikov »∧« na vrhu, za začetnimi »∀ …,«, npr. `… ∧ ∀ x, 0 < x → …`; »¬ …«, »∃ …« in »let …« ne štejejo).
+  Šteje tudi »→« v oklepaju (`(1 < a → …) ∧ …`), ASCII `->`, omejeni `∀ x > 0,` / `∀ x ∈ S,` in binder s strukturo, ki
+  nosi dokaz (`Affine.Triangle`, `Affine.Simplex`, podtip `{x // p x}`).
   Primer je `example` (ali izrek `<izrek>_izpolnljivo`) brez lastnih predpostavk, ki izrek **uporabi** na konkretnih
-  vrednostih, npr. `example := koren_pot (n := 2) (a := 4) (by norm_num) (by norm_num)` ali
+  vrednostih (z argumenti: golo ime `example := izrek`, `@izrek` brez argumentov ali `#check` za primerom ne štejejo;
+  `<izrek>_izpolnljivo` je priča le za `<izrek>` in ga mora uporabiti, sicer je navaden izrek z obveznimi oznakami), npr. `example := koren_pot (n := 2) (a := 4) (by norm_num) (by norm_num)` ali
   `example := preizkus2.2.2 0 (by norm_num) (by norm_num)`. Lean tako preveri, da iste vrednosti izpolnijo vse
   predpostavke hkrati. Kjer primer ni preprost, docstring izreka pove `izpolnljivo: ročno – <razlog>`. Pomožne
   trditve primera ne potrebujejo.
+
+Izreki, ki so bili brez primera že, preden je PV-09 začel šteti »→« v oklepaju, `->` in omejeni `∀`, so v
+`lean/izpolnljivo-dolg.json` (`{ izrek, podpis }`; v kazalu `izpolnljivo: "dolg"`). Vnos velja le, dokler se podpis
+izreka ne spremeni, seznam se sme le krčiti (`lean-lekcije.yml` ga primerja z osnovno vejo), nov izrek potrebuje
+primer. `private` je dovoljen le pri `pomozno` (kazalo in `lean-aksiomi.mjs` privatnega imena ne vidita);
+`lean-aksiomi.mjs` uporablja isti razčlenjevalnik (zamaknjeni izreki, atributi, `noncomputable section`, znakovni
+literali in surovi nizi) in v `#print axioms` vzame tudi vsak `izrek` iz `lean/trditve.json`, zato Lean zavrne kazalo z
+neobstoječim imenom. Besedilno ni mogoče preveriti, da primer poda **vse** predpostavke in tudi predpostavke v sklepu
+(primer `have w : … := by norm_num; izrek (hx := w.1)` pusti »→« v sklepu nedokazan; dolg zgoraj): to preveri Lean
+sam (tip primera brez preostalih `∀`/`→`), PV-13.
 
 `scripts/lean-lekcije.mjs` (in `.github/workflows/lean-lekcije.yml`) javi, ko se lekcija spremeni po dokazu, ko
 izreku manjka `trditev:`/`besedilo:` (ali `pomozno`), ko je id podvojen ali citata ni v lekciji in ko predpostavke
