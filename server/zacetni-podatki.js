@@ -18,6 +18,8 @@
 // Strošek: ~10 notranjih klicev na odprtje strani, ki bi jih sicer brskalnik takoj naredil sam (isto delo strežnika,
 // brez TLS in glav HTTP); skupni rok 1,5 s za vse klice, nato stran z do takrat zbranimi podatki.
 import http from "node:http";
+import zlib from "node:zlib";
+import { pickEncoding } from "./compress.js";
 import { jeFaks } from "../public/stopnja.js";
 import { gamesOn } from "../public/games/stage.js";
 
@@ -35,9 +37,28 @@ export function zaZacetnePodatke(req) {
   if (req.headers["x-app-client"]) return false;
   // Predhodno nalaganje (prefetch, prerender) ni odprtje strani: ne zasede profila in ne šteje kot dejavnost.
   if (/prefetch|prerender/i.test(`${req.headers.purpose || ""} ${req.headers["sec-purpose"] || ""}`)) return false;
+  return sejaInNaprava(req);
+}
+
+// Brez piškotka naprave bi vsak notranji klic ustvaril svojo napravo in profil zasedel za neobstoječo; app.js ga dobi sam.
+function sejaInNaprava(req) {
   const piskotki = String(req.headers.cookie || "");
-  // Brez piškotka naprave bi vsak notranji klic ustvaril svojo napravo in profil zasedel za neobstoječo; app.js ga dobi sam.
   return SEJA.test(piskotki) && NAPRAVA.test(piskotki);
+}
+
+// Ponovni obisk (meritev N-08, 25. 11. 2026): service worker postreže shranjeno vstopno stran brez podatkov (stran s
+// podatki je no-store), zato je app.js po zagonu spet čakal verigo klicev (račun → profili → pot → načini …, tri kroge
+// po 0,56 s na počasnem 4G). public/zacetek.js zdaj iste podatke zahteva v enem klicu GET /api/zacetni-podatki, takoj
+// v <head>, vzporedno z zagonom modulov. Isti pogoji kot za stran, le da je to klic fetch iz iste strani (ne navigacija):
+// samo iz istega izvora (Sec-Fetch-Site), ne za mobilnega odjemalca in ne kot predhodno nalaganje.
+export function zaZacetnePodatkeKlic(req) {
+  if (req.method !== "GET") return false;
+  const site = req.headers["sec-fetch-site"];
+  if (site && site !== "same-origin") return false;
+  if (req.headers["sec-fetch-mode"] === "navigate") return false;
+  if (req.headers["x-app-client"]) return false;
+  if (/prefetch|prerender/i.test(`${req.headers.purpose || ""} ${req.headers["sec-purpose"] || ""}`)) return false;
+  return sejaInNaprava(req);
 }
 
 // Notranja zahteva GET skozi aplikacijo z glavami in naslovom prvotne zahteve. Vrne { status, body, cookies } ali null.
@@ -123,45 +144,73 @@ function naslovi(s, pot) {
 
 // Podatki za vstopno stran ali null. Vrne { json (varen za <script>), cookies, student }.
 export function zacetniPodatki(app) {
-  return async (req) => {
-    if (!zaZacetnePodatke(req)) return null;
-    const d = {};
-    const cookies = [];
-    const rok = Date.now() + ROK_MS; // en skupni rok za vse klice: stran nikoli ne čaka dlje
-    const get = async (url) => {
-      const ostane = rok - Date.now();
-      if (ostane <= 0) return null;
-      const r = await notranjiGet(app, req, url, ostane);
-      if (!r) return null;
-      for (const c of r.cookies) if (!cookies.includes(c)) cookies.push(c);
-      if (r.status !== 200 || !/json/i.test(r.type) || r.body.length > NAJVEC) return null;
-      const txt = r.body.toString("utf8");
-      d[url] = txt;
-      return txt;
-    };
-    const parse = (txt) => {
-      try {
-        return txt == null ? null : JSON.parse(txt);
-      } catch {
-        return null;
-      }
-    };
-    const status = parse(await get("/api/account/status"));
-    // Seja ni (več) veljavna ali računi niso vklopljeni: app.js pokaže prijavo, podatkov ni.
-    if (!status?.enabled || !status.logged_in) return cookies.length ? { json: null, cookies, student: null } : null;
-    await get("/api/config");
-    const list = parse(await get("/api/students"));
-    // Profil, ki ga bo izbral app.js (loadStudents), je gotov samo, ko je en sam: pri več profilih je izbira v brskalniku
-    // (localStorage), klic za drug profil pa bi ga na tej napravi zasedel (server/accounts/devices.js).
-    const s = Array.isArray(list) && list.length === 1 && !list[0].locked && !list[0].needs_password ? list[0] : null;
-    if (s && Number.isInteger(s.id)) {
-      await get(`/api/students/${s.id}/conversations`);
-      const pot = parse(await get(`/api/students/${s.id}/path`));
-      for (const url of naslovi(s, pot)) await get(url);
+  return async (req) => (zaZacetnePodatke(req) ? zberi(app, req) : null);
+}
+
+// GET /api/zacetni-podatki: isti JSON kot v strani ({ s, d }), no-store; 204, ko podatkov ni (zacetek.js tedaj pokliče
+// posamezne klice kot prej). Piškotek notranjega klica gre v odgovor kot pri strani.
+export function zacetniPodatkiKlic(app) {
+  return async (req, res) => {
+    res.setHeader("Cache-Control", "no-store");
+    let p = null;
+    try {
+      p = zaZacetnePodatkeKlic(req) ? await zberi(app, req) : null;
+    } catch {
+      p = null;
     }
-    const parts = Object.entries(d).map(([url, txt]) => `${JSON.stringify(url)}:${txt}`);
-    const json = varenJson(`{"s":${s ? s.id : "null"},"d":{${parts.join(",")}}}`);
-    // podatki: za Učno pot v strani (server/pot-takoj.js), ki jo sestavi iz istih odgovorov.
-    return { json, cookies, student: s ? s.id : null, podatki: s ? { s, d } : null };
+    for (const c of p?.cookies || []) res.append("Set-Cookie", c);
+    if (!p?.json) return res.status(204).end();
+    res.setHeader("Vary", "Accept-Encoding, Cookie");
+    const raw = Buffer.from(p.json);
+    const enc = process.env.EVKLID_COMPRESS === "0" ? null : pickEncoding(req.headers["accept-encoding"]);
+    let body = raw;
+    if (enc) {
+      body = enc === "br" ? zlib.brotliCompressSync(raw, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 5 } }) : zlib.gzipSync(raw, { level: 6 });
+      res.setHeader("Content-Encoding", enc);
+    }
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    res.setHeader("Content-Length", body.length);
+    return res.end(body);
   };
+}
+
+async function zberi(app, req) {
+  const d = {};
+  const cookies = [];
+  const rok = Date.now() + ROK_MS; // en skupni rok za vse klice: stran nikoli ne čaka dlje
+  const get = async (url) => {
+    const ostane = rok - Date.now();
+    if (ostane <= 0) return null;
+    const r = await notranjiGet(app, req, url, ostane);
+    if (!r) return null;
+    for (const c of r.cookies) if (!cookies.includes(c)) cookies.push(c);
+    if (r.status !== 200 || !/json/i.test(r.type) || r.body.length > NAJVEC) return null;
+    const txt = r.body.toString("utf8");
+    d[url] = txt;
+    return txt;
+  };
+  const parse = (txt) => {
+    try {
+      return txt == null ? null : JSON.parse(txt);
+    } catch {
+      return null;
+    }
+  };
+  const status = parse(await get("/api/account/status"));
+  // Seja ni (več) veljavna ali računi niso vklopljeni: app.js pokaže prijavo, podatkov ni.
+  if (!status?.enabled || !status.logged_in) return cookies.length ? { json: null, cookies, student: null } : null;
+  await get("/api/config");
+  const list = parse(await get("/api/students"));
+  // Profil, ki ga bo izbral app.js (loadStudents), je gotov samo, ko je en sam: pri več profilih je izbira v brskalniku
+  // (localStorage), klic za drug profil pa bi ga na tej napravi zasedel (server/accounts/devices.js).
+  const s = Array.isArray(list) && list.length === 1 && !list[0].locked && !list[0].needs_password ? list[0] : null;
+  if (s && Number.isInteger(s.id)) {
+    await get(`/api/students/${s.id}/conversations`);
+    const pot = parse(await get(`/api/students/${s.id}/path`));
+    for (const url of naslovi(s, pot)) await get(url);
+  }
+  const parts = Object.entries(d).map(([url, txt]) => `${JSON.stringify(url)}:${txt}`);
+  const json = varenJson(`{"s":${s ? s.id : "null"},"d":{${parts.join(",")}}}`);
+  // podatki: za Učno pot v strani (server/pot-takoj.js), ki jo sestavi iz istih odgovorov.
+  return { json, cookies, student: s ? s.id : null, podatki: s ? { s, d } : null };
 }

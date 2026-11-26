@@ -207,6 +207,9 @@ export async function zazeniHttp2Posrednik({ cilj, mapa }) {
     for (const [k, v] of Object.entries(h)) if (!k.startsWith(":") && !PREC.has(k)) glave[k] = v;
     glave.host = h[":authority"];
     glave["x-forwarded-proto"] = "https";
+    // Kot posrednik Renderja (N-08, 25. 11. 2026): brez te glave je bil merjeni učenec »lokalni skrbnik« (isLocalRequest),
+    // zato je zagon čakal še števec porabe (/api/usage), ki ga učenec v produkciji nima. 203.0.113.7: naslov za primere.
+    glave["x-forwarded-for"] = "203.0.113.7";
     let koncano = false;
     const req = http.request({ host: gor.hostname, port: gor.port, method: h[":method"], path: h[":path"], headers: glave, agent }, (res) => {
       res.on("end", () => (koncano = true));

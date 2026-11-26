@@ -150,7 +150,8 @@ test("prompt (produkcijski in kandidat): enak del za učenca in vse oznake, nova
 test("kandidat 3: krajši stalni del, pet prednostnih pravil, ena definicija, šibke točke meritve", () => {
   const [ks] = fs.readFileSync(KANDIDAT_PROMPT_PATH, "utf8").split(SPLIT_MARKER);
   // 66 198 → 56 9xx znakov (−14 %, s popravki dveh pregledov); rezerva ~200.
-  assert.ok(ks.length < 57100, `stalni del kandidata ${ks.length} znakov`);
+  // Orodja vaja in kalkulator (P1-3, P1-9, 25. 11. 2026): +1000 znakov (56 869 → 57 869, s popravki pregleda), meja +800.
+  assert.ok(ks.length < 57100 + 800, `stalni del kandidata ${ks.length} znakov`);
   const vedno = ks.slice(ks.indexOf("**Vedno**"), ks.indexOf("## Kako poučuješ"));
   for (const s of ["(za Varnostnim ščitom in Mejami ima teh pet pravil največjo težo)", "v skriti blok `RACUN` ga zapišeš", "**Ne izdaj.**", "**Preveri, preden sodiš:**", "**Ob »ne razumem« nov pristop:**", "**En korak (način A):**", "**Oblika:**"]) {
     assert.ok(vedno.includes(s), s);
