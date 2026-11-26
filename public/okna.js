@@ -658,7 +658,9 @@ export function placeToast() {
   if (!el || el.hidden) return;
   const a = area();
   const st = document.querySelector("body > main.view:not([hidden]):not(.in-okno) .tb-stepper");
-  const dno = Math.min(a.bottom, st?.offsetParent ? st.getBoundingClientRect().top : Infinity);
+  // Odprta Evklidova tipkovnica (.tk, nad obvestilom) prekrije spodnji del zaslona: obvestilo gre nad njo (pregled 3).
+  const tk = document.body.classList.contains("tk-open") ? document.querySelector("body > .tk:not([hidden])") : null;
+  const dno = Math.min(a.bottom, st?.offsetParent ? st.getBoundingClientRect().top : Infinity, tk ? tk.getBoundingClientRect().top : Infinity);
   const glave = [...document.querySelectorAll(GLAVE)].map((g) => g.getBoundingClientRect()).filter((r) => r.height > 0 && r.top < window.innerHeight / 2);
   const vrh = Math.max(0, ...glave.map((r) => r.bottom));
   // Samo vidni del ovire: del simulacije ali odgovora, odrinjen pod glavo, je odrezan z robom pogleda.

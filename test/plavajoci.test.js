@@ -397,3 +397,27 @@ test("hitrost: ura, ki menja le besedilo, ne sproža iskanja mesta za mehurček 
     await ctx.close();
   });
 });
+
+test("telefon 390 × 844: obvestilo je nad odprto Evklidovo tipkovnico, ne pod njo (pregled 3)", opts, async () => {
+  await withApp(async (base) => {
+    const { ctx, p, errors } = await phone(base, { width: 390, height: 844 });
+    await p.tap("#input");
+    await p.waitForSelector("body.tk-open .tk:not([hidden])");
+    await p.waitForTimeout(300);
+    await p.evaluate(() => {
+      const t = document.querySelector("#toast");
+      t.textContent = "Napaka: povezava je prekinjena.";
+      t.hidden = false;
+      t.dataset.at = Date.now();
+    });
+    await p.waitForTimeout(400);
+    const r = await p.evaluate(() => {
+      const t = document.querySelector("#toast").getBoundingClientRect();
+      return { bottom: t.bottom, tk: document.querySelector(".tk").getBoundingClientRect().top };
+    });
+    assert.ok(r.bottom <= r.tk, `obvestilo je skrito pod tipkovnico: ${JSON.stringify(r)}`);
+    assert.deepEqual(await pokrito(p, "#toast"), [], "obvestilo nad tipkovnico prekrije vrstico za pisanje");
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+});
