@@ -26,16 +26,25 @@ sredi pogovora pokaže Evklidova orodja.
   orodja/enote/pretvornik, periodni sistem/PSE, formule/zbirka; samo »kalkulator« ali »računalo« → zadnji uporabljeni
   način (pri kemiji periodni sistem, kot gumb v glavi pogovora). Neznana
   beseda ali dva načina hkrati → ni gumba. Kalkulatorja samega to ne spreminja (lastnik kalkulatorja je druga seja).
-  Kdaj inštruktor blok napiše, doda profil B v pozivu (#539); do tedaj ga model ne pozna in gumba ni.
+  Kdaj inštruktor blok napiše, je v pozivu (profil B, razdelek »Orodja aplikacije« v obeh pozivih): ko naj učenec
+  sam računa, riše ali pretvarja (npr. ko v načinu A postavita račun), nikoli namesto razlage.
 - **Podobna naloga** (P1-3, del A; j 25. 11. 2026, načrt treh prioritet): `<<ODPRI vaja="kvadratna enačba">>` →
   `server/vaja-po-razlagi.js` poišče temo učenčeve stopnje z generatorjem nalog (najprej `topicForName`; pri vsaj dveh
   besedah sicer prva lekcija, ki ima vse besede v naslovu in nobena druga s tem ne konkurira; ena sama beseda brez
   točnega imena teme, dvoumna poizvedba, beseda poizvedbe, ki je ni v imenu teme, ali tema brez generatorja → ni
   gumba, nikoli napačna tema). Gumb »Podobna naloga«
   (`vr.vaja`) odpre temo v Vadnici in začne vajo (kot »Preveri se« v laboratoriju): nalogo ustvari generator, odgovor
-  preveri koda (`progress.answer`), rezultat gre v napredek in šibke točke. Samo s stikalom `EVKLID_VAJA_PO_RAZLAGI=1`
-  (privzeto izklopljeno), dokler profil B v pozivu ne doda pravila, kdaj inštruktor blok napiše (#539). »Nazaj« iz teme
+  preveri koda (`progress.answer`), rezultat gre v napredek in šibke točke. Kdaj inštruktor blok napiše, je v pozivu
+  (profil B): ko je učenec razlago razumel ali računsko nalogo rešil (po rešeni nalogi najraje `vaja`), ne v načinu A
+  pred rešitvijo trenutne naloge, ne med nalogo s pole, pri isti temi največ enkrat. Gumb je še vedno samo s stikalom
+  `EVKLID_VAJA_PO_RAZLAGI=1` (privzeto izklopljeno; vklop odloči j), brez njega blok ne da gumba. »Nazaj« iz teme
   vodi na Učno pot (kot iz laboratorija), ne nazaj v pogovor; pogovor ostane v zgodovini.
+- **Lekcija za prvo vprašanje** (P1-9, del B; j 25. 11. 2026): ko `lessonForQuestion` (server/lekcija-za-vprasanje.js)
+  najde lekcijo za prvo vprašanje prostega pogovora, dobi inštruktor skrito opombo in aplikacija pod prvim odgovorom
+  pokaže gumb lekcije (`{ kind: "lesson", id, title }`, kot `findLesson`), brez podvajanja z blokom `ucbenik` modela;
+  ne pri zavrnitvi, popravku ali opozorilu. Odgovor v zgodovini nosi skrit zapis `<orodje>App record … »ime« (id)`
+  (`lessonRecord` v server/app.js, kot `actionNote`), iz katerega se gumb sestavi ob ponovnem odprtju; velja le zapis
+  za prvim blokom besedila (ki ga doda aplikacija). Opomba inštruktorju pove, da je gumb že pod odgovorom.
 - Preizkus brez API ključa: v klepet napiši »pokaži poskus« (vnaprej pripravljen odgovor v `server/claude.js`).
 
 ## Obratna smer: iz poskusa ali 3D modela v klepet in nazaj (j, 24. 11. 2026, faza A načrta »povezan učni prostor«)

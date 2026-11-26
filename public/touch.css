@@ -115,7 +115,7 @@
     :has(> #view-cards:not([hidden]):not(.in-okno)), :has(> #view-graph:not([hidden]):not(.in-okno)),
     :has(> #view-uci:not([hidden]):not(.in-okno) > #view-textbook:not([hidden]) .tb-lesson-grid),
     :has(> #view-uci:not([hidden]):not(.in-okno) > #view-lab.lab-open:not([hidden]))) > .tabbar {
-    position: fixed; inset-inline: 0; bottom: 0; z-index: 30;
+    position: fixed; inset-inline: 0; bottom: 0; z-index: var(--z-noga, 30);
     transform: translateY(var(--tb-y, 100%)); visibility: var(--tb-vis, hidden);
     transition: transform 0.22s ease, visibility 0s linear var(--tb-vd, 0.22s);
   }
@@ -142,7 +142,7 @@
    Zasloni za branje zgoraj imajo močnejše pravilo (--tb-y) in ostanejo po starem. Med vodičem (kaže na zavihke) je
    vrstica vedno na mestu. */
 @media (max-width: 760px), (max-width: 1240px) and (hover: none) and (pointer: coarse) {
-  body:is(.tb-mir, .tb-vraca):not(:has(> #tour:not([hidden]))) > .tabbar { position: fixed; inset-inline: 0; bottom: 0; z-index: 30; transition: transform 0.22s ease; }
+  body:is(.tb-mir, .tb-vraca):not(:has(> #tour:not([hidden]))) > .tabbar { position: fixed; inset-inline: 0; bottom: 0; z-index: var(--z-noga, 30); transition: transform 0.22s ease; }
   body.tb-mir:not(:has(> #tour:not([hidden]))) > .tabbar { transform: translateY(100%); visibility: hidden; transition: transform 0.22s ease, visibility 0s linear 0.22s; }
 }
 @media (prefers-reduced-motion: reduce) { .tabbar, .tb-stepper { transition: none !important; } }
