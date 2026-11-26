@@ -173,15 +173,22 @@ function unitStep(a, b, relTol, chainUnits) {
   // 2000 · 3 = 6 kWh: Wh; 120/80 = 90 min: h; pregled): rezultat × 10³ᵏ, × 60 ali × 3600. Pri enotah z dolžino tudi
   // 10ⁿ (4 · 25 = 1 m: cm; 540/200 = 2700 kg/m³: g/cm³), kot pred AUDIT-058; napaka ×10ⁿ med zapisanimi enotami
   // (72 km/h = 200 m/s) se še vedno ujame na poti z enotami na obeh straneh.
-  const len = (() => {
-    const p = siValues(withU, [SI_ONE]);
-    const q = siValues(withU, [[2, 1, 1, 1, 1, 1]]);
-    return p && q && !sameRatio(p[0], q[0]);
-  })();
-  const pows = len ? Array.from({ length: 19 }, (_, i) => 10 ** (i - 9)) : [-3, -2, -1, 1, 2, 3].map((k) => 10 ** (3 * k));
+  // dimenzija enote: eksponent dolžine in ali vsebuje čas (osnove v vrstnem redu m, kg, s, A, K, mol)
+  const at = (base) => siValues(withU, [base])?.[0];
+  const v1 = at(SI_ONE);
+  const dimExp = (i) => {
+    const base = SI_ONE.map((x, j) => (j === i ? 2 : 1));
+    const v = at(base);
+    return v1 && v ? Math.round(Math.log2(v / v1)) : 0;
+  };
+  const dims = [0, 1, 2, 3, 4, 5].map(dimExp);
+  const pureLen = dims[0] !== 0 && dims.slice(1).every((e) => e === 0);
+  // čista dolžina, ploščina ali prostornina (cm, dm², cm³): 10ⁿ v koraku dolžinske enote; sicer predpone 10³ᵏ
+  const pows = pureLen ? Array.from({ length: 19 }, (_, i) => 10 ** ((i - 9) * Math.abs(dims[0]))) : [-3, -2, -1, 1, 2, 3].map((k) => 10 ** (3 * k));
+  // × 60 in × 3600 le, če je v zapisu enote čas (min, h, s, Wh, Ah), ne pri N (s⁻² v dimenziji)
+  const times = /(?:^|[^A-Za-z])(?:min|h|s)(?![A-Za-z])|Wh|Ah/.test(withU.units.join(" ")) ? [1, 60, 3600, 1 / 60, 1 / 3600] : [1];
   const scale = [];
-  for (const p of pows) for (const t of [1, 60, 3600, 1 / 60, 1 / 3600]) scale.push(p * t);
-  for (const t of [60, 3600, 1 / 60, 1 / 3600]) scale.push(t);
+  for (const p of [1, ...pows]) for (const t of times) if (p !== 1 || t !== 1) scale.push(p * t);
   const near = (c) => Math.abs(bare.value - c) <= relTol * Math.max(Math.abs(bare.value), Math.abs(c), 1e-12);
   // le, ko veriga nima druge enote (72 km/h = 72/3,6 = 200 m/s: golo število je v eni od enot verige, ne poljubno)
   const only = chainUnits.every((u) => withU.units.length === 1 && u === withU.units[0]);
@@ -395,11 +402,7 @@ function compare(a, b, approx, loose, afterData = false, chainUnits = []) {
     // 469 000): ničle na koncu golega rezultata takrat štejejo kot zaokrožitev (pregled #1011).
     const rounded = dec > 0;
     const t = Math.max(...[a, b].map((x) => (x.bare ? halfUlp(x, rounded) : 0)), 0.5 * 10 ** -dec * (a.bare && b.bare ? 0 : 1), 1e-9 * scale);
-    // decimalka s 4 veljavnimi mesti (0,6138) je pogosto zaokrožen vmesni rezultat: njena zaokrožitev se prenese v
-    // rezultat (3 · 0,6138 · 44,01 = 81,03 pri ξ = 0,61377…; pregled); 2,5 · 4 = 10,05 ostane napaka
-    const r4 = [a, b].flatMap((x) => (x.expr.match(/\d+\.\d+/g) || []).filter((n) => sig(n) === 4).map((n) => (0.5 * 10 ** -n.split(".")[1].length) / Number(n)));
-    const t4 = r4.reduce((p, q) => p + q, 0) * scale;
-    if (diff <= (t + t4) * (1 + 1e-9) + 1e-12) return null; // 8,565 → 8,57 (zaokroženo navzgor)
+    if (diff <= t * (1 + 1e-9) + 1e-12) return null; // 8,565 → 8,57 (zaokroženo navzgor)
     return diff / scale;
   }
   const ua = a.units.join();
