@@ -1182,6 +1182,7 @@
   "sc.memory": "In memoria",
   "sc.recent": "Recenti",
   "sc.insert": "Inserisci nel calcolo",
+  "sc.removeRecent": "Rimuovi da Recenti: {v}",
   "sc.pressSolve": "Premi = per risolvere",
   "sc.fmHint": "Sostituisci le lettere note con numeri, lascia l’incognita e premi =.",
   "sc.fmRad": "La calcolatrice ora è in modalità RAD (angoli in radianti).",

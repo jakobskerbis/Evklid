@@ -303,8 +303,77 @@ export function verifyAi(problemText, ai) {
 // odvod polinoma po spremenljivki v (druge črke so konstante)
 const polyDiff = (p, v) => new P(p.terms().filter(({ m }) => m[v]).map(({ m, c }) => ({ m: { ...m, [v]: m[v] - 1 }, c: c.mul(Q.of(m[v])) })));
 
+// Vrsta naloge iz zapisa: integral in limito prepoznamo po zapisu, ne po tem, kako ju je AI poimenoval (meritev 26. 11.:
+// integral z odgovorom 0 namesto 6 je ostal nepreverjen, ker AI ni rekel »integral«, in se ni ponovil). Le, ko zapis
+// z njima začne: »2∫…«, »d/dx ∫…« in enačbe z integralom ali limito odloči vrsta, ki jo je dal AI (pregled).
+export function kindOfText(text) {
+  const s = String(text ?? "").replace(/\\int/g, "∫");
+  if (/[=<>≤≥]/.test(s.replace(/->/g, "→"))) return null;
+  if (parseIntegral(s)) return "integral";
+  if (parseLimit(s)) return "limit";
+  return null;
+}
+// meja integrala ali točka limite: {…}, (…) ali eno število ali ime (»10«, »-1«, »pi«, »oo«, »a«)
+function bound(s, i) {
+  const open = s[i];
+  if (open === "{" || open === "(") {
+    const close = open === "{" ? "}" : ")";
+    let d = 0;
+    for (let j = i; j < s.length; j++) {
+      if (s[j] === open) d++;
+      else if (s[j] === close && --d === 0) return { v: s.slice(i + 1, j).trim(), end: j + 1 };
+    }
+    return null;
+  }
+  const m = /^[-−]?(?:\d+(?:[.,]\d+)?|\\infty|[a-zA-Zπ∞]+)/.exec(s.slice(i));
+  return m ? { v: m[0], end: i + m[0].length } : null;
+}
+// ∫_a^b f dx, ∫ f dx (zapis se začne z ∫) → { a, b, f, x } (a, b le pri določenem integralu)
+export function parseIntegral(text) {
+  const s = String(text ?? "").replace(/\\int/g, "∫").trim();
+  if (!s.startsWith("∫")) return null;
+  let i = 1;
+  let a;
+  let b;
+  if (s[i] === "_") {
+    const lo = bound(s, i + 1);
+    if (!lo || s[lo.end] !== "^") return null;
+    const hi = bound(s, lo.end + 1);
+    if (!hi) return null;
+    [a, b, i] = [lo.v, hi.v, hi.end];
+  }
+  const m = /^\s*(.+?)\s*(?:[*·]\s*)?(?:\\,\s*)?d([a-z])\s*$/.exec(s.slice(i));
+  if (!m || /[∫]/.test(m[1])) return null;
+  const meja = (v) => v?.replace(/\\pi/g, "pi").replace(/\\infty|∞/g, "oo");
+  return { a: meja(a), b: meja(b), f: m[1], x: m[2] };
+}
+// Nedoločeni integral: »F + C« → »F« (konstanta je poljubna); null, če je C (ali K) še kje drugje (x^2 + C*x ni
+// pravilen odgovor, SymPy pa bi C nadomestil z 0).
+export function bezKonstante(value) {
+  const v = String(value ?? "").replace(/\s*\+\s*[CK]\s*$/, "");
+  return /(?<![A-Za-z])[CK](?![A-Za-z])/.test(v) ? null : v;
+}
+// lim_(x->a) f, lim_{x\to a} f (zapis se začne z lim) → { x, point, f }; točka za SymPy (oo, 0+, 0-)
+export function parseLimit(text) {
+  const m = /^\s*\\?lim\s*_\s*([({])\s*([a-z])\s*(?:->|→|\\to)\s*/.exec(String(text ?? ""));
+  if (!m) return null;
+  const s = String(text);
+  const close = m[1] === "{" ? "}" : ")";
+  let d = 1;
+  let j = m[0].length;
+  for (; j < s.length && d; j++) d += s[j] === m[1] ? 1 : s[j] === close ? -1 : 0;
+  if (d) return null;
+  const point = s
+    .slice(m[0].length, j - 1)
+    .replace(/\\infty|∞/g, "oo")
+    .replace(/\^\s*\{?\s*([+-])\s*\}?\s*$/, "$1")
+    .replace(/\s+/g, "");
+  const f = s.slice(j).trim();
+  return point && f ? { x: m[2], point, f } : null;
+}
+
 function check(problemText, ai) {
-  const kind = ai?.kind;
+  const kind = kindOfText(problemText) ?? ai?.kind;
   const v = /^[a-zA-Z]$/.test(ai?.variable || "") ? ai.variable : "x";
   try {
     if (kind === "system") {
@@ -423,25 +492,21 @@ function check(problemText, ai) {
       return { verified: compareFns((x) => odvodV((t) => f({ [v]: t }), x), (x) => g({ [v]: x })), reason: "wrong" };
     }
     if (kind === "integral") {
-      // Meja je v oklepaju ali zaviti oklepaj, sicer cel žeton do presledka (»∫_0^pi«, »∫_1^10«; leno ujemanje je
-      // prej prebralo meji »p« in »1«, N-01 integral-019/021), brez presledka pa število ali π.
-      const MEJA = String.raw`\([^()]*\)|\{[^{}]*\}|[^\s(){}]+(?=\s)|-?\d+(?:[.,]\d+)?|π`;
-      const m = new RegExp(String.raw`∫\s*(?:_(\([^()]*\)|\{[^{}]*\}|[^\s^(){}]+)\^(${MEJA}))?\s*(\S.*?)\s*d([a-z])\s*$`).exec(String(problemText).replace(/\\int/g, "∫"));
-      const g = fnOf(ai.value);
+      const m = parseIntegral(problemText);
+      const g = fnOf(m?.a !== undefined ? ai.value : (bezKonstante(ai.value) ?? ""));
       if (!m || !g) return { verified: false, reason: "parse" };
-      const f = fnOf(m[3]);
-      const x = m[4];
+      const f = fnOf(m.f);
+      const x = m.x;
       if (!f) return { verified: false, reason: "parse" };
-      if (m[1] !== undefined) {
-        const meja = (t) => values(t.replace(/^[({](.*)[)}]$/, "$1"))[0];
-        const a = meja(m[1]);
-        const b = meja(m[2]);
-        const exact = integrate((t) => f({ [x]: t }), a, b);
+      // Map namesto pisanja v objekt z imenom iz besedila (CodeQL js/remote-property-injection), kot pri sistemih
+      const env = (t) => Object.fromEntries(new Map([[x, t]]));
+      if (m.a !== undefined) {
+        const a = values(m.a)[0];
+        const b = values(m.b)[0];
+        const exact = integrate((t) => f(env(t)), a, b);
         const val = g({});
         return { verified: fin(exact) && fin(val) && Math.abs(exact - val) < 1e-6 * Math.max(1, Math.abs(exact)), reason: "wrong" };
       }
-      // Map namesto pisanja v objekt z imenom iz besedila (CodeQL js/remote-property-injection), kot pri sistemih
-      const env = (t) => Object.fromEntries(new Map([[x, t]]));
       return { verified: compareFns((t) => f(env(t)), (t) => odvodV((u) => g(env(u)), t)), reason: "wrong" };
     }
   } catch {

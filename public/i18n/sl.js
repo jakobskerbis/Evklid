@@ -1478,6 +1478,7 @@ export default {
   "sc.memory": "Shranjeno",
   "sc.recent": "Nedavno",
   "sc.insert": "Vstavi v račun",
+  "sc.removeRecent": "Odstrani iz »Nedavno«: {v}",
   "sc.pressSolve": "Pritisni = za rešitev",
   "sc.fmHint": "Namesto znanih črk vpiši števila, neznanko pusti in pritisni =.",
   "sc.fmRad": "Kalkulator je zdaj v načinu RAD (koti v radianih).",

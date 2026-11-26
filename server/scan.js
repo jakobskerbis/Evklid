@@ -7,7 +7,7 @@
 // (public/scan/verify.js); vsaka rešitev dobi enega od petih statusov (public/scan/status.js), »Preverjeno« samo z dokazom.
 import { AI_JSON } from "./ai-oznaka.js";
 import { getClient, isMockMode, quickParams, MODEL, MODEL_MID, errorText, apiErrorCode } from "./claude.js";
-import { verifyAi, normalizeSet, zaokrozenRacun } from "../public/scan/verify.js";
+import { verifyAi, normalizeSet, zaokrozenRacun, kindOfText, parseIntegral, parseLimit, bezKonstante } from "../public/scan/verify.js";
 import { prep, splitSystem } from "../public/scan/solvecore.js";
 import { cleanUnclear, unclearCount, hasUnclear, normalizeUnclear } from "../public/scan/nejasno.js";
 import { casCheck } from "./cas.js";
@@ -112,6 +112,21 @@ function systemGroups(solutions) {
 
 async function casScan(text, sol) {
   const v = /^[a-zA-Z]$/.test(sol?.variable || "") ? sol.variable : "x";
+  // integral in limito po zapisu naloge (public/scan/verify.js kindOfText), ne po vrsti, ki jo je dal AI
+  const kind = kindOfText(text);
+  if (kind === "integral") {
+    const m = parseIntegral(text);
+    if (!m || !sol?.value) return { ok: null };
+    const f = casText(prep(m.f));
+    if (m.a !== undefined) return casCheck("int", [f, m.x, casText(prep(m.a)), casText(prep(m.b)), casText(prep(sol.value))]);
+    const F = bezKonstante(sol.value);
+    return F ? casCheck("int", [f, m.x, casText(prep(F))]) : { ok: null };
+  }
+  if (kind === "limit") {
+    const m = parseLimit(text);
+    if (!m || !sol?.value) return { ok: null };
+    return casCheck("limit", [casText(prep(m.f)), m.x, casText(m.point), casText(prep(sol.value))]);
+  }
   const sols = (sol?.solutions || []).map((x) => String(x).replace(/^\s*[a-zA-Z](?:_\{?\d+\}?)?\s*=(?!=)/, "").trim()).filter(Boolean);
   if (sol?.kind === "equation") return casCheck("solve", [casText(prep(text)), v, sols.length ? sols.map((x) => casText(x)).join(", ") : "none"]);
   if (sol?.kind === "system") {
@@ -195,7 +210,7 @@ export const READ_PROMPT =
   'a list of them in LaTeX, one each, with the meaning of the page, keeping every unit and writing a decimal comma as {,} (e.g. ["a = 3\\\\ \\\\mathrm{cm}", "b = 2{,}5\\\\ \\\\mathrm{cm}", "T(7,2)", "\\\\text{pol: } x=3", "f(0)=5"]). Never drop a value stated in the task; never add a value from the student\'s working or a result, never invent one, and leave out a bare domain such as x ∈ ℝ. Otherwise leave it out.\n' +
   '- "sought": what the task asks you to find is never data. If it is already "text" as <letter>=?, or it is what "goal" does to "text" (solve it, its zeros, simplify, factor, evaluate, differentiate), leave "sought" out. ' +
   'Otherwise (e.g. the angle at which the graph cuts the x-axis, the vertex of the parabola) write it in "sought" as one short phrase (LaTeX for maths), in the language of the language line below, e.g. in Slovene "\\\\text{kot, pod katerim graf seka os x}".\n' +
-  "For a word or geometry problem without one equation or expression, give as \"text\" only the unknown asked for in calculator syntax as <letter>=? (e.g. P=?, v=?), never a sentence, and every stated value in \"given\".\n" +
+  "For a word or geometry problem without one equation or expression, give as \"text\" only the unknown asked for in calculator syntax as <letter>=? (e.g. P=?, v=?), never a sentence, and every stated value in \"given\". When the task asks for the formula of a function that is not written in it (e.g. read from its graph or from given points), \"text\" is its name and variable with =? (f(x)=?, g(x)=?, p(t)=?), never a general form such as a*(x-p)^2+q, and \"sought\" names the form asked for (e.g. \"\\\\text{predpis v temenski obliki}\"). A task with a written formula (izračunaj f(3), odvajaj f(x)=x^2, inverzna funkcija od f(x)=2x+1) keeps that formula in \"text\".\n" +
   '- "tex": the same problem in LaTeX.\n' +
   "Ignore task numbers (1., a)), the wording of instructions (but keep their conditions in \"given\") and crossed-out work. If the instruction says what to do (Razstavi / factor, Poenostavi / simplify, Izračunaj / evaluate, Odvajaj / differentiate), add \"goal\": factor|simplify|evaluate|derivative|solve; if there is neither such an instruction nor an equation or inequality to solve, leave \"goal\" out.\n" +
   'Return only JSON: {"problems":[{"text":"...","tex":"...","goal":"...","given":["..."],"sought":"...","unclear":[["...","..."]]}]} (most prominent problem first, at most 6). If no maths is readable: {"problems":[]}.\n' +
