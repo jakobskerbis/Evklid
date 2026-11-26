@@ -194,7 +194,7 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null, onChec
       <span class="op-score" aria-live="polite"></span>
     </header>
     <div class="pv-scroll"><div class="op-body">${bodyHtml()}</div></div>`;
-  const showScore = () => (el.querySelector(".op-score").textContent = konec ? t("pp.oursScore", { got: sum(), max }) : t("pp.oursMax", { max }));
+  const showScore = () => (el.querySelector(".op-score").textContent = konec ? t("pp.oursScore", { got: sum(), max }) : t("pp.oursScore", { got: "–", max }));
   showScore();
   // Nov izris telesa (konec, »Reši znova«): na vrh pole, fokus na gumb ×.
   const rerender = () => {
