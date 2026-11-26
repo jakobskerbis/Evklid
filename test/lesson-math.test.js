@@ -326,6 +326,6 @@ test("AUDIT-058 (pregled prevzema): račun brez enot v običajni enoti iste koli
     R`$m(\mathrm{SO_4^{2-}}) = 0{,}000934 \cdot 96{,}06 \approx 89{,}73\ \mathrm{mg}$`,
   ])
     assert.deepEqual(checkArithmetic(t).mismatches, [], t);
-  for (const t of [R`$m = 2 \cdot 30 = 1\ \mathrm{kg}$`, R`$F = 2 \cdot 30 = 1\ \mathrm{N}$`, R`$F = 50 \cdot 2 = 1000\ \mathrm{N}$`, R`$F = 1000 \cdot 9{,}81 \cdot 0{,}25 \cdot 1{,}05 \approx 25{,}8\ \mathrm{kN}$`, R`$V = 0{,}25 \cdot 2 = 50\ \mathrm{mL}$`, R`$9{,}81 \cdot 2 = 19{,}63$`, R`$m = 0{,}002 \cdot 180 = 36\ \mathrm{mg}$`, R`$72\ \mathrm{km/h} = \frac{72}{3{,}6} = 200\ \mathrm{m/s}$`, R`$2{,}5 \cdot 4 = 10{,}05$`])
+  for (const t of [R`$s = 340 \cdot 3 = 10{,}2\ \mathrm{km}$`, R`$s = 90 \cdot 2 = 1{,}8\ \mathrm{km}$`, R`$m = 2 \cdot 30 = 1\ \mathrm{kg}$`, R`$F = 2 \cdot 30 = 1\ \mathrm{N}$`, R`$F = 50 \cdot 2 = 1000\ \mathrm{N}$`, R`$F = 1000 \cdot 9{,}81 \cdot 0{,}25 \cdot 1{,}05 \approx 25{,}8\ \mathrm{kN}$`, R`$V = 0{,}25 \cdot 2 = 50\ \mathrm{mL}$`, R`$9{,}81 \cdot 2 = 19{,}63$`, R`$m = 0{,}002 \cdot 180 = 36\ \mathrm{mg}$`, R`$72\ \mathrm{km/h} = \frac{72}{3{,}6} = 200\ \mathrm{m/s}$`, R`$2{,}5 \cdot 4 = 10{,}05$`])
     assert.equal(checkArithmetic(t).mismatches.length, 1, t);
 });

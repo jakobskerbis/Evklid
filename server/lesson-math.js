@@ -184,7 +184,12 @@ function unitStep(a, b, relTol, chainUnits) {
   const dims = [0, 1, 2, 3, 4, 5].map(dimExp);
   const pureLen = dims[0] !== 0 && dims.slice(1).every((e) => e === 0);
   // čista dolžina, ploščina ali prostornina (cm, dm², cm³): 10ⁿ v koraku dolžinske enote; sicer predpone 10³ᵏ
-  const pows = pureLen ? Array.from({ length: 19 }, (_, i) => 10 ** ((i - 9) * Math.abs(dims[0]))) : [-3, -2, -1, 1, 2, 3].map((k) => 10 ** (3 * k));
+  // dolžina: razmerja običajnih enot (km, m, dm, cm, mm, µm, nm) na potenco enote, ne vsaka potenca 10
+  // (340 · 3 = 10,2 km ni prav: 1020 m = 1,02 km; pregled)
+  const LEN = [1e3, 1, 0.1, 0.01, 1e-3, 1e-6, 1e-9];
+  // golo število je v eni od teh enot U: rezultat × (enota rezultata v SI) / U
+  const sV = v1 / withU.value;
+  const pows = pureLen && Number.isFinite(sV) && sV > 0 ? LEN.map((u) => sV / u ** Math.abs(dims[0])) : [-3, -2, -1, 1, 2, 3].map((k) => 10 ** (3 * k));
   // × 60 in × 3600 le, če je v zapisu enote čas (min, h, s, Wh, Ah), ne pri N (s⁻² v dimenziji)
   const times = /(?:^|[^A-Za-z])(?:min|h|s)(?![A-Za-z])|Wh|Ah/.test(withU.units.join(" ")) ? [1, 60, 3600, 1 / 60, 1 / 3600] : [1];
   const scale = [];
