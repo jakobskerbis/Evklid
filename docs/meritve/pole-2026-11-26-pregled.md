@@ -14,4 +14,10 @@ potrditev ali lažni alarm; vse so popravljene in imajo teste:
 naredi, in vsi so pravilni; napačno potrjenih 0/80 (95 % interval 0–4,6 %). Preveril je tudi 10 nalog brez statusa in
 10 delnih: statusi so pošteni. Našel je, da je bil status naloge »numerično« prestrog do bralca: 20 od 29 takih nalog
 je imelo končni odgovor s črko ali besedo, ki ga noben račun ne preveri. Popravek: del brez preverjenega končnega
-odgovora je brez statusa, zato je takih nalog zdaj 15. Oznake nalog imajo zdaj tudi sklop (A/B na maturi).
+odgovora je brez statusa. Oznake nalog imajo zdaj tudi sklop (A/B na maturi).
+
+**Ponovni pregled popravkov (prehod 2).** Popravki so potrjeni. Pregledovalec je našel, da je prvo pravilo pokritosti
+odgovora še štelo števila iz formul snovi (C₆H₁₂) in iz ene od več vrednosti, ter da je »⇒« v formuli za pogojem z »in«
+še tvoril par. Popravek: šteje vsako število odgovora, brez indeksov in eksponentov; izbira, opis ali odgovor brez števila
+so brez statusa. Nalog s statusom »numerično« je zato le 2: popis je strog, ker večina odgovorov na polah ni zapisana
+kot rezultat enega računa (besedilo, več vrednosti, enote v besedilu). To je pokritost, ne napaka.

@@ -177,14 +177,16 @@ generatorje, `vrstaKoraka`). Par, kjer sta obe formuli brez rešitve, ni korak i
 identiteto, ostane korak in ga ukaz označi za napako. Posledica (korak, ki doda rešitev, npr. kvadriranje) šteje za
 pravilen korak.
 
-Status naloge je najšibkejši člen. Vsak del mora imeti končni odgovor, ki je rezultat (zadnje število) katere od
-preverjenih trditev dela, sicer dobi trditev »odgovor« brez statusa: odgovor s črko ali besedo ni preverjen, tudi če so
-vmesni računi pravilni. Zato »numerično« pomeni, da je preverjen tudi odgovor vsakega dela.
+Status naloge je najšibkejši člen. Vsako število v končnem odgovoru dela mora biti rezultat (desna stran zadnje
+relacije) katere od preverjenih trditev dela, sicer dobi del trditev »odgovor« brez statusa. Odgovor z izbirno črko, z
+opisom zunaj formul (več kot dve besedi ali besedilo pred formulo) ali brez števila ni preverjen, tudi če so vmesni
+računi pravilni; števila v indeksih, eksponentih in `\mathrm{}` (C₆H₁₂) ne štejejo. Zato »numerično« pomeni, da je
+preverjen tudi odgovor vsakega dela.
 
 Zaznavanje napak meri skript sam: vsak potrjen korak pokvari dvakrat (zadnje celo število v drugi formuli koraka in
 posebej v prvi + 1, `mutiraj`) in prešteje ujete in napačno potrjene; `--strogo` pade, če je katera vstavljena napaka
-potrjena ali SymPy ni odgovoril. Izhodišče `docs/meritve/pole-2026-11-26.md`: od 626 nalog jih ima 15 status
-numerično, 385 delno, 0 napako in 226 nobenega (besedilne rešitve, biologija, izbire); SymPy je potrdil 160 od 162
+potrjena ali SymPy ni odgovoril. Izhodišče `docs/meritve/pole-2026-11-26.md`: od 626 nalog jih ima 2 status
+numerično, 398 delno, 0 napako in 226 nobenega (besedilne rešitve, biologija, izbire); SymPy je potrdil 160 od 162
 korakov, 2 imata izgubljeno posamezno rešitev v kontekstu; vstavljenih napak 320/320 ujetih, 0 potrjenih. Poročilo ima
 vrstico za vsako nalogo (oznaka: pola, sklop, številka). Dva neodvisna pregledovalca (modela AI, ne človek) sta ročno
 preverila 152 parov korakov iz besedila in vzorec 40 potrjenih korakov in 40 potrjenih računov: 0/80 napačno
