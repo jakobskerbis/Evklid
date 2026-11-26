@@ -5,23 +5,21 @@
 //   node scripts/meri-preverjanje.mjs              vsi motorji, preglednica na zaslon
 //   node scripts/meri-preverjanje.mjs --json p.json  še poročilo v JSON
 //   node scripts/meri-preverjanje.mjs --brez-sympy   samo motorji brez Pythona (za hiter CI)
+//   node scripts/meri-preverjanje.mjs --nabor pot    drug nabor (privzeto nabor-v2.json, N-01; v1 je njegov začetek)
 //
 // Motorji (kako vsak izid preslikamo v skupni status, statusi.js):
-//   sympy          ukaz iz polja »racun« naravnost v server/cas worker: ok true → izracunano (meja motorja sympy,
-//                  trditev.js; worker še ne pove, ali je preveril simbolno ali v točkah: PV-03), false → napaka,
-//                  null → nepreverjeno.
+//   sympy          ukaz iz polja »racun« naravnost v server/cas worker: ok true → izracunano samo, ko je worker
+//                  dokazal simbolno (how: symbolic, PV-03), sicer numericno; false → napaka, null → nepreverjeno.
 //   skener         server/scan.js verifyAiFull(naloga, sol), kot ga vidi učenec (SymPy + verify.js) → izSkenerja.
 //   skener-lokalno isto brez SymPy (cas: false): samo public/scan/verify.js, kot ob izpadu Pythona.
-// Izhod: 1, če ima kateri motor, ki ga vidi učenec (skener, skener-lokalno), vsaj eno napačno potrjeno trditev ali
-// status nad mejo »najvec«; sicer 0. Motor »sympy« je surov izid workerja: zaokrožene decimalke sprejme s toleranco
-// (worker.py decimals_tol), zato je pri priblizek-* previsok. To je znana omejitev do PV-03 (način preverjanja).
+// Izhod: 1, če ima kateri motor vsaj eno napačno potrjeno trditev, status nad mejo »najvec« ali izjemo; sicer 0.
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { izSkenerja, jePotrjeno, jeStatus } from "../public/preverjanje/statusi.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const NABOR = join(ROOT, "test/fixtures/preverjanje/nabor-v1.json");
+const NABOR = join(ROOT, "test/fixtures/preverjanje/nabor-v2.json");
 const MOC = { dokazano: 4, izracunano: 3, numericno: 2, delno: 1, v_teku: 0, nepreverjeno: 0, napaka: 0 };
 
 export function naloziNabor(pot = NABOR) {
@@ -44,11 +42,12 @@ export function razvrsti(p, status) {
 export const MOTORJI = {
   sympy: {
     python: true,
-    surovo: true,
     zna: (p) => Array.isArray(p.racun),
     async status(p, { casCheck }) {
       const c = await casCheck(p.racun[0], p.racun[1]);
-      return c.ok === true ? "izracunano" : c.ok === false ? "napaka" : "nepreverjeno";
+      // PV-03: »izracunano« samo za simbolni dokaz; številski ali vzorčeni »drži« je največ »numericno«
+      if (c.ok === true) return c.how === "symbolic" ? "izracunano" : "numericno";
+      return c.ok === false ? "napaka" : "nepreverjeno";
     },
   },
   skener: {
@@ -119,11 +118,12 @@ function natisni(izid) {
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const a = process.argv.slice(2);
   const motorji = a.includes("--brez-sympy") ? Object.keys(MOTORJI).filter((k) => !MOTORJI[k].python) : undefined;
-  const izid = await izmeri(naloziNabor(), { motorji });
+  const n = a.indexOf("--nabor");
+  const izid = await izmeri(naloziNabor(n >= 0 && a[n + 1] ? a[n + 1] : undefined), { motorji });
   natisni(izid);
   const j = a.indexOf("--json");
   if (j >= 0 && a[j + 1]) writeFileSync(a[j + 1], JSON.stringify(izid, null, 1));
-  const slabo = Object.entries(izid).some(([k, r]) => !MOTORJI[k].surovo && r.stevci && (r.stevci.napacno_potrjena || r.stevci.previsok_status || r.stevci.izjema));
+  const slabo = Object.values(izid).some((r) => r.stevci && (r.stevci.napacno_potrjena || r.stevci.previsok_status || r.stevci.izjema));
   const { casStop } = await import("../server/cas.js");
   casStop();
   process.exit(slabo ? 1 : 0);

@@ -1,6 +1,6 @@
 /-
 vir: content/lessons/MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente.md
-sha256: 864864e4077e2a5e811bfdd2b8d81f16674f18fcbf8d3fa41b6dc3aee9f16401
+sha256: c39c71ad3e426d0a1ecfce31377cab51771cb18a385a25d7f6b391e66b8b34f6
 Ni v Leanu: zgodovina (Apolonij, Descartes) in uvodna zgodba; risbe (dokazane so le koordinate točk na njih) in
 simulacija (dokazana je vsota razdalj 2a in e = 0 pri a = b); tabela za prepoznavo stožnice po koeficientih
 x² in y² (pravilo za prepoznavo, ne izrek; dokazani so posamezni primeri v Primerih, Nalogah in Preveri se);
