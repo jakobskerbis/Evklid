@@ -11,6 +11,7 @@ import { wireLessonReport } from "./prijave.js";
 import { predmetiNaRavni, knjigaNaRavni } from "./ucbenik-ravni.js";
 import { isStoreApp } from "./pay-ui.js"; // aplikacija iz trgovine: brez ponudbe paketov mimo trgovine
 import { LOCILO, zdruzi } from "./datum.js";
+import { oznakeHtml } from "./oznake-vsebine.js";
 
 // Povezava na učbenik za tisk/PDF (server/textbook-print.js): ?l= je jezik besedil na strani (pregrada »Pripravljam
 // učbenik …«, navodilo za brskalnike brez tiskanja); ?poglavje= samo en sklop poti (manjši in hitrejši PDF).
@@ -77,6 +78,25 @@ const ic = (n) => iconFn(n);
 export function initTextbook(c) {
   ctx = c;
   wireSelectionAsk();
+  // Kazalo: položaj seznama si zapomnimo (ob vrnitvi iz lekcije ali z drugega zavihka se kazalo izriše znova).
+  $("#view-textbook")?.addEventListener(
+    "scroll",
+    (e) => {
+      if (!current && !tb.topicId && e.target.id === "view-textbook") tb.homeY = { k: homeKey(), y: e.target.scrollTop };
+    },
+    { passive: true },
+  );
+}
+
+// Kazalo z istim predmetom, ravnjo, iskanjem in načinom: ob vrnitvi isti položaj seznama (UX PR 2: izguba stanja ob
+// navigaciji; prej je vsak izris kazala skočil na vrh).
+const homeKey = () => [tb.subject, tb.book, tb.group, tb.query, tb.browse, tb.mode].join("|");
+async function renderHomeKeep() {
+  const k = homeKey();
+  const y = tb.homeY?.k === k ? tb.homeY.y : 0;
+  await renderHome();
+  const box = $("#view-textbook");
+  if (y && box && !tb.topicId && homeKey() === k) box.scrollTop = y;
 }
 
 // ---------- Označi besedilo in vprašaj tutorja ----------
@@ -199,7 +219,7 @@ export function textbookBack() {
   if (gr) return setGradiva(gr, false, gr.contains(document.activeElement)), true;
   if (!tb.topicId || !$("#view-textbook") || $("#view-textbook").closest("[hidden]")) return false;
   tb.topicId = null;
-  renderHome();
+  renderHomeKeep();
   window.scrollTo(0, 0);
   return true;
 }
@@ -218,7 +238,7 @@ export async function showTextbook() {
   if (!box) return;
   syncProfile();
   if (tb.topicId) return renderLesson(tb.topicId);
-  await renderHome();
+  await renderHomeKeep();
 }
 
 // Na širokem zaslonu so poskusi v desnem stolpcu (ostanejo vidni med branjem), sicer med besedilom.
@@ -785,8 +805,8 @@ async function renderLesson(topicId, name = "") {
     ${linkHtml}
     ${pending ? "" : `<p class="muted tb-sel-hint">${ic("message-circle")}Ti kakšen del ni jasen? Označi ga in pritisni »Razloži«.</p>`}
     ${L.goals ? `<p class="tb-goals"><b>Cilji:</b> ${esc(L.goals)}</p>` : ""}
+    ${lesson ? oznakeHtml(Array.isArray(L.labels) ? L.labels : [{ id: "osnutek" }], { ikona: ic }) : ""}
     ${L.pretest_due ? `<section class="card tb-pretest"><h2>${ic("target")}${esc(t("pretest.title"))}</h2><p>${esc(t("pretest.lessonIntro"))}</p><button type="button" class="primary" id="tb-pretest">${ic("play")}${esc(t("pretest.start"))}</button></section>` : ""}
-    ${!lesson || lesson.status === "pregledano" ? "" : lesson.status === "preverjeno" ? `<p class="tb-draft tb-checked">Račune sta preverila program in AI. Učitelj lekcije še ni pregledal. Če opaziš napako, pritisni »Prijavi napako«.</p>` : `<p class="tb-draft">Osnutek: lekcijo mora še pregledati učitelj. Če opaziš napako, pritisni »Prijavi napako«.</p>`}
     ${stepMode ? `<div class="tb-progress" role="progressbar" aria-valuemin="1" aria-valuemax="${steps.length}"><span></span></div>${stepsHtml}${nextHtml}` : `${sectionHtml()}${fallback}${checksHtml()}${nextHtml}`}
     </div><aside class="tb-side">${demoHtml}</aside></div>${stepper}`;
   placeDemos(box);
@@ -811,7 +831,7 @@ async function renderLesson(topicId, name = "") {
 
   $("#tb-back").addEventListener("click", () => {
     tb.topicId = null;
-    renderHome();
+    renderHomeKeep();
   });
   wireGradivaMenu(box.querySelector(".tb-gr-menu"));
   wireLessonReport($("#tb-report"), {

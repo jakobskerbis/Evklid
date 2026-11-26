@@ -14,7 +14,7 @@ SymPy: `docs/preverjanje-s-kodo.md`.
 | Status | Ključ | Kdaj velja |
 | --- | --- | --- |
 | Formalno dokazano | `dokazano` | Lean je dokazal trditev in njeno popolnost (cela množica rešitev). Pogoji iz `docs/lean.md`: izrek je zapisan tako kot v viru (prevod AI preveri neodvisno), predpostavke imajo `example`, ki pokaže, da se dajo izpolniti, aksiomi so samo `propext`, `Classical.choice`, `Quot.sound`. |
-| Računsko preverjeno | `izracunano` | Točna aritmetika, točna algebra (`public/scan/algebra.js`) ali SymPy brez naključnih točk potrdi trditev v celoti. |
+| Računsko preverjeno | `izracunano` | Točna aritmetika, točna algebra (`public/scan/algebra.js`) ali SymPy z `how: "symbolic"` (PV-03) potrdi trditev v celoti. |
 | Numerično preverjeno | `numericno` | Vsaj en del (trditev ali popolnost) je preverjen samo s števili (naključne točke, mreža). Ni dokaz in se nikoli ne zviša sam. |
 | Delno preverjeno | `delno` | Del trditve ali odgovora je preverjen, del ne (npr. vsaka navedena rešitev drži, popolnost ne). |
 | Preverjanje v teku | `v_teku` | Počasnejši motor (Lean) še dela. Začasno; po roku velja najvišji doseženi status (rok uvede PV-14). Oznaka »ni preverjeno z Lean« iz L6 (`docs/lean.md`) je ta status oziroma status, ki ga je trditev dobila brez Leana. |
@@ -51,18 +51,38 @@ blok RACUN), `vrsta` (`VRSTE`), `predpostavke`, `obmocje`, `enote`, `prejsnji` (
 sledi), `pravilo`, `dokazi` (`{ motor, holds, how, complete, ms, razlicica }`), `dokaz` (Lean izrek in sha256) in
 `izid` (status, izračunan iz dokazov; vir ga ne nastavi sam). `napakeZapisa(t)` preveri obliko, ne matematike.
 
-## Znana omejitev: SymPy še ne pove, kako je preveril
+## Način preverjanja SymPy (PV-03)
 
-Vsi ukazi SymPy, ki gredo skozi `is_zero` (`server/cas/worker.py`: `equal`, vstavljanje rešitev pri `solve`,
-`diff`, nedoločeni `int`, `value`), ob neuspehu simbolnega poenostavljanja preidejo na preizkus v naključnih točkah
-(ustavi se pri 8 ujemanjih, zadošča jih 5) in vrnejo isti `ok: true` kot simbolni dokaz; tudi konstanto sprejmejo kot
-0, ko je |N(z, 30)| < 10⁻¹². Zato:
+Worker (`server/cas/worker.py`) v vsakem odgovoru vrne `how`, najšibkejši način, ki ga je ukaz uporabil
+(dogovor s profilom B na #539):
 
-- izidov bloka RACUN (`server/racun.js`) še ne preslikamo v `izracunano`;
-- »Preverjeno« skenerja, ki temelji na SymPy `ok: true` (`server/scan.js` `verifyAiFull`: izrazi, odvodi), se
-  preslika v `izracunano`, čeprav je lahko le numerično. To je znana precenitev do PV-03.
+- `symbolic`: simbolni račun (poenostavitev na 0, `solveset`, točna števila, ki jih SymPy odloči sam);
+- `numeric`: števila na 30 mest (konstanta z decimalkami, |N| < 10⁻¹²), sprejem s toleranco zapisa (`decimals_tol`,
+  približki rešitev, zaokroženi vmesni rezultati, enote z razmerjem, ki ni točno 1), numeričen določeni integral,
+  realnost korenov in logaritmov, ki je SymPy ne dokaže, in popolnost periodičnih rešitev samo na [−20, 20];
+- `sampled`: `is_zero` je odločil s preizkusom v naključnih točkah.
 
-PV-03 doda v odgovor workerja način preverjanja (`symbolic` ali `sampled`), dogovor s profilom B na #539.
+Dve pravili iz pregleda: (1) ukaz z decimalkami, ki je izšel `symbolic`, worker ponovi z decimalkami kot ulomki
+(0.05 → 1/20, tudi 0,05 in 5e-2); `symbolic` ostane le, če tudi točen račun drži simbolno, sicer je `numeric` (53-bitni `Float` je
+`100000000.05 · 100000001` zaokrožil na `10000000105000000`); `ineq` meje z decimalkami primerja kot ulomke.
+(2) Sistem s kotnimi funkcijami je največ `numeric`, ker `sp.solve` vrne le glavne rešitve
+(`sin x = y, cos x = y` brez −3π/4 in periodičnih rešitev).
+`Timeout` je `BaseException`, da ga širok `except Exception` v SymPy ne pogoltne: ukaz se konča v 6 s, prej je
+lahko tekel do roba 9 s v `cas.js`, ki proces ubije (na trditvah iz lekcij se `ok` zato ni spremenil).
+
+`server/cas.js` `casCheck` vrne `how`, kadar ga worker pošlje. Pravilo: SymPy »drži« je `izracunano` samo pri
+`how: "symbolic"`, sicer (tudi brez `how`) največ `numericno`. Meja motorja `sympy` v `trditev.js` ostane `exact`;
+vir v `dokazi` preslika besednjak workerja: `symbolic` → `exact`, `numeric` in `sampled` → `numeric`.
+
+`ok` se spremeni le na robu: točno število, ki ni 0, a je manjše od 10⁻¹², je prej veljalo za 0, zdaj ga SymPy
+odloči simbolno (`equal e^(-60) | 0`: prej `true`, zdaj `false`; `value sqrt(10^40+1) | 10^20`: prej `true`, zdaj
+`null`). Na 5.329 trditvah RACUN iz lekcij se `ok` ni spremenil nikjer. Ker `simplify` sam ne najde vseh identitet,
+`is_zero` pred vzorčenjem poskusi še tri simbolne prepise (`expand_trig`, `rewrite(exp)`, razstavljena osnova
+korena), vsakega z lastnim časovnim robom 1,5 s; Piecewise, ki je 0 povsod razen v točki, kjer izraz ni definiran
+(odvod |x|), šteje kot 0. Tako `tan x + cot x = 2/sin 2x`, `sqrt(x²+6x+9) = |x+3|`, `(|x|)' = x/|x|`,
+`(ln|x|)' = 1/x` in točna rešitev eksponentne enačbe ostanejo `symbolic`. Skener (`verifyAiFull`) to že upošteva: SymPy, ki ni simbolno dokazal, da
+največ »Numerično preverjeno«, razen če je lokalna točna algebra odgovor dokazala. Bloka RACUN (`server/racun.js`,
+profil B) še ne preslikamo v statuse; ko ga, velja isto pravilo.
 
 ## Meritev (PV-02)
 
@@ -80,7 +100,7 @@ odgovor ima mejo `najvec: "numericno"`.
 Dogovora: rešitve so realne (kompleksni rešitvi pri realni enačbi sta napaka); identiteta, kot je
 `(x^2-4)/(x-2) = x+2`, šteje kot pravilna poenostavitev (izključeno točko preverja skupina »luknja«).
 
-`node scripts/meri-preverjanje.mjs [--json pot]` izmeri tri motorje: `sympy` (surov izid workerja), `skener`
+`node scripts/meri-preverjanje.mjs [--json pot]` izmeri tri motorje: `sympy` (izid workerja z načinom `how`), `skener`
 (`verifyAiFull`, kot ga vidi učenec) in `skener-lokalno` (isto brez SymPy). Razredi: napačno potrjena, previsok
 status, lažni alarm, napačna s šibkim statusom (učenec vidi »delno« ali »numerično«), izjema, ujeta napaka, potrjena,
 šibkejši status, nepreverjena. `test/preverjanje-meritev.test.js` (CI ima SymPy prek `npm ci`, postinstall) pade ob
@@ -92,9 +112,11 @@ Izhodišče 25. 11. 2026:
 | Motor | Trditev | Napačno potrjene | Ujete napake | Napačne s šibkim statusom | Lažni alarmi | Pravilne potrjene |
 | --- | --- | --- | --- | --- | --- | --- |
 | sympy (surovo) | 384 | 5 | 187/193 | 0 | 0 | 179/191 (+12 previsoko) |
+| sympy z načinom (PV-03) | 384 | 0 | 187/193 | 5 | 0 | 173/191 |
 | skener | 363 | **4** | 178/182 | 0 | 5 | 153/181 (+1 previsoko) |
 | skener-lokalno | 363 | 0 | 172/182 | 5 | 8 | 101/181 |
 | skener po popravku | 363 | 0 | 178/182 | 0 | 5 | 154/181 |
+| skener s PV-03 | 363 | 0 | 178/182 | 0 | 5 | 154/181 |
 | skener-lokalno po popravku | 363 | 0 | 173/182 | 4 | 7 | 106/181 |
 
 0 napačno potrjenih na tem naboru pomeni pri 95-odstotnem zaupanju delež pod približno 3/n (n = število napačnih
@@ -111,8 +133,8 @@ Ugotovitve:
   skener pokaže »Nepreverjeno«; odvod polinoma `verify.js` preveri točno (ulomki); zapis `1.4e6` se lokalno prebere kot
   1,4·10⁶ (prej kot 1,4·e·6). **Ostane odprto:** popravek velja le za polinome. Napačen odgovor z velikimi koeficienti
   v nepolinomskem izrazu (npr. `(x+1000000)^2 + sin(x)` ali `e*(x+1000000)^3` za odvod) še dobi »Preverjeno«, ker
-  vzroka v `is_zero` (relativna toleranca glede na največji člen) ni popravil; to reši PV-03 (worker vrne način
-  preverjanja, vzorčeno → največ »Numerično«).
+  vzroka v `is_zero` (relativna toleranca glede na največji člen) ni popravil. **PV-03:** worker zdaj pove, da je
+  odločil v točkah (`how: "sampled"`), zato skener tam pokaže največ »Numerično preverjeno«.
 - Skener: »≈1414« (zaokroženo na celo število) je dobil »Preverjeno«, ker je regex `rounded` v `verifyAiFull`
   prepoznal le decimalno piko. **Popravljeno:** »≈«, »approx« in znanstveni zapis (2e6, 2*10^6) so približek.
 - Odprto, skener: pravilen določeni integral z mejo iz več znakov (`∫_0^pi sin(x) dx = 2`, `∫_1^10 1/x dx = ln(10)`) dobi
@@ -123,9 +145,30 @@ Ugotovitve:
   »Delno preverjeno«.
 - Surov SymPy: zaokrožene decimalke sprejme s toleranco (`decimals_tol`) in vrne `ok: true` (12 previsokih
   statusov); zmnožek velikih števil v zapisu `1.2193263111263526*10^17` (napaka 9) sprejme, ker `value` računa s
-  plavajočo vejico. Kdor bi `ok: true` preslikal v `izracunano`, bi te precenil: PV-03 (worker vrne način preverjanja).
+  plavajočo vejico. **PV-03:** vsi ti odgovori imajo `how` ≠ `symbolic`, zato so največ `numericno`; surov SymPy z
+  načinom nima nobene napačno potrjene trditve in nobenega previsokega statusa, pet napačnih pa dobi `numericno`.
+- Cena PV-03 v pokritosti: pravilne periodične rešitve (`sin x = 0` → `kπ`, `cos x = 0` → `π/2 + kπ`, 6 trditev)
+  so zdaj `numericno`, ker worker popolnost preveri samo na [−20, 20]. Simbolni dokaz popolnosti ostaja odprt.
+  Identitete, ki jih `simplify` sam ne najde (tan + cot, koren popolnega kvadrata, odvod |x| in ln|x|, točna rešitev
+  eksponentne enačbe), po pregledu ostanejo `izracunano` (trije dodatni simbolni prepisi v `is_zero`).
 
 ## Pravilo za nove dele aplikacije
 
 Vsak nov del aplikacije, ki prikaže matematično trditev, jo odda v zapisu trditve in prikaže status iz
 `statusi.js`; svojega pomena besede »preverjeno« ne uvaja. Pregledovalec (`docs/pregled.md`, prehod 2) to preveri.
+
+## Oznake vsebine (N-03, `server/oznake-vsebine.js`)
+
+Lekcije učbenika in naše pole imajo oznako izvora in pregleda celote, ločeno od statusa posamezne trditve:
+
+| Oznaka | Dokaz v podatkih |
+|---|---|
+| Osnutek | pregledi niso končani ali program v besedilu najde napako |
+| Pregledal AI | pregledi AI končani, program nima česa preračunati |
+| Strojno preverjeno | pregledi AI končani in program ob prikazu preračuna vsaj en račun ali identiteto brez napake (`server/lesson-check.js`, pri polah `validatePaper`) |
+| Strokovno pregledano | `stanje: pregledano`, `pregledal:` ime človeka, `pregledano:` datum, ki ni v prihodnosti |
+| Formalno dokazano: N | dokaz Lean z glavo `vir:` in `sha256:`, ki se ujema s trenutnim besedilom; vedno s številom N dokazanih trditev |
+
+»Strojno preverjeno« lekcije ni status `izracunano` njenih trditev: pomeni le, da program ni našel napake v računih,
+ki jih zna preračunati. Ko PV-08 lekcije pretvori v trditve s statusi, oznaka »Strojno preverjeno« dodatno zahteva, da
+nobena trditev nima statusa `napaka`. Oznako izriše samo `public/oznake-vsebine.js`; neznane oznake se ne izrišejo.

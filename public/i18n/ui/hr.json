@@ -4778,5 +4778,20 @@
   "set.grpHelp": "Pomoć",
   "set.grpHelpSub": "Uvodni obilazak i vodič kroz aplikaciju",
   "path.noCurriculum": "Kurikul tvoje zemlje{country} još nije dostupan, zato koristiš slovenski kurikul, raspoređen po godinama školovanja. Razredi su iz tvog školskog sustava; instruktor ti sve objašnjava na tvom jeziku.",
-  "path.noExam": "Priprema za završni ispit ({exam}) još nije dostupna."
+  "path.noExam": "Priprema za završni ispit ({exam}) još nije dostupna.",
+  "oz.kaj": "Što to znači?",
+  "oz.osnutek": "Nacrt",
+  "oz.osnutekTip": "Lekcija još nije prošla sve provjere ili je program u njoj pronašao pogrešku u računu ili zapisu.",
+  "oz.osnutekTipPola": "Ispit još nije prošao sve provjere ili je program u njemu pronašao pogrešku.",
+  "oz.pregledalAi": "Pregledao AI",
+  "oz.pregledalAiTip": "Sadržaj su pregledali AI modeli. U njemu nema računa koje bi program mogao sam ponovno izračunati.",
+  "oz.strojno": "Strojno provjereno",
+  "oz.strojnoTip": "Program je sam ponovno izračunao račune i identitete (provjerenih koraka: {n}) i nije pronašao pogrešku. Sadržaj su pregledali AI modeli. Program provjerava samo ono što zna izračunati.",
+  "oz.strokovno": "Stručno pregledano",
+  "oz.strokovnoTip": "Sadržaj je {datum} pregledao učitelj.",
+  "oz.formalno": "Formalno dokazano: {n}",
+  "oz.formalnoTip": "Program za dokaze Lean dokazao je tvrdnje iz ove lekcije (dokazanih tvrdnji: {n}). Ostale tvrdnje nisu formalno dokazane.",
+  "oz.niStrokovno": "Učitelj još nije pregledao lekciju. Ako primijetiš pogrešku, pritisni „Prijavi pogrešku”.",
+  "oz.niStrokovnoPola": "Učitelj još nije pregledao ispit.",
+  "oz.niStrokovnoCip": "Bez pregleda učitelja"
 }

@@ -4746,5 +4746,20 @@
   "set.grpHelp": "Aiuto",
   "set.grpHelpSub": "Tour introduttivo e guida all'app",
   "path.noCurriculum": "Il programma scolastico del tuo paese{country} non è ancora disponibile, quindi usi il programma sloveno, ordinato per anno di scuola. Le classi sono quelle del tuo sistema scolastico; il tutor ti spiega tutto nella tua lingua.",
-  "path.noExam": "La preparazione all'esame finale ({exam}) non è ancora disponibile."
+  "path.noExam": "La preparazione all'esame finale ({exam}) non è ancora disponibile.",
+  "oz.kaj": "Che cosa significa?",
+  "oz.osnutek": "Bozza",
+  "oz.osnutekTip": "La lezione non ha ancora completato tutte le revisioni, oppure il programma vi ha trovato un errore di calcolo o di scrittura.",
+  "oz.osnutekTipPola": "La prova non ha ancora completato tutte le revisioni, oppure il programma vi ha trovato un errore.",
+  "oz.pregledalAi": "Rivisto dall'IA",
+  "oz.pregledalAiTip": "Il contenuto è stato rivisto da modelli di IA. Non contiene calcoli che il programma possa ricalcolare da solo.",
+  "oz.strojno": "Verificato automaticamente",
+  "oz.strojnoTip": "Il programma ha ricalcolato da solo i calcoli e le identità ({n} passaggi verificati) e non ha trovato errori. Il contenuto è stato rivisto da modelli di IA. Il programma verifica solo ciò che sa ricalcolare.",
+  "oz.strokovno": "Revisionato da esperti",
+  "oz.strokovnoTip": "Un insegnante ha revisionato il contenuto il {datum}.",
+  "oz.formalno": "Dimostrato formalmente: {n}",
+  "oz.formalnoTip": "Il dimostratore Lean ha dimostrato affermazioni di questa lezione ({n} dimostrate). Le altre affermazioni non sono dimostrate formalmente.",
+  "oz.niStrokovno": "Nessun insegnante ha ancora revisionato questa lezione. Se noti un errore, premi «Segnala un errore».",
+  "oz.niStrokovnoPola": "Nessun insegnante ha ancora revisionato questa prova.",
+  "oz.niStrokovnoCip": "Non revisionato da un insegnante"
 }
