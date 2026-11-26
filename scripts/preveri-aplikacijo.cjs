@@ -6,7 +6,7 @@
 // prijavo, Račun in stran za starše. Beleži napake strani in konzole, neuspele zahteve in odgovore
 // ≥ 400, vodoravno drsenje in vidne neprevedene ključe (npr. »nav.path«).
 // Zagon: node scripts/preveri-aplikacijo.cjs [--posnetki <mapa>] [--brez-racunov] [--samo racunalnik|telefon|racuni]
-//   [--brskalnik chromium|webkit] [--jezik sl|en|de|it|hu]
+//   [--brskalnik chromium|webkit|firefox] [--jezik sl|en|de|it|hu]
 //   [--zaslon ŠxV] [--dotik] [--mobilno] [--tema temna] [--meritve] (druge naprave)
 //   [--naprave [seznam]] (vse naprave in legi naenkrat, s kazalom: scripts/posnetki-naprave.cjs)
 // (--samo: en del, CI jih zažene tri hkrati; računi tečejo samo brez --samo ali z --samo racuni).
@@ -45,6 +45,9 @@ const ONLY = arg("--samo");
 const ACCOUNTS = !args.includes("--brez-racunov");
 const BRSKALNIK = arg("--brskalnik") || "chromium";
 const WEBKIT = BRSKALNIK === "webkit";
+// Firefox (K-12, matrika naprav): Playwright v Firefoxu ne pozna isMobile (mobilni pogled), zato samo računalnik ali
+// zaslon na dotik brez mobilnega pogleda.
+const FIREFOX = BRSKALNIK === "firefox";
 const JEZIK = arg("--jezik") || "sl";
 // Jezik → nastavitve naprave (navigator.languages, časovni pas): aplikacija iz njih izbere jezik in šolski sistem.
 // Samo živi jeziki brez č, š, ž (public/i18n/languages.js LIVE_UI_LANGUAGES; hrvaščina jih ima, zato je tu ni).
@@ -194,11 +197,13 @@ async function newPage(browser, phone, label, base) {
   const ctx = await browser.newContext({
     viewport: ZASLON || (phone ? { width: 360, height: 740 } : { width: 1280, height: 800 }),
     hasTouch: phone || DOTIK,
-    isMobile: phone || MOBILNO,
+    ...(FIREFOX ? {} : { isMobile: phone || MOBILNO }),
     colorScheme: TEMNA ? "dark" : "light",
     deviceScaleFactor: 1,
     // WebKit na telefonu: iPhone 13 (zaslon, dotik, uporabniški niz Safarija); posnetki ostanejo v merilu 1.
-    ...(phone && WEBKIT ? { ...playwright.devices["iPhone 13"], deviceScaleFactor: 1 } : {}),
+    // Z --zaslon (matrika naprav, K-12) pa velja izbrani zaslon; iPhonov uporabniški niz samo z --mobilno (iPad je brez).
+    ...(phone && WEBKIT && !ZASLON ? { ...playwright.devices["iPhone 13"], deviceScaleFactor: 1 } : {}),
+    ...(WEBKIT && ZASLON && MOBILNO ? { userAgent: playwright.devices["iPhone 13"].userAgent } : {}),
     ...NAPRAVA[JEZIK],
     reducedMotion: "reduce",
     serviceWorkers: "block",
@@ -2535,12 +2540,13 @@ async function tujJezik(browser, app, phone) {
   KEYS = Object.keys((await import(pathToFileURL(path.join(ROOT, "public/i18n/sl.js")))).default);
   NEIZRISANO = (await import(pathToFileURL(path.join(ROOT, "scripts/popis-formul.js")))).neizrisanoVDom;
   if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true });
-  if (!["chromium", "webkit"].includes(BRSKALNIK)) throw new Error(`--brskalnik: chromium ali webkit (ne »${BRSKALNIK}«)`);
+  if (!["chromium", "webkit", "firefox"].includes(BRSKALNIK)) throw new Error(`--brskalnik: chromium, webkit ali firefox (ne »${BRSKALNIK}«)`);
+  if (FIREFOX && (MOBILNO || (ONLY === "telefon" && !ZASLON))) throw new Error("--brskalnik firefox: brez mobilnega pogleda (--mobilno, telefon brez --zaslon)");
   if (!NAPRAVA[JEZIK]) throw new Error(`--jezik: ${Object.keys(NAPRAVA).join(", ")} (ne »${JEZIK}«)`);
   if (JEZIK !== "sl" && ONLY === "racuni") throw new Error("--jezik: računi se preverjajo samo v slovenščini");
   // Z --zaslon (scripts/posnetki-naprave.cjs) teče Chromium v slovenščini: sicer polje za datum kaže mm/dd/llll
   // in zunanji recenzent to prijavi kot napako lokalizacije (pregled 3, PR #1079). Brez --zaslon kot prej.
-  const browser = await playwright[BRSKALNIK].launch(ZASLON && !WEBKIT ? { args: ["--lang=sl-SI"] } : {});
+  const browser = await playwright[BRSKALNIK].launch(ZASLON && BRSKALNIK === "chromium" ? { args: ["--lang=sl-SI"] } : {});
   try {
     if (ONLY && !["racunalnik", "telefon", "racuni"].includes(ONLY)) throw new Error(`--samo: racunalnik, telefon ali racuni (ne »${ONLY}«)`);
     const app = ONLY === "racuni" ? null : await startServer(); // del »racuni« ima samo svoj strežnik
