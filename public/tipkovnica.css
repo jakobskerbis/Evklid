@@ -7,7 +7,7 @@
   --tk-dim: color-mix(in srgb, var(--muted) 70%, var(--text));
   /* --tk-vv: del zaslona, ki ga spodaj prekrije brskalnik (spodnja vrstica naslova); --tk-dvig: tipke dvignjene od roba za potezo domov */
   --tk-dvig: 8px;
-  position: fixed; left: 0; right: 0; bottom: var(--tk-vv, 0px); z-index: 500;
+  position: fixed; left: 0; right: 0; bottom: var(--tk-vv, 0px); z-index: var(--z-tipkovnica, 500);
   background: var(--tk-board); color: var(--tk-ink); border-top: 1px solid var(--border);
   padding: 6px max(4px, env(safe-area-inset-right)) calc(var(--tk-dvig) + var(--varno-sp, env(safe-area-inset-bottom, 0px))) max(4px, env(safe-area-inset-left));
   font-family: var(--font); user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: manipulation;

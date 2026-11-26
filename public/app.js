@@ -4610,6 +4610,7 @@ initUci({
 initTextbook({
   api,
   renderRich,
+  renderMath,
   escapeHtml,
   getStudent: () => state.student,
   openTopic,

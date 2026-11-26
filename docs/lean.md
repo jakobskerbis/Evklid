@@ -30,6 +30,16 @@ v Mathlibu pravilo (npr. `integral_pow`), sicer ne.
 - Trditev je zapisana tako, kot je v viru (ista števila, isti vrstni red). Lean dokaže samo to, kar je zapisano:
   napačen prevod je napačna trditev, zato pregledovalec primerja trditev z virom.
 
+## Pregled (j, 25. 11. 2026: »Vse za Lean 4× preveri«)
+
+Vsaka sprememba v `lean/` ima pred združitvijo štiri neodvisne preglede (več kot `docs/pregled.md`):
+
+1. **Zvestoba viru A** – vsaka trditev pove natanko to, kar vir (ista števila, pogoji, obe smeri rešitev).
+2. **Zvestoba viru B** – drug pregledovalec isto, neodvisno, brez branja poročila A.
+3. **Napad** – poskusi iz predpostavk dokazati `False`, poišči oslabljene trditve, manjkajoče korake, prazne
+   `example`, prevelike `maxHeartbeats`.
+4. **Gradnja** – `lake build --wfail` od začetka, varovala v `lean.yml`, `scripts/lean-lekcije.mjs`, CI zelen.
+
 ## Lokalno
 
 ```
@@ -41,3 +51,33 @@ lake build           # preveri vse
 Brez Leana na stroju preverjanje teče samo v GitHubu (`lean.yml`, ob spremembi `lean/`; L2 in L3 dodata lekcije
 in pole). elan je zaklenjen na v4.4.0 s preverjenim sha256.
 Ne zadrži objave na evklid.app.
+
+## Lekcije (L2)
+
+Ena datoteka na lekcijo: `lean/Evklid/Lekcije/<PODROCJE>/<ImeVCamelCase>.lean` (npr. `MAT-SS-4/binomski-izrek.md`
+→ `Lekcije/MAT_SS_4/BinomskiIzrek.lean`, modul `Evklid.Lekcije.MAT_SS_4.BinomskiIzrek`), uvožena v
+`lean/Evklid.lean`. Glava:
+
+```
+/-
+vir: content/lessons/MAT-SS-4/binomski-izrek.md
+sha256: <sha256sum lekcije>
+Ni v Leanu: <kaj iz lekcije ni dokazano in zakaj, npr. »risba«, »simulacija«, »statistični podatki iz ankete«>
+-/
+module
+
+public import Mathlib
+```
+
+Kaj se dokaže (vse, kar je v Mathlibu dokazljivo):
+
+1. vsako pravilo ali identiteto iz `:::formula`, `$$…$$` in razlage, v splošni obliki (s pogoji, ki jih navaja
+   lekcija, npr. `n ≠ -1`);
+2. vsak rešen primer (`### Primer`) kot verigo `calc` z vmesnimi koraki natanko tako, kot so zapisani; rešitev
+   enačbe ali neenačbe kot `↔` (množica rešitev, ne samo ena smer);
+3. vsako vrstico bloka `<<RACUN`, ki jo Mathlib zna (resi, neenacba, enako, vrednost, odvod, integral, kjer gre);
+4. pravilni odgovor vsakega `:::kviz` / »Preveri se«, kjer je matematičen.
+
+`scripts/lean-lekcije.mjs` (in `.github/workflows/lean-lekcije.yml`) javi, ko se lekcija spremeni po dokazu.
+Napake v lekciji, ki jih Lean najde, se ne popravljajo v Leanu: popravi se lekcija (po `content/lessons/README.md`
+in pregledu Opus), dokaz ostane za pravilno trditev.
