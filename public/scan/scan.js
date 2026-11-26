@@ -803,6 +803,8 @@ function renderConfirm(box) {
     // poljem jo pokaže celo)
     if (html && (fieldIzris.scrollWidth > fieldIzris.clientWidth + 1 || fieldIzris.scrollHeight > fieldIzris.clientHeight + 1)) wrap.classList.remove("ima-izris");
   };
+  // Med urejanjem je ta izris skrit (širina 0): dolgo nalogo izmeri znova, ko učenec zapusti polje (pregled AUDIT-084).
+  wrap.addEventListener("focusout", () => requestAnimationFrame(() => input.isConnected && showField()));
   // j 26. 11.: dotik na okence □ ga označi, vpisan znak (s katerekoli tipkovnice) ga zamenja. Dotik, ki polje šele
   // odpre, označi okence, najbližje mestu dotika (prej je bil tam izris formule, zapis pod njim je drugače dolg).
   const okenceOb = (p) => {

@@ -180,7 +180,7 @@
 .scan-unclear-n .katex { color: var(--text); font-size: 1.05rem; }
 .scan-unclear-need { margin: 8px 0 0; font-weight: 700; }
 
-/* Naloga v polju kot formula (j 26. 11.); surov zapis za tipke se pokaže ob tapu v polje (fokus). */
+/* Naloga v polju kot formula (j 26. 11.); med urejanjem skupni izris vnosa, česar ne zna, pa surov zapis za tipke. */
 .scan-input-wrap { position: relative; flex: 1; min-width: 0; display: flex; }
 .scan-input-wrap input { flex: 1; }
 .scan-input-izris { position: absolute; inset: 2px 12px; display: none; align-items: center; overflow: hidden; white-space: nowrap; pointer-events: none; color: var(--text); font-size: 1.1rem; }

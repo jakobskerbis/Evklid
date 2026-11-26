@@ -49,6 +49,7 @@ test("zaslon Skeniraj: polje kaže zaPolje, reševanje dobi nespremenjeno prebra
   assert.match(css, /\.scan-input-wrap\.ima-izris:not\(:focus-within\) \.vnos-izris \{ visibility: hidden; \}/, "zunaj polja cela formula, med urejanjem skupni izris");
   // AUDIT-084: skupni izris vnosa velja tudi v potrditvi skenerja (.scan-confirm je sicer brez njega)
   assert.match(conf, /<input id="scan-input" type="text" data-izris-v-polju /);
+  assert.match(conf, /wrap\.addEventListener\("focusout", \(\) => requestAnimationFrame\(\(\) => input\.isConnected && showField\(\)\)\)/, "dolga naloga se izmeri znova po urejanju");
   assert.match(css, /\.scan-input-wrap\.ima-izris input \{ -webkit-text-fill-color: transparent;/, "barva polja ostane (skupni izris jo prevzame)");
   assert.doesNotMatch(css, /\.ima-izris input \{ color: transparent/);
   assert.match(conf, /m\.initPredogledVnosa\(\);\s*if \(input\.isConnected && input\.value\) input\.dispatchEvent\(new Event\("change"/, "prebrana naloga se izriše brez vnosa");
