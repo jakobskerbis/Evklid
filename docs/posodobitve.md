@@ -36,9 +36,11 @@ približno minuto izpada, zato se nove različice objavljajo **samo ponoči med 
 času (j, 19. 11. 2026, »Noč zdaj, baza po pilotu«). Po pilotu (po 15. 12. 2026) se baza preseli izven
 Renderja; takrat objava ne bo več pomenila izpada in nočno okno ne bo več potrebno.
 
-**Do nadaljnjega (j, 24. 11. 2026): vsaka združitev v `main` se objavi takoj, ko so testi zeleni**, tudi
-podnevi in med uporabo (vsakič ~1 minuta izpada). Spodnja nočna pravila spet veljajo, ko v
-`scripts/render-objava.js` nastaviš `TAKOJ_DO = 0`.
+**Do 10. 12. 2026 (j, 24. 11. 2026): vsaka združitev v `main` se objavi takoj, ko so testi zeleni**, tudi
+podnevi in med uporabo (vsakič ~1 minuta izpada). **Od 10. 12. 2026 00:00 (začetek pilota) spet veljajo
+spodnja nočna pravila** (j, 26. 11. 2026, kartica »Nočno okno med pilotom«; `TAKOJ_DO` v
+`scripts/render-objava.js`). Pred objavo ni ločenega preizkusnega strežnika, zato je pomembna hitra vrnitev
+(spodaj, K-17).
 
 | Stanje | Kdaj se objavi |
 |---|---|
@@ -54,6 +56,33 @@ podnevi in med uporabo (vsakič ~1 minuta izpada). Spodnja nočna pravila spet v
 Tek ob združitvi počaka na okno le, če se odpre v naslednjih ~3 urah; sicer objavo opravi nočni urnik
 (0:47 in 1:47 UTC) ali urnik vsako uro. Ko velja nočno okno, se podnevi nič ne objavi, zato združitev med dnevom
 ne prekine testa v Render Shell (dokler velja »takoj«, ga lahko).
+
+### Vrnitev na prejšnjo različico (K-17)
+
+j, 26. 11. 2026: »Vzpostavi postopno uvajanje produkcijskih sprememb in možnost hitre vrnitve na prejšnjo
+različico.« Če nova različica na evklid.app ne dela prav:
+
+1. Poišči zadnjo dobro različico: Render → evklid → Events (vsaka objava ima commit) ali GitHub → Commits na `main`.
+   Dovolj je prvih 7 ali več znakov SHA.
+2. GitHub → Actions → Render → Run workflow, »Use workflow from« pusti **main**, v polje »vrni_na« prilepi SHA.
+3. Skripta preveri, da je commit v zgodovini `main` in da so bili njegovi testi zeleni (v sili »brez_testov«), ga
+   objavi z Render Deploy Hook (`?ref=<sha>`) in do 15 minut preverja, da evklid.app res teče na njem (`/healthz/stanje`).
+4. Dokler se `main` ne spremeni, samodejne objave (urnik, konec testov, »takoj«, `[nujno]`) pokvarjene različice ne
+   objavijo znova.
+
+Pazi: **vsaka** nova združitev v `main` zaklep sprosti in objavi vrh `main`. Zato po vrnitvi najprej združi
+popravek ali razveljavitev (revert) pokvarjenega PR-ja in do takrat ustavi druge združitve (tudi samodejne, npr.
+kalkulatorja). Običajen ročni zagon brez »vrni_na« takoj objavi vrh `main`, torej znova pokvarjeno različico, če ta
+še ni popravljena.
+
+Vrnitev velja samo za evklid.app; telefoni, ki so posodobitev že dobili prek `ota.yml`, ostanejo na novi različici.
+
+Baza ostane, kakršna je, zato vrnitev ni varna čez združitev, ki je bazo spremenila nazaj nezdružljivo:
+
+- #1086 (25. 11. 2026, `75cf119`) je tabelo `test_plans` preselila v priprave in jo izbrisala; koda pred tem
+  commitom vidi prazne načrte testov, dokler se ne vrneš naprej.
+
+Vsak nov PR, ki odstrani ali preimenuje tabelo ali stolpec, to napiše v opis in doda vrstico v ta seznam.
 
 ### Objava samo po zelenih testih
 
