@@ -146,6 +146,10 @@ test("meritev 26. 11.: odgovori AI, kot jih je dal pravi zagon (zapis z dvema en
   assert.equal(TRP("P = 32\\ \\mathrm{cm^2} = 0{,}0032\\ \\mathrm{m^2}"), "partial");
   assert.equal(TRP("P = 48\\ \\mathrm{cm^2} \\text{ ali } P = 32"), "unverified");
   assert.equal(TRP("P = 32\\ \\mathrm{cm^2} \\approx 0\\ \\mathrm{m^2}"), "unverified");
+  // pregled 3: drug prikazan odgovor za »ali« ni račun; t = 189\,s ostane berljiv (\, ni ločilo)
+  assert.equal(TRP("P = \\frac{96}{2}\\ \\mathrm{cm^2} \\text{ ali } P = 32\\ \\mathrm{cm^2}"), "unverified");
+  assert.equal(TRP("P = (10+6) \\text{ ali } P = 32"), "unverified");
+  assert.equal(TRP("P = \\frac{10+6}{2}\\cdot 4 = 32\\,\\mathrm{cm^2}"), "partial");
   const HIT = (tex) => status("v=?", ["s = 36\\,\\mathrm{km}", "t = 30\\,\\mathrm{min}"], sol({ s: "36000", t: "1800", v: "20" }, ["v=s/t"], { value: "20", answer_tex: tex }));
   assert.equal(HIT("v = 20\\ \\mathrm{m/s} = 72\\ \\mathrm{km/h}"), "partial");
   assert.equal(HIT("v = 20\\ \\mathrm{m/s} = 20\\ \\mathrm{km/h}"), "unverified");

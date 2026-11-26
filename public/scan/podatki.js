@@ -242,7 +242,11 @@ export function stevilaZapisa(tex) {
 // Ali zapis odgovora pokaže preverjeno vrednost q kot končni rezultat: en del je q (enako(x)), vsak del za njim pa je
 // le ista količina v drugi enoti (189 s ≈ 3,15 min), v okviru zaokrožitve prikazanih decimalk. »P = 32 ali P = 48«,
 // »32 cm² = 0,32 m²« in »32 ≈ 30« ne (pregled: drugače bi prikazan, nepreverjen končni rezultat dobil »partial«).
+// Ločilo med dvema odgovoroma (»… ali P = 32«, »P_1 = 5, P_2 = 7«): tak zapis ne pokaže enega rezultata.
+const VEC_ODGOVOROV = /\b(?:ali|or|oziroma|in|and)\b|\\(?:lor|vee|quad|qquad)\b|\\\\|;|(?<!\\),\s*\\?[A-Za-z]/;
+
 function zapisPokaze(tex, q, enako) {
+  if (VEC_ODGOVOROV.test(tex)) return false;
   const deli = tex.split(DELI);
   const vsi = (deli.length > 1 ? deli.slice(1) : deli).map((d) => ({ x: steviloDela(d), p: podatkiNaloge([d])[0], racun: jeRacun(d) })).filter((d) => d.x !== null);
   const i = vsi.findLastIndex((d) => enako(d.x));
@@ -263,7 +267,7 @@ function zapisPokaze(tex, q, enako) {
 // Del zapisa je korak računa (ulomek, operacija, oklepaj), ne prikazan rezultat. Enote (\mathrm{cm^2}, m/s) ne štejejo.
 function jeRacun(d) {
   const t = d.replace(/\\(?:text|mathrm|textrm|mbox)\s*\{[^{}]*\}/g, " ").replace(/([A-Za-zµΩ])\s*\^\s*\{?-?\d\}?/g, "$1").replace(/[A-Za-zµΩ]+\s*\/\s*[A-Za-zµΩ(]/g, " ");
-  return /\\frac|\\cdot|\\times|\\sqrt|[+*/·×(]|\d\s*-\s*\d/.test(t);
+  return /\\frac|\\cdot|\\times|\\sqrt|[+*/·×(]|\d\s*(?:\\?%)?\s*-\s*\d/.test(t);
 }
 
 // AI »check« → {values: Map(ime → vrednost), equations} ali razlog, zakaj ga ni mogoče prebrati. Vsaka formula je
