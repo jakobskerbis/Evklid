@@ -299,7 +299,8 @@ function surveyCard(s) {
   return `<section class="card pn-card" id="pn-survey">${head(4, "clipboard-check", t("pn.surveyTitle"), s.survey || !s.surveyOpen ? "" : t("pn.surveyText"), s.survey)}${body}</section>`;
 }
 
-// Preizkus znanja: na začetku in čez 14 dni ista tema, nove naloge. Brez ocene in brez povratne informacije pri
+// Preizkus znanja (N-10): 12 nalog iz sklopov kataloga mature MAT na začetku in čez 14 dni vzporedna oblika (druga
+// števila, ista snov). Brez ocene in brez povratne informacije pri
 // posamezni nalogi (meri, ne uči); na koncu število pravilnih. »Ne vem« je vedno na voljo.
 function quizCard(s) {
   const q = s.quiz || { pre: {}, post: {} };
@@ -313,9 +314,7 @@ function quizCard(s) {
       tk.answerType === "choice"
         ? `<div class="choices${tk.options.some((o) => String(o).length > 20) ? " one-col" : ""}">${tk.options.map((o, i) => `<button type="button" class="choice" data-pn="quiz-choice" data-i="${i}">${D.choiceHtml?.(tk, o) ?? esc(o)}</button>`).join("")}</div>`
         : `<form class="answer-row pn-quiz-form"><label class="sr-only" for="pn-quiz-in">${esc(ph)}</label><input id="pn-quiz-in" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="${tk.answerType === "number" && !tk.hasUnit ? "decimal" : "text"}" placeholder="${esc(ph)}"><button type="button" class="primary" data-pn="quiz-send">${esc(t("pn.quizSend"))}</button></form>`;
-    // Prvič vse pravilno: strežnik doda tri težje naloge (brez tega bi bil drugi preizkus na stropu).
-    const harder = quiz.phase === "pre" && quiz.data.harder ? `<p class="pn-status ok" role="status">${icon("sparkles")}${esc(t("pn.quizHarder"))}</p>` : "";
-    body = `${harder}<p class="muted small" aria-live="polite">${esc(t("pn.quizCount", { i: quiz.data.index + 1, n: quiz.data.total }))}</p>
+    body = `<p class="muted small" aria-live="polite">${esc(t("pn.quizCount", { i: quiz.data.index + 1, n: quiz.data.total }))}</p>
       <div class="task-text"${tk.textLang ? ` lang="${tk.textLang}"` : ""}>${D.renderRich ? D.renderRich(tk.text) : esc(tk.text)}</div>
       ${input}
       <p class="pn-err" role="alert" hidden></p>
@@ -573,23 +572,50 @@ export function paintAccountPilot(list, children, { api, toast, hasPassword = tr
 
 // ---------- skrbnik: vsote brez imen (Račun → »Pilot: naloge članov«) ----------
 
-// Merjenje učinka: povprečje pred in po (isti učenci) in odgovori o plačilu; pod pragom »Premalo odgovorov«.
+// Merjenje učinka: povprečje pred in po (isti učenci), po obliki, vrstnem redu in sklopih kataloga; odgovori o plačilu;
+// pod pragom »Premalo odgovorov«.
 function impactHtml(im, { pc, few }) {
   if (!im) return "";
   const q = im.quiz;
   const w = im.wtp;
-  const diff = q.diff == null ? "–" : `${q.diff >= 0 ? "+" : "−"}${Math.round(Math.abs(q.diff) * 100)}`;
+  const pp = (d) => (d == null ? "–" : `${d >= 0 ? "+" : "−"}${Math.round(Math.abs(d) * 100)}`);
   const dist = (o, keys) => keys.filter((k) => o?.[k]).map((k) => `${t(WTP_KEY[k])} ${o[k]}`).join(", ") || "–";
-  const c = q.ceiling || { nPaired: 0 };
-  const cdiff = c.diff == null ? "–" : `${c.diff >= 0 ? "+" : "−"}${Math.round(Math.abs(c.diff) * 100)}`;
+  const forms = Object.entries(q.byForm || {}).filter(([, v]) => v).map(([f, v]) => `<li>${esc(t("pilot.n.quizForm", { form: f, n: v.n, avg: pc(v.avg) }))}</li>`).join("");
+  const orders = Object.entries(q.byOrder || {}).filter(([, v]) => v).map(([k, v]) => `<li>${esc(t("pilot.n.quizOrder", { a: k[0], b: k[1], n: v.n, pre: pc(v.pre), post: pc(v.post), diff: pp(v.diff) }))}</li>`).join("");
+  const slots = q.slots
+    ? `<div class="pilot-scroll"><table class="table pilot-table"><thead><tr><th scope="col">${esc(t("pilot.n.quizSlot"))}</th><th scope="col">${esc(t("pilot.n.quizBefore"))}</th><th scope="col">${esc(t("pilot.n.quizAfter"))}</th></tr></thead>
+      <tbody>${q.slots.map((sl) => `<tr><td lang="sl">${esc(sl.sklop)}</td><td>${pc(sl.pre)}</td><td>${pc(sl.post)}</td></tr>`).join("")}</tbody></table></div>`
+    : "";
   return `<h3>${esc(t("pilot.n.quiz"))}</h3>
     <ul class="pilot-sum"><li>${esc(t("pilot.n.quizPre", { n: q.nPre, avg: pc(q.pre) }))}</li>
-      <li>${esc(t("pilot.n.quizPaired", { n: q.nPaired, pre: pc(q.pairedPre), post: pc(q.pairedPost), diff }))}</li>
-      <li>${esc(t("pilot.n.quizCeiling", { n: c.nPre ?? 0, paired: c.nPaired, pre: pc(c.pairedPre), post: pc(c.pairedPost), diff: cdiff }))}</li></ul>
+      <li>${esc(t("pilot.n.quizPaired", { n: q.nPaired, pre: pc(q.pairedPre), post: pc(q.pairedPost), diff: pp(q.diff) }))}</li>${forms}${orders}
+      ${q.ci95 ? `<li>${esc(t("pilot.n.quizCi", { lo: pp(q.ci95[0]), hi: pp(q.ci95[1]), bal: pp(q.diffBalanced) }))}</li>` : ""}</ul>
+    ${slots}
+    ${q.pairedPre != null ? `<p class="muted small">${esc(t("pilot.n.quizNote"))}</p>` : ""}
     ${q.pairedPre == null ? `<p class="muted small">${few}</p>` : ""}
     ${q.allSkip ? `<p class="muted small">${esc(t("pilot.n.quizSkip", { n: q.allSkip }))}</p>` : ""}
     <h3>${esc(t("pilot.n.wtp"))} (${w.n})</h3>
     ${w.pay ? `<ul class="pilot-sum"><li>${esc(t("pilot.n.wtpPay"))}: ${esc(dist(w.pay, WTP_PAY))}</li><li>${esc(t("pilot.n.wtpAmount"))}: ${esc(dist(w.amount, WTP_AMOUNT))}</li></ul>` : `<p class="muted">${esc(t("pilot.n.few", { n: w.min ?? 5 }))}</p>`}`;
+}
+
+// Meritve pilota (N-09): vrnitev, samostojnost, strošek AI na učenca in napake po temah, vse šele od praga (5) učencev.
+function meritveHtml(m, { pc }) {
+  if (!m) return "";
+  const date = m.asOf ? new Date(`${m.asOf}T00:00:00Z`).toLocaleDateString(locale(), { day: "numeric", month: "numeric", year: "numeric", timeZone: "UTC" }) : "–";
+  const head = `<h3>${esc(t("pilot.n.metrics", { n: m.n, date }))}</h3>`;
+  if (m.few) return `${head}<p class="muted">${esc(t("pilot.n.few", { n: m.min }))}</p>`;
+  const eur = (x) => (x == null ? "–" : Number(x).toLocaleString(locale(), { style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: 3 }));
+  const ret = Object.entries(m.retention)
+    .map(([k, v]) => `<li>${esc(t("pilot.n.ret", { d: k.slice(1), pct: pc(v.pct), a: v.returned ?? "–", b: v.eligible }))}</li>`)
+    .join("");
+  const i = m.independence;
+  const ai = m.ai ? `<li>${esc(t("pilot.n.ai", { avg: eur(m.ai.eurPerStudentMonth), median: eur(m.ai.medianEurPerStudentMonth), users: m.ai.users, n: m.ai.students }))}</li>` : "";
+  const errs = m.errors.length
+    ? `<h4>${esc(t("pilot.n.errors"))}</h4><div class="pilot-scroll"><table class="table pilot-table"><thead><tr><th scope="col">${esc(t("pilot.n.topic"))}</th><th scope="col">${esc(t("pilot.n.students"))}</th><th scope="col">${esc(t("pilot.n.tasks"))}</th><th scope="col">${esc(t("pilot.n.wrong"))}</th></tr></thead>
+      <tbody>${m.errors.map((e) => `<tr><td>${esc(e.topic)}</td><td>${e.students}</td><td>${e.tasks}</td><td>${pc(e.wrongPct)}</td></tr>`).join("")}</tbody></table></div>`
+    : "";
+  return `${head}<ul class="pilot-sum">${ret}<li>${esc(t("pilot.n.indep", { pct: pc(i.pct), a: i.independent ?? "–", b: i.tasks ?? "–", n: i.students }))}</li>${ai}</ul>${errs}
+    ${m.hiddenTopics ? `<p class="muted small">${esc(t("pilot.n.hiddenTopics", { n: m.hiddenTopics, min: m.min }))}</p>` : ""}`;
 }
 
 export async function renderPilotAdmin(box, { api, toast }) {
@@ -620,6 +646,7 @@ export async function renderPilotAdmin(box, { api, toast }) {
     <h3>${esc(t("pilot.n.survey"))} (${r.survey.n})</h3>
     ${r.survey.hidden ? `<p class="muted">${few}</p>` : `<ul class="pilot-sum">${SCALE.map((q) => `<li><b>${r.survey.avg[q] == null ? "–" : Number(r.survey.avg[q]).toLocaleString(locale())}</b> ${esc(t(`pn.q.${q}`))}</li>`).join("")}
       <li>${esc(t("pilot.n.improve"))}: ${esc(IMPROVE.filter((k) => r.survey.improve?.[k]).map((k) => `${t(`pn.i.${k}`)} ${r.survey.improve[k]}`).join(", ") || "–")}</li></ul>`}
+    ${meritveHtml(r.meritve, { pc })}
     ${impactHtml(r.impact, { pc, few })}
     ${r.notesHidden ? `<h3>${esc(t("pilot.n.notes"))}</h3><p class="muted">${few}</p>` : ""}
     ${r.notes.length ? `<h3>${esc(t("pilot.n.notes"))}</h3><ul class="pn-admin-notes">${r.notes.map((n) => `<li><small class="muted">${esc(n.kind === "scan" ? cond(n.what) : feat(n.what))} · ${esc(t(n.kind === "scan" ? (n.ok ? "pn.ok" : "pn.bad") : n.ok ? "pn.works" : "pn.broken"))}</small><br>${esc(n.note)}</li>`).join("")}</ul>` : ""}

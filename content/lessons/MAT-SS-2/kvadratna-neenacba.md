@@ -249,13 +249,13 @@ d) Za koliko odstotkov je mejna hitrost na mokri cesti manjša od mejne hitrosti
 3. b) Iščemo $v \ge 0$, za katere je $0{,}008v^2 + 0{,}3v < 60$. Pomnožimo s $125$ (pozitivno število): $v^2 + 37{,}5v - 7500 < 0$.
 4. b) $D = 37{,}5^2 + 4 \cdot 7500 = 31406{,}25$, $v_{1,2} = \dfrac{-37{,}5 \pm \sqrt{31406{,}25}}{2}$, torej $v_1 \approx -107{,}359$ in $v_2 \approx 69{,}859$.
 5. b) Parabola je odprta navzgor, pod osjo je med ničlama: $v_1 < v < v_2$.
-6. b) Hitrost ni negativna, zato se avtomobil ustavi pred oviro pri $0 \le v < 69{,}9\,\text{km/h}$ (natančneje $v < 69{,}859$).
+6. b) Hitrost ni negativna, zato se avtomobil ustavi pred oviro pri $0 \le v < 69{,}859\,\text{km/h}$, torej pri hitrostih do približno $69{,}9\,\text{km/h}$.
 7. c) Zavorna pot je $1{,}5 \cdot 0{,}008v^2 = 0{,}012v^2$, zato $d_m(v) = 0{,}3v + 0{,}012v^2$.
 8. c) Neenačba $0{,}012v^2 + 0{,}3v < 60$ po množenju z $\dfrac{250}{3}$ da $v^2 + 25v - 5000 < 0$; $D = 625 + 20000 = 20625$.
 9. c) Pozitivna ničla je $v = \dfrac{-25 + \sqrt{20625}}{2} \approx 59{,}307$, zato se avtomobil ustavi pri $0 \le v < 59{,}3\,\text{km/h}$.
 10. d) Razlika mejnih hitrosti je $69{,}859 - 59{,}307 = 10{,}552\,\text{km/h}$.
 11. d) $\dfrac{10{,}552}{69{,}859} \approx 0{,}151$, torej je mejna hitrost manjša za približno $15{,}1\,\%$.
-12. Odgovor: b) $0 \le v < 69{,}9\,\text{km/h}$; c) $d_m(v) = 0{,}3v + 0{,}012v^2$ in $v < 59{,}3\,\text{km/h}$; d) za približno $15{,}1\,\%$.
+12. Odgovor: b) $0 \le v < 69{,}859\,\text{km/h}$ (približno do $69{,}9\,\text{km/h}$); c) $d_m(v) = 0{,}3v + 0{,}012v^2$ in $v < 59{,}3\,\text{km/h}$; d) za približno $15{,}1\,\%$.
 
 **Točkovanje:** a) 1 točka za člen $0{,}3v$, 1 točka za člen $0{,}008v^2$; b) 1 točka za neenačbo $0{,}008v^2 + 0{,}3v - 60 < 0$, 1 točka za ničli (vrednost pred zaokrožitvijo), 1 točka za interval med ničlama z upoštevanjem $v \ge 0$; c) 1 točka za model $d_m$, 1 točka za neenačbo in pozitivno ničlo, 1 točka za $v < 59{,}3\,\text{km/h}$; d) 1 točka za postopek (razlika, deljena s hitrostjo na suhi cesti), 1 točka za $15{,}1\,\%$ (priznamo tudi $15{,}2\,\%$, izračunano z zaokroženima mejama $69{,}9$ in $59{,}3$).
 

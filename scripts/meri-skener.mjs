@@ -108,6 +108,26 @@ if (PREIZKUS !== isMockMode()) {
 const slikaB64 = (s) => fs.readFileSync(path.join(nabor.mapa, s.datoteka)).toString("base64");
 const vrstaSlike = (s) => (/\.png$/i.test(s.datoteka) ? "image/png" : /\.webp$/i.test(s.datoteka) ? "image/webp" : "image/jpeg");
 const vseNaloge = (s) => [s, ...(s.ostale || [])];
+function oznakeBranja(naloge, problems) {
+  const ocene = [];
+  for (const n of naloge) {
+    let naj = null;
+    let tocke = -1;
+    for (const p of problems) {
+      const t = n.racun ? oceniBesedilo(n.racun.replace(/\*/g, ""), String(p?.text ?? "").replace(/\*/g, "")) : { stevila: 0, operatorji: 0 };
+      const o = oceniRacun(n, p);
+      const tt = (o.enakovredno ? 5 : 0) + t.stevila + t.operatorji + o.podatki;
+      if (tt > tocke) [naj, tocke] = [o, tt];
+    }
+    if (naj) ocene.push(naj);
+  }
+  return {
+    ugibano: ocene.filter((o) => o.ugibano).length,
+    oznaceno: ocene.reduce((a, o) => a + o.oznaceno, 0),
+    moznostiZgresene: ocene.reduce((a, o) => a + (o.moznostiZgresene || 0), 0),
+    odvecna: Math.max(0, problems.length - naloge.length),
+  };
+}
 
 // --preizkus: namesto modela vrne pričakovano iz naloge.json (pot, rezerve in ocena tečejo kot sicer, 0 $).
 function preizkusneFunkcije() {
@@ -191,6 +211,9 @@ async function meriSliko(s, x) {
       pricakovano: naloge.length,
       prva: problems.length ? oceniRacun(s, problems[0]) : null,
       vse: naloge.filter((n) => problems.some((p) => oceniRacun(n, p).ok)).length,
+      // P3-5: za vsako pričakovano nalogo njej najbližje branje; ugibano = napačno brez oznake [?]. Odvečna branja
+      // (vrstice postopka, ki jih model doda »za vsak primer«) niso ugibanje znakov, štejejo se posebej.
+      ...oznakeBranja(naloge, problems),
     };
   } catch (e) {
     x.napake.push(`branje: ${e.message}`);
@@ -269,6 +292,7 @@ console.log(
   `\nIZID: ${izid.length}/${slike.length} slik; Inštruktor (prepis) ${st((x) => x.ocena.prepis?.ok)}/${sPrepisom.length} pravilnih, ` +
     `slika ${st((x) => x.ocena.prepis?.figure)}/${sPrepisom.length}, več nalog ${st((x) => x.ocena.prepis?.more && x.ocena.prepis?.tasks)}/${sPrepisom.length}; ` +
     `Skeniraj (prva naloga) ${st((x) => x.ocena.branje?.prva?.ok)}/${zBranjem.length}, vse naloge ${st((x) => x.ocena.branje && x.ocena.branje.vse === x.ocena.branje.pricakovano)}/${zBranjem.length}; ` +
+    `branje z ugibanjem ${st((x) => x.ocena.branje?.ugibano > 0)}/${zBranjem.length} slik (merilo 0), označenih znakov ${zBranjem.reduce((a, x) => a + (x.ocena.branje.oznaceno || 0), 0)} (brez prave možnosti ${zBranjem.reduce((a, x) => a + (x.ocena.branje.moznostiZgresene || 0), 0)}), odvečnih branj ${zBranjem.reduce((a, x) => a + (x.ocena.branje.odvecna || 0), 0)}; ` +
     `rešitev ${st((x) => x.ocena.resitev?.pravilno)}/${zResitvijo.length} pravilnih (lastni reševalnik ${st((x) => x.resitev?.vir === "lastni reševalnik")}, AI ${st((x) => x.resitev?.vir === "AI")}, preverjenih ${st((x) => x.ocena.resitev?.preverjeno)}); ` +
     `strošek ${porabljeno().toFixed(4)} $${ustavljeno ? ` (ustavljeno pred mejo ${MAX_USD} $)` : ""}. Izid: ${OUT}`,
 );
