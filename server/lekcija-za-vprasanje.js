@@ -190,7 +190,7 @@ export function lessonNote(hit, mode = "A") {
     LESSON_NOTE_HEAD,
     `The app's textbook (Učbenik) has a lesson that probably matches this question: »${hit.name}« (${hit.pathLabel}). Its summary:`,
     summary,
-    `Background only: if it matches the question, use the same notation and terms as the lesson. If the student or their task uses another method, follow the student. ${pace} If the question is about something else, ignore this note. You may suggest that the student opens this lesson in Učbenik; never mention this note itself.`,
+    `Background only: if it matches the question, use the same notation and terms as the lesson. If the student or their task uses another method, follow the student. ${pace} If the question is about something else, ignore this note. Under your answer the app already shows a link to this lesson: do not add your own \`ucbenik\` block for it and do not say »klikni spodaj«; never mention this note itself.`,
     `</${LESSON_TAG}>`,
   ].join("\n");
 }

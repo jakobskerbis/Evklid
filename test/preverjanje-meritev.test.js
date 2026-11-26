@@ -21,6 +21,15 @@ const IZHODISCE = {
     ujete: 173,
     potrjena: 106,
   },
+  // Surov SymPy z načinom (PV-03): simbolni dokaz → izracunano, številski ali vzorčeni »drži« → numericno.
+  sympy: {
+    potrjene: [],
+    previsoki: [],
+    sibke: ["skoraj-002", "skoraj-006", "skoraj-008", "skoraj-010", "skoraj-026"],
+    alarmi: [],
+    ujete: 187,
+    potrjena: 173,
+  },
   // Ob počasnem SymPy (rok 9 s) skener uporabi lokalno preverjanje, zato so dovoljeni tudi njegovi znani alarmi.
   skener: {
     potrjene: [],
@@ -60,8 +69,8 @@ test("razvrsti: vsak izid ima svoj razred", () => {
   assert.throws(() => razvrsti({ pravilno: true }, "preverjeno"));
 });
 
-for (const motor of ["skener-lokalno", "skener"]) {
-  test(`meritev ${motor}: nič novih napačnih potrditev, alarmov ali izjem; ne slabše od izhodišča`, { skip: motor === "skener" && !HAVE && "SymPy ni na voljo" }, async () => {
+for (const motor of ["skener-lokalno", "skener", "sympy"]) {
+  test(`meritev ${motor}: nič novih napačnih potrditev, alarmov ali izjem; ne slabše od izhodišča`, { skip: motor !== "skener-lokalno" && !HAVE && "SymPy ni na voljo" }, async () => {
     const r = (await izmeri(nabor, { motorji: [motor] }))[motor];
     const z = IZHODISCE[motor];
     const id = (razred) => r.primeri.filter((v) => v.razred === razred).map((v) => v.id);
@@ -72,7 +81,7 @@ for (const motor of ["skener-lokalno", "skener"]) {
     // podmnožico, ker ob počasnem SymPy (rok 9 s) preide na lokalno preverjanje in izid posamezne trditve se lahko
     // spremeni.
     for (const [razred, znani] of [["napacno_potrjena", z.potrjene], ["previsok_status", z.previsoki], ["napacna_sibko", z.sibke]]) {
-      if (motor === "skener-lokalno") assert.deepEqual(id(razred), znani, `${razred} se ne ujema z izhodiščem`);
+      if (motor !== "skener") assert.deepEqual(id(razred), znani, `${razred} se ne ujema z izhodiščem`);
       else assert.deepEqual(novi(razred, motor === "skener" && razred === "napacna_sibko" ? IZHODISCE["skener-lokalno"].sibke : znani), [], `nova: ${razred}`);
     }
     assert.deepEqual(novi("lazni_alarm", z.alarmi), [], "nov lažni alarm");

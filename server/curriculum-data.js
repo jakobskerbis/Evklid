@@ -646,7 +646,9 @@ export const PATHS = {
       ]],
       ["Nihanje in valovanje", [
         "Nihanje | nihalo na vzmeti, matematično nihalo, energija",
+        "Dušeno in vsiljeno nihanje | dušenje in pojemanje amplitude, energija pri dušenem nihanju, vsiljeno nihanje, lastna frekvenca, resonanca in resonančna krivulja",
         "Valovanje | valovna dolžina, frekvenca, hitrost, interferenca",
+        "Stoječe valovanje | odboj na prostem in vpetem krajišču, zaporedne slike valovanja, stoječe valovanje na struni, lastna nihanja, hitrost valovanja in napetost strune",
         "Zvok | jakost, Dopplerjev pojav",
       ]],
       ["Optika", [
@@ -663,12 +665,14 @@ export const PATHS = {
         "Fotoefekt in foton | energija fotona, izstopno delo",
         "Atom | energijski nivoji, spektri",
         "Jedro in radioaktivnost | razpadi, razpolovni čas, jedrska energija",
+        "Jedrske reakcije in reaktor | jedrske reakcije z obstreljevanjem, ohranitveni zakoni, reakcijska energija iz razlike mas, verižna reakcija, zgradba in delovanje jedrskega reaktorja",
       ]],
       ["Astronomija", [
         "Osončje in gibanje planetov | telesa v Osončju, Keplerjevi zakoni, gravitacija in kroženje planetov",
         "Zvezde in vesolje | izsev, Stefanov in Wienov zakon, temperatura zvezd, fuzija v zvezdah, razdalje v vesolju",
       ]],
       ["Priprava na maturo", [
+        "Meritve, grafi in poročilo | računanje z napakami, graf meritev, premica najboljšega prileganja, linearizacija, laboratorijsko poročilo za maturo",
         "Mešane maturitetne naloge | ponovitev vseh letnikov",
       ]],
     ],
@@ -689,6 +693,7 @@ export const PATHS = {
         "Stehiometrija | računanje iz kemijskih enačb, prebitni reaktant",
         "Plini | molska prostornina, plinska enačba",
         "Raztopine | masni delež, množinska koncentracija, redčenje",
+        "Topnost in sestava raztopin | topnost in diagram topnosti, nasičena raztopina, pretvorbe med masnim deležem, množinsko in masno koncentracijo, mešanje raztopin, topnost plinov",
       ]],
       ["Kemijske reakcije", [
         "Urejanje enačb | vrste reakcij",
@@ -708,6 +713,7 @@ export const PATHS = {
         "pH | računanje pH močnih kislin in baz",
         "Šibke kisline in baze | konstanta kislosti, pufri",
         "Titracija | nevtralizacija, računanje",
+        "Elektroliti in ionske reakcije | elektroliti in prevodnost, pravila topnosti, ionski zapis enačb, nastanek oborine, plina in vode, protoliza ionov soli",
       ]],
       ["Redoks in elektrokemija", [
         "Oksidacijska števila | določanje",
@@ -742,6 +748,10 @@ export const PATHS = {
   "KEM-SS-4": {
     label: "Kemija, 4. letnik",
     units: [
+      ["Anorganska kemija", [
+        "Prehodni elementi in koordinacijske spojine | lega in lastnosti prehodnih kovin, več oksidacijskih števil, barve, centralni ion, ligandi, koordinacijsko število, imena kompleksov",
+        "Anorganske snovi v industriji in okolju | aluminij, kloralkalna elektroliza, žveplova, dušikova in fosforjeva kislina, amoniak, gnojila, silicij, steklo, cement, onesnaževanje",
+      ]],
       ["Priprava na maturo", [
         "Splošna in anorganska kemija | ponovitev",
         "Organska kemija | ponovitev",

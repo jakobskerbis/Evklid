@@ -77,7 +77,8 @@ export function privilegedEmail(email, env = process.env) {
   return !!e && (list(env.EVKLID_PILOT_EMAILS).includes(e) || list(env.EVKLID_ADMIN_EMAILS).includes(e));
 }
 
-// Ali je račun (vrstica parents) član pilota ob času now.
+// Ali je račun (vrstica parents) član pilota ob času now. EVKLID_PILOT_EMAILS je ročni seznam lastnika: vanj sodijo
+// samo polnoletni (pilot samo s polnoletnimi, N-11); naloge in meritve pilota mladoletnim zapre pilotMember.
 export function isPilotParent(p, now = Date.now(), env = process.env) {
   const email = verifiedEmail(p);
   if (!email || now >= pilotEndMs(env, now)) return false;

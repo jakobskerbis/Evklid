@@ -151,12 +151,28 @@ test("H6: brez ključa za šifriranje fotografije ne shranimo", async () => {
 
 // H7: mlajšemu od 15 piše »Shranimo samo tvojo oceno in kratko opombo, brez fotografij«, strežnik pa shrani še
 // prepis naloge s fotografije (lahko vsebuje ime z delovnega lista). Prepisa nihče ne bere (skrbnik ga ne vidi).
+// Pilot je od 25. 11. 2026 samo za polnoletne (N-11): mlajši od 15 sploh ni član (403, nič shranjeno). Profil brez
+// fotografije je zdaj polnoleten brez ključa za šifriranje (photoAllowed = false, kot pri H6), pravilo ostane isto.
 test("H7: prepis naloge se brez fotografije ne shrani (besedilo »samo ocena in opomba«)", async () => {
   await withServer(async ({ client, store }) => {
-    const a = await account(client, store, "h7@pilot.si", 14 + 1); // letos 15: mlajši
-    setPilot(store, "h7@pilot.si");
-    const r = await a.call(`/api/students/${a.sid}/pilot/scan`, { method: "POST", body: { cond: "light", ok: true, problems: ["Ime: Maja Novak, 7.b — 3x+2=11"] } });
-    assert.equal(r.status, 200);
-    assert.equal(store.db.prepare("SELECT problems FROM pilot_scans").get().problems, null);
+    const teen = await account(client, store, "h7m@pilot.si", 14 + 1); // letos 15: mlajši, ni član pilota
+    setPilot(store, "h7m@pilot.si");
+    const t = await teen.call(`/api/students/${teen.sid}/pilot/scan`, { method: "POST", body: { cond: "light", ok: true, problems: ["Ime: Maja Novak, 7.b — 3x+2=11"] } });
+    assert.equal(t.status, 403);
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM pilot_scans").get().n, 0);
   });
+  const key = process.env.EVKLID_DATA_KEY;
+  delete process.env.EVKLID_DATA_KEY;
+  try {
+    await withServer(async ({ client, store }) => {
+      const a = await account(client, store, "h7@pilot.si", 19);
+      setPilot(store, "h7@pilot.si");
+      assert.equal((await a.call(`/api/students/${a.sid}/pilot`)).body.photo.allowed, false);
+      const r = await a.call(`/api/students/${a.sid}/pilot/scan`, { method: "POST", body: { cond: "light", ok: true, problems: ["Ime: Maja Novak, 7.b — 3x+2=11"] } });
+      assert.equal(r.status, 200);
+      assert.equal(store.db.prepare("SELECT problems FROM pilot_scans").get().problems, null);
+    });
+  } finally {
+    if (key !== undefined) process.env.EVKLID_DATA_KEY = key;
+  }
 });

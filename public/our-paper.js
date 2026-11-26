@@ -6,6 +6,7 @@
 import { t, locale } from "./i18n.js";
 import { prilagodiSirino } from "./sirina.js";
 import { icon } from "./icons.js";
+import { oznakeHtml } from "./oznake-vsebine.js";
 import { zadrziFokus, escZaOkno } from "./fokus-okna.js";
 import { partKey, simPolas } from "./our-paper-key.js";
 
@@ -124,6 +125,7 @@ export function openOurPaper(paper, { title, rich, onTutor, score = null, onChec
     </header>
     <div class="pv-scroll"><div class="op-body">
       <p class="op-about">${icon("info")}<span>${esc(t("pp.oursAbout"))}</span></p>
+      ${oznakeHtml(paper.labels, { ikona: icon, vrsta: "pola" })}
       ${paper.tools && !(paper.polas?.length && paper.polas.every((x) => x.tools)) ? `<p class="op-tools">${esc(paper.tools)}</p>` : ""}
       ${paper.tasks
         .map((tk, i) => `${headings(tk, paper.tasks[i - 1])}${r.task(tk, i, tk.parts.map((p) => partHtml(tk, p)).join(""))}`)

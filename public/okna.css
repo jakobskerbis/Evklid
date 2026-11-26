@@ -7,7 +7,7 @@
 
 /* ---------- okno ---------- */
 .okno {
-  position: fixed; z-index: 40; display: flex; flex-direction: column; min-width: 0;
+  position: fixed; z-index: var(--z-okno, 40); display: flex; flex-direction: column; min-width: 0;
   background: var(--bg); color: var(--text);
   border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-lg); overflow: hidden;
 }
@@ -50,7 +50,7 @@
 
 /* Predogled pripenjanja ob robu zaslona. */
 .okno-snap {
-  position: fixed; z-index: 39; pointer-events: none; border-radius: var(--radius);
+  position: fixed; z-index: calc(var(--z-okno, 40) - 1); pointer-events: none; border-radius: var(--radius);
   background: color-mix(in srgb, var(--accent) 14%, transparent);
   border: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
   transition: left 0.12s, width 0.12s;
@@ -130,7 +130,7 @@ body.docked > main.view { container: okno / inline-size; min-width: 0; }
 
 /* ---------- spodnji list (telefon, tablica na dotik) ---------- */
 .okno-sheet {
-  left: 0; right: 0; bottom: var(--tabbar-h, 0px); top: auto; z-index: 45;
+  left: 0; right: 0; bottom: var(--tabbar-h, 0px); top: auto; z-index: calc(var(--z-mehurcek, 46) - 1);
   height: min(var(--sheet-h, 60dvh), 100dvh - var(--tabbar-h, 0px));
   border-radius: var(--radius) var(--radius) 0 0; border-block-end: 0;
   /* Stoji nad spodnjo vrstico zavihkov (--tabbar-h, okna.js), ki ima svoj odmik za varno območje;
@@ -144,7 +144,7 @@ body.docked > main.view { container: okno / inline-size; min-width: 0; }
 .okno-sheet .okno-head { cursor: ns-resize; }
 
 /* ---------- mehurček inštruktorja ---------- */
-.chat-bubble { position: fixed; z-index: 46; width: 56px; height: 56px; touch-action: none; }
+.chat-bubble { position: fixed; z-index: var(--z-mehurcek, 46); width: 56px; height: 56px; touch-action: none; }
 .chat-bubble[hidden], .chat-bubble.umaknjen { display: none; }
 .chat-bubble:not(.dragging) { transition: left 0.18s ease-out, top 0.18s ease-out; }
 .cb-main {
@@ -174,6 +174,17 @@ body.docked > main.view { container: okno / inline-size; min-width: 0; }
 @media (hover: hover) { .chat-bubble:hover .cb-x, .chat-bubble:focus-within .cb-x { display: grid; } }
 .chat-bubble.show-x .cb-x { display: grid; }
 .chat-bubble.dragging .cb-x { display: none; }
+/* Jeziček (okna.js placeBubble): na nizkem zaslonu ali kadar bi okrogel mehurček prekril polje ali gumb, se stisne ob rob
+   (24 × 56 px, WCAG 2.5.8). Tap odpre klepet, poteg ga premakne (med vlečenjem je spet okrogel). */
+.chat-bubble.jezicek { width: 24px; }
+.chat-bubble.jezicek .cb-main { width: 24px; border-radius: 14px 0 0 14px; }
+.chat-bubble.jezicek[data-side="left"] .cb-main { border-radius: 0 14px 14px 0; }
+.chat-bubble.jezicek .cb-main svg { width: 18px; height: 18px; }
+.chat-bubble.jezicek .cb-x { display: none; }
+.chat-bubble.jezicek .cb-badge { min-width: 12px; width: 12px; height: 12px; padding: 0; font-size: 0; top: -4px; right: auto; left: -6px; }
+.chat-bubble.jezicek[data-side="left"] .cb-badge { left: auto; right: -6px; }
+.chat-bubble.jezicek[data-side="right"] .cb-preview { right: 34px; }
+.chat-bubble.jezicek[data-side="left"] .cb-preview { left: 34px; }
 
 /* Predogled novega odgovora (kot SMS): ob mehurčku, na strani proti sredini zaslona. */
 .cb-preview {
@@ -191,7 +202,7 @@ body.docked > main.view { container: okno / inline-size; min-width: 0; }
 
 /* Spusti sem, da mehurček izgine (kot pri Messengerju). */
 .cb-drop {
-  position: fixed; z-index: 45; left: 50%; bottom: calc(28px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); transform: translateX(-50%);
+  position: fixed; z-index: calc(var(--z-mehurcek, 46) - 1); left: 50%; bottom: calc(28px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); transform: translateX(-50%);
   width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; pointer-events: none;
   background: color-mix(in srgb, var(--text) 70%, transparent); color: var(--bg); transition: transform 0.15s, background 0.15s;
 }
@@ -210,14 +221,14 @@ body.docked > main.view { container: okno / inline-size; min-width: 0; }
 .vr-dragging { opacity: 0.35; }
 body.vr-busy, body.vr-busy * { cursor: grabbing !important; user-select: none !important; -webkit-user-select: none !important; }
 .vr-ghost {
-  position: fixed; z-index: 70; pointer-events: none; margin: 0 !important; opacity: 0.95;
+  position: fixed; z-index: var(--z-pasica, 70); pointer-events: none; margin: 0 !important; opacity: 0.95;
   background: var(--surface) !important; border-radius: var(--radius-sm); box-shadow: var(--shadow-lg); transform: rotate(-1.5deg);
 }
 /* Kopija zavihka, ki je v vrstici samo ikona: napis se pokaže (pravila .tabs-minor veljajo le v .topbar), zato širina po vsebini. */
 .vr-ghost.tab { width: max-content !important; white-space: nowrap; }
 /* Zavihek pod vrstico: kmalu okno. */
 .vr-ghost.vr-out { outline: 2px solid var(--accent); outline-offset: 2px; transform: none; }
-.vr-mark { position: fixed; z-index: 70; pointer-events: none; border-radius: 2px; background: var(--accent); }
+.vr-mark { position: fixed; z-index: var(--z-pasica, 70); pointer-events: none; border-radius: 2px; background: var(--accent); }
 .vr-mark[hidden] { display: none; }
 /* Zavihek pogleda, ki je v oknu: piko pod ikono. */
 .tab.floating { position: relative; }

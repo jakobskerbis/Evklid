@@ -130,7 +130,7 @@ test("B3-4 obvestilo o zasebnosti: brez gesla računa ga nihče na napravi ne sk
 test("B3-5 /api/account/pilot-photos/:sid ne obide gesla profila brata ali zaklepa računa", async () => {
   await withServer({ accountLock: true }, async ({ client, store }) => {
     const a = await account(client, store, "druz@b3.si", 45, { self: false });
-    const y = new Date().getFullYear() - 16;
+    const y = new Date().getFullYear() - 19; // pilot samo za polnoletne (N-11)
     const s1 = (await a.call("/api/students", { method: "POST", body: { name: "Brat", birth_year: y, consent: true, profile_password: "brat1234" } })).body;
     const s2 = (await a.call("/api/students", { method: "POST", body: { name: "Sestra", birth_year: y, consent: true, profile_password: "sestra1234" } })).body;
     assert.ok(s1.id && s2.id, JSON.stringify([s1, s2]));

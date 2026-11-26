@@ -82,7 +82,7 @@ test("A4-1 vzporedni napačni poskusi gesla na privacy-seen: koliko jih preide o
 test("A4-2 starš z dvema profiloma (z gesli) v Računu izbriše fotografije otroka na svoji napravi", async () => {
   await withServer({}, async ({ client, store }) => {
     const a = await account(client, store, "starsfoto@a4.si", 45, { self: false });
-    const y = new Date().getFullYear() - 16;
+    const y = new Date().getFullYear() - 19; // pilot samo za polnoletne (N-11)
     const s1 = (await a.call("/api/students", { method: "POST", body: { name: "Ana", birth_year: y, consent: true, profile_password: "ana12345" } })).body;
     const s2 = (await a.call("/api/students", { method: "POST", body: { name: "Bor", birth_year: y, consent: true, profile_password: "bor12345" } })).body;
     // otrok na svoji napravi (druga seja) shrani fotografijo; tu poenostavljeno: ista seja, nato odklepi izbrisani (starševa naprava)

@@ -73,6 +73,11 @@
   color: var(--text);
 }
 :root, :root.dark {
+  /* Plasti plavajočih elementov (docs/NACRT-UX-UI.md §4): vsebina < spodnja vrstica < okno < mehurček < obvestilo
+     < pojavna okna < pasice < prekrivni dialog < tipkovnica < zaslon ob napaki zagona. Mehurček je nad okni, ker se
+     jim umakne sam (okna.js placeBubble) in ga mora biti mogoče prijeti tudi nad oknom. Nove vrednosti samo tukaj. */
+  --z-noga: 30; --z-okno: 40; --z-mehurcek: 46; --z-obvestilo: 50; --z-pojavno: 60; --z-pasica: 70; --z-modal: 100;
+  --z-tipkovnica: 500; --z-zagon: 1000;
   --surface-base: var(--surface); --text-base: var(--text); --muted-base: var(--muted); --surface-2-base: var(--surface-2);
   --border-base: var(--border); --accent-base: var(--accent); --accent-soft-base: var(--accent-soft);
 }
@@ -249,7 +254,7 @@ html[data-zacetek-pod] body > main.view:not([data-posnetek]) { visibility: hidde
 .pm-avatar.sm { width: 26px; height: 26px; font-size: 0.82rem; }
 .pm-avatar.big { width: 44px; height: 44px; border-radius: 14px; font-size: 1.25rem; }
 .profile-pop {
-  position: fixed; z-index: 60; width: min(290px, calc(100vw - 16px)); max-height: calc(100dvh - 88px); overflow-y: auto;
+  position: fixed; z-index: var(--z-pojavno, 60); width: min(290px, calc(100vw - 16px)); max-height: calc(100dvh - 88px); overflow-y: auto;
   margin: 0; padding: 6px; box-shadow: var(--shadow-lg, 0 12px 40px rgba(0, 0, 0, 0.18)); animation: dd-in 0.14s ease; transform-origin: top right;
 }
 [dir="rtl"] .profile-pop { transform-origin: top left; }
@@ -275,7 +280,7 @@ html[data-zacetek-pod] body > main.view:not([data-posnetek]) { visibility: hidde
 .brand:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 .brand[aria-expanded="true"] .logo { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent); }
 .quick-pop {
-  position: fixed; z-index: 60; width: min(360px, calc(100vw - 16px)); max-height: calc(100dvh - 88px); overflow-y: auto;
+  position: fixed; z-index: var(--z-pojavno, 60); width: min(360px, calc(100vw - 16px)); max-height: calc(100dvh - 88px); overflow-y: auto;
   margin: 0; padding: 8px; box-shadow: var(--shadow-lg, 0 12px 40px rgba(0, 0, 0, 0.18)); animation: dd-in 0.14s ease; transform-origin: top left;
 }
 [dir="rtl"] .quick-pop { transform-origin: top right; }
@@ -434,13 +439,15 @@ body.onboarding .test-notice .tn-report, body.auth-mode .test-notice .tn-report 
 .leaderboard li { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); }
 .leaderboard li.me { font-weight: 800; color: var(--accent); }
 .toast {
-  position: fixed; bottom: 96px; left: 50%; transform: translateX(-50%); z-index: 50;
+  position: fixed; bottom: calc(var(--tabbar-h, 0px) + 16px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); left: 50%; transform: translateX(-50%); z-index: var(--z-obvestilo, 50);
+  pointer-events: none; /* tapi gredo skozi; mesto izbere okna.js placeToast (nad spodnjo vrstico ali pod zgornjo) */
   display: flex; align-items: center; gap: 8px; width: max-content; max-width: calc(100% - 32px); /* left: 50 % bi sicer omejil širino na pol zaslona (dolga sporočila v 5 vrsticah na 360 px) */
   background: var(--text); color: var(--bg); padding: 12px 18px; border-radius: 14px; box-shadow: var(--shadow-lg); font-weight: 700;
   animation: rise 0.25s ease;
 }
 .toast svg.i { color: var(--gold); }
-@keyframes rise { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
+/* Dvig največ 4 px: toliko razmika do ovir pusti okna.js placeToast, da obvestilo ob prikazu ne zdrsne čez vrstico za pisanje. */
+@keyframes rise { from { opacity: 0; transform: translate(-50%, 4px); } to { opacity: 1; transform: translate(-50%, 0); } }
 
 /* ---------- klepet z inštruktorjem ---------- */
 .chat-view { display: grid; grid-template-columns: var(--split-chat, 270px) minmax(0, 1fr); }
@@ -471,7 +478,19 @@ body.onboarding .test-notice .tn-report, body.auth-mode .test-notice .tn-report 
    »Matematika · Vodenje · 1. letnik« brez sivih pilul, orodja (prijava, skeniraj, kalkulator) skupaj na desni. */
 .chat-head { justify-content: flex-start; }
 .chat-head h1 { flex: 0 1 auto; min-width: 0; }
-.chat-head #chat-state { flex: 1 1 auto; min-width: 0; gap: 0; overflow: hidden; }
+.chat-head #chat-state { flex: 1 1 auto; min-width: 0; gap: 0; overflow: hidden; } /* pred @container klepet: enaka specifičnost, kasnejše pravilo zmaga */
+/* Ozek klepet (iPad pokončno s seznamom pogovorov, ozko okno): oznake v svoji vrstici pod naslovom, kot na telefonu,
+   ne odrezane ob naslovu (UX-102: na 820 px je glava široka 550 px, ostalo je »…atika ⌄« in izbire načina ni bilo
+   mogoče tapniti). Merilo je širina klepeta, ne zaslona. */
+.chat { container: klepet / inline-size; }
+@container klepet (max-width: 699px) {
+  .chat-head { flex-wrap: wrap; row-gap: 2px; }
+  .chat-head h1 { flex: 1 1 0; }
+  .chat-head #chat-state { order: 10; flex: 1 1 100%; max-width: none; overflow: visible; flex-wrap: wrap; padding-bottom: 4px; }
+  .chat-head #chat-state .chip { display: inline-flex; max-width: none; overflow: visible; }
+  .chat-head #chat-state .chip-btn { order: -1; }
+  .chat-head #chat-state:empty, .chat-view:has(.sidebar.open) .chat-head #chat-state { display: none; }
+}
 .chat-head #chat-state .chip:not(.chip-btn) { background: none; border-radius: 0; padding: 0; font-weight: 600; font-size: 0.85rem; }
 .chat-head #chat-state .chip:not(.chip-btn) ~ .chip:not(.chip-btn)::before { content: "·"; margin-inline: 6px 1px; } /* + 5 px razmika v oznaki = enako na obeh straneh */
 .chat-head #chat-state .chip-btn { margin-inline-end: 10px; }
@@ -894,7 +913,7 @@ label.check input { width: 18px; height: 18px; accent-color: var(--accent); }
 .fig figcaption { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.8rem; color: var(--muted); margin-top: 6px; font-weight: 600; }
 
 /* ---------- uvodni ogled ---------- */
-.tour { position: fixed; inset: 0; z-index: 60; }
+.tour { position: fixed; inset: 0; z-index: var(--z-pojavno, 60); }
 .tour-spot { position: fixed; border-radius: 16px; box-shadow: 0 0 0 9999px rgba(12, 14, 30, 0.6); transition: all 0.2s ease; pointer-events: none; }
 .tour-card {
   position: fixed; left: 50%; transform: translateX(-50%); width: min(380px, calc(100% - 32px));
@@ -1306,7 +1325,7 @@ body.onboarding .tabs, body.onboarding .tabbar, body.onboarding #modebar, body.o
 .stat.usage-meter svg.i { color: var(--accent); }
 .stat.usage-meter:hover { background: var(--accent-soft); }
 .usage-pop {
-  position: fixed; z-index: 60; top: 64px; inset-inline-end: 16px; width: min(440px, calc(100vw - 32px));
+  position: fixed; z-index: var(--z-pojavno, 60); top: 64px; inset-inline-end: 16px; width: min(440px, calc(100vw - 32px));
   max-height: calc(100vh - 88px); overflow-y: auto; margin: 0; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
 }
 .usage-pop[hidden] { display: none; }
@@ -1437,7 +1456,7 @@ body.onboarding .tabs, body.onboarding .tabbar, body.onboarding #modebar, body.o
 .open-sk-lbl { fill: var(--text); font-size: 13px; font-style: italic; }
 .open-sk-name { font-style: normal; font-weight: 600; }
 .open-sk-vlbl { fill: var(--danger); font-weight: 600; }
-.open-sim { position: fixed; inset: 0; z-index: 70; background: rgba(10, 14, 22, 0.45); display: flex; align-items: center; justify-content: center; padding: calc(12px + var(--varno-zg, env(safe-area-inset-top, 0px))) max(12px, env(safe-area-inset-right, 0px)) calc(12px + var(--varno-sp, env(safe-area-inset-bottom, 0px))) max(12px, env(safe-area-inset-left, 0px)); }
+.open-sim { position: fixed; inset: 0; z-index: var(--z-pasica, 70); background: rgba(10, 14, 22, 0.45); display: flex; align-items: center; justify-content: center; padding: calc(12px + var(--varno-zg, env(safe-area-inset-top, 0px))) max(12px, env(safe-area-inset-right, 0px)) calc(12px + var(--varno-sp, env(safe-area-inset-bottom, 0px))) max(12px, env(safe-area-inset-left, 0px)); }
 .open-sim-card { background: var(--surface); color: var(--text); border-radius: var(--radius); box-shadow: var(--shadow-lg); width: min(960px, 100%); max-height: 100%; overflow-y: auto; display: flex; flex-direction: column; min-width: 0; }
 .open-sim-head { position: sticky; top: 0; z-index: 1; background: var(--surface); display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-bottom: 1px solid var(--border); }
 .open-sim-head h2 { flex: 1; min-width: 0; margin: 0; font-size: 1.05rem; overflow-wrap: anywhere; }

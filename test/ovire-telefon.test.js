@@ -213,7 +213,7 @@ test("registracija v brskalniku: shranjeno vabilo (/vabilo) gre na strežnik sku
       assert.ok(summary.height >= 44, `»Imam kodo« ${summary.height}px`);
       await f.locator('[name="email"]').fill("vabilo-koda@primer.si");
       await f.locator('[name="password"]').fill("geslo-12345");
-      await f.locator('[name="birth_date"]').fill(`${YEAR - 17}-03-03`);
+      await f.locator('[name="birth_date"]').fill(`${YEAR - 19}-03-03`); // pilot samo za polnoletne (N-11)
       for (const box of await f.locator('input[type="checkbox"][required]').all()) await box.check();
       const [req] = await Promise.all([page.waitForRequest((r) => r.url().endsWith("/api/auth/register")), f.locator('button[type="submit"]').click()]);
       const res = await req.response();

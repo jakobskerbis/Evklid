@@ -1,6 +1,6 @@
 // Zapis matematične trditve, skupen vsem delom Evklida (docs/preverjanje.md, PV-01). Vsak vir (inštruktor, skener,
-// kalkulator, učbenik, generatorji, pole, laboratorij …) odda trditve v tem zapisu; usmerjevalnik (PV-03) jih
-// preveri, status pa se izračuna tukaj iz dokazov. Brez DOM in brez omrežja: teče v brskalniku, Node in aplikaciji.
+// kalkulator, učbenik, generatorji, pole, laboratorij …) odda trditve v tem zapisu; motorji (SymPy z načinom
+// how od PV-03, Lean, lokalna algebra) jih preverijo, status pa se izračuna tukaj iz dokazov. Brez DOM in brez omrežja: teče v brskalniku, Node in aplikaciji.
 //
 // Trditev:
 //   id           niz, enoličen znotraj odgovora ali vira (npr. "k3")
