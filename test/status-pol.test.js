@@ -1,7 +1,7 @@
 // PV-11 (docs/preverjanje.md, »Status nalog na polah«): rešitve nalog na polah mature in NPZ v trditve.
 import { test, after } from "node:test";
 import assert from "node:assert/strict";
-import { resitveDela, korakiPoti, mutiraj, trditveDela, popisPol, povzemi, porocilo } from "../scripts/status-pol.mjs";
+import { resitveDela, korakiPoti, mutiraj, trditveDela, popisPol, povzemi, porocilo, pokritostOdgovora } from "../scripts/status-pol.mjs";
 import * as cas from "../server/cas.js";
 
 const HAVE = await cas.casAvailable();
@@ -32,8 +32,11 @@ test("korakiPoti: implikacija, veznik, »in« sredi izpeljave, »ali« kot ena t
 test("korakiPoti: seznami in pogoji niso koraki", () => {
   // seznam enačb v podatkih
   assert.deepEqual(pari("enačbe $2x^{2} + x - 6 = 0$, $x^{2} + 6x + 34 = 0$ in $9x^{2} - 12x + 4 = 0$"), []);
-  // hkratna pogoja (lažni alarm pred pregledom)
-  assert.deepEqual(pari("Pogoja: $x + 3 > 0$ in $x - 1 > 0$, torej $x > 1$."), ["x - 1 > 0 | x > 1"]);
+  // hkratna pogoja: sklep sledi iz obeh, ne iz zadnjega (pregled PV-11: sicer lažna potrditev x > -1)
+  assert.deepEqual(pari("Pogoja: $x + 3 > 0$ in $x - 1 > 0$, torej $x > 1$."), []);
+  assert.deepEqual(pari("Pogoja: $x - 2 > 0$ in $x + 1 > 0$, torej $x > -1$."), []);
+  // »oziroma« pomeni »po vrsti«
+  assert.deepEqual(pari("$2x + 1 = 5$ oziroma $3x - 1 = 8$"), []);
   // formuli brez veznika in rešena oblika na začetku
   assert.deepEqual(pari("Velja $2x = 4$. Potem $3y = 6$."), []);
   assert.deepEqual(pari("$x = 2$, torej $x + 1 = 3$."), []);
@@ -52,9 +55,23 @@ test("trditveDela: pravilen korak izračunano, napačen napaka, prazen brez stat
   const st = async (text) => (await trditveDela({ ways: [{ text }] }, { cas })).filter((x) => x.vir === "korak").map((x) => x.status);
   assert.deepEqual(await st("$$x + 2 = -2 \\Rightarrow x = -4$$"), ["izracunano"]);
   assert.deepEqual(await st("$$x + 2 = -2 \\Rightarrow x = -3$$"), ["napaka"]);
-  assert.deepEqual(await st("$5x^{2} = 180$ in $x^{2} = 36$, torej $x = 6$ ali $x = -6$"), ["izracunano"]);
+  assert.deepEqual(await st("$4x^{2} + x^{2} = 180$, torej $5x^{2} = 180$ in $x^{2} = 36$, torej $x = 6$ ali $x = -6$"), ["izracunano", "izracunano", "izracunano"]);
+  // »A in B, torej C« na začetku je sistem ali seznam: C ne sledi le iz B
+  assert.deepEqual(await st("$5x^{2} = 180$ in $x^{2} = 36$, torej $x = 6$ ali $x = -6$"), []);
   // iz enačbe brez realne rešitve sledi vsaka: ni potrditve
   assert.deepEqual(await st("$$x^{2} + 6x + 34 = 0 \\Rightarrow x^{2} = 5$$"), ["nepreverjeno"]);
+  // prazna premisa tudi v obliki »ali« in pri neenačbi (pregled PV-11)
+  assert.deepEqual(await st("$x^{2} + 1 = 0$ ali $x^{2} + 4 = 0$, torej $x^{2} = 7$"), ["nepreverjeno"]);
+  assert.deepEqual(await st("$x^{2} + 1 < 0$, torej $x^{2} < -5$"), []); // ∅ → ∅: ni korak
+  assert.deepEqual(await st("$x^{2} + 1 < 0$, torej $x < 5$"), ["nepreverjeno"]);
+});
+
+test("pokritost odgovora: črka ali beseda ni preverjena, rezultat preverjene trditve je", () => {
+  const ok = [{ vir: "racun", tex: "44 + 3 = 47", status: "numericno" }];
+  assert.equal(pokritostOdgovora({ answer: "C – Klinefelter" }, ok).status, "nepreverjeno");
+  assert.equal(pokritostOdgovora({ answer: "$47$ kromosomov" }, ok), null);
+  assert.equal(pokritostOdgovora({ answer: "$x = 1{,}5$" }, [{ vir: "korak", tex: "2x = 3 → x = 1.5", status: "izracunano" }]), null);
+  assert.equal(pokritostOdgovora({ answer: "$x = 2$" }, []).why, "del brez preverjene trditve");
 });
 
 test("popis in poročilo ene pole (brez SymPy)", async () => {

@@ -33,7 +33,8 @@ export function resitveDela(part) {
 const FORMULA = /\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g;
 const IMPLIKACIJA = /\\(?:Rightarrow|Longrightarrow|implies|Leftrightarrow|iff)|⇒|⇔/;
 // besedilo med formulama, ki pove, da druga sledi iz prve (»$4x^2 + x^2 = 180$, torej $5x^2 = 180$«)
-const VEZNIK = /^\s*[,.:;]?\s*(?:torej|sledi|zato|od tod|in zato|dobimo|oziroma)\s*[,:]?\s*$/i;
+// »oziroma« ni veznik: pogosto pomeni »po vrsti« ($2x + 1 = 5$ oziroma $3x - 1 = 8$)
+const VEZNIK = /^\s*[,.:;]?\s*(?:torej|sledi|zato|od tod|in zato|dobimo)\s*[,:]?\s*$/i;
 // »in« veže le enačbi sredi izpeljave (»…, torej $5x^2 = 180$ in $x^2 = 36$«); pri neenačbah pomeni hkratne pogoje
 // ($x + 3 > 0$ in $x - 1 > 0$), na začetku pa seznam (»enačbe $A$, $B$ in $C$«)
 const IN = /^\s*,?\s*in\s*$/i;
@@ -78,9 +79,12 @@ export function korakiPoti(besedilo) {
     }
     // »in« le sredi izpeljave (veriga ima že korak): »enačbe $A$, $B$ in $C$« je seznam, ne korak
     const enacbe = zadnja && zadnja.length > 1 && zadnja[zadnja.length - 1]?.vrsta === "enacba" && kosi.every((k) => k?.vrsta === "enacba");
-    if (vmes != null && zadnja && (VEZNIK.test(vmes) || (IN.test(vmes) && enacbe))) zadnja.push(...kosi);
+    if (vmes != null && zadnja && !zadnja.pogoji && (VEZNIK.test(vmes) || (IN.test(vmes) && enacbe))) zadnja.push(...kosi);
     else {
+      // »$x - 2 > 0$ in $x + 1 > 0$, torej $x > 2$«: sklep sledi iz obeh pogojev, ne iz zadnjega
+      const pogoji = vmes != null && zadnja && IN.test(vmes);
       zadnja = [...kosi];
+      if (pogoji) zadnja.pogoji = true;
       verige.push(zadnja);
     }
   });
@@ -119,7 +123,7 @@ export async function trditveDela(part, { cas = null } = {}) {
 }
 
 /**
- * Vstavljena napaka v desno stran koraka: zadnje celo število v zapisu »potem« poveča za 1 (x = 4 → x = 5,
+ * Vstavljena napaka v formulo koraka: zadnje celo število v zapisu poveča za 1 (x = 4 → x = 5,
  * 5x^2 = 180 → 5x^2 = 181). Vrne null, če zapis nima števila. Le za merjenje zaznavanja napak.
  */
 export function mutiraj(potem) {
@@ -129,7 +133,8 @@ export function mutiraj(potem) {
 }
 
 /**
- * Zaznavanje napak na resničnih korakih pol: vsak potrjen korak (izracunano) dobi vstavljeno napako (mutiraj).
+ * Zaznavanje napak na resničnih korakih pol: vsak potrjen korak (izracunano) dobi vstavljeno napako (mutiraj) enkrat
+ * v drugi formuli (»potem«) in enkrat v prvi (»prej«; ujame prazne premise in nadmnožice).
  * ujete = napaka; napacnoPotrjene = spremenjeni korak še vedno potrjen; ostalo brez statusa.
  */
 export async function izmeriMutacije(pole, { cas }) {
@@ -138,18 +143,50 @@ export async function izmeriMutacije(pole, { cas }) {
     for (const n of pl.naloge)
       for (const t of n.trditve) {
         if (t.vir !== "korak" || t.status !== "izracunano" || !t.par) continue;
-        const potem = mutiraj(t.par.potem);
-        if (!potem) continue;
-        const k = { ...t.par, potem, tex: `${t.par.prej} → ${potem}` };
-        const c = await cas.casCheck("korak", [k.prej, k.potem, k.neznanka, ""]);
-        izidi.push({ pola: pl.id, n: n.n, tex: k.tex, status: casStatus(c, k), why: c.why || "" });
+        for (const [vrsta, prej, potem] of [["potem", t.par.prej, mutiraj(t.par.potem)], ["prej", mutiraj(t.par.prej), t.par.potem]]) {
+          if (!prej || !potem) continue;
+          const k = { ...t.par, prej, potem, tex: `${prej} → ${potem}` };
+          const v = await vrstaKoraka(cas, k);
+          if (v === "ni") continue; // pokvarjena premisa brez rešitve (in sklep prav tako): ni korak
+          const c = v === "prazen" ? { ok: null, why: PRAZEN } : await cas.casCheck("korak", [k.prej, k.potem, k.neznanka, ""]);
+          izidi.push({ pola: pl.id, n: n.n, oznaka: n.oznaka, vrsta, tex: k.tex, status: casStatus(c, k), why: c.why || "" });
+        }
       }
   return {
     izidi,
     vstavljenih: izidi.length,
     ujete: izidi.filter((x) => x.status === "napaka").length,
     napacnoPotrjene: izidi.filter((x) => x.status === "izracunano" || x.status === "numericno").length,
+    poVrsti: Object.fromEntries(
+      ["potem", "prej"].map((v) => {
+        const i = izidi.filter((x) => x.vrsta === v);
+        return [v, { vstavljenih: i.length, ujete: i.filter((x) => x.status === "napaka").length, napacnoPotrjene: i.filter((x) => x.status === "izracunano" || x.status === "numericno").length }];
+      }),
+    ),
   };
+}
+
+const STEVILO = /-?\d+(?:\.\d+)?/g;
+const stevila = (tex) =>
+  String(tex)
+    .replace(/(\d)\{,\}(\d)/g, "$1.$2")
+    .replace(/(\d),(\d)/g, "$1.$2")
+    .replace(/(\d)\\?[ ,;]\s?(?=\d{3}(?!\d))/g, "$1")
+    .match(STEVILO)
+    ?.map(Number) || [];
+
+/**
+ * Pokritost končnega odgovora dela: odgovor mora imeti število, ki je rezultat (zadnje število) katere od preverjenih
+ * trditev dela. Odgovor s črko ali besedo (»C – Klinefelter«) ali brez povezave z računom ni preverjen, tudi če so
+ * vmesni računi pravilni. Vrne trditev »odgovor« s statusom nepreverjeno ali null (odgovor je pokrit).
+ */
+export function pokritostOdgovora(part, trditve) {
+  const odgovor = [part.answer, ...(part.choices || []).filter((_, i) => (part.correct || []).includes(i))].filter(Boolean).join(" ");
+  const ok = trditve.filter((x) => x.status !== "nepreverjeno" && x.status !== "napaka");
+  const zadnja = new Set(ok.map((x) => stevila(x.tex).pop()).filter((x) => x != null));
+  const v = stevila(odgovor);
+  if (v.length && v.some((a) => [...zadnja].some((b) => Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a))))) return null;
+  return { vir: "odgovor", kje: "odgovor", tex: String(odgovor).slice(0, 120), status: "nepreverjeno", why: ok.length ? "odgovor ni rezultat preverjene trditve" : "del brez preverjene trditve" };
 }
 
 export async function popisPol({ predpona = "", cas = null } = {}) {
@@ -160,9 +197,15 @@ export async function popisPol({ predpona = "", cas = null } = {}) {
     const naloge = [];
     for (const task of p.tasks || []) {
       const trditve = [];
-      for (const part of task.parts || []) for (const x of await trditveDela(part, { cas })) trditve.push({ ...x, del: part.id || "" });
+      for (const part of task.parts || []) {
+        const td = (await trditveDela(part, { cas })).map((x) => ({ ...x, del: part.id || "" }));
+        const o = pokritostOdgovora(part, td);
+        trditve.push(...td, ...(o ? [{ ...o, del: part.id || "" }] : []));
+      }
       const tocke = (task.parts || []).reduce((s, x) => s + (Number(x.points) || 0), 0);
-      naloge.push({ pola: task.pola ?? null, n: task.n, tocke, delov: (task.parts || []).length, status: statusOdgovora(trditve.map((x) => x.status)), trditve });
+      // oznaka: pola, sklop (A/B na maturi) in številka, da je naloga v poročilu enolična
+      const oznaka = [(p.polas || [1]).length > 1 && task.pola != null ? `${task.pola}/` : "", task.section ? `${task.section}` : "", task.n].join("");
+      naloge.push({ pola: task.pola ?? null, sklop: task.section ?? null, n: task.n, oznaka, tocke, delov: (task.parts || []).length, status: statusOdgovora(trditve.map((x) => x.status)), trditve });
     }
     pole.push({ id: p.id, predmet: p.subject || "", polas: (p.polas || [1]).length, naloge });
   }
@@ -213,20 +256,22 @@ export function porocilo(pole, { datum, commit, ukaz = "", dodatek = "", mutacij
   for (const [k, s] of Object.entries(p.poViru)) v.push(`| ${k} | ${tocke(s.vse)} | ${tocke(s.izracunano)} | ${tocke(s.numericno)} | ${tocke(s.delno)} | ${tocke(s.napaka)} | ${tocke(s.nepreverjeno)} |`);
   if (mutacije) {
     v.push("", "## Zaznavanje vstavljenih napak", "");
-    v.push("Vsak potrjen korak smo pokvarili: zadnje celo število na desni strani se poveča za 1 (x = 4 → x = 5).", "");
-    v.push(`- Ujete: ${ki(mutacije.ujete, mutacije.vstavljenih)}; napačno potrjene: ${ki(mutacije.napacnoPotrjene, mutacije.vstavljenih)}.`);
+    v.push("Vsak potrjen korak smo pokvarili dvakrat: zadnje celo število v drugi formuli koraka (»potem«) in posebej v prvi");
+    v.push("(»prej«) se poveča za 1 (x = 4 → x = 5). Pokvarjena prva formula preizkusi tudi prazne premise in nadmnožice.", "");
+    v.push(`- Skupaj ujete: ${ki(mutacije.ujete, mutacije.vstavljenih)}; napačno potrjene: ${ki(mutacije.napacnoPotrjene, mutacije.vstavljenih)}.`);
+    for (const [k, x] of Object.entries(mutacije.poVrsti || {})) v.push(`- Pokvarjena formula »${k}«: ujete ${ki(x.ujete, x.vstavljenih)}; napačno potrjene ${tocke(x.napacnoPotrjene)}.`);
     const os = mutacije.izidi.filter((x) => x.status !== "napaka");
-    for (const x of os) v.push(`- ${x.status}: \`${x.pola}\` naloga ${x.n}: \`${x.tex.replace(/`/g, "'").slice(0, 160)}\`${x.why ? ` (${x.why})` : ""}`);
+    for (const x of os) v.push(`- ${x.status} (${x.vrsta}): \`${x.pola}\` naloga ${x.oznaka}: \`${x.tex.replace(/`/g, "'").slice(0, 160)}\`${x.why ? ` (${x.why})` : ""}`);
   }
   v.push("", "## Zaznane napake", "");
   const nap = pole.flatMap((pl) => pl.naloge.flatMap((n) => n.trditve.filter((x) => x.status === "napaka").map((x) => ({ pl: pl.id, n, ...x }))));
   if (!nap.length) v.push("Nobene.");
-  for (const x of nap) v.push(`- \`${x.pl}\` naloga ${x.n.n}${x.del} (${x.vir}, ${x.kje}): \`${x.tex.replace(/`/g, "'").slice(0, 200)}\`${x.why ? ` (${x.why})` : ""}`);
+  for (const x of nap) v.push(`- \`${x.pl}\` naloga ${x.n.oznaka}${x.del} (${x.vir}, ${x.kje}): \`${x.tex.replace(/`/g, "'").slice(0, 200)}\`${x.why ? ` (${x.why})` : ""}`);
   v.push("", "## Koraki z izgubljeno posamezno rešitvijo", "");
   v.push("Pravilni le, če izgubljeno rešitev izloči kontekst naloge. Brez statusa.", "");
   const izg = pole.flatMap((pl) => pl.naloge.flatMap((n) => n.trditve.filter((x) => x.vrsta === "izguba" && x.status !== "napaka").map((x) => ({ pl: pl.id, n, ...x }))));
   if (!izg.length) v.push("Nobenega.");
-  for (const x of izg) v.push(`- \`${x.pl}\` naloga ${x.n.n}${x.del}: \`${x.tex.replace(/`/g, "'")}\` (${x.why})`);
+  for (const x of izg) v.push(`- \`${x.pl}\` naloga ${x.n.oznaka}${x.del}: \`${x.tex.replace(/`/g, "'")}\` (${x.why})`);
   if (dodatek) v.push("", dodatek.trim());
   v.push("", "## Po polah", "");
   v.push("| Pola | Nalog | izracunano | numericno | delno | napaka | brez statusa |", "| --- | --- | --- | --- | --- | --- | --- |");
@@ -237,11 +282,15 @@ export function porocilo(pole, { datum, commit, ukaz = "", dodatek = "", mutacij
   v.push("", "## Po nalogah", "");
   v.push("Status naloge (izr izračunano, num numerično, del delno, NAP napaka, – brez statusa) ter preverjene/vse trditve.", "");
   for (const pl of pole) {
-    const vrstica = pl.naloge.map((n) => `${n.pola != null && pl.polas > 1 ? `${n.pola}/` : ""}${n.n} ${KRATKO[n.status]} ${n.trditve.filter((x) => x.status !== "nepreverjeno").length}/${n.trditve.length}`);
+    const vrstica = pl.naloge.map((n) => `${n.oznaka} ${KRATKO[n.status]} ${n.trditve.filter((x) => x.status !== "nepreverjeno").length}/${n.trditve.length}`);
     v.push(`- **${pl.id}**: ${vrstica.join(" · ")}`);
   }
   v.push("", "## Omejitve", "");
-  v.push("- »korak« preveri le zaporedni (ne)enačbi z isto eno neznanko v sosednjih vrsticah poti rešitve (PV-06, PV-10).");
+  v.push("- »korak« preveri le pare (ne)enačb z isto eno neznanko: sosednji čisti vrstici (PV-10) ter verige z »⇒« in vezniki");
+  v.push("  v besedilu poti. Par, kjer ni prva ne druga formula rešljiva (∅ → ∅), ni korak in ni štet. Posledica (korak, ki doda");
+  v.push("  rešitev, npr. kvadriranje) šteje za pravilen korak; tuje rešitve izloči preizkus v rešitvi.");
+  v.push("- Status »numerično« naloge pomeni: vsak del ima končni odgovor, ki je rezultat preverjene trditve, in vse trditve so");
+  v.push("  pravilne. Odgovor s črko ali besedo je brez statusa, zato je taka naloga največ »delno«.");
   v.push("- Besedilne utemeljitve, skice, grafi in izbirni odgovori brez formule ostanejo brez statusa.");
   v.push("- Odgovor in točkovnik preračuna tudi test pol (server/our-papers.js); to poročilo ga ne ponavlja.");
   v.push("");

@@ -166,7 +166,18 @@ export const casStatus = (r, k = null) => {
 // že »račun«, lesson-identity). Dve zaporedni »enačbi« brez rešitve (dve napačni identiteti) bi bili za ukaz korak
 // enakovredni (∅ = ∅): tak par tudi ni korak, da napačni računi ne dobijo potrditve.
 async function mnozica(cas, zapis, x) {
-  if (/ ali |<|>/.test(zapis)) return null;
+  if (/ ali /.test(zapis)) {
+    // unija: prazna, če so prazni vsi deli; R, če je R kateri koli
+    const m = await Promise.all(zapis.split(" ali ").map((z) => mnozica(cas, z.trim(), x)));
+    return m.includes("R") ? "R" : m.every((y) => y === "prazna") ? "prazna" : null;
+  }
+  if (/<|>/.test(zapis)) {
+    for (const [trditev, ime] of [["R", "R"], ["∅", "prazna"]]) {
+      const r = await cas.casCheck("ineq", [zapis, x, trditev]);
+      if (r.ok === true) return ime;
+    }
+    return null;
+  }
   const [a, b] = zapis.split("=");
   for (const [trditev, ime] of [["all", "R"], ["none", "prazna"]]) {
     const r = await cas.casCheck("solve", [`${a} = ${b}`, x, trditev]);
