@@ -1182,3 +1182,35 @@ test("AUDIT-066 (pregled): vprašanja, citati in pogoji ostanejo brez popravka",
   // prave napake z »če«/»ali«/»?« drugje v vrstici ostanejo ujete
   for (const a of [R`Če najprej množimo: $7 \cdot 8 = 54$. Zdaj prištej še $2$.`, R`Ali veš, zakaj? Velja $7 \cdot 8 + 2 = 59$.`]) assert.ok(codeFindings(a, presolve(AR, { first: true }), AR).issue, a);
 });
+
+// AUDIT-063: znan odvod (presolve) se primerja z zadnjim »f'(x) = …« v odgovoru.
+test("AUDIT-063: napačen odvod dobi issue, pravilen in učenčev zapis ne", () => {
+  const R = String.raw;
+  const cases = [
+    ["Odvajaj x^3", R`Odvod je $f'(x) = 2x$.`, true],
+    ["Odvajaj x^3", R`$f'(x) = 3 \cdot x^{3-1} = 3x^{2}$`, false],
+    ["Odvajaj sin(x)", R`$y' = -\cos x$`, true],
+    ["Odvajaj sin(x)", R`$y' = \cos x$`, false],
+    ["Odvajaj x^2 + 3x", R`$f^{\prime}(x) = 2x$`, true],
+    ["Odvajaj ln(x)", R`$f'(x) = \frac{1}{x}$`, false],
+    ["Odvajaj f(x) = e^{3x}", R`$f'(x) = e^{3x}$`, true],
+    ["Odvajaj f(x) = e^{3x}", R`$f'(x) = 3e^{3x}$`, false],
+    ["Odvajaj f(x) = x^2 sin x", R`$f'(x) = 2x \sin x + x^2 \cos x$`, false],
+    ["Odvajaj x^3", R`Pravilo: $(x^n)' = n x^{n-1}$, torej $f'(x) = 3x^2$.`, false],
+    ["Odvajaj x^3", R`Ti si napisal $f'(x) = 2x$, prav je $f'(x) = 3x^2$.`, false],
+  ];
+  for (const [q, a, bad] of cases) {
+    const f = codeFindings(a, presolve(q, { first: true }), q);
+    assert.equal(!!f.issue, bad, `${q} | ${a} | ${f.issue}`);
+  }
+});
+
+test("AUDIT-063 (pregled): drugi odvod, f'(x) = 0 in \\mathrm{e} niso napačen odvod", () => {
+  const R = String.raw;
+  const q = "Odvajaj x^3 - 3x";
+  for (const a of [R`$f'(x) = 3x^2 - 3$. Drugi odvod je $f''(x) = 6x$.`, R`$f'(x) = 3x^2 - 3$. Stacionarne točke: $f'(x) = 0$.`, R`$f'(x) = 3x^2 - 3 = 0$, torej $x = \pm 1$.`, "$f'(x) = 3x^2 - 3$\nPostavimo $f'(x) = 0$ in rešimo."]) {
+    assert.equal(codeFindings(a, presolve(q, { first: true }), q).issue, null, a);
+  }
+  assert.equal(codeFindings(R`$f'(x) = 3\mathrm{e}^{3x}$`, presolve("Odvajaj f(x) = e^{3x}", { first: true }), "").issue, null);
+  assert.ok(codeFindings(R`$f'(x) = 3x^2$`, presolve(q, { first: true }), q).issue, "napačen odvod ostane ujet");
+});
