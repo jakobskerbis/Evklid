@@ -356,12 +356,17 @@ drC("cos(x)=0", ["pi/2+k*pi"], true, "", "periodična enačba");
 drC("cos(x)=0", ["pi/2+2*k*pi"], false, "manjka", "periodična rešitev s predolgo periodo");
 
 // Samopreverba: napačen odgovor enačbe se mora od prave množice rešitev res razlikovati (številsko).
-const mnozica = (a) => JSON.stringify((a || []).map((x) => Number(Function(`"use strict"; const sqrt = Math.sqrt; return (${String(x).replace(/\^/g, "**")});`)()).toFixed(9)).sort());
+const mnozica = (a) => JSON.stringify((a || []).map((x) => Number(Function(`"use strict"; const sqrt = Math.sqrt, ln = Math.log; return (${String(x).replace(/\^/g, "**")});`)()).toFixed(9)).sort());
 const POLJA = { naloga: "besedilo naloge za skener", sol: "rešitev v obliki AI rešitve skenerja", racun: "[ukaz SymPy, argumenti] kot v bloku RACUN", pravilno: "ali trditev drži", napaka: "vrsta namerne napake", najvec: "najvišji upravičen status (zaokrožen odgovor)", resnica: "prava množica rešitev (kjer je znana)" };
 function zapisi(pot, opis, seznam, polja = POLJA) {
   const ids = new Set(seznam.map((x) => x.id));
   if (ids.size !== seznam.length) fail("podvojen id");
-  for (const x of seznam) if (x.sol?.kind === "equation" && Array.isArray(x.resnica) && !x.pravilno && !x.najvec && mnozica(x.sol.solutions) === mnozica(x.resnica)) fail(`${x.id}: napačen odgovor je enak pravemu`);
+  for (const x of seznam) {
+    if (x.sol?.kind !== "equation" || !Array.isArray(x.resnica) || x.najvec) continue;
+    const enako = mnozica(x.sol.solutions) === mnozica(x.resnica);
+    if (!x.pravilno && enako) fail(`${x.id}: napačen odgovor je enak pravemu`);
+    if (x.pravilno && !enako && !x.sol.solutions.some((v) => /k/.test(v))) fail(`${x.id}: pravilen odgovor se razlikuje od resnice`);
+  }
   mkdirSync(dirname(pot), { recursive: true });
   writeFileSync(pot, JSON.stringify({ opis, polja, primeri: seznam }, null, 1) + "\n");
   const by = {};
@@ -406,8 +411,9 @@ for (let i = 0; i < 20; i++) {
     // a^x = m, m ni potenca a: x = ln m / ln a; napaka: obrnjen ulomek
     const m = pick([3, 5, 6, 7, 10, 11].filter((v) => v !== a && v % a !== 0));
     const n = `${a}^x=${m}`;
-    eqn("eksp", n, [`ln(${m})/ln(${a})`], true, "eksponentna enačba z logaritmom");
-    eqn("eksp", n, [`ln(${a})/ln(${m})`], false, "napaka: logaritma v ulomku zamenjana", { napaka: "pravilo" });
+    const resnica = [`ln(${m})/ln(${a})`];
+    eqn("eksp", n, resnica, true, "eksponentna enačba z logaritmom", { resnica });
+    eqn("eksp", n, [`ln(${a})/ln(${m})`], false, "napaka: logaritma v ulomku zamenjana", { napaka: "pravilo", resnica });
     continue;
   }
   const k = pick([1, 2, 3]);
@@ -416,12 +422,12 @@ for (let i = 0; i < 20; i++) {
   const c = k * x0 + b;
   const rhs = c >= 0 ? String(a ** c) : `1/${a ** -c}`;
   const n = `${a}^(${k}*x${sgnStr(b)})=${rhs}`.replace("+0)", ")").replace("1*x", "x");
-  eqn("eksp", n, [String(x0)], true, "eksponentna enačba, ista osnova");
+  eqn("eksp", n, [String(x0)], true, "eksponentna enačba, ista osnova", { resnica: [String(x0)] });
   // napaka: b prenesen z napačnim predznakom ali pozabljen deljenje s k
   let w = frStr(Fr(c + b, k));
   if (w === String(x0)) w = String(c);
   if (w === String(x0)) w = String(x0 + 1);
-  eqn("eksp", n, [w], false, "napaka: eksponent napačno izražen", { napaka: "vrednost" });
+  eqn("eksp", n, [w], false, "napaka: eksponent napačno izražen", { napaka: "vrednost", resnica: [String(x0)] });
 }
 
 // ---------- Q. logaritemske enačbe (40) ----------
@@ -431,8 +437,8 @@ for (let i = 0; i < 20; i++) {
     const r = int(1, 6);
     const d = int(1, 5);
     const n = `ln(x)+ln(x+${d})=ln(${r * (r + d)})`;
-    eqn("log", n, [String(r)], true, "logaritemska enačba, tuja rešitev izločena");
-    eqn("log", n, [String(r), String(-(r + d))], false, "napaka: rešitev zunaj definicijskega območja", { napaka: "obmocje" });
+    eqn("log", n, [String(r)], true, "logaritemska enačba, tuja rešitev izločena", { resnica: [String(r)] });
+    eqn("log", n, [String(r), String(-(r + d))], false, "napaka: rešitev zunaj definicijskega območja", { napaka: "obmocje", resnica: [String(r)] });
     continue;
   }
   const a = pick([2, 3, 5, 10]);
@@ -440,11 +446,11 @@ for (let i = 0; i < 20; i++) {
   const c = int(0, a === 10 ? 3 : 4);
   const x0 = a ** c - b;
   const n = `log(x${sgnStr(b)}, ${a})=${c}`.replace("+0,", ",");
-  eqn("log", n, [String(x0)], true, `logaritemska enačba z osnovo ${a}`);
+  eqn("log", n, [String(x0)], true, `logaritemska enačba z osnovo ${a}`, { resnica: [String(x0)] });
   let w = String(a * c - b);
   if (w === String(x0)) w = String(c ** a - b);
   if (w === String(x0)) w = String(x0 + a);
-  eqn("log", n, [w], false, "napaka: logaritem razrešen kot množenje", { napaka: "pravilo" });
+  eqn("log", n, [w], false, "napaka: logaritem razrešen kot množenje", { napaka: "pravilo", resnica: [String(x0)] });
 }
 
 // ---------- R. absolutna vrednost (40) ----------
@@ -455,16 +461,16 @@ for (let i = 0; i < 20; i++) {
   if (i % 5 === 4) {
     const b = -int(1, 5);
     const n = `${lhs}=${b}`;
-    eqn("abs", n, [], true, "absolutna vrednost je negativna: ni rešitve");
-    eqn("abs", n, [frStr(Fr(a + b, k)), frStr(Fr(a - b, k))], false, "napaka: rešitev enačbe z negativno desno stranjo", { napaka: "obmocje" });
+    eqn("abs", n, [], true, "absolutna vrednost je negativna: ni rešitve", { resnica: [] });
+    eqn("abs", n, [frStr(Fr(a + b, k)), frStr(Fr(a - b, k))], false, "napaka: rešitev enačbe z negativno desno stranjo", { napaka: "obmocje", resnica: [] });
     continue;
   }
   const b = int(1, 7);
   const n = `${lhs}=${b}`;
   const t = [frStr(Fr(a + b, k)), frStr(Fr(a - b, k))];
-  eqn("abs", n, shuffle(t), true, "enačba z absolutno vrednostjo");
+  eqn("abs", n, shuffle(t), true, "enačba z absolutno vrednostjo", { resnica: t });
   const manjka = i % 2 || a === 0 || a + b === 0; // pri a = 0 je »napačen predznak« spet prava množica
-  eqn("abs", n, manjka ? [t[0]] : [frStr(Fr(a + b, k)), frStr(Fr(-a - b, k))], false, manjka ? "napaka: manjka drugi primer" : "napaka: drugi primer z napačnim predznakom", { napaka: manjka ? "manjka" : "predznak" });
+  eqn("abs", n, manjka ? [t[0]] : [frStr(Fr(a + b, k)), frStr(Fr(-a - b, k))], false, manjka ? "napaka: manjka drugi primer" : "napaka: drugi primer z napačnim predznakom", { napaka: manjka ? "manjka" : "predznak", resnica: t });
 }
 
 // ---------- S. sistemi linearnih enačb (60) ----------

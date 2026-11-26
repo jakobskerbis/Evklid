@@ -1,4 +1,4 @@
-// PV-02 in N-01 (docs/preverjanje.md, »Meritev«): referenčni nabor v2 (1034 trditev) in meritev preverjanja. Glavna metrika je 0 napačno
+// PV-02 in N-01 (docs/preverjanje.md, »Meritev«): referenčni nabor v2 (1020 trditev) in meritev preverjanja. Glavna metrika je 0 napačno
 // potrjenih trditev v vsem, kar vidi učenec. Znane izjeme spodaj so izmerjeno izhodišče (26. 11. 2026, nabor v2 po PV-03) in
 // čakajo na popravek; test pade ob vsaki NOVI napačni potrditvi, novem lažnem alarmu ali izjemi, in kadar motor ujame ali
 // potrdi manj kot ob izhodišču (pokvarjen preverjevalnik se ne sme skriti med »nepreverjeno«).

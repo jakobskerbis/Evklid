@@ -161,7 +161,8 @@ enačbe (tudi tuja rešitev zunaj definicijskega območja), absolutna vrednost (
 nedoločeni in določeni integrali (točna vrednost z ulomki), limite, računi (delno korenjenje, negativni eksponent,
 odstotki, vrstni red operacij, deljenje ulomkov, večmestni zmnožki, logaritmi, neokrajšani ulomki), racionalne in
 absolutne neenačbe, enote, enakovredne oblike pravilnih odgovorov (pravilni, ki ne smejo dobiti alarma) ter
-zaporedja in kombinatorika. Ponovljene trditve generator izpusti.
+zaporedja in kombinatorika. Ponovljene trditve generator izpusti (zato ima kakšna trditev brez para). Enačbe novih
+družin imajo `resnica`; generator se ustavi, če je napačen odgovor enak resnici ali pravilen različen od nje.
 
 Pričakovano oceno vseh 636 novih trditev so pred prvim zagonom preverjevalnikov določili trije neodvisni pregledovalci
 na slepo (premešan seznam brez oznak, brez kode Evklida in brez SymPy, le ročno in s celimi števili). Ujemanje s
@@ -184,8 +185,8 @@ Nove ugotovitve (odprte, popravek potrebuje odobritev):
 
 - Skener tudi s SymPy: pravilen zmnožek fakultet (`factorial(14)/factorial(4) = 3632428800`, 11 trditev) dobi
   »Zaznana napaka«. Lokalni preverjevalnik ga oceni kot napačnega, SymPy pa ga potrdi.
-- Skener brez SymPy: `log(u, a)` z osnovo (20 trditev), `binomial(n, k)` (10) in odvod `cos(x^n)` (2) dobijo
-  »Zaznana napaka«.
+- Skener brez SymPy: `log(u, a)` z osnovo (20 trditev: 16 enačb in 4 računi), `binomial(n, k)` (9) in odvod
+  `cos(x^n)` (2) dobijo »Zaznana napaka«.
 - Skener: pravilni nedoločeni in določeni integrali dobijo največ »Numerično preverjeno« (lokalno numerično, SymPy pri
   integralu skenerja ni vključen).
 - SymPy: enota `minute` je neznana (`45*minute`, 4 trditve ostanejo nepreverjene); točni decimalni odgovori z enotami

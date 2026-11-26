@@ -8816,6 +8816,9 @@
    "skupina": "eksp",
    "opis": "eksponentna enačba, ista osnova",
    "pravilno": true,
+   "resnica": [
+    "0"
+   ],
    "naloga": "5^(2*x-3)=1/125",
    "sol": {
     "kind": "equation",
@@ -8839,6 +8842,9 @@
    "opis": "napaka: eksponent napačno izražen",
    "pravilno": false,
    "napaka": "vrednost",
+   "resnica": [
+    "0"
+   ],
    "naloga": "5^(2*x-3)=1/125",
    "sol": {
     "kind": "equation",
@@ -8861,6 +8867,9 @@
    "skupina": "eksp",
    "opis": "eksponentna enačba, ista osnova",
    "pravilno": true,
+   "resnica": [
+    "2"
+   ],
    "naloga": "3^(2*x+3)=2187",
    "sol": {
     "kind": "equation",
@@ -8884,6 +8893,9 @@
    "opis": "napaka: eksponent napačno izražen",
    "pravilno": false,
    "napaka": "vrednost",
+   "resnica": [
+    "2"
+   ],
    "naloga": "3^(2*x+3)=2187",
    "sol": {
     "kind": "equation",
@@ -8906,6 +8918,9 @@
    "skupina": "eksp",
    "opis": "eksponentna enačba, ista osnova",
    "pravilno": true,
+   "resnica": [
+    "0"
+   ],
    "naloga": "5^(2*x+4)=625",
    "sol": {
     "kind": "equation",
@@ -8929,6 +8944,9 @@
    "opis": "napaka: eksponent napačno izražen",
    "pravilno": false,
    "napaka": "vrednost",
+   "resnica": [
+    "0"
+   ],
    "naloga": "5^(2*x+4)=625",
    "sol": {
     "kind": "equation",
@@ -8951,6 +8969,9 @@
    "skupina": "eksp",
    "opis": "eksponentna enačba z logaritmom",
    "pravilno": true,
+   "resnica": [
+    "ln(7)/ln(2)"
+   ],
    "naloga": "2^x=7",
    "sol": {
     "kind": "equation",
@@ -8974,6 +8995,9 @@
    "opis": "napaka: logaritma v ulomku zamenjana",
    "pravilno": false,
    "napaka": "pravilo",
+   "resnica": [
+    "ln(7)/ln(2)"
+   ],
    "naloga": "2^x=7",
    "sol": {
     "kind": "equation",
@@ -8996,6 +9020,9 @@
    "skupina": "eksp",
    "opis": "eksponentna enačba, ista osnova",
    "pravilno": true,
+   "resnica": [
+    "0"
+   ],
    "naloga": "5^(3*x+4)=625",
    "sol": {
     "kind": "equation",
@@ -9019,6 +9046,9 @@
    "opis": "napaka: eksponent napačno izražen",
    "pravilno": false,
    "napaka": "vrednost",
+   "resnica": [
+    "0"
+   ],
    "naloga": "5^(3*x+4)=625",
    "sol": {
     "kind": "equation",
@@ -9041,6 +9071,9 @@
    "skupina": "eksp",
    "opis": "eksponentna enačba, ista osnova",
    "pravilno": true,
+   "resnica": [
+    "1"
+   ],
    "naloga": "3^(x-4)=1/27",
    "sol": {
     "kind": "equation",
@@ -9064,6 +9097,9 @@
    "opis": "napaka: eksponent napačno izražen",
    "pravilno": false,
    "napaka": "vrednost",
+   "resnica": [
+    "1"
+   ],
    "naloga": "3^(x-4)=1/27",
    "sol": {
     "kind": "equation",
@@ -9086,6 +9122,9 @@
    "skupina": "eksp",
    "opis": "eksponentna enačba, ista osnova",
    "pravilno": true,
+   "resnica": [
+    "-2"
+   ],
    "naloga": "3^(2*x-3)=1/2187",
    "sol": {
     "kind": "equation",
@@ -9109,6 +9148,9 @@
    "opis": "napaka: eksponent napačno izražen",
    "pravilno": false,
    "napaka": "vrednost",
+   "resnica": [
+    "-2"
+   ],
    "naloga": "3^(2*x-3)=1/2187",
    "sol": {
     "kind": "equation",
@@ -9131,6 +9173,9 @@
    "skupina": "eksp",
    "opis": "eksponentna enačba z logaritmom",
    "pravilno": true,
+   "resnica": [
+    "ln(5)/ln(3)"
+   ],
    "naloga": "3^x=5",
    "sol": {
     "kind": "equation",
@@ -9154,6 +9199,9 @@
    "opis": "napaka: logaritma v ulomku zamenjana",
    "pravilno": false,
    "napaka": "pravilo",
+   "resnica": [
+    "ln(5)/ln(3)"
+   ],
    "naloga": "3^x=5",
    "sol": {
     "kind": "equation",
@@ -9176,6 +9224,9 @@
    "skupina": "eksp",
    "opis": "eksponentna enačba, ista osnova",
    "pravilno": true,
+   "resnica": [
+    "0"
+   ],
    "naloga": "3^(x+2)=9",
    "sol": {
     "kind": "equation",
@@ -9199,6 +9250,9 @@
    "opis": "napaka: eksponent napačno izražen",
    "pravilno": false,
    "napaka": "vrednost",
+   "resnica": [
+    "0"
+   ],
    "naloga": "3^(x+2)=9",
    "sol": {
     "kind": "equation",
@@ -9221,6 +9275,9 @@
    "skupina": "eksp",
    "opis": "eksponentna enačba, ista osnova",
    "pravilno": true,
+   "resnica": [
+    "0"
+   ],
    "naloga": "2^(x-1)=1/2",
    "sol": {
     "kind": "equation",
@@ -9244,6 +9301,9 @@
    "opis": "napaka: eksponent napačno izražen",
    "pravilno": false,
    "napaka": "vrednost",
+   "resnica": [
+    "0"
+   ],
    "naloga": "2^(x-1)=1/2",
    "sol": {
     "kind": "equation",
@@ -9266,6 +9326,9 @@
    "skupina": "eksp",
    "opis": "eksponentna enačba, ista osnova",
    "pravilno": true,
+   "resnica": [
+    "4"
+   ],
    "naloga": "3^(3*x+3)=14348907",
    "sol": {
     "kind": "equation",
@@ -9289,6 +9352,9 @@
    "opis": "napaka: eksponent napačno izražen",
    "pravilno": false,
    "napaka": "vrednost",
+   "resnica": [
+    "4"
+   ],
    "naloga": "3^(3*x+3)=14348907",
    "sol": {
     "kind": "equation",
@@ -9311,6 +9377,9 @@
    "skupina": "eksp",
    "opis": "eksponentna enačba, ista osnova",
    "pravilno": true,
+   "resnica": [
+    "2"
+   ],
    "naloga": "2^(3*x+4)=1024",
    "sol": {
     "kind": "equation",
@@ -9334,6 +9403,9 @@
    "opis": "napaka: eksponent napačno izražen",
    "pravilno": false,
    "napaka": "vrednost",
+   "resnica": [
+    "2"
+   ],
    "naloga": "2^(3*x+4)=1024",
    "sol": {
     "kind": "equation",
@@ -9356,6 +9428,9 @@
    "skupina": "eksp",
    "opis": "eksponentna enačba, ista osnova",
    "pravilno": true,
+   "resnica": [
+    "0"
+   ],
    "naloga": "2^(x+4)=16",
    "sol": {
     "kind": "equation",
@@ -9379,6 +9454,9 @@
    "opis": "napaka: eksponent napačno izražen",
    "pravilno": false,
    "napaka": "vrednost",
+   "resnica": [
+    "0"
+   ],
    "naloga": "2^(x+4)=16",
    "sol": {
     "kind": "equation",
@@ -9401,6 +9479,9 @@
    "skupina": "eksp",
    "opis": "eksponentna enačba, ista osnova",
    "pravilno": true,
+   "resnica": [
+    "-1"
+   ],
    "naloga": "2^(x-3)=1/16",
    "sol": {
     "kind": "equation",
@@ -9424,6 +9505,9 @@
    "opis": "napaka: eksponent napačno izražen",
    "pravilno": false,
    "napaka": "vrednost",
+   "resnica": [
+    "-1"
+   ],
    "naloga": "2^(x-3)=1/16",
    "sol": {
     "kind": "equation",
@@ -9446,6 +9530,9 @@
    "skupina": "eksp",
    "opis": "eksponentna enačba z logaritmom",
    "pravilno": true,
+   "resnica": [
+    "ln(7)/ln(3)"
+   ],
    "naloga": "3^x=7",
    "sol": {
     "kind": "equation",
@@ -9469,6 +9556,9 @@
    "opis": "napaka: logaritma v ulomku zamenjana",
    "pravilno": false,
    "napaka": "pravilo",
+   "resnica": [
+    "ln(7)/ln(3)"
+   ],
    "naloga": "3^x=7",
    "sol": {
     "kind": "equation",
@@ -9491,6 +9581,9 @@
    "skupina": "eksp",
    "opis": "eksponentna enačba, ista osnova",
    "pravilno": true,
+   "resnica": [
+    "-3"
+   ],
    "naloga": "2^(2*x-3)=1/512",
    "sol": {
     "kind": "equation",
@@ -9514,6 +9607,9 @@
    "opis": "napaka: eksponent napačno izražen",
    "pravilno": false,
    "napaka": "vrednost",
+   "resnica": [
+    "-3"
+   ],
    "naloga": "2^(2*x-3)=1/512",
    "sol": {
     "kind": "equation",
@@ -9536,6 +9632,9 @@
    "skupina": "eksp",
    "opis": "eksponentna enačba, ista osnova",
    "pravilno": true,
+   "resnica": [
+    "-3"
+   ],
    "naloga": "3^(x+1)=1/9",
    "sol": {
     "kind": "equation",
@@ -9559,6 +9658,9 @@
    "opis": "napaka: eksponent napačno izražen",
    "pravilno": false,
    "napaka": "vrednost",
+   "resnica": [
+    "-3"
+   ],
    "naloga": "3^(x+1)=1/9",
    "sol": {
     "kind": "equation",
@@ -9581,6 +9683,9 @@
    "skupina": "eksp",
    "opis": "eksponentna enačba, ista osnova",
    "pravilno": true,
+   "resnica": [
+    "3"
+   ],
    "naloga": "3^(2*x+3)=19683",
    "sol": {
     "kind": "equation",
@@ -9604,6 +9709,9 @@
    "opis": "napaka: eksponent napačno izražen",
    "pravilno": false,
    "napaka": "vrednost",
+   "resnica": [
+    "3"
+   ],
    "naloga": "3^(2*x+3)=19683",
    "sol": {
     "kind": "equation",
@@ -9626,6 +9734,9 @@
    "skupina": "eksp",
    "opis": "eksponentna enačba z logaritmom",
    "pravilno": true,
+   "resnica": [
+    "ln(5)/ln(2)"
+   ],
    "naloga": "2^x=5",
    "sol": {
     "kind": "equation",
@@ -9649,6 +9760,9 @@
    "opis": "napaka: logaritma v ulomku zamenjana",
    "pravilno": false,
    "napaka": "pravilo",
+   "resnica": [
+    "ln(5)/ln(2)"
+   ],
    "naloga": "2^x=5",
    "sol": {
     "kind": "equation",
@@ -9671,6 +9785,9 @@
    "skupina": "log",
    "opis": "logaritemska enačba z osnovo 3",
    "pravilno": true,
+   "resnica": [
+    "5"
+   ],
    "naloga": "log(x-2, 3)=1",
    "sol": {
     "kind": "equation",
@@ -9694,6 +9811,9 @@
    "opis": "napaka: logaritem razrešen kot množenje",
    "pravilno": false,
    "napaka": "pravilo",
+   "resnica": [
+    "5"
+   ],
    "naloga": "log(x-2, 3)=1",
    "sol": {
     "kind": "equation",
@@ -9716,6 +9836,9 @@
    "skupina": "log",
    "opis": "logaritemska enačba z osnovo 3",
    "pravilno": true,
+   "resnica": [
+    "28"
+   ],
    "naloga": "log(x-1, 3)=3",
    "sol": {
     "kind": "equation",
@@ -9739,6 +9862,9 @@
    "opis": "napaka: logaritem razrešen kot množenje",
    "pravilno": false,
    "napaka": "pravilo",
+   "resnica": [
+    "28"
+   ],
    "naloga": "log(x-1, 3)=3",
    "sol": {
     "kind": "equation",
@@ -9761,6 +9887,9 @@
    "skupina": "log",
    "opis": "logaritemska enačba z osnovo 5",
    "pravilno": true,
+   "resnica": [
+    "29"
+   ],
    "naloga": "log(x-4, 5)=2",
    "sol": {
     "kind": "equation",
@@ -9784,6 +9913,9 @@
    "opis": "napaka: logaritem razrešen kot množenje",
    "pravilno": false,
    "napaka": "pravilo",
+   "resnica": [
+    "29"
+   ],
    "naloga": "log(x-4, 5)=2",
    "sol": {
     "kind": "equation",
@@ -9806,6 +9938,9 @@
    "skupina": "log",
    "opis": "logaritemska enačba z osnovo 5",
    "pravilno": true,
+   "resnica": [
+    "27"
+   ],
    "naloga": "log(x-2, 5)=2",
    "sol": {
     "kind": "equation",
@@ -9829,6 +9964,9 @@
    "opis": "napaka: logaritem razrešen kot množenje",
    "pravilno": false,
    "napaka": "pravilo",
+   "resnica": [
+    "27"
+   ],
    "naloga": "log(x-2, 5)=2",
    "sol": {
     "kind": "equation",
@@ -9851,6 +9989,9 @@
    "skupina": "log",
    "opis": "logaritemska enačba, tuja rešitev izločena",
    "pravilno": true,
+   "resnica": [
+    "3"
+   ],
    "naloga": "ln(x)+ln(x+2)=ln(15)",
    "sol": {
     "kind": "equation",
@@ -9874,6 +10015,9 @@
    "opis": "napaka: rešitev zunaj definicijskega območja",
    "pravilno": false,
    "napaka": "obmocje",
+   "resnica": [
+    "3"
+   ],
    "naloga": "ln(x)+ln(x+2)=ln(15)",
    "sol": {
     "kind": "equation",
@@ -9897,6 +10041,9 @@
    "skupina": "log",
    "opis": "logaritemska enačba z osnovo 5",
    "pravilno": true,
+   "resnica": [
+    "130"
+   ],
    "naloga": "log(x-5, 5)=3",
    "sol": {
     "kind": "equation",
@@ -9920,6 +10067,9 @@
    "opis": "napaka: logaritem razrešen kot množenje",
    "pravilno": false,
    "napaka": "pravilo",
+   "resnica": [
+    "130"
+   ],
    "naloga": "log(x-5, 5)=3",
    "sol": {
     "kind": "equation",
@@ -9942,6 +10092,9 @@
    "skupina": "log",
    "opis": "logaritemska enačba z osnovo 3",
    "pravilno": true,
+   "resnica": [
+    "27"
+   ],
    "naloga": "log(x, 3)=3",
    "sol": {
     "kind": "equation",
@@ -9965,6 +10118,9 @@
    "opis": "napaka: logaritem razrešen kot množenje",
    "pravilno": false,
    "napaka": "pravilo",
+   "resnica": [
+    "27"
+   ],
    "naloga": "log(x, 3)=3",
    "sol": {
     "kind": "equation",
@@ -9987,6 +10143,9 @@
    "skupina": "log",
    "opis": "logaritemska enačba z osnovo 3",
    "pravilno": true,
+   "resnica": [
+    "-1"
+   ],
    "naloga": "log(x+4, 3)=1",
    "sol": {
     "kind": "equation",
@@ -10010,6 +10169,9 @@
    "opis": "napaka: logaritem razrešen kot množenje",
    "pravilno": false,
    "napaka": "pravilo",
+   "resnica": [
+    "-1"
+   ],
    "naloga": "log(x+4, 3)=1",
    "sol": {
     "kind": "equation",
@@ -10032,6 +10194,9 @@
    "skupina": "log",
    "opis": "logaritemska enačba z osnovo 2",
    "pravilno": true,
+   "resnica": [
+    "14"
+   ],
    "naloga": "log(x+2, 2)=4",
    "sol": {
     "kind": "equation",
@@ -10055,6 +10220,9 @@
    "opis": "napaka: logaritem razrešen kot množenje",
    "pravilno": false,
    "napaka": "pravilo",
+   "resnica": [
+    "14"
+   ],
    "naloga": "log(x+2, 2)=4",
    "sol": {
     "kind": "equation",
@@ -10077,6 +10245,9 @@
    "skupina": "log",
    "opis": "logaritemska enačba, tuja rešitev izločena",
    "pravilno": true,
+   "resnica": [
+    "3"
+   ],
    "naloga": "ln(x)+ln(x+1)=ln(12)",
    "sol": {
     "kind": "equation",
@@ -10100,6 +10271,9 @@
    "opis": "napaka: rešitev zunaj definicijskega območja",
    "pravilno": false,
    "napaka": "obmocje",
+   "resnica": [
+    "3"
+   ],
    "naloga": "ln(x)+ln(x+1)=ln(12)",
    "sol": {
     "kind": "equation",
@@ -10123,6 +10297,9 @@
    "skupina": "log",
    "opis": "logaritemska enačba z osnovo 2",
    "pravilno": true,
+   "resnica": [
+    "11"
+   ],
    "naloga": "log(x+5, 2)=4",
    "sol": {
     "kind": "equation",
@@ -10146,6 +10323,9 @@
    "opis": "napaka: logaritem razrešen kot množenje",
    "pravilno": false,
    "napaka": "pravilo",
+   "resnica": [
+    "11"
+   ],
    "naloga": "log(x+5, 2)=4",
    "sol": {
     "kind": "equation",
@@ -10168,6 +10348,9 @@
    "skupina": "log",
    "opis": "logaritemska enačba z osnovo 10",
    "pravilno": true,
+   "resnica": [
+    "15"
+   ],
    "naloga": "log(x-5, 10)=1",
    "sol": {
     "kind": "equation",
@@ -10191,6 +10374,9 @@
    "opis": "napaka: logaritem razrešen kot množenje",
    "pravilno": false,
    "napaka": "pravilo",
+   "resnica": [
+    "15"
+   ],
    "naloga": "log(x-5, 10)=1",
    "sol": {
     "kind": "equation",
@@ -10213,6 +10399,9 @@
    "skupina": "log",
    "opis": "logaritemska enačba z osnovo 5",
    "pravilno": true,
+   "resnica": [
+    "30"
+   ],
    "naloga": "log(x-5, 5)=2",
    "sol": {
     "kind": "equation",
@@ -10236,6 +10425,9 @@
    "opis": "napaka: logaritem razrešen kot množenje",
    "pravilno": false,
    "napaka": "pravilo",
+   "resnica": [
+    "30"
+   ],
    "naloga": "log(x-5, 5)=2",
    "sol": {
     "kind": "equation",
@@ -10258,6 +10450,9 @@
    "skupina": "log",
    "opis": "logaritemska enačba z osnovo 3",
    "pravilno": true,
+   "resnica": [
+    "0"
+   ],
    "naloga": "log(x+3, 3)=1",
    "sol": {
     "kind": "equation",
@@ -10281,6 +10476,9 @@
    "opis": "napaka: logaritem razrešen kot množenje",
    "pravilno": false,
    "napaka": "pravilo",
+   "resnica": [
+    "0"
+   ],
    "naloga": "log(x+3, 3)=1",
    "sol": {
     "kind": "equation",
@@ -10303,6 +10501,9 @@
    "skupina": "log",
    "opis": "logaritemska enačba, tuja rešitev izločena",
    "pravilno": true,
+   "resnica": [
+    "1"
+   ],
    "naloga": "ln(x)+ln(x+5)=ln(6)",
    "sol": {
     "kind": "equation",
@@ -10326,6 +10527,9 @@
    "opis": "napaka: rešitev zunaj definicijskega območja",
    "pravilno": false,
    "napaka": "obmocje",
+   "resnica": [
+    "1"
+   ],
    "naloga": "ln(x)+ln(x+5)=ln(6)",
    "sol": {
     "kind": "equation",
@@ -10349,6 +10553,9 @@
    "skupina": "log",
    "opis": "logaritemska enačba z osnovo 5",
    "pravilno": true,
+   "resnica": [
+    "0"
+   ],
    "naloga": "log(x+5, 5)=1",
    "sol": {
     "kind": "equation",
@@ -10372,6 +10579,9 @@
    "opis": "napaka: logaritem razrešen kot množenje",
    "pravilno": false,
    "napaka": "pravilo",
+   "resnica": [
+    "0"
+   ],
    "naloga": "log(x+5, 5)=1",
    "sol": {
     "kind": "equation",
@@ -10394,6 +10604,9 @@
    "skupina": "log",
    "opis": "logaritemska enačba z osnovo 10",
    "pravilno": true,
+   "resnica": [
+    "3"
+   ],
    "naloga": "log(x-2, 10)=0",
    "sol": {
     "kind": "equation",
@@ -10417,6 +10630,9 @@
    "opis": "napaka: logaritem razrešen kot množenje",
    "pravilno": false,
    "napaka": "pravilo",
+   "resnica": [
+    "3"
+   ],
    "naloga": "log(x-2, 10)=0",
    "sol": {
     "kind": "equation",
@@ -10439,6 +10655,9 @@
    "skupina": "log",
    "opis": "logaritemska enačba z osnovo 10",
    "pravilno": true,
+   "resnica": [
+    "10"
+   ],
    "naloga": "log(x, 10)=1",
    "sol": {
     "kind": "equation",
@@ -10462,6 +10681,9 @@
    "opis": "napaka: logaritem razrešen kot množenje",
    "pravilno": false,
    "napaka": "pravilo",
+   "resnica": [
+    "10"
+   ],
    "naloga": "log(x, 10)=1",
    "sol": {
     "kind": "equation",
@@ -10484,6 +10706,9 @@
    "skupina": "log",
    "opis": "logaritemska enačba z osnovo 2",
    "pravilno": true,
+   "resnica": [
+    "19"
+   ],
    "naloga": "log(x-3, 2)=4",
    "sol": {
     "kind": "equation",
@@ -10507,6 +10732,9 @@
    "opis": "napaka: logaritem razrešen kot množenje",
    "pravilno": false,
    "napaka": "pravilo",
+   "resnica": [
+    "19"
+   ],
    "naloga": "log(x-3, 2)=4",
    "sol": {
     "kind": "equation",
@@ -10529,6 +10757,10 @@
    "skupina": "abs",
    "opis": "enačba z absolutno vrednostjo",
    "pravilno": true,
+   "resnica": [
+    "3",
+    "-7"
+   ],
    "naloga": "abs(x+2)=5",
    "sol": {
     "kind": "equation",
@@ -10553,6 +10785,10 @@
    "opis": "napaka: drugi primer z napačnim predznakom",
    "pravilno": false,
    "napaka": "predznak",
+   "resnica": [
+    "3",
+    "-7"
+   ],
    "naloga": "abs(x+2)=5",
    "sol": {
     "kind": "equation",
@@ -10577,6 +10813,10 @@
    "opis": "napaka: manjka drugi primer",
    "pravilno": false,
    "napaka": "manjka",
+   "resnica": [
+    "3",
+    "-7"
+   ],
    "naloga": "abs(x+2)=5",
    "sol": {
     "kind": "equation",
@@ -10599,6 +10839,10 @@
    "skupina": "abs",
    "opis": "enačba z absolutno vrednostjo",
    "pravilno": true,
+   "resnica": [
+    "2",
+    "0"
+   ],
    "naloga": "abs(x-1)=1",
    "sol": {
     "kind": "equation",
@@ -10623,6 +10867,10 @@
    "opis": "napaka: drugi primer z napačnim predznakom",
    "pravilno": false,
    "napaka": "predznak",
+   "resnica": [
+    "2",
+    "0"
+   ],
    "naloga": "abs(x-1)=1",
    "sol": {
     "kind": "equation",
@@ -10646,6 +10894,10 @@
    "skupina": "abs",
    "opis": "enačba z absolutno vrednostjo",
    "pravilno": true,
+   "resnica": [
+    "-1",
+    "-7"
+   ],
    "naloga": "abs(x+4)=3",
    "sol": {
     "kind": "equation",
@@ -10670,6 +10922,10 @@
    "opis": "napaka: manjka drugi primer",
    "pravilno": false,
    "napaka": "manjka",
+   "resnica": [
+    "-1",
+    "-7"
+   ],
    "naloga": "abs(x+4)=3",
    "sol": {
     "kind": "equation",
@@ -10692,6 +10948,7 @@
    "skupina": "abs",
    "opis": "absolutna vrednost je negativna: ni rešitve",
    "pravilno": true,
+   "resnica": [],
    "naloga": "abs(x-6)=-2",
    "sol": {
     "kind": "equation",
@@ -10713,6 +10970,7 @@
    "opis": "napaka: rešitev enačbe z negativno desno stranjo",
    "pravilno": false,
    "napaka": "obmocje",
+   "resnica": [],
    "naloga": "abs(x-6)=-2",
    "sol": {
     "kind": "equation",
@@ -10736,6 +10994,10 @@
    "skupina": "abs",
    "opis": "enačba z absolutno vrednostjo",
    "pravilno": true,
+   "resnica": [
+    "3/2",
+    "-7/2"
+   ],
    "naloga": "abs(2*x+2)=5",
    "sol": {
     "kind": "equation",
@@ -10760,6 +11022,10 @@
    "opis": "napaka: manjka drugi primer",
    "pravilno": false,
    "napaka": "manjka",
+   "resnica": [
+    "3/2",
+    "-7/2"
+   ],
    "naloga": "abs(2*x+2)=5",
    "sol": {
     "kind": "equation",
@@ -10782,6 +11048,10 @@
    "skupina": "abs",
    "opis": "enačba z absolutno vrednostjo",
    "pravilno": true,
+   "resnica": [
+    "9/2",
+    "-5/2"
+   ],
    "naloga": "abs(2*x-2)=7",
    "sol": {
     "kind": "equation",
@@ -10806,6 +11076,10 @@
    "opis": "napaka: drugi primer z napačnim predznakom",
    "pravilno": false,
    "napaka": "predznak",
+   "resnica": [
+    "9/2",
+    "-5/2"
+   ],
    "naloga": "abs(2*x-2)=7",
    "sol": {
     "kind": "equation",
@@ -10829,6 +11103,10 @@
    "skupina": "abs",
    "opis": "enačba z absolutno vrednostjo",
    "pravilno": true,
+   "resnica": [
+    "2",
+    "-1"
+   ],
    "naloga": "abs(2*x-1)=3",
    "sol": {
     "kind": "equation",
@@ -10853,6 +11131,10 @@
    "opis": "napaka: manjka drugi primer",
    "pravilno": false,
    "napaka": "manjka",
+   "resnica": [
+    "2",
+    "-1"
+   ],
    "naloga": "abs(2*x-1)=3",
    "sol": {
     "kind": "equation",
@@ -10875,6 +11157,10 @@
    "skupina": "abs",
    "opis": "enačba z absolutno vrednostjo",
    "pravilno": true,
+   "resnica": [
+    "3",
+    "-4"
+   ],
    "naloga": "abs(2*x+1)=7",
    "sol": {
     "kind": "equation",
@@ -10899,6 +11185,10 @@
    "opis": "napaka: drugi primer z napačnim predznakom",
    "pravilno": false,
    "napaka": "predznak",
+   "resnica": [
+    "3",
+    "-4"
+   ],
    "naloga": "abs(2*x+1)=7",
    "sol": {
     "kind": "equation",
@@ -10922,6 +11212,7 @@
    "skupina": "abs",
    "opis": "absolutna vrednost je negativna: ni rešitve",
    "pravilno": true,
+   "resnica": [],
    "naloga": "abs(2*x-1)=-2",
    "sol": {
     "kind": "equation",
@@ -10943,6 +11234,7 @@
    "opis": "napaka: rešitev enačbe z negativno desno stranjo",
    "pravilno": false,
    "napaka": "obmocje",
+   "resnica": [],
    "naloga": "abs(2*x-1)=-2",
    "sol": {
     "kind": "equation",
@@ -10966,6 +11258,10 @@
    "skupina": "abs",
    "opis": "enačba z absolutno vrednostjo",
    "pravilno": true,
+   "resnica": [
+    "3",
+    "-11"
+   ],
    "naloga": "abs(x+4)=7",
    "sol": {
     "kind": "equation",
@@ -10990,6 +11286,10 @@
    "opis": "napaka: drugi primer z napačnim predznakom",
    "pravilno": false,
    "napaka": "predznak",
+   "resnica": [
+    "3",
+    "-11"
+   ],
    "naloga": "abs(x+4)=7",
    "sol": {
     "kind": "equation",
@@ -11013,6 +11313,10 @@
    "skupina": "abs",
    "opis": "enačba z absolutno vrednostjo",
    "pravilno": true,
+   "resnica": [
+    "7/3",
+    "1/3"
+   ],
    "naloga": "abs(3*x-4)=3",
    "sol": {
     "kind": "equation",
@@ -11037,6 +11341,10 @@
    "opis": "napaka: manjka drugi primer",
    "pravilno": false,
    "napaka": "manjka",
+   "resnica": [
+    "7/3",
+    "1/3"
+   ],
    "naloga": "abs(3*x-4)=3",
    "sol": {
     "kind": "equation",
@@ -11059,6 +11367,10 @@
    "skupina": "abs",
    "opis": "enačba z absolutno vrednostjo",
    "pravilno": true,
+   "resnica": [
+    "-2/3",
+    "-8/3"
+   ],
    "naloga": "abs(3*x+5)=3",
    "sol": {
     "kind": "equation",
@@ -11083,6 +11395,10 @@
    "opis": "napaka: drugi primer z napačnim predznakom",
    "pravilno": false,
    "napaka": "predznak",
+   "resnica": [
+    "-2/3",
+    "-8/3"
+   ],
    "naloga": "abs(3*x+5)=3",
    "sol": {
     "kind": "equation",
@@ -11106,6 +11422,10 @@
    "skupina": "abs",
    "opis": "enačba z absolutno vrednostjo",
    "pravilno": true,
+   "resnica": [
+    "0",
+    "-10"
+   ],
    "naloga": "abs(x+5)=5",
    "sol": {
     "kind": "equation",
@@ -11130,6 +11450,10 @@
    "opis": "napaka: manjka drugi primer",
    "pravilno": false,
    "napaka": "manjka",
+   "resnica": [
+    "0",
+    "-10"
+   ],
    "naloga": "abs(x+5)=5",
    "sol": {
     "kind": "equation",
@@ -11152,6 +11476,7 @@
    "skupina": "abs",
    "opis": "absolutna vrednost je negativna: ni rešitve",
    "pravilno": true,
+   "resnica": [],
    "naloga": "abs(x+2)=-5",
    "sol": {
     "kind": "equation",
@@ -11173,6 +11498,7 @@
    "opis": "napaka: rešitev enačbe z negativno desno stranjo",
    "pravilno": false,
    "napaka": "obmocje",
+   "resnica": [],
    "naloga": "abs(x+2)=-5",
    "sol": {
     "kind": "equation",
@@ -11196,6 +11522,10 @@
    "skupina": "abs",
    "opis": "enačba z absolutno vrednostjo",
    "pravilno": true,
+   "resnica": [
+    "-2/3",
+    "-2"
+   ],
    "naloga": "abs(3*x+4)=2",
    "sol": {
     "kind": "equation",
@@ -11220,6 +11550,10 @@
    "opis": "napaka: manjka drugi primer",
    "pravilno": false,
    "napaka": "manjka",
+   "resnica": [
+    "-2/3",
+    "-2"
+   ],
    "naloga": "abs(3*x+4)=2",
    "sol": {
     "kind": "equation",
@@ -11242,6 +11576,10 @@
    "skupina": "abs",
    "opis": "enačba z absolutno vrednostjo",
    "pravilno": true,
+   "resnica": [
+    "-1/3",
+    "-5/3"
+   ],
    "naloga": "abs(3*x+3)=2",
    "sol": {
     "kind": "equation",
@@ -11266,6 +11604,10 @@
    "opis": "napaka: drugi primer z napačnim predznakom",
    "pravilno": false,
    "napaka": "predznak",
+   "resnica": [
+    "-1/3",
+    "-5/3"
+   ],
    "naloga": "abs(3*x+3)=2",
    "sol": {
     "kind": "equation",
@@ -11289,6 +11631,10 @@
    "skupina": "abs",
    "opis": "enačba z absolutno vrednostjo",
    "pravilno": true,
+   "resnica": [
+    "4",
+    "0"
+   ],
    "naloga": "abs(x-2)=2",
    "sol": {
     "kind": "equation",
@@ -11313,6 +11659,10 @@
    "opis": "napaka: manjka drugi primer",
    "pravilno": false,
    "napaka": "manjka",
+   "resnica": [
+    "4",
+    "0"
+   ],
    "naloga": "abs(x-2)=2",
    "sol": {
     "kind": "equation",
@@ -11335,6 +11685,10 @@
    "skupina": "abs",
    "opis": "enačba z absolutno vrednostjo",
    "pravilno": true,
+   "resnica": [
+    "4",
+    "2"
+   ],
    "naloga": "abs(x-3)=1",
    "sol": {
     "kind": "equation",
@@ -11359,6 +11713,10 @@
    "opis": "napaka: drugi primer z napačnim predznakom",
    "pravilno": false,
    "napaka": "predznak",
+   "resnica": [
+    "4",
+    "2"
+   ],
    "naloga": "abs(x-3)=1",
    "sol": {
     "kind": "equation",
@@ -11382,6 +11740,7 @@
    "skupina": "abs",
    "opis": "absolutna vrednost je negativna: ni rešitve",
    "pravilno": true,
+   "resnica": [],
    "naloga": "abs(x+1)=-2",
    "sol": {
     "kind": "equation",
@@ -11403,6 +11762,7 @@
    "opis": "napaka: rešitev enačbe z negativno desno stranjo",
    "pravilno": false,
    "napaka": "obmocje",
+   "resnica": [],
    "naloga": "abs(x+1)=-2",
    "sol": {
     "kind": "equation",
