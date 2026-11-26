@@ -2933,7 +2933,7 @@ export default {
   "scan.st.numeric": "Numerično preverjeno",
   "scan.st.numericTip": "Evklid je rezultat preveril s števili (decimalnimi približki), ne s točnim računom. To ni dokaz, da je rezultat točen in da nobena rešitev ne manjka.",
   "scan.st.unverified": "Nepreverjeno",
-  "scan.st.unverifiedTip": "Tega Evklid ni mogel preveriti. Rezultat preveri s preizkusom ali vprašaj inštruktorja.",
+  "scan.st.unverifiedTip": "Evklid tega rezultata ne more preveriti sam, zato ne trdi, da je pravilen ali napačen. Preveri ga s preizkusom ali vprašaj inštruktorja.",
   "scan.st.wrong": "Napačno",
   "scan.st.wrongTip": "Preverjanje je pokazalo, da odgovor Evklid AI ne drži ali da v njem manjka kakšna rešitev, zato rešitve ne prikažemo. Vprašaj inštruktorja.",
   "scan.st.wrongTipRetried": "Evklid AI je nalogo samodejno rešil večkrat, a preverjanje je pokazalo, da noben odgovor ne drži, zato rešitve ne prikažemo. Vprašaj inštruktorja.",

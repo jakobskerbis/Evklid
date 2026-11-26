@@ -3016,7 +3016,7 @@
   "scan.st.numeric": "Numerički provjereno",
   "scan.st.numericTip": "Evklid je rezultat provjerio brojevima (decimalnim približnim vrijednostima), ne točnim računom. To ne dokazuje da je rezultat točan i da nijedno rješenje ne nedostaje.",
   "scan.st.unverified": "Neprovjereno",
-  "scan.st.unverifiedTip": "Evklid ovo nije mogao provjeriti. Provjeri rezultat uvrštavanjem ili pitaj instruktora.",
+  "scan.st.unverifiedTip": "Evklid ovaj rezultat ne može sam provjeriti, pa ne tvrdi da je točan ili netočan. Provjeri ga uvrštavanjem ili pitaj instruktora.",
   "scan.st.wrong": "Netočno",
   "scan.st.wrongTip": "Provjera je pokazala da odgovor Evklid AI-ja nije točan ili da u njemu nedostaje neko rješenje, pa rješenje ne prikazujemo. Pitaj instruktora.",
   "scan.st.wrongTipRetried": "Evklid AI je zadatak sam riješio nekoliko puta, ali provjera je pokazala da nijedan odgovor nije točan, pa rješenje ne prikazujemo. Pitaj instruktora.",
