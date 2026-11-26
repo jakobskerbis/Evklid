@@ -205,7 +205,7 @@ theorem resitve_tan (a x : ℝ) : (cos x ≠ 0 ∧ tan x = a) ↔ ∃ k : ℤ, x
 
 /-- Ustno vprašanje 1: tan(u + s) = tan u za vsak u natanko takrat, ko je s večkratnik π.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#tan-premik
-besedilo: »$f(x + T) = f(x)$« -/
+besedilo: »Tangens ima osnovno periodo $\pi$,« -/
 theorem tan_premik (s : ℝ) : (∀ u, tan (u + s) = tan u) ↔ ∃ k : ℤ, s = k * π := by
   constructor
   · intro h
@@ -455,13 +455,13 @@ theorem kotangens : (∀ x, cot x = cos x / sin x) ∧ (∀ x, sin x = 0 ↔ ∃
 
 /-- Razlaga 3 (kotangens): v Leanu je cot x = tan(π/2 − x) za vsak x (tudi v polih, kjer sta obe 0).
 trditev: MAT-SS-3/grafi-kotnih-funkcij#cot-tan
-besedilo: »Tangens ni definiran tam, kjer je $\cos x = 0$, torej pri $x = \frac{\pi}{2} + k\pi$.« -/
+besedilo: »Kotangens $\cot x = \frac{\cos x}{\sin x}$ ima pole pri $k\pi$,« -/
 theorem cot_tan (x : ℝ) : cot x = tan (π / 2 - x) := by
   rw [cot_eq_cos_div_sin, tan_eq_sin_div_cos, sin_pi_div_two_sub, cos_pi_div_two_sub]
 
 /-- Razlaga 3 (kotangens): osnovna perioda kotangensa je π.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#kotangens-perioda
-besedilo: »osnovna perioda pa je $\pi$:« -/
+besedilo: »Kotangens $\cot x = \frac{\cos x}{\sin x}$ ima pole pri $k\pi$, periodo $\pi$ in na vsaki veji pada.« -/
 theorem kotangens_perioda : OsnovnaPerioda cot π := by
   have ht := osnovne_periode.2.2.1
   refine ⟨pi_pos, fun x => by rw [cot_tan, cot_tan, show π / 2 - (x + π) = π / 2 - x - π by ring,
@@ -625,7 +625,7 @@ theorem primer1 :
 perioda π, Z_f = [1 − 2, 1 + 2] = [−1, 3]; f(x) = 3 natanko pri x = π/2 + kπ (RACUN: 2(x − π/4) = π/2 ⇔
 x = π/2), zato je najmanjši pozitivni maksimum pri x = π/2 (π/2 − π < 0) in f(π/2) = 2 sin(π/2) + 1 = 3.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#primer2
-besedilo: »Za funkcijo $f(x) = 2\sin\left(2x - \frac{\pi}{2}\right) + 1$ določi amplitudo, osnovno periodo, premika in zalogo vrednosti. Pri katerem najmanjšem pozitivnem $x$ ima maksimum?« -/
+besedilo: »Odgovor: amplituda $2$, perioda $\pi$, premik za $\frac{\pi}{4}$ v desno in za $1$ navzgor, $Z_f = [-1, 3]$; prvi maksimum je pri $x = \frac{\pi}{2}$.« -/
 theorem primer2 :
     (∀ x, 2 * sin (2 * x - π / 2) + 1 = 2 * sin (2 * (x - π / 4)) + 1) ∧
     OsnovnaPerioda (fun x => 2 * sin (2 * (x - π / 4)) + 1) π ∧
@@ -662,7 +662,7 @@ sin(2π·42/365) ≈ 0,662, D(121) ≈ 14,6 h; D(t) = 15,8 natanko pri t = 79 + 
 ≈ 170), najkrajši dan pri 79 − 365/4 + 365 = 352,75 ≈ 353 (D = 8,6); dnevi: 20. 3. = 31 + 28 + 20 = 79,
 1. 5. = 121, 19. 6. = 170, 19. 12. = 353.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#primer3
-besedilo: »Podatki:** $D_{\min} = 8{,}6\,\text{h}$, $D_{\max} = 15{,}8\,\text{h}$, $T = 365\,\text{dni}$, 20. marec: $t = 79$ (dan srednje dolg, se daljša), 1. maj: $t = 121$« -/
+besedilo: »Za 1. maj je $t - c = 121 - 79 = 42$. Argument sinusa je $\frac{2\pi \cdot 42}{365} \approx 0{,}723$ (v radianih) in $\sin 0{,}723 \approx 0{,}662$.« -/
 theorem primer3 :
     ((15.8 : ℝ) + 8.6) / 2 = 12.2 ∧ ((15.8 : ℝ) - 8.6) / 2 = 3.6 ∧
     OsnovnaPerioda (fun t => 3.6 * sin (2 * π / 365 * (t - 79)) + 12.2) 365 ∧
@@ -851,7 +851,7 @@ theorem pogoste :
 natanko tedaj, ko je d = (5 + (−1))/2 = 2, A = (5 − (−1))/2 = 3 in b = 3 (iz 2π/b = 2π/3, RACUN), torej
 f(x) = 3 cos 3x + 2.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#matura1
-besedilo: »Zapišite predpis funkcije oblike $f(x) = A\cos(bx) + d$, kjer sta $A > 0$ in $b > 0$, ki ima zalogo vrednosti $[-1, 5]$ in osnovno periodo $\frac{2\pi}{3}$.« -/
+besedilo: »Srednja črta je na sredini zaloge vrednosti: $d = \frac{5 + (-1)}{2} = 2$.« -/
 theorem matura1 (A b d : ℝ) (hA : 0 < A) (hb : 0 < b) :
     (range (fun x => A * cos (b * x) + d) = Icc (-1) 5 ∧ OsnovnaPerioda (fun x => A * cos (b * x) + d) (2 * π / 3))
       ↔ (d = 2 ∧ A = 3 ∧ b = 3) := by
@@ -881,7 +881,7 @@ example :=
 
 /-- Naloga 1, RACUN: (5 + (−1))/2 = 2, (5 − (−1))/2 = 3 in 2π/b = 2π/3 ⇔ b = 3 (za vsak realni b).
 trditev: MAT-SS-3/grafi-kotnih-funkcij#matura1-racun
-besedilo: »$A = \frac{5 - (-1)}{2} = 3$« -/
+besedilo: »Iz $T = \frac{2\pi}{b} = \frac{2\pi}{3}$ sledi $b = 3$.« -/
 theorem matura1_racun : ((5 : ℝ) + (-1)) / 2 = 2 ∧ ((5 : ℝ) - (-1)) / 2 = 3 ∧
     ∀ b : ℝ, 2 * π / b = 2 * π / 3 ↔ b = 3 := by
   have hp := pi_pos
@@ -1075,7 +1075,7 @@ theorem matura3d :
 /-- Ustno vprašanje 2 in Bolj natančno: sin(b(x + T)) = sin(bx) za vsak x (b ≠ 0) natanko takrat, ko je bT
 večkratnik 2π; zato je osnovna perioda sin(bx) enaka 2π/|b|.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#ustno2
-besedilo: »Ker je $\sin(bx + bT) = \sin(bx)$ za vsak $x$ natanko takrat, ko je $bT$ večkratnik $2\pi$, je najmanjši tak $|b|T = 2\pi$, torej $T = \frac{2\pi}{|b|}$.« -/
+besedilo: »Sinus ima pri vsakem argumentu in pri argumentu, povečanem za $bT$, enako vrednost natanko takrat, ko je $bT$ večkratnik osnovne periode $2\pi$.« -/
 theorem ustno2 (b T : ℝ) (hb : b ≠ 0) :
     ((∀ x, sin (b * (x + T)) = sin (b * x)) ↔ ∃ k : ℤ, b * T = k * (2 * π)) ∧
     OsnovnaPerioda (fun x => sin (b * x)) (2 * π / |b|) := by

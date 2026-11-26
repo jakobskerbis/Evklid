@@ -83,10 +83,10 @@ example : ∃ a : ℕ → ℝ, a 1 = 8 ∧ ∀ n, 1 ≤ n → a (n + 1) = a n / 
   ⟨fun n => 16 * (1 / 2) ^ n, by norm_num, fun n _ => by simp only [pow_succ]; ring⟩
 
 /-- Predpostavke trditve `pohod` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ a : ℕ → ℝ, a 1 = 8 ∧ ∀ n, 1 ≤ n → a (n + 1) = a n / 2 :=
     ⟨fun n => 16 * (1 / 2) ^ n, by norm_num, fun n _ => by simp only [pow_succ]; ring⟩
-  pohod (h1 := w.choose_spec.1) (h := w.choose_spec.2)
+  (fun _ => trivial) (pohod (a := w.choose) (h1 := w.choose_spec.1) (h := w.choose_spec.2))
 
 /-- Uvod, primer 2: povprečna hitrost vₙ = 200n/(2n + 1): v₁ ≈ 67, v₂ = 80, v₃ ≈ 86, v₄ ≈ 89
 (vse zaokrožene na celo), vₙ < 100 za vsak n in vₙ narašča.
@@ -249,7 +249,7 @@ theorem def_limite_koncno (a : ℕ → ℝ) (L : ℝ) :
 
 /-- Razlaga 7 in pogoste napake: (−1)ⁿ je omejeno (−1 ≤ (−1)ⁿ ≤ 1), a divergentno.
 trditev: MAT-SS-4/zaporedja#minus1-divergira
-besedilo: »$a_n = (-1)^n$« -/
+besedilo: »Zaporedje $a_n = (-1)^n$ skače med $-1$ in $1$, zato je divergentno: nobenega ozkega pasu ne moreš postaviti tako, da bi bile v njem vse pike od nekod naprej.« -/
 theorem minus1_divergira :
     (∀ n : ℕ, -1 ≤ ((-1 : ℝ) ^ n) ∧ (-1 : ℝ) ^ n ≤ 1) ∧
     ¬ ∃ L, Tendsto (fun n : ℕ => (-1 : ℝ) ^ n) atTop (𝓝 L) := by
@@ -297,7 +297,7 @@ theorem limita_enolicna (a : ℕ → ℝ) (L₁ L₂ : ℝ) (h₁ : Tendsto a at
 example :=
   have w : Tendsto (fun _ : ℕ => (0:ℝ)) atTop (𝓝 0) ∧ Tendsto (fun _ : ℕ => (1:ℝ)) atTop (𝓝 1) :=
     ⟨tendsto_const_nhds, tendsto_const_nhds⟩
-  limita_enolicna (h₁ := w.1) (h₂ := w.2)
+  limita_enolicna (h₁ := w.1) (h₂ := w.1)
 
 /-- Primer 1: aₙ = (n + 2)/(2n): a₁ = 3/2, a₂ = 1, a₃ = 5/6, a₄ = 3/4; aₙ = n/(2n) + 2/(2n) = 1/2 + 1/n;
 aₙ₊₁ − aₙ = 1/(n + 1) − 1/n = −1/(n(n + 1)) < 0, zato strogo pada (n ≥ 1).
@@ -425,12 +425,12 @@ example : ∃ (a : ℕ → ℝ) (L : ℝ), (∀ n, 1 ≤ n → a (n + 1) = a n /
       (fun n _ => by simp only [pow_succ]; ring)).2.2.2.2⟩
 
 /-- Predpostavke trditve `primer3_sklep` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ (a : ℕ → ℝ) (L : ℝ), (∀ n, 1 ≤ n → a (n + 1) = a n / 2 + 100) ∧ Tendsto a atTop (𝓝 L) :=
     ⟨fun n => 200 - 200 * (1 / 2) ^ n, 200, fun n _ => by simp only [pow_succ]; ring,
       (primer3 (fun n => 200 - 200 * (1 / 2) ^ n) (by norm_num)
         (fun n _ => by simp only [pow_succ]; ring)).2.2.2.2⟩
-  primer3_sklep (h := w.choose_spec.choose_spec.1) (hL := w.choose_spec.choose_spec.2)
+  (fun _ => trivial) (primer3_sklep (a := w.choose) (L := w.choose_spec.choose) (h := w.choose_spec.choose_spec.1) (hL := w.choose_spec.choose_spec.2))
 
 /-- Primer 4: (2n² − n)/(n² + 3) = (2 − 1/n)/(1 + 3/n²) (n ≥ 1) in limita je (2 − 0)/(1 + 0) = 2.
 trditev: MAT-SS-4/zaporedja#primer4
@@ -544,10 +544,10 @@ example : ∃ a : ℕ → ℤ, a 1 = 3 ∧ ∀ n, 1 ≤ n → a (n + 1) = 2 * a 
   ⟨fun n => 2 ^ n + 1, by norm_num, fun n _ => by simp only [pow_succ]; ring⟩
 
 /-- Predpostavke trditve `matura1` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ a : ℕ → ℤ, a 1 = 3 ∧ ∀ n, 1 ≤ n → a (n + 1) = 2 * a n - 1 :=
     ⟨fun n => 2 ^ n + 1, by norm_num, fun n _ => by simp only [pow_succ]; ring⟩
-  matura1 (h1 := w.choose_spec.1) (h := w.choose_spec.2)
+  (fun _ => trivial) (matura1 (a := w.choose) (h1 := w.choose_spec.1) (h := w.choose_spec.2))
 
 /-- Naloga 2 a)–b): aₙ = (2n + 5)/(n + 1): a₁ = 7/2, a₂ = 9/3 = 3, a₃ = 11/4;
 aₙ = (2(n + 1) + 3)/(n + 1) = 2 + 3/(n + 1); aₙ₊₁ − aₙ = 3/(n + 2) − 3/(n + 1)
@@ -632,10 +632,10 @@ example : ∃ a : ℕ → ℝ, a 1 = 1 ∧ ∀ n, 1 ≤ n → a (n + 1) = a n + 
 /-! ## Drugače -/
 
 /-- Predpostavke trditve `ustno3` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ a : ℕ → ℝ, a 1 = 1 ∧ ∀ n, 1 ≤ n → a (n + 1) = a n + 2 :=
     ⟨fun n => 2 * n - 1, by norm_num, fun n _ => by push_cast; ring⟩
-  ustno3 (h1 := w.choose_spec.1) (h := w.choose_spec.2)
+  (fun _ => trivial) (ustno3 (a := w.choose) (h1 := w.choose_spec.1) (h := w.choose_spec.2))
 
 /-- Z analogijo: pri 1/n in L = 0 za ε = 0,1 zadošča n₀ = 10, za ε = 0,001 pa n₀ = 1000.
 trditev: MAT-SS-4/zaporedja#sodnik-1n
@@ -715,7 +715,7 @@ theorem kviz1 : (∀ n : ℕ, 1 ≤ n → 50 - 1 / (n : ℝ) ≤ 50) ∧ (∀ n 
 /-- Preveri se 2: če prvih 1000 členov 1/n zamenjamo s 7, ostane limita 0; zaporedje je (za n ≥ 1) še vedno
 padajoče, le ne strogo (a₁ = a₂ = 7).
 trditev: MAT-SS-4/zaporedja#kviz2
-besedilo: »Zaporedje $a_n = \dfrac{1}{n}$ ima limito $0$. Kaj se zgodi z limito, če prvih $1000$ členov zamenjamo s številom $7$, ostale pa pustimo?« -/
+besedilo: »Zaporedje je še vedno padajoče (le ne več strogo), pa tudi sicer monotonost ni pogoj za limito. Od $a_{1001}$ naprej so členi enaki kot prej in se bližajo $0$.« -/
 theorem kviz2 : Tendsto (fun n : ℕ => if n ≤ 1000 then (7 : ℝ) else 1 / (n : ℝ)) atTop (𝓝 0) ∧
     (∀ m n : ℕ, 1 ≤ m → m ≤ n →
       (if n ≤ 1000 then (7 : ℝ) else 1 / (n : ℝ)) ≤ (if m ≤ 1000 then (7 : ℝ) else 1 / (m : ℝ))) ∧

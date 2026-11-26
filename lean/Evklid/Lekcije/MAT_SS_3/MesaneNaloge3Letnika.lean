@@ -207,7 +207,7 @@ theorem P2_sub (a b c d : ℝ) : P2 a b - P2 c d = P2 (a - c) (b - d) := by
 
 /-- Razlaga, tabela: a = 30 − 2x in V(1) = 784, V(2) = 1352, V(5) = 2000, V(10) = 1000, V(14) = 56.
 trditev: MAT-SS-3/mesane-naloge-3-letnika#tabela
-besedilo: »$a = 30 - 2x$« -/
+besedilo: »dno pa je kvadrat s stranico $a = 30 - 2x$ (z vsake strani odrežeš $x$).« -/
 theorem tabela :
     (30 : ℝ) - 2 * 1 = 28 ∧ V 1 = 784 ∧ (30 : ℝ) - 2 * 2 = 26 ∧ V 2 = 1352 ∧ (30 : ℝ) - 2 * 5 = 20 ∧
     V 5 = 2000 ∧ (30 : ℝ) - 2 * 10 = 10 ∧ V 10 = 1000 ∧ (30 : ℝ) - 2 * 14 = 2 ∧ V 14 = 56 := by
@@ -311,7 +311,7 @@ theorem pekac (x : ℝ) :
 
 /-- Razlaga (drugi poskus): x² + (x + n)² = 8 ⇔ 2x² + 2nx + n² − 8 = 0; D = 4n² − 8(n² − 8) = 64 − 4n².
 trditev: MAT-SS-3/mesane-naloge-3-letnika#premica-kroznica
-besedilo: »$D = 4n^2 - 8(n^2 - 8) = 64 - 4n^2$« -/
+besedilo: »Diskriminanta je $D = 4n^2 - 8(n^2 - 8) = 64 - 4n^2$.« -/
 theorem premica_kroznica (x n : ℝ) :
     (x ^ 2 + (x + n) ^ 2 = 8 ↔ 2 * x ^ 2 + 2 * n * x + n ^ 2 - 8 = 0) ∧
     discrim 2 (2 * n) (n ^ 2 - 8) = 4 * n ^ 2 - 8 * (n ^ 2 - 8) ∧ 4 * n ^ 2 - 8 * (n ^ 2 - 8) = 64 - 4 * n ^ 2 := by
@@ -653,7 +653,7 @@ example : ∃ t : Affine.Triangle ℝ R2, dist (t.points 0) (t.points 2) = 6 ∧
   · simp; rw [hk']; ring
 
 /-- Predpostavke trditve `naloga1` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ t : Affine.Triangle ℝ R2, dist (t.points 0) (t.points 2) = 6 ∧ ∠ (t.points 0) (t.points 1) (t.points 2) = 30 * π / 180 := by
     have h3 : 0 < √3 := by positivity
     have hr : ∠ (P2 0 6) (P2 0 0) (P2 (6 * √3) 0) = π / 2 := by
@@ -680,12 +680,12 @@ example :=
     refine ⟨⟨_, hind⟩, ?_, ?_⟩
     · simp; rw [d1]
     · simp; rw [hk']; ring
-  naloga1 (ha := w.choose_spec.1) (hα := w.choose_spec.2)
+  (fun _ => trivial) (naloga1 (t := w.choose) (ha := w.choose_spec.1) (hα := w.choose_spec.2))
 
 /-- Naloga 2 a), RAČUN: p(x) = 2x³ − x² − 2x + 1 = x²(2x − 1) − (2x − 1) = (2x − 1)(x² − 1)
 = (2x − 1)(x − 1)(x + 1); ničle so natanko −1, 1/2, 1.
 trditev: MAT-SS-3/mesane-naloge-3-letnika#naloga2a
-besedilo: »$p(x) = 2x^3 - x^2 - 2x + 1$« -/
+besedilo: »$x^2(2x - 1) - (2x - 1) = (2x - 1)(x^2 - 1) = (2x - 1)(x - 1)(x + 1)$« -/
 theorem naloga2a (x : ℝ) :
     2 * x ^ 3 - x ^ 2 - 2 * x + 1 = x ^ 2 * (2 * x - 1) - (2 * x - 1) ∧
     x ^ 2 * (2 * x - 1) - (2 * x - 1) = (2 * x - 1) * (x ^ 2 - 1) ∧
@@ -725,8 +725,7 @@ theorem naloga2b (x : ℝ) : 2 * x ^ 3 - x ^ 2 - 2 * x + 1 < 0 ↔ x < -1 ∨ (1
         (by linarith : (0:ℝ) < x + 1)]
 
 /-- Na [0, 2π) velja cos x = cos y (y ∈ [0, π]) natanko za x = y ali x = 2π − y.
-trditev: MAT-SS-3/mesane-naloge-3-letnika#cos-eq-na-intervalu
-besedilo: »c) Na $[0, 2\pi)$: $\cos x = 1$ da $x = 0$; $\cos x = -1$ da $x = \pi$; $\cos x = \frac{1}{2}$ da $x = \frac{\pi}{3}$ in $x = \frac{5\pi}{3}$.« -/
+pomozno -/
 theorem cos_eq_na_intervalu {x y : ℝ} (hx0 : 0 ≤ x) (hx : x < 2 * π) (hy0 : 0 ≤ y) (hy : y ≤ π) :
     cos x = cos y ↔ x = y ∨ x = 2 * π - y := by
   have hp := pi_pos
@@ -803,7 +802,7 @@ example : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 2 * π ∧ (0:ℝ) ≤ π := ⟨le_rfl, by
 /-- Predpostavke trditve `cos_eq_na_intervalu` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
   have w : (0:ℝ) ≤ 0 ∧ (0:ℝ) < 2 * π ∧ (0:ℝ) ≤ π := ⟨le_rfl, by positivity, pi_pos.le⟩
-  cos_eq_na_intervalu (hx0 := w.1) (hx := w.2.1) (hy0 := w.2.2) (hy := w.2.2)
+  cos_eq_na_intervalu (hx0 := w.1) (hx := w.2.1) (hy0 := w.1) (hy := w.2.2)
 
 /-- Naloga 3 (a = 6, s = 8): polovica diagonale 6√2/2 = 3√2 ≈ 4,24; v = √(64 − 18) = √46 ≈ 6,78;
 V = 36√46/3 = 12√46 ≈ 81,39. (Kot φ = arccos(3√2/8) je v `naloga3b`.)
@@ -922,7 +921,7 @@ theorem tri_cetrtine :
 
 /-- Preveri se (3): vse tri ničle pekača 10 − 5√3, 10, 10 + 5√3 so pozitivne.
 trditev: MAT-SS-3/mesane-naloge-3-letnika#tri-pozitivne
-besedilo: »$x = \frac{20 \pm \sqrt{400 - 100}}{2} = 10 \pm 5\sqrt{3}$« -/
+besedilo: »$x = \frac{20 \pm \sqrt{400 - 100}}{2} = 10 \pm 5\sqrt{3}$,« -/
 theorem tri_pozitivne : 0 < 10 - 5 * √3 ∧ (0 : ℝ) < 10 ∧ 0 < 10 + 5 * √3 := by
   obtain ⟨t1, t2⟩ := sqrt3_meje
   exact ⟨by linarith, by norm_num, by positivity⟩

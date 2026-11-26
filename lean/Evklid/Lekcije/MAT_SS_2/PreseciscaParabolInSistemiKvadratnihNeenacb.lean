@@ -168,7 +168,7 @@ theorem razlaga1 (x : ℝ) : (-0.1 * x ^ 2 + 2 * x = 0 ↔ x * (-0.1 * x + 2) = 
 /-- Razlaga 2: −0,1x² + 2x = 0,5x ⇔ −0,1x² + 1,5x = 0 ⇔ x(−0,1x + 1,5) = 0 ⇔ x = 0 ali x = 15;
 ordinata 0,5·15 = 7,5, presečišče (15; 7,5).
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#razlaga2
-besedilo: »Pri $D = 0$ je dvojna rešitev $x = -\dfrac{b}{2a} = \dfrac{15}{2} = 7{,}5$. Ordinata: $0{,}5 \cdot 7{,}5 + 5{,}625 = 9{,}375$. Na paraboli: $-0{,}1 \cdot 7{,}5^2 + 2 \cdot 7{,}5 = 9{,}375$, ustreza.« -/
+besedilo: »Žogica pristane v točki $(15; 7{,}5)$, torej $15\,\mathrm{m}$ vodoravno in $7{,}5\,\mathrm{m}$ višje od mesta udarca.« -/
 theorem razlaga2 (x : ℝ) : (-0.1 * x ^ 2 + 2 * x = 0.5 * x ↔ -0.1 * x ^ 2 + 1.5 * x = 0) ∧
     (-0.1 * x ^ 2 + 1.5 * x = 0 ↔ x * (-0.1 * x + 1.5) = 0) ∧
     (-0.1 * x ^ 2 + 2 * x = 0.5 * x ↔ x = 0 ∨ x = 15) ∧ (0.5 : ℝ) * 15 = 7.5 ∧
@@ -188,7 +188,7 @@ theorem razlaga3_lara : (2 : ℝ) - 0.5 = 1.5 ∧ (1.5 : ℝ) ^ 2 - 4 * (-0.1) *
 /-- Razlaga 3, premisli: za premico y = 0,5x + n je D = 1,5² − 4·(−0,1)·(0 − n) = 2,25 − 0,4n; D pada,
 ko n raste, D = 0 ⇔ n = 5,625.
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#premisli-n
-besedilo: »Pri Lari je $a = -0{,}1$, $b - k = 1{,}5$ in $c - n = 0$, zato je $D = 1{,}5^2 - 0 = 2{,}25 > 0$ in pobočje je sekanta parabole.« -/
+besedilo: »Pri Lari je $a = -0{,}1$, $b - k = 1{,}5$ in $c - n = 0$, zato je $D = 1{,}5^2 - 0 = 2{,}25 > 0$ in pobočje je sekanta parabole. Za vsako absciso izračunamo še ordinato, ker je presečišče točka, ne število.« -/
 theorem premisli_n (n n' : ℝ) : (1.5 : ℝ) ^ 2 - 4 * (-0.1) * (0 - n) = 2.25 - 0.4 * n ∧
     (n < n' → 2.25 - 0.4 * n' < 2.25 - 0.4 * n) ∧ (2.25 - 0.4 * n = 0 ↔ n = 5.625) := by
   refine ⟨by ring, fun h => by linarith, by constructor <;> intro h <;> linarith⟩
@@ -240,7 +240,7 @@ theorem razlaga4 (x : ℝ) : (x ^ 2 - 2 * x - 3 = -x ^ 2 + 4 * x + 5 ↔ 2 * x ^
 
 /-- Razlaga 4, premisli: x² + 1 = x² − 2x + 5 ⇔ 2x = 4 ⇔ x = 2; edina skupna točka je (2, 5).
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#premisli-enak-a
-besedilo: »Za paraboli $f(x) = x^2 - 2x - 3$ in $g(x) = -x^2 + 4x + 5$ izenačimo $f(x) = g(x)$ in vse prenesemo na levo:« -/
+besedilo: »Paraboli se sekata v natanko eni točki, $(2, 5)$.« -/
 theorem premisli_enak_a (x : ℝ) : (x ^ 2 + 1 = x ^ 2 - 2 * x + 5 ↔ 2 * x = 4) ∧ (2 * x = 4 ↔ x = 2) ∧
     (2 : ℝ) ^ 2 + 1 = 5 := by
   refine ⟨by constructor <;> intro h <;> linarith, by constructor <;> intro h <;> linarith, by norm_num⟩
@@ -248,7 +248,7 @@ theorem premisli_enak_a (x : ℝ) : (x ^ 2 + 1 = x ^ 2 - 2 * x + 5 ↔ 2 * x = 4
 /-- Razlaga 5: f(x) ≤ 0 ⇔ x ∈ [−1, 3], g(x) > 0 ⇔ x ∈ (−1, 5); sistem f ≤ 0 in g > 0 ⇔ x ∈ (−1, 3]
 (presek); −1 izpade, ker je g(−1) = 0.
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#razlaga5
-besedilo: »Vzemimo sistem $x^2 - 2x - 3 \le 0$ in $-x^2 + 4x + 5 > 0$. To sta neenačbi $f(x) \le 0$ in $g(x) > 0$ za paraboli z zgornje slike. Rešitvi beremo z grafa:« -/
+besedilo: »Rešitev sistema je presek $(-1, 3]$. Število $-1$ izpade, ker je $g(-1) = 0$, druga neenačba pa je stroga.« -/
 theorem razlaga5 (x : ℝ) : (x ^ 2 - 2 * x - 3 ≤ 0 ↔ -1 ≤ x ∧ x ≤ 3) ∧ (-x ^ 2 + 4 * x + 5 > 0 ↔ -1 < x ∧ x < 5) ∧
     ((x ^ 2 - 2 * x - 3 ≤ 0 ∧ -x ^ 2 + 4 * x + 5 > 0) ↔ -1 < x ∧ x ≤ 3) ∧
     -(-1 : ℝ) ^ 2 + 4 * (-1) + 5 = 0 := by
@@ -531,7 +531,7 @@ example : (∃! x : ℝ, 1 * x ^ 2 + 0 * x + 0 = (-1) * x ^ 2 + 4 * x + (-2)) :=
 /-- Drugače: kot zgodba: pri n = 6 je D = −15 (ni skupnih točk); pri n = 5: −0,1x² + 2x = 0,5x + 5 ⇔
 x² − 15x + 50 = 0, D = 25, x ∈ {5, 10}, točki (5; 7,5) in (10, 10).
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#zgodba
-besedilo: »Izenačimo: enačba $-0{,}1x^2 + 2x = 0{,}5x + 6$. Prenesemo na levo in pomnožimo z $-10$, da se znebimo decimalk: enačba $x^2 - 15x + 60 = 0$.« -/
+besedilo: »Pri $n = 5$ pa jo žogica sreča dvakrat: enačba $x^2 - 15x + 50 = 0$ ima $D = 25$ in rešitvi $x = 5$ ter $x = 10$.« -/
 theorem zgodba (x : ℝ) : (225 : ℝ) - 40 * 6 = -15 ∧ (-0.1 * x ^ 2 + 2 * x = 0.5 * x + 5 ↔ x ^ 2 - 15 * x + 50 = 0) ∧
     ((-15 : ℝ) ^ 2 - 4 * 1 * 50 = 25) ∧ (x ^ 2 - 15 * x + 50 = 0 ↔ x = 5 ∨ x = 10) ∧
     (0.5 : ℝ) * 5 + 5 = 7.5 ∧ (0.5 : ℝ) * 10 + 5 = 10 := by
@@ -551,7 +551,7 @@ theorem korak_presecisca (x : ℝ) : (x ^ 2 - 2 * x + 3 = 2 * x ↔ x ^ 2 - 4 * 
 /-- Drugače: sistem po korakih: x² − 9 ≤ 0 ⇔ −3 ≤ x ≤ 3; x² + x − 2 > 0 ⇔ x < −2 ali x > 1;
 sistem ⇔ x ∈ [−3, −2) ∪ (1, 3].
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#korak-sistem
-besedilo: »Sistem po korakih (višja raven).** Sistem $x^2 - 9 \le 0$ in $x^2 + x - 2 > 0$:« -/
+besedilo: »Rešitev: $x \in [-3, -2) \cup (1, 3]$.« -/
 theorem korak_sistem (x : ℝ) : (x ^ 2 - 9 ≤ 0 ↔ -3 ≤ x ∧ x ≤ 3) ∧ (x ^ 2 + x - 2 > 0 ↔ x < -2 ∨ 1 < x) ∧
     ((x ^ 2 - 9 ≤ 0 ∧ x ^ 2 + x - 2 > 0) ↔ (-3 ≤ x ∧ x < -2) ∨ (1 < x ∧ x ≤ 3)) := by
   have h1 : x ^ 2 - 9 ≤ 0 ↔ -3 ≤ x ∧ x ≤ 3 := by
@@ -608,7 +608,7 @@ theorem preveri3 (n x : ℝ) : (x ^ 2 = 2 * x + n ↔ x ^ 2 - 2 * x - n = 0) ∧
 /-- Preveri se 4: korak 2 je napačen: x² − 3x ≥ 0 ⇔ x ≤ 0 ali x ≥ 3 (x = 1: 1 − 3 = −2 < 0); prvi korak je
 pravilen, pravilni presek z (−2, 2) je (−2, 0].
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#preveri4
-besedilo: »(višja raven) Miha rešuje sistem $x^2 - 4 < 0$ in $x^2 - 3x \ge 0$. Korak 1: prva neenačba ima rešitev $(-2, 2)$. Korak 2: druga neenačba ima rešitev $[0, 3]$. Korak 3: presek je $[0, 2)$. Kateri korak je napačen?« -/
+besedilo: »Parabola $y = x^2 - 3x$ je odprta navzgor, zato je $x(x - 3) \ge 0$ zunaj ničel: $(-\infty, 0] \cup [3, \infty)$. Pravilni presek z $(-2, 2)$ je $(-2, 0]$.« -/
 theorem preveri4 (x : ℝ) : (x ^ 2 - 4 < 0 ↔ -2 < x ∧ x < 2) ∧ (x ^ 2 - 3 * x ≥ 0 ↔ x ≤ 0 ∨ 3 ≤ x) ∧
     (1 : ℝ) ^ 2 - 3 * 1 = -2 ∧ ((x ^ 2 - 4 < 0 ∧ x ^ 2 - 3 * x ≥ 0) ↔ -2 < x ∧ x ≤ 0) := by
   have h1 : x ^ 2 - 4 < 0 ↔ -2 < x ∧ x < 2 := by

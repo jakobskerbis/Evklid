@@ -150,10 +150,10 @@ example : ∃ G : ℕ → ℝ, ∀ k, G (k + 1) = G k + G 0 * 5 / 100 :=
   ⟨fun k => 1000 + 50 * k, fun k => by push_cast; ring⟩
 
 /-- Predpostavke trditve `navadno_stanje` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ G : ℕ → ℝ, ∀ k, G (k + 1) = G k + G 0 * 5 / 100 :=
     ⟨fun k => 1000 + 50 * k, fun k => by push_cast; ring⟩
-  navadno_stanje (h := w.choose_spec)
+  (fun _ => trivial) (navadno_stanje (G := w.choose) (h := w.choose_spec))
 
 /-- Razlaga 3: stanja navadnega obrestovanja tvorijo aritmetično zaporedje z diferenco o = G₀·p/100.
 trditev: MAT-SS-4/obrestni-racun#navadno-aritmeticno
@@ -172,7 +172,7 @@ theorem navadno_800 : (800 : ℝ) * 3 / 100 = 24 ∧ (800 : ℝ) + 4 * 24 = 896 
 
 /-- Razlaga 4: obrestovalni faktor r = 1 + p/100; pri p = 3 je r = 1,03.
 trditev: MAT-SS-4/obrestni-racun#faktor-3
-besedilo: »Številu $r$ rečemo **obrestovalni faktor**. Pri $p = 3$ je $r = 1{,}03$. Vsako leto znova množimo z $r$:« -/
+besedilo: »Pri $p = 3$ je $r = 1{,}03$.« -/
 theorem faktor_3 : 1 + (3 : ℝ) / 100 = 1.03 := by norm_num
 
 /-- Razlaga 4: če vsako leto množimo z r, je Gₙ = G₀·rⁿ.
@@ -189,10 +189,10 @@ example : ∃ G : ℕ → ℝ, ∀ k, G (k + 1) = G k * 1.05 :=
   ⟨fun k => 1000 * 1.05 ^ k, fun k => by simp only [pow_succ, mul_assoc]⟩
 
 /-- Predpostavke trditve `obrestno_stanje` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ G : ℕ → ℝ, ∀ k, G (k + 1) = G k * 1.05 :=
     ⟨fun k => 1000 * 1.05 ^ k, fun k => by simp only [pow_succ, mul_assoc]⟩
-  obrestno_stanje (h := w.choose_spec)
+  (fun _ => trivial) (obrestno_stanje (G := w.choose) (h := w.choose_spec))
 
 /-- Razlaga 4: povečanje za p % je množenje z r: G + G·p/100 = G·(1 + p/100).
 trditev: MAT-SS-4/obrestni-racun#obrestno-korak
@@ -211,7 +211,7 @@ theorem obrestno_800 : (800 : ℝ) * 1.03 ^ 2 = 848.72 := by norm_num
 
 /-- Razlaga 4, premisli: pri isti glavnici in meri sta po 1. letu stanji enaki.
 trditev: MAT-SS-4/obrestni-racun#prvo-leto-enako
-besedilo: »ali imata navadno in obrestno obrestovanje pri isti glavnici in isti obrestni meri po prvem letu enako stanje?« -/
+besedilo: »Napovej, preden pogledaš tabelo spodaj: ali imata navadno in obrestno obrestovanje pri isti glavnici in isti obrestni meri po prvem letu enako stanje? Kaj pa po drugem? Utemelji.« -/
 theorem prvo_leto_enako (G₀ p : ℝ) : G₀ * (1 + 1 * p / 100) = G₀ * (1 + p / 100) ^ 1 := by ring
 
 /-! ## Razlaga 5: primerjava (1000 € pri 5 %) -/
@@ -267,7 +267,7 @@ theorem uganka_8_9 : (2000 : ℝ) * (1 + 0.06 * 8) = 2960 ∧ |(2000 : ℝ) * 1.
 
 /-- Uganka: »B prehiti A med 8. in 9. letom« – za 1 ≤ n ≤ 8 je A boljša, za vsak n ≥ 9 B.
 trditev: MAT-SS-4/obrestni-racun#uganka-prehit
-besedilo: »Banka B prehiti A med 8. letom (A $2960\,\text{€}$, B $2954{,}91\,\text{€}$) in 9. letom (A $3080\,\text{€}$, B $3102{,}66\,\text{€}$).« -/
+besedilo: »Banka B prehiti A med 8. letom (A $2960\,\text{€}$,« -/
 theorem uganka_prehit (n : ℕ) :
     ((1 ≤ n ∧ n ≤ 8) → 2000 * (1.05 : ℝ) ^ n < 2000 * (1 + 0.06 * n)) ∧
     (9 ≤ n → 2000 * (1 + 0.06 * (n : ℝ)) < 2000 * (1.05 : ℝ) ^ n) := by
@@ -318,7 +318,7 @@ theorem relativna_6 : (6 : ℝ) / 12 = 0.5 ∧ 1 + (0.5 : ℝ) / 100 = 1.005 ∧
 
 /-- Razlaga 7: konformni faktor r_m = (1 + p/100)^(1/m) izpolni r_mᵐ = 1 + p/100 (p ≥ −100, m ≠ 0).
 trditev: MAT-SS-4/obrestni-racun#konformni-faktor
-besedilo: »Faktor za eno obdobje $r_m = 1 + \frac{p_k}{100}$ mora zato izpolniti $r_m^{\,m} = r$:« -/
+besedilo: »$r_m = \sqrt[m]{1 + \frac{p}{100}} = \left(1 + \frac{p}{100}\right)^{1/m}$« -/
 theorem konformni_faktor (p : ℝ) (m : ℕ) (hp : -100 ≤ p) (hm : m ≠ 0) :
     ((1 + p / 100) ^ ((1 : ℝ) / m)) ^ m = 1 + p / 100 :=
   koren_pot hm (by linarith)
@@ -616,7 +616,7 @@ theorem primer6_r2 : (2163.2 : ℝ) / 2000 = 1.0816 := by norm_num
 
 /-- Primer 6, premisli: r² = 1,0816 in r > 0 natanko tedaj, ko r = 1,04.
 trditev: MAT-SS-4/obrestni-racun#primer6-r
-besedilo: »$r = \sqrt{1{,}0816} = 1{,}04$« -/
+besedilo: »$r = \sqrt{1{,}0816} = 1{,}04$, zato $\frac{p}{100} = 0{,}04$ in $p = 4\,\%$.« -/
 theorem primer6_r (r : ℝ) : (r ^ 2 = 1.0816 ∧ 0 < r) ↔ r = 1.04 := by
   constructor
   · rintro ⟨h, hr⟩
@@ -644,7 +644,7 @@ theorem matura1 : (2616 : ℝ) - 2400 = 216 ∧ (216 : ℝ) / 3 = 72 ∧ 100 * (
 
 /-- Matura 1 (točkovanje): enačba 2400(1 + 3p/100) = 2616 ima natanko rešitev p = 3.
 trditev: MAT-SS-4/obrestni-racun#matura1-enacba
-besedilo: »Točkovanje:** 1 točka za obresti v treh letih ($216\,\text{€}$), 1 točka za letne obresti ($72\,\text{€}$) ali za pravilno nastavljeno enačbo $2400\left(1 + \frac{3p}{100}\right) = 2616$, 1 točka za $p = 3\,\%$.« -/
+besedilo: »1 točka za letne obresti ($72\,\text{€}$) ali za pravilno nastavljeno enačbo $2400\left(1 + \frac{3p}{100}\right) = 2616$,« -/
 theorem matura1_enacba (p : ℝ) : 2400 * (1 + 3 * p / 100) = 2616 ↔ p = 3 := by
   constructor
   · intro h; linarith

@@ -74,7 +74,7 @@ theorem babica_narasca : StrictMono babica := fun _ _ h => by unfold babica; ome
 
 /-- Simetrija (tabela): (±1)² = 1, (±2)² = 4, (±3)² = 9 (enaki), (±1)³ = ±1, (±2)³ = ±8, (±3)³ = ±27 (nasprotni).
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#tabela
-besedilo: »$(f \circ g)(1) = f(2) = 4 - 3 = 1$« -/
+besedilo: »$f(1) = 9$ in pravilna $f^{-1}(9) = 3 - 2 = 1$.« -/
 theorem tabela : ((1:ℝ) ^ 2 = 1 ∧ (-1:ℝ) ^ 2 = 1 ∧ (2:ℝ) ^ 2 = 4 ∧ (-2:ℝ) ^ 2 = 4 ∧ (3:ℝ) ^ 2 = 9 ∧ (-3:ℝ) ^ 2 = 9) ∧
     ((1:ℝ) ^ 3 = 1 ∧ (-1:ℝ) ^ 3 = -1 ∧ (2:ℝ) ^ 3 = 8 ∧ (-2:ℝ) ^ 3 = -8 ∧ (3:ℝ) ^ 3 = 27 ∧ (-3:ℝ) ^ 3 = -27) := by
   norm_num
@@ -132,20 +132,20 @@ theorem kvadrat_ABC :
 
 /-- Surjektivnost: x³ je kot R → R bijektivna.
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#kub-bijektivna
-besedilo: »Funkcija $x^3$ je kot $\mathbb{R} \to \mathbb{R}$ bijektivna. Če za $B$ vzamemo zalogo vrednosti $Z_f$, je vsaka funkcija surjektivna. Zato je vsaka injektivna funkcija kot $f\colon D_f \to Z_f$ bijektivna.« -/
+besedilo: »Funkcija $x^3$ je kot $\mathbb{R} \to \mathbb{R}$ bijektivna.« -/
 theorem kub_bijektivna : Bijective (fun x : ℝ => x ^ 3) :=
   ⟨injektivnost.1, fun y => ⟨koren 3 y, koren_lih_pot ⟨1, rfl⟩ y⟩⟩
 
 /-- Surjektivnost: kot f : A → Z_f je vsaka funkcija surjektivna, injektivna pa bijektivna.
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#na-zalogo
-besedilo: »Funkcija $x^3$ je kot $\mathbb{R} \to \mathbb{R}$ bijektivna. Če za $B$ vzamemo zalogo vrednosti $Z_f$, je vsaka funkcija surjektivna. Zato je vsaka injektivna funkcija kot $f\colon D_f \to Z_f$ bijektivna.« -/
+besedilo: »Če za $B$ vzamemo zalogo vrednosti $Z_f$, je vsaka funkcija surjektivna.« -/
 theorem na_zalogo {α β : Type*} (f : α → β) : Surjective (rangeFactorization f) ∧
     (Injective f → Bijective (rangeFactorization f)) :=
   ⟨rangeFactorization_surjective, fun h => ⟨fun _ _ hab => h (congrArg Subtype.val hab), rangeFactorization_surjective⟩⟩
 
 /-- Sestavljena funkcija: (g ∘ f)(x) = g(f(x)).
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#sestavljena
-besedilo: »Sestavljena funkcija $g \circ f$ ima predpis $(g \circ f)(x) = g(f(x))$:« -/
+besedilo: »$(g \circ f)(x) = g(f(x))$« -/
 theorem sestavljena {α β γ : Type*} (f : α → β) (g : β → γ) (x : α) : (g ∘ f) x = g (f x) := rfl
 
 /-- Inverzna funkcija: levo obratna funkcija obstaja natanko za injektivno f; za injektivno f : A → Z_f obstaja
@@ -281,7 +281,7 @@ theorem primer1 :
 /-- Primer 2: f(x) = x³ − 4x je liha: f(−x) = (−x)³ − 4(−x) = −x³ + 4x = −(x³ − 4x); g(x) = x² + 2x ni ne soda
 ne liha (g(−x) = x² − 2x; g(1) = 3, g(−1) = −1); f(0) = 0 = f(2) = 8 − 8, zato f ni injektivna.
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#primer2
-besedilo: »Ugotovi, ali sta $f(x) = x^3 - 4x$ in $g(x) = x^2 + 2x$ sodi ali lihi. Ali je $f$ injektivna?« -/
+besedilo: »$f(-x) = (-x)^3 - 4(-x) = -x^3 + 4x$« -/
 theorem primer2 :
     (∀ x : ℝ, (-x) ^ 3 - 4 * (-x) = -x ^ 3 + 4 * x ∧ -x ^ 3 + 4 * x = -(x ^ 3 - 4 * x)) ∧
     (∀ x : ℝ, (-x) ^ 2 + 2 * (-x) = x ^ 2 - 2 * x) ∧ ((1:ℝ) ^ 2 + 2 * 1 = 3 ∧ (-1:ℝ) ^ 2 + 2 * (-1) = -1) ∧
@@ -345,7 +345,7 @@ example :=
 /-- Pogoste napake: f⁻¹(x) ni 1/f(x) (npr. pri x = 200: (200 − 100)/50 = 2, 1/(50 · 200 + 100) ≠ 2); iz
 1/R₂ = 1/R − 1/R₁ ne sledi R₂ = R − R₁ (pri R = 4, R₁ = 12 bi bilo −8 < 0, pravilno 6).
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#pogoste-napake
-besedilo: »$f^{-1}$ kot ulomek.** Oznaka $f^{-1}(x)$ ni $\dfrac{1}{f(x)}$. Pri babici je $\dfrac{1}{50x + 100}$ nesmiselna količina, prava inverzna pa je $\dfrac{x - 100}{50}$. Inverzna funkcija »odpravi« $f$, ne obrne ulomka.« -/
+besedilo: »Obrnjen vsak člen posebej.** Iz $\dfrac{1}{R_2} = \dfrac{1}{R} - \dfrac{1}{R_1}$ ne sledi $R_2 = R - R_1$ (napačno).« -/
 theorem pogoste_napake : ((200:ℝ) - 100) / 50 = 2 ∧ (1:ℝ) / (50 * 200 + 100) ≠ 2 ∧ (4:ℝ) - 12 = -8 ∧
     (1:ℝ) / 4 - 1 / 12 ≠ 1 / (4 - 12) ∧ (4:ℝ) * 12 / (12 - 4) = 6 := by norm_num
 
@@ -441,14 +441,14 @@ theorem preveri1 : (∀ x : ℝ, x ^ 3 - 4 * x = 0 ↔ x = -2 ∨ x = 0 ∨ x = 
 
 /-- Preveri se, 2: f(x) = 2x − 1, g(x) = x²: (g ∘ f)(3) = g(5) = 25; f(g(3)) = f(9) = 17; g(3) · f(3) = 45.
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#preveri2
-besedilo: »Naj bo $f(x) = 2x - 1$ in $g(x) = x^2$. Koliko je $(g \circ f)(3)$?« -/
+besedilo: »$f(3) = 5$, nato $g(5) = 25$.« -/
 theorem preveri2 : ((fun x : ℝ => x ^ 2) ∘ (fun x : ℝ => 2 * x - 1)) 3 = 25 ∧
     ((fun x : ℝ => 2 * x - 1) ∘ (fun x : ℝ => x ^ 2)) 3 = 17 ∧ ((3:ℝ) ^ 2) * (2 * 3 - 1) = 45 := by
   simp; norm_num
 
 /-- Preveri se, 3: inverz 3x + 6 je (x − 6)/3 = x/3 − 2 (ne x/3 − 6); f(1) = 9, f⁻¹(9) = 3 − 2 = 1.
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#preveri3
-besedilo: »Jan je iskal inverzno funkcijo $f(x) = 3x + 6$. Pisal je: (1) $y = 3x + 6$; (2) $x = \dfrac{y - 6}{3}$; (3) $f^{-1}(x) = \dfrac{x}{3} - 6$. Kje je napaka?« -/
+besedilo: »Pisal je: (1) $y = 3x + 6$; (2) $x = \dfrac{y - 6}{3}$; (3) $f^{-1}(x) = \dfrac{x}{3} - 6$.« -/
 theorem preveri3 (x : ℝ) : (∀ y : ℝ, y = 3 * x + 6 ↔ x = (y - 6) / 3) ∧ (x - 6) / 3 = x / 3 - 2 ∧
     (3:ℝ) * 1 + 6 = 9 ∧ (9:ℝ) / 3 - 2 = 1 ∧ (9:ℝ) / 3 - 6 ≠ 1 :=
   ⟨fun y => ⟨fun h => by rw [h]; ring, fun h => by rw [h]; ring⟩, by ring, by norm_num, by norm_num, by norm_num⟩
@@ -543,9 +543,9 @@ theorem racun (R R1 l a d x : ℝ) (hR : R ≠ 0) (hR1 : R1 ≠ 0) (hRR : R1 - R
 /-- Predpostavke trditve `racun` se dajo izpolniti. -/
 example : (1:ℝ) ≠ 0 ∧ (2:ℝ) ≠ 0 ∧ (2:ℝ) - 1 ≠ 0 ∧ (1:ℝ) + 0 * 0 ≠ 0 := by norm_num
 
-end Evklid.Lekcije.MAT_SS_2.FunkcijeInNjihoveLastnosti
 /-- Predpostavke trditve `racun` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
   have w : (1:ℝ) ≠ 0 ∧ (2:ℝ) ≠ 0 ∧ (2:ℝ) - 1 ≠ 0 ∧ (1:ℝ) + 0 * 0 ≠ 0 := by norm_num
   racun (hR := w.1) (hR1 := w.2.1) (hRR := w.2.2.1) (had := w.2.2.2)
 
+end Evklid.Lekcije.MAT_SS_2.FunkcijeInNjihoveLastnosti

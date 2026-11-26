@@ -140,7 +140,7 @@ example :=
 /-- Razlaga »Zakaj v desno?«: (x − 2)² pri x = 3 da 1² = 1, isto kot x² pri x = 1; pri p = 2 je g(x) = f(x − 2)
 pri x enak f pri x − 2.
 trditev: MAT-SS-2/transformacije-grafov#zakaj-desno
-besedilo: »S števili iz tabele, kjer je $p = 2$: pri $x = 3$ funkcija $(x - 2)^2$ izračuna $1^2 = 1$, torej isto kot $x^2$ pri $x = 1$.« -/
+besedilo: »S števili iz tabele, kjer je $p = 2$: pri $x = 3$ funkcija $(x - 2)^2$ izračuna $1^2 = 1$, torej isto kot $x^2$ pri $x = 1$. Enako je pri Tinetu: sobotni sladkor ob 10.00 je tak kot običajni ob 8.00.« -/
 theorem zakaj_desno : ((3:ℝ) - 2) ^ 2 = 1 ^ 2 ∧ (1:ℝ) ^ 2 = 1 ∧
     ∀ (f : ℝ → ℝ) (x : ℝ), (fun t => f (t - 2)) x = f (x - 2) :=
   ⟨by norm_num, by norm_num, fun _ _ => rfl⟩
@@ -284,7 +284,7 @@ theorem primer2 :
 
 /-- Primer 3, model: m(t) = −2(t − 1)² + 7 da m(0) = 5, m(1) = 7, m(2) = 5 (s 5 na 7 in nazaj na 5).
 trditev: MAT-SS-2/transformacije-grafov#primer3-model
-besedilo: »Podatki:** $m(t) = -2(t - 1)^2 + 7$ ($\mathrm{mmol/L}$, $t$ v h, $0 \le t \le 2$), zamik $2\,\mathrm{h}$, napaka senzorja $+0{,}5\,\mathrm{mmol/L}$, meja $7\,\mathrm{mmol/L}$, po kosilu $n(t) = m\left(\frac{t}{2}\right)$« -/
+besedilo: »$m(t) = -2(t - 1)^2 + 7$« -/
 theorem primer3_model :
     -2 * ((0:ℝ) - 1) ^ 2 + 7 = 5 ∧ -2 * ((1:ℝ) - 1) ^ 2 + 7 = 7 ∧ -2 * ((2:ℝ) - 1) ^ 2 + 7 = 5 := by
   norm_num
@@ -538,7 +538,7 @@ theorem korak_za_korakom :
 /-- Korak za korakom (zrcaljenje): g(x) = √(−x) + 1; (0, 0), (1, 1), (4, 2) → (0, 0), (−1, 1), (−4, 2) →
 (0, 1), (−1, 2), (−4, 3); g(−4) = √4 + 1 = 3; √(−x) je definiran za x ≤ 0.
 trditev: MAT-SS-2/transformacije-grafov#korak-zrcaljenje
-besedilo: »$g(-4) = \sqrt{4} + 1 = 3$« -/
+besedilo: »Prištevanje $1$ jih dvigne v $(0, 1)$, $(-1, 2)$, $(-4, 3)$.« -/
 theorem korak_zrcaljenje :
     √(-(0:ℝ)) + 1 = 1 ∧ √(-(-1:ℝ)) + 1 = 2 ∧ √(-(-4:ℝ)) + 1 = √4 + 1 ∧ √(4:ℝ) + 1 = 3 ∧
     ∀ x : ℝ, 0 ≤ -x ↔ x ≤ 0 := by
@@ -572,7 +572,7 @@ theorem kviz2 :
 /-- Preveri se 3 in 6: g(x) = f(x − 3) ima pri x vrednost f pri x − 3 (graf 3 v desno: (x, y) ↦ (x + 3, y));
 jutrišnja temperatura je T(t − 5), graf 5 minut v desno.
 trditev: MAT-SS-2/transformacije-grafov#kviz3-6
-besedilo: »Zakaj graf $g(x) = f(x - 3)$ leži $3$ enote desno od grafa $f$?« -/
+besedilo: »Jutri ima zrak ob času $t$ tisto temperaturo, kot jo je danes imel ob $t - 5$. Graf se premakne za $5$ minut v desno.« -/
 theorem kviz3_6 (f : ℝ → ℝ) :
     graf (fun x => f (x - 3)) = (fun P : ℝ × ℝ => (P.1 + 3, P.2)) '' graf f ∧
     graf (fun t => f (t - 5)) = (fun P : ℝ × ℝ => (P.1 + 5, P.2)) '' graf f :=

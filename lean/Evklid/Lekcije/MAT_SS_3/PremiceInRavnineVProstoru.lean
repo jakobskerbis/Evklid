@@ -318,7 +318,7 @@ pravokoten na vsak vektor ravnine (vsako razliko dveh njenih točk). -/
 /-- Razlaga 2 (tabela, primer na kocki): AB in BC se sekata (natanko ena skupna točka, B) in ležita
 v isti ravnini (z = 0).
 trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#ab-bc-sekata
-besedilo: »V tabeli so »Točke« število skupnih točk, »Ravnina« pa pove, ali premici ležita v isti ravnini.« -/
+besedilo: »Na kocki se $AB$ in $BC$ sekata, $AB$ in $HG$ sta vzporedni, $AB$ in $CG$ pa mimobežni.« -/
 theorem AB_BC_sekata (a : ℝ) (ha : 0 < a) :
     sekajoci (premica (A a a a) (B a a a)) (premica (B a a a) (C a a a)) ∧
     vIstiRavnini (premica (A a a a) (B a a a)) (premica (B a a a) (C a a a)) := by
@@ -452,7 +452,7 @@ theorem kriterij {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] (n
 
 /-- Razlaga 4 (obratna smer kriterija): če je n pravokoten na vse su + tv, je pravokoten na u in v.
 trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#kriterij-obratno
-besedilo: »zato velja kriterij:« -/
+besedilo: »zato je pravokoten na vsako premico v njej,« -/
 theorem kriterij_obratno {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] (n u v : V)
     (h : ∀ s t : ℝ, inner ℝ n (s • u + t • v) = 0) : inner ℝ n u = 0 ∧ inner ℝ n v = 0 :=
   ⟨by simpa using h 1 0, by simpa using h 0 1⟩
@@ -570,8 +570,7 @@ theorem nozisce_enolicno {X N N' n : R3} {k : ℝ} (h : nozisce X N n k) (h' : n
   exact sub_eq_zero.mp (norm_eq_zero.mp this)
 
 /-- Projekcija na ravnino z = 0 (ABCD): nožišče točke (x, y, z) je (x, y, 0).
-trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#nozisce-z
-besedilo: »Pravokotna projekcija.** Iz točke $T$ spustimo pravokotnico na ravnino; nožišče $T'$ je **pravokotna projekcija** točke $T$.« -/
+pomozno -/
 theorem nozisce_z (x y z : ℝ) : nozisce (T x y z) (T x y 0) (T 0 0 1) 0 := by
   refine ⟨by simp [ravnina, inner_k], ?_⟩
   intro U hU W hW
@@ -591,8 +590,7 @@ example :=
   nozisce_enolicno (h := w.1) (h' := w.2)
 
 /-- Projekcija na ravnino y = 0 (ABFE): nožišče točke (x, y, z) je (x, 0, z).
-trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#nozisce-y
-besedilo: »Pravokotna projekcija.** Iz točke $T$ spustimo pravokotnico na ravnino; nožišče $T'$ je **pravokotna projekcija** točke $T$.« -/
+pomozno -/
 theorem nozisce_y (x y z : ℝ) : nozisce (T x y z) (T x 0 z) (T 0 1 0) 0 := by
   refine ⟨by simp [ravnina, inner_k], ?_⟩
   intro U hU W hW
@@ -602,8 +600,7 @@ theorem nozisce_y (x y z : ℝ) : nozisce (T x y z) (T x 0 z) (T 0 1 0) 0 := by
   simp only [inner_k, T_sub, PiLp.sub_apply, T_0, T_1, T_2, hU', hW']; ring
 
 /-- Projekcija na ravnino x = y (ACGE): nožišče točke (x, y, z) je ((x+y)/2, (x+y)/2, z).
-trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#nozisce-xy
-besedilo: »Pravokotna projekcija.** Iz točke $T$ spustimo pravokotnico na ravnino; nožišče $T'$ je **pravokotna projekcija** točke $T$.« -/
+pomozno -/
 theorem nozisce_xy (x y z : ℝ) :
     nozisce (T x y z) (T ((x + y) / 2) ((x + y) / 2) z) (T 1 (-1) 0) 0 := by
   refine ⟨by simp [ravnina, inner_k], ?_⟩
@@ -713,7 +710,7 @@ example :=
 /-- Preveri se (2): projekcija p(φ) = l cos φ se pri dviganju (φ od 0° do 90°) strogo krajša, pri 0°
 je enaka l, v navpični legi je 0 (točka); nikoli ni daljša od l.
 trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#projekcija-se-krajsa
-besedilo: »»Projekcija je enako dolga kot daljica.«** Velja le za daljico, vzporedno z ravnino. Sicer je $p = l\cos\varphi$ krajša, pri $90^\circ$ je le točka.« -/
+besedilo: »$p = l\cos\varphi$: ko kot narašča od $0^\circ$ do $90^\circ$, kosinus pade z $1$ na $0$.« -/
 theorem projekcija_se_krajsa (l : ℝ) (hl : 0 < l) :
     StrictAntiOn (fun φ => l * cos φ) (Set.Icc 0 (π / 2)) ∧ l * cos 0 = l ∧ l * cos (π / 2) = 0 ∧
     ∀ φ, l * cos φ ≤ l := by
@@ -780,7 +777,7 @@ example :=
 
 /-- Razlaga 5, premisli: AF je bolj strma od AG (tan 45° = 1 > 1/√2, torej ∠ B A F > ∠ C A G).
 trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#af-bolj-strma
-besedilo: »Diagonala $AF$. Obe se dvigneta za $a$, projekcija $AF$ je rob $AB$ dolžine $a$, projekcija $AG$ pa daljša diagonala $AC = a\sqrt{2}$. Pri $AF$ je $\tan\varphi = 1$, torej $45^\circ$; pri $AG$ je kot manjši, okoli $35^\circ$ (Primer 2).« -/
+besedilo: »Pri $AF$ je $\tan\varphi = 1$, torej $45^\circ$; pri $AG$ je kot manjši, okoli $35^\circ$ (Primer 2).« -/
 theorem AF_bolj_strma (a : ℝ) (ha : 0 < a) :
     ∠ (C a a a) (A a a a) (G a a a) < ∠ (F a a a) (A a a a) (B a a a) := by
   rw [(kocka_kot a ha).2, (AF_45 a ha).2, ← arctan_one]
@@ -858,14 +855,14 @@ theorem arcsin_35_2644 : |arcsin (1 / √3) * 180 / π - 35.2644| < 0.0005 := by
 
 /-- Primer 2 (korak 5), RAČUN: φ = arcsin(1/√3) ≈ 35,26°.
 trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#arcsin-35-26
-besedilo: »$\tan\varphi = \dfrac{6}{6\sqrt{2}} = \dfrac{1}{\sqrt{2}} \approx 0{,}707$, zato $\varphi \approx 35{,}26^\circ$.« -/
+besedilo: »zato $\varphi \approx 35{,}26^\circ$.« -/
 theorem arcsin_35_26 : |arcsin (1 / √3) * 180 / π - 35.26| < 0.005 := by
   have h := arcsin_35_2644
   rw [abs_lt] at h ⊢; constructor <;> linarith [h.1, h.2]
 
 /-- Primer 2: kot je pri a = 6 enak ∠ C A G = arctan(1/√2) ≈ 35,26° in ≈ 35°16′ (|φ − 35 16/60| < 1/120).
 trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#primer2-kot
-besedilo: »$\tan\varphi = \dfrac{6}{6\sqrt{2}} = \dfrac{1}{\sqrt{2}} \approx 0{,}707$, zato $\varphi \approx 35{,}26^\circ$.« -/
+besedilo: »Odgovor: telesna diagonala oklepa z osnovno ploskvijo kot približno $35{,}26^\circ$ ($35^\circ 16'$). Rob $a$ se je pokrajšal, zato je kot enak pri vsaki kocki.« -/
 theorem primer2_kot :
     |∠ (C 6 6 6) (A 6 6 6) (G 6 6 6) * 180 / π - 35.26| < 0.005 ∧
     |∠ (C 6 6 6) (A 6 6 6) (G 6 6 6) * 180 / π - (35 + 16 / 60)| < 1 / 120 := by
@@ -955,7 +952,7 @@ example :=
 
 /-- RAČUN: 5·tan 60° ≈ 8,66 (premisli v primeru 4).
 trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#racun-5tan60
-besedilo: »$c = d\tan 60^\circ = 5\sqrt{3} \approx 8{,}66\,\mathrm{cm}$« -/
+besedilo: »$c = d\tan 60^\circ = 5\sqrt{3} \approx 8{,}66\,\mathrm{cm}$.« -/
 theorem racun_5tan60 : |5 * tan (60 * π / 180) - 8.66| < 0.005 := by
   rw [show (60 : ℝ) * π / 180 = π / 3 by ring, tan_pi_div_three]
   obtain ⟨t1, t2⟩ := sqrt3_meje
@@ -1176,7 +1173,7 @@ example : (0:ℝ) < 3 * √2 ∧ dist (T 3 3 (3 * √2)) (T 0 0 0) = 6 := by
 
 /-- RAČUN (naloga 1): 6√2/2 = 3√2 in arccos(3√2/6) · 180/π = 45.
 trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#racun-naloga1
-besedilo: »Stranski rob $l = 6\,\mathrm{cm}$, projekcija in višina piramide tvorijo pravokotni trikotnik: $\cos\varphi = \dfrac{p}{l} = \dfrac{3\sqrt{2}}{6} = \dfrac{\sqrt{2}}{2}$, zato $\varphi = 45^\circ$.« -/
+besedilo: »$\cos\varphi = \dfrac{p}{l} = \dfrac{3\sqrt{2}}{6} = \dfrac{\sqrt{2}}{2}$« -/
 theorem racun_naloga1 : 6 * √2 / 2 = 3 * √2 ∧ arccos (3 * √2 / 6) * 180 / π = 45 := by
   refine ⟨by ring, ?_⟩
   rw [show 3 * √2 / 6 = √2 / 2 by ring, ← cos_pi_div_four,
@@ -1345,7 +1342,7 @@ theorem naloga2c_kot :
 /-- Naloga 3 a): BD ⊥ AC (diagonali kvadrata), BD ⊥ AE, zato je BD pravokotna na vsak vektor ravnine
 ACGE (x = y), torej na celo ravnino; A, C, G, E ležijo v tej ravnini.
 trditev: MAT-SS-3/premice-in-ravnine-v-prostoru#naloga3a
-besedilo: »c) Robovi $AB$, $AD$, $EF$ in $EH$ so pravokotni na $AE$, zato so $B$, $D$, $F$ in $H$ od premice $AE$ oddaljeni $4\,\mathrm{cm}$. Oglišči $C$ in $G$ sta oddaljeni $4\sqrt{2}\,\mathrm{cm}$, $A$ in $E$ pa ležita na osi. V množici so oglišča $B$, $D$, $F$, $H$.« -/
+besedilo: »a) Premica $BD$ je pravokotna na dve sekajoči se premici $AC$ in $AE$ ravnine $ACGE$, zato je pravokotna na celo ravnino.« -/
 theorem naloga3a :
     inner ℝ (D 4 4 4 - B 4 4 4) (C 4 4 4 - A 4 4 4) = 0 ∧
     inner ℝ (D 4 4 4 - B 4 4 4) (E 4 4 4 - A 4 4 4) = 0 ∧

@@ -485,7 +485,7 @@ theorem primer3 :
 = (x^(3/4 − (−1/4))·y^(−1/2 − 1/6))^(3/2) = (x^(4/4)·y^(−3/6 − 1/6))^(3/2) = (x¹·y^(−2/3))^(3/2)
 = x^(1·3/2)·y^(−2/3·3/2) = x^(3/2)·y⁻¹ = x^(3/2)/y = x√x/y.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#primer4
-besedilo: »Podatki:** izraz $\left(\dfrac{x^{\frac{3}{4}} \cdot y^{-\frac{1}{2}}}{x^{-\frac{1}{4}} \cdot y^{\frac{1}{6}}}\right)^{\frac{3}{2}}$, pogoj $x, y > 0$, vrednosti $x = 4$, $y = 8$« -/
+besedilo: »Najprej uredimo ulomek v oklepaju; pri deljenju eksponente odštejemo. Pri $x$: $\dfrac{3}{4} - \left(-\dfrac{1}{4}\right) = \dfrac{4}{4} = 1$. Pri $y$: $-\dfrac{1}{2} - \dfrac{1}{6} = -\dfrac{3}{6} - \dfrac{1}{6} = -\dfrac{2}{3}$.« -/
 theorem primer4 (x y : ℝ) (hx : 0 < x) (hy : 0 < y) :
     ((x ^ (3 / 4 : ℝ) * y ^ (-1 / 2 : ℝ)) / (x ^ (-1 / 4 : ℝ) * y ^ (1 / 6 : ℝ))) ^ (3 / 2 : ℝ)
       = x * Real.sqrt x / y := by
@@ -513,7 +513,7 @@ example :=
 
 /-- Primer 4, premisli: pri x = 4, y = 8 je 4·√4/8 = 4·2/8 = 1, zato ima prvotni izraz vrednost 1.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#primer4-vrednost
-besedilo: »Podatki:** izraz $\left(\dfrac{x^{\frac{3}{4}} \cdot y^{-\frac{1}{2}}}{x^{-\frac{1}{4}} \cdot y^{\frac{1}{6}}}\right)^{\frac{3}{2}}$, pogoj $x, y > 0$, vrednosti $x = 4$, $y = 8$« -/
+besedilo: »Poenostavi izraz $\left(\dfrac{x^{\frac{3}{4}} \cdot y^{-\frac{1}{2}}}{x^{-\frac{1}{4}} \cdot y^{\frac{1}{6}}}\right)^{\frac{3}{2}}$ za $x, y > 0$. Nato izračunaj njegovo vrednost za $x = 4$ in $y = 8$.« -/
 theorem primer4_vrednost :
     (4 : ℝ) * Real.sqrt 4 / 8 = 4 * 2 / 8 ∧ (4 : ℝ) * 2 / 8 = 1 ∧
     (((4 : ℝ) ^ (3 / 4 : ℝ) * (8 : ℝ) ^ (-1 / 2 : ℝ)) / ((4 : ℝ) ^ (-1 / 4 : ℝ) * (8 : ℝ) ^ (1 / 6 : ℝ)))
@@ -696,7 +696,7 @@ example :=
 
 /-- Za maturo, naloga 2 b) in RAČUN: (240/50)⁴ = 530,8416, kar je zaokroženo 531.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#racun-masa
-besedilo: »b) Potenciramo s $4$: $M = 4{,}8^4 = 530{,}8416$, torej približno $531\,\mathrm{kg}$.« -/
+besedilo: »$M = 4{,}8^4 = 530{,}8416$« -/
 theorem racun_masa : ((240 : ℝ) / 50) ^ 4 = 530.8416 ∧ (530.5 : ℝ) < 530.8416 ∧
     (530.8416 : ℝ) < 531.5 := by norm_num
 
@@ -921,7 +921,7 @@ theorem iracionalni : (2 : ℝ) ^ (1.4 : ℝ) < (2 : ℝ) ^ (1.41 : ℝ) ∧
 /-- Drugače, bolj natančno: 2^√2 leži med 2^1,414 in 2^1,415 (1,414 < √2 < 1,415, potenca z osnovo
 2 narašča).
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#iracionalni-meje
-besedilo: »Kaj pa iracionalni eksponenti?** Potenco $2^{\sqrt{2}}$ lahko razumemo kot število, ki ga vedno bolj natančno približujejo potence $2^{1{,}4}$, $2^{1{,}41}$, $2^{1{,}414}$, … z racionalnimi eksponenti.« -/
+besedilo: »Kaj pa iracionalni eksponenti?** Potenco $2^{\sqrt{2}}$ lahko razumemo kot število, ki ga vedno bolj natančno približujejo potence $2^{1{,}4}$, $2^{1{,}41}$, $2^{1{,}414}$, … z racionalnimi eksponenti. Natančno to obravnavamo pri eksponentni funkciji.« -/
 theorem iracionalni_meje : (2 : ℝ) ^ (1.414 : ℝ) < (2 : ℝ) ^ Real.sqrt 2 ∧
     (2 : ℝ) ^ Real.sqrt 2 < (2 : ℝ) ^ (1.415 : ℝ) := by
   have h1 : (1.414 : ℝ) < Real.sqrt 2 := by
@@ -984,7 +984,7 @@ theorem kviz3 : (∀ a r : ℝ, 0 < a → a ^ (-r) = 1 / a ^ r) ∧
 
 /-- Preveri se 3: za a > 0 je a^(−r) = a^r natanko tedaj, ko je a = 1 ali r = 0.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#kviz3-enako
-besedilo: »razen pri $a = 1$ ali $r = 0$:« -/
+besedilo: »Spremeni se, razen pri $a = 1$ ali $r = 0$: na primer $4^{\frac{1}{2}} = 2$, $4^{-\frac{1}{2}} = \frac{1}{2}$.« -/
 theorem kviz3_enako (a r : ℝ) (ha : 0 < a) : a ^ (-r) = a ^ r ↔ a = 1 ∨ r = 0 := by
   rw [Real.rpow_def_of_pos ha, Real.rpow_def_of_pos ha, Real.exp_eq_exp]
   constructor

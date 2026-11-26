@@ -44,9 +44,8 @@ example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x) ((fun _ => (1:ℝ)) x) x) 
 
 /-- Predpostavke trditve `pada` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
-  have w : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x) ((fun _ => (1:ℝ)) x) x) ∧ Convex ℝ (univ : Set ℝ) ∧ (∀ x ∈ interior (univ : Set ℝ), (0:ℝ) < (fun _ => (1:ℝ)) x) :=
-    ⟨fun x => hasDerivAt_id' x, convex_univ, fun _ _ => one_pos⟩
-  pada (hd := w.1) (hD := w.2.1) (hn := w.2.2)
+  pada (f := fun x : ℝ => -x) (f' := fun _ => (-1:ℝ)) (D := Set.univ) (fun x => (hasDerivAt_id' x).neg) convex_univ
+    (fun _ _ => by norm_num)
 
 /-- Predpostavke trditve `narasca` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
@@ -93,10 +92,9 @@ example :=
 
 /-- Predpostavke trditve `lokalni_maksimum` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
-  have w : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x ^ 2) ((fun x => 2 * x) x) x) ∧ (-1:ℝ) < 0 ∧ (0:ℝ) < 1 ∧ (∀ x ∈ Ioo (-1:ℝ) 0, (fun x => 2 * x) x ≤ 0) ∧ (∀ x ∈ Ioo (0:ℝ) 1, 0 ≤ (fun x => 2 * x) x) :=
-    ⟨fun x => (hasDerivAt_pow 2 x).congr_deriv (by norm_num), by norm_num, by norm_num,
-      fun x hx => by simp only; linarith [hx.2], fun x hx => by simp only; linarith [hx.1]⟩
-  lokalni_maksimum (hd := w.1) (hab := w.2.1) (hbc := w.2.2.1) (h₀ := w.2.2.2.1) (h₁ := w.2.2.2.2)
+  lokalni_maksimum (f := fun x : ℝ => -x ^ 2) (f' := fun x => -(2 * x)) (a := -1) (b := 0) (c := 1)
+    (fun x => ((hasDerivAt_pow 2 x).neg).congr_deriv (by norm_num)) (by norm_num) (by norm_num)
+    (fun x hx => by simp only; linarith [hx.2]) (fun x hx => by simp only; linarith [hx.1])
 
 example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => -x ^ 2) ((fun x => -(2 * x)) x) x) ∧ (-1:ℝ) < 0 ∧ (0:ℝ) < 1 ∧
     (∀ x ∈ Ioo (-1:ℝ) 0, 0 ≤ (fun x => -(2 * x)) x) ∧ (∀ x ∈ Ioo (0:ℝ) 1, (fun x => -(2 * x)) x ≤ 0) :=
@@ -113,7 +111,7 @@ theorem uvod : (1:ℝ) * 300 = 300 ∧ (1.5:ℝ) * 200 = 300 := by norm_num
 /-- Tabela namesto formule: prodanih je 300 − 200(x − 1) = 500 − 200x kosov, prihodek
 R(x) = x(500 − 200x) = 500x − 200x².
 trditev: MAT-SS-4/uporaba-odvoda#kosi-in-prihodek
-besedilo: »Tabela namesto formule.** Naj bo $x$ cena rogljička v evrih. Vsak evro podražitve odžene $200$ kupcev ($20$ na vsakih $10$ centov), zato je prodanih $300 - 200(x - 1) = 500 - 200x$ kosov. Prihodek je cena krat število kosov (cena in prihodek v evrih):« -/
+besedilo: »zato je prodanih $300 - 200(x - 1) = 500 - 200x$ kosov.« -/
 theorem kosi_in_prihodek (x : ℝ) :
     300 - 200 * (x - 1) = 500 - 200 * x ∧ x * (500 - 200 * x) = 500 * x - 200 * x ^ 2 := by
   constructor <;> ring
@@ -147,7 +145,7 @@ theorem rogljicki_tangenta (x : ℝ) :
 
 /-- Številska premica: R narašča na [1; 1,25] (R' > 0) in pada na [1,25; 1,5] (R' < 0).
 trditev: MAT-SS-4/uporaba-odvoda#rogljicki-monotonost
-besedilo: »Za $x > 1{,}25$ je $R'(x) < 0$.« -/
+besedilo: »Odvod $0$ velja le v točki vrha, ne na intervalu. Za $x > 1{,}25$ je $R'(x) < 0$.« -/
 theorem rogljicki_monotonost :
     StrictMonoOn (fun x : ℝ => 500 * x - 200 * x ^ 2) (Icc 1 1.25) ∧
     StrictAntiOn (fun x : ℝ => 500 * x - 200 * x ^ 2) (Icc 1.25 1.5) := by
@@ -267,7 +265,7 @@ theorem primer2_stacionarni (x : ℝ) : 3 * (x + 1) * (x - 3) = 0 ↔ x = -1 ∨
 /-- Primer 2, korak 3: testne točke f'(−2) = 15, f'(0) = −9, f'(4) = 15; f narašča na (−∞, −1) in
 (3, ∞), pada na (−1, 3).
 trditev: MAT-SS-4/uporaba-odvoda#primer2-monotonost
-besedilo: »b) Predznak odvoda: $f'(0) = 9 > 0$, $f'(2) = -3 < 0$, $f'(4) = 9 > 0$. Funkcija narašča na $(-\infty, 1)$ in na $(3, \infty)$, pada na $(1, 3)$.« -/
+besedilo: »Odgovor: $f$ narašča na $(-\infty, -1)$ in $(3, \infty)$, pada na $(-1, 3)$; lokalni maksimum je $T_1(-1, 7)$, lokalni minimum $T_2(3, -25)$.« -/
 theorem primer2_monotonost :
     (3:ℝ) * (-2) ^ 2 - 6 * (-2) - 9 = 15 ∧ (3:ℝ) * 0 ^ 2 - 6 * 0 - 9 = -9 ∧
     (3:ℝ) * 4 ^ 2 - 6 * 4 - 9 = 15 ∧
@@ -412,7 +410,7 @@ theorem matura1 (x : ℝ) :
 
 /-- Naloga 2 a): f(x) = x(x² − 6x + 9) = x(x − 3)², ničli sta 0 in 3.
 trditev: MAT-SS-4/uporaba-odvoda#matura2a
-besedilo: »$f(x) = x(x^2 - 6x + 9) = x(x - 3)^2$« -/
+besedilo: »a) $f(x) = x(x^2 - 6x + 9) = x(x - 3)^2$.« -/
 theorem matura2a (x : ℝ) :
     x ^ 3 - 6 * x ^ 2 + 9 * x = x * (x ^ 2 - 6 * x + 9) ∧ x * (x ^ 2 - 6 * x + 9) = x * (x - 3) ^ 2 ∧
     (x * (x - 3) ^ 2 = 0 ↔ x = 0 ∨ x = 3) := by
@@ -495,7 +493,7 @@ example :=
 
 /-- Naloga 3 b): C'(r) = 1,2πr − 1,2/r² (r > 0).
 trditev: MAT-SS-4/uporaba-odvoda#matura3b-odvod
-besedilo: »a) Vstavimo $h$: $0{,}3 \cdot 2\pi r \cdot \dfrac{2}{\pi r^2} = \dfrac{1{,}2}{r}$, torej $C(r) = 0{,}6\pi r^2 + \dfrac{1{,}2}{r}$.« -/
+besedilo: »b) $C'(r) = 1{,}2\pi r - \dfrac{1{,}2}{r^2}$.« -/
 theorem matura3b_odvod (r : ℝ) (hr : 0 < r) :
     HasDerivAt (fun r : ℝ => 0.6 * π * r ^ 2 + 1.2 / r) (1.2 * π * r - 1.2 / r ^ 2) r := by
   have h1 := (hasDerivAt_pow 2 r).const_mul (0.6 * π)
@@ -576,9 +574,9 @@ theorem matura3b_minimum (r₀ : ℝ) (h0 : 0 < r₀) (hπ : π * r₀ ^ 3 = 1) 
 example : ∃ r₀ : ℝ, 0 < r₀ ∧ π * r₀ ^ 3 = 1 := ⟨_, matura3b_r0⟩
 
 /-- Predpostavke trditve `matura3b_minimum` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ r₀ : ℝ, 0 < r₀ ∧ π * r₀ ^ 3 = 1 := ⟨_, matura3b_r0⟩
-  matura3b_minimum (h0 := w.choose_spec.1) (hπ := w.choose_spec.2)
+  (fun _ => trivial) (matura3b_minimum (r₀ := w.choose) (h0 := w.choose_spec.1) (hπ := w.choose_spec.2))
 
 /-- Naloga 3 b), c): r₀ ≐ 0,68278 dm (na milimeter 0,683 dm ≐ 6,8 cm); višina h = 2/(πr₀²) = 2r₀ ≐ 1,3656 dm
 (13,7 cm); stroški 0,6πr₀² ≐ 0,8788, 1,2/r₀ ≐ 1,7575, C(r₀) ≐ 2,6363 ≐ 2,64 €.
@@ -614,9 +612,9 @@ theorem matura3_stevila (r₀ : ℝ) (h0 : 0 < r₀) (hπ : π * r₀ ^ 3 = 1) :
     · rw [div_lt_iff₀ h0]; nlinarith
 
 /-- Predpostavke trditve `matura3_stevila` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ r₀ : ℝ, 0 < r₀ ∧ π * r₀ ^ 3 = 1 := ⟨_, matura3b_r0⟩
-  matura3_stevila (h0 := w.choose_spec.1) (hπ := w.choose_spec.2)
+  (fun _ => trivial) (matura3_stevila (r₀ := w.choose) (h0 := w.choose_spec.1) (hπ := w.choose_spec.2))
 
 /-- Naloga 3 c): pri πr³ = 1 je h = 2/(πr²) = 2r³/r² = 2r, višina je enaka premeru dna.
 trditev: MAT-SS-4/uporaba-odvoda#matura3c-premer
@@ -634,9 +632,9 @@ example : ∃ r : ℝ, 0 < r ∧ π * r ^ 3 = 1 := ⟨_, matura3b_r0⟩
 /-! ## Preveri se -/
 
 /-- Predpostavke trditve `matura3c_premer` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ r : ℝ, 0 < r ∧ π * r ^ 3 = 1 := ⟨_, matura3b_r0⟩
-  matura3c_premer (hr := w.choose_spec.1) (hπ := w.choose_spec.2)
+  (fun _ => trivial) (matura3c_premer (r := w.choose) (hr := w.choose_spec.1) (hπ := w.choose_spec.2))
 
 /-- Preveri se 2: pri f(x) = x² so smerni koeficienti tangent v −1, 0, 2 enaki −2, 0, 4 (vrstni red
 −1, 0, 2).

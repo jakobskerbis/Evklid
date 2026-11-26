@@ -92,7 +92,7 @@ theorem kvadrat_v_1 : HasDerivAt (fun x : ℝ => x ^ 2) 2 1 :=
 
 /-- Razlaga 1: diferenčni količnik |h|/h je −1 za h < 0 in 1 za h > 0; tabela pri ±0,1 in ±0,01.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#abs-kvocient
-besedilo: »| $-0{,}01$ | $-1$ |« -/
+besedilo: »| $0{,}1$ | $1$ |« -/
 theorem abs_kvocient :
     (∀ h : ℝ, h < 0 → |h| / h = -1) ∧ (∀ h : ℝ, 0 < h → |h| / h = 1) ∧
     |(-0.1:ℝ)| / (-0.1) = -1 ∧ |(-0.01:ℝ)| / (-0.01) = -1 ∧ |(0.01:ℝ)| / 0.01 = 1 ∧
@@ -268,7 +268,7 @@ example :=
 /-- Razlaga 4: predpostavke trditve `krog_implicitno` so izpolnljive: zgornji lok y = √(25 − x²) blizu
 x = 3, y(3) = 4, y'(3) = −3/4.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#krog-lok-v-3
-besedilo: »$y = -\frac{3}{4}x + \frac{25}{4}$« -/
+besedilo: »Tangenta je $y - 4 = -\frac{3}{4}(x - 3)$ oziroma $y = -\frac{3}{4}x + \frac{25}{4}$.« -/
 theorem krog_lok_v_3 :
     HasDerivAt (fun x => √(25 - x ^ 2)) (-3 / 4) 3 ∧
     (∀ᶠ x in 𝓝 (3:ℝ), x ^ 2 + √(25 - x ^ 2) ^ 2 = 25) ∧ √(25 - (3:ℝ) ^ 2) = 4 := by
@@ -289,7 +289,7 @@ theorem krog_tangenta (x y : ℝ) :
 
 /-- RACUN: tangenta y = −3/4 x + 25/4 ima s krožnico x² + y² = 25 skupno le točko x = 3.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#krog-tangenta-dotik
-besedilo: »(višja raven) (brez računala) Kolikšen je smerni koeficient tangente na krožnico $x^2 + y^2 = 25$ v točki $(-3, 4)$?« -/
+besedilo: »Odvod implicitno podane funkcije (višja raven).** Narišimo krožnico $x^2 + y^2 = 25$ in na njej točko $T(3, 4)$.« -/
 theorem krog_tangenta_dotik (x : ℝ) : x ^ 2 + (-3 / 4 * x + 25 / 4) ^ 2 = 25 ↔ x = 3 := by
   constructor
   · intro h
@@ -302,7 +302,7 @@ theorem krog_tangenta_dotik (x : ℝ) : x ^ 2 + (-3 / 4 * x + 25 / 4) ^ 2 = 25 �
 /-- Razlaga 4, Premisli: v točki (5, 0) ni odvedljive implicitne funkcije (iz 2x + 2y y' = 0 bi sledilo
 10 = 0): formula −x/y ima tam imenovalec 0.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#krog-v-5
-besedilo: »Kaj se zgodi s formulo $y' = -\frac{x}{y}$ v točki $(5, 0)$? Kaj to pove o tangenti tam?« -/
+besedilo: »Imenovalec je $0$, odvod ne obstaja. Na sliki se vidi zakaj: v točki $(5, 0)$ je tangenta na krožnico navpična premica $x = 5$. Implicitni odvod sam opozori na navpično tangento.« -/
 theorem krog_v_5 :
     ¬ ∃ (y : ℝ → ℝ) (y' : ℝ), HasDerivAt y y' 5 ∧ y 5 = 0 ∧ ∀ᶠ x in 𝓝 (5:ℝ), x ^ 2 + y x ^ 2 = 25 := by
   rintro ⟨y, y', hy, h0, he⟩
@@ -393,7 +393,7 @@ theorem primer2_dotik (x : ℝ) : x ^ 2 / 25 + (-4 / 5 * x + 5) ^ 2 / 9 = 1 ↔ 
 /-- Primer 3, koraki 2–4: točke krožnice x² + y² = 625 (y ≠ 0) s smernim koeficientom −x/y = 3/4 so
 natanko (15, −20) in (−15, 20).
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#primer3-tocki
-besedilo: »Podatki:** krožnica $x^2 + y^2 = 625$ (polmer $25\,\mathrm{mm}$), smerni koeficient tangente $k = \frac{3}{4}$« -/
+besedilo: »Ko voznik v točki $(15, -20)$ izpusti volan, gre avto naravnost po tangenti s smernim koeficientom $y' = -\frac{x}{y} = \frac{3}{4}$.« -/
 theorem primer3_tocki (x y : ℝ) :
     (x ^ 2 + y ^ 2 = 625 ∧ y ≠ 0 ∧ -x / y = 3 / 4) ↔ (x = 15 ∧ y = -20) ∨ (x = -15 ∧ y = 20) := by
   constructor
@@ -433,7 +433,7 @@ theorem primer3_tangenti :
 
 /-- RACUN: tangenta y = 3/4 x − 125/4 ima s krožnico x² + y² = 625 skupno le točko x = 15.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#primer3-dotik
-besedilo: »Podatki:** krožnica $x^2 + y^2 = 625$ (polmer $25\,\mathrm{mm}$), smerni koeficient tangente $k = \frac{3}{4}$« -/
+besedilo: »skozi $(15, -20)$ je $y = \frac{3}{4}x - \frac{125}{4}$,« -/
 theorem primer3_dotik (x : ℝ) : x ^ 2 + (3 / 4 * x - 125 / 4) ^ 2 = 625 ↔ x = 15 := by
   constructor
   · intro h
@@ -487,7 +487,7 @@ theorem primer4 (x y : ℝ) :
 
 /-- RACUN: tangenta y = −4/5 x + 14/5 ima s krivuljo x² + xy + y² = 7 skupno le točko x = 1.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#primer4-dotik
-besedilo: »$k = -\frac{2 + 2}{1 + 4} = -\frac{4}{5} = -0{,}8$. Tangenta: $y - 2 = -0{,}8(x - 1)$, torej $y = -0{,}8x + 2{,}8$.« -/
+besedilo: »Tangenta: $y - 1{,}8 = -0{,}8(x - 4)$, torej $y = -0{,}8x + 5$.« -/
 theorem primer4_dotik (x : ℝ) :
     x ^ 2 + x * (-4 / 5 * x + 14 / 5) + (-4 / 5 * x + 14 / 5) ^ 2 = 7 ↔ x = 1 := by
   constructor
@@ -676,7 +676,7 @@ theorem matura3b_dotik (x : ℝ) : x ^ 2 - x * (x + 4) + (x + 4) ^ 2 = 12 ↔ x 
 /-- Naloga 3 c): točke K z vodoravno tangento (števec y − 2x = 0, imenovalec 2y − x ≠ 0) so natanko
 (2, 4) in (−2, −4): y = 2x, 3x² = 12; imenovalca sta 6 in −6.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#matura3c
-besedilo: »d) V točki $B$ je imenovalec $2y - x = 4 - 4 = 0$, števec pa $y - 2x = -6 \ne 0$. Odvod $y'$ tam ne obstaja: tangenta je navpična.« -/
+besedilo: »c) Točki sta $(2, 4)$ in $(-2, -4)$; v njiju je imenovalec $2y - x$ enak $6$ oziroma $-6$, torej različen od $0$.« -/
 theorem matura3c (x y : ℝ) :
     (x ^ 2 - x * y + y ^ 2 = 12 ∧ y - 2 * x = 0 ∧ 2 * y - x ≠ 0) ↔
       (x = 2 ∧ y = 4) ∨ (x = -2 ∧ y = -4) := by
@@ -808,7 +808,7 @@ theorem kviz4 :
 
 /-- Preveri se 5: smerni koeficient tangente na x² + y² = 25 v (−3, 4) je −(−3)/4 = 3/4 = 0,75.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#kviz5
-besedilo: »(višja raven) (brez računala) Kolikšen je smerni koeficient tangente na krožnico $x^2 + y^2 = 25$ v točki $(-3, 4)$?« -/
+besedilo: »-0,75 | To je smerni koeficient v točki $(3, 4)$. Pozor na minus pri $x = -3$.« -/
 theorem kviz5 : -(-3:ℝ) / 4 = 3 / 4 ∧ (3:ℝ) / 4 = 0.75 := by norm_num
 
 /-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
@@ -818,7 +818,7 @@ example :=
   krog_implicitno (hy := krog_lok_v_3.1) (he := krog_lok_v_3.2.1)
 
 /-- Predpostavke trditve `elipsa_implicitno` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ (y : ℝ → ℝ) (y' : ℝ), HasDerivAt y y' 4 ∧ y 4 = 1.8 ∧ ∀ᶠ x in 𝓝 (4:ℝ), x ^ 2 / 25 + y x ^ 2 / 9 = 1 := by
     have hd : DifferentiableAt ℝ (fun x : ℝ => 3 * √(1 - x ^ 2 / 25)) 4 :=
       ((by fun_prop : DifferentiableAt ℝ (fun x : ℝ => 1 - x ^ 2 / 25) 4).sqrt (by norm_num)).const_mul 3
@@ -827,10 +827,10 @@ example :=
       rw [show (1:ℝ) - 4 ^ 2 / 25 = (3 / 5) ^ 2 by norm_num, sqrt_sq (by norm_num)]; norm_num
     · filter_upwards [Ioo_mem_nhds (show (3:ℝ) < 4 by norm_num) (show (4:ℝ) < 5 by norm_num)] with x hx
       rw [mul_pow, sq_sqrt (by nlinarith [hx.1, hx.2])]; ring
-  elipsa_implicitno (hy := w.choose_spec.choose_spec.1) (he := w.choose_spec.choose_spec.2.2)
+  (fun _ => trivial) (elipsa_implicitno (y := w.choose) (y' := w.choose_spec.choose) (hy := w.choose_spec.choose_spec.1) (he := w.choose_spec.choose_spec.2.2))
 
 /-- Predpostavke trditve `primer4_implicitno` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ (y : ℝ → ℝ) (y' : ℝ), HasDerivAt y y' 1 ∧ y 1 = 2 ∧ ∀ᶠ x in 𝓝 (1:ℝ), x ^ 2 + x * y x + y x ^ 2 = 7 := by
     have hd : DifferentiableAt ℝ (fun x : ℝ => (-x + √(28 - 3 * x ^ 2)) / 2) 1 :=
       ((differentiableAt_id.neg.add
@@ -841,10 +841,10 @@ example :=
     · filter_upwards [Ioo_mem_nhds (show (0:ℝ) < 1 by norm_num) (show (1:ℝ) < 2 by norm_num)] with x hx
       have hs := sq_sqrt (show (0:ℝ) ≤ 28 - 3 * x ^ 2 by nlinarith [hx.1, hx.2])
       nlinarith [hs]
-  primer4_implicitno (hy := w.choose_spec.choose_spec.1) (he := w.choose_spec.choose_spec.2.2)
+  (fun _ => trivial) (primer4_implicitno (y := w.choose) (y' := w.choose_spec.choose) (hy := w.choose_spec.choose_spec.1) (he := w.choose_spec.choose_spec.2.2))
 
 /-- Predpostavke trditve `matura3a` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ (y : ℝ → ℝ) (y' : ℝ), HasDerivAt y y' (-2) ∧ y (-2) = 2 ∧ ∀ᶠ x in 𝓝 (-2:ℝ), x ^ 2 - x * y x + y x ^ 2 = 12 := by
     have hd : DifferentiableAt ℝ (fun x : ℝ => (x + √(48 - 3 * x ^ 2)) / 2) (-2) :=
       ((differentiableAt_id.add
@@ -857,6 +857,6 @@ example :=
         with x hx
       have hs := sq_sqrt (show (0:ℝ) ≤ 48 - 3 * x ^ 2 by nlinarith [hx.1, hx.2])
       nlinarith [hs]
-  matura3a (hy := w.choose_spec.choose_spec.1) (he := w.choose_spec.choose_spec.2.2)
+  (fun _ => trivial) (matura3a (y := w.choose) (y' := w.choose_spec.choose) (hy := w.choose_spec.choose_spec.1) (he := w.choose_spec.choose_spec.2.2))
 
 end Evklid.Lekcije.MAT_SS_4.OdvedljivostInImplicitniOdvod

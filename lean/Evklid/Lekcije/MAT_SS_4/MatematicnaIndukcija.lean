@@ -71,7 +71,7 @@ theorem nacelo_n0 (P : ℕ → Prop) (n₀ : ℕ) (h0 : P n₀) (hk : ∀ n, n�
 /-- Bolj natančno, krepka indukcija: če iz P(k) za vse k od n₀ do n sledi P(n + 1) in velja P(n₀),
 velja P(n) za vse n ≥ n₀.
 trditev: MAT-SS-4/matematicna-indukcija#krepka
-besedilo: »Različice.** Baza je lahko pri $n_0$ namesto pri $1$; dokaz velja za $n \ge n_0$. Pri **krepki indukciji** v koraku predpostavimo, da $P(k)$ velja za vse $k$ od $n_0$ do $n$, ne le za $n$; to je priročno, ko je izraz za $n + 1$ odvisen od več prejšnjih.« -/
+besedilo: »Pri **krepki indukciji** v koraku predpostavimo, da $P(k)$ velja za vse $k$ od $n_0$ do $n$, ne le za $n$; to je priročno, ko je izraz za $n + 1$ odvisen od več prejšnjih.« -/
 theorem krepka (P : ℕ → Prop) (n₀ : ℕ) (h0 : P n₀)
     (hk : ∀ n, n₀ ≤ n → (∀ k, n₀ ≤ k → k ≤ n → P k) → P (n + 1)) : ∀ n, n₀ ≤ n → P n := by
   have : ∀ n, n₀ ≤ n → ∀ k, n₀ ≤ k → k ≤ n → P k := by
@@ -144,8 +144,9 @@ theorem primer1 (n : ℕ) : ∑ k ∈ range n, ((k : ℝ) + 1) = n * (n + 1) / 2
       _ = (n + 1) * (n + 2) / 2 := by ring
       _ = (n + 1) * (n + 1 + 1) / 2 := by ring
 
-/-- Pomožna trditev (orodje za dokaze v tej datoteki).
-pomozno -/
+/-- Primer 1, baza: pri n = 1 je 1 = 1·2/2.
+trditev: MAT-SS-4/matematicna-indukcija#primer1-baza
+besedilo: »Baza, $n = 1$: leva stran je $1$, desna $\frac{1 \cdot 2}{2} = 1$.« -/
 theorem primer1_baza : (1 : ℝ) = 1 * 2 / 2 := by norm_num
 
 /-- Primer 1: pri n + 1 ekipah je tekem 1 + 2 + … + n = C(n + 1, 2) (vsak par ekip enkrat);
@@ -173,8 +174,9 @@ theorem primer2 (n : ℕ) : 3 ∣ n ^ 3 + 2 * n := by
       _ = 3 * k + 3 * (n ^ 2 + n + 1) := by rw [hk]
       _ = 3 * (k + n ^ 2 + n + 1) := by ring
 
-/-- Pomožna trditev (orodje za dokaze v tej datoteki).
-pomozno -/
+/-- Primer 2: baza 1³ + 2·1 = 3 in preizkus n = 4: 4³ + 2·4 = 72 = 3·24.
+trditev: MAT-SS-4/matematicna-indukcija#primer2-racuni
+besedilo: »Odgovor: $n^3 + 2n$ je deljivo s $3$ za vsako naravno število (preizkus: $n = 4$ da $72 = 3 \cdot 24$).« -/
 theorem primer2_racuni : 1 ^ 3 + 2 * 1 = 3 ∧ 4 ^ 3 + 2 * 4 = 72 ∧ 72 = 3 * 24 := by norm_num
 
 /-- Primer 3, tabela: 2ⁿ = 2, 4, 8, 16, 32 in n² = 1, 4, 9, 16, 25 za n = 1, …, 5.
@@ -195,7 +197,7 @@ theorem primer3_pomozna (n : ℤ) :
 
 /-- Primer 3: 2ⁿ > n² za vsak n ≥ 5 (baza 32 > 25; korak 2ⁿ⁺¹ = 2·2ⁿ > 2n² ≥ (n + 1)²).
 trditev: MAT-SS-4/matematicna-indukcija#primer3
-besedilo: »Za $n \ge 5$ je $(n - 1)^2 \ge 16$, zato je razlika pozitivna in $2^{n + 1} > (n + 1)^2$. (Razlika je pozitivna že od $n = 3$ naprej, saj je $2^2 - 2 > 0$; korak torej velja za $n \ge 3$.)« -/
+besedilo: »Tabela: $n = 1, 2, 3, 4, 5$ da $2^n = 2, 4, 8, 16, 32$ in $n^2 = 1, 4, 9, 16, 25$.« -/
 theorem primer3 : ∀ n : ℕ, 5 ≤ n → n ^ 2 < 2 ^ n := by
   intro n hn
   induction n, hn using Nat.le_induction with
@@ -245,10 +247,10 @@ example : ∃ H : ℕ → ℤ, H 1 = 1 ∧ ∀ n, 1 ≤ n → H (n + 1) = 2 * H 
 /-! ## Pogoste napake -/
 
 /-- Predpostavke trditve `primer4` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ H : ℕ → ℤ, H 1 = 1 ∧ ∀ n, 1 ≤ n → H (n + 1) = 2 * H n + 1 :=
     ⟨fun n => 2 ^ n - 1, by norm_num, fun n _ => by simp only [pow_succ]; ring⟩
-  primer4 (h1 := w.choose_spec.1) (h := w.choose_spec.2)
+  (fun _ => trivial) (primer4 (H := w.choose) (h1 := w.choose_spec.1) (h := w.choose_spec.2))
 
 /-- Pogoste napake 1: n² + n + 41 je praštevilo za vse n od 1 do 39, pri n = 40 pa 1681 = 41².
 trditev: MAT-SS-4/matematicna-indukcija#euler
@@ -311,12 +313,12 @@ example : ∃ a : ℕ → ℤ, a 1 = 2 ∧ ∀ n, 1 ≤ n → a (n + 1) = 3 * a 
 noncomputable def S (n : ℕ) : ℝ := ∑ k ∈ range n, 1 / (((k : ℝ) + 1) * (k + 2))
 
 /-- Predpostavke trditve `matura1` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ a : ℕ → ℤ, a 1 = 2 ∧ ∀ n, 1 ≤ n → a (n + 1) = 3 * a n - 2 := by
     refine ⟨fun n => 3 ^ (n - 1) + 1, by norm_num, fun n hn => ?_⟩
     obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le' hn
     simp only [show k + 1 + 1 - 1 = k + 1 by omega, Nat.add_sub_cancel, pow_succ]; ring
-  matura1 (h1 := w.choose_spec.1) (h := w.choose_spec.2)
+  (fun _ => trivial) (matura1 (a := w.choose) (h1 := w.choose_spec.1) (h := w.choose_spec.2))
 
 /-- Naloga 2 a): S₁ = 1/2, S₂ = 1/2 + 1/6 = 2/3, S₃ = 2/3 + 1/12 = 3/4.
 trditev: MAT-SS-4/matematicna-indukcija#matura2a
@@ -434,7 +436,7 @@ example : ∃ P : ℕ → Prop, P 5 ∧ ∀ n, 3 ≤ n → P n → P (n + 1) :=
     · left; exact primer3 (n + 1) (by omega)⟩
 
 /-- Predpostavke trditve `kviz3` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ P : ℕ → Prop, P 5 ∧ ∀ n, 3 ≤ n → P n → P (n + 1) :=
     ⟨fun n => n ^ 2 < 2 ^ n ∨ n < 5, Or.inl (by norm_num), fun n hn h => by
       rcases Nat.lt_or_ge n 5 with h' | h'
@@ -442,7 +444,7 @@ example :=
         · subst h4; left; norm_num
         · right; omega
       · left; exact primer3 (n + 1) (by omega)⟩
-  kviz3 (h5 := w.choose_spec.1) (hk := w.choose_spec.2)
+  (fun _ => trivial) (kviz3 (P := w.choose) (h5 := w.choose_spec.1) (hk := w.choose_spec.2))
 
 /-- Preveri se 4: za napačno trditev 1 + … + n = (n² + n + 2)/2 je korak pravilen (obe strani sta
 (n² + 3n + 4)/2), baza pa ne (pri n = 1 je leva stran 1, desna 2).

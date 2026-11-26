@@ -45,11 +45,11 @@ example : (0:ℝ) ≤ 4 := by norm_num
 /-- Predpostavke trditve `koren_nenegativen` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
   have w : (0:ℝ) ≤ 4 := by norm_num
-  koren_nenegativen (ha := w)
+  koren_nenegativen (n := 2) (ha := w)
 
 /-- Razlaga 2: za a ≥ 0 in n ≥ 1 je (ⁿ√a)ⁿ = a.
 trditev: MAT-SS-2/koreni#koren-pot
-besedilo: »$a \ge 0$« -/
+besedilo: »2. n-ti koren.** Za naravno število $n \ge 2$ je $\sqrt[n]{a}$ tisto število $b$, za katero velja $b^n = a$.« -/
 theorem koren_pot {n : ℕ} (hn : n ≠ 0) {a : ℝ} (ha : 0 ≤ a) : koren n a ^ n = a := by
   simp only [koren, ha, ↓reduceIte]; exact Real.rpow_inv_natCast_pow ha hn
 
@@ -63,7 +63,7 @@ example :=
 
 /-- Razlaga 2: če je b ≥ 0 in bⁿ = a, je ⁿ√a = b.
 trditev: MAT-SS-2/koreni#koren-eq
-besedilo: »$b^n = a$« -/
+besedilo: »2. n-ti koren.** Za naravno število $n \ge 2$ je $\sqrt[n]{a}$ tisto število $b$, za katero velja $b^n = a$.« -/
 theorem koren_eq {n : ℕ} (hn : n ≠ 0) {a b : ℝ} (hb : 0 ≤ b) (h : b ^ n = a) : koren n a = b := by
   subst h; simp only [koren, pow_nonneg hb n, ↓reduceIte]; exact Real.pow_rpow_inv_natCast hb hn
 
@@ -77,7 +77,7 @@ example :=
 
 /-- Razlaga 2: pri lihem n je (ⁿ√a)ⁿ = a za vsak realni a, tudi negativen.
 trditev: MAT-SS-2/koreni#koren-lih-pot
-besedilo: »Pri **lihem** $n$ je koren definiran tudi za negativne $a$:« -/
+besedilo: »Pri **lihem** $n$ je koren definiran tudi za negativne $a$: $\sqrt[3]{-27} = -3$, ker je $(-3)^3 = -27$.« -/
 theorem koren_lih_pot {n : ℕ} (hn : Odd n) (a : ℝ) : koren n a ^ n = a := by
   have hn0 : n ≠ 0 := by rintro rfl; exact Nat.not_odd_zero hn
   by_cases ha : 0 ≤ a
@@ -95,7 +95,7 @@ example :=
 
 /-- Razlaga 2 in Ustno vprašanje 1: pri lihem n je ⁿ√a edino realno število b z bⁿ = a.
 trditev: MAT-SS-2/koreni#koren-lih
-besedilo: »2. n-ti koren.** Za naravno število $n \ge 2$ je $\sqrt[n]{a}$ tisto število $b$, za katero velja $b^n = a$.« -/
+besedilo: »Pri lihem $n$ je $\sqrt[n]{a}$ definiran za vsako realno število $a$,« -/
 theorem koren_lih {n : ℕ} (hn : Odd n) (a b : ℝ) : b ^ n = a ↔ b = koren n a := by
   constructor
   · intro h; exact hn.pow_inj.mp (by rw [h, koren_lih_pot hn])
@@ -111,7 +111,7 @@ example :=
 
 /-- Razlaga 2: pri sodem n in a ≥ 0 je ⁿ√a edino nenegativno število b z bⁿ = a.
 trditev: MAT-SS-2/koreni#koren-sod
-besedilo: »2. n-ti koren.** Za naravno število $n \ge 2$ je $\sqrt[n]{a}$ tisto število $b$, za katero velja $b^n = a$.« -/
+besedilo: »Pri sodem korenskem eksponentu $n$ je $\sqrt[n]{a}$ definiran le za $a \ge 0$ in je po dogovoru nenegativen.« -/
 theorem koren_sod {n : ℕ} (hn0 : n ≠ 0) {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) :
     b ^ n = a ↔ b = koren n a :=
   ⟨fun h => (koren_eq hn0 hb h).symm, fun h => h ▸ koren_pot hn0 ha⟩
@@ -164,7 +164,7 @@ example :=
 
 /-- Ustno vprašanje 1: pri sodem n in a = 0 ima xⁿ = 0 le rešitev 0.
 trditev: MAT-SS-2/koreni#enacba-sod-nic
-besedilo: »Zato ima enačba $x^n = a$ pri sodem $n$ dve rešitvi $\pm\sqrt[n]{a}$, če je $a > 0$, eno rešitev $0$, če je $a = 0$, in nobene realne rešitve, če je $a < 0$.« -/
+besedilo: »Zato ima enačba $x^n = a$ pri sodem $n$ dve rešitvi $\pm\sqrt[n]{a}$,« -/
 theorem enacba_sod_nic {n : ℕ} (hn0 : n ≠ 0) (x : ℝ) : x ^ n = 0 ↔ x = 0 := pow_eq_zero_iff hn0
 
 /-- Predpostavke trditve `enacba_sod_nic` se dajo izpolniti. -/
@@ -236,7 +236,7 @@ example :=
 
 /-- Ocena kvadratnega korena: 0 ≤ lo, lo² < x < hi², 0 < hi ⇒ lo < √x < hi.
 trditev: MAT-SS-2/koreni#koren2-med
-besedilo: »Kvadratni koren.** Za $a \ge 0$ je $\sqrt{a}$ **nenegativno** število,« -/
+besedilo: »Ocena korena.** Če $a$ ni popoln kvadrat, koren ocenimo med dvema celima številoma.« -/
 theorem koren2_med {x lo hi : ℝ} (hlo : 0 ≤ lo) (hhi : 0 < hi) (h1 : lo ^ 2 < x) (h2 : x < hi ^ 2) :
     lo < √x ∧ √x < hi :=
   ⟨(Real.lt_sqrt hlo).mpr h1, (Real.sqrt_lt' hhi).mpr h2⟩
@@ -470,7 +470,7 @@ theorem primer_kub_2_4 : koren 3 2 * koren 3 4 = koren 3 8 ∧ koren 3 8 = 2 := 
 
 /-- Pravila: ᵐ√(ⁿ√a) = ᵐⁿ√a za a ≥ 0.
 trditev: MAT-SS-2/koreni#koren-korena
-besedilo: »Pravila** za $a, b \ge 0$ (pri ulomku $b > 0$):« -/
+besedilo: »$\sqrt[m]{\sqrt[n]{a}} = \sqrt[m \cdot n]{a}$« -/
 theorem koren_korena (m n : ℕ) {a : ℝ} (ha : 0 ≤ a) : koren m (koren n a) = koren (m * n) a := by
   have h := koren_nenegativen (n := n) ha
   simp only [koren, ha, ↓reduceIte] at h ⊢
@@ -750,7 +750,7 @@ example :=
 
 /-- Razlaga 7: decimalke √2, √3, √5 in √13 se nikoli ne končajo.
 trditev: MAT-SS-2/koreni#decimalke-korenov
-besedilo: »Konstrukcija kvadratnih korenov.** Kvadratni koren naravnega števila, ki ni popolni kvadrat, je iracionalen: $\sqrt{2}$, $\sqrt{3}$, $\sqrt{5}$, $\sqrt{13}$ (dokaz je podoben kot za $\sqrt{2}$ v razdelku »Bolj natančno«).« -/
+besedilo: »Kateti $1$ in $1$ dasta $\sqrt{2}$, kateti $1$ in $2$ dasta $\sqrt{5}$, kateti $2$ in $3$ dasta $\sqrt{13}$.« -/
 theorem decimalke_korenov (m : ℤ) (k : ℕ) : √(2:ℝ) ≠ m / 10 ^ k ∧ √(3:ℝ) ≠ m / 10 ^ k ∧ √(5:ℝ) ≠ m / 10 ^ k ∧
     √(13:ℝ) ≠ m / 10 ^ k :=
   ⟨decimalke_ne_koncajo iracionalni.1 m k, decimalke_ne_koncajo iracionalni.2.1 m k,
@@ -849,7 +849,7 @@ example : (0:ℝ) ≤ 200 := by norm_num
 /-- Predpostavke trditve `potenca_1_n` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
   have w : (0:ℝ) ≤ 200 := by norm_num
-  potenca_1_n (ha := w)
+  potenca_1_n (n := 2) (ha := w)
 
 /-- Razlaga 8 in Primer 6 b): ∛(−20) = −∛20 ≈ −2,714.
 trditev: MAT-SS-2/koreni#kub-m20
@@ -1105,7 +1105,7 @@ theorem matura2c : (koren 3 128 * √2) ^ 3 = koren 3 128 ^ 3 * √2 ^ 3 ∧ kor
 
 /-- RACUN: (4∛2 · √2)³ = 256√2 (rob 4∛2).
 trditev: MAT-SS-2/koreni#racun-kub
-besedilo: »$D^3 = \left(c\sqrt{2}\right)^3 = c^3 \cdot \left(\sqrt{2}\right)^3 = 128 \cdot 2\sqrt{2} = 256\sqrt{2}\,\text{cm}^3$« -/
+besedilo: »$\sqrt[3]{2} \cdot \sqrt[3]{2} = \sqrt[3]{4}$« -/
 theorem racun_kub : (4 * koren 3 2 * √2) ^ 3 = 256 * √(2:ℝ) := by
   have h : koren 3 (2:ℝ) ^ 3 = 2 := koren_pot (by norm_num) (by norm_num)
   have h3 : √(2:ℝ) ^ 3 = 2 * √2 := by rw [pow_succ, sq2]
@@ -1139,7 +1139,7 @@ theorem tabela_korenov : √(0:ℝ) = 0 ∧ √(1:ℝ) = 1 ∧ √(4:ℝ) = 2 �
 /-- Kot zgodba: diagonala √(1,2² + 1,2²) = √(2 · 1,2²) = 1,2√2 ≈ 1,697 m; Majina meritev 1,70 m je natančna na
 centimeter.
 trditev: MAT-SS-2/koreni#zgodba-diagonala
-besedilo: »»Preveriva z računom,« reče Tone. »Po Pitagori je diagonala $\sqrt{1{,}2^2 + 1{,}2^2} = \sqrt{2 \cdot 1{,}2^2}$. Kvadrat je faktor, zato ga izvlečeš iz korena: diagonala je $1{,}2\sqrt{2} \approx 1{,}697\,\text{m}$.« Maja je zadela na centimeter natančno.« -/
+besedilo: »diagonala je $1{,}2\sqrt{2} \approx 1{,}697\,\text{m}$.« Maja je zadela na centimeter natančno.« -/
 theorem zgodba_diagonala : √((1.2:ℝ) ^ 2 + 1.2 ^ 2) = √(2 * 1.2 ^ 2) ∧ √((2:ℝ) * 1.2 ^ 2) = 1.2 * √2 ∧
     1.6965 < 1.2 * √(2:ℝ) ∧ 1.2 * √(2:ℝ) < 1.6975 ∧ |1.70 - 1.2 * √(2:ℝ)| < 0.01 := by
   obtain ⟨a, b⟩ := s2

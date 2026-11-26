@@ -114,7 +114,7 @@ theorem premisli_120 : cos (2 * π / 3) < 0 ∧ 0 < sin (2 * π / 3) := by
 
 /-- Razlaga 4 (predznaki po kvadrantih), I. kvadrant: sin > 0, cos > 0, tan > 0.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#kvadrant1
-besedilo: »| kvadrant | $\sin$ | $\cos$ | $\tan$ |« -/
+besedilo: »| I. $0^\circ$–$90^\circ$ | $+$ | $+$ | $+$ |« -/
 theorem kvadrant1 (α : ℝ) (h0 : 0 < α) (h1 : α < π / 2) : 0 < sin α ∧ 0 < cos α ∧ 0 < tan α := by
   have hp := pi_pos
   have hs := sin_pos_of_pos_of_lt_pi h0 (by linarith)
@@ -123,7 +123,7 @@ theorem kvadrant1 (α : ℝ) (h0 : 0 < α) (h1 : α < π / 2) : 0 < sin α ∧ 0
 
 /-- Razlaga 4, II. kvadrant: sin > 0, cos < 0, tan < 0.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#kvadrant2
-besedilo: »| kvadrant | $\sin$ | $\cos$ | $\tan$ |« -/
+besedilo: »| II. $90^\circ$–$180^\circ$ | $+$ | $-$ | $-$ |« -/
 theorem kvadrant2 (α : ℝ) (h0 : π / 2 < α) (h1 : α < π) : 0 < sin α ∧ cos α < 0 ∧ tan α < 0 := by
   have hp := pi_pos
   have hs := sin_pos_of_pos_of_lt_pi (by linarith) h1
@@ -140,7 +140,7 @@ example :=
 
 /-- Razlaga 4, III. kvadrant: sin < 0, cos < 0, tan > 0.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#kvadrant3
-besedilo: »| kvadrant | $\sin$ | $\cos$ | $\tan$ |« -/
+besedilo: »| III. $180^\circ$–$270^\circ$ | $-$ | $-$ | $+$ |« -/
 theorem kvadrant3 (α : ℝ) (h0 : π < α) (h1 : α < 3 * π / 2) : sin α < 0 ∧ cos α < 0 ∧ 0 < tan α := by
   have hp := pi_pos
   have hs := sin_neg_of_neg_of_neg_pi_lt (x := α - 2 * π) (by linarith) (by linarith)
@@ -158,7 +158,7 @@ example :=
 
 /-- Razlaga 4, IV. kvadrant: sin < 0, cos > 0, tan < 0.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#kvadrant4
-besedilo: »| kvadrant | $\sin$ | $\cos$ | $\tan$ |« -/
+besedilo: »| IV. $270^\circ$–$360^\circ$ | $-$ | $+$ | $-$ |« -/
 theorem kvadrant4 (α : ℝ) (h0 : 3 * π / 2 < α) (h1 : α < 2 * π) : sin α < 0 ∧ 0 < cos α ∧ tan α < 0 := by
   have hp := pi_pos
   have hs := sin_neg_of_neg_of_neg_pi_lt (x := α - 2 * π) (by linarith) (by linarith)
@@ -378,7 +378,7 @@ theorem sin30rad : (-0.9885 : ℝ) < sin 30 ∧ sin 30 < -0.9875 ∧ sin (30 * (
 /-- Naloga 1: sin(7π/4) = −√2/2 (315°, IV. kvadrant), cos(3π/4) = −√2/2 (135°, II. kvadrant), produkt 2/4 = 1/2;
 8π/3 = 2π + 2π/3, tan(8π/3) = tan(2π/3) = −√3; izraz 1/2 − (−√3) = 1/2 + √3.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#matura1
-besedilo: »Točkovanje:** 1 točka za $\sin\frac{7\pi}{4} = -\frac{\sqrt2}{2}$ in $\cos\frac{3\pi}{4} = -\frac{\sqrt2}{2}$ s pravilnima predznakoma, 1 točka za $\tan\frac{8\pi}{3} = -\sqrt3$ (z odštetim polnim kotom), 1 točka za končni rezultat $\frac12 + \sqrt3$.« -/
+besedilo: »Brez uporabe računala izračunajte natančno vrednost izraza $\sin\frac{7\pi}{4} \cdot \cos\frac{3\pi}{4} - \tan\frac{8\pi}{3}$.« -/
 theorem matura1 : sin (7 * π / 4) = -(√2 / 2) ∧ cos (3 * π / 4) = -(√2 / 2) ∧
     (-(√2 / 2)) * (-(√2 / 2)) = 2 / 4 ∧ (2 : ℝ) / 4 = 1 / 2 ∧ 8 * π / 3 = 2 * π + 2 * π / 3 ∧
     tan (8 * π / 3) = tan (2 * π / 3) ∧ tan (2 * π / 3) = -√3 ∧
@@ -484,7 +484,7 @@ theorem cos225 : cos (5 * π / 4) = -cos (π / 4) ∧ -cos (π / 4) = -(√2 / 2
 /-- Drugače, korak za korakom (tabela): (cos, sin) za 30°, 150°, 210°, 330° je (√3/2, 1/2), (−√3/2, 1/2),
 (−√3/2, −1/2), (√3/2, −1/2); preverba za 150°: (−√3/2)² + (1/2)² = 3/4 + 1/4 = 1.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#tabela-30
-besedilo: »| $330^\circ$ | IV. | $30^\circ$ | $(\frac{\sqrt3}{2}, -\frac12)$ |« -/
+besedilo: »| $150^\circ$ | II. | $30^\circ$ | $(-\frac{\sqrt3}{2}, \frac12)$ |« -/
 theorem tabela_30 :
     (cos (π / 6) = √3 / 2 ∧ sin (π / 6) = 1 / 2) ∧
     (cos (5 * π / 6) = -(√3 / 2) ∧ sin (5 * π / 6) = 1 / 2) ∧
@@ -544,7 +544,7 @@ theorem preveri2 : -sin (π / 3) = -(√3 / 2) ∧ (-0.875 : ℝ) < -(√3 / 2) 
 /-- Preveri se 3 (Luka): 300° je v IV. kvadrantu (270° < 300° < 360°), ostri kot 360° − 300° = 60°, napaka je
 v koraku 3: sin 300° = −sin 60° = −√3/2 < 0.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#preveri3
-besedilo: »Luka je računal $\sin 300^\circ$: »(1) Kot je v IV. kvadrantu. (2) Pripadajoči ostri kot je $360^\circ - 300^\circ = 60^\circ$. (3) Torej je $\sin 300^\circ = \frac{\sqrt3}{2}$.« Kje je napaka?« -/
+besedilo: »V koraku (3): v IV. kvadrantu je sinus negativen, zato $\sin 300^\circ = -\frac{\sqrt3}{2}$.« -/
 theorem preveri3 : 3 * π / 2 < 5 * π / 3 ∧ 5 * π / 3 < 2 * π ∧ 2 * π - 5 * π / 3 = π / 3 ∧
     sin (5 * π / 3) = -sin (π / 3) ∧ -sin (π / 3) = -(√3 / 2) ∧ sin (5 * π / 3) ≠ √3 / 2 := by
   have hp := pi_pos

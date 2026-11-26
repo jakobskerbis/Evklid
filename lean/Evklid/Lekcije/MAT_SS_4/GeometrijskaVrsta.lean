@@ -80,7 +80,7 @@ example :=
 
 /-- Od primera k formuli: pri |q| < 1 in n ≥ 1 sta števec qⁿ − 1 in imenovalec q − 1 negativna.
 trditev: MAT-SS-4/geometrijska-vrsta#negativna
-besedilo: »Od primera k formuli.** Za delno vsoto geometrijskega zaporedja že imaš formulo $S_n = a_1 \cdot \frac{q^n - 1}{q - 1}$. Pri $|q| < 1$ sta števec in imenovalec negativna, zato oba pomnožimo z $-1$:« -/
+besedilo: »Pri $|q| < 1$ sta števec in imenovalec negativna,« -/
 theorem negativna (q : ℝ) (hq : |q| < 1) (n : ℕ) (hn : 1 ≤ n) : q ^ n - 1 < 0 ∧ q - 1 < 0 := by
   have h1 : |q ^ n| < 1 := by
     rw [abs_pow]; exact pow_lt_one₀ (abs_nonneg q) hq (by omega)
@@ -107,7 +107,7 @@ theorem vsota (a₁ q : ℝ) (hq : |q| < 1) : Tendsto (S a₁ q) atTop (𝓝 (a�
 
 /-- Ahil: delne vsote gredo proti 100/(1 − 0,1) = 1000/9.
 trditev: MAT-SS-4/geometrijska-vrsta#ahil-vsota
-besedilo: »Pri Ahilu je $q^n = 0{,}1;\ 0{,}01;\ 0{,}001; \dots$ Potence gredo proti $0$. Zato gre $1 - q^n$ proti $1$, delne vsote pa proti $\frac{100}{1 - 0{,}1} = \frac{1000}{9}$. Prav toliko kot pri računu z gibanjem.« -/
+besedilo: »delne vsote pa proti $\frac{100}{1 - 0{,}1} = \frac{1000}{9}$.« -/
 theorem ahil_vsota : Tendsto (S 100 (1 / 10)) atTop (𝓝 (1000 / 9)) := by
   have := vsota 100 (1 / 10) (by rw [abs_of_pos (by norm_num)]; norm_num)
   convert this using 2; norm_num
@@ -158,19 +158,19 @@ Trditve: `pot_nic`, `vsota` in `qn_dokaz` (|q| < 1). -/
 example : ∃ a₁ q : ℝ, a₁ ≠ 0 ∧ |q| < 1 := ⟨1, 1 / 2, one_ne_zero, by norm_num [abs_of_pos]⟩
 
 /-- Predpostavke trditve `konvergira_iff` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ a₁ q : ℝ, a₁ ≠ 0 ∧ |q| < 1 := ⟨1, 1 / 2, one_ne_zero, by norm_num [abs_of_pos]⟩
-  konvergira_iff (ha := w.choose_spec.choose_spec.1)
+  (fun _ => trivial) (konvergira_iff (a₁ := w.choose) (q := w.choose_spec.choose) (ha := w.choose_spec.choose_spec.1))
 
 /-- Predpostavke trditve `vsota` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ a₁ q : ℝ, a₁ ≠ 0 ∧ |q| < 1 := ⟨1, 1 / 2, one_ne_zero, by norm_num [abs_of_pos]⟩
-  vsota (hq := w.choose_spec.choose_spec.2)
+  (fun _ => trivial) (vsota (a₁ := w.choose) (q := w.choose_spec.choose) (hq := w.choose_spec.choose_spec.2))
 
 /-- Predpostavke trditve `pot_nic` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ a₁ q : ℝ, a₁ ≠ 0 ∧ |q| < 1 := ⟨1, 1 / 2, one_ne_zero, by norm_num [abs_of_pos]⟩
-  pot_nic (hq := w.choose_spec.choose_spec.2)
+  (fun _ => trivial) (pot_nic (q := w.choose_spec.choose) (hq := w.choose_spec.choose_spec.2))
 
 /-- Kdaj vrsta divergira: q = 1: 5 + 5 + … ima Sₙ = 5n; q > 1: 1 + 2 + 4 + … ima Sₙ = 2ⁿ − 1 ≥ n;
 q = −1: 1 − 1 + 1 − … ima delne vsote 1, 0, 1, 0.
@@ -257,7 +257,7 @@ theorem primer4 :
 /-- Pogoste napake 1 in »Preveri se« 4: 1 + 2 + 4 + … (in 3 + 6 + 12 + …) divergira; formula bi dala
 1/(1 − 2) = −1 oziroma 3/(1 − 2) = −3; delne vsote 3, 9, 21 rastejo.
 trditev: MAT-SS-4/geometrijska-vrsta#napaka-formula
-besedilo: »Druga vrsta: $q = \dfrac{-18}{12} = -\dfrac{3}{2}$. Ker je $|q| = \frac{3}{2} > 1$, vrsta divergira. Formula bi dala $\frac{12}{5/2} = 4{,}8$, a te številke ne smemo zapisati kot vsote: delne vsote $12, -6, 21, \dots$ skačejo vse dlje.« -/
+besedilo: »Vsota pozitivnih števil ne more biti negativna. Formula $S = \frac{a_1}{1-q}$ velja le pri $|q| < 1$.« -/
 theorem napaka_formula :
     ¬ (∃ L, Tendsto (S 1 2) atTop (𝓝 L)) ∧ (1 : ℝ) / (1 - 2) = -1 ∧
     ¬ (∃ L, Tendsto (S 3 2) atTop (𝓝 L)) ∧ (3 : ℝ) / (1 - 2) = -3 ∧
@@ -319,9 +319,9 @@ theorem qn_dokaz (q : ℝ) (hq : |q| < 1) :
   · exact h
 
 /-- Predpostavke trditve `qn_dokaz` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ a₁ q : ℝ, a₁ ≠ 0 ∧ |q| < 1 := ⟨1, 1 / 2, one_ne_zero, by norm_num [abs_of_pos]⟩
-  qn_dokaz (hq := w.choose_spec.choose_spec.2)
+  (fun _ => trivial) (qn_dokaz (q := w.choose_spec.choose) (hq := w.choose_spec.choose_spec.2))
 
 /-- Bolj natančno: napaka delne vsote S − Sₙ = a₁qⁿ/(1 − q) (q ≠ 1); pri Ahilu po petih odsekih
 100·0,1⁵/0,9 ≈ 0,0011 m.
@@ -473,7 +473,7 @@ theorem matura2d :
 (trditvi `S_formula`, `vsota`). Ustno vprašanje 3: 1 − 2 + 4 − 8 + … ima delne vsote 1, −1, 3, −5,
 divergira; formula bi dala 1/(1 − (−2)) = 1/3.
 trditev: MAT-SS-4/geometrijska-vrsta#ustno3
-besedilo: »Druga vrsta: $q = \dfrac{-18}{12} = -\dfrac{3}{2}$. Ker je $|q| = \frac{3}{2} > 1$, vrsta divergira. Formula bi dala $\frac{12}{5/2} = 4{,}8$, a te številke ne smemo zapisati kot vsote: delne vsote $12, -6, 21, \dots$ skačejo vse dlje.« -/
+besedilo: »Formula brez preverjanja količnika.** »$1 + 2 + 4 + \dots = \frac{1}{1-2} = -1$.« Vsota pozitivnih števil ne more biti negativna. Formula $S = \frac{a_1}{1-q}$ velja le pri $|q| < 1$. Zato najprej preveri $|q|$, šele nato računaj.« -/
 theorem ustno3 :
     (S 1 (-2) 1 = 1 ∧ S 1 (-2) 2 = -1 ∧ S 1 (-2) 3 = 3 ∧ S 1 (-2) 4 = -5) ∧
     (1 - 2 + 4 - 8 : ℝ) = -5 ∧
@@ -529,7 +529,7 @@ theorem kviz5 :
 /-- RAČUN: 0,07/(1 − 0,1) = 7/90, 6/5 + 7/90 = 23/18, 115/90 = 23/18, 3/(1 − (−1/2)) = 2, 3/(3 − 2) = 3,
 3/(1 − 1/4) = 4, 1 − 2 + 4 − 8 = −5, 1/(1 − (−2)) = 1/3; 3/(1 − (x − 2)) = 3/(3 − x).
 trditev: MAT-SS-4/geometrijska-vrsta#racun
-besedilo: »$\dfrac{0{,}07}{1 - 0{,}1} = \dfrac{0{,}07}{0{,}9} = \dfrac{7}{90}$« -/
+besedilo: »njena vsota je $\dfrac{0{,}07}{1 - 0{,}1} = \dfrac{0{,}07}{0{,}9} = \dfrac{7}{90}$.« -/
 theorem racun :
     (0.07 : ℝ) / (1 - 0.1) = 7 / 90 ∧ (6 / 5 + 7 / 90 : ℝ) = 23 / 18 ∧ (115 / 90 : ℝ) = 23 / 18 ∧
     (3 : ℝ) / (1 - (-1 / 2)) = 2 ∧ (3 : ℝ) / (3 - 2) = 3 ∧ (3 : ℝ) / (1 - 1 / 4) = 4 ∧

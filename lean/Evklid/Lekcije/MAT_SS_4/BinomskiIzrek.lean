@@ -106,7 +106,7 @@ theorem vsota_vrstice (n : ℕ) : ∑ k ∈ range (n + 1), Nat.choose n k = 2 ^ 
 
 /-- Razlaga 2: 1 + 6 + 15 + 20 + 15 + 6 + 1 = 64 = 2⁶ (vrstica 6).
 trditev: MAT-SS-4/binomski-izrek#vsota-vrstice-6
-besedilo: »Vsota vrstice** $n$ je $2^n$, saj ima vsak od $n$ korakov dve možnosti: $1 + 6 + 15 + 20 + 15 + 6 + 1 = 64 = 2^6$.« -/
+besedilo: »$1 + 6 + 15 + 20 + 15 + 6 + 1 = 64 = 2^6$« -/
 theorem vsota_vrstice_6 : 1 + 6 + 15 + 20 + 15 + 6 + 1 = 64 ∧ (64 : ℕ) = 2 ^ 6 := by norm_num
 
 /-- Razlaga 2, »Premisli«: vrstica 7 je 1, 7, 21, 35, 35, 21, 7, 1 (6 + 15 = 21, 15 + 20 = 35), njena vsota je
@@ -171,7 +171,7 @@ example :=
 
 /-- Razlaga 5 (in Povzetek): binomski simbol je `C(n,k) = n!/(k!·(n−k)!)` za `k ≤ n` (deljenje je točno).
 trditev: MAT-SS-4/binomski-izrek#binomski-simbol
-besedilo: »Binomski simbol** $\binom{n}{k}$ (beri »$n$ nad $k$«) je število kombinacij $C_n^k = \frac{n!}{k!\,(n-k)!}$ iz kombinatorike in hkrati $k$-to število v vrstici $n$ (štejemo od $0$):« -/
+besedilo: »$\binom{n}{k} = C_n^k = \frac{n!}{k!\,(n-k)!}$« -/
 theorem binomski_simbol (n k : ℕ) (hk : k ≤ n) :
     Nat.choose n k = Nat.factorial n / (Nat.factorial k * Nat.factorial (n - k)) ∧
     Nat.choose n k * (Nat.factorial k * Nat.factorial (n - k)) = Nat.factorial n := by
@@ -201,7 +201,7 @@ theorem simulacija_5_2 : Nat.choose 5 2 = 10 ∧ Nat.choose 5 3 = 10 := by decid
 
 /-- Razlaga 6: `(a−b)ⁿ = (a+(−b))ⁿ = Σ (−1)^k·C(n,k)·a^(n−k)·b^k` (predznaki se izmenjujejo).
 trditev: MAT-SS-4/binomski-izrek#binomski-izrek-minus
-besedilo: »6. Dvočlenik z minusom.** $(a-b)^n$ zapišemo kot $(a+(-b))^n$. Liha potenca števila $-b$ je negativna, soda pozitivna, zato se predznaki izmenjujejo:« -/
+besedilo: »Dvočlenik z minusom.** $(a-b)^n$ zapišemo kot $(a+(-b))^n$.« -/
 theorem binomski_izrek_minus {R : Type*} [CommRing R] (a b : R) (n : ℕ) :
     (a - b) ^ n = ∑ k ∈ range (n + 1), (-1) ^ k * (Nat.choose n k : R) * a ^ (n - k) * b ^ k := by
   rw [sub_eq_add_neg, binomski_izrek]
@@ -241,7 +241,7 @@ theorem primer1_razvoj {R : Type*} [CommRing R] (V S : R) :
 /-- Primer 2: (x−2)⁵ po korakih: koeficienti 1, 5, 10, 10, 5, 1, potence −2 so 1, −2, 4, −8, 16, −32, zmnožki
 −10, 40, −80, 80; rezultat x⁵ − 10x⁴ + 40x³ − 80x² + 80x − 32.
 trditev: MAT-SS-4/binomski-izrek#primer2
-besedilo: »$(x-2)^5 = x^5 - 10x^4 + 40x^3 - 80x^2 + 80x - 32$« -/
+besedilo: »Odgovor: $(x-2)^5 = x^5 - 10x^4 + 40x^3 - 80x^2 + 80x - 32$.« -/
 theorem primer2 {R : Type*} [CommRing R] (x : R) :
     (x - 2) ^ 5 = x ^ 5 - 10 * x ^ 4 + 40 * x ^ 3 - 80 * x ^ 2 + 80 * x - 32 := by
   calc (x - 2) ^ 5 = (x + (-2)) ^ 5 := by rw [sub_eq_add_neg]
@@ -334,7 +334,7 @@ theorem primer4_razvoj {R : Type*} [CommRing R] (x : R) :
 
 /-- Pogoste napake: (a+b)³ = a³ + b³ ne velja (pri a = b = 1 je 8 ≠ 2).
 trditev: MAT-SS-4/binomski-izrek#potenca-se-ne-razdeli
-besedilo: »»Potenca se razdeli.«** Zapis $(a+b)^3 = a^3 + b^3$ je napačen:« -/
+besedilo: »»Potenca se razdeli.«** Zapis $(a+b)^3 = a^3 + b^3$ je napačen: izpusti vse mešane člene, torej vse poti, ki zavijejo. Pravilno: razvoj ima $n + 1$ členov.« -/
 theorem potenca_se_ne_razdeli : ¬ ∀ a b : ℤ, (a + b) ^ 3 = a ^ 3 + b ^ 3 := by
   intro h; have := h 1 1; norm_num at this
 
@@ -419,7 +419,7 @@ theorem naloga2_c : ((1 : ℤ) + 2 * 1) ^ 8 = 3 ^ 8 ∧ (3 : ℤ) ^ 8 = 6561 ∧
 
 /-- Naloga 2 (RAČUN): `8!/(2!·6!)·2² = 112`, `8!/(4!·4!)·2⁴ = 1120`.
 trditev: MAT-SS-4/binomski-izrek#naloga2-racun
-besedilo: »$T_5 = \binom{8}{4}(2x)^4 = 70 \cdot 16x^4 = 1120x^4$« -/
+besedilo: »b) $T_5 = \binom{8}{4}(2x)^4 = 70 \cdot 16x^4 = 1120x^4$.« -/
 theorem naloga2_racun : Nat.factorial 8 / (Nat.factorial 2 * Nat.factorial 6) * 2 ^ 2 = 112 ∧
     Nat.factorial 8 / (Nat.factorial 4 * Nat.factorial 4) * 2 ^ 4 = 1120 := by decide
 
@@ -457,7 +457,7 @@ theorem kviz1 : #((range 4).powersetCard 2) = 6 := by rw [card_powersetCard, car
 /-- Preveri se 2: splošni člen (x + 1/x²)⁹ je `C(9,k)·x^(9−k)·(1/x²)^k = C(9,k)·x^(9−3k)`; eksponent 0 da
 k = 3 in člen `C(9,3) = 9!/(3!·6!) = 84`.
 trditev: MAT-SS-4/binomski-izrek#kviz2
-besedilo: »Zapiši splošni člen $\binom{9}{k}x^{9-k}\left(\frac{1}{x^2}\right)^k$.« -/
+besedilo: »Najprej splošni člen, nato skupni eksponent $x$, iz pogoja »eksponent $0$« dobiš $k$ in šele na koncu število $\binom{9}{3} = 84$.« -/
 theorem kviz2 (x : ℝ) (hx : x ≠ 0) (k : ℕ) (hk : k ≤ 9) :
     (Nat.choose 9 k : ℝ) * x ^ (9 - k) * (1 / x ^ 2) ^ k = (Nat.choose 9 k : ℝ) * x ^ ((9 : ℤ) - 3 * k) ∧
     ((9 : ℤ) - 3 * k = 0 ↔ k = 3) ∧ Nat.choose 9 3 = 84 ∧
@@ -513,7 +513,7 @@ example :=
 
 /-- Preveri se 5: celoten razvoj (2x − 1/x)⁶ = 64x⁶ − 192x⁴ + 240x² − 160 + 60/x² − 12/x⁴ + 1/x⁶ (x ≠ 0).
 trditev: MAT-SS-4/binomski-izrek#kviz5-razvoj
-besedilo: »Izračunaj člen brez $x$ v razvoju $\left(2x - \frac{1}{x}\right)^6$.« -/
+besedilo: »$\left(2x - \frac{1}{x}\right)^6$« -/
 theorem kviz5_razvoj (x : ℝ) (hx : x ≠ 0) :
     (2 * x - 1 / x) ^ 6 = 64 * x ^ 6 - 192 * x ^ 4 + 240 * x ^ 2 - 160 + 60 / x ^ 2 - 12 / x ^ 4 + 1 / x ^ 6 := by
   field_simp

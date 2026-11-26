@@ -64,8 +64,7 @@ theorem nekolinearne (a b c : P) (h : ∠ a b c = π / 2) (ha : a ≠ b) (hc : c
   · rw [h] at h1; linarith [pi_pos]
 
 /-- Primer pogojev: v ravnini ℂ imajo točke 1, 0, i pravi kot pri 0.
-trditev: MAT-SS-2/podobnost#primer-pravi-kot
-besedilo: »Točkovanje:** 1 točka za podobnost trikotnikov in $k = \dfrac{3}{2}$,« -/
+pomozno -/
 theorem primer_pravi_kot : ∠ (1:ℂ) 0 Complex.I = π / 2 := by
   rw [EuclideanGeometry.angle, ← InnerProductGeometry.inner_eq_zero_iff_angle_eq_pi_div_two]
   simp [Complex.inner]
@@ -119,7 +118,7 @@ example : ¬ Collinear ℝ {(1:ℂ), 0, Complex.I} ∧
 se pri k-krat daljših dolžinah pomnoži s k²: ½·(kz)·(kv) = k²·(½·z·v); Premisli 1: 3² = 9; simulacija:
 2² = 4, 0,5² = 0,25.
 trditev: MAT-SS-2/podobnost#ploscina-k2
-besedilo: »V simulaciji spodaj (»Podobnost in središčni razteg«) nastavi k = 2 in nato k = 0,5. Opazuj, da je razmerje stranic $k$, razmerje ploščin pa $4$ oziroma $0{,}25$, torej $k^2$. Kje glede na središče (v simulaciji O) leži slika, ko nastaviš negativen k?« -/
+besedilo: »Če je razmerje dolžin $k$, je razmerje ploščin $k^2$.« -/
 theorem ploscina_k2 :
     (∀ k z v : ℝ, (k * z) * (k * v) / 2 = k ^ 2 * (z * v / 2)) ∧ (3:ℝ) ^ 2 = 9 ∧ (2:ℝ) ^ 2 = 4 ∧
     (0.5:ℝ) ^ 2 = 0.25 :=
@@ -157,7 +156,7 @@ theorem ploscina_trikotnika_razteg (S A B C : ℝ × ℝ) (k : ℝ) :
 /-- Razlaga 4 in 8 (ploščina kot mera): pri središčnem raztegu ravnine s koeficientom k se ploščina (Lebesgueova
 mera) vsakega lika pomnoži s k².
 trditev: MAT-SS-2/podobnost#razteg-ploscina
-besedilo: »Zato je slika lika podobna liku s koeficientom podobnosti $|k|$, ploščina pa se pomnoži s $k^2$.« -/
+besedilo: »Slika je podobna liku s koeficientom $|k|$; ploščina se pomnoži s $k^2$.« -/
 theorem razteg_ploscina (S : EuclideanSpace ℝ (Fin 2)) (k : ℝ) (s : Set (EuclideanSpace ℝ (Fin 2))) :
     MeasureTheory.volume (AffineMap.homothety S k '' s) = ENNReal.ofReal (k ^ 2) * MeasureTheory.volume s := by
   rw [MeasureTheory.Measure.addHaar_image_homothety, finrank_euclideanSpace_fin, abs_of_nonneg (sq_nonneg k)]
@@ -251,9 +250,7 @@ theorem trije_podobni {A B C D : P} (hD : Sbtw ℝ A D B) (hCD : ∠ A D C = π 
 
 /-- Predpostavke trditve `trije_podobni` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
-  have w : ∃ A B C D : ℂ, Sbtw ℝ A D B ∧ ∠ A D C = π / 2 ∧ ∠ A C B = π / 2 :=
-    ⟨0, 25, 16 + 12 * Complex.I, 16, primer_risba⟩
-  trije_podobni (hD := w.choose_spec.choose_spec.choose_spec.choose_spec.1) (hCD := w.choose_spec.choose_spec.choose_spec.choose_spec.2.1) (hC := w.choose_spec.choose_spec.choose_spec.choose_spec.2.2)
+  trije_podobni (hD := primer_risba.1) (hCD := primer_risba.2.1) (hC := primer_risba.2.2)
 
 /-- Razlaga 7 (risba) in Preveri se 1: 15² = 25·9, 20² = 25·16 in 12² = 9·16.
 trditev: MAT-SS-2/podobnost#risba
@@ -275,7 +272,7 @@ example : (0:ℝ) ≤ 1 / 2 ∧ (0:ℝ) ≤ 1 ∧ (1 / 2 : ℝ) = 1 / 2 ∧ (1 /
 /-- Predpostavke trditve `premisli2` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
   have w : (0:ℝ) ≤ 1 / 2 ∧ (0:ℝ) ≤ 1 ∧ (1 / 2 : ℝ) = 1 / 2 ∧ (1 / 2 : ℝ) ^ 2 = 1 / 2 * (1 / 2) ∧ (1:ℝ) ^ 2 = 2 * (1 / 2) := by norm_num
-  premisli2 (hv := w.1) (hca := w.2.1) (ha := w.1) (hb := w.1) (he := w.2.2.1) (h1 := w.2.2.2.1) (h2 := w.2.2.2.2) (h3 := w.2.2.2.1)
+  premisli2 1 1 2 (1 / 2) (1 / 2) (1 / 2) w.1 w.1 w.2.1 w.2.1 w.2.2.1 w.2.2.2.1 w.2.2.2.2 w.2.2.2.2
 
 /-- Razlaga 7, Premisli 2: v enakokrakem pravokotnem trikotniku (|CA| = |CB|, pravi kot pri C) sta kota ob
 hipotenuzi enaka (kota ob osnovnici enakokrakega trikotnika) in skupaj merita π − π/2, zato je vsak π/4 = 45°.
@@ -337,13 +334,12 @@ example : (2:ℝ) ≠ 0 := by norm_num
 
 /-- Predpostavke trditve `razteg_podobnost` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
-  have w : (2:ℝ) ≠ 0 := by norm_num
-  razteg_podobnost (hk := w)
+  razteg_podobnost (0:ℂ) 0 0 0 2 (by norm_num)
 
 /-- Razlaga 8 (slika): pri središču v izhodišču se A(2, 1), B(4, 1), C(3, 3) pri k = 2 preslikajo v (4, 2), (8, 2),
 (6, 6), pri k = −1/2 pa v (−1; −0,5), (−2; −0,5), (−1,5; −1,5).
 trditev: MAT-SS-2/podobnost#slika-razteg
-besedilo: »V simulaciji spodaj (»Podobnost in središčni razteg«) nastavi k = 2 in nato k = 0,5. Opazuj, da je razmerje stranic $k$, razmerje ploščin pa $4$ oziroma $0{,}25$, torej $k^2$. Kje glede na središče (v simulaciji O) leži slika, ko nastaviš negativen k?« -/
+besedilo: »a) Pri $k = 2$ odmike podvojimo: $A'(1 + 2, 1 + 2) = A'(3, 3)$, $B'(1 + 6, 1 + 2) = B'(7, 3)$, $C'(1 + 2, 1 + 4) = C'(3, 5)$.« -/
 theorem slika_razteg :
     ((2:ℝ) * 2, (2:ℝ) * 1) = (4, 2) ∧ ((2:ℝ) * 4, (2:ℝ) * 1) = (8, 2) ∧ ((2:ℝ) * 3, (2:ℝ) * 3) = (6, 6) ∧
     ((-1 / 2 : ℝ) * 2, (-1 / 2 : ℝ) * 1) = (-1, -0.5) ∧ ((-1 / 2 : ℝ) * 4, (-1 / 2 : ℝ) * 1) = (-2, -0.5) ∧
@@ -391,7 +387,7 @@ example : (0:ℝ) ≤ 1 := zero_le_one
 /-- Primer 3: c = 9 + 16 = 25; v_c² = 9·16 = 144, v_c = 12; a² = 25·9 = 225, a = 15; b² = 25·16 = 400, b = 20
 (dolžine so nenegativne); preizkus 15² + 20² = 225 + 400 = 625 = 25².
 trditev: MAT-SS-2/podobnost#primer3
-besedilo: »$15^2 + 20^2 = 225 + 400 = 625 = 25^2$« -/
+besedilo: »zato $a^2 = c \cdot c_a = 25 \cdot 9 = 225$ in $a = 15\,\text{cm}$.« -/
 theorem primer3 :
     (9:ℝ) + 16 = 25 ∧ (∀ v : ℝ, 0 ≤ v → (v ^ 2 = 9 * 16 ↔ v = 12)) ∧ (9:ℝ) * 16 = 144 ∧
     (∀ a : ℝ, 0 ≤ a → (a ^ 2 = 25 * 9 ↔ a = 15)) ∧ (∀ b : ℝ, 0 ≤ b → (b ^ 2 = 25 * 16 ↔ b = 20)) ∧
@@ -496,7 +492,7 @@ theorem vsakdan : (6:ℝ) * 50000 = 300000 ∧ (300000:ℝ) / 100000 = 3 ∧ (5:
 /-- Drugače: Korak za korakom: a = 6, b = 8, c = 10 (36 + 64 = 100); c_a = 36/10 = 3,6, c_b = 64/10 = 6,4,
 3,6 + 6,4 = 10; v_c² = 3,6·6,4 = 23,04, v_c = 4,8; ploščina 6·8/2 = 24 = 10·4,8/2.
 trditev: MAT-SS-2/podobnost#korak-za-korakom
-besedilo: »| Višina iz višinskega izreka | $v_c^2 = 3{,}6 \cdot 6{,}4 = 23{,}04$ | $v_c = 4{,}8\,\text{cm}$ |« -/
+besedilo: »$v_c^2 = 3{,}6 \cdot 6{,}4 = 23{,}04$« -/
 theorem korak_za_korakom :
     (36:ℝ) + 64 = 100 ∧ (36:ℝ) / 10 = 3.6 ∧ (64:ℝ) / 10 = 6.4 ∧ (3.6:ℝ) + 6.4 = 10 ∧ (3.6:ℝ) * 6.4 = 23.04 ∧
     (∀ v : ℝ, 0 ≤ v → (v ^ 2 = 23.04 ↔ v = 4.8)) ∧ (6:ℝ) * 8 / 2 = 24 ∧ (10:ℝ) * 4.8 / 2 = 24 := by

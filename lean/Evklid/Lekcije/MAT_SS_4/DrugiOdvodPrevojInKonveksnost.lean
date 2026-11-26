@@ -94,7 +94,7 @@ example : ConvexOn ℝ univ (fun x : ℝ => x ^ 2) ∧ HasDerivAt (fun x : ℝ =
 
 /-- Razlaga 3 (pomen): graf konkavne funkcije leži pod vsako svojo tangento.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#pod-tangento
-besedilo: »3. Imena.** Funkcija je na intervalu **konveksna**, če njen graf tam leži nad vsako svojo tangento (oblika »skodelice«, $\cup$). Je **konkavna**, če graf leži pod tangentami (oblika »kupole«, $\cap$). Za dvakrat odvedljivo funkcijo velja:« -/
+besedilo: »Graf je konkaven: leži pod svojimi tangentami.« -/
 theorem pod_tangento {f : ℝ → ℝ} {D : Set ℝ} {x y f' : ℝ} (hf : ConcaveOn ℝ D f) (hx : x ∈ D)
     (hy : y ∈ D) (hd : HasDerivAt f f' x) : f y ≤ f x + f' * (y - x) := by
   have := nad_tangento hf.neg hx hy hd.neg
@@ -151,10 +151,8 @@ example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x ^ 2) ((fun x => 2 * x) x) x
 
 /-- Predpostavke trditve `test_maksimum` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
-  have w : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x ^ 2) ((fun x => 2 * x) x) x) ∧ (∀ x : ℝ, HasDerivAt (fun x : ℝ => 2 * x) ((fun _ => (2:ℝ)) x) x) ∧ (fun x : ℝ => 2 * x) 0 = 0 ∧ (0:ℝ) < (fun _ => (2:ℝ)) 0 :=
-    ⟨fun x => (hasDerivAt_pow 2 x).congr_deriv (by norm_num),
-      fun x => ((hasDerivAt_id' x).const_mul 2).congr_deriv (by ring), by norm_num, two_pos⟩
-  test_maksimum (h₁ := w.1) (h₂ := w.2.1) (ha := w.2.2.1) (hn := w.2.2.2)
+  test_maksimum (h₁ := konkavna_izpolnljivo.1) (h₂ := konkavna_izpolnljivo.2.1) (a := 0) (ha := by norm_num)
+    (hn := by norm_num)
 
 /-- Predpostavke trditve `test_minimum` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
@@ -173,7 +171,7 @@ example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => -x ^ 2) ((fun x => -2 * x) x)
 
 /-- Razlaga 1: prvi odvod (odvod funkcije), kot je zapisan v lekciji.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#kub-d1
-besedilo: »$f'(x) = 3x^2$« -/
+besedilo: »Za $f(x) = x^3$ je $f'(x) = 3x^2$ in $f''(x) = 6x$.« -/
 theorem kub_d1 (x : ℝ) : HasDerivAt (fun x : ℝ => x ^ 3) (3 * x ^ 2) x :=
   (hasDerivAt_pow 3 x).congr_deriv (by norm_num)
 
@@ -224,7 +222,7 @@ theorem f_d1 (x : ℝ) : HasDerivAt (fun x : ℝ => x ^ 3 - 3 * x) (3 * x ^ 2 - 
 
 /-- Razlaga 4: drugi odvod (odvod prvega odvoda), kot je zapisan v lekciji.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#f-d2
-besedilo: »Izračunaj drugi odvod malo levo in malo desno; $(x^3)'' = 6x$ in $(x^4)'' = 12x^2$.« -/
+besedilo: »Tu je $f''(x) = 6x$.« -/
 theorem f_d2 (x : ℝ) : HasDerivAt (fun x : ℝ => 3 * x ^ 2 - 3) (6 * x) x :=
   (((hasDerivAt_pow 2 x).const_mul 3).sub_const 3).congr_deriv (by push_cast; ring)
 
@@ -319,7 +317,7 @@ theorem p1_d1 (x : ℝ) : HasDerivAt (fun x : ℝ => x ^ 3 - 3 * x ^ 2 + 2) (3 *
 
 /-- Primer 1: drugi odvod (odvod prvega odvoda), kot je zapisan v lekciji.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#p1-d2
-besedilo: »Prvi odvod: $f'(x) = 3x^2 - 6x$.« -/
+besedilo: »Drugi odvod: $f''(x) = 6x - 6 = 6(x - 1)$.« -/
 theorem p1_d2 (x : ℝ) : HasDerivAt (fun x : ℝ => 3 * x ^ 2 - 6 * x) (6 * x - 6) x :=
   (((hasDerivAt_pow 2 x).const_mul 3).sub ((hasDerivAt_id' x).const_mul 6)).congr_deriv
     (by push_cast; ring)
@@ -347,7 +345,7 @@ theorem p2_d1 (x : ℝ) : HasDerivAt (fun x : ℝ => x ^ 4 - 6 * x ^ 2) (4 * x ^
 
 /-- Primer 2: drugi odvod (odvod prvega odvoda), kot je zapisan v lekciji.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#p2-d2
-besedilo: »$f'(x) = 4x^3 - 12x = 4x(x^2 - 3)$« -/
+besedilo: »$f'(x) = 4x^3 - 12x = 4x(x^2 - 3)$.« -/
 theorem p2_d2 (x : ℝ) : HasDerivAt (fun x : ℝ => 4 * x ^ 3 - 12 * x) (12 * x ^ 2 - 12) x :=
   (((hasDerivAt_pow 3 x).const_mul 4).sub ((hasDerivAt_id' x).const_mul 12)).congr_deriv
     (by push_cast; ring)
@@ -355,7 +353,7 @@ theorem p2_d2 (x : ℝ) : HasDerivAt (fun x : ℝ => 4 * x ^ 3 - 12 * x) (12 * x
 /-- Primer 2, koraki 1–4: f' = 4x³ − 12x = 4x(x² − 3), f'' = 12x² − 12 = 12(x − 1)(x + 1), ničli ±1,
 f'' < 0 natanko na (−1, 1); f''(−2) = 36, f''(0) = −12, f''(2) = 36; f(±1) = 1 − 6 = −5.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#primer2-prevoja
-besedilo: »$f'(x) = 4x^3 - 12x = 4x(x^2 - 3)$« -/
+besedilo: »$f''(x) = 12x^2 - 12 = 12(x - 1)(x + 1)$, ničli sta $x = -1$ in $x = 1$.« -/
 theorem primer2_prevoja (x : ℝ) :
     4 * x ^ 3 - 12 * x = 4 * x * (x ^ 2 - 3) ∧ 12 * x ^ 2 - 12 = 12 * (x - 1) * (x + 1) ∧
     (12 * x ^ 2 - 12 = 0 ↔ x = -1 ∨ x = 1) ∧ (12 * x ^ 2 - 12 < 0 ↔ -1 < x ∧ x < 1) ∧
@@ -422,7 +420,7 @@ theorem p3_d1 (t : ℝ) : HasDerivAt (fun t : ℝ => 6 * t ^ 2 - t ^ 3) (12 * t 
 
 /-- Primer 3: drugi odvod (odvod prvega odvoda), kot je zapisan v lekciji.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#p3-d2
-besedilo: »$v(t) = h'(t) = 12t - 3t^2$« -/
+besedilo: »$v(t) = h'(t) = 12t - 3t^2$.« -/
 theorem p3_d2 (t : ℝ) : HasDerivAt (fun t : ℝ => 12 * t - 3 * t ^ 2) (12 - 6 * t) t :=
   (((hasDerivAt_id' t).const_mul 12).sub ((hasDerivAt_pow 2 t).const_mul 3)).congr_deriv
     (by push_cast; ring)
@@ -454,7 +452,7 @@ theorem primer3 (t : ℝ) :
 
 /-- Primer 4: prvi odvod (odvod funkcije), kot je zapisan v lekciji.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#p4-d1
-besedilo: »Za $f(x) = x\,e^{-x}$ določi vrsto stacionarne točke z drugim odvodom in poišči prevoj.« -/
+besedilo: »$f'(x) = e^{-x} - x\,e^{-x} = (1 - x)\,e^{-x}$« -/
 theorem p4_d1 (x : ℝ) : HasDerivAt (fun x : ℝ => x * exp (-x)) (exp (-x) - x * exp (-x)) x :=
   ((hasDerivAt_id' x).mul (hasDerivAt_neg x).exp).congr_deriv (by ring)
 
@@ -466,14 +464,14 @@ theorem p4_d1' (x : ℝ) : HasDerivAt (fun x : ℝ => x * exp (-x)) ((1 - x) * e
 
 /-- Primer 4: drugi odvod (odvod prvega odvoda), kot je zapisan v lekciji.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#p4-d2
-besedilo: »Za $f(x) = x\,e^{-x}$ določi vrsto stacionarne točke z drugim odvodom in poišči prevoj.« -/
+besedilo: »$f''(x) = -e^{-x} - (1 - x)\,e^{-x} = (x - 2)\,e^{-x}$« -/
 theorem p4_d2 (x : ℝ) :
     HasDerivAt (fun x : ℝ => (1 - x) * exp (-x)) (-exp (-x) - (1 - x) * exp (-x)) x :=
   (((hasDerivAt_id' x).const_sub 1).mul (hasDerivAt_neg x).exp).congr_deriv (by ring)
 
 /-- Primer 4: drugi odvod (odvod prvega odvoda), kot je zapisan v lekciji.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#p4-d2-crtica
-besedilo: »Za $f(x) = x\,e^{-x}$ določi vrsto stacionarne točke z drugim odvodom in poišči prevoj.« -/
+besedilo: »$f''(x) = -e^{-x} - (1 - x)\,e^{-x} = (x - 2)\,e^{-x}$« -/
 theorem p4_d2' (x : ℝ) : HasDerivAt (fun x : ℝ => (1 - x) * exp (-x)) ((x - 2) * exp (-x)) x :=
   (p4_d2 x).congr_deriv (by ring)
 
@@ -632,7 +630,7 @@ theorem m2_d1 (x : ℝ) :
 
 /-- Naloga 2: prvi odvod (odvod funkcije), kot je zapisan v lekciji.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#m2-d1-crtica
-besedilo: »Dana je funkcija $f(x) = (x^2 - 3)\,e^x$.« -/
+besedilo: »$f'(x) = 2x\,e^x + (x^2 - 3)\,e^x = (x^2 + 2x - 3)\,e^x$« -/
 theorem m2_d1' (x : ℝ) : HasDerivAt (fun x : ℝ => (x ^ 2 - 3) * exp x) ((x ^ 2 + 2 * x - 3) * exp x) x :=
   (m2_d1 x).congr_deriv (by ring)
 

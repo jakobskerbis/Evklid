@@ -77,7 +77,7 @@ theorem uganka : sin (π / 4) + sin (π / 6) = √2 / 2 + 1 / 2 ∧
 /-- Razlaga 1, tabela, stolpec »križni«: sin α cos β + cos α sin β za pare 30° + 60°, 30° + 30°, 60° + 90°,
 45° + 30° je 1, √3/2 ≈ 0,866, 1/2 in (√6 + √2)/4 ≈ 0,966.
 trditev: MAT-SS-3/adicijski-izreki#tabela-krizni
-besedilo: »Nina računa $\cos 75^\circ$. (1) $75^\circ = 45^\circ + 30^\circ$. (2) $\cos 75^\circ = \cos 45^\circ\cos 30^\circ + \sin 45^\circ\sin 30^\circ$. (3) Rezultat: $\dfrac{\sqrt{6} + \sqrt{2}}{4} \approx 0{,}966$. Kje je napaka?« -/
+besedilo: »| $45^\circ + 30^\circ$ | $0{,}966$ | $0{,}966$ |« -/
 theorem tabela_krizni :
     sin (π / 6) * cos (π / 3) + cos (π / 6) * sin (π / 3) = 1 ∧
     sin (π / 6) * cos (π / 6) + cos (π / 6) * sin (π / 6) = √3 / 2 ∧
@@ -203,13 +203,11 @@ example : cos (0:ℝ) ≠ 0 ∧ cos ((0:ℝ) + 0) ≠ 0 ∧ cos ((0:ℝ) - 0) �
 
 /-- Predpostavke trditve `tangens_razlike` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
-  have w : cos (0:ℝ) ≠ 0 ∧ cos ((0:ℝ) + 0) ≠ 0 ∧ cos ((0:ℝ) - 0) ≠ 0 := by simp
-  tangens_razlike (ha := w.1) (hb := w.2.1) (h := w.2.2)
+  tangens_razlike 0 0 (by simp) (by simp) (by simp)
 
 /-- Predpostavke trditve `tangens_vsote` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
-  have w : cos (0:ℝ) ≠ 0 ∧ cos ((0:ℝ) + 0) ≠ 0 ∧ cos ((0:ℝ) - 0) ≠ 0 := by simp
-  tangens_vsote (ha := w.1) (hb := w.2.1) (h := w.2.2)
+  tangens_vsote 0 0 (by simp) (by simp) (by simp)
 
 /-- Razlaga 5 in Ustno vprašanje 2: sin 2α = sin α cos α + cos α sin α = 2 sin α cos α.
 trditev: MAT-SS-3/adicijski-izreki#sinus-dvojnega
@@ -561,7 +559,7 @@ theorem racun_primer5 : sin (π - arctan (4 / 3)) = 0.8 ∧ cos (π - arctan (4 
 sin 2α = 2 sin α ne velja za vse kote (α = 90°: sin 180° = 0 ≠ 2), cos²α + sin²α je vedno 1, zato ne more biti
 cos 2α (pri α = 90° je cos 180° = −1).
 trditev: MAT-SS-3/adicijski-izreki#pogoste-napake
-besedilo: »Nina računa $\cos 75^\circ$. (1) $75^\circ = 45^\circ + 30^\circ$. (2) $\cos 75^\circ = \cos 45^\circ\cos 30^\circ + \sin 45^\circ\sin 30^\circ$. (3) Rezultat: $\dfrac{\sqrt{6} + \sqrt{2}}{4} \approx 0{,}966$. Kje je napaka?« -/
+besedilo: »Že $\sin 45^\circ + \sin 30^\circ > 1$ pokaže, da je to nemogoče.« -/
 theorem pogoste_napake :
     sin (π / 4 + π / 6) ≠ sin (π / 4) + sin (π / 6) ∧ sin (2 * (π / 2)) ≠ 2 * sin (π / 2) ∧
     (∀ α : ℝ, cos α ^ 2 + sin α ^ 2 = 1) ∧ cos (2 * (π / 2)) ≠ cos (π / 2) ^ 2 + sin (π / 2) ^ 2 := by

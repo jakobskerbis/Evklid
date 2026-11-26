@@ -45,8 +45,11 @@ uvoz vsake datoteke (`lean.yml`), sha256 lekcije, id in citat vsake trditve ter 
 (`scripts/lean-lekcije.mjs`, `lean-lekcije.yml`).
 
 **Štirje** neodvisni pregledi (zvestoba viru A, zvestoba viru B brez branja poročila A, napad, gradnja) ostanejo za
-spremembe `lean.yml`, `lean-toolchain`, poti, ki učencu pokaže »Formalno dokazano« (`server/oznake-vsebine.js`,
-`public/oznake-vsebine.js`), ter za PV-15 in PV-16.
+spremembe `lean.yml`, `lean-toolchain`, samih varoval (`scripts/lean-lekcije.mjs`, `scripts/lean-aksiomi.mjs`,
+`.github/workflows/lean-lekcije.yml`), poti, ki učencu pokaže »Formalno dokazano« (`server/oznake-vsebine.js`,
+`public/oznake-vsebine.js`), ter za PV-15 in PV-16. PV-15: inštruktor odda strukturirane korake (RACUN po korakih s
+`prejsnji` in `besedilo`), vidni odgovor se izriše iz njih; PV-16: samodejni popravek prvega napačnega koraka in
+ponovno preverjanje celote (načrt na [#539](https://github.com/jakobskerbis/Evklid/issues/539)).
 
 ## Lokalno
 
@@ -102,13 +105,19 @@ theorem simetrija (n k : ℕ) (hk : k ≤ n) : Nat.choose n k = Nat.choose n (n 
   ne spreminja, ko se izrek preimenuje.
 - `besedilo: »…«` je dobesedni izsek iz besedila, ki ga učenec vidi (brez glave, `:::risba`, `:::simboli` in
   `<<RACUN`), v eni vrstici; presledki, prelomi in LaTeX `\,` `\;` `\!` se pri primerjavi štejejo kot en presledek.
-  Brez `-/` in `/-` (zaprla bi docstring).
+  Brez `-/` in `/-` (zaprla bi docstring). Citat je trditev, ki jo izrek dokaže (sklep, odgovor, pravilo), ne besedilo
+  naloge, »Podatki:«, »Točkovanje:«, vprašanje ali glava tabele; pri tabeli citiraj vrstico izreka. Krajši od 15 znakov
+  je dovoljen le z vrstico `besedilo-kratko: <razlog>`; isti citat pri več kot dveh izrekih lekcije je opozorilo.
 - Pomožna trditev, ki ni trditev lekcije (orodje, meje za √2, Taylorjeve ocene), ima namesto tega vrstico `pomozno`.
-- Izrek s predpostavkami v binderjih (npr. `(hk : k ≤ n)`, `(hf : HasDerivAt f f' x)`; ne spremenljivke in razredi,
-  kot `(n : ℕ)` ali `[CommRing R]`) ima primer izpolnljivosti: `example` (ali izrek), katerega docstring pove
-  »izpoln…« in imenuje izrek v `` `…` `` (»Predpostavka trditve `simetrija` se da izpolniti (n = 5, k = 2).«), ali izrek
-  `<izrek>_izpolnljivo`. Primer vstavi iste konkretne vrednosti v vse predpostavke hkrati. Kjer primer ni preprost,
-  docstring izreka pove `izpolnljivo: ročno – <razlog>`. Pomožne trditve primera ne potrebujejo.
+  `pomozno` z docstringom, ki omenja primer ali nalogo, je opozorilo (morda je to trditev lekcije).
+- Izrek s predpostavkami ima primer izpolnljivosti. Predpostavka je binder (npr. `(hk : k ≤ n)`,
+  `(hf : HasDerivAt f f' x)`; ne spremenljivke in razredi, kot `(n : ℕ)` ali `[CommRing R]`) ali »→« v sklepu (v enem
+  od veznikov »∧« na vrhu, za začetnimi »∀ …,«, npr. `… ∧ ∀ x, 0 < x → …`; »¬ …«, »∃ …« in »let …« ne štejejo).
+  Primer je `example` (ali izrek `<izrek>_izpolnljivo`) brez lastnih predpostavk, ki izrek **uporabi** na konkretnih
+  vrednostih, npr. `example := koren_pot (n := 2) (a := 4) (by norm_num) (by norm_num)` ali
+  `example := preizkus2.2.2 0 (by norm_num) (by norm_num)`. Lean tako preveri, da iste vrednosti izpolnijo vse
+  predpostavke hkrati. Kjer primer ni preprost, docstring izreka pove `izpolnljivo: ročno – <razlog>`. Pomožne
+  trditve primera ne potrebujejo.
 
 `scripts/lean-lekcije.mjs` (in `.github/workflows/lean-lekcije.yml`) javi, ko se lekcija spremeni po dokazu, ko
 izreku manjka `trditev:`/`besedilo:` (ali `pomozno`), ko je id podvojen ali citata ni v lekciji in ko predpostavke

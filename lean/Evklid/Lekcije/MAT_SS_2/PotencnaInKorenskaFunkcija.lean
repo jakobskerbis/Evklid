@@ -274,7 +274,7 @@ theorem negativni (x : ℝ) (n : ℕ) : x ^ (-(n:ℤ)) = 1 / x ^ n := by
 
 /-- Negativni eksponent: definicijsko območje R \ {0}: imenovalec xⁿ je nič natanko pri x = 0 (n ≥ 1).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#negativni-d
-besedilo: »Negativni eksponent.** Za $n > 0$ je« -/
+besedilo: »Funkcija je $f(x) = \frac{1}{x^n}$, zato je definirana za vse $x \ne 0$ in nikoli ne doseže vrednosti $0$.« -/
 theorem negativni_D {n : ℕ} (hn : n ≠ 0) (x : ℝ) : x ^ n ≠ 0 ↔ x ≠ 0 :=
   not_congr (pow_eq_zero_iff hn)
 
@@ -288,7 +288,7 @@ example :=
 
 /-- Negativni eksponent: ko gre x proti ±∞, gre x^(−n) proti 0 (asimptota y = 0).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#negativni-v-neskoncnosti
-besedilo: »Negativni eksponent.** Za $n > 0$ je« -/
+besedilo: »Ko se $x$ oddaljuje od $0$, gre vrednost proti $0$.« -/
 theorem negativni_v_neskoncnosti {n : ℕ} (hn : n ≠ 0) :
     Tendsto (fun x : ℝ => x ^ (-(n:ℤ))) atTop (𝓝 0) ∧ Tendsto (fun x : ℝ => x ^ (-(n:ℤ))) atBot (𝓝 0) := by
   refine ⟨tendsto_pow_neg_atTop hn, ?_⟩
@@ -351,7 +351,7 @@ example :=
 
 /-- Negativni eksponent, sodi n: ko gre x z leve proti 0, gre x^(−n) proti +∞.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#negativni-sod-z-leve
-besedilo: »Ko se $x$ oddaljuje od $0$, gre vrednost proti $0$.« -/
+besedilo: »gre vrednost proti $0$.« -/
 theorem negativni_sod_z_leve {n : ℕ} (hn : Even n) (hn0 : n ≠ 0) :
     Tendsto (fun x : ℝ => x ^ (-(n:ℤ))) (𝓝[<] 0) atTop := by
   have h1 : Tendsto (fun x : ℝ => x ^ n) (𝓝[<] 0) (𝓝[>] 0) := by
@@ -374,7 +374,7 @@ example :=
 /-- Negativni eksponent, zaloga vrednosti: pri sodem n (n ≥ 2) je Z = (0, ∞), pri lihem n je Z = R \ {0}
 (D = R \ {0}).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#negativni-zaloga
-besedilo: »Pravilo za sode eksponente.** Pri sodem $n \ge 2$ je $(-x)^n = x^n$,« -/
+besedilo: »Funkcija $y = x^{-2}$ ima zalogo vrednosti $(0, \infty)$;« -/
 theorem negativni_zaloga {n : ℕ} (hn0 : n ≠ 0) :
     (Even n → (fun x : ℝ => x ^ (-(n:ℤ))) '' {x | x ≠ 0} = Ioi 0) ∧
     (Odd n → (fun x : ℝ => x ^ (-(n:ℤ))) '' {x | x ≠ 0} = {y | y ≠ 0}) := by
@@ -538,7 +538,7 @@ example :=
 /-- Transformacije, negativni eksponent: pri y = a(x − p)^(−n) + q (a ≠ 0) je D = R \ {p} (imenovalec
 (x − p)ⁿ je nič le pri x = p), vrednosti q funkcija ne doseže.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#premik-asimptota
-besedilo: »Pri $y = a \cdot (x - p)^n + q$ točka $(0, 0)$ preide v $(p, q)$; pri $n < 0$ sta asimptoti $x = p$ in $y = q$.« -/
+besedilo: »Pri $y = a \cdot (x - p)^n + q$ točka $(0, 0)$ preide v $(p, q)$;« -/
 theorem premik_asimptota {a p q : ℝ} (ha : a ≠ 0) {n : ℕ} (hn : n ≠ 0) (x : ℝ) :
     ((x - p) ^ n ≠ 0 ↔ x ≠ p) ∧ (x ≠ p → a * (x - p) ^ (-(n:ℤ)) + q ≠ q) := by
   refine ⟨by rw [Ne, pow_eq_zero_iff hn, sub_eq_zero], fun hx => ?_⟩
@@ -551,7 +551,7 @@ example : (2:ℝ) ≠ 0 ∧ (1:ℕ) ≠ 0 := by norm_num
 /-- Predpostavke trditve `premik_asimptota` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
   have w : (2:ℝ) ≠ 0 ∧ (1:ℕ) ≠ 0 := by norm_num
-  premik_asimptota (ha := w.1) (hn := w.2)
+  premik_asimptota (p := 0) (q := 0) (ha := w.1) (hn := w.2)
 
 /-- Transformacije: pri lihem n je (p, q) središče simetrije grafa y = a(x − p)ⁿ + q: točki pri x = p + t in
 x = p − t sta simetrični glede na (p, q), f(p + t) + f(p − t) = 2q.
@@ -574,7 +574,7 @@ example :=
 /-- Potenčna odvisnost: c(2x)ⁿ = 2ⁿ · c · xⁿ; pri V = a³ dvakrat daljši rob da 8-krat večjo prostornino;
 pri y = c x⁻² se y zmanjša na četrtino.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#podvojitev
-besedilo: »»Dvakrat večji rob, dvakrat več lesa.«** Prostornina raste s tretjo potenco: dvakrat daljši rob da $2^3 = 8$-krat večjo prostornino.« -/
+besedilo: »Pri premem sorazmerju se $y$ le podvoji, pri $V = a^3$ se poveča $8$-krat, pri $y = c \cdot x^{-2}$ pa pade na četrtino.« -/
 theorem podvojitev (c x : ℝ) (n : ℕ) : c * (2 * x) ^ n = 2 ^ n * c * x ^ n ∧ (2 * x) ^ 3 = 8 * x ^ 3 ∧
     c * (2 * x) ^ (-2:ℤ) = c * x ^ (-2:ℤ) / 4 := by
   refine ⟨by rw [mul_pow]; ring, by ring, ?_⟩
@@ -778,7 +778,7 @@ theorem primer6_limita : Tendsto f6 atTop (𝓝 (-1)) := by
 
 /-- Primer 6: asimptota x = 1 – ko gre x z desne proti 1, f(x) raste čez vse meje.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#primer6-asimptota-x
-besedilo: »hiperbola s središčem $(1, -1)$ in asimptotama $x = 1$,« -/
+besedilo: »Odgovor: hiperbola s središčem $(1, -1)$ in asimptotama $x = 1$, $y = -1$; $D_f = \mathbb{R} \setminus \{1\}$, $Z_f = \mathbb{R} \setminus \{-1\}$, ničla $x = 3$, presečišče z osjo $y$ je $(0, -3)$, funkcija pada na obeh intervalih.« -/
 theorem primer6_asimptota_x : Tendsto f6 (𝓝[>] 1) atTop := by
   have h1 : Tendsto (fun x : ℝ => x - 1) (𝓝[>] 1) (𝓝[>] 0) := by
     apply tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within
@@ -792,7 +792,7 @@ theorem primer6_asimptota_x : Tendsto f6 (𝓝[>] 1) atTop := by
 
 /-- Primer 6: f(x) → −1 tudi, ko x → −∞.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#primer6-limita-minus
-besedilo: »$f(x) = \dfrac{2}{x - 1} - 1$« -/
+besedilo: »| $-1$ | $1$ | $-1$ | $1$ |« -/
 theorem primer6_limita_minus : Tendsto f6 atBot (𝓝 (-1)) := by
   have h1 : Tendsto (fun x : ℝ => x - 1) atBot atBot := tendsto_atBot_add_const_right _ (-1) tendsto_id
   have h2 : Tendsto (fun x : ℝ => 2 * (x - 1)⁻¹) atBot (𝓝 (2 * 0)) :=
@@ -821,7 +821,7 @@ theorem primer6_asimptota_x_leve : Tendsto f6 (𝓝[<] 1) atBot := by
 /-- Pogoste napake: 2⁻² = 1/4 (ne −4), x⁻² > 0 za x ≠ 0; pri lihem n je (−1)ⁿ = −1; √9 = 3 ≠ −3; ∛(−8) = −2;
 dvakrat daljši rob da 2³ = 8-krat večjo prostornino; pri podvojeni prostornini rob zraste za ∛2 ≈ 1,26.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#pogoste-napake
-besedilo: »»Dvakrat večji rob, dvakrat več lesa.«** Prostornina raste s tretjo potenco: dvakrat daljši rob da $2^3 = 8$-krat večjo prostornino. Obratno pri podvojeni prostornini rob zraste le za faktor $\sqrt[3]{2} \approx 1{,}26$.« -/
+besedilo: »»$x^{-2}$ je negativno.«** Učenec bere minus v eksponentu kot minus pred številom: $2^{-2} = -4$.« -/
 theorem pogoste_napake : (2:ℝ) ^ (-2:ℤ) = 1 / 4 ∧ (2:ℝ) ^ (-2:ℤ) ≠ -4 ∧ (∀ x : ℝ, x ≠ 0 → 0 < x ^ (-2:ℤ)) ∧
     (-1:ℝ) ^ 3 = -1 ∧ √((-3:ℝ) ^ 2) = 3 ∧ koren 3 (-8) = -2 ∧ (2:ℝ) ^ 3 = 8 ∧
     1.255 < koren 3 2 ∧ koren 3 2 < 1.265 := by
@@ -838,7 +838,7 @@ noncomputable def g1 (x : ℝ) : ℝ := (x - 1) ^ (-2:ℤ) + 2
 
 /-- Naloga 1: g(x) = 1/(x − 1)² + 2; D_g = R \ {1}; zaloga x⁻² je (0, ∞), Z_g = (2, ∞).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#matura1
-besedilo: »$g(x) = \dfrac{1}{(x - 1)^2} + 2$« -/
+besedilo: »Odgovor: $D_g = \mathbb{R} \setminus \{1\}$, $Z_g = (2, \infty)$, asimptoti sta $x = 1$ in $y = 2$.« -/
 theorem matura1 : (∀ x : ℝ, g1 x = 1 / (x - 1) ^ 2 + 2) ∧ (∀ x : ℝ, (x - 1) ^ 2 ≠ 0 ↔ x ≠ 1) ∧
     (fun x : ℝ => x ^ (-2:ℤ)) '' {x | x ≠ 0} = Set.Ioi 0 ∧ g1 '' {x | x ≠ 1} = Set.Ioi 2 := by
   have hg : ∀ x : ℝ, g1 x = 1 / (x - 1) ^ 2 + 2 := fun x => by unfold g1; simp [zpow_neg, one_div]
@@ -961,7 +961,7 @@ theorem zgodba : (4:ℝ) ^ 2 = 4 * 2 ^ 2 ∧ 4.45 < √(20:ℝ) ∧ √(20:ℝ) 
 /-- Preveri se, 1: x⁻² da pri −2, −1, 1, 2 vrednosti 1/4, 1, 1, 1/4; x² da pri 2 vrednost 4, x⁻¹ pri −1 vrednost
 −1, −x² da negativne vrednosti.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#preveri1
-besedilo: »Katera funkcija ima tabelo vrednosti $x$: $-2, -1, 1, 2$ in $y$: $\frac{1}{4}, 1, 1, \frac{1}{4}$?« -/
+besedilo: »$x^2$ je res soda, vendar da pri $x = 2$ vrednost $4$, ne $\frac{1}{4}$.« -/
 theorem preveri1 : (-2:ℝ) ^ (-2:ℤ) = 1 / 4 ∧ (-1:ℝ) ^ (-2:ℤ) = 1 ∧ (1:ℝ) ^ (-2:ℤ) = 1 ∧ (2:ℝ) ^ (-2:ℤ) = 1 / 4 ∧
     (2:ℝ) ^ 2 = 4 ∧ (-1:ℝ) ^ (-1:ℤ) = -1 ∧ -(1:ℝ) ^ 2 < 0 := by norm_num
 

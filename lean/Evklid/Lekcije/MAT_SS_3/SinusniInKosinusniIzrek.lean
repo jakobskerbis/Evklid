@@ -226,9 +226,9 @@ theorem sinusni_izrek_2R (t : Affine.Triangle ℝ P) {i₁ i₂ i₃ : Fin 3} (h
 example : (0 : Fin 3) ≠ 1 ∧ (0 : Fin 3) ≠ 2 ∧ (1 : Fin 3) ≠ 2 := by decide
 
 /-- Predpostavke trditve `sinusni_izrek_2R` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example (t : Affine.Triangle ℝ (EuclideanSpace ℝ (Fin 2))) :=
   have w : (0 : Fin 3) ≠ 1 ∧ (0 : Fin 3) ≠ 2 ∧ (1 : Fin 3) ≠ 2 := by decide
-  sinusni_izrek_2R (h₁₂ := w.1) (h₁₃ := w.2.1) (h₂₃ := w.2.2)
+  sinusni_izrek_2R t (h₁₂ := w.1) (h₁₃ := w.2.1) (h₂₃ := w.2.2)
 
 /-- Postopek in Primer 2: vsota notranjih kotov trikotnika je `180° = π` (tretji kot iz `180°`).
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#vsota-kotov
@@ -343,7 +343,7 @@ theorem sin_suplement (x : ℝ) : Real.sin (π - x) = Real.sin x := Real.sin_pi_
 /-- Razlaga (past pri sinusu), Pogoste napake in Ustno vprašanje 3: za `x₀ ∈ [0°, 90°]` ima `sin x = sin x₀` na
 `[0°, 180°]` natanko rešitvi `x₀` in `180° − x₀`.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#dve-resitvi-sinus
-besedilo: »da ima $\sin x = 0{,}9$ med $0^\circ$ in $180^\circ$ dve rešitvi:« -/
+besedilo: »Med $0^\circ$ in $180^\circ$ imata enak sinus kota $x$ in $180^\circ - x$,« -/
 theorem dve_resitvi_sinus (x₀ x : ℝ) (h0 : 0 ≤ x₀) (h1 : x₀ ≤ π / 2) (hx0 : 0 ≤ x) (hx1 : x ≤ π) :
     Real.sin x = Real.sin x₀ ↔ x = x₀ ∨ x = π - x₀ := by
   have hm : x₀ ∈ Set.Icc (-(π / 2)) (π / 2) := ⟨by linarith [Real.pi_pos], h1⟩
@@ -365,7 +365,7 @@ example : (0:ℝ) ≤ 0 ∧ (0:ℝ) ≤ π / 2 ∧ (0:ℝ) ≤ π := ⟨le_rfl, 
 /-- Predpostavke trditve `dve_resitvi_sinus` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
   have w : (0:ℝ) ≤ 0 ∧ (0:ℝ) ≤ π / 2 ∧ (0:ℝ) ≤ π := ⟨le_rfl, by positivity, Real.pi_pos.le⟩
-  dve_resitvi_sinus (h0 := w.1) (h1 := w.2.1) (hx0 := w.2.2) (hx1 := w.2.2)
+  dve_resitvi_sinus 0 0 w.1 w.2.1 w.1 w.2.2
 
 /-- Razlaga (premisli) in Povzetek: med 0° in 180° ima vsak kot drugačen kosinus, zato da kosinus en sam kot.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#kosinus-en-kot
@@ -995,7 +995,7 @@ theorem kviz5 :
 /-- Preveri se 5, razlaga napačnega odgovora 5: zaradi zavoja je razdalja `≈ 4,55` strogo krajša od vsote
 odsekov `3 + 2`.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#kviz5-krajse
-besedilo: »Notranji kot je $180^\circ - 50^\circ = 130^\circ$. Torej $c^2 = 9 + 4 - 12\cos 130^\circ \approx 20{,}71$ in $c \approx 4{,}55\,\mathrm{km}$.« -/
+besedilo: »Torej $c^2 = 9 + 4 - 12\cos 130^\circ \approx 20{,}71$ in $c \approx 4{,}55\,\mathrm{km}$.« -/
 theorem kviz5_krajse : Real.sqrt (9 + 4 - 12 * Real.cos (130 * π / 180)) < 3 + 2 := by
   obtain ⟨-, h, -⟩ := kviz5
   rw [abs_lt] at h

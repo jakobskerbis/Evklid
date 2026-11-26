@@ -83,7 +83,7 @@ theorem primer2_skupini : List.Perm [27, 29, 25, 30, 28, 26] [25, 26, 27, 28, 29
 /-- Primer 2: zapis dijaka kot pari (temperatura, dež?); suhi (filter »ne dež«) so 27, 29, 25, 30, 28, 26,
 deževni (filter »dež«) 21, 23, 19, 22; skupini skupaj štejeta vseh 10 dni (razdelitev podatkov).
 trditev: MAT-SS-4/statisticna-naloga#primer2-razdelitev
-besedilo: »Dijak je deset julijskih dni beležil najvišjo dnevno temperaturo in ali je deževalo. Zapisal je: $27$ suho, $21$ dež, $29$ suho, $23$ dež, $25$ suho, $30$ suho, $19$ dež, $28$ suho, $22$ dež, $26$ suho. Ali so bili deževni dnevi hladnejši?« -/
+besedilo: »Zapisal je: $27$ suho, $21$ dež, $29$ suho, $23$ dež, $25$ suho, $30$ suho, $19$ dež, $28$ suho, $22$ dež, $26$ suho.« -/
 theorem primer2_razdelitev :
     let d : List (ℕ × Bool) := [(27, false), (21, true), (29, false), (23, true), (25, false), (30, false),
       (19, true), (28, false), (22, true), (26, false)]

@@ -363,7 +363,7 @@ theorem lastnosti_arctan :
 /-- Razlaga 5, Premisli in Povzetek: arkus tangens ima vodoravni asimptoti y = π/2 (x → ∞) in y = −π/2
 (x → −∞), ki ju ne doseže.
 trditev: MAT-SS-3/krozne-funkcije#asimptoti
-besedilo: »Tangens ima navpični asimptoti $x = -\frac{\pi}{2}$ in $x = \frac{\pi}{2}$. Kakšni asimptoti napoveš za arkus tangens?« -/
+besedilo: »Tangens ima navpični asimptoti $x = -\frac{\pi}{2}$ in $x = \frac{\pi}{2}$.« -/
 theorem asimptoti : Tendsto arctan atTop (𝓝 (π / 2)) ∧ Tendsto arctan atBot (𝓝 (-(π / 2))) ∧
     ∀ x, -(π / 2) < arctan x ∧ arctan x < π / 2 :=
   ⟨tendsto_nhds_of_tendsto_nhdsWithin tendsto_arctan_atTop,
@@ -407,7 +407,7 @@ theorem resitve_sin (a x : ℝ) (h0 : -1 ≤ a) (h1 : a ≤ 1) :
 
 /-- Razlaga 8: za −1 ≤ a ≤ 1 so rešitve cos x = a natanko x = ±arccos a + 2kπ.
 trditev: MAT-SS-3/krozne-funkcije#resitve-cos
-besedilo: »$x = \pm\arccos a + 2k\pi$« -/
+besedilo: »Pri kosinusu je $x = \pm\arccos a + 2k\pi$, pri tangensu $x = \arctan a + k\pi$.« -/
 theorem resitve_cos (a x : ℝ) (h0 : -1 ≤ a) (h1 : a ≤ 1) :
     cos x = a ↔ ∃ k : ℤ, x = arccos a + 2 * k * π ∨ x = -arccos a + 2 * k * π := by
   conv_lhs => rw [← cos_arccos h0 h1, eq_comm]
@@ -623,7 +623,7 @@ theorem primer4 : π < 4 * π / 3 ∧ cos (4 * π / 3) = -(1 / 2) ∧ arccos (co
 /-- Pogoste napake: arcsin(sin(5π/4)) = −π/4 (sin(5π/4) = −√2/2), ne 5π/4; arccos(−1/2) = π − π/3 = 2π/3,
 ne −π/3; napaka pri stopinjah je faktor 180/π, med 57 in 58 (»približno 57«).
 trditev: MAT-SS-3/krozne-funkcije#pogoste
-besedilo: »»$\arcsin(\sin x)$ je vedno $x$.«** Arkus sinus vrača le kote z $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$, zato je na primer $\arcsin\left(\sin\frac{5\pi}{4}\right) = -\frac{\pi}{4}$.« -/
+besedilo: »zato je na primer $\arcsin\left(\sin\frac{5\pi}{4}\right) = -\frac{\pi}{4}$.« -/
 theorem pogoste : sin (5 * π / 4) = -(√2 / 2) ∧ arcsin (sin (5 * π / 4)) = -(π / 4) ∧
     arcsin (sin (5 * π / 4)) ≠ 5 * π / 4 ∧ arccos (-(1 / 2)) = π - π / 3 ∧ arccos (-(1 / 2)) ≠ -(π / 3) ∧
     (57 : ℝ) < 180 / π ∧ 180 / π < 58 := by
@@ -878,7 +878,7 @@ theorem preveri1 : arcsin (1 / 2) = π / 6 ∧ arccos (√3 / 2) = π / 6 ∧ ar
 /-- Preveri se 2 in RACUN `limita`: y = 2 arctan x ima vodoravni asimptoti y = π (x → ∞) in y = −π (x → −∞),
 zaloga vrednosti je (−π, π).
 trditev: MAT-SS-3/krozne-funkcije#preveri2
-besedilo: »Na sliki je graf funkcije $y = 2\arctan x$. Zakaj ima vodoravni asimptoti $y = \pi$ in $y = -\pi$?« -/
+besedilo: »Zakaj ima vodoravni asimptoti $y = \pi$ in $y = -\pi$?« -/
 theorem preveri2 : Tendsto (fun x => 2 * arctan x) atTop (𝓝 π) ∧
     Tendsto (fun x => 2 * arctan x) atBot (𝓝 (-π)) ∧ ∀ x, -π < 2 * arctan x ∧ 2 * arctan x < π := by
   have a := asimptoti

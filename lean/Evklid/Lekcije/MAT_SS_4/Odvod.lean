@@ -57,7 +57,7 @@ theorem olje_povprecje : ((120:ℝ) - 20) / 10 = 10 := by norm_num
 /-- Razlaga 1, tabela: h = 1 da T(5) = 95 in količnik 11; h = 0,1 da T(4,1) = 85,19 in 11,9;
 h = 0,01 da T(4,01) = 84,1199 in 11,99.
 trditev: MAT-SS-4/odvod#olje-tabela
-besedilo: »| $0{,}01$ | $84{,}1199$ | $11{,}99$ |« -/
+besedilo: »| $0{,}1$ | $85{,}19$ | $11{,}9$ |« -/
 theorem olje_tabela :
     ((20:ℝ) + 20 * 5 - 5 ^ 2 = 95 ∧ ((95:ℝ) - 84) / 1 = 11) ∧
     ((20:ℝ) + 20 * 4.1 - 4.1 ^ 2 = 85.19 ∧ ((85.19:ℝ) - 84) / 0.1 = 11.9) ∧
@@ -187,9 +187,9 @@ theorem odvod_ena_skozi_x (x : ℝ) (hx : x ≠ 0) :
 example : ∃ x : ℝ, x ≠ 0 := ⟨1, one_ne_zero⟩
 
 /-- Predpostavke trditve `odvod_ena_skozi_x` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ x : ℝ, x ≠ 0 := ⟨1, one_ne_zero⟩
-  odvod_ena_skozi_x (hx := w.choose_spec)
+  (fun _ => trivial) (odvod_ena_skozi_x (x := w.choose) (hx := w.choose_spec))
 
 /-- Razlaga 3: x' = 1 in odvod konstante je 0.
 trditev: MAT-SS-4/odvod#odvod-x-in-konstante
@@ -216,7 +216,7 @@ example :=
 
 /-- Razlaga 5: (f + g)' = f' + g'.
 trditev: MAT-SS-4/odvod#odvod-vsote
-besedilo: »$$(c \cdot f)' = c \cdot f' \qquad (f + g)' = f' + g'$$« -/
+besedilo: »$(c f)' = c f', \quad (f + g)' = f' + g'$« -/
 theorem odvod_vsote {f g : ℝ → ℝ} {f' g' x : ℝ} (hf : HasDerivAt f f' x) (hg : HasDerivAt g g' x) :
     HasDerivAt (fun x => f x + g x) (f' + g') x := hf.add hg
 
@@ -308,14 +308,14 @@ example :=
 
 /-- Razlaga 7, tabela: (sin x)' = cos x, (cos x)' = −sin x, (eˣ)' = eˣ.
 trditev: MAT-SS-4/odvod#elementarni-odvodi
-besedilo: »| $\cos x$ | $-\sin x$ |« -/
+besedilo: »$(x^n)' = n x^{n-1}$, $(\sin x)' = \cos x$, $(\cos x)' = -\sin x$ (na pamet)« -/
 theorem elementarni_odvodi (x : ℝ) :
     HasDerivAt sin (cos x) x ∧ HasDerivAt cos (-sin x) x ∧ HasDerivAt exp (exp x) x :=
   ⟨hasDerivAt_sin x, hasDerivAt_cos x, hasDerivAt_exp x⟩
 
 /-- Razlaga 7, tabela: (ln x)' = 1/x za x > 0.
 trditev: MAT-SS-4/odvod#odvod-ln
-besedilo: »$\lim\limits_{h \to 0} \frac{\sin h}{h} = 1$« -/
+besedilo: »| $\ln x$ | $\frac{1}{x}$ |« -/
 theorem odvod_ln (x : ℝ) (hx : 0 < x) : HasDerivAt log (1 / x) x := by
   rw [one_div]; exact hasDerivAt_log hx.ne'
 
@@ -331,7 +331,7 @@ example :=
 
 /-- Razlaga 8: diferenčni količnik vsote razpade na vsoto diferenčnih količnikov.
 trditev: MAT-SS-4/odvod#vsota-kvocient
-besedilo: »Vsota.* Diferenčni količnik vsote razpade na dva:« -/
+besedilo: »$\frac{(f + g)(a + h) - (f + g)(a)}{h} = \frac{f(a + h) - f(a)}{h} + \frac{g(a + h) - g(a)}{h}$« -/
 theorem vsota_kvocient (f g : ℝ → ℝ) (a h : ℝ) :
     ((f (a + h) + g (a + h)) - (f a + g a)) / h = (f (a + h) - f a) / h + (g (a + h) - g a) / h := by
   ring
@@ -514,9 +514,9 @@ theorem primer1_kvocient (h : ℝ) (hh : h ≠ 0) :
 example : ∃ h : ℝ, h ≠ 0 := ⟨1, one_ne_zero⟩
 
 /-- Predpostavke trditve `primer1_kvocient` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ h : ℝ, h ≠ 0 := ⟨1, one_ne_zero⟩
-  primer1_kvocient (hh := w.choose_spec)
+  (fun _ => trivial) (primer1_kvocient (h := w.choose) (hh := w.choose_spec))
 
 /-- Primer 1, korak 4 in 6: limita je 5, torej f'(1) = 5 (smerni koeficient tangente v (1, 4)).
 trditev: MAT-SS-4/odvod#primer1-odvod
@@ -557,7 +557,7 @@ example :=
 
 /-- Primer 2, korak 4: f'(4) = −7/1² = −7.
 trditev: MAT-SS-4/odvod#primer2-v-4
-besedilo: »$f'(4) = \dfrac{-7}{1^2} = -7$« -/
+besedilo: »Odgovor: $f'(x) = -\dfrac{7}{(x - 3)^2}$ in $f'(4) = -7$.« -/
 theorem primer2_v_4 : (-7:ℝ) / (4 - 3) ^ 2 = -7 / 1 ^ 2 ∧ (-7:ℝ) / 1 ^ 2 = -7 := by norm_num
 
 /-- Primer 2, korak 5: odvod je povsod negativen, zato f pada na (−∞, 3) in na (3, ∞).
@@ -583,7 +583,7 @@ theorem primer2_pada :
 
 /-- Povzetek in Postopek, korak 5: f' > 0 na (notranjosti) intervala ⇒ f tam strogo narašča.
 trditev: MAT-SS-4/odvod#narasca
-besedilo: »$f' > 0$: funkcija narašča; $f' < 0$: pada.« -/
+besedilo: »Predznak $f'$ pove, kje funkcija narašča ($f' > 0$) in kje pada.« -/
 theorem narasca {f f' : ℝ → ℝ} {D : Set ℝ} (hd : ∀ x, HasDerivAt f (f' x) x) (hD : Convex ℝ D)
     (hp : ∀ x ∈ interior D, 0 < f' x) : StrictMonoOn f D :=
   strictMonoOn_of_deriv_pos hD (fun x _ => (hd x).continuousAt.continuousWithinAt)
@@ -691,7 +691,7 @@ theorem napaka_produkt (x : ℝ) :
 
 /-- Pogoste napake 3: brez notranjega odvoda bi pri x = 1 dobili 3(1² + 1)² = 12, pravi odvod pa je 24.
 trditev: MAT-SS-4/odvod#napaka-notranji
-besedilo: »Pozabljen notranji odvod.** $\bigl((x^2 + 1)^3\bigr)' = 3(x^2 + 1)^2$ je nepopolno:« -/
+besedilo: »Pozabljen notranji odvod.** $\bigl((x^2 + 1)^3\bigr)' = 3(x^2 + 1)^2$ je nepopolno: manjka faktor $2x$.« -/
 theorem napaka_notranji : (3:ℝ) * (1 ^ 2 + 1) ^ 2 = 12 ∧ (12:ℝ) ≠ 24 := by norm_num
 
 /-- Pogoste napake 4: pri f(x) = x² je f(2) = 4, (4)' = 0, a f'(2) = 4; (x² + 7)' = 2x.
@@ -773,7 +773,7 @@ theorem matura2b_odvod : HasDerivAt (fun x : ℝ => 4 / x) (-1) 2 := by
 
 /-- Naloga 2 (RACUN): (4/x)' = −4/x² za x ≠ 0.
 trditev: MAT-SS-4/odvod#matura2-odvod-splosno
-besedilo: »b) $\dfrac{f(2 + h) - f(2)}{h} = \dfrac{\frac{4}{2 + h} - 2}{h} = \dfrac{4 - 4 - 2h}{h(2 + h)} = \dfrac{-2}{2 + h}$ (krajšamo $h \ne 0$).« -/
+besedilo: »$f(x) = \dfrac{4}{x}$« -/
 theorem matura2_odvod_splosno (x : ℝ) (hx : x ≠ 0) : HasDerivAt (fun x : ℝ => 4 / x) (-4 / x ^ 2) x :=
   ((hasDerivAt_const x (4:ℝ)).div (hasDerivAt_id' x) hx).congr_deriv (by ring)
 
@@ -969,7 +969,7 @@ theorem drugace_stevila :
 
 /-- Preveri se 2: f(x) = 4x³ − 2x + 7 ima f'(x) = 12x² − 2, f'(1) = 12 − 2 = 10; f(1) = 9 ni odvod.
 trditev: MAT-SS-4/odvod#kviz2
-besedilo: »(brez računala) Koliko je $f'(1)$ za $f(x) = 4x^3 - 2x + 7$?« -/
+besedilo: »$f'(x) = 12x^2 - 2$, zato je $f'(1) = 12 - 2 = 10$.« -/
 theorem kviz2 (x : ℝ) :
     HasDerivAt (fun x : ℝ => 4 * x ^ 3 - 2 * x + 7) (12 * x ^ 2 - 2) x ∧
     (12:ℝ) * 1 ^ 2 - 2 = 12 - 2 ∧ (12:ℝ) - 2 = 10 ∧ (4:ℝ) * 1 ^ 3 - 2 * 1 + 7 = 9 := by
@@ -989,7 +989,7 @@ theorem kviz4 :
 /-- Preveri se 5: T(t) = 10 + 12t − 0,5t² ima T'(t) = 12 − t, T'(4) = 8; T(4) = 50 in povprečje
 (50 − 10)/4 = 10.
 trditev: MAT-SS-4/odvod#kviz5
-besedilo: »Mleko v loncu se segreva po modelu $T(t) = 10 + 12t - 0{,}5t^2$ ($t$ v minutah, $T$ v $^\circ\mathrm{C}$). Kako hitro se segreva pri $t = 4$?« -/
+besedilo: »$T(t) = 10 + 12t - 0{,}5t^2$« -/
 theorem kviz5 (t : ℝ) :
     HasDerivAt (fun t : ℝ => 10 + 12 * t - 0.5 * t ^ 2) (12 - t) t ∧ (12:ℝ) - 4 = 8 ∧
     (10:ℝ) + 12 * 4 - 0.5 * 4 ^ 2 = 50 ∧ ((50:ℝ) - 10) / 4 = 10 := by
@@ -1013,9 +1013,9 @@ theorem kviz7 (x : ℝ) (hx : cos x ≠ 0) :
 /-- Predpostavke trditve `kviz7` se dajo izpolniti. -/
 example : cos (0:ℝ) ≠ 0 := by simp
 
-end Evklid.Lekcije.MAT_SS_4.Odvod
 /-- Predpostavke trditve `kviz7` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
   have w : cos (0:ℝ) ≠ 0 := by simp
   kviz7 (hx := w)
 
+end Evklid.Lekcije.MAT_SS_4.Odvod

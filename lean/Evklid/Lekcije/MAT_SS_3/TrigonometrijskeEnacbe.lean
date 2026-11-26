@@ -280,7 +280,7 @@ example :=
 
 /-- Razlaga 4: za `−1 ≤ a ≤ 1`, `x₁ = arccos a`, je `cos x = a` natanko tedaj, ko `x = ±x₁ + k·360°`.
 trditev: MAT-SS-3/trigonometrijske-enacbe#cos-splosna
-besedilo: »Za $\cos x = a$, $-1 \le a \le 1$, $x_1 = \arccos a$:« -/
+besedilo: »$\cos x = a \ \Rightarrow\ x = \pm x_1 + k \cdot 360^\circ$, $\ x_1 = \arccos a$« -/
 theorem cos_splosna (a x : ℝ) (h1 : -1 ≤ a) (h2 : a ≤ 1) :
     Real.cos x = a ↔ ∃ k : ℤ, x = Real.arccos a + k * (2 * π) ∨ x = -Real.arccos a + k * (2 * π) := by
   rw [← Real.cos_arccos h1 h2, eq_comm, Real.cos_eq_cos_iff, Real.arccos_cos (Real.arccos_nonneg _)
@@ -304,7 +304,7 @@ example :=
 /-- Razlaga 4: za vsak `a`, `x₁ = arctan a`, je `tan x = a` (kjer je tangens definiran, `cos x ≠ 0`) natanko
 tedaj, ko `x = x₁ + k·180°`. (V Leanu je `tan x = sin x / cos x` in `x/0 = 0`, zato pogoj `cos x ≠ 0`.)
 trditev: MAT-SS-3/trigonometrijske-enacbe#tan-splosna
-besedilo: »Pri tangensu je $\tan x = \frac{\sin x}{\cos x}$ naklon poltraka od izhodišča do točke. Premica skozi izhodišče z naklonom $a$ zato seka krožnico v dveh nasprotnih točkah, ki sta za $180^\circ$ narazen. Za $\tan x = a$ (vsak $a$), $x_1 = \arctan a$:« -/
+besedilo: »$\tan x = a$: $x = x_1 + k \cdot 180^\circ$ (na pamet)« -/
 theorem tan_splosna (a x : ℝ) :
     (Real.tan x = a ∧ Real.cos x ≠ 0) ↔ ∃ k : ℤ, x = Real.arctan a + k * π := by
   have hc := Real.cos_arctan_pos a
@@ -604,7 +604,7 @@ theorem primer1 :
 /-- Primer 3: `325 sin(100πt) = 162,5` za `0 ≤ t < 0,02` natanko pri `t = 1/600 s` in `t = 1/120 s`
 (`sin(100πt) = 162,5/325 = 0,5`, `y = 100πt`); `1/600 ≈ 0,00167`, `1/120 ≈ 0,00833`, perioda `1/50 = 0,02`.
 trditev: MAT-SS-3/trigonometrijske-enacbe#primer3
-besedilo: »Podatki:** $u = 325\,\text{V} \cdot \sin(100\pi t)$; $u = 162{,}5\,\text{V}$; $0 \le t < 0{,}02\,\text{s}$« -/
+besedilo: »$t_1 = \dfrac{1}{600}\,\text{s} \approx 0{,}00167\,\text{s}$ in $t_2 = \dfrac{1}{120}\,\text{s} \approx 0{,}00833\,\text{s}$.« -/
 theorem primer3 (t : ℝ) (h0 : 0 ≤ t) (h1 : t < 0.02) :
     ((162.5:ℝ) / 325 = 0.5 ∧ (1:ℝ) / 50 = 0.02) ∧
     (325 * Real.sin (100 * π * t) = 162.5 ↔ t = 1 / 600 ∨ t = 1 / 120) ∧
@@ -973,7 +973,7 @@ theorem razlaga6 (x : ℝ) :
 /-- Primer 6 (in `<<RACUN`): splošna rešitev `sin 3x + sin x = cos x` je `x = π/2 + kπ`, `x = π/12 + kπ` ali
 `x = 5π/12 + kπ` (iz `2x = 30° + k·360°` ali `150° + k·360°`).
 trditev: MAT-SS-3/trigonometrijske-enacbe#primer6-splosna
-besedilo: »$\sin 2x = \frac{1}{2}$: $2x = 30^\circ + k \cdot 360^\circ$ ali $2x = 150^\circ + k \cdot 360^\circ$, torej $x = 15^\circ + k \cdot 180^\circ$ ali $x = 75^\circ + k \cdot 180^\circ$.« -/
+besedilo: »$2x = 30^\circ + k \cdot 360^\circ$ ali $2x = 150^\circ + k \cdot 360^\circ$,« -/
 theorem primer6_splosna (x : ℝ) :
     Real.sin (3 * x) + Real.sin x = Real.cos x ↔
       ∃ k : ℤ, x = π / 2 + k * π ∨ x = π / 12 + k * π ∨ x = 5 * π / 12 + k * π := by
@@ -1284,7 +1284,7 @@ example :=
 /-- `<<RACUN`: splošna rešitev `cos 3x + cos x = cos 2x` je `x = π/4 + kπ`, `3π/4 + kπ`, `π/3 + 2kπ` ali
 `−π/3 + 2kπ`.
 trditev: MAT-SS-3/trigonometrijske-enacbe#matura3b-splosna
-besedilo: »Osamimo kosinus: $\cos\left(x - \frac{\pi}{6}\right) = \frac{1}{2}$. Ker je $\cos\frac{\pi}{3} = \frac{1}{2}$, velja $x - \frac{\pi}{6} = \pm\frac{\pi}{3} + 2k\pi$, $k \in \mathbb{Z}$.« -/
+besedilo: »$\sin 3x + \sin x = 2\sin 2x\cos x$« -/
 theorem matura3b_splosna (x : ℝ) :
     Real.cos (3 * x) + Real.cos x = Real.cos (2 * x) ↔ ∃ k : ℤ, x = π / 4 + k * π ∨
       x = 3 * π / 4 + k * π ∨ x = π / 3 + k * (2 * π) ∨ x = -(π / 3) + k * (2 * π) := by
@@ -1310,7 +1310,7 @@ theorem matura3b_splosna (x : ℝ) :
 /-- `<<RACUN`: splošna rešitev `cos(3x/2) + cos(x/2) = 1 + cos x` je `x = 4kπ`, `π + 2kπ`, `4π/3 + 4kπ` ali
 `−4π/3 + 4kπ`.
 trditev: MAT-SS-3/trigonometrijske-enacbe#matura3c-splosna
-besedilo: »Osamimo kosinus: $\cos\left(x - \frac{\pi}{6}\right) = \frac{1}{2}$. Ker je $\cos\frac{\pi}{3} = \frac{1}{2}$, velja $x - \frac{\pi}{6} = \pm\frac{\pi}{3} + 2k\pi$, $k \in \mathbb{Z}$.« -/
+besedilo: »$\cos\dfrac{3x}{2} + \cos\dfrac{x}{2} = 1 + \cos x$« -/
 theorem matura3c_splosna (x : ℝ) :
     Real.cos (3 * x / 2) + Real.cos (x / 2) = 1 + Real.cos x ↔ ∃ k : ℤ, x = k * (4 * π) ∨
       x = π + k * (2 * π) ∨ x = 4 * π / 3 + k * (4 * π) ∨ x = -(4 * π / 3) + k * (4 * π) := by

@@ -86,7 +86,7 @@ example :=
 /-- Razlaga 3, obrat (Primer 3, Naloga 3 a): če `p(x) = (x − c)ᵏ s(x)` (`s(c) ≠ 0`) blizu `c` levo in desno od
 `c` nima nasprotnih predznakov (graf se osi le dotakne), je stopnja ničle `k` soda.
 trditev: MAT-SS-3/graf-polinoma#dotik-soda-stopnja
-besedilo: »Zakaj odloča parnost stopnje ničle.** Če je $c$ ničla stopnje $k$, je $p(x) = (x - c)^k s(x)$, kjer je $s(c) \ne 0$.« -/
+besedilo: »Če je $c$ ničla stopnje $k$, lahko polinom zapišemo kot $p(x) = (x - c)^k s(x)$, kjer je $s(c) \ne 0$.« -/
 theorem dotik_soda_stopnja (s : ℝ[X]) (c : ℝ) (k : ℕ) (hs : s.eval c ≠ 0)
     (h : ∃ δ > 0, ∀ x y, c - δ < x → x < c → c < y → y < c + δ →
       0 < ((x - c) ^ k * s.eval x) * ((y - c) ^ k * s.eval y)) : Even k := by
@@ -352,7 +352,7 @@ theorem uganka_vrednosti :
 /-- Rešitev uganke: na `(2, 7)` in na `(7, 10]` je temperatura negativna, pri `t = 7` natanko 0; po 1.00 se
 do 4.00 ni otoplilo nad ledišče (`T(t) ≤ 0` za `7 ≤ t ≤ 10`).
 trditev: MAT-SS-3/graf-polinoma#uganka-resitev
-besedilo: »Rešitev uganke.** V modelu $T(t) = -0{,}04\,(t - 2)(t - 7)^2$ je $t = 7$ ničla stopnje $2$.« -/
+besedilo: »$T(t) = -0{,}04\,(t - 2)(t - 7)^2$« -/
 theorem uganka_resitev :
     (∀ t : ℝ, 2 < t → t < 7 → (-0.04:ℝ) * (t - 2) * (t - 7) ^ 2 < 0) ∧
     (∀ t : ℝ, 7 < t → t ≤ 10 → (-0.04:ℝ) * (t - 2) * (t - 7) ^ 2 < 0) ∧
@@ -414,7 +414,7 @@ theorem tabela_krakov : (10:ℝ) ^ 3 - 10 * 10 ^ 2 + 5 = 5 ∧ (100:ℝ) ^ 3 - 1
 /-- Razlaga 5, premisli: `p(x) = 7 + 2x − x⁴` ima stopnjo 4 in vodilni koeficient −1, zato gresta oba kraka
 v `−∞`.
 trditev: MAT-SS-3/graf-polinoma#premisli-kraka
-besedilo: »Oba navzdol, levo in desno $-\infty$. Vodilni člen je $-x^4$: stopnja $4$ je soda, vodilni koeficient $-1$ negativen. Prosti člen $7$ na kraka ne vpliva, pa čeprav je zapisan prvi.« -/
+besedilo: »Iz $-16a = 8$ sledi $a = -0{,}5$. Stopnja $4$ je soda, vodilni koeficient $-0{,}5$ negativen, zato gresta oba kraka v $-\infty$. Polinom: $p(x) = -0{,}5\,(x + 1)(x - 2)^2(x - 4)$.« -/
 theorem premisli_kraka :
     (7 + 2 * X - X ^ 4 : ℝ[X]).natDegree = 4 ∧ (7 + 2 * X - X ^ 4 : ℝ[X]).leadingCoeff = -1 ∧
     Tendsto (fun x => (7 + 2 * X - X ^ 4 : ℝ[X]).eval x) atBot atBot ∧
@@ -531,7 +531,7 @@ theorem primer2_stopnje :
 /-- Primer 2, koraki 4–6: za `0 ≤ d ≤ 7` je gladina nad običajno višino natanko za `5 < d ≤ 7`; preizkus
 `v(3) = 1·(−2) = −2`, `v(0) = −20`; pri `d = 2` je odmik 0, okoli nje negativen.
 trditev: MAT-SS-3/graf-polinoma#primer2-odgovor
-besedilo: »Cerkniško jezero presiha: gladina se hitro dviga in spušča. Odmik gladine od običajne višine (v cm) $d$ dni po začetku merjenja opisuje model $v(d) = d^3 - 9d^2 + 24d - 20$, ki velja za $0 \le d \le 7$. Kdaj je gladina nad običajno višino?« -/
+besedilo: »Odmik gladine od običajne višine (v cm) $d$ dni po začetku merjenja opisuje model $v(d) = d^3 - 9d^2 + 24d - 20$, ki velja za $0 \le d \le 7$.« -/
 theorem primer2_odgovor :
     (∀ d : ℝ, 0 ≤ d → d ≤ 7 → (0 < d ^ 3 - 9 * d ^ 2 + 24 * d - 20 ↔ 5 < d)) ∧
     (∀ d : ℝ, 0 ≤ d → d < 5 → d ≠ 2 → d ^ 3 - 9 * d ^ 2 + 24 * d - 20 < 0) ∧
@@ -560,7 +560,7 @@ theorem primer3_a (a : ℝ) : a * (0 + 1) * (0 - 2) ^ 2 * (0 - 4) = a * 1 * 4 * 
 (faktorja `x + 1`, `x − 4`) in se je dotakne pri 2 (faktor `(x − 2)²`), ima `p` stopnjo vsaj 4; pri stopnji 4
 in `p(0) = 8` je `p(x) = −0,5 (x + 1)(x − 2)²(x − 4)`.
 trditev: MAT-SS-3/graf-polinoma#primer3-polinom
-besedilo: »Iz $-16a = 8$ sledi $a = -0{,}5$. Stopnja $4$ je soda, vodilni koeficient $-0{,}5$ negativen, zato gresta oba kraka v $-\infty$. Polinom: $p(x) = -0{,}5\,(x + 1)(x - 2)^2(x - 4)$.« -/
+besedilo: »Polinom: $p(x) = -0{,}5\,(x + 1)(x - 2)^2(x - 4)$.« -/
 theorem primer3_polinom (p : ℝ[X]) (hp : p ≠ 0) (h1 : X - C (-1) ∣ p) (h2 : (X - C 2) ^ 2 ∣ p)
     (h4 : X - C 4 ∣ p) :
     4 ≤ p.natDegree ∧ (p.natDegree = 4 → p.eval 0 = 8 →
@@ -656,7 +656,7 @@ theorem primer4_model : (∀ t : ℝ, t ^ 3 - 12 * t ^ 2 + 36 * t = t * (t - 6) 
 /-- Primer 4 (enoličnost): polinom stopnje največ 3 skozi `(0, 0)`, `(1, 25)`, `(2, 32)`, `(3, 27)` je natanko
 `t³ − 12t² + 36t`.
 trditev: MAT-SS-3/graf-polinoma#primer4-enolicnost
-besedilo: »Podatki:** meritve $(0, 0)$, $(1, 25)$, $(2, 32)$, $(3, 27)$, kontrolna $(4, 16)$; polinom tretje stopnje« -/
+besedilo: »$C(t) = t^3 - 12t^2 + 36t = t\,(t - 6)^2$.« -/
 theorem primer4_enolicnost (f : ℝ[X]) (hf : f.natDegree ≤ 3) (h0 : f.eval 0 = 0) (h1 : f.eval 1 = 25)
     (h2 : f.eval 2 = 32) (h3 : f.eval 3 = 27) : f = X ^ 3 - 12 * X ^ 2 + 36 * X := by
   apply dolocen_s_tockami 3 f _ {0, 1, 2, 3} (by norm_num) hf (by compute_degree!)
@@ -743,7 +743,7 @@ theorem napaka_stopnja :
 
 /-- Pogoste napake (model velja povsod): `v(d) = d³ − 9d² + 24d − 20` gre za velike `d` v `+∞`.
 trditev: MAT-SS-3/graf-polinoma#napaka-model
-besedilo: »Podatki:** $v(d) = d^3 - 9d^2 + 24d - 20$ (v cm), $d$ v dneh, $0 \le d \le 7$« -/
+besedilo: »$v(d) = d^3 - 9d^2 + 24d - 20$« -/
 theorem napaka_model : Tendsto (fun d => (X ^ 3 - 9 * X ^ 2 + 24 * X - 20 : ℝ[X]).eval d) atTop atTop := by
   have hd : (X ^ 3 - 9 * X ^ 2 + 24 * X - 20 : ℝ[X]).natDegree = 3 := by compute_degree!
   have hl : (X ^ 3 - 9 * X ^ 2 + 24 * X - 20 : ℝ[X]).leadingCoeff = 1 := by
@@ -823,7 +823,7 @@ theorem matura2b_predznaki :
 
 /-- Naloga 2 c) (in `<<RACUN`): `−x³ + 3x + 2 > 0` natanko za `x ∈ (−∞, −1) ∪ (−1, 2)`.
 trditev: MAT-SS-3/graf-polinoma#matura2c
-besedilo: »$p(x) = -x^3 + 3x + 2$« -/
+besedilo: »Odgovor: $p(x) = -(x - 2)(x + 1)^2$; neenačba velja za $x \in (-\infty, -1) \cup (-1, 2)$.« -/
 theorem matura2c (x : ℝ) : 0 < -x ^ 3 + 3 * x + 2 ↔ x < -1 ∨ (-1 < x ∧ x < 2) := by
   rw [show -x ^ 3 + 3 * x + 2 = -(x - 2) * (x + 1) ^ 2 by ring]
   constructor
@@ -996,7 +996,7 @@ theorem matura3e :
 
 /-- Ustno vprašanje 3: `(x − 1)²(x + 2) > 0` natanko za `x ∈ (−2, 1) ∪ (1, ∞)`.
 trditev: MAT-SS-3/graf-polinoma#ustno3
-besedilo: »$(x - 1)^2(x + 2) > 0$« -/
+besedilo: »in rešitev je $(-2, 1) \cup (1, \infty)$.« -/
 theorem ustno3 (x : ℝ) : 0 < (x - 1) ^ 2 * (x + 2) ↔ (-2 < x ∧ x < 1) ∨ 1 < x := by
   constructor
   · intro h
@@ -1093,7 +1093,7 @@ theorem kviz6 : (4:ℕ) + 1 = 5 := rfl
 /-- Primer 1, Primer 2, Primer 4, Naloga 1, Naloga 2: razcepljene oblike, s katerimi so zgoraj izračunane
 stopnje ničel, so kot polinomi enake razvitim polinomom iz lekcije.
 trditev: MAT-SS-3/graf-polinoma#razcepi-kot-polinomi
-besedilo: »Kandidati za cele ničle: $\pm 1, \pm 2, \pm 4, \pm 5, \pm 10, \pm 20$. Velja $v(1) = 1 - 9 + 24 - 20 = -4$, $v(2) = 8 - 36 + 48 - 20 = 0$. Ničla je $2$.« -/
+besedilo: »Velja $v(1) = 1 - 9 + 24 - 20 = -4$, $v(2) = 8 - 36 + 48 - 20 = 0$.« -/
 theorem razcepi_kot_polinomi :
     ((X - C (-2)) * (X - C 1) ^ 2 * (X - C 3) : ℝ[X]) = (X + 2) * (X - 1) ^ 2 * (X - 3) ∧
     ((X - C 2) ^ 2 * (X - C 5) : ℝ[X]) = X ^ 3 - 9 * X ^ 2 + 24 * X - 20 ∧

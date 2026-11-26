@@ -69,7 +69,7 @@ example :=
 /-- Razlaga 1 (gorišči) v središčni legi: za 0 < b ≤ a in e = √(a² − b²) leži točka (u, v) na elipsi
 u²/a² + v²/b² = 1 natanko tedaj, ko je vsota razdalj do (−e, 0) in (e, 0) enaka 2a.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#gorisci-elipse-sredisce
-besedilo: »Kot pri krožnici je v oklepaju minus koordinata središča. Oblika, polosi in ekscentričnost $e = \sqrt{a^2 - b^2}$ ostanejo enake; premakneta se le središče in gorišči. Za $a > b$ sta gorišči $F_{1,2}(x_0 \pm e, y_0)$. Krožnica je poseben primer z $a = b = r$.« -/
+besedilo: »Oblika, polosi in ekscentričnost $e = \sqrt{a^2 - b^2}$ ostanejo enake; premakneta se le središče in gorišči.« -/
 theorem gorisci_elipse_sredisce (a b u v : ℝ) (ha : 0 < a) (hb : 0 < b) (hab : b ≤ a) :
     u ^ 2 / a ^ 2 + v ^ 2 / b ^ 2 = 1 ↔
       √((u + √(a ^ 2 - b ^ 2)) ^ 2 + v ^ 2) + √((u - √(a ^ 2 - b ^ 2)) ^ 2 + v ^ 2) = 2 * a := by
@@ -134,7 +134,7 @@ example : (0:ℝ) < 3 ∧ (0:ℝ) < 2 ∧ (2:ℝ) ≤ 3 := by norm_num
 /-- Predpostavke trditve `gorisci_elipse_navpicno` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
   have w : (0:ℝ) < 3 ∧ (0:ℝ) < 2 ∧ (2:ℝ) ≤ 3 := by norm_num
-  gorisci_elipse_navpicno (ha := w.1) (hb := w.2.1) (hab := w.2.2)
+  gorisci_elipse_navpicno (ha := w.2.1) (hb := w.1) (hab := w.2.2)
 
 /-- Predpostavke trditve `gorisci_elipse` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
@@ -236,7 +236,7 @@ example :=
 
 /-- Razlaga 3 in Povzetek: asimptoti y − y₀ = ±(b/a)(x − x₀) gresta skozi središče in hiperbole ne sekata.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#asimptoti
-besedilo: »Asimptoti gresta skozi središče: $y - y_0 = \pm\frac{b}{a}(x - x_0)$. Gorišči sta $(x_0 \pm e, y_0)$ z $e = \sqrt{a^2 + b^2}$.« -/
+besedilo: »Asimptoti gresta skozi središče: $y - y_0 = \pm\frac{b}{a}(x - x_0)$.« -/
 theorem asimptoti (x₀ y₀ a b : ℝ) (hb : b ≠ 0) :
     (y₀ - y₀ = b / a * (x₀ - x₀) ∧ y₀ - y₀ = -(b / a) * (x₀ - x₀)) ∧
     ∀ x y, (y - y₀ = b / a * (x - x₀) ∨ y - y₀ = -(b / a) * (x - x₀)) →
@@ -282,7 +282,7 @@ example :=
 za x → ∞ (iz ocene `priblizevanje_asimptoti` ≤ ab/x); po simetriji enako za spodnjo desno vejo in asimptoto
 y = −(b/a)x ter za obe levi veji pri x → −∞ (a, b > 0).
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#asimptota-limita
-besedilo: »Asimptoti gresta skozi središče: $y - y_0 = \pm\frac{b}{a}(x - x_0)$. Gorišči sta $(x_0 \pm e, y_0)$ z $e = \sqrt{a^2 + b^2}$.« -/
+besedilo: »$y - y_0 = \pm\frac{b}{a}(x - x_0)$« -/
 theorem asimptota_limita (a b : ℝ) (ha : 0 < a) (hb : 0 < b) :
     Filter.Tendsto (fun x => b / a * x - b / a * √(x ^ 2 - a ^ 2)) Filter.atTop (nhds 0) ∧
     Filter.Tendsto (fun x => -(b / a) * x - (-(b / a) * √(x ^ 2 - a ^ 2))) Filter.atTop (nhds 0) ∧
@@ -637,7 +637,7 @@ theorem vzporednica_asimptoti (a b n : ℝ) (ha : 0 < a) (hb : 0 < b) (hn : n �
 /-- Ustno vprašanje 3 (RACUN): za y = (b/a)x + 1 je x²/a² − y²/b² = −2x/(ab) − 1/b²; asimptota (n = 0)
 hiperbole ne seka.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#vzporednica-primer
-besedilo: »Primer je premica $y = \frac{b}{a}x + 1$, ki je vzporedna asimptoti hiperbole $\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1$.« -/
+besedilo: »ki je vzporedna asimptoti hiperbole $\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1$.« -/
 theorem vzporednica_primer (a b : ℝ) (ha : 0 < a) (hb : 0 < b) :
     (∀ x : ℝ, x ^ 2 / a ^ 2 - (b / a * x + 1) ^ 2 / b ^ 2 = -2 * x / (a * b) - 1 / b ^ 2) ∧
     ∀ x : ℝ, x ^ 2 / a ^ 2 - (b / a * x) ^ 2 / b ^ 2 ≠ 1 := by
@@ -740,7 +740,7 @@ theorem premisli_navpicna (x y : ℝ) :
 /-- Razlaga 2, tabela: raztezek s faktorjem 3/5 vzdolž osi y preslika (0, 5), (3, 4), (−4, 3), (5, 0) v
 (0, 3), (3; 2,4), (−4; 1,8), (5, 0); vse točke krožnice x² + y² = 25 gredo na elipso x²/25 + y²/9 = 1.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#raztezek-tabela
-besedilo: »Splošno: krožnica $x^2 + y^2 = a^2$, raztegnjena vzdolž osi $y$ s faktorjem $\frac{b}{a}$, je elipsa s polosema $a$ in $b$.« -/
+besedilo: »| $(-4, 3)$ | $(-4; 1{,}8)$ |« -/
 theorem raztezek_tabela :
     (3 / 5 * (5:ℝ) = 3 ∧ 3 / 5 * (4:ℝ) = 2.4 ∧ 3 / 5 * (3:ℝ) = 1.8 ∧ 3 / 5 * (0:ℝ) = 0) ∧
     ((0:ℝ) ^ 2 + 5 ^ 2 = 25 ∧ (3:ℝ) ^ 2 + 4 ^ 2 = 25 ∧ (-4:ℝ) ^ 2 + 3 ^ 2 = 25 ∧ (5:ℝ) ^ 2 + 0 ^ 2 = 25) ∧
@@ -1446,7 +1446,7 @@ theorem racun_enako (x y u m n : ℝ) :
 /-- Blok RACUN, vrstice `vrednost` (vrstica s korenom √(9 − 4) = √5 je v `primer1_gorisci`, √(25 − 9) = 4 v
 `naloga2b`, −3 + √(25 − 9) = 1 in √(5² − 3²) = 4 v `kviz2`, √(1 + 8) = 3 v `naloga3ab`).
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#racun-vrednost
-besedilo: »Z grafa: $a = 5$, $b = 3$, $e = \sqrt{25 - 9} = 4$. Desno gorišče je bilo $(4, 0)$, po premiku je $(-3 + 4, 2) = (1, 2)$.« -/
+besedilo: »$\frac{1{,}8(x - 2)}{9} + \frac{1{,}6(y + 3)}{4} = 1$« -/
 theorem racun_vrednost :
     (-61:ℝ) + 16 + 81 = 36 ∧ √((16:ℝ) + 9) = 5 ∧ (3.6:ℝ) ^ 2 / 36 + 3.2 ^ 2 / 16 = 1 ∧
     (1.8:ℝ) ^ 2 / 9 + 1.6 ^ 2 / 4 = 1 ∧ (14:ℝ) / 5 + 4 / 5 = 18 / 5 ∧ 8 * ((-5:ℝ) + 2) ^ 2 - (-7 - 1) ^ 2 = 8 ∧

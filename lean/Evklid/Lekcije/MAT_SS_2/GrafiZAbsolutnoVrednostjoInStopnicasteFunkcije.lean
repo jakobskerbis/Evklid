@@ -24,14 +24,14 @@ open Real Set
 /-- Razlaga 1 in 3: število štručk po 300 g je n = ⌊m/300⌋ in velja ⌊m/300⌋ = k natanko za 300k ≤ m < 300(k + 1)
 (vsak k ∈ ℤ).
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#strucke
-besedilo: »$0 \le m < 300$« -/
+besedilo: »Celi del** števila $x$, zapišemo $\lfloor x \rfloor$, je največje celo število, ki ni večje od $x$.« -/
 theorem strucke (m : ℝ) (k : ℤ) : ⌊m / 300⌋ = k ↔ 300 * (k : ℝ) ≤ m ∧ m < 300 * ((k : ℝ) + 1) := by
   rw [Int.floor_eq_iff, le_div_iff₀ (by norm_num), div_lt_iff₀ (by norm_num)]
   constructor <;> rintro ⟨h1, h2⟩ <;> constructor <;> linarith
 
 /-- Razlaga 1, tabela: 0 ≤ m < 300 da 0 štručk, 300 ≤ m < 600 eno, 600 ≤ m < 900 dve, 900 ≤ m < 1200 tri.
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#tabela
-besedilo: »| $900 \le m < 1200$ | $3$ |« -/
+besedilo: »| $300 \le m < 600$ | $1$ |« -/
 theorem tabela (m : ℝ) :
     (0 ≤ m ∧ m < 300 → ⌊m / 300⌋ = 0) ∧ (300 ≤ m ∧ m < 600 → ⌊m / 300⌋ = 1) ∧
     (600 ≤ m ∧ m < 900 → ⌊m / 300⌋ = 2) ∧ (900 ≤ m ∧ m < 1200 → ⌊m / 300⌋ = 3) := by
@@ -136,7 +136,7 @@ theorem korito_po_primerih (x : ℝ) :
 za −2 ≤ x ≤ 1 (najboljših mest je neskončno mnogo); deska pri 2 je oddaljena 4 + 1 = 3 + 2·1 = 5. Razlaga 7:
 enačba |x − 1| + |x + 2| = 2 nima rešitve.
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#korito-dno
-besedilo: »$f(-3) = |-3 - 1| + |-3 + 2| = 4 + 1 = 5$« -/
+besedilo: »Vsota je najmanjša, $3\,\mathrm{m}$, kjerkoli med hladilnikom in štedilnikom: najboljših mest je neskončno mnogo.« -/
 theorem korito_dno :
     (∀ x : ℝ, 3 ≤ |x - 1| + |x + 2|) ∧ (∀ x : ℝ, |x - 1| + |x + 2| = 3 ↔ -2 ≤ x ∧ x ≤ 1) ∧
     {x : ℝ | |x - 1| + |x + 2| = 3}.Infinite ∧ |(2:ℝ) - 1| + |(2:ℝ) + 2| = 5 ∧ (3:ℝ) + 2 * 1 = 5 ∧
@@ -229,7 +229,7 @@ theorem dve_temeni :
 
 /-- Razlaga 6, Premisli 2: za f(x) = x² − 4 je f(|x|) = f(x) (soda funkcija, graf se ne spremeni).
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#premisli2
-besedilo: »Napovej: kako je videti graf $y = f(|x|)$ za $f(x) = x^2 - 4$? Se kaj spremeni?« -/
+besedilo: »Nič se ne spremeni. Funkcija $x^2 - 4$ je soda, ker je $(-x)^2 = x^2$. Njena leva polovica je že zrcalna slika desne, zato zrcaljenje desne polovice da isti graf. Funkcija $|x^2 - 4|$ pa je drugačna, glej Primer 2.« -/
 theorem premisli2 (x : ℝ) : |x| ^ 2 - 4 = x ^ 2 - 4 := by rw [sq_abs]
 
 /-- Razlaga 7: rešitve f(x) = c so abscise presečišč grafa s premico y = c, rešitve f(x) ≤ c pa x, kjer graf leži
@@ -328,7 +328,7 @@ theorem primer4 (x : ℝ) :
 /-- Naloga 1 (in blok RACUN): ⌊(x + 1)/2⌋ = −1 ⟺ −1 ≤ (x + 1)/2 < 0 ⟺ −2 ≤ x + 1 < 0 ⟺ −3 ≤ x < −1, torej
 x ∈ [−3, −1); posebej (x + 1)/2 ≥ −1 ⟺ x ≥ −3 in (x + 1)/2 < 0 ⟺ x < −1.
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#naloga1
-besedilo: »Točkovanje:** 1 točka za dvojno neenačbo $-1 \le \dfrac{x + 1}{2} < 0$, 1 točka za $-3 \le x < -1$, 1 točka za interval $[-3, -1)$ s pravilnima krajiščema.« -/
+besedilo: »Pomnožimo z $2$: $-2 \le x + 1 < 0$, nato odštejemo $1$: $-3 \le x < -1$.« -/
 theorem naloga1 (x : ℝ) :
     (⌊(x + 1) / 2⌋ = -1 ↔ -1 ≤ (x + 1) / 2 ∧ (x + 1) / 2 < 0) ∧
     (-1 ≤ (x + 1) / 2 ∧ (x + 1) / 2 < 0 ↔ -2 ≤ x + 1 ∧ x + 1 < 0) ∧

@@ -173,9 +173,7 @@ example : IsProbabilityMeasure (Measure.dirac true : Measure Bool) ∧ Measurabl
 
 /-- Predpostavke trditve `neodvisna` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
-  have w : IsProbabilityMeasure (Measure.dirac true : Measure Bool) ∧ MeasurableSet (Set.univ : Set Bool) :=
-    ⟨inferInstance, MeasurableSet.univ⟩
-  neodvisna (hA := w.1) (hB := w.2)
+  neodvisna (Measure.dirac true) Set.univ Set.univ MeasurableSet.univ MeasurableSet.univ
 
 /-- Ustno vprašanje 1: dva meta kovanca, verjetnost dveh grbov je `1/2 · 1/2 = 1/4`.
 trditev: MAT-SS-4/mesane-maturitetne-naloge#kovanec
@@ -297,7 +295,7 @@ theorem primer3_odvod (t : ℝ) : HasDerivAt v₃ (3 - 0.5 * t) t := by
 /-- Primer 3, koraka 2 in 3: `3 − 0,5t = 0` natanko pri `t = 6`; pred tem je `v' > 0`, po tem `v' < 0`;
 `v_max = 3·6 − 0,25·36 = 9` in `v(t) ≤ 9` za vsak `t`.
 trditev: MAT-SS-4/mesane-maturitetne-naloge#primer3-maksimum
-besedilo: »$v_{\max} = 3 \cdot 6 - 0{,}25 \cdot 36 = 9$« -/
+besedilo: »$3 - 0{,}5t = 0$ da $t = 6\,\mathrm{s}$. Pred tem je $v' > 0$ (pospešuje), po tem $v' < 0$ (zavira), zato je to maksimum.« -/
 theorem primer3_maksimum :
     (∀ t : ℝ, 3 - 0.5 * t = 0 ↔ t = 6) ∧ (∀ t : ℝ, t < 6 → 0 < 3 - 0.5 * t) ∧
       (∀ t : ℝ, 6 < t → 3 - 0.5 * t < 0) ∧ v₃ 6 = 3 * 6 - 0.25 * 36 ∧ (3:ℝ) * 6 - 0.25 * 36 = 9 ∧
@@ -510,7 +508,7 @@ theorem naloga3_c_log (n : ℝ) :
 
 /-- Naloga 3 c), korak 6: `ln 0,5 / ln 0,96 = 16,979…` (meje za logaritma iz vrste za `ln(1 − x)`).
 trditev: MAT-SS-4/mesane-maturitetne-naloge#naloga3-c-kvocient
-besedilo: »c) Logaritmiramo: $n \ln 0{,}96 < \ln 0{,}5$. Ker je $\ln 0{,}96 < 0$, se pri deljenju znak neenakosti obrne: $n > \dfrac{\ln 0{,}5}{\ln 0{,}96} = 16{,}979\ldots$.« -/
+besedilo: »$n > \dfrac{\ln 0{,}5}{\ln 0{,}96} = 16{,}979\ldots$« -/
 theorem naloga3_c_kvocient :
     (16.979:ℝ) < Real.log 0.5 / Real.log 0.96 ∧ Real.log 0.5 / Real.log 0.96 < 16.98 := by
   obtain ⟨a1, a2⟩ := log_meje 0.5 40 (by norm_num [abs_of_pos]) (-0.6931471815) (-0.69314718)
@@ -649,7 +647,7 @@ theorem kviz5 :
 /-- RACUN: `8·7/2 = 28`, `5·3/28 = 15/28`, `−1² + 4·1 = 3`, `0,04·(0,96¹⁰ − 1)/(0,96 − 1) ≈ 0,3352`,
 `0,96¹⁰ ≈ 0,6648`, `ln 0,5/ln 0,96 ≈ 16,98`.
 trditev: MAT-SS-4/mesane-maturitetne-naloge#racun
-besedilo: »$S_{10} = 0{,}04 \cdot \dfrac{0{,}96^{10} - 1}{0{,}96 - 1} = 0{,}04 \cdot \dfrac{1 - 0{,}96^{10}}{0{,}04} = 1 - 0{,}96^{10} \approx 0{,}3352$« -/
+besedilo: »d) $S_{10} = 0{,}04 \cdot \dfrac{0{,}96^{10} - 1}{0{,}96 - 1} = 0{,}04 \cdot \dfrac{1 - 0{,}96^{10}}{0{,}04} = 1 - 0{,}96^{10} \approx 0{,}3352$.« -/
 theorem racun :
     (8:ℝ) * 7 / 2 = 28 ∧ (5:ℝ) * 3 / 28 = 15 / 28 ∧ -(1:ℝ) ^ 2 + 4 * 1 = 3 ∧
       |0.04 * ((0.96:ℝ) ^ 10 - 1) / (0.96 - 1) - 0.3352| ≤ 0.00005 ∧

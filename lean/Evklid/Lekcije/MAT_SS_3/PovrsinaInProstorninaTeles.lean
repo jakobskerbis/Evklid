@@ -194,8 +194,7 @@ theorem meje_35 : (0.7002072 : ℝ) < tan (35 * π / 180) ∧ tan (35 * π / 180
 
 /-- Kot v pravokotnem trikotniku s katetama p (ob kotu) in v (nasproti) je α = arctan(v/p); velja
 tan α = v/p, cos α = p/√(p² + v²) = p/s, sin α = v/s, 0 < α < 90°.
-trditev: MAT-SS-3/povrsina-in-prostornina-teles#kot-trikotnik
-besedilo: »Pravokotni trikotnik s katetama $v = 4$ in $\frac{a}{2} = 3$ ima hipotenuzo $v_s$: $v_s = \sqrt{4^2 + 3^2} = \sqrt{25} = 5\,\text{cm}$.« -/
+pomozno -/
 theorem kot_trikotnik (p v : ℝ) (hp : 0 < p) (hv : 0 < v) :
     tan (arctan (v / p)) = v / p ∧ cos (arctan (v / p)) = p / √(p ^ 2 + v ^ 2) ∧
     sin (arctan (v / p)) = v / √(p ^ 2 + v ^ 2) ∧ 0 < arctan (v / p) ∧ arctan (v / p) < π / 2 := by
@@ -377,7 +376,7 @@ example :=
 /-- Bolj natančno (višja raven): presek polkrogle na višini h je krog s polmerom √(r² − h²), ploščina
 π(r² − h²) = πr² − πh² (kolobar valja brez stožca); ∫₀ʳ = πr²·r − πr²·r/3 = 2πr³/3, krogla 4πr³/3.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#polkrogla
-besedilo: »presek »valja brez stožca« je kolobar: velik krog $\pi r^2$ minus krog stožca s polmerom $h$ (stožec ima enako višino in polmer, zato je na višini $h$ polmer $h$): $\pi r^2 - \pi h^2$.« -/
+besedilo: »presek polkrogle je krog s polmerom $\sqrt{r^2 - h^2}$, ploščina $\pi(r^2 - h^2)$,« -/
 theorem polkrogla (r : ℝ) (hr : 0 ≤ r) :
     (∀ h, |h| ≤ r → π * √(r ^ 2 - h ^ 2) ^ 2 = π * (r ^ 2 - h ^ 2)) ∧
     (∀ h : ℝ, π * (r ^ 2 - h ^ 2) = π * r ^ 2 - π * h ^ 2) ∧
@@ -595,7 +594,7 @@ theorem naloga1 (r : ℝ) :
 
 /-- RAČUN: 27^(1/3) = 3, 2π·3³ = 54π.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#racun-naloga1
-besedilo: »Iz $2\pi r^3 = 54\pi$ sledi $r^3 = 27$, torej $r = 3\,\text{cm}$ in $v = 6\,\text{cm}$.« -/
+besedilo: »Iz $2\pi r^3 = 54\pi$ sledi $r^3 = 27$,« -/
 theorem racun_naloga1 : (27 : ℝ) ^ ((1 : ℝ) / 3) = 3 ∧ 2 * π * 3 ^ 3 = 54 * π := by
   refine ⟨?_, by ring⟩
   rw [show (27 : ℝ) = 3 ^ (3 : ℝ) by norm_num, ← Real.rpow_mul (by norm_num)]; norm_num

@@ -50,7 +50,7 @@ theorem dolzina2 (a₁ a₂ : ℝ) : ‖(!₂[a₁, a₂] : R2)‖ = √(a₁ ^ 
 
 /-- Dolžina v prostoru |a⃗| = √(a_x² + a_y² + a_z²).
 trditev: MAT-SS-3/skalarni-produkt#dolzina3
-besedilo: »Od tod dobiš dolžino iz komponent: $|\vec a| = \sqrt{a_x^2 + a_y^2}$.« -/
+besedilo: »$|\vec a| = \sqrt{a_x^2 + a_y^2}$« -/
 theorem dolzina3 (a₁ a₂ a₃ : ℝ) : ‖(!₂[a₁, a₂, a₃] : R3)‖ = √(a₁ ^ 2 + a₂ ^ 2 + a₃ ^ 2) := by
   rw [EuclideanSpace.norm_eq]; simp [Fin.sum_univ_three]
 
@@ -136,7 +136,7 @@ example :=
 /-- Razlaga (kosinusni izrek, Ustno vprašanje 2): |a⃗ − b⃗|² = a⃗·a⃗ − 2a⃗·b⃗ + b⃗·b⃗ = |a⃗|² + |b⃗|² − 2|a⃗||b⃗|cos γ;
 pri γ = π/2 ostane Pitagorov izrek.
 trditev: MAT-SS-3/skalarni-produkt#kosinusni-izrek
-besedilo: »Vstavimo $\vec a \cdot \vec a = a^2$, $\vec b \cdot \vec b = b^2$ in $\vec a \cdot \vec b = ab\cos\gamma$ ter dobimo kosinusni izrek:« -/
+besedilo: »Ko vstavimo $\vec a \cdot \vec a = a^2$, $\vec b \cdot \vec b = b^2$ in $\vec a \cdot \vec b = ab\cos\gamma$, dobimo $c^2 = a^2 + b^2 - 2ab\cos\gamma$.« -/
 theorem kosinusni_izrek (a b : V) :
     ‖a - b‖ ^ 2 = inner ℝ (a - b) (a - b) ∧
     inner ℝ (a - b) (a - b) = inner ℝ a a - 2 * inner ℝ a b + inner ℝ b b ∧
@@ -150,7 +150,7 @@ theorem kosinusni_izrek (a b : V) :
 /-- Razlaga (pravokotna projekcija): b⃗_a = (a⃗·b⃗/|a⃗|²) a⃗; ostanek b⃗ − b⃗_a je pravokoten na a⃗; predznačena dolžina
 je |b⃗|cos φ = a⃗·b⃗/|a⃗|, b⃗_a = (|b⃗|cos φ)·(a⃗/|a⃗|), dolžina |b⃗_a| = |a⃗·b⃗|/|a⃗| (za a⃗ ≠ 0⃗).
 trditev: MAT-SS-3/skalarni-produkt#projekcija
-besedilo: »Vektor $\vec b$ projiciramo na premico, na kateri leži $\vec a$, in dobimo vektor $\vec b_a$. Njegova predznačena dolžina je senca $|\vec b|\cos\varphi = \dfrac{\vec a \cdot \vec b}{|\vec a|}$, smer pa mu da enotski vektor $\dfrac{\vec a}{|\vec a|}$. Zmnožimo:« -/
+besedilo: »Njegova predznačena dolžina je senca $|\vec b|\cos\varphi = \dfrac{\vec a \cdot \vec b}{|\vec a|}$, smer pa mu da enotski vektor $\dfrac{\vec a}{|\vec a|}$.« -/
 theorem projekcija (a b : V) (ha : a ≠ 0) :
     inner ℝ a (b - (inner ℝ a b / ‖a‖ ^ 2) • a) = 0 ∧
     ‖b‖ * Real.cos (angle a b) = inner ℝ a b / ‖a‖ ∧
@@ -168,7 +168,7 @@ theorem projekcija (a b : V) (ha : a ≠ 0) :
 /-- Razlaga: pri negativnem produktu kaže b⃗_a nasprotno od a⃗ (koeficient a⃗·b⃗/|a⃗|² je negativen, b⃗_a je
 pozitiven večkratnik −a⃗).
 trditev: MAT-SS-3/skalarni-produkt#projekcija-nazaj
-besedilo: »Pri negativnem produktu kaže $\vec b_a$ nasprotno od $\vec a$. Za $\vec a = (4, 2)$ in $\vec b = (1, 3)$ je $\vec a \cdot \vec b = 4 + 6 = 10$ in $|\vec a|^2 = 20$, zato je $\vec b_a = \frac{10}{20}(4, 2) = (2, 1)$:« -/
+besedilo: »Pri negativnem produktu kaže $\vec b_a$ nasprotno od $\vec a$.« -/
 theorem projekcija_nazaj (a b : V) (ha : a ≠ 0) (h : inner ℝ a b < 0) :
     inner ℝ a b / ‖a‖ ^ 2 < 0 ∧ SameRay ℝ (-a) ((inner ℝ a b / ‖a‖ ^ 2) • a) := by
   have hn : 0 < ‖a‖ ^ 2 := by have := norm_pos_iff.2 ha; positivity
@@ -235,8 +235,7 @@ example : (0:ℝ) < 3 ∧ (0:ℝ) < 2 := by norm_num
 
 /-- Predpostavke trditve `raztezanje` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
-  have w : (0:ℝ) < 3 ∧ (0:ℝ) < 2 := by norm_num
-  raztezanje (hk := w.1)
+  raztezanje (0 : EuclideanSpace ℝ (Fin 2)) 0 3 (by norm_num)
 
 /-- Pogoste napake (kot iz napačnih vektorjev): angle(AB⃗, BC⃗) = π − angle(BA⃗, BC⃗) = 180° − β.
 trditev: MAT-SS-3/skalarni-produkt#napacen-kot

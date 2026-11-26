@@ -145,7 +145,7 @@ example : (0:ℝ) ≤ 9 := by norm_num
 /-- Predpostavke trditve `kor_eq` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
   have w : (0:ℝ) ≤ 9 := by norm_num
-  kor_eq (hA := w)
+  kor_eq (B := 0) (hA := w)
 
 /-- Bolj natančno: enačba √A = B (s pogojem, da koren obstaja) je ekvivalentna sistemu »A = B² in B ≥ 0«;
 pogoj A ≥ 0 je tedaj že izpolnjen.
@@ -236,7 +236,7 @@ example : (0:ℝ) ≤ 4 := by norm_num
 /-- Predpostavke trditve `kvadriranje_obe_krivulji` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
   have w : (0:ℝ) ≤ 4 := by norm_num
-  kvadriranje_obe_krivulji (hA := w)
+  kvadriranje_obe_krivulji (B := 0) (hA := w)
 
 /-- Razlaga 3: črtkana krivulja y = −√(x + 6) seka premico y = x v (−2, −2): −√(x + 6) = x ⇔ x = −2.
 trditev: MAT-SS-2/iracionalne-enacbe#navidezna-krivulja
@@ -308,7 +308,7 @@ theorem razlaga7_sod (x : ℝ) : x ^ 4 = 16 ↔ x = 2 ∨ x = -2 := by
 
 /-- Razlaga 7: x² = −4 nima realne rešitve.
 trditev: MAT-SS-2/iracionalne-enacbe#razlaga7-neg
-besedilo: »$x^2 = -4$« -/
+besedilo: »enačba $x^2 = -4$ pa ne.« -/
 theorem razlaga7_neg : ¬ ∃ x : ℝ, x ^ 2 = -4 := enacba_sod_neg even_two (by norm_num)
 
 /-- Razlaga 7: razlika kubov a³ − b³ = (a − b)(a² + ab + b²).
@@ -341,7 +341,7 @@ theorem razstavljanje_cetrta (x : ℝ) : x ^ 4 - 16 = (x ^ 2 - 4) * (x ^ 2 + 4) 
 /-- Primer 1: x − √(x + 1) = 5. Koraki: √(x + 1) = x − 5; pogoja x + 1 ≥ 0, x − 5 ≥ 0 (skupaj x ≥ 5);
 x + 1 = x² − 10x + 25; x² − 11x + 24 = (x − 3)(x − 8) = 0; 3 odpade, preizkus 8 − √9 = 5. Edina rešitev x = 8.
 trditev: MAT-SS-2/iracionalne-enacbe#primer1
-besedilo: »Uredimo v enačbo $x^2 - 11x + 24 = 0$ in razstavimo: $(x - 3)(x - 8) = 0$, torej $x = 3$ ali $x = 8$.« -/
+besedilo: »Odgovor: enačba ima eno rešitev, $x = 8$.« -/
 theorem primer1 (x : ℝ) : (0 ≤ x + 1 ∧ x - √(x + 1) = 5) ↔ x = 8 := by
   constructor
   · rintro ⟨hA, h⟩
@@ -451,8 +451,9 @@ theorem primer4 (x : ℝ) : (0 ≤ 5 - x ∧ √(5 - x) = x + 1) ↔ x = 1 := by
     · exact h3
   · rintro rfl; refine ⟨by norm_num, ?_⟩; norm_num
 
-/-- Pomožna trditev (orodje za dokaze v tej datoteki).
-pomozno -/
+/-- Primer 4, koraki 1–3: pogoja dasta −1 ≤ x ≤ 5, razcep (x + 4)(x − 1) = 0, √9 = 3 ≠ −3.
+trditev: MAT-SS-2/iracionalne-enacbe#primer4-koraki
+besedilo: »Pogoja: $5 - x \ge 0$ in $x + 1 \ge 0$, torej $-1 \le x \le 5$.« -/
 theorem primer4_koraki (x : ℝ) : ((0 ≤ 5 - x ∧ 0 ≤ x + 1) ↔ (-1 ≤ x ∧ x ≤ 5)) ∧
     x ^ 2 + 3 * x - 4 = (x + 4) * (x - 1) ∧ √(5 - (-4) : ℝ) = 3 ∧ √(5 - (-4) : ℝ) ≠ -4 + 1 := by
   have h9 : √(5 - (-4) : ℝ) = 3 := by norm_num
@@ -486,7 +487,7 @@ theorem osamitev (x : ℝ) : √(x + 1) + 2 = x ↔ √(x + 1) = x - 2 := ⟨fun
 
 /-- Naloga 1: (x − 1)⁴ = 625 ⇔ x − 1 = ±∜625 = ±5 ⇔ x = 6 ali x = −4.
 trditev: MAT-SS-2/iracionalne-enacbe#matura1
-besedilo: »Točkovanje:** 1 točka za $x - 1 = 5$ ali $x - 1 = -5$ (oba predznaka), 1 točka za $x = 6$ in $x = -4$, 1 točka za razstavljanje z utemeljitvijo, da faktor $(x - 1)^2 + 25$ ni nikoli nič.« -/
+besedilo: »zato je $x - 1 = \sqrt[4]{625} = 5$ ali $x - 1 = -\sqrt[4]{625} = -5$.« -/
 theorem matura1 (x : ℝ) : koren 4 625 = 5 ∧ ((x - 1) ^ 4 = 625 ↔ x - 1 = 5 ∨ x - 1 = -5) ∧
     ((x - 1) ^ 4 = 625 ↔ x = 6 ∨ x = -4) := by
   have k : koren 4 625 = 5 := koren_eq (by norm_num) (by norm_num) (by norm_num)
@@ -606,7 +607,7 @@ example : (0:ℝ) ≤ 1 := by norm_num
 /-- Predpostavke trditve `ustno1` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
   have w : (0:ℝ) ≤ 1 := by norm_num
-  ustno1 (hA := w)
+  ustno1 (B := 0) (hA := w)
 
 /-- Ustno vprašanje 2: √(2x + 1) = −x − 1 nima rešitve; kvadriranje da 2x + 1 = x² + 2x + 1, x² = 0, kandidat 0,
 ki ga preizkus izloči (√1 = 1 ≠ −1); pogoj korena 2x + 1 ≥ 0 je x ≥ −1/2, pogoj desne strani −x − 1 ≥ 0 je

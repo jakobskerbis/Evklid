@@ -47,7 +47,7 @@ example :=
 
 /-- Razlaga 1: nasprotni dogodek: P(Ā) = 1 − P(A).
 trditev: MAT-SS-4/verjetnost#nasprotni
-besedilo: »$$P(\overline{A}) = 1 - P(A).$$« -/
+besedilo: »Nasprotni dogodek** $\overline{A}$ se zgodi,« -/
 theorem nasprotni {α : Type*} [DecidableEq α] (Ω A : Finset α) (hΩ : Ω.Nonempty) (hA : A ⊆ Ω) :
     P Ω (Ω \ A) = 1 - P Ω A := by
   have hn : (#Ω : ℚ) ≠ 0 := by exact_mod_cast hΩ.card_pos.ne'
@@ -107,7 +107,7 @@ theorem empiricna : (310 : ℚ) / 500 = 0.62 ∧ (4 : ℚ) / 10 = 0.4 ∧ (600 :
 
 /-- Razlaga 4 (in Bolj natančno): `|A + B| = |A| + |B| − |A·B|` (vključitev in izključitev).
 trditev: MAT-SS-4/verjetnost#vkljucitev
-besedilo: »$$P(A + B) = P(A) + P(B) - P(A \cdot B).$$« -/
+besedilo: »$|A + B| = |A| + |B| - |A \cdot B|,$« -/
 theorem vkljucitev {α : Type*} [DecidableEq α] (A B : Finset α) : #(A ∪ B) + #(A ∩ B) = #A + #B :=
   card_union_add_card_inter A B
 
@@ -172,7 +172,7 @@ example : MeasureTheory.IsProbabilityMeasure (MeasureTheory.Measure.dirac (0 : �
 /-- Razlaga 4, »Premisli«: P(A) = 0,7, P(B) = 0,6 ⇒ P(A·B) ≥ 0,3 (ker P(A + B) ≤ 1); vsota 1,3 > 1 ni
 verjetnost.
 trditev: MAT-SS-4/verjetnost#mleko-jajca
-besedilo: »V kuhinji je verjetnost, da je v hladilniku mleko, $0{,}7$, da so jajca, pa $0{,}6$. Ali je verjetnost, da je vsaj eno od obojega, $1{,}3$? Zakaj ne?« -/
+besedilo: »Pozabljen presek pri vsoti.** »Mleko $0{,}7$, jajca $0{,}6$, vsaj eno $1{,}3$.« Izidi, kjer se zgodita oba dogodka, so šteti dvakrat. Pri združljivih dogodkih odštej $P(A \cdot B)$; verjetnost nad $1$ je vedno znak te napake.« -/
 theorem mleko_jajca {α : Type*} [DecidableEq α] (Ω A B : Finset α) (hΩ : Ω.Nonempty) (hA : A ⊆ Ω) (hB : B ⊆ Ω)
     (pA : P Ω A = 0.7) (pB : P Ω B = 0.6) : 0.3 ≤ P Ω (A ∩ B) ∧ (1 : ℚ) < 0.7 + 0.6 := by
   have h1 := (gotov_nemogoc Ω (A ∪ B) hΩ (union_subset hA hB)).2.2.2
@@ -298,8 +298,7 @@ example : MeasurableSet (Set.univ : Set ℝ) := MeasurableSet.univ
 
 /-- Predpostavke trditve `pogojna_mera` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
-  have w : MeasurableSet (Set.univ : Set ℝ) := MeasurableSet.univ
-  pogojna_mera (hB := w)
+  pogojna_mera (MeasureTheory.Measure.dirac (0:ℝ)) Set.univ Set.univ MeasurableSet.univ
 
 /-- Razlaga 7 (splošna verjetnostna mera): A in B sta neodvisna natanko tedaj, ko μ(A ∩ B) = μ(A)·μ(B).
 trditev: MAT-SS-4/verjetnost#neodvisnost-mera
@@ -320,8 +319,7 @@ def jajca : Finset (Fin 12 × Fin 12) := univ.filter (fun p => p.1 ≠ p.2)
 
 /-- Predpostavke trditve `neodvisnost_mera` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
-  have w : MeasureTheory.IsProbabilityMeasure (MeasureTheory.Measure.dirac (0 : ℝ)) ∧ MeasurableSet (Set.univ : Set ℝ) := ⟨inferInstance, MeasurableSet.univ⟩
-  neodvisnost_mera (hA := w.1) (hB := w.2)
+  neodvisnost_mera (MeasureTheory.Measure.dirac (0:ℝ)) Set.univ Set.univ MeasurableSet.univ MeasurableSet.univ
 
 /-- Razlaga 6 (drevo): 132 urejenih parov; obe celi 90, prvo celo 110, drugo celo 110, obe počeni 2; torej
 P(obe celi) = 90/132 = 15/22, P(drugo celo / prvo celo) = 9/11 ≠ 10/12 = P(drugo celo), P(obe počeni) = 1/66.

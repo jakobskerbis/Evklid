@@ -65,7 +65,7 @@ theorem produkt2 (k a₁ a₂ : ℝ) : k • (!₂[a₁, a₂] : R2) = !₂[k * 
 
 /-- Razlaga in Povzetek: k·a⃗ = (k a_x, k a_y, k a_z) v prostoru.
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#produkt3
-besedilo: »$$k\vec a = (k a_x,\ k a_y,\ k a_z)$$« -/
+besedilo: »V prostoru dodamo še višino: $\vec a = (a_x, a_y, a_z)$.« -/
 theorem produkt3 (k a₁ a₂ a₃ : ℝ) : k • (!₂[a₁, a₂, a₃] : R3) = !₂[k * a₁, k * a₂, k * a₃] := by
   ext i; fin_cases i <;> simp
 
@@ -172,7 +172,7 @@ example :=
 /-- Povzetek in Bolj natančno (trikotniška neenakost, Premisli 1): |a⃗ + b⃗| ≤ |a⃗| + |b⃗|, enakost natanko
 tedaj, ko sta vektorja enako usmerjena (SameRay).
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#trikotniska-neenakost
-besedilo: »Trikotniška neenakost** (enakost le pri enako usmerjenih vektorjih):« -/
+besedilo: »Trikotniška neenakost.** Vektorji $\vec a$, $\vec b$ in $\vec a + \vec b$ tvorijo trikotnik.« -/
 theorem trikotniska_neenakost (a b : R3) :
     ‖a + b‖ ≤ ‖a‖ + ‖b‖ ∧ (‖a + b‖ = ‖a‖ + ‖b‖ ↔ SameRay ℝ a b) :=
   ⟨norm_add_le a b, sameRay_iff_norm_add.symm⟩
@@ -735,7 +735,7 @@ theorem kviz7 (k m : ℝ) :
 √(0² + 3² + 3²) = 3√2, 3·1 + 2·(−1) = 1, √(3² + 4² + 12²) = 13, √(50² + 50²) ≈ 70,7,
 √(3² + 4² + 0²) = 5; sistema 2k − 2m = 2, 2k + m = 5 in k + m = 5, k − m = 1 sta v `naloga2d` in `ustno3`).
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#racun
-besedilo: »d) $\overrightarrow{AE} = (3 - 1,\ 5 - 0,\ 6 - 2) = (2, 5, 4)$. Iščemo števili $k$ in $m$, da je $k\overrightarrow{AB} + m\overrightarrow{BC} = \overrightarrow{AE}$. Po komponentah: $2k - 2m = 2$, $2k + m = 5$ in $k + 2m = 4$.« -/
+besedilo: »Po Pitagorovem izreku je prva dolga $\sqrt{12^2 + 5^2} = 13\,\mathrm{m}$, druga $\sqrt{3^2 + 4^2} = 5\,\mathrm{m}$.« -/
 theorem racun :
     √((2:ℝ) ^ 2 + 2 ^ 2 + 1 ^ 2) = 3 ∧ √((-2:ℝ) ^ 2 + 1 ^ 2 + 2 ^ 2) = 3 ∧
     √((0:ℝ) ^ 2 + 3 ^ 2 + 3 ^ 2) = 3 * √2 ∧ 3 * (1:ℝ) + 2 * (-1) = 1 ∧ √((3:ℝ) ^ 2 + 4 ^ 2 + 12 ^ 2) = 13 ∧

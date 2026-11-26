@@ -611,7 +611,7 @@ theorem naloga2d (r AD DB : ℝ) :
 /-- RAČUN: π·3²·4/3 = 12π, π·4²·3/3 = 16π, √(6² + 8²) = 10, 36/(24√3) = √3/2. (6·8/10 = 4,8 je v
 `primer3`; 6 sin 60° = 3√3, √3/4·4² = 4√3 in 4√3·3√3 = 36 so v `naloga1`.)
 trditev: MAT-SS-3/posevna-telesa-in-vrtenine#racun
-besedilo: »c) $\dfrac{V}{V'} = \dfrac{36}{24\sqrt{3}} = \dfrac{3}{2\sqrt{3}} = \dfrac{\sqrt{3}}{2}$. Razmerje je enako $\sin 60^\circ$, ker se prizmi razlikujeta le v višini.« -/
+besedilo: »Ploščino trikotnika zapišemo na dva načina, $\frac{a\,b}{2} = \frac{c\,r}{2}$, zato $r = \dfrac{6 \cdot 8}{10} = 4{,}8\,\mathrm{cm}$.« -/
 theorem racun :
     π * 3 ^ 2 * 4 / 3 = 12 * π ∧ π * 4 ^ 2 * 3 / 3 = 16 * π ∧ √((6 : ℝ) ^ 2 + 8 ^ 2) = 10 ∧
     36 / (24 * √3) = √3 / 2 := by

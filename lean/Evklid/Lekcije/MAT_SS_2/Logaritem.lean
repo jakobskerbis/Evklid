@@ -249,7 +249,7 @@ theorem premisli_log2_5 :
 /-- Razlaga 5 (Povzetek, Ponovitev): za a > 0, a ≠ 1, x, y > 0 in realen n:
 logₐ(xy) = logₐ x + logₐ y, logₐ(x/y) = logₐ x − logₐ y, logₐ xⁿ = n·logₐ x, logₐ ⁿ√x = (1/n)·logₐ x.
 trditev: MAT-SS-2/logaritem#pravila
-besedilo: »Za $a > 0$, $a \ne 1$, $x, y > 0$ in realno število $n$ (pri korenu je $n$ naravno, $n \ge 2$):« -/
+besedilo: »$\log (xy) = \log x + \log y$, $\;\log x^n = n \log x$, $\;\log_a b = \dfrac{\log b}{\log a}$« -/
 theorem pravila (a x y n : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hx : 0 < x) (hy : 0 < y) :
     Real.logb a (x * y) = Real.logb a x + Real.logb a y ∧
     Real.logb a (x / y) = Real.logb a x - Real.logb a y ∧
@@ -1253,12 +1253,12 @@ example : ∃ c₁ c₂ : ℝ, 0 < c₁ ∧ 0 < c₂ ∧ -Real.logb 10 c₁ = 4.
     by rw [log_pot 10 _ (by norm_num) (by norm_num)]; norm_num⟩
 
 /-- Predpostavke trditve `kviz5` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ c₁ c₂ : ℝ, 0 < c₁ ∧ 0 < c₂ ∧ -Real.logb 10 c₁ = 4.6 ∧ -Real.logb 10 c₂ = 5.6 :=
     ⟨10 ^ (-4.6 : ℝ), 10 ^ (-5.6 : ℝ), Real.rpow_pos_of_pos (by norm_num) _,
       Real.rpow_pos_of_pos (by norm_num) _, by rw [log_pot 10 _ (by norm_num) (by norm_num)]; norm_num,
       by rw [log_pot 10 _ (by norm_num) (by norm_num)]; norm_num⟩
-  kviz5 (h1 := w.choose_spec.choose_spec.1) (h2 := w.choose_spec.choose_spec.2.1) (p1 := w.choose_spec.choose_spec.2.2.1) (p2 := w.choose_spec.choose_spec.2.2.2)
+  (fun _ => trivial) (kviz5 (c₁ := w.choose) (c₂ := w.choose_spec.choose) (h1 := w.choose_spec.choose_spec.1) (h2 := w.choose_spec.choose_spec.2.1) (p1 := w.choose_spec.choose_spec.2.2.1) (p2 := w.choose_spec.choose_spec.2.2.2))
 
 /-- Preveri se 6: ln e⁴ + e^(ln 3) − ln 1 = 4 + 3 − 0 = 7.
 trditev: MAT-SS-2/logaritem#kviz6

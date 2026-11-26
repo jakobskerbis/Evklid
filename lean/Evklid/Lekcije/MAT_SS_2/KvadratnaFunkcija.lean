@@ -65,7 +65,7 @@ theorem preveri_ni_kvadratna (x : ℝ) : (x - 1) ^ 2 - x ^ 2 = -2 * x + 1 := by 
 /-- Razlaga 2 (tabela in sodost): (±3)² = 9, (±2)² = 4, (±1)² = 1, 0² = 0; (−x)² = x²; teme (0, 0) je
 najnižja točka: x² ≥ 0 = 0².
 trditev: MAT-SS-2/kvadratna-funkcija#osnovna-parabola
-besedilo: »b) Iz $-(x + 1)^2 + 4 = 0$ sledi $(x + 1)^2 = 4$ in $x + 1 = \pm 2$, torej $x_1 = -3$ in $x_2 = 1$.« -/
+besedilo: »$x^2 - 6x + 5 = (x^2 - 6x + 9) - 9 + 5 = (x - 3)^2 - 4$.« -/
 theorem osnovna_parabola : ((-3 : ℝ) ^ 2 = 9 ∧ (-2 : ℝ) ^ 2 = 4 ∧ (-1 : ℝ) ^ 2 = 1 ∧ (0 : ℝ) ^ 2 = 0 ∧
     (1 : ℝ) ^ 2 = 1 ∧ (2 : ℝ) ^ 2 = 4 ∧ (3 : ℝ) ^ 2 = 9) ∧ (∀ x : ℝ, (-x) ^ 2 = x ^ 2) ∧
     ∀ x : ℝ, (0 : ℝ) ^ 2 ≤ x ^ 2 := by
@@ -117,7 +117,7 @@ theorem tri_oblike (a b c p q x₁ x₂ : ℝ) : a * 0 ^ 2 + b * 0 + c = c ∧ a
 
 /-- Razlaga 4: x² − 2x − 3 = (x − 1)² − 4 = (x + 1)(x − 3); f(0) = −3, f(1) = −4, ničli −1 in 3.
 trditev: MAT-SS-2/kvadratna-funkcija#tri-zapisi
-besedilo: »Ista funkcija ima lahko vse tri zapise, na primer $x^2 - 2x - 3 = (x - 1)^2 - 4 = (x + 1)(x - 3)$. Na sliki vsaka oblika pokaže svoje točke: splošna presečišče $(0, -3)$, temenska teme $T(1, -4)$, ničelna ničli $-1$ in $3$.« -/
+besedilo: »na primer $x^2 - 2x - 3 = (x - 1)^2 - 4 = (x + 1)(x - 3)$.« -/
 theorem tri_zapisi (x : ℝ) : (x ^ 2 - 2 * x - 3 = (x - 1) ^ 2 - 4 ∧ (x - 1) ^ 2 - 4 = (x + 1) * (x - 3)) ∧
     ((0 : ℝ) ^ 2 - 2 * 0 - 3 = -3 ∧ (1 : ℝ) ^ 2 - 2 * 1 - 3 = -4) ∧
     (x ^ 2 - 2 * x - 3 = 0 ↔ x = -1 ∨ x = 3) := by
@@ -265,7 +265,7 @@ example : (1 : ℝ) * 3 ^ 2 + -6 * 3 + 5 = 1 * ((3 + -6 / (2 * 1)) ^ 2 - (-6) ^ 
 /-- Razlaga 5, premisli: parabola y = 2x² s temenom T(−1, 4), tj. 2(x + 1)² + 4, ne seka osi x
 (vse vrednosti so ≥ 4 > 0).
 trditev: MAT-SS-2/kvadratna-funkcija#premisli-2x2
-besedilo: »Parabolo $y = 2x^2$ premaknemo tako, da ima teme $T(-1, 4)$. Napovej brez računanja: ali nova parabola seka os $x$?« -/
+besedilo: »Parabolo $y = 2x^2$ premaknemo tako, da ima teme $T(-1, 4)$.« -/
 theorem premisli_2x2 (x : ℝ) : 4 ≤ 2 * (x - -1) ^ 2 + 4 ∧ 2 * (x - -1) ^ 2 + 4 ≠ 0 := by
   constructor <;> nlinarith [sq_nonneg (x + 1)]
 
@@ -535,7 +535,7 @@ theorem primer2_narascanje :
 /-- Primer 3, korak 1 in formula: če model a(t − p)² + q (a ≠ 0) da f(12) = f(16) = 19 in f(8) = 11, je
 p = (12 + 16)/2 = 14, a = −0,25 in q = 20 (model je enolično določen).
 trditev: MAT-SS-2/kvadratna-funkcija#primer3-enolicnost
-besedilo: »Podatki:** $f(8) = 11$, $f(12) = 19$, $f(16) = 19$, $f(20) = 11$ ($t$ v urah, $f(t)$ v $^\circ\text{C}$); iskana temperatura $16\,^\circ\text{C}$« -/
+besedilo: »Model je $f(t) = -0{,}25(t - 14)^2 + 20$. Kontrola s četrto meritvijo: $f(20) = -0{,}25 \cdot 36 + 20 = 11$.« -/
 theorem primer3_enolicnost (a p q : ℝ) (ha : a ≠ 0) (h12 : a * (12 - p) ^ 2 + q = 19)
     (h16 : a * (16 - p) ^ 2 + q = 19) (h8 : a * (8 - p) ^ 2 + q = 11) :
     p = 14 ∧ a = -0.25 ∧ q = 20 := by
@@ -626,7 +626,7 @@ theorem napaka_teme : (∀ x : ℝ, (x + 3) ^ 2 - 1 = (x - -3) ^ 2 + -1) ∧ (�
 
 /-- Pogoste napake 2: pri metu c = h(0) = 2,25, q = 3,69; pri b = 0 je c = q (teme pri p = 0).
 trditev: MAT-SS-2/kvadratna-funkcija#napaka-c-q
-besedilo: »Druga koordinata: $q = h(2{,}4) = -0{,}25 \cdot 2{,}4^2 + 1{,}2 \cdot 2{,}4 + 2{,}25 = 3{,}69$. Ker je $a < 0$, je teme najvišja točka.« -/
+besedilo: »$q = h(2{,}4) = -0{,}25 \cdot 2{,}4^2 + 1{,}2 \cdot 2{,}4 + 2{,}25 = 3{,}69$« -/
 theorem napaka_c_q (a c : ℝ) : -0.25 * (0 : ℝ) ^ 2 + 1.2 * 0 + 2.25 = 2.25 ∧ (2.25 : ℝ) ≠ 3.69 ∧
     -(0 : ℝ) / (2 * a) = 0 ∧ a * 0 ^ 2 + 0 * 0 + c = c := by
   refine ⟨by norm_num, by norm_num, by simp, by ring⟩
@@ -655,7 +655,7 @@ theorem napaka_minus : -(-1 : ℝ) ^ 2 + 4 * (-1) + 5 = -1 - 4 + 5 ∧ (-1 : ℝ
 /-- Za maturo, naloga 1: ničli −1 in 5 ⇒ f(x) = a(x + 1)(x − 5); a·1·(−5) = 10 ⇔ a = −2;
 −2(x + 1)(x − 5) = −2(x² − 4x − 5) = −2x² + 8x + 10.
 trditev: MAT-SS-2/kvadratna-funkcija#matura1
-besedilo: »$f(x) = -2(x + 1)(x - 5) = -2(x^2 - 4x - 5) = -2x^2 + 8x + 10$« -/
+besedilo: »Odgovor: $f(x) = -2x^2 + 8x + 10$.« -/
 theorem matura1 (a x : ℝ) : (a * (0 + 1) * (0 - 5) = 10 ↔ a = -2) ∧
     -2 * (x + 1) * (x - 5) = -2 * (x ^ 2 - 4 * x - 5) ∧ -2 * (x ^ 2 - 4 * x - 5) = -2 * x ^ 2 + 8 * x + 10 := by
   refine ⟨by constructor <;> intro h <;> linarith, by ring, by ring⟩
@@ -663,7 +663,7 @@ theorem matura1 (a x : ℝ) : (a * (0 + 1) * (0 - 5) = 10 ↔ a = -2) ∧
 /-- Za maturo, naloga 1 (enoličnost): edina kvadratna funkcija z f(−1) = 0, f(5) = 0, f(0) = 10 je
 −2x² + 8x + 10.
 trditev: MAT-SS-2/kvadratna-funkcija#matura1-enolicnost
-besedilo: »$f(x) = -2(x + 1)(x - 5) = -2(x^2 - 4x - 5) = -2x^2 + 8x + 10$« -/
+besedilo: »Odgovor: $f(x) = -2x^2 + 8x + 10$.« -/
 theorem matura1_enolicnost (a b c : ℝ) :
     (a * (-1) ^ 2 + b * (-1) + c = 0 ∧ a * 5 ^ 2 + b * 5 + c = 0 ∧ a * 0 ^ 2 + b * 0 + c = 10) ↔
       (a = -2 ∧ b = 8 ∧ c = 10) := by
@@ -748,7 +748,7 @@ theorem matura3d (x : ℝ) : (900 ≤ -3 * x ^ 2 + 120 * x ↔ 10 ≤ x ∧ x �
 največjo (glej `ekstrem`); |a| > 1 ožja, |a| < 1 širša (glej `ozja_sirsa`). Ustno vprašanje 3, primer:
 (x − 2)² − 9 = 0 ⇔ x = −1 ali x = 5 (a > 0, q < 0).
 trditev: MAT-SS-2/kvadratna-funkcija#ustno3
-besedilo: »Ekstrem.** Ker je $(x - p)^2 \ge 0$ in je enak nič samo pri $x = p$, za $a > 0$ velja $f(x) \ge q$ z enakostjo samo v temenu, zato je $q$ najmanjša vrednost. Za $a < 0$ je $f(x) \le q$, $q$ je največja vrednost.« -/
+besedilo: »Funkcija $f(x) = (x - 2)^2 - 9$ ima na primer ničli $-1$ in $5$, ker je $a > 0$ in $q < 0$.« -/
 theorem ustno3 (x : ℝ) : ((x - 2) ^ 2 - 9 = 0 ↔ x = -1 ∨ x = 5) ∧ (1 : ℝ) * (-9) < 0 := by
   refine ⟨?_, by norm_num⟩
   rw [enacba_iff (P := (x - -1) * (x - 5)) (by ring), dva_faktorja]
@@ -813,7 +813,7 @@ theorem preveri6 : ((-1 : ℝ) + 5) / 2 = 2 ∧ (2 * ((2 : ℝ) + 1) * (2 - 5) =
 
 /-- Preveri se 7: g(x) = −(x − 1)² − 4 ima teme (1, −4), g(x) ≤ −4 < 0, zato nima realnih ničel.
 trditev: MAT-SS-2/kvadratna-funkcija#preveri7
-besedilo: »Funkcija $f(x) = (x - 1)^2 - 4$ ima teme $T(1, -4)$ in ničli $-1$ in $3$. Kaj se zgodi, če vodilni koeficient spremenimo z $1$ na $-1$ in dobimo $g(x) = -(x - 1)^2 - 4$?« -/
+besedilo: »Funkcija $f(x) = (x - 1)^2 - 4$ ima teme $T(1, -4)$ in ničli $-1$ in $3$.« -/
 theorem preveri7 : (∀ x : ℝ, -(x - 1) ^ 2 - 4 ≤ -4) ∧ -((1 : ℝ) - 1) ^ 2 - 4 = -4 ∧
     ∀ x : ℝ, -(x - 1) ^ 2 - 4 ≠ 0 := by
   refine ⟨fun x => by nlinarith [sq_nonneg (x - 1)], by norm_num,

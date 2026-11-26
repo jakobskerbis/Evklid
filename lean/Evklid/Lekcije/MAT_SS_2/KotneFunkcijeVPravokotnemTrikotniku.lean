@@ -669,7 +669,7 @@ theorem radiani : |sin 30 - (-0.988)| < 0.0005 ∧ sin (30 * π / 180) = 0.5 := 
 /-- Preveri se 1: pri 60° je (sin, cos, tan) = (√3/2, 1/2, √3); trojica (1/2, √3/2, √3/3) spada k 30°, (√2/2, √2/2, 1)
 k 45°, obrnjeni tangens √3/3 pa ni tan 60°.
 trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#kviz1
-besedilo: »$\sin 30^\circ = \dfrac{1}{2}$, $\sin 45^\circ = \dfrac{\sqrt{2}}{2}$, $\tan 60^\circ = \sqrt{3}$ (na pamet)« -/
+besedilo: »Pri $60^\circ$ je $\sin 60^\circ = \dfrac{\sqrt{3}}{2}$, $\cos 60^\circ = \dfrac{1}{2}$ in $\tan 60^\circ = \sqrt{3}$.« -/
 theorem kviz1 :
     (sin (π / 3), cos (π / 3), tan (π / 3)) = (√3 / 2, 1 / 2, √3) ∧
     (sin (π / 6), cos (π / 6), tan (π / 6)) = (1 / 2, √3 / 2, √3 / 3) ∧
@@ -833,7 +833,7 @@ theorem naloga1 :
 
 /-- Naloga 1 (blok RACUN): sin(tan⁻¹ 2) = 2√5/5 in cos(tan⁻¹ 2) = √5/5.
 trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#racun-naloga1
-besedilo: »$\sin \alpha = \dfrac{a}{c} = \dfrac{2}{\sqrt{5}} = \dfrac{2\sqrt{5}}{5}$ in $\cos \alpha = \dfrac{b}{c} = \dfrac{1}{\sqrt{5}} = \dfrac{\sqrt{5}}{5}$.« -/
+besedilo: »Odgovor: $\sin \alpha = \dfrac{2\sqrt{5}}{5}$ in $\cos \alpha = \dfrac{\sqrt{5}}{5}$.« -/
 theorem racun_naloga1 : sin (arctan 2) = 2 * √5 / 5 ∧ cos (arctan 2) = √5 / 5 := by
   obtain ⟨-, h, -⟩ := naloga1
   have := h (arctan 2) (arctan_pos.mpr (by norm_num)) (arctan_lt_pi_div_two _) (tan_arctan _)
@@ -920,7 +920,7 @@ D = 3i, M = 0): vse stranice merijo √34, |AC| = 10, |BD| = 6, M je razpoloviš
 suplementarna (∠ABC = 180° − ∠DAB); nožišče višine iz D je H = −45/17 − 24/17·i = A + 8/17·(B − A) na stranici AB
 z ∠DHA = 90° in višina v = |DH| = |AD|·sin ∠DAB.
 trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#naloga2-romb
-besedilo: »a) Diagonali romba se razpolavljata in sta pravokotni, zato je trikotnik $AMB$ pravokoten s pravim kotom pri $M$ in s katetama $|AM| = 5\,\text{cm}$ in $|BM| = 3\,\text{cm}$.« -/
+besedilo: »b) Diagonala $AC$ razpolavlja kot pri oglišču $A$. V trikotniku $AMB$ je $|BM|$ nasprotna, $|AM|$ pa priležna kateta kota $\angle MAB$, zato je $\tan \angle MAB = \dfrac{3}{5}$ in $\angle MAB \approx 30{,}9638^\circ$.« -/
 theorem naloga2_romb :
     dist (-5:ℂ) (-3 * Complex.I) = √34 ∧ dist (-3 * Complex.I) (5:ℂ) = √34 ∧
     dist (5:ℂ) (3 * Complex.I) = √34 ∧ dist (3 * Complex.I) (-5:ℂ) = √34 ∧

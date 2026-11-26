@@ -96,7 +96,7 @@ theorem limita_sinc : Tendsto (fun x : ℝ => sin x / x) (𝓝[≠] 0) (𝓝 1) 
 /-- Razlaga, blok 2, »Premisli«: če funkciji sin x / x dodamo f(0) = 5, ostane limita 1
 (limita ne gleda vrednosti v točki).
 trditev: MAT-SS-4/limita-in-zveznost-funkcije#limita-ne-gleda-f0
-besedilo: »Funkciji $\dfrac{\sin x}{x}$ dodamo pravilo $f(0) = 5$. Sošolec reče: »Zdaj je limita pri $x \to 0$ enaka $5$, saj je tam vrednost $5$.« Ima prav?« -/
+besedilo: »Funkciji $\dfrac{\sin x}{x}$ dodamo pravilo $f(0) = 5$.« -/
 theorem limita_ne_gleda_f0 :
     Tendsto (Function.update (fun x : ℝ => sin x / x) 0 5) (𝓝[≠] 0) (𝓝 1) := by
   refine limita_sinc.congr' (eventually_nhdsWithin_of_forall fun x hx => ?_)
@@ -107,7 +107,7 @@ noncomputable def g (x : ℝ) : ℝ := if x < 1 then x else x + 1
 
 /-- Razlaga, blok 3: leva limita g v 1 je 1, desna 2, limite v 1 ni; »Pogoste napake«: g(1) = 2.
 trditev: MAT-SS-4/limita-in-zveznost-funkcije#skok
-besedilo: »Pri $g$ s skokom je $g(1) = 2$, leva limita pa $1$.« -/
+besedilo: »$\lim\limits_{x \to 1^+} g(x) = 2$ (**desna limita**).« -/
 theorem skok : Tendsto g (𝓝[<] 1) (𝓝 1) ∧ Tendsto g (𝓝[>] 1) (𝓝 2) ∧
     (¬ ∃ L, Tendsto g (𝓝[≠] 1) (𝓝 L)) ∧ g 1 = 2 := by
   have hl : Tendsto g (𝓝[<] 1) (𝓝 1) := by
@@ -262,7 +262,7 @@ example :=
 /-- Primer 2: (3x² − 5x)/(6x² + 1) = (3 − 5/x)/(6 + 1/x²) za x ≠ 0 in
 lim_{x→∞} (3x² − 5x)/(6x² + 1) = 3/6 = 0,5.
 trditev: MAT-SS-4/limita-in-zveznost-funkcije#primer2
-besedilo: »Izračunaj $\lim\limits_{x \to \infty} \dfrac{3x^2 - 5x}{6x^2 + 1}$.« -/
+besedilo: »$f(x) = \dfrac{3x^2 - 5x}{6x^2 + 1}$« -/
 theorem primer2 : (∀ x : ℝ, x ≠ 0 → (3 * x ^ 2 - 5 * x) / (6 * x ^ 2 + 1) = (3 - 5 / x) / (6 + 1 / x ^ 2)) ∧
     Tendsto (fun x : ℝ => (3 * x ^ 2 - 5 * x) / (6 * x ^ 2 + 1)) atTop (𝓝 0.5) := by
   have hdel : ∀ x : ℝ, x ≠ 0 → (3 * x ^ 2 - 5 * x) / (6 * x ^ 2 + 1) = (3 - 5 / x) / (6 + 1 / x ^ 2) := by
@@ -747,7 +747,7 @@ theorem kviz2 : Tendsto (fun x : ℝ => (2 * x + 1) / (x - 3)) atTop (𝓝 2) �
 
 /-- Preveri se, vprašanje 3: f(x) = 1/(x − 1)² raste čez vse meje, ko x → 1 (z obeh strani); pol pri 1.
 trditev: MAT-SS-4/limita-in-zveznost-funkcije#kviz3
-besedilo: »Kaj se zgodi z vrednostmi $f(x) = \dfrac{1}{(x - 1)^2}$, ko se $x$ z obeh strani približuje $1$?« -/
+besedilo: »Rastejo čez vse meje; pri $x = 1$ je pol.« -/
 theorem kviz3 : Tendsto (fun x : ℝ => 1 / (x - 1) ^ 2) (𝓝[≠] 1) atTop := by
   refine pol_atTop _ _ 1 one_pos tendsto_const_nhds ?_
   rw [tendsto_nhdsWithin_iff]

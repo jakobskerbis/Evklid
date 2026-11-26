@@ -26,7 +26,7 @@ open Filter Topology Set
 
 /-- Bolj natančno: za q ≠ 0 je p/q > 0 enakovredno p·q > 0 (množimo s q² > 0).
 trditev: MAT-SS-3/racionalne-neenacbe#kolicnik-poz
-besedilo: »$\frac{p(x)}{q(x)} > 0$ enakovredno $p(x) \cdot q(x) > 0$.« -/
+besedilo: »Množiti smemo z izrazom, za katerega **vemo**, da je pozitiven. Za $q(x) \ne 0$ je $q(x)^2 > 0$, zato je« -/
 theorem kolicnik_poz (p q : ℝ) (hq : q ≠ 0) : 0 < p / q ↔ 0 < p * q := by
   have e : p / q = p * q / q ^ 2 := by field_simp
   rw [e, lt_div_iff₀ (by positivity), zero_mul]
@@ -47,7 +47,7 @@ theorem kolicnik_neg (p q : ℝ) (hq : q ≠ 0) : p / q < 0 ↔ p * q < 0 := by
 
 /-- Bolj natančno (isto za ≤): za q ≠ 0 je p/q ≤ 0 enakovredno p·q ≤ 0.
 trditev: MAT-SS-3/racionalne-neenacbe#kolicnik-nepozitiven
-besedilo: »$\frac{p(x)}{q(x)} > 0$ enakovredno $p(x) \cdot q(x) > 0$.« -/
+besedilo: »Pri $\ge$ velja $p(x) \cdot q(x) \ge 0$ in hkrati $q(x) \ne 0$: drugi pogoj izloči pole.« -/
 theorem kolicnik_nepozitiven (p q : ℝ) (hq : q ≠ 0) : p / q ≤ 0 ↔ p * q ≤ 0 := by
   have e : p / q = p * q / q ^ 2 := by field_simp
   rw [e, div_le_iff₀ (by positivity), zero_mul]
@@ -197,7 +197,7 @@ theorem uvod : (1 : ℝ) / (-2) = -1 / 2 ∧ (1 : ℝ) / (-2) < 1 ∧ ¬ ((1 : �
 
 /-- Razlaga 1: 1/x − 1 = (1 − x)/x za x ≠ 0.
 trditev: MAT-SS-3/racionalne-neenacbe#en-ulomek
-besedilo: »$$\frac{1}{x} - 1 < 0$$« -/
+besedilo: »$\frac{1 - x}{x} < 0$« -/
 theorem en_ulomek (x : ℝ) (hx : x ≠ 0) : 1 / x - 1 = (1 - x) / x := by field_simp
 
 /-- Predpostavka `en_ulomek` se da izpolniti (x = 2). -/
@@ -303,7 +303,7 @@ example : ((3 : ℝ) + 5) / (3 - 1) - 2 = (3 + 5 - 2 * (3 - 1)) / (3 - 1) ∧
 
 /-- Primer 1, korak 4: tabela predznakov (7 − x)/(x − 1): −, +, − na (−∞, 1), (1, 7), (7, ∞).
 trditev: MAT-SS-3/racionalne-neenacbe#primer1-tabela
-besedilo: »$\frac{x + 5 - 2(x - 1)}{x - 1} = \frac{7 - x}{x - 1} \ge 0$« -/
+besedilo: »$\frac{x + 5 - 2(x - 1)}{x - 1} = \frac{7 - x}{x - 1} \ge 0$.« -/
 theorem primer1_tabela :
     (∀ x : ℝ, x < 1 → 0 < 7 - x ∧ x - 1 < 0 ∧ (7 - x) / (x - 1) < 0) ∧
     (∀ x : ℝ, 1 < x → x < 7 → 0 < 7 - x ∧ 0 < x - 1 ∧ 0 < (7 - x) / (x - 1)) ∧
@@ -314,7 +314,7 @@ theorem primer1_tabela :
 
 /-- Primer 1 (RACUN neenacba): (x + 5)/(x − 1) ≥ 2 s pogojem x ≠ 1 ↔ x ∈ (1, 7].
 trditev: MAT-SS-3/racionalne-neenacbe#primer1
-besedilo: »Reši neenačbo $\frac{x + 5}{x - 1} \ge 2$.« -/
+besedilo: »Pri $x = 0$ je $\frac{5}{-1} = -5$, kar ni $\ge 2$, čeprav bi »pomnožena« neenačba ($x + 5 \ge 2x - 2$, torej $x \le 7$) število $0$ sprejela.« -/
 theorem primer1 (x : ℝ) : (x ≠ 1 ∧ 2 ≤ (x + 5) / (x - 1)) ↔ x ∈ Ioc 1 7 := by
   simp only [mem_Ioc]
   constructor
@@ -392,7 +392,7 @@ theorem primer2_tabela :
 /-- Primer 2 (RACUN neenacba): (x² − 4x + 4)/(x² − 9) < 0 ↔ x ∈ (−3, 2) ∪ (2, 3). Pogoste napake: (−3, 3)
 ni rešitev, ker je v 2 ulomek 0.
 trditev: MAT-SS-3/racionalne-neenacbe#primer2
-besedilo: »$x^2 - 4x + 4 = (x - 2)^2$ in $x^2 - 9 = (x - 3)(x + 3)$;« -/
+besedilo: »Dvojna ničla pri strogi neenačbi.** Pri $\frac{(x - 2)^2}{x^2 - 9} < 0$ zapišeš $(-3, 3)$. V $x = 2$ je ulomek $0$, kar ni $< 0$, zato točko $2$ izločiš.« -/
 theorem primer2 (x : ℝ) : (x ^ 2 - 4 * x + 4) / (x ^ 2 - 9) < 0 ↔ x ∈ Ioo (-3) 2 ∪ Ioo 2 3 := by
   simp only [mem_union, mem_Ioo]
   rw [(primer2_razcep x).1]
@@ -446,7 +446,7 @@ theorem primer3_tabela :
 /-- Primer 3 (RACUN neenacba): 340/(340 − v) ≥ 17/16 s pogojem v ≠ 340 ↔ v ∈ [20, 340); skupaj s pogojem
 v ≥ 0 je rešitev ista.
 trditev: MAT-SS-3/racionalne-neenacbe#primer3
-besedilo: »Podatki:** $\frac{f}{f_0} = \frac{340}{340 - v}$; hitrost zvoka $340\,\mathrm{m/s}$; pogoj $\frac{f}{f_0} \ge \frac{17}{16}$; $v \ge 0$« -/
+besedilo: »Neenačba je $\frac{17v - 340}{16(340 - v)} \ge 0$. Ničla $v = 20$, pol $v = 340$.« -/
 theorem primer3 (v : ℝ) : (v ≠ 340 ∧ 17 / 16 ≤ 340 / (340 - v)) ↔ v ∈ Ico 20 340 := by
   simp only [mem_Ico]
   constructor
@@ -468,7 +468,7 @@ theorem primer3 (v : ℝ) : (v ≠ 340 ∧ 17 / 16 ≤ 340 / (340 - v)) ↔ v �
 
 /-- Primer 3, korak 5: s pogojem v ≥ 0 je rešitev ista.
 trditev: MAT-SS-3/racionalne-neenacbe#primer3-v-nenegativen
-besedilo: »Neenačba je $\frac{17v - 340}{16(340 - v)} \ge 0$. Ničla $v = 20$, pol $v = 340$.« -/
+besedilo: »Rešitev neenačbe je $[20, 340)$; vsa ta števila so pozitivna, zato pogoj $v \ge 0$ ne spremeni ničesar.« -/
 theorem primer3_v_nenegativen (v : ℝ) :
     (0 ≤ v ∧ v ≠ 340 ∧ 17 / 16 ≤ 340 / (340 - v)) ↔ v ∈ Ico 20 340 := by
   rw [← primer3]
@@ -484,7 +484,7 @@ theorem primer3_pretvorba : (20 : ℝ) * (36 / 10) = 72 := by norm_num
 /-- Primer 3, korak 7: »pomnožena« neenačba 16·340 ≥ 17(340 − v) da v ≥ 20, za v > 340 pa je razmerje
 340/(340 − v) negativno.
 trditev: MAT-SS-3/racionalne-neenacbe#primer3-naivno
-besedilo: »Neenačba je $\frac{17v - 340}{16(340 - v)} \ge 0$. Ničla $v = 20$, pol $v = 340$.« -/
+besedilo: »Neenačba je $\frac{17v - 340}{16(340 - v)} \ge 0$.« -/
 theorem primer3_naivno : (∀ v : ℝ, (16 * 340 ≥ 17 * (340 - v) ↔ 20 ≤ v)) ∧
     (∀ v : ℝ, 340 < v → 340 / (340 - v) < 0) :=
   ⟨fun v => ⟨fun h => by linarith, fun h => by linarith⟩,
@@ -508,7 +508,7 @@ example : (1 : ℝ) / (1 + 2) - 1 / 1 = (1 ^ 2 - 1 - 2) / (1 * (1 + 2)) ∧
 /-- Primer 4, korak 3: predznaka števca (x − 2)(x + 1) in imenovalca x(x + 2) po intervalih:
 +/+, +/−, −/−, −/+, +/+.
 trditev: MAT-SS-3/racionalne-neenacbe#primer4-tabela
-besedilo: »| interval | $\frac{(x - 2)(x + 1)}{x(x + 2)}$ |« -/
+besedilo: »$\frac{x}{x + 2} - \frac{1}{x} = \frac{x^2 - x - 2}{x(x + 2)} > 0$.« -/
 theorem primer4_tabela :
     (∀ x : ℝ, x < -2 → 0 < (x - 2) * (x + 1) ∧ 0 < x * (x + 2)) ∧
     (∀ x : ℝ, -2 < x → x < -1 → 0 < (x - 2) * (x + 1) ∧ x * (x + 2) < 0) ∧
@@ -522,7 +522,7 @@ theorem primer4_tabela :
 /-- Primer 4, premisli (RACUN neenacba): x/(x + 2) > 1/x s pogojema x ≠ 0, x ≠ −2 ↔
 x ∈ (−∞, −2) ∪ (−1, 0) ∪ (2, ∞).
 trditev: MAT-SS-3/racionalne-neenacbe#primer4
-besedilo: »$\frac{x}{x + 2} - \frac{1}{x} = \frac{x^2 - x - 2}{x(x + 2)} > 0$« -/
+besedilo: »Na eno stran in en ulomek: $\frac{x}{x + 2} - \frac{1}{x} = \frac{x^2 - x - 2}{x(x + 2)} > 0$.« -/
 theorem primer4 (x : ℝ) :
     (x ≠ 0 ∧ x ≠ -2 ∧ 1 / x < x / (x + 2)) ↔ x ∈ Iio (-2) ∪ Ioo (-1) 0 ∪ Ioi 2 := by
   simp only [mem_union, mem_Iio, mem_Ioo, mem_Ioi]
@@ -849,7 +849,7 @@ theorem ustno3 (x : ℝ) : (x ≠ 1 ∧ 0 ≤ (x + 2) / (x - 1)) ↔ x ∈ Iic (
 
 /-- Preveri se, vprašanje 1 (RACUN neenacba): (x + 3)/(x − 2) ≤ 0 s pogojem x ≠ 2 ↔ x ∈ [−3, 2).
 trditev: MAT-SS-3/racionalne-neenacbe#preveri1
-besedilo: »(brez računala) Koliko celih števil reši neenačbo $\frac{x + 3}{x - 2} \le 0$?« -/
+besedilo: »Ničla $-3$, pol $2$; ulomek je nepozitiven na $[-3, 2)$.« -/
 theorem preveri1 (x : ℝ) : (x ≠ 2 ∧ (x + 3) / (x - 2) ≤ 0) ↔ x ∈ Ico (-3) 2 := by
   simp only [mem_Ico]
   constructor

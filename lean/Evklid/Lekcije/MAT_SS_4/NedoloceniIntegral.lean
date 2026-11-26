@@ -188,7 +188,7 @@ example :=
 /-- Osnovni integrali, formula ∫ xⁿ dx = x^(n+1)/(n+1) + C za realni eksponent n ≠ −1 in x > 0
 (uporabljeno pri √x = x^(1/2) v primeru 2).
 trditev: MAT-SS-4/nedoloceni-integral#potenca-realna
-besedilo: »| $x^n$ | $\dfrac{x^{n+1}}{n+1} + C$ | $n \ne -1$ |« -/
+besedilo: »$\int x^n\,dx = \frac{x^{n+1}}{n+1} + C$, $n \ne -1$ (na pamet)« -/
 theorem potenca_realna (n : ℝ) (hn : n ≠ -1) (C x : ℝ) (hx : 0 < x) :
     HasDerivAt (fun x : ℝ => x ^ (n + 1) / (n + 1) + C) (x ^ n) x := by
   have hn' : n + 1 ≠ 0 := fun h => hn (by linarith)
@@ -206,12 +206,12 @@ example :=
 
 /-- Premisli »Zakaj pravilo za potence ne velja za n = −1?«: pri n = −1 je imenovalec n + 1 = 0.
 trditev: MAT-SS-4/nedoloceni-integral#n-minus-1
-besedilo: »Zakaj pravilo za potence ne velja za $n = -1$?« -/
+besedilo: »Ker bi v imenovalcu dobili $n + 1 = 0$. Funkcija $x^{-1} = \frac{1}{x}$ ima zato svoje pravilo: integral je $\ln\lvert x\rvert + C$.« -/
 theorem n_minus_1 : (-1 : ℝ) + 1 = 0 := by norm_num
 
 /-- Osnovni integrali: ∫ 1/x dx = ln|x| + C za x ≠ 0.
 trditev: MAT-SS-4/nedoloceni-integral#integral-1-x
-besedilo: »| $\dfrac{1}{x}$ | $\ln\lvert x\rvert + C$ | $x \ne 0$ |« -/
+besedilo: »Funkcija $x^{-1} = \frac{1}{x}$ ima zato svoje pravilo: integral je $\ln\lvert x\rvert + C$.« -/
 theorem integral_1_x (C x : ℝ) (hx : x ≠ 0) : HasDerivAt (fun x : ℝ => log |x| + C) (1 / x) x := by
   simpa using (hasDerivAt_log hx).add_const C
 
@@ -243,19 +243,19 @@ example :=
 
 /-- Osnovni integrali: ∫ eˣ dx = eˣ + C.
 trditev: MAT-SS-4/nedoloceni-integral#integral-exp
-besedilo: »$e^x + C$« -/
+besedilo: »$\int e^x\,dx = e^x + C$« -/
 theorem integral_exp (C x : ℝ) : HasDerivAt (fun x => exp x + C) (exp x) x :=
   (hasDerivAt_exp x).add_const C
 
 /-- Osnovni integrali: ∫ cos x dx = sin x + C.
 trditev: MAT-SS-4/nedoloceni-integral#integral-cos
-besedilo: »| $\cos x$ | $\sin x + C$ | |« -/
+besedilo: »$\int \cos x\,dx = \sin x + C$« -/
 theorem integral_cos (C x : ℝ) : HasDerivAt (fun x => sin x + C) (cos x) x :=
   (hasDerivAt_sin x).add_const C
 
 /-- Osnovni integrali: ∫ sin x dx = −cos x + C.
 trditev: MAT-SS-4/nedoloceni-integral#integral-sin
-besedilo: »| $\sin x$ | $-\cos x + C$ | |« -/
+besedilo: »$\int \sin x\,dx = -\cos x + C$« -/
 theorem integral_sin (C x : ℝ) : HasDerivAt (fun x => -cos x + C) (sin x) x := by
   simpa using ((hasDerivAt_cos x).neg).add_const C
 
@@ -287,7 +287,7 @@ theorem veriga_primer (x : ℝ) :
 /-- Razlaga, pravilo ∫ f(g(x)) g'(x) dx = ∫ f(u) du: če je F primitivna funkcija za f (v točki g(x)),
 je F ∘ g primitivna funkcija za f(g(x)) · g'(x).
 trditev: MAT-SS-4/nedoloceni-integral#nova-spremenljivka
-besedilo: »Simboli.** Funkcija $F$ je **primitivna funkcija** funkcije $f$, če je $F'(x) = f(x)$.« -/
+besedilo: »$\int f\bigl(g(x)\bigr)\,g'(x)\,dx = \int f(u)\,du$« -/
 theorem nova_spremenljivka (F f g g' : ℝ → ℝ) (x : ℝ) (hF : HasDerivAt F (f (g x)) (g x))
     (hg : HasDerivAt g (g' x) x) : HasDerivAt (fun x => F (g x)) (f (g x) * g' x) x :=
   hF.comp x hg
@@ -299,7 +299,7 @@ example : HasDerivAt sin (cos ((fun x : ℝ => x ^ 2) 1)) ((fun x : ℝ => x ^ 2
 /-- Predpostavke trditve `nova_spremenljivka` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
   have w : HasDerivAt sin (cos ((fun x : ℝ => x ^ 2) 1)) ((fun x : ℝ => x ^ 2) 1) ∧ HasDerivAt (fun x : ℝ => x ^ 2) (2 * 1) 1 := ⟨hasDerivAt_sin _, tabela_x2 1⟩
-  nova_spremenljivka (hF := w.1) (hg := w.2)
+  nova_spremenljivka sin cos (fun x => x ^ 2) (fun x => 2 * x) 1 w.1 w.2
 
 /-- Razlaga: ∫ cos(kx) dx = sin(kx)/k + C za k ≠ 0 (odvod sin(kx) je k cos(kx)).
 trditev: MAT-SS-4/nedoloceni-integral#integral-cos-kx
@@ -357,7 +357,7 @@ theorem primer2_preverba (x : ℝ) : 8 / 3 * (3 / 2) * x ^ (1 / 2 : ℝ) = 4 * �
 
 /-- Primer 2, odgovor: za x > 0 je ∫ (4√x − 3 sin x + 2eˣ) dx = (8/3) x√x + 3 cos x + 2eˣ + C.
 trditev: MAT-SS-4/nedoloceni-integral#primer2
-besedilo: »Preverba: $\left(\dfrac{8}{3}x^{3/2}\right)' = \dfrac{8}{3} \cdot \dfrac{3}{2}\,x^{1/2} = 4\sqrt{x}$ ✓, $(3\cos x)' = -3\sin x$ ✓.« -/
+besedilo: »Odgovor: integral je $\dfrac{8}{3}\,x\sqrt{x} + 3\cos x + 2e^x + C$.« -/
 theorem primer2 (C x : ℝ) (hx : 0 < x) :
     HasDerivAt (fun x : ℝ => 8 / 3 * x * √x + 3 * cos x + 2 * exp x + C)
       (4 * √x - 3 * sin x + 2 * exp x) x := by
@@ -387,7 +387,7 @@ theorem primer3_odvod (C t : ℝ) : HasDerivAt (fun t => 2 * sin (3 * t) + C) (6
 
 /-- Primer 3, korak 3: 6 cos u · (1/3) = 2 cos u.
 trditev: MAT-SS-4/nedoloceni-integral#primer3-korak3
-besedilo: »$\int 6\cos u \cdot \dfrac{du}{3} = 2\int \cos u\,du = 2\sin u + C$« -/
+besedilo: »$\int 6\cos u \cdot \dfrac{du}{3} = 2\int \cos u\,du = 2\sin u + C$.« -/
 theorem primer3_korak3 (u : ℝ) : 6 * cos u * (1 / 3) = 2 * cos u := by ring
 
 /-- Primer 3, korak 5: y(0) = 2 sin 0 + C = C, zato iz y(0) = 0 sledi C = 0.
@@ -398,7 +398,7 @@ theorem primer3_C (C : ℝ) : 2 * sin (3 * 0) + C = 0 ↔ C = 0 := by
 
 /-- Primer 3, korak 5: vsaka funkcija y z y'(t) = 6 cos(3t) in y(0) = 0 je y(t) = 2 sin(3t).
 trditev: MAT-SS-4/nedoloceni-integral#primer3-enolicno
-besedilo: »Podatki:** $v(t) = 6\cos(3t)\,\mathrm{mm/s}$, $y(0) = 0\,\mathrm{mm}$, $t_1 = \dfrac{\pi}{6}\,\mathrm{s}$« -/
+besedilo: »Vrnemo se k $t$: $y(t) = 2\sin(3t) + C$.« -/
 theorem primer3_enolicno (y : ℝ → ℝ) (hy : ∀ t, HasDerivAt y (6 * cos (3 * t)) t) (h0 : y 0 = 0) :
     ∀ t, y t = 2 * sin (3 * t) := by
   have h := enolicnost y _ _ 0 hy (primer3_odvod 0) (by rw [h0]; simp)
@@ -529,7 +529,7 @@ theorem matura2_C (C : ℝ) : 1 - 3 + C = 2 ↔ C = 4 := by
 /-- Matura, naloga 2 a): edina funkcija z f'(x) = 3x² − 6x (za vsak x) in f(1) = 2 je
 f(x) = x³ − 3x² + 4.
 trditev: MAT-SS-4/nedoloceni-integral#matura2-f
-besedilo: »a) Iz $f(1) = 2$ sledi $1 - 3 + C = 2$, torej $C = 4$ in $f(x) = x^3 - 3x^2 + 4$.« -/
+besedilo: »$f(x) = \int (3x^2 - 6x)\,dx = x^3 - 3x^2 + C$« -/
 theorem matura2_f (f : ℝ → ℝ) (hf : ∀ x, HasDerivAt f (3 * x ^ 2 - 6 * x) x) (h1 : f 1 = 2) :
     ∀ x, f x = x ^ 3 - 3 * x ^ 2 + 4 := by
   have hd : ∀ x, HasDerivAt (fun x => f x - (x ^ 3 - 3 * x ^ 2 + 0)) 0 x := fun x =>
@@ -592,7 +592,7 @@ theorem matura2_stacionarni (x : ℝ) : 3 * x ^ 2 - 6 * x = 0 ↔ x = 0 ∨ x = 
 
 /-- Matura, naloga 2 c), korak 5 (in vrstici `vrednost`): f(0) = 4 in f(2) = 8 − 12 + 4 = 0.
 trditev: MAT-SS-4/nedoloceni-integral#matura2-vrednosti
-besedilo: »c) Stacionarni točki: $f'(x) = 3x^2 - 6x = 3x(x - 2) = 0$, torej $x = 0$ in $x = 2$; $f(0) = 4$ in $f(2) = 8 - 12 + 4 = 0$.« -/
+besedilo: »$f(0) = 4$ in $f(2) = 8 - 12 + 4 = 0$.« -/
 theorem matura2_vrednosti : (0 : ℝ) ^ 3 - 3 * 0 ^ 2 + 4 = 4 ∧ (2 : ℝ) ^ 3 - 3 * 2 ^ 2 + 4 = 0 := by
   refine ⟨by norm_num, ?_⟩
   calc (2 : ℝ) ^ 3 - 3 * 2 ^ 2 + 4 = 8 - 12 + 4 := by norm_num
@@ -608,7 +608,7 @@ theorem matura2_predznak (x : ℝ) :
 
 /-- Matura, naloga 2 c): f ima v točki (0, 4) lokalni maksimum.
 trditev: MAT-SS-4/nedoloceni-integral#matura2-maks
-besedilo: »Odgovor: a) $f(x) = x^3 - 3x^2 + 4$; b) $x_1 = -1$, $x_2 = 2$ (dvojna ničla); c) lokalni maksimum v točki $(0, 4)$, lokalni minimum v točki $(2, 0)$.« -/
+besedilo: »Zato ima $f$ v točki $(0, 4)$ lokalni maksimum,« -/
 theorem matura2_maks : IsLocalMax (fun x : ℝ => x ^ 3 - 3 * x ^ 2 + 4) 0 := by
   filter_upwards [Iio_mem_nhds (show (0:ℝ) < 3 by norm_num)] with y hy
   simp only [Set.mem_Iio] at hy
@@ -616,7 +616,7 @@ theorem matura2_maks : IsLocalMax (fun x : ℝ => x ^ 3 - 3 * x ^ 2 + 4) 0 := by
 
 /-- Matura, naloga 2 c): f ima v točki (2, 0) lokalni minimum.
 trditev: MAT-SS-4/nedoloceni-integral#matura2-min
-besedilo: »Odgovor: a) $f(x) = x^3 - 3x^2 + 4$; b) $x_1 = -1$, $x_2 = 2$ (dvojna ničla); c) lokalni maksimum v točki $(0, 4)$, lokalni minimum v točki $(2, 0)$.« -/
+besedilo: »Zato ima $f$ v točki $(0, 4)$ lokalni maksimum, v točki $(2, 0)$ pa lokalni minimum; tam se graf dotakne osi $x$, kar se ujema z dvojno ničlo.« -/
 theorem matura2_min : IsLocalMin (fun x : ℝ => x ^ 3 - 3 * x ^ 2 + 4) 2 := by
   filter_upwards [Ioi_mem_nhds (show (-1:ℝ) < 2 by norm_num)] with y hy
   simp only [Set.mem_Ioi] at hy
@@ -792,9 +792,9 @@ example : (∀ t : ℝ, HasDerivAt (fun t : ℝ => 80 * t + 10 * t ^ 2 + 0) (80 
 example :=
   kviz3.2.2 (1 / 4) (fun x => by simpa using kviz3.1 0 x)
 
-end Evklid.Lekcije.MAT_SS_4.NedoloceniIntegral
 /-- Predpostavke trditve `kviz5_enolicno` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
   have w : (∀ t : ℝ, HasDerivAt (fun t : ℝ => 80 * t + 10 * t ^ 2 + 0) (80 + 20 * t) t) ∧ ((80:ℝ) * 0 + 10 * 0 ^ 2 + 0 = 0) := ⟨kviz5.1 0, by norm_num⟩
   kviz5_enolicno (hN := w.1) (h0 := w.2)
 
+end Evklid.Lekcije.MAT_SS_4.NedoloceniIntegral

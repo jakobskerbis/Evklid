@@ -131,7 +131,7 @@ theorem odvisni_iff_razseznost (n : ℕ) (v : Fin n → V) :
 /-- Razlaga 2 in 4: dva vektorja sta linearno odvisna natanko tedaj, ko je eden večkratnik drugega
 (b⃗ = k a⃗ ali a⃗ = k b⃗; za a⃗ ≠ 0⃗ je to b⃗ = k a⃗).
 trditev: MAT-SS-3/vektorji-v-geometriji#dva-odvisna
-besedilo: »2. Kolinearnost.** Vektorja sta **kolinearna**, če ju lahko s premikom postavimo na isto premico. Takrat je eden večkratnik drugega:« -/
+besedilo: »Dva vektorja sta odvisna natanko tedaj,« -/
 theorem dva_odvisna (a b : V) :
     ¬ LinearIndependent ℝ ![a, b] ↔ (∃ k : ℝ, b = k • a) ∨ (∃ k : ℝ, a = k • b) := by
   rw [LinearIndependent.pair_iff]
@@ -270,14 +270,13 @@ example : (1:ℝ) + 2 ≠ 0 := by norm_num
 
 /-- Predpostavke trditve `delilno_razmerje` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
-  have w : (1:ℝ) + 2 ≠ 0 := by norm_num
-  delilno_razmerje (hmn := w)
+  delilno_razmerje (0 : R2) 0 0 1 2 (by norm_num)
 
 /-- Razlaga 5: razpolovišče (m = n) ima r⃗_S = (r⃗_A + r⃗_B)/2; razdalji v normiranem prostoru sta
 |AD| = m/(m + n)|AB| in |DB| = n/(m + n)|AB|, zato je D bližje A (|AD| < |DB|) natanko pri m < n (r⃗_A ima
 večjo utež n).
 trditev: MAT-SS-3/vektorji-v-geometriji#razpolovisce-in-blizina
-besedilo: »Pazi na vrstni red: če je $D$ bližje $A$, ima $\vec r_A$ večjo utež, torej večji koeficient v števcu. Razpolovišče $S$ dobiš pri $m = n$:« -/
+besedilo: »$\vec r_S = \frac{\vec r_A + \vec r_B}{2}$« -/
 theorem razpolovisce_in_blizina {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W] (A B : W) (m n : ℝ)
     (hm : 0 < m) (hn : 0 < n) (hAB : A ≠ B) :
     A + (1 / (1 + 1) : ℝ) • (B - A) = (2:ℝ)⁻¹ • (A + B) ∧
@@ -310,7 +309,7 @@ example :=
 T leži na vseh treh težiščnicah in vsako deli v razmerju 2 : 1 (1·(T − X) = 2·(S_X − T) za vsako oglišče X in
 razpolovišče S_X nasprotne stranice).
 trditev: MAT-SS-3/vektorji-v-geometriji#tezisce
-besedilo: »Delilno razmerje da $\vec r_T = \frac{\vec r_C + 2\vec r_S}{3}$; vstavimo $2\vec r_S = \vec r_A + \vec r_B$:« -/
+besedilo: »Težišče $T$ leži na težiščnici $CS$, kjer je $S$ razpolovišče stranice $AB$, in jo deli v razmerju $CT : TS = 2 : 1$.« -/
 theorem tezisce (A B C : V) :
     (3:ℝ)⁻¹ • (C + (2:ℝ) • ((2:ℝ)⁻¹ • (A + B))) = (3:ℝ)⁻¹ • (A + B + C) ∧
     (1:ℝ) • ((3:ℝ)⁻¹ • (A + B + C) - C) = (2:ℝ) • ((2:ℝ)⁻¹ • (A + B) - (3:ℝ)⁻¹ • (A + B + C)) ∧
@@ -356,7 +355,7 @@ example :=
 
 /-- Razlaga 1: OP⃗ = 2·(2, 1) + 1·(1, 2) = (5, 4) (pot čez (2, 1) in (4, 2)).
 trditev: MAT-SS-3/vektorji-v-geometriji#linearna-kombinacija-mreza
-besedilo: »1. Linearna kombinacija.** Na mreži narišemo vektorja $\vec a = (2, 1)$ in $\vec b = (1, 2)$ z začetkom v izhodišču $O$. Do točke $P(5, 4)$ prideš z dvema korakoma $\vec a$ in enim korakom $\vec b$:« -/
+besedilo: »$y_S = \frac{1 + 4}{2} = 2{,}5$« -/
 theorem linearna_kombinacija_mreza :
     (2:ℝ) • (!₂[2, 1] : R2) + (1:ℝ) • !₂[1, 2] = !₂[5, 4] ∧ (!₂[2, 1] : R2) + !₂[2, 1] = !₂[4, 2] ∧
     (!₂[4, 2] : R2) + !₂[1, 2] = !₂[5, 4] := by
@@ -407,9 +406,7 @@ example : ∃ A B C D : R2, A = !₂[0, 0] ∧ B = !₂[1, 0] ∧ C = !₂[0, 1]
 
 /-- Predpostavke trditve `vzporedni_ne_ista` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
-  have w : ∃ A B C D : R2, A = !₂[0, 0] ∧ B = !₂[1, 0] ∧ C = !₂[0, 1] ∧ D = !₂[1, 1] :=
-    ⟨_, _, _, _, rfl, rfl, rfl, rfl⟩
-  vzporedni_ne_ista (hA := w.choose_spec.choose_spec.choose_spec.choose_spec.1) (hB := w.choose_spec.choose_spec.choose_spec.choose_spec.2.1) (hC := w.choose_spec.choose_spec.choose_spec.choose_spec.2.2.1) (hD := w.choose_spec.choose_spec.choose_spec.choose_spec.2.2.2)
+  vzporedni_ne_ista _ _ _ _ rfl rfl rfl rfl
 
 /-- Razlaga 4: 2·(2, 1) + 1·(−4, −2) = (0, 0), zato sta (2, 1) in (−4, −2) linearno odvisna.
 trditev: MAT-SS-3/vektorji-v-geometriji#primer-odvisna
@@ -798,7 +795,7 @@ theorem kviz5 (p : ℝ) :
 
 /-- Blok RACUN (vrstice `vrednost`, ki niso že v drugih trditvah).
 trditev: MAT-SS-3/vektorji-v-geometriji#racun
-besedilo: »$\overrightarrow{AD} = (7 - 1, 7 - 2) = (6, 5)$. Prva komponenta da $k = \frac{6}{3} = 2$, druga $k = \frac{5}{2} = 2{,}5$. Enega samega $k$ ni, vektorja nista kolinearna.« -/
+besedilo: »$x_S = \frac{1 + 7}{2} = 4$ in $y_S = \frac{1 + 4}{2} = 2{,}5$,« -/
 theorem racun :
     (9:ℝ) / 3 = 3 ∧ (6:ℝ) / 2 = 3 ∧ (6:ℝ) / 3 = 2 ∧ (5:ℝ) / 2 = 2.5 ∧ ((1:ℝ) + 7 + 4) / 3 = 4 ∧
     ((1:ℝ) + 4 + 7) / 3 = 4 ∧ (2 * (1:ℝ) + 7) / 3 = 3 ∧ (2 * (1:ℝ) + 4) / 3 = 2 ∧ ((1:ℝ) + 4) / 2 = 2.5 ∧

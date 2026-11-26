@@ -154,7 +154,7 @@ example : Tendsto (fun x : ℝ => (fun _ => (1 : ℝ)) x / (x - 0) ^ 2) (𝓝[<]
 
 /-- Razlaga, »Stopnja pola«, pol sode stopnje pri g(c) < 0: obe veji gresta v −∞.
 trditev: MAT-SS-3/racionalne-funkcije#pol-soda-stopnja-crtica
-besedilo: »Pol $2$ funkcije $g(x) = \dfrac{1}{(x - 2)^2}$ je sode stopnje, zato gresta veji ob njem v isto smer.« -/
+besedilo: »Pol $2$ funkcije $g(x) = \dfrac{1}{(x - 2)^2}$ je sode stopnje, zato gresta veji ob njem v isto smer. V katero, $+\infty$ ali $-\infty$? Odgovori brez računanja.« -/
 theorem pol_soda_stopnja' {g : ℝ → ℝ} {c : ℝ} {m : ℕ} (hg : ContinuousAt g c) (h0 : g c < 0)
     (hm : Even m) (hm1 : 1 ≤ m) :
     Tendsto (fun x => g x / (x - c) ^ m) (𝓝[<] c) atBot ∧
@@ -195,7 +195,7 @@ example : (5 : ℝ) / 2 = 2 + 1 / 2 := deljenje 5 2 2 1 (by norm_num) (by norm_n
 ostanek R nižjo stopnjo kot Q, gre P(x)/Q(x) − K(x) = R(x)/Q(x) proti 0 v +∞ in v −∞: graf se bliža
 grafu količnika K (poševna asimptota, ko je K stopnje 1).
 trditev: MAT-SS-3/racionalne-funkcije#asimptota-kolicnik
-besedilo: »Ulomek $\frac{r(x)}{q(x)}$ gre za velike $|x|$ proti $0$, zato se graf bliža grafu količnika $k$. Za vodoravno asimptoto zadošča primerjava stopenj:« -/
+besedilo: »Ulomek $\frac{r(x)}{q(x)}$ gre za velike $|x|$ proti $0$, zato se graf bliža grafu količnika $k$.« -/
 theorem asimptota_kolicnik (P Q K R : ℝ[X]) (h : P = Q * K + R) (hdeg : R.degree < Q.degree) :
     Tendsto (fun x => P.eval x / Q.eval x - K.eval x) atTop (𝓝 0) ∧
       Tendsto (fun x => P.eval x / Q.eval x - K.eval x) atBot (𝓝 0) := by
@@ -302,7 +302,7 @@ theorem f₀_definicija (x : ℝ) : x + 3 ≠ 0 ↔ x ≠ -3 := by
 
 /-- Razlaga, »Ničla«: za x ≠ −3 je f(x) = 0 natanko pri x = 0.
 trditev: MAT-SS-3/racionalne-funkcije#f0-nicla
-besedilo: »Kje ni definirana.* Z ničlo ne smemo deliti, zato mora biti $x + 3 \ne 0$, torej $x \ne -3$.« -/
+besedilo: »Kje ni definirana.* Z ničlo ne smemo deliti, zato mora biti $x + 3 \ne 0$, torej $x \ne -3$. Definicijsko območje je $\mathbb{R} \setminus \{-3\}$.« -/
 theorem f₀_nicla (x : ℝ) (hx : x ≠ -3) : f₀ x = 0 ↔ x = 0 := by
   have : x + 3 ≠ 0 := (f₀_definicija x).2 hx
   rw [f₀, nicle_iz_stevca _ _ this]; constructor <;> intro h <;> linarith
@@ -312,7 +312,7 @@ example : f₀ 0 = 0 ↔ (0 : ℝ) = 0 := f₀_nicla 0 (by norm_num)
 
 /-- Razlaga, tabela blizu −3: x + 3 in f(x) pri x = −3,1; −3,01; −2,99; −2,9.
 trditev: MAT-SS-3/racionalne-funkcije#f0-tabela
-besedilo: »| $-2{,}99$ | $0{,}01$ | $-1794$ |« -/
+besedilo: »| $-3{,}1$ | $-0{,}1$ | $186$ |« -/
 theorem f₀_tabela :
     ((-31 / 10 : ℝ) + 3 = -1 / 10 ∧ f₀ (-31 / 10) = 186) ∧
     ((-301 / 100 : ℝ) + 3 = -1 / 100 ∧ f₀ (-301 / 100) = 1806) ∧
@@ -481,13 +481,13 @@ noncomputable def f₁ (x : ℝ) : ℝ := (2 * x - 4) / (x + 1)
 
 /-- Primer 1, korak 1–2: x + 1 ≠ 0 ↔ x ≠ −1; števec je 2(x − 2).
 trditev: MAT-SS-3/racionalne-funkcije#f1-korak12
-besedilo: »$f(x) = \dfrac{2x - 4}{x + 1}$« -/
+besedilo: »Imenovalec: $x + 1 \ne 0$, torej $x \ne -1$; $D_f = \mathbb{R} \setminus \{-1\}$.« -/
 theorem f₁_korak12 (x : ℝ) : (x + 1 ≠ 0 ↔ x ≠ -1) ∧ 2 * x - 4 = 2 * (x - 2) := by
   refine ⟨by constructor <;> intro h e <;> apply h <;> linarith, by ring⟩
 
 /-- Primer 1, korak 3: za x ≠ −1 je f(x) = 0 natanko pri x = 2.
 trditev: MAT-SS-3/racionalne-funkcije#f1-nicla
-besedilo: »Ničla: $2x - 4 = 0$, $x = 2$. Pol: $x = -1$, stopnje $1$, zato veji ob njem na nasprotnih straneh.« -/
+besedilo: »Odgovor: leva veja leži nad $y = 2$ in se ob $x = -1$ dviga v $+\infty$.« -/
 theorem f₁_nicla (x : ℝ) (hx : x ≠ -1) : f₁ x = 0 ↔ x = 2 := by
   have : x + 1 ≠ 0 := ((f₁_korak12 x).1).2 hx
   rw [f₁, nicle_iz_stevca _ _ this]; constructor <;> intro h <;> linarith
@@ -585,7 +585,7 @@ theorem f₂_luknja : Tendsto f₂ (𝓝[≠] 2) (𝓝 (4 / 3)) := by
 
 /-- Primer 2, korak 4: ničla x = −2 (pogoji x ≠ 2, x ≠ −1).
 trditev: MAT-SS-3/racionalne-funkcije#f2-nicla
-besedilo: »Definicijsko območje: $x \ne 2$ in $x \ne -1$, ker sta to ničli imenovalca.« -/
+besedilo: »Krajšanje: $f(x) = \dfrac{x + 2}{x + 1}$ za $x \ne 2$.« -/
 theorem f₂_nicla (x : ℝ) (h2 : x ≠ 2) (h1 : x ≠ -1) : f₂ x = 0 ↔ x = -2 := by
   have b : x + 1 ≠ 0 := fun e => h1 (by linarith)
   rw [f₂_okrajsano x h2 h1, nicle_iz_stevca _ _ b]; constructor <;> intro h <;> linarith
@@ -781,7 +781,7 @@ theorem primer4 (x : ℝ) :
 /-- Primer 4, korak 1 in 5: x² − 1 = (x − 1)(x + 1), x² − x − 2 = (x − 2)(x + 1) ima rešitvi −1 in 2
 (RACUN: resi x^2-x-2=0).
 trditev: MAT-SS-3/racionalne-funkcije#primer4-kvadratna
-besedilo: »Reši enačbo $\dfrac{x}{x - 1} - \dfrac{2}{x + 1} = \dfrac{4}{x^2 - 1}$.« -/
+besedilo: »Razcep: $x^2 - 4 = (x - 2)(x + 2)$ in $x^2 - x - 2 = (x - 2)(x + 1)$.« -/
 theorem primer4_kvadratna (x : ℝ) : x ^ 2 - 1 = (x - 1) * (x + 1) ∧
     (x ^ 2 - x - 2 = 0 ↔ x = -1 ∨ x = 2) := by
   refine ⟨by ring, ?_⟩
@@ -999,7 +999,7 @@ theorem trak : Tendsto (fun v : ℝ => 12 / (v - 3)) (𝓝[>] 3) atTop := by
 /-- Analogija s taksijem (in Preveri se, vprašanje 4): cena na km (4 + 0,8x)/x je pri 100 km 0,84 €, pri
 1 km 4,80 €, nikoli ne pade pod 0,80 € in se 0,80 € bliža (asimptota y = 0,8).
 trditev: MAT-SS-3/racionalne-funkcije#taksi
-besedilo: »Taksi zaračuna $4\,€$ ob vstopu in $0{,}80\,€$ na kilometer. Cena na kilometer za vožnjo $x$ kilometrov je $\dfrac{4 + 0{,}8x}{x}$ (v evrih). Kateri vrednosti se bliža pri zelo dolgih vožnjah?« -/
+besedilo: »Funkcija $\frac{4 + 0{,}8x}{x}$ ima asimptoto $y = 0{,}8$.« -/
 theorem taksi : (4 + 8 / 10 * 100 : ℝ) / 100 = 84 / 100 ∧ (4 + 8 / 10 * 1 : ℝ) / 1 = 48 / 10 ∧
     (∀ x : ℝ, 0 < x → 8 / 10 < (4 + 8 / 10 * x) / x) ∧
     Tendsto (fun x : ℝ => (4 + 8 / 10 * x) / x) atTop (𝓝 (8 / 10)) := by

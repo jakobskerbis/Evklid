@@ -64,11 +64,11 @@ example : ∃ D : ℕ → ℝ, D 0 = 4000 ∧ ∀ k, D (k + 1) = D k * 1.05 - 11
     fun k => by simp only [geom_sum_succ, pow_succ]; ring⟩
 
 /-- Predpostavke trditve `dolg_vsota` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ D : ℕ → ℝ, D 0 = 4000 ∧ ∀ k, D (k + 1) = D k * 1.05 - 1128 :=
     ⟨fun k => 4000 * 1.05 ^ k - 1128 * ∑ i ∈ range k, (1.05 : ℝ) ^ i, by simp,
       fun k => by simp only [geom_sum_succ, pow_succ]; ring⟩
-  dolg_vsota (h0 := w.choose_spec.1) (h := w.choose_spec.2)
+  (fun _ => trivial) (dolg_vsota (D := w.choose) (h0 := w.choose_spec.1) (h := w.choose_spec.2))
 
 /-- Razlaga 2 (in Povzetek, Primer 4): Dₙ = G₀rⁿ − a(rⁿ − 1)/(r − 1) za r ≠ 1.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#dolg
@@ -162,7 +162,7 @@ example :=
 
 /-- Razlaga 3: brez obrokov bi dolg narasel na 4000·1,05⁴ = 4862,025 ≈ 4862,03 €.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#brez-obrokov
-besedilo: »Brez obrokov bi dolg narasel na $4000 \cdot 1{,}05^4 \approx 4862{,}03$ €:« -/
+besedilo: »Brez obrokov bi dolg narasel na $4000 \cdot 1{,}05^4 \approx 4862{,}03$ €: to je vrednost posojila ob koncu četrtega leta, s katero primerjamo vrednost vseh štirih obrokov ob koncu četrtega leta.« -/
 theorem brez_obrokov : (4000 : ℝ) * 1.05 ^ 4 = 4862.025 ∧ |(4862.025 : ℝ) - 4862.03| ≤ 0.005 := by
   norm_num [abs_le]
 
@@ -200,15 +200,15 @@ example : ∃ D : ℕ → ℝ, ∀ k, D (k + 1) = D k * 1.05 - 1128 :=
     fun k => by simp only [geom_sum_succ, pow_succ]; ring⟩
 
 /-- Predpostavke trditve `razdolznina_geometrijska` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ D : ℕ → ℝ, ∀ k, D (k + 1) = D k * 1.05 - 1128 :=
     ⟨fun k => 4000 * 1.05 ^ k - 1128 * ∑ i ∈ range k, (1.05 : ℝ) ^ i,
       fun k => by simp only [geom_sum_succ, pow_succ]; ring⟩
-  razdolznina_geometrijska (h := w.choose_spec)
+  (fun _ => trivial) (razdolznina_geometrijska (D := w.choose) (h := w.choose_spec))
 
 /-- Razlaga 5: vsota razdolžnin (Dₖ − Dₖ₊₁) v n letih je D₀ − Dₙ; ko je Dₙ = 0, je to ravno posojilo.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#vsota-razdolznin
-besedilo: »Vsota razdolžnin je ravno posojilo:« -/
+besedilo: »Vsota razdolžnin je ravno posojilo: $928{,}05 + 974{,}45 + 1023{,}17 + 1074{,}33 = 4000$.« -/
 theorem vsota_razdolznin (D : ℕ → ℝ) (n : ℕ) (hn : D n = 0) :
     ∑ k ∈ range n, (D k - D (k + 1)) = D 0 := by
   have : ∀ m, ∑ k ∈ range m, (D k - D (k + 1)) = D 0 - D m := by
@@ -222,9 +222,9 @@ theorem vsota_razdolznin (D : ℕ → ℝ) (n : ℕ) (hn : D n = 0) :
 example : ∃ D : ℕ → ℝ, D 1 = 0 := ⟨fun k => 1 - k, by norm_num⟩
 
 /-- Predpostavke trditve `vsota_razdolznin` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ D : ℕ → ℝ, D 1 = 0 := ⟨fun k => 1 - k, by norm_num⟩
-  vsota_razdolznin (hn := w.choose_spec)
+  (fun _ => trivial) (vsota_razdolznin (D := w.choose) (hn := w.choose_spec))
 
 /-- Razlaga 5: zadnja razdolžnina je enaka ostanku pred zadnjim letom: iz 0 = Dₙ₋₁ − Rₙ sledi Rₙ = Dₙ₋₁.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#zadnja-razdolznina
@@ -234,7 +234,7 @@ theorem zadnja_razdolznina (Dp R : ℝ) : Dp - R = 0 ↔ R = Dp := by
 
 /-- Razlaga 5, tabela za teleskop (a = 1128,05, zaokroženo na cente): vrstice 1–4.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#nacrt-teleskop
-besedilo: »Za teleskop ($a = 1128{,}05$ € v vsakem letu, zneski v evrih) so v vrstici leta $k$ obresti $o_k$, razdolžnina $R_k$ in ostanek $D_k$:« -/
+besedilo: »Za teleskop ($a = 1128{,}05$ € v vsakem letu,« -/
 theorem nacrt_teleskop :
     (4000 : ℝ) * 0.05 = 200 ∧ (1128.05 : ℝ) - 200 = 928.05 ∧ (4000 : ℝ) - 928.05 = 3071.95 ∧
     |(3071.95 : ℝ) * 0.05 - 153.60| < 0.005 ∧ (1128.05 : ℝ) - 153.60 = 974.45 ∧
@@ -316,7 +316,7 @@ theorem primer3 : (1.06 : ℝ) ^ 5 = 1.3382255776 ∧
 
 /-- Primer 4, podatek: anuiteta za 3200 €, 6 %, 5 let je 3200·1,06⁵·0,06/(1,06⁵ − 1) ≈ 759,67.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#primer4-anuiteta
-besedilo: »Podatki:** $G_0 = 3200$ €, $p = 6\,\%$, $n = 5$, $a = 759{,}67$ €, plačane so $3$ anuitete« -/
+besedilo: »Tri plačane anuitete ob istem trenutku: $759{,}67 \cdot \dfrac{0{,}191016}{0{,}06} \approx 2418{,}4854$.« -/
 theorem primer4_anuiteta : |(3200 : ℝ) * (1.06 ^ 5 * 0.06 / (1.06 ^ 5 - 1)) - 759.67| < 0.005 := by
   norm_num [abs_lt]
 
@@ -430,7 +430,7 @@ theorem kviz4 : (1210 : ℝ) / 1.1 + 1210 / 1.21 = 1100 + 1000 ∧ (1100 : ℝ) 
 /-- Preveri se 4 (tudi kot rešitev enačbe): posojilo G₀ z dvema anuitetama 1210 € pri 10 % je natanko
 2100 €: G₀·1,1² − 1210·1,1 − 1210 = 0 ⟺ G₀ = 2100.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#kviz4-enacba
-besedilo: »$\frac{1210}{1{,}1} + \frac{1210}{1{,}21} = 1100 + 1000 = 2100$« -/
+besedilo: »$\frac{1210}{1{,}1} + \frac{1210}{1{,}21} = 1100 + 1000 = 2100$ €.« -/
 theorem kviz4_enacba (G₀ : ℝ) : G₀ * 1.1 ^ 2 - 1210 * 1.1 - 1210 = 0 ↔ G₀ = 2100 := by
   constructor
   · intro h; norm_num at h; linarith
@@ -446,10 +446,10 @@ theorem kviz5 : |(1100 : ℝ) / 1.05 + 1100 / 1.05 ^ 2 + 1100 / 1.05 ^ 3 - 2995.
 /-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
 
 /-- Predpostavke trditve `dolg` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ D : ℕ → ℝ, D 0 = 4000 ∧ ∀ k, D (k + 1) = D k * 1.05 - 1128 :=
     ⟨fun k => 4000 * 1.05 ^ k - 1128 * ∑ i ∈ range k, (1.05 : ℝ) ^ i, by simp,
       fun k => by simp only [geom_sum_succ, pow_succ]; ring⟩
-  dolg (hr := (by norm_num : (1.05:ℝ) ≠ 1)) (h0 := w.choose_spec.1) (h := w.choose_spec.2)
+  (fun _ => trivial) (dolg (D := w.choose) (hr := (by norm_num : (1.05:ℝ) ≠ 1)) (h0 := w.choose_spec.1) (h := w.choose_spec.2))
 
 end Evklid.Lekcije.MAT_SS_4.AnuiteteInAmortizacijskiNacrt

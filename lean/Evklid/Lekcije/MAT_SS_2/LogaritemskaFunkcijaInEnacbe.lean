@@ -162,7 +162,7 @@ example :=
 
 /-- Razlaga 3 (Povzetek): zaloga vrednosti logₐ na (0, ∞) je ℝ: za vsak y obstaja x > 0 z logₐ x = y.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#zaloga
-besedilo: »Njena **zaloga vrednosti** je $Z_f = \mathbb{R}$:« -/
+besedilo: »Njena **zaloga vrednosti** je $Z_f = \mathbb{R}$: logaritem je lahko poljubno realno število.« -/
 theorem zaloga (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (y : ℝ) : ∃ x : ℝ, 0 < x ∧ Real.logb a x = y :=
   ⟨a ^ y, Real.rpow_pos_of_pos ha y, log_pot a y ha ha1⟩
 
@@ -406,7 +406,7 @@ theorem definicijsko (x : ℝ) : (0 < 6 - 2 * x ↔ x < 3) ∧ x ^ 2 - x - 6 = (
 /-- Razlaga 7 (Povzetek, Ponovitev): za a > 0, a ≠ 1 in A, B > 0: logₐ A = c ⟺ A = a^c,
 logₐ A = logₐ B ⟺ A = B, logₐ A + logₐ B = logₐ(A·B).
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#tipi
-besedilo: »$\log_a A + \log_a B = \log_a (A \cdot B)$« -/
+besedilo: »$\log_a A + \log_a B = \log_a (A \cdot B)$; $\;\log_a C = c \iff C = a^c$« -/
 theorem tipi (a A B c : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hA : 0 < A) (hB : 0 < B) :
     (Real.logb a A = c ↔ A = a ^ c) ∧ (Real.logb a A = Real.logb a B ↔ A = B) ∧
     Real.logb a A + Real.logb a B = Real.logb a (A * B) := by
@@ -476,12 +476,12 @@ theorem rast_tabela (x : ℝ) (hx : 0 < x) :
 /-- Predpostavke trditve `rast_tabela` se dajo izpolniti (x = 1). -/
 example : (0 : ℝ) < 1 := by norm_num
 
-set_option exponentiation.threshold 1100 in
 /-- Predpostavke trditve `rast_tabela` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
   have w : (0 : ℝ) < 1 := by norm_num
   rast_tabela (hx := w)
 
+set_option exponentiation.threshold 1100 in
 /-- Razlaga 9 in RAČUN: 2ˣ = 1000 ⟺ x = log₂ 1000 ≈ 9,97; log₂ x = 1000 ⟺ x = 2¹⁰⁰⁰ (x > 0), ki ima 302
 števki (10³⁰¹ ≤ 2¹⁰⁰⁰ < 10³⁰²); 1000·log 2 ≈ 301,03; pri x = 2²⁰ je log₂ x = 20, √x = 1024.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#rast-stevila
@@ -572,7 +572,7 @@ theorem primer1 :
 ⟺ log₂((x + 3)(x − 1)) = 5 ⟺ (x + 3)(x − 1) = 2⁵ = 32 ⟺ x² + 2x − 35 = 0 ⟺ (x + 7)(x − 5) = 0
 ⟺ x = 5 (x = −7 ne ustreza pogoju).
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#primer2
-besedilo: »Razcepimo: $(x + 7)(x - 5) = 0$, zato je $x_1 = 5$ in $x_2 = -7$.« -/
+besedilo: »Odgovor: enačba ima eno rešitev, $x = 5$.« -/
 theorem primer2 (x : ℝ) :
     (0 < x + 3 ∧ 0 < x - 1 ∧ Real.logb 2 (x + 3) + Real.logb 2 (x - 1) = 5) ↔ x = 5 := by
   constructor
@@ -1070,9 +1070,9 @@ example : (0 : ℝ) < 1 := by norm_num
 example :=
   kviz7.2 1024 (by norm_num)
 
-end Evklid.Lekcije.MAT_SS_2.LogaritemskaFunkcijaInEnacbe
 /-- Predpostavke trditve `racun_osnove` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
   have w : (0 : ℝ) < 1 := by norm_num
   racun_osnove (hx := w)
 
+end Evklid.Lekcije.MAT_SS_2.LogaritemskaFunkcijaInEnacbe

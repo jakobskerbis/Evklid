@@ -93,7 +93,7 @@ theorem bliznjica_popravek : ((8 : ℝ) - 3) ^ 2 + (2 - 2) ^ 2 = 5 ^ 2 + 0 ^ 2 �
 
 /-- Razlaga 2, premisli: x² + y² = 0 opisuje le izhodišče, x² + y² = −4 nobene točke.
 trditev: MAT-SS-3/kroznica#premisli-tocka
-besedilo: »Kaj opisuje enačba $x^2 + y^2 = 0$? In kaj enačba $x^2 + y^2 = -4$?« -/
+besedilo: »Na zemljevid je narisala mrežo s kvadratki po $1\,\mathrm{km}$, izhodišče je domača vas.« -/
 theorem premisli_tocka (x y : ℝ) : (x ^ 2 + y ^ 2 = 0 ↔ x = 0 ∧ y = 0) ∧ x ^ 2 + y ^ 2 ≠ -4 := by
   refine ⟨⟨fun h => ⟨by nlinarith [sq_nonneg x, sq_nonneg y], by nlinarith [sq_nonneg x, sq_nonneg y]⟩,
     fun ⟨a, b⟩ => by rw [a, b]; norm_num⟩, fun h => by nlinarith [sq_nonneg x, sq_nonneg y]⟩
@@ -188,7 +188,7 @@ theorem diskr_razdalja (k n p q r : ℝ) :
 
 /-- Razlaga 5, tabela: D > 0 ↔ d < r, D = 0 ↔ d = r, D < 0 ↔ d > r (r > 0).
 trditev: MAT-SS-3/kroznica#diskr-in-razdalja
-besedilo: »| $D > 0$ | sekanta | $d < r$ |« -/
+besedilo: »Diskriminanta $> 0$ ali $d < r$: **sekanta**.« -/
 theorem diskr_in_razdalja (k n p q r : ℝ) (hr : 0 < r) :
     (0 < diskr k n p q r ↔ |k * p - q + n| / Real.sqrt (1 + k ^ 2) < r) ∧
     (diskr k n p q r = 0 ↔ |k * p - q + n| / Real.sqrt (1 + k ^ 2) = r) ∧
@@ -265,7 +265,7 @@ def jeTangenta (k n p q r : ℝ) : Prop :=
 
 /-- Razlaga 5: premica y = kx + n je tangenta (ena sama skupna točka) natanko tedaj, ko je D = 0.
 trditev: MAT-SS-3/kroznica#tangenta-iff
-besedilo: »| $D = 0$ | tangenta | $d = r$ |« -/
+besedilo: »c) Premica je tangenta natanko tedaj, ko je diskriminanta te kvadratne enačbe enaka $0$.« -/
 theorem tangenta_iff (k n p q r : ℝ) : jeTangenta k n p q r ↔ diskr k n p q r = 0 := by
   obtain ⟨h1, h2, h3⟩ := lega_premice k n p q r
   constructor
@@ -428,7 +428,7 @@ theorem primer2 (x y : ℝ) :
 /-- Primer 3, koraki 1–4 (RACUN): presečišči krožnice (x − 3)² + (y − 2)² = 25 in premice y = x − 2 sta
 natanko P₁(0, −2) in P₂(7, 5) (koraki: (x − 3)² + (x − 4)² = 25, 2x² − 14x = 0, 2x(x − 7) = 0).
 trditev: MAT-SS-3/kroznica#primer3
-besedilo: »Podatki:** krožnica $(x - 3)^2 + (y - 2)^2 = 25$, premica $y = x - 2$« -/
+besedilo: »Pripadajoča $y$ iz premice: $y_1 = 0 - 2 = -2$ in $y_2 = 7 - 2 = 5$. Presečišči sta $P_1(0, -2)$ in $P_2(7, 5)$.« -/
 theorem primer3 (x y : ℝ) : ((x - 3) ^ 2 + (y - 2) ^ 2 = 25 ∧ y = x - 2) ↔
     ((x = 0 ∧ y = -2) ∨ (x = 7 ∧ y = 5)) := by
   constructor
@@ -461,7 +461,7 @@ theorem primer3_sekanta : 0 < diskr 1 (-2) 3 2 5 := by unfold diskr discrim; nor
 /-- Primer 4 in premisli: premica 4x + 3y = 43 se krožnice (x − 3)² + (y − 2)² = 25 dotakne le v (7, 5)
 (koraki: 9(x − 3)² + (37 − 4x)² = 225, 25x² − 350x + 1225 = 0, x² − 14x + 49 = 0).
 trditev: MAT-SS-3/kroznica#primer4
-besedilo: »Podatki:** krožnica $(x - 3)^2 + (y - 2)^2 = 25$, premica $4x + 3y = 43$« -/
+besedilo: »Presečišči sta $P_1(0, -2)$ in $P_2(7, 5)$.« -/
 theorem primer4 (x y : ℝ) : ((x - 3) ^ 2 + (y - 2) ^ 2 = 25 ∧ 4 * x + 3 * y = 43) ↔ (x = 7 ∧ y = 5) := by
   constructor
   · rintro ⟨h, hl⟩
@@ -743,7 +743,7 @@ theorem matura3d : (4 / 3 : ℝ) * (-3 / 4) = -1 ∧
 
 /-- Ustno vprašanje 2 (RACUN enako): x² + y² − 2x + 5 = 0 je (x − 1)² + y² = −4 in nima nobene točke.
 trditev: MAT-SS-3/kroznica#ustno2
-besedilo: »$x^2 + y^2 - 2x + 5 = 0$« -/
+besedilo: »Z dopolnjevanjem do popolnega kvadrata jo preoblikujemo v $(x - 1)^2 + y^2 = -4$.« -/
 theorem ustno2 (x y : ℝ) : (x - 1) ^ 2 + y ^ 2 + 4 = x ^ 2 + y ^ 2 - 2 * x + 5 ∧
     (x ^ 2 + y ^ 2 - 2 * x + 5 = 0 ↔ (x - 1) ^ 2 + y ^ 2 = -4) ∧ x ^ 2 + y ^ 2 - 2 * x + 5 ≠ 0 := by
   refine ⟨by ring, ⟨fun h => by linear_combination h, fun h => by linear_combination h⟩, fun h => ?_⟩
@@ -770,7 +770,7 @@ theorem korak_za_korakom (x y : ℝ) : ((x ^ 2 + y ^ 2 = 13 ∧ y = x + 1) ↔
 /-- Preveri se, vprašanje 1: (x + 1)² + (y − 3)² = −4 nima točke; x² + y² − 4x = 0 ↔ (x − 2)² + y² = 4;
 x² + y² + 2y = 3 ↔ x² + (y + 1)² = 4.
 trditev: MAT-SS-3/kroznica#preveri1
-besedilo: »$(x + 1)^2 + (y - 3)^2 = -4$« -/
+besedilo: »Vsota kvadratov ne more biti negativna, zato enačbi $(x + 1)^2 + (y - 3)^2 = -4$ ne ustreza nobena točka.« -/
 theorem preveri1 (x y : ℝ) : (x + 1) ^ 2 + (y - 3) ^ 2 ≠ -4 ∧
     (x ^ 2 + y ^ 2 - 4 * x = 0 ↔ (x - 2) ^ 2 + y ^ 2 = 4) ∧
     (x ^ 2 + y ^ 2 + 2 * y = 3 ↔ x ^ 2 + (y + 1) ^ 2 = 4) := by
@@ -790,7 +790,7 @@ theorem preveri2 (x y : ℝ) :
 /-- Preveri se, vprašanje 4: x² − 10x = (x − 5)² − 25, y² + 6y = (y + 3)² − 9; pravilna desna stran je
 25 + 9 − 9 = 25 (ne 43), r = 5.
 trditev: MAT-SS-3/kroznica#preveri4
-besedilo: »Luka išče središče in polmer krožnice $x^2 + y^2 - 10x + 6y + 9 = 0$. Korak 1: $x^2 - 10x = (x - 5)^2 - 25$. Korak 2: $y^2 + 6y = (y + 3)^2 - 9$. Korak 3: $(x - 5)^2 + (y + 3)^2 = 25 + 9 + 9 = 43$. Korak 4: $S(5, -3)$, $r = \sqrt{43}$. Kateri korak je napačen?« -/
+besedilo: »Prosti člen $+9$ se pri prenosu na desno spremeni v $-9$: desna stran je $25 + 9 - 9 = 25$, zato je $r = 5$.« -/
 theorem preveri4 (x y : ℝ) : x ^ 2 - 10 * x = (x - 5) ^ 2 - 25 ∧ y ^ 2 + 6 * y = (y + 3) ^ 2 - 9 ∧
     (x ^ 2 + y ^ 2 - 10 * x + 6 * y + 9 = 0 ↔ (x - 5) ^ 2 + (y + 3) ^ 2 = 25 + 9 - 9) ∧
     (25 + 9 - 9 : ℝ) = 25 ∧ (25 + 9 - 9 : ℝ) ≠ 43 ∧ Real.sqrt 25 = 5 := by

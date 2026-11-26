@@ -41,7 +41,7 @@ theorem re_in_im (a b : ℝ) : ((a:ℂ) + b * I).re = a ∧ ((a:ℂ) + b * I).im
 
 /-- Razlaga 1: tabela – točke 3 + 4i, −2 − i, 5, 3i imajo koordinati (3, 4), (−2, −1), (5, 0), (0, 3).
 trditev: MAT-SS-2/kompleksna-stevila#tabela-tock
-besedilo: »$\dfrac{3 + 4i}{1 - 2i} = \dfrac{-5 + 10i}{5} = -1 + 2i$« -/
+besedilo: »| $3$ vzhodno, $4$ severno | $3 + 4i$ |« -/
 theorem tabela_tock : ((3 + 4 * I : ℂ).re = 3 ∧ (3 + 4 * I : ℂ).im = 4) ∧ ((-2 - I : ℂ).re = -2 ∧ (-2 - I : ℂ).im = -1) ∧
     ((5 : ℂ).re = 5 ∧ (5 : ℂ).im = 0) ∧ ((3 * I : ℂ).re = 0 ∧ (3 * I : ℂ).im = 3) := by
   simp
@@ -62,7 +62,7 @@ theorem enakost (a b c d : ℝ) : (a:ℂ) + b * I = c + d * I ↔ a = c ∧ b = 
 
 /-- Razlaga 2: 1 · i = i, i · i = i² = −1.
 trditev: MAT-SS-2/kompleksna-stevila#i-kvadrat
-besedilo: »$$i^2 = -1$$« -/
+besedilo: »Dva zasuka sta $i \cdot i$, rezultat pa je $-1$:« -/
 theorem i_kvadrat : (1:ℂ) * I = I ∧ I * I = -1 ∧ I ^ 2 = -1 := ⟨one_mul I, I_mul_I, I_sq⟩
 
 /-- Razlaga 2: i ni realno število (kvadrat realnega števila je nenegativen, i² = −1).
@@ -138,7 +138,7 @@ theorem zasuk (a b : ℝ) : I * ((a:ℂ) + b * I) = (-b : ℝ) + a * I ∧ ‖I 
 
 /-- Razlaga 5: z̄ = a − bi.
 trditev: MAT-SS-2/kompleksna-stevila#konjugirano
-besedilo: »$$z \cdot \bar{z} = (a + bi)(a - bi) = a^2 - b^2 i^2$$« -/
+besedilo: »$\bar{z} = a - bi$« -/
 theorem konjugirano (a b : ℝ) : conj ((a:ℂ) + b * I) = a - b * I := by simp; ring
 
 /-- Razlaga 5: 3 + 4i → 3 − 4i; conj(3 + 2i) = 3 − 2i, conj(−4i) = 4i, conj 5 = 5.
@@ -349,7 +349,7 @@ example :=
 /-- Razlaga 8: kvadratna enačba ax² + bx + c = 0 z realnimi koeficienti (a ≠ 0) nima realne rešitve natanko
 tedaj, ko je D = b² − 4ac < 0 (posebej x² + px + q: natanko tedaj, ko je p² − 4q < 0).
 trditev: MAT-SS-2/kompleksna-stevila#brez-realne
-besedilo: »(brez računala) Kvadratna enačba $x^2 + px + q = 0$ z realnima koeficientoma $p$ in $q$ ima rešitev $x_1 = 2 + 5i$.« -/
+besedilo: »Kvadratna enačba z realnimi koeficienti in negativno diskriminanto ima vedno dve konjugirani kompleksni rešitvi.« -/
 theorem brez_realne (a b c : ℝ) (ha : a ≠ 0) : (¬ ∃ x : ℝ, a * x ^ 2 + b * x + c = 0) ↔ b ^ 2 - 4 * a * c < 0 := by
   constructor
   · intro h
@@ -373,7 +373,7 @@ example :=
 
 /-- Razlaga 8: x² + px + q = 0 nima realne rešitve natanko tedaj, ko je p² − 4q < 0.
 trditev: MAT-SS-2/kompleksna-stevila#brez-realne-pq
-besedilo: »Ker je $(x - 3)^2 = x^2 - 6x + 9$, enačbo $x^2 - 6x + 13 = 0$ zapišemo kot $(x - 3)^2 + 4 = 0$, torej $(x - 3)^2 = -4$.« -/
+besedilo: »enačbo $x^2 - 6x + 13 = 0$ zapišemo kot $(x - 3)^2 + 4 = 0$,« -/
 theorem brez_realne_pq (p q : ℝ) : (¬ ∃ x : ℝ, x ^ 2 + p * x + q = 0) ↔ p ^ 2 - 4 * q < 0 := by
   have := brez_realne 1 p q one_ne_zero; simp only [one_mul, mul_one] at this; exact this
 
@@ -643,7 +643,7 @@ theorem preveri3 : (1 - 2 * I) * (1 + 2 * I) = (1 - 4 * I ^ 2 : ℂ) ∧ (1 - 4 
 
 /-- Preveri se, 4: (2 + 3i)(1 − i) = 2 − 2i + 3i − 3i² = 2 + i − 3i² = 2 + i + 3 = 5 + i; korak (3) 2 + i − 3 je napačen.
 trditev: MAT-SS-2/kompleksna-stevila#preveri4
-besedilo: »Učenec računa $(2 + 3i)(1 - i)$ v korakih: (1) $2 - 2i + 3i - 3i^2$, (2) $2 + i - 3i^2$, (3) $2 + i - 3$, (4) $-1 + i$. V katerem koraku je napaka?« -/
+besedilo: »Ker je $i^2 = -1$, je $-3i^2 = +3$. Pravilno je $2 + i + 3 = 5 + i$.« -/
 theorem preveri4 : (2 + 3 * I) * (1 - I) = (2 - 2 * I + 3 * I - 3 * I ^ 2 : ℂ) ∧
     (2 - 2 * I + 3 * I - 3 * I ^ 2 : ℂ) = 2 + I - 3 * I ^ 2 ∧ (2 + I - 3 * I ^ 2 : ℂ) = 2 + I + 3 ∧
     (2 + I + 3 : ℂ) = 5 + I ∧ (2 + I - 3 * I ^ 2 : ℂ) ≠ 2 + I - 3 := by
@@ -717,7 +717,7 @@ example :=
 (3 + 2i)² − 6(3 + 2i) + 13 = 0; (3i)² = −9; (x − 3 − 2i)(x − 3 + 2i) = x² − 6x + 13; (2 + 3i) − (4 − i) = −2 + 4i;
 1/(1 − 2i) = 1/5 + 2i/5; (x − 2 − 5i)(x − 2 + 5i) = x² − 4x + 29.
 trditev: MAT-SS-2/kompleksna-stevila#racun
-besedilo: »Ker je $(x - 3)^2 = x^2 - 6x + 9$, enačbo $x^2 - 6x + 13 = 0$ zapišemo kot $(x - 3)^2 + 4 = 0$, torej $(x - 3)^2 = -4$.« -/
+besedilo: »$(1 + i)(3 + 2i) = 3 + 2i + 3i - 2 = 1 + 5i$ in $3(3 - 2i) = 9 - 6i$,« -/
 theorem racun (x : ℂ) : I ^ 23 = -I ∧ 1 / (2 - I) = (2 / 5 + I / 5 : ℂ) ∧ ((-4:ℝ) ^ 2 - 4 * 1 * 13 = -36) ∧
     (x - 2 - 3 * I) * (x - 2 + 3 * I) = x ^ 2 - 4 * x + 13 ∧ (6 * I) ^ 2 = (-36 : ℂ) ∧ (4 + 6 * I) / 2 = (2 + 3 * I : ℂ) ∧
     (2 + 3 * I : ℂ) ^ 2 = -5 + 12 * I ∧ (2 + 3 * I) / (2 - 3 * I) = (-5 / 13 + 12 * I / 13 : ℂ) ∧

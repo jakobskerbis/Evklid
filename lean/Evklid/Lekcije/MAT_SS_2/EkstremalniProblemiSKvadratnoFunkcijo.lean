@@ -50,7 +50,7 @@ example : (1 : ℝ) * (0 - 0) ^ 2 + 0 = 0 ↔ (0 : ℝ) = 0 := le_v_temenu 1 0 0
 /-- Pogoste napake 4: pri a > 0 največje vrednosti na vseh realnih številih ni (za vsak M je kakšna
 vrednost večja); pri a < 0 ni najmanjše.
 trditev: MAT-SS-2/ekstremalni-problemi-s-kvadratno-funkcijo#ni-drugega-ekstrema
-besedilo: »»V temenu je vedno največ.«** Pri $a > 0$ je v temenu najmanjša vrednost, največje pa na vseh realnih številih sploh ni.« -/
+besedilo: »največje pa na vseh realnih številih sploh ni.« -/
 theorem ni_drugega_ekstrema (a p q : ℝ) :
     (0 < a → ∀ M, ∃ x, M < a * (x - p) ^ 2 + q) ∧ (a < 0 → ∀ M, ∃ x, a * (x - p) ^ 2 + q < M) := by
   refine ⟨fun ha M => ?_, fun ha M => ?_⟩
@@ -108,7 +108,7 @@ example : (0 : ℝ) ≤ 1 * (0 - 0) ^ 2 + 0 := ((pravilo_mn 1 0 0 0 1 0 ⟨le_rf
 ležijo vse vrednosti f(x) = a(x − p)² + q na [m, n] med f(m) in f(n), ekstrema sta v krajiščih
 (monotonost glej `krajisca_monotona`).
 trditev: MAT-SS-2/ekstremalni-problemi-s-kvadratno-funkcijo#krajisca
-besedilo: »V lekciji Kvadratna funkcija si iz temenske oblike $f(x) = a(x - p)^2 + q$ prebral: pri $a < 0$ je $q$ največja vrednost funkcije, pri $a > 0$ najmanjša.« -/
+besedilo: »Splošno pravilo za zaprt interval $[m, n]$: izračunaj vrednost v temenu, če leži v intervalu, in v obeh krajiščih.« -/
 theorem krajisca (a p q m n x : ℝ) (hx : x ∈ Icc m n) (hp : n ≤ p ∨ p ≤ m) :
     min (a * (m - p) ^ 2 + q) (a * (n - p) ^ 2 + q) ≤ a * (x - p) ^ 2 + q ∧
       a * (x - p) ^ 2 + q ≤ max (a * (m - p) ^ 2 + q) (a * (n - p) ^ 2 + q) := by

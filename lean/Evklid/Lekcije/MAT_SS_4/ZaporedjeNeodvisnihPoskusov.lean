@@ -155,7 +155,7 @@ theorem primer1 :
 /-- Primer 2: P₆(0) = (5/6)⁶ ≈ 0,3349, 1 − 0,3349 = 0,6651, P₆(1) = 6·(1/6)·(5/6)⁵ ≈ 0,4019,
 0,3349 + 0,4019 = 0,7368; točni vrednosti 1 − P₆(0) ≈ 0,665 in P₆(0) + P₆(1) ≈ 0,737.
 trditev: MAT-SS-4/zaporedje-neodvisnih-poskusov#primer2
-besedilo: »»Največ en« pomeni $0$ ali $1$: $0{,}3349 + 0{,}4019 = 0{,}7368$.« -/
+besedilo: »Odgovor: vsaj enega ugane z verjetnostjo približno $0{,}665$, največ enega pa z verjetnostjo približno $0{,}737$.« -/
 theorem primer2 :
     Pn 6 0 (1 / 6) = (5 / 6) ^ 6 ∧ 0.33485 ≤ ((5 : ℝ) / 6) ^ 6 ∧ ((5 : ℝ) / 6) ^ 6 < 0.33495 ∧
     (1 : ℝ) - 0.3349 = 0.6651 ∧
@@ -172,7 +172,7 @@ theorem primer2 :
 
 /-- Pogoste napake: »vsaj en« ni n·p: 6·(1/6) = 1 bi bila gotovost, pri 10 ugibanjih 10/6 > 1.
 trditev: MAT-SS-4/zaporedje-neodvisnih-poskusov#napaka-np
-besedilo: »»Vsaj en« kot $n \cdot p$.** Pri $6$ ugibanjih s $p = \frac{1}{6}$ bi to dalo $1$, torej gotovost, kar ni res. Pri $10$ ugibanjih bi verjetnost presegla $1$. Pravilno: $1 - q^n$.« -/
+besedilo: »Pri $6$ ugibanjih s $p = \frac{1}{6}$ bi to dalo $1$, torej gotovost, kar ni res. Pri $10$ ugibanjih bi verjetnost presegla $1$. Pravilno: $1 - q^n$.« -/
 theorem napaka_np : (6 : ℝ) * (1 / 6) = 1 ∧ (1 : ℝ) < 10 * (1 / 6) ∧ 1 - Pn 6 0 (1 / 6) < 1 := by
   refine ⟨by norm_num, by norm_num, ?_⟩
   unfold Pn; norm_num
@@ -197,7 +197,7 @@ set_option exponentiation.threshold 2000 in
 /-- Primer 3, korak 3: ln 0,05 / ln 0,7 ≈ 8,40, dokazano kot 8,395 < ln 0,05 / ln 0,7 < 8,405
 (primerjava potenc 0,05²⁰⁰ s 0,7¹⁶⁷⁹ in 0,7¹⁶⁸¹).
 trditev: MAT-SS-4/zaporedje-neodvisnih-poskusov#primer3-priblizek
-besedilo: »Ker je $\ln 0{,}7 < 0$, se znak neenakosti obrne: $n \ge \frac{\ln 0{,}05}{\ln 0{,}7} \approx 8{,}40$.« -/
+besedilo: »Logaritmiramo. Ker je $\ln 0{,}7 < 0$, se znak neenakosti obrne: $n \ge \frac{\ln 0{,}05}{\ln 0{,}7} \approx 8{,}40$.« -/
 theorem primer3_priblizek :
     8.395 < Real.log 0.05 / Real.log 0.7 ∧ Real.log 0.05 / Real.log 0.7 < 8.405 := by
   have hl : Real.log 0.7 < 0 := Real.log_neg (by norm_num) (by norm_num)
@@ -228,7 +228,7 @@ theorem primer3_preizkus :
 
 /-- Primer 3, odgovor: za naravni n velja 1 − 0,7ⁿ ≥ 0,95 natanko tedaj, ko n ≥ 9 (najmanj 9 posnetkov).
 trditev: MAT-SS-4/zaporedje-neodvisnih-poskusov#primer3
-besedilo: »$1 - 0{,}7^n \ge 0{,}95$« -/
+besedilo: »Preizkus: pri $n = 8$ je $1 - 0{,}7^8 \approx 0{,}942$, premalo; pri $n = 9$ je $1 - 0{,}7^9 \approx 0{,}960$.« -/
 theorem primer3 (n : ℕ) : 1 - (0.7 : ℝ) ^ n ≥ 0.95 ↔ 9 ≤ n := by
   rw [primer3_korak2]
   constructor
@@ -344,11 +344,11 @@ example : ∃ q : ℝ, q ^ 5 = 0.03 :=
     rw [← Real.rpow_natCast, ← Real.rpow_mul (by norm_num)]; norm_num⟩
 
 /-- Predpostavke trditve `kviz2` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ q : ℝ, q ^ 5 = 0.03 :=
     ⟨(0.03 : ℝ) ^ ((1 : ℝ) / 5), by
       rw [← Real.rpow_natCast, ← Real.rpow_mul (by norm_num)]; norm_num⟩
-  kviz2 (h := w.choose_spec)
+  (fun _ => trivial) (kviz2 (q := w.choose) (h := w.choose_spec))
 
 /-- Preveri se 3: Rokova napaka je korak (3): 0,7⁴ = 0,2401, 0,3·0,7³ = 0,1029 (en potek), 1 − 0,2401 − 0,1029 =
 0,657; pravilno P₄(1) = 4·0,1029 = 0,4116 in 1 − 0,2401 − 0,4116 = 0,3483.
@@ -377,7 +377,7 @@ theorem kviz5 :
 
 /-- Z analogijo (mešalna miza): štiri stikala od petih gor: `C(5,4) = 5`, verjetnost P₅(4) = C(5,4)·p⁴·q.
 trditev: MAT-SS-4/zaporedje-neodvisnih-poskusov#mesalna-miza
-besedilo: »pri Maji je $5 \cdot 0{,}8 = 4$ in res je $P_5(4) = 0{,}4096$ največja od vseh verjetnosti $P_5(k)$.« -/
+besedilo: »To je $\binom{5}{4} = 5$. Drugo: kako verjetna je ena taka postavitev? To je $p^4 q$.« -/
 theorem mesalna_miza (p : ℝ) : Nat.choose 5 4 = 5 ∧ Pn 5 4 p = 5 * p ^ 4 * (1 - p) := by
   refine ⟨by decide, ?_⟩
   unfold Pn; rw [show Nat.choose 5 4 = 5 by decide]; norm_num

@@ -50,7 +50,7 @@ example : (0 : ℝ) < 4 ∧ (0 : ℝ) ≤ 3 ∧ (1 / 2 : ℝ) * ((2 : ℕ) : ℝ
 
 /-- Razlaga 5: pri a > 1 je aˣ strogo naraščajoča.
 trditev: MAT-SS-2/eksponentna-funkcija#narasca
-besedilo: »$a^x > 1$« -/
+besedilo: »da je eksponentna funkcija $f(x) = a^x$ z osnovo $a > 1$ strogo naraščajoča.« -/
 theorem narasca (a : ℝ) (ha : 1 < a) : StrictMono fun x : ℝ => a ^ x :=
   fun _ _ h => (Real.rpow_lt_rpow_left_iff ha).mpr h
 
@@ -64,7 +64,7 @@ example :=
 
 /-- Razlaga 5: pri 0 < a < 1 je aˣ strogo padajoča.
 trditev: MAT-SS-2/eksponentna-funkcija#pada
-besedilo: »| $x > 0$ | $a^x > 1$ | $0 < a^x < 1$ |« -/
+besedilo: »Pri $0 < a < 1$ je strogo padajoča, zato iz $x_1 < x_2$ sledi $a^{x_1} > a^{x_2}$.« -/
 theorem pada (a : ℝ) (h0 : 0 < a) (h1 : a < 1) : StrictAnti fun x : ℝ => a ^ x :=
   fun _ _ h => (Real.rpow_lt_rpow_left_iff_of_base_lt_one h0 h1).mpr h
 
@@ -78,7 +78,7 @@ example :=
 
 /-- Razlaga 5 (injektivnost): za a > 0, a ≠ 1 je aᵘ = aᵛ natanko tedaj, ko je u = v.
 trditev: MAT-SS-2/eksponentna-funkcija#injektivna
-besedilo: »| $x > 0$ | $a^x > 1$ | $0 < a^x < 1$ |« -/
+besedilo: »Ker je funkcija strogo monotona, je **injektivna**: vsako vrednost doseže le pri enem $x$ (vodoravna premica seka graf največ enkrat).« -/
 theorem injektivna (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (u v : ℝ) : a ^ u = a ^ v ↔ u = v := by
   constructor
   · intro h
@@ -98,7 +98,7 @@ example :=
 /-- Razlaga 5: za a > 0, a ≠ 1 je zaloga vrednosti aˣ (definirane za vsak realen x) interval (0, ∞):
 vse vrednosti so pozitivne (ničel ni) in vsaka pozitivna vrednost je dosežena.
 trditev: MAT-SS-2/eksponentna-funkcija#zaloga
-besedilo: »Pri vsaki osnovi je definicijsko območje $\mathbb{R}$, zaloga vrednosti $(0, \infty)$ in presečišče z osjo $y$ točka $(0, 1)$. Ničel ni. Funkcija je navzdol omejena (z $0$), navzgor ne, in strogo monotona. Os $x$ ($y = 0$) je asimptota. Osnova odloča le o tem:« -/
+besedilo: »Pri vsaki osnovi je definicijsko območje $\mathbb{R}$, zaloga vrednosti $(0, \infty)$ in presečišče z osjo $y$ točka $(0, 1)$.« -/
 theorem zaloga (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) :
     Set.range (fun x : ℝ => a ^ x) = Set.Ioi 0 := by
   ext y
@@ -117,7 +117,7 @@ example :=
 /-- Razlaga 5: graf gre skozi (0, 1) in (1, a); ničel ni; funkcija je navzdol omejena z 0, navzgor pa
 ni omejena (vsako mejo M preseže).
 trditev: MAT-SS-2/eksponentna-funkcija#lastnosti
-besedilo: »Pri vsaki osnovi je definicijsko območje $\mathbb{R}$, zaloga vrednosti $(0, \infty)$ in presečišče z osjo $y$ točka $(0, 1)$. Ničel ni. Funkcija je navzdol omejena (z $0$), navzgor ne, in strogo monotona. Os $x$ ($y = 0$) je asimptota. Osnova odloča le o tem:« -/
+besedilo: »Vsak graf gre skozi $(0, 1)$ in $(1, a)$,« -/
 theorem lastnosti (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) :
     a ^ (0 : ℝ) = 1 ∧ a ^ (1 : ℝ) = a ∧ (∀ x : ℝ, a ^ x ≠ 0) ∧ (∀ x : ℝ, 0 < a ^ x) ∧
     (∀ M : ℝ, ∃ x : ℝ, M < a ^ x) := by
@@ -154,7 +154,7 @@ example :=
 /-- Razlaga 5 (asimptota y = 0): pri a > 1 so vrednosti levo od neke meje poljubno blizu 0 (asimptota
 na levi), pri 0 < a < 1 pa desno od neke meje (asimptota na desni); 0 ni dosežena (`lastnosti`).
 trditev: MAT-SS-2/eksponentna-funkcija#asimptota
-besedilo: »| | $a > 1$ | $0 < a < 1$ |« -/
+besedilo: »Os $x$ ($y = 0$) je asimptota.« -/
 theorem asimptota (a : ℝ) (ε : ℝ) (hε : 0 < ε) :
     (1 < a → ∃ x₀ : ℝ, ∀ x, x < x₀ → a ^ x < ε) ∧
     (0 < a → a < 1 → ∃ x₀ : ℝ, ∀ x, x₀ < x → a ^ x < ε) := by
@@ -237,7 +237,7 @@ theorem oktave_priblizki :
 /-- Razlaga 1 (in slika): za 0 < n < 12 je pravilna uglasitev 440·2^(n/12) pod Nikino prvo zamislijo
 440 + 440·n/12 (stroga konveksnost eksponentne funkcije); na koncih (n = 0, n = 12) sta enaki.
 trditev: MAT-SS-2/eksponentna-funkcija#pod-premico
-besedilo: »1. En primer do konca.** Nikin sintetizator najprej uglasimo po oktavah. Vsaka oktava navzgor frekvenco podvoji, vsaka navzdol jo razpolovi. Z $x$ označimo, za koliko oktav je ton nad a¹ (pod a¹ je $x$ negativen). Frekvenca je potem $440 \cdot 2^x$ hercev:« -/
+besedilo: »$440 \cdot 2^{-10} = \dfrac{440}{1024} \approx 0{,}43\,\mathrm{Hz}$.« -/
 theorem pod_premico (n : ℝ) (h0 : 0 < n) (h12 : n < 12) :
     440 * (2 : ℝ) ^ (n / 12) < 440 + 440 * n / 12 := by
   have t0 : 0 < n / 12 := by positivity
@@ -606,12 +606,12 @@ theorem prehiti_vsako (a : ℝ) (ha : 1 < a) (n : ℕ) :
 /-- Predpostavke trditve `prehiti_vsako` se dajo izpolniti (a = 1,1). -/
 example : (1 : ℝ) < 1.1 := by norm_num
 
-set_option exponentiation.threshold 700 in
 /-- Predpostavke trditve `prehiti_vsako` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
   have w : (1 : ℝ) < 1.1 := by norm_num
   prehiti_vsako (ha := w)
 
+set_option exponentiation.threshold 700 in
 /-- Razlaga 11 in RAČUN: 1,1⁶⁸⁵/685¹⁰ ≈ 0,993 < 1 in 1,1⁶⁸⁶/686¹⁰ ≈ 1,077 > 1.
 trditev: MAT-SS-2/eksponentna-funkcija#prehiti
 besedilo: »$1{,}1^x$ prehiti $x^{10}$ pri $x \approx 685$.« -/
@@ -849,7 +849,7 @@ example :=
 
 /-- Za maturo, naloga 1 in RAČUN: 3/12 = 1/4, 3/(1/2) = 6, 6·(1/2)^(−1) = 12; f(x) = 6·(1/2)ˣ pada.
 trditev: MAT-SS-2/eksponentna-funkcija#matura1-racun
-besedilo: »Ker je $a > 0$, je $a = \dfrac{1}{2}$. Iz $c \cdot \dfrac{1}{2} = 3$ sledi $c = 6$. Preizkus: $6 \cdot \left(\dfrac{1}{2}\right)^{-1} = 6 \cdot 2 = 12$.« -/
+besedilo: »$\dfrac{c \cdot a}{c \cdot a^{-1}} = a^2 = \dfrac{3}{12} = \dfrac{1}{4}$« -/
 theorem matura1_racun : (3 : ℝ) / 12 = 1 / 4 ∧ (3 : ℝ) / (1 / 2) = 6 ∧ 6 * (1 / 2 : ℝ) ^ (-1 : ℝ) = 12 ∧
     StrictAnti (fun x : ℝ => 6 * (1 / 2 : ℝ) ^ x) := by
   refine ⟨by norm_num, by norm_num, by norm_num, fun x y h => ?_⟩
@@ -982,7 +982,7 @@ example :=
 
 /-- RAČUN: 2^(3/2 − 1) + 1 ≈ 2,414 in (1 + 1/2)² = 2,25.
 trditev: MAT-SS-2/eksponentna-funkcija#racun-sqrt
-besedilo: »Po letu imamo $\left(1 + \frac{1}{n}\right)^n$ €: pri $n = 1, 2, 12, 365$ dobimo $2;\ 2{,}25;\ 2{,}613;\ 2{,}7146$.« -/
+besedilo: »pri $n = 1, 2, 12, 365$ dobimo $2;\ 2{,}25;\ 2{,}613;\ 2{,}7146$.« -/
 theorem racun_sqrt : (2.4135 < (2 : ℝ) ^ ((3 / 2 : ℝ) - 1) + 1 ∧ (2 : ℝ) ^ ((3 / 2 : ℝ) - 1) + 1 < 2.4145) ∧
     ((1 : ℝ) + 1 / 2) ^ 2 = 2.25 := by
   have hs : 1.4135 < (2 : ℝ) ^ (1 / 2 : ℝ) ∧ (2 : ℝ) ^ (1 / 2 : ℝ) < 1.4145 :=
@@ -1023,7 +1023,7 @@ example :=
 
 /-- Bolj natančno (iracionalni eksponenti): 2^1,4 < 2^1,41 < 2^1,414 < 2^1,5.
 trditev: MAT-SS-2/eksponentna-funkcija#iracionalni
-besedilo: »$2^{1{,}41}$,« -/
+besedilo: »… Potence $2^{1{,}4}$,« -/
 theorem iracionalni : (2 : ℝ) ^ (1.4 : ℝ) < (2 : ℝ) ^ (1.41 : ℝ) ∧
     (2 : ℝ) ^ (1.41 : ℝ) < (2 : ℝ) ^ (1.414 : ℝ) ∧ (2 : ℝ) ^ (1.414 : ℝ) < (2 : ℝ) ^ (1.5 : ℝ) := by
   refine ⟨?_, ?_, ?_⟩ <;> exact narasca 2 (by norm_num) (by norm_num)

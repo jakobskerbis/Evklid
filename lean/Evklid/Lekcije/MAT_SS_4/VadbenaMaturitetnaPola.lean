@@ -169,7 +169,7 @@ theorem izrek_o_ostanku (p : Polynomial ℝ) (a : ℝ) :
 
 /-- Razlaga 5 (ključna beseda »natančno«): `sin 60° = √3/2`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#sin60
-besedilo: »»natančno« → krožnica, $\sin 60° = \tfrac{\sqrt{3}}{2}$« -/
+besedilo: »$\sin 60° = \tfrac{\sqrt{3}}{2}$« -/
 theorem sin60 : Real.sin (60 * (π / 180)) = Real.sqrt 3 / 2 := by
   rw [show 60 * (π / 180) = π / 3 by ring, Real.sin_pi_div_three]
 
@@ -235,7 +235,7 @@ theorem primer2_b :
 /-- Primer 2 c): `T(t) > 10` ⇔ `t² − 12t + 32 < 0` ⇔ `(t − 4)(t − 8) < 0` ⇔ `4 < t < 8`, torej med
 `6 + 4 = 10.` in `6 + 8 = 14.` uro; Rok dobi `1 + 2 + 2 = 5` točk.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#primer2-c
-besedilo: »Točkovanje:** a) $1$ točka; b) $1$ za odvod, $1$ za $t = 6$, $1$ za »ob 12. uri, $11\,°\mathrm{C}$«; c) $1$ za neenačbo $t^2 - 12t + 32 < 0$, $1$ za ničli $4$ in $8$, $1$ za interval od 10. do 14. ure.« -/
+besedilo: »Parabola je odprta navzgor, zato je negativna med ničlama: $4 < t < 8$.« -/
 theorem primer2_c (t : ℝ) :
     (T₂ t > 10 ↔ t ^ 2 - 12 * t + 32 < 0) ∧ t ^ 2 - 12 * t + 32 = (t - 4) * (t - 8) ∧
       (T₂ t > 10 ↔ 4 < t ∧ t < 8) ∧ 6 + 4 = 10 ∧ 6 + 8 = 14 ∧ 1 + 2 + 2 = 5 := by
@@ -253,7 +253,7 @@ theorem primer2_c (t : ℝ) :
 
 /-- Primer 3, korak 1: `v(t) = 6t − t² = t(6 − t)` je pozitivna natanko za `0 < t < 6`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#primer3-narasca
-besedilo: »$v(t) = 6t - t^2$« -/
+besedilo: »Razcep $v(t) = t(6 - t)$ ima ničli $0$ in $6$.« -/
 theorem primer3_narasca (t : ℝ) : 6 * t - t ^ 2 = t * (6 - t) ∧ (0 < 6 * t - t ^ 2 ↔ 0 < t ∧ t < 6) := by
   refine ⟨by ring, ⟨fun h => ?_, fun ⟨h0, h6⟩ => by nlinarith⟩⟩
   by_contra hn
@@ -1155,7 +1155,7 @@ delež `S/(πr²) = 9 sin 40°/(2π) = 0,920725… ≈ 92,07 %`. Meje za `s = si
 `3s − 4s³ = sin 60° = √3/2` (funkcija `3s − 4s³` narašča na `[0, 1/2]`, `0 < s < sin 30° = 1/2`),
 nato `sin² 40° = 4s²(1 − s²)`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga21-stevila
-besedilo: »$S = 9 \cdot \dfrac{r^2 \sin 40^\circ}{2} = \dfrac{225 \sin 40^\circ}{2} = 72{,}3136\ldots \approx 72{,}31\,\text{cm}^2$« -/
+besedilo: »$S = 9 \cdot \dfrac{r^2 \sin 40^\circ}{2} = \dfrac{225 \sin 40^\circ}{2} = 72{,}3136\ldots \approx 72{,}31\,\text{cm}^2$.« -/
 theorem naloga21_stevila :
     (3.4202:ℝ) ≤ 10 * Real.sin (20 * (π / 180)) ∧ 10 * Real.sin (20 * (π / 180)) < 3.4203 ∧
       |10 * Real.sin (20 * (π / 180)) - 3.42| ≤ 0.005 ∧
@@ -1463,7 +1463,7 @@ theorem naloga27 :
 `P(C) = 1 − (1001 + 2184)/4845 = 1660/4845 = 0,34262… ≈ 0,3426` (kar je tudi
 `C(6,2)C(14,2) + C(6,3)C(14,1) + C(6,4)` ugodnih izbir).
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga28
-besedilo: »Točkovanje:** a) 1 točka za $\binom{20}{4}$ in $\binom{14}{4}$, 1 točka za $0{,}2066$; b) 1 točka za $6 \cdot \binom{14}{3}$ ugodnih izbir, 1 točka za $0{,}4508$; c) 1 točka za $1 - P(A) - P(B)$, 1 točka za $0{,}3426$.« -/
+besedilo: »b) Rumeno seme izberemo na $6$ načinov, tri rdeča na $\binom{14}{3} = 364$ načinov: $P(B) = \dfrac{6 \cdot 364}{4845} = \dfrac{2184}{4845} = 0{,}45077\ldots \approx 0{,}4508$.« -/
 theorem naloga28 :
     Nat.choose 20 4 = 4845 ∧ Nat.choose 14 4 = 1001 ∧ Nat.choose 14 3 = 364 ∧ 6 * 364 = 2184 ∧
       (0.20660:ℝ) ≤ 1001 / 4845 ∧ (1001:ℝ) / 4845 < 0.20661 ∧ |(1001:ℝ) / 4845 - 0.2066| ≤ 0.00005 ∧

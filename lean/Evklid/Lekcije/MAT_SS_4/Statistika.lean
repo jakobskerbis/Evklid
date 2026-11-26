@@ -272,7 +272,7 @@ theorem φ_integrabilna : Integrable φ := f_integrabilna 0 1 one_pos
 
 /-- Razlaga 6: Φ(−z) = −Φ(z).
 trditev: MAT-SS-4/statistika#liha
-besedilo: »$\Phi(-z) = -\Phi(z)$« -/
+besedilo: »Za negativne $z$ velja $\Phi(-z) = -\Phi(z)$.« -/
 theorem Φ_liha (z : ℝ) : Φ (-z) = -Φ z := by
   unfold Φ
   have h := intervalIntegral.integral_comp_neg (a := 0) (b := -z) φ
@@ -355,7 +355,7 @@ theorem primer1 : [3, 8, 5, 12, 5, 7, 2].sum = 42 ∧ (42 : ℝ) / 7 = 6 ∧
 
 /-- Primer 2, A: x̄ = 100 : 5 = 20; odkloni −2, 0, 2, −1, 1; kvadrati 4, 0, 4, 1, 1; vsota 10; σ² = 2.
 trditev: MAT-SS-4/statistika#primer2-a
-besedilo: »Podatki:** A: $18, 20, 22, 19, 21\,\mathrm{h}$; B: $14, 26, 20, 16, 24\,\mathrm{h}$; $N = 5$« -/
+besedilo: »Vsota kvadratov je $10$, zato $\sigma_A^2 = 10 : 5 = 2$ in $\sigma_A = \sqrt{2} \approx 1{,}41\,\mathrm{h}$.« -/
 theorem primer2_A : ((18 : ℝ) + 20 + 22 + 19 + 21) = 100 ∧ (100 : ℝ) / 5 = 20 ∧
     ((18 : ℝ) - 20 = -2 ∧ (20 : ℝ) - 20 = 0 ∧ (22 : ℝ) - 20 = 2 ∧ (19 : ℝ) - 20 = -1 ∧ (21 : ℝ) - 20 = 1) ∧
     ((-2 : ℝ) ^ 2 = 4 ∧ (0 : ℝ) ^ 2 = 0 ∧ (2 : ℝ) ^ 2 = 4 ∧ (-1 : ℝ) ^ 2 = 1 ∧ (1 : ℝ) ^ 2 = 1) ∧
@@ -389,7 +389,7 @@ theorem primer2_sigmaB : |√(20.8 : ℝ) - 4.56| < 0.005 ∧ 3 * √(2 : ℝ) <
 
 /-- Razlaga 2: variacijski razmik A je 22 − 18 = 4, B pa 26 − 14 = 12.
 trditev: MAT-SS-4/statistika#razmik
-besedilo: »Podatki:** A: $18, 20, 22, 19, 21\,\mathrm{h}$; B: $14, 26, 20, 16, 24\,\mathrm{h}$; $N = 5$« -/
+besedilo: »Model A je v petih dneh zdržal $18, 20, 22, 19, 21$ ur, model B pa $14, 26, 20, 16, 24$ ur.« -/
 theorem razmik : (22 : ℝ) - 18 = 4 ∧ (26 : ℝ) - 14 = 12 := by norm_num
 
 /-! ## Primer 3 in 4: normalna porazdelitev (s tabelnimi vrednostmi iz lekcije) -/
@@ -409,7 +409,7 @@ theorem primer4 : ((18 : ℝ) - 20) / 2 = -1 ∧ ((24 : ℝ) - 20) / 2 = 2 ∧
 
 /-- Primer 4: Φ(2) − Φ(−1) = Φ(2) + Φ(1) (iz Φ(−z) = −Φ(z)).
 trditev: MAT-SS-4/statistika#primer4-2
-besedilo: »Izračunaj $\Phi(2) - \Phi(-1)$ sam,« -/
+besedilo: »$\Phi(2) - \Phi(-1) = 0{,}4772 + 0{,}3413 = 0{,}8185$« -/
 theorem primer4_Φ : Φ 2 - Φ (-1) = Φ 2 + Φ 1 := by rw [Φ_liha]; ring
 
 /-! ## Pogoste napake -/
@@ -502,7 +502,7 @@ theorem kviz4 : ((23 : ℝ) - 20) / 1 = 3 ∧ ((23 : ℝ) - 20) / 3 = 1 ∧ (0.5
 /-- Preveri se 4 (brez tabele): ker je Φ naraščajoča (φ > 0), je P(Z > 3) < P(Z > 1), torej je verjetnost
 pri B večja kot pri A.
 trditev: MAT-SS-4/statistika#kviz4-primerjava
-besedilo: »Oba modela imata $\mu = 20\,\mathrm{h}$, model A ima $\sigma = 1\,\mathrm{h}$, model B $\sigma = 3\,\mathrm{h}$. Pri katerem je verjetnost, da baterija zdrži več kot $23\,\mathrm{h}$, večja?« -/
+besedilo: »Sredina je enaka, razpršenost ne. Meja $23$ je pri A $3\sigma$, pri B le $1\sigma$ od sredine.« -/
 theorem kviz4_primerjava : ∫ x in Ioi 3, φ x < ∫ x in Ioi 1, φ x := by
   rw [P_vec, P_vec]
   have h : 0 < ∫ x in (1 : ℝ)..3, φ x :=

@@ -402,7 +402,7 @@ theorem primer3 (x : ℝ) : (9 : ℝ) ^ x - 2 * (3 : ℝ) ^ (x + 1) - 27 = 0 ↔
 
 /-- Primer 3: D = 36 + 108 = 144, t₁,₂ = (6 ± 12)/2 = 9, −3; preizkus 9² − 2·3³ − 27 = 81 − 54 − 27 = 0.
 trditev: MAT-SS-2/eksponentne-enacbe#primer3-racun
-besedilo: »Rešimo kvadratno enačbo. Diskriminanta je $D = 36 + 108 = 144$, zato je $t_{1,2} = \dfrac{6 \pm 12}{2}$, torej $t_1 = 9$ in $t_2 = -3$. (Tudi razcep $(t - 9)(t + 3) = 0$ da isto.)« -/
+besedilo: »Diskriminanta je $D = 36 + 108 = 144$, zato je $t_{1,2} = \dfrac{6 \pm 12}{2}$, torej $t_1 = 9$ in $t_2 = -3$.« -/
 theorem primer3_racun : (-6 : ℝ) ^ 2 - 4 * 1 * (-27) = 36 + 108 ∧ (36 : ℝ) + 108 = 144 ∧
     Real.sqrt 144 = 12 ∧ ((6 : ℝ) + 12) / 2 = 9 ∧ ((6 : ℝ) - 12) / 2 = -3 ∧
     (9 : ℝ) ^ (2 : ℝ) - 2 * (3 : ℝ) ^ ((2 : ℝ) + 1) - 27 = 81 - 54 - 27 ∧ (81 : ℝ) - 54 - 27 = 0 := by

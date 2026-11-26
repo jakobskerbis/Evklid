@@ -29,7 +29,7 @@ local macro "odv" : tactic =>
 /-- Razlaga, blok 4: Newton-Leibnizova formula ∫ₐᵇ f(x) dx = F(b) − F(a) za zvezno f in vsako
 primitivno funkcijo F (na intervalu med a in b).
 trditev: MAT-SS-4/doloceni-integral#newton-leibniz
-besedilo: »Ker je $A(a) = 0$, za vsako primitivno funkcijo $F$ velja **Newton-Leibnizova formula**:« -/
+besedilo: »Če je $F$ katera koli primitivna funkcija zvezne funkcije $f$ na intervalu $[a, b]$, velja $\int_a^b f(x)\,dx = F(b) - F(a)$.« -/
 theorem newton_leibniz (f F : ℝ → ℝ) (a b : ℝ) (hf : ContinuousOn f (Set.uIcc a b))
     (hF : ∀ x ∈ Set.uIcc a b, HasDerivAt F (f x) x) : ∫ x in a..b, f x = F b - F a :=
   integral_eq_sub_of_hasDerivAt hF (hf.intervalIntegrable)
@@ -117,7 +117,7 @@ theorem spodnja_formula (n : ℕ) (hn : n ≠ 0) :
 
 /-- Razlaga, blok 2: za n ≥ 1 je zgornja vsota (n + 1)(2n + 1)/(6n²).
 trditev: MAT-SS-4/doloceni-integral#zgornja-formula
-besedilo: »to je **zgornja vsota**.« -/
+besedilo: »Zgornja vsota ima iste pravokotnike kot spodnja, le premaknjene za en del v desno: izgubi prvega (višina $f(0) = 0$) in dobi novega na koncu (višina $f(1) = 1$, širina $\frac{1}{n}$).« -/
 theorem zgornja_formula (n : ℕ) (hn : n ≠ 0) :
     zgornja n = ((n : ℝ) + 1) * (2 * n + 1) / (6 * n ^ 2) := by
   have hn' : (n : ℝ) ≠ 0 := by exact_mod_cast hn
@@ -159,7 +159,7 @@ theorem tabela_100 : spodnja 100 = 0.32835 ∧ zgornja 100 = 0.33835 := by
 /-- Razlaga, blok 2, in prvi »Premisli«: razlika zgornje in spodnje vsote je 1/n
 (0,25; 0,1; 0,01 in pri n = 1000 0,001).
 trditev: MAT-SS-4/doloceni-integral#razlika-vsot
-besedilo: »Razlika med zgornjo in spodnjo vsoto je bila $0{,}25$; $0{,}1$ in $0{,}01$. Kolikšna bo pri $n = 1000$? Zakaj se tako lepo zmanjšuje?« -/
+besedilo: »Razlika med zgornjo in spodnjo vsoto je bila $0{,}25$; $0{,}1$ in $0{,}01$.« -/
 theorem razlika_vsot (n : ℕ) (hn : n ≠ 0) : zgornja n - spodnja n = 1 / n := by
   have hn' : (n : ℝ) ≠ 0 := by exact_mod_cast hn
   rw [zgornja_formula n hn, spodnja_formula n hn]; field_simp; ring
@@ -174,7 +174,7 @@ example :=
 
 /-- Prvi »Premisli«: pri n = 1000 je razlika 0,001.
 trditev: MAT-SS-4/doloceni-integral#razlika-1000
-besedilo: »$0{,}001$.« -/
+besedilo: »$0{,}001$. Zgornja vsota ima iste pravokotnike kot spodnja, le premaknjene za en del v desno: izgubi prvega (višina $f(0) = 0$) in dobi novega na koncu (višina $f(1) = 1$, širina $\frac{1}{n}$). Razlika je torej $\frac{1}{n}$.« -/
 theorem razlika_1000 : zgornja 1000 - spodnja 1000 = 0.001 := by
   rw [razlika_vsot 1000 (by norm_num)]; norm_num
 
@@ -260,12 +260,12 @@ theorem ploscina_x3 : ∫ x in (-1:ℝ)..1, |x ^ 3| = 2 * ∫ x in (0:ℝ)..1, x
 
 /-- Razlaga, blok 6: enaki meji, ∫ₐᵃ f dx = 0.
 trditev: MAT-SS-4/doloceni-integral#enaki-meji
-besedilo: »Enaki meji.** $\int_a^a f(x)\,dx = F(a) - F(a) = 0$:« -/
+besedilo: »Enaki meji.** $\int_a^a f(x)\,dx = F(a) - F(a) = 0$: lik brez širine nima ploščine.« -/
 theorem enaki_meji (f : ℝ → ℝ) (a : ℝ) : ∫ x in a..a, f x = 0 := integral_same
 
 /-- Razlaga, blok 6: zamenjava mej, ∫_b^a f dx = −∫ₐᵇ f dx.
 trditev: MAT-SS-4/doloceni-integral#zamenjava-mej
-besedilo: »Zamenjava mej.** $\int_b^a f(x)\,dx = F(a) - F(b) = -\int_a^b f(x)\,dx$:« -/
+besedilo: »Zamenjava mej.** $\int_b^a f(x)\,dx = F(a) - F(b) = -\int_a^b f(x)\,dx$: ko meji zamenjaš, integral spremeni predznak.« -/
 theorem zamenjava_mej (f : ℝ → ℝ) (a b : ℝ) : ∫ x in b..a, f x = -∫ x in a..b, f x := integral_symm a b
 
 /-- Razlaga, blok 6: aditivnost, ∫ₐᵇ f + ∫_b^c f = ∫ₐᶜ f (za zvezno f, tudi če b ni med a in c).
@@ -329,12 +329,12 @@ example : ∃ f : ℝ → ℝ, Continuous f ∧ ∫ x in (0:ℝ)..2, f x = 3 ∧
   · beta_reduce; rw [linearna]; norm_num
 
 /-- Predpostavke trditve `zgled_aditivnost` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ f : ℝ → ℝ, Continuous f ∧ ∫ x in (0:ℝ)..2, f x = 3 ∧ ∫ x in (0:ℝ)..5, f x = 7 := by
     -- f(x) = p x + q: ∫₀² = 2p + 2q = 3, ∫₀⁵ = 25p/2 + 5q = 7 ⇒ p = −1/15, q = 47/30
     refine ⟨fun x => -1 / 15 * x + 47 / 30, by fun_prop, ?_, ?_⟩ <;>
     · beta_reduce; rw [linearna]; norm_num
-  zgled_aditivnost (hf := w.choose_spec.1) (h2 := w.choose_spec.2.1) (h5 := w.choose_spec.2.2)
+  (fun _ => trivial) (zgled_aditivnost (f := w.choose) (hf := w.choose_spec.1) (h2 := w.choose_spec.2.1) (h5 := w.choose_spec.2.2))
 
 /-- Razlaga, blok 7, in »Pogoste napake«: če je g ≥ f na [a, b], je ∫ₐᵇ (g − f) ≥ 0, obratna razlika
 (spodnja minus zgornja) pa da ∫ₐᵇ (f − g) = −∫ₐᵇ (g − f) ≤ 0.
@@ -383,7 +383,7 @@ theorem primer1_priblizek : |(64 / 3 : ℝ) - 21.33| < 0.005 ∧ |(64 / 3 : ℝ)
 
 /-- Primer 1, odgovor: v(4) = 16 − 8 = 8 m/s.
 trditev: MAT-SS-4/doloceni-integral#primer1-v4
-besedilo: »$v(4) = 8\,\mathrm{m/s}$« -/
+besedilo: »Odgovor: šprinter v prvih štirih sekundah preteče približno $21{,}3\,\mathrm{m}$ in pri tem doseže hitrost $v(4) = 8\,\mathrm{m/s}$.« -/
 theorem primer1_v4 : (4 : ℝ) * 4 - 0.5 * 4 ^ 2 = 8 := by norm_num
 
 /-- Primer 2, korak 1: x² − 2x − 3 = (x − 3)(x + 1); ničli sta 3 in −1.
@@ -501,12 +501,12 @@ example : ∃ f : ℝ → ℝ, ContinuousOn f (Set.Icc 0 6) ∧ ∫ x in (0:ℝ)
   · beta_reduce; rw [linearna]; norm_num
 
 /-- Predpostavke trditve `primer3ab` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ f : ℝ → ℝ, ContinuousOn f (Set.Icc 0 6) ∧ ∫ x in (0:ℝ)..6, f x = 10 ∧ ∫ x in (2:ℝ)..6, f x = 4 := by
     -- ∫₀⁶ = 18p + 6q = 10, ∫₂⁶ = 16p + 4q = 4 ⇒ p = −2/3, q = 11/3
     refine ⟨fun x => -2 / 3 * x + 11 / 3, by fun_prop, ?_, ?_⟩ <;>
     · beta_reduce; rw [linearna]; norm_num
-  primer3ab (hf := w.choose_spec.1) (h06 := w.choose_spec.2.1) (h26 := w.choose_spec.2.2)
+  (fun _ => trivial) (primer3ab (f := w.choose) (hf := w.choose_spec.1) (h06 := w.choose_spec.2.1) (h26 := w.choose_spec.2.2))
 
 /-- Primer 3 c): ∫₋₁² |x| dx = ∫₋₁⁰ (−x) dx + ∫₀² x dx = 1/2 + 2 = 5/2.
 trditev: MAT-SS-4/doloceni-integral#primer3c
@@ -875,12 +875,12 @@ example : ∃ f : ℝ → ℝ, Continuous f ∧ ∫ x in (0:ℝ)..4, f x = 10 �
   refine ⟨fun x => -1 / 3 * x + 19 / 6, by fun_prop, ?_, ?_⟩ <;>
   · beta_reduce; rw [linearna]; norm_num
 
-end Evklid.Lekcije.MAT_SS_4.DoloceniIntegral
 /-- Predpostavke trditve `kviz6` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : ∃ f : ℝ → ℝ, Continuous f ∧ ∫ x in (0:ℝ)..4, f x = 10 ∧ ∫ x in (0:ℝ)..1, f x = 3 := by
     -- ∫₀⁴ = 8p + 4q = 10, ∫₀¹ = p/2 + q = 3 ⇒ p = −1/3, q = 19/6
     refine ⟨fun x => -1 / 3 * x + 19 / 6, by fun_prop, ?_, ?_⟩ <;>
     · beta_reduce; rw [linearna]; norm_num
-  kviz6 (hf := w.choose_spec.1) (h4 := w.choose_spec.2.1) (h1 := w.choose_spec.2.2)
+  (fun _ => trivial) (kviz6 (f := w.choose) (hf := w.choose_spec.1) (h4 := w.choose_spec.2.1) (h1 := w.choose_spec.2.2))
 
+end Evklid.Lekcije.MAT_SS_4.DoloceniIntegral

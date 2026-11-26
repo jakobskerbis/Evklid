@@ -35,7 +35,7 @@ local macro "odv" : tactic =>
 
 /-- Tabela v razlagi, točka 7: (ln|x − a|)' = 1/(x − a) za x ≠ a.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#d-log-sub
-besedilo: »Pomnožimo z $(x - 1)(x + 1)$ in dobimo $1 = A(x + 1) + B(x - 1)$. Pri $x = 1$ ostane $1 = 2A$, torej $A = \frac{1}{2}$. Pri $x = -1$ ostane $1 = -2B$, torej $B = -\frac{1}{2}$. Vsak parcialni ulomek integriramo v logaritem:« -/
+besedilo: »| $\frac{1}{x - a}$ | $\ln\lvert x - a\rvert$ |« -/
 theorem d_log_sub (a x : ℝ) (h : x - a ≠ 0) : HasDerivAt (fun x => log |x - a|) (1 / (x - a)) x := by
   have := ((hasDerivAt_id' x).sub_const a).log h
   simp only [log_abs]; exact this
@@ -109,7 +109,7 @@ example :=
 /-- Razlaga, točka 2, in ustno vprašanje 1 (nedoločena oblika per partes): če je G primitivna
 funkcija za u'v, je uv − G primitivna funkcija za uv', tj. ∫ u v' dx = u v − ∫ u' v dx.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#per-partes
-besedilo: »Integrirajmo obe strani: $u\,v = \int u'\,v\,dx + \int u\,v'\,dx$. Ko drugi integral izrazimo, dobimo formulo **per partes**:« -/
+besedilo: »$\int u\,v'\,dx = u\,v - \int u'\,v\,dx$« -/
 theorem per_partes (u v u' v' G : ℝ → ℝ) (x : ℝ) (hu : HasDerivAt u (u' x) x)
     (hv : HasDerivAt v (v' x) x) (hG : HasDerivAt G (u' x * v x) x) :
     HasDerivAt (fun x => u x * v x - G x) (u x * v' x) x :=
@@ -124,12 +124,12 @@ example : HasDerivAt (fun x : ℝ => x) ((fun _ => (1:ℝ)) 0) 0 ∧ HasDerivAt 
 example :=
   have w : HasDerivAt (fun x : ℝ => x) ((fun _ => (1:ℝ)) 0) 0 ∧ HasDerivAt exp (exp 0) 0 ∧ HasDerivAt exp ((fun _ => (1:ℝ)) 0 * exp 0) 0 :=
     ⟨hasDerivAt_id' 0, hasDerivAt_exp 0, by simpa using hasDerivAt_exp 0⟩
-  per_partes (hu := w.1) (hv := w.2.1) (hG := w.2.2)
+  per_partes (fun x => x) exp (fun _ => 1) exp exp 0 w.1 w.2.1 w.2.2
 
 /-- Razlaga, točka 2 (določena oblika per partes): za zvezno odvedljivi u, v na [a, b] je
 ∫ₐᵇ u v' dx = u(b)v(b) − u(a)v(a) − ∫ₐᵇ u' v dx.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#per-partes-dolocen
-besedilo: »Integrirajmo obe strani: $u\,v = \int u'\,v\,dx + \int u\,v'\,dx$. Ko drugi integral izrazimo, dobimo formulo **per partes**:« -/
+besedilo: »$(u\,v)' = u'\,v + u\,v'$« -/
 theorem per_partes_dolocen (u v u' v' : ℝ → ℝ) (a b : ℝ) (hu : ∀ x, HasDerivAt u (u' x) x)
     (hv : ∀ x, HasDerivAt v (v' x) x) (hu' : Continuous u') (hv' : Continuous v') :
     ∫ x in a..b, u x * v' x = u b * v b - u a * v a - ∫ x in a..b, u' x * v x :=
@@ -215,7 +215,7 @@ example :=
 /-- Razlaga, točka 7, in »Pogoste napake«: ln|x² − 1| ni primitivna funkcija za 1/(x² − 1)
 (pri x = 2 je odvod 4/3, ne 1/3).
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#ln-imenovalca-napacno
-besedilo: »Odvod desne strani je $\frac{2x}{x^2 - 1}$, ne $\frac{1}{x^2 - 1}$.« -/
+besedilo: »4 | To je samo števec pri $x = 1$. Iz $3x + 1 = A(x + 1) + B(x - 1)$ pri $x = 1$ sledi $4 = 2A$.« -/
 theorem ln_imenovalca_napacno : ¬ HasDerivAt (fun x => log |x ^ 2 - 1|) (1 / ((2:ℝ) ^ 2 - 1)) 2 := by
   intro h
   have := h.unique (d_ln_x2_1 2 (by norm_num))
@@ -223,7 +223,7 @@ theorem ln_imenovalca_napacno : ¬ HasDerivAt (fun x => log |x ^ 2 - 1|) (1 / ((
 
 /-- Razlaga, točka 7: 1 = A(x + 1) + B(x − 1) za vsak x natanko pri A = 1/2, B = −1/2.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#razcep-x2-1-ab
-besedilo: »Pomnožimo z $(x - 1)(x + 1)$ in dobimo $1 = A(x + 1) + B(x - 1)$. Pri $x = 1$ ostane $1 = 2A$, torej $A = \frac{1}{2}$. Pri $x = -1$ ostane $1 = -2B$, torej $B = -\frac{1}{2}$. Vsak parcialni ulomek integriramo v logaritem:« -/
+besedilo: »$\frac{1}{x^2 - 1} = \frac{A}{x - 1} + \frac{B}{x + 1}$« -/
 theorem razcep_x2_1_AB (A B : ℝ) : (∀ x : ℝ, 1 = A * (x + 1) + B * (x - 1)) ↔ A = 1 / 2 ∧ B = -1 / 2 := by
   constructor
   · intro h
@@ -288,7 +288,7 @@ example :=
 /-- Razlaga, točka 8, »Premisli«: nobena izbira A, B ne da A/(x − 1) + B/(x + 1) = (x² + 1)/(x² − 1)
 za vse x ≠ ±1.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#nastavek-brez-deljenja
-besedilo: »Zakaj nastavek $\frac{A}{x - 1} + \frac{B}{x + 1}$ ne more biti enak $\frac{x^2 + 1}{x^2 - 1}$, ne glede na izbiro $A$ in $B$?« -/
+besedilo: »Za zelo velike $x$ gre vsota $\frac{A}{x - 1} + \frac{B}{x + 1}$ proti $0$, ulomek $\frac{x^2 + 1}{x^2 - 1}$ pa proti $1$.« -/
 theorem nastavek_brez_deljenja : ¬ ∃ A B : ℝ, ∀ x : ℝ, x - 1 ≠ 0 → x + 1 ≠ 0 →
     A / (x - 1) + B / (x + 1) = (x ^ 2 + 1) / (x ^ 2 - 1) := by
   rintro ⟨A, B, h⟩
@@ -426,7 +426,7 @@ theorem primer3_razcep (A B : ℝ) :
 
 /-- Primer 3, korak 3: −½ ln|1 − s| + ½ ln|1 + s| = ½ ln|(1 + s)/(1 − s)| za s ≠ ±1.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#primer3-zdruzi
-besedilo: »Nastavek pomnožimo z imenovalcem: $1 = A(1 + s) + B(1 - s)$. Pri $s = 1$: $A = \frac{1}{2}$; pri $s = -1$: $B = \frac{1}{2}$.« -/
+besedilo: »Integriramo, pozorno pri minusu: $F(s) = -\frac{1}{2}\ln\lvert 1 - s\rvert + \frac{1}{2}\ln\lvert 1 + s\rvert + C$, kar združimo v $F(s) = \frac{1}{2}\ln\left\lvert\frac{1 + s}{1 - s}\right\rvert + C$.« -/
 theorem primer3_zdruzi (s : ℝ) (h1 : 1 - s ≠ 0) (h2 : 1 + s ≠ 0) :
     -(1 / 2) * log |1 - s| + 1 / 2 * log |1 + s| = 1 / 2 * log |(1 + s) / (1 - s)| := by
   rw [abs_div, log_div (abs_ne_zero.mpr h2) (abs_ne_zero.mpr h1)]; ring
@@ -491,7 +491,7 @@ example : IsOpen (Set.Ioo (0:ℝ) 1) ∧ IsPreconnected (Set.Ioo (0:ℝ) 1) ∧ 
 /-- Primer 3, korak 4: vsaka funkcija F z F'(s) = 1/(1 − s²) na (−1, 1) in F(0) = 0 je tam
 F(s) = ½ ln|(1 + s)/(1 − s)|.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#primer3-enolicno
-besedilo: »Podatki:** $R = 10\,\mathrm{cm}$, $\varphi = 46^\circ$, $y = R \cdot F(\sin\varphi)$, $F'(s) = \frac{1}{1 - s^2}$, $F(0) = 0$« -/
+besedilo: »kar združimo v $F(s) = \frac{1}{2}\ln\left\lvert\frac{1 + s}{1 - s}\right\rvert + C$.« -/
 theorem primer3_enolicno (F : ℝ → ℝ) (hF : ∀ s ∈ Set.Ioo (-1:ℝ) 1, HasDerivAt F (1 / (1 - s ^ 2)) s)
     (h0 : F 0 = 0) : ∀ s ∈ Set.Ioo (-1:ℝ) 1, F s = 1 / 2 * log |(1 + s) / (1 - s)| := by
   have h := enolicnost_na isOpen_Ioo isPreconnected_Ioo F

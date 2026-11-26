@@ -63,7 +63,7 @@ theorem nic_fakulteta : Nat.factorial 0 = 1 := Nat.factorial_zero
 /-- Razlaga 2, tabela: Bled (0), Bohinj (1), Kr. Gora (2) razvrstimo na 3·2·1 = 6 načinov; vseh šest vrstic
 tabele so različne razvrstitve.
 trditev: MAT-SS-4/kombinatorika#tabela-treh
-besedilo: »2. Permutacije.** Obiskati želiš Bled, Bohinj in Kranjsko Goro, vsak kraj enkrat. Prvi kraj izbereš na $3$ načine, drugi na $2$ (enega si že obiskal), za tretjega ostane $1$. Drevo ima $3 \cdot 2 \cdot 1 = 6$ listov:« -/
+besedilo: »$3 \cdot 2 \cdot 1 = 6$« -/
 theorem tabela_treh :
     ([0, 1, 2].permutations').length = 6 ∧ 3 * 2 * 1 = 6 ∧
     [[0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]].Nodup ∧
@@ -127,7 +127,7 @@ example :=
 
 /-- Razlaga 4, Povzetek, Ustno vprašanje 2, analogija: `V_n^k = k!·C(n,k)`, torej `C(n,k) = V_n^k / k!`.
 trditev: MAT-SS-4/kombinatorika#variacije-kombinacije
-besedilo: »$V_n^k = k! \cdot C_n^k$« -/
+besedilo: »Velja torej $V_n^k = k! \cdot C_n^k$.« -/
 theorem variacije_kombinacije (n k : ℕ) :
     Nat.descFactorial n k = Nat.factorial k * Nat.choose n k ∧
     Nat.choose n k = Nat.descFactorial n k / Nat.factorial k := by
@@ -141,7 +141,7 @@ theorem sedem_tri_kombinacije : Nat.factorial 3 = 6 ∧ 210 / 6 = 35 ∧ Nat.cho
 
 /-- Razlaga 4, »Premisli« in Povzetek: `C(n,k) = C(n,n−k)` (k ≤ n); posebej `C(7,3) = C(7,4) = 35`.
 trditev: MAT-SS-4/kombinatorika#simetrija
-besedilo: »$\binom{7}{3}$ ali $\binom{7}{4}$?« -/
+besedilo: »Kaj je večje: $\binom{7}{3}$ ali $\binom{7}{4}$? Odgovori brez računanja.« -/
 theorem simetrija (n k : ℕ) (hk : k ≤ n) : Nat.choose n k = Nat.choose n (n - k) :=
   (Nat.choose_symm hk).symm
 
@@ -155,7 +155,7 @@ example :=
 
 /-- Razlaga 4, »Premisli«: `C(7,3) = C(7,4) = 35`.
 trditev: MAT-SS-4/kombinatorika#sedem-tri-stiri
-besedilo: »$\binom{7}{3}$ ali $\binom{7}{4}$?« -/
+besedilo: »$\frac{7!}{3! \cdot 4!} = 35$« -/
 theorem sedem_tri_stiri : Nat.choose 7 3 = Nat.choose 7 4 ∧ Nat.choose 7 4 = 35 := by decide
 
 /-- Razlaga 5 (simulacija): pri n = 5, k = 3 je variacij 60, kombinacij 10, razmerje 3! = 6.
@@ -241,7 +241,7 @@ theorem primer3_racun :
 
 /-- Pogoste napake: v Primeru 3 je 20 + 6 = 26 napačno, pravilno je 20·6 = 120.
 trditev: MAT-SS-4/kombinatorika#napaka-sestevanje
-besedilo: »$20 + 6 = 26$« -/
+besedilo: »Seštevanje namesto množenja.** V Primeru 3 bi kdo zapisal $20 + 6 = 26$.« -/
 theorem napaka_sestevanje : 20 + 6 = 26 ∧ 20 + 6 ≠ 20 * 6 := by decide
 
 /-- Primer 4 (RAČUN `resi`): n(n−1)/2 = 45 ⇔ n(n−1) = 90 ⇔ n² − n − 90 = 0 ⇔ n = −9 ali n = 10.
@@ -259,7 +259,7 @@ theorem primer4_enacba (n : ℝ) : n * (n - 1) / 2 = 45 ↔ n = -9 ∨ n = 10 :=
 
 /-- Primer 4: med naravnimi števili je linij `C(n,2) = 45` natanko pri n = 10; preizkus 10·9/2 = 45.
 trditev: MAT-SS-4/kombinatorika#primer4
-besedilo: »$n = 10$, ker je $10 \cdot 9 = 90$. Preizkus: $\binom{10}{2} = \frac{10 \cdot 9}{2} = 45$. Kvadratna enačba $n^2 - n - 90 = 0$ ima še rešitev $n = -9$, ki ni smiselna.« -/
+besedilo: »Preizkus: $\binom{10}{2} = \frac{10 \cdot 9}{2} = 45$.« -/
 theorem primer4 (n : ℕ) : Nat.choose n 2 = 45 ↔ n = 10 := by
   constructor
   · intro h
@@ -349,7 +349,7 @@ theorem naloga2_d : Fintype.card (Fin 2 ↪ Fin 13) = 13 * 12 ∧ 13 * 12 = 156 
 
 /-- Naloga 2 (RAČUN): `14!/(3!·11!) = 364`, `6!/(2!·4!)·8 = 120`, `8!/(3!·5!) = 56`, `6·13·12 = 936`.
 trditev: MAT-SS-4/kombinatorika#naloga2-racun
-besedilo: »$\binom{14}{3} = \frac{14 \cdot 13 \cdot 12}{3 \cdot 2 \cdot 1} = 364$« -/
+besedilo: »$\binom{14}{3} = \frac{14 \cdot 13 \cdot 12}{3 \cdot 2 \cdot 1} = 364$.« -/
 theorem naloga2_racun :
     Nat.factorial 14 / (Nat.factorial 3 * Nat.factorial 11) = 364 ∧
     Nat.factorial 6 / (Nat.factorial 2 * Nat.factorial 4) * 8 = 120 ∧
@@ -365,7 +365,7 @@ theorem petnajst : Nat.factorial 15 = 1307674368000 ∧ 10 ^ 12 < Nat.factorial 
 
 /-- Letališke oznake: 26³ = 17 576; Rim: `C(7,3) = 35`, z razporedom 210.
 trditev: MAT-SS-4/kombinatorika#letalisca-rim
-besedilo: »zato je oznak lahko $26^3 = 17\,576$:« -/
+besedilo: »Črke se smejo ponavljati in vrstni red je pomemben, zato je oznak lahko $26^3 = 17\,576$: dovolj za vsa večja letališča na svetu.« -/
 theorem letalisca_rim : Fintype.card (Fin 3 → Fin 26) = 17576 ∧ Nat.choose 7 3 = 35 ∧
     Nat.descFactorial 7 3 = 210 := by
   refine ⟨by simp, by decide, by decide⟩

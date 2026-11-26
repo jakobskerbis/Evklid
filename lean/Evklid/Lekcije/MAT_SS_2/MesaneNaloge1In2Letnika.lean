@@ -422,7 +422,7 @@ theorem kvadratni :
 
 /-- Primer 2: 4^x − 3·2^(x+1) + 8 = 0 ⟺ x = 1 ali x = 2 (obe rešitvi za s = 2^x > 0 sta pozitivni).
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#primer2
-besedilo: »Reši enačbo $4^x - 3 \cdot 2^{x+1} + 8 = 0$.« -/
+besedilo: »$4^x - 3 \cdot 2^{x+1} + 8 = 0$« -/
 theorem primer2 (x : ℝ) : (4:ℝ) ^ x - 3 * 2 ^ (x + 1) + 8 = 0 ↔ x = 1 ∨ x = 2 := by
   obtain ⟨_, _, e, f, g1, g2, _, _⟩ := primer2_koraki x
   rw [e, f, mul_eq_zero, sub_eq_zero, sub_eq_zero, g1, g2]
@@ -509,7 +509,7 @@ theorem primer3_zaokrozeno : ∀ t : ℝ, (0.84 : ℝ) ^ t = 0.1 → |t - 13.2| 
 /-- Primer 3, korak 5 (in blok RACUN): t = log 0,1 / log q z nezaokroženim q = ⁸√(1/4) je ≈ 13,3, z zaokroženim
 q = 0,84 pa ≈ 13,2.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#primer3-vrednosti
-besedilo: »Prezgodnje zaokroževanje.** Če v Primeru 3 vzameš $q \approx 0{,}84$, dobiš $t \approx 13{,}2\,\mathrm{h}$ namesto $13{,}3\,\mathrm{h}$.« -/
+besedilo: »Prezgodnje zaokroževanje.** Če v Primeru 3 vzameš $q \approx 0{,}84$, dobiš $t \approx 13{,}2\,\mathrm{h}$ namesto $13{,}3\,\mathrm{h}$. Vmesne rezultate hrani v računalu, zaokroži šele odgovor.« -/
 theorem primer3_vrednosti :
     |Real.log 0.1 / Real.log ((1 / 4 : ℝ) ^ (1 / 8 : ℝ)) - 13.3| < 0.05 ∧
     |Real.log 0.1 / Real.log 0.84 - 13.2| < 0.05 := by
@@ -570,7 +570,7 @@ theorem primer4 :
 /-- Pogoste napake in Preveri se 1: log₂(4 + 4) = log₂ 8 = 3, log₂ 4 + log₂ 4 = 2 + 2 = 4 (vsote pod logaritmom ne
 razbiješ); ∛27 = 3 in 9^(1/2) = 3.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#vsota-pod-log
-besedilo: »»Logaritem vsote je vsota logaritmov.«** $\log_2 (4 + 4) = 3$, $\log_2 4 + \log_2 4 = 4$. Pravilo velja za produkt: $\log_a (AB) = \log_a A + \log_a B$. Vsote pod logaritmom ne razbiješ.« -/
+besedilo: »$\log_2 (4 + 4) = \log_2 8 = 3$, tako kot ostala dva. Vsote pod logaritmom ne razbiješ na vsoto logaritmov.« -/
 theorem vsota_pod_log :
     Real.logb 2 (4 + 4) = 3 ∧ Real.logb 2 4 + Real.logb 2 4 = 4 ∧ (27:ℝ) ^ (1 / 3 : ℝ) = 3 ∧
     (9:ℝ) ^ (1 / 2 : ℝ) = 3 := by
@@ -842,12 +842,12 @@ theorem ustno2 (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) :
 /-- Predpostavke `ustno2` se dajo izpolniti (a = 2). -/
 example : (0:ℝ) < 2 ∧ (2:ℝ) ≠ 1 := by norm_num
 
-open Filter Topology in
 /-- Predpostavke trditve `ustno2` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=
   have w : (0:ℝ) < 2 ∧ (2:ℝ) ≠ 1 := by norm_num
   ustno2 (ha := w.1) (ha1 := w.2)
 
+open Filter Topology in
 /-- Ustno vprašanje 2 (vodoravna asimptota os x): za a > 1 gre a^x proti 0, ko gre x proti −∞, za 0 < a < 1
 pa, ko gre x proti +∞.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#ustno2-asimptota

@@ -191,7 +191,7 @@ example : ContinuousOn (fun x : ℝ => x) (Icc (-1) 1) ∧ (-1:ℝ) ≤ 1 ∧ (-
 /-- Razlaga 2, premisli: `x² − 1` ima na `[−2, 2]` na krajiščih enaka predznaka (`3` in `3`), pa vseeno
 ničli `−1` in `1`.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#enaka-predznaka-dve-nicli
-besedilo: »Funkcija $f(x) = x^2 - 1$ ima na krajiščih intervala $[-2, 2]$ vrednosti $f(-2) = 3$ in $f(2) = 3$, torej enak predznak. Ali to pomeni, da na $[-2, 2]$ nima ničle?« -/
+besedilo: »Funkcija $f(x) = x^2 - 1$ ima na krajiščih intervala $[-2, 2]$ vrednosti $f(-2) = 3$ in $f(2) = 3$, torej enak predznak.« -/
 theorem enaka_predznaka_dve_nicli :
     ((-2:ℝ) ^ 2 - 1 = 3 ∧ (2:ℝ) ^ 2 - 1 = 3) ∧ ∀ x : ℝ, x ^ 2 - 1 = 0 ↔ x = -1 ∨ x = 1 := by
   refine ⟨by norm_num, fun x => ?_⟩
@@ -464,7 +464,7 @@ example :=
 /-- Pogoste napake (»natanko ena ničla«): funkcija iz primera 1 ima `f(−2) = −1` in `f(2) = 3`, na
 `[−2, 2]` pa tri ničle — na `(−2, −1)`, `(0, 1)` in `(1, 2)` — in drugih ničel nima.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#primer1-tri-nicle
-besedilo: »»Natanko ena ničla«.** Izrek zagotovi **vsaj** eno ničlo. Funkcija iz primera 1 ima $f(-2) = -1$ in $f(2) = 3$, na $[-2, 2]$ pa tri ničle. Število ničel ugotoviš šele z več vrednostmi ali grafom.« -/
+besedilo: »Funkcija iz primera 1 ima $f(-2) = -1$ in $f(2) = 3$, na $[-2, 2]$ pa tri ničle.« -/
 theorem primer1_tri_nicle :
     f₁ (-2) = -1 ∧ f₁ 2 = 3 ∧ ∃ x₁ ∈ Ioo (-2:ℝ) (-1), ∃ x₂ ∈ Ioo (0:ℝ) 1, ∃ x₃ ∈ Ioo (1:ℝ) 2,
       ∀ x, f₁ x = 0 ↔ x = x₁ ∨ x = x₂ ∨ x = x₃ := by
@@ -603,7 +603,7 @@ theorem primer3_vrednosti :
 /-- Primer 3, korak 3: štirje koraki bisekcije na `[1; 1,1]` dajo `[1,05; 1,1]`, `[1,05; 1,075]`,
 `[1,05; 1,0625]` in `[1,05; 1,05625]`.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#primer3-koraki
-besedilo: »Štirje koraki bisekcije: $f(1{,}05) = -0{,}88 < 0$, $f(1{,}075) \approx 4{,}70 > 0$, $f(1{,}0625) \approx 1{,}86 > 0$, $f(1{,}05625) \approx 0{,}48 > 0$.« -/
+besedilo: »Štirje koraki bisekcije: $f(1{,}05) = -0{,}88 < 0$, $f(1{,}075) \approx 4{,}70 > 0$, $f(1{,}0625) \approx 1{,}86 > 0$, $f(1{,}05625) \approx 0{,}48 > 0$. Ostane $[1{,}05; 1{,}05625]$, torej je $p$ med $5$ % in $5{,}625$ %.« -/
 theorem primer3_koraki :
     bisekcija f₃ 1 1.1 1 = (1.05, 1.1) ∧ bisekcija f₃ 1 1.1 2 = (1.05, 1.075) ∧
       bisekcija f₃ 1 1.1 3 = (1.05, 1.0625) ∧ bisekcija f₃ 1 1.1 4 = (1.05, 1.05625) := by

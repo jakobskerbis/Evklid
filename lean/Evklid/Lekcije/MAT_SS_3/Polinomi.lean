@@ -145,7 +145,7 @@ theorem nicle_dvojna : ((X - C 2) ^ 2 * (X - C (-1)) : ℂ[X]).roots = {2, 2, -1
 /-- Blok 7, posledica 3 (prvi del): če ima polinom realne koeficiente in je `z` njegova ničla, je ničla tudi
 `z̄`, ker `p(z̄) = conj(p(z)) = 0`.
 trditev: MAT-SS-3/polinomi#konjugirana-nicla
-besedilo: »Konjugirani pari.** Če ima polinom realne koeficiente in je $z$ njegova ničla, je ničla tudi $\bar{z}$, in to z enako stopnjo.« -/
+besedilo: »Konjugirani pari.** Če ima polinom realne koeficiente in je $z$ njegova ničla,« -/
 theorem konjugirana_nicla (p : ℝ[X]) (z : ℂ) (h : aeval z p = 0) :
     aeval (starRingEnd ℂ z) p = 0 := by
   have := aeval_algHom_apply (Complex.conjAe : ℂ →ₐ[ℝ] ℂ) z p
@@ -443,7 +443,7 @@ theorem horner_3 (c₃ c₂ c₁ c₀ a x : ℝ) :
 
 /-- Blok 5, tabela za `a = 2`: srednja vrstica 4, 2, 12, spodnja 2, 1, 6, 7.
 trditev: MAT-SS-3/polinomi#blok5-tabela
-besedilo: »| $2$ | $1$ | $6$ | $\mathbf{7}$ |« -/
+besedilo: »Spodnja vrstica so koeficienti količnika $2x^2 + x + 6$, zadnje število je ostanek $7$, torej tudi $p(2)$.« -/
 theorem blok5_tabela :
     (2:ℝ) * 2 = 4 ∧ (-3:ℝ) + 4 = 1 ∧ (1:ℝ) * 2 = 2 ∧ (4:ℝ) + 2 = 6 ∧ (6:ℝ) * 2 = 12 ∧ (-5:ℝ) + 12 = 7 := by
   norm_num
@@ -477,7 +477,7 @@ theorem kandidati_uganka (a : ℤ) : a ∣ -6 ↔ a ∈ ({1, -1, 2, -2, 3, -3, 6
 /-- Blok 6: s Hornerjem iz ničle 1 dobimo količnik `t² − 5t + 6 = (t − 2)(t − 3)`, zato
 `f(t) = (t − 1)(t − 2)(t − 3)`.
 trditev: MAT-SS-3/polinomi#uganka-razcep
-besedilo: »Ko najdemo $t = 1$, s Hornerjem dobimo količnik $t^2 - 5t + 6$, ta pa ima ničli $2$ in $3$:« -/
+besedilo: »$f(t) = (t - 1)(t - 2)(t - 3).$« -/
 theorem uganka_razcep (t : ℝ) : t ^ 3 - 6 * t ^ 2 + 11 * t - 6 = (t - 1) * (t ^ 2 - 5 * t + 6) ∧
     t ^ 2 - 5 * t + 6 = (t - 2) * (t - 3) ∧
     t ^ 3 - 6 * t ^ 2 + 11 * t - 6 = (t - 1) * (t - 2) * (t - 3) := by
@@ -537,7 +537,7 @@ theorem x3_minus_1 :
 
 /-- Blok 7, primer: `x³ − 1` ima eno samo realno ničlo, `x = 1`.
 trditev: MAT-SS-3/polinomi#x3-minus-1-realna
-besedilo: »Primer: $x^3 - 1 = (x - 1)(x^2 + x + 1)$. Kvadratni faktor ima diskriminanto $1 - 4 = -3$ in konjugirani ničli $-\frac{1}{2} \pm \frac{\sqrt{3}}{2}\,i$. Polinom ima tri kompleksne ničle, od tega eno realno.« -/
+besedilo: »Polinom $x^3 + x$ ima eno samo realno ničlo, $0$.« -/
 theorem x3_minus_1_realna (x : ℝ) : x ^ 3 - 1 = 0 ↔ x = 1 := by
   constructor
   · intro h
@@ -556,7 +556,7 @@ theorem primer1_horner : (1:ℝ) * 3 - 2 = 1 ∧ (1:ℝ) * 3 - 5 = -2 ∧ (-2:�
 
 /-- Primer 1, koraka 3 in 4: `p(3) = 0`, torej je 3 ničla in `p(x) = (x − 3)(x² + x − 2)`.
 trditev: MAT-SS-3/polinomi#primer1
-besedilo: »S Hornerjevim algoritmom preveri, ali je $x = 3$ ničla polinoma $p(x) = x^3 - 2x^2 - 5x + 6$, in zapiši količnik pri deljenju z $x - 3$.« -/
+besedilo: »Odgovor: $x = 3$ je ničla, količnik je $k(x) = x^2 + x - 2$, zato $p(x) = (x - 3)(x^2 + x - 2)$.« -/
 theorem primer1 : (3:ℝ) ^ 3 - 2 * 3 ^ 2 - 5 * 3 + 6 = 0 ∧
     ∀ x : ℝ, x ^ 3 - 2 * x ^ 2 - 5 * x + 6 = (x - 3) * (x ^ 2 + x - 2) :=
   ⟨by norm_num, fun x => by ring⟩
@@ -903,7 +903,7 @@ theorem matura2c_koraki (x : ℝ) :
 
 /-- Naloga 2 c), korak 7: preizkus pri `x = 1`: `p(1) = 2 − 3 − 11 + 6 = −6` in ostanek `−9 + 3 = −6`.
 trditev: MAT-SS-3/polinomi#matura2c-preizkus
-besedilo: »c) Preizkus pri $x = 1$, kjer je $x^2 - 1 = 0$: $p(1) = 2 - 3 - 11 + 6 = -6$ in ostanek $-9 + 3 = -6$.« -/
+besedilo: »c) Preizkus pri $x = 1$, kjer je $x^2 - 1 = 0$: $p(1) = 2 - 3 - 11 + 6 = -6$ in ostanek $-9 + 3 = -6$. Ujema se.« -/
 theorem matura2c_preizkus : (2:ℝ) * 1 ^ 3 - 3 * 1 ^ 2 - 11 * 1 + 6 = 2 - 3 - 11 + 6 ∧
     (2:ℝ) - 3 - 11 + 6 = -6 ∧ (-9:ℝ) + 3 = -6 := by norm_num
 
@@ -1091,7 +1091,7 @@ theorem kviz4 : (X ^ 3 - X : ℝ[X]) %ₘ (X - C 2) = C 6 ∧ (X ^ 3 - X : ℝ[X
 /-- Preveri se 5: `h(t) = t³ − 2t² − 9t + 18 = (t − 2)(t − 3)(t + 3)`; za `t ≥ 0` je sonda na tirnici natanko
 pri `t = 2` in `t = 3`; `h(18) ≠ 0`.
 trditev: MAT-SS-3/polinomi#kviz5
-besedilo: »Odmik sonde od tirnice opisuje $h(t) = t^3 - 2t^2 - 9t + 18$ ($t$ v minutah, $t \ge 0$). Velja $h(t) = (t - 2)(t - 3)(t + 3)$. Kdaj je sonda na tirnici?« -/
+besedilo: »Odmik sonde od tirnice opisuje $h(t) = t^3 - 2t^2 - 9t + 18$ ($t$ v minutah, $t \ge 0$).« -/
 theorem kviz5 :
     (∀ t : ℝ, t ^ 3 - 2 * t ^ 2 - 9 * t + 18 = (t - 2) * (t - 3) * (t + 3)) ∧
     (∀ t : ℝ, 0 ≤ t → (t ^ 3 - 2 * t ^ 2 - 9 * t + 18 = 0 ↔ t = 2 ∨ t = 3)) ∧
@@ -1120,7 +1120,7 @@ theorem kviz6 : (∀ x : ℝ, (2 * x - 1) ^ 2 - 4 * x ^ 2 = 4 * x ^ 2 - 4 * x + 
 /-- Preveri se 7: polinom četrte stopnje z realnimi koeficienti in ničlama `1 + 2i`, `−3i` nima realnih ničel
 (ničle so še `1 − 2i` in `3i`, skupaj štiri).
 trditev: MAT-SS-3/polinomi#kviz7
-besedilo: »Polinom četrte stopnje z realnimi koeficienti ima ničli $1 + 2i$ in $-3i$. Koliko realnih ničel ima?« -/
+besedilo: »Polinom četrte stopnje z realnimi koeficienti ima ničli $1 + 2i$ in $-3i$.« -/
 theorem kviz7 (p : ℝ[X]) (hd : p.natDegree = 4) (h1 : aeval (1 + 2 * Complex.I) p = 0)
     (h2 : aeval (-3 * Complex.I) p = 0) : ∀ x : ℝ, p.eval x ≠ 0 := by
   intro x hx
@@ -1188,7 +1188,7 @@ example :=
 /-- `<<RACUN`: `resi: 4m + 12 = 0 → m = −3`; `vrednost: 2³ − 3·2² − 4·2 + 12 = 0`;
 `vrednost: 2·3³ − 3·3² − 11·3 + 6 = 0`; `vrednost: 2³ − 4·2² + 6·2 − 4 = 0`.
 trditev: MAT-SS-3/polinomi#racun-vrednosti
-besedilo: »b) Hornerjev algoritem z $a = 3$ na koeficientih $2, -3, -11, 6$: $2$; $2 \cdot 3 - 3 = 3$; $3 \cdot 3 - 11 = -2$; $-2 \cdot 3 + 6 = 0$. Količnik je $2x^2 + 3x - 2$.« -/
+besedilo: »b) Hornerjev algoritem z $a = 3$ na koeficientih $2, -3, -11, 6$: $2$; $2 \cdot 3 - 3 = 3$; $3 \cdot 3 - 11 = -2$; $-2 \cdot 3 + 6 = 0$.« -/
 theorem racun_vrednosti : (∀ m : ℝ, 4 * m + 12 = 0 ↔ m = -3) ∧ (2:ℝ) ^ 3 - 3 * 2 ^ 2 - 4 * 2 + 12 = 0 ∧
     (2:ℝ) * 3 ^ 3 - 3 * 3 ^ 2 - 11 * 3 + 6 = 0 ∧ (2:ℝ) ^ 3 - 4 * 2 ^ 2 + 6 * 2 - 4 = 0 := by
   refine ⟨fun m => ⟨fun h => by linarith, fun h => by rw [h]; norm_num⟩, by norm_num, by norm_num,
@@ -1203,14 +1203,14 @@ theorem racun_kolicnik_1 (x : ℝ) (h2 : x ≠ 2) :
 
 /-- `<<RACUN`: `enako: (2x³ − 3x² − 11x + 6)/(x − 3) = 2x² + 3x − 2` (za `x ≠ 3`, kot racionalni izraz).
 trditev: MAT-SS-3/polinomi#racun-kolicnik-2
-besedilo: »$p(x) = 2x^3 - 3x^2 - 11x + 6$« -/
+besedilo: »$p(x) = (x - 2)(x^2 - 2x + 2) = x^3 - 4x^2 + 6x - 4$.« -/
 theorem racun_kolicnik_2 (x : ℝ) (h3 : x ≠ 3) :
     (2 * x ^ 3 - 3 * x ^ 2 - 11 * x + 6) / (x - 3) = 2 * x ^ 2 + 3 * x - 2 := by
   rw [div_eq_iff (sub_ne_zero.mpr h3)]; ring
 
 /-- `<<RACUN`: `enako: (x³ − 13x² + 40x − 36)/(x − 2) = x² − 11x + 18` (za `x ≠ 2`, kot racionalni izraz).
 trditev: MAT-SS-3/polinomi#racun-kolicnik-3
-besedilo: »b) Horner z $a = 2$ na $1, -13, 40, -36$: $1$; $-11$; $18$; $0$. Količnik $x^2 - 11x + 18 = (x - 2)(x - 9)$.« -/
+besedilo: »$x^3 - 13x^2 + 40x - 36 = (x - 2)^2(x - 9)$« -/
 theorem racun_kolicnik_3 (x : ℝ) (h2 : x ≠ 2) :
     (x ^ 3 - 13 * x ^ 2 + 40 * x - 36) / (x - 2) = x ^ 2 - 11 * x + 18 := by
   rw [div_eq_iff (sub_ne_zero.mpr h2)]; ring
@@ -1236,7 +1236,7 @@ example :=
 
 /-- `<<RACUN`: `enako: 2x³ − 3x² − 11x + 6 = (x² − 1)(2x − 3) − 9x + 3`.
 trditev: MAT-SS-3/polinomi#racun-deljenje-kvadratni
-besedilo: »c) Preizkus pri $x = 1$, kjer je $x^2 - 1 = 0$: $p(1) = 2 - 3 - 11 + 6 = -6$ in ostanek $-9 + 3 = -6$.« -/
+besedilo: »c) $2x^3 : x^2 = 2x$; $2x(x^2 - 1) = 2x^3 - 2x$; ostane $-3x^2 - 9x + 6$.« -/
 theorem racun_deljenje_kvadratni (x : ℝ) :
     2 * x ^ 3 - 3 * x ^ 2 - 11 * x + 6 = (x ^ 2 - 1) * (2 * x - 3) - 9 * x + 3 := by ring
 

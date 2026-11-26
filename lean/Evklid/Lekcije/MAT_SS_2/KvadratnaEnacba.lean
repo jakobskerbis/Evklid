@@ -37,7 +37,7 @@ example : (3 : ℝ) = 1 ↔ (2 : ℝ) = 0 := enacba_iff (by norm_num)
 
 /-- Razlaga 3 (pravilo produkta): A·B = 0 natanko tedaj, ko je A = 0 ali B = 0.
 trditev: MAT-SS-2/kvadratna-enacba#produkt-nic
-besedilo: »Rešimo jo s pravilom: produkt je enak $0$ natanko tedaj, ko je enak $0$ vsaj en faktor.« -/
+besedilo: »produkt je enak $0$ natanko tedaj,« -/
 theorem produkt_nic (A B : ℝ) : A * B = 0 ↔ A = 0 ∨ B = 0 := mul_eq_zero
 
 /-- Pomožno: (x − r)(x − s) = 0 ↔ x = r ∨ x = s (v ℝ in v ℂ).
@@ -156,7 +156,7 @@ theorem x2_9 (x : ℝ) : (x ^ 2 = 9 ↔ x = 3 ∨ x = -3) ∧ x ^ 2 - 9 = (x - 3
 
 /-- Razlaga 2: x² = 5 ⇔ x = ±√5, x² − 5 = (x − √5)(x + √5).
 trditev: MAT-SS-2/kvadratna-enacba#x2-5
-besedilo: »$x^2 - 5 = (x - \sqrt{5})(x + \sqrt{5})$« -/
+besedilo: »Gre tudi, kadar $k$ ni popoln kvadrat: $x^2 - 5 = (x - \sqrt{5})(x + \sqrt{5})$, rešitvi sta $\pm\sqrt{5}$.« -/
 theorem x2_5 (x : ℝ) : (x ^ 2 = 5 ↔ x = Real.sqrt 5 ∨ x = -Real.sqrt 5) ∧
     x ^ 2 - 5 = (x - Real.sqrt 5) * (x + Real.sqrt 5) :=
   ⟨korenjenje 5 x (by norm_num), razlika_kvadratov 5 x (by norm_num)⟩
@@ -261,7 +261,7 @@ example : (1 : ℝ) * 1 ^ 2 + (-2) * 1 + 1 = 0 ↔ (1 : ℝ) = -(-2) / (2 * 1) :
 /-- Preveri se, vprašanje 1: graf se osi x dotakne v eni sami točki (enačba ima natanko eno realno
 rešitev) natanko tedaj, ko je D = 0.
 trditev: MAT-SS-2/kvadratna-enacba#ena-resitev-iff
-besedilo: »Graf funkcije $f(x) = ax^2 + bx + c$ se osi $x$ le dotakne, v eni sami točki. Kaj velja za enačbo $ax^2 + bx + c = 0$?« -/
+besedilo: »Graf funkcije $f(x) = ax^2 + bx + c$ se osi $x$ le dotakne, v eni sami točki.« -/
 theorem ena_resitev_iff (a b c : ℝ) (ha : a ≠ 0) :
     (∃! x : ℝ, a * x ^ 2 + b * x + c = 0) ↔ b ^ 2 - 4 * a * c = 0 := by
   have e : ∀ x : ℝ, a * x ^ 2 + b * x + c = a * (x * x) + b * x + c := fun x => by ring
@@ -347,7 +347,7 @@ theorem realni_del (a b s : ℝ) :
 
 /-- Drugače: Na sliki: (−b + i·s)/(2a) = −b/(2a) + (s/(2a))·i (a ≠ 0), zato je realni del −b/(2a).
 trditev: MAT-SS-2/kvadratna-enacba#kompleksna-oblika
-besedilo: »Pri $D < 0$ simetrijska os ostane, ničel pa ni: realni del obeh kompleksnih rešitev je ravno $-\dfrac{b}{2a}$.« -/
+besedilo: »realni del obeh kompleksnih rešitev je ravno $-\dfrac{b}{2a}$.« -/
 theorem kompleksna_oblika (a b s : ℝ) (ha : a ≠ 0) :
     (-(b : ℂ) + I * s) / (2 * a) = ((-b / (2 * a) : ℝ) : ℂ) + ((s / (2 * a) : ℝ) : ℂ) * I := by
   have : (a : ℂ) ≠ 0 := ofReal_ne_zero.mpr ha
@@ -510,7 +510,7 @@ example : 0 < 4 * (1 : ℝ) ^ 2 := (dopolnjevanje 1 0 0 0 one_ne_zero).2.2
 
 /-- Bolj natančno: pri D ≥ 0 iz (x + b/(2a))² = D/(4a²) sledi x + b/(2a) = ±√D/(2a).
 trditev: MAT-SS-2/kvadratna-enacba#korenjenje-kvadrata
-besedilo: »$$x^2 + \frac{b}{a}x + \frac{c}{a} = 0 \;\Longrightarrow\; \left(x + \frac{b}{2a}\right)^2 = \frac{b^2 - 4ac}{4a^2} = \frac{D}{4a^2}.$$« -/
+besedilo: »\left(x + \frac{b}{2a}\right)^2 = \frac{b^2 - 4ac}{4a^2} = \frac{D}{4a^2}.$« -/
 theorem korenjenje_kvadrata (a b c x : ℝ) (_ha : a ≠ 0) (hD : 0 ≤ b ^ 2 - 4 * a * c) :
     (x + b / (2 * a)) ^ 2 = (b ^ 2 - 4 * a * c) / (4 * a ^ 2) ↔
       x + b / (2 * a) = Real.sqrt (b ^ 2 - 4 * a * c) / (2 * a) ∨
@@ -538,7 +538,7 @@ example : -(2 : ℝ) / 1 = 2 * (-2 / (2 * 1)) := vsota_simetrija 1 2 one_ne_zero
 /-- Razlaga 7, premisli: x² − 10x + 21 = 0 ⇔ x ∈ {3, 7}; edina para celih števil z vsoto 10 in
 produktom 21 sta (3, 7) in (7, 3).
 trditev: MAT-SS-2/kvadratna-enacba#premisli-vieta
-besedilo: »Rešitvi sta $3$ in $7$. Po Vietu iščeš dve števili z vsoto $10$ in produktom $21$; med celimi delitelji števila $21$ ustreza le par $3$ in $7$.« -/
+besedilo: »Po Vietu iščeš dve števili z vsoto $10$ in produktom $21$; med celimi delitelji števila $21$ ustreza le par $3$ in $7$.« -/
 theorem premisli_vieta (x : ℝ) : (x ^ 2 - 10 * x + 21 = 0 ↔ x = 3 ∨ x = 7) ∧
     ∀ p q : ℤ, (p + q = 10 ∧ p * q = 21) ↔ (p = 3 ∧ q = 7) ∨ (p = 7 ∧ q = 3) := by
   refine ⟨by rw [enacba_iff (P := (x - 3) * (x - 7)) (by ring), dva_faktorja], fun p q => ?_⟩
@@ -628,7 +628,7 @@ theorem primer1_racun : ((-2 : ℝ) ^ 2 - 4 * 1 * (-15) = 4 + 60 ∧ (4 : ℝ) +
 
 /-- Primer 1, odgovor: x² − 2x − 15 = 0 ⇔ x = 5 ali x = −3.
 trditev: MAT-SS-2/kvadratna-enacba#primer1
-besedilo: »$x^2 - 2x - 15 = 0$« -/
+besedilo: »Odgovor: rešitvi enačbe sta $x_1 = 5$ in $x_2 = -3$.« -/
 theorem primer1 (x : ℝ) : x ^ 2 - 2 * x - 15 = 0 ↔ x = 5 ∨ x = -3 := by
   rw [enacba_iff (P := (x - 5) * (x - -3)) (by ring), dva_faktorja]
 
@@ -686,7 +686,7 @@ theorem primer2_graf : -(4 : ℝ) / 4 = -1 ∧ (2 * (-1 : ℝ) ^ 2 + 4 * (-1) + 
 /-- Primer 3, korak 1: 3,24t − 0,81t² = 2,43 ⇔ 0,81t² − 3,24t + 2,43 = 0; model h(t) = v₀t − g/2·t² z
 v₀ = 3,24 in g = 1,62 (g/2 = 0,81).
 trditev: MAT-SS-2/kvadratna-enacba#primer3-enacba
-besedilo: »Podatki:** $v_0 = 3{,}24\,\text{m/s}$, $g = 1{,}62\,\text{m/s}^2$, $h(t) = 3{,}24t - 0{,}81t^2$, višini $h_1 = 2{,}43\,\text{m}$ in $h_2 = 4\,\text{m}$« -/
+besedilo: »Enačbo $3{,}24t - 0{,}81t^2 = 2{,}43$ preoblikujemo v $0{,}81t^2 - 3{,}24t + 2{,}43 = 0$,« -/
 theorem primer3_enacba (t : ℝ) : (3.24 * t - 0.81 * t ^ 2 = 2.43 ↔ 0.81 * t ^ 2 - 3.24 * t + 2.43 = 0) ∧
     (1.62 : ℝ) / 2 = 0.81 := by
   refine ⟨by constructor <;> intro h <;> linarith, by norm_num⟩
@@ -703,7 +703,7 @@ theorem primer3_racun : ((3.24 : ℝ) ^ 2 - 4 * 0.81 * 2.43 = 10.4976 - 7.8732 �
 
 /-- Primer 3, odgovor: 0,81t² − 3,24t + 2,43 = 0 ⇔ t = 1 ali t = 3.
 trditev: MAT-SS-2/kvadratna-enacba#primer3
-besedilo: »$0{,}81t^2 - 3{,}24t + 2{,}43 = 0$« -/
+besedilo: »$\sqrt{D} = 1{,}62$ in $2a = 1{,}62$, zato $t_{1,2} = \dfrac{3{,}24 \pm 1{,}62}{1{,}62}$: $t_1 = 1\,\text{s}$ in $t_2 = 3\,\text{s}$.« -/
 theorem primer3 (t : ℝ) : 0.81 * t ^ 2 - 3.24 * t + 2.43 = 0 ↔ t = 1 ∨ t = 3 := by
   rw [enacba_iff (P := 0.81 * ((t - 1) * (t - 3))) (by ring), mul_eq_zero, dva_faktorja,
     or_iff_right (by norm_num)]
@@ -781,7 +781,7 @@ theorem primer4_priblizki : ((-7 : ℝ) ^ 2 - 4 * 1 * 3 = 49 - 12 ∧ (49 : ℝ)
 /-- Primer 5: x³ − 2x² = 9x − 18 ⇔ x³ − 2x² − 9x + 18 = 0 ⇔ x²(x − 2) − 9(x − 2) = 0
 ⇔ (x − 2)(x² − 9) = 0 ⇔ (x − 2)(x − 3)(x + 3) = 0 ⇔ x ∈ {2, 3, −3}.
 trditev: MAT-SS-2/kvadratna-enacba#primer5
-besedilo: »$x^3 - 2x^2 - 9x + 18 = 0$« -/
+besedilo: »Vsak faktor izenačimo z $0$: $x_1 = 2$, $x_2 = 3$ in $x_3 = -3$.« -/
 theorem primer5 (x : ℝ) : x ^ 3 - 2 * x ^ 2 = 9 * x - 18 ↔ x = 2 ∨ x = 3 ∨ x = -3 := by
   have e : x ^ 3 - 2 * x ^ 2 - (9 * x - 18) = (x - 2) * (x - 3) * (x - -3) := by
     calc x ^ 3 - 2 * x ^ 2 - (9 * x - 18) = x ^ 3 - 2 * x ^ 2 - 9 * x + 18 := by ring
@@ -818,7 +818,7 @@ theorem napaka_predznak : (-3 : ℝ) ^ 2 = 9 ∧ (-3 : ℝ) ^ 2 ≠ -9 ∧ -(-3 
 /-- Pogoste napake 3: napačni zapis −b + √D/(2a) pri x² − 2x − 15 = 0 da 2 + 8/2 = 6, kar ni rešitev;
 pravilni (−b + √D)/(2a) = 5 je.
 trditev: MAT-SS-2/kvadratna-enacba#napaka-ulomkova-crta
-besedilo: »Točkovanje:** 1 točka za zapis z ničlo na desni (ali splošno obliko $x^2 - 8x + 15 = 0$), 1 točka za razcep $(x - 3)(x - 5) = 0$, 1 točka za obe rešitvi.« -/
+besedilo: »$x_1 = \dfrac{2 + 8}{2} = 5$ in $x_2 = \dfrac{2 - 8}{2} = -3$.« -/
 theorem napaka_ulomkova_crta : (2 : ℝ) + 8 / 2 = 6 ∧ (6 : ℝ) ^ 2 - 2 * 6 - 15 ≠ 0 ∧
     ((2 : ℝ) + 8) / 2 = 5 ∧ (5 : ℝ) ^ 2 - 2 * 5 - 15 = 0 := by norm_num
 
@@ -843,7 +843,7 @@ theorem napaka_razcep_ni_nic (x : ℝ) :
 /-- Za maturo, naloga 1: (x − 3)² = 2x − 6 ⇔ (x − 3)² − 2(x − 3) = 0 ⇔ (x − 3)(x − 3 − 2) = 0
 ⇔ (x − 3)(x − 5) = 0 ⇔ x ∈ {3, 5}; splošna oblika x² − 8x + 15 = 0.
 trditev: MAT-SS-2/kvadratna-enacba#matura1
-besedilo: »Točkovanje:** 1 točka za zapis z ničlo na desni (ali splošno obliko $x^2 - 8x + 15 = 0$), 1 točka za razcep $(x - 3)(x - 5) = 0$, 1 točka za obe rešitvi.« -/
+besedilo: »Izpostavimo skupni faktor $x - 3$: $(x - 3)(x - 3 - 2) = 0$, torej $(x - 3)(x - 5) = 0$.« -/
 theorem matura1 (x : ℝ) : ((x - 3) ^ 2 = 2 * x - 6 ↔ x = 3 ∨ x = 5) ∧
     ((x - 3) ^ 2 = 2 * x - 6 ↔ x ^ 2 - 8 * x + 15 = 0) := by
   have e : (x - 3) ^ 2 - (2 * x - 6) = (x - 3) * (x - 5) := by
@@ -991,7 +991,7 @@ example : ((0 : ℝ) < 1 ∧ (-1 : ℝ) < 0) ∨ ((1 : ℝ) < 0 ∧ (0 : ℝ) < 
 /-- Za maturo, naloga 3 c) (Vieta): če sta r₁, r₂ rešitvi 4x² + 140x − S = 0
 (4x² + 140x − S = 4(x − r₁)(x − r₂)), je njun produkt r₁r₂ = −S/4 < 0 za S > 0.
 trditev: MAT-SS-2/kvadratna-enacba#matura3c-vieta
-besedilo: »(Enako sledi iz Vietovih formul: rešitvi enačbe $4x^2 + 140x - S = 0$ imata produkt $-\dfrac{S}{4} < 0$, zato je natanko ena pozitivna.)« -/
+besedilo: »rešitvi enačbe $4x^2 + 140x - S = 0$ imata produkt $-\dfrac{S}{4} < 0$,« -/
 theorem matura3c_vieta (S r₁ r₂ : ℝ) (hS : 0 < S)
     (h : ∀ x : ℝ, 4 * x ^ 2 + 140 * x - S = 4 * (x - r₁) * (x - r₂)) :
     r₁ * r₂ = -S / 4 ∧ r₁ * r₂ < 0 := by

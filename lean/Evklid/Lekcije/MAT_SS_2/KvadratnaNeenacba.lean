@@ -213,7 +213,7 @@ theorem prelaz_napaka : (-6 : ℝ) < 4 ∧ 1600 - 25 * (-6 : ℝ) ^ 2 = 700 ∧ 
 
 /-- Razlaga 1 (tabela): f(−5) = −225 < 0, f(0) = 400 > 0, f(5) = −225 < 0 za f(x) = 400 − 25x²; ničli ±4.
 trditev: MAT-SS-2/kvadratna-neenacba#prelaz-tabela
-besedilo: »| $x < -4$ | $f(-5) = -225 < 0$ |« -/
+besedilo: »Ničli dobimo iz enačbe $400 - 25x^2 = 0$: $x^2 = 16$, torej $x_1 = -4$ in $x_2 = 4$.« -/
 theorem prelaz_tabela : 400 - 25 * (-5 : ℝ) ^ 2 = -225 ∧ 400 - 25 * (0 : ℝ) ^ 2 = 400 ∧
     400 - 25 * (5 : ℝ) ^ 2 = -225 ∧ ∀ x : ℝ, 400 - 25 * x ^ 2 = 0 ↔ x = -4 ∨ x = 4 := by
   refine ⟨by norm_num, by norm_num, by norm_num, fun x => ?_⟩
@@ -222,7 +222,7 @@ theorem prelaz_tabela : 400 - 25 * (-5 : ℝ) ^ 2 = -225 ∧ 400 - 25 * (0 : ℝ
 
 /-- Razlaga 1, premisli: 1600 − 25x² > 1700 ⇔ −25x² − 100 > 0, kar nima rešitve (najvišja točka je 1600).
 trditev: MAT-SS-2/kvadratna-neenacba#prelaz-1700
-besedilo: »Rešitve ni. Najvišja točka ceste je vrh prelaza na $1600\,\text{m}$. Neenačba $1600 - 25x^2 > 1700$ da $-25x^2 - 100 > 0$; parabola $-25x^2 - 100$ je odprta navzdol z vrhom pri $-100$, zato je ves graf pod osjo.« -/
+besedilo: »Neenačba $1600 - 25x^2 > 1700$ da $-25x^2 - 100 > 0$;« -/
 theorem prelaz_1700 : (∀ x : ℝ, 1600 - 25 * x ^ 2 > 1700 ↔ -25 * x ^ 2 - 100 > 0) ∧
     {x : ℝ | 1600 - 25 * x ^ 2 > 1700} = ∅ ∧ ∀ x : ℝ, 1600 - 25 * x ^ 2 ≤ 1600 := by
   refine ⟨fun x => by constructor <;> intro h <;> linarith, ?_, fun x => by nlinarith [sq_nonneg x]⟩
@@ -322,7 +322,7 @@ theorem primer2_cela : {n : ℤ | 0 ≤ -2 * n ^ 2 + 5 * n + 3} = Icc 0 3 ∧ (F
 (množenje s 1000 > 0); D = 160² − 4·5500 = 25600 − 22000 = 3600, v = (160 ± 60)/2: 50 in 110;
 rešitev (50, 110) leži v območju modela [30, 130].
 trditev: MAT-SS-2/kvadratna-neenacba#primer3
-besedilo: »Podatki:** $p(v) = 0{,}001v^2 - 0{,}16v + 11$ ($p$ v $\text{L}/100\,\text{km}$, $v$ v $\text{km/h}$), model za $30 \le v \le 130$, meji $5{,}5\,\text{L}/100\,\text{km}$ in $4{,}5\,\text{L}/100\,\text{km}$« -/
+besedilo: »Prva neenačba: $0{,}001v^2 - 0{,}16v + 11 < 5{,}5$. Vse prenesemo na levo: $0{,}001v^2 - 0{,}16v + 5{,}5 < 0$.« -/
 theorem primer3 (v : ℝ) : (0.001 * v ^ 2 - 0.16 * v + 11 < 5.5 ↔ 0.001 * v ^ 2 - 0.16 * v + 5.5 < 0) ∧
     (0.001 * v ^ 2 - 0.16 * v + 5.5 < 0 ↔ v ^ 2 - 160 * v + 5500 < 0) ∧
     ((160 : ℝ) ^ 2 - 4 * 5500 = 25600 - 22000 ∧ (25600 : ℝ) - 22000 = 3600) ∧
@@ -355,7 +355,7 @@ theorem primer3_45 : (∀ v : ℝ, 0.001 * v ^ 2 - 0.16 * v + 11 < 4.5 ↔ v ^ 2
 
 /-- Pogoste napake 1 in 4: −x² + 9 > 0 ⇔ x² − 9 < 0 ⇔ −3 < x < 3 (ne x² − 9 > 0).
 trditev: MAT-SS-2/kvadratna-neenacba#napaka-obrat
-besedilo: »»Korenjenje« neenačbe.** Iz $x^2 > 9$ ni res, da je $x > 3$. Pozabil si na negativna števila: tudi $(-4)^2 = 16 > 9$. Pravilno: $x^2 - 9 > 0$, ničli $-3$ in $3$, rešitev $(-\infty, -3) \cup (3, \infty)$.« -/
+besedilo: »Iz $-x^2 + 9 > 0$ ne dobiš $x^2 - 9 > 0$. Pri množenju ali deljenju z negativnim številom se neenačaj obrne: $x^2 - 9 < 0$, rešitev je $(-3, 3)$.« -/
 theorem napaka_obrat (x : ℝ) : (-x ^ 2 + 9 > 0 ↔ x ^ 2 - 9 < 0) ∧ (x ^ 2 - 9 < 0 ↔ -3 < x ∧ x < 3) := by
   refine ⟨by constructor <;> intro h <;> linarith, ?_⟩
   rw [show x ^ 2 - 9 = 1 * (x - -3) * (x - 3) by ring]
@@ -363,7 +363,7 @@ theorem napaka_obrat (x : ℝ) : (-x ^ 2 + 9 > 0 ↔ x ^ 2 - 9 < 0) ∧ (x ^ 2 -
 
 /-- Pogoste napake 2, Ponovitev: x² > 9 ⇔ x < −3 ali x > 3 (ne le x > 3: (−4)² = 16 > 9).
 trditev: MAT-SS-2/kvadratna-neenacba#napaka-korenjenje
-besedilo: »»Korenjenje« neenačbe.** Iz $x^2 > 9$ ni res, da je $x > 3$. Pozabil si na negativna števila: tudi $(-4)^2 = 16 > 9$. Pravilno: $x^2 - 9 > 0$, ničli $-3$ in $3$, rešitev $(-\infty, -3) \cup (3, \infty)$.« -/
+besedilo: »Pravilno: $x^2 - 9 > 0$, ničli $-3$ in $3$, rešitev $(-\infty, -3) \cup (3, \infty)$.« -/
 theorem napaka_korenjenje (x : ℝ) : (x ^ 2 > 9 ↔ x < -3 ∨ 3 < x) ∧ (-4 : ℝ) ^ 2 = 16 ∧ (16 : ℝ) > 9 := by
   refine ⟨?_, by norm_num, by norm_num⟩
   rw [gt_iff_lt, ← sub_pos (a := x ^ 2) (b := 9), show x ^ 2 - 9 = 1 * (x - -3) * (x - 3) by ring]
@@ -597,7 +597,7 @@ theorem korak_za_korakom (x : ℝ) : (x ^ 2 + 2 * x > 8 ↔ x ^ 2 + 2 * x - 8 > 
 /-- Preveri se 2: 3x² > 2x + 1 ⇔ 3x² − 2x − 1 > 0 ⇔ x < −1/3 ali x > 1; x = −1 je rešitev (izgubi se
 pri deljenju z x).
 trditev: MAT-SS-2/kvadratna-neenacba#preveri2
-besedilo: »$3x^2 - 2x - 1 > 0$« -/
+besedilo: »Najprej $3x^2 - 2x - 1 > 0$, ničli $-\dfrac{1}{3}$ in $1$, parabola je odprta navzgor, rešitev $\left(-\infty, -\dfrac{1}{3}\right) \cup (1, \infty)$.« -/
 theorem preveri2 (x : ℝ) : (3 * x ^ 2 > 2 * x + 1 ↔ x < -1 / 3 ∨ 1 < x) ∧ 3 * (-1 : ℝ) ^ 2 > 2 * (-1) + 1 := by
   refine ⟨?_, by norm_num⟩
   rw [gt_iff_lt, ← sub_pos (a := 3 * x ^ 2) (b := 2 * x + 1), show 3 * x ^ 2 - (2 * x + 1) = 3 * (x - -1 / 3) * (x - 1) by ring]
@@ -619,13 +619,13 @@ theorem preveri3 : (∀ x : ℝ, x ^ 2 - 4 * x + 3 < 0 ↔ 1 < x ∧ x < 3) ∧ 
 
 /-- Preveri se 4: x² − 9 < 0 ⇔ −3 < x < 3; (−5)² = 25 ni < 9, 4² − 9 = 7 > 0.
 trditev: MAT-SS-2/kvadratna-neenacba#preveri4
-besedilo: »$4^2 - 9 = 7 > 0$« -/
+besedilo: »To dobiš s »korenjenjem« v $x < 3$. Pozabil si na negativna števila: $(-5)^2 = 25$ ni manjše od $9$.« -/
 theorem preveri4 (x : ℝ) : (x ^ 2 - 9 < 0 ↔ -3 < x ∧ x < 3) ∧ ¬ ((-5 : ℝ) ^ 2 < 9) ∧ (4 : ℝ) ^ 2 - 9 = 7 :=
   ⟨(napaka_obrat x).2, by norm_num, by norm_num⟩
 
 /-- Preveri se 5: −x² + 6x − 8 ≥ 0 ⇔ 2 ≤ x ≤ 4 (ničli 2, 4, f(2) = 0).
 trditev: MAT-SS-2/kvadratna-neenacba#preveri5
-besedilo: »$-x^2 + 6x - 8 \ge 0$« -/
+besedilo: »Ničli sta $2$ in $4$. Parabola je odprta navzdol, nad osjo je med ničlama; neenačaj je nestrog, zato ničli vključimo.« -/
 theorem preveri5 (x : ℝ) : (-x ^ 2 + 6 * x - 8 ≥ 0 ↔ 2 ≤ x ∧ x ≤ 4) ∧ -(2 : ℝ) ^ 2 + 6 * 2 - 8 = 0 := by
   refine ⟨?_, by norm_num⟩
   rw [ge_iff_le, show -x ^ 2 + 6 * x - 8 = -1 * (x - 2) * (x - 4) by ring]
