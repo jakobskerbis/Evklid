@@ -5,7 +5,7 @@ Model: števila so naravna (ℕ); D(a) je `Nat.divisors a`, D(a, b) je `Nat.gcd 
 »a je večkratnik b« je b ∣ a, razcep na prafaktorje je `Nat.factorization` (eksponent prafaktorja p). Ulomki so
 v ℚ. Ura 6.00 je 6·60 minut.
 Lean: naravna števila v lekciji so od 1 naprej, zato imajo splošne trditve pogoj a ≠ 0, b ≠ 0 (v Leanu je
-0 ∣ … in D(0) = ∅, 0 deli vsako število ni, vsako število deli 0). Naštevanja (D(12) = {…}, prvi skupni
+D(0) = ∅, 0 ∣ a le za a = 0, vsako število deli 0). Naštevanja (D(12) = {…}, prvi skupni
 večkratnik) so preverjena z `decide`. Deljenje v ℕ (a·b / D) je celoštevilsko; v trditvi v = a·b/D se deli
 natančno (D deli a·b).
 Ni v Leanu: uganki in zgodbe (kresnice, tulipani, sadike, postaji, dežemeri, ploščice) kot besedilo, njihovi
@@ -87,7 +87,10 @@ theorem v_najmanjsi (a b : ℕ) (ha : a ≠ 0) (hb : b ≠ 0) :
 
 /-- Razlaga 4 (uganka A): kresnici svetita pri 4, 8, 12, 16, 20, 24 s in 6, 12, 18, 24 s; prvič se ujameta pri
 12 s: noben pozitiven čas pod 12 ni večkratnik obeh, v(4, 6) = 12. -/
-theorem uganka_A : Nat.lcm 4 6 = 12 ∧ (∀ m < 12, 0 < m → ¬ (4 ∣ m ∧ 6 ∣ m)) := by decide
+theorem uganka_A :
+    (4 * 1, 4 * 2, 4 * 3, 4 * 4, 4 * 5, 4 * 6) = (4, 8, 12, 16, 20, 24) ∧
+      (6 * 1, 6 * 2, 6 * 3, 6 * 4) = (6, 12, 18, 24) ∧
+      Nat.lcm 4 6 = 12 ∧ (∀ m < 12, 0 < m → ¬ (4 ∣ m ∧ 6 ∣ m)) := by decide
 
 /-- Razlaga 4 (premisli): vsi skupni večkratniki so večkratniki najmanjšega: a ∣ m in b ∣ m ⇔ v(a, b) ∣ m. -/
 theorem skupni_veckratniki (a b m : ℕ) : (a ∣ m ∧ b ∣ m) ↔ Nat.lcm a b ∣ m := Nat.lcm_dvd_iff.symm
@@ -317,10 +320,10 @@ theorem kviz4 :
   decide
 
 /-- Kviz 5: 36 = 2²·3², 54 = 2·3³, D(36, 54) = 2·3² = 18; v vsakem šopku 36 : 18 = 2 tulipana in 54 : 18 = 3
-narcise; 6 je skupni delitelj, a manjši; 108 = v(36, 54). -/
+narcise; 6 je skupni delitelj, a manjši; 108 = v(36, 54) ni D in je več kot 36 tulipanov. -/
 theorem kviz5 :
     36 = 2 ^ 2 * 3 ^ 2 ∧ 54 = 2 * 3 ^ 3 ∧ Nat.gcd 36 54 = 2 * 3 ^ 2 ∧ 2 * 3 ^ 2 = 18 ∧ 36 / 18 = 2 ∧
-      54 / 18 = 3 ∧ 6 ∣ 36 ∧ 6 ∣ 54 ∧ 6 < 18 ∧ Nat.lcm 36 54 = 108 ∧ 108 ≠ 18 := by
+      54 / 18 = 3 ∧ 6 ∣ 36 ∧ 6 ∣ 54 ∧ 6 < 18 ∧ Nat.lcm 36 54 = 108 ∧ 108 ≠ 18 ∧ 36 < 108 := by
   decide
 
 end Evklid.Lekcije.MAT_OS_7.NajvecjiSkupniDeliteljInNajmanjsiSkupniVeckratnik

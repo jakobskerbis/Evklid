@@ -14,8 +14,10 @@ stranice, »stranica a leži nasproti oglišča A«, kraka, osnovnica, vrh) in r
 definicije; slika z vzporednico skozi C (Na sliki, Bolj natančno: »kota s paroma vzporednima, nasprotno obrnjenima
 krakoma sta enaka«) je drug dokaz iste trditve, dokazana je trditev vsota = 180° (Mathlib); »obhod okoli
 trikotnika je poln obrat« (opis; dokazana je vsota zunanjih kotov 360°); simulacija »Vrste trikotnikov in vsota
-kotov« (opis); v Primeru 1 je »enakokrak« dokazan s splošnim obratom izreka (`enaka_kota_enaka_kraka`), račun
-pa s koti; besedilo napačnih odgovorov kvizov (dokazano je, da napačne vrednosti niso pravilne).
+kotov« (opis); v Primeru 1 korak »α = γ, zato je trikotnik enakokrak«: dokazano je, da iz α = 55°, β = 70°
+sledi γ = 55° = α, in splošni obrat izreka (`enaka_kota_enaka_kraka`), ki ga na točkah Primera 1 ne uporabimo
+(zahtevno, še ni dokazano: točke s koti 55°, 70°, 55° v ℂ);
+besedilo napačnih odgovorov kvizov (dokazano je, da napačne vrednosti niso pravilne).
 -/
 module
 
@@ -248,17 +250,31 @@ theorem zunanji_vsota_racun (α β γ : ℝ) (s : α + β + γ = 180) :
       (540 : ℝ) - 180 = 360 := by
   refine ⟨by ring, by rw [s]; norm_num, by norm_num⟩
 
+/-- Pogoste napake 3: 180° − (α + β) je notranji kot γ; enak zunanjemu γ' = α + β je le pri γ = 90°. -/
+theorem napaka_napacna_kota (α β γ : ℝ) (h : α + β + γ = 180) :
+    180 - (α + β) = γ ∧ (180 - (α + β) = α + β ↔ γ = 90) := by
+  refine ⟨by linarith, ⟨fun e => by linarith, fun e => by linarith⟩⟩
+
+/-- Predpostavka `napaka_napacna_kota` se da izpolniti (55°, 70°, 55°). -/
+example : (55 : ℝ) + 70 + 55 = 180 := by norm_num
+
+/-- Pogoste napake 4: kot ob vrhu je lahko drugačen od kotov ob osnovnici (40°, 40°, 100° iz Primera 2). -/
+theorem napaka_kot_ob_vrhu : Trikotnik 40 40 100 ∧ (100 : ℝ) ≠ 40 := by unfold Trikotnik; norm_num
+
 /-- Pogoste napake 2: zunanji in notranji kot pri istem oglišču sta enaka le pri pravem kotu. -/
 theorem zunanji_enak_notranjemu (α : ℝ) : 180 - α = α ↔ α = 90 := by
   constructor <;> intro h <;> linarith
 
 /-! ## Rešeni primeri -/
 
-/-- Primer 1: γ = 180° − 55° − 70° = 55°; vsi koti < 90° (ostrokotni), α = γ (enakokraki); preverimo
-55° + 70° + 55° = 180°. -/
+/-- Primer 1: γ = 180° − 55° − 70° = 55° (edina rešitev: Trikotnik 55 70 γ ⇔ γ = 55, torej γ = α); vsi koti
+< 90° (ostrokotni); preverimo 55° + 70° + 55° = 180°. Da iz α = γ sledi enakokrak, je splošni
+`enaka_kota_enaka_kraka`. -/
 theorem primer1 :
-    (180 : ℝ) - 55 - 70 = 55 ∧ (55 : ℝ) < 90 ∧ (70 : ℝ) < 90 ∧ (55 : ℝ) = 55 ∧ (55 : ℝ) + 70 + 55 = 180 := by
-  norm_num
+    (∀ γ : ℝ, Trikotnik 55 70 γ ↔ γ = 55) ∧ (180 : ℝ) - 55 - 70 = 55 ∧ (55 : ℝ) < 90 ∧ (70 : ℝ) < 90 ∧
+      (55 : ℝ) + 70 + 55 = 180 := by
+  refine ⟨fun γ => ⟨fun h => by unfold Trikotnik at h; linarith, fun h => by
+    unfold Trikotnik; subst h; norm_num⟩, by norm_num, by norm_num, by norm_num, by norm_num⟩
 
 /-- Primer 2: kota ob osnovnici skupaj merita 180° − 100° = 80°, vsak 80° : 2 = 40°; preverimo
 40° + 40° + 100° = 180°. Rešitev je ena sama: α = β in α + β + 100° = 180° ⇔ α = β = 40°. -/

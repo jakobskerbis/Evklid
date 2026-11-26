@@ -7,8 +7,8 @@ v radianih (θ° = θ·π/180: 30° = π/6, 45° = π/4, 60° = π/3, 75° = 5π
 β = 180° − α − γ) so s stopinjami kot števili. Skladnost je Mathlibova `≅` (enake vse razdalje med istoležnimi
 oglišči). »Trikotnik« (nesploščen) je `¬ Collinear ℝ {A, B, C}`. Krožnica okoli A s polmerom b je množica točk z
 dist A C = b. »≈ x« na eno decimalko je |vrednost − x| < 0,05.
-Lean: kot ob izrojenem oglišču je v Mathlibu π/2, zato imajo izreki ssk, ksk in računi s koti pogoja A ≠ B oz.
-nekolinearnost; √ negativnega števila je 0 (vse korenjene vrednosti so pozitivne).
+Lean: kot ob izrojenem oglišču je v Mathlibu π/2, zato imajo izrek ksk in računi s koti pogoja A ≠ B oz.
+nekolinearnost (pri ssk A ≠ B sledi iz |AC| < |BC|); √ negativnega števila je 0 (vse korenjene vrednosti so pozitivne).
 Ni v Leanu: poskus s trakovi, stojala, oddajniki in zemljevidi kot zgodbe (dokazani so njihovi računi in trditve
 o razdaljah); risbe in simulacija »Konstrukcije trikotnikov«; definicije (skladnost, istoležnost, oznake stranic)
 kot poimenovanja; postopek načrtovanja (skica, analiza, opis, konstrukcija z ravnilom in šestilom, »pomožnih črt ne
@@ -150,11 +150,13 @@ theorem ksk {A B C A₁ B₁ C₁ : P} (hn : ¬ Collinear ℝ ({A, B, C} : Set P
   exact side_side_side hc (by simpa using k.dist_eq 2 0) (by simpa using k.dist_eq 0 1)
 
 /-- Razlaga 3 in 4 (ssk): dve stranici a = |BC|, b = |AC| in kot α pri A, ki leži nasproti daljše od njiju (a > b),
-določajo trikotnik (A ≠ B, A₁ ≠ B₁). Dokaz: po kosinusnem izreku je c = |AB| pozitivna rešitev
+določajo trikotnik (A ≠ B in A₁ ≠ B₁ sledita iz |AC| < |BC|). Dokaz: po kosinusnem izreku je c = |AB| pozitivna rešitev
 c² − 2bc·cos α + (b² − a²) = 0; zmnožek rešitev je b² − a² < 0, zato je pozitivna rešitev ena sama. -/
-theorem ssk {A B C A₁ B₁ C₁ : P} (hAB : A ≠ B) (hAB₁ : A₁ ≠ B₁) (h : ∠ C A B = ∠ C₁ A₁ B₁)
+theorem ssk {A B C A₁ B₁ C₁ : P} (h : ∠ C A B = ∠ C₁ A₁ B₁)
     (hb : dist A C = dist A₁ C₁) (ha : dist B C = dist B₁ C₁) (hdalj : dist A C < dist B C) :
     ![A, B, C] ≅ ![A₁, B₁, C₁] := by
+  have hAB : A ≠ B := by rintro rfl; exact lt_irrefl _ hdalj
+  have hAB₁ : A₁ ≠ B₁ := by rintro rfl; rw [hb, ha] at hdalj; exact lt_irrefl _ hdalj
   have l1 := EuclideanGeometry.law_cos C A B
   have l2 := EuclideanGeometry.law_cos C₁ A₁ B₁
   have hc : 0 < dist A B := dist_pos.mpr hAB
@@ -178,7 +180,7 @@ theorem ssk {A B C A₁ B₁ C₁ : P} (hAB : A ≠ B) (hAB₁ : A₁ ≠ B₁) 
   exact side_side_side hc_eq ha (by rw [dist_comm C A, dist_comm C₁ A₁]; exact hb)
 
 /-- Predpostavke trditev `sss`, `sks`, `ksk`, `ssk` se dajo izpolniti (isti trikotnik A = 0, B = 1, C = i dvakrat:
-nekolinearen, A ≠ B, |AC| = 1 < |BC| = √2). -/
+nekolinearen, |AC| = 1 < |BC| = √2). -/
 example : ¬ Collinear ℝ ({(0 : ℂ), 1, Complex.I} : Set ℂ) ∧ (0 : ℂ) ≠ 1 ∧
     dist (0 : ℂ) Complex.I < dist (1 : ℂ) Complex.I := by
   refine ⟨nekolinearni, zero_ne_one, ?_⟩
@@ -187,16 +189,22 @@ example : ¬ Collinear ℝ ({(0 : ℂ), 1, Complex.I} : Set ℂ) ∧ (0 : ℂ) �
 
 /-- Razlaga 1, premisli 1 (dve stranici nista dovolj): trikotnika z enakima b = |AC|, c = |AB|, a različnima kotoma
 med njima, nista skladna. -/
-theorem dve_stranici_ne {A B C A₁ B₁ C₁ : P} (h : ∠ B A C ≠ ∠ B₁ A₁ C₁) : ¬ (![A, B, C] ≅ ![A₁, B₁, C₁]) := by
+theorem dve_stranici_ne {A B C A₁ B₁ C₁ : P} (_hc : dist A B = dist A₁ B₁)
+    (_hb : dist A C = dist A₁ C₁) (h : ∠ B A C ≠ ∠ B₁ A₁ C₁) : ¬ (![A, B, C] ≅ ![A₁, B₁, C₁]) := by
   intro hc
   exact h (by simpa using angle_eq_of_congruent hc 1 0 2)
 
-/-- Predpostavka trditve `dve_stranici_ne` se da izpolniti: b = 10, c = 8 pri kotih π/3 in π/2 (`obstoj_sks`). -/
-example : ∠ ((8 : ℝ) : ℂ) 0 ⟨10 * cos (π / 3), 10 * sin (π / 3)⟩ ≠
+/-- Predpostavke trditve `dve_stranici_ne` se dajo izpolniti: b = 10, c = 8 pri kotih π/3 in π/2 (`obstoj_sks`). -/
+example : dist (0 : ℂ) ((8 : ℝ) : ℂ) = dist (0 : ℂ) ((8 : ℝ) : ℂ) ∧
+    dist (0 : ℂ) ⟨10 * cos (π / 3), 10 * sin (π / 3)⟩ = dist (0 : ℂ) ⟨10 * cos (π / 2), 10 * sin (π / 2)⟩ ∧
+    ∠ ((8 : ℝ) : ℂ) 0 ⟨10 * cos (π / 3), 10 * sin (π / 3)⟩ ≠
     ∠ ((8 : ℝ) : ℂ) 0 ⟨10 * cos (π / 2), 10 * sin (π / 2)⟩ := by
-  rw [(obstoj_sks (b := 10) (c := 8) (by norm_num) (by norm_num) (by positivity)
-      (by linarith [pi_pos])).2.2,
-    (obstoj_sks (b := 10) (c := 8) (by norm_num) (by norm_num) (by positivity) (by linarith [pi_pos])).2.2]
+  have k1 := obstoj_sks (b := 10) (c := 8) (θ := π / 3) (by norm_num) (by norm_num) (by positivity)
+    (by linarith [pi_pos])
+  have k2 := obstoj_sks (b := 10) (c := 8) (θ := π / 2) (by norm_num) (by norm_num) (by positivity)
+    (by linarith [pi_pos])
+  refine ⟨rfl, k1.2.1.trans k2.2.1.symm, ?_⟩
+  rw [k1.2.2, k2.2.2]
   intro h; have := pi_pos; linarith
 
 /-- Razlaga 2, Povzetek 1: skladna trikotnika (△ABC ≅ △A₁B₁C₁) imata enako dolge istoležne stranice in enako velike
@@ -212,19 +220,25 @@ theorem skladna {A B C A₁ B₁ C₁ : P} (h : ![A, B, C] ≅ ![A₁, B₁, C�
 example : ![(0 : ℂ), 1, Complex.I] ≅ ![(0 : ℂ), 1, Complex.I] := Congruent.refl _
 
 /-- Razlaga 1, Pogoste napake 5, Preveri se 3 (trije koti ne določajo trikotnika): trikotnik, raztegnjen s faktorjem
-r > 0, r ≠ 1, ima enake kote, a drugačne stranice, zato ni skladen s prvotnim; koti 50°, 60°, 70° dajo 180°. -/
+r > 0, r ≠ 1, ima enake vse tri kote, a drugačne stranice, zato ni skladen s prvotnim; koti 50°, 60°, 70° dajo
+180°. -/
 theorem kkk_ne (A B C : V) {r : ℝ} (hr : 0 < r) (hr1 : r ≠ 1) (hAB : A ≠ B) :
-    ∠ (r • A) (r • B) (r • C) = ∠ A B C ∧ dist (r • A) (r • B) ≠ dist A B ∧ (50 : ℝ) + 60 + 70 = 180 := by
-  refine ⟨?_, ?_, by norm_num⟩
-  · simp only [EuclideanGeometry.angle, vsub_eq_sub, ← smul_sub]
+    ∠ (r • C) (r • A) (r • B) = ∠ C A B ∧ ∠ (r • A) (r • B) (r • C) = ∠ A B C ∧
+      ∠ (r • B) (r • C) (r • A) = ∠ B C A ∧ dist (r • A) (r • B) ≠ dist A B ∧
+      ¬ (![r • A, r • B, r • C] ≅ ![A, B, C]) ∧ (50 : ℝ) + 60 + 70 = 180 := by
+  have hk : ∀ X Y Z : V, ∠ (r • X) (r • Y) (r • Z) = ∠ X Y Z := by
+    intro X Y Z
+    simp only [EuclideanGeometry.angle, vsub_eq_sub, ← smul_sub]
     rw [InnerProductGeometry.angle_smul_left_of_pos _ _ hr, InnerProductGeometry.angle_smul_right_of_pos _ _ hr]
-  · rw [dist_smul₀, Real.norm_of_nonneg hr.le]
+  have hd : dist (r • A) (r • B) ≠ dist A B := by
+    rw [dist_smul₀, Real.norm_of_nonneg hr.le]
     intro h
     have hd : 0 < dist A B := dist_pos.mpr hAB
     have : (r - 1) * dist A B = 0 := by linarith
     rcases mul_eq_zero.mp this with h0 | h0
     · exact hr1 (by linarith)
     · linarith
+  refine ⟨hk C A B, hk A B C, hk B C A, hd, fun h => hd (by simpa using h.dist_eq 0 1), by norm_num⟩
 
 /-- Predpostavke trditve `kkk_ne` se dajo izpolniti (r = 2, A = 0, B = 1 v ℂ). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℂ) ≠ 1 := ⟨by norm_num, by norm_num, zero_ne_one⟩
@@ -555,7 +569,7 @@ example : (0 : ℝ) < 1 := one_pos
 
 /-- Drugače: Na sliki, Razlaga 4: pri c = 6, α = 30° in a = 4 < c sta na kraku dve točki C₁ = krak30 (3√3 − √7) in
 C₂ = krak30 (3√3 + √7) z |BC| = 4; trikotnika ABC₁ in ABC₂ imata enake tri podatke, a nista skladna; kot pri C₁ je
-top, pri C₂ oster. -/
+top, pri C₂ oster. Drugih točk z |BC| = 4 ni: `ssk_dva_vse`. -/
 theorem ssk_dva :
     let C₁ := krak30 (3 * √3 - √7)
     let C₂ := krak30 (3 * √3 + √7)
@@ -599,8 +613,26 @@ theorem ssk_dva :
     rw [← not_le, ← InnerProductGeometry.inner_nonpos_iff_pi_div_two_le_angle, hin, not_le]
     nlinarith [mul_pos t2 p7]
 
-/-- Drugače: Na sliki: pri a = 7 > c = 6 je na kraku ena sama točka C z |BC| = 7 (t > 0 je enolično določen). -/
-theorem ssk_a7 {t₁ t₂ : ℝ} (h1 : 0 < t₁) (h2 : 0 < t₂) (e1 : dist (krak30 t₁) 6 = 7)
+/-- Drugače: Na sliki: krožnica s središčem B = 6 in polmerom 4 seka premico kraka v natanko dveh točkah,
+t = 3√3 − √7 in t = 3√3 + √7; obe sta na kraku (t > 0, `ssk_dva`). -/
+theorem ssk_dva_vse (t : ℝ) :
+    dist (krak30 t) 6 = 4 ↔ (t = 3 * √3 - √7 ∨ t = 3 * √3 + √7) := by
+  have h7 : (√7 : ℝ) ^ 2 = 7 := Real.sq_sqrt (by norm_num)
+  have q := krak30_razdalja t
+  constructor
+  · intro h
+    rw [h] at q
+    have : (t - 3 * √3) ^ 2 = (√7) ^ 2 := by linarith
+    rcases sq_eq_sq_iff_eq_or_eq_neg.mp this with e | e
+    · right; linarith
+    · left; linarith
+  · intro h
+    rw [← Real.sqrt_sq dist_nonneg, q]
+    rw [show (t - 3 * √3) ^ 2 + 9 = (4 : ℝ) ^ 2 by rcases h with rfl | rfl <;> linear_combination h7]
+    exact Real.sqrt_sq (by norm_num)
+
+/-- Pomožno za `ssk_a7`: točka na kraku (t > 0) z |BC| = 7 je največ ena. -/
+theorem ssk_a7_enolicno {t₁ t₂ : ℝ} (h1 : 0 < t₁) (h2 : 0 < t₂) (e1 : dist (krak30 t₁) 6 = 7)
     (e2 : dist (krak30 t₂) 6 = 7) : t₁ = t₂ := by
   have q1 := krak30_razdalja t₁
   have q2 := krak30_razdalja t₂
@@ -620,13 +652,26 @@ theorem ssk_a7 {t₁ t₂ : ℝ} (h1 : 0 < t₁) (h2 : 0 < t₂) (e1 : dist (kra
     linear_combination q1 + 9 * h3
   nlinarith [mul_pos h1 h2]
 
-/-- Predpostavke trditve `ssk_a7` se dajo izpolniti: t = 3√3 + √40 > 0 da |BC| = 7. -/
+/-- Predpostavke trditve `ssk_a7_enolicno` se dajo izpolniti: t = 3√3 + √40 > 0 da |BC| = 7. -/
 example : 0 < 3 * √3 + √40 ∧ dist (krak30 (3 * √3 + √40)) 6 = 7 := by
   have h40 : (√40 : ℝ) ^ 2 = 40 := Real.sq_sqrt (by norm_num)
   refine ⟨by positivity, ?_⟩
   rw [← Real.sqrt_sq dist_nonneg, krak30_razdalja,
     show (3 * √3 + √40 - 3 * √3) ^ 2 + 9 = (7 : ℝ) ^ 2 by linear_combination h40]
   exact Real.sqrt_sq (by norm_num)
+
+/-- Drugače: Na sliki: pri a = 7 > c = 6 je na kraku (t > 0) natanko ena točka C z |BC| = 7 (t = 3√3 + √40). -/
+theorem ssk_a7 : ∃! t : ℝ, 0 < t ∧ dist (krak30 t) 6 = 7 := by
+  have h40 : (√40 : ℝ) ^ 2 = 40 := Real.sq_sqrt (by norm_num)
+  refine ⟨3 * √3 + √40, ⟨by positivity, ?_⟩, fun t ht => ?_⟩
+  · rw [← Real.sqrt_sq dist_nonneg, krak30_razdalja,
+      show (3 * √3 + √40 - 3 * √3) ^ 2 + 9 = (7 : ℝ) ^ 2 by linear_combination h40]
+    exact Real.sqrt_sq (by norm_num)
+  · have e : dist (krak30 (3 * √3 + √40)) 6 = 7 := by
+      rw [← Real.sqrt_sq dist_nonneg, krak30_razdalja,
+        show (3 * √3 + √40 - 3 * √3) ^ 2 + 9 = (7 : ℝ) ^ 2 by linear_combination h40]
+      exact Real.sqrt_sq (by norm_num)
+    exact ssk_a7_enolicno ht.1 (by positivity) ht.2 e
 
 /-- Drugače: Na sliki in `RACUN`: točka B je od kraka oddaljena 6 · sin 30° = 3: vsaka točka kraka je od B oddaljena
 vsaj 3 (najbližja je krak30 (3√3)), zato pri a < 3 krožnica kraka ne doseže in trikotnika ni. -/
@@ -662,14 +707,18 @@ example : ∃ A B C : ℂ, dist A C = 6 ∧ dist A B = 8 ∧ ∠ B A C = π / 2 
   exact ⟨0, (8 : ℝ), ⟨6 * cos (π / 2), 6 * sin (π / 2)⟩, h2, h1, h3⟩
 
 /-- Preveri se 4 (meja): v trikotniku s stranicama 4 in 7 je celoštevilska tretja stranica n ≤ 10 (n < 4 + 7 = 11);
-spodnja meja je 7 − 4 = 3. -/
+spodnja meja je 7 − 4 = 3, zato n ≥ 4. -/
 theorem kviz4_meja {A B C : P} (hn : ¬ Collinear ℝ ({A, B, C} : Set P)) (ha : dist B C = 4) (hb : dist C A = 7)
-    (n : ℕ) (hc : dist A B = n) : n ≤ 10 ∧ (4 : ℝ) + 7 = 11 ∧ (7 : ℝ) - 4 = 3 := by
-  have := (meje_tretje hn).2
-  rw [ha, hb, hc] at this
-  refine ⟨?_, by norm_num, by norm_num⟩
-  have : (n : ℝ) < 11 := by linarith
-  exact Nat.lt_succ_iff.mp (by exact_mod_cast this)
+    (n : ℕ) (hc : dist A B = n) : n ≤ 10 ∧ 4 ≤ n ∧ (4 : ℝ) + 7 = 11 ∧ (7 : ℝ) - 4 = 3 := by
+  have h2 := (meje_tretje hn).2
+  have h1 := (meje_tretje hn).1
+  rw [ha, hb, hc] at h2
+  rw [ha, hb, hc, show (4 : ℝ) - 7 = -3 by norm_num, abs_neg, abs_of_pos (by norm_num : (0 : ℝ) < 3)] at h1
+  refine ⟨?_, ?_, by norm_num, by norm_num⟩
+  · have : (n : ℝ) < 11 := by linarith
+    exact Nat.lt_succ_iff.mp (by exact_mod_cast this)
+  · have : (3 : ℝ) < n := h1
+    exact_mod_cast this
 
 /-- Preveri se 4 (dosežena meja) in predpostavke `kviz4_meja`: trikotnik s stranicami 4, 7, 10 obstaja. -/
 theorem kviz4_obstoj : ∃ A B C : ℂ, dist B C = 4 ∧ dist C A = 7 ∧ dist A B = ((10 : ℕ) : ℝ) ∧

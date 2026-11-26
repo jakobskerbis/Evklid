@@ -8,7 +8,9 @@ risbe (pravokotniki, krivulja) kot slike: dokazano je, da imajo vsi pravokotniki
 naravnih števil z zmnožkom 24 natanko našteti, da točke (1, 24), (2, 12), (3, 8) ne ležijo na premici, da
 y = k/x za k > 0 na x > 0 strogo pada in da pri k ≠ 0 nobena točka ne leži na osi; »krivulja najprej
 strmo, nato vse bolj položno pada« in »se osi približuje« nista dokazani (zahtevno, še ni dokazano kot
-lastnost grafa); navodila (»preveri smer«, »vprašaj se«) kot besedilo.
+lastnost grafa); »tudi k ni 0« (Bolj natančno) je del definicije obratnega sorazmerja, ne izrek; vrstica
+tabele »premo: graf je premica skozi (0, 0)« je opis slike (zahtevno, še ni dokazano kot lastnost grafa);
+navodila (»preveri smer«, »vprašaj se«) kot besedilo.
 Model: količini x, y sta obratno sorazmerni s koeficientom k, ko je x·y = k; računa se v ℚ. Kjer se deli z
 x, je x ≠ 0 predpostavka (Leanov dogovor x/0 = 0 se nikjer ne uporabi). Napačni odgovori kvizov: dokazano
 je, da napačne vrednosti niso rešitve.
@@ -261,8 +263,10 @@ t ustreza natanko t = 4. Napačni odgovori: 15 = 10·9 : 6 (premo), 4 (le preost
 (devet učencev od začetka) niso 8. -/
 theorem kviz5 (t : ℚ) : ((6 : ℚ) * 10 = 60 ∧ (6 : ℚ) * 4 = 24 ∧ (60 : ℚ) - 24 = 36 ∧ (6 : ℚ) + 3 = 9 ∧
     (36 : ℚ) / 9 = 4 ∧ (4 : ℚ) + 4 = 8) ∧ (6 * 4 + 9 * t = (6 : ℚ) * 10 ↔ t = 4) ∧
-    ((10 : ℚ) * 9 / 6 = 15 ∧ |(60 : ℚ) / 9 - 6.7| < 0.05 ∧ (4 : ℚ) ≠ 8 ∧ (15 : ℚ) ≠ 8) := by
-  refine ⟨by norm_num, by constructor <;> intro h <;> linarith, ⟨by norm_num, ?_, by norm_num, by norm_num⟩⟩
+    ((10 : ℚ) * 9 / 6 = 15 ∧ |(60 : ℚ) / 9 - 6.7| < 0.05 ∧ (4 : ℚ) ≠ 8 ∧ (15 : ℚ) ≠ 8 ∧
+    (60 : ℚ) / 9 ≠ 8) := by
+  refine ⟨by norm_num, by constructor <;> intro h <;> linarith,
+    ⟨by norm_num, ?_, by norm_num, by norm_num, by norm_num⟩⟩
   rw [abs_lt]; constructor <;> norm_num
 
 /-! ## Pogoj -/

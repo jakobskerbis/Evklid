@@ -17,7 +17,13 @@ enako usmerjeni osnovnici, c ≤ a). Romb je tu paralelogram s sosednjima strani
 Model: točke so vektorji v realnem prostoru s skalarnim produktom V (ravnina je poseben primer); primeri
 izpolnljivosti so v ℂ. Kot ∠ je Mathlibov `EuclideanGeometry.angle` v radianih (180° = π); stopinje v primerih
 so računane kot števila. Dolžine (cm) so števila v ℝ. Napačni odgovori kvizov: dokazano je, da napačne
-vrednosti niso pravilne.
+vrednosti niso pravilne, razen pri Preveri se 1 (napačni 2, 4, 5 slonijo na zgornji tabeli, ki še ni
+dokazana) in pri povratnih informacijah, ki so opis konstrukcije: Preveri se 3 (»lik na drugi strani AB je
+zrcalna slika in skladen s prvim«) in Korak za korakom, korak 2 (»dani kot β leži nasproti daljše stranice
+e, zato gre za izrek ssk«) nista dokazani (zahtevno, še ni dokazano, skladnost ni formalizirana). Preveri se 5
+je dokazan na zgledu v ℂ (A = 0, B = 4): C = 4 + 3i je na pravokotnici v B in |AC| = 5; napačna izbira
+»5 cm na pravokotnico v A« da točko 5i ≠ C, »5 cm na pravokotnico v B« pa točko z |AC| = √41 ≠ 5.
+Da je to presečišče edino oglišče C nad AB, je del konstrukcije (zahtevno, še ni dokazano).
 -/
 module
 
@@ -67,12 +73,15 @@ variable {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
 omit [InnerProductSpace ℝ V] in
 /-- Primer 1 (formula) in Na sliki: v paralelogramu (B − A = C − D) sta nasprotni stranici enaki,
 |CD| = |AB| in |DA| = |BC|; zrcaljenje čez razpolovišče diagonale BD (X ↦ B + D − X) preslika A v C,
-B v D in D v B, zato sta trikotnika ABD in CDB skladna. -/
+B v D in D v B in ohranja razdalje (‖(B + D − X) − (B + D − Y)‖ = ‖X − Y‖), zato sta trikotnika ABD in
+CDB skladna. -/
 theorem paralelogram (A B C D : V) (h : B - A = C - D) :
-    ‖C - D‖ = ‖B - A‖ ∧ ‖D - A‖ = ‖C - B‖ ∧ B + D - A = C ∧ B + D - B = D ∧ B + D - D = B := by
+    ‖C - D‖ = ‖B - A‖ ∧ ‖D - A‖ = ‖C - B‖ ∧ B + D - A = C ∧ B + D - B = D ∧ B + D - D = B ∧
+      ∀ X Y : V, ‖(B + D - X) - (B + D - Y)‖ = ‖X - Y‖ := by
   have hC : C = B - A + D := by rw [h]; abel
   subst hC
-  refine ⟨by congr 1; abel, by congr 1; abel, by abel, by abel, by abel⟩
+  refine ⟨by congr 1; abel, by congr 1; abel, by abel, by abel, by abel, fun X Y => ?_⟩
+  rw [show (B + D - X) - (B + D - Y) = -(X - Y) by abel, norm_neg]
 
 /-- Predpostavka trditve `paralelogram` se da izpolniti (A = 0, B = 1, C = 1 + i, D = i v ℂ). -/
 example : (1 : ℂ) - 0 = (1 + I) - I := by ring
@@ -150,7 +159,8 @@ example : (4 : ℂ) - 0 = (4 + 3 * I) - 3 * I ∧ ⟪(4 : ℂ) - 0, (4 + 3 * I) 
   simp [Complex.inner]
 
 /-- Primer 3 (formula) in Povzetek: v trapezu z AB ∥ CD (C − D = (c/a)·(B − A), |AB| = a > 0, c ≤ a)
-in točko E = B − (C − D) je EBCD paralelogram (B − E = C − D), |ED| = |BC| = b in |AE| = a − c. -/
+in točko E = B − (C − D) je EBCD paralelogram (B − E = C − D), |ED| = |BC| = b in |AE| = a − c.
+Trapez je pri 0 < c; trditev velja za vsak c ≤ a (pogoj c ≥ 0 ni potreben). -/
 theorem trapez (A B C D : V) (a c : ℝ) (ha : 0 < a) (hca : c ≤ a) (hAB : ‖B - A‖ = a)
     (hpar : C - D = (c / a) • (B - A)) :
     B - (B - (C - D)) = C - D ∧ ‖(B - (C - D)) - D‖ = ‖B - C‖ ∧ ‖(B - (C - D)) - A‖ = a - c := by
@@ -242,7 +252,7 @@ theorem primer4 : (5 : ℝ) + 3 = 8 ∧ (8 : ℝ) > 6 ∧ ‖(6 : ℂ) - 0‖ = 
   · rw [Complex.norm_eq_sqrt_sq_add_sq]; apply koren _ _ (by norm_num); simp; nlinarith
 
 /-- Korak za korakom: pravokotnik z a = 4 in e = 5: e > a; |BC| = b > 0 z 4² + b² = 5² je natanko b = 3;
-f = e = 5. Pogoste napake 2: b = 5 bi dal diagonalo √41 ≠ 5. -/
+Pogoste napake 2: b = 5 bi dal diagonalo √41 ≠ 5. (Da je f = e, dokazuje `pravokotnik_diagonali`.) -/
 theorem korak (b : ℝ) (hb : 0 < b) : (5 : ℝ) > 4 ∧ ((4 : ℝ) ^ 2 + b ^ 2 = 5 ^ 2 ↔ b = 3) ∧
     √((4 : ℝ) ^ 2 + 5 ^ 2) ≠ 5 := by
   refine ⟨by norm_num, ⟨fun h => by nlinarith, fun h => by rw [h]; norm_num⟩, ?_⟩
@@ -253,6 +263,24 @@ theorem korak (b : ℝ) (hb : 0 < b) : (5 : ℝ) > 4 ∧ ((4 : ℝ) ^ 2 + b ^ 2 
 
 /-- Predpostavka trditve `korak` se da izpolniti (b = 3). -/
 example : (0 : ℝ) < 3 := by norm_num
+
+/-- Preveri se 5 (zgled v ℂ, A = 0, B = 4, a = 4, e = 5): C = 4 + 3i leži na pravokotnici na AB v B in je
+od A oddaljen 5; napačno: točka 5i (5 cm na pravokotnico v A) je od A oddaljena 5, a ni C; točka 4 + 5i
+(5 cm na pravokotnico v B) je od A oddaljena √41 ≠ 5. -/
+theorem kviz5 :
+    ⟪(4 : ℂ) - 0, (4 + 3 * I) - 4⟫_ℝ = 0 ∧ ‖(4 + 3 * I : ℂ) - 0‖ = 5 ∧
+      ⟪(4 : ℂ) - 0, 5 * I - 0⟫_ℝ = 0 ∧ ‖(5 * I : ℂ) - 0‖ = 5 ∧ (5 * I : ℂ) ≠ 4 + 3 * I ∧
+      ⟪(4 : ℂ) - 0, (4 + 5 * I) - 4⟫_ℝ = 0 ∧ ‖(4 + 5 * I : ℂ) - 0‖ = √41 ∧ √41 ≠ 5 := by
+  refine ⟨by simp [Complex.inner], ?_, by simp [Complex.inner], by simp, ?_, by simp [Complex.inner], ?_, ?_⟩
+  · rw [Complex.norm_eq_sqrt_sq_add_sq]; apply koren _ _ (by norm_num); simp; norm_num
+  · intro h
+    have := congrArg Complex.re h
+    simp at this
+  · rw [Complex.norm_eq_sqrt_sq_add_sq]; congr 1; simp; norm_num
+  · intro h
+    have := Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 41)
+    rw [h] at this
+    norm_num at this
 
 /-- Preveri se 4 in Pogoste napake 4: trapez a = 8, c = 5, b = 4, d = 3: pomožni trikotnik ima stranice
 a − c = 3, 4, 3 (obstaja: 3 + 3 > 4); napačni sta 8 (cela osnovnica) in 13 = 8 + 5. -/

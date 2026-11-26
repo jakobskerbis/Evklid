@@ -155,8 +155,10 @@ theorem enak_izsek_razlicno (k N N' : ℝ) (hk : k ≠ 0) (h : N ≠ N') : k / 3
 /-- Predpostavke `enak_izsek_razlicno` se dajo izpolniti (90°, 24 in 32). -/
 example : (90 : ℝ) ≠ 0 ∧ (24 : ℝ) ≠ 32 := by norm_num
 
-/-- Pogoste napake 5 in kviz 4: 90° je četrtina kroga; četrtina od 24 je 6, od 32 je 8, razlika 2. -/
-theorem kviz4 : (90 : ℝ) / 360 = 1 / 4 ∧ (90 : ℝ) / 360 * 24 = 6 ∧ (90 : ℝ) / 360 * 32 = 8 ∧ (8 : ℝ) - 6 = 2 := by
+/-- Pogoste napake 5 in kviz 4: 90° je četrtina kroga; četrtina od 24 je 6, od 32 je 8, razlika 2; napačno
+»enako« (6 ≠ 8) in »v 7.a več« (6 < 8). -/
+theorem kviz4 : (90 : ℝ) / 360 = 1 / 4 ∧ (90 : ℝ) / 360 * 24 = 6 ∧ (90 : ℝ) / 360 * 32 = 8 ∧ (8 : ℝ) - 6 = 2 ∧
+    (6 : ℝ) ≠ 8 ∧ (6 : ℝ) < 8 := by
   norm_num
 
 /-! ## Drugače -/
@@ -189,8 +191,10 @@ theorem kviz2 :
       (35 : ℝ) ≠ 126 ∧ (50.4 : ℝ) ≠ 126 := by
   unfold kot; norm_num
 
-/-- Kviz 3: 9/36 je četrtina; 9/36·100 = 25 je odstotek, kot je 9/36·360° = 25·3,6° = 90°. -/
-theorem kviz3 : (9 : ℝ) / 36 = 1 / 4 ∧ (9 : ℝ) / 36 * 100 = 25 ∧ kot 9 36 = 90 ∧ (25 : ℝ) * 3.6 = 90 := by
+/-- Kviz 3: 9/36 je četrtina; 9/36·100 = 25 je odstotek, kot je 9/36·360° = 25·3,6° = 90°; napačno: 36/9 ni
+del celote 9/36, 25° ni pravi kot 90°. -/
+theorem kviz3 : (9 : ℝ) / 36 = 1 / 4 ∧ (9 : ℝ) / 36 * 100 = 25 ∧ kot 9 36 = 90 ∧ (25 : ℝ) * 3.6 = 90 ∧
+    (36 : ℝ) / 9 ≠ 9 / 36 ∧ (25 : ℝ) ≠ 90 := by
   unfold kot; norm_num
 
 /-- Kviz 5: 60°/360° = 1/6, cement 1/6·2400 = 400 €; napačno 2400 : 60 = 40 in 60 % od 2400 = 1440. -/

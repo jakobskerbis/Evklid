@@ -120,7 +120,8 @@ example : (0 : ℝ) ≤ 8 ∧ (0 : ℝ) < 3 := by norm_num
 
 /-- Gradnik 4 in 5, Povzetek, Bolj natančno, Preveri se 2: lik s pravokotnima diagonalama e in f = f₁ + f₂
 (romb ali deltoid; f₁, f₂ > 0 sta dela diagonale f na obeh straneh e) je unija dveh trikotnikov z osnovnico e in
-višinama f₂, f₁; njegova ploščina je e · f₂/2 + e · f₁/2 = e · (f₁ + f₂)/2 = e · f/2. Trikotnika se ne prekrivata. -/
+višinama f₂, f₁; njegova ploščina je e · f₂/2 + e · f₁/2 = e · (f₁ + f₂)/2 = e · f/2. Trikotnika se ne prekrivata:
+`diagonali_ne_prekrivata`. -/
 theorem ploscina_diagonali (e f₁ f₂ h : ℝ) (he : 0 ≤ e) (h1 : 0 < f₁) (h2 : 0 < f₂) :
     volume (regionBetween (fun y => h * y / f₂) (fun y => e - (e - h) * y / f₂) (Ioc 0 f₂) ∪
         regionBetween (fun y => h * (-y) / f₁) (fun y => e - (e - h) * (-y) / f₁) (Ioc (-f₁) 0)) =
@@ -156,6 +157,15 @@ theorem ploscina_diagonali (e f₁ f₂ h : ℝ) (he : 0 ≤ e) (h1 : 0 < f₁) 
     ring
   · field_simp
     nlinarith [mul_pos h1 h1]
+
+/-- Bolj natančno: trikotnika, iz katerih je sestavljen lik s pravokotnima diagonalama, se ne prekrivata (prvi ima
+p.1 > 0, drugi p.1 ≤ 0). -/
+theorem diagonali_ne_prekrivata (e f₁ f₂ h : ℝ) :
+    Disjoint (regionBetween (fun y => h * y / f₂) (fun y => e - (e - h) * y / f₂) (Ioc 0 f₂))
+      (regionBetween (fun y => h * (-y) / f₁) (fun y => e - (e - h) * (-y) / f₁) (Ioc (-f₁) 0)) := by
+  rw [Set.disjoint_left]
+  rintro p ⟨hp1, -⟩ ⟨hp2, -⟩
+  exact absurd hp2.2 (not_le.mpr hp1.1)
 
 /-- Predpostavke trditve `ploscina_diagonali` se dajo izpolniti (romb e = 8, f₁ = f₂ = 3, h = 4: Na sliki). -/
 example : (0 : ℝ) ≤ 8 ∧ (0 : ℝ) < 3 ∧ (0 : ℝ) < 3 := by norm_num
@@ -217,11 +227,21 @@ theorem posevna_stranica (a v t : ℝ) (ha : 0 ≤ a) (hv : 0 ≤ v) :
 /-- Predpostavke trditve `posevna_stranica` se dajo izpolniti (a = 4, v = 2). -/
 example : (0 : ℝ) ≤ 4 ∧ (0 : ℝ) ≤ 2 := by norm_num
 
-/-- Bolj natančno: med rombi s stranico 4 m (v ≤ b = 4) ima največjo ploščino kvadrat, 4 · 4 = 16 m². -/
-theorem najvecji_romb (v : ℝ) (hv : v ≤ 4) : 4 * v ≤ 16 ∧ (4 : ℝ) * 4 = 16 := ⟨by linarith, by norm_num⟩
+/-- Bolj natančno: med rombi s stranico 4 m (poševna stranica b = √(v² + (t·v)²) = 4, višina v ≥ 0) je v ≤ 4
+(`posevna_stranica`), zato ploščina 4 · v ≤ 16 m²; kvadrat (t = 0, v = 4) jo doseže: 4 · 4 = 16 m². -/
+theorem najvecji_romb (v t : ℝ) (hv : 0 ≤ v) (hb : √(v ^ 2 + (t * v) ^ 2) = 4) :
+    v ≤ 4 ∧ 4 * v ≤ 16 ∧ (4 : ℝ) * 4 = 16 ∧ √((4 : ℝ) ^ 2 + (0 * 4) ^ 2) = 4 := by
+  have h := (posevna_stranica 4 v t (by norm_num) hv).1
+  rw [hb] at h
+  refine ⟨h, by linarith, by norm_num, ?_⟩
+  rw [show (4 : ℝ) ^ 2 + (0 * 4) ^ 2 = 4 ^ 2 by norm_num]
+  exact Real.sqrt_sq (by norm_num)
 
-/-- Predpostavka trditve `najvecji_romb` se da izpolniti (v = 2). -/
-example : (2 : ℝ) ≤ 4 := by norm_num
+/-- Predpostavke trditve `najvecji_romb` se dajo izpolniti (v = 4, t = 0: kvadrat). -/
+example : (0 : ℝ) ≤ 4 ∧ √((4 : ℝ) ^ 2 + (0 * 4) ^ 2) = 4 := by
+  refine ⟨by norm_num, ?_⟩
+  rw [show (4 : ℝ) ^ 2 + (0 * 4) ^ 2 = 4 ^ 2 by norm_num]
+  exact Real.sqrt_sq (by norm_num)
 
 /-- Gradnik 1, Povzetek (tabela): obseg je vsota stranic; paralelogram (a, b, a, b) ima o = 2(a + b), romb
 (a, a, a, a) o = 4a, deltoid (a, a, b, b) o = 2(a + b). -/

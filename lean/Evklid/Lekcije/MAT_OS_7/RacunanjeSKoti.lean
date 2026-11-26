@@ -254,11 +254,11 @@ theorem dvajset_minut :
   have h3 : 3 ∣ 10 := Nat.Prime.dvd_of_dvd_pow Nat.prime_three ⟨k, h2.symm⟩
   omega
 
-/-- Kot zgodba: 45°33' − 43°48' = 44°93' − 43°48' = 1°45' = 105'; 105·1,852 = 194,46 ≈ 194 km; bratov
-»1°85'« (45,33 − 43,48 = 1,85) ni pravilen zapis (85 ≥ 60). -/
+/-- Kot zgodba: minut je premalo (33 < 48), zato 45°33' − 43°48' = 44°93' − 43°48' = 1°45' = 105';
+105·1,852 = 194,46 ≈ 194 km; bratov »1°85'« (45,33 − 43,48 = 1,85) ni pravilen zapis (85 ≥ 60). -/
 theorem mornarka :
     st 45 33 = st 44 93 ∧ st 44 93 - st 43 48 = st 1 45 ∧ st 1 45 * 60 = 105 ∧ (105 : ℚ) * 1.852 = 194.46 ∧
-      |(194.46 : ℚ) - 194| ≤ 1 / 2 ∧ (45.33 : ℚ) - 43.48 = 1.85 ∧ ¬ (85 < 60) := by
+      |(194.46 : ℚ) - 194| ≤ 1 / 2 ∧ (45.33 : ℚ) - 43.48 = 1.85 ∧ ¬ (85 < 60) ∧ (33 : ℕ) < 48 := by
   refine ⟨by unfold st; norm_num, by unfold st; norm_num, by unfold st; norm_num, by norm_num, ?_, by norm_num,
     by norm_num⟩
   rw [abs_le]; constructor <;> norm_num

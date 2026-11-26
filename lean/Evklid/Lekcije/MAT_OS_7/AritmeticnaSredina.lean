@@ -320,11 +320,13 @@ theorem crta_na_visini {n : ℕ} (hn : n ≠ 0) (x : Fin n → ℝ) (c : ℝ) :
   · nlinarith
 
 /-- Iz vsakdanjega življenja: 9 + 6 + 12 + 5 = 32 €, 32 : 4 = 8 €; odmiki +1, −2, +4, −3; preplačanega
-1 + 4 = 5 €, premalo plačanega 2 + 3 = 5 €. -/
+1 + 4 = 5 €, premalo plačanega 2 + 3 = 5 €; Bor in Dana dasta 2 + 3 = 5 €, Ana dobi 1 €, Cene 4 €, nato je vsak
+plačal 8 €: 9 − 1 = 6 + 2 = 12 − 4 = 5 + 3 = 8. -/
 theorem pica :
     sr [9, 6, 12, 5] = 8 ∧ (9 : ℝ) + 6 + 12 + 5 = 32 ∧ (32 : ℝ) / 4 = 8 ∧
       (9 : ℝ) - 8 = 1 ∧ (6 : ℝ) - 8 = -2 ∧ (12 : ℝ) - 8 = 4 ∧ (5 : ℝ) - 8 = -3 ∧
-      (1 : ℝ) + 4 = 5 ∧ (2 : ℝ) + 3 = 5 := by
+      (1 : ℝ) + 4 = 5 ∧ (2 : ℝ) + 3 = 5 ∧
+      (9 : ℝ) - 1 = 8 ∧ (6 : ℝ) + 2 = 8 ∧ (12 : ℝ) - 4 = 8 ∧ (5 : ℝ) + 3 = 8 := by
   norm_num [sr]
 
 /-- Korak za korakom, način A: 152 + 148 + 160 + 140 = 600, n = 4, 600 : 4 = 150 g. -/

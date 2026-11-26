@@ -137,6 +137,11 @@ theorem tabela :
 theorem primer1 : (5 : ℝ) / 2 = 2.5 ∧ (10 : ℝ) / 4 = 2.5 ∧ (15 : ℝ) / 6 = 2.5 ∧ (2.5 : ℝ) * 10 = 25 := by
   norm_num
 
+/-- Primer 1 (sklep iz tabele): vsi trije pari (2, 5), (4, 10), (6, 15) imajo isti količnik k = 2,5 (5 = k · 2,
+10 = k · 4, 15 = k · 6), zato je tabela del premo sorazmerne zveze y = 2,5 · x. -/
+theorem primer1_premo : ∃ k : ℝ, (5 : ℝ) = k * 2 ∧ (10 : ℝ) = k * 4 ∧ (15 : ℝ) = k * 6 ∧
+    premo (fun x => k * x) := ⟨2.5, by norm_num, by norm_num, by norm_num, ⟨2.5, fun _ => rfl⟩⟩
+
 /-- Primer 1 (enoličnost): vsi trije pari (2, 5), (4, 10), (6, 15) ležijo na y = 2,5 · x; in vsaka premo
 sorazmerna zveza s f 2 = 5 da f 10 = 25. -/
 theorem primer1_enolicno (f : ℝ → ℝ) (hf : premo f) (h : f 2 = 5) :
@@ -234,15 +239,17 @@ example : (0 : ℝ) < 0.06 ∧ (150 : ℝ) < 350 := by norm_num
 /-! ## Drugače -/
 
 /-- Kot zgodba: 2 cm → 1 km, torej 1 cm → 0,5 km in 9 cm → 4,5 km (ne 9 km); pri 3 km na uro je čas
-4,5 : 3 = 1,5 h; 0 cm → 0 km, dvakrat daljša pot → dvakrat daljša hoja. -/
+4,5 : 3 = 1,5 h; 0 cm → 0 km in 0 minut hoje, dvakrat daljša pot na zemljevidu → dvakrat daljša pot in dvakrat
+daljša hoja (g ∘ f: cm → km → h). -/
 theorem zgodba (f g : ℝ → ℝ) (hf : premo f) (hg : premo g) (h1 : f 2 = 1) (h2 : g 3 = 1) :
     f 1 = 0.5 ∧ f 9 = 4.5 ∧ f 9 ≠ 9 ∧ g 4.5 = 1.5 ∧ (4.5 : ℝ) / 3 = 1.5 ∧ f 0 = 0 ∧
-      ∀ x, f (2 * x) = 2 * f x := by
+      (∀ x, f (2 * x) = 2 * f x) ∧ g (f 0) = 0 ∧ ∀ x, g (f (2 * x)) = 2 * g (f x) := by
   have e := iz_para f hf two_ne_zero h1
   have eg := iz_para g hg (by norm_num) h2
   have e9 : f 9 = 4.5 := by rw [e]; norm_num
   refine ⟨by rw [e]; norm_num, e9, by rw [e9]; norm_num, by rw [eg]; norm_num, by norm_num,
-    izhodisce f hf, fun x => (pravilo f).mp hf 2 x⟩
+    izhodisce f hf, fun x => (pravilo f).mp hf 2 x, by rw [izhodisce f hf, izhodisce g hg], fun x => ?_⟩
+  rw [(pravilo f).mp hf 2 x, (pravilo g).mp hg 2 (f x)]
 
 /-- Predpostavke trditve `zgodba` se dajo izpolniti (f x = x/2, g x = x/3). -/
 example : premo (fun x => 1 / 2 * x) ∧ premo (fun x => 1 / 3 * x) ∧ (fun x : ℝ => 1 / 2 * x) 2 = 1 ∧

@@ -180,16 +180,17 @@ theorem krizisce_racun : (180 : ℝ) - 65 = 115 ∧ (180 : ℝ) - 115 = 65 ∧ (
     (65 : ℝ) < 90 ∧ (90 : ℝ) < 115 ∧ (115 : ℝ) < 180 := by norm_num
 
 /-- Razlaga (Lipova ulica): kot φ na drugem križišču ima vzporedne krake s 65° ali s 115° (φ = θ ali φ = 180 − θ);
-ostri meri 65°, topi 115°: spet dva kota po 65° in dva po 115°. -/
-theorem lipova (φ ψ : ℝ) (h1 : φ = 65 ∨ φ = 180 - 65) (h1' : φ < 90) (h2 : ψ = 65 ∨ ψ = 180 - 65)
-    (h2' : 90 < ψ) : φ = 65 ∧ ψ = 115 := by
-  refine ⟨(vrste 180 65 φ h1).1 (Or.inl ⟨by norm_num, by linarith⟩), ?_⟩
+ostri meri 65°, topi 115°; preostala kota χ, ω na tem križišču sta sokota (ψ + χ = 180°, χ + ω = 180°), zato
+χ = 65°, ω = 115°: spet dva kota po 65° in dva po 115°. -/
+theorem lipova (φ ψ χ ω : ℝ) (h1 : φ = 65 ∨ φ = 180 - 65) (h1' : φ < 90) (h2 : ψ = 65 ∨ ψ = 180 - 65)
+    (h2' : 90 < ψ) (h3 : ψ + χ = 180) (h4 : χ + ω = 180) : φ = 65 ∧ ψ = 115 ∧ χ = 65 ∧ ω = 115 := by
+  have hφ := (vrste 180 65 φ h1).1 (Or.inl ⟨by norm_num, by linarith⟩)
   have := (vrste 180 65 ψ h2).2.1 (Or.inl ⟨by norm_num, by linarith⟩)
-  linarith
+  refine ⟨hφ, by linarith, by linarith, by linarith⟩
 
-/-- Predpostavke trditve `lipova` se dajo izpolniti (φ = 65, ψ = 115). -/
+/-- Predpostavke trditve `lipova` se dajo izpolniti (φ = 65, ψ = 115, χ = 65, ω = 115). -/
 example : ((65 : ℝ) = 65 ∨ (65 : ℝ) = 180 - 65) ∧ (65 : ℝ) < 90 ∧ ((115 : ℝ) = 65 ∨ (115 : ℝ) = 180 - 65) ∧
-    (90 : ℝ) < 115 := by norm_num
+    (90 : ℝ) < 115 ∧ (115 : ℝ) + 65 = 180 ∧ (65 : ℝ) + 115 = 180 := by norm_num
 
 /-- Primer 1: sokot kota 112° je natanko 180° − 112° = 68°; 112° je topi, 68° ostri; preizkus 112° + 68° = 180°. -/
 theorem primer1 (β : ℝ) : 112 + β = 180 ↔ β = 68 := by

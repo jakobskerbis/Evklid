@@ -10,19 +10,24 @@ k = 1); enakokraki trapez: še |AD| = |BC| in k ≠ 1 (kraka nista vzporedna; pr
 pravokotni trapez: krak AD je pravokoten na osnovnico; romb: paralelogram z |AB| = |AD|; pravokotnik: paralelogram
 s pravim kotom α; kvadrat: pravokotnik in romb; deltoid: |AB| = |AD| in |CB| = |CD|.
 Lean: kot pri izrojenem oglišču (ničelni vektor) je v Mathlibu π/2; zato imajo trditve, ki to potrebujejo, pogoja
-B ≠ A, C ≠ A. Računi s stopinjami v primerih, kjer lekcija uporabi vsoto kotov 360° (Primer 2, Preveri se 2), so
+B ≠ A, C ≠ A. Definicije zajemajo tudi izrojene like (npr. pri D = A je ∠DAB = π/2, zato je daljica
+»pravokotnik« in točka »kvadrat«); trditve zato veljajo splošneje. Računi s stopinjami v primerih, kjer lekcija uporabi vsoto kotov 360° (Primer 2, Preveri se 2), so
 dokazani s to vsoto kot predpostavko.
 Ni v Leanu: zgodovina (Herodot, Evklid, beseda trapez), risbe, simulacija, analogiji (rodbina, naslovi) in zgodbe
 (trg, regata, parcela, kolesarska pot) kot besedilo; oznake in »oglišča v nasprotni smeri urnega kazalca«
-(dogovor); vsota notranjih kotov 360° v SPLOŠNEM štirikotniku z razrezom po diagonali (zahtevno, še ni dokazano;
-dokazana je za vsak trapez in zato vsak paralelogram); da deltoidova os simetrije AC razpolavlja diagonalo BD
-in prezrcali B v D (zahtevno, še ni dokazano; dokazani so pravokotnost diagonal, β = δ in razpolavljanje kotov
+(dogovor); vsota notranjih kotov 360° v SPLOŠNEM štirikotniku z razrezom po diagonali (v modelu V ne velja brez dodatnih
+pogojev: ne za prostorski štirikotnik in ne za nekonveksnega, ker so koti neorientirani; potrebuje ravnino in
+konveksnost; ta različica: zahtevno, še ni dokazano; dokazana je za vsak trapez in zato vsak paralelogram); da
+deltoidova os simetrije AC razpolavlja diagonalo BD in prezrcali B v D (ne velja za prostorski deltoid; potrebuje
+ravnino; ravninska različica: zahtevno, še ni dokazano; dokazani so pravokotnost diagonal, β = δ in razpolavljanje kotov
 pri A in C); »deltoid v splošnem nima vzporednih stranic« je dokazan s primerom deltoida brez vzporednih stranic;
 v Pogostih napakah 3 in 4 »kota ob isti osnovnici v splošnem trapezu nista enaka« in »v deltoidu v splošnem
 α ≠ γ« (ni dokazano s primerom; dokazana so pravila α + δ = β + γ = 180°, α = β v enakokrakem trapezu in β = δ);
 Pogoste napake 5 je dokazana z ekvivalencama (paralelogram ima enaki diagonali natanko kot pravokotnik in
 pravokotni natanko kot romb), ne s posebnim primerom; »okvir
-vrat«: da je lik z enakimi nasprotnimi stranicami paralelogram (zahtevno, še ni dokazano; dokazano je, da je
+vrat«: da je lik z enakimi nasprotnimi stranicami (in enakima diagonalama) paralelogram oz. pravokotnik (v modelu V
+ne velja brez dodatnih pogojev, npr. za štiri oglišča enakoploskovnega tetraedra v prostoru; potrebuje ravnino in
+lik brez samopresečišč; ta različica: zahtevno, še ni dokazano; dokazano je, da je
 paralelogram z enakima diagonalama pravokotnik in obratno); škarjasto dvigalo, zmaj, znak, nasip, parkirna mesta
 kot opisi (dokazane so ustrezne lastnosti likov); vrstni red korakov v Preveri se 5 (dokazani so koraki in
 rezultat); besedilo napačnih odgovorov v Preveri se (dokazane so napačne vrednosti, ki jih razlaga navaja).
@@ -548,10 +553,13 @@ example : ∃ A B C D : ℂ, romb A B C D ∧ B ≠ A ∧ C ≠ A ∧ ∠ B A C 
 theorem dva_trikotnika : (2:ℝ) * 180 = 360 := by norm_num
 
 /-- Preveri se 2: z vsoto kotov 360° in α = 90°, β = 75°, γ = 110° je δ natanko 85°; napačni odgovori
-275 (vsota danih), 75 in 70 ne ustrezajo. -/
+275 (vsota danih), 75 (δ = β kot v paralelogramu) in 70 (γ + δ = 180° kot v trapezu: 180 − 110 = 70) ne
+ustrezajo. -/
 theorem preveri2 (δ : ℝ) : (90 + 75 + 110 + δ = 360 ↔ δ = 85) ∧ (360:ℝ) - 90 - 75 - 110 = 85 ∧
-    (90:ℝ) + 75 + 110 = 275 ∧ (90:ℝ) + 75 + 110 + 75 ≠ 360 ∧ (90:ℝ) + 75 + 110 + 70 ≠ 360 := by
-  refine ⟨⟨fun h => by linarith, fun h => by rw [h]; norm_num⟩, by norm_num, by norm_num, by norm_num, by norm_num⟩
+    (90:ℝ) + 75 + 110 = 275 ∧ (180:ℝ) - 110 = 70 ∧ (90:ℝ) + 75 + 110 + 75 ≠ 360 ∧
+    (90:ℝ) + 75 + 110 + 70 ≠ 360 := by
+  refine ⟨⟨fun h => by linarith, fun h => by rw [h]; norm_num⟩, by norm_num, by norm_num, by norm_num, by norm_num,
+    by norm_num⟩
 
 /-- Preveri se 3: paralelogram z enakimi stranicami je romb: diagonali sta pravokotni, se še vedno razpolavljata,
 enako dolgi pa sta le, če je kot pravi (kvadrat). -/

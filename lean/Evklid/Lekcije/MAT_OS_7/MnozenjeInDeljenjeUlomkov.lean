@@ -63,7 +63,8 @@ theorem mnozenje_z_manjsim (x q : ℚ) (hx : 0 < x) (_hq0 : 0 < q) (hq1 : q < 1)
 example : (0:ℚ) < 3 / 4 ∧ (0:ℚ) < 1 / 2 ∧ (1:ℚ) / 2 < 1 := by norm_num
 
 /-- Razlaga 3: krajšanje pred množenjem: števec k · a prvega ulomka in imenovalec k · d drugega smemo krajšati
-s k ≠ 0, ker je produkt en sam ulomek; enako za imenovalec prvega in števec drugega. -/
+s k ≠ 0, ker je produkt en sam ulomek; enako za imenovalec prvega in števec drugega. (Navadno krajšanje
+števca in imenovalca istega ulomka je pravilo krajšanja ulomkov.) -/
 theorem krajsanje_navzkriz (a b c d k : ℚ) (hk : k ≠ 0) (hb : b ≠ 0) (hd : d ≠ 0) :
     (k * a) / b * (c / (k * d)) = a / b * (c / d) ∧ a / (k * b) * ((k * c) / d) = a / b * (c / d) := by
   constructor <;> field_simp
@@ -159,6 +160,9 @@ theorem primer2 : ((2:ℚ) + 1 / 4) / (1 + 1 / 2) = 1 + 1 / 2 := by
     _ = 3 / 2 := by norm_num
     _ = 1 + 1 / 2 := by norm_num
 
+/-- Primer 2, korak 3: krajšamo 9 in 3 s 3 ter 2 in 4 z 2: 9 : 3 = 3, 3 : 3 = 1, 2 : 2 = 1, 4 : 2 = 2. -/
+theorem primer2_krajsanje : (9:ℚ) / 3 = 3 ∧ (3:ℚ) / 3 = 1 ∧ (2:ℚ) / 2 = 1 ∧ (4:ℚ) / 2 = 2 := by norm_num
+
 /-- Primer 2, korak 4 (preizkus): 3/2 · 3/2 = 9/4 = 2 1/4. -/
 theorem primer2_preizkus : (3:ℚ) / 2 * (3 / 2) = 9 / 4 ∧ (9:ℚ) / 4 = 2 + 1 / 4 := by norm_num
 
@@ -174,6 +178,9 @@ theorem primer3 : ((1:ℚ) / 2 + 1 / 3) / (5 / 12) - 1 / 5 * (5 / 2) = 1 + 1 / 2
     _ = 4 / 2 - 1 / 2 := by norm_num
     _ = 3 / 2 := by norm_num
     _ = 1 + 1 / 2 := by norm_num
+
+/-- Primer 3, korak 2: krajšamo 5 in 5 s 5 ter 12 in 6 s 6: 5 : 5 = 1, 12 : 6 = 2, 6 : 6 = 1. -/
+theorem primer3_krajsanje : (5:ℚ) / 5 = 1 ∧ (12:ℚ) / 6 = 2 ∧ (6:ℚ) / 6 = 1 := by norm_num
 
 /-- Primer 4, korak 1: pojedeno 2/5 · 5/6 = 2/6 = 1/3 kg. -/
 theorem primer4_pojedeno : (2:ℚ) / 5 * (5 / 6) = 1 / 3 := by

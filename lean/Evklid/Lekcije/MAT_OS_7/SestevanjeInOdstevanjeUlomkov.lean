@@ -149,18 +149,23 @@ theorem primer3 : (3 + 1 / 4 : ℚ) - ((1 + 1 / 2) + 1 / 3) = 1 + 5 / 12 := by
     _ = 17 / 12 := by norm_num
     _ = 1 + 5 / 12 := by norm_num
 
-/-- Primer 3, koraki 1, 3, 5–7: v(2, 3) = 6, v(4, 6) = 12; 17 = 1 · 12 + 5; 1/12 ure = 5 min, 5/12 ure = 5 · 5 = 25
-min; preizkus: 3 3/12 − 1 10/12 = 2 15/12 − 1 10/12 = 1 5/12 (3/12 < 10/12). -/
-theorem primer3_koraki : Nat.lcm 2 3 = 6 ∧ Nat.lcm 4 6 = 12 ∧ (17:ℕ) = 1 * 12 + 5 ∧ (1:ℚ) / 12 * 60 = 5 ∧
+/-- Primer 3, koraki 1–7: v(2, 3) = 6, 1 1/2 = 1 3/6, 1/3 = 2/6, 3/6 + 2/6 = 5/6; 3 1/4 = 13/4, 1 5/6 = 11/6;
+v(4, 6) = 12, 13/4 = 39/12, 11/6 = 22/12, 39/12 − 22/12 = 17/12; 17 = 1 · 12 + 5; 1/12 ure = 5 min, 5/12 ure = 5 · 5 = 25
+min; preizkus: 3 1/4 = 3 3/12, 1 5/6 = 1 10/12; 3 3/12 − 1 10/12 = 2 15/12 − 1 10/12 = 1 5/12 (3/12 < 10/12). -/
+theorem primer3_koraki : Nat.lcm 2 3 = 6 ∧ (1 + 1 / 2 : ℚ) = 1 + 3 / 6 ∧ (1:ℚ) / 3 = 2 / 6 ∧
+    (3:ℚ) / 6 + 2 / 6 = 5 / 6 ∧ (3 + 1 / 4 : ℚ) = 13 / 4 ∧ (1 + 5 / 6 : ℚ) = 11 / 6 ∧ Nat.lcm 4 6 = 12 ∧
+    (13:ℚ) / 4 = 39 / 12 ∧ (11:ℚ) / 6 = 22 / 12 ∧ (39:ℚ) / 12 - 22 / 12 = 17 / 12 ∧
+    (3 + 1 / 4 : ℚ) = 3 + 3 / 12 ∧ (1 + 5 / 6 : ℚ) = 1 + 10 / 12 ∧ (17:ℕ) = 1 * 12 + 5 ∧ (1:ℚ) / 12 * 60 = 5 ∧
     (5:ℚ) / 12 * 60 = 5 * 5 ∧ (5:ℚ) * 5 = 25 ∧ (3:ℚ) / 12 < 10 / 12 ∧
     (3 + 3 / 12 : ℚ) - (1 + 10 / 12) = (2 + 15 / 12) - (1 + 10 / 12) ∧
     (2 + 15 / 12 : ℚ) - (1 + 10 / 12) = 1 + 5 / 12 := by norm_num
 
-/-- Primer 4: 2 2/3 = 8/3, 1 3/4 = 7/4; v(3, 4) = 12; 8/3 + 7/4 = 32/12 + 21/12 = 53/12 = 4 5/12 ure (53 = 4 · 12 + 5),
+/-- Primer 4: 2 2/3 = 8/3, 1 3/4 = 7/4; v(3, 4) = 12; 8/3 = 32/12, 7/4 = 21/12; 8/3 + 7/4 = 32/12 + 21/12 = 53/12 = 4 5/12 ure (53 = 4 · 12 + 5),
 to so 4 ure in 25 minut. -/
 theorem primer4 : (2 + 2 / 3 : ℚ) = 8 / 3 ∧ (1 + 3 / 4 : ℚ) = 7 / 4 ∧ Nat.lcm 3 4 = 12 ∧
+    (8:ℚ) / 3 = 32 / 12 ∧ (7:ℚ) / 4 = 21 / 12 ∧
     (2 + 2 / 3 : ℚ) + (1 + 3 / 4) = 4 + 5 / 12 ∧ (53:ℕ) = 4 * 12 + 5 ∧ (5:ℚ) / 12 * 60 = 25 := by
-  refine ⟨by norm_num, by norm_num, by norm_num, ?_, by norm_num, by norm_num⟩
+  refine ⟨by norm_num, by norm_num, by norm_num, by norm_num, by norm_num, ?_, by norm_num, by norm_num⟩
   calc (2 + 2 / 3 : ℚ) + (1 + 3 / 4) = 8 / 3 + 7 / 4 := by norm_num
     _ = 32 / 12 + 21 / 12 := by norm_num
     _ = 53 / 12 := by norm_num
@@ -216,20 +221,26 @@ theorem preveri2 : (1:ℚ) / 2 + 1 / 4 = 9 / 12 ∧ (2:ℚ) / 3 = 8 / 12 ∧ (1:
 theorem preveri3 : (24:ℕ) / 6 = 4 ∧ (1:ℚ) / 4 = 6 / 24 ∧ (1:ℚ) / 6 = 4 / 24 ∧ (6:ℚ) / 24 + 4 / 24 = 10 / 24 ∧
     (10:ℚ) / 24 = 5 / 12 := by norm_num
 
-/-- Preveri se 4: v(4, 3) = 12; 3/4 + 2/3 = 9/12 + 8/12 = 17/12 = 1 5/12 ure = 1 ura 25 minut; napačna 5/7 in 5/12. -/
+/-- Preveri se 4: v(4, 3) = 12; 3/4 + 2/3 = 9/12 + 8/12 = 17/12 = 1 5/12 ure = 1 ura 25 minut; napačna: seštevanje števcev in imenovalcev (3 + 2)/(4 + 3) = 5/7, razširjena le imenovalca
+3/12 + 2/12 = 5/12; obe nista pravi rezultat. -/
 theorem preveri4 : Nat.lcm 4 3 = 12 ∧ (3:ℚ) / 4 + 2 / 3 = 1 + 5 / 12 ∧ (5:ℚ) / 12 * 60 = 25 ∧
+    ((3:ℚ) + 2) / (4 + 3) = 5 / 7 ∧ (3:ℚ) / 12 + 2 / 12 = 5 / 12 ∧
     (3:ℚ) / 4 + 2 / 3 ≠ 5 / 7 ∧ (3:ℚ) / 4 + 2 / 3 ≠ 5 / 12 := by
-  refine ⟨by norm_num, ?_, by norm_num, by norm_num, by norm_num⟩
+  refine ⟨by norm_num, ?_, by norm_num, by norm_num, by norm_num, by norm_num, by norm_num⟩
   calc (3:ℚ) / 4 + 2 / 3 = 9 / 12 + 8 / 12 := by norm_num
     _ = 17 / 12 := by norm_num
     _ = 1 + 5 / 12 := by norm_num
 
 /-- Preveri se 5: 4 1/3 − 2 1/2 = 4 2/6 − 2 3/6 = 3 8/6 − 2 3/6 = 1 5/6 km; preizkus 2 3/6 + 1 5/6 = 3 8/6 = 4 2/6;
-napačni odgovori 2 1/6, 2 5/6, 1 1/6 niso enaki. -/
+napačni odgovori: obrnjena ulomka (4 − 2) + (3/6 − 2/6) = 2 1/6; celota sposojena, celi del ne zmanjšan
+4 8/6 − 2 3/6 = 2 5/6; celi del zmanjšan, ulomka obrnjena (3 − 2) + (3/6 − 2/6) = 1 1/6; nobeden ni pravi. -/
 theorem preveri5 : (4 + 1 / 3 : ℚ) - (2 + 1 / 2) = 1 + 5 / 6 ∧ (2 + 3 / 6 : ℚ) + (1 + 5 / 6) = 3 + 8 / 6 ∧
-    (3 + 8 / 6 : ℚ) = 4 + 2 / 6 ∧ (1 + 5 / 6 : ℚ) ≠ 2 + 1 / 6 ∧ (1 + 5 / 6 : ℚ) ≠ 2 + 5 / 6 ∧
+    (3 + 8 / 6 : ℚ) = 4 + 2 / 6 ∧ ((4:ℚ) - 2) + (3 / 6 - 2 / 6) = 2 + 1 / 6 ∧
+    (4 + 8 / 6 : ℚ) - (2 + 3 / 6) = 2 + 5 / 6 ∧ ((3:ℚ) - 2) + (3 / 6 - 2 / 6) = 1 + 1 / 6 ∧
+    (1 + 5 / 6 : ℚ) ≠ 2 + 1 / 6 ∧ (1 + 5 / 6 : ℚ) ≠ 2 + 5 / 6 ∧
     (1 + 5 / 6 : ℚ) ≠ 1 + 1 / 6 := by
-  refine ⟨?_, by norm_num, by norm_num, by norm_num, by norm_num, by norm_num⟩
+  refine ⟨?_, by norm_num, by norm_num, by norm_num, by norm_num, by norm_num, by norm_num, by norm_num,
+    by norm_num⟩
   calc (4 + 1 / 3 : ℚ) - (2 + 1 / 2) = (4 + 2 / 6) - (2 + 3 / 6) := by norm_num
     _ = (3 + 8 / 6) - (2 + 3 / 6) := by norm_num
     _ = 1 + 5 / 6 := by norm_num

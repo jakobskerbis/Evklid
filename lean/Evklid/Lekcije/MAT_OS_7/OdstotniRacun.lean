@@ -84,9 +84,11 @@ theorem dvajset_odstotkov :
     (100 : ℝ) - 20 = 80 ∧ (80 : ℝ) / 100 = 0.8 ∧ (100 : ℝ) + 20 = 120 ∧ (120 : ℝ) / 100 = 1.2 := by
   norm_num
 
-/-- Razlaga (premisli) in Pogoste napake 4: 100 € → 110 €, popust 10 % od 110 € je 11 €, nova cena 99 €. -/
+/-- Razlaga (premisli) in Pogoste napake 4: 100 € → 110 €, popust 10 % od 110 € je 11 €, nova cena 99 €;
+podražitev je 10 % od 100 € = 10 €, popust 11 € je večji. -/
 theorem kopacke_gor_dol :
-    (100 : ℝ) * (110 / 100) = 110 ∧ (110 : ℝ) * (10 / 100) = 11 ∧ (110 : ℝ) - 11 = 99 ∧ (99 : ℝ) < 100 := by
+    (100 : ℝ) * (110 / 100) = 110 ∧ (110 : ℝ) * (10 / 100) = 11 ∧ (110 : ℝ) - 11 = 99 ∧ (99 : ℝ) < 100 ∧
+      (100 : ℝ) * (10 / 100) = 10 ∧ (10 : ℝ) < 11 := by
   norm_num
 
 /-- Razlaga (premisli), Pogoste napake 4 in kviz 3 (splošno): po podražitvi za p % in popustu za p % je cena

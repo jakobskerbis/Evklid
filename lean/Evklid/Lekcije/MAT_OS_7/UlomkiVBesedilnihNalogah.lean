@@ -161,6 +161,13 @@ en del je 20 : 4 = 5 oziroma 24 : 3 = 8. -/
 theorem napaka_primerjava : (2 : ℚ) / 3 < 3 / 4 ∧ (3 : ℚ) / 4 * 20 = 15 ∧ (2 : ℚ) / 3 * 24 = 16 ∧
     (15 : ℚ) < 16 ∧ (20 : ℚ) / 4 = 5 ∧ (24 : ℚ) / 3 = 8 := by norm_num
 
+/-- Pogoste napake 3: večji ulomek pomeni večji del pri isti celoti: q₁ < q₂ in c > 0 ⇒ q₁·c < q₂·c. -/
+theorem vecji_ulomek_ista_celota (q₁ q₂ c : ℚ) (hq : q₁ < q₂) (hc : 0 < c) : q₁ * c < q₂ * c :=
+  mul_lt_mul_of_pos_right hq hc
+
+/-- Predpostavki trditve `vecji_ulomek_ista_celota` se dasta izpolniti (2/3 < 3/4, c = 20). -/
+example : (2 : ℚ) / 3 < 3 / 4 ∧ (0 : ℚ) < 20 := by norm_num
+
 /-! ## Drugače -/
 
 /-- Na sliki: trak 12 kvadratkov; 12 : 3 = 4 (kino), ostane 8; 8 : 4 = 2 (knjiga), ostane 6 = 1/2 traku;

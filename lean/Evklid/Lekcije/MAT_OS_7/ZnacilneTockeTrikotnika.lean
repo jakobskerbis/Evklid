@@ -10,9 +10,12 @@ leži S na osi simetrije): zahtevno, še ni dokazano. Lega O in V znotraj/zunaj
 (ostrokotni: znotraj; topokotni: zunaj, O onkraj stranice c, V za ogliščem C; Primer 2, koraka 4–5,
 Preveri se 3): zahtevno, še ni dokazano. Obstoj presečišča višin (da se nosilki dveh višin sploh sekata)
 ni dokazan; dokazano je, da gre tretja nosilka skozi vsako skupno točko prvih dveh. Enoličnost V = C pri
-pravokotnem trikotniku ni dokazana (dokazano je, da C leži na vseh treh nosilkah). Preveri se 1: napačni
-odgovori (V, T, S v splošnem niso enako oddaljene od oglišč) niso dokazani; dokazano je, da je točka na
-simetrali stranice natanko tedaj, ko je enako oddaljena od krajišč.
+pravokotnem trikotniku ni dokazana (dokazano je, da C leži na vseh treh nosilkah). Pri pravokotnem
+trikotniku »simetrala vsake katete je vzporedna drugi kateti in razpolovi hipotenuzo« ni dokazano kot
+geometrijska trditev (zahtevno, še ni dokazano); dokazano je, da je razpolovišče hipotenuze O in R = c/2.
+Preveri se 1 in »točke so v splošnem različne«: za T in V dokazano na protiprimeru (`tocke_razlicne`), za S ni
+(S ni formaliziran); dokazano je tudi, da je točka na simetrali stranice natanko tedaj, ko je enako
+oddaljena od krajišč.
 Model: točke so vektorji v realnem prostoru s skalarnim produktom V (ravnina je poseben primer), primeri
 izpolnljivosti so v ℂ. Razpolovišče je (1/2)•(B + C) (= `midpoint`), težišče (1/3)•(A + B + C). Višina iz A
 leži na premici skozi A, pravokotni na BC: točka X je na njej, ko ⟪X − A, B − C⟫ = 0. »T je znotraj« je
@@ -129,8 +132,8 @@ example : ⟪I - 1, (-1 : ℂ) - I⟫_ℝ = 0 ∧ ⟪I - (-1 : ℂ), I - 1⟫_�
 /-! ## Pravokotni trikotnik -/
 
 /-- Razlaga (pravokotni trikotnik), Povzetek in Primer 3: pri pravem kotu pri C (⟪A − C, B − C⟫ = 0) je
-razpolovišče C₁ hipotenuze AB enako oddaljeno od A, B in C, oddaljenost je c/2 (O je na sredini
-hipotenuze, R = c/2). -/
+razpolovišče C₁ hipotenuze AB enako oddaljeno od A, B in C, oddaljenost je c/2. Da je zato O = C₁ in
+R = c/2, dokazuje `pravokotni_O_sredisce`. -/
 theorem pravokotni_O (A B C : V) (h : ⟪A - C, B - C⟫_ℝ = 0) :
     ‖A - (1 / 2 : ℝ) • (A + B)‖ = ‖A - B‖ / 2 ∧ ‖B - (1 / 2 : ℝ) • (A + B)‖ = ‖A - B‖ / 2 ∧
       ‖C - (1 / 2 : ℝ) • (A + B)‖ = ‖A - B‖ / 2 := by
@@ -177,7 +180,8 @@ theorem tezisnica_je_visina (A B C : V) :
     or_iff_right (by norm_num : (1 / 2 : ℝ) ≠ 0), real_inner_add_sub_eq_zero_iff]
 
 /-- Razlaga (posebni trikotniki): v enakokrakem trikotniku (|CA| = |CB|) ležita C in razpolovišče AB na
-simetrali stranice AB; ta premica je tudi nosilka višine in težiščnice iz C. -/
+simetrali stranice AB; ta premica je tudi nosilka višine in težiščnice iz C. Da ležijo na njej tudi T, V
+in O, dokazuje `enakokraki_tocke`. -/
 theorem enakokraki (A B C : V) (h : ‖A - C‖ = ‖B - C‖) :
     C ∈ AffineSubspace.perpBisector A B ∧ midpoint ℝ A B ∈ AffineSubspace.perpBisector A B ∧
       ⟪(1 / 2 : ℝ) • (A + B) - C, A - B⟫_ℝ = 0 := by
@@ -187,6 +191,42 @@ theorem enakokraki (A B C : V) (h : ‖A - C‖ = ‖B - C‖) :
 
 /-- Predpostavka trditve `enakokraki` se da izpolniti (A = 1, B = −1, C = i v ℂ). -/
 example : ‖(1 : ℂ) - I‖ = ‖(-1 : ℂ) - I‖ := by
+  rw [← norm_neg ((-1 : ℂ) - I)]
+  ring_nf
+  rw [← Complex.norm_conj]
+  simp
+
+/-- Razlaga (posebni trikotniki): v enakokrakem trikotniku (|CA| = |CB|) ležijo na simetrali osnovnice AB
+(osi simetrije) težišče T in vsaka točka X na nosilkah višin iz A in B (višinska točka V); središče O
+očrtane krožnice leži na njej po `ocrtana`. -/
+theorem enakokraki_tocke (A B C X : V) (h : ‖A - C‖ = ‖B - C‖) (ha : ⟪X - A, B - C⟫_ℝ = 0)
+    (hb : ⟪X - B, C - A⟫_ℝ = 0) :
+    (1 / 3 : ℝ) • (A + B + C) ∈ AffineSubspace.perpBisector A B ∧
+      X ∈ AffineSubspace.perpBisector A B := by
+  constructor
+  · rw [AffineSubspace.mem_perpBisector_iff_dist_eq, dist_eq_norm, dist_eq_norm]
+    have dA := tezisce_razdalja_sq A B C
+    have dB := tezisce_razdalja_sq B A C
+    rw [show B + A + C = A + B + C by abel] at dB
+    have e1 : ‖B - A‖ = ‖A - B‖ := norm_sub_rev _ _
+    have e2 : ‖C - A‖ = ‖A - C‖ := norm_sub_rev _ _
+    have e3 : ‖C - B‖ = ‖B - C‖ := norm_sub_rev _ _
+    have e4 : ‖A - C‖ = ‖B - C‖ := h
+    rw [e1, e2] at dA
+    rw [e3] at dB
+    rw [e4] at dA dB
+    exact (pow_left_inj₀ (norm_nonneg _) (norm_nonneg _) two_ne_zero).mp (by linarith)
+  · have hc := visine_sekajo A B C X ha hb
+    have hC := (enakokraki A B C h).1
+    rw [AffineSubspace.mem_perpBisector_iff_inner_eq_zero] at hC ⊢
+    simp only [vsub_eq_sub] at hC ⊢
+    rw [show X - midpoint ℝ A B = (X - C) + (C - midpoint ℝ A B) by abel, inner_add_left, hC,
+      add_zero, show B - A = -(A - B) by abel, inner_neg_right, hc, neg_zero]
+
+/-- Predpostavke trditve `enakokraki_tocke` se dajo izpolniti (A = 1, B = −1, C = i, X = i v ℂ). -/
+example : ‖(1 : ℂ) - I‖ = ‖(-1 : ℂ) - I‖ ∧ ⟪I - 1, (-1 : ℂ) - I⟫_ℝ = 0 ∧
+    ⟪I - (-1 : ℂ), I - 1⟫_ℝ = 0 := by
+  refine ⟨?_, by simp [Complex.inner], by simp [Complex.inner]⟩
   rw [← norm_neg ((-1 : ℂ) - I)]
   ring_nf
   rw [← Complex.norm_conj]
@@ -267,7 +307,9 @@ example (t : Affine.Triangle ℝ P) : t.circumcenter ∈ affineSpan ℝ (Set.ran
     ∀ i, dist (t.points i) t.circumcenter = t.circumradius :=
   ⟨t.circumcenter_mem_affineSpan, fun i => t.dist_circumcenter_eq_circumradius i⟩
 
-/-- Primer 2 (formula): v trikotniku (B ≠ A) je γ = 180° − α − β, tj. ∠BCA = π − ∠ABC − ∠CAB. -/
+/-- Primer 2 (formula): v trikotniku (B ≠ A) je γ = 180° − α − β, tj. ∠BCA = π − ∠ABC − ∠CAB.
+(Trditev velja tudi, če C sovpada z A ali B, a le zaradi dogovora, da je kot z ničelnim vektorjem π/2;
+za pravi trikotnik je C ≠ A, B.) -/
 theorem tretji_kot (A B C : P) (h : B ≠ A) : ∠ B C A = π - ∠ A B C - ∠ C A B := by
   have := EuclideanGeometry.angle_add_angle_add_angle_eq_pi C h
   linarith
@@ -292,6 +334,58 @@ example : dist (8 * I) (6 : ℂ) = 10 ∧ dist (6 : ℂ) 0 = 6 ∧ dist (0 : ℂ
   norm_num
 
 end Ravnina
+
+/-! ## Pravokotni trikotnik: O je razpolovišče hipotenuze -/
+
+section RavninaV
+
+variable {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
+
+/-- Razlaga (pravokotni trikotnik), Povzetek in Primer 3: pri pravem kotu pri oglišču C = t.points 2 je
+središče očrtane krožnice O razpolovišče hipotenuze AB in R = c/2 (iz `pravokotni_O` in enoličnosti
+`ocrtana_enolicna`). -/
+theorem pravokotni_O_sredisce (t : Affine.Triangle ℝ V)
+    (h : ⟪t.points 0 - t.points 2, t.points 1 - t.points 2⟫_ℝ = 0) :
+    t.circumcenter = midpoint ℝ (t.points 0) (t.points 1) ∧
+      t.circumradius = ‖t.points 0 - t.points 1‖ / 2 := by
+  have hm : midpoint ℝ (t.points 0) (t.points 1) ∈ affineSpan ℝ (Set.range t.points) := by
+    apply affineSpan_pair_le_of_mem_of_mem (mem_affineSpan ℝ (Set.mem_range_self 0))
+      (mem_affineSpan ℝ (Set.mem_range_self 1))
+    exact AffineMap.lineMap_mem_affineSpan_pair _ _ _
+  have hO := pravokotni_O (t.points 0) (t.points 1) (t.points 2) h
+  have hd : ∀ i, dist (t.points i) (midpoint ℝ (t.points 0) (t.points 1)) =
+      ‖t.points 0 - t.points 1‖ / 2 := by
+    intro i
+    rw [dist_eq_norm, razpolovisce]
+    fin_cases i
+    · exact hO.1
+    · exact hO.2.1
+    · exact hO.2.2
+  obtain ⟨h1, h2⟩ := ocrtana_enolicna t _ hm _ hd
+  exact ⟨h1.symm, h2.symm⟩
+
+end RavninaV
+
+/-- Zakaj se tega učimo, Kot zgodba (»štiri točke, štiri različna mesta«) in Preveri se 1: značilne točke
+so v splošnem različne. Zgled: pravokotni trikotnik A = 4, B = 2i, C = 0 v ℂ (pravi kot pri C).
+Razpolovišče hipotenuze 2 + i je enako oddaljeno od vseh oglišč (O, `pravokotni_O_sredisce`), C leži na
+vseh nosilkah višin (V = C, `pravokotni_V`), težišče je T = (4 + 2i)/3. Velja T ≠ O, T ≠ C, O ≠ C; T ni enako
+oddaljen od A in C (|TA|² = 68/9, |TC|² = 20/9), C pa ne od A in C (|CA| = 4, |CC| = 0). Središče S
+včrtane krožnice ni formalizirano. -/
+theorem tocke_razlicne :
+    ⟪(4 : ℂ) - 0, 2 * I - 0⟫_ℝ = 0 ∧ (1 / 2 : ℝ) • ((4 : ℂ) + 2 * I) = 2 + I ∧
+      (1 / 3 : ℝ) • ((4 : ℂ) + 2 * I + 0) = 4 / 3 + 2 / 3 * I ∧
+      (4 / 3 + 2 / 3 * I : ℂ) ≠ 2 + I ∧ (4 / 3 + 2 / 3 * I : ℂ) ≠ 0 ∧ (2 + I : ℂ) ≠ 0 ∧
+      ‖(4 / 3 + 2 / 3 * I : ℂ) - 4‖ ^ 2 = 68 / 9 ∧ ‖(4 / 3 + 2 / 3 * I : ℂ) - 0‖ ^ 2 = 20 / 9 ∧
+      ‖(0 : ℂ) - 4‖ = 4 ∧ ‖(0 : ℂ) - 0‖ = 0 := by
+  refine ⟨by simp [Complex.inner], ?_, ?_, ?_, ?_, ?_, ?_, ?_, by simp, by simp⟩
+  · rw [Complex.real_smul]; push_cast; ring
+  · rw [Complex.real_smul]; push_cast; ring
+  · intro h; have := congrArg Complex.re h; norm_num at this
+  · intro h; have := congrArg Complex.re h; norm_num at this
+  · intro h; have := congrArg Complex.re h; norm_num at this
+  · rw [Complex.sq_norm, Complex.normSq_apply]; simp; norm_num
+  · rw [Complex.sq_norm, Complex.normSq_apply]; simp; norm_num
 
 /-! ## Rešeni primeri in računi -/
 

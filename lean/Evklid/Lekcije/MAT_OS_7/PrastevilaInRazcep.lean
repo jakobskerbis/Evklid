@@ -241,8 +241,8 @@ theorem tjasa_84 :
 5 : 5 = 1 (vsakič brez ostanka). -/
 theorem primer1_koraki :
     (90 / 2 = 45 ∧ 90 % 2 = 0) ∧ (4 + 5 = 9 ∧ 3 ∣ 9 ∧ 45 / 3 = 15 ∧ 45 % 3 = 0) ∧
-      (1 + 5 = 6 ∧ 3 ∣ 6 ∧ 15 / 3 = 5 ∧ 15 % 3 = 0) ∧ (Nat.Prime 5 ∧ 5 / 5 = 1) := by
-  refine ⟨by decide, by decide, by decide, ⟨by norm_num, by decide⟩⟩
+      (1 + 5 = 6 ∧ 3 ∣ 6 ∧ 15 / 3 = 5 ∧ 15 % 3 = 0) ∧ (Nat.Prime 5 ∧ 5 / 5 = 1 ∧ 5 % 5 = 0) := by
+  refine ⟨by decide, by decide, by decide, ⟨by norm_num, by decide, by decide⟩⟩
 
 /-- Primer 1: 90 = 2·45 = 2·3·15 = 2·3·3·5 = 2·3²·5, preizkus 2·3·3·5 = 90, razcep 2, 3, 3, 5. -/
 theorem primer1 : (90 : ℕ) = 2 * 3 ^ 2 * 5 ∧ Nat.primeFactorsList 90 = [2, 3, 3, 5] := by
@@ -293,17 +293,17 @@ theorem primer3 : (Nat.divisors 126).filter (fun d => 10 ≤ d ∧ d ≤ 20) = {
 168 = 2³·3·7, preizkus 8·3·7 = 168. -/
 theorem primer4 :
     (168 / 2 = 84 ∧ 168 % 2 = 0) ∧ (84 / 2 = 42 ∧ 42 / 2 = 21 ∧ 84 % 2 = 0 ∧ 42 % 2 = 0) ∧
-      (21 / 3 = 7 ∧ 21 % 3 = 0) ∧ (7 / 7 = 1) ∧ (168 : ℕ) = 2 ^ 3 * 3 * 7 ∧ 8 * 3 * 7 = 168 ∧
+      (21 / 3 = 7 ∧ 21 % 3 = 0) ∧ (7 / 7 = 1 ∧ 7 % 7 = 0) ∧ (168 : ℕ) = 2 ^ 3 * 3 * 7 ∧ 8 * 3 * 7 = 168 ∧
       Nat.primeFactorsList 168 = [2, 2, 2, 3, 7] := by
-  refine ⟨by decide, by decide, by decide, rfl, rfl, rfl, by simp⟩
+  refine ⟨by decide, by decide, by decide, by decide, rfl, rfl, by simp⟩
 
 /-! ## Pogoste napake -/
 
 /-- Pogoste napake: 21 = 3·7 ni praštevilo, čeprav je liho. -/
 theorem napaka_21 : Odd 21 ∧ 21 = 3 * 7 ∧ ¬ Nat.Prime 21 := ⟨by decide, rfl, by norm_num⟩
 
-/-- Pogoste napake (prehitro ustavljanje) in Preveri se 4: 91 in 119 nista deljiva z 2, 3, 5, a 7·7 = 49
-≤ 91, in 91 = 7·13, zato 91 ni praštevilo. -/
+/-- Pogoste napake (prehitro ustavljanje) in Preveri se 4: 91 ni deljivo z 2, 3, 5 (za 119 glej `primer2`),
+a 7·7 = 49 ≤ 91, in 91 = 7·13, zato 91 ni praštevilo. -/
 theorem napaka_91 :
     ¬ 2 ∣ 91 ∧ ¬ 3 ∣ 91 ∧ ¬ 5 ∣ 91 ∧ 7 * 7 = 49 ∧ 49 ≤ 91 ∧ 91 = 7 * 13 ∧ ¬ Nat.Prime 91 := by
   refine ⟨by norm_num, by norm_num, by norm_num, rfl, by norm_num, rfl, by norm_num⟩
@@ -351,7 +351,8 @@ theorem kviz1 :
 /-- Preveri se 2: 150 : 2 = 75, 75 : 3 = 25, 25 : 5 = 5, 5 : 5 = 1; razcep je 2·3·5²; 2·75 in 2·3·25 nista
 razcepa (75 = 3·5·5 in 25 = 5·5 nista praštevili); 2·3²·5 = 90 ≠ 150. -/
 theorem kviz2 :
-    (150 / 2 = 75 ∧ 75 / 3 = 25 ∧ 25 / 5 = 5 ∧ 5 / 5 = 1) ∧ (150 : ℕ) = 2 * 3 * 5 ^ 2 ∧
+    (150 / 2 = 75 ∧ 75 / 3 = 25 ∧ 25 / 5 = 5 ∧ 5 / 5 = 1 ∧
+      150 % 2 = 0 ∧ 75 % 3 = 0 ∧ 25 % 5 = 0 ∧ 5 % 5 = 0) ∧ (150 : ℕ) = 2 * 3 * 5 ^ 2 ∧
       Nat.primeFactorsList 150 = [2, 3, 5, 5] ∧ 75 = 3 * 5 * 5 ∧ ¬ Nat.Prime 75 ∧ 25 = 5 * 5 ∧
       ¬ Nat.Prime 25 ∧ (2 * 3 ^ 2 * 5 : ℕ) = 90 ∧ (90 : ℕ) ≠ 150 := by
   refine ⟨by decide, rfl, by simp, rfl, by norm_num, rfl, by norm_num, rfl, by norm_num⟩
@@ -359,14 +360,14 @@ theorem kviz2 :
 /-- Preveri se 3: če so prafaktorji števila 2, 3, 3 in 5, je število 90; zato je sodo, ni deljivo s 4,
 je deljivo z 18 (90 : 18 = 5) in ni deljivo s 7. -/
 theorem kviz3 (n : ℕ) (h : Nat.primeFactorsList n = [2, 3, 3, 5]) :
-    n = 90 ∧ Even n ∧ ¬ 4 ∣ n ∧ 18 ∣ n ∧ 90 / 18 = 5 ∧ ¬ 7 ∣ n := by
+    n = 90 ∧ Even n ∧ ¬ 4 ∣ n ∧ 18 ∣ n ∧ 90 / 18 = 5 ∧ 90 % 18 = 0 ∧ ¬ 7 ∣ n := by
   have hn : n ≠ 0 := by rintro rfl; simp at h
   have h90 : n = 90 := by
     have := Nat.prod_primeFactorsList hn
     rw [h] at this
     simpa using this.symm
   subst h90
-  refine ⟨rfl, by decide, by decide, by decide, rfl, by decide⟩
+  refine ⟨rfl, by decide, by decide, by decide, rfl, rfl, by decide⟩
 
 /-- Predpostavka trditve `kviz3` se da izpolniti (n = 90). -/
 example : Nat.primeFactorsList 90 = [2, 3, 3, 5] := by simp
@@ -384,7 +385,7 @@ theorem kviz4 :
 theorem kviz5 :
     (72 : ℕ) = 2 ^ 3 * 3 ^ 2 ∧ (Nat.divisors 72).filter (fun d => 6 ≤ d ∧ d ≤ 10) = {6, 8, 9} ∧
       2 * 3 = 6 ∧ 2 * 2 * 2 = 8 ∧ 3 * 3 = 9 ∧ 72 / 6 = 12 ∧ 72 / 8 = 9 ∧ 72 / 9 = 8 ∧
-      ¬ 7 ∣ 72 ∧ ¬ 10 ∣ 72 := by
-  refine ⟨rfl, by decide, rfl, rfl, rfl, rfl, rfl, rfl, by decide, by decide⟩
+      72 % 6 = 0 ∧ 72 % 8 = 0 ∧ 72 % 9 = 0 ∧ ¬ 7 ∣ 72 ∧ ¬ 10 ∣ 72 := by
+  refine ⟨rfl, by decide, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, by decide, by decide⟩
 
 end Evklid.Lekcije.MAT_OS_7.PrastevilaInRazcep

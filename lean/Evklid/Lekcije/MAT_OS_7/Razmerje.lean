@@ -72,6 +72,22 @@ theorem pristevanje_ne_ohrani : ¬ ∀ a b c : ℚ, (a + c) / (b + c) = a / b :=
   have := h 2 3 1
   norm_num at this
 
+/-- Razlaga 3 (premisli) v splošnem: prištevanje istega števila c obema členoma (b ≠ 0, b + c ≠ 0)
+ohrani razmerje natanko tedaj, ko je c = 0 ali a = b; pri 2 : 3 in c ≠ 0 se razmerje torej vedno spremeni. -/
+theorem pristevanje_splosno (a b c : ℚ) (hb : b ≠ 0) (hbc : b + c ≠ 0) :
+    (a + c) / (b + c) = a / b ↔ c = 0 ∨ a = b := by
+  rw [div_eq_div_iff hbc hb]
+  constructor
+  · intro h
+    have : c * (b - a) = 0 := by linarith
+    rcases mul_eq_zero.mp this with h1 | h1
+    · exact Or.inl h1
+    · exact Or.inr (by linarith)
+  · rintro (rfl | rfl) <;> ring
+
+/-- Predpostavki trditve `pristevanje_splosno` se dasta izpolniti (b = 3, c = 1). -/
+example : (3 : ℚ) ≠ 0 ∧ (3 : ℚ) + 1 ≠ 0 := by norm_num
+
 /-! ## Razlaga 4: okrajšano razmerje -/
 
 /-- Razlaga 4 in Povzetek: ko oba člena (naravni števili, b > 0) delimo z D(a, b), sta člena tuji števili
@@ -194,6 +210,11 @@ example : (6 : ℚ) + 4 + 3 ≠ 0 := by norm_num
 theorem klop_racun : (2 : ℚ) + 3 = 5 ∧ (45 : ℚ) / 5 = 9 ∧ (2 : ℚ) * 9 = 18 ∧ (3 : ℚ) * 9 = 27 ∧
     (18 : ℚ) + 27 = 45 ∧ (18 : ℚ) / 27 = 2 / 3 := by
   refine ⟨by norm_num, by norm_num, by norm_num, by norm_num, by norm_num, by norm_num⟩
+
+/-- Zakaj se tega učimo: če vsak dobi polovico (45 : 2 = 22,5 €), dobi brat premalo: 22,5 < 27 (pošteni
+bratov del iz `klop`). -/
+theorem klop_polovica : (45 : ℚ) / 2 = 22.5 ∧ (22.5 : ℚ) < 27 := by
+  refine ⟨by norm_num, by norm_num⟩
 
 /-- Razlaga 7 (klop): 45 € v razmerju 2 : 3 razdelimo natanko na 18 € in 27 €. -/
 theorem klop (x y : ℚ) : (x + y = 45 ∧ x / y = 2 / 3) ↔ (x = 18 ∧ y = 27) := by
@@ -346,8 +367,10 @@ theorem enaki_razmerji (a b c d : ℚ) (hb : b ≠ 0) (hd : d ≠ 0) : a / b = c
 /-- Predpostavki trditve `enaki_razmerji` se dasta izpolniti (b = 18, d = 3). -/
 example : (18 : ℚ) ≠ 0 ∧ (3 : ℚ) ≠ 0 := by norm_num
 
-/-- Bolj natančno: 8 : 12 : 20 = 2 : 3 : 5, ker je D(8, 12, 20) = 4 (vsi trije členi deljeni s 4). -/
-theorem tri_clena : Nat.gcd (Nat.gcd 8 12) 20 = 4 ∧ 8 / 4 = 2 ∧ 12 / 4 = 3 ∧ 20 / 4 = 5 := by decide
+/-- Bolj natančno: 8 : 12 : 20 = 2 : 3 : 5, ker je D(8, 12, 20) = 4 (vsi trije členi deljeni s 4);
+2 : 3 : 5 je okrajšano do konca (D(2, 3, 5) = 1). -/
+theorem tri_clena : Nat.gcd (Nat.gcd 8 12) 20 = 4 ∧ 8 / 4 = 2 ∧ 12 / 4 = 3 ∧ 20 / 4 = 5 ∧
+    Nat.gcd (Nat.gcd 2 3) 5 = 1 := by decide
 
 /-! ## Preveri se -/
 
@@ -358,10 +381,16 @@ theorem kviz1 : Nat.gcd 2 4 = 2 ∧ (2 : ℚ) / 4 = 1 / 2 ∧ Nat.Coprime 1 2 �
   refine ⟨by decide, by norm_num, by decide, by norm_num, by norm_num, by norm_num, by decide⟩
 
 /-- Preveri se 2: 24 : 36 = 2 : 3 (D(24, 36) = 12), Lukov 12 : 24 = 1 : 2 pa ne (12/24 ≠ 24/36); tudi
-odštevanje 6 ne ohrani razmerja (18 : 30 ≠ 2 : 3). -/
+odštevanje 6 ne ohrani razmerja (18 : 30 ≠ 2 : 3), in to velja za vsako od 0 različno število c
+(pri c = 36 je člen 0, vrednost 0 po dogovoru x/0 = 0, ki tudi ni 2/3). -/
 theorem kviz2 : Nat.gcd 24 36 = 12 ∧ (24 : ℚ) / 36 = 2 / 3 ∧ (12 : ℚ) / 24 = 1 / 2 ∧
-    (12 : ℚ) / 24 ≠ 24 / 36 ∧ (24 - 6 : ℚ) / (36 - 6) ≠ 24 / 36 := by
-  refine ⟨by decide, by norm_num, by norm_num, by norm_num, by norm_num⟩
+    (12 : ℚ) / 24 ≠ 24 / 36 ∧ (24 - 6 : ℚ) / (36 - 6) ≠ 24 / 36 ∧
+    ∀ c : ℚ, c ≠ 0 → (24 - c) / (36 - c) ≠ 24 / 36 := by
+  refine ⟨by decide, by norm_num, by norm_num, by norm_num, by norm_num, fun c hc h => ?_⟩
+  by_cases h36 : (36 : ℚ) - c = 0
+  · rw [h36, div_zero] at h; norm_num at h
+  · rw [div_eq_div_iff h36 (by norm_num)] at h
+    exact hc (by linarith)
 
 /-- Preveri se 3: apno : pesek = 1 : 3 in 45 kg peska ⇒ apna je natanko 15 kg (en del 45 : 3 = 15);
 napačna 45/4 = 11,25 in 45·3 = 135. -/

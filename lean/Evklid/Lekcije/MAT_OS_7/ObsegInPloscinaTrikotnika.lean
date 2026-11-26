@@ -15,11 +15,14 @@ stranica, kaj je v_c: Preveri se 1, opis); da je p = a·v_a/2 = b·v_b/2 = c·v_
 ploščina ne glede na izbrano osnovnico: zahtevno, še ni dokazano; dokazano je za trikotnik 5, 5, 8 iz Primera 2,
 postavljen na osnovnico a = 5 in na osnovnico c = 8, obakrat ploščina 12); »pravokotni trikotnik: samo tu smeš
 množiti dve stranici« je dokazano le za stranici ob oglišču (0, 0) (a · √(h² + s²)/2 je ploščina natanko pri s = 0);
-razrez z višino na dva pravokotna trikotnika in »diagonala razpolovi pravokotnik« (dokazana je algebra
+»višini na stranici ob topem kotu padeta zunaj« je dokazano za
+stranico, postavljeno kot osnovnica a (top kot ob (0, a) ali (0, 0) natanko tedaj, ko vrh ni nad [0, a]; da lahko
+za osnovnico postavimo katerokoli stranico, je opis); razrez z višino na dva pravokotna trikotnika in »diagonala razpolovi pravokotnik« (dokazana je algebra
 s·h/2 + (a − s)·h/2 = a·h/2 in da je ploščina pravokotnika a·h, trikotnika pa pol tega); vrstica »daleč ob strani:
 še večji obseg« (dokazano je le, da je nad sredino najmanjši in nad ogliščem večji; rast obsega z oddaljenostjo:
 zahtevno, še ni dokazano); hipotenuza ruti »približno 136 cm« je dokazana kot 135,5 < √18432 < 136,5; postopek
-»Korak za korakom«, Pogoste napake 4 (višina mora pripadati osnovnici, opis), zadnja alineja Povzetka (rob je
+»Korak za korakom«, Pogoste napake 4 in Primer 2, korak 2 (višina mora pripadati osnovnici, stranice c ne smemo
+vzeti, ker v_a ne pade nanjo: opis), zadnja alineja Povzetka (rob je
 obseg, površina je ploščina, opis), nasveti o enotah in besedilo napačnih odgovorov v Preveri se (dokazane so napačne vrednosti);
 v zgodbi, da sta pol kvadrata dve enaki ruti (dokazano 96 · 96 = 9216 in 9216 : 2 = 4608 ter ploščina modela).
 -/
@@ -115,6 +118,23 @@ theorem topokotni (a h s : ℝ) (ha : 0 < a) (hs : a < s) : s ∉ Icc 0 a ∧ 0 
 
 /-- Predpostavki `topokotni` se dajo izpolniti (a = 5, s = 32/5 iz Primera 2). -/
 example : (0:ℝ) < 5 ∧ (5:ℝ) < 32 / 5 := by norm_num
+
+/-- Razlaga (Topokotni trikotnik), obrat: če je kot ob oglišču osnovnice top (pri (0, a): skalarni produkt
+(0, −a) · (h, s − a) < 0; pri (0, 0): (0, a) · (h, s) < 0), višina na osnovnico pade zunaj [0, a]. Ker je
+osnovnica stranica ob tem topem kotu, je to trditev »višina na stranico ob topem kotu pade zunaj«. -/
+theorem topokotni_obrat (a h s : ℝ) (ha : 0 < a) :
+    (0 * h + (-a) * (s - a) < 0 → a < s ∧ s ∉ Icc 0 a) ∧
+    (0 * h + a * s < 0 → s < 0 ∧ s ∉ Icc 0 a) := by
+  constructor
+  · intro e
+    have : a < s := by nlinarith
+    exact ⟨this, fun h' => by linarith [h'.2]⟩
+  · intro e
+    have : s < 0 := by nlinarith
+    exact ⟨this, fun h' => by linarith [h'.1]⟩
+
+/-- Predpostavka `topokotni_obrat` se da izpolniti (a = 5); top kot ob (0, 5) pri s = 32/5 iz Primera 2. -/
+example : (0:ℝ) < 5 ∧ 0 * (24 / 5) + (-5) * (32 / 5 - 5) < (0:ℝ) := by norm_num
 
 /-- Razlaga (simulacija), Korak za korakom, Preveri se 3: obseg je najmanjši, ko je vrh nad sredino osnovnice
 (s = a/2); pri ostalih legah vrha je obseg enak ali večji. -/
@@ -233,10 +253,11 @@ theorem primer2_model :
   · rw [ploscina 8 3 4 (by norm_num) (by norm_num)]; norm_num
 
 /-- Primer 3, formula, Povzetek: iz p = a · v_a/2 sledi natanko v_a = 2p/a (a ≠ 0), oziroma a · v_a = 2p. -/
-theorem visina_iz_ploscine (a p v : ℝ) (ha : a ≠ 0) : p = a * v / 2 ↔ v = 2 * p / a := by
-  constructor
-  · intro h; rw [h]; field_simp
-  · intro h; rw [h]; field_simp
+theorem visina_iz_ploscine (a p v : ℝ) (ha : a ≠ 0) :
+    (p = a * v / 2 ↔ v = 2 * p / a) ∧ (p = a * v / 2 ↔ a * v = 2 * p) := by
+  refine ⟨⟨fun h => ?_, fun h => ?_⟩, ⟨fun h => by linarith, fun h => by linarith⟩⟩
+  · rw [h]; field_simp
+  · rw [h]; field_simp
 
 /-- Predpostavka `visina_iz_ploscine` se da izpolniti (a = 50). -/
 example : (50:ℝ) ≠ 0 := by norm_num
