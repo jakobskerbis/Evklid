@@ -49,3 +49,24 @@ test("povratna informacija za ponovni poskus pove manjkajočo vejo kot večkratn
   const r = verifyAi("cos(x)=1/2", eq(["pi/3+2*k*pi"]));
   assert.match(retryFeedback(eq(["pi/3+2*k*pi"]), r), /-pi\/3/);
 });
+
+// Neodvisen pregled (model AI, 26. 11.): lažni alarmi in zapisi, ki bi dvignili status.
+test("zaokrožena konstanta ob periodični družini in vrzel pri večkratniku π nista »manjka«", () => {
+  for (const [naloga, sol] of [
+    ["(2^x-3)*sin(x)=0", ["1.585", "kπ"]],
+    ["(x^2-2)*sin(x)=0", ["1.414", "-1.414", "kπ"]],
+    ["(1-cos(x))/sin(x)=sin(x)", ["π/2+kπ"]],
+    ["sin(2*x)/(2*sin(x))=cos(x)^2", ["π/2+kπ"]],
+  ])
+    assert.notEqual(verifyAi(naloga, eq(sol)).reason, "missing", naloga);
+});
+
+test("dolga perioda, nelinearna družina in »0k« ne dvignejo statusa", () => {
+  for (const [naloga, sol] of [
+    ["sin(x/10)=1/2", ["10π/6+20kπ"]], // druga veja 50π/6 + 20kπ je zunaj [−20, 20]
+    ["sin(x)=0", ["2k^2π"]],
+    ["x^2=900", ["30+0k"]],
+  ])
+    assert.equal(verifyAi(naloga, eq(sol)).status, "wrong", naloga);
+  assert.equal(verifyAi("sin(x/10)=1/2", eq(["10π/6+20kπ", "50π/6+20kπ"])).status, "partial");
+});
