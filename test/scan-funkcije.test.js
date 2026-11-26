@@ -49,6 +49,10 @@ test("verifyAi: pravilno ni »Napačno«, napačno ni potrjeno", () => {
     assert.equal(st(t, { kind: "arith", value: v }), "unverified", t);
   assert.equal(st("C(5,2)", { kind: "arith", value: "11" }), "wrong");
   assert.equal(st("(2+3)*4", { kind: "arith", value: "21" }), "wrong");
+  // sistem: rešitev kot par ali brez ene neznanke ni »Napačno«; napačen par z imeni je
+  for (const sol of [["(2,1)"], ["2,1"], ["x=2"]]) assert.equal(st("2x+y=5; x-y=1", { kind: "system", solutions: sol }), "unverified", sol[0]);
+  assert.equal(st("2x+y=5; x-y=1", { kind: "system", solutions: ["x=3; y=1"] }), "wrong");
+  assert.equal(st("atan2(1, 1)", { kind: "arith", value: "π/4" }), "unverified");
   assert.equal(st("2,5+1", { kind: "arith", value: "3,5" }), "verified");
   // veljaven zapis ni »neznana funkcija«: d/dx(…), produkt črk pred oklepajem
   assert.equal(st("d/dx(x^2)", { kind: "derivative", value: "3x" }), "wrong");

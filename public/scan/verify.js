@@ -289,7 +289,7 @@ function compileValue(e) {
 //   »d/dx(x^2)« veljaven zapis;
 // - log z več kot dvema argumentoma, ostanek C(…)/V(…), ki ni kombinatorika s celimi števili;
 // - kombinatorika s spremenljivko (n!, nCr(n, 2)): kalkulator jo izračuna tudi za n = −4 ali n = 2,5 (gama).
-const NEZNANE = /(?<![A-Za-z_])(?:factorial|gamma|Gamma|digamma|perm|comb|choose|fact|erf|beta|zeta|Sum|summation|product|integrate|diff|limit|Matrix|det|rank|Mod|arg|re|im|conjugate|Abs|Max|Min|Rational)\s*\(/;
+const NEZNANE = /(?<![A-Za-z_])(?:factorial|atan2|gamma|Gamma|digamma|perm|comb|choose|fact|erf|beta|zeta|Sum|summation|product|integrate|diff|limit|Matrix|det|rank|Mod|arg|re|im|conjugate|Abs|Max|Min|Rational)\s*\(/;
 const ENOMESTNE = /^(?:a?(?:sin|cos|tan|tg|ctg|cot)h?|arc(?:sin|cos|tan|tg|ctg|cot)|ln|lg|sqrt|exp|abs)$/;
 function neizracunljivo(t, { identiteta = false, resitev = false } = {}) {
   if (t === undefined || t === null || t === "") return false;
@@ -436,6 +436,9 @@ function check(problemText, ai) {
           if (val === undefined) return { verified: false, reason: "parse" };
           vals.set(m[1], val);
         }
+        // rešitev brez vseh imen (»(2,1)«, »x=2« pri dveh neznankah) ni dokaz napake (pregled AUDIT-096)
+        const neznanke = new Set(parts.join(" ").match(/(?<![A-Za-z_])[a-df-hj-zA-DF-HJ-Z](?![A-Za-z_(])/g) || []);
+        if ([...neznanke].some((x) => !vals.has(x))) return { verified: false, reason: "parse" };
         const env = Object.fromEntries(vals);
         if (!parts.length || parts.some((p) => satisfies(p, env) !== true)) return { verified: false, reason: "wrong" };
       }
