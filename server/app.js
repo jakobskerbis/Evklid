@@ -18,6 +18,7 @@ import { streamReply, readHandwriting, isMockMode, MODEL, MODEL_DEEP, MODEL_MID,
 import { Usage, LIMITS, NOTES, windowHistory, recentHistory, staleImages, isImagePlaceholder } from "./usage.js";
 import { pricingAdvice } from "./advice.js";
 import { codeHint } from "./hints.js";
+import { vajaOpomba } from "./vaja-opomba.js";
 import { Progress, RULES } from "./progress.js";
 import { mountLeagues } from "./leagues.js";
 import { mountClassShowcase } from "./vitrina.js";
@@ -1223,6 +1224,9 @@ export function createApp(store, opts = {}) {
       console.warn(`[evklid] iskanje lekcije ni uspelo: ${err?.message || err}`);
     }
     if (lesson) userContent.push({ type: "text", text: lessonNote(lesson, solveAsk ? "B1" : solvingMode) });
+    // Naloga iz Vadnice: rezultat generatorja in rešen zgled kot skrita opomba, shranjena s prvim sporočilom (server/vaja-opomba.js).
+    const vajaNote = isFirst && !image && helpTasks.has(conv.id) ? vajaOpomba(helpTasks.get(conv.id).task) : null;
+    if (vajaNote) userContent.push({ type: "text", text: vajaNote });
     // Zamenjava načina A/B med pogovorom (j 14. 11.): skrita opomba, sicer zgodovina vleče nazaj v stari način.
     // Prej: način, s katerim je inštruktor nazadnje odgovoril (stolpec; pri starih pogovorih iz META zadnjega odgovora).
     const modeBefore = isFirst ? null : conv.solving_mode || store.lastEvent(conv.id)?.mode || null;
@@ -1447,6 +1451,7 @@ export function createApp(store, opts = {}) {
               subject: getTopic(help.task.topic_id)?.subject || student.settings.subject,
               topicName: getTopic(help.task.topic_id)?.name,
               lastAnswer: help.task.last_answer,
+              work: help.work,
             })
           : null;
       // »Odpri kalkulator« in podobni kratki ukazi: okno odpre odjemalec, odgovor je en stavek brez modela.
@@ -2398,7 +2403,9 @@ export function createApp(store, opts = {}) {
         : kind === "review"
           ? `Preglej moj rezultat${work ? " in postopek" : ""} pri tej nalogi:\n\n${t.payload.text}\n\n${answerPart}${workPart}Je prav? Če ni, mi pokaži, kje sem se zmotil.`
           : `Rešujem nalogo iz Vadnice:\n\n${t.payload.text}\n\n${workPart}${t.last_answer ? `Moj odgovor je bil: ${t.last_answer}. Ni pravilen.` : "Ne vem, kako začeti."} Mi pomagaš najti, kje se zatakne? Rešitve mi ne povej.`;
-    helpTasks.set(conv.id, { text: text.trim().slice(0, MAX_TEXT), task: t, kind });
+    helpTasks.set(conv.id, { text: text.trim().slice(0, MAX_TEXT), task: t, kind, work });
+    // Pomoč pred pravilnim odgovorom (tudi »Razloži nalogo«) pomeni rešeno s pomočjo, ne samostojno (poseg 2, 26. 11.).
+    if (!t.solved) progress.markHelped(s.id, t.id);
     if (helpTasks.size > 500) helpTasks.delete(helpTasks.keys().next().value);
     res.json({ conversation: conv, text });
   });
