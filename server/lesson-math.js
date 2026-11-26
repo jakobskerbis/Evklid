@@ -239,8 +239,17 @@ export function normalizeTex(tex, pct = "div", { unitSub = null, colon = true } 
   // € (tudi \euro) je enota: 80 € · 0,75 = 60 €; pri pretvorbah (unitSub) je neznana, zato velja staro pravilo
   s = s.replace(/\\EURO/g, () => (units.push("€"), sub("€")));
   // Enote: \mathrm{kW}, \text{cm}^2, \Omega, °, ^\circ
-  s = s.replace(/\\(?:mathrm|text|textrm|textit|operatorname|mathit|mathbf)\s*\{([^{}]*)\}(\s*\^\s*(?:\{[^{}]*\}|\\circ|\w))?/g, (_, u, e) => {
+  let label = false;
+  s = s.replace(/\\(?:mathrm|text|textrm|textit|operatorname|mathit|mathbf)\s*\{([^{}]*)\}(\s*\^\s*(?:\{[^{}]*\}|\\circ|\w))?/g, (cela, u, e, at, cel) => {
     if (!u.trim()) return " ";
+    // AUDIT-087: besedilo z več besedami namesto števila (»\text{št. skupine} - 10«) je oznaka količine, ne enota:
+    // izraz ni samo račun (le, ko ji sledi operator ali =; uvod »\text{od tega}\ 3 \cdot 4« ostane). Za številom (»37\ \text{kosov jabolk}«) ostane kot enota; ukazi (\mu m, N \cdot m, ^\circ C) niso besede.
+    const besede = u.replace(/\\[A-Za-z]+|\^/g, " ").trim();
+    const zaNjo = cel.slice(at + cela.length);
+    if (/[\p{L}]{2,}\.?\s+[\p{L}]/u.test(besede) && !/[\d)}]\s*$/.test(cel.slice(0, at)) && /^\s*(?:[-+*/=]|\\(?:cdot|times|div)\b)/.test(zaNjo)) {
+      label = true;
+      return " ";
+    }
     const unit = u.trim() + (e || "").replace(/\s/g, "");
     units.push(unit);
     return sub(unit);
@@ -268,9 +277,10 @@ export function normalizeTex(tex, pct = "div", { unitSub = null, colon = true } 
   s = s.replace(/\|([^|]*)\|/g, "abs($1)");
   s = s.replace(/[{]/g, "(").replace(/[}]/g, ")").replace(/\^/g, "**");
   // Zapis a · 10ⁿ je eno število: 3,97 · 10⁻¹⁹ / 1,602 · 10⁻¹⁹ pomeni (3,97 · 10⁻¹⁹) / (1,602 · 10⁻¹⁹).
-  s = s.replace(/(\d+\.?\d*)\s*\*\s*10\s*\*\*\s*(\(\s*[-+]?\d+\s*\)|[-+]?\d+)/g, "($1*10**$2)");
+  // AUDIT-087: ne, ko je mantisa sama eksponent (10**4 * 10**1 je 10⁵, ne 10**(4·10))
+  s = s.replace(/(?<!\*\*\s*\(?\s*|[\d.])(\d+\.?\d*)\s*\*\s*10\s*\*\*\s*(\(\s*[-+]?\d+\s*\)|[-+]?\d+)/g, "($1*10**$2)");
   s = s.replace(/[*/]\s*$/, "").replace(/\(\s*\)/g, "").trim(); // ostanek po odstranjeni enoti
-  if (!/\d/.test(s)) return null;
+  if (label || !/\d/.test(s)) return null;
   if (/[^\d\s.+\-*/(),]/.test(s.replace(WORDS, ""))) return null;
   // Golo število: 6,5 | -36 | (1.602*10**(-19))
   const lit = s.match(/^-?\(?(-?\d+(?:\.\d+)?)(?:\*10\*\*\(?([-+]?\d+)\)?)?\)?$/);

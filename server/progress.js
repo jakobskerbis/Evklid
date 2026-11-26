@@ -23,7 +23,7 @@ const isPrepPath = (key) => isCompetitionPath(key) || isExamPath(key);
 const pretestTier = (known) => (known >= 3 ? "višja" : known === 2 ? "srednja" : "osnovna");
 
 // Naloge z enim poskusom in brez namigov (preizkusi, tekmovanja, test predznanja).
-const ONE_SHOT = ["placement", "contest", "pretest"];
+export const ONE_SHOT = ["placement", "contest", "pretest"];
 
 export const RULES = {
   levelUpStreak: 3, // 3 pravilni zapored -> težje
@@ -1131,6 +1131,12 @@ export class Progress {
       if (out.next.finished && row.mode === "pretest") out.pretest = this.pretestScore(studentId, row.session_id);
     }
     return out;
+  }
+
+  // Pomoč inštruktorja pri nalogi iz Vadnice (»Vprašaj inštruktorja«, tudi pred prvim odgovorom): naloga ni več
+  // samostojna, kot pri namigu. Rešene naloge ne spremeni.
+  markHelped(studentId, taskId) {
+    this.db.prepare("UPDATE tasks SET hint_used = 1 WHERE id = ? AND student_id = ? AND solved = 0").run(taskId, studentId);
   }
 
   // Lestev namigov pred odgovorom (practice/index.js hintSteps); uporaba namiga zmanjša XP.

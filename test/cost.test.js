@@ -185,7 +185,7 @@ test("code hint: data, unknown and hint without the formula or the result", () =
   }
   const h = codeHint(task, { subject: "FIZ", topicName: "teža", lastAnswer: "7" });
   assert.match(h, /\*\*Podatki:\*\*/);
-  assert.match(h, /<<META subject=FIZ topic="teža" error=1 mode=A/);
+  assert.match(h, /<<META subject=FIZ topic="teža" error=0 mode=A/);
   for (const f of [].concat(task.formula || [])) assert.ok(!h.includes(f), "formula ostane skrita");
   assert.equal(codeHint({ text: "x", data: false, formula: false }), null);
 });

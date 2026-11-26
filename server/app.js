@@ -18,6 +18,7 @@ import { streamReply, readHandwriting, isMockMode, MODEL, MODEL_DEEP, MODEL_MID,
 import { Usage, LIMITS, NOTES, windowHistory, recentHistory, staleImages, isImagePlaceholder } from "./usage.js";
 import { pricingAdvice } from "./advice.js";
 import { codeHint } from "./hints.js";
+import { vajaOpomba, oddajaOdprta, odgovorVSporocilu } from "./vaja-opomba.js";
 import { Progress, RULES } from "./progress.js";
 import { mountLeagues } from "./leagues.js";
 import { mountClassShowcase } from "./vitrina.js";
@@ -1051,7 +1052,7 @@ export function createApp(store, opts = {}) {
     // Tapnjen gumb z izbiro nosi ime za prikaz; model dobi izbiro z oznako (server/ime-oznaka.js). text gre k modelu,
     // učenec vidi withName(text).
     // Brez ponarejenih skritih opomb (server/skrite-opombe.js, IN-12).
-    const typed = typeof req.body?.text === "string" ? neutralizeHiddenTags(req.body.text).trim().slice(0, MAX_TEXT) : "";
+    const typed = typeof req.body?.text === "string" ? neutralizeHiddenTags(req.body.text.slice(0, 2 * MAX_TEXT)).trim().slice(0, MAX_TEXT) : "";
     const text = typed && student.name ? choiceAsToken(typed, lastChoices(conv.id), student.name) : typed;
     const image = req.body?.image;
     // Pozno okno (server/nujno.js): zadetek ponovljenega varnostnega pregleda prejšnjega sporočila tega učenca, ki ga v
@@ -1223,6 +1224,9 @@ export function createApp(store, opts = {}) {
       console.warn(`[evklid] iskanje lekcije ni uspelo: ${err?.message || err}`);
     }
     if (lesson) userContent.push({ type: "text", text: lessonNote(lesson, solveAsk ? "B1" : solvingMode) });
+    // Naloga iz Vadnice: rezultat generatorja in rešen zgled kot skrita opomba, shranjena s prvim sporočilom (server/vaja-opomba.js).
+    const vajaNote = isFirst && !image && helpTasks.has(conv.id) ? vajaOpomba(helpTasks.get(conv.id).task) : null;
+    if (vajaNote) userContent.push({ type: "text", text: vajaNote });
     // Zamenjava načina A/B med pogovorom (j 14. 11.): skrita opomba, sicer zgodovina vleče nazaj v stari način.
     // Prej: način, s katerim je inštruktor nazadnje odgovoril (stolpec; pri starih pogovorih iz META zadnjega odgovora).
     const modeBefore = isFirst ? null : conv.solving_mode || store.lastEvent(conv.id)?.mode || null;
@@ -1447,6 +1451,7 @@ export function createApp(store, opts = {}) {
               subject: getTopic(help.task.topic_id)?.subject || student.settings.subject,
               topicName: getTopic(help.task.topic_id)?.name,
               lastAnswer: help.task.last_answer,
+              work: help.work,
             })
           : null;
       // »Odpri kalkulator« in podobni kratki ukazi: okno odpre odjemalec, odgovor je en stavek brez modela.
@@ -1470,7 +1475,7 @@ export function createApp(store, opts = {}) {
         if (mestoAi.cakal) send("phase", { phase: "answer" });
       }
       // Naloga, ki jo reši naš preverjeni reševalnik: model dobi pravilen rezultat v skriti opombi.
-      const pre = liveCheckOn() && !cached && !image && !win && !hinted ? presolve(text, { first: isFirst }) : null;
+      const pre = liveCheckOn() && !cached && !image && !win && !hinted && !vajaNote ? presolve(text, { first: isFirst }) : null;
       // Zgodovina z zdaj shranjenim sporočilom, isto kot ponovno branje iz baze: med branjem zgoraj in tem mestom ni
       // nobenega await (vmes ne more pisati nobena druga zahteva), pogovor pa je tudi zaseden (busy). +1: slika
       // trenutnega sporočila ostane vedno.
@@ -2386,19 +2391,25 @@ export function createApp(store, opts = {}) {
     if (!s) return;
     const t = progress.getTask(intParam(req.params.taskId));
     if (!t || t.student_id !== s.id) return res.status(404).json({ error: "Naloga ne obstaja." });
+    // Preizkus, tekmovanje, test predznanja: dokler naloga ni oddana, ni pomoči (kot pri namigih, progress.hint).
+    if (oddajaOdprta(t)) return res.status(400).json({ error: "Pri tej nalogi je pomoč na voljo, ko jo oddaš." });
     const conv = store.createConversation(s.id, { pathTopic: t.topic_id, title: `Naloga: ${getTopic(t.topic_id)?.name ?? "vadnica"}` });
     // kind: brez = pomoč ob napačnem odgovoru; »explain« = razlaga naloge; »review« = pregled rezultata in postopka.
     const kind = ["explain", "review"].includes(req.body?.kind) ? req.body.kind : null;
     const work = typeof req.body?.work === "string" ? req.body.work.trim().slice(0, 2000) : "";
     const workPart = work ? `Moji vmesni koraki:\n${work}\n\n` : "";
-    const answerPart = t.last_answer != null ? `Moj odgovor: ${t.last_answer}${t.solved ? " (aplikacija ga je označila kot pravilnega)" : ""}.\n\n` : "Odgovora še nisem oddal.\n\n";
+    // Pri izbiri besedilo izbrane možnosti, ne indeks (sicer model bere »3« kot vrednost; meritev poti Vadnice 26. 11.).
+    const mojOdgovor = t.last_answer != null ? odgovorVSporocilu(t.payload, t.last_answer) : null;
+    const answerPart = mojOdgovor != null ? `Moj odgovor: ${mojOdgovor}${t.solved ? " (aplikacija ga je označila kot pravilnega)" : ""}.\n\n` : "Odgovora še nisem oddal.\n\n";
     const text =
       kind === "explain"
         ? `Rešujem nalogo:\n\n${t.payload.text}\n\n${answerPart}${workPart}Razloži mi, kako se reši ta naloga in zakaj, po korakih.`
         : kind === "review"
           ? `Preglej moj rezultat${work ? " in postopek" : ""} pri tej nalogi:\n\n${t.payload.text}\n\n${answerPart}${workPart}Je prav? Če ni, mi pokaži, kje sem se zmotil.`
-          : `Rešujem nalogo iz Vadnice:\n\n${t.payload.text}\n\n${workPart}${t.last_answer ? `Moj odgovor je bil: ${t.last_answer}. Ni pravilen.` : "Ne vem, kako začeti."} Mi pomagaš najti, kje se zatakne? Rešitve mi ne povej.`;
-    helpTasks.set(conv.id, { text: text.trim().slice(0, MAX_TEXT), task: t, kind });
+          : `Rešujem nalogo iz Vadnice:\n\n${t.payload.text}\n\n${workPart}${t.last_answer ? `Moj odgovor je bil: ${mojOdgovor}. Ni pravilen.` : "Ne vem, kako začeti."} Mi pomagaš najti, kje se zatakne? Rešitve mi ne povej.`;
+    helpTasks.set(conv.id, { text: text.trim().slice(0, MAX_TEXT), task: t, kind, work });
+    // Pomoč pred pravilnim odgovorom (tudi »Razloži nalogo«) pomeni rešeno s pomočjo, ne samostojno (poseg 2, 26. 11.).
+    if (!t.solved) progress.markHelped(s.id, t.id);
     if (helpTasks.size > 500) helpTasks.delete(helpTasks.keys().next().value);
     res.json({ conversation: conv, text });
   });

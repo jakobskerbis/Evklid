@@ -261,3 +261,59 @@ test("pregled prevzema 3 (AUDIT-069): naloga z eno operacijo ne sodi učenčeveg
     assert.equal(stepVerdict(s, { pre: presolve(t, { narrow: false }) }), null, `${t} ${s}`);
   }
 });
+
+test("sodba koraka AUDIT-092: naloga brez realne rešitve, »x = ±2« in popoln odgovor brez oštevilčenja", () => {
+  const o = (naloga) => ({ pre: presolve(naloga, { first: true }), prevTutor: "Kaj narediš?" });
+  // Pregled pilota 26. 11.: pri $x^6 = -64$ je bila sodba null, napačno rešitev je presojal le model.
+  for (const ans of ["x = 2", "x = -2", "x = ±2", "$x = \\pm 2$"]) {
+    const v = verdict(ans, o("Reši enačbo $x^6 = -64$."));
+    assert.equal(v?.wrong, true, ans);
+    assert.match(v.finding, /has no real solution/);
+  }
+  assert.match(verdict("x = ±2", o("Reši enačbo $x^6 = -64$.")).finding, /x = ±2 is wrong/);
+  assert.equal(verdict("x = 2", o("Reši enačbo $x^2 = -4$."))?.wrong, true);
+  assert.equal(verdict("Ni rešitve.", o("Reši enačbo $x^6 = -64$.")), null);
+  // Popoln odgovor ni »partial« (sicer zavrnitev pravilnega ne bi sprožila ponovnega odgovora).
+  for (const [naloga, ans] of [["Reši enačbo $x^2 - 5x + 6 = 0$.", "x = 2 in x = 3"], ["Reši enačbo $x^2 - 5x + 6 = 0$.", "x = 2, x = 3"], ["Reši (x - 2)^2 = 9", "x = 5 ali x = -1"], ["Reši enačbo $x^2 = 4$.", "x = ±2"], ["Reši enačbo $x^2 = 4$.", "$x = \\pm 2$"]]) {
+    const v = verdict(ans, o(naloga));
+    assert.equal(v?.wrong, false, ans);
+    assert.equal(v.partial, false, ans);
+  }
+  // Nepopoln ostane nepopoln, napačen ostane napačen.
+  assert.equal(verdict("x = 5", o("Reši (x - 2)^2 = 9")).partial, true);
+  assert.equal(verdict("x = ±2", o("Reši enačbo $x^2 - 5x + 6 = 0$."))?.wrong, true);
+  assert.equal(verdict("x = 2, x = 3, x = 4", o("Reši enačbo $x^2 - 5x + 6 = 0$."))?.wrong, true);
+});
+
+test("sodba koraka AUDIT-092 (pregled): brez lažnega alarma pri preizkusu vrednosti, drugi enačbi inštruktorja in kompleksnih rešitvah", () => {
+  const v = (naloga, ans, prevTutor = "Kaj narediš?") => stepVerdict(ans, { pre: presolve(naloga, { first: true }), prevTutor });
+  // Inštruktor je medtem zastavil drugo enačbo (tudi takšno, ki je koda ne zna rešiti).
+  assert.equal(v("Reši enačbo $x^2 = -4$.", "x = 2", "Poskusiva najprej preprostejšo: $x^2 = 4$. Koliko je x?"), null);
+  assert.equal(v("Reši enačbo $x^2 = -4$.", "x = ±2", "Recimo, da bi bilo $x^2 = 4$. Kaj bi bil x?"), null);
+  assert.equal(v("Reši enačbo $x^6 = -64$.", "x = 2", "Kaj pa enačba $x^6 = 64$?"), null);
+  // Vrednost v razlagi je preizkus, ne odgovor.
+  assert.equal(v("Reši enačbo $x^2 = -4$.", "x = ±2 ni rešitev, ker je kvadrat vedno pozitiven"), null);
+  assert.equal(v("Reši enačbo $x^6 = -64$.", "Ti si rekel x = 2, ampak 2^6 = 64. Torej ni rešitve."), null);
+  assert.equal(v("Reši enačbo $x^2 + 2x + 5 = 0$.", "Teme je pri x = -1. Ni ničel."), null);
+  // Kompleksne rešitve in »2 ± 1« niso realna vrednost 2.
+  assert.equal(v("Reši v množici kompleksnih števil: $x^2 + 2x + 5 = 0$", "x = -1 ± 2i"), null);
+  assert.equal(v("Reši enačbo $x^2 = -4$.", "x = 2 i"), null);
+  assert.equal(v("Reši enačbo $x^2 - 4x + 3 = 0$.", "x = 2 ± 1"), null);
+  // Presledek za ± je popoln odgovor.
+  for (const ans of ["x = ± 2", "x = +- 2", "x = +/- 2"]) assert.equal(v("Reši enačbo $x^2 = 4$.", ans)?.partial, false, ans);
+});
+
+test("sodba koraka AUDIT-092 (pregled 2): stransko vprašanje inštruktorja brez »=« ne da sodbe, ponovljena naloga jo", () => {
+  const v = (naloga, prevTutor, ans) => stepVerdict(ans, { pre: presolve(naloga, { first: true }), prevTutor });
+  assert.equal(v("Reši enačbo $x^2+2x+5=0$.", "Pri katerem x je $(x+1)^2$ enako 0?", "x = -1"), null);
+  assert.equal(v("Reši enačbo $x^2+2x+5=0$.", "Koliko je $-\\frac{b}{2a}$?", "x = -1"), null);
+  assert.equal(v("Reši enačbo $x^2+4=0$.", "Vstavi kakšno število, npr. 2, in poglej, kaj dobiš.", "x = 2"), null);
+  assert.equal(v("Reši enačbo $x^6=-64$.", "Koliko je $\\sqrt[6]{64}$? Zapiši kot x.", "x = 2"), null);
+  assert.equal(v("Reši enačbo $x^6 = -64$.", "Kaj pa, če bi bilo na desni strani $x^6 = -64$ pozitivno število? Koliko bi bil x?", "x = 2"), null);
+  assert.equal(v("Reši enačbo $x^2+2x+5=0$.", "Pri katerem x je leva stran enačbe $x^2 + 2x + 5 = 0$ najmanjša?", "x = -1"), null);
+  assert.equal(v("Reši enačbo $x^2+2x+5=0$.", "Pri katerem x je leva stran najmanjša?", "x = -1"), null);
+  assert.equal(v("Reši enačbo $x^6 = -64$.", "Rešujemo $x^{6} = -64$. Kaj dobiš?", "x = 2")?.wrong, true);
+  const t0 = performance.now();
+  v("Reši enačbo $x^6 = -64$.", "Kaj narediš?", "x = 2" + " ".repeat(50000) + "a");
+  assert.ok(performance.now() - t0 < 300);
+});

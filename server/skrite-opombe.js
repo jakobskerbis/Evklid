@@ -10,6 +10,7 @@ export const isHiddenNote = (text) => typeof text === "string" && HEADS.some((h)
 // zapise z velikimi črkami, presledki, polnoširinskimi znaki, cirilskimi dvojniki črk, podobnimi oklepaji (〈 ⟨ ˂,
 // &lt;), presledkom ali pomišljajem namesto »_« ter nevidne znake (ZWSP, U+2063, izbirniki različic …) med znaki
 // oznake. Nevidni znaki drugje ostanejo (ZWJ v emojijih, npr. 👨‍👩‍👧).
+// Presledki pred »/« in za njim niso dve zaporedni zvezdici (»\s*(/?)\s*«): dolg niz presledkov za »<« bi bil kvadraten.
 const IGN = "\\p{Default_Ignorable_Code_Point}";
 const DVOJNIKI = { a: "а", c: "с", e: "е", i: "іı", j: "ј", o: "оο", p: "р", s: "ѕ", k: "к" };
 // »č«/»ć« le kot »c« v »račun« (»<preverjen_račun>«, #1018), ne povsod: »<Način dela …>« je navadno besedilo, ne oznaka
@@ -21,7 +22,7 @@ const ODPRI = "(?:[<\\uFF1C\\uFE64\\u3008\\u27E8\\u2329\\u02C2]|&lt;?|&#0*60;?|&
 const ZAPRI = "(?:[>\\uFF1E\\uFE65\\u3009\\u27E9\\u232A\\u02C3]|&gt;?|&#0*62;?|&#x0*3e;?)";
 const vzorec = (t) => [...t].map((c, i) => znak(c, i, t)).join(`${IGN}*`);
 const OZNAKA = new RegExp(
-  `${ODPRI}[\\s${IGN}]*(/?)[\\s${IGN}]*(${HIDDEN_TAGS.map(vzorec).join("|")})(?!${IGN}*[\\p{L}\\p{N}_\\uFF3F])([\\s${IGN}]*${ZAPRI})?`,
+  `${ODPRI}[\\s${IGN}]*(?:(/)[\\s${IGN}]*)?(${HIDDEN_TAGS.map(vzorec).join("|")})(?!${IGN}*[\\p{L}\\p{N}_\\uFF3F])([\\s${IGN}]*${ZAPRI})?`,
   "giu",
 );
 const ime = (m) => {

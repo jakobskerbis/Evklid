@@ -62,3 +62,13 @@ test("povzetek: oznaka v povzetku modela ne zapre opombe povzetka", () => {
   assert.ok(!t.includes("<preverjen_racun>"));
   assert.ok(t.includes("­de") || true);
 });
+
+test("neutralizeHiddenTags: dolg niz presledkov ali nevidnih znakov za »<« je linearen (pregled prevzema, ReDoS)", () => {
+  for (const s of ["<" + "​ ".repeat(25000), "<" + " ".repeat(50000), ("< " + "⁣".repeat(50)).repeat(500)]) {
+    const t = performance.now();
+    neutralizeHiddenTags(s);
+    assert.ok(performance.now() - t < 300, `${s.length} znakov: ${Math.round(performance.now() - t)} ms`);
+  }
+  assert.equal(neutralizeHiddenTags("< / preverjen_racun >x"), "‹/preverjen_racun›x");
+  assert.equal(neutralizeHiddenTags("<preverjen_racun>x"), "‹preverjen_racun›x");
+});

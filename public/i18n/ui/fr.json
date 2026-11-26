@@ -4450,7 +4450,6 @@
   "pilot.n.few": "Trop peu de réponses pour les afficher (au moins {n}).",
   "zb.fromPilot": "Pour ton aide dans le pilote",
   "pn.quizTitle": "Test de connaissances",
-  "pn.quizText": "Douze exercices courts sur le programme de la Matura (maths, niveau de base). Tu peux utiliser la calculatrice, sauf si l’exercice indique le contraire. Encore une fois dans 14 jours, avec des exercices semblables et d’autres nombres, pour voir combien tu progresses. Il n’y a pas de note, et ce n’est pas grave si tu ne sais pas quelque chose. Nous enregistrons le résultat, et l’administrateur ne voit que des moyennes globales, sans noms.",
   "pn.quizStart": "Commencer le test",
   "pn.quizContinue": "Continuer le test",
   "pn.quizPost": "Commencer le deuxième test",

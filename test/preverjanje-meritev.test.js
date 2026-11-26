@@ -14,12 +14,11 @@ after(() => casStop());
 
 const ids = (pred, od, do_, korak = 1) => Array.from({ length: Math.floor((do_ - od) / korak) + 1 }, (_, i) => `${pred}-${String(od + i * korak).padStart(3, "0")}`);
 // Pragovi (ujete, potrjena) so točno izmerjeni: ob počasnem SymPy (rok 9 s, zdaj ~100 ms na trditev) bi test padel,
-// kar je namerno. Brez SymPy: log(u, a) z osnovo, binomial(n, k) in factorial(n) kalkulatorjev razčlenjevalnik
-// (public/graph/math.js) ne pozna, zato jih lokalni preverjevalnik oceni narobe (N-01, zapis v docs/revizija/register.md).
+// kar je namerno. Lažnih alarmov ni več: log(u, a) z osnovo, binomial, C/V in factorial prep v solvecore prepiše v
+// zapis kalkulatorja, neznana funkcija da »Nepreverjeno« (poseg 1 pregleda pilota, 26. 11.; prej 40 lokalnih alarmov).
 // Lažne alarme skenerja (factor v factorial, meje integrala, zaokrožene decimalke, vrzel, odvod cos(x^n)) je popravil
 // PR po N-01 (test/scan-lazni-alarmi.test.js).
-const LOG_OSNOVA = [1, 3, 5, 7, 11, 13, 15, 17, 21, 23, 25, 27, 31, 33, 35, 37].map((n) => `log-${String(n).padStart(3, "0")}`);
-const LOKALNO_ALARMI = [...LOG_OSNOVA, "racun2-013", "racun2-027", "racun2-043", "racun2-059", ...ids("racun2", 118, 156, 2)];
+const LOKALNO_ALARMI = [];
 const IZHODISCE = {
   "skener-lokalno": {
     potrjene: [],
@@ -38,7 +37,7 @@ const IZHODISCE = {
     ujete: 504,
     potrjena: 484,
   },
-  // Ob počasnem SymPy (rok 9 s) skener uporabi lokalno preverjanje, zato so dovoljeni tudi njegovi znani alarmi.
+  // Ob počasnem SymPy (rok 9 s) skener uporabi lokalno preverjanje; lokalnih alarmov ni več (LOKALNO_ALARMI je prazen).
   skener: {
     potrjene: [],
     previsoki: [],

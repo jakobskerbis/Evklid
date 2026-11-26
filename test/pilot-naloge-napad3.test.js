@@ -71,6 +71,7 @@ test("B3-1 tuj račun ne more oddati preizkusa, odgovora, obvestila ali izbrisat
     for (const [path, method, body] of [
       [`/api/students/${a.sid}/pilot/quiz`, "POST", { phase: "pre" }],
       [`/api/students/${a.sid}/pilot/quiz/answer`, "POST", { phase: "pre", index: 0, skip: true }],
+      [`/api/students/${a.sid}/pilot/quiz/help`, "POST", { phase: "pre", help: "no" }],
       [`/api/students/${a.sid}/pilot/seen`, "POST", { what: "intro" }],
       [`/api/students/${a.sid}/pilot/photos`, "DELETE"],
       [`/api/students/${a.sid}/pilot/scan/light/photo`, "DELETE"],
@@ -86,13 +87,16 @@ test("B3-1 tuj račun ne more oddati preizkusa, odgovora, obvestila ali izbrisat
   });
 });
 
-test("B3-2 XP: vzporedni zadnji odgovori, ponovni začetek, »Ne vem« ×12 ne dajo več kot 2 × XP.quiz", async () => {
+test("B3-2 XP: vzporedni zadnji odgovori in vzporedni odgovori o pomoči (konec), ponovni začetek, »Ne vem« ×12 ne dajo več kot 2 × XP.quiz", async () => {
   await withServer({}, async ({ client, store }) => {
     const a = await account(client, store, "xp@b3.si", 40);
     await a.call(`/api/students/${a.sid}/pilot/quiz`, { method: "POST", body: { phase: "pre" } });
     for (let i = 0; i < 11; i++) await a.call(`/api/students/${a.sid}/pilot/quiz/answer`, { method: "POST", body: { phase: "pre", index: i, skip: true } });
     const rs = await Promise.all(Array.from({ length: 8 }, () => a.call(`/api/students/${a.sid}/pilot/quiz/answer`, { method: "POST", body: { phase: "pre", index: 11, skip: true } })));
     assert.equal(rs.filter((r) => r.status === 200).length, 1);
+    // Preizkus konča odgovor o pomoči: vzporedni odgovori ga končajo enkrat.
+    const hs = await Promise.all(Array.from({ length: 8 }, (_, i) => a.call(`/api/students/${a.sid}/pilot/quiz/help`, { method: "POST", body: { phase: "pre", help: i % 2 ? "yes" : "no" } })));
+    assert.equal(hs.filter((r) => r.status === 200).length, 1);
     await a.call(`/api/students/${a.sid}/pilot/quiz`, { method: "POST", body: { phase: "pre" } });
     const n = store.db.prepare("SELECT COALESCE(SUM(amount),0) AS n FROM xp_events WHERE student_id = ? AND reason LIKE 'pilot: quiz%'").get(a.sid).n;
     assert.equal(n, 10);

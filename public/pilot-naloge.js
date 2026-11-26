@@ -301,12 +301,17 @@ function surveyCard(s) {
 
 // Preizkus znanja (N-10): 12 nalog iz sklopov kataloga mature MAT na začetku in čez 14 dni vzporedna oblika (druga
 // števila, ista snov). Brez ocene in brez povratne informacije pri
-// posamezni nalogi (meri, ne uči); na koncu število pravilnih. »Ne vem« je vedno na voljo.
+// posamezni nalogi (meri, ne uči); na koncu število pravilnih. »Ne vem« je vedno na voljo. Po zadnji nalogi vprašanje
+// »Si pri kateri nalogi uporabil pomoč?« (Da / Ne); preizkus se konča (rezultat, XP) šele z odgovorom.
 function quizCard(s) {
   const q = s.quiz || { pre: {}, post: {} };
   const both = q.pre.done && q.post.done;
+  const ask = ["post", "pre"].find((p) => q[p].askHelp);
   let body;
-  if (quiz?.data?.task) {
+  if (ask && !quiz?.data?.task) {
+    body = `<p id="pn-quiz-help-q">${esc(t("pn.quizHelpQ"))}</p>
+      <div class="pn-actions" role="group" aria-labelledby="pn-quiz-help-q"><button type="button" class="secondary" id="pn-quiz-help-no" data-pn="quiz-help" data-phase="${ask}" data-help="no">${esc(t("pn.quizHelpNo"))}</button><button type="button" class="secondary" data-pn="quiz-help" data-phase="${ask}" data-help="yes">${esc(t("pn.quizHelpYes"))}</button></div>`;
+  } else if (quiz?.data?.task) {
     const tk = quiz.data.task;
     // Pri pilotnih nalogah enota ni obvezna (strežnik jo doda, server/pilot-ucinek.js): namig je samo rezultat.
     const ph = tk.inputHint || t("task.phResult");
@@ -341,7 +346,7 @@ async function quizSend(answer, skip = false) {
     const r = await D.api(`/api/students/${D.getStudent().id}/pilot/quiz/answer`, { method: "POST", body });
     quiz = r.run?.done ? null : { phase: quiz.phase, data: r.run };
     applied(r, { quiet: true });
-    setTimeout(() => ($("#pn-quiz-in") || $("#pn-quiz .choice") || $("#pn-quiz"))?.focus?.());
+    setTimeout(() => ($("#pn-quiz-in") || $("#pn-quiz .choice") || $("#pn-quiz-help-no"))?.focus?.());
   } catch (e) {
     btns.forEach((b) => (b.disabled = false));
     // Napaka v zapisu (manjka enota, ni število): popravi in oddaj znova; ne šteje kot odgovor.
@@ -356,6 +361,32 @@ async function quizSend(answer, skip = false) {
   }
 }
 
+// Odgovor na vprašanje o pomoči konča preizkus (strežnik shrani rezultat in da XP).
+async function quizHelp(phase, help) {
+  const btns = [...document.querySelectorAll('#pn-quiz [data-pn="quiz-help"]')];
+  btns.forEach((b) => (b.disabled = true));
+  try {
+    const r = await D.api(`/api/students/${D.getStudent().id}/pilot/quiz/help`, { method: "POST", body: { phase, help } });
+    quiz = null;
+    applied(r, { quiet: true });
+  } catch (e) {
+    btns.forEach((b) => (b.disabled = false));
+    // 409: preizkus je že končan (drug zavihek): naloži stanje znova.
+    if (e?.status === 409) {
+      quiz = null;
+      return loadPilot({ notices: false });
+    }
+    return D.toast(e?.message || t("off.noConnection"));
+  }
+  // Fokus na rezultat (bralnik zaslona ga prebere).
+  setTimeout(() => {
+    const el = $("#pn-quiz .pn-status");
+    if (!el) return;
+    el.tabIndex = -1;
+    el.focus();
+  });
+}
+
 async function startQuiz(phase) {
   try {
     const r = await D.api(`/api/students/${D.getStudent().id}/pilot/quiz`, { method: "POST", body: { phase } });
@@ -365,7 +396,7 @@ async function startQuiz(phase) {
     else D.toast(e?.message || t("off.noConnection"));
   }
   render();
-  setTimeout(() => ($("#pn-quiz-in") || $("#pn-quiz .choice"))?.focus());
+  setTimeout(() => ($("#pn-quiz-in") || $("#pn-quiz .choice") || $("#pn-quiz-help-no"))?.focus());
 }
 
 // Odgovor strežnika: novo stanje, nagrada (toast z XP), osvežitev zvezdic.
@@ -394,6 +425,7 @@ async function onClick(e) {
     if (act === "quiz-start") return startQuiz(b.dataset.phase);
     if (act === "quiz-choice") return quizSend(b.dataset.i);
     if (act === "quiz-skip") return quizSend(null, true);
+    if (act === "quiz-help") return quizHelp(b.dataset.phase, b.dataset.help);
     if (act === "quiz-send") {
       const v = $("#pn-quiz-in")?.value.trim();
       if (!v) {
@@ -586,7 +618,22 @@ function impactHtml(im, { pc, few }) {
     ? `<div class="pilot-scroll"><table class="table pilot-table"><thead><tr><th scope="col">${esc(t("pilot.n.quizSlot"))}</th><th scope="col">${esc(t("pilot.n.quizBefore"))}</th><th scope="col">${esc(t("pilot.n.quizAfter"))}</th></tr></thead>
       <tbody>${q.slots.map((sl) => `<tr><td lang="sl">${esc(sl.sklop)}</td><td>${pc(sl.pre)}</td><td>${pc(sl.post)}</td></tr>`).join("")}</tbody></table></div>`
     : "";
+  const c = q.concept;
+  const ci = (o) => (o.ci95 ? `${pc(o.ci95[0])}–${pc(o.ci95[1])}` : "–");
+  const conceptRow = (key, o) =>
+    o.hidden
+      ? `<tr><th scope="row">${esc(t(key))}</th><td colspan="5" class="muted">${esc(t("pilot.n.quizHiddenRow", { n: o.candidates }))}</td></tr>`
+      : `<tr><th scope="row">${esc(t(key))}</th><td>${o.candidates}</td><td>${o.n}</td><td>${o.improved}</td><td>${pc(o.share)}</td><td>${ci(o)}</td></tr>`;
+  const concept = c
+    ? `<p>${esc(t("pilot.n.quizMain", { n: c.candidates, gap: c.gapDays ?? "–" }))}</p>
+      <p class="muted small">${esc(t("pilot.n.quizHelped", { n: q.helped, auto: q.helpedAuto, self: q.helpedSelf, pre: q.helpedPre }))}</p>
+      <div class="pilot-scroll"><table class="table pilot-table"><thead><tr><th scope="col">${esc(t("pilot.n.quizConcept"))}</th><th scope="col">${esc(t("pilot.n.quizCandidates"))}</th><th scope="col">${esc(t("pilot.n.quizWrongFirst"))}</th><th scope="col">${esc(t("pilot.n.quizRightLater"))}</th><th scope="col">${esc(t("pilot.n.quizShare"))}</th><th scope="col">${esc(t("pilot.n.quizInterval"))}</th></tr></thead>
+      <tbody>${conceptRow("pilot.n.quizPracticed", c.practiced)}${conceptRow("pilot.n.quizNotPracticed", c.notPracticed)}${conceptRow("pilot.n.quizAll", c.all)}</tbody></table></div>
+      <p class="muted small">${esc(t("pilot.n.quizConceptNote"))}</p>`
+    : "";
   return `<h3>${esc(t("pilot.n.quiz"))}</h3>
+    <p>${esc(t("pilot.n.quizFunnel", { invited: q.invited ?? "–", started: q.started, pre: q.nPre, paired: q.nPaired, dropped: q.dropped, days: q.dropDays, waiting: q.waiting }))}</p>
+    ${concept}
     <ul class="pilot-sum"><li>${esc(t("pilot.n.quizPre", { n: q.nPre, avg: pc(q.pre) }))}</li>
       <li>${esc(t("pilot.n.quizPaired", { n: q.nPaired, pre: pc(q.pairedPre), post: pc(q.pairedPost), diff: pp(q.diff) }))}</li>${forms}${orders}
       ${q.ci95 ? `<li>${esc(t("pilot.n.quizCi", { lo: pp(q.ci95[0]), hi: pp(q.ci95[1]), bal: pp(q.diffBalanced) }))}</li>` : ""}</ul>
