@@ -191,7 +191,7 @@ test("po objavi ob počasnem omrežju: stara stran iz predpomnilnika se sama osv
     try {
       const p = await installOld(ctx, base);
       state.mode = "nova";
-      state.delayEntry = 6000; // daljše od roka vstopne strani v sw.js: postreže se shranjena (stara) stran
+      state.delayEntry = 6000; // shranjena (stara) stran pride iz predpomnilnika takoj; počasno omrežje zadrži tudi preverjanje v ozadju
       await p.goto(base + "/");
       // do osvežitve stara stran dobiva lene module svoje različice (pregled B2 P2-1)
       const mixed = await p

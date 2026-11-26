@@ -169,12 +169,12 @@ test("ista različica na strežniku: kopije modulov ostanejo takojšnje", async 
   assert.equal(sw.updates.length, 0);
 });
 
-test("vstopna stran brez povezave (omrežje ne odgovori): v kratkem roku shranjena kopija", async () => {
+test("vstopna stran brez povezave (omrežje ne odgovori): kopija iste različice takoj", async () => {
   const sw = loadSw("abc", { hang: true });
   await (await sw.caches.open("evklid-v1-static")).put(`${ORIGIN}/`, new Response("shranjena stran", { headers: { "X-Evklid-App": "abc" } }));
   const t0 = Date.now();
   assert.equal(await sw.get("/", "navigate"), "shranjena stran");
-  assert.ok(Date.now() - t0 < 2000, "rok vstopne strani je kratek (1 s)");
+  assert.ok(Date.now() - t0 < 2000, "kopija iste različice ne čaka omrežja");
 });
 
 test("nova različica aplikacije: stara kopija ni več sveža, gre na omrežje", async () => {

@@ -1,7 +1,8 @@
 // Service worker: aplikacija se odpre tudi brez povezave in ponovno ne prenaša knjižnic.
 // - knjižnice in pisave (/vendor/): najprej iz predpomnilnika (se ne spreminjajo),
-// - vstopna stran (/ z ali brez poizvedbe, npr. /?pogled=chat, /?koda=): najprej omrežje s kratkim rokom (1 s; stran
-//   je majhna, ob nespremenjeni samo 304), ob izpadu ali počasni povezavi shranjena kopija (ena, pod »/«). Vsak odgovor strežnika pove
+// - vstopna stran (/ z ali brez poizvedbe, npr. /?pogled=chat, /?koda=): kopija iste različice takoj, omrežje jo preveri
+//   v ozadju (stale-while-revalidate, entryPage); brez take kopije najprej omrežje s kratkim rokom (1 s), ob izpadu ali
+//   počasni povezavi shranjena kopija (ena, pod »/«). Vsak odgovor strežnika pove
 //   različico datotek (glava X-Evklid-App, server/app.js). Če je drugačna od APP tega service workerja, ta do
 //   zamenjave ne postreže nobene shranjene kopije več (outdated): nova stran tako nikoli ne dobi starih modulov,
 // - stran, ki ji je bila postrežena shranjena (starejša) vstopna stran, ker je omrežje zamujalo, pove svojo
@@ -289,8 +290,9 @@ async function networkFirst(req, cacheName, ms, { entry = false, page = "", onPa
 }
 
 // Vstopna stran: kopija različice tega service workerja takoj (stale-while-revalidate, N-08b), sicer networkFirst.
-// Preverjanje v ozadju (revalidateEntry) je zahteva brez navigacije: osebna stran (no-store, Učna pot strežnika) se
-// prekine že ob glavah (brez prenosa telesa na počasni povezavi), javna se shrani kot nova kopija; nova različica na
+// Preverjanje v ozadju (revalidateEntry) je zahteva brez navigacije, zato strežnik vrne javno stran (osebno stran z
+// začetnimi podatki sestavi samo za navigacijo, server/zacetni-podatki.js); zasebna ali no-store bi se vseeno prekinila
+// že ob glavah in ne bi bila shranjena. Javna z oznako te različice se shrani kot nova kopija; nova različica na
 // strežniku (glava STAMP) pobriše stare kopije, prijava z geslom (401, server/gate.js) pobriše kopijo vstopne strani,
 // da naslednje odprtje pokaže prijavo (sicer bi kopija vedno obšla prijavo in klici API bi vračali 401).
 async function entryPage(req, onPage, waitUntil) {
