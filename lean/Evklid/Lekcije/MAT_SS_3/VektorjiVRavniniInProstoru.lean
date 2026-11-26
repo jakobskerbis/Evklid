@@ -354,7 +354,7 @@ example : ‖(!₂[300, 0] : R2)‖ = 300 ∧ ‖(!₂[-150, 150 * √3] : R2)�
   · rw [show (150:ℝ) ^ 2 + (150 * √3) ^ 2 = 300 ^ 2 by rw [mul_pow, h3]; norm_num, Real.sqrt_sq (by norm_num)]
 
 /-- Predpostavke `sani` so izpolnjene tudi s kotom: med (300, 0) in (−150, 150√3) je kot 2π/3. -/
-example : angle (!₂[300, 0] : R2) !₂[-150, 150 * √3] = 2 * π / 3 := by
+theorem sani_kot_izpolnljivo : angle (!₂[300, 0] : R2) !₂[-150, 150 * √3] = 2 * π / 3 := by
   have h3 : √3 ^ 2 = 3 := Real.sq_sqrt (by norm_num)
   have n1 : ‖(!₂[300, 0] : R2)‖ = 300 := by
     rw [dolzina2, show (300:ℝ) ^ 2 + 0 ^ 2 = 300 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
@@ -751,5 +751,25 @@ theorem racun :
       Real.sqrt_sq (by norm_num)]
   · rw [show (3:ℝ) ^ 2 + 4 ^ 2 + 12 ^ 2 = 13 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
   · rw [show (3:ℝ) ^ 2 + 4 ^ 2 + 0 ^ 2 = 5 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `pravokotni_smeri` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (!₂[1, 0] : R2) ≠ 0 ∧ inner ℝ (!₂[1, 0] : R2) !₂[0, 1] = 0 := by
+    refine ⟨fun h => ?_, ?_⟩
+    · have := congrArg (fun v : R2 => v 0) h; simp at this
+    · simp [EuclideanSpace.inner_eq_star_dotProduct, dotProduct, Fin.sum_univ_two]
+  pravokotni_smeri (ha := w.1) (hab := w.2) (k := 1) (m := 0) (hF := rfl)
+
+/-- Predpostavke trditve `sani` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ‖(!₂[300, 0] : R2)‖ = 300 ∧ ‖(!₂[-150, 150 * √3] : R2)‖ = 300 ∧ (!₂[300, 0] : R2) + !₂[-150, 150 * √3] = !₂[150, 150 * √3] ∧ ‖(!₂[150, 150 * √3] : R2)‖ = 300 := by
+    have h3 : √3 ^ 2 = 3 := Real.sq_sqrt (by norm_num)
+    refine ⟨?_, ?_, by rw [vsota2]; norm_num, ?_⟩ <;> rw [dolzina2]
+    · rw [show (300:ℝ) ^ 2 + 0 ^ 2 = 300 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+    · rw [show (-150:ℝ) ^ 2 + (150 * √3) ^ 2 = 300 ^ 2 by rw [mul_pow, h3]; norm_num, Real.sqrt_sq (by norm_num)]
+    · rw [show (150:ℝ) ^ 2 + (150 * √3) ^ 2 = 300 ^ 2 by rw [mul_pow, h3]; norm_num, Real.sqrt_sq (by norm_num)]
+  sani (h₁ := w.1) (h₂ := w.2.1) (hk := sani_kot_izpolnljivo)
 
 end Evklid.Lekcije.MAT_SS_3.VektorjiVRavniniInProstoru

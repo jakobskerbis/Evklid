@@ -1153,4 +1153,10 @@ theorem korak_preverjanje (x : ℝ) : ((1 : ℝ) / 3 - 2 = -5 / 3 ∧ (1 : ℝ) 
     3 * x ^ 2 + 5 * x - 2 = 3 * (x - 1 / 3) * (x + 2) ∧ 3 * (x - 1 / 3) * (x + 2) = (3 * x - 1) * (x + 2) :=
   ⟨by norm_num, by norm_num, by norm_num, by ring, by ring⟩
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `matura3c` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  matura3c.2.2 1 one_pos
+
 end Evklid.Lekcije.MAT_SS_2.KvadratnaEnacba

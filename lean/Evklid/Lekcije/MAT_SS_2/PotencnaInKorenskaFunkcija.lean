@@ -1049,4 +1049,10 @@ theorem eksponent_realni (r : ℝ) : ((2:ℝ) ^ r = 4 ↔ r = 2) ∧ ((3:ℝ) * 
   · rw [show ((3:ℝ) * 2 ^ r = 24) ↔ (2:ℝ) ^ r = 2 ^ (3:ℝ) from ⟨fun h => by norm_num; linarith,
       fun h => by rw [h]; norm_num⟩, inj]
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `premik_korena` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  premik_korena.2 3 (by norm_num)
+
 end Evklid.Lekcije.MAT_SS_2.PotencnaInKorenskaFunkcija

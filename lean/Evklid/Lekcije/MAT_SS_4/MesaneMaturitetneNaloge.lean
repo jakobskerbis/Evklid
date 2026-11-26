@@ -658,4 +658,10 @@ theorem racun :
   exact ⟨by norm_num, by norm_num, by norm_num, blizu (by norm_num) (by norm_num),
     blizu (by norm_num) (by norm_num), blizu (by linarith) (by linarith)⟩
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `nasprotni_dogodek` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  nasprotni_dogodek (Measure.dirac true) {true} (measurableSet_singleton true)
+
 end Evklid.Lekcije.MAT_SS_4.MesaneMaturitetneNaloge

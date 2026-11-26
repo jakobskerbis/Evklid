@@ -1116,4 +1116,15 @@ theorem racun (a b c : ℝ) :
   refine ⟨⟨fun ⟨h1, h2, h3⟩ => ⟨by linarith, by linarith, by linarith⟩, ?_⟩, by norm_num, by norm_num⟩
   rintro ⟨rfl, rfl, rfl⟩; norm_num
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `predznak_stalen` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∀ x ∈ Set.Ioo (0:ℝ) 1, (X ^ 2 + 1 : ℝ[X]).eval x ≠ 0 := fun x _ => by simp; positivity
+  predznak_stalen (h := w) (x := 1 / 2) (y := 1 / 2) (hx := by norm_num) (hy := by norm_num)
+
+/-- Predpostavke trditve `preizkus2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  preizkus2.2.2 0 (by norm_num) (by norm_num)
+
 end Evklid.Lekcije.MAT_SS_3.GrafPolinoma

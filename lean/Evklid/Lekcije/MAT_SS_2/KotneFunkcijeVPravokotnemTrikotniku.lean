@@ -1003,4 +1003,14 @@ theorem naloga2_romb :
   · rw [dDH, dAD, eDAB, sDAB, div_eq_iff hp.ne']
     linear_combination (-15 / 17 : ℝ) * h34
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `le_od_kota` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∠ Complex.I (0:ℂ) 1 = π / 2 ∧ Complex.I ≠ 0 := by
+    refine ⟨?_, Complex.I_ne_zero⟩
+    rw [EuclideanGeometry.angle, ← InnerProductGeometry.inner_eq_zero_iff_angle_eq_pi_div_two]
+    simp [Complex.inner]
+  le_od_kota (h := w.1) (h' := w.1) (hB := w.2) (hB' := w.2) (hα := rfl)
+
 end Evklid.Lekcije.MAT_SS_2.KotneFunkcijeVPravokotnemTrikotniku

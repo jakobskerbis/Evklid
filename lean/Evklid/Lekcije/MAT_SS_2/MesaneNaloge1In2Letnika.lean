@@ -957,4 +957,32 @@ theorem kviz4 :
     · linarith
   · intro h; rw [h]; norm_num
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `ustno3` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : EuclideanGeometry.angle Complex.I (0:ℂ) 1 = π / 2 ∧ Complex.I ≠ 0 := by
+    refine ⟨?_, Complex.I_ne_zero⟩
+    rw [EuclideanGeometry.angle, ← InnerProductGeometry.inner_eq_zero_iff_angle_eq_pi_div_two]
+    simp [Complex.inner]
+  ustno3 (h := w.1) (h' := w.1) (hB := w.2) (hB' := w.2) (hα := rfl)
+
+/-- Predpostavke trditve `meja12` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  meja12.2.2 _ meja12.2.1
+
+/-- Predpostavke trditve `primer3_t` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  And.intro (primer3_t.1 2 1 (by norm_num) (by norm_num))
+    (primer3_t.2 _ (Real.rpow_logb (by positivity)
+      (Real.rpow_lt_one (by norm_num) (by norm_num) (by norm_num)).ne (by norm_num)))
+
+/-- Predpostavke trditve `primer3_zaokrozeno` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  primer3_zaokrozeno _ (Real.rpow_logb (by norm_num) (by norm_num) (by norm_num))
+
+/-- Predpostavke trditve `odstotek_in_koren` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  odstotek_in_koren.2.2.2.2 3 4 (by norm_num) (by norm_num)
+
 end Evklid.Lekcije.MAT_SS_2.MesaneNaloge1In2Letnika

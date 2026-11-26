@@ -563,4 +563,24 @@ theorem preveri6 : tan (5 * π / 4) = 1 ∧ tan (5 * π / 4) ≠ -1 := by
       (pripadajoci _).2.2.2.1, neg_div_neg_eq, ← tan_eq_sin_div_cos, tan_pi_div_four]
   exact ⟨e, by rw [e]; norm_num⟩
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `kvadrant1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 < π / 6 ∧ π / 6 < π / 2) ∧ (π / 2 < 2 * π / 3 ∧ 2 * π / 3 < π) ∧ (π < 7 * π / 6 ∧ 7 * π / 6 < 3 * π / 2) ∧ (3 * π / 2 < 5 * π / 3 ∧ 5 * π / 3 < 2 * π) := by
+    have hp := pi_pos
+    refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩, ⟨?_, ?_⟩, ⟨?_, ?_⟩⟩ <;> linarith
+  kvadrant1 (h0 := w.1.1) (h1 := w.1.2)
+
+/-- Predpostavke trditve `kvadrant4` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 < π / 6 ∧ π / 6 < π / 2) ∧ (π / 2 < 2 * π / 3 ∧ 2 * π / 3 < π) ∧ (π < 7 * π / 6 ∧ 7 * π / 6 < 3 * π / 2) ∧ (3 * π / 2 < 5 * π / 3 ∧ 5 * π / 3 < 2 * π) := by
+    have hp := pi_pos
+    refine ⟨⟨?_, ?_⟩, ⟨?_, ?_⟩, ⟨?_, ?_⟩, ⟨?_, ?_⟩⟩ <;> linarith
+  kvadrant4 (h0 := w.2.2.2.1) (h1 := w.2.2.2.2)
+
+/-- Predpostavke trditve `matura2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  matura2 (h0 := matura2_kot.1) (h1 := matura2_kot.2.1) (hc := matura2_kot.2.2.1) (hs := matura2_kot.2.2.2.1)
+
 end Evklid.Lekcije.MAT_SS_3.KotneFunkcijePoljubnegaKota

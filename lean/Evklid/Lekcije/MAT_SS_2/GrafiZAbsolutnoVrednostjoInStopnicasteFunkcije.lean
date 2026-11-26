@@ -621,4 +621,10 @@ theorem kviz5 : ⌊(-3.7:ℝ)⌋ = -4 ∧ ⌊(3.7:ℝ)⌋ = 3 ∧ ⌊(-3.7:ℝ)�
   have b : ⌊(3.7:ℝ)⌋ = 3 := by rw [Int.floor_eq_iff]; norm_num
   refine ⟨a, b, by rw [a, b]; norm_num, by norm_num, by norm_num, by norm_num⟩
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `parkirnina_odgovor` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  parkirnina_odgovor.2.2 1 (by norm_num)
+
 end Evklid.Lekcije.MAT_SS_2.GrafiZAbsolutnoVrednostjoInStopnicasteFunkcije

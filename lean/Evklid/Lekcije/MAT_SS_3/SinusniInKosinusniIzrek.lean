@@ -1014,4 +1014,60 @@ theorem kviz6 :
   · rw [show (169:ℝ) = 13 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
   all_goals (rw [abs_lt]; constructor <;> linarith)
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `kosinus_en_kot` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ∈ Set.Icc 0 π := ⟨le_rfl, Real.pi_pos.le⟩
+  kosinus_en_kot (hx := w) (hy := w) (h := rfl)
+
+/-- Predpostavke trditve `sestilo` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 ∧ (0:ℝ) < π := ⟨one_pos, Real.pi_pos⟩
+  sestilo (ha := w.1) (hb := w.1) (h0 := le_refl (0:ℝ)) (h12 := w.2) (h2 := le_refl π)
+
+/-- Predpostavke trditve `sinusni_izrek` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Real.sin (∠ tC tA tB) ≠ 0 ∧ Real.sin (∠ tA tB tC) ≠ 0 ∧ tB ≠ tA ∧ ¬Collinear ℝ ({tA, tB, tC} : Set (EuclideanSpace ℝ (Fin 2))) ∧ dist tA tB < dist tA tC ∧ ∠ tC tA tB = π / 2 := by
+    have h := t_nekolinearen
+    have hp : ∠ tC tA tB = π / 2 := by rw [EuclideanGeometry.angle_comm]; exact t_pravi
+    refine ⟨?_, sin_ne_zero_of_not_collinear h, ?_, h, ?_, hp⟩
+    · rw [hp, Real.sin_pi_div_two]; exact one_ne_zero
+    · intro hBA; apply h; rw [hBA]; simp [collinear_pair]
+    · simp [EuclideanSpace.dist_eq, tA, tB, tC, Fin.sum_univ_two]
+  sinusni_izrek (hα := w.1) (hβ := w.2.1)
+
+/-- Predpostavke trditve `vecji_kot_daljsa_stranica` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Real.sin (∠ tC tA tB) ≠ 0 ∧ Real.sin (∠ tA tB tC) ≠ 0 ∧ tB ≠ tA ∧ ¬Collinear ℝ ({tA, tB, tC} : Set (EuclideanSpace ℝ (Fin 2))) ∧ dist tA tB < dist tA tC ∧ ∠ tC tA tB = π / 2 := by
+    have h := t_nekolinearen
+    have hp : ∠ tC tA tB = π / 2 := by rw [EuclideanGeometry.angle_comm]; exact t_pravi
+    refine ⟨?_, sin_ne_zero_of_not_collinear h, ?_, h, ?_, hp⟩
+    · rw [hp, Real.sin_pi_div_two]; exact one_ne_zero
+    · intro hBA; apply h; rw [hBA]; simp [collinear_pair]
+    · simp [EuclideanSpace.dist_eq, tA, tB, tC, Fin.sum_univ_two]
+  vecji_kot_daljsa_stranica (h := w.2.2.2.1)
+
+/-- Predpostavke trditve `kot_nasproti_krajse_oster` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Real.sin (∠ tC tA tB) ≠ 0 ∧ Real.sin (∠ tA tB tC) ≠ 0 ∧ tB ≠ tA ∧ ¬Collinear ℝ ({tA, tB, tC} : Set (EuclideanSpace ℝ (Fin 2))) ∧ dist tA tB < dist tA tC ∧ ∠ tC tA tB = π / 2 := by
+    have h := t_nekolinearen
+    have hp : ∠ tC tA tB = π / 2 := by rw [EuclideanGeometry.angle_comm]; exact t_pravi
+    refine ⟨?_, sin_ne_zero_of_not_collinear h, ?_, h, ?_, hp⟩
+    · rw [hp, Real.sin_pi_div_two]; exact one_ne_zero
+    · intro hBA; apply h; rw [hBA]; simp [collinear_pair]
+    · simp [EuclideanSpace.dist_eq, tA, tB, tC, Fin.sum_univ_two]
+  kot_nasproti_krajse_oster (h := w.2.2.2.1) (hd := w.2.2.2.2.1)
+
+/-- Predpostavke trditve `visina` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Real.sin (∠ tC tA tB) ≠ 0 ∧ Real.sin (∠ tA tB tC) ≠ 0 ∧ tB ≠ tA ∧ ¬Collinear ℝ ({tA, tB, tC} : Set (EuclideanSpace ℝ (Fin 2))) ∧ dist tA tB < dist tA tC ∧ ∠ tC tA tB = π / 2 := by
+    have h := t_nekolinearen
+    have hp : ∠ tC tA tB = π / 2 := by rw [EuclideanGeometry.angle_comm]; exact t_pravi
+    refine ⟨?_, sin_ne_zero_of_not_collinear h, ?_, h, ?_, hp⟩
+    · rw [hp, Real.sin_pi_div_two]; exact one_ne_zero
+    · intro hBA; apply h; rw [hBA]; simp [collinear_pair]
+    · simp [EuclideanSpace.dist_eq, tA, tB, tC, Fin.sum_univ_two]
+  visina (h := w.2.2.2.2.2)
+
 end Evklid.Lekcije.MAT_SS_3.SinusniInKosinusniIzrek

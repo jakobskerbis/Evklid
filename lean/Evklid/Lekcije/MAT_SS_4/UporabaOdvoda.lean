@@ -676,4 +676,11 @@ theorem kviz5 (x : ℝ) :
   exact ((((hasDerivAt_pow 2 x).const_mul (-2)).add ((hasDerivAt_id' x).const_mul 120)).sub_const
     1000).congr_deriv (by push_cast; ring)
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `presecni_kot` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : cos (0:ℝ) ≠ 0 ∧ tan (0:ℝ) = 0 := by simp
+  presecni_kot (h₁ := w.1) (h₂ := w.1) (t₁ := w.2) (t₂ := w.2)
+
 end Evklid.Lekcije.MAT_SS_4.UporabaOdvoda

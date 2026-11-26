@@ -492,4 +492,16 @@ theorem racun :
     rw [div_eq_div_iff this (by norm_num)]
     constructor <;> intro h <;> linarith
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `kviz5` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (fun n : ℕ => n ≤ 120) 1 ∧ (∀ n, 1 ≤ n → n < 500 → n ≠ 120 → (fun n : ℕ => n ≤ 120) n → (fun n : ℕ => n ≤ 120) (n + 1)) ∧ ¬ (fun n : ℕ => n ≤ 120) 121 :=
+    ⟨by norm_num, fun n _ _ h1 h2 => by simp only at h2 ⊢; omega, by norm_num⟩
+  kviz5 (h1 := w.1) (hk := w.2.1)
+
+/-- Predpostavke trditve `primer3_n0` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  primer3_n0.2.2.2.2 5 primer3_n0.1
+
 end Evklid.Lekcije.MAT_SS_4.MatematicnaIndukcija

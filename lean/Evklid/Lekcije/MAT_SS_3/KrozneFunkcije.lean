@@ -960,4 +960,15 @@ theorem preveri5 : (∀ x : ℝ, 2 * sin x = -1 ↔ ∃ k : ℤ, x = -(π / 6) +
   · rw [show 2 * sin x = -1 ↔ sin x = -(1 / 2) from ⟨fun h => by linarith, fun h => by rw [h]; ring⟩]
     exact (simulacija x h0 h1).2.1
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `sinus_zozen` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  (sinus_zozen.2 0 (by norm_num)).2.2 0 ⟨by linarith [Real.pi_pos], by linarith [Real.pi_pos]⟩
+    Real.sin_zero
+
+/-- Predpostavke trditve `kosinus_zozen` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  (kosinus_zozen.2.2 1 (by norm_num)).2.2 0 ⟨le_rfl, Real.pi_pos.le⟩ Real.cos_zero
+
 end Evklid.Lekcije.MAT_SS_3.KrozneFunkcije

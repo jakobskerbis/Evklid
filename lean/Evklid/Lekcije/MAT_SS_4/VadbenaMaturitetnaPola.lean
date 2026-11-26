@@ -1947,4 +1947,22 @@ theorem kviz5 :
     linarith
   · rintro rfl; norm_num
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `uganka` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  uganka.2.2.2.2.2 ∅ (by simp)
+
+/-- Predpostavke trditve `naloga9_a` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  naloga9_a.2.2 0 (by norm_num)
+
+/-- Predpostavke trditve `naloga10_b` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  naloga10_b.2.2 0 (by norm_num)
+
+/-- Predpostavke trditve `naloga16_meje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  naloga16_meje.2.2 1 le_rfl
+
 end Evklid.Lekcije.MAT_SS_4.VadbenaMaturitetnaPola

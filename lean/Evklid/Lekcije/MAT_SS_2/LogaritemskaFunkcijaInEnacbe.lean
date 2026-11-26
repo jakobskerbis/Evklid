@@ -1064,6 +1064,12 @@ theorem racun_osnove (x : ℝ) (hx : 0 < x) :
 /-- Predpostavke trditve `racun_osnove` se dajo izpolniti (x = 1). -/
 example : (0 : ℝ) < 1 := by norm_num
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `kviz7` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  kviz7.2 1024 (by norm_num)
+
 end Evklid.Lekcije.MAT_SS_2.LogaritemskaFunkcijaInEnacbe
 /-- Predpostavke trditve `racun_osnove` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=

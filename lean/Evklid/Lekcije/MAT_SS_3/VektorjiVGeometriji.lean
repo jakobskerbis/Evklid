@@ -811,4 +811,20 @@ theorem racun :
     fun x y => ⟨fun ⟨h1, h2⟩ => ⟨by linarith, h2⟩, fun ⟨h1, h2⟩ => by subst h1 h2; norm_num⟩,
     fun b => ⟨fun h => by linarith, fun h => by rw [h]; norm_num⟩, by norm_num, by norm_num, by norm_num⟩
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `primerjava_koeficientov` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : LinearIndependent ℝ ![(!₂[1, 0] : R2), !₂[0, 1]] := by
+    rw [LinearIndependent.pair_iff]
+    intro s t h
+    rw [v2_smul, v2_smul, v2_add] at h
+    have h' : (!₂[s * 1 + t * 0, s * 0 + t * 1] : R2) = !₂[0, 0] := by rw [h]; ext i; fin_cases i <;> rfl
+    rw [v2_eq] at h'; constructor <;> linarith [h'.1, h'.2]
+  primerjava_koeficientov (h := w) (α := 1) (β := 0) (γ := 1) (δ := 0) (he := rfl)
+
+/-- Predpostavke trditve `kolinearnost_ravnina` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  kolinearnost_ravnina.2.2 1 0 0 0 (Or.inl one_ne_zero)
+
 end Evklid.Lekcije.MAT_SS_3.VektorjiVGeometriji

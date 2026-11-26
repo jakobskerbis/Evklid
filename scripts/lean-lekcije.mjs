@@ -184,27 +184,36 @@ export function deklaracije(txt) {
   return out;
 }
 
-/** Ali ima sklep izreka predpostavko: »→« na ničti globini za začetnimi »∀ …,« (npr. ∀ x, 0 < x → …). */
+/** Ali ima sklep izreka predpostavko: v enem od veznikov »∧« na vrhu je za začetnimi »∀ …,« še »→« na ničti globini
+ * (npr. »… ∧ ∀ x, 0 < x → …«; veznik v oklepaju se ne šteje). Zanikanje (»¬ …«), »∃ …« in »let …« niso predpostavke. */
 export function implikacija(izjava) {
-  let s = String(izjava).trim();
-  for (;;) {
-    const m = /^∀\s/.exec(s);
-    if (!m) break;
+  const globina0 = (s, f) => {
     let d = 0;
-    let k = 1;
-    for (; k < s.length; k++) {
-      if (ODPRI.includes(s[k])) d++;
-      else if (ZAPRI.includes(s[k])) d--;
-      else if (d === 0 && s[k] === ",") break;
+    for (let i = 0; i < s.length; i++) {
+      if (ODPRI.includes(s[i])) d++;
+      else if (ZAPRI.includes(s[i])) d--;
+      else if (d === 0 && f(s, i)) return i;
     }
-    if (k >= s.length) break;
-    s = s.slice(k + 1).trim();
+    return -1;
+  };
+  const vezniki = [];
+  let rest = String(izjava).trim();
+  while (rest) {
+    if (/^(¬\s*)?(∀|∃|let\b|fun\b)/.test(rest)) { vezniki.push(rest); break; }
+    const k = globina0(rest, (t, i) => t[i] === "∧");
+    if (k < 0) { vezniki.push(rest); break; }
+    vezniki.push(rest.slice(0, k).trim());
+    rest = rest.slice(k + 1).trim();
   }
-  let d = 0;
-  for (const ch of s) {
-    if (ODPRI.includes(ch)) d++;
-    else if (ZAPRI.includes(ch)) d--;
-    else if (d === 0 && ch === "→") return true;
+  for (let v of vezniki) {
+    for (;;) {
+      if (!/^∀\s/.test(v)) break;
+      const k = globina0(v.slice(1), (t, i) => t[i] === ",");
+      if (k < 0) break;
+      v = v.slice(k + 2).trim();
+    }
+    if (/^(¬|∃|let\b)/.test(v)) continue;
+    if (globina0(v, (t, i) => t[i] === "→") >= 0) return true;
   }
   return false;
 }

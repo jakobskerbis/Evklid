@@ -550,4 +550,38 @@ trditev: MAT-SS-2/podobnost#kviz7
 besedilo: »15 | Dolžine se pomnožijo s $|k| = 3$, ploščina pa s $k^2 = 9$.« -/
 theorem kviz7 : (-3:ℝ) ^ 2 = 9 ∧ (-3:ℝ) ^ 2 * 5 = 45 ∧ |(-3:ℝ)| = 3 ∧ (3:ℝ) * 5 = 15 := by norm_num
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `izrek_KK` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ¬ Collinear ℝ {(1:ℂ), 0, Complex.I} :=
+    nekolinearne 1 0 Complex.I primer_pravi_kot one_ne_zero Complex.I_ne_zero
+  izrek_KK (h := w) (h₁ := rfl) (h₂ := rfl)
+
+/-- Predpostavke trditve `izrek_SSS` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : dist (1:ℂ) 0 ≠ 0 ∧ dist (1:ℂ) 0 * dist (0:ℂ) Complex.I = dist (0:ℂ) Complex.I * dist (1:ℂ) 0 ∧ dist (1:ℂ) 0 * dist Complex.I (1:ℂ) = dist Complex.I (1:ℂ) * dist (1:ℂ) 0 := by
+    refine ⟨by simp, by ring, by ring⟩
+  izrek_SSS (h := w.1) (h' := w.1) (e1 := w.2.1) (e2 := w.2.2)
+
+/-- Predpostavke trditve `izrek_SKS` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ¬ Collinear ℝ {(1:ℂ), 0, Complex.I} ∧ dist (1:ℂ) 0 * dist (0:ℂ) Complex.I = dist (0:ℂ) Complex.I * dist (1:ℂ) 0 :=
+    ⟨nekolinearne 1 0 Complex.I primer_pravi_kot one_ne_zero Complex.I_ne_zero, by ring⟩
+  izrek_SKS (h := w.1) (h' := w.1) (hk := rfl) (hd := w.2)
+
+/-- Predpostavke trditve `evklid_visinski` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  evklid_visinski (hD := primer_risba.1) (hCD := primer_risba.2.1) (hC := primer_risba.2.2)
+
+/-- Predpostavke trditve `tretji_kot` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℂ) ≠ 1 ∧ ∠ (1:ℂ) 0 Complex.I = π / 2 ∧ (1:ℂ) ≠ 0 ∧ Complex.I ≠ 0 :=
+    ⟨zero_ne_one, primer_pravi_kot, one_ne_zero, Complex.I_ne_zero⟩
+  tretji_kot (1:ℂ) 0 Complex.I (1:ℂ) 0 Complex.I w.1 w.1 rfl rfl
+
+/-- Predpostavke trditve `primer1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  primer1.2.2.2.2.2 15 20 (by norm_num) (by norm_num)
+
 end Evklid.Lekcije.MAT_SS_2.Podobnost

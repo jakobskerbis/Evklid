@@ -670,4 +670,19 @@ theorem racun : (6 : ℚ) / 36 = 1 / 6 ∧ (2 : ℕ) ^ 3 = 8 ∧ 1 + 3 + 3 + 1 =
   · rw [show Nat.factorial 12 / (Nat.factorial 2 * Nat.factorial 10) = 66 by decide,
       show Nat.factorial 30 / (Nat.factorial 2 * Nat.factorial 28) = 435 by decide]; norm_num
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `nasprotni_mera` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  nasprotni_mera (MeasureTheory.Measure.dirac (0:ℝ)) Set.univ MeasurableSet.univ
+
+/-- Predpostavke trditve `kviz4` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : P (range 50) (range 30) = 0.6 ∧ P (range 50) (Ico 24 44) = 0.4 ∧ P (range 50) (range 30 ∩ Ico 24 44) = 0.12 := by
+    refine ⟨?_, ?_, ?_⟩ <;> unfold P
+    · simp; norm_num
+    · simp; norm_num
+    · rw [show #(range 30 ∩ Ico 24 44) = 6 by decide]; simp; norm_num
+  kviz4 (pB := w.2.1) (pAB := w.2.2)
+
 end Evklid.Lekcije.MAT_SS_4.Verjetnost

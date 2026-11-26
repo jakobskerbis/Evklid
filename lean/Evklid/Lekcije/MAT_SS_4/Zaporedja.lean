@@ -813,4 +813,12 @@ theorem racun : (2 * 3 - 1 : ℝ) = 5 ∧ (2 * 5 - 1 : ℝ) = 9 ∧ (2 * 9 - 1 :
     (2 * 65 - 1 : ℝ) = 129 ∧ (2 ^ 7 + 1 : ℝ) = 129 ∧ ((2 * 1 + 5) / (1 + 1) : ℝ) = 7 / 2 ∧
     ((2 * 3 + 5) / (3 + 1) : ℝ) = 11 / 4 ∧ (2 + 3 / 60 : ℝ) = 2.05 := by norm_num
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `konvergentno_omejeno` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Tendsto (fun _ : ℕ => (0:ℝ)) atTop (𝓝 0) ∧ Tendsto (fun _ : ℕ => (1:ℝ)) atTop (𝓝 1) :=
+    ⟨tendsto_const_nhds, tendsto_const_nhds⟩
+  konvergentno_omejeno (h := w.1)
+
 end Evklid.Lekcije.MAT_SS_4.Zaporedja

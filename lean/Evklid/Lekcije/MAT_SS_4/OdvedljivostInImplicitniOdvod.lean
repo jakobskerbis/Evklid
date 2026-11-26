@@ -811,4 +811,52 @@ trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#kviz5
 besedilo: »(višja raven) (brez računala) Kolikšen je smerni koeficient tangente na krožnico $x^2 + y^2 = 25$ v točki $(-3, 4)$?« -/
 theorem kviz5 : -(-3:ℝ) / 4 = 3 / 4 ∧ (3:ℝ) / 4 = 0.75 := by norm_num
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `krog_implicitno` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  krog_implicitno (hy := krog_lok_v_3.1) (he := krog_lok_v_3.2.1)
+
+/-- Predpostavke trditve `elipsa_implicitno` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ (y : ℝ → ℝ) (y' : ℝ), HasDerivAt y y' 4 ∧ y 4 = 1.8 ∧ ∀ᶠ x in 𝓝 (4:ℝ), x ^ 2 / 25 + y x ^ 2 / 9 = 1 := by
+    have hd : DifferentiableAt ℝ (fun x : ℝ => 3 * √(1 - x ^ 2 / 25)) 4 :=
+      ((by fun_prop : DifferentiableAt ℝ (fun x : ℝ => 1 - x ^ 2 / 25) 4).sqrt (by norm_num)).const_mul 3
+    refine ⟨_, _, hd.hasDerivAt, ?_, ?_⟩
+    · show 3 * √(1 - (4:ℝ) ^ 2 / 25) = 1.8
+      rw [show (1:ℝ) - 4 ^ 2 / 25 = (3 / 5) ^ 2 by norm_num, sqrt_sq (by norm_num)]; norm_num
+    · filter_upwards [Ioo_mem_nhds (show (3:ℝ) < 4 by norm_num) (show (4:ℝ) < 5 by norm_num)] with x hx
+      rw [mul_pow, sq_sqrt (by nlinarith [hx.1, hx.2])]; ring
+  elipsa_implicitno (hy := w.choose_spec.choose_spec.1) (he := w.choose_spec.choose_spec.2.2)
+
+/-- Predpostavke trditve `primer4_implicitno` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ (y : ℝ → ℝ) (y' : ℝ), HasDerivAt y y' 1 ∧ y 1 = 2 ∧ ∀ᶠ x in 𝓝 (1:ℝ), x ^ 2 + x * y x + y x ^ 2 = 7 := by
+    have hd : DifferentiableAt ℝ (fun x : ℝ => (-x + √(28 - 3 * x ^ 2)) / 2) 1 :=
+      ((differentiableAt_id.neg.add
+        ((by fun_prop : DifferentiableAt ℝ (fun x : ℝ => 28 - 3 * x ^ 2) 1).sqrt (by norm_num))).div_const 2)
+    refine ⟨_, _, hd.hasDerivAt, ?_, ?_⟩
+    · show (-(1:ℝ) + √(28 - 3 * 1 ^ 2)) / 2 = 2
+      rw [show (28:ℝ) - 3 * 1 ^ 2 = 5 ^ 2 by norm_num, sqrt_sq (by norm_num)]; norm_num
+    · filter_upwards [Ioo_mem_nhds (show (0:ℝ) < 1 by norm_num) (show (1:ℝ) < 2 by norm_num)] with x hx
+      have hs := sq_sqrt (show (0:ℝ) ≤ 28 - 3 * x ^ 2 by nlinarith [hx.1, hx.2])
+      nlinarith [hs]
+  primer4_implicitno (hy := w.choose_spec.choose_spec.1) (he := w.choose_spec.choose_spec.2.2)
+
+/-- Predpostavke trditve `matura3a` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ (y : ℝ → ℝ) (y' : ℝ), HasDerivAt y y' (-2) ∧ y (-2) = 2 ∧ ∀ᶠ x in 𝓝 (-2:ℝ), x ^ 2 - x * y x + y x ^ 2 = 12 := by
+    have hd : DifferentiableAt ℝ (fun x : ℝ => (x + √(48 - 3 * x ^ 2)) / 2) (-2) :=
+      ((differentiableAt_id.add
+        ((by fun_prop : DifferentiableAt ℝ (fun x : ℝ => 48 - 3 * x ^ 2) (-2)).sqrt
+          (by norm_num))).div_const 2)
+    refine ⟨_, _, hd.hasDerivAt, ?_, ?_⟩
+    · show ((-2:ℝ) + √(48 - 3 * (-2) ^ 2)) / 2 = 2
+      rw [show (48:ℝ) - 3 * (-2) ^ 2 = 6 ^ 2 by norm_num, sqrt_sq (by norm_num)]; norm_num
+    · filter_upwards [Ioo_mem_nhds (show (-3:ℝ) < -2 by norm_num) (show (-2:ℝ) < -1 by norm_num)]
+        with x hx
+      have hs := sq_sqrt (show (0:ℝ) ≤ 48 - 3 * x ^ 2 by nlinarith [hx.1, hx.2])
+      nlinarith [hs]
+  matura3a (hy := w.choose_spec.choose_spec.1) (he := w.choose_spec.choose_spec.2.2)
+
 end Evklid.Lekcije.MAT_SS_4.OdvedljivostInImplicitniOdvod

@@ -443,4 +443,13 @@ theorem kviz5 : |(1100 : ℝ) / 1.05 + 1100 / 1.05 ^ 2 + 1100 / 1.05 ^ 3 - 2995.
     (1100 : ℝ) / 1.05 + 1100 / 1.05 ^ 2 + 1100 / 1.05 ^ 3 < 3000 ∧ 3 * (1100 : ℝ) = 3300 := by
   norm_num [abs_lt]
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `dolg` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∃ D : ℕ → ℝ, D 0 = 4000 ∧ ∀ k, D (k + 1) = D k * 1.05 - 1128 :=
+    ⟨fun k => 4000 * 1.05 ^ k - 1128 * ∑ i ∈ range k, (1.05 : ℝ) ^ i, by simp,
+      fun k => by simp only [geom_sum_succ, pow_succ]; ring⟩
+  dolg (hr := (by norm_num : (1.05:ℝ) ≠ 1)) (h0 := w.choose_spec.1) (h := w.choose_spec.2)
+
 end Evklid.Lekcije.MAT_SS_4.AnuiteteInAmortizacijskiNacrt

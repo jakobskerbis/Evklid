@@ -1041,4 +1041,10 @@ theorem kviz5 : (162 : ℝ) * 50 / 3600 = 8100 / 3600 ∧ (8100 : ℝ) / 3600 = 
     by norm_num, by norm_num⟩
   rw [show (2.25 : ℝ) = 1.5 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `napaka_negativni` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  napaka_negativni.2.2.2 25 (1 / 2) (by norm_num)
+
 end Evklid.Lekcije.MAT_SS_2.PotenceZRacionalnimiEksponenti

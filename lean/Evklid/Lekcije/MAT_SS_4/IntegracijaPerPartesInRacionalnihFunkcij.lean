@@ -814,4 +814,22 @@ theorem kviz5 :
   · rw [hr x h1 h2]
     exact (((d_log_radd 1 x h2).sub (d_log_rsub 1 x h1)).add_const C).congr_deriv (by odv)
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `primer3_razcep` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  (primer3_razcep 0 0).2 0 (by norm_num) (by norm_num)
+
+/-- Predpostavke trditve `ustno2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  (ustno2 0 0).2 0 1 (by norm_num) (by norm_num)
+
+/-- Predpostavke trditve `kviz3` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  (kviz3 0 0).2 0 (by norm_num) (by norm_num)
+
+/-- Predpostavke trditve `kviz5` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  kviz5.2.2.2 0 0 (by norm_num) (by norm_num)
+
 end Evklid.Lekcije.MAT_SS_4.IntegracijaPerPartesInRacionalnihFunkcij

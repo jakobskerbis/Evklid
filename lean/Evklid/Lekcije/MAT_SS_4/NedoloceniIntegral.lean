@@ -786,6 +786,12 @@ theorem kviz5_enolicno (N : ℝ → ℝ) (hN : ∀ t, HasDerivAt N (80 + 20 * t)
 example : (∀ t : ℝ, HasDerivAt (fun t : ℝ => 80 * t + 10 * t ^ 2 + 0) (80 + 20 * t) t) ∧
     ((80:ℝ) * 0 + 10 * 0 ^ 2 + 0 = 0) := ⟨kviz5.1 0, by norm_num⟩
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `kviz3` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  kviz3.2.2 (1 / 4) (fun x => by simpa using kviz3.1 0 x)
+
 end Evklid.Lekcije.MAT_SS_4.NedoloceniIntegral
 /-- Predpostavke trditve `kviz5_enolicno` se dajo izpolniti: izrek, uporabljen na primeru. -/
 example :=

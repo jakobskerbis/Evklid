@@ -1494,4 +1494,22 @@ theorem racun_ostalo :
   · rw [show (6 ^ 2 + 8 ^ 2 : ℝ) = 10 ^ 2 by norm_num, sq 10 (by norm_num)]
   · rw [show (12 ^ 2 + 4 ^ 2 + 3 ^ 2 : ℝ) = 13 ^ 2 by norm_num, sq 13 (by norm_num)]
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `kriterij` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : inner ℝ (T 0 0 1) (T 1 0 0) = 0 ∧ inner ℝ (T 0 0 1) (T 0 1 0) = 0 ∧ T 1 0 0 ≠ 0 ∧ T 0 1 0 ≠ 0 := by
+    refine ⟨by simp [inner_k], by simp [inner_k], ?_, ?_⟩
+    · intro h; have := congrFun (congrArg (⇑) h) 0; simp at this
+    · intro h; have := congrFun (congrArg (⇑) h) 1; simp at this
+  kriterij (hu := w.1) (hv := w.2.1)
+
+/-- Predpostavke trditve `naloga1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 3 * √2 ∧ dist (T 3 3 (3 * √2)) (T 0 0 0) = 6 := by
+    refine ⟨by positivity, ?_⟩
+    rw [dist_T, show ((3:ℝ) - 0) ^ 2 + (3 - 0) ^ 2 + (3 * √2 - 0) ^ 2 = 6 ^ 2 by
+      ring_nf; rw [Real.sq_sqrt (by norm_num)]; norm_num, Real.sqrt_sq (by norm_num)]
+  naloga1 (hl := w.2)
+
 end Evklid.Lekcije.MAT_SS_3.PremiceInRavnineVProstoru

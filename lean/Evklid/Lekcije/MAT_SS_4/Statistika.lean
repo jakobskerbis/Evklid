@@ -511,4 +511,10 @@ theorem kviz4_primerjava : ∫ x in Ioi 3, φ x < ∫ x in Ioi 1, φ x := by
   rw [P_med] at h
   linarith
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `igrice_modus` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  igrice_modus.2 20 (by decide) (by decide)
+
 end Evklid.Lekcije.MAT_SS_4.Statistika

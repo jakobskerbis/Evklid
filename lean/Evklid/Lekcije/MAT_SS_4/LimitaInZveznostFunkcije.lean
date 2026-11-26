@@ -813,4 +813,11 @@ theorem kviz6 : (∀ x : ℝ, x ^ 2 - 4 * x = 0 ↔ x = 0 ∨ x = 4) ∧
     hc _ fun x hx => ⟨hx.1.ne', hx.2.ne⟩, hc _ fun x (hx : 4 < x) => ⟨by linarith, by linarith⟩,
     by norm_num⟩
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `pravila` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Tendsto (fun x : ℝ => sin x / x) (𝓝[≠] 0) (𝓝 1) := limita_sinc
+  pravila (hf := w) (hh := w)
+
 end Evklid.Lekcije.MAT_SS_4.LimitaInZveznostFunkcije

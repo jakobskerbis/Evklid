@@ -1240,4 +1240,16 @@ besedilo: »c) Preizkus pri $x = 1$, kjer je $x^2 - 1 = 0$: $p(1) = 2 - 3 - 11 +
 theorem racun_deljenje_kvadratni (x : ℝ) :
     2 * x ^ 3 - 3 * x ^ 2 - 11 * x + 6 = (x ^ 2 - 1) * (2 * x - 3) - 9 * x + 3 := by ring
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `racionalne_nicle_monic` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (X - C 2 : ℤ[X]).leadingCoeff = 1 ∧ IsCoprime (2 : ℤ) 1 ∧ aeval (((2 : ℤ) : ℚ) / ((1 : ℤ) : ℚ)) (X - C 2 : ℤ[X]) = 0 :=
+    ⟨leadingCoeff_X_sub_C 2, isCoprime_one_right, by rw [map_sub, aeval_X, aeval_C]; norm_num⟩
+  racionalne_nicle_monic (hp := w.1) (hms := w.2.1) (hs := one_ne_zero) (h := w.2.2)
+
+/-- Predpostavke trditve `x3_minus_1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  x3_minus_1.2.2.2 1 (Or.inl rfl)
+
 end Evklid.Lekcije.MAT_SS_3.Polinomi

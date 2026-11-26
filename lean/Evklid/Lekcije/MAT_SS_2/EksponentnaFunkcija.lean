@@ -1167,4 +1167,14 @@ besedilo: »$e = 2{,}71828\ldots$« -/
 theorem racun_e : 2.718275 < Real.exp 1 ∧ Real.exp 1 < 2.718285 :=
   ⟨by linarith [Real.exp_one_gt_d9], by linarith [Real.exp_one_lt_d9]⟩
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `vecja_osnova` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  vecja_osnova.2.2.2 2 3 1 (by norm_num) (by norm_num)
+
+/-- Predpostavke trditve `presecisca` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  And.intro (presecisca.1 2 (by norm_num)) (presecisca.2 5 (by norm_num))
+
 end Evklid.Lekcije.MAT_SS_2.EksponentnaFunkcija

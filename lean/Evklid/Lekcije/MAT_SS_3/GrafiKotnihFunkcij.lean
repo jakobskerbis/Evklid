@@ -1146,4 +1146,11 @@ theorem preveri4 : range (fun t => 40 * cos (π * (t - 0)) + 50) = Icc 10 90 ∧
   rw [show |(40 : ℝ)| = 40 by norm_num] at r
   refine ⟨by rw [r]; norm_num, by rw [sub_zero, mul_one, cos_pi]; norm_num, by norm_num, by norm_num⟩
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `matura3a` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  matura3a.2.2.2.2.2.2.2.2.2.2.2.2 6.1 (by norm_num)
+    (by rw [show π / 6.2 * (9.2 - 6.1) = π / 2 by ring]; exact sin_pi_div_two)
+
 end Evklid.Lekcije.MAT_SS_3.GrafiKotnihFunkcij

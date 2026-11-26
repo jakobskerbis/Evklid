@@ -1101,4 +1101,32 @@ theorem racun :
   refine ⟨by norm_num, blizu (by norm_num) (by norm_num), by norm_num, by norm_num, by norm_num,
     by norm_num, by norm_num, by norm_num⟩
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `izrek_o_nicli` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ContinuousOn (fun x : ℝ => x) (Icc (-1) 1) ∧ (-1:ℝ) ≤ 1 ∧ (-1:ℝ) * 1 < 0 :=
+    ⟨continuousOn_id, by norm_num, by norm_num⟩
+  izrek_o_nicli (hab := w.2.1) (hf := w.1) (h := w.2.2)
+
+/-- Predpostavke trditve `vmesne_vrednosti` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ContinuousOn (fun x : ℝ => x) (Icc 0 1) ∧ (0:ℝ) ≤ 1 ∧ (1/2:ℝ) ∈ uIcc 0 1 :=
+    ⟨continuousOn_id, by norm_num, by rw [uIcc_of_le (by norm_num)]; norm_num⟩
+  vmesne_vrednosti (hab := w.2.1) (hf := w.1) (hy := w.2.2)
+
+/-- Predpostavke trditve `bisekcija_pogoj` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≤ 2 ∧ ContinuousOn (fun x : ℝ => x ^ 3 + x - 3) (Icc 1 2) ∧ ((1:ℝ) ^ 3 + 1 - 3) * (2 ^ 3 + 2 - 3) ≤ 0 := ⟨by norm_num, by fun_prop, by norm_num⟩
+  bisekcija_pogoj (f := fun x : ℝ => x ^ 3 + x - 3) (hab := w.1) (hf := w.2.2)
+
+/-- Predpostavke trditve `zaokrozitev_krajisc` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1.2:ℝ) ≤ 1.2 ∧ zaokrozi 1 1.2 = zaokrozi 1 1.2 := ⟨le_rfl, rfl⟩
+  zaokrozitev_krajisc (h1 := w.1) (h2 := w.1) (h := w.2)
+
+/-- Predpostavke trditve `ena_skozi_x` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  ena_skozi_x.2.2 1 (by norm_num) one_ne_zero
+
 end Evklid.Lekcije.MAT_SS_4.ZvezneFunkcijeInBisekcija

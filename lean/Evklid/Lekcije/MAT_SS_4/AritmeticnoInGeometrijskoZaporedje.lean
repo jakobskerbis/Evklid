@@ -920,4 +920,68 @@ theorem racun : ((43 : ℝ) - 7) / 9 = 4 ∧ (10 : ℝ) / 2 * (7 + 43) = 250 ∧
     (10 : ℝ) / 2 * (2 * 120 + 9 * 12) = 1740 ∧ (3 : ℝ) ^ 5 + 1 = 244 ∧ (2 : ℝ) ^ 6 - 1 = 63 ∧
     (6 : ℝ) * 7 = 42 ∧ (7 : ℝ) * 8 = 56 := by norm_num
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `aritm_narasca` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  aritm_narasca (fun n => 1 + ((n : ℝ) - 1) * 1) 1 (fun n _ => by push_cast; ring) one_pos
+
+/-- Predpostavke trditve `aritm_pada` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  aritm_pada (fun n => 1 + ((n : ℝ) - 1) * (-1)) (-1) (fun n _ => by push_cast; ring) (by norm_num)
+
+/-- Predpostavke trditve `aritm_konst` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  aritm_konst (fun _ => (5:ℝ)) (fun _ _ => by norm_num)
+
+/-- Predpostavke trditve `aritm_vsota` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  aritm_vsota (fun n => 1 + ((n : ℝ) - 1) * 1) 1 (fun n _ => by push_cast; ring) 1 le_rfl
+
+/-- Predpostavke trditve `aritm_sredina` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  aritm_sredina (fun n => 1 + ((n : ℝ) - 1) * 1) 1 (fun n _ => by push_cast; ring) 2 le_rfl
+
+/-- Predpostavke trditve `geom_splosni` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  geom_splosni (fun n => (2:ℝ) ^ n) 2 (fun n _ => by positivity)
+    (fun n _ => by rw [div_eq_iff (by positivity)]; ring)
+
+/-- Predpostavke trditve `geom_narasca` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  geom_narasca (fun n => (2:ℝ) ^ n) 2 (fun n _ => by positivity)
+    (fun n _ => by rw [div_eq_iff (by positivity)]; ring) (by norm_num) (by norm_num)
+
+/-- Predpostavke trditve `geom_pada` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  geom_pada (fun n => (1 / 2 : ℝ) ^ n) (1 / 2) (fun n _ => by positivity)
+    (fun n _ => by rw [div_eq_iff (by positivity)]; ring) (by norm_num) (by norm_num) (by norm_num)
+
+/-- Predpostavke trditve `geom_konst` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  geom_konst (fun _ => (1:ℝ)) (fun _ _ => one_ne_zero) (fun _ _ => by norm_num)
+
+/-- Predpostavke trditve `geom_alternira` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  geom_alternira (fun n => -(-2:ℝ) ^ n) (-2) (fun n _ => neg_ne_zero.mpr (pow_ne_zero _ (by norm_num)))
+    (fun n _ => by rw [div_eq_iff (neg_ne_zero.mpr (pow_ne_zero _ (by norm_num)))]; ring) (by norm_num)
+    (by norm_num)
+
+/-- Predpostavke trditve `geom_vsota` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  geom_vsota (fun n => (2:ℝ) ^ n) 2 (fun n _ => by positivity)
+    (fun n _ => by rw [div_eq_iff (by positivity)]; ring) (by norm_num)
+
+/-- Predpostavke trditve `geom_vsota_q1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  geom_vsota_q1 (fun _ => (1:ℝ)) (fun _ _ => one_ne_zero) (fun _ _ => by norm_num)
+
+/-- Predpostavke trditve `geom_sredina` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  geom_sredina (fun _ => (1:ℝ)) 1 (fun _ _ => one_pos) (fun _ _ => by norm_num) 2 le_rfl
+
+/-- Predpostavke trditve `primer4_nadaljuj` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  primer4_nadaljuj (fun n => n * (n + 1)) (by norm_num) (by norm_num) (fun n _ => by push_cast; ring)
+
 end Evklid.Lekcije.MAT_SS_4.AritmeticnoInGeometrijskoZaporedje

@@ -878,4 +878,14 @@ theorem kviz6 (x : ℝ) : ((1 / 2 : ℝ) ^ x ≤ x + 3 ↔ x ∈ Set.Ici (-1)) �
     have : (1 / 2 : ℝ) ^ x ≤ (1 / 2 : ℝ) ^ (-1 : ℝ) := (pada (1 / 2) (by norm_num) (by norm_num)).antitone hx
     linarith
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `tabela_potenc` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  tabela_potenc.2.2.2 2 1 1 (by norm_num) (by norm_num)
+
+/-- Predpostavke trditve `dva_pet_resitev` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  dva_pet_resitev.2 _ dva_pet_resitev.1.choose_spec
+
 end Evklid.Lekcije.MAT_SS_2.EksponentneEnacbe

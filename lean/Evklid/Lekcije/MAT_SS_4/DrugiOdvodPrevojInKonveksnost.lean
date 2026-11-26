@@ -67,7 +67,7 @@ example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x ^ 2) (2 * x) x) ∧
   ⟨fun x => (hasDerivAt_pow 2 x).congr_deriv (by norm_num),
     fun x => ((hasDerivAt_id' x).const_mul 2).congr_deriv (by ring), fun _ _ => two_pos⟩
 
-example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => -x ^ 2) (-2 * x) x) ∧
+theorem konkavna_izpolnljivo : (∀ x : ℝ, HasDerivAt (fun x : ℝ => -x ^ 2) (-2 * x) x) ∧
     (∀ x : ℝ, HasDerivAt (fun x : ℝ => -2 * x) ((fun _ => (-2:ℝ)) x) x) ∧
     ∀ x ∈ interior (univ : Set ℝ), (fun _ => (-2:ℝ)) x < 0 :=
   ⟨fun x => ((hasDerivAt_pow 2 x).neg).congr_deriv (by norm_num),
@@ -795,5 +795,36 @@ theorem kviz4 (k x : ℝ) :
       (by push_cast; ring)) x,
     ⟨fun h => by linarith, fun h => by subst h; norm_num⟩, fun h => by linarith, fun h => by linarith,
     ⟨fun h => by linarith, fun h => by subst h; norm_num⟩⟩
+
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `konveksna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x ^ 2) (2 * x) x) ∧ (∀ x : ℝ, HasDerivAt (fun x : ℝ => 2 * x) ((fun _ => (2:ℝ)) x) x) ∧ ∀ x ∈ interior (univ : Set ℝ), (0:ℝ) < (fun _ => (2:ℝ)) x :=
+    ⟨fun x => (hasDerivAt_pow 2 x).congr_deriv (by norm_num),
+      fun x => ((hasDerivAt_id' x).const_mul 2).congr_deriv (by ring), fun _ _ => two_pos⟩
+  konveksna (h₁ := w.1) (h₂ := w.2.1) (hD := convex_univ) (hp := w.2.2)
+
+/-- Predpostavke trditve `konkavna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  konkavna (h₁ := konkavna_izpolnljivo.1) (h₂ := konkavna_izpolnljivo.2.1) (hD := convex_univ)
+    (hn := konkavna_izpolnljivo.2.2)
+
+/-- Predpostavke trditve `nad_tangento` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ConvexOn ℝ univ (fun x : ℝ => x ^ 2) ∧ HasDerivAt (fun x : ℝ => x ^ 2) 0 0 :=
+    ⟨Even.convexOn_pow (by decide), (hasDerivAt_pow 2 (0:ℝ)).congr_deriv (by norm_num)⟩
+  nad_tangento (hf := w.1) (hx := Set.mem_univ 0) (hy := Set.mem_univ 1) (hd := w.2)
+
+/-- Predpostavke trditve `pod_tangento` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ConcaveOn ℝ univ (fun x : ℝ => -x ^ 2) ∧ HasDerivAt (fun x : ℝ => -x ^ 2) 0 0 :=
+    ⟨(Even.convexOn_pow (𝕜 := ℝ) (n := 2) (by decide)).neg,
+      ((hasDerivAt_pow 2 (0:ℝ)).neg).congr_deriv (by norm_num)⟩
+  pod_tangento (hf := w.1) (hx := Set.mem_univ 0) (hy := Set.mem_univ 1) (hd := w.2)
+
+/-- Predpostavke trditve `prevoj_potrebni_pogoj` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  prevoj_potrebni_pogoj (hδ := one_pos) (hd := prevoj_x3.1) (hs := Or.inl ⟨prevoj_x3.2.1, prevoj_x3.2.2.1⟩)
 
 end Evklid.Lekcije.MAT_SS_4.DrugiOdvodPrevojInKonveksnost

@@ -1470,4 +1470,18 @@ theorem racun_resi :
   · rw [show x ^ 2 + 2 * x - 48 = x ^ 2 + 2 * x + (-48) by ring]
     exact kvadratna x _ _ _ _ (by norm_num) (by norm_num)
 
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `tangenta_hiperbole_edina` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1:ℝ) ≠ 0 ∧ √(8:ℝ) ≠ 0 ∧ ((1:ℝ) - (-2)) ^ 2 / 1 ^ 2 - ((9:ℝ) - 1) ^ 2 / √8 ^ 2 = 1 := by
+    refine ⟨one_ne_zero, by positivity, ?_⟩
+    rw [Real.sq_sqrt (by norm_num)]; norm_num
+  tangenta_hiperbole_edina (ha := w.1) (hb := w.2.1) (h₁ := w.2.2) (h := w.2.2)
+    (hl := by rw [Real.sq_sqrt (by norm_num)]; norm_num)
+
+/-- Predpostavke trditve `hiperbola_primer_podatki` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  hiperbola_primer_podatki.2.2.2.2.2 2 (-1) (Or.inl (by norm_num))
+
 end Evklid.Lekcije.MAT_SS_3.StozniceVPremaknjeniLegiInTangente
