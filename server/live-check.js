@@ -303,7 +303,7 @@ const derivLhs = (name) => new RegExp(name === "y" ? String.raw`^y${PRIME}\s*(?:
 // Ni odgovor (pregled prevzema 2, 3 in 4): primer, opomnik pravila, pogosta napaka, delni, zunanji/notranji odvod ali
 // odvod člena (»Zunanja: $f'(x) = \cos x$«, »Odvod prvega člena: $f'(x) = 3x^2$«), vrednost v točki (»V točki $x = 1$:
 // $y' = 3$«, »naklon«) in učenčev zapis (»Imaš $f'(x) = …$«). Beseda »pravilo« sama ne (»Produktno pravilo: …« je odgovor).
-const DERIV_SKIP_LINE = /primer|example|npr\.|spomni|remember|recall|napak|zmot|zunanj|notranj|manjka|še ni|skoraj|ustav|člen|točk|naklon|velja|ker je|(?<!\p{L})del(?!\p{L})|sledi|prvi|drugi|korak|najprej|začn|(?<!\p{L})(?:pri\s*\$?\s*x|imaš|imas|mistake|error|outer|inner|almost|term|slope|point|at\s*\$?\s*x)(?!\p{L})/iu;
+const DERIV_SKIP_LINE = /primer|example|npr\.|spomni|remember|recall|napak|zmot|zunanj|notranj|manjka|veriž|verig|chain|pozabi|forget|pomnož|multipl|še ni|skoraj|ustav|člen|točk|naklon|velja|ker je|(?<!\p{L})del(?!\p{L})|sledi|prvi|drugi|korak|najprej|začn|(?<!\p{L})(?:pri\s*\$?\s*x|imaš|imas|mistake|error|outer|inner|almost|term|slope|point|at\s*\$?\s*x)(?!\p{L})/iu;
 const derivFn = (tex) => {
   if (TEX_SHORT.test(String(tex))) return null; // »$f'(x) = \frac12 x^{-\frac12}$« (pregled prevzema 3)
   try {
@@ -360,7 +360,8 @@ function derivativeIssue(answer, p) {
   const lhsList = names.map(derivLhs);
   const lhs = { test: (t) => lhsList.some((re) => re.test(t)) };
   const found = [];
-  for (const line of String(answer).split("\n")) {
+  const lines = String(answer).split("\n");
+  for (const [i, line] of lines.entries()) {
     if (SKIP_LINE.test(line) || DERIV_SKIP_LINE.test(line)) continue;
     for (const m of line.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) {
       const tex = m[1] ?? m[2];
@@ -372,12 +373,16 @@ function derivativeIssue(answer, p) {
         .slice(1, 9) // veriga »= … = …« največ do 8 delov (linearno)
         .map((x) => cutCondition(x.replace(/\s+/g, " ").trim()))
         .filter((x) => x && x.length <= 300 && /x|\d/.test(x) && !/^0$/.test(x) && (constant || /x/.test(x)));
-      if (rhs.length) found.push({ tex: tex.trim(), rhs });
+      if (rhs.length) found.push({ tex: tex.trim(), rhs, line: i, end: m.index + m[0].length });
     }
   }
   if (!found.length || found.length > 50) return null; // največ 50 kandidatov (linearno)
   // Sodi se le zadnji zapis odgovora: za »$f'(x) = \cos(x^2)$, in množimo z $2x$« sledi še korak (pregled prevzema 5).
   if (found.at(-1).tex !== String(formulas.at(-1) || "").trim()) return null;
+  // Vprašanje ali namig za zadnjim zapisom (»$y' = 5(3x+1)^4$⏎⏎Kaj moraš še pomnožiti?«, »Ne pozabi na verižno
+  // pravilo!«) pomeni, da je zapis delni korak vodenega odgovora: brez sodbe (pregled prevzema 6).
+  const tail = [lines[found.at(-1).line].slice(found.at(-1).end), ...lines.slice(found.at(-1).line + 1)].join("\n");
+  if (/\?/.test(tail) || DERIV_SKIP_LINE.test(tail) || SKIP_LINE.test(tail)) return null;
   const judge = (rhs) => sameFn(want, derivFn(rhs));
   if (found.some((f) => f.rhs.map(judge).includes("match"))) return { checked: 1, issue: null };
   // Pravilen odvod kjerkoli v odgovoru (tudi brez »f'(x) =«, v vrstici, ki se preskoči): »f'(x) = 3x^2« je bil delni

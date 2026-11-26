@@ -1300,6 +1300,18 @@ test("pregled prevzema (3): odvod le funkcije iz naloge; primer, pomožne funkci
   for (const [q, a] of [["Odvajaj $x^3$.", R`$f'(x) = 2x$`], ["Odvajaj $x^3$.", R`$y' = 2x$`], ["Odvajaj $g(x) = x^3$.", R`$g'(x) = 2x$`]]) assert.ok(codeFindings(a, presolve(q), q).issue, a);
 });
 
+test("pregled prevzema (6): delni korak vodenega odgovora (vprašanje ali namig za zapisom) ni napačen odvod", () => {
+  const R = String.raw;
+  const q = "Odvajaj $(3x+1)^5$.";
+  for (const a of [
+    R`Pravilo za potenco: $y' = 5(3x+1)^4$` + "\n\nKaj moraš še pomnožiti?",
+    R`Potenčno pravilo da $y' = 5(3x+1)^4$. Ne pozabi na verižno pravilo!`,
+    R`Pravilo za potenco: $y' = 5(3x+1)^4$. Kaj pa še manjka?`,
+  ]) assert.equal(codeFindings(a, presolve(q), q).issue, null, a);
+  // končni napačen zapis brez nadaljevanja ostane ulovljen
+  assert.ok(codeFindings(R`Uporabimo potenčno pravilo:` + "\n" + R`$y' = 5(3x+1)^4$`, presolve(q), q).issue);
+});
+
 test("pregled prevzema (5): »če«, poskus in pogosta zmota niso trditev; »Če najprej množimo: …« je", () => {
   const R = String.raw;
   const EQ = "Reši $2x + 3 = 11$.";
