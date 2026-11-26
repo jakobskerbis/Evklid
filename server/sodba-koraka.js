@@ -323,7 +323,18 @@ const RIGHT_RULES =
  * Sodba kode o učenčevem sporočilu (koraki, računi, končna vrednost). Vrne null, če koda ne more soditi, sicer
  * { wrong: bool, finding: besedilo za ponovni odgovor, note: skrita opomba za ta klic }.
  */
-export function stepVerdict(text, { pre = null, prevTutor = "" } = {}) {
+export function stepVerdict(text, opts = {}) {
+  // Vprašanje-predlog (»x = 5?«, »je 7 · 8 = 54?«, AUDIT-059): sodi se predlog brez uvodne besede in vprašaja;
+  // verdictIgnored ga šteje za prezrtega le ob izrecni potrditvi (pregled prevzema 5).
+  const t = String(text || "");
+  if (!/\?\s*$/.test(t)) return judgeStep(t, opts);
+  const core = t.replace(/^\s*(?:(?:a|ali)\s+)?(?:je\s+)?(?:(?:mogoče|morda|menda|torej|potem|rezultat(?:\s+je)?|to\s+je)\s+)?/iu, "").replace(/\s*\?+\s*$/, "");
+  const v = judgeStep(core, opts);
+  // vrednosti predloga (»x = 5«): drugačna vrednost iste neznanke v odgovoru je popravek
+  const vals = [...core.matchAll(/(?<![\p{L}\d])([a-zA-Z])(?:_?\d)?\s*=\s*([-−]?\d+(?:[.,]\d+)?)(?!\d|[.,]\d)/gu)].map((m) => ({ v: m[1], x: num(m[2]) }));
+  return v ? { ...v, asked: true, vals } : v;
+}
+function judgeStep(text, { pre = null, prevTutor = "" } = {}) {
   const wrong = [];
   const right = [];
   // Končna vrednost proti nalogi (obstoječa sodba kode). Ko je inštruktor medtem zastavil drugo enačbo, ne.
@@ -418,6 +429,26 @@ const POSITIVE_OPEN = /^[\s>*_"'»«„“(]*(?:\p{L}+\s*,\s*)?(?:prav|pravilno|
 const ERROR_MARK = /(?<!\p{L})(?:napak\p{L}*|narobe|napačn\p{L}*|ni (?:čisto |povsem |še |ravno |res )?(?:prav|pravilno|pravilen|res|tako|točno|enako)|ne drži|ne velja|ne ujema|ne more|zmot\p{L}*|spodrsl\p{L}*|zalomil\p{L}*|pazi|preveri\p{L}*|poglej\p{L}*|še enkrat|ponovno|skoraj|ampak|vendar|toda|hmm?|wrong|mistake|not quite|almost|check)(?!\p{L})|≠/iu;
 const SOFT_MARK = /(?<!\p{L})(?:pazi\p{L}*|preveri\p{L}*|poglej\p{L}*|še enkrat|ponovno|check\p{L}*)(?!\p{L})/giu;
 const NEGATIVE_OPEN = /^[\s>*_"'»«„“(]*(?:\p{L}+\s*,\s*)?(?:ne(?=\s*[,.!:—–])|ni (?:čisto |povsem |še |ravno )?(?:prav|pravilno|res|tako|točno)|narobe|napačno|napaka|ne drži|skoraj|hmm?|not quite|wrong|no(?=\s*[,.!:—–]))/iu;
+// Izrecna potrditev učenčevega predloga: prvi stavek so le besede potrditve (»Da, pravilno!«, »Tako je.«, »Točno!«).
+// »Pravilno je $x = 4$.«, »Dobro razmišljaš, a …«, »Prav, da vprašaš!«, »Točno – $x = 4$« niso potrditev predloga
+// (pregled prevzema 5).
+const CONFIRM_WORD = String.raw`(?:da|ja|tako je|res je|pravilno|prav|točno|drži|odlično|super|bravo|natanko|seveda|yes|correct|right|exactly)`;
+const CONFIRM_OPEN = new RegExp(String.raw`^[\s>*_"'»«„“(]*${CONFIRM_WORD}(?:\s*,\s*${CONFIRM_WORD})*\s*[!.]+(?:\s|$)`, "iu");
+const num = (t) => {
+  const x = Number(String(t).replace("−", "-").replace(",", "."));
+  return Number.isFinite(x) ? x : null;
+};
+// Popravek kjerkoli v odgovoru (pregled prevzema 6): »Prav. Preverimo: … kar ni 11.«, »Da. Ampak …«, »Odlično! Vstavi
+// zdaj $x = 6$ …«, »Ja.\n\nNe, počakaj: $x = 4$.« Pri vprašanju-predlogu je odgovor tedaj popravek, ne potrditev.
+const LATER_FIX = /(?<!\p{L})(?:vstav\p{L}*|preveri\p{L}*|preizkus\p{L}*|poglej\p{L}*|check\p{L}*|n[ie] \d)|\\neq?(?![a-zA-Z])|≠/iu;
+function correctsLater(answer, vals) {
+  if (ERROR_MARK.test(answer) || LATER_FIX.test(answer)) return true;
+  for (const m of answer.matchAll(/(?<![\p{L}\d])([a-zA-Z])(?:_?\{?\d\}?)?\s*=\s*([-−]?\d+(?:[.,]\d+)?)(?!\d|[.,]\d)/gu)) {
+    const x = num(m[2]);
+    if (vals.some((s) => s.v === m[1] && s.x !== null && x !== null && Math.abs(s.x - x) > 1e-9)) return true;
+  }
+  return false;
+}
 const firstSentence = (s) => (/^[\s\S]{0,240}?(?:[.!?](?=\s|$)|\n|$)/.exec(String(s || "").trim())?.[0] || "");
 
 /** Ali odgovor nasprotuje sodbi kode (potrdi napačen korak ali zavrne pravilnega)? */
@@ -425,6 +456,9 @@ export function verdictIgnored(answer, verdict) {
   if (!verdict) return false;
   const head = firstSentence(answer);
   // V prvem stavku za potrditvijo štejejo le besede, ki res zavrnejo (»Prav, preverimo …«, »Dobro, poglejmo …« ostaneta potrditev).
+  // Vprašanje-predlog: prezrt je le izrecno potrjen napačen predlog; pravilnega koda ne brani (zavrnitev je dvoumna:
+  // »Hmm, $8 : 2 = 4$, torej $x = 4$.«).
+  if (verdict.asked) return !!verdict.wrong && CONFIRM_OPEN.test(head) && !correctsLater(String(answer || ""), verdict.vals || []);
   if (verdict.wrong) return (POSITIVE_OPEN.test(head) && !ERROR_MARK.test(head.replace(SOFT_MARK, ""))) || !ERROR_MARK.test(String(answer || ""));
   return !verdict.partial && NEGATIVE_OPEN.test(head);
 }

@@ -314,3 +314,139 @@ test("parseClaims: odgovor inštruktorja do MAX_CLAIMS, lekcija (max = Infinity)
   assert.equal(parseClaims(text).length, MAX_CLAIMS);
   assert.equal(parseClaims(text, Infinity).length, MAX_CLAIMS + 5);
 });
+
+// AUDIT-064: rešitev iz bloka RACUN se mora ujemati z vrednostjo neznanke v vidnem besedilu.
+test("AUDIT-064: vidna »x = 5« ob bloku »| x | 4« je napaka; brez navedene vrednosti in ob ujemanju ne", async () => {
+  const { visibleIssue } = await import("../server/racun.js");
+  const R = String.raw;
+  const block = (b) => `\n<<RACUN\n${b}\n>>`;
+  const cases = [
+    [R`Torej $x = 5$.` + block("resi: 2*x+3=11 | x | 4"), true],
+    [R`$x_1 = 2$, $x_2 = 4$` + block("resi: x^2-5*x+6=0 | x | 2, 3"), false], // pregled prevzema 4: ena vrednost se ujema
+    [R`Torej $x = 4$.` + block("resi: 2*x+3=11 | x | 4"), false],
+    ["Kaj narediš najprej?" + block("resi: 2*x+3=11 | x | 4"), false], // način A: rezultat ni naveden
+    [R`Rešitvi sta $x_1 = 2$ in $x_2 = 3$.` + block("resi: x^2-5*x+6=0 | x | 2, 3"), false],
+    [R`$x = \frac{8}{2} = 4$` + block("resi: 2*x=8 | x | 4"), false],
+    [R`$x = 0{,}5$` + block("resi: 2*x=1 | x | 1/2"), false],
+    [R`$x = \pm 2$` + block("resi: x^2=4 | x | -2, 2"), false],
+  ];
+  for (const [t, bad] of cases) assert.equal(!!visibleIssue(t, parseClaims(t)), bad, t);
+});
+
+test("AUDIT-064 (pregled): zaokrožene vrednosti in zapis števil kot v kalkulatorjih", async () => {
+  const { visibleIssue } = await import("../server/racun.js");
+  const R = String.raw;
+  const block = (b) => `\n<<RACUN\n${b}\n>>`;
+  for (const t of [R`$x = 1{,}41$ (zaokroženo)` + block("resi: x^2=2 | x | sqrt(2)"), R`$x = 0{,}33$` + block("resi: 3*x=1 | x | 1/3"), R`$x = 2,5$` + block("resi: 2*x=5 | x | 5/2"), R`$x = 1\,000$` + block("resi: log10(x)=3 | x | 1000"), R`$x = 1.000$` + block("resi: log10(x)=3 | x | 1000"), R`$x = 7{,}39$` + block("resi: ln(x)=2 | x | exp(2)")]) {
+    assert.equal(visibleIssue(t, parseClaims(t)), null, t);
+  }
+  assert.ok(visibleIssue(R`$x = 1{,}5$` + block("resi: x^2=2 | x | sqrt(2)"), parseClaims(R`$x = 1{,}5$` + block("resi: x^2=2 | x | sqrt(2)"))));
+});
+
+// Pregled prevzema (ugotovitev 4): vidno besedilo ob bloku RACUN po istih pravilih kot končne vrednosti v live-check.js;
+// napaka je le končna navedena vrednost, ki ni enaka nobeni rešitvi iz blokov.
+test("pregled prevzema: pogoj, poskus, učenčev zapis, ≐ in izbran koren niso napaka", async () => {
+  const { visibleIssue } = await import("../server/racun.js");
+  const R = String.raw;
+  const block = (b) => `\n<<RACUN\n${b}\n>>`;
+  const none = [
+    R`Za $x = 0$ je leva stran $3$. Kaj moraš narediti, da dobiš 11?` + block("resi: 2*x+3=11 | x | 4"),
+    R`Vstavimo $x = 1$: $1 - 5 + 6 = 2 \neq 0$. Rešitvi sta $2$ in $3$.` + block("resi: x^2-5*x+6=0 | x | 2, 3"),
+    R`Preizkus: pri $x = 1$ je leva stran 5, kar ni 11.` + block("resi: 2*x+3=11 | x | 4"),
+    R`Ti si napisal $x = 5$. Kaj dobiš, če vstaviš?` + block("resi: 2*x+3=11 | x | 4"),
+    R`Najprej poglej graf: presečišče z osjo $y$ je pri $x = 0$.` + block("resi: 2*x+3=11 | x | 4"),
+    R`$x = \frac{1}{3} \doteq 0,33$` + block("resi: 3*x=1 | x | 1/3"),
+    R`$x = \sqrt{2} \doteq 1{,}41$` + block("resi: x^2=2 | x | -sqrt(2), sqrt(2)"),
+    R`Telo pade na tla po $t = 2$ s.` + block("resi: 5*t^2=20 | t | -2, 2"),
+    R`Pozitivna rešitev je $x = 4$ (dolžina ne more biti negativna).` + block("resi: x^2=16 | x | -4, 4"),
+    R`Na začetku je $x = 0$, nato dobimo rešitev $x = 4$.` + block("resi: 2*x+3=11 | x | 4"),
+    R`Prva: $x = 4$. Druga: $x = 2$.` + block("resi: 3*x-2=10 | x | 4\nresi: x+1=3 | x | 2"),
+  ];
+  for (const t of none) assert.equal(visibleIssue(t, parseClaims(t)), null, t);
+  for (const t of [R`Torej $x = 5$.` + block("resi: 2*x+3=11 | x | 4"), R`Rešitev je $t = 3$.` + block("resi: 5*t^2=20 | t | -2, 2"), R`Vstavimo $x = 1$: leva stran je 5. Rešitev je $x = 5$.` + block("resi: 2*x+3=11 | x | 4")]) {
+    assert.ok(visibleIssue(t, parseClaims(t)), t);
+  }
+});
+
+// Pregled prevzema 2 (AUDIT-064): premica, os ali asimptota ni rešitev; brez potrditve SymPy ni primerjave vidnega besedila.
+test("pregled prevzema 2 (AUDIT-064): asimptota in os simetrije, le potrjeni bloki", async () => {
+  const { visibleIssue, checkAnswerClaims } = await import("../server/racun.js");
+  const R = String.raw;
+  const block = (b) => `\n<<RACUN\n${b}\n>>`;
+  for (const t of [R`Ničla: $x = -1$. Navpična asimptota: $x = 1$, vodoravna: $y = 1$.` + block("resi: (x+1)/(x-1)=0 | x | -1"), R`Os simetrije je premica $x = 2$, ničli sta $x_1 = 1$ in $x_2 = 3$.` + block("resi: x^2-4*x+3=0 | x | 1, 3"), R`Pol funkcije je pri $x = 1$, ničla je $x = -1$.` + block("resi: (x+1)/(x-1)=0 | x | -1")]) {
+    assert.equal(visibleIssue(t, parseClaims(t)), null, t);
+  }
+  const wrong = R`Ničla je $x = 1$.` + block("resi: (x+1)/(x-1)=0 | x | -1");
+  assert.ok(visibleIssue(wrong, parseClaims(wrong)), "napačna ničla ostane ujeta");
+  // nepotrjen ali napačen blok: brez »the answer text states …« (s SymPy ga ujame preverba bloka sama)
+  for (const t of [R`$2x = 8$, torej $x = 4$.` + block("resi: 2*x+3=11 | x | 5"), R`Rešitvi sta $x_1 = 2$ in $x_2 = 3$.` + block("resi: x^2-5*x+6=0 | x | 2")]) {
+    const r = await checkAnswerClaims(t);
+    assert.doesNotMatch(r.issue || "", /answer text states/, t);
+  }
+});
+
+// Pregled prevzema 3 (26. 11.): vaja, izločena vrednost, teme in druge vrednosti v razlagi niso navedena rešitev.
+test("pregled prevzema 3 (AUDIT-064): vaja, izločena vrednost, teme in ničle druge funkcije niso napaka", async () => {
+  const { visibleIssue } = await import("../server/racun.js");
+  const R = String.raw;
+  const c = (...args) => [{ op: "solve", args }];
+  const A = c("2*x+3=11", "x", "4");
+  const Q = c("x^2-5*x+6=0", "x", "2, 3");
+  const F = c("1/(x-1)=2", "x", "3/2");
+  const none = [
+    [c("2*x-6=0", "x", "3"), R`Rešitev je $x = 3$. Ničli parabole pa sta $x = 0$ in $x = 6$.`],
+    [A, "Rešitev je $x = 4$.\n\n" + R`Za vajo: reši $3x = 15$. Rešitev: $x = 5$.`],
+    [A, "Rešitev je $x = 4$.\n\n" + R`**Vaja:** reši $3x = 15$ → $x = 5$`],
+    [A, "Rešitev je $x = 4$.\n\n" + R`Podobna naloga: $3x + 1 = 10$ ima rešitev $x = 3$.`],
+    [A, R`Rešitev je $x = 4$. Na intervalu od $x = 0$ do $x = 10$ je to edina.`],
+    [F, R`Izločimo $x = 1$. Rešitev je $x = 3/2$.`],
+    [F, R`Vrednost $x = 1$ ni dovoljena. Torej $x = \frac{3}{2}$.`],
+    [F, R`Ne sme biti $x = 1$. Rešitev: $x = 1{,}5$.`],
+    [Q, R`Rešitvi sta $x_1 = 2$, $x_2 = 3$. Teme je v $x = 2{,}5$.`],
+    [Q, "$x_1 = 2$, $x_2 = 3$\n" + R`Sredina: $x = 2{,}5$.`],
+  ];
+  for (const [cl, t] of none) assert.equal(visibleIssue(t, cl), null, t);
+  for (const [cl, t] of [[A, R`Rešitev je $x = 5$.`], [A, R`$x = 5$`], [Q, R`Rešitvi sta $x_1 = 4$ in $x_2 = 5$.`]]) assert.ok(visibleIssue(t, cl), t);
+});
+
+// Pregled prevzema 4 (26. 11.): pravilna vrednost kjerkoli v besedilu in naloga za vajo ali zgled druge naloge.
+test("pregled prevzema 4 (AUDIT-064): pravilna vrednost v preskočeni vrstici, druga naloga in »Zdaj ti« niso napaka", async () => {
+  const { visibleIssue } = await import("../server/racun.js");
+  const R = String.raw;
+  const A = [{ op: "solve", args: ["2*x+3=11", "x", "4"] }];
+  const L = [{ op: "solve", args: ["2*x-6=0", "x", "3"] }];
+  const none = [
+    [L, R`Rešitev enačbe $f'(x) = 0$: $x = 3$.` + "\n" + R`Ničla funkcije, ki ni v izhodišču, je $x = 6$.`],
+    [A, R`**Zdaj ti:** $3x + 1 = 16$` + "\n\n$x = 5$"],
+    [A, R`Podobna naloga: reši $3x + 1 = 16$.` + "\n$x = 5$"],
+    [A, R`Naloga 2: $3x = 15$` + "\n$x = 5$"],
+    [A, R`Druga naloga: rešitev je $x = 5$.`],
+  ];
+  for (const [cl, t] of none) assert.equal(visibleIssue(t, cl), null, t);
+  assert.ok(visibleIssue(R`Rešitev je $x = 5$.`, A));
+  const s = performance.now();
+  visibleIssue(R`$x = 1$, `.repeat(7000), A);
+  assert.ok(performance.now() - s < 200, "7000 vrednosti");
+});
+
+// Pregled prevzema 6 (AUDIT-064): zapisi, ki jih branje vrednosti ne razume zanesljivo, in logaritemske enačbe brez sodbe.
+test("pregled prevzema 6 (AUDIT-064): \\frac12, periodični zapis, mešani ulomek, kot, enota in log brez sodbe", async () => {
+  const { visibleIssue } = await import("../server/racun.js");
+  const R = String.raw;
+  const block = (b) => `\n<<RACUN\n${b}\n>>`;
+  const none = [
+    R`Rešitev: $x = \frac12$` + block("resi: 2*x=1 | x | 1/2"),
+    R`Rešitev: $x = 0{,}\overline{6}$` + block("resi: 3*x=2 | x | 2/3"),
+    R`Rešitev: $x = 0{,}(6)$` + block("resi: 3*x=2 | x | 2/3"),
+    R`Rešitev: $x = 0{,}66\ldots$` + block("resi: 3*x=2 | x | 2/3"),
+    R`Rešitev: $x = 1\tfrac12$` + block("resi: 2*x=3 | x | 3/2"),
+    R`Rešitev: $x = 30°$` + block("resi: 2*x=60 | x | 30"),
+    R`Rešitev: $x = 30^\circ$` + block("resi: 2*x=60 | x | 30"),
+    R`Rešitev: $x = 5$ cm` + block("resi: 2*x=10 | x | 5"),
+    R`Rešitev: $x = 5\,\text{cm}$` + block("resi: 2*x=10 | x | 5"),
+    R`Rešitev: $x = 3$` + block("resi: log(x, 2)=2 | x | 4"),
+    R`Rešitev: $x = 3$` + block("resi: ln(x)=1 | x | E"),
+  ];
+  for (const t of none) assert.equal(visibleIssue(t, parseClaims(t)), null, t);
+  for (const t of [R`Rešitev: $x = 3$.` + block("resi: 2*x=10 | x | 5"), R`**Rešitev:** $x = 3$` + block("resi: 2*x=10 | x | 5")]) assert.ok(visibleIssue(t, parseClaims(t)), t);
+});

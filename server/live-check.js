@@ -20,6 +20,8 @@ import { verifyAi } from "../public/scan/verify.js";
 import { checkArithmetic } from "./lesson-math.js";
 import { askModel, checkerUser, SYSTEM as CHECKER_SYSTEM } from "./verify.js";
 import { MODEL_MID, addUsage } from "./claude.js";
+import { SKIP_LINE, notClaimAt, TEX_SHORT, EXERCISE_RE, hasExercise } from "./besedilo-trditev.js";
+export { SKIP_LINE, notClaimAt, TEX_SHORT, hasExercise };
 
 export const liveCheckOn = () => process.env.EVKLID_LIVE_CHECK !== "0";
 // Največ toliko USD na dan za pregled z modelom (vrsta »preverjanje«); negativno = brez meje.
@@ -87,17 +89,34 @@ function answerText(r, type) {
   return approx ? `${a.tex} (${type === "arith" ? "= " : ""}${approx})` : a.tex;
 }
 
-function trySolve(cand, deriv) {
+// ask: vse sporočilo je le beseda naloge in ta zapis (»Izračunaj $7 \cdot 8$.«, »Koliko je 81 % od 300?«). Le tedaj šteje
+// tudi račun z eno samo operacijo ali odstotek (AUDIT-069): v besedilni nalogi (»Koliko je $\frac{3}{4}$ od 200?«,
+// »ostanek pri deljenju $17 : 5$«) je tak zapis le del naloge in opomba bi navedla napačen »točen rezultat«; učenčev
+// gol odgovor (»1/2«, »20 %«, »3 + 5«) pa ostane odgovor, ne nova naloga (looksLikeTask kot na main).
+function trySolve(cand, deriv, ask = false) {
   // »1 000« je tisoč; presledek med števkami, ki ni zapis tisočic (»12 34«), ni jasen: raje nič kot napačen »preverjen« rezultat
   let c = joinThousands(cand.replace(/\s+in\s+(?=[^=]*=)/g, "; ").trim());
   if (digitGap(c)) return null;
   // »2x = 1.000«: v Sloveniji je to tisoč, razčlenjevalnik pa bi bral 1,0 – dvoumno, zato brez »preverjenega« rezultata
   if (/(?<![\d.,])[1-9]\d{0,2}(?:\.\d{3})+(?![\d,.])/.test(c)) return null;
+  // »Odvajaj f(x) = e^{3x}«: odvaja se desna stran (AUDIT-063)
+  // Ime funkcije (»g(x) = …«) šteje pri primerjavi odvoda: »g'(x)« drugje je pomožna funkcija (pregled prevzema).
+  let fname = null;
+  if (deriv) {
+    const fm = /^\s*(?:([a-zA-Z])\s*\(\s*x\s*\)|(y))\s*=(?!=)\s*/.exec(c);
+    if (fm) fname = fm[1] || fm[2];
+    c = c.slice(fm ? fm[0].length : 0).replace(/\{/g, "(").replace(/\}/g, ")");
+  }
+  // »81 % od 300«: odstotek od števila (AUDIT-069), le v nalogi »Izračunaj …«. Drugi »%« ne (pregled prevzema 3:
+  // »100 % - 35 %« je 65 %, ne 13/20).
+  const pct = ask && /\d\s*%\s*(?:od|of)\s/iu.test(c);
+  if (pct) c = c.replace(/(\d+(?:[.,]\d+)?)\s*%\s*(?:od|of)\s+(\d+(?:[.,]\d+)?)/giu, "($1/100*$2)");
   if (!mathOnly(c)) return null;
   if (/^\s*d\/d[a-z]/i.test(c)) deriv = true;
   const hasEq = c.includes("=");
   if (hasEq && deriv) return null;
-  if (!hasEq && !deriv && (/\p{L}/u.test(c.replace(FUNCS, "")) || opsCount(c) < 2)) return null;
+  // Tudi račun z eno samo operacijo (»7 · 8«, AUDIT-069): rezultat je potem mogoče primerjati z odgovorom.
+  if (!hasEq && !deriv && (/\p{L}/u.test(c.replace(FUNCS, "")) || opsCount(c) < (ask ? 1 : 2))) return null;
   if (hasEq && (solvedForm(c) || opsCount(c.replace(/=/g, " ")) + (/\d\s*[a-z(]/i.test(c) ? 1 : 0) < 1)) return null;
   let r;
   try {
@@ -111,7 +130,10 @@ function trySolve(cand, deriv) {
   if (!type || (hasEq && type !== "equation" && type !== "system") || (!hasEq && type !== "arith" && type !== "derivative")) return null;
   const ans = answerText(r, type);
   if (!ans) return null;
-  return { type, problem: c, problemTex: r.problemTex, answer: ans, answerTex: r.answer.tex };
+  // narrow: naloga, ki je main ne bi prepoznal (ena operacija, »% od«): sodba učenčevega koraka (claimNote) je ne
+  // uporabi, ker bi njeno ohlapno zaokroževanje »3,4« za 10/3 štelo za pravilno (pregled prevzema 3).
+  const narrow = type === "arith" && (pct || opsCount(c) < 2);
+  return { type, problem: c, problemTex: r.problemTex, answer: ans, answerTex: r.answer.tex, ...(type === "derivative" ? { fname } : {}), ...(narrow ? { narrow } : {}) };
 }
 
 // Sporočilo je videti kot nova naloga (beseda naloge ali rešljiv zapis): učenčev rezultat po njem
@@ -122,24 +144,31 @@ export const looksLikeTask = (text) => stripLead(text).task || !!presolve(text, 
  * Naloge iz učenčevega sporočila, ki jih reševalnik reši in preveri. Ob dvomu nič.
  * first: prvo sporočilo pogovora. Pozneje samo z besedo naloge (»Reši …«, »Izračunaj …«): med vodenjem je
  * »2x = 12« učenčev korak (morda napačen), ne naloga, in opomba bi ga »potrdila«.
+ * narrow: false vrne le naloge, ki jih bere tudi main (brez ene same operacije in »% od«), za sodbo učenčevega koraka:
+ * njeno ohlapno zaokroževanje bi »3,4« pri 10/3 štelo za pravilno (pregled prevzema 3, AUDIT-069).
  * @returns {{ problems: Array<{type, problem, problemTex, answer, answerTex}>, note: string } | null}
  */
-export function presolve(text, { first = true } = {}) {
+// »\frac14«, »\frac12 x«, »\sqrt4« brez oklepajev: texToText jih bere narobe, zato koda o njih ne sodi.
+export function presolve(text, { first = true, narrow = true } = {}) {
   const src = String(text || "");
   if (!src.trim() || src.length > 600) return null;
   if (!first && !stripLead(src).task) return null;
   const problems = [];
-  const segs = [...src.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)].map((m) => texToText(m[1] ?? m[2]));
+  // »\frac14«, »\sqrt4« brez oklepajev texToText bere narobe (»14«): tak zapis ni naloga (pregled prevzema 3)
+  const segs = [...src.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)].map((m) => (TEX_SHORT.test(m[1] ?? m[2]) ? "?" : texToText(m[1] ?? m[2])));
   if (segs.length) {
-    const { deriv } = stripLead(src);
+    const { deriv, task } = stripLead(src);
+    // Zunaj zapisa le besede naloge (LEAD) in ločila: sporočilo je samo ta naloga (glej trySolve, ask).
+    const outside = src.replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, " ");
+    const whole = segs.length === 1 && !/[\d=]/.test(outside) && (outside.match(/\p{L}+/gu) || []).every((w) => LEAD.has(w.toLowerCase()));
     for (const s of segs.slice(0, 4)) {
-      const p = trySolve(s, deriv);
-      if (p) problems.push(p);
+      const p = trySolve(s, deriv, whole && task);
+      if (p && (narrow || !p.narrow)) problems.push({ ...p, whole });
     }
   } else {
-    const { rest, deriv } = stripLead(src);
-    const p = rest && trySolve(rest, deriv);
-    if (p) problems.push(p);
+    const { rest, deriv, task } = stripLead(src);
+    const p = rest && trySolve(rest, deriv, task);
+    if (p && (narrow || !p.narrow)) problems.push({ ...p, whole: true }); // ves preostanek je zapis naloge
   }
   if (!problems.length) return null;
   const list = problems.slice(0, MAX_PROBLEMS);
@@ -170,13 +199,18 @@ export function withNote(messages, note) {
 
 // Vrstice, kjer napačna vrednost lahko stoji namenoma (učenčeva napaka, vprašanje, »če bi …«).
 // Tudi učenčev zapis (»Ti si napisal …«), zavrnjeni kandidati (»$x = 1$ odpade«) in poskusi.
-export const SKIP_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|ne drži|ni prav|ni pravil|ne ustreza|ne zadošča|odpade|ni rešitev|kandidat|definicijsk|poskus|tvoj|✗|\?|(?<!\p{L})(če|ali|bi|if|wrong|incorrect|you|napisal[a]?|zapisal[a]?|dobil[a]?|izračunal[a]?|extraneous|reject)(?!\p{L})/iu;
+
+// Računi in končne vrednosti (AUDIT-066, pregled prevzema 3): vrstica se preskoči kot na main (SKIP_LINE: vprašanje,
+// »če«, »ali«, »bi«, učenčev zapis …). Izjema za račune za »če« je odstranjena: »Če zanemarimo predznak, dobimo
+// $(-2)^3 = 8$« je namerno napačen zapis.
 
 // Zadnja navedena vrednost vsake neznanke (»$x = 4$«, »$x_1 = \frac{1}{2}$«, »$x = \frac{8}{2} = 4$«).
-function statedValues(answer, vars) {
+// Vrednost, ki jo je napisal tudi učenec, se preverja (pregled prevzema, P1): »Da, $x = 5$ je pravilno« ob učenčevem
+// napačnem »x = 5« je prav napaka, ki jo mora koda ujeti; citat z zavrnitvijo ujame SKIP_LINE (»napisal«, »tvoj«).
+export function statedValues(answer, vars) {
   const out = new Map();
   for (const line of String(answer).split("\n")) {
-    if (SKIP_LINE.test(line)) continue;
+    if (notClaimAt(line)) continue;
     for (const m of line.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) {
       let tex = m[1] ?? m[2];
       // »±« je par vrednosti; »≈« (texToText ga izpusti) loči točno vrednost od približka.
@@ -255,24 +289,239 @@ function valueIssue(answer, p) {
   return { checked: 1 };
 }
 
+// Znan odvod (presolve) proti »f'(x) = …« ali »y' = …« v odgovoru (AUDIT-063): primerjava vrednosti v več točkah (brez
+// SymPy). Prej se je končna vrednost preverjala le pri enačbah: »Odvajaj x³« → »f'(x) = 2x« je šlo mimo.
+// Pregled prevzema (26. 11.): šteje le odvod funkcije iz naloge (»f«, »y« ali ime iz »g(x) = …«), ne pomožna
+// »g'(x) = 2x« ali »v'(x) = \cos x« pri verižnem ali produktnem pravilu; vrstica s primerom, notranjo ali zunanjo
+// funkcijo se preskoči; pogoj za izrazom (»\quad (x \in \mathbb{R})«, »\text{ za vse } x«, », \; x > 0«) se odreže.
+// Ko se katerikoli zapis odvoda ujema s pravilnim, ni napake.
+// Pregled prevzema 4: sodi le »f'(x) = …« z imenom iz naloge ali »y' = …«, ko naloga imena nima; nikoli »\frac{d}{dx}«
+// (pravilo »Velja $\frac{d}{dx}\sin x = \cos x$«, vrednost v točki).
+const PRIME = String.raw`\s*(?:'|\^\{?\\prime\}?|′)(?!\s*(?:'|\^|′))`;
+const derivLhs = (name) => new RegExp(name === "y" ? String.raw`^y${PRIME}\s*(?:\(\s*x\s*\))?$` : String.raw`^${name}${PRIME}\s*\(\s*x\s*\)$`); // le prvi odvod (f'' je drugi)
+// Ni odgovor (pregled prevzema 2, 3 in 4): primer, opomnik pravila, pogosta napaka, delni, zunanji/notranji odvod ali
+// odvod člena (»Zunanja: $f'(x) = \cos x$«, »Odvod prvega člena: $f'(x) = 3x^2$«), vrednost v točki (»V točki $x = 1$:
+// $y' = 3$«, »naklon«) in učenčev zapis (»Imaš $f'(x) = …$«). Beseda »pravilo« sama ne (»Produktno pravilo: …« je odgovor).
+const DERIV_SKIP_LINE = /primer|example|npr\.|spomni|remember|recall|napak|zmot|zunanj|notranj|manjka|veriž|verig|chain|pozabi|forget|pomnož|multipl|še ni|skoraj|ustav|člen|točk|naklon|velja|ker je|(?<!\p{L})del(?!\p{L})|sledi|prvi|drugi|korak|najprej|začn|(?<!\p{L})(?:pri\s*\$?\s*x|imaš|imas|mistake|error|outer|inner|almost|term|slope|point|at\s*\$?\s*x)(?!\p{L})/iu;
+const derivFn = (tex) => {
+  if (TEX_SHORT.test(String(tex))) return null; // »$f'(x) = \frac12 x^{-\frac12}$« (pregled prevzema 3)
+  try {
+    const f = compile(parse(calcText(prep(texToText(String(tex).replace(/\\(?:mathrm|operatorname|text)\s*\{\s*e\s*\}/g, "e"))), { comma: false })));
+    return (x) => {
+      const v = f({ x });
+      return typeof v === "number" ? v : NaN;
+    };
+  } catch {
+    return null;
+  }
+};
+// Pogoj ali opomba za izrazom odvoda ni del izraza (brez začetnega \s* pred izbiro: linearno, pregled prevzema 3).
+const cutCondition = (x) =>
+  x
+    .replace(/(?:\\q?quad|\\text\s*\{(?!\s*e\s*\})|\\mbox|\\[;:]|,\s*\\[,;:! ]|\\in(?![a-zA-Z])|\\forall|\\mathbb|\\(?:geq|ge|leq|le|neq|ne|gt|lt|Rightarrow|rightarrow|implies|to)(?![a-zA-Z])|[<>≤≥≠⇒→]|\s(?:za|for)\s).*$/s, "")
+    .trim()
+    .replace(/[.,;]$/, "")
+    .trim();
+const XS = [0.37, 1.3, 2.1, -0.8, 3.7];
+// Funkciji enaki v vseh točkah: »match«; v kateri drugačni: »diff«; ni mogoče prebrati: null.
+const sameFn = (f, g) => {
+  if (!f || !g) return null;
+  let n = 0;
+  for (const x of XS) {
+    const a = f(x);
+    const b = g(x);
+    if (!Number.isFinite(a) || !Number.isFinite(b)) continue;
+    n++;
+    if (Math.abs(a - b) > 1e-6 * Math.max(1, Math.abs(a))) return "diff";
+  }
+  return n ? "match" : null;
+};
+function derivativeIssue(answer, p) {
+  // »\log x« brez osnove je lahko desetiški ali naravni logaritem (pregled prevzema 5): brez sodbe.
+  if (/\\log(?![_a-zA-Z])|(?<![\\a-zA-Z])log(?![_a-zA-Z\d])/.test(`${p.problem} ${p.problemTex}`)) return null;
+  const want = derivFn(String(p.answerTex || p.answer).split("=").at(-1));
+  if (!want) return null;
+  // Ime iz naloge (»g(x) = …«), sicer »f(x)« ali »y«. Ime, ki ga odgovor kjerkoli uporabi za drugo funkcijo
+  // (»$y = x^2$« v vrstici zase, nato »$y' = 2x$« pri nalogi sin(x²)), ne govori o odvodu naloge.
+  const task = derivFn(String(p.problemTex || "").split("=").at(-1));
+  const formulas = [...String(answer).matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)].map((m) => m[1] ?? m[2]);
+  const names = (p.fname ? [p.fname] : ["f", "y"]).filter((name) => {
+    const nameRe = new RegExp(String.raw`^\s*(?:${name}\s*\(\s*x\s*\)${name === "y" ? "|y" : ""})\s*$`);
+    return !formulas.some((tex) => {
+      const parts = tex.split("=");
+      return parts.length === 2 && nameRe.test(parts[0]) && sameFn(task, rhsFn(parts[1])) !== "match";
+    });
+  });
+  if (!names.length) return null;
+  // Odvod, ki ni konstanta, mora imeti x na desni (»$y' = 3$ (naklon)« je vrednost v točki).
+  const w0 = want(XS[0]);
+  const constant = XS.every((x) => Math.abs(want(x) - w0) <= 1e-9 * Math.max(1, Math.abs(w0)));
+  const lhsList = names.map(derivLhs);
+  const lhs = { test: (t) => lhsList.some((re) => re.test(t)) };
+  const found = [];
+  const lines = String(answer).split("\n");
+  for (const [i, line] of lines.entries()) {
+    if (SKIP_LINE.test(line) || DERIV_SKIP_LINE.test(line)) continue;
+    for (const m of line.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) {
+      const tex = m[1] ?? m[2];
+      if (/\\approx|≈|\\pm|±/.test(tex)) continue;
+      const parts = tex.split("=");
+      if (parts.length < 2 || !lhs.test(parts[0].trim())) continue;
+      // »f'(x) = 0« (iskanje stacionarnih točk) ni odvod; v verigi »f'(x) = 3x^2 - 3 = 0« šteje vsak del razen 0
+      const rhs = parts
+        .slice(1, 9) // veriga »= … = …« največ do 8 delov (linearno)
+        .map((x) => cutCondition(x.replace(/\s+/g, " ").trim()))
+        .filter((x) => x && x.length <= 300 && /x|\d/.test(x) && !/^0$/.test(x) && (constant || /x/.test(x)));
+      if (rhs.length) found.push({ tex: tex.trim(), rhs, line: i, end: m.index + m[0].length });
+    }
+  }
+  if (!found.length || found.length > 50) return null; // največ 50 kandidatov (linearno)
+  // Sodi se le zadnji zapis odgovora: za »$f'(x) = \cos(x^2)$, in množimo z $2x$« sledi še korak (pregled prevzema 5).
+  if (found.at(-1).tex !== String(formulas.at(-1) || "").trim()) return null;
+  // Vprašanje ali namig za zadnjim zapisom (»$y' = 5(3x+1)^4$⏎⏎Kaj moraš še pomnožiti?«, »Ne pozabi na verižno
+  // pravilo!«) pomeni, da je zapis delni korak vodenega odgovora: brez sodbe (pregled prevzema 6).
+  const tail = [lines[found.at(-1).line].slice(found.at(-1).end), ...lines.slice(found.at(-1).line + 1)].join("\n");
+  if (/\?/.test(tail) || DERIV_SKIP_LINE.test(tail) || SKIP_LINE.test(tail)) return null;
+  // Sodi se le zapis, ki je očitno končni odgovor (pregled prevzema 7): cel odgovor je ta zapis, zapis je krepak, ali
+  // njegova vrstica oziroma prejšnja neprazna vrstica pove, da je to rezultat (»Torej«, »Odvod je«, »Rezultat:«).
+  // Oznaka v vrstici pred zapisom (»Zunanji odvod:⏎$$y' = …$$«, »Korak 1:«) je delni korak: brez sodbe.
+  const fl = found.at(-1).line;
+  let prev = "";
+  for (let j = fl - 1; j >= 0 && j >= fl - 20; j--) if (lines[j].trim()) { prev = lines[j]; break; }
+  if (prev && (SKIP_LINE.test(prev) || DERIV_SKIP_LINE.test(prev))) return null;
+  const rest = String(answer).replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, "").replace(/[\s*_.!:,;]/g, "");
+  const bold = /\*\*\s*\$[^$\n]+\$\s*\*\*/.test(lines[fl]);
+  const FINAL = /(?<!\p{L})(?:torej|rezultat\p{L}*|odgovor\p{L}*|končn\p{L}*|odvod (?:je|funkcije|naloge)|thus|therefore|hence|result|answer|final)(?!\p{L})/iu;
+  if (rest && !bold && !FINAL.test(lines[fl]) && !FINAL.test(prev)) return null;
+  // Za zapisom ne sme biti nič več (»Zdaj še odvod oklepaja.«, »Nato …«); »vmesni/delni rezultat« ni končni (pregled prevzema 8).
+  if (!/^[\s.!*_]*$/.test(tail)) return null;
+  if (/vmesn|deln|partial|so far|napač|narobe|wrong|incorrect|pogost|common|(?<!\p{L})(?:ni|not)(?!\p{L})/iu.test(`${lines[fl]}\n${prev}`)) return null;
+  const judge = (rhs) => sameFn(want, derivFn(rhs));
+  if (found.some((f) => f.rhs.map(judge).includes("match"))) return { checked: 1, issue: null };
+  // Pravilen odvod kjerkoli v odgovoru (tudi brez »f'(x) =«, v vrstici, ki se preskoči): »f'(x) = 3x^2« je bil delni
+  // korak (»Najprej prvi del: $f'(x) = 3x^2$ … Skupaj $3x^2 + 2$.«), pregled prevzema 5. Največ 50 delov, sicer brez sodbe.
+  const pieces = formulas.flatMap((tex) => tex.split("=").slice(0, 9)).map((x) => cutCondition(x.replace(/\s+/g, " ").trim())).filter((x) => x && x.length <= 300 && /x|\d/.test(x));
+  if (pieces.length > 50 || pieces.some((x) => judge(x) === "match")) return { checked: 1, issue: null };
+  const last = found.at(-1);
+  if (last.rhs.map(judge).some((v) => v === null)) return { checked: 0, issue: null };
+  return { checked: 1, issue: `the derivative $${last.tex}$ is wrong: the derivative of $${p.problemTex}$ is $${p.answerTex}$` };
+}
+// Desna stran zapisa funkcije: presledki strnjeni, dolga (> 300 znakov) brez sodbe (prep v solvecore ni linearen).
+const rhsFn = (x) => {
+  const t = cutCondition(String(x).replace(/\s+/g, " ").trim());
+  return t.length > 300 ? null : derivFn(t);
+};
+
+// Gol rezultat računa (AUDIT-069): »**Rezultat:** 317«, »Odgovor: 56«, odgovor iz enega samega števila (»**54**«) se
+// primerja z rešitvijo, ki jo pozna presolve. Prej se je pri računu primerjal le zapisan račun »$… = 317$«, kratek
+// odgovor »Samo rezultat« pa ne. Vrednost mora biti enaka ali pravilno zaokrožena (pol zadnjega mesta).
+// Pregled prevzema (26. 11.): le kadar je vprašanje samo ta račun (p.whole: »Izračunaj $…$«, »Koliko je …?«), ne pri
+// besedilni nalogi, kjer je račun le del (»Koliko je $\frac{3}{4}$ od 200?«, »Zaokroži $\frac{17}{3}$ …«), in le zadnja
+// vrstica z rezultatom, za katero ni več števil (vmesni »Rezultat:« po korakih ali preizkus za njim: brez sodbe).
+// Brez polinomskega vračanja (pregled prevzema 2: »Rezultat: 56« + 140 presledkov + »!x« je trajalo 34 s): presledki se
+// najprej strnejo v enega, vrstica z rezultatom se išče po vrsticah (največ 160 znakov), gol odgovor le do 80 znakov.
+const RESULT_LINE = /^[*_]*(?:rezultat|odgovor|rešitev|result|answer)[*_]* ?(?:(?:je|is) ?)?(?:[:=] ?)?[*_]* ?\$? ?(?:[a-zA-Z] ?= ?)?([-−+]?\d[\d .,]*?(?:\/\d+)?) ?\$?[*_]*(?: ?([\p{L}%€°]{1,6})\.?)? ?[*_]*$/iu;
+const BARE_ANSWER = /^[*_]* ?\$? ?([-−+]?\d[\d .,]*?(?:\/\d+)?) ?\$? ?[*_]* ?[.!]?$/u;
+// Ena sama vrstica z rezultatom in brez drugih števil v odgovoru (pregled prevzema 3: več vrstic »Rezultat:«, vaja ali
+// nova naloga za rezultatom ali pred njim → brez sodbe).
+function finalResult(a) {
+  let hit = null;
+  for (const raw of a.split("\n")) {
+    const l = raw.trim();
+    if (!l) continue;
+    const m = l.length <= 160 ? RESULT_LINE.exec(l) : null;
+    if (m) {
+      if (hit) return null;
+      hit = m;
+    } else if (/\d/.test(l)) return null;
+  }
+  return hit;
+}
+// »3 1/3« je mešano število (10/3), ne 31/3; »1 000« so tisočice.
+function resultValue(t) {
+  const mixed = /^([-−+]?)(\d+) (\d+)\/(\d+)$/.exec(t);
+  if (mixed) return { x: (mixed[1] && mixed[1] !== "+" ? -1 : 1) * (Number(mixed[2]) + Number(mixed[3]) / Number(mixed[4])), raw: t };
+  const raw = joinThousands(t).replace(/\s+/g, "").replace(/[.,]$/, "");
+  if (/(?<![\d.,])[1-9]\d{0,2}(?:\.\d{3})+(?![\d,.])/.test(raw)) return null; // »1.000«: tisočice ali decimalke?
+  const x = num(raw);
+  return x === null ? null : { x, raw };
+}
+function bareResultIssue(answer, p) {
+  if (!p.whole) return null;
+  // Dvoumna naloga: množenje brez znaka za deljenjem (»6 : 2(1+2)«) bere vsak po svoje (pregled prevzema 4).
+  if (/(?:[:/÷]|\\div)\s*[\d.,]+\s*[(a-zA-Z]/.test(String(p.problem))) return null;
+  const a = String(answer || "").replace(/[^\S\n]+/g, " ").replace(/ ?\n[\s]*/g, "\n").trim();
+  // ves odgovor je en sam zapis »$… = 317$«: zadnji del je rezultat
+  const only = a.length <= 300 ? /^(?:[*_]*(?:rezultat|odgovor|rešitev)[*_: ]*)?\$([^$\n]+)\$ ?[.!]?$/iu.exec(a) : null;
+  const tail = only && !/\\approx|≈/.test(only[1]) ? /= ?([-−+]?\d[\d .,{}\\]*?) ?(\\%)? ?$/.exec(only[1]) : null;
+  const m = (a.length <= 80 && BARE_ANSWER.exec(a)) || finalResult(a) || (tail && [tail[0], tail[1].replace(/\{,\}/g, ",").replace(/\\,|\\ |[{}\\]/g, ""), tail[2] && "%"]);
+  if (!m) return null;
+  // Enota ali beseda za številom (»3 km«, »2 tisoč«, »45 min«): brez sodbe. »%«: velja vrednost ali stotinka (»12,5 %« za 1/8).
+  const unit = m[2];
+  if (unit && unit !== "%") return null;
+  const v = resultValue(m[1].trim());
+  const y = num(texToText(String(p.answerTex)));
+  if (!v || y === null) return null;
+  const dec = /[.,](\d+)$/.exec(v.raw)?.[1].length ?? 0;
+  // Zaokroženo (pol zadnjega mesta) ali odrezano (»0,666« za 2/3, »3« za 10/3; pregled prevzema 3). Pri celem y le točno.
+  const eps = 1e-9 * Math.max(1, Math.abs(y));
+  // Ulomek ali mešano število (»3 1/3«) je točen zapis: brez zaokroževanja.
+  const exact = /\//.test(v.raw);
+  const cut = (x, d) => !exact && !Number.isInteger(y) && Math.sign(x) === Math.sign(y) && Math.abs(x) <= Math.abs(y) + eps && Math.abs(y) - Math.abs(x) < 10 ** -d;
+  const near = (x, d) => Math.abs(x - y) <= Math.max(exact ? 0 : 0.5 * 10 ** -d * (d || !Number.isInteger(y) ? 1 : 0), eps) * (1 + 1e-9) || cut(x, d);
+  if (near(v.x, dec) || (unit === "%" && near(v.x / 100, dec + 2))) return { checked: 1, issue: null };
+  return { checked: 1, issue: `the stated result ${m[1].trim()} is wrong: $${p.problemTex} = ${p.answerTex}$` };
+}
+
 /**
  * Preveri odgovor (brez vrstice META) s kodo.
  * @returns {{ checked: number, issue: string|null }} checked = koliko računov in vrednosti je koda preverila
  */
+// AUDIT-066 (pregled prevzema 6, j na kartici): vrstica, ki jo main preskoči le zaradi »če«, »ali«, »bi« ali »?«, je
+// lahko namerni primer napake (»Če najprej množimo: …«). Napačen račun v njej ni sodba kode, le blaga ugotovitev za
+// obstoječi plačani popravek, ki ob pravilni razlagi odgovori »OK«.
+const SOFT_SKIP_WORDS = /\?|(?<!\p{L})(?:če|ali|bi|if)(?!\p{L})/giu;
+const softSkip = (line) => notClaimAt(line) && !SKIP_LINE.test(line.replace(SOFT_SKIP_WORDS, " "));
+const SOFT_HINT =
+  "This line may be a deliberate example of a mistake (an »if«/»or« case, a hypothetical or a question to the student): answer OK unless the tutor really presents the wrong value as true.";
+
 export function codeFindings(answer, pre = null, question = "") {
   let checked = 0;
+  let soft = null; // AUDIT-066: le če koda sicer ne najde ničesar
   try {
     const r = checkArithmetic(String(answer || ""));
     checked += r.checked;
     // Vrstice z učenčevim ali namerno napačnim računom (»Ti si napisal $3 + 4 \\cdot 2 = 14$«) niso napaka odgovora.
     const lines = String(answer || "").split("\n");
-    const real = r.mismatches.filter((m) => !SKIP_LINE.test(lines[m.line - 1] || ""));
+    // Račun, ki ga je napisal tudi učenec, se preverja: »Prav, $7 \cdot 8 = 54$« ob učenčevem 54 je napaka (P1).
+    const real = r.mismatches.filter((m) => {
+      const line = lines[m.line - 1] || "";
+      return !notClaimAt(line);
+    });
     if (real.length) {
       const m = real[0];
       return { checked, issue: `in the step $${m.tex}$ the calculation does not hold: ${m.left} ≠ ${m.right}` };
     }
+    const s = r.mismatches.find((m) => softSkip(lines[m.line - 1] || ""));
+    if (s) soft = `in the step $${s.tex}$ the calculation does not hold: ${s.left} ≠ ${s.right}. ${SOFT_HINT}`;
   } catch {
     // račun, ki ga ni mogoče prebrati, ni napaka
+  }
+  const der = (pre?.problems || []).filter((p) => p.type === "derivative");
+  if (der.length === 1) {
+    const d = derivativeIssue(answer, der[0]);
+    if (d) {
+      checked += d.checked;
+      if (d.issue) return { checked, issue: d.issue };
+    }
+  }
+  const ar = (pre?.problems || []).filter((p) => p.type === "arith");
+  if (ar.length === 1) {
+    const b = bareResultIssue(answer, ar[0]);
+    if (b) {
+      checked += b.checked;
+      if (b.issue) return { checked, issue: b.issue, sure: true }; // sure: AUDIT-060, opomba brez modela
+    }
   }
   const eq = (pre?.problems || []).filter((p) => p.type === "equation" || p.type === "system");
   if (eq.length === 1) {
@@ -290,6 +539,7 @@ export function codeFindings(answer, pre = null, question = "") {
   if (chemIssues.length) return { checked, issue: chemIssues.join("; ") };
   const c = celsiusIssue(answer, question);
   checked += c.checked;
+  if (!c.issue && soft) return { checked, issue: soft, soft: true }; // ni sodba kode, nikoli »sure«
   return { checked, issue: c.issue || null };
 }
 
@@ -818,10 +1068,8 @@ const val = (x) => (typeof x === "function" ? x() : x);
 // Vaja: oznaka z dvopičjem v svoji vrstici (»**Vaja:**«, ki jo zahteva prompt, »Dodatna vaja:«, »Za vajo:«,
 // »Practice:«). Sam okvir »Zapomni si« je v večini razlag, zato šteje le ob oznaki rešene naloge (Podatki,
 // Iščemo ali Preverba iz vzorca za računske naloge).
-const EXERCISE_RE = /(?:^|\n)[ \t>*_]*(?:dodatna vaja|vaja|za vajo|practice(?: exercise)?)[*_ \t]*[:：]/iu;
 const BOX_RE = /📌|zapomni si/iu;
 const SOLVED_RE = /(?:^|\n)[ \t>*_\d.]*(?:podatki|iščemo|preverba)[*_ \t]*[:：]/iu;
-export const hasExercise = (answer) => EXERCISE_RE.test(String(answer || ""));
 // Načrt poskusa v odgovoru (»Boljši načrt«, »Izboljšan načrt«, »načrt poskusa«, kontrolna skupina). Pregled PR #848: tudi
 // odgovor samo z načrtom (brez vaje ali okvirja) gre v pregled (j: natančnost).
 const PLAN_RE = /(?<!\p{L})(?:(?:boljši|izboljšan\p{L}*|popravljen\p{L}*|nov\p{L}*)\s+načrt|načrt\p{L}*\s+poskus\p{L}*|kontroln\p{L}*\s+skupin\p{L}*|improved\s+plan|experimental\s+design)/iu;
@@ -925,10 +1173,26 @@ export function noteReviewSkip(db, stopnja, reason) {
 
 // Učenčevo sporočilo je rezultat ali trditev, o kateri bo inštruktor sodil: število, enačba, zapis
 // z »=«, ali odgovor (ne vprašanje) na inštruktorjevo vprašanje.
+// Brez dvoumnih zaporednih \s* v ponovljeni skupini (pregled prevzema 2: »x = 5« + 18 × » ne« + » y?« je trajalo > 30 s):
+// enota ne sme biti beseda repa (»ne«, »ali« …), med deli je vejica ali presledek (ne oboje kot dva \s*), rep največ 3-krat,
+// sporočilo največ CQ_MAX znakov. Za besedo repa ni nove vrednosti (pregled prevzema 3: »x = 4 ali x = 6?« je vprašanje).
+// Pregled prevzema 5: kot prezrta sodba šteje le izrecna potrditev (sodba-koraka.js, verdictIgnored, »asked«).
+const CQ_TAIL_WORD = String.raw`(?:ali|ne|prav|kajne|a ne|res|right)(?![\p{L}])`;
+const CQ_NUM = String.raw`[-−+]?\d+(?:[.,]\d+)?(?:\s*\/\s*\d+)?(?:\s*(?!${CQ_TAIL_WORD})[A-Za-zµΩ]{1,4}(?:\/[A-Za-z]{1,3})?[²³]?(?![\p{L}]))?`;
+const CQ_LHS = String.raw`(?:[a-zA-Z](?:_?\{?\d\}?)?|\d+[a-zA-Z]|[\d(][\d.,+\-−*·×:/()^ ]{0,60}?)`;
+const CQ_VAL = String.raw`(?:${CQ_LHS}\s*(?:=|je)\s*${CQ_NUM}|${CQ_NUM})`;
+const CQ_MAX = 120;
+const CLAIM_QUESTION = new RegExp(
+  String.raw`^(?:(?:a|ali)\s+)?(?:je\s+)?(?:(?:mogoče|morda|menda|torej|potem|rezultat(?:\s+je)?|to\s+je)\s*)?${CQ_VAL}(?:(?:\s*,\s*|\s+)${CQ_TAIL_WORD}){0,3}\s*\?+$`,
+  "iu",
+);
 export function isClaim(text, prevTutor = "") {
   const t = String(text || "").trim();
   if (!t || t.length > 1500) return false;
-  if (/\?\s*$/.test(t)) return false; // vprašanje, ne trditev
+  // Vprašanje ni trditev, razen če je VSE sporočilo predlog vrednosti ali rezultata (»x = 5?«, »je 7 · 8 = 54?«,
+  // »mogoče 12?«, »x = 4, ne?«): tak negotov odgovor je trditev, o kateri inštruktor sodi (AUDIT-059). Vprašanje z
+  // drugimi besedami (»Kaj dobim, če je x = 5?«, »Lahko narediš še eno z x = 2?«, »Kaj pa 3x = 15?«) ostane vprašanje.
+  if (/\?\s*$/.test(t)) return t.length <= CQ_MAX && CLAIM_QUESTION.test(t.replace(/\s+/g, " "));
   if (/\d|=/.test(t)) return true;
   return /\?\s*$/.test(String(prevTutor || "").trim()) && /\p{L}{2,}/u.test(t);
 }
@@ -996,7 +1260,7 @@ export function noSolution(p) {
  * vrednost. Vrne opombo za model (pravilno ali napačno z rešitvijo) ali null, če koda ne more soditi.
  */
 export function claimNote(text, pre) {
-  const problems = (pre?.problems || []).filter((p) => p.type === "equation" || p.type === "arith");
+  const problems = (pre?.problems || []).filter((p) => p.type === "equation" || (p.type === "arith" && !p.narrow));
   if (problems.length !== 1) return null;
   const p = problems[0];
   let vars = p.type === "arith" ? ["r"] : [...new Set([...String(p.answerTex || "").matchAll(/([a-zA-Z])(?:_\{?\d+\}?)?\s*=/g)].map((m) => m[1]))];

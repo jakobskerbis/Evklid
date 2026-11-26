@@ -14,6 +14,9 @@
 import { casCheck } from "./cas.js";
 import { parseSpecies } from "../public/graph/chemcore.js";
 import { MASSES } from "../public/graph/pse-data.js";
+import { texToText } from "../public/scan/solvecore.js";
+import { parse, compile, calcText } from "../public/graph/math.js";
+import { notClaimAt, hasExercise, TEX_SHORT } from "./besedilo-trditev.js";
 
 // Tudi »RAČUN« (model piše slovensko); bloka učenec v nobeni obliki ne vidi (server/meta.js).
 const BLOCK_RE = /<<\s*RA[CČ]UN\b([\s\S]*?)>>/g;
@@ -126,7 +129,7 @@ async function checkOne(c) {
 const BUDGET_MS = () => Number(process.env.EVKLID_RACUN_BUDGET_MS) || 20_000;
 
 export async function checkClaims(claims, { max = MAX_CLAIMS, budgetMs = BUDGET_MS() } = {}) {
-  const out = { checked: 0, failed: [], unsure: [] };
+  const out = { checked: 0, failed: [], unsure: [], confirmed: [] };
   const t0 = Date.now();
   for (const c of claims.slice(0, max)) {
     let r;
@@ -135,7 +138,10 @@ export async function checkClaims(claims, { max = MAX_CLAIMS, budgetMs = BUDGET_
     } catch (e) {
       r = { ok: null, why: String(e?.message || e) };
     }
-    if (r.ok === true) out.checked++;
+    if (r.ok === true) {
+      out.checked++;
+      out.confirmed.push(c);
+    }
     else if (r.ok === false) {
       out.checked++;
       out.failed.push({ line: c.line, why: r.why });
@@ -151,12 +157,135 @@ export function claimIssue(res) {
   return `an exact computer-algebra check of the claim »${f.line}« found it wrong (${f.why})`;
 }
 
+// Blok RACUN preveri le sebe (AUDIT-064): model zapiše trditve dvakrat, vidno in v bloku. Če vidno besedilo navede
+// drugo vrednost neznanke kot blok (»$x = 5$«, v bloku »resi: 2*x+3=11 | x | 4«), je »potrjen« le blok, učenec pa vidi
+// napačno vrednost. Zato se rešitve (»resi«) primerjajo z vrednostmi iste neznanke v vidnem besedilu.
+// Število po istem pravilu kot kalkulatorja (calcText: decimalna vejica, »1 000«); »1.000« (tisočice ali decimalke?)
+// ni jasno in se ne bere (pregled #1016).
+const numOf = (t) => {
+  const raw = String(t).trim();
+  if (/(?<![\d.,])[1-9]\d{0,2}(?:\.\d{3})+(?![\d,.])/.test(raw)) return null;
+  try {
+    const v = compile(parse(calcText(raw, { comma: true })))({});
+    return typeof v === "number" && Number.isFinite(v) ? v : null;
+  } catch {
+    return null;
+  }
+};
+const close = (a, b) => Math.abs(a - b) <= 1e-6 * Math.max(1, Math.abs(a), Math.abs(b));
+// Vrednost, ki jo besedilo navede kot rešitev (pregled prevzema 3): pred njo je v istem stavku »rešitev«, »ničla«,
+// »torej« … ali pa vrstica nima drugega besedila kot zapise (»$x_1 = 2$, $x_2 = 3$«). »Teme je v $x = 2{,}5$«, »Izločimo
+// $x = 1$«, »Na intervalu od $x = 0$ …« zato niso rešitve.
+const SOLUTION_WORD = /(?<!\p{L})(?:rešit\p{L}*|ničl\p{L}*|torej|zato|sledi|dobimo|solution\p{L}*|therefore|hence|zero\p{L}*)(?!\p{L})/iu;
+const MATH_SEG = /\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g;
+/**
+ * Vrednosti neznanke, ki jih vidno besedilo (brez blokov) navede kot rešitev. Vrstica se preskoči kot pri končnih
+ * vrednostih na main (SKIP_LINE: vprašanje, »če«, »ali«, učenčev zapis, »poskus« …), tudi vrstica z drugo enačbo v tej
+ * neznanki (»Za vajo: reši $3x = 15$. Rešitev: $x = 5$.«, »$2x = 8$, torej …«); od vrstice z vajo naprej se ne bere.
+ * Približek (≈, ≐) in neenakost se ne bereta.
+ */
+const OTHER_TASK = /naloga|podobn|zdaj ti|še ena|(?<!\p{L})(?:your turn|try this|another)(?!\p{L})/iu;
+// Vse vrednosti »$v = …$« v besedilu, tudi v preskočenih vrsticah (pregled prevzema 4).
+function anyValues(plain, v) {
+  const lhsRe = new RegExp(`^${v}(?:_?\\(?(\\d)\\)?)?$`);
+  const out = [];
+  for (const m of plain.matchAll(MATH_SEG)) {
+    for (const piece of texToText(m[1] ?? m[2]).split(/,\s+|;|\bin\b/)) {
+      const parts = piece.split("=").map((x) => x.trim());
+      if (parts.length < 2 || !lhsRe.test(parts[0])) continue;
+      const n = numOf(parts.at(-1).replace(/[.]$/, ""));
+      if (n !== null) out.push(n);
+    }
+  }
+  return out;
+}
+// Zapisi, ki jih branje vrednosti ne razume zanesljivo (pregled prevzema 6): »\frac12«, »0{,}\overline{6}«, »0,(3)«,
+// »1{,}41\ldots«, mešani ulomek »1\tfrac12«, kot (»30°«, »30^\circ«), enota ali beseda za številom.
+const UNSURE_TEX = /\\overline|\\l?dots|…|°|\\circ|\d\s*\\[dt]?frac(?![a-zA-Z])|\d(?:[.,]|\{,\})\d*\(\d+\)/;
+const NEXT_OK = /^[^\S\n]*(?:$|[.,;:!)\]*_]|(?:in|and|ter|or)(?!\p{L}))/u;
+function visibleValues(text, v) {
+  const plain = String(text || "").replace(BLOCK_RE, "").replace(/<<META[^<>]*>>/g, "");
+  const lhsRe = new RegExp(`^${v}(?:_?\\(?(\\d)\\)?)?$`);
+  const varRe = new RegExp(`(?<![a-zA-Z])${v}(?![a-zA-Z])`);
+  const out = [];
+  for (const line of plain.split("\n")) {
+    // Od vaje ali druge naloge naprej se ne bere (pregled prevzema 4: »**Zdaj ti:** $3x + 1 = 16$«, »Podobna naloga: …«).
+    if (hasExercise(line) || OTHER_TASK.test(line)) break;
+    if (notClaimAt(line)) continue;
+    const segs = [...line.matchAll(MATH_SEG)];
+    if (!segs.length) continue;
+    const texts = segs.map((m) => texToText(m[1] ?? m[2]));
+    // druga enačba v tej neznanki (leva stran ni sama neznanka): od tod naprej postopek ali druga naloga
+    if (texts.some((t) => t.includes("=") && varRe.test(t) && !lhsRe.test(t.split("=")[0].trim()))) break;
+    const onlyMath = !/[\p{L}\d]/u.test(line.replace(MATH_SEG, " ").replace(/(?<!\p{L})(?:in|and|ter)(?!\p{L})/giu, " "));
+    segs.forEach((m, k) => {
+      const tex = m[1] ?? m[2];
+      if (/\\pm|\\mp|[±∓]|\\approx|\\doteq|≈|≐|\\neq|≠|<|>|\\le|\\ge/.test(tex)) return;
+      if (TEX_SHORT.test(tex) || UNSURE_TEX.test(tex)) return;
+      // beseda ali enota takoj za zapisom (»$x = 5$ cm«, »$x = 30$ stopinj«): ni gola vrednost
+      if (!NEXT_OK.test(line.slice(m.index + m[0].length))) return;
+      if (!onlyMath) {
+        const before = line.slice(Math.max(0, m.index - 200), m.index);
+        const cut = Math.max(before.lastIndexOf(". "), before.lastIndexOf("! "), before.lastIndexOf("? "));
+        if (!SOLUTION_WORD.test(cut >= 0 ? before.slice(cut + 2) : before)) return;
+      }
+      // ločila med vrednostmi: », « (z presledkom), »;«, »in«, \quad; »2,5« je eno število
+      for (const piece of texts[k].split(/,\s+|;|\bin\b/)) {
+        const parts = piece.split("=").map((x) => x.trim());
+        if (parts.length < 2 || !lhsRe.test(parts[0])) continue;
+        const last = parts.at(-1).replace(/[.]$/, "");
+        if (/^[-−+]?\d[\d.,\s]*[\p{L}µ%]/u.test(last)) continue; // enota ali beseda za številom v zapisu
+        const n = numOf(last);
+        // zaokrožena vrednost (»x = 1,41« za √2, »0,33« za 1/3): pol zadnjega zapisanega mesta
+        const dec = /^[-−+]?\d+[.,](\d+)$/.exec(last.replace(/\s/g, ""))?.[1].length ?? null;
+        if (n !== null) out.push({ n, tol: dec === null ? 0 : 0.5 * 10 ** -dec });
+      }
+    });
+  }
+  return out;
+}
+/**
+ * Navedena rešitev, ki ni enaka nobeni rešitvi iz potrjenih blokov »resi« za to neznanko, je napaka. Ob dvomu nič:
+ * rešitve iz bloka ni mogoče prebrati, ali besedilo navede več različnih vrednosti, kot ima naloga rešitev (»$x = 3$ …
+ * ničli pa sta $x = 0$ in $x = 6$«: druge vrednosti so del razlage).
+ */
+export function visibleIssue(text, claims) {
+  const sols = new Map();
+  for (const c of claims) {
+    if (c.op !== "solve" || c.args.length < 3 || !/^[a-zA-Z]$/.test(c.args[1])) continue;
+    // logaritemske enačbe: zapisi vrednosti (osnova, \log_2) se berejo nezanesljivo (pregled prevzema 6)
+    const unsureEq = /log|(?<![a-zA-Z])ln(?![a-zA-Z])/i.test(c.args[0]);
+    const raw = c.args[2].split(/[,;]/).map((x) => x.trim()).filter(Boolean);
+    const vals = raw.map(numOf);
+    const prev = sols.get(c.args[1]) || { vals: [], text: [], unsure: false };
+    sols.set(c.args[1], { vals: [...prev.vals, ...vals.filter((x) => x !== null)], text: [...prev.text, c.args[2]], unsure: prev.unsure || unsureEq || !raw.length || vals.includes(null) });
+  }
+  for (const [v, s] of sols) {
+    if (s.unsure) continue;
+    const near = (x, y) => close(x.n, y) || Math.abs(x.n - y) <= x.tol * (1 + 1e-9);
+    const seen = visibleValues(text, v);
+    const keys = new Set();
+    const distinct = seen.filter((x) => !keys.has(+x.n.toPrecision(9)) && keys.add(+x.n.toPrecision(9)));
+    if (!distinct.length || distinct.length > new Set(s.vals).size) continue;
+    // Pravilna vrednost kjerkoli v besedilu (tudi v preskočeni vrstici): brez sodbe (pregled prevzema 4).
+    const plain = String(text || "").replace(BLOCK_RE, "").replace(/<<META[^<>]*>>/g, "");
+    if (anyValues(plain, v).some((n) => s.vals.some((y) => close(n, y)))) continue;
+    const bad = distinct.filter((x) => !s.vals.some((y) => near(x, y)));
+    if (bad.length) {
+      return `the answer text states ${v} = ${bad.map((x) => String(+x.n.toPrecision(10)).replace(".", ",")).join(", ")}, but the exactly checked solution is ${v} = ${s.text.join("; ")}`;
+    }
+  }
+  return null;
+}
+
 /** Celoten krog za besedilo: trditve iz bloka → { checked, issue, failed, unsure, claims }. */
 export async function checkAnswerClaims(text) {
   const claims = parseClaims(text);
   if (!claims.length) return { checked: 0, issue: null, failed: [], unsure: [], claims: 0 };
   const r = await checkClaims(claims);
-  return { ...r, issue: claimIssue(r), claims: claims.length };
+  // Vidno besedilo le proti blokom, ki jih je SymPy res potrdil (pregled prevzema 2): nepreverjen blok ali blok z le
+  // enim od dveh korenov ni »točno preverjena rešitev«; brez SymPy ni primerjave.
+  return { ...r, issue: claimIssue(r) || (r.failed.length ? null : visibleIssue(text, r.confirmed || [])), claims: claims.length };
 }
 
 // Števec (kv »racun_statistika«): { "2026-11-11": { odgovori, z_blokom, potrjene, napake, nepreverjene } },
