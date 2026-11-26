@@ -453,3 +453,45 @@ theorem oklep (a : ℝ) : (1 < a → 0 < a) ∧ (a = a) := ⟨fun h => by linari
 test("lean-aksiomi: vsak izrek iz kazala gre v #print axioms (napačno ime v kazalu Lean zavrne)", () => {
   assert.deepEqual(imenaZaPreverjanje(["A.x", "A.y"], [{ izrek: "A.x" }, { izrek: "A.napacno" }]), ["A.x", "A.y", "A.napacno"]);
 });
+
+test("lean/oznake-dolg.json: datoteka na seznamu brez oznak (priče še veljajo), nova neoznačena pade, seznam se le krči", () => {
+  const koren = fs.mkdtempSync(path.join(os.tmpdir(), "lean-oznake-"));
+  fs.mkdirSync(path.join(koren, "content/lessons/MAT-SS-4"), { recursive: true });
+  fs.mkdirSync(path.join(koren, "lean/Evklid/Lekcije/MAT_SS_4"), { recursive: true });
+  const pravi = crypto.createHash("sha256").update(LEKCIJA).digest("hex");
+  const lekcija = (ime) => {
+    fs.writeFileSync(path.join(koren, `content/lessons/MAT-SS-4/${ime}.md`), LEKCIJA);
+    return `/-\nvir: content/lessons/MAT-SS-4/${ime}.md\nsha256: ${pravi}\n-/\nmodule\n\npublic import Mathlib\n\nnamespace Evklid.Lekcije.MAT_SS_4.X\n`;
+  };
+  const neoznacena = (ime) => `${lekcija(ime)}
+/-- Razlaga brez oznak. -/
+theorem brez (x : ℝ) : x = x := rfl
+
+theorem s_predpostavko (x : ℝ) (hx : 0 < x) : 0 ≤ x := hx.le
+
+end Evklid.Lekcije.MAT_SS_4.X
+`;
+  const pot = "lean/Evklid/Lekcije/MAT_SS_4/Stara.lean";
+  fs.writeFileSync(path.join(koren, pot), neoznacena("stara"));
+  const dir = path.join(koren, "lean/Evklid/Lekcije");
+  const zapisi = (x) => fs.writeFileSync(path.join(koren, "lean/oznake-dolg.json"), JSON.stringify(x));
+
+  // brez seznama: oznake manjkajo
+  assert.ok(preveri({ dir, root: koren }).napake.some((n) => /Stara\.lean:\d+ brez: docstring nima/.test(n)));
+  // na seznamu: oznake se ne preverjajo, kazala ni, pravilo za priče pa velja
+  zapisi([pot]);
+  let r = preveri({ dir, root: koren, osnovaOznak: [pot] });
+  assert.deepEqual(r.trditve, []);
+  assert.deepEqual(r.napake.map((n) => n.replace(/^.*?\.lean:\d+ /, "")), ["s_predpostavko: predpostavke hx brez primera izpolnljivosti, ki izrek uporabi (docs/lean.md, »Lekcije (L2)«)"]);
+  // nova neoznačena datoteka, ki ni na seznamu, pade
+  fs.writeFileSync(path.join(koren, "lean/Evklid/Lekcije/MAT_SS_4/Nova.lean"), neoznacena("nova"));
+  r = preveri({ dir, root: koren, osnovaOznak: [pot] });
+  assert.ok(r.napake.some((n) => /Nova\.lean:\d+ brez: docstring nima/.test(n)));
+  assert.ok(!r.napake.some((n) => /Stara\.lean:\d+ brez: docstring nima/.test(n)));
+  // seznam se ne sme večati glede na osnovno vejo; vnos za neobstoječo datoteko je napaka
+  zapisi([pot, "lean/Evklid/Lekcije/MAT_SS_4/Nova.lean"]);
+  assert.ok(preveri({ dir, root: koren, osnovaOznak: [pot] }).napake.some((n) => /oznake-dolg\.json: nov vnos .*Nova\.lean/.test(n)));
+  zapisi([pot, "lean/Evklid/Lekcije/MAT_SS_4/Ni.lean"]);
+  assert.ok(preveri({ dir, root: koren }).napake.some((n) => /Ni\.lean ne obstaja/.test(n)));
+  fs.rmSync(koren, { recursive: true });
+});

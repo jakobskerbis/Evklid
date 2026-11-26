@@ -390,9 +390,10 @@ export function izsekVLekciji(izsek, md) {
 /**
  * Preveri eno datoteko Lean z dokazi lekcije. rel: pot za sporočila, txt: besedilo .lean, md: lekcija (ali null),
  * vir: content/lessons/<pot>.md, sha: sha256 iz glave, dolg: Map polno ime → zgoščena izjava izrekov, ki so bili brez
- * primera izpolnljivosti že pred strožjim pravilom (lean/izpolnljivo-dolg.json). Vrne { napake, opozorila, trditve, dolg }.
+ * primera izpolnljivosti že pred strožjim pravilom (lean/izpolnljivo-dolg.json); brezOznak: datoteka je na
+ * lean/oznake-dolg.json (oznake trditev/besedilo/pomozno se ne preverjajo, izreki ne gredo v kazalo). Vrne { napake, opozorila, trditve, dolg }.
  */
-export function preveriDatoteko(rel, txt, md, vir, sha, dolg = new Map()) {
+export function preveriDatoteko(rel, txt, md, vir, sha, dolg = new Map(), { brezOznak = false } = {}) {
   const vDolgu = [];
   const napake = [];
   const opozorila = [];
@@ -424,6 +425,18 @@ export function preveriDatoteko(rel, txt, md, vir, sha, dolg = new Map()) {
   }
   const ids = new Map();
   const citati = new Map();
+  // Primer izpolnljivosti izreka d (velja tudi za datoteke brez oznak na lean/oznake-dolg.json).
+  const prica = (d, kje, o) => {
+    const predpostavke = d.binderji.filter(jePredpostavka);
+    const sklep = implikacija(d.izjava);
+    let izp = o.izpolnljivoRocno ? "ročno" : "primer";
+    if ((predpostavke.length || sklep) && !izpolnjeni.has(d.ime) && !o.izpolnljivoRocno) {
+      const kaj = [...predpostavke.map((b) => b.imena.join(" ") || b.tip), ...(sklep ? ["»→« v sklepu"] : [])].join(", ");
+      if (dolg.get(d.polnoIme) === zgostiPodpis(d.podpis)) (vDolgu.push(d.polnoIme), (izp = "dolg"));
+      else napake.push(`${kje}: predpostavke ${kaj} brez primera izpolnljivosti, ki izrek uporabi (docs/lean.md, »Lekcije (L2)«)`);
+    } else if (dolg.has(d.polnoIme)) napake.push(`${kje}: izrek ima primer izpolnljivosti (ali ga ne potrebuje); odstrani ga iz lean/izpolnljivo-dolg.json`);
+    return { predpostavke, sklep, izp };
+  };
   for (const d of izreki) {
     // Izrek T_izpolnljivo, ki je prava priča za T, ni trditev lekcije; drugače je navaden izrek (oznake so obvezne).
     if (pricaZa.get(d.ime)) continue;
@@ -437,6 +450,11 @@ export function preveriDatoteko(rel, txt, md, vir, sha, dolg = new Map()) {
       if (o.trditev || o.besedilo) napake.push(`${kje}: »pomozno« in »trditev:« hkrati`);
       const prvi = (d.doc?.text || "").split("\n").filter((v) => !/^\s*pomozno\b/.test(v)).join(" ");
       if (/\b(primer|primeru|primera|naloga|nalogi|naloge)\b/i.test(prvi)) opozorila.push(`${kje}: »pomozno«, docstring pa omenja primer ali nalogo (je to trditev lekcije?)`);
+      continue;
+    }
+    if (brezOznak) {
+      // datoteka čaka ročne navedke (lean/oznake-dolg.json): brez oznak in brez kazala, priče pa veljajo
+      prica(d, kje, o);
       continue;
     }
     if (!o.trditev || o.besedilo == null) {
@@ -460,14 +478,7 @@ export function preveriDatoteko(rel, txt, md, vir, sha, dolg = new Map()) {
       if (glave.has(b) || glave.has(normaliziraj(b.replace(/^\|\s*|\s*\|$/g, "")))) napake.push(`${kje}: besedilo »${b.slice(0, 60)}« je glava tabele, ne trditev (citiraj vrstico izreka)`);
       citati.set(b, [...(citati.get(b) || []), d.ime]);
     }
-    const predpostavke = d.binderji.filter(jePredpostavka);
-    const sklep = implikacija(d.izjava);
-    let izp = o.izpolnljivoRocno ? "ročno" : "primer";
-    if ((predpostavke.length || sklep) && !izpolnjeni.has(d.ime) && !o.izpolnljivoRocno) {
-      const kaj = [...predpostavke.map((b) => b.imena.join(" ") || b.tip), ...(sklep ? ["»→« v sklepu"] : [])].join(", ");
-      if (dolg.get(d.polnoIme) === zgostiPodpis(d.podpis)) (vDolgu.push(d.polnoIme), (izp = "dolg"));
-      else napake.push(`${kje}: predpostavke ${kaj} brez primera izpolnljivosti, ki izrek uporabi (docs/lean.md, »Lekcije (L2)«)`);
-    } else if (dolg.has(d.polnoIme)) napake.push(`${kje}: izrek ima primer izpolnljivosti (ali ga ne potrebuje); odstrani ga iz lean/izpolnljivo-dolg.json`);
+    const { predpostavke, sklep, izp } = prica(d, kje, o);
     trditve.push({
       id: o.trditev,
       izrek: d.polnoIme,
@@ -489,7 +500,11 @@ export const zgostiPodpis = (podpis) => crypto.createHash("sha256").update(podpi
  * primerja z osnovno vejo); vsak nov ali spremenjen izrek potrebuje primer. Dokončno: PV-13 (Lean preveri tip primera). */
 export const DOLG = path.join(ROOT, "lean", "izpolnljivo-dolg.json");
 
-export function preveri({ dir = DIR, root = ROOT, dolgPot = path.join(root, "lean", "izpolnljivo-dolg.json"), osnovaDolga = null } = {}) {
+/** Datoteke z dokazi, ki še čakajo ročne navedke PV-09 (lean/oznake-dolg.json, seznam poti; j 26. 11. 2026: lekcije
+ * iz #1145 in kasnejše z main). Seznam se sme le krčiti; nova datoteka mora biti označena. */
+export const OZNAKE_DOLG = path.join(ROOT, "lean", "oznake-dolg.json");
+
+export function preveri({ dir = DIR, root = ROOT, dolgPot = path.join(root, "lean", "izpolnljivo-dolg.json"), osnovaDolga = null, oznakeDolgPot = path.join(root, "lean", "oznake-dolg.json"), osnovaOznak = null } = {}) {
   const napake = [];
   const opozorila = [];
   const pokrite = new Set();
@@ -502,6 +517,14 @@ export function preveri({ dir = DIR, root = ROOT, dolgPot = path.join(root, "lea
     for (const x of dolgSeznam) if (!prej.has(`${x.izrek} ${x.podpis}`)) napake.push(`lean/izpolnljivo-dolg.json: nov vnos ${x.izrek} (seznam se sme le krčiti; dodaj primer izpolnljivosti)`);
   }
   const vDolgu = new Set();
+  const brezOznak = fs.existsSync(oznakeDolgPot) ? JSON.parse(fs.readFileSync(oznakeDolgPot, "utf8")) : [];
+  const brezOznakSet = new Set(brezOznak);
+  if (brezOznakSet.size !== brezOznak.length) napake.push("lean/oznake-dolg.json: podvojena pot");
+  if (osnovaOznak) {
+    const prej = new Set(osnovaOznak);
+    for (const x of brezOznak) if (!prej.has(x)) napake.push(`lean/oznake-dolg.json: nov vnos ${x} (seznam se sme le krčiti; označi izreke)`);
+  }
+  for (const x of brezOznak) if (!fs.existsSync(path.join(root, x))) napake.push(`lean/oznake-dolg.json: ${x} ne obstaja; odstrani vnos`);
   for (const f of walk(dir)) {
     const rel = path.relative(root, f);
     const celo = fs.readFileSync(f, "utf8");
@@ -518,7 +541,7 @@ export function preveri({ dir = DIR, root = ROOT, dolgPot = path.join(root, "lea
     }
     if (pokrite.has(vir)) napake.push(`${rel}: lekcija ${vir} ima že drugo datoteko z dokazi`);
     pokrite.add(vir);
-    const r = preveriDatoteko(rel, celo, md && md.toString("utf8"), vir, sha, dolg);
+    const r = preveriDatoteko(rel, celo, md && md.toString("utf8"), vir, sha, dolg, { brezOznak: brezOznakSet.has(rel) });
     for (const x of r.dolg) vDolgu.add(x);
     napake.push(...r.napake);
     opozorila.push(...r.opozorila);
@@ -535,7 +558,7 @@ export function preveri({ dir = DIR, root = ROOT, dolgPot = path.join(root, "lea
     }
   }
   trditve.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
-  return { napake, opozorila, pokrite: [...pokrite].sort(), pokriteMat, vseMat: vseMat.length, trditve, dolg: vDolgu.size };
+  return { napake, opozorila, pokrite: [...pokrite].sort(), pokriteMat, vseMat: vseMat.length, trditve, dolg: vDolgu.size, brezOznak: brezOznak.length };
 }
 
 /** Vsebina lean/trditve.json: kazalo { id, izrek, sha256, vir, besedilo } za zapis trditve (dokaz: { izrek, sha256 }). */
@@ -544,7 +567,9 @@ export const kazaloJson = (trditve) => `[\n${trditve.map((t) => JSON.stringify(t
 if (import.meta.url === `file://${process.argv[1]}`) {
   const io = process.argv.indexOf("--osnova-dolga");
   const osnovaDolga = io > 0 ? JSON.parse(fs.readFileSync(process.argv[io + 1], "utf8") || "[]") : null;
-  const r = preveri({ osnovaDolga });
+  const ioz = process.argv.indexOf("--osnova-oznak");
+  const osnovaOznak = ioz > 0 ? JSON.parse(fs.readFileSync(process.argv[ioz + 1], "utf8") || "[]") : null;
+  const r = preveri({ osnovaDolga, osnovaOznak });
   const nov = kazaloJson(r.trditve);
   if (process.argv.includes("--zapisi")) fs.writeFileSync(KAZALO, nov);
   else if (!fs.existsSync(KAZALO) || fs.readFileSync(KAZALO, "utf8") !== nov) {
@@ -553,7 +578,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   if (process.argv.includes("--json")) console.log(JSON.stringify(r, null, 2));
   else {
     const rocno = r.trditve.filter((t) => t.izpolnljivo === "ročno").length;
-    console.log(`Lean dokazi lekcij matematike OŠ/SŠ: ${r.pokriteMat} od ${r.vseMat}; trditev z id: ${r.trditve.length} (izpolnljivo ročno: ${rocno}; brez primera iz dolga, PV-13: ${r.dolg}).`);
+    console.log(`Lean dokazi lekcij matematike OŠ/SŠ: ${r.pokriteMat} od ${r.vseMat}; trditev z id: ${r.trditve.length} (izpolnljivo ročno: ${rocno}; brez primera iz dolga, PV-13: ${r.dolg}; datotek brez oznak: ${r.brezOznak}).`);
     for (const n of r.napake) console.log(`✗ ${n}`);
     for (const n of r.opozorila) console.log(`⚠ ${n}`);
   }

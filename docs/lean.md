@@ -135,6 +135,12 @@ neobstoječim imenom. Besedilno ni mogoče preveriti, da primer poda **vse** pre
 (primer `have w : … := by norm_num; izrek (hx := w.1)` pusti »→« v sklepu nedokazan; dolg zgoraj): to preveri Lean
 sam (tip primera brez preostalih `∀`/`→`), PV-13.
 
+Datoteke z dokazi lekcij, ki so prišle na main pred PV-09 brez oznak (MAT-SS-1 iz #1145 in MAT-OŠ-9), čakajo ročne
+navedke v ločenem PR (j, 26. 11. 2026). Njihove poti so v `lean/oznake-dolg.json`: oznake `trditev:`/`besedilo:`/`pomozno`
+se tam ne preverjajo in izreki ne gredo v `lean/trditve.json`; aksiomi, prepovedane besede, razčlenjevalnik in primeri
+izpolnljivosti (izreki brez primera so v `lean/izpolnljivo-dolg.json`) veljajo. Seznam se sme le krčiti (`lean-lekcije.yml`,
+`--osnova-oznak`), nova datoteka mora biti označena.
+
 `scripts/lean-lekcije.mjs` (in `.github/workflows/lean-lekcije.yml`) javi, ko se lekcija spremeni po dokazu, ko
 izreku manjka `trditev:`/`besedilo:` (ali `pomozno`), ko je id podvojen ali citata ni v lekciji in ko predpostavke
 nimajo primera. Kazalo `lean/trditve.json` (`{ id, izrek, sha256, vir, besedilo }`, pri predpostavkah še
