@@ -1,0 +1,26 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Odboj
+  - vpeto krajišče: hrib se vrne kot dolina
+  - prosto krajišče: hrib ostane hrib
+- Zaporedne slike
+  - obliko premakni za $\Delta x = c\,\Delta t$
+  - pred vrhom se delec dviga
+  - delec na vrhu za hip miruje
+- Stoječe valovanje
+  - dva enaka vala potujeta nasproti
+  - vozli mirujejo, hrbti nihajo najmočneje
+  - razdalja med vozloma $\frac{\lambda}{2}$
+- Lastna nihanja
+  - $L = n\,\frac{\lambda}{2}$
+  - $\nu_n = \frac{n\,c}{2L}$
+  - napaka: $L = n\lambda$
+- Hitrost na struni
+  - $c = \sqrt{\frac{F\,l}{m}}$
+  - štirikratna sila: dvakrat višji ton
+  - maso pretvori v kilograme
+- Lom
+  - $\frac{\sin\alpha}{\sin\beta} = \frac{c_1}{c_2}$
+  - valovi v plitvini se obrnejo k obali
