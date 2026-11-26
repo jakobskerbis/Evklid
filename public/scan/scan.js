@@ -6,10 +6,12 @@ import { icon, hydrateIcons } from "../icons.js";
 import { t } from "../i18n.js";
 import { jeOs } from "../stopnja.js";
 import { solve, analyze, prep, tex as exprTex, parseTask, izvorOznak, oznakaGrafa } from "./solvecore.js";
-import { configureKeyboard, toggleKeyboard, keyboardOpenFor, keyboardLayer } from "../tipkovnica.js";
+import { configureKeyboard, toggleKeyboard, keyboardOpenFor, keyboardLayer, hideKeyboard } from "../tipkovnica.js";
 import { measureSource, problemOf, tiltAngle } from "./kakovost.js";
 import { answerParts, soughtParts, soughtNeedsAi } from "./odgovor.js";
 import { STATUSES } from "./status.js";
+import { unclearCount, hasUnclear, fillUnclear, markUnclear, keepOptions } from "./nejasno.js";
+import { zaPolje, izPolja, VIDNA_OZNAKA } from "./zapis-polja.js";
 import { plottableFromText } from "../graph/math.js";
 import { izrisi } from "../mat/izris.js";
 
@@ -28,6 +30,8 @@ const fresh = () => ({
   note: null, // obvestilo nad poljem (npr. brez povezave)
   given: [], // podatki naloge s fotografije (točka, asimptota …), gredo k AI rešitvi
   sought: "", // iskano (»kot, pod katerim graf seka os x«): ni podatek, zato ne izklopi lastnega reševalnika
+  unclear: [], // možnosti za vsak nejasen znak [?] v text (P3-5, public/scan/nejasno.js)
+  unclearNeed: false, // učenec je pritisnil Reši, a so še oznake [?] (sporočilo v obvestilu o branju, ne rdeča napaka)
   quality: null, // težava fotografije (blur | dark | glare), ki jo zaznamo na napravi pred branjem
   shot: null, // zadnja prebrana fotografija (samo v pomnilniku; za pilot se shrani le ob soglasju)
 });
@@ -133,6 +137,7 @@ export function showScan({ text = null, goal = null } = {}) {
     S.text = text;
     S.problems = [];
     S.given = [];
+    S.unclear = [];
     S.sought = "";
     S.goal = goal; // npr. »factor« iz kalkulatorja (razstavi)
     return solveNow();
@@ -244,6 +249,7 @@ function renderCapture(box) {
     S.text = "";
     S.problems = [];
     S.given = [];
+    S.unclear = [];
     S.sought = "";
     S.note = null;
     S.mode = "confirm";
@@ -268,6 +274,7 @@ function renderCapture(box) {
       S.goal = h.goal || null;
       S.problems = [];
       S.given = Array.isArray(h.given) ? h.given.filter((g) => typeof g === "string").slice(0, 10) : [];
+      S.unclear = [];
       S.sought = typeof h.sought === "string" ? h.sought.slice(0, 160) : "";
       solveNow();
     }),
@@ -590,6 +597,7 @@ async function readImage(dataUrl) {
       S.note = t("scan.mock");
       S.problems = [];
       S.given = [];
+      S.unclear = [];
       S.sought = "";
       S.text = "";
       S.mode = "confirm";
@@ -600,6 +608,7 @@ async function readImage(dataUrl) {
     if (!S.problems.length && pilotTask && S.readOk) {
       // Pilot: tudi neuspešno branje oceni (»Prebrano narobe«), zato ostanemo na prepisu.
       S.given = [];
+      S.unclear = [];
       S.sought = "";
       S.text = "";
       S.note = t("scan.readFail");
@@ -608,6 +617,7 @@ async function readImage(dataUrl) {
     }
     if (!S.problems.length) {
       S.given = [];
+      S.unclear = [];
       S.sought = "";
       D.toast(t("scan.readFail"));
       S.mode = "crop";
@@ -615,7 +625,8 @@ async function readImage(dataUrl) {
     }
     S.note = null;
     S.text = S.problems[0].text;
-    S.given = S.problems[0].given || [];
+    S.given = [...(S.problems[0].given || [])];
+    S.unclear = (S.problems[0].unclear || []).map((o) => [...o]);
     S.sought = S.problems[0].sought || "";
     S.goal = S.problems[0].goal || null;
     S.mode = "confirm";
@@ -722,14 +733,18 @@ function renderConfirm(box) {
     <div class="card scan-confirm">
       ${S.problems.length ? `<p class="scan-label">${esc(t("scan.readAs"))}</p>` : ""}
       <div class="scan-preview" aria-live="polite"></div>
-      ${S.given.length ? `<p class="scan-given"><span class="scan-label">${esc(t("scan.given"))}</span>${S.given.map((g) => `<span class="scan-given-item">${math(g)}</span>`).join("")}</p>` : ""}
+      <div class="scan-unclear-host" aria-live="polite"></div>
+      ${S.given.length ? `<p class="scan-given"><span class="scan-label">${esc(t("scan.given"))}</span>${S.given.map((g) => `<span class="scan-given-item${hasUnclear(g) ? " scan-given-unclear" : ""}">${math(boxUnclear(g))}</span>`).join("")}</p>` : ""}
       ${S.sought ? `<p class="scan-given scan-sought"><span class="scan-label">${esc(t("scan.sought"))}</span>${soughtHtml(S.sought)}</p>` : ""}
       <label class="scan-label" for="scan-input">${esc(S.problems.length ? t("scan.inputLabel") : t("scan.typeLabel"))}</label>
       <div class="scan-input-row">
-        <input id="scan-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="text" placeholder="${esc(t("scan.placeholder"))}" value="${esc(S.text)}">
+        <div class="scan-input-wrap">
+          <input id="scan-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="text" placeholder="${esc(t("scan.placeholder"))}" value="${esc(zaPolje(S.text))}">
+          <div class="scan-input-izris" aria-hidden="true"></div>
+        </div>
         <button type="button" class="ghost icon-only" data-act="sym" aria-label="${esc(t("scan.symbols"))}" title="${esc(t("scan.symbols"))}" aria-expanded="false">${icon("sigma")}</button>
       </div>
-      <p class="scan-err" hidden></p>
+      <p class="scan-err" role="alert" hidden></p>
       <div class="scan-actions">
         <button type="button" class="secondary" data-act="retake">${icon("camera")}${esc(t("scan.retake"))}</button>
         <button type="button" class="primary" data-act="solve">${icon("check")}${esc(t("scan.solve"))}</button>
@@ -737,26 +752,187 @@ function renderConfirm(box) {
     </div>`;
   if (pilotTask && S.shot && S.readOk) bindPilotRate(box);
   const input = box.querySelector("#scan-input");
+  // Polje kaže zapis s tipkovnice (zaPolje: ·, √, □ za [?]); naloga (S.text) ostane v prebrani obliki. Dokler učenec
+  // polja ne spremeni, gre v reševanje natanko prebrani zapis. naloga() = trenutna naloga iz polja.
+  let field = { shown: input.value, text: S.text };
+  const naloga = () => (input.value === field.shown ? field.text : izPolja(input.value));
+  // Skupni izris vnosa (public/predogled-vnosa.js, kot v klepetu) izriše polje ob prvem vnosu; prebrano nalogo naj
+  // izriše že ob odprtju in po izbiri možnosti (»change«: naš poslušalec »input« se ne sproži).
+  const izrisPolja = () =>
+    import("../predogled-vnosa.js")
+      .then((m) => {
+        m.initPredogledVnosa();
+        if (input.isConnected && input.value) input.dispatchEvent(new Event("change", { bubbles: true }));
+      })
+      .catch(() => {});
+  const setNaloga = (text) => {
+    field = { shown: zaPolje(text), text };
+    input.value = field.shown;
+    izrisPolja();
+  };
+  let prevField = input.value;
   const prev = box.querySelector(".scan-preview");
   const err = box.querySelector(".scan-err");
+  const unclearHost = box.querySelector(".scan-unclear-host");
+  const showUnclear = () => {
+    const html = unclearBlock();
+    if (unclearHost.dataset.html === html) return; // ne prepiši polja, v katerega učenec piše
+    unclearHost.dataset.html = html;
+    // vpisani znaki v podatkih (še brez ✓) in fokus preživijo zamenjavo obvestila
+    const typed = [...unclearHost.querySelectorAll("[data-given-fill]")].map((el) => [el.dataset.givenFill, el.value, el === document.activeElement]);
+    unclearHost.innerHTML = html;
+    for (const [i, v, f] of typed) {
+      const el = unclearHost.querySelector(`[data-given-fill="${i}"]`);
+      if (!el) continue;
+      el.value = v;
+      if (f) el.focus();
+    }
+    bindGivenInputs();
+  };
+  // Polje pokaže nalogo kot formulo (j 26. 11.: surov zapis »2*x^2-[?]*x-5=0« ni za učenca); zapis za tipke se pokaže
+  // šele, ko učenec tapne v polje (CSS :focus-within). Brez izrisa (napol napisano, napaka) ostane besedilo.
+  const wrap = box.querySelector(".scan-input-wrap");
+  const fieldIzris = wrap.querySelector(".scan-input-izris");
+  const showField = () => {
+    const html = input.value.trim() ? inputFormulaHtml(naloga()) : "";
+    fieldIzris.innerHTML = html;
+    wrap.classList.toggle("ima-izris", !!html);
+    // formula, ki ne gre v polje (dolga, visoka), ostane surov zapis: ne pokažemo odrezanega dela (»Prebral sem« nad
+    // poljem jo pokaže celo)
+    if (html && (fieldIzris.scrollWidth > fieldIzris.clientWidth + 1 || fieldIzris.scrollHeight > fieldIzris.clientHeight + 1)) wrap.classList.remove("ima-izris");
+  };
+  // j 26. 11.: dotik na okence □ ga označi, vpisan znak (s katerekoli tipkovnice) ga zamenja. Dotik, ki polje šele
+  // odpre, označi okence, najbližje mestu dotika (prej je bil tam izris formule, zapis pod njim je drugače dolg).
+  const okenceOb = (p) => {
+    const v = input.value;
+    if (v[p] === VIDNA_OZNAKA) return p;
+    if (v[p - 1] === VIDNA_OZNAKA) return p - 1;
+    return -1;
+  };
+  // Ob odprtju se zaslon lahko premakne (Evklidova tipkovnica), zato »click« včasih ne pride: takrat velja fokus.
+  let zaprtoOb = 0; // čas dotika, ki je polje šele odprl (velja le za ta dotik)
+  let dotik = 0;
+  const sveze = () => performance.now() - zaprtoOb < 700;
+  const oznaciOkence = (odprl) => {
+    if (document.activeElement !== input || input.selectionStart !== input.selectionEnd) return;
+    const p = input.selectionStart;
+    let at = okenceOb(p);
+    if (at < 0 && odprl) at = najblizjeOkence(p);
+    if (at >= 0) input.setSelectionRange(at, at + VIDNA_OZNAKA.length);
+  };
+  wrap.addEventListener("pointerdown", () => (zaprtoOb = document.activeElement !== input ? performance.now() : 0), true);
+  wrap.addEventListener("focusin", () => {
+    if (!sveze()) return;
+    const n = ++dotik;
+    setTimeout(() => n === dotik && oznaciOkence(true), 300);
+  });
+  wrap.addEventListener("click", () => {
+    const odprl = sveze();
+    zaprtoOb = 0;
+    dotik++;
+    // po skupnem izrisu vnosa, ki ob dotiku sam postavi kazalec
+    requestAnimationFrame(() => oznaciOkence(odprl));
+  });
+  // vpis ali premik s tipkami prekliče čakajočo izbiro okenca
+  for (const ev of ["keydown", "input"]) input.addEventListener(ev, () => dotik++);
+  const okenca = () => {
+    const out = [];
+    for (let i = input.value.indexOf(VIDNA_OZNAKA); i >= 0; i = input.value.indexOf(VIDNA_OZNAKA, i + 1)) out.push(i);
+    return out;
+  };
+  const najblizjeOkence = (p) => okenca().reduce((a, b) => (a < 0 || Math.abs(b - p) < Math.abs(a - p) ? b : a), -1);
+  // dotik na označeno mesto v »Prebral sem« izbere isto okence v polju
+  prev.addEventListener("click", (e) => {
+    const mesta = [...prev.querySelectorAll(".boxpad, .scan-unclear-mark")];
+    const i = mesta.findIndex((m) => {
+      const r = m.getBoundingClientRect();
+      return e.clientX >= r.left - 6 && e.clientX <= r.right + 6 && e.clientY >= r.top - 6 && e.clientY <= r.bottom + 6;
+    });
+    const vsa = okenca();
+    // le ko se mesta v izrisu ujemajo z okenci v polju (modelov LaTeX ima lahko drugačno število okvirjev)
+    if (i < 0 || mesta.length !== vsa.length) return;
+    const at = vsa[i];
+    input.focus();
+    input.setSelectionRange(at, at + VIDNA_OZNAKA.length);
+  });
   const update = () => {
-    S.text = input.value;
-    const info = analyze(input.value);
+    showField();
+    // možnosti ostalih oznak ostanejo poravnane, ko učenec eno popravi s tipkami
+    const text = naloga();
+    const kept = keepOptions(izPolja(prevField), izPolja(input.value), S.unclear);
+    prevField = input.value;
+    if (kept) S.unclear = kept;
+    else if (!hasUnclear(text)) S.unclear = [];
+    S.text = text;
+    showUnclear();
+    const info = analyze(text);
     err.hidden = true;
-    if (!input.value.trim()) {
+    if (!text.trim()) {
       // izbrisana naloga: podatki prejšnje ne smejo k novi, vpisani
       S.given = [];
+      S.unclear = [];
       S.sought = "";
       box.querySelectorAll(".scan-given").forEach((el) => el.remove());
+      showUnclear();
       return (prev.innerHTML = "");
+    }
+    // nejasni znaki: nespremenjen prepis pokažemo z modelovim LaTeX (\boxed{?}), sicer zapis z označenimi mesti
+    if (hasUnclear(text)) {
+      const read = S.problems.find((p) => p.text === text && /\\boxed\{\?\}/.test(p.tex || ""));
+      return (prev.innerHTML = read ? math(read.tex, true) : `<p class="scan-unclear-text">${markUnclear(text, esc)}</p>`);
     }
     if (info.type === "error") {
       prev.innerHTML = "";
       return;
     }
-    prev.innerHTML = problemTexOf(input.value);
+    prev.innerHTML = problemTexOf(text);
   };
-  input.addEventListener("input", update);
+  input.addEventListener("input", () => {
+    S.unclearNeed = false;
+    update();
+  });
+  // izbira ene od možnosti za nejasen znak: zamenja ta [?], fokus na naslednjega
+  unclearHost.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-fill]");
+    if (!b) return;
+    const i = Number(b.dataset.fill);
+    setNaloga(fillUnclear(naloga(), i, b.dataset.val));
+    update(); // keepOptions odstrani možnosti zapolnjene oznake
+    // fokus na naslednjo izbiro (ne v polje: tam bi se namesto formule pokazal surov zapis)
+    (unclearHost.querySelector("[data-fill], [data-given-fill]") || box.querySelector('[data-act="solve"]'))?.focus();
+  });
+  // nejasen znak v podatku: učenec vpiše, kaj piše na listu (gumb ✓, Enter ali Reši)
+  function fillGiven(rerender = true) {
+    let changed = false;
+    unclearHost.querySelectorAll("[data-given-fill]").forEach((el) => {
+      const v = el.value.trim();
+      if (!v || hasUnclear(v)) return;
+      const i = Number(el.dataset.givenFill);
+      S.given[i] = fillUnclear(S.given[i], 0, v);
+      changed = true;
+    });
+    if (changed && rerender) {
+      // zaslon se izriše na novo: Evklidova tipkovnica ne sme ostati na odstranjenem polju
+      hideKeyboard();
+      render();
+      (box.querySelector("[data-fill], [data-given-fill]") || box.querySelector('[data-act="solve"]'))?.focus();
+    }
+    return changed;
+  }
+  function bindGivenInputs() {
+    unclearHost.querySelectorAll("[data-given-fill]").forEach((el) => {
+      configureKeyboard(el, { math: true, layers: ["num", "fx", "sym", "abc"], start: "num" });
+      el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          fillGiven();
+        }
+      });
+    });
+  }
+  unclearHost.addEventListener("click", (e) => {
+    if (e.target.closest("[data-given-ok]")) fillGiven();
+  });
   input.addEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -777,7 +953,8 @@ function renderConfirm(box) {
     b.addEventListener("click", () => {
       const p = S.problems[Number(b.dataset.pick)];
       S.text = p.text;
-      S.given = p.given || [];
+      S.given = [...(p.given || [])];
+      S.unclear = (p.unclear || []).map((o) => [...o]);
       S.sought = p.sought || "";
       S.goal = p.goal || null;
       render();
@@ -791,18 +968,85 @@ function renderConfirm(box) {
     render();
   });
   const go = () => {
-    const info = analyze(input.value);
+    // P3-5: neprebran znak popravi učenec, nihče ga ne ugiba (tudi strežnik zavrne [?])
+    // vpisan znak v podatku velja tudi brez ✓
+    const filled = fillGiven(false);
+    if (hasUnclear(naloga()) || S.given.some(hasUnclear)) {
+      S.text = naloga();
+      S.unclearNeed = true; // sporočilo v obvestilu o branju (ni napaka v zapisu ali računu)
+      if (filled) {
+        hideKeyboard();
+        render(); // pokaže popravljene podatke; sporočilo in fokus v novem zaslonu
+      }
+      else showUnclear();
+      S.unclearNeed = false; // velja do naslednjega vnosa (zaslon ga že kaže)
+      // na prvo izbiro; brez možnosti v polje z izbrano oznako
+      const in2 = box.querySelector("#scan-input");
+      // oznaka je v polju □ (ali »[?]«, če jo je učenec vpisal sam)
+      const mark = in2.value.includes(VIDNA_OZNAKA) ? VIDNA_OZNAKA : "[?]";
+      const at = in2.value.indexOf(mark);
+      const choice = box.querySelector("[data-fill], [data-given-fill]");
+      if (choice) choice.focus();
+      else if (at >= 0) {
+        in2.focus();
+        in2.setSelectionRange(at, at + mark.length);
+      }
+      return;
+    }
+    const info = analyze(naloga());
     if (info.type === "error" || info.type === "empty") {
       err.textContent = t("scan.parseErr");
       err.hidden = false;
       input.focus();
       return;
     }
-    S.text = input.value;
+    S.text = naloga();
     solveNow();
   };
   box.querySelector('[data-act="solve"]').addEventListener("click", go);
+  izrisPolja();
   if (!S.problems.length && !coarse()) input.focus();
+}
+
+// Negotovo branje (P3-5): obvestilo o branju je ločeno od napake zapisa (scan-err) in od statusov rešitve; ob vsakem
+// nejasnem znaku po vrsti možnosti, ki jih je predlagal model (samo, dokler se število oznak ujema z njimi).
+const boxUnclear = (g) => String(g).split("[?]").join("\\boxed{?}");
+// Izris naloge v polju za vnos: z oznakami [?] modelov LaTeX (nespremenjen prepis) ali besedilo z označenimi mesti,
+// sicer formula iz razčlenjenega zapisa; "" pomeni, da ostane surov zapis (ga ne razumemo).
+function inputFormulaHtml(text) {
+  if (hasUnclear(text)) {
+    const read = S.problems.find((p) => p.text === text && /\\boxed\{\?\}/.test(p.tex || ""));
+    return read ? math(read.tex) : `<span class="scan-unclear-text">${markUnclear(text, esc)}</span>`;
+  }
+  try {
+    const info = analyze(text);
+    if (info.type === "error" || info.type === "empty") return "";
+    if (info.type === "system") return math(info.parts.map((p) => exprTex(parseTask(p))).join(";\\quad "));
+    return math(exprTex(parseTask(text)));
+  } catch {
+    return "";
+  }
+}
+function unclearBlock() {
+  const n = unclearCount(S.text);
+  if (!n && !S.given.some(hasUnclear)) return "";
+  const opts = S.unclear.length === n ? S.unclear : [];
+  const rows = opts
+    .map((o, i) =>
+      o.length
+        ? `<div class="scan-unclear-row" role="group" aria-labelledby="scan-unclear-n${i}"><span class="scan-unclear-n" id="scan-unclear-n${i}">${esc(t("scan.unclearN", { n: i + 1 }))}</span>${o.map((v) => `<button type="button" class="scan-unclear-opt" data-fill="${i}" data-val="${esc(v)}">${esc(v)}</button>`).join("")}</div>`
+        : "",
+    )
+    .join("");
+  const given = S.given
+    .map((g, i) =>
+      hasUnclear(g)
+        ? `<div class="scan-unclear-row" role="group" aria-labelledby="scan-unclear-g${i}"><span class="scan-unclear-n" id="scan-unclear-g${i}">${math(boxUnclear(g))}</span><input type="text" class="scan-unclear-in" data-given-fill="${i}" maxlength="12" aria-label="${esc(t("scan.unclearGiven"))}" aria-describedby="scan-unclear-g${i}" placeholder="?" autocomplete="off" autocapitalize="off" spellcheck="false"><button type="button" class="scan-unclear-opt" data-given-ok aria-label="${esc(t("scan.unclearApply"))}" title="${esc(t("scan.unclearApply"))}">${icon("check")}</button></div>`
+        : "",
+    )
+    .join("");
+  const msg = n > 1 || (n === 1 && S.given.some(hasUnclear)) ? "scan.unclear" : n === 1 ? "scan.unclearOne" : "scan.unclearGivenOnly";
+  return `<div class="scan-unclear">${icon("eye")}<div><p><b>${esc(t("scan.unclearTitle"))}</b> ${esc(t(msg))}</p>${rows}${given}${S.unclearNeed ? `<p class="scan-unclear-need">${esc(t("scan.unclearErr"))}</p>` : ""}</div></div>`;
 }
 
 // Pilot: ocena branja nad prepisom; fotografija gre na strežnik samo ob kljukici (in samo, kjer jo smemo ponuditi).
@@ -1076,6 +1320,7 @@ function bindSolution(box) {
     setImage(null);
     S.problems = [];
     S.given = [];
+    S.unclear = [];
     S.sought = "";
     S.text = "";
     S.goal = null;
