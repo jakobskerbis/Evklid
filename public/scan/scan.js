@@ -739,7 +739,7 @@ function renderConfirm(box) {
       <label class="scan-label" for="scan-input">${esc(S.problems.length ? t("scan.inputLabel") : t("scan.typeLabel"))}</label>
       <div class="scan-input-row">
         <div class="scan-input-wrap">
-          <input id="scan-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="text" placeholder="${esc(t("scan.placeholder"))}" value="${esc(zaPolje(S.text))}">
+          <input id="scan-input" type="text" data-izris-v-polju autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="text" placeholder="${esc(t("scan.placeholder"))}" value="${esc(zaPolje(S.text))}">
           <div class="scan-input-izris" aria-hidden="true"></div>
         </div>
         <button type="button" class="ghost icon-only" data-act="sym" aria-label="${esc(t("scan.symbols"))}" title="${esc(t("scan.symbols"))}" aria-expanded="false">${icon("sigma")}</button>
@@ -789,8 +789,10 @@ function renderConfirm(box) {
     }
     bindGivenInputs();
   };
-  // Polje pokaže nalogo kot formulo (j 26. 11.: surov zapis »2*x^2-[?]*x-5=0« ni za učenca); zapis za tipke se pokaže
-  // šele, ko učenec tapne v polje (CSS :focus-within). Brez izrisa (napol napisano, napaka) ostane besedilo.
+  // Polje pokaže nalogo kot formulo (j 26. 11.: surov zapis »2*x^2-[?]*x-5=0« ni za učenca): zunaj polja ta izris (cela
+  // formula), med urejanjem skupni izris vnosa (public/predogled-vnosa.js, data-izris-v-polju; AUDIT-084), kot v klepetu.
+  // Česar skupni izris ne zna (prebrani »x/4«, abs, log), je med urejanjem zapis za tipke (CSS :focus-within).
+  // Brez izrisa (napol napisano, napaka) ostane besedilo.
   const wrap = box.querySelector(".scan-input-wrap");
   const fieldIzris = wrap.querySelector(".scan-input-izris");
   const showField = () => {
@@ -801,6 +803,8 @@ function renderConfirm(box) {
     // poljem jo pokaže celo)
     if (html && (fieldIzris.scrollWidth > fieldIzris.clientWidth + 1 || fieldIzris.scrollHeight > fieldIzris.clientHeight + 1)) wrap.classList.remove("ima-izris");
   };
+  // Med urejanjem je ta izris skrit (širina 0): dolgo nalogo izmeri znova, ko učenec zapusti polje (pregled AUDIT-084).
+  wrap.addEventListener("focusout", () => requestAnimationFrame(() => input.isConnected && showField()));
   // j 26. 11.: dotik na okence □ ga označi, vpisan znak (s katerekoli tipkovnice) ga zamenja. Dotik, ki polje šele
   // odpre, označi okence, najbližje mestu dotika (prej je bil tam izris formule, zapis pod njim je drugače dolg).
   const okenceOb = (p) => {

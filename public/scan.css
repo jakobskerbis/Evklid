@@ -180,7 +180,7 @@
 .scan-unclear-n .katex { color: var(--text); font-size: 1.05rem; }
 .scan-unclear-need { margin: 8px 0 0; font-weight: 700; }
 
-/* Naloga v polju kot formula (j 26. 11.); surov zapis za tipke se pokaže ob tapu v polje (fokus). */
+/* Naloga v polju kot formula (j 26. 11.); med urejanjem skupni izris vnosa, česar ne zna, pa surov zapis za tipke. */
 .scan-input-wrap { position: relative; flex: 1; min-width: 0; display: flex; }
 .scan-input-wrap input { flex: 1; }
 .scan-input-izris { position: absolute; inset: 2px 12px; display: none; align-items: center; overflow: hidden; white-space: nowrap; pointer-events: none; color: var(--text); font-size: 1.1rem; }
@@ -190,7 +190,8 @@
 .scan-input-wrap.ima-izris input { -webkit-text-fill-color: transparent; caret-color: var(--text); }
 .scan-input-wrap.ima-izris:focus-within .scan-input-izris { display: none; }
 .scan-input-wrap.ima-izris:focus-within input { -webkit-text-fill-color: currentColor; }
-/* ko polje izriše skupni izris vnosa (public/predogled-vnosa.js, kot v klepetu), ta izris odstopi */
-.scan-input-wrap .vnos-izrisan ~ .scan-input-izris { display: none; }
+/* Skupni izris vnosa (public/predogled-vnosa.js, data-izris-v-polju; AUDIT-084) velja med urejanjem, kot v klepetu;
+   zunaj polja ostane cela formula tega izrisa (lepša: brez »·«, spremenljivke poševno). */
+.scan-input-wrap.ima-izris:not(:focus-within) .vnos-izris { visibility: hidden; }
 /* dotik na nejasno mesto v »Prebral sem« izbere okence v polju */
 .scan-preview .boxpad, .scan-preview .scan-unclear-mark { cursor: pointer; }
