@@ -44,8 +44,9 @@ test("lekcija: razlaga, »Preveri se«, rešeni primeri, namerno napačne in vpr
   // pravilni odgovor, pojasnilo in razvrščanje so vsebina
   assert.deepEqual(statusi(d.preveri), ["numericno", "numericno", "numericno"]);
   assert.deepEqual(statusi(d.primeri), ["numericno"]);
-  // »Pogoste napake«, napačna možnost in pojasnilo napačne možnosti (~, ponovi napačen račun): štiri trditve, niso vsebina
-  assert.equal(trditveIzBesedila(d.namerne).length, 4);
+  // »Pogoste napake« ter napačni možnosti in pojasnilo napačne možnosti (~, ponovi napačen račun) niso vsebina
+  assert.equal(trditveIzBesedila(d.namerne).length, 1);
+  assert.equal(trditveIzBesedila(d.napacneMoznosti).length, 3);
   assert.equal(trditveIzBesedila(d.vprasanja).length, 1);
   assert.ok(!/RACUN|id: x/.test(Object.values(d).join("\n")));
 });

@@ -93,12 +93,13 @@ export function trditveIzBesedila(md) {
 
 // ---------- lekcije ----------
 
-/** Razdeli lekcijo na dele: { razlaga, primeri, namerne } (besedilo), brez glave, blokov RACUN in :::simboli. */
+/** Razdeli lekcijo: { razlaga, preveri, primeri, namerne (»Pogoste napake«), napacneMoznosti (- in ~ v »Preveri se«), vprasanja }
+ * kot besedilo, brez glave, blokov RACUN in :::simboli. */
 export function deliLekcije(src) {
   let body = String(src).replace(/^﻿/, "").replace(/\r\n/g, "\n");
   body = body.replace(/^---\n[\s\S]*?\n---\n?/, "");
   body = body.replace(/<<\s*RA[CČ]UN\b[\s\S]*?>>/g, "").replace(/^:::simboli\s*\n[\s\S]*?^:::\s*$/gm, "");
-  const out = { razlaga: [], preveri: [], primeri: [], namerne: [], vprasanja: [] };
+  const out = { razlaga: [], preveri: [], primeri: [], namerne: [], napacneMoznosti: [], vprasanja: [] };
   let kam = "razlaga";
   let preveri = false;
   for (const l of body.split("\n")) {
@@ -113,8 +114,8 @@ export function deliLekcije(src) {
     // »Preveri se«: pravilni odgovor (+), pojasnilo (>), razvrščanje in nadaljevanja so vsebina; napačne možnosti (-)
     // in njihova pojasnila (~, pogosto ponovijo napačen račun) so namerno napačne; vprašanje (?) je podatek naloge.
     if (preveri) {
-      const kamP = /^[-~] /.test(l) ? "namerne" : /^\? /.test(l) ? "vprasanja" : "preveri";
-      for (const k of ["preveri", "namerne", "vprasanja"]) out[k].push(k === kamP ? l : "");
+      const kamP = /^[-~] /.test(l) ? "napacneMoznosti" : /^\? /.test(l) ? "vprasanja" : "preveri";
+      for (const k of ["preveri", "napacneMoznosti", "vprasanja"]) out[k].push(k === kamP ? l : "");
       continue;
     }
     out[kam].push(l);
@@ -170,10 +171,11 @@ export async function popisi({ cas = null } = {}) {
     const tQ = trditveIzBesedila(d.preveri);
     const tP = trditveIzBesedila(d.primeri);
     const nam = trditveIzBesedila(d.namerne).length;
+    const namP = trditveIzBesedila(d.napacneMoznosti).length;
     const vpr = trditveIzBesedila(d.vprasanja).length;
     if (l.uni) {
       dodaj(m.fakulteta, [...tR, ...tQ, ...tP], l.id);
-      m.fakulteta.namerne += nam;
+      m.fakulteta.namerne += nam + namP;
       m.fakulteta.vprasanja += vpr;
       m.fakulteta.enot++;
     } else {
@@ -181,6 +183,7 @@ export async function popisi({ cas = null } = {}) {
       dodaj(m.preveri, tQ, l.id);
       dodaj(m.primeri, tP, l.id);
       m.lekcije.namerne += nam;
+      m.preveri.namerne += namP;
       m.preveri.vprasanja += vpr;
       m.lekcije.enot++;
       if (tQ.length) m.preveri.enot++;
