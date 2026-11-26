@@ -38,6 +38,9 @@ test("AUDIT-084: izbran del polja dobi ozadje le sam; izbor čez pol ulomka ni m
     assert.equal(izborHtml("(3)/(4)", 0, 3), null);
     assert.equal(izborHtml("(3)/(4)", 2, 5), null);
     assert.equal(izborHtml("abc", 1, 1), null);
+    // pregled: ∫(f;a;b) se izriše v drugem vrstnem redu, izbor brez vidnega dela (zadnji »)« limite): celo polje
+    assert.equal(izborHtml("∫(x^(2);0;1)", 7, 12), null);
+    assert.equal(izborHtml("lim_(x→0)((sin x)/(x))", 21, 22), null);
     assert.equal(izborHtml("a<b", 1, 2), "a<span class=\"vnos-izbor\">&lt;</span>b");
   } finally {
     delete globalThis.katex;

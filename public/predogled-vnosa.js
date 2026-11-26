@@ -65,14 +65,18 @@ export function izborHtml(vrednost, a, b) {
   // oznaki izbora ne smeta spremeniti razbitja na formule in besedilo
   const brez = deli.map((p) => ("tex" in p ? { tex: p.tex.replace(IZ, "") } : { text: p.text.replace(IZ, "") })).filter(vsebina);
   if (JSON.stringify(brez) !== JSON.stringify(splitFormulas(s))) return null;
+  // ∫(f;a;b) se izriše v drugem vrstnem redu (\int_{a}^{b} f\,dx): izbor bi označil napačen del
+  if (deli.some((p) => "tex" in p && /\\int_/.test(p.tex) && /[\uE001\uE002]/.test(p.tex.replace(/^[\uE001\uE002]+|[\uE001\uE002]+$/g, "")))) return null;
   let v = false; // med oznakama
+  let oznaceno = false; // vsaj en neprazen del izbora (sicer izbor ne bi bil viden)
   try {
-    return deli
+    const out = deli
       .map((p) => {
         const kosi = vsebina(p)
           .split(IZ)
           .map((k, i) => [k, i ? (v = !v) : v])
           .filter(([k]) => k);
+        if (kosi.some(([, iz]) => iz)) oznaceno = true;
         if (!("tex" in p)) return kosi.map(([k, iz]) => (iz ? `<span class="vnos-izbor">${esc(k)}</span>` : esc(k))).join("");
         const src = kosi
           .map(([k, iz]) => {
@@ -84,6 +88,7 @@ export function izborHtml(vrednost, a, b) {
         return izrisiTex(`\\displaystyle ${src.replace(/\{\}/g, "{\\square}")}`, { zaupaj: "kazalec", napaka: "vrzi" });
       })
       .join("");
+    return oznaceno ? out : null;
   } catch {
     return null;
   }
