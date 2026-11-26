@@ -67,7 +67,15 @@ test("dolga perioda, nelinearna družina in »0k« ne dvignejo statusa", () => {
     ["sin(x/10)=1/2", ["10π/6+20kπ"]], // druga veja 50π/6 + 20kπ je zunaj [−20, 20]
     ["sin(x)=0", ["2k^2π"]],
     ["x^2=900", ["30+0k"]],
+    ["sin(x/30)=1/2", ["30π/6+60kπ"]], // perioda 60π: okno se razširi čez ±50
+    ["sin(x/100)=1/2", ["100π/6+200kπ"]],
   ])
     assert.equal(verifyAi(naloga, eq(sol)).status, "wrong", naloga);
-  assert.equal(verifyAi("sin(x/10)=1/2", eq(["10π/6+20kπ", "50π/6+20kπ"])).status, "partial");
+  for (const [naloga, sol] of [
+    ["sin(x/10)=1/2", ["10π/6+20kπ", "50π/6+20kπ"]],
+    ["sin(x/30)=1/2", ["30π/6+60kπ", "150π/6+60kπ"]],
+    ["sin(x/100)=1/2", ["100π/6+200kπ", "500π/6+200kπ"]],
+    ["sin(1/x)=0", ["1/(k*pi)"]], // ničle se kopičijo pri 0 (k zunaj [−400, 400]): ni lažnega alarma
+  ])
+    assert.equal(verifyAi(naloga, eq(sol)).status, "partial", naloga);
 });
