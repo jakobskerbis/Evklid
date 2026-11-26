@@ -4,7 +4,7 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 [README.md](README.md).
 
 **Zadnji pregledani `main`:** `3e2a78dbc742b3c2b0f174ed42ac57be4591d212` (25. 11. 2026)
-**Naslednji prosti ID:** AUDIT-097
+**Naslednji prosti ID:** AUDIT-098
 
 | ID | Prioriteta | Področje | Kratek opis | Status | Pregledani commit | Komentar | PR popravka |
 |---|---|---|---|---|---|---|---|
@@ -104,6 +104,7 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 | AUDIT-094 | P2 | Vadnica → inštruktor | Pomoč iz Vadnice: inštruktor ne dobi rezultata generatorja, prvi namig prezre učenčeve korake, napaka se šteje dvakrat, pomoč pred odgovorom ni označena »s pomočjo«. Lastnik: nit »Izboljšaj okolico AI inštruktorja« (j odobril po navedbi niti) | NOVO | `2275cc2` | Claude (nit pregleda pripravljenosti pilota, artefakt Sj5uu8iU8QjgvAppkho4fA), 26. 11. | – |
 | AUDIT-095 | P2 | Pilot, poročilo | Poročilo pilota nima povabljenih, odpadlih in zagotovila »brez pomoči«. Lastnik: nit pilota (j odobril po navedbi niti) | NOVO | `2275cc2` | Claude (nit pregleda pripravljenosti pilota, artefakt Sj5uu8iU8QjgvAppkho4fA), 26. 11. | – |
 | AUDIT-096 | P3 | Kalkulator, iPhone SE (WebKit) | Na iPhonu SE (WebKit, 375 × 667) je v zgodovini znanstvenega kalkulatorja viden tanek navpični drsnik (~120 px); posnetek `/mnt/project-files/evklid/ux-hitrost/k12/kalkulator-iphone-se.png`, matrika naprav K-12 na `main` `613278d`, pred #1181 (`87b705e`: `.sc-history` dobi `scrollbar-width: none` in `::-webkit-scrollbar {display: none}`, kot AUDIT-083). Verjetno že popravljeno; potrdi nov posnetek WebKit na trenutnem `main` (naročen pri niti UX). Lastnik: nit »Prevzemi kalkulator« | ZAKLJUČENO | `613278d` | Claude (nit »Prevzemi kalkulator«, vir nit »Izboljšaj UX in hitrost« K-12), 26. 11.; ponovni posnetek WebKit 26.6, 375 × 667, `main` `2275cc2`, korak 042-tel-kalkulator-sci-tel: drsnika ni (`/mnt/project-files/evklid/ux-hitrost/k12/kalkulator-iphone-se-main-2275cc2.png`, Claude pregledal) | [#1181](https://github.com/jakobskerbis/Evklid/pull/1181) |
+| AUDIT-097 | P3 | Klepet, preverjanje (`live-check.js`) | `claimNote` (`server/live-check.js`) sodi učenčev goli »x = …« proti rešitvam enačbe iz naloge, tudi ko naloga ali inštruktorjevo stransko vprašanje sprašuje po čem drugem (teme, minimum): naloga x² − 6x + 8 = 0, vprašanje »Kdaj je (x − 3)² − 1 najmanjši?«, odgovor »x = 3« → WRONG (prav); »Poišči teme parabole x² + 2x + 5« z »x = −1« enako. Vzrok: presolve ne hrani besedila naloge. Za naloge brez rešitve pokrije AUDIT-092 (veja `claude/project-thread-nlvj2s-prazna`); za naloge z rešitvami odprto. Lastnik: nit »Prevzemi kalkulator« | NOVO | `2275cc2` | Claude (nit »Prevzemi kalkulator«), 26. 11. | – |
 
 ## Zgodovina statusov
 
@@ -177,3 +178,4 @@ Vsaka sprememba statusa: datum, ID, star → nov status, kdo, razlog ali dokaz (
 - 26. 11. 2026: združeni na j-jeve kartice: 058 PRIPRAVLJENO ZA PONOVNI PREGLED → PRIPRAVLJENO ZA PONOVNI PREGLED (#1179); 061 PRIPRAVLJENO ZA PONOVNI PREGLED → PRIPRAVLJENO ZA PONOVNI PREGLED (#1179); 062 PRIPRAVLJENO ZA PONOVNI PREGLED → PRIPRAVLJENO ZA PONOVNI PREGLED (#1179); 084 PRIPRAVLJENO ZA PONOVNI PREGLED → PRIPRAVLJENO ZA PONOVNI PREGLED (#1180); 082 V IZVEDBI → PRIPRAVLJENO ZA PONOVNI PREGLED (#1181); 083 V IZVEDBI → PRIPRAVLJENO ZA PONOVNI PREGLED (#1181); 086 V IZVEDBI → PRIPRAVLJENO ZA PONOVNI PREGLED (#1181); 087 NOVO → PRIPRAVLJENO ZA PONOVNI PREGLED (#1182); 088 NOVO → PRIPRAVLJENO ZA PONOVNI PREGLED (#1182). Novi AUDIT-090–095 (pregled pripravljenosti pilota in nit »Prevzemi kalkulator«), NOVO; Claude jih še ni neodvisno ponovil.
 - 26. 11. 2026: AUDIT-096 (P3, drsnik v zgodovini na iPhonu SE, WebKit) PRIPRAVLJENO ZA PONOVNI PREGLED: verjetno odpravljen s #1181; ZAKLJUČENO po novem posnetku WebKit na trenutnem `main`.
 - 26. 11. 2026: AUDIT-096 → ZAKLJUČENO (nov posnetek WebKit na `main` `2275cc2` brez drsnika; popravil #1181).
+- 26. 11. 2026: AUDIT-097 NOVO (claimNote sodi »x = …« proti rešitvam enačbe, ko vprašanje sprašuje po temenu ali minimumu); nit »Prevzemi kalkulator«.
