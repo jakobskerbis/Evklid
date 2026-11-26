@@ -79,7 +79,7 @@ $$a^m : a^n = a^{m-n}$$
 
 Osnovo prepišemo, eksponenta odštejemo. Primer: $5^7 : 5^3 = 5^4 = 625$. Spet kontrast: deljenje potenc postane odštevanje eksponentov. Pogoj $a \ne 0$ je potreben, ker z $0$ ne delimo.
 
-**6. Kje pravili ne veljata.** Obe pravili veljata samo, ko sta osnovi **enaki**. Izraza $2^3 \cdot 3^4$ ne moremo zapisati kot eno potenco. Pravili veljata tudi le za množenje in deljenje, ne za seštevanje: $2^3 + 2^2 = 8 + 4 = 12$, $2^5$ pa je $32$.
+**6. Kje pravili ne veljata.** Obe pravili veljata samo, ko sta osnovi **enaki**. Izraza $2^3 \cdot 3^4$ ne moremo zapisati kot eno potenco z isto osnovo. Pravili veljata tudi le za množenje in deljenje, ne za seštevanje: $2^3 + 2^2 = 8 + 4 = 12$, $2^5$ pa je $32$.
 
 ## Rešeni primeri
 

@@ -151,7 +151,7 @@ Izhodišče `docs/meritve/generatorji-2026-11-26.md` (5 semen): od 704 generator
 delno, 3 napako, 235 nobenega (večinoma izbirni odgovori in besedilne rešitve). SymPy je potrdil 301 od 305 korakov
 simbolno, 4 imajo izgubljeno posamezno rešitev v kontekstu (koncentracija), nobeden ni napačen. Vseh 7 zaznanih napak
 je pregledal model AI (ne človek): dve sta pravi napaki zapisa (`dod-fiz-ss-plinska-enacba`: tlak, zaokrožen na eno
-decimalko, ne da zapisanega rezultata; `exk-mole`: levi strani manjka ×10²³), popravljeni v ločenem PR; tretja je
+decimalko, ne da zapisanega rezultata; `exk-mole`: levi strani manjka ×10²³), popravljeni v #1166 (poročilo je izdelano na commitu pred popravkom); tretja je
 lažni alarm preračuna (`\text{…}` kot enota, AUDIT-087). Drugi model AI je ročno preračunal 60 nalog 30 naključnih
 generatorjev brez zaznane napake: 0/30 zgrešenih napak (95 % interval 0–11 %); 3/30 imajo zaokroženo vrednost za »=«
 (PV-07).
