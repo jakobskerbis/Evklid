@@ -546,7 +546,7 @@ theorem preveri1 :
 /-- Preveri se 3: 0,333… = 1/3 je racionalno, √2 ne; velikost ne odloča: 5,5 = 11/2 je racionalno,
 √0,5 pa iracionalno.
 trditev: MAT-OS-8/realna-stevila#preveri3
-besedilo: »$0{,}333\ldots = \dfrac{1}{3}$« -/
+besedilo: »tudi $5{,}5$ je racionalno in $\sqrt{0{,}5}$ iracionalno.« -/
 theorem preveri3 :
     ¬ Irrational (∑' k : ℕ, (3 : ℝ) / (10 ^ 1) ^ (k + 1)) ∧ Irrational √2 ∧ ¬ Irrational 5.5 ∧
       Irrational √(0.5 : ℝ) := by
