@@ -431,3 +431,21 @@ test("ležeč telefon 844 × 390: klepet v spodnjem listu ima polje in »Pošlji
     await ctx.close();
   });
 });
+
+// Med pisanjem je klepet ležeče širok le 280–370 px, vrstica za pisanje pa je imela računalniški »Pošlji« z napisom
+// (95 px): prazno polje je ostalo 106 px široko (na telefonu pokončno 168–198 px).
+test("ležeč telefon 844 × 390: med pisanjem je »Pošlji« samo ikona, polje za pisanje ni stisnjeno", opts, async () => {
+  await withApp(async (base) => {
+    const { ctx, p, errors } = await phone(base, L);
+    await p.locator("#input").tap();
+    await p.waitForSelector(".tk:not([hidden])");
+    await p.waitForTimeout(400);
+    const m = await p.evaluate(() => ({
+      poslji: Math.round(document.querySelector("#send").getBoundingClientRect().width),
+      polje: Math.round(document.querySelector("#input").getBoundingClientRect().width),
+    }));
+    assert.ok(m.poslji <= 48 && m.polje >= 150, `»Pošlji« z ikono, polje vsaj 150 px: ${JSON.stringify(m)}`);
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+});

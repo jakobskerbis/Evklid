@@ -124,6 +124,10 @@
 @media (orientation: landscape) and (max-height: 500px) and (min-width: 600px) {
   body.tk-open .chat-head { flex-wrap: nowrap; }
   body.tk-open .chat-head :is(#chat-state, #toggle-sidebar, #chat-bug, #chat-idea) { display: none; }
+  /* Vrstica za pisanje kot na telefonu pokončno: »Pošlji« samo z ikono, sicer je prazno polje ozko (106 px), namig
+     se prelomi in gumbi zdrsnejo pod polje. */
+  body.tk-open #composer button.send span { display: none; }
+  body.tk-open #composer button.send { padding: 6px 10px; }
 }
 @media (orientation: landscape) and (max-height: 500px) {
   #view-chat .chat > .bug-box { flex: none; max-height: 30dvh; overflow-y: auto; overscroll-behavior: contain; grid-template-columns: minmax(0, 1fr) auto; }
