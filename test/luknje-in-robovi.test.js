@@ -101,3 +101,56 @@ test("AUDIT-080 (pregled 2): pol z veliko desno stranjo ni luknja", () => {
   assert.equal(n("tan(2x)=1000000"), 4);
   assert.ok(close(roots("1/x=1000000")[0], 1e-6));
 });
+
+// Izpis v zgodovini kalkulatorja (pregled revizijske niti, 26. 11.): zgodovina izriše rešitev znova iz shranjenega
+// rezultata, ki je izgubil število mest (minDec), zato je bilo »x ≈ 1« namesto 1,0000001.
+import http from "node:http";
+import fs from "node:fs";
+import path from "node:path";
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
+let playwright = null;
+try {
+  playwright = require("playwright");
+} catch {}
+const PUB = path.resolve("public");
+const KX = path.resolve("node_modules/katex/dist");
+const PAGE = `<!doctype html><meta charset="utf-8"><link rel="stylesheet" href="/vendor/katex/katex.min.css"><link rel="stylesheet" href="/graph.css"><script src="/vendor/katex/katex.min.js"></script><div id="s" style="height:700px"></div>
+<script type="module">
+import { createScientific } from "/graph/sci.js";
+localStorage.clear();
+window.sci = createScientific(document.getElementById("s"), { t: (k) => k, icon: () => "", locale: () => "sl", storageKey: () => "t-sci", toast() {}, canSteps: () => false });
+window.ready = true;
+</script>`;
+test("AUDIT-080 izpis: rešitev tik ob luknji in polu se v zgodovini loči od točke, kjer F ni definirana", { skip: playwright ? false : "Playwright ni nameščen" }, async (t) => {
+  const server = http.createServer((req, res) => {
+    const url = decodeURIComponent(req.url.split("?")[0]);
+    if (url === "/stran.html") return res.writeHead(200, { "content-type": "text/html; charset=utf-8" }).end(PAGE);
+    const file = url.startsWith("/vendor/katex/") ? path.join(KX, url.slice(14)) : path.join(PUB, path.normalize(url));
+    if (!(file.startsWith(PUB) || file.startsWith(KX)) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) return res.writeHead(404).end();
+    res.writeHead(200, { "content-type": file.endsWith(".js") ? "text/javascript" : file.endsWith(".css") ? "text/css" : "application/octet-stream" }).end(fs.readFileSync(file));
+  });
+  await new Promise((ok) => server.listen(0, "127.0.0.1", ok));
+  const browser = await playwright.chromium.launch();
+  t.after(async () => {
+    await browser.close();
+    server.close();
+  });
+  const page = await browser.newPage();
+  await page.goto(`http://127.0.0.1:${server.address().port}/stran.html`);
+  await page.waitForFunction(() => window.ready);
+  const res = async (s) => {
+    await page.fill(".sc-input", s);
+    await page.press(".sc-input", "Enter");
+    return page.locator(".sc-h-row.last .sc-h-res annotation").first().textContent();
+  };
+  assert.match(await res("(x^2-1)/(x-1)=2,0000001"), /1\{,\}0000001/);
+  assert.match(await res("1/(x^2-4)=10^6"), /-2\{,\}000000[23]/); // prav: ±√(4 + 10⁻⁶) = ±2,00000025
+  assert.match(await res("√(x^2-2)=0"), /1\{,\}414214/);
+  // po menjavi oblike zapisa se zgodovina izriše znova: mesta ostanejo
+  const fmt = page.locator(".sc-format");
+  if (await fmt.count()) {
+    await fmt.selectOption({ index: 0 });
+    assert.match(await page.locator(".sc-h-row .sc-h-res annotation").first().textContent(), /1\{,\}0000001/);
+  }
+});
