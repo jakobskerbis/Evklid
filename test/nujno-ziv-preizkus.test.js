@@ -61,6 +61,28 @@ test("vsak primer gre skozi pravo funkcijo: model, navodilo in max_tokens iz ser
   assert.ok(z.usd > 0 && z.usd < 0.001 && z.ms >= 0);
 });
 
+test("napaka povezave: takojšnja ponovitev v istem roku kot v aplikaciji (U1); uspela pobriše napako, šteje se v povezava", async () => {
+  const roki = [];
+  const primer = primeri.find((p) => p.vrsta === "stiska");
+  let n = 0;
+  const opozorila = [];
+  const prej = console.warn;
+  console.warn = (...a) => opozorila.push(a.join(" "));
+  try {
+    const z = await enPrimer(primer, { create: async (body, ms) => {
+      roki.push(ms);
+      if (++n === 1) throw Object.assign(new Error("read ECONNRESET"), { code: "ECONNRESET" });
+      return odgovor("STISKA");
+    } });
+    assert.deepEqual({ dobljeno: z.dobljeno, napaka: z.napaka, povezava: z.povezava }, { dobljeno: "stiska", napaka: null, povezava: 1 });
+    assert.equal(roki.length, 2);
+    assert.ok(roki[1] <= roki[0], "drugi klic dobi ostanek roka");
+    assert.equal(povzemi(primeri.slice(0, 1), [z]).povezava, 1);
+  } finally {
+    console.warn = prej;
+  }
+});
+
 test("povzetek: popoln filter doseže prag, izpis ne vsebuje besedil sporočil", async () => {
   const poBesedilu = new Map(primeri.map((p) => [ovij(p.text), p]));
   const create = async (body) => odgovor(BESEDA[poBesedilu.get(body.messages[0].content).vrsta] || "NE");

@@ -259,6 +259,14 @@ test("alarm: kratke kode za vsako okvaro, prazno ko je vse v redu", () => {
   assert.deepEqual(razlogiAlarma({ ...ok, pomnilnik: { najvecDelez: 90, opozorilo: 85 } }, { now }), ["pomnilnik"]);
   assert.deepEqual(razlogiAlarma({ ...ok, zagoni: { zadnji: "2026-11-21T09:30:00Z" } }, { now }), ["zagon"]);
   assert.deepEqual(razlogiAlarma({ ...ok, zagoni: { zadnji: "2026-11-21T08:30:00Z" } }, { now }), [], "po eni uri samo še števec");
+  // Varnostni pregled sporočil (U1, j 26. 11.): izklopljen ali nepregledano sporočilo v zadnji uri (server/nujno.js
+  // varnostStanje izračuna nepregledanoZadnjoUro; starejše od ure je false, test v nujno-ponovitev.test.js).
+  const vp = (o) => ({ vklopljen: true, danes: { rok: 0, napaka: 0, nepregledano: 0 }, zadnjeNepregledano: null, nepregledanoZadnjoUro: false, ...o });
+  assert.deepEqual(razlogiAlarma({ ...ok, varnostniPregled: vp() }, { now }), []);
+  assert.deepEqual(razlogiAlarma({ varnostniPregled: { vklopljen: false } }, { now }), ["varnost"]);
+  assert.deepEqual(razlogiAlarma({ ...ok, varnostniPregled: vp({ nepregledanoZadnjoUro: true, zadnjeNepregledano: "2026-11-21" }) }, { now }), ["varnost"]);
+  assert.deepEqual(razlogiAlarma({ ...ok, varnostniPregled: vp({ zadnjeNepregledano: "2026-11-21", danes: { rok: 0, napaka: 2, nepregledano: 1 } }) }, { now }), [], "nepregledano pred več kot uro ne drži alarma");
+  assert.deepEqual(razlogiAlarma({ ...ok, varnostniPregled: null }, { now }), [], "stanje brez števca (napaka) ni alarm");
 });
 
 test("straža: AI ne dela, poln disk in svež nepričakovan zagon jo podrejo", () => {
@@ -268,6 +276,10 @@ test("straža: AI ne dela, poln disk in svež nepričakovan zagon jo podrejo", (
   assert.match(presojaStanja({ ...osnova, ai: { deluje: false, vrsta: "kljuc", zapored: 1 } }, now).napake.join(), /inštruktor AI ne dela/);
   assert.match(presojaStanja({ ...osnova, disk: { delez: 90, opozorilo: 85, prostoMb: 100 } }, now).napake.join(), /disk/);
   assert.match(presojaStanja({ ...osnova, zagoni: { zadnji: "2026-11-21T09:45:00Z", razlog: "neznan" } }, now).napake.join(), /nepričakovano/);
+  // Varnostni pregled sporočil: isto pravilo kot koda »varnost« v /healthz/alarm.
+  assert.deepEqual(presojaStanja({ ...osnova, varnostniPregled: { vklopljen: true, nepregledanoZadnjoUro: false, zadnjeNepregledano: "2026-11-21" } }, now).napake, []);
+  assert.match(presojaStanja({ ...osnova, varnostniPregled: { vklopljen: false } }, now).napake.join(), /varnostni pregled sporočil z AI ne teče/);
+  assert.match(presojaStanja({ ...osnova, varnostniPregled: { vklopljen: true, nepregledanoZadnjoUro: true } }, now).napake.join(), /brez varnostnega pregleda/);
 });
 
 test("/healthz/stanje ima mock, ai, zagoni in disk; /healthz/alarm 200 ali 503 s kodo brez podrobnosti", async () => {
@@ -281,14 +293,30 @@ test("/healthz/stanje ima mock, ai, zagoni in disk; /healthz/alarm 200 ali 503 s
     assert.equal(st.ai.deluje, true);
     assert.deepEqual(st.zagoni, { nepricakovani: 0, zadnji: null, razlog: null });
     assert.equal(st.disk, null); // baza v pomnilniku
+    assert.equal(st.varnostniPregled.vklopljen, false); // brez ključa API varnostnega pregleda z AI ni
+    assert.equal(st.varnostniPregled.nepregledanoZadnjoUro, false);
     let r = await fetch(base + "/healthz/alarm");
-    assert.equal(r.status, 200);
-    assert.equal(r.headers.get("cache-control"), "no-store");
-    assert.equal(await r.text(), "ok");
-    app.locals.zdravje.aiIzid({ ok: false, koda: "401 neveljaven API ključ" });
-    r = await fetch(base + "/healthz/alarm");
     assert.equal(r.status, 503);
-    assert.equal(await r.text(), "alarm: ai");
+    assert.equal(await r.text(), "alarm: varnost");
+    // S ključem (lažnim; klica AI ni) pregled teče: alarm je »ok«.
+    const [k, m] = [process.env.ANTHROPIC_API_KEY, process.env.EVKLID_MOCK];
+    process.env.ANTHROPIC_API_KEY = "sk-test-ni-pravi";
+    delete process.env.EVKLID_MOCK;
+    try {
+      r = await fetch(base + "/healthz/alarm");
+      assert.equal(r.status, 200);
+      assert.equal(r.headers.get("cache-control"), "no-store");
+      assert.equal(await r.text(), "ok");
+      app.locals.zdravje.aiIzid({ ok: false, koda: "401 neveljaven API ključ" });
+      r = await fetch(base + "/healthz/alarm");
+      assert.equal(r.status, 503);
+      assert.equal(await r.text(), "alarm: ai");
+    } finally {
+      for (const [ime, vr] of [["ANTHROPIC_API_KEY", k], ["EVKLID_MOCK", m]]) {
+        if (vr === undefined) delete process.env[ime];
+        else process.env[ime] = vr;
+      }
+    }
     const st2 = await (await fetch(base + "/healthz/stanje")).json();
     assert.equal(st2.ai.vrsta, "kljuc");
     assert.doesNotMatch(JSON.stringify(st2.ai), /ključ|sk-/);
