@@ -14,6 +14,7 @@ import { izrisi as izrisiTex } from "./mat/izris.js";
 
 // Polja s svojim izrisom: kalkulator (sprotni izračun pod vnosom), skeniraj (.scan-preview);
 // iskalnik spustnega seznama (ikona kljukice je sosed polja: .dd-search input + .dd-check).
+// Polje z data-izris-v-polju ima izris tudi znotraj teh delov (AUDIT-084: naloga v potrditvi skenerja, j 26. 11.).
 const BREZ = "[data-brez-predogleda], .graph-overlay, #graph-slot, .gc, .sc, .tl, .fm, .pse, .scan-confirm, .dd-search, .razpri-area";
 const predogledi = new WeakMap(); // večvrstično polje → element s predogledom pod njim
 const izrisi = new WeakMap(); // polje v eni vrstici → izris čez njega
@@ -45,10 +46,53 @@ export function izrisHtml(vrednost, p = null) {
   return html(delisKazalcem(vrednost, p));
 }
 
+// Izbran del polja (AUDIT-084, j 26. 11.: dotik na □ označi le □): ozadje dobi le izbrani del, ne celo polje.
+const IZ_A = "\uE001";
+const IZ_B = "\uE002";
+const IZ = /[\uE001\uE002]/g;
+const vsebina = (p) => ("tex" in p ? p.tex : p.text);
+// Izbrani del formule gre v \htmlClass le z uravnoteženimi { }, sicer bi razbil zgradbo (pol ulomka »}{«).
+const uravnotezen = (t) => {
+  let d = 0;
+  for (const [c] of t.matchAll(/\\.|[{}]/g)) if ((d += c === "{" ? 1 : c === "}" ? -1 : 0) < 0) return false;
+  return d === 0;
+};
+/** Izris polja z izbranim delom [a, b); null, ko izbor ne sledi zgradbi formule (takrat se označi celo polje). */
+export function izborHtml(vrednost, a, b) {
+  const s = String(vrednost ?? "");
+  if (!(Number.isInteger(a) && Number.isInteger(b) && a >= 0 && a < b && b <= s.length)) return null;
+  const deli = splitFormulas(s.slice(0, a) + IZ_A + s.slice(a, b) + IZ_B + s.slice(b));
+  // oznaki izbora ne smeta spremeniti razbitja na formule in besedilo
+  const brez = deli.map((p) => ("tex" in p ? { tex: p.tex.replace(IZ, "") } : { text: p.text.replace(IZ, "") })).filter(vsebina);
+  if (JSON.stringify(brez) !== JSON.stringify(splitFormulas(s))) return null;
+  let v = false; // med oznakama
+  try {
+    return deli
+      .map((p) => {
+        const kosi = vsebina(p)
+          .split(IZ)
+          .map((k, i) => [k, i ? (v = !v) : v])
+          .filter(([k]) => k);
+        if (!("tex" in p)) return kosi.map(([k, iz]) => (iz ? `<span class="vnos-izbor">${esc(k)}</span>` : esc(k))).join("");
+        const src = kosi
+          .map(([k, iz]) => {
+            if (!iz) return k;
+            if (!uravnotezen(k)) throw new Error("izbor");
+            return `\\htmlClass{vnos-izbor}{${k}}`;
+          })
+          .join("");
+        return izrisiTex(`\\displaystyle ${src.replace(/\{\}/g, "{\\square}")}`, { zaupaj: "kazalec", napaka: "vrzi" });
+      })
+      .join("");
+  } catch {
+    return null;
+  }
+}
+
 function polje(el) {
   const f = el?.closest?.("input, textarea");
   if (!f || (f.tagName === "INPUT" && !/^(?:text|search|)$/.test(f.getAttribute("type") || ""))) return null;
-  return f.closest(BREZ) ? null : f;
+  return f.closest(BREZ) && !f.hasAttribute("data-izris-v-polju") ? null : f;
 }
 
 function dodajSlog() {
@@ -152,12 +196,16 @@ function posodobiIzris(f) {
   o.hidden = false;
   const p = kazalec(f);
   const v = o.firstChild;
-  const k = `${p}\u0000${f.value}`;
+  const iz = document.activeElement === f && p == null && f.selectionStart !== f.selectionEnd;
+  const k = iz ? `${f.selectionStart}-${f.selectionEnd}\u0000${f.value}` : `${p}\u0000${f.value}`;
   if (o.dataset.k !== k) {
-    v.innerHTML = izrisHtml(f.value, p);
+    const h = iz ? izborHtml(f.value, f.selectionStart, f.selectionEnd) : null;
+    v.innerHTML = h ?? izrisHtml(f.value, p);
     o.dataset.k = k;
+    o.dataset.delniIzbor = h == null ? "" : "1";
   }
-  o.classList.toggle("izbor", document.activeElement === f && p == null && f.selectionStart !== f.selectionEnd);
+  // celo polje označeno le, ko izbranega dela ni mogoče označiti posebej (izbor čez pol ulomka)
+  o.classList.toggle("izbor", iz && !o.dataset.delniIzbor);
   postavi(f, o);
 }
 
@@ -301,7 +349,7 @@ const SLOG =
   ".vnos-izris{position:absolute;box-sizing:border-box;display:flex;align-items:center;overflow:hidden;white-space:pre;cursor:text;pointer-events:auto;line-height:1.2;z-index:1;border-radius:inherit;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}" +
   ".vnos-izris[hidden]{display:none!important}" +
   ".vnos-izris-v{display:inline-block;padding:4px 0;flex:none;direction:ltr;unicode-bidi:isolate}" + // formula je tudi na strani RTL od leve proti desni
-  ".vnos-izris.izbor .vnos-izris-v{background:color-mix(in srgb,var(--accent) 30%,transparent);border-radius:4px}" +
+  ".vnos-izris.izbor .vnos-izris-v,.vnos-izbor{background:color-mix(in srgb,var(--accent) 30%,transparent);border-radius:4px}" +
   ".vnos-izris .katex{font-size:1.1em}" +
   // Klepet: besedilo se prelomi kot v polju; predolgo besedilo drsi navpično.
   ".vnos-izris.vec{display:block;white-space:pre-wrap;overflow-wrap:anywhere;overflow-x:hidden;overflow-y:auto;line-height:inherit}" +

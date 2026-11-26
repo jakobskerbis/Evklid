@@ -19,7 +19,7 @@ export const decVejica = (t) =>
 // Lastni ukazi, ki jih smemo izvesti (trust). Ime ali seznam imen; funkcija samo za posebne primere (ni v predpomnilniku).
 export const ZAUPAJ = {
   oznake: (c) => c.command === "\\htmlData", // klikljive oznake formul (formula-info.js, sirina.js)
-  kazalec: (c) => c.command === "\\htmlClass" && c.class === "vnos-kazalka", // kazalec v poljih za vnos
+  kazalec: (c) => c.command === "\\htmlClass" && (c.class === "vnos-kazalka" || c.class === "vnos-izbor"), // kazalec in izbor v poljih za vnos
   kalkulator: (c) => (c.command === "\\htmlClass" && /^(sc-|vnos-)/.test(c.class || "")) || c.command === "\\htmlData", // sci-vnos.js
 };
 const zaupanje = (z) => {
