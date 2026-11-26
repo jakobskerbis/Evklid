@@ -147,7 +147,7 @@ export const looksLikeTask = (text) => stripLead(text).task || !!presolve(text, 
  * @returns {{ problems: Array<{type, problem, problemTex, answer, answerTex}>, note: string } | null}
  */
 // »\frac14«, »\frac12 x«, »\sqrt4« brez oklepajev: texToText jih bere narobe, zato koda o njih ne sodi.
-const TEX_SHORT = /\\(?:d|t)?(?:frac|sqrt)(?![a-zA-Z])\s*[^{\s\\[]/;
+export const TEX_SHORT = /\\(?:d|t)?(?:frac|sqrt)(?![a-zA-Z])\s*[^{\s\\[]/;
 export function presolve(text, { first = true, narrow = true } = {}) {
   const src = String(text || "");
   if (!src.trim() || src.length > 600) return null;
@@ -303,7 +303,7 @@ const derivLhs = (name) => new RegExp(name === "y" ? String.raw`^y${PRIME}\s*(?:
 // Ni odgovor (pregled prevzema 2, 3 in 4): primer, opomnik pravila, pogosta napaka, delni, zunanji/notranji odvod ali
 // odvod člena (»Zunanja: $f'(x) = \cos x$«, »Odvod prvega člena: $f'(x) = 3x^2$«), vrednost v točki (»V točki $x = 1$:
 // $y' = 3$«, »naklon«) in učenčev zapis (»Imaš $f'(x) = …$«). Beseda »pravilo« sama ne (»Produktno pravilo: …« je odgovor).
-const DERIV_SKIP_LINE = /primer|example|npr\.|spomni|remember|recall|napak|zmot|zunanj|notranj|manjka|še ni|skoraj|ustav|člen|točk|naklon|velja|ker je|(?<!\p{L})(?:pri\s*\$?\s*x|imaš|imas|mistake|error|outer|inner|almost|term|slope|point|at\s*\$?\s*x)(?!\p{L})/iu;
+const DERIV_SKIP_LINE = /primer|example|npr\.|spomni|remember|recall|napak|zmot|zunanj|notranj|manjka|še ni|skoraj|ustav|člen|točk|naklon|velja|ker je|(?<!\p{L})del(?!\p{L})|sledi|prvi|drugi|korak|najprej|začn|(?<!\p{L})(?:pri\s*\$?\s*x|imaš|imas|mistake|error|outer|inner|almost|term|slope|point|at\s*\$?\s*x)(?!\p{L})/iu;
 const derivFn = (tex) => {
   if (TEX_SHORT.test(String(tex))) return null; // »$f'(x) = \frac12 x^{-\frac12}$« (pregled prevzema 3)
   try {
@@ -459,8 +459,17 @@ function bareResultIssue(answer, p) {
  * Preveri odgovor (brez vrstice META) s kodo.
  * @returns {{ checked: number, issue: string|null }} checked = koliko računov in vrednosti je koda preverila
  */
+// AUDIT-066 (pregled prevzema 6, j na kartici): vrstica, ki jo main preskoči le zaradi »če«, »ali«, »bi« ali »?«, je
+// lahko namerni primer napake (»Če najprej množimo: …«). Napačen račun v njej ni sodba kode, le blaga ugotovitev za
+// obstoječi plačani popravek, ki ob pravilni razlagi odgovori »OK«.
+const SOFT_SKIP_WORDS = /\?|(?<!\p{L})(?:če|ali|bi|if)(?!\p{L})/giu;
+const softSkip = (line) => notClaimAt(line) && !SKIP_LINE.test(line.replace(SOFT_SKIP_WORDS, " "));
+const SOFT_HINT =
+  "This line may be a deliberate example of a mistake (an »if«/»or« case, a hypothetical or a question to the student): answer OK unless the tutor really presents the wrong value as true.";
+
 export function codeFindings(answer, pre = null, question = "") {
   let checked = 0;
+  let soft = null; // AUDIT-066: le če koda sicer ne najde ničesar
   try {
     const r = checkArithmetic(String(answer || ""));
     checked += r.checked;
@@ -475,6 +484,8 @@ export function codeFindings(answer, pre = null, question = "") {
       const m = real[0];
       return { checked, issue: `in the step $${m.tex}$ the calculation does not hold: ${m.left} ≠ ${m.right}` };
     }
+    const s = r.mismatches.find((m) => softSkip(lines[m.line - 1] || ""));
+    if (s) soft = `in the step $${s.tex}$ the calculation does not hold: ${s.left} ≠ ${s.right}. ${SOFT_HINT}`;
   } catch {
     // račun, ki ga ni mogoče prebrati, ni napaka
   }
@@ -483,7 +494,7 @@ export function codeFindings(answer, pre = null, question = "") {
     const d = derivativeIssue(answer, der[0]);
     if (d) {
       checked += d.checked;
-      if (d.issue) return { checked, issue: d.issue, sure: true }; // sure: AUDIT-060, opomba brez modela
+      if (d.issue) return { checked, issue: d.issue };
     }
   }
   const ar = (pre?.problems || []).filter((p) => p.type === "arith");
@@ -491,7 +502,7 @@ export function codeFindings(answer, pre = null, question = "") {
     const b = bareResultIssue(answer, ar[0]);
     if (b) {
       checked += b.checked;
-      if (b.issue) return { checked, issue: b.issue, sure: true };
+      if (b.issue) return { checked, issue: b.issue, sure: true }; // sure: AUDIT-060, opomba brez modela
     }
   }
   const eq = (pre?.problems || []).filter((p) => p.type === "equation" || p.type === "system");
@@ -510,6 +521,7 @@ export function codeFindings(answer, pre = null, question = "") {
   if (chemIssues.length) return { checked, issue: chemIssues.join("; ") };
   const c = celsiusIssue(answer, question);
   checked += c.checked;
+  if (!c.issue && soft) return { checked, issue: soft, soft: true }; // ni sodba kode, nikoli »sure«
   return { checked, issue: c.issue || null };
 }
 

@@ -363,7 +363,7 @@ test("pregled prevzema: pogoj, poskus, učenčev zapis, ≐ in izbran koren niso
     R`Prva: $x = 4$. Druga: $x = 2$.` + block("resi: 3*x-2=10 | x | 4\nresi: x+1=3 | x | 2"),
   ];
   for (const t of none) assert.equal(visibleIssue(t, parseClaims(t)), null, t);
-  for (const t of [R`Torej $x = 5$.` + block("resi: 2*x+3=11 | x | 4"), R`Rešitev je $t = 3$ s.` + block("resi: 5*t^2=20 | t | -2, 2"), R`Vstavimo $x = 1$: leva stran je 5. Rešitev je $x = 5$.` + block("resi: 2*x+3=11 | x | 4")]) {
+  for (const t of [R`Torej $x = 5$.` + block("resi: 2*x+3=11 | x | 4"), R`Rešitev je $t = 3$.` + block("resi: 5*t^2=20 | t | -2, 2"), R`Vstavimo $x = 1$: leva stran je 5. Rešitev je $x = 5$.` + block("resi: 2*x+3=11 | x | 4")]) {
     assert.ok(visibleIssue(t, parseClaims(t)), t);
   }
 });
@@ -427,4 +427,26 @@ test("pregled prevzema 4 (AUDIT-064): pravilna vrednost v preskočeni vrstici, d
   const s = performance.now();
   visibleIssue(R`$x = 1$, `.repeat(7000), A);
   assert.ok(performance.now() - s < 200, "7000 vrednosti");
+});
+
+// Pregled prevzema 6 (AUDIT-064): zapisi, ki jih branje vrednosti ne razume zanesljivo, in logaritemske enačbe brez sodbe.
+test("pregled prevzema 6 (AUDIT-064): \\frac12, periodični zapis, mešani ulomek, kot, enota in log brez sodbe", async () => {
+  const { visibleIssue } = await import("../server/racun.js");
+  const R = String.raw;
+  const block = (b) => `\n<<RACUN\n${b}\n>>`;
+  const none = [
+    R`Rešitev: $x = \frac12$` + block("resi: 2*x=1 | x | 1/2"),
+    R`Rešitev: $x = 0{,}\overline{6}$` + block("resi: 3*x=2 | x | 2/3"),
+    R`Rešitev: $x = 0{,}(6)$` + block("resi: 3*x=2 | x | 2/3"),
+    R`Rešitev: $x = 0{,}66\ldots$` + block("resi: 3*x=2 | x | 2/3"),
+    R`Rešitev: $x = 1\tfrac12$` + block("resi: 2*x=3 | x | 3/2"),
+    R`Rešitev: $x = 30°$` + block("resi: 2*x=60 | x | 30"),
+    R`Rešitev: $x = 30^\circ$` + block("resi: 2*x=60 | x | 30"),
+    R`Rešitev: $x = 5$ cm` + block("resi: 2*x=10 | x | 5"),
+    R`Rešitev: $x = 5\,\text{cm}$` + block("resi: 2*x=10 | x | 5"),
+    R`Rešitev: $x = 3$` + block("resi: log(x, 2)=2 | x | 4"),
+    R`Rešitev: $x = 3$` + block("resi: ln(x)=1 | x | E"),
+  ];
+  for (const t of none) assert.equal(visibleIssue(t, parseClaims(t)), null, t);
+  for (const t of [R`Rešitev: $x = 3$.` + block("resi: 2*x=10 | x | 5"), R`**Rešitev:** $x = 3$` + block("resi: 2*x=10 | x | 5")]) assert.ok(visibleIssue(t, parseClaims(t)), t);
 });

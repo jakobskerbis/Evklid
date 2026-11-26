@@ -209,6 +209,34 @@ test("pregled sodbe: navodila zajamejo »Pravilno« pred namigom, dvom o praviln
   assert.match(system, /pointing at a wrong place while the real error is elsewhere/);
 });
 
+// AUDIT-059 (pregled prevzema 6): popravek kjerkoli v odgovoru (»Prav. Preverimo: … kar ni 11.«, »Ja.\n\nNe, počakaj«,
+// druga vrednost iste neznanke) pomeni, da sodba ni prezrta.
+test("pregled prevzema 6 (AUDIT-059): vprašanje-predlog, popravek kasneje v odgovoru ni prezrta sodba", () => {
+  const R = String.raw;
+  const pre = presolve("Reši enačbo $2x + 3 = 11$.", { narrow: false });
+  const v = stepVerdict("x = 6?", { pre, prevTutor: "Koliko je x?" });
+  assert.equal(v?.wrong, true);
+  assert.equal(v.asked, true);
+  const fixes = [
+    R`Prav. Preverimo: $2 \cdot 6 + 3 = 15$, kar ni 11.`,
+    "Da. Ampak preveri: koliko je $2 \\cdot 6 + 3$?",
+    R`Seveda. Vstavimo: $2 \cdot 6 + 3 = 15 \neq 11$`,
+    "Seveda. Vstavimo: 2 · 6 + 3 = 15 ≠ 11",
+    R`Odlično! Vstavi zdaj $x = 6$ v enačbo.`,
+    R`Drži. Preizkus pa pokaže $15$, zato $x = 4$.`,
+    R`Ja.
+
+Ne, počakaj: $x = 4$.`,
+    "Correct! Let's check: $2 \\cdot 6 + 3 = 15$.",
+    R`Tako je. Torej $x = 4$.`,
+  ];
+  for (const a of fixes) assert.equal(verdictIgnored(a, v), false, a);
+  // vrednost z vejico za njo (»x = 6, ne?«) se prav tako primerja
+  const vNe = stepVerdict("x = 6, ne?", { pre, prevTutor: "Koliko je x?" });
+  for (const a of ["Točno! Ne, oprosti: $x = 4$.", "Yes. Wait, no: $x = 4$."]) assert.equal(verdictIgnored(a, vNe), false, a);
+  for (const a of ["Da, pravilno!", "Tako je.", "Točno! Zdaj naredi še naslednjo nalogo.", R`Da, pravilno! $x = 6$.`]) assert.equal(verdictIgnored(a, v), true, a);
+});
+
 // AUDIT-059 (pregled prevzema 5): vprašanje-predlog z eno vrednostjo (»x = 5?«) je trditev; kot prezrta sodba šteje le
 // izrecna potrditev (»Da, pravilno!«), ne »Pravilno je $x = 4$.«, »Dobro razmišljaš, a …«, »Ne, …« ali »Vstavi …«.
 test("pregled prevzema 5 (AUDIT-059): vprašanje-predlog, ponovni odgovor le ob izrecni potrditvi", async () => {
@@ -223,12 +251,14 @@ test("pregled prevzema 5 (AUDIT-059): vprašanje-predlog, ponovni odgovor le ob 
     for (const a of ["Pravilno je $x = 4$.", "Dobro razmišljaš, a $8 : 2 = 4$.", "Ne, $x = 5$ ne da 11.", "Vstavi $x = 5$ v enačbo. Koliko dobiš?", "Točno – $x = 4$.", "Da, ampak preveri še enkrat."]) assert.equal(verdictIgnored(a, v), false, `${q} ${a}`);
   }
   assert.equal(stepVerdict("x = 5", { pre }).asked, undefined);
+  const R = String.raw;
+  for (const a of [R`Prav. Preverimo: $2 \cdot 6 + 3 = 15$, kar ni 11.`]) assert.equal(verdictIgnored(a, stepVerdict("x = 6?", { pre })), false, a);
   for (const t of ["x = 5", "7 · 8 = 54", "12"]) assert.equal(isClaim(t, ""), true, t);
   const { openDb } = await import("../server/db.js");
   const run = async (msg) => {
     const store = openDb(":memory:");
     const calls = [];
-    const answers = ["Kaj narediš najprej?", "Da, pravilno! Zdaj naredi preizkus."];
+    const answers = ["Kaj narediš najprej?", "Da, pravilno! Zdaj pa naslednji korak."];
     const META = '\n<<META subject=MAT topic="x" error=0 mode=A flag=none done=0>>';
     const streamFn = async ({ system, mode, onText }) => {
       const isFix = String(system).startsWith("You fix");

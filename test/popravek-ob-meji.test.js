@@ -27,9 +27,11 @@ class NearCap extends Usage {
 async function run({ answers, fixText = "Popravek: $7 \\cdot 8 = 56$.", n = 1, msgs, review = "OK" }) {
   const store = openDb(":memory:");
   const calls = [];
-  const streamFn = async ({ system, mode, onText }) => {
+  const fixPrompts = [];
+  const streamFn = async ({ system, mode, onText, messages }) => {
     const isFix = String(system).startsWith("You fix the mistakes");
     calls.push(isFix ? "fix" : "chat");
+    if (isFix) fixPrompts.push(messages[0].content[0].text);
     if (isFix && fixText === null) throw new Error("klic popravka ni uspel");
     const text = isFix ? fixText : (answers.shift() ?? "Odgovor.") + META;
     if (!isFix) onText(text);
@@ -52,7 +54,7 @@ async function run({ answers, fixText = "Popravek: $7 \\cdot 8 = 56$.", n = 1, m
     for (const t of msgs) sse = await call(`/api/conversations/${c.id}/messages`, { text: t });
     const m = store.listMessages(c.id).at(-1);
     const skips = JSON.parse(store.db.prepare("SELECT value FROM kv WHERE key = ?").get(SKIP_KV)?.value || "{}");
-    return { calls, display: m.display_text, sse, skips: JSON.stringify(skips) };
+    return { calls, fixPrompts, display: m.display_text, sse, skips: JSON.stringify(skips) };
   } finally {
     server.close();
   }
@@ -74,15 +76,14 @@ test("s prostorom pod mejo: popravek modela kot prej; »OK« modela ostane brez 
   assert.doesNotMatch(refused.display, /Popravek/);
 });
 
-// Pregled prevzema 5 (AUDIT-060): ob zanesljivem viru (gol rezultat, odvod, sodba kode, ki jo je inštruktor prezrl) in
-// brez popravka modela previdna opomba brez modela; gumbi in kartice odgovora ostanejo.
-test("pregled prevzema 5 (AUDIT-060): meja porabe, prezrta sodba kode → opomba o sodbi", async () => {
+// Pregled prevzema 5 in 6 (AUDIT-060): le pri golem rezultatu in brez popravka modela previdna opomba brez modela;
+// gumbi in kartice odgovora ostanejo. Pri sodbi koraka, odvodu in računu v besedilu nič (kot main).
+test("pregled prevzema 6 (AUDIT-060): meja porabe, prezrta sodba kode → brez opombe (kot main)", async () => {
   // »x = 5« pri 2x + 3 = 11 je napačno, model pa reče »Da, pravilno!«; drugi klic (ponovni odgovor) ne gre pod mejo.
   const r = await run({ answers: ["Kaj narediš najprej?", "Da, pravilno!"], n: 2, msgs: ["Reši 2x + 3 = 11", "x = 5"] });
   assert.equal(r.calls.filter((c) => c === "chat").length, 2, "brez ponovnega odgovora");
-  assert.match(r.display, /Da, pravilno![\s\S]*\*\(Ta ocena tvojega koraka morda ni pravilna\. Preveri ga še sam\.\)\*/);
-  assert.match(r.sse, /Ta ocena tvojega koraka/);
-  assert.match(r.skips, /meja-sodba/);
+  assert.match(r.display, /Da, pravilno!/);
+  assert.doesNotMatch(r.display + r.sse, /Ta ocena tvojega koraka|morda vsebuje napako|Preveri ga še sam/);
 });
 
 test("pregled prevzema 5 (AUDIT-060): napačen gol rezultat ob meji ali napaki klica → opomba, gumbi ostanejo", async () => {
@@ -100,9 +101,10 @@ test("pregled prevzema 5 (AUDIT-060): napačen gol rezultat ob meji ali napaki k
   assert.doesNotMatch(refused.display, /morda vsebuje napako/, "model je napako zavrnil");
 });
 
-test("pregled prevzema 5 (AUDIT-060): napačen odvod ob meji → opomba; račun v besedilu ne", async () => {
+test("pregled prevzema 6 (AUDIT-060): napačen odvod ali račun v besedilu ob meji → brez opombe", async () => {
   const d = await run({ answers: ["Odvod je $f'(x) = 2x$."], msgs: ["Odvajaj $f(x) = x^3$."] });
-  assert.match(d.display, /morda vsebuje napako/);
+  assert.deepEqual(d.calls, ["chat"], "brez klica popravka");
+  assert.doesNotMatch(d.display + d.sse, /morda vsebuje napako/);
   const a = await run({ answers: ["Izračunajmo: $7 \\cdot 8 = 54$. Zdaj prištej še $2$."], msgs: ["Koliko je 7 krat 8 plus 2?"] });
   assert.doesNotMatch(a.display, /morda vsebuje napako|Popravek/);
 });
@@ -126,4 +128,26 @@ test("pregled prevzema 2 (AUDIT-059): »je 7 · 8 = 54?« brez sodbe kode ne gre
   const msgs = ["Izračunaj $7 \\cdot 8 + 2$.", "je 7 · 8 = 54?"];
   const r = await run({ answers: ["Koliko je $7 \\cdot 8$?", "Da, tako je."], n: null, msgs, review: "NAPAKA: 7 · 8 = 56" });
   assert.ok(!r.calls.includes("review"), String(r.calls));
+});
+
+// AUDIT-066 (pregled prevzema 6, j na kartici): napačen račun v vrstici, ki jo main preskoči le zaradi »če«, »ali«, »bi«
+// ali »?«, gre le v obstoječi plačani popravek (en klic, iste meje), z navodilom, da je vrstica lahko namerni primer
+// napake. Ob »OK« modela odgovor ostane nespremenjen in brez opombe; ob meji porabe nič (ni »sure«).
+test("pregled prevzema 6 (AUDIT-066): »Če najprej množimo: $7 \\cdot 8 = 54$« gre v popravek; ob »OK« brez spremembe", async () => {
+  const ans = "Če najprej množimo: $7 \\cdot 8 = 54$. Potem prištejemo $2$.";
+  const fixed = await run({ answers: [ans], n: null, msgs: ["Koliko je 7 krat 8 plus 2?"] });
+  assert.deepEqual(fixed.calls.filter((c) => c === "fix"), ["fix"], "natanko en klic popravka");
+  assert.match(fixed.fixPrompts[0], /56 ≠ 54/);
+  assert.match(fixed.fixPrompts[0], /deliberate example of a mistake/);
+  assert.match(fixed.display, /Popravek/);
+  const ok = await run({ answers: [ans], n: null, fixText: "OK", msgs: ["Koliko je 7 krat 8 plus 2?"] });
+  assert.deepEqual(ok.calls.filter((c) => c === "fix"), ["fix"]);
+  assert.match(ok.display, /^Če najprej množimo: \$7 \\cdot 8 = 54\$\. Potem prištejemo \$2\$\.\s*$/);
+  assert.doesNotMatch(ok.display + ok.sse, /Popravek|morda vsebuje napako|Preveri ga še sam/);
+  const cap = await run({ answers: [ans], msgs: ["Koliko je 7 krat 8 plus 2?"] });
+  assert.deepEqual(cap.calls, ["chat"], "ob meji porabe brez klica popravka");
+  assert.doesNotMatch(cap.display + cap.sse, /Popravek|morda vsebuje napako/);
+  // trdna vrstica brez »če« ostane sodba kode kot prej
+  const hard = await run({ answers: ["Torej $7 \\cdot 8 = 54$."], n: null, fixText: "OK", msgs: ["Koliko je 7 krat 8?"] });
+  assert.doesNotMatch(hard.fixPrompts[0] || "", /deliberate example/);
 });

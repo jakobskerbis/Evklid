@@ -287,7 +287,6 @@
   "chat.ctx3d": "Az oktató látni fogja a kiválasztott modellt és részt.",
   "chat.cutNote": "A válasz túl hosszú volt, ezért megszakadt. Írd be, hogy „folytasd”, és befejezem.",
   "chat.checkNote": "Ebben a válaszban lehet számolási hiba. Ellenőrizd te is.",
-  "chat.checkNoteVerdict": "Lehet, hogy a lépésed értékelése nem helyes. Ellenőrizd te is.",
   "chat.list": "Beszélgetések",
   "chat.photoPreview": "Fotó előnézete",
   "chat.removeImage": "Kép eltávolítása",

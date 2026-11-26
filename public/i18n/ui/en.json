@@ -287,7 +287,6 @@
   "chat.ctx3d": "The tutor will see the selected model and part.",
   "chat.cutNote": "The reply was too long, so it was cut off. Type “continue” and I will finish it.",
   "chat.checkNote": "This answer may contain a calculation mistake. Please check it yourself.",
-  "chat.checkNoteVerdict": "This assessment of your step may not be right. Please check it yourself.",
   "chat.list": "Conversations",
   "chat.photoPreview": "Photo preview",
   "chat.removeImage": "Remove image",

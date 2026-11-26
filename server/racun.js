@@ -16,7 +16,7 @@ import { parseSpecies } from "../public/graph/chemcore.js";
 import { MASSES } from "../public/graph/pse-data.js";
 import { texToText } from "../public/scan/solvecore.js";
 import { parse, compile, calcText } from "../public/graph/math.js";
-import { notClaimAt, hasExercise } from "./live-check.js";
+import { notClaimAt, hasExercise, TEX_SHORT } from "./live-check.js";
 
 // Tudi »RAČUN« (model piše slovensko); bloka učenec v nobeni obliki ne vidi (server/meta.js).
 const BLOCK_RE = /<<\s*RA[CČ]UN\b([\s\S]*?)>>/g;
@@ -199,6 +199,10 @@ function anyValues(plain, v) {
   }
   return out;
 }
+// Zapisi, ki jih branje vrednosti ne razume zanesljivo (pregled prevzema 6): »\frac12«, »0{,}\overline{6}«, »0,(3)«,
+// »1{,}41\ldots«, mešani ulomek »1\tfrac12«, kot (»30°«, »30^\circ«), enota ali beseda za številom.
+const UNSURE_TEX = /\\overline|\\l?dots|…|°|\\circ|\d\s*\\[dt]?frac(?![a-zA-Z])|\d(?:[.,]|\{,\})\d*\(\d+\)/;
+const NEXT_OK = /^[^\S\n]*(?:$|[.,;:!)\]*_]|(?:in|and|ter|or)(?!\p{L}))/u;
 function visibleValues(text, v) {
   const plain = String(text || "").replace(BLOCK_RE, "").replace(/<<META[^<>]*>>/g, "");
   const lhsRe = new RegExp(`^${v}(?:_?\\(?(\\d)\\)?)?$`);
@@ -217,6 +221,9 @@ function visibleValues(text, v) {
     segs.forEach((m, k) => {
       const tex = m[1] ?? m[2];
       if (/\\pm|\\mp|[±∓]|\\approx|\\doteq|≈|≐|\\neq|≠|<|>|\\le|\\ge/.test(tex)) return;
+      if (TEX_SHORT.test(tex) || UNSURE_TEX.test(tex)) return;
+      // beseda ali enota takoj za zapisom (»$x = 5$ cm«, »$x = 30$ stopinj«): ni gola vrednost
+      if (!NEXT_OK.test(line.slice(m.index + m[0].length))) return;
       if (!onlyMath) {
         const before = line.slice(Math.max(0, m.index - 200), m.index);
         const cut = Math.max(before.lastIndexOf(". "), before.lastIndexOf("! "), before.lastIndexOf("? "));
@@ -227,6 +234,7 @@ function visibleValues(text, v) {
         const parts = piece.split("=").map((x) => x.trim());
         if (parts.length < 2 || !lhsRe.test(parts[0])) continue;
         const last = parts.at(-1).replace(/[.]$/, "");
+        if (/^[-−+]?\d[\d.,\s]*[\p{L}µ%]/u.test(last)) continue; // enota ali beseda za številom v zapisu
         const n = numOf(last);
         // zaokrožena vrednost (»x = 1,41« za √2, »0,33« za 1/3): pol zadnjega zapisanega mesta
         const dec = /^[-−+]?\d+[.,](\d+)$/.exec(last.replace(/\s/g, ""))?.[1].length ?? null;
@@ -245,10 +253,12 @@ export function visibleIssue(text, claims) {
   const sols = new Map();
   for (const c of claims) {
     if (c.op !== "solve" || c.args.length < 3 || !/^[a-zA-Z]$/.test(c.args[1])) continue;
+    // logaritemske enačbe: zapisi vrednosti (osnova, \log_2) se berejo nezanesljivo (pregled prevzema 6)
+    const unsureEq = /log|(?<![a-zA-Z])ln(?![a-zA-Z])/i.test(c.args[0]);
     const raw = c.args[2].split(/[,;]/).map((x) => x.trim()).filter(Boolean);
     const vals = raw.map(numOf);
     const prev = sols.get(c.args[1]) || { vals: [], text: [], unsure: false };
-    sols.set(c.args[1], { vals: [...prev.vals, ...vals.filter((x) => x !== null)], text: [...prev.text, c.args[2]], unsure: prev.unsure || !raw.length || vals.includes(null) });
+    sols.set(c.args[1], { vals: [...prev.vals, ...vals.filter((x) => x !== null)], text: [...prev.text, c.args[2]], unsure: prev.unsure || unsureEq || !raw.length || vals.includes(null) });
   }
   for (const [v, s] of sols) {
     if (s.unsure) continue;
@@ -275,10 +285,7 @@ export async function checkAnswerClaims(text) {
   const r = await checkClaims(claims);
   // Vidno besedilo le proti blokom, ki jih je SymPy res potrdil (pregled prevzema 2): nepreverjen blok ali blok z le
   // enim od dveh korenov ni »točno preverjena rešitev«; brez SymPy ni primerjave.
-  const own = claimIssue(r);
-  const seen = own || r.failed.length ? null : visibleIssue(text, r.confirmed || []);
-  // sure: neskladje z rešitvijo, ki jo je SymPy potrdil (AUDIT-060: opomba brez modela, ko popravek ni mogoč).
-  return { ...r, issue: own || seen, sure: !!seen, claims: claims.length };
+  return { ...r, issue: claimIssue(r) || (r.failed.length ? null : visibleIssue(text, r.confirmed || [])), claims: claims.length };
 }
 
 // Števec (kv »racun_statistika«): { "2026-11-11": { odgovori, z_blokom, potrjene, napake, nepreverjene } },

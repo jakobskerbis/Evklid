@@ -1146,19 +1146,22 @@ test("live check: OŠ review (EVKLID_LIVE_REVIEW_OS=1) is reserved in the pupil'
 
 // AUDIT-066: »če«, »ali« in »?« v razlagi ne izklopijo preverjanja računa in končne vrednosti.
 const R = String.raw;
+// Pregled prevzema 6 (AUDIT-066, j na kartici): napačen račun v vrstici s »če«/»ali«/»bi«/»?« ni sodba kode, le blaga
+// ugotovitev (soft) za plačani popravek, ki ob namernem primeru napake odgovori »OK«. »Brez popravka« = brez sodbe kode.
+const hardIssue = (f) => (f.soft ? null : f.issue);
 test("AUDIT-066: vrstica s »če« ostane kot na main, učenčev zapis in vprašanje brez popravka", () => {
   const q = "Koliko je 7 krat 8 plus 2?";
   // Pregled prevzema 4: izjema za račune za »če« je odstranjena (»Če zanemarimo predznak, dobimo $(-2)^3 = 8$«).
   for (const a of [R`Če najprej množimo: $7 \cdot 8 = 54$. Zdaj prištej še $2$.`, R`Če računamo po vrsti: $3 + 4 \cdot 2 = 14$.`]) {
-    assert.equal(codeFindings(a, presolve(q, { first: true }), q).issue, null, a);
+    assert.equal(hardIssue(codeFindings(a, presolve(q, { first: true }), q)), null, a);
   }
   assert.match(codeFindings(R`Najprej množimo: $7 \cdot 8 = 54$. Zdaj prištej še $2$.`, presolve(q, { first: true }), q).issue || "", /does not hold/);
   // Pregled prevzema 3: »?«/»ali« v vrstici in vrednosti neznanke za »če« ostanejo kot na main (brez popravka).
-  assert.equal(codeFindings(R`Ali veš, zakaj? Velja $7 \cdot 8 + 2 = 59$.`, presolve(q, { first: true }), q).issue, null);
+  assert.equal(hardIssue(codeFindings(R`Ali veš, zakaj? Velja $7 \cdot 8 + 2 = 59$.`, presolve(q, { first: true }), q)), null);
   const eq = "Reši 2x + 3 = 11";
-  assert.equal(codeFindings(R`Če odštejemo 3, dobimo $2x = 8$, torej $x = 5$.`, presolve(eq, { first: true }), eq).issue, null, "x = 5");
+  assert.equal(hardIssue(codeFindings(R`Če odštejemo 3, dobimo $2x = 8$, torej $x = 5$.`, presolve(eq, { first: true }), eq)), null, "x = 5");
   for (const a of [R`Ti si napisal $7 \cdot 8 = 54$, prav pa je $7 \cdot 8 = 56$.`, R`Ali je $7 \cdot 8 = 54$?`, R`Če bi pozabil na vrstni red, bi dobil $3 + 4 \cdot 2 = 14$.`, R`Kaj pa, če je $x = 5$? Preveri: $2 \cdot 4 + 3 = 11$.`]) {
-    assert.equal(codeFindings(a, presolve(q, { first: true }), q).issue, null, a);
+    assert.equal(hardIssue(codeFindings(a, presolve(q, { first: true }), q)), null, a);
   }
 });
 
@@ -1176,14 +1179,14 @@ test("AUDIT-066 (pregled): vprašanja, citati in pogoji ostanejo brez popravka",
     [AR, R`Poglej: $7 \cdot 8 = 54$. Je to res?`],
     [AR, R`Na listu imaš $7 \cdot 8 + 2 = 54$. Kje je napaka?`],
   ];
-  for (const [q, a] of none) assert.equal(codeFindings(a, presolve(q, { first: true }), q).issue, null, a);
+  for (const [q, a] of none) assert.equal(hardIssue(codeFindings(a, presolve(q, { first: true }), q)), null, a);
   // citat iz učenčevega sporočila (question je učenčevo besedilo)
   const st = "Izračunal sem 7 · 8 = 54, ali je prav?";
   // »Pri $7 \cdot 8 = 54$ si se zmotil« ostane kot na main (pregled prevzema 3); »Imaš« v vrstici je učenčev zapis
-  assert.equal(codeFindings(R`Napisal si $7 \cdot 8 = 54$, prav je $56$.`, null, st).issue, null);
+  assert.equal(hardIssue(codeFindings(R`Napisal si $7 \cdot 8 = 54$, prav je $56$.`, null, st)), null);
   assert.equal(codeFindings(R`Velja $7 \cdot 8 = 54$.`, null, "Koliko je 7 · 8?").issue !== null, true, "isti račun brez citata je napaka");
   // pregled prevzema 4: vrstica s »če« kot na main
-  assert.equal(codeFindings(R`Če najprej množimo: $7 \cdot 8 = 54$. Zdaj prištej še $2$.`, presolve(AR, { first: true }), AR).issue, null);
+  assert.equal(hardIssue(codeFindings(R`Če najprej množimo: $7 \cdot 8 = 54$. Zdaj prištej še $2$.`, presolve(AR, { first: true }), AR)), null);
 });
 
 // AUDIT-063: znan odvod (presolve) se primerja z zadnjim »f'(x) = …« v odgovoru.
@@ -1309,11 +1312,11 @@ test("pregled prevzema (5): »če«, poskus in pogosta zmota niso trditev; »Če
     [EQ, R`Vstavimo $x = 1$: leva stran je $5$. Rešitev je $x = 4$.`],
     [EQ, R`Rešitev je $x = 4$ ali $x = 5$?`],
   ];
-  for (const [q, a] of none) assert.equal(codeFindings(a, presolve(q), q).issue, null, a);
+  for (const [q, a] of none) assert.equal(hardIssue(codeFindings(a, presolve(q), q)), null, a);
   for (const [q, a] of [[EQ, R`Vstavimo $x = 1$: leva stran je $5$. Rešitev je $x = 5$.`]]) assert.ok(codeFindings(a, presolve(q), q).issue, a);
-  assert.equal(codeFindings(R`Če najprej množimo: $7 \cdot 8 = 54$, potem prištejemo 2.`, presolve(AR), AR).issue, null, "pregled prevzema 4: kot main");
+  assert.equal(hardIssue(codeFindings(R`Če najprej množimo: $7 \cdot 8 = 54$, potem prištejemo 2.`, presolve(AR), AR)), null, "pregled prevzema 4: kot main");
   // pregled prevzema 3: vrednost neznanke v vrstici s »če« kot na main (brez popravka)
-  assert.equal(codeFindings(R`Če od obeh strani odštejemo 3: $2x = 8$. Torej $x = 5$.`, presolve(EQ), EQ).issue, null);
+  assert.equal(hardIssue(codeFindings(R`Če od obeh strani odštejemo 3: $2x = 8$. Torej $x = 5$.`, presolve(EQ), EQ)), null);
 });
 
 // Pregled prevzema 2 (26. 11.): časovne meje (ReDoS) in lažni alarmi, ki jih main ni imel.
@@ -1367,14 +1370,14 @@ test("pregled prevzema 2 (AUDIT-063): opomnik pravila, druga funkcija, pogosta n
 
 test("pregled prevzema 2 (AUDIT-066, AUDIT-069): vprašanje s »če« pred računom, »Npr.«, mešano število", () => {
   const R = String.raw;
-  assert.equal(codeFindings(R`Kaj dobiš, če pozabiš na oklepaj? $2 + 3 \cdot 4 = 20$.`, null, "").issue, null);
+  assert.equal(hardIssue(codeFindings(R`Kaj dobiš, če pozabiš na oklepaj? $2 + 3 \cdot 4 = 20$.`, null, "")), null);
   // pregled prevzema 3: vrstica z »?« ali »ali« kot na main (brez popravka)
-  assert.equal(codeFindings(R`Ali veš, zakaj? Velja $2 + 3 \cdot 4 = 20$.`, null, "").issue, null);
+  assert.equal(hardIssue(codeFindings(R`Ali veš, zakaj? Velja $2 + 3 \cdot 4 = 20$.`, null, "")), null);
   const eq = "Reši enačbo $4x + 2 = 18$.";
-  assert.equal(codeFindings(R`Pomagaj si z obratnimi operacijami. Npr. pri $x + 3 = 5$ odšteješ 3 in dobiš $x = 2$. Kaj narediš pri svoji enačbi najprej?`, presolve(eq), eq).issue, null);
+  assert.equal(hardIssue(codeFindings(R`Pomagaj si z obratnimi operacijami. Npr. pri $x + 3 = 5$ odšteješ 3 in dobiš $x = 2$. Kaj narediš pri svoji enačbi najprej?`, presolve(eq), eq)), null);
   assert.ok(codeFindings(R`Npr. pri $x + 3 = 5$ odšteješ 3. Rešitev je $x = 2$.`, presolve(eq), eq).issue, "stavek za primerom je trditev");
   const fr = R`Izračunaj $\frac{10}{3}$.`;
-  assert.equal(codeFindings("Odgovor: 3 1/3", presolve(fr), fr).issue, null);
+  assert.equal(hardIssue(codeFindings("Odgovor: 3 1/3", presolve(fr), fr)), null);
   assert.ok(codeFindings("Odgovor: 3 2/3", presolve(fr), fr).issue);
 });
 
@@ -1397,14 +1400,14 @@ test("pregled prevzema 3 (AUDIT-066): citat, kviz, vprašanje v istem vrstici in
     [null, R`True or false? $7 \cdot 8 = 54$`],
     [null, R`Is this right? $7 \cdot 8 = 54$`],
   ];
-  for (const [q, a] of none) assert.equal(codeFindings(a, q ? presolve(q) : null, q || "").issue, null, a);
+  for (const [q, a] of none) assert.equal(hardIssue(codeFindings(a, q ? presolve(q) : null, q || "")), null, a);
   // napake, ki jih ujame main, ostanejo ujete
   const EQ = "Reši enačbo $2x + 3 = 11$.";
   for (const a of [R`Prav imaš, $x = 5$.`, R`Imaš prav: $x = 5$.`, R`Pravilno! $x = 5$, nobene napake.`, R`Rešitev je na primer $x = 5$.`, R`Izberemo $x = 5$, ker je tako lepo.`]) assert.ok(codeFindings(a, presolve(EQ), EQ).issue, a);
   for (const a of [R`Prav imaš: $7 \cdot 8 = 54$.`, R`Preizkus: $2 \cdot 4 + 3 = 12$ ✓`, R`Naredimo preizkus: $7 \cdot 8 = 54$.`, R`Recimo, da imamo 7 vrst po 8: $7 \cdot 8 = 54$ stolov.`]) assert.ok(codeFindings(a, null, "").issue, a);
   // pregled prevzema 4: tudi račun za pogojem v prvi osebi kot na main
   for (const a of [R`Če najprej množimo: $7 \cdot 8 = 54$.`, R`Če zanemarimo predznak, dobimo $(-2)^3 = 8$. Pazimo torej na predznak.`, R`Če računamo od leve proti desni, dobimo $2 + 3 \cdot 4 = 20$. Tega ne smemo.`, R`Če korenimo vsak člen posebej, dobimo $\sqrt{9 + 16} = 7$. Tako se ne sme.`, R`Mnogi, če ne pazijo, napišejo $2^3 = 6$.`, R`If we ignore the order, we get $2 + 3 \cdot 4 = 20$.`]) {
-    assert.equal(codeFindings(a, null, "").issue, null, a);
+    assert.equal(hardIssue(codeFindings(a, null, "")), null, a);
   }
 });
 
@@ -1521,12 +1524,43 @@ test("pregled prevzema 5 (AUDIT-063): delni koraki odvoda, »\\log« brez osnove
   for (const [q, a] of [[A, R`Odvod je $f'(x) = 3x^2$.`], [B, R`$y' = 5(3x+1)^4$`], [C, R`$f'(x) = \cos(x^2)$`]]) assert.ok(codeFindings(a, presolve(q), q).issue, a);
   const many = R`$f'(x) = 2x$ `.repeat(7500);
   // čas odvoda: razlika do istega odgovora brez naloge (preostali čas je račun v besedilu, kot na main)
-  const ms = (pre) => {
+  // najkrajši od treh zagonov (vzporedni testi ne vplivajo na meritev)
+  const ms = (pre) => Math.min(...[0, 1, 2].map(() => {
     const s = performance.now();
     codeFindings(many, pre, A);
     return performance.now() - s;
-  };
+  }));
   const base = ms(null);
   assert.equal(codeFindings(many, presolve(A), A).issue, null, "več kot 50 kandidatov: brez sodbe");
   assert.ok(ms(presolve(A)) - base < 200);
+});
+
+// Pregled prevzema 6 (AUDIT-063): delni korak odvoda z besedo »del«, »sledi«, »prvi«, »korak« … ni končni odvod.
+test("pregled prevzema 6 (AUDIT-063): delni koraki odvoda z »del«, »sledi«, »prvi« niso napaka", () => {
+  const B = "Odvajaj $(3x+1)^5$.";
+  const C = R`Odvajaj $\sin(x^2)$.`;
+  const P = R`Odvajaj $x^2 e^x$.`;
+  const none = [
+    [B, R`Po potenčnem pravilu: $y' = 5(3x+1)^4$ (pa še verižno pravilo sledi)`],
+    [C, R`Prvi del odvoda: $y' = \cos(x^2)$`],
+    [P, R`Produktno pravilo. Prvi del: $f'(x) = 2xe^x$`],
+    [B, R`Prvi korak: $y' = 5(3x+1)^4$`],
+  ];
+  for (const [q, a] of none) assert.equal(codeFindings(a, presolve(q), q).issue, null, a);
+  assert.ok(codeFindings(R`$y' = 5(3x+1)^4$`, presolve(B), B).issue);
+});
+
+test("pregled prevzema 6 (AUDIT-066): napačen račun v vrstici s »če«/»ali«/»?« je le blaga ugotovitev", () => {
+  for (const a of [R`Če najprej množimo: $7 \cdot 8 = 54$`, R`Ali je $7 \cdot 8 = 54$?`]) {
+    const f = codeFindings(a, null, "");
+    assert.equal(f.soft, true, a);
+    assert.equal(f.sure, undefined, a);
+    assert.match(f.issue, /deliberate example of a mistake/, a);
+  }
+  for (const a of [R`Tvoj račun $7 \cdot 8 = 54$ ni prav.`, R`Če bi napisal $7 \cdot 8 = 54$, bi bilo napačno.`, R`Če najprej množimo: $7 \cdot 8 = 56$`]) assert.equal(codeFindings(a, null, "").issue, null, a);
+  const hard = codeFindings(R`Torej $7 \cdot 8 = 54$.`, null, "");
+  assert.ok(hard.issue && !hard.soft);
+  // trdna napaka ima prednost pred blago
+  const both = codeFindings(R`Če najprej množimo: $7 \cdot 8 = 54$` + "\n" + R`Torej $3 \cdot 3 = 10$.`, null, "");
+  assert.ok(both.issue && !both.soft && /3 \\cdot 3/.test(both.issue));
 });

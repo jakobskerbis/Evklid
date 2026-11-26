@@ -293,7 +293,6 @@
   "chat.ctx3d": "Instruktor će vidjeti odabrani model i dio.",
   "chat.cutNote": "Odgovor je bio predug, pa je prekinut. Napiši »nastavi« i dovršit ću ga.",
   "chat.checkNote": "Ovaj odgovor možda sadrži pogrešku u računu. Provjeri ga sam.",
-  "chat.checkNoteVerdict": "Ova ocjena tvog koraka možda nije točna. Provjeri ga sam.",
   "chat.list": "Razgovori",
   "chat.photoPreview": "Pregled fotografije",
   "chat.removeImage": "Ukloni sliku",
