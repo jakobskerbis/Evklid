@@ -20,7 +20,8 @@ namespace Evklid.Lekcije.MAT_SS_2.EksponentneEnacbe
 
 /-! ## Pomožne trditve -/
 
-/-- Pomožno (za približke): če je e·q = p in aᵠ < yᵖ < bᵠ (y > 0, b ≥ 0), potem leži y^e med a in b. -/
+/-- Pomožno (za približke): če je e·q = p in aᵠ < yᵖ < bᵠ (y > 0, b ≥ 0), potem leži y^e med a in b.
+pomozno -/
 theorem koren_med {y a b e : ℝ} {p : ℤ} {q : ℕ} (hy : 0 < y)
     (hb : 0 ≤ b) (he : e * q = p) (h1 : a ^ q < y ^ p) (h2 : y ^ p < b ^ q) :
     a < y ^ e ∧ y ^ e < b := by
@@ -39,21 +40,25 @@ theorem koren_med {y a b e : ℝ} {p : ℤ} {q : ℕ} (hy : 0 < y)
 example : (0 : ℝ) < 4 ∧ (0 : ℝ) ≤ 3 ∧ (1 / 2 : ℝ) * ((2 : ℕ) : ℝ) = ((1 : ℤ) : ℝ)
     ∧ (1 : ℝ) ^ 2 < (4 : ℝ) ^ (1 : ℤ) ∧ (4 : ℝ) ^ (1 : ℤ) < 3 ^ 2 := by norm_num
 
-/-- Pomožno: pri a > 1 je aˣ strogo naraščajoča. -/
+/-- Pomožno: pri a > 1 je aˣ strogo naraščajoča.
+pomozno -/
 theorem narasca (a : ℝ) (ha : 1 < a) : StrictMono fun x : ℝ => a ^ x :=
   fun _ _ h => (Real.rpow_lt_rpow_left_iff ha).mpr h
 
 /-- Predpostavke trditve `narasca` se dajo izpolniti (a = 2). -/
 example : (1 : ℝ) < 2 := by norm_num
 
-/-- Pomožno: pri 0 < a < 1 je aˣ strogo padajoča. -/
+/-- Pomožno: pri 0 < a < 1 je aˣ strogo padajoča.
+pomozno -/
 theorem pada (a : ℝ) (h0 : 0 < a) (h1 : a < 1) : StrictAnti fun x : ℝ => a ^ x :=
   fun _ _ h => (Real.rpow_lt_rpow_left_iff_of_base_lt_one h0 h1).mpr h
 
 /-- Predpostavke trditve `pada` se dajo izpolniti (a = 1/2). -/
 example : (0 : ℝ) < 1 / 2 ∧ (1 / 2 : ℝ) < 1 := by norm_num
 
-/-- Razlaga 3 (ključna lastnost, Povzetek, ustno vprašanje 1): za a > 0, a ≠ 1 je aᵘ = aᵛ ⟺ u = v. -/
+/-- Razlaga 3 (ključna lastnost, Povzetek, ustno vprašanje 1): za a > 0, a ≠ 1 je aᵘ = aᵛ ⟺ u = v.
+trditev: MAT-SS-2/eksponentne-enacbe#enacenje
+besedilo: »$$a^{u} = a^{v} \iff u = v \qquad (a > 0,\ a \ne 1).$$« -/
 theorem enacenje (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (u v : ℝ) : a ^ u = a ^ v ↔ u = v := by
   constructor
   · intro h
@@ -65,11 +70,18 @@ theorem enacenje (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (u v : ℝ) : a ^ u = a 
 /-- Predpostavke trditve `enacenje` se dajo izpolniti (a = 2). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 := by norm_num
 
-/-- Pomožno: (t − r)(t − s) = 0 ⟺ t = r ali t = s. -/
+/-- Predpostavke trditve `enacenje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 := by norm_num
+  enacenje (ha := w.1) (ha1 := w.2)
+
+/-- Pomožno: (t − r)(t − s) = 0 ⟺ t = r ali t = s.
+pomozno -/
 theorem kvadratna (t r s : ℝ) : (t - r) * (t - s) = 0 ↔ t = r ∨ t = s := by
   rw [mul_eq_zero, sub_eq_zero, sub_eq_zero]
 
-/-- Pomožno: (a²)ˣ = (aˣ)² za a ≥ 0 (npr. 4ˣ = (2ˣ)², 9ˣ = (3ˣ)²). -/
+/-- Pomožno: (a²)ˣ = (aˣ)² za a ≥ 0 (npr. 4ˣ = (2ˣ)², 9ˣ = (3ˣ)²).
+pomozno -/
 theorem kvad (a x : ℝ) (ha : 0 ≤ a) : (a ^ 2) ^ x = (a ^ x) ^ 2 := by
   rw [← Real.rpow_natCast a 2, ← Real.rpow_mul ha, ← Real.rpow_natCast (a ^ x) 2,
     ← Real.rpow_mul ha]
@@ -78,18 +90,22 @@ theorem kvad (a x : ℝ) (ha : 0 ≤ a) : (a ^ 2) ^ x = (a ^ x) ^ 2 := by
 /-- Predpostavke trditve `kvad` se dajo izpolniti (a = 2). -/
 example : (0 : ℝ) ≤ 2 := by norm_num
 
-/-- Pomožno: 4ˣ = (2ˣ)². -/
+/-- Pomožno: 4ˣ = (2ˣ)².
+pomozno -/
 theorem stiri (x : ℝ) : (4 : ℝ) ^ x = ((2 : ℝ) ^ x) ^ 2 := by
   rw [show (4 : ℝ) = 2 ^ 2 by norm_num]; exact kvad 2 x (by norm_num)
 
-/-- Pomožno: 9ˣ = (3ˣ)². -/
+/-- Pomožno: 9ˣ = (3ˣ)².
+pomozno -/
 theorem devet (x : ℝ) : (9 : ℝ) ^ x = ((3 : ℝ) ^ x) ^ 2 := by
   rw [show (9 : ℝ) = 3 ^ 2 by norm_num]; exact kvad 3 x (by norm_num)
 
 /-! ## Razlaga 1: šahovnica -/
 
 /-- Razlaga 1: 2¹ = 2, 2² = 4, 2³ = 8, 2¹⁰ = 1024; 2^(n−1) = 1024 ⟺ 2^(n−1) = 2¹⁰ ⟺ n − 1 = 10 ⟺ n = 11;
-preizkus 2^(11−1) = 2¹⁰ = 1024. -/
+preizkus 2^(11−1) = 2¹⁰ = 1024.
+trditev: MAT-SS-2/eksponentne-enacbe#sahovnica
+besedilo: »Desno stran zapišemo kot potenco števila $2$: $2^1 = 2$, $2^2 = 4$, $2^3 = 8$, … in $2^{10} = 1024$. Enačba se glasi $2^{n-1} = 2^{10}$. Ker sta osnovi enaki, morata biti enaka tudi eksponenta: $n - 1 = 10$, torej $n = 11$. Preizkus: $2^{11-1} = 2^{10} = 1024$.« -/
 theorem sahovnica (n : ℝ) :
     ((2 : ℝ) ^ (1 : ℝ) = 2 ∧ (2 : ℝ) ^ (2 : ℝ) = 4 ∧ (2 : ℝ) ^ (3 : ℝ) = 8 ∧ (2 : ℝ) ^ (10 : ℝ) = 1024) ∧
     ((2 : ℝ) ^ (n - 1) = 1024 ↔ n = 11) ∧ (2 : ℝ) ^ ((11 : ℝ) - 1) = 1024 := by
@@ -100,11 +116,15 @@ theorem sahovnica (n : ℝ) :
 
 /-! ## Razlaga 3 in 4 -/
 
-/-- Razlaga 3: pogoj a ≠ 1 je potreben: 1⁵ = 1⁷, a 5 ≠ 7. -/
+/-- Razlaga 3: pogoj a ≠ 1 je potreben: 1⁵ = 1⁷, a 5 ≠ 7.
+trditev: MAT-SS-2/eksponentne-enacbe#ena-osnova
+besedilo: »Pogoj $a \ne 1$ je pomemben: $1^5 = 1^7$, pa vendar $5 \ne 7$.« -/
 theorem ena_osnova : (1 : ℝ) ^ (5 : ℝ) = (1 : ℝ) ^ (7 : ℝ) ∧ (5 : ℝ) ≠ 7 := by norm_num
 
 /-- Razlaga 4 (in Povzetek, ustno vprašanje 3): za a > 0 in c ≤ 0 enačba aˣ = c nima rešitve; posebej
-2ˣ = −4, 3ˣ = 0, 3ˣ = −9 in 3ˣ = −3 nimajo rešitve. -/
+2ˣ = −4, 3ˣ = 0, 3ˣ = −9 in 3ˣ = −3 nimajo rešitve.
+trditev: MAT-SS-2/eksponentne-enacbe#brez-resitve
+besedilo: »Ker je $a^x > 0$, enačba $a^x = c$ s $c \le 0$ nima rešitve.« -/
 theorem brez_resitve (a c : ℝ) (ha : 0 < a) (hc : c ≤ 0) : ¬ ∃ x : ℝ, a ^ x = c := by
   rintro ⟨x, hx⟩
   have := Real.rpow_pos_of_pos ha x
@@ -113,14 +133,23 @@ theorem brez_resitve (a c : ℝ) (ha : 0 < a) (hc : c ≤ 0) : ¬ ∃ x : ℝ, a
 /-- Predpostavke trditve `brez_resitve` se dajo izpolniti (a = 2, c = −4). -/
 example : (0 : ℝ) < 2 ∧ (-4 : ℝ) ≤ 0 := by norm_num
 
-/-- Razlaga 4: primeri 2ˣ = −4, 3ˣ = 0, 3ˣ = −9, 3ˣ = −3 brez rešitve. -/
+/-- Predpostavke trditve `brez_resitve` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (-4 : ℝ) ≤ 0 := by norm_num
+  brez_resitve (ha := w.1) (hc := w.2)
+
+/-- Razlaga 4: primeri 2ˣ = −4, 3ˣ = 0, 3ˣ = −9, 3ˣ = −3 brez rešitve.
+trditev: MAT-SS-2/eksponentne-enacbe#brez-resitve-primeri
+besedilo: »Enačbe $2^x = -4$ ali $3^x = 0$ zato nimajo realne rešitve.« -/
 theorem brez_resitve_primeri :
     (¬ ∃ x : ℝ, (2 : ℝ) ^ x = -4) ∧ (¬ ∃ x : ℝ, (3 : ℝ) ^ x = 0) ∧
     (¬ ∃ x : ℝ, (3 : ℝ) ^ x = -9) ∧ (¬ ∃ x : ℝ, (3 : ℝ) ^ x = -3) :=
   ⟨brez_resitve 2 (-4) (by norm_num) (by norm_num), brez_resitve 3 0 (by norm_num) le_rfl,
     brez_resitve 3 (-9) (by norm_num) (by norm_num), brez_resitve 3 (-3) (by norm_num) (by norm_num)⟩
 
-/-- Razlaga 4, premisli: 2ˣ = 2^(x+1) nima rešitve (x = x + 1 ne velja; 2^(x+1) = 2·2ˣ). -/
+/-- Razlaga 4, premisli: 2ˣ = 2^(x+1) nima rešitve (x = x + 1 ne velja; 2^(x+1) = 2·2ˣ).
+trditev: MAT-SS-2/eksponentne-enacbe#premisli-x-plus-1
+besedilo: »Nobene. Z enačenjem eksponentov dobimo enačbo $x = x + 1$, ki ne velja za noben $x$. Drugače: $2^{x+1} = 2 \cdot 2^x$, iz enačbe $2^x = 2 \cdot 2^x$ pa bi sledilo $2^x = 0$, kar je nemogoče.« -/
 theorem premisli_x_plus_1 : (∀ x : ℝ, (2 : ℝ) ^ (x + 1) = 2 * (2 : ℝ) ^ x) ∧
     ¬ ∃ x : ℝ, (2 : ℝ) ^ x = (2 : ℝ) ^ (x + 1) := by
   refine ⟨fun x => by rw [Real.rpow_add (by norm_num), Real.rpow_one]; ring, ?_⟩
@@ -131,7 +160,9 @@ theorem premisli_x_plus_1 : (∀ x : ℝ, (2 : ℝ) ^ (x + 1) = 2 * (2 : ℝ) ^ 
 /-! ## Razlaga 5: enačenje osnov -/
 
 /-- Razlaga 5, tabela: potence števil 2, 3, 5 ter za a > 0 in n ≠ 0: 1 = a⁰, 1/aⁿ = a⁻ⁿ,
-(aᵐ)^(1/n) = a^(m/n). -/
+(aᵐ)^(1/n) = a^(m/n).
+trditev: MAT-SS-2/eksponentne-enacbe#tabela-potenc
+besedilo: »| $2$ | $4 = 2^2$, $8 = 2^3$, $16 = 2^4$, $32 = 2^5$, $64 = 2^6$, $128 = 2^7$, $256 = 2^8$ | | $3$ | $9 = 3^2$, $27 = 3^3$, $81 = 3^4$, $243 = 3^5$ | | $5$ | $25 = 5^2$, $125 = 5^3$, $625 = 5^4$ | | vsaka $a$ | $1 = a^0$, $\;\dfrac{1}{a^n} = a^{-n}$, $\;\sqrt[n]{a^m} = a^{\frac{m}{n}}$ |« -/
 theorem tabela_potenc :
     ((2 : ℝ) ^ 2 = 4 ∧ (2 : ℝ) ^ 3 = 8 ∧ (2 : ℝ) ^ 4 = 16 ∧ (2 : ℝ) ^ 5 = 32 ∧ (2 : ℝ) ^ 6 = 64 ∧
       (2 : ℝ) ^ 7 = 128 ∧ (2 : ℝ) ^ 8 = 256) ∧
@@ -143,7 +174,9 @@ theorem tabela_potenc :
   · rw [Real.rpow_neg ha.le, one_div]
   · rw [← Real.rpow_mul ha.le]; congr 1; ring
 
-/-- Razlaga 5 (in analogija z valuto): 8ˣ = 4^(x+1) ⟺ 2^(3x) = 2^(2x+2) ⟺ 3x = 2x + 2 ⟺ x = 2. -/
+/-- Razlaga 5 (in analogija z valuto): 8ˣ = 4^(x+1) ⟺ 2^(3x) = 2^(2x+2) ⟺ 3x = 2x + 2 ⟺ x = 2.
+trditev: MAT-SS-2/eksponentne-enacbe#osem-stiri
+besedilo: »Primer: $8^{x} = 4^{x+1}$. Ker je $8 = 2^3$ in $4 = 2^2$, dobimo $2^{3x} = 2^{2x+2}$, torej $3x = 2x + 2$ in $x = 2$.« -/
 theorem osem_stiri (x : ℝ) : (8 : ℝ) ^ x = (4 : ℝ) ^ (x + 1) ↔ x = 2 := by
   have h8 : (8 : ℝ) ^ x = (2 : ℝ) ^ (3 * x) := by
     rw [show (8 : ℝ) = 2 ^ (3 : ℝ) by norm_num, ← Real.rpow_mul (by norm_num)]
@@ -156,7 +189,9 @@ theorem osem_stiri (x : ℝ) : (8 : ℝ) ^ x = (4 : ℝ) ^ (x + 1) ↔ x = 2 := 
 /-! ## Razlaga 6: izpostavljanje -/
 
 /-- Razlaga 6: 3^(x+1) − 3^(x−1) = 72 ⟺ 3·3ˣ − (1/3)·3ˣ = 72 ⟺ 3ˣ(3 − 1/3) = 72 ⟺ 3ˣ·8/3 = 72
-⟺ 3ˣ = 72·3/8 = 27 = 3³ ⟺ x = 3. -/
+⟺ 3ˣ = 72·3/8 = 27 = 3³ ⟺ x = 3.
+trditev: MAT-SS-2/eksponentne-enacbe#izpostavljanje
+besedilo: »$$3^x = 72 \cdot \frac{3}{8} = 27 = 3^3 \;\Rightarrow\; x = 3.$$« -/
 theorem izpostavljanje (x : ℝ) : (3 : ℝ) ^ (x + 1) - (3 : ℝ) ^ (x - 1) = 72 ↔ x = 3 := by
   have h1 : (3 : ℝ) ^ (x + 1) = 3 * (3 : ℝ) ^ x := by
     rw [Real.rpow_add (by norm_num), Real.rpow_one]; ring
@@ -173,14 +208,18 @@ theorem izpostavljanje (x : ℝ) : (3 : ℝ) ^ (x + 1) - (3 : ℝ) ^ (x - 1) = 7
 /-! ## Razlaga 7: nova spremenljivka -/
 
 /-- Razlaga 7, premisli: 2ˣ = t pri t ≤ 0 nima rešitve, 2ˣ = 1/2 pa ima rešitev x = −1 (majhen pozitiven
-t pomeni negativen x). -/
+t pomeni negativen x).
+trditev: MAT-SS-2/eksponentne-enacbe#majhen-t
+besedilo: »enačba $2^x = \frac{1}{2}$ ima rešitev $x = -1$« -/
 theorem majhen_t (x : ℝ) : (2 : ℝ) ^ x = 1 / 2 ↔ x = -1 := by
   calc (2 : ℝ) ^ x = 1 / 2 ↔ (2 : ℝ) ^ x = (2 : ℝ) ^ (-1 : ℝ) := by norm_num
     _ ↔ x = -1 := enacenje 2 (by norm_num) (by norm_num) _ _
 
 /-! ## Razlaga 8: enaka eksponenta -/
 
-/-- Razlaga 8 (in Povzetek): za a, b > 0, a ≠ b iz aᵘ = bᵘ sledi (a/b)ᵘ = 1 = (a/b)⁰ in u = 0. -/
+/-- Razlaga 8 (in Povzetek): za a, b > 0, a ≠ b iz aᵘ = bᵘ sledi (a/b)ᵘ = 1 = (a/b)⁰ in u = 0.
+trditev: MAT-SS-2/eksponentne-enacbe#enaka-eksponenta
+besedilo: »Enaki eksponenti, različni osnovi.** Če je $a^{u} = b^{u}$ za različni pozitivni osnovi $a$ in $b$, delimo z $b^u$ in dobimo $\left(\dfrac{a}{b}\right)^u = 1 = \left(\dfrac{a}{b}\right)^0$, zato je $u = 0$.« -/
 theorem enaka_eksponenta (a b u : ℝ) (ha : 0 < a) (hb : 0 < b) (hab : a ≠ b) (h : a ^ u = b ^ u) :
     (a / b) ^ u = 1 ∧ (1 : ℝ) = (a / b) ^ (0 : ℝ) ∧ u = 0 := by
   have h1 : (a / b) ^ u = 1 := by
@@ -194,7 +233,14 @@ theorem enaka_eksponenta (a b u : ℝ) (ha : 0 < a) (hb : 0 < b) (hab : a ≠ b)
 /-- Predpostavke trditve `enaka_eksponenta` se dajo izpolniti (a = 2, b = 5, u = 0). -/
 example : (0 : ℝ) < 2 ∧ (0 : ℝ) < 5 ∧ (2 : ℝ) ≠ 5 ∧ (2 : ℝ) ^ (0 : ℝ) = (5 : ℝ) ^ (0 : ℝ) := by norm_num
 
-/-- Razlaga 8: 2^(x−3) = 5^(x−3) ⟺ x = 3. -/
+/-- Predpostavke trditve `enaka_eksponenta` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (0 : ℝ) < 5 ∧ (2 : ℝ) ≠ 5 ∧ (2 : ℝ) ^ (0 : ℝ) = (5 : ℝ) ^ (0 : ℝ) := by norm_num
+  enaka_eksponenta (ha := w.1) (hb := w.2.1) (hab := w.2.2.1) (h := w.2.2.2)
+
+/-- Razlaga 8: 2^(x−3) = 5^(x−3) ⟺ x = 3.
+trditev: MAT-SS-2/eksponentne-enacbe#dva-pet
+besedilo: »Tako je rešitev enačbe $2^{x-3} = 5^{x-3}$ število $x = 3$.« -/
 theorem dva_pet (x : ℝ) : (2 : ℝ) ^ (x - 3) = (5 : ℝ) ^ (x - 3) ↔ x = 3 := by
   constructor
   · intro h
@@ -204,13 +250,17 @@ theorem dva_pet (x : ℝ) : (2 : ℝ) ^ (x - 3) = (5 : ℝ) ^ (x - 3) ↔ x = 3 
 
 /-! ## Razlaga 10: grafični pogled, obstoj rešitve -/
 
-/-- Razlaga 10: 2ˣ = 8 ⟺ x = 3. -/
+/-- Razlaga 10: 2ˣ = 8 ⟺ x = 3.
+trditev: MAT-SS-2/eksponentne-enacbe#dva-osem
+besedilo: »Rešitve enačbe $2^x = 8$ so torej abscise presečišč krivulje $y = 2^x$ in vodoravne premice $y = 8$; presečišče je pri $x = 3$.« -/
 theorem dva_osem (x : ℝ) : (2 : ℝ) ^ x = 8 ↔ x = 3 := by
   calc (2 : ℝ) ^ x = 8 ↔ (2 : ℝ) ^ x = (2 : ℝ) ^ (3 : ℝ) := by norm_num
     _ ↔ x = 3 := enacenje 2 (by norm_num) (by norm_num) _ _
 
 /-- Razlaga 10 in Bolj natančno (obstoj rešitve): za a > 0, a ≠ 1 in c > 0 ima aˣ = c natanko eno
-rešitev; pri a = 2: rešitev enačbe 2ˣ = b je pri b = 1 enaka 0, pri 0 < b < 1 pa negativna. -/
+rešitev; pri a = 2: rešitev enačbe 2ˣ = b je pri b = 1 enaka 0, pri 0 < b < 1 pa negativna.
+trditev: MAT-SS-2/eksponentne-enacbe#obstoj
+besedilo: »Zato ima enačba $a^x = c$ za vsak $c > 0$ natanko eno rešitev« -/
 theorem obstoj (a c : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hc : 0 < c) :
     (∃! x : ℝ, a ^ x = c) ∧ (∀ x : ℝ, (2 : ℝ) ^ x = 1 ↔ x = 0) ∧
     (∀ b x : ℝ, b < 1 → (2 : ℝ) ^ x = b → x < 0) := by
@@ -224,7 +274,14 @@ theorem obstoj (a c : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hc : 0 < c) :
 /-- Predpostavke trditve `obstoj` se dajo izpolniti (a = 2, c = 5). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 5 := by norm_num
 
-/-- Razlaga 10: 2ˣ = 5 ima rešitev, in vsaka rešitev leži med 2,25 in 2,35 (≈ 2,3). -/
+/-- Predpostavke trditve `obstoj` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 5 := by norm_num
+  obstoj (ha := w.1) (ha1 := w.2.1) (hc := w.2.2)
+
+/-- Razlaga 10: 2ˣ = 5 ima rešitev, in vsaka rešitev leži med 2,25 in 2,35 (≈ 2,3).
+trditev: MAT-SS-2/eksponentne-enacbe#dva-pet-resitev
+besedilo: »Rešitev vseeno obstaja, graf jo pokaže blizu $x \approx 2{,}3$.« -/
 theorem dva_pet_resitev : (∃ x : ℝ, (2 : ℝ) ^ x = 5) ∧
     ∀ x : ℝ, (2 : ℝ) ^ x = 5 → 2.25 < x ∧ x < 2.35 := by
   refine ⟨⟨Real.logb 2 5, Real.rpow_logb (by norm_num) (by norm_num) (by norm_num)⟩, fun x hx => ?_⟩
@@ -239,7 +296,9 @@ theorem dva_pet_resitev : (∃ x : ℝ, (2 : ℝ) ^ x = 5) ∧
 
 /-! ## Razlaga 11: neenačbe -/
 
-/-- Razlaga 11: 2ˣ < 8 ⟺ x < 3 in (1/2)ˣ < 8 ⟺ x > −3 (presečišči (3, 8) in (−3, 8)). -/
+/-- Razlaga 11: 2ˣ < 8 ⟺ x < 3 in (1/2)ˣ < 8 ⟺ x > −3 (presečišči (3, 8) in (−3, 8)).
+trditev: MAT-SS-2/eksponentne-enacbe#neenacbi
+besedilo: »Naraščajoča krivulja $y = 2^x$ je pod premico $y = 8$ levo od presečišča $(3, 8)$, zato velja za $x < 3$. Padajoča krivulja $y = \left(\frac{1}{2}\right)^x$ pa je pod premico $y = 8$ desno od presečišča $(-3, 8)$, zato neenačbo $\left(\frac{1}{2}\right)^x < 8$ rešijo vsi $x > -3$.« -/
 theorem neenacbi (x : ℝ) : ((2 : ℝ) ^ x < 8 ↔ x < 3) ∧ ((1 / 2 : ℝ) ^ x < 8 ↔ -3 < x) := by
   constructor
   · rw [show (8 : ℝ) = (2 : ℝ) ^ (3 : ℝ) by norm_num]
@@ -250,7 +309,9 @@ theorem neenacbi (x : ℝ) : ((2 : ℝ) ^ x < 8 ↔ x < 3) ∧ ((1 / 2 : ℝ) ^ 
 /-! ## Primer 1 -/
 
 /-- Primer 1 a): 1/27 = 1/3³ = 3^(−3); 3^(2x−1) = 1/27 ⟺ 3^(2x−1) = 3^(−3) ⟺ 2x − 1 = −3 ⟺ 2x = −2
-⟺ x = −1; preizkus 3^(2·(−1)−1) = 3^(−3) = 1/27. -/
+⟺ x = −1; preizkus 3^(2·(−1)−1) = 3^(−3) = 1/27.
+trditev: MAT-SS-2/eksponentne-enacbe#primer1a
+besedilo: »a) Desno stran zapišemo s potenco števila $3$: $\dfrac{1}{27} = \dfrac{1}{3^3} = 3^{-3}$. 2. Dobimo $3^{2x-1} = 3^{-3}$, zato je $2x - 1 = -3$, $2x = -2$ in $x = -1$. 3. Preizkus: $3^{2 \cdot (-1) - 1} = 3^{-3} = \dfrac{1}{27}$.« -/
 theorem primer1a (x : ℝ) :
     (1 : ℝ) / 27 = 1 / 3 ^ 3 ∧ (1 : ℝ) / 3 ^ 3 = (3 : ℝ) ^ (-3 : ℝ) ∧
     ((3 : ℝ) ^ (2 * x - 1) = 1 / 27 ↔ x = -1) ∧
@@ -263,7 +324,9 @@ theorem primer1a (x : ℝ) :
     _ ↔ x = -1 := by constructor <;> intro h <;> linarith
 
 /-- Primer 1 b): 4ˣ = (2²)ˣ = 2^(2x), 8√2 = 2³·2^(1/2) = 2^(7/2); 4ˣ = 8√2 ⟺ 2^(2x) = 2^(7/2) ⟺ 2x = 7/2
-⟺ x = 7/4. -/
+⟺ x = 7/4.
+trditev: MAT-SS-2/eksponentne-enacbe#primer1b
+besedilo: »b) Obe strani zapišemo s potenco števila $2$: $4^x = \left(2^2\right)^x = 2^{2x}$ in $8\sqrt{2} = 2^3 \cdot 2^{\frac{1}{2}} = 2^{\frac{7}{2}}$. 5. Iz $2^{2x} = 2^{\frac{7}{2}}$ sledi $2x = \dfrac{7}{2}$ in $x = \dfrac{7}{4}$.« -/
 theorem primer1b (x : ℝ) :
     (4 : ℝ) ^ x = (2 : ℝ) ^ (2 * x) ∧ 8 * Real.sqrt 2 = (2 : ℝ) ^ (3 : ℝ) * (2 : ℝ) ^ (1 / 2 : ℝ) ∧
     (2 : ℝ) ^ (3 : ℝ) * (2 : ℝ) ^ (1 / 2 : ℝ) = (2 : ℝ) ^ (7 / 2 : ℝ) ∧
@@ -280,7 +343,9 @@ theorem primer1b (x : ℝ) :
     _ ↔ 2 * x = 7 / 2 := enacenje 2 (by norm_num) (by norm_num) _ _
     _ ↔ x = 7 / 4 := by constructor <;> intro h <;> linarith
 
-/-- Primer 1 b), preizkus: 4^(7/4) = 2^(7/2) ≈ 11,31 in 8·1,414 ≈ 11,31. -/
+/-- Primer 1 b), preizkus: 4^(7/4) = 2^(7/2) ≈ 11,31 in 8·1,414 ≈ 11,31.
+trditev: MAT-SS-2/eksponentne-enacbe#primer1b-preizkus
+besedilo: »Preizkus: $4^{\frac{7}{4}} = 2^{\frac{7}{2}} \approx 11{,}31$ in $8\sqrt{2} \approx 8 \cdot 1{,}414 \approx 11{,}31$.« -/
 theorem primer1b_preizkus : (4 : ℝ) ^ (7 / 4 : ℝ) = (2 : ℝ) ^ (7 / 2 : ℝ) ∧
     (11.305 < (2 : ℝ) ^ (7 / 2 : ℝ) ∧ (2 : ℝ) ^ (7 / 2 : ℝ) < 11.315) ∧
     (11.305 < (8 : ℝ) * 1.414 ∧ (8 : ℝ) * 1.414 < 11.315) := by
@@ -291,7 +356,9 @@ theorem primer1b_preizkus : (4 : ℝ) ^ (7 / 4 : ℝ) = (2 : ℝ) ^ (7 / 2 : ℝ
 /-! ## Primer 2 -/
 
 /-- Primer 2: 2^(x+2) + 2^(x−1) = 36 ⟺ 4·2ˣ + (1/2)·2ˣ = 36 ⟺ 2ˣ(4 + 1/2) = 36 ⟺ 2ˣ·9/2 = 36
-⟺ 2ˣ = 36·2/9 = 8 = 2³ ⟺ x = 3; preizkus 2⁵ + 2² = 32 + 4 = 36. -/
+⟺ 2ˣ = 36·2/9 = 8 = 2³ ⟺ x = 3; preizkus 2⁵ + 2² = 32 + 4 = 36.
+trditev: MAT-SS-2/eksponentne-enacbe#primer2
+besedilo: »Člene zapišemo s potenco $2^x$: $2^{x+2} = 4 \cdot 2^x$ in $2^{x-1} = \dfrac{1}{2} \cdot 2^x$. 2. Izpostavimo $2^x$: $2^x \left(4 + \dfrac{1}{2}\right) = 36$, torej $2^x \cdot \dfrac{9}{2} = 36$. 3. Delimo z $\dfrac{9}{2}$: $2^x = 36 \cdot \dfrac{2}{9} = 8$. 4. Ker je $8 = 2^3$, je $x = 3$. 5. Preizkus: $2^{5} + 2^{2} = 32 + 4 = 36$.« -/
 theorem primer2 (x : ℝ) :
     ((2 : ℝ) ^ (x + 2) + (2 : ℝ) ^ (x - 1) = 36 ↔ x = 3) ∧
     (2 : ℝ) ^ ((3 : ℝ) + 2) + (2 : ℝ) ^ ((3 : ℝ) - 1) = 32 + 4 ∧ (32 : ℝ) + 4 = 36 := by
@@ -311,7 +378,9 @@ theorem primer2 (x : ℝ) :
 /-! ## Primer 3 -/
 
 /-- Primer 3: 9ˣ = (3ˣ)², 2·3^(x+1) = 6·3ˣ; 9ˣ − 2·3^(x+1) − 27 = 0 ⟺ t² − 6t − 27 = 0 (t = 3ˣ)
-⟺ (t − 9)(t + 3) = 0 ⟺ t = 9 ali t = −3 ⟺ t = 9 (t = −3 < 0 zavržemo) ⟺ 3ˣ = 3² ⟺ x = 2. -/
+⟺ (t − 9)(t + 3) = 0 ⟺ t = 9 ali t = −3 ⟺ t = 9 (t = −3 < 0 zavržemo) ⟺ 3ˣ = 3² ⟺ x = 2.
+trditev: MAT-SS-2/eksponentne-enacbe#primer3
+besedilo: »enačba ima eno rešitev, $x = 2$« -/
 theorem primer3 (x : ℝ) : (9 : ℝ) ^ x - 2 * (3 : ℝ) ^ (x + 1) - 27 = 0 ↔ x = 2 := by
   have ht : 0 < (3 : ℝ) ^ x := Real.rpow_pos_of_pos (by norm_num) x
   have h3 : 2 * (3 : ℝ) ^ (x + 1) = 6 * (3 : ℝ) ^ x := by
@@ -331,7 +400,9 @@ theorem primer3 (x : ℝ) : (9 : ℝ) ^ x - 2 * (3 : ℝ) ^ (x + 1) - 27 = 0 ↔
     _ ↔ (3 : ℝ) ^ x = (3 : ℝ) ^ (2 : ℝ) := by norm_num
     _ ↔ x = 2 := enacenje 3 (by norm_num) (by norm_num) _ _
 
-/-- Primer 3: D = 36 + 108 = 144, t₁,₂ = (6 ± 12)/2 = 9, −3; preizkus 9² − 2·3³ − 27 = 81 − 54 − 27 = 0. -/
+/-- Primer 3: D = 36 + 108 = 144, t₁,₂ = (6 ± 12)/2 = 9, −3; preizkus 9² − 2·3³ − 27 = 81 − 54 − 27 = 0.
+trditev: MAT-SS-2/eksponentne-enacbe#primer3-racun
+besedilo: »Diskriminanta je $D = 36 + 108 = 144$, zato je $t_{1,2} = \dfrac{6 \pm 12}{2}$, torej $t_1 = 9$ in $t_2 = -3$. (Tudi razcep $(t - 9)(t + 3) = 0$ da isto.) 5. Rešitev $t_2 = -3$ zavržemo, ker $3^x$ ne more biti negativno. 6. Iz $3^x = 9 = 3^2$ dobimo $x = 2$. 7. Preizkus: $9^2 - 2 \cdot 3^3 - 27 = 81 - 54 - 27 = 0$.« -/
 theorem primer3_racun : (-6 : ℝ) ^ 2 - 4 * 1 * (-27) = 36 + 108 ∧ (36 : ℝ) + 108 = 144 ∧
     Real.sqrt 144 = 12 ∧ ((6 : ℝ) + 12) / 2 = 9 ∧ ((6 : ℝ) - 12) / 2 = -3 ∧
     (9 : ℝ) ^ (2 : ℝ) - 2 * (3 : ℝ) ^ ((2 : ℝ) + 1) - 27 = 81 - 54 - 27 ∧ (81 : ℝ) - 54 - 27 = 0 := by
@@ -340,7 +411,9 @@ theorem primer3_racun : (-6 : ℝ) ^ 2 - 4 * 1 * (-27) = 36 + 108 ∧ (36 : ℝ)
 
 /-! ## Primer 4: turnir -/
 
-/-- Primer 4: 256·(1/2)ⁿ = 2 ⟺ (1/2)ⁿ = 2/256 = 1/128 ⟺ (1/2)ⁿ = (1/2)⁷ (128 = 2⁷) ⟺ n = 7. -/
+/-- Primer 4: 256·(1/2)ⁿ = 2 ⟺ (1/2)ⁿ = 2/256 = 1/128 ⟺ (1/2)ⁿ = (1/2)⁷ (128 = 2⁷) ⟺ n = 7.
+trditev: MAT-SS-2/eksponentne-enacbe#primer4
+besedilo: »Ker je $128 = 2^7$, je $\frac{1}{128} = \left(\frac{1}{2}\right)^7$ in $n = 7$.« -/
 theorem primer4 (n : ℝ) : 256 * (1 / 2 : ℝ) ^ n = 2 ↔ n = 7 := by
   calc 256 * (1 / 2 : ℝ) ^ n = 2 ↔ (1 / 2 : ℝ) ^ n = 2 / 256 := by
         constructor <;> intro h <;> linarith
@@ -348,13 +421,16 @@ theorem primer4 (n : ℝ) : 256 * (1 / 2 : ℝ) ^ n = 2 ↔ n = 7 := by
     _ ↔ (1 / 2 : ℝ) ^ n = (1 / 2 : ℝ) ^ (7 : ℝ) := by norm_num
     _ ↔ n = 7 := enacenje (1 / 2) (by norm_num) (by norm_num) _ _
 
-/-- Primer 4, premisli: 128 = 2⁷, 256·1/128 = 2; finale je osmi krog: 256·(1/2)⁸ = 1 zmagovalec. -/
+/-- Primer 4, premisli: 128 = 2⁷, 256·1/128 = 2; finale je osmi krog: 256·(1/2)⁸ = 1 zmagovalec.
+trditev: MAT-SS-2/eksponentne-enacbe#primer4-racun
+besedilo: »Ker je $128 = 2^7$, je $\frac{1}{128} = \left(\frac{1}{2}\right)^7$ in $n = 7$. Preizkus: $256 \cdot \frac{1}{128} = 2$. Po $7$ krogih ostaneta finalista. Finale je še en krog, zato ima turnir $8$ krogov; po njem ostane $256 \cdot \left(\frac{1}{2}\right)^8 = 1$ zmagovalec.« -/
 theorem primer4_racun : (128 : ℝ) = 2 ^ 7 ∧ (256 : ℝ) * (1 / 128) = 2 ∧ (7 : ℝ) + 1 = 8 ∧
     256 * (1 / 2 : ℝ) ^ (8 : ℝ) = 1 := by norm_num
 
 /-! ## Primer 5: neenačbi -/
 
-/-- Pomožno: za t < 0 in t > 1 je 2ᵗ > 1 + t, za 0 ≤ t ≤ 1 pa 2ᵗ ≤ 1 + t. -/
+/-- Pomožno: za t < 0 in t > 1 je 2ᵗ > 1 + t, za 0 ≤ t ≤ 1 pa 2ᵗ ≤ 1 + t.
+pomozno -/
 theorem dve_na_t (t : ℝ) : (t < 0 → 1 + t < (2 : ℝ) ^ t) ∧ (1 < t → 1 + t < (2 : ℝ) ^ t) ∧
     (0 ≤ t → t ≤ 1 → (2 : ℝ) ^ t ≤ 1 + t) := by
   have hl1 := Real.log_two_gt_d9
@@ -375,7 +451,9 @@ theorem dve_na_t (t : ℝ) : (t < 0 → 1 + t < (2 : ℝ) ^ t) ∧ (1 < t → 1 
     rw [hdef, mul_comm]
     linarith
 
-/-- Primer 5, točke krivulje: (−1; 0,5), (0, 1), (1, 2), (2, 4), (3, 8); 6 − 2 = 4; 2^(1/2) ≈ 1,41 < 1,5. -/
+/-- Primer 5, točke krivulje: (−1; 0,5), (0, 1), (1, 2), (2, 4), (3, 8); 6 − 2 = 4; 2^(1/2) ≈ 1,41 < 1,5.
+trditev: MAT-SS-2/eksponentne-enacbe#primer5-tocke
+besedilo: »b) Med presečiščema je krivulja pod premico: pri $x = \frac{1}{2}$ je $2^{\frac{1}{2}} \approx 1{,}41 < 1{,}5$. Levo od $0$ in desno od $1$ je nad njo, na primer $2^{-1} = 0{,}5 > 0$ in $2^3 = 8 > 4$.« -/
 theorem primer5_tocke :
     (2 : ℝ) ^ (-1 : ℝ) = 0.5 ∧ (2 : ℝ) ^ (0 : ℝ) = 1 ∧ (2 : ℝ) ^ (1 : ℝ) = 2 ∧ (2 : ℝ) ^ (2 : ℝ) = 4 ∧
     (2 : ℝ) ^ (3 : ℝ) = 8 ∧ (6 : ℝ) - 2 = 4 ∧ (0 : ℝ) + 1 = 1 ∧ (1 : ℝ) + 1 = 2 ∧
@@ -385,7 +463,9 @@ theorem primer5_tocke :
     by norm_num, koren_med (p := 1) (q := 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
       (by norm_num), by norm_num, by norm_num, by norm_num⟩
 
-/-- Primer 5 a): 2ˣ < 6 − x ⟺ x < 2 (presečišče (2, 4); krivulja narašča, premica pada). -/
+/-- Primer 5 a): 2ˣ < 6 − x ⟺ x < 2 (presečišče (2, 4); krivulja narašča, premica pada).
+trditev: MAT-SS-2/eksponentne-enacbe#primer5a
+besedilo: »a) Krivulja seka premico $y = 6 - x$ v točki $(2, 4)$. Preizkus: $2^2 = 4$ in $6 - 2 = 4$. Krivulja narašča, premica pada, zato drugega presečišča ni. 3. a) Levo od $x = 2$ je krivulja pod premico (pri $x = 0$ je $1 < 6$), desno nad njo. Znak $<$ je strog, zato $x = 2$ ni rešitev: rešitev je $x \in (-\infty, 2)$.« -/
 theorem primer5a (x : ℝ) : (2 : ℝ) ^ x < 6 - x ↔ x < 2 := by
   have h4 : (2 : ℝ) ^ (2 : ℝ) = 4 := by norm_num
   constructor
@@ -399,7 +479,9 @@ theorem primer5a (x : ℝ) : (2 : ℝ) ^ x < 6 - x ↔ x < 2 := by
     linarith
 
 /-- Primer 5 b): 2ˣ ≤ x + 1 ⟺ x ∈ [0, 1]; enakost (presečišči) natanko pri x = 0 in x = 1, zato
-tretjega presečišča ni. -/
+tretjega presečišča ni.
+trditev: MAT-SS-2/eksponentne-enacbe#primer5b
+besedilo: »b) Krivulja seka premico $y = x + 1$ v točkah $(0, 1)$ in $(1, 2)$. Preizkus: $2^0 = 1 = 0 + 1$ in $2^1 = 2 = 1 + 1$. Krivulja $y = 2^x$ je vse strmejša in se ukrivlja navzgor, zato jo premica seka največ v dveh točkah: tretjega presečišča ni. 5. b) Med presečiščema je krivulja pod premico: pri $x = \frac{1}{2}$ je $2^{\frac{1}{2}} \approx 1{,}41 < 1{,}5$. Levo od $0$ in desno od $1$ je nad njo, na primer $2^{-1} = 0{,}5 > 0$ in $2^3 = 8 > 4$. 6. b) Znak $\le$ dovoli tudi enakost, zato abscisi presečišč vključimo: rešitev je $x \in [0, 1]$.« -/
 theorem primer5b (x : ℝ) : ((2 : ℝ) ^ x ≤ x + 1 ↔ x ∈ Set.Icc 0 1) ∧
     ((2 : ℝ) ^ x = x + 1 ↔ x = 0 ∨ x = 1) := by
   obtain ⟨hA, hB, hC⟩ := dve_na_t x
@@ -435,7 +517,9 @@ theorem primer5b (x : ℝ) : ((2 : ℝ) ^ x ≤ x + 1 ↔ x ∈ Set.Icc 0 1) ∧
 
 /-! ## Pogoste napake -/
 
-/-- Pogoste napake 1: 2ˣ = 4^(x−1) ⟺ 2ˣ = 2^(2x−2) ⟺ x = 2x − 2 ⟺ x = 2 (preizkus 2² = 4 = 4¹). -/
+/-- Pogoste napake 1: 2ˣ = 4^(x−1) ⟺ 2ˣ = 2^(2x−2) ⟺ x = 2x − 2 ⟺ x = 2 (preizkus 2² = 4 = 4¹).
+trditev: MAT-SS-2/eksponentne-enacbe#napaka1
+besedilo: »Pravilno: $4^{x-1} = 2^{2x-2}$, zato je $x = 2x - 2$ in $x = 2$ (preizkus: $2^2 = 4 = 4^1$).« -/
 theorem napaka1 (x : ℝ) : (2 : ℝ) ^ x = (4 : ℝ) ^ (x - 1) ↔ x = 2 := by
   have h4 : (4 : ℝ) ^ (x - 1) = (2 : ℝ) ^ (2 * x - 2) := by
     rw [show (4 : ℝ) = 2 ^ (2 : ℝ) by norm_num, ← Real.rpow_mul (by norm_num)]; congr 1; ring
@@ -444,7 +528,9 @@ theorem napaka1 (x : ℝ) : (2 : ℝ) ^ x = (4 : ℝ) ^ (x - 1) ↔ x = 2 := by
     _ ↔ x = 2 := by constructor <;> intro h <;> linarith
 
 /-- Pogoste napake 2 in 3: 2^(x+3) = 2³·2ˣ = 8·2ˣ (ne 2ˣ + 2³: pri x = 0 je 8 ≠ 9); 2ˣ + 2ˣ = 2·2ˣ = 2^(x+1)
-(ne 4ˣ: pri x = 2 je 8 ≠ 16); 2·3ˣ ni 6ˣ (pri x = 2: 2·9 = 18, 6² = 36). -/
+(ne 4ˣ: pri x = 2 je 8 ≠ 16); 2·3ˣ ni 6ˣ (pri x = 2: 2·9 = 18, 6² = 36).
+trditev: MAT-SS-2/eksponentne-enacbe#napaka2
+besedilo: »$2^{x+3} = 2^x + 2^3$ ni res, saj vsota v eksponentu pomeni **produkt** potenc: $2^{x+3} = 2^3 \cdot 2^x = 8 \cdot 2^x$. Podobno $2^x + 2^x$ ni $4^x$, ampak $2 \cdot 2^x = 2^{x+1}$. - **Koeficient vpleten v osnovo.** $2 \cdot 3^x$ ni enako $6^x$, ker se potencira le osnova $3$, faktor $2$ pa ne. Preizkus z $x = 2$: $2 \cdot 9 = 18$, $6^2 = 36$.« -/
 theorem napaka2 (x : ℝ) :
     (2 : ℝ) ^ (x + 3) = (2 : ℝ) ^ (3 : ℝ) * (2 : ℝ) ^ x ∧ (2 : ℝ) ^ (3 : ℝ) * (2 : ℝ) ^ x = 8 * (2 : ℝ) ^ x ∧
     (2 : ℝ) ^ ((0 : ℝ) + 3) ≠ (2 : ℝ) ^ (0 : ℝ) + (2 : ℝ) ^ (3 : ℝ) ∧
@@ -455,7 +541,9 @@ theorem napaka2 (x : ℝ) :
     by rw [Real.rpow_add (by norm_num), Real.rpow_one]; ring, by norm_num, by norm_num, by norm_num⟩
 
 /-- Pogoste napake 5: 1/8 = 2^(−3), ne 2³ ali 2^(1/3) (∛2 = 2^(1/3) ≠ 1/8, ker je 2^(1/3) > 1);
-(1/2)ⁿ = 1/8 ⟺ n = 3. -/
+(1/2)ⁿ = 1/8 ⟺ n = 3.
+trditev: MAT-SS-2/eksponentne-enacbe#napaka5
+besedilo: »$\dfrac{1}{8} = 2^{3}$ ali $\dfrac{1}{8} = 2^{\frac{1}{3}}$ je napačno. Obratna vrednost pomeni negativni eksponent: $\dfrac{1}{8} = 2^{-3}$, koren pa ulomek v eksponentu: $\sqrt[3]{2} = 2^{\frac{1}{3}}$. Podobno je število korakov eksponent, ne faktor: iz enačbe $\left(\frac{1}{2}\right)^n = \frac{1}{8}$ sledi $n = 3$, ne $n = 8$.« -/
 theorem napaka5 (n : ℝ) :
     (1 : ℝ) / 8 = (2 : ℝ) ^ (-3 : ℝ) ∧ (1 : ℝ) / 8 ≠ (2 : ℝ) ^ (3 : ℝ) ∧ (1 : ℝ) / 8 ≠ (2 : ℝ) ^ (1 / 3 : ℝ) ∧
     ((1 / 2 : ℝ) ^ n = 1 / 8 ↔ n = 3) := by
@@ -468,7 +556,9 @@ theorem napaka5 (n : ℝ) :
 /-! ## Za maturo -/
 
 /-- Za maturo, naloga 1: √(27ˣ) = (3^(3x))^(1/2) = 3^(3x/2), 9^(x+1)/3 = 3^(2x+2)/3¹ = 3^(2x+1);
-√(27ˣ) = 9^(x+1)/3 ⟺ 3x/2 = 2x + 1 ⟺ 3x = 4x + 2 ⟺ x = −2. -/
+√(27ˣ) = 9^(x+1)/3 ⟺ 3x/2 = 2x + 1 ⟺ 3x = 4x + 2 ⟺ x = −2.
+trditev: MAT-SS-2/eksponentne-enacbe#matura1
+besedilo: »Levo stran zapišemo s potenco števila $3$: $\sqrt{27^x} = \left(3^{3x}\right)^{\frac{1}{2}} = 3^{\frac{3x}{2}}$. 2. Desno stran zapišemo s potenco števila $3$: $\dfrac{9^{x+1}}{3} = \dfrac{3^{2x+2}}{3^1} = 3^{2x+1}$. 3. Izenačimo eksponenta: $\dfrac{3x}{2} = 2x + 1$, torej $3x = 4x + 2$ in $x = -2$.« -/
 theorem matura1 (x : ℝ) :
     Real.sqrt ((27 : ℝ) ^ x) = ((3 : ℝ) ^ (3 * x)) ^ (1 / 2 : ℝ) ∧
     ((3 : ℝ) ^ (3 * x)) ^ (1 / 2 : ℝ) = (3 : ℝ) ^ (3 * x / 2) ∧
@@ -493,18 +583,24 @@ theorem matura1 (x : ℝ) :
     _ ↔ 3 * x = 4 * x + 2 := by constructor <;> intro h <;> linarith
     _ ↔ x = -2 := by constructor <;> intro h <;> linarith
 
-/-- Za maturo, naloga 1, preizkus in RAČUN: √(27^(−2)) = √(1/729) = 1/27 in 9^(−1)/3 = 1/27. -/
+/-- Za maturo, naloga 1, preizkus in RAČUN: √(27^(−2)) = √(1/729) = 1/27 in 9^(−1)/3 = 1/27.
+trditev: MAT-SS-2/eksponentne-enacbe#matura1-preizkus
+besedilo: »Preizkus: $\sqrt{27^{-2}} = \sqrt{\dfrac{1}{729}} = \dfrac{1}{27}$ in $\dfrac{9^{-1}}{3} = \dfrac{1}{27}$.« -/
 theorem matura1_preizkus : Real.sqrt ((27 : ℝ) ^ (-2 : ℝ)) = Real.sqrt (1 / 729) ∧
     Real.sqrt (1 / 729) = 1 / 27 ∧ (9 : ℝ) ^ (-1 : ℝ) / 3 = 1 / 27 := by
   refine ⟨by norm_num [Real.rpow_neg], ?_, by norm_num⟩
   rw [show (1 / 729 : ℝ) = (1 / 27) ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
 
-/-- Za maturo, naloga 2 a): f(0) = 4⁰ − 6·2⁰ + 8 = 1 − 6 + 8 = 3. -/
+/-- Za maturo, naloga 2 a): f(0) = 4⁰ − 6·2⁰ + 8 = 1 − 6 + 8 = 3.
+trditev: MAT-SS-2/eksponentne-enacbe#matura2a
+besedilo: »$f(0) = 4^0 - 6 \cdot 2^0 + 8 = 1 - 6 + 8 = 3$« -/
 theorem matura2a : (4 : ℝ) ^ (0 : ℝ) - 6 * (2 : ℝ) ^ (0 : ℝ) + 8 = 1 - 6 + 8 ∧ (1 : ℝ) - 6 + 8 = 3 := by
   norm_num
 
 /-- Za maturo, naloga 2 b): f(x) = 0 ⟺ t² − 6t + 8 = 0 (t = 2ˣ) ⟺ (t − 2)(t − 4) = 0 ⟺ t = 2 ali t = 4
-⟺ x = 1 ali x = 2. -/
+⟺ x = 1 ali x = 2.
+trditev: MAT-SS-2/eksponentne-enacbe#matura2b
+besedilo: »b) Ker je $4^x = \left(2^x\right)^2$, vpeljemo $t = 2^x$ s pogojem $t > 0$. Enačba $f(x) = 0$ se glasi $t^2 - 6t + 8 = 0$. 3. b) Razcep $(t - 2)(t - 4) = 0$ da $t_1 = 2$ in $t_2 = 4$; obe vrednosti sta pozitivni. 4. b) Iz $2^x = 2$ sledi $x_1 = 1$, iz $2^x = 4 = 2^2$ pa $x_2 = 2$.« -/
 theorem matura2b (x : ℝ) : (4 : ℝ) ^ x - 6 * (2 : ℝ) ^ x + 8 = 0 ↔ x = 1 ∨ x = 2 := by
   calc (4 : ℝ) ^ x - 6 * (2 : ℝ) ^ x + 8 = 0 ↔ ((2 : ℝ) ^ x) ^ 2 - 6 * (2 : ℝ) ^ x + 8 = 0 := by
         rw [stiri]
@@ -516,7 +612,9 @@ theorem matura2b (x : ℝ) : (4 : ℝ) ^ x - 6 * (2 : ℝ) ^ x + 8 = 0 ↔ x = 1
         rw [enacenje 2 (by norm_num) (by norm_num) x 1, enacenje 2 (by norm_num) (by norm_num) x 2]
 
 /-- Za maturo, naloga 2 c): f(x) = 24 ⟺ t² − 6t + 8 = 24 ⟺ t² − 6t − 16 = 0 ⟺ (t − 8)(t + 2) = 0
-⟺ t = 8 (t = −2 zavržemo) ⟺ x = 3; preizkus f(3) = 64 − 48 + 8 = 24. -/
+⟺ t = 8 (t = −2 zavržemo) ⟺ x = 3; preizkus f(3) = 64 − 48 + 8 = 24.
+trditev: MAT-SS-2/eksponentne-enacbe#matura2c
+besedilo: »c) Enačba $f(x) = 24$ se s $t = 2^x$ glasi $t^2 - 6t + 8 = 24$, torej $t^2 - 6t - 16 = 0$. 6. c) Razcep $(t - 8)(t + 2) = 0$ da $t_1 = 8$ in $t_2 = -2$. Vrednost $t_2 = -2$ zavržemo, ker je $2^x > 0$. 7. c) Iz $2^x = 8 = 2^3$ sledi $x = 3$. Preizkus: $f(3) = 64 - 48 + 8 = 24$.« -/
 theorem matura2c (x : ℝ) : ((4 : ℝ) ^ x - 6 * (2 : ℝ) ^ x + 8 = 24 ↔ x = 3) ∧
     (4 : ℝ) ^ (3 : ℝ) - 6 * (2 : ℝ) ^ (3 : ℝ) + 8 = 64 - 48 + 8 ∧ (64 : ℝ) - 48 + 8 = 24 := by
   have ht : 0 < (2 : ℝ) ^ x := Real.rpow_pos_of_pos (by norm_num) x
@@ -537,7 +635,9 @@ theorem matura2c (x : ℝ) : ((4 : ℝ) ^ x - 6 * (2 : ℝ) ^ x + 8 = 24 ↔ x =
     _ ↔ x = 3 := dva_osem x
 
 /-- Za maturo, naloga 3 a), b): A(0) = 200, B(0) = 25; 200·2ˣ = 25·4ˣ ⟺ 8 = 4ˣ/2ˣ = 2ˣ ⟺ x = 3;
-A(3) = 200·8 = 1600 = 25·64 = B(3). -/
+A(3) = 200·8 = 1600 = 25·64 = B(3).
+trditev: MAT-SS-2/eksponentne-enacbe#matura3ab
+besedilo: »a) $A(0) = 200$ in $B(0) = 25$: na začetku je v prvi kulturi $200$, v drugi $25$ bakterij. 2. b) Enačbo $200 \cdot 2^x = 25 \cdot 4^x$ delimo s $25 \cdot 2^x$ (ki ni $0$) in dobimo $8 = \dfrac{4^x}{2^x} = 2^x$. 3. b) Iz $2^x = 2^3$ sledi $x = 3$. Takrat je $A(3) = 200 \cdot 8 = 1600$ in $B(3) = 25 \cdot 64 = 1600$.« -/
 theorem matura3ab (x : ℝ) :
     200 * (2 : ℝ) ^ (0 : ℝ) = 200 ∧ 25 * (4 : ℝ) ^ (0 : ℝ) = 25 ∧
     (4 : ℝ) ^ x / (2 : ℝ) ^ x = (2 : ℝ) ^ x ∧
@@ -557,7 +657,9 @@ theorem matura3ab (x : ℝ) :
     · intro h; rw [h]; norm_num
 
 /-- Za maturo, naloga 3 c): 200·2ˣ + 25·4ˣ = 9600 ⟺ t² + 8t − 384 = 0 (deljeno s 25, t = 2ˣ)
-⟺ (t − 16)(t + 24) = 0 ⟺ t = 16 (t = −24 zavržemo) ⟺ 2ˣ = 2⁴ ⟺ x = 4. -/
+⟺ (t − 16)(t + 24) = 0 ⟺ t = 16 (t = −24 zavržemo) ⟺ 2ˣ = 2⁴ ⟺ x = 4.
+trditev: MAT-SS-2/eksponentne-enacbe#matura3c
+besedilo: »c) Enačba $200 \cdot 2^x + 25 \cdot 4^x = 9600$; delimo s $25$ in vpeljemo $t = 2^x$, $t > 0$: $t^2 + 8t - 384 = 0$. 5. c) Diskriminanta je $D = 64 + 1536 = 1600$, zato je $t_{1,2} = \dfrac{-8 \pm 40}{2}$, torej $t_1 = 16$ in $t_2 = -24$. Vrednost $t_2 = -24$ zavržemo, ker je $2^x > 0$. 6. c) Iz $2^x = 16 = 2^4$ sledi $x = 4$.« -/
 theorem matura3c (x : ℝ) : 200 * (2 : ℝ) ^ x + 25 * (4 : ℝ) ^ x = 9600 ↔ x = 4 := by
   have ht : 0 < (2 : ℝ) ^ x := Real.rpow_pos_of_pos (by norm_num) x
   calc 200 * (2 : ℝ) ^ x + 25 * (4 : ℝ) ^ x = 9600 ↔ ((2 : ℝ) ^ x) ^ 2 + 8 * (2 : ℝ) ^ x - 384 = 0 := by
@@ -576,7 +678,9 @@ theorem matura3c (x : ℝ) : 200 * (2 : ℝ) ^ x + 25 * (4 : ℝ) ^ x = 9600 ↔
     _ ↔ x = 4 := enacenje 2 (by norm_num) (by norm_num) _ _
 
 /-- Za maturo, naloga 3 c) in d), RAČUN: D = 64 + 1536 = 1600, t = (−8 ± 40)/2 = 16, −24;
-A(4) + B(4) = 3200 + 6400 = 9600; točke A: 200, 400, 800, 1600, 3200; B: 25, 100, 400, 1600, 6400. -/
+A(4) + B(4) = 3200 + 6400 = 9600; točke A: 200, 400, 800, 1600, 3200; B: 25, 100, 400, 1600, 6400.
+trditev: MAT-SS-2/eksponentne-enacbe#matura3-racun
+besedilo: »c) Diskriminanta je $D = 64 + 1536 = 1600$, zato je $t_{1,2} = \dfrac{-8 \pm 40}{2}$, torej $t_1 = 16$ in $t_2 = -24$. Vrednost $t_2 = -24$ zavržemo, ker je $2^x > 0$. 6. c) Iz $2^x = 16 = 2^4$ sledi $x = 4$. Preizkus: $A(4) + B(4) = 3200 + 6400 = 9600$. 7. d) Točke grafa $A$: $(0, 200)$, $(1, 400)$, $(2, 800)$, $(3, 1600)$, $(4, 3200)$; točke grafa $B$: $(0, 25)$, $(1, 100)$, $(2, 400)$, $(3, 1600)$, $(4, 6400)$.« -/
 theorem matura3_racun :
     (8 : ℝ) ^ 2 - 4 * 1 * (-384) = 64 + 1536 ∧ (64 : ℝ) + 1536 = 1600 ∧ Real.sqrt 1600 = 40 ∧
     ((-8 : ℝ) + 40) / 2 = 16 ∧ ((-8 : ℝ) - 40) / 2 = -24 ∧
@@ -587,7 +691,9 @@ theorem matura3_racun :
     by norm_num⟩
   rw [show (1600 : ℝ) = 40 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
 
-/-- Za maturo, naloga 3 d): 25·4ˣ > 200·2ˣ ⟺ 2ˣ > 8 = 2³ ⟺ x > 3. -/
+/-- Za maturo, naloga 3 d): 25·4ˣ > 200·2ˣ ⟺ 2ˣ > 8 = 2³ ⟺ x > 3.
+trditev: MAT-SS-2/eksponentne-enacbe#matura3d
+besedilo: »neenačbo $25 \cdot 4^x > 200 \cdot 2^x$ delimo s pozitivnim številom $25 \cdot 2^x$ in dobimo $2^x > 8 = 2^3$. Ker je $2^x$ strogo naraščajoča, to velja natanko za $x > 3$.« -/
 theorem matura3d (x : ℝ) : 200 * (2 : ℝ) ^ x < 25 * (4 : ℝ) ^ x ↔ 3 < x := by
   have ht : 0 < (2 : ℝ) ^ x := Real.rpow_pos_of_pos (by norm_num) x
   calc 200 * (2 : ℝ) ^ x < 25 * (4 : ℝ) ^ x ↔ 8 < (2 : ℝ) ^ x := by
@@ -601,7 +707,9 @@ theorem matura3d (x : ℝ) : 200 * (2 : ℝ) ^ x < 25 * (4 : ℝ) ^ x ↔ 3 < x 
 /-! ## Drugače -/
 
 /-- Drugače, korak za korakom: 5^(2x) = (5ˣ)²; 5^(2x) − 30·5ˣ + 125 = 0 ⟺ t² − 30t + 125 = 0
-⟺ (t − 25)(t − 5) = 0 ⟺ t = 25 ali t = 5 ⟺ x = 2 ali x = 1. -/
+⟺ (t − 25)(t − 5) = 0 ⟺ t = 25 ali t = 5 ⟺ x = 2 ali x = 1.
+trditev: MAT-SS-2/eksponentne-enacbe#korak-pet
+besedilo: »Rešitvi enačbe sta $x_1 = 2$ in $x_2 = 1$.« -/
 theorem korak_pet (x : ℝ) : (5 : ℝ) ^ (2 * x) - 30 * (5 : ℝ) ^ x + 125 = 0 ↔ x = 2 ∨ x = 1 := by
   have h5 : (5 : ℝ) ^ (2 * x) = ((5 : ℝ) ^ x) ^ 2 := by
     rw [← Real.rpow_natCast, ← Real.rpow_mul (by norm_num)]; congr 1; push_cast; ring
@@ -615,7 +723,9 @@ theorem korak_pet (x : ℝ) : (5 : ℝ) ^ (2 * x) - 30 * (5 : ℝ) ^ x + 125 = 0
         rw [enacenje 5 (by norm_num) (by norm_num) x 2, enacenje 5 (by norm_num) (by norm_num) x 1]
 
 /-- Drugače, korak za korakom (račun): D = (−30)² − 4·1·125 = 900 − 500 = 400, √D = 20, t = (30 ± 20)/2
-= 25, 5; preizkusa 625 − 750 + 125 = 0 in 25 − 150 + 125 = 0. -/
+= 25, 5; preizkusa 625 − 750 + 125 = 0 in 25 − 150 + 125 = 0.
+trditev: MAT-SS-2/eksponentne-enacbe#korak-pet-racun
+besedilo: »Diskriminanta: $D = (-30)^2 - 4 \cdot 1 \cdot 125 = 900 - 500 = 400$, $\sqrt{D} = 20$. 4. Rešitvi: $t_1 = \dfrac{30 + 20}{2} = 25$ in $t_2 = \dfrac{30 - 20}{2} = 5$. Obe sta pozitivni, zato obe obdržimo. 5. Vrnemo se k $x$: iz $5^x = 25 = 5^2$ dobimo $x_1 = 2$, iz $5^x = 5 = 5^1$ dobimo $x_2 = 1$. 6. Preizkus za $x = 2$: $625 - 30 \cdot 25 + 125 = 625 - 750 + 125 = 0$. 7. Preizkus za $x = 1$: $25 - 30 \cdot 5 + 125 = 25 - 150 + 125 = 0$.« -/
 theorem korak_pet_racun :
     (-30 : ℝ) ^ 2 - 4 * 1 * 125 = 900 - 500 ∧ (900 : ℝ) - 500 = 400 ∧ Real.sqrt 400 = 20 ∧
     ((30 : ℝ) + 20) / 2 = 25 ∧ ((30 : ℝ) - 20) / 2 = 5 ∧
@@ -626,7 +736,9 @@ theorem korak_pet_racun :
   rw [show (400 : ℝ) = 20 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
 
 /-- Drugače, bolj natančno (zakaj smemo izenačiti): pri a > 1 in u < v je a^(v−u) > 1 in
-a^v = a^u·a^(v−u) > a^u; pri 0 < a < 1 se neenakost obrne. -/
+a^v = a^u·a^(v−u) > a^u; pri 0 < a < 1 se neenakost obrne.
+trditev: MAT-SS-2/eksponentne-enacbe#zakaj-izenaciti
+besedilo: »Naj bo $a > 1$ in $u < v$. Potem je $v - u > 0$ in $a^{v-u} > 1$, ker je potenca števila, večjega od $1$, s pozitivnim eksponentom večja od $1$. Zato je $a^v = a^u \cdot a^{v-u} > a^u$. Različna eksponenta torej dasta različni potenci. Za $0 < a < 1$ je sklep enak, le neenakost se obrne.« -/
 theorem zakaj_izenaciti (a u v : ℝ) (ha : 0 < a) (h : u < v) :
     a ^ v = a ^ u * a ^ (v - u) ∧ (1 < a → 1 < a ^ (v - u) ∧ a ^ u < a ^ v) ∧
     (a < 1 → a ^ (v - u) < 1 ∧ a ^ v < a ^ u) := by
@@ -642,8 +754,15 @@ theorem zakaj_izenaciti (a u v : ℝ) (ha : 0 < a) (h : u < v) :
 /-- Predpostavke trditve `zakaj_izenaciti` se dajo izpolniti (a = 2, u = 0, v = 1). -/
 example : (0 : ℝ) < 2 ∧ (0 : ℝ) < 1 := by norm_num
 
+/-- Predpostavke trditve `zakaj_izenaciti` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (0 : ℝ) < 1 := by norm_num
+  zakaj_izenaciti (ha := w.1) (h := w.2)
+
 /-- Drugače, bolj natančno: 2ˣ + 2^(−x) = 5/2 ⟺ t + 1/t = 5/2 (t = 2ˣ) ⟺ 2t² − 5t + 2 = 0 (pomnožimo z
-2t > 0) ⟺ t = 2 ali t = 1/2 ⟺ x = 1 ali x = −1. -/
+2t > 0) ⟺ t = 2 ali t = 1/2 ⟺ x = 1 ali x = −1.
+trditev: MAT-SS-2/eksponentne-enacbe#plus-minus
+besedilo: »Enačbe z $a^x$ in $a^{-x}$.** Enačbo $2^x + 2^{-x} = \dfrac{5}{2}$ rešimo s $t = 2^x$: $t + \dfrac{1}{t} = \dfrac{5}{2}$. Pomnožimo z $2t$ (smemo, ker je $t > 0$): $2t^2 - 5t + 2 = 0$, torej $t = 2$ ali $t = \dfrac{1}{2}$ in $x = 1$ ali $x = -1$.« -/
 theorem plus_minus (x : ℝ) : (2 : ℝ) ^ x + (2 : ℝ) ^ (-x) = 5 / 2 ↔ x = 1 ∨ x = -1 := by
   have ht : 0 < (2 : ℝ) ^ x := Real.rpow_pos_of_pos (by norm_num) x
   have hu : (2 : ℝ) ^ x * (1 / (2 : ℝ) ^ x) = 1 := mul_one_div_cancel ht.ne'
@@ -665,7 +784,9 @@ theorem plus_minus (x : ℝ) : (2 : ℝ) ^ x + (2 : ℝ) ^ (-x) = 5 / 2 ↔ x = 
 /-! ## Preveri se -/
 
 /-- Preveri se 1: 1/25 = 1/5² = 5^(−2), zato 5ˣ = 1/25 ⟺ x = −2; napačni: 5^(1/2) = √5 in
-5^(−1/2) = 1/√5 nista 1/25. -/
+5^(−1/2) = 1/√5 nista 1/25.
+trditev: MAT-SS-2/eksponentne-enacbe#kviz1
+besedilo: »$\dfrac{1}{25} = \dfrac{1}{5^2} = 5^{-2}$, zato je $x = -2$.« -/
 theorem kviz1 (x : ℝ) : ((5 : ℝ) ^ x = 1 / 25 ↔ x = -2) ∧ (5 : ℝ) ^ (1 / 2 : ℝ) ≠ 1 / 25 ∧
     (5 : ℝ) ^ (-1 / 2 : ℝ) ≠ 1 / 25 := by
   refine ⟨?_, ?_, ?_⟩
@@ -677,7 +798,9 @@ theorem kviz1 (x : ℝ) : ((5 : ℝ) ^ x = 1 / 25 ↔ x = -2) ∧ (5 : ℝ) ^ (1
     intro h; have := (enacenje 5 (by norm_num) (by norm_num) _ _).mp h; norm_num at this
 
 /-- Preveri se 2: 2^(x+2) = 2²·2ˣ = 4·2ˣ, zato 2^(x+2) + 2ˣ = 5·2ˣ in 2^(x+2) + 2ˣ = 40 ⟺ 5·2ˣ = 40
-⟺ x = 3 (preizkus 32 + 8 = 40). -/
+⟺ x = 3 (preizkus 32 + 8 = 40).
+trditev: MAT-SS-2/eksponentne-enacbe#kviz2
+besedilo: »$2^{x+2} = 4 \cdot 2^x$, zato je $2^x(4 + 1) = 5 \cdot 2^x = 40$. Sledi $2^x = 8 = 2^3$ in $x = 3$; preizkus: $32 + 8 = 40$.« -/
 theorem kviz2 (x : ℝ) : (2 : ℝ) ^ (x + 2) + (2 : ℝ) ^ x = 5 * (2 : ℝ) ^ x ∧
     ((2 : ℝ) ^ (x + 2) + (2 : ℝ) ^ x = 40 ↔ x = 3) ∧ (32 : ℝ) + 8 = 40 := by
   have h1 : (2 : ℝ) ^ (x + 2) + (2 : ℝ) ^ x = 5 * (2 : ℝ) ^ x := by
@@ -687,7 +810,9 @@ theorem kviz2 (x : ℝ) : (2 : ℝ) ^ (x + 2) + (2 : ℝ) ^ x = 5 * (2 : ℝ) ^ 
   constructor <;> intro h <;> linarith
 
 /-- Preveri se 3: 4ˣ − 2ˣ − 12 = 0 ⟺ t = 4 ali t = −3 (t = 2ˣ); 2ˣ = −3 nima rešitve, zato x = 2;
-negativni x so dovoljeni: 2^(−1) = 1/2. -/
+negativni x so dovoljeni: 2^(−1) = 1/2.
+trditev: MAT-SS-2/eksponentne-enacbe#kviz3
+besedilo: »Nova spremenljivka $t = 2^x$ zavzame le pozitivne vrednosti. Ostane enačba $2^x = 4$, torej $x = 2$.« -/
 theorem kviz3 (x : ℝ) : (4 : ℝ) ^ x - (2 : ℝ) ^ x - 12 = 0 ↔ x = 2 := by
   have ht : 0 < (2 : ℝ) ^ x := Real.rpow_pos_of_pos (by norm_num) x
   calc (4 : ℝ) ^ x - (2 : ℝ) ^ x - 12 = 0 ↔ ((2 : ℝ) ^ x - 4) * ((2 : ℝ) ^ x - (-3)) = 0 := by
@@ -704,7 +829,9 @@ theorem kviz3 (x : ℝ) : (4 : ℝ) ^ x - (2 : ℝ) ^ x - 12 = 0 ↔ x = 2 := by
     _ ↔ x = 2 := enacenje 2 (by norm_num) (by norm_num) _ _
 
 /-- Preveri se 4: Maja: t² − 3t − 4 = (t − 4)(t + 1), t = 4 ali t = −1 (koraka 1 in 2 pravilna);
-2ˣ = −1 nima rešitve (korak 3 napačen), x = −1 ni rešitev; edina rešitev je x = 2 (16 − 12 − 4 = 0). -/
+2ˣ = −1 nima rešitve (korak 3 napačen), x = −1 ni rešitev; edina rešitev je x = 2 (16 − 12 − 4 = 0).
+trditev: MAT-SS-2/eksponentne-enacbe#kviz4
+besedilo: »Enačba $2^x = -1$ nima rešitve, ker je $2^x > 0$. Vrednost $t = -1$ je treba zavreči, ne pa iz nje izpeljati $x = -1$. Edina rešitev je $x = 2$; preizkus: $16 - 12 - 4 = 0$.« -/
 theorem kviz4 (x : ℝ) : ((4 : ℝ) ^ x - 3 * (2 : ℝ) ^ x - 4 = 0 ↔ x = 2) ∧
     (¬ ∃ y : ℝ, (2 : ℝ) ^ y = -1) ∧
     (4 : ℝ) ^ (-1 : ℝ) - 3 * (2 : ℝ) ^ (-1 : ℝ) - 4 ≠ 0 ∧ (16 : ℝ) - 12 - 4 = 0 := by
@@ -724,14 +851,18 @@ theorem kviz4 (x : ℝ) : ((4 : ℝ) ^ x - 3 * (2 : ℝ) ^ x - 4 = 0 ↔ x = 2) 
     _ ↔ x = 2 := enacenje 2 (by norm_num) (by norm_num) _ _
 
 /-- Preveri se 5: 4·(1/2)ⁿ = 0,5 ⟺ (1/2)ⁿ = 1/8 = (1/2)³ ⟺ n = 3 (razmerje 4 : 0,5 = 8 je število
-8 = 2³, ne število odbojev). -/
+8 = 2³, ne število odbojev).
+trditev: MAT-SS-2/eksponentne-enacbe#kviz5
+besedilo: »Enačba $4 \cdot \left(\frac{1}{2}\right)^n = 0{,}5$ da $\left(\frac{1}{2}\right)^n = \frac{1}{8} = \left(\frac{1}{2}\right)^3$, zato je $n = 3$.« -/
 theorem kviz5 (n : ℝ) : (4 * (1 / 2 : ℝ) ^ n = 0.5 ↔ n = 3) ∧ (4 : ℝ) / 0.5 = 8 := by
   refine ⟨?_, by norm_num⟩
   calc 4 * (1 / 2 : ℝ) ^ n = 0.5 ↔ (1 / 2 : ℝ) ^ n = 1 / 8 := by
         constructor <;> intro h <;> norm_num at h ⊢ <;> linarith
     _ ↔ n = 3 := (napaka5 n).2.2.2
 
-/-- Preveri se 6: (1/2)ˣ ≤ x + 3 ⟺ x ∈ [−1, ∞) (presečišče (−1, 2): (1/2)^(−1) = 2 = −1 + 3). -/
+/-- Preveri se 6: (1/2)ˣ ≤ x + 3 ⟺ x ∈ [−1, ∞) (presečišče (−1, 2): (1/2)^(−1) = 2 = −1 + 3).
+trditev: MAT-SS-2/eksponentne-enacbe#kviz6
+besedilo: »Preizkus presečišča: $\left(\frac{1}{2}\right)^{-1} = 2$ in $-1 + 3 = 2$. Desno od $x = -1$ je padajoča krivulja pod naraščajočo premico, zato je rešitev $x \in [-1, \infty)$.« -/
 theorem kviz6 (x : ℝ) : ((1 / 2 : ℝ) ^ x ≤ x + 3 ↔ x ∈ Set.Ici (-1)) ∧
     (1 / 2 : ℝ) ^ (-1 : ℝ) = 2 ∧ (-1 : ℝ) + 3 = 2 := by
   have h2 : (1 / 2 : ℝ) ^ (-1 : ℝ) = 2 := by norm_num
@@ -746,5 +877,15 @@ theorem kviz6 (x : ℝ) : ((1 / 2 : ℝ) ^ x ≤ x + 3 ↔ x ∈ Set.Ici (-1)) �
   · intro hx
     have : (1 / 2 : ℝ) ^ x ≤ (1 / 2 : ℝ) ^ (-1 : ℝ) := (pada (1 / 2) (by norm_num) (by norm_num)).antitone hx
     linarith
+
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `tabela_potenc` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  tabela_potenc.2.2.2 2 1 1 (by norm_num) (by norm_num)
+
+/-- Predpostavke trditve `dva_pet_resitev` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  dva_pet_resitev.2 _ dva_pet_resitev.1.choose_spec
 
 end Evklid.Lekcije.MAT_SS_2.EksponentneEnacbe
