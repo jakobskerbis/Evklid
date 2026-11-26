@@ -4,7 +4,7 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 [README.md](README.md).
 
 **Zadnji pregledani `main`:** `3e2a78dbc742b3c2b0f174ed42ac57be4591d212` (25. 11. 2026)
-**Naslednji prosti ID:** AUDIT-084
+**Naslednji prosti ID:** AUDIT-085
 
 | ID | Prioriteta | Področje | Kratek opis | Status | Pregledani commit | Komentar | PR popravka |
 |---|---|---|---|---|---|---|---|
@@ -83,6 +83,7 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 | AUDIT-081 | P1 | Kalkulator, enačbe | Ničla na robu definicijskega območja izgubljena: `√x = 0`, `√(x−4) = 0`, `√(x²−4) = 0` → »ni rešitve na [−10¹²; 10¹²]«. `isRoot` (`scisolve.js:549`): `Math.max(1, |f(x±10⁻³)|)` je NaN, ko je sosed zunaj območja. Tudi na evklid.app (`51c1c99`). Seja kalkulatorja | ODOBRENO | `7a9a820` | Claude (ob AUDIT-080), 25. 11. | – |
 | AUDIT-082 | P3 | Kalkulator, izpis | Izbirni seznam regresije v grafičnem kalkulatorju: besedilo ključa `gc.reg.expe` (`public/i18n/sl.js:4470`) »Eksponentna z e (a·e^(bx))« se izpiše s surovim zapisom potence »^(bx)«, ker v izbirnem seznamu KaTeX ne deluje (oznaka ključa se ne izpiše); predlog a·eᵇˣ v živih jezikih. Javi DOM sloj `scripts/preveri-aplikacijo.cjs` (N-07, #1118). Seja kalkulatorja | NOVO | `d79a9f0` | Claude (nit »Izboljšaj UX in hitrost«), 26. 11. | – |
 | AUDIT-083 | P2 | Kalkulator, ležeč telefon | V 740×360 in 844×390 ima `div.sc-history` (`public/graph.css:277`, `overflow-y: auto; flex: 1`) mali navpični drsnik (▲▼), tudi na `main`; krši »0 malih drsnikov« (j). Ponovi: `node scripts/posnetki-naprave.cjs --naprave tel-360,tel-390 --teme temna`. Seja kalkulatorja | NOVO | `d79a9f0` | Claude (nit »Izboljšaj UX in hitrost«, UX PR 2), 26. 11. | – |
+| AUDIT-084 | P2 | Kalkulator, vnos (skener) | Izris formule v polju (s kazalcem, kot v klepetu) ne deluje v potrditvi skenerja: `BREZ` v `public/predogled-vnosa.js:17` izpusti vsa polja v `.scan-confirm`, zato `#scan-input` (`public/scan/scan.js:729`) kaže le surov zapis. j je 26. 11. na kartici v niti skenerja izbral urejanje naloge v formuli. Predlog: `.scan-confirm` odstraniti iz `BREZ` ali dovoliti izris za polje z atributom (npr. `data-izris-v-polju`) tudi znotraj `BREZ`; `.scan-preview` ostane izpuščen. Stran skenerja (`public/scan/*`, zapis tipkovnice √(…), x^(2), (a)/(b), □) uredi nit skenerja. Seja kalkulatorja | ODOBRENO | `8c5cf50` | Claude (nit »Naredi skener zanesljiv«), 26. 11. | – |
 
 ## Zgodovina statusov
 
@@ -143,3 +144,4 @@ Vsaka sprememba statusa: datum, ID, star → nov status, kdo, razlog ali dokaz (
 - 26. 11. 2026: AUDIT-082 in AUDIT-083 NOVO (nit »Izboljšaj UX in hitrost«): kalkulator, predano seji kalkulatorja; Claude še ni neodvisno ponovil.
 - 26. 11. 2026: AUDIT-001 ODOBRENO → PRIPRAVLJENO ZA PONOVNI PREGLED: #1089 združen v `main` (`ead79d5`, j kartica); numerična potrditev brez dokaza popolnosti je zdaj »numeric«/»partial«, ne »Preverjeno« (`server/scan.js:18`, `:118`).
 - 26. 11. 2026: veja posodobljena na `main` `d267cd5` (25 novih commitov, brez konfliktov).
+- 26. 11. 2026: AUDIT-084 ODOBRENO (j kartica v niti skenerja: urejanje naloge v formuli): sprememba v `public/predogled-vnosa.js` je kalkulatorska datoteka, predano seji kalkulatorja (#539); nit skenerja uskladi svoj PR, ko bo številka znana.
