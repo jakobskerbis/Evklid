@@ -197,3 +197,30 @@ test("datoteka Lean: dokaz ne sme vsebovati ukazov (instance, notation …)", ()
   for (const d of ["norm_num\ninstance (priority := high) evilLE : LE ℝ := ⟨fun _ _ => True⟩", "norm_num\nnotation \"x\" => 1", "norm_num\nattribute [simp] foo", "norm_num\nopen Real in trivial"])
     assert.throws(() => datotekaLean([{ id: "a", izrek: "∀ x : ℝ, x ^ 2 ≤ -1", dokazi: [d] }]), /prepovedana/);
 });
+
+// Drugi krog pregleda (model AI): predznak vsote korenov, prazno območje pod zaokrožitvijo, čas.
+test("skladnost: predznak p − q√2 z velikima p, q je točen (Pellov par)", () => {
+  const p = "405635685060423865006987953410600042845579632756521";
+  const q = "286827743597476442537332434074520260478106619164061"; // p² − 2q² = −1, p − q√2 ≈ −1,2·10⁻⁵¹
+  assert.equal(skladnost(["ineq", ["x < 0", "x", "(0, inf)"]], `∀ x : ℝ, ((${p} : ℝ) - ${q} * Real.sqrt 2) * x < 0 ↔ 0 < x`).skladno, false);
+  assert.equal(skladnost(["value", [`abs(${p} - ${q}*sqrt(2))`, `${p} - ${q}*sqrt(2)`]], `(${p} : ℝ) - ${q} * Real.sqrt 2 = ${p} - ${q} * Real.sqrt 2`).skladno, false);
+  // pravilna različica (|·| = −(…)) ostane skladna
+  assert.equal(skladnost(["value", [`abs(${p} - ${q}*sqrt(2))`, `${q}*sqrt(2) - ${p}`]], `|(${p} : ℝ) - ${q} * Real.sqrt 2| = ${q} * Real.sqrt 2 - ${p}`).skladno, true);
+});
+
+test("prazno definicijsko območje pod zaokrožitvijo: zunaj obsega in neskladno", () => {
+  const B = "10^12*10^12*10^12*10^12*10^12";
+  assert.equal(prevedi(["equal", [`1/(${B}*(x/3*3-x))`, "5"]]).ok, false);
+  const d = "((10:ℝ) ^ 12 * 10 ^ 12 * 10 ^ 12 * 10 ^ 12 * 10 ^ 12 * (x / 3 * 3 - x))";
+  assert.equal(skladnost(["equal", [`1/(${B}*(x/3*3-x))`, "5"]], `∀ x : ℝ, ${d} ≠ 0 → 1 / ${d} = 5`).skladno, false);
+});
+
+test("skladnost: velik izraz ne traja (proračun dela)", () => {
+  let t = Date.now();
+  assert.equal(skladnost(["equal", ["(a+b+c+d)*(a+b+c+d)", "(a+b+c+d)^2"]], "∀ a b c d : ℝ, (a+b+c+d)^20 * (a+b+c+d)^20 * (a+b+c+d)^20 = (a+b+c+d)^2").skladno, false);
+  assert.ok(Date.now() - t < 3000, `${Date.now() - t} ms`);
+  t = Date.now();
+  const koreni = Array.from({ length: 120 }, (_, i) => `Real.sqrt ${999999999999999989n - 2n * BigInt(i)}`).join(" + ");
+  skladnost(["value", ["1", "1"]], `(1:ℝ) + ${koreni} = 1`);
+  assert.ok(Date.now() - t < 3000, `${Date.now() - t} ms`);
+});

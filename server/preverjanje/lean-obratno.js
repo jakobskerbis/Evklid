@@ -11,8 +11,8 @@
 // Pomen se primerja točno (lean-algebra.js: racionalne funkcije s koeficienti v Q(√…)), ne z besedilom in ne z
 // vzorčenjem; kjer točen zapis ni mogoč (koren ali |…| s spremenljivko), mora biti zapis enak. Ker je v Leanu x/0 = 0
 // in √(−1) = 0, mora vsak imenovalec in vsak koren s spremenljivko v izreku varovati pogoj (pokritost).
-import { Q, qIzDecimalnega, spremenljivke, obmocje, velikost } from "./lean-izraz.js";
-import { racFunkcija, jeNicelna, enakiFunkciji, konstantna, sorazmerni, kanon, zaprtPredznak } from "./lean-algebra.js";
+import { Q, qIzDecimalnega, spremenljivke, obmocje, velikost, tocke } from "./lean-izraz.js";
+import { racFunkcija, jeNicelna, enakiFunkciji, konstantna, sorazmerni, kanon, zaprtPredznak, nepraznoTocno, zProracunom } from "./lean-algebra.js";
 import { oblikaIzRacuna } from "./lean-prevod.js";
 
 const NAJVEC_ZNAKOV = 4000;
@@ -539,6 +539,9 @@ function istiIntervali(d1, d2, x) {
  * Neprepoznana oblika je vedno neskladna. Velja tudi za izreke, ki jih ni napisal prevajalnik (npr. model AI).
  */
 export function skladnost(racun, izrek) {
+  return zProracunom(3000000, () => skladnostTocno(racun, izrek));
+}
+function skladnostTocno(racun, izrek) {
   const o = oblikaIzRacuna(racun);
   if (o.napaka) return { skladno: false, razlog: `izvirnik zunaj obsega: ${o.napaka}` };
   let l;
@@ -564,6 +567,8 @@ export function skladnost(racun, izrek) {
       if (l.oblika !== "imp" || l.levo.length !== 1 || l.levo[0].op !== "=") return { skladno: false, razlog: "identiteta ni ∀ … → A = B" };
       if (!istiAtomi(o.obmocje, l.hipoteze, imena)) return { skladno: false, razlog: "pogoji območja se ne ujemajo" };
       if (!pokritost(l.hipoteze, l.levo, imena)) return { skladno: false, razlog: "imenovalec ali koren brez pogoja (v Leanu je x/0 = 0)" };
+      // iz nemogoče predpostavke sledi vse: območje mora imeti točko, kjer pogoji točno držijo
+      if (!nepraznoTocno(l.hipoteze, imena, tocke(imena, JSON.stringify(imena), 24))) return { skladno: false, razlog: "prazno definicijsko območje" };
       const [x] = o.glavni;
       const [y] = l.levo;
       const ok = (enakIzraz(x.a, y.a, imena) && enakIzraz(x.b, y.b, imena)) || (enakIzraz(x.a, y.b, imena) && enakIzraz(x.b, y.a, imena));

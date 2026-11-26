@@ -5,7 +5,7 @@
 //
 // Drevo izraza je isto kot v lean-izraz.js: num, var, neg, add, sub, mul, div, pow (n celo), sqrt, abs.
 
-import { Q, vrednost, velikost } from "./lean-izraz.js";
+import { Q, velikost } from "./lean-izraz.js";
 
 export { velikost };
 
@@ -16,9 +16,37 @@ const NAJVEC_KORENOV = 32;
 
 class Prevelik extends Error {}
 
+// Proračun dela (enote ≈ množenja števil): skladnost ga nastavi za cel klic, sicer ga ima vsak racFunkcija svojega.
+let ostanek = null;
+function porabi(n) {
+  if (ostanek == null) return;
+  ostanek -= n;
+  if (ostanek < 0) throw new Prevelik();
+}
+/** Požene fn z omejenim delom; ob prekoračitvi vrne racFunkcija null (primerjava zavrne, varna smer). */
+export function zProracunom(enote, fn) {
+  const prej = ostanek;
+  ostanek = enote;
+  try {
+    return fn();
+  } finally {
+    ostanek = prej;
+  }
+}
+const KVADRATI = new Map(); // brezKvadratov: rezultati so stalni
+
 // ---------- vsota korenov: Σ q_m · √m (m celo, brez kvadratov; m = 1 je racionalni del) ----------
 function brezKvadratov(n) {
   // n > 0 → { k, m }: n = k² · m, m brez kvadratov; null, če tega ni mogoče zanesljivo ugotoviti
+  const kljucN = String(n);
+  if (KVADRATI.has(kljucN)) return KVADRATI.get(kljucN);
+  porabi(20000); // deljenje do 10⁶ je drago: največ nekaj velikih korenov na klic
+  const out = brezKvadratovRacunaj(n);
+  if (KVADRATI.size > 5000) KVADRATI.clear();
+  KVADRATI.set(kljucN, out);
+  return out;
+}
+function brezKvadratovRacunaj(n) {
   let k = 1n;
   let m = 1n;
   let r = n;
@@ -84,6 +112,7 @@ export class S {
     return this.add(o.neg());
   }
   mul(o) {
+    porabi(this.m.size * o.m.size);
     let r = new S();
     for (const [k1, v1] of this.m)
       for (const [k2, v2] of o.m) {
@@ -99,17 +128,27 @@ export class S {
   eq(o) {
     return this.sub(o).isZero();
   }
-  /** Predznak (−1, 0, 1) ali null, če je vrednost premajhna za zanesljivo oceno. */
+  /**
+   * Predznak (−1, 0, 1) ali null. Vsota korenov brez kvadratov, ki ni ničelna, ni 0 (√m so linearno neodvisni nad
+   * Q), zato natančnost večamo, dokler približek ni zunaj dokazane meje napake: vsak člen c·√k je izračunan z
+   * napako pod |c| + 1 enote (koren navzdol, deljenje navzdol).
+   */
   predznak() {
     if (this.isZero()) return 0;
     const q = this.rac();
     if (q) return q.sign();
-    const SK = 10n ** 80n;
-    let v = 0n;
-    for (const [k, c] of this.m) v += (c.n * isqrt(BigInt(k) * SK * SK)) / c.d;
-    const meja = SK / 10n ** 40n;
-    if (v > meja) return 1;
-    if (v < -meja) return -1;
+    for (let mest = 80n; mest <= 5120n; mest *= 2n) {
+      porabi(Number(mest) * this.m.size);
+      const SK = 10n ** mest;
+      let v = 0n;
+      let napaka = 0n;
+      for (const [k, c] of this.m) {
+        v += (c.n * isqrt(BigInt(k) * SK * SK)) / c.d;
+        napaka += (c.n < 0n ? -c.n : c.n) / c.d + 2n;
+      }
+      if (v > napaka) return 1;
+      if (v < -napaka) return -1;
+    }
     return null;
   }
   /** √q za racionalno q ≥ 0, sicer null. */
@@ -144,6 +183,8 @@ function pAdd(a, b) {
 }
 const pNeg = (a) => new Map([...a].map(([k, v]) => [k, v.neg()]));
 function pMul(a, b) {
+  if (a.size * b.size > 200000) throw new Prevelik();
+  porabi(a.size * b.size);
   let r = new Map();
   for (const [k1, v1] of a)
     for (const [k2, v2] of b) {
@@ -167,6 +208,7 @@ const pKonstanten = (a) => [...a.keys()].every((k) => eksponenti(k).every((x) =>
  * kjer je imenovalec 0, izraz ni definiran (to preveri pokritost s pogoji, ne ta funkcija).
  */
 export function racFunkcija(e, imena) {
+  if (ostanek == null) return zProracunom(300000, () => racFunkcija(e, imena));
   if (velikost(e) > NAJVEC_BITOV) return null;
   const n = imena.length;
   const ena = () => pKonst(S.q(new Q(1n)), n);
@@ -211,7 +253,10 @@ export function racFunkcija(e, imena) {
         if (x.n < 0 && !a.n.size) return null;
         const b = x.n < 0 ? { n: a.d, d: a.n } : a;
         let out = { n: ena(), d: ena() };
-        for (let i = 0; i < Math.abs(x.n); i++) out = { n: pMul(out.n, b.n), d: pMul(out.d, b.d) };
+        for (let i = 0; i < Math.abs(x.n); i++) {
+          out = { n: pMul(out.n, b.n), d: pMul(out.d, b.d) };
+          if (pStopnja(out.n) > NAJVEC_STOPNJA || pStopnja(out.d) > NAJVEC_STOPNJA) throw new Prevelik();
+        }
         return out;
       }
       case "sqrt": {
@@ -249,22 +294,36 @@ export function racFunkcija(e, imena) {
 /** Točno: ali je f ≡ 0 (kot racionalna funkcija). */
 export const jeNicelna = (f) => f.n.size === 0;
 /** Točno: f ≡ g. */
-export const enakiFunkciji = (f, g) => pAdd(pMul(f.n, g.d), pNeg(pMul(g.n, f.d))).size === 0;
+export const enakiFunkciji = (f, g) => varno(() => pAdd(pMul(f.n, g.d), pNeg(pMul(g.n, f.d))).size === 0, false);
 /** Ali je f konstanta (brez spremenljivk). */
 export const konstantna = (f) => pKonstanten(f.n) && pKonstanten(f.d);
 /** Predznak konstantne funkcije (−1, 0, 1) ali null. */
 export function predznakKonstante(f) {
   const zn = (p) => (p.size ? [...p.values()][0].predznak() : 0);
-  const a = zn(f.n);
-  const b = zn(f.d);
-  return a == null || b == null ? null : a * b;
+  return varno(() => {
+    const a = zn(f.n);
+    const b = zn(f.d);
+    return a == null || b == null ? null : a * b;
+  }, null);
+}
+/** Izračun, ki ob prekoračenem proračunu vrne privzeto vrednost (zavrnitev). */
+function varno(fn, privzeto) {
+  try {
+    return fn();
+  } catch (err) {
+    if (err instanceof Prevelik) return privzeto;
+    throw err;
+  }
 }
 
 /**
  * Ali je f = c · g za konstanto c ≠ 0 (pri pozitiven še c > 0). Točno: n_f·d_g in n_g·d_f morata biti sorazmerna
  * polinoma. Obe ničelni ni sorazmerje (o tem odloči klicatelj).
  */
-export function sorazmerni(f, g, { pozitiven = false } = {}) {
+export function sorazmerni(f, g, moznosti = {}) {
+  return varno(() => sorazmerniTocno(f, g, moznosti), false);
+}
+function sorazmerniTocno(f, g, { pozitiven = false } = {}) {
   const A = pMul(f.n, g.d);
   const B = pMul(g.n, f.d);
   if (!A.size || !B.size) return false;
@@ -304,13 +363,42 @@ export function kanon(e) {
   }
 }
 
-/** Ali je zaprt izraz zanesljivo različen od 0 (točno, sicer z oceno na 40 mest) oziroma ≥ 0. */
+/** Predznak zaprtega izraza, izračunan točno (−1, 0, 1), ali null, če točen izračun ni mogoč (tedaj zavrnemo). */
 export function zaprtPredznak(e) {
   const f = racFunkcija(e, []);
-  if (f) return predznakKonstante(f);
-  if (velikost(e) > NAJVEC_BITOV) return null;
-  const v = vrednost(e, {});
-  if (v == null) return null;
-  const meja = 10n ** 40n;
-  return v > meja ? 1 : v < -meja ? -1 : null;
+  return f ? predznakKonstante(f) : null;
+}
+
+/** Vrednost polinoma v racionalni točki (seznam Q po vrstnem redu imen) kot S. */
+function pVrednost(p, tocka) {
+  let r = new S();
+  for (const [k, c] of p) {
+    let m = new Q(1n);
+    eksponenti(k).forEach((e, i) => (m = m.mul(tocka[i].pow(e))));
+    r = r.add(c.mul(S.q(m)));
+  }
+  return r;
+}
+
+/**
+ * Ali je definicijsko območje zanesljivo neprazno: v neki racionalni točki vsi pogoji (d ≠ 0, 0 ≤ r) točno držijo
+ * in so vsi imenovalci pogojev definirani. Pogoj, ki ga ni mogoče izračunati točno, da false (prazno resnična
+ * identiteta bi bila dokaz česarkoli).
+ */
+export function nepraznoTocno(pogoji, imena, tocke) {
+  return varno(() => {
+    const fun = pogoji.map((g) => ({ op: g.op, f: racFunkcija({ t: "sub", a: g.b, b: g.a }, imena) }));
+    if (fun.some((g) => !g.f || !["≠", "≤", "<"].includes(g.op))) return false;
+    return tocke.some((t) => {
+      const tocka = imena.map((v) => t[v]);
+      return fun.every(({ op, f }) => {
+        const n = pVrednost(f.n, tocka);
+        const d = pVrednost(f.d, tocka);
+        if (d.isZero()) return false;
+        if (op === "≠") return !n.isZero();
+        const z = n.mul(d).predznak();
+        return z != null && (op === "≤" ? z >= 0 : z > 0);
+      });
+    });
+  }, false);
 }

@@ -11,6 +11,7 @@
 //   - enačba in neenačba sta ekvivalenca (↔) s celo množico rešitev: manjkajoča ali tuja rešitev izreka ne da;
 //   - izrek se pred dokazovanjem prevede nazaj (lean-obratno.js) in primerja z izvirnikom (skladnost()).
 import { razcleni, spremenljivke, zaprt, konstanta, obmocje, racionalna, racionalneNicle, P, Q, ZERO, ONE, vrednost, tocke, jeNic } from "./lean-izraz.js";
+import { nepraznoTocno } from "./lean-algebra.js";
 
 // ---------- izpis izraza v Lean ----------
 export function vLean(e) {
@@ -217,7 +218,8 @@ export function oblikaIzRacuna(racun) {
     // koren izraza s spremenljivko: območje je lahko ena sama točka (√x = √(-x)), zato zunaj obsega
     if (pogoji.some((p) => p.op === "≤")) return { napaka: "koren izraza s spremenljivko v identiteti" };
     if (!vars.length) return { vrsta: "racun", spremenljivke: [], obmocje: [], glavni: [{ op: "=", a, b }], resitve: [] };
-    if (!nepraznoObmocje([a, b], vars)) return { napaka: "prazno definicijsko območje" };
+    // vzorčenje (dovolj točk) in točno (vsaj ena točka, kjer pogoji res držijo; zaokrožitev ne sme skriti prazne množice)
+    if (!nepraznoObmocje([a, b], vars) || !nepraznoTocno(pogoji, vars, tocke(vars, JSON.stringify(vars), 24))) return { napaka: "prazno definicijsko območje" };
     return { vrsta: "identiteta", spremenljivke: vars, obmocje: brezPodvojenih(pogoji), glavni: [{ op: "=", a, b }], resitve: [] };
   }
   if (ukaz === "solve" || ukaz === "ineq") {
