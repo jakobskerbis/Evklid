@@ -396,7 +396,7 @@ function derivativeIssue(answer, p) {
   if (rest && !bold && !FINAL.test(lines[fl]) && !FINAL.test(prev)) return null;
   // Za zapisom ne sme biti nič več (»Zdaj še odvod oklepaja.«, »Nato …«); »vmesni/delni rezultat« ni končni (pregled prevzema 8).
   if (!/^[\s.!*_]*$/.test(tail)) return null;
-  if (/vmesn|deln|partial|so far|(?<!\p{L})ni še(?!\p{L})|not yet/iu.test(`${lines[fl]}\n${prev}`)) return null;
+  if (/vmesn|deln|partial|so far|napač|narobe|wrong|incorrect|pogost|common|(?<!\p{L})(?:ni|not)(?!\p{L})/iu.test(`${lines[fl]}\n${prev}`)) return null;
   const judge = (rhs) => sameFn(want, derivFn(rhs));
   if (found.some((f) => f.rhs.map(judge).includes("match"))) return { checked: 1, issue: null };
   // Pravilen odvod kjerkoli v odgovoru (tudi brez »f'(x) =«, v vrstici, ki se preskoči): »f'(x) = 3x^2« je bil delni

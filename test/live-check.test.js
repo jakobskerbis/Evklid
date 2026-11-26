@@ -1318,6 +1318,8 @@ test("pregled prevzema (6): delni korak vodenega odgovora (vprašanje ali namig 
     "Torej po potenčnem pravilu:\n" + R`$y' = 5(3x+1)^4$` + "\n\nNato odvod oklepaja.",
     R`**$y' = 5(3x+1)^4$**` + "\n\nZdaj še odvod oklepaja.",
     "Poglejva skupaj:\n" + R`$y' = 5(3x+1)^4$`,
+    R`Pogost napačen rezultat: $y' = 5(3x+1)^4$.`,
+    R`Rezultat ni $y' = 5(3x+1)^4$.`,
   ]) assert.equal(codeFindings(a, presolve(q), q).issue, null, a);
   // končni napačen zapis (cel odgovor, »Torej«, »Odvod je«, krepko) ostane ulovljen
   for (const a of [
