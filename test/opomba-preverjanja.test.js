@@ -598,7 +598,8 @@ test("pregled B (018af7ab6): golo število, ki je rezultat naloge ali že vidno,
   }
 });
 
-// Pregled B (4cf3be1fb): ura s piko in angleška vejica za tisočice niso ugotovitev kode (ne opomba ne popravek).
+// Pregled B (4cf3be1fb, bd0af5dac): ura s piko in angleška vejica za tisočice ostaneta ugotovitev kode (popravek kot
+// main), opombe brez modela pa ni, tudi blage ne.
 export const B_CLOCK = [
   R`Če začneš ob 8.45 in delaš 30 minut: $8.45 + 0.30 = 9.15$.`,
   R`Ali prideš ob $8.45 + 0.30 = 9.15$?`,
@@ -610,8 +611,20 @@ export const B_CLOCK = [
   R`Result: $2,000 - 500 = 1,500$`,
   R`So the answer is $2,500 + 500 = 3,000$.`,
 ];
-test("pregled B: ura s piko in angleške tisočice brez ugotovitve", () => {
-  for (const a of B_CLOCK) assert.equal(codeFindings(a, null, "").issue, null, a);
+test("pregled B: ura s piko in angleške tisočice brez opombe, ugotovitev ostane", () => {
+  for (const a of B_CLOCK) {
+    const f = codeFindings(a, null, "");
+    assert.equal(f.fact ?? null, null, a);
+    if (f.soft) assert.equal(f.quiet, true, a);
+  }
+  // ulov main ostane (pregled B, bd0af5dac): napačen račun v uri ali tisočicah gre v popravek
+  for (const a of [R`Result: $2.45 + 1.30 = 3.85$`, R`Result: $0.25 \cdot 4 = 2$`, R`Result: $1,250 + 250 = 1,600$`]) {
+    const f = codeFindings(a, null, "");
+    assert.ok(f.issue && !f.soft, a);
+    assert.equal(f.fact ?? null, null, a);
+  }
+  // periodični zapis in pika za tisočice ostaneta brez ugotovitve
+  for (const a of [R`Torej je $0{,}(3) \cdot 3 = 1$.`, R`Torej $10.000 - 2.500 = 7.500$.`]) assert.equal(codeFindings(a, null, "").issue, null, a);
   for (const a of [R`Torej $7 \cdot 8 = 54$.`, R`Torej $2{,}5 + 0{,}5 = 4$.`, R`Torej $2.5 + 0.5 = 4$.`]) assert.ok(codeFindings(a, null, "").fact, a);
 });
 
@@ -677,8 +690,109 @@ test("pregled A (4cf3be1fb): beseda za formulo, spremenjena naloga in hipoteza v
   for (const s of [" ".repeat(60000) + "1", " ".repeat(30000) + "~" + " ".repeat(30000) + "1"]) {
     assert.ok(ms(() => codeFindings(R`Torej $7 \cdot 8 = 54$` + s, null, "")) < 300, "beseda za formulo");
   }
-  for (const q of ["$".repeat(60000), "$a".repeat(30000), "a".repeat(60000) + "=", "$1$ ".repeat(15000)]) {
+  for (const q of ["$".repeat(60000), "$a".repeat(30000), "a".repeat(60000) + "=", "$1$ ".repeat(15000), "tri ".repeat(15000), "3" + " x".repeat(30000) + ",", "3" + " ".repeat(60000) + "x"]) {
     assert.ok(ms(() => codeFindings(R`Rešitev je $x = 5$.`, pre, T + q)) < 300, q.slice(0, 10));
     assert.ok(ms(() => verdictNoteSafe("Da, pravilno!", v, { prevTutor: q, pre })) < 300, q.slice(0, 10));
+  }
+});
+
+// Pregled A (bd0af5dac): pozitivni pogoji namesto seznamov besed.
+// A: opomba ob prezrti sodbi le brez tujega števila (s števkami ali z besedo) v prejšnjem inštruktorjevem odgovoru.
+export const A_STEP_FOREIGN = [
+  "Če je desna stran 13, koliko je x?",
+  "Desno stran zamenjajmo s 13. Koliko je x?",
+  "Pri desni strani 13: koliko je x?",
+  "Naj bo desna stran 13. Koliko je x?",
+  "Kaj dobiš, ko desno stran povečaš na 13?",
+  "Še ena: dva iks plus tri je trinajst. Koliko je x?",
+  "Lažja: x plus tri je pet. Koliko je x?",
+  "Zdaj pa obratno: desno 13, levo isto. Koliko je x?",
+  "Spremenimo enačbo: desno naj bo 13. Koliko je x?",
+  "Kaj, ko bi bilo desno 13?",
+  "Kaj pa pri 13?",
+  "Pa poskusiva še z desno stranjo 13.",
+  R`Reši še to: $2x + 3 = 13$.`,
+  R`Zdaj z $13$ na desni. Koliko je x?`,
+  "Naj bo desna stran trinajst.",
+  "What if the right side were thirteen?",
+];
+test("pregled A (bd0af5dac): opomba ob prezrti sodbi le brez tujega števila v prejšnjem odgovoru", () => {
+  const T = R`Reši enačbo $2x + 3 = 11$.`;
+  const pre = presolve(T, { first: true, narrow: false });
+  const at = (prev, q, a) => {
+    const v = stepVerdict(q, { pre, prevTutor: prev, seen: T + "\n" + prev });
+    return !!v && verdictNoteSafe(a, v, { prevTutor: prev, pre });
+  };
+  for (const prev of A_STEP_FOREIGN) assert.equal(at(prev, "x = 5", "Odlično!"), false, prev);
+  // primer ChatGPT: navadno vprašanje ali namig brez tujih števil → opomba ostane
+  for (const prev of ["Kaj dobiš za x?", "Koliko je x? Namig: odštej 3.", "Kaj dobiš, če odšteješ 3 in deliš z 2?", "Kaj dobiš, če obe strani deliš z dva?", "Kaj narediš najprej?"]) {
+    assert.equal(at(prev, "x = 5", "Odlično!"), true, prev);
+  }
+  assert.equal(at("Kaj dobiš za x?", "x = 5?", "Da, pravilno!"), true);
+  // števila izraza, ki ga sodba presoja, niso tuja (naloga brez »presolve«: »Izračunaj $7 \\cdot 8$.«)
+  const P = presolve(R`Izračunaj $7 \cdot 8$.`, { first: true, narrow: false });
+  const v = stepVerdict("mogoče 54?", { pre: P, prevTutor: R`Koliko je $7 \cdot 8$?` });
+  assert.equal(verdictNoteSafe("Ja, 54 je pravilno.", v, { prevTutor: R`Koliko je $7 \cdot 8$?`, pre: P }), true);
+  assert.equal(verdictNoteSafe("Ja, 54 je pravilno.", v, { prevTutor: R`Koliko je $7 \cdot 9$?`, pre: P }), false);
+});
+
+// B: opomba proti nalogi le, ko je v sporočilu samo stavek z nalogo.
+export const A_TASK_EXTRA = [
+  [R`Reši enačbo $2x + 3 = 11$. Oprosti, mislil sem trinajst.`, R`Potem je rešitev $x = 5$.`],
+  [R`Reši enačbo $2x + 3 = 11$. Ups, na desni je trinajst.`, R`Rešitev je torej $x = 5$.`],
+  [R`Reši enačbo $2x + 3 = 11$. Kako bi bilo pri trinajst?`, R`Pri trinajst je rešitev $x = 5$.`],
+  [R`Reši enačbo $2x + 3 = 11$ (v knjigi je desno trinajst).`, R`Za trinajst je rešitev $x = 5$.`],
+  [R`Solve $2x + 3 = 11$. Sorry, I meant thirteen.`, R`Then the solution is $x = 5$.`],
+  [R`Reši enačbo $2x + 3 = 11$. Pomota – plus pet, ne plus tri.`, R`Torej je rešitev $x = 3$.`],
+  [R`Odvajaj $f(x) = x^3$, oziroma kvadrat.`, R`Odvod je torej $f'(x) = 2x$.`],
+  [R`Odvajaj $f(x) = x^3$. Pardon, mislil sem $x^2$.`, R`Odvod je torej $f'(x) = 2x$.`],
+  [R`Izračunaj $7 \cdot 8$. Oziroma sedem krat devet.`, "**63**"],
+  [R`Izračunaj $7 \cdot 8$. Pravzaprav me zanima sedem krat devet.`, "Rezultat je **63**."],
+  ["Reši enačbo 2x + 3 = 11. Oprosti, mislil sem trinajst.", R`Potem je rešitev $x = 5$.`],
+  ["Odvajaj x^3, oziroma kvadrat.", R`Odvod je torej $f'(x) = 2x$.`],
+];
+test("pregled A (bd0af5dac): dodatek za zapisom naloge izklopi opombo o vrednosti, odvodu in golem rezultatu", () => {
+  for (const [q, a] of A_TASK_EXTRA) {
+    const f = codeFindings(a, presolve(q, { first: true }), q);
+    assert.ok(!f.issue || !f.fact || f.soft, `${q} → ${a}`);
+  }
+  for (const [q, a] of [
+    [R`Reši enačbo $2x + 3 = 11$.`, R`Rešitev je $x = 5$.`],
+    ["Reši enačbo 2x + 3 = 11", R`Rešitev je $x = 5$.`],
+    ["Reši 2x + 3 = 11.", R`Rešitev je $x = 5$.`],
+    [R`Odvajaj $f(x) = x^3$.`, R`Odvod je torej $f'(x) = 2x$.`],
+    [R`Odvajaj $\sin x$.`, R`$f'(x) = -\cos x$`],
+    [R`Izračunaj $7 \cdot 8$.`, "**54**"],
+  ]) {
+    const f = codeFindings(a, presolve(q, { first: true }), q);
+    assert.ok(f.issue && f.fact && !f.soft, `${q} → ${a}`);
+  }
+});
+
+// C: rezultat besedilne naloge (deljenje, zaokroženo navzgor ali navzdol; pretvorba enot) brez opombe.
+export const A_WORD_RESULT = [
+  R`Potrebujemo torej $25 : 6 = 5$, saj zadnji avtobus ni poln.`,
+  R`Potrebujemo torej $25 : 6 = 5$ – zadnji ne bo poln.`,
+  R`Odgovor: $25 : 6 = 5$.`,
+  R`Torej $50 : 12 = 4$, dve jajci ostaneta.`,
+  R`Odgovor: $50 : 12 = 5$, ker 4 škatle niso dovolj.`,
+  R`Torej $25 / 6 = 5$.`,
+  R`Rezultat: $3 \cdot 500 = 1{,}5$.`,
+  R`Torej $3 \cdot 500 = 1{,}5$ (v kg).`,
+  R`Torej $3 \cdot 500 = 1{,}5$, izraženo v kilogramih.`,
+  R`Torej $250 : 100 = 2{,}5$, kar so metri.`,
+  R`Torej $2 \cdot 45 = 1{,}5$.`,
+  R`Torej $3 \cdot 24 = 3$.`,
+];
+test("pregled A (bd0af5dac): zaokroženo deljenje in pretvorba enot brez opombe, ugotovitev ostane", () => {
+  for (const a of A_WORD_RESULT) {
+    const f = codeFindings(a, null, "");
+    assert.equal(f.fact ?? null, null, a);
+    if (f.soft) assert.equal(f.quiet, true, a);
+  }
+  assert.ok(codeFindings(R`Odgovor: $25 : 6 = 5$.`, null, "").issue, "ugotovitev ostane");
+  // drugačna napaka ostane z opombo
+  for (const a of [R`Odgovor: $25 : 5 = 4$.`, R`Odgovor: $25 : 6 = 6$.`, R`Rezultat: $3 \cdot 500 = 1600$.`, R`Torej $7 \cdot 8 = 54$.`]) {
+    assert.ok(codeFindings(a, null, "").fact?.wrong, a);
   }
 });

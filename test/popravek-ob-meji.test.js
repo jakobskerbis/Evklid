@@ -397,14 +397,35 @@ test("pregleda A in B: drug sistem, namig, označena napaka in vmesni korak brez
   }
 });
 
-test("pregled B (4cf3be1fb): ura s piko in angleške tisočice brez opombe na meji, ob »OK« in brez popravka", async () => {
-  for (const a of [R`Če začneš ob 8.45 in delaš 30 minut: $8.45 + 0.30 = 9.15$.`, R`Ali prideš ob $8.45 + 0.30 = 9.15$?`, R`Rezultat: $14.30 + 2.45 = 17.15$`, R`Result: $1,000 + 1 = 1,001$`, R`So the answer is $2,500 + 500 = 3,000$.`]) {
-    for (const opt of [{ n: 1 }, { n: null, fixText: "OK" }, { n: null, fixText: null }]) {
-      const r = await run({ answers: [a], msgs: ["Koliko je to?"], ...opt });
-      assert.ok(!r.calls.includes("fix"), `${a}: brez klica popravka`);
-      none(r);
-    }
+test("pregled B (4cf3be1fb, bd0af5dac): ura s piko in angleške tisočice brez opombe; popravek kot main", async () => {
+  for (const a of [R`Če začneš ob 8.45 in delaš 30 minut: $8.45 + 0.30 = 9.15$.`, R`Ali prideš ob $8.45 + 0.30 = 9.15$?`, R`Rezultat: $14.30 + 2.45 = 17.15$`, R`Result: $1,000 + 1 = 1,001$`, R`So the answer is $2,500 + 500 = 3,000$.`, R`Result: $2.45 + 1.30 = 3.85$`, R`Result: $1,250 + 250 = 1,600$`]) {
+    for (const opt of [{ n: 1 }, { n: null, fixText: "OK" }, { n: null, fixText: null }]) none(await run({ answers: [a], msgs: ["Koliko je to?"], ...opt }));
   }
+  // napačen račun z uro ali tisočicami gre v popravek kot na main
+  for (const a of [R`Result: $2.45 + 1.30 = 3.85$`, R`Result: $0.25 \cdot 4 = 2$`, R`Result: $1,250 + 250 = 1,600$`]) {
+    const r = await run({ answers: [a], msgs: ["Koliko je to?"], n: null });
+    assert.ok(r.calls.includes("fix"), a);
+    assert.match(r.display, /Popravek/);
+  }
+});
+
+test("pregled A (bd0af5dac): tuje število pri inštruktorju, dodatek za nalogo in rezultat besedilne naloge brez opombe", async () => {
+  const cases = [
+    { answers: [R`Potem je rešitev $x = 5$.`], msgs: [R`Reši enačbo $2x + 3 = 11$. Oprosti, mislil sem trinajst.`] },
+    { answers: [R`Odvod je torej $f'(x) = 2x$.`], msgs: [R`Odvajaj $f(x) = x^3$, oziroma kvadrat.`] },
+    { answers: [R`Potrebujemo torej $25 : 6 = 5$, saj zadnji avtobus ni poln.`], msgs: ["Koliko avtobusov po 6 sedežev potrebujemo za 25 otrok?"] },
+    { answers: [R`Torej $3 \cdot 500 = 1{,}5$ (v kg).`], msgs: ["Koliko kilogramov so 3 vrečke po 500 g?"] },
+  ];
+  for (const c of cases) {
+    for (const opt of [{ n: 1 }, { n: null, fixText: null }]) none(await run({ ...c, answers: [...c.answers], ...opt }));
+  }
+  for (const prev of ["Če je desna stran 13, koliko je x?", "Naj bo desna stran 13.", "Kaj dobiš, ko desno stran povečaš na 13?", "Še ena: dva iks plus tri je trinajst.", R`Zdaj z $13$ na desni.`, "Lažja: x plus tri je pet."]) {
+    const c = { answers: [prev, "Odlično!"], msgs: [R`Reši enačbo $2x + 3 = 11$.`, prev.includes("pet") ? "x = 2" : "x = 5"] };
+    none(await run({ ...c, answers: [...c.answers], n: 2 }));
+    none(await run({ ...c, answers: [...c.answers], n: null, chatFail: 3 }));
+  }
+  const kept = await run({ answers: ["Kaj dobiš za x? Namig: odštej 3.", "Da, pravilno!"], n: 2, msgs: [R`Reši enačbo $2x + 3 = 11$.`, "x = 5"] });
+  has(kept, R`*(Opomba: $x = 5$ ni rešitev enačbe $2x + 3 = 11$ (rešitev: $x = 4$). Preveri še sam.)*`);
 });
 
 test("pregled A (4cf3be1fb): spremenjena naloga, beseda za formulo in hipoteza inštruktorja brez opombe na meji in ob napaki klica", async () => {

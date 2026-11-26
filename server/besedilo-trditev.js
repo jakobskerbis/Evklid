@@ -17,8 +17,11 @@ export const hasExercise = (answer) => EXERCISE_RE.test(String(answer || ""));
 // Zapis števila, ki ga račun ne bere zanesljivo (pregled B, 7f565d941): periodična decimalka (»0{,}(3)«, »0,1(6)«,
 // »\overline«, »\dot«, »\ldots«), pika za tisočice (»2.500«, »1.200 €«), kratki TeX (»\frac12«) in mešano število
 // (»1\tfrac12«). Neujemanje v takem zapisu ni ugotovitev kode (ne popravek ne opomba).
-// Pregled B (4cf3be1fb): tudi angleška vejica za tisočice (»1,000 + 1 = 1,001«) in ura s piko (»8.45 + 0.30 = 9.15«).
-export const AMBIGUOUS_NUM = /\d(?:[.,]|\{,\})\d*\(\d+\)|\\overline|\\dot(?![a-zA-Z])|\\l?dots|…|(?<![\d.,{])\d{1,3}(?:\.\d{3})+(?![\d,{])|(?<![\d.,{])\d{1,3}(?:,\d{3})+(?![\d{])|(?<![\d.,{])\d{1,2}\.[0-5]\d(?![\d.])|\d\s*\\[dt]?frac(?![a-zA-Z])/;
+export const AMBIGUOUS_NUM = /\d(?:[.,]|\{,\})\d*\(\d+\)|\\overline|\\dot(?![a-zA-Z])|\\l?dots|…|(?<![\d.,{])\d{1,3}(?:\.\d{3})+(?![\d,{])|\d\s*\\[dt]?frac(?![a-zA-Z])/;
+// Angleška vejica za tisočice (»1,000 + 1 = 1,001«) in ura s piko (»8.45 + 0.30 = 9.15«): ugotovitev in popravek
+// ostaneta kot na main (»$1,250 + 250 = 1,600$« je napačen v obeh branjih), opombe brez modela pa ni (pregled B,
+// 4cf3be1fb in bd0af5dac).
+export const NOTE_AMBIGUOUS_NUM = /(?<![\d.,{])\d{1,3}(?:,\d{3})+(?![\d{])|(?<![\d.,{])\d{1,2}\.[0-5]\d(?![\d.])/;
 // Vrstica, kjer zapis lahko stoji namenoma ali v drugem pomenu (pregled A, 7f565d941): zgled, pogosta napaka, vaja,
 // namig, teme, os, ekstrem, asimptota, vrednost funkcije, ura, ostanek, enota (»cm«, »mm«, enota za vrednostjo,
 // »\text{…}«). Ugotovitev ostane (popravek modela kot main), opombe brez modela pa ni: ob pravilnem odgovoru bi bila
@@ -112,7 +115,7 @@ export function statesNumber(answer, v, skip = "") {
 // vejico. Karkoli drugega (besedilni zapis »sqrt(3)«, enote, dvoumna števila) → null: brez opombe.
 export function valueTex(tex) {
   const t = String(tex || "").trim().replace(/[.,;:]$/, "").trim();
-  if (!t || t.length > 60 || AMBIGUOUS_NUM.test(t) || TEX_SHORT.test(t)) return null;
+  if (!t || t.length > 60 || AMBIGUOUS_NUM.test(t) || NOTE_AMBIGUOUS_NUM.test(t) || TEX_SHORT.test(t)) return null;
   if (!/^[-−+\d\s{}(),.^_/]+$/.test(t.replace(/\\(?:[dt]?frac|sqrt|pi|cdot|left|right)(?![a-zA-Z])/g, ""))) return null;
   if (!/\d/.test(t)) return null;
   return t.replace(/−/g, "-").replace(/(\d)[.,](?=\d)/g, "$1{,}");
@@ -120,6 +123,7 @@ export function valueTex(tex) {
 
 // vsak del posebej: stik »… = 20« in »\frac« iz drugega dela ni mešano število
 export const ambiguousCalc = (m) => [m?.tex, m?.lhs, m?.rhs].some((t) => AMBIGUOUS_NUM.test(String(t || ""))) || TEX_SHORT.test(String(m?.tex || ""));
+export const noteAmbiguousCalc = (m) => [m?.tex, m?.lhs, m?.rhs].some((t) => NOTE_AMBIGUOUS_NUM.test(String(t || "")));
 
 // Zapisi za opombo brez modela (server/opomba-preverjanja.js, AUDIT-060): podatki ugotovitev so TeX brez »$«.
 /** Navaden zapis (»x = 2,5«, »7 · 8«, »x ≈ 0,7«) v TeX za opombo. */

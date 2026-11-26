@@ -386,6 +386,28 @@ export function stepVerdict(text, opts = {}) {
   if (said && !vals.length) vals.push({ v: null, x: num(said) });
   return v ? { ...v, asked: true, vals } : v;
 }
+// Števila z besedo (sl, en), z običajnimi skloni; vsako ujemanje šteje (»ena« v »Še ena:« je tuje število).
+const NUMBER_WORDS = new Map();
+[
+  [0, "nič ničla nula zero"],
+  [1, "ena en eno ene eni enega enemu enim enkrat one once"],
+  [2, "dva dve dveh dvema dvakrat two twice"],
+  [3, "tri treh trem tremi trikrat three"],
+  [4, "štiri štirih štirim štirimi four"],
+  [5, "pet petih petim petimi five"],
+  [6, "šest šestih šestim six"],
+  [7, "sedem sedmih sedmim seven"],
+  [8, "osem osmih osmim eight"],
+  [9, "devet devetih devetim nine"],
+  [10, "deset desetih desetim ten"],
+  [11, "enajst eleven"], [12, "dvanajst twelve"], [13, "trinajst thirteen"], [14, "štirinajst fourteen"],
+  [15, "petnajst fifteen"], [16, "šestnajst sixteen"], [17, "sedemnajst seventeen"], [18, "osemnajst eighteen"],
+  [19, "devetnajst nineteen"], [20, "dvajset twenty"], [30, "trideset thirty"], [40, "štirideset forty"],
+  [50, "petdeset fifty"], [60, "šestdeset sixty"], [70, "sedemdeset seventy"], [80, "osemdeset eighty"],
+  [90, "devetdeset ninety"], [100, "sto hundred"], [1000, "tisoč thousand"],
+  [0.5, "pol polovica half"],
+].forEach(([v, ws]) => ws.split(" ").forEach((w) => NUMBER_WORDS.set(w, v)));
+const NUMBER_WORD = new RegExp(`(?<!\\p{L})(?:${[...NUMBER_WORDS.keys()].sort((a, b) => b.length - a.length).join("|")})(?!\\p{L})`, "giu");
 const TUTOR_HYPO = /(?<!\p{L})(?:če bi|kaj pa|kaj če|vzemimo|recimo|denimo|namesto|predpostavimo|what if|suppose|instead)(?!\p{L})/iu;
 // Vmesni korak v inštruktorjevem vprašanju (»Najprej …«, »Nato …«, »prvi korak«).
 const SUBSTEP = /(?<!\p{L})(?:najprej|nato|potem|zdaj|sedaj|prv\p{L}*|drug\p{L}*|tretj\p{L}*|naslednj\p{L}*|korak\p{L}*|vmesn\p{L}*|first|then|next|step)(?!\p{L})/iu;
@@ -589,12 +611,18 @@ const firstSentence = (s) => (/^[\s\S]{0,240}?(?:[.!?](?=\s|$)|\n|$)/.exec(Strin
  */
 export function verdictNoteSafe(answer, verdict, { prevTutor = "", pre = null } = {}) {
   if (!verdict || !verdictIgnored(answer, verdict)) return false;
-  // Inštruktor je zastavil hipotezo ali drugo enačbo (»Kaj pa, če bi bila desna stran 13?«, »Vzemimo enostavnejšo
-  // enačbo x + 3 = 5«): sodba proti nalogi je kot na main, vidne opombe pa ne (pregled A, 4cf3be1fb).
+  // Opomba le, ko prejšnji inštruktorjev odgovor nima števila (s števkami ali z besedo: »trinajst«, »pet«) zunaj
+  // števil naloge, ne druge enačbe in ne hipoteze (pregleda A, 4cf3be1fb in bd0af5dac: »Naj bo desna stran 13.«,
+  // »Lažja: x plus tri je pet.«). Sodba proti nalogi je kot na main, vidne opombe pa ne.
   const prev = String(prevTutor || "");
   if (TUTOR_HYPO.test(prev)) return false;
   const nums = (t) => (String(t || "").match(/\d+(?:[.,]\d+)?/g) || []).join(" ");
   const tasks = (pre?.problems || []).map((p) => nums(p.problemTex || p.problem));
+  // znana števila: naloga in izraz, ki ga sodba presoja (»$7 \\cdot 8$« pri »mogoče 54?«), ne njegov rezultat
+  const judged = verdict.fact?.eq || String(verdict.fact?.right || "").split(/=|\\approx/)[0];
+  const known = new Set(`${tasks.join(" ")} ${nums(judged)}`.split(" ").filter(Boolean).map((n) => Number(n.replace(",", "."))));
+  for (const n of prev.match(/\d+(?:[.,]\d+)?/g) || []) if (!known.has(Number(n.replace(",", ".")))) return false;
+  for (const w of prev.matchAll(NUMBER_WORD)) if (!known.has(NUMBER_WORDS.get(w[0].toLowerCase()))) return false;
   for (const m of prev.matchAll(/([^\n=.,;:?!]{0,40})=([^\n=.;:?!]{0,40})/g)) {
     if (!tasks.includes(nums(m[1] + "=" + m[2]))) return false;
   }

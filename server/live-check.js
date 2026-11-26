@@ -20,7 +20,7 @@ import { verifyAi } from "../public/scan/verify.js";
 import { checkArithmetic } from "./lesson-math.js";
 import { askModel, checkerUser, SYSTEM as CHECKER_SYSTEM } from "./verify.js";
 import { MODEL_MID, addUsage } from "./claude.js";
-import { SKIP_LINE, notClaimAt, TEX_SHORT, EXERCISE_RE, hasExercise, calcFact, plainToTex, numTex, ambiguousCalc, noteLine, valueTex, OTHER_SYSTEM, LABELLED_REPLY, presentedAsResult, lastFormula, segmentOf, statesNumber, prevLine, wordAfter } from "./besedilo-trditev.js";
+import { SKIP_LINE, notClaimAt, TEX_SHORT, EXERCISE_RE, hasExercise, calcFact, plainToTex, numTex, ambiguousCalc, noteAmbiguousCalc, noteLine, valueTex, OTHER_SYSTEM, LABELLED_REPLY, presentedAsResult, lastFormula, segmentOf, statesNumber, prevLine, wordAfter } from "./besedilo-trditev.js";
 export { SKIP_LINE, notClaimAt, TEX_SHORT, hasExercise };
 
 export const liveCheckOn = () => process.env.EVKLID_LIVE_CHECK !== "0";
@@ -548,9 +548,27 @@ const calcValue = (m) => {
 // v odgovoru ni drugega številskega sistema, ostankov, ure ali logike (OTHER_SYSTEM), ne oznak napake (❌, ~~,
 // »namesto«) in vrstica ni zgled, napaka, vaja … (noteLine). Sicer brez opombe; ugotovitev gre v popravek kot na main.
 // Blaga (AUDIT-066) ostane previdna opomba, razen ob pravi vrednosti v odgovoru ali drugem sistemu (quiet).
+// Rezultat besedilne naloge (pregled A, bd0af5dac): deljenje, zaokroženo navzgor ali navzdol (»$25 : 6 = 5$«
+// avtobusov), in pretvorba enot, kjer je navedena vrednost prava, pomnožena ali deljena s potenco 10, 60, 24, 3600
+// ali 1440 (»$3 \cdot 500 = 1{,}5$« kg). Ugotovitev ostane (popravek kot main), opombe brez modela pa ni.
+function wordProblemResult(m) {
+  const reversed = calcValue(m) !== m.lv;
+  const [side, exact, stated] = reversed ? [m.rhs, m.rv, m.lv] : [m.lhs, m.lv, m.rv];
+  if (typeof exact !== "number" || typeof stated !== "number" || !Number.isFinite(exact) || !Number.isFinite(stated)) return false;
+  const near = (a, b) => Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(b));
+  if (/:|\/|÷|\\div(?![a-zA-Z])|\\[dt]?frac(?![a-zA-Z])/.test(String(side || "")) && (near(stated, Math.floor(exact)) || near(stated, Math.ceil(exact)))) return true;
+  if (!exact || !stated) return false;
+  for (const r of [stated / exact, exact / stated]) {
+    if (r <= 1) continue;
+    const k = Math.round(Math.log10(r));
+    if ((k >= 1 && near(r, 10 ** k)) || [60, 24, 3600, 1440].some((f) => near(r, f))) return true;
+  }
+  return false;
+}
+
 function calcNote(answer, lines, m, { hard = true } = {}) {
   const text = String(answer || "");
-  if (OTHER_SYSTEM.test(text) || statesNumber(text, calcValue(m), m.tex)) return { fact: null, quiet: true };
+  if (OTHER_SYSTEM.test(text) || statesNumber(text, calcValue(m), m.tex) || noteAmbiguousCalc(m) || wordProblemResult(m)) return { fact: null, quiet: true };
   if (LABELLED_REPLY.test(text) || !noteLine(withPrev(lines, m.line - 1), { value: false })) return { fact: null };
   if (hard) {
     const i = m.line - 1;
@@ -561,16 +579,27 @@ function calcNote(answer, lines, m, { hard = true } = {}) {
   return { fact: calcFact(m) };
 }
 
-// Učenec je nalogo spremenil ali dodal drugo (pregled A, 4cf3be1fb): »Kaj pa, če je desna stran 13?«, »a namesto 5
-// vzemi 7«, druga enačba ali število zunaj zapisa naloge. Opomba proti nalogi (vrednost, gol rezultat, odvod) bi bila
-// lahko lažna: brez nje; ugotovitev gre v popravek kot na main.
+// Učenec je nalogo spremenil ali dodal drugo (pregleda A, 4cf3be1fb in bd0af5dac): opomba proti nalogi (vrednost,
+// gol rezultat, odvod) le, ko je v sporočilu samo stavek z nalogo: za zapisom naloge nič razen ločil (»Oprosti, mislil
+// sem trinajst.«, », oziroma kvadrat«, »(v knjigi je desno trinajst)« ne), ena enačba in nobenega števila zunaj zapisa.
+// Sicer brez opombe; ugotovitev gre v popravek kot na main.
+const ONLY_PUNCT = /^[\s.!?:;,)\]]*$/;
 const TASK_CHANGE = /(?<!\p{L})(?:kaj pa|kaj če|če je|če bi|namesto|vzemi|vzemimo|zamenj\p{L}*|spremen\p{L}*|recimo|denimo|potem pa|nato pa|pa še|what if|instead|suppose)(?!\p{L})/iu;
 function taskModified(question, pre) {
   if ((pre?.problems || []).length !== 1) return true;
   const q = String(question || "");
   if (TASK_CHANGE.test(q) || (q.match(/=/g) || []).length > 1) return true;
-  const segs = [...q.matchAll(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g)].filter((m) => /[\d=]/.test(m[0]));
-  return segs.length > 1 || (segs.length === 1 && /\d/.test(q.replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, " ")));
+  const all = [...q.matchAll(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g)];
+  const segs = all.filter((m) => /[\d=]/.test(m[0]));
+  if (segs.length > 1) return true;
+  if (all.length) {
+    const last = all.at(-1);
+    return /\d/.test(q.replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, " ")) || !ONLY_PUNCT.test(q.slice(last.index + last[0].length));
+  }
+  // brez »$«: za zadnjo števko (zapis naloge) le ločila
+  if (!q.trim()) return false; // klicatelj ni podal sporočila (le pre)
+  const tail = q.match(/\d[^\d]*$/);
+  return !tail || !ONLY_PUNCT.test(tail[0].slice(1).replace(/^(?:\s*(?:\p{L}(?!\p{L})|[-+*/^()=·×:{}\[\]]))*/u, ""));
 }
 
 export function codeFindings(answer, pre = null, question = "") {
