@@ -1039,7 +1039,7 @@ export const TEK_MAT_OS = [
           hint: "Ogledalo zamenja levo in desno: kazalec, ki je videti pri $x$ minutah, je v resnici pri $60 - x$. Prava in zrcalna ura skupaj dasta 12.00.",
           data: false,
           formula: "\\text{prava ura} = 12.00 - \\text{zrcalna ura}",
-          solution: `Zrcaljenje čez navpično os da: prava ura + zrcalna ura = 12.00.\n$12.00 - ${fmtT(h, m)} = ${correct}$.`,
+          solution: `Zrcaljenje čez navpično os da: prava ura + zrcalna ura = 12.00.\n12 h 00 min − ${h} h ${m} min = ${Math.floor(tot / 60)} h ${rm} min, zato je prava ura ${correct}${tot < 60 ? " (0 h na uri s kazalci je 12)" : ""}.`,
         };
       }
       const configs = [[[3, 12], 12], [[4, 6], 12], [[4, 8], 8], [[3, 3, 4], 12], [[3, 3, 6], 6], [[3, 4, 4], 6], [[5, 5], 10], [[3, 8], 24], [[3, 9], 18], [[3, 10], 15], [[4, 5], 20], [[3, 7], 42]];
