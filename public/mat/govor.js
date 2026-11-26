@@ -32,7 +32,7 @@ const SLOVARJI = {
     manj: "is less than", vec: "is greater than", manjEnako: "is less than or equal to", vecEnako: "is greater than or equal to", plusMinus: "plus or minus",
     skozi: "over", ulomek: "fraction", stevec: "numerator", imenovalec: "denominator", konecUlomka: "end fraction",
     na: "to the power of", kvadrat: "squared", kub: "cubed", potenca: "to the power of", konecPotence: "end exponent", indeks: "sub",
-    koren: "square root of", nKoren: (n) => ({ 2: "square root of", 3: "cube root of" })[n] ?? `${n}${/^\d*1$/.test(n) && n !== "11" ? "st" : /^\d*2$/.test(n) && n !== "12" ? "nd" : /^\d*3$/.test(n) && n !== "13" ? "rd" : /^\d+$/.test(n) ? "th" : "-th"} root of`, konecKorena: "end root",
+    koren: "square root of", nKoren: (n) => ({ 2: "square root of", 3: "cube root of" })[n] ?? `${n}${!/^\d+$/.test(n) ? "-th" : [11, 12, 13].includes(n % 100) ? "th" : ({ 1: "st", 2: "nd", 3: "rd" })[n % 10] ?? "th"} root of`, konecKorena: "end root",
     oklepaj: "open paren", zaklepaj: "close paren", oglati: "open bracket", oglatiZ: "close bracket", zaviti: "open brace", zavitiZ: "close brace",
     abs: "absolute value of", konecAbs: "end absolute value",
     neskoncno: "infinity", element: "is in", niElement: "is not in", unija: "union", presek: "intersection", razlika: "minus",
@@ -206,7 +206,11 @@ function govor(tex, S) {
       return { ...d, zetonov: i - zac - 1 };
     }
     // Brez zavitih oklepajev je argument en znak: \frac12 = 1/2, x^23 = x² · 3 (kot izris KaTeX).
-    if (t.k === "st" && !t.per && /^\d\d/.test(t.v)) z.splice(i, 1, { k: "st", v: t.v[0] }, { k: "st", v: t.v.slice(1) });
+    // Ostanek ostane naslednji žeton (x^2{,}5 = x² in »,5«); brez splice, da je dolg zapis linearen.
+    if (t.k === "st" && !t.per && t.v.length > 1) {
+      z[i] = { k: "st", v: t.v.slice(1) };
+      return { s: t.v[0], preprost: true };
+    }
     return atom();
   }
   // Besedilo skupine brez izgovora (\text{…}, \operatorname{…}).
@@ -272,7 +276,7 @@ function govor(tex, S) {
     if (u === "sqrt") {
       const n = izbirni();
       const a = argument();
-      const zac = n ? S.nKoren(n.s) : S.koren;
+      const zac = n?.s ? S.nKoren(n.s) : S.koren;
       return a.preprost ? { s: `${zac} ${a.s}`, preprost: false, pavza: true } : { s: `${zac} ${a.s}, ${S.konecKorena}`, preprost: false };
     }
     if (u === "binom" || u === "dbinom" || u === "tbinom") {
@@ -353,9 +357,13 @@ function govor(tex, S) {
   // Navpičnica brez para (\{x \mid …\} zapisano kot \{x | x>0\}) je »za katere velja«.
   const abs = () => {
     if (absOdprt) return zapriAbs();
-    let par = false;
-    for (let j = i; j < z.length && !par; j++) par = (z[j].k === "zn" && z[j].v === "|") || (z[j].k === "ukaz" && ["|", "vert", "rvert"].includes(z[j].v));
-    return par ? odpriAbs() : { s: S.zaKatere, preprost: false, locilo: true };
+    // Par je, če je do konca množice (\}) ali zapisa liho število navpičnic: \{x | |x|<1\} → »za katere velja«, nato |x|.
+    let st = 0;
+    for (let j = i; j < z.length; j++) {
+      if (z[j].k === "ukaz" && (z[j].v === "}" || z[j].v === "rbrace")) break;
+      if ((z[j].k === "zn" && z[j].v === "|") || (z[j].k === "ukaz" && ["|", "vert", "rvert", "lvert"].includes(z[j].v))) st++;
+    }
+    return st % 2 ? odpriAbs() : { s: S.zaKatere, preprost: false, locilo: true };
   };
   // Potenca in indeks za atomom.
   function zDodatki(a) {
@@ -426,7 +434,7 @@ function govor(tex, S) {
     // Ena črka, število ali ukaz (pi) je preprost; več delov (»2x«, »a+b«) ni.
     const s = deli.join(" ").replace(/\s+,/g, ",").replace(/,\s*,/g, ",").replace(/\s{2,}/g, " ").trim();
     const brez = predznak ? deli.slice(1) : deli;
-    return { s, preprost: n <= 1 && brez.length <= 1 && !/\s/.test(brez.join(" ")) };
+    return { s, preprost: n <= 1 && brez.length <= 1 && !/\s/.test(brez.join(" ")), pavza: n === 1 && pavza };
   }
   return zaporedje(null).s.replace(/,\s*$/, "").trim();
 }

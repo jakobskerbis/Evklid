@@ -73,6 +73,12 @@ test("texGovor: argument brez zavitih oklepajev je en znak (\\frac12), kot ga iz
   assert.equal(texGovor("x^{\\frac12}"), "x na potenco 1 skozi 2, konec potence");
   assert.equal(texGovor("x^23"), "x na kvadrat 3");
   assert.equal(texGovor("\\sqrt 2"), "kvadratni koren iz 2");
+  assert.equal(texGovor("x^2{,}5"), "x na kvadrat,5");
+  assert.equal(texGovor("{\\sqrt{x}}+1"), "kvadratni koren iz x, plus 1");
+  const t0 = Date.now();
+  texGovor("x^23".repeat(32000));
+  texGovor("\\frac12".repeat(32000));
+  assert.ok(Date.now() - t0 < 1500, `${Date.now() - t0} ms`);
 });
 
 test("texGovor: pavza za preprostim korenom, potenco in ulomkom, ko sledi še kaj (ne pred relacijo ali zaklepajem)", () => {
@@ -96,6 +102,10 @@ test("texGovor: fakulteta, binomski simbol, limita z ene strani, daljica, ločne
   assert.equal(texGovor("\\arcsin x"), "arkus sinus x");
   assert.equal(texGovor("\\begin{cases}x+y=1\\\\x-y=3\\end{cases}"), "x plus y je enako 1, x minus y je enako 3");
   assert.equal(texGovor("\\{x | x>0\\}"), "zaviti oklepaj x za katere velja x je večje od 0 zaviti zaklepaj");
+  assert.equal(texGovor("\\{x | x>0\\}\\cup\\{x | x<-1\\}"), "zaviti oklepaj x za katere velja x je večje od 0 zaviti zaklepaj unija zaviti oklepaj x za katere velja x je manjše od minus 1 zaviti zaklepaj");
+  assert.equal(texGovor("\\{x | |x|<1\\}"), "zaviti oklepaj x za katere velja absolutna vrednost x, konec absolutne vrednosti, je manjše od 1 zaviti zaklepaj");
+  assert.equal(texGovor("\\sqrt[111]{x}", "en"), "111th root of x");
+  assert.equal(texGovor("\\sqrt[21]{x}", "en"), "21st root of x");
   assert.equal(texGovor("\\Delta x"), "velika delta x");
   assert.equal(texGovor("\\xi+\\rho"), "ksi plus ro");
   assert.equal(texGovor("\\mathrm{cm}"), "cm");
