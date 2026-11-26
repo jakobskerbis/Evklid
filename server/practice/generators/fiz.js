@@ -18,6 +18,79 @@ const res = (x, d, unit) => `${needsRounding(x, d) ? "\\approx" : "="} ${qty(tx(
 // Zaokrožena vrednost za natančnim rezultatom: " \approx 12{,}3\ \mathrm{kJ}" ali prazen niz, če zaokroževanje ni potrebno.
 const rnd = (x, d, unit) => (needsRounding(x, d) ? ` \\approx ${qty(tx(x, d), unit)}` : "");
 
+// Prosti pad (in navpični met pri SŠ): teme FIZ-OS-9/prosti-pad in FIZ-SS-1/prosti-pad-in-navpicni-met. Prej je
+// generator »pospesek« tu dajal splošno pospešeno gibanje (avto, kolesar), kar ni prosti pad (meritev K-08, 26. 11. 2026).
+function prostiPad(level, r, topic) {
+  const ss = /^FIZ-SS-/.test(topic || "");
+  const [Rec, rec] = r.pick([["Kamen", "kamen"], ["Kroglico", "kroglica"], ["Ključ", "ključ"]]);
+  const gData = dat("g", G_TEX, "m/s^2");
+  if (level === 3 && ss) {
+    // Navpični met navzgor: največja višina h = v0² / (2 g).
+    const v0 = r.int(5, 25);
+    const h = (v0 * v0) / (2 * G);
+    return {
+      text: `Žogo vržemo navpično navzgor s hitrostjo $${v0}\\ \\mathrm{m/s}$. Kako visoko nad mestom meta se dvigne, če zanemarimo zračni upor? Uporabi $g = ${G_TEX}\\ \\mathrm{m/s^2}$ in zaokroži na eno decimalko.`,
+      answer: num(h, "m", 1, {}, [
+        [(v0 * v0) / G, "Pozabil si faktor 2 v imenovalcu: h = v₀² / (2g)."],
+        [v0 / G, "To je čas dviganja, ne višina."],
+        [(v0 * v0) / 2, "Deliti moraš še z g."],
+      ]),
+      hint: "Na najvišji točki je hitrost 0, zato velja $v_0^2 = 2 g h$.",
+      data: { given: [dat("v_0", v0, "m/s"), gData], find: ["h"] },
+      formula: "h = \\dfrac{v_0^2}{2 \\cdot g}",
+      solution: eqs("h", "\\dfrac{v_0^2}{2 \\cdot g}", `\\dfrac{(${qty(v0, "m/s")})^2}{2 \\cdot ${qty(G_TEX, "m/s^2")}}`, res(h, 1, "m")),
+    };
+  }
+  if (level === 3) {
+    // Čas padca z znane višine: t = √(2h/g).
+    const h = r.int(5, 80);
+    const t = Math.sqrt((2 * h) / G);
+    return {
+      text: `${Rec} spustimo z višine $${h}\\ \\mathrm{m}$. Koliko časa pada do tal, če zanemarimo zračni upor? Uporabi $g = ${G_TEX}\\ \\mathrm{m/s^2}$ in zaokroži na dve decimalki.`,
+      answer: num(t, "s", 2, {}, [
+        [Math.sqrt(h / G), "Iz h = g t² / 2 sledi t² = 2h / g: ne pozabi faktorja 2."],
+        [(2 * h) / G, "To je t²; izračunati moraš še koren."],
+        [h / G, "Pot pri prostem padu raste s kvadratom časa: t = √(2h / g)."],
+      ]),
+      hint: "Pri prostem padu iz mirovanja velja $h = \\dfrac{g t^2}{2}$.",
+      data: { given: [dat("h", h, "m"), gData], find: ["t"] },
+      formula: "t = \\sqrt{\\dfrac{2 \\cdot h}{g}}",
+      solution: eqs("t", "\\sqrt{\\dfrac{2 \\cdot h}{g}}", `\\sqrt{\\dfrac{2 \\cdot ${qty(h, "m")}}{${qty(G_TEX, "m/s^2")}}}`, res(t, 2, "s")),
+    };
+  }
+  const t = level === 1 ? r.int(2, 8) : r.dec(0.5, 4, 1);
+  if (level === 2) {
+    // Pot v času t: h = g t² / 2.
+    const h = (G * t * t) / 2;
+    return {
+      text: `${Rec} spustimo z velike višine. Koliko metrov pade v prvih $${tx(t)}\\ \\mathrm{s}$, če zanemarimo zračni upor? Uporabi $g = ${G_TEX}\\ \\mathrm{m/s^2}$ in zaokroži na eno decimalko.`,
+      answer: num(h, "m", 1, {}, [
+        [G * t * t, "Pozabil si faktor ½ v formuli h = g t² / 2."],
+        [(G * t) / 2, "Čas moraš kvadrirati."],
+        [G * t, "To je hitrost po času t, ne pot."],
+      ]),
+      hint: "Pri prostem padu iz mirovanja velja $h = \\dfrac{g t^2}{2}$.",
+      data: { given: [dat("t", tx(t), "s"), gData], find: ["h"] },
+      formula: "h = \\dfrac{g \\cdot t^2}{2}",
+      solution: eqs("h", "\\dfrac{g \\cdot t^2}{2}", `\\dfrac{${qty(G_TEX, "m/s^2")} \\cdot (${qty(tx(t), "s")})^2}{2}`, res(h, 1, "m")),
+    };
+  }
+  // Hitrost po času t: v = g t.
+  const v = G * t;
+  return {
+    text: `${Rec} spustimo iz helikopterja, ki lebdi na mestu. Kolikšna je ${rec === "kroglica" ? "njena" : "njegova"} hitrost po $${t}\\ \\mathrm{s}$ padanja, če zanemarimo zračni upor? Uporabi $g = ${G_TEX}\\ \\mathrm{m/s^2}$ in zaokroži na eno decimalko.`,
+    answer: num(v, "m/s", 1, {}, [
+      [(G * t) / 2, "Pri hitrosti ni faktorja ½; ta je v formuli za pot."],
+      [G / t, "Hitrost je g krat čas, ne deljeno s časom."],
+      [(G * t * t) / 2, "To je pot, ne hitrost."],
+    ]),
+    hint: "Pri prostem padu iz mirovanja se hitrost vsako sekundo poveča za $g$: $v = g \\cdot t$.",
+    data: { given: [dat("t", t, "s"), gData], find: ["v"] },
+    formula: "v = g \\cdot t",
+    solution: eqs("v", "g \\cdot t", `${qty(G_TEX, "m/s^2")} \\cdot ${qty(t, "s")}`, res(v, 1, "m/s")),
+  };
+}
+
 export const FIZ_GENERATORS = [
   {
     id: "gostota",
@@ -239,7 +312,8 @@ export const FIZ_GENERATORS = [
   {
     id: "pospesek",
     topics: ["FIZ-OS-8/pospeseno-gibanje", "FIZ-SS-1/enakomerno-pospeseno-gibanje", "FIZ-OS-9/prosti-pad", "FIZ-SS-1/prosti-pad-in-navpicni-met"],
-    gen(level, r) {
+    gen(level, r, topic) {
+      if (/prosti-pad/.test(topic || "")) return prostiPad(level, r, topic);
       const a = level === 1 ? r.int(1, 5) : r.dec(0.5, 6, 1);
       const t = r.int(2, 12);
       if (level === 3) {
