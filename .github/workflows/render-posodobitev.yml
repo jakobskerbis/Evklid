@@ -10,7 +10,8 @@
 # zato [nujno] pride na Render nekaj minut po zelenih testih. Padli testi: ta commit se ne objavi.
 # Deluje, ko je v GitHubu nastavljena skrivnost RENDER_DEPLOY_HOOK (Render > evklid > Settings > Deploy Hook).
 # Ročni zagon (Actions > Render > Run workflow) objavi takoj, ko so testi zeleni; »brez_testov« (privzeto izklopljeno)
-# objavi tudi brez njih (samo v sili). Navodila: docs/posodobitve.md
+# objavi tudi brez njih (samo v sili). »vrni_na« (K-17) objavi starejši commit iz main (hitra vrnitev); nato samodejne
+# objave počakajo na nov commit v main. Navodila: docs/posodobitve.md
 name: Render
 on:
   push:
@@ -28,6 +29,10 @@ on:
         description: "Objavi tudi brez zelenih testov (samo v sili)"
         type: boolean
         default: false
+      vrni_na:
+        description: "Vrnitev (K-17): polni SHA starejšega commita iz main; prazno = običajna objava vrha main"
+        type: string
+        default: ""
 permissions:
   contents: read
   actions: read # stanje testov (testi.yml) za commit
@@ -68,6 +73,7 @@ jobs:
           BREZ_TESTOV: ${{ github.event_name == 'workflow_dispatch' && inputs.brez_testov && '1' || '0' }}
           # Tudi urnik čaka: novi tek (cancel-in-progress) prekine čakajočega, zato mora čakati naprej sam.
           CAKAJ: ${{ github.event_name != 'workflow_dispatch' && '1' || '0' }}
+          VRNI_NA: ${{ github.event_name == 'workflow_dispatch' && inputs.vrni_na || '' }}
         run: node scripts/render-objava.js
       - uses: actions/cache/save@v6
         # always(): shrani tudi, če novejši tek prekliče ta tek takoj po sprožitvi.

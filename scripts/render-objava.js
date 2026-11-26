@@ -12,7 +12,10 @@
 // in ga pošlje kot ?ref=<sha>.
 // Po pilotu (po 15. 12. 2026) se baza preseli izven Renderja; potem izpada ob objavi ni več in to okno ni potrebno.
 // Okolje: HOOK (Render Deploy Hook), GH_TOKEN (bere teste: actions: read), REPO, URL (privzeto https://<domena>),
-// ROCNO=1 (takoj, ko so testi zeleni), BREZ_TESTOV=1 (samo z ROCNO: objavi tudi brez zelenih testov).
+// ROCNO=1 (takoj, ko so testi zeleni), BREZ_TESTOV=1 (samo z ROCNO: objavi tudi brez zelenih testov),
+// VRNI_NA=<sha> (K-17, j 26. 11. 2026 »možnost hitre vrnitve na prejšnjo različico«): objavi starejši commit iz main.
+// Po vrnitvi se samodejne objave ustavijo, dokler se main ne spremeni (nov popravek) ali dokler kdo ročno ne zažene
+// objave brez VRNI_NA. Navodila: docs/posodobitve.md »Vrnitev na prejšnjo različico«.
 export const MIRNO_MIN = 10; // toliko minut nihče ni nič poslal
 export const MED_OBJAVAMA_MIN = 60;
 export const NAJDLJE_MIN = 180;
@@ -49,6 +52,8 @@ export const TAKOJ_DO = Infinity;
 // testi: stanjeTestov(...) za mainSha; brez njega (null) se ne objavi. brezTestov: samo z rocno (izrecna izbira v ročnem zagonu).
 export function decide({ stanje, mainSha, cakaMin, testi = null, rocno = false, brezTestov = false, takoj = false, nujno = false, zadnja = null, now = Date.now() }) {
   if (stanje && mainSha.startsWith(stanje.razlicica || "\0")) return { objavi: false, zakaj: "že teče zadnja različica" };
+  // Po vrnitvi (VRNI_NA) se ista pokvarjena različica ne objavi znova; nov commit v main ali ročni zagon zaklep sprosti.
+  if (!rocno && jeZaklenjeno(zadnja, mainSha)) return { objavi: false, zakaj: `vrnjeno na ${String(zadnja.sha).slice(0, 12)}; main se od vrnitve ni spremenil, čakam na nov popravek ali ročni zagon` };
   if (!(rocno && brezTestov) && testi?.stanje !== "uspeh") {
     if (testi?.stanje === "napaka") return { objavi: false, testi: "napaka", zakaj: `testi za to različico niso uspeli (${testi.zakaj}), ne objavim` };
     return { objavi: false, testi: "caka", zakaj: `čakam na zelene teste (${testi?.zakaj || "stanje testov ni znano"})` };
@@ -68,6 +73,23 @@ export function decide({ stanje, mainSha, cakaMin, testi = null, rocno = false, 
   if (ljubljanaMin(now) >= NOC_DO - NOC_ZADNJIH_MIN) return { objavi: true, zakaj: "konec nočnega okna" };
   const miren = !stanje.aktivni && (stanje.mirujeMs == null || stanje.mirujeMs >= MIRNO_MIN * 60000);
   return miren ? { objavi: true, zakaj: "strežnik je miren" } : { objavi: false, zakaj: "nekdo se ravno uči, počakam" };
+}
+
+export const SHA40 = /^[0-9a-f]{40}$/;
+/** Zaklep po vrnitvi: zadnja objava je bila vrnitev, main pa je še na istem commitu kot ob vrnitvi. */
+export function jeZaklenjeno(zadnja, mainSha) {
+  return !!(zadnja?.vrnitev && zadnja.mainOb && zadnja.mainOb === mainSha);
+}
+
+/**
+ * Ali se sme objaviti starejši commit `sha` (vrnitev): mora biti 40 znakov hex, prednik vrha main (GitHub compare
+ * `sha...main` vrne »ahead« ali »identical«) in imeti zelene teste (razen z izrecnim brezTestov).
+ */
+export function preveriVrnitev({ sha, primerjava, testi, brezTestov = false }) {
+  if (!SHA40.test(String(sha || ""))) return { ok: false, zakaj: "VRNI_NA mora biti polni SHA (40 znakov 0-9a-f)" };
+  if (!primerjava || !["ahead", "identical"].includes(primerjava.status)) return { ok: false, zakaj: `${sha.slice(0, 12)} ni v zgodovini main (${primerjava?.status || "ni znano"})` };
+  if (!brezTestov && testi?.stanje !== "uspeh") return { ok: false, zakaj: `testi za ${sha.slice(0, 12)} niso zeleni (${testi?.zakaj || "ni znano"}); v sili izberi »brez_testov«` };
+  return { ok: true, zakaj: primerjava.status === "identical" ? "vrnitev na vrh main" : `vrnitev za ${primerjava.ahead_by} commitov nazaj` };
 }
 
 // Od kdaj je v main sprememba, ki je na strežniku še ni. Commiti iz vej PR (tudi »Merge main« v veji)
@@ -150,6 +172,22 @@ async function main() {
       return { stanje: "caka", zakaj: `stanja testov ni bilo mogoče prebrati: ${e.message}` };
     }
   };
+  const VRNI_NA = String(process.env.VRNI_NA || "").trim().toLowerCase();
+  if (VRNI_NA) {
+    const mainSha = (await gh("commits/main")).sha;
+    let primerjava = null;
+    if (SHA40.test(VRNI_NA)) primerjava = await gh(`compare/${VRNI_NA}...${mainSha}`).catch(() => null);
+    const p = preveriVrnitev({ sha: VRNI_NA, primerjava, testi: SHA40.test(VRNI_NA) ? await testiZa(VRNI_NA) : null, brezTestov: BREZ_TESTOV === "1" });
+    if (!p.ok) throw new Error(`Vrnitev zavrnjena: ${p.zakaj}`);
+    const hook = new URL(HOOK);
+    hook.searchParams.set("ref", VRNI_NA);
+    // Brez ref bi Render objavil vrh veje (pokvarjeno različico), zato tu ni rezerve brez ref.
+    const r = await fetch(hook, { method: "POST" });
+    if (!r.ok) throw new Error(`Render ni sprejel vrnitve na ${VRNI_NA.slice(0, 12)}: ${r.status}`);
+    fs.writeFileSync(file, JSON.stringify({ sha: VRNI_NA, at: Date.now(), vrnitev: true, mainOb: mainSha }));
+    if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, "sprozeno=1\n");
+    return console.log(`Vrnitev sprožena: ${VRNI_NA.slice(0, 12)} (${p.zakaj}). Samodejne objave počakajo na nov commit v main.`);
+  }
   for (;;) {
     let mainSha;
     try { mainSha = (await gh("commits/main")).sha; } catch (e) {
@@ -199,7 +237,7 @@ async function main() {
     }
     if (d.testi === "napaka") return console.log(`::warning::Render: ${mainSha.slice(0, 12)} se ne objavi, ker testi niso uspeli (objavi se, ko so zeleni: ponovni zagon testov ali nova združitev).`);
     if (d.testi === "caka") { if (Date.now() + 5 * 60000 > konecTesti) return; await pocakaj(); continue; }
-    if (d.zakaj === "že teče zadnja različica" || d.zakaj.startsWith("ta različica je že bila sprožena") || Date.now() + 5 * 60000 > konec) return;
+    if (d.zakaj === "že teče zadnja različica" || d.zakaj.startsWith("ta različica je že bila sprožena") || d.zakaj.startsWith("vrnjeno na") || Date.now() + 5 * 60000 > konec) return;
     // Do nočnega okna je dlje, kot ta tek sme čakati: objavi ga nočni tek urnika (ne porablja minut GitHub Actions).
     if (d.doOkna && Date.now() + d.doOkna * 60000 > konec) return;
     await pocakaj();

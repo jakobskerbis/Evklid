@@ -55,6 +55,23 @@ Tek ob združitvi počaka na okno le, če se odpre v naslednjih ~3 urah; sicer o
 (0:47 in 1:47 UTC) ali urnik vsako uro. Ko velja nočno okno, se podnevi nič ne objavi, zato združitev med dnevom
 ne prekine testa v Render Shell (dokler velja »takoj«, ga lahko).
 
+### Vrnitev na prejšnjo različico (K-17)
+
+j, 26. 11. 2026: »Vzpostavi postopno uvajanje produkcijskih sprememb in možnost hitre vrnitve na prejšnjo
+različico.« Če nova različica na evklid.app ne dela prav:
+
+1. GitHub → Actions → Render → Run workflow, v polje »vrni_na« prilepi polni SHA (40 znakov) zadnjega dobrega commita
+   iz `main` (GitHub → Commits; ali `razlicica` iz `https://evklid.app/healthz/stanje` pred pokvarjeno objavo).
+2. Skripta preveri, da je commit v zgodovini `main` in da so bili njegovi testi zeleni (v sili »brez_testov«), in ga
+   objavi z Render Deploy Hook (`?ref=<sha>`). Objava traja nekaj minut, kot vsaka druga.
+3. Po vrnitvi samodejne objave (ob urniku, ob koncu testov, »takoj«, `[nujno]`) pokvarjene različice ne objavijo
+   znova. Zaklep se sprosti sam, ko se v `main` združi nov commit (popravek); običajen ročni zagon brez »vrni_na«
+   ga sprosti takoj.
+
+Baza ostane, kakršna je: migracije v `server/db.js` dodajajo tabele in stolpce (ali tabelo obnovijo z istimi stolpci), ki jih starejša koda ne bere.
+Če bi kdaj sprememba baze odstranila ali preimenovala stolpec, ki ga starejša koda potrebuje, vrnitev čez tisto
+združitev ni varna; tak PR mora to napisati v opisu.
+
 ### Objava samo po zelenih testih
 
 Od 20. 11. 2026 gre sprememba na evklid.app (Render) in na telefone (posodobitev aplikacije) šele, ko so za
