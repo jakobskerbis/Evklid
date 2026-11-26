@@ -798,7 +798,7 @@ export const TEK_KEM = [
         hint: "Izračunaj toploto za segrevanje vode, jo deli z izkoristkom, nato deli z molsko entalpijo gorenja.",
         data: { given: [dat("V", L, "L"), dat("t_1", t1, "°C"), dat("t_2", t2, "°C"), `\\eta = ${eta}\\,\\%`, `\\Delta H_c = ${tx(Hcr)}\\ \\mathrm{kJ/mol}`, Md(f)], find: ["m"] },
         formula: ["Q = m_{voda} c \\Delta T", "n = \\dfrac{Q}{\\eta\\, |\\Delta H_c|}", "m = n M"],
-        solution: `$Q = ${L * 1000} \\cdot 4{,}18 \\cdot ${t2 - t1} = ${tx(Q / 1000, 1)}$ kJ, potrebna toplota gorenja $\\dfrac{${tx(Q / 1000, 1)}}{${tx(eta / 100)}} = ${tx(Q / 1000 / (eta / 100), 1)}$ kJ.\n$n = \\dfrac{${tx(Q / 1000 / (eta / 100), 1)}}{${tx(-Hcr)}} = ${tx(Q / 1000 / (eta / 100) / -Hcr, 4)}$ mol, $m ${res(m, 1, "g")}$.`,
+        solution: `$Q = ${L * 1000} \\cdot 4{,}18 \\cdot ${t2 - t1} = ${tx(Q, 0)}\\ \\mathrm{J} ${res(Q / 1000, 1, "kJ")}$, potrebna toplota gorenja $\\dfrac{${tx(Q / 1000, 1)}}{${tx(eta / 100)}} = ${tx(Q / 1000 / (eta / 100), 1)}$ kJ.\n$n = \\dfrac{${tx(Q / 1000 / (eta / 100), 1)}}{${tx(-Hcr)}} = ${tx(Q / 1000 / (eta / 100) / -Hcr, 4)}$ mol, $m ${res(m, 1, "g")}$.`,
       };
     },
   },
