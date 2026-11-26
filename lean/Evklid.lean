@@ -59,3 +59,8 @@ import Evklid.Lekcije.MAT_SS_2.Podobnost
 import Evklid.Lekcije.MAT_SS_2.TransformacijeGrafov
 import Evklid.Lekcije.MAT_SS_2.GrafiZAbsolutnoVrednostjoInStopnicasteFunkcije
 import Evklid.Lekcije.MAT_SS_2.MesaneNaloge1In2Letnika
+import Evklid.Lekcije.MAT_SS_2.PotenceZRacionalnimiEksponenti
+import Evklid.Lekcije.MAT_SS_2.EksponentnaFunkcija
+import Evklid.Lekcije.MAT_SS_2.EksponentneEnacbe
+import Evklid.Lekcije.MAT_SS_2.Logaritem
+import Evklid.Lekcije.MAT_SS_2.LogaritemskaFunkcijaInEnacbe
