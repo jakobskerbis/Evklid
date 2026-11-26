@@ -532,7 +532,8 @@ test("sought is shown as plain text (breaks between words) and a plain expressio
 
 test("konstantna naloga brez d/dx kot »derivative« z 0 ni preverjena (meritev skenerja s11), drugo ostane", () => {
   const t = "∫_0^2 (3*x^2-2*x+1) dx";
-  assert.deepEqual(verifyAi(t, { kind: "derivative", value: "0" }), { verified: false, reason: "kind", status: "unverified" });
+  // vrsto določi zapis naloge (integral), zato je 0 napačno in sproži ponovitev (meritev 26. 11.)
+  assert.deepEqual(verifyAi(t, { kind: "derivative", value: "0" }), { verified: false, reason: "wrong", status: "wrong" });
   assert.equal(verifyAi(t, { kind: "expression", value: "0" }).verified, false);
   assert.equal(verifyAi(t, { kind: "integral", value: "0" }).verified, false);
   assert.equal(verifyAi(t, { kind: "integral", value: "6" }).verified, true);

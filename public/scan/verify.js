@@ -251,8 +251,28 @@ export function verifyAi(problemText, ai) {
 // odvod polinoma po spremenljivki v (druge črke so konstante)
 const polyDiff = (p, v) => new P(p.terms().filter(({ m }) => m[v]).map(({ m, c }) => ({ m: { ...m, [v]: m[v] - 1 }, c: c.mul(Q.of(m[v])) })));
 
+// Vrsta naloge iz zapisa: integral in limito prepoznamo po zapisu, ne po tem, kako ju je AI poimenoval (meritev 26. 11.:
+// integral z odgovorom 0 namesto 6 je ostal nepreverjen, ker AI ni rekel »integral«, in se ni ponovil).
+export function kindOfText(text) {
+  const s = String(text ?? "").replace(/\\int/g, "∫");
+  if (/[=<>≤≥]/.test(s.replace(/->/g, "→"))) return null; // enačba ali neenačba z integralom ali limito ostane enačba
+  if (s.includes("∫")) return "integral";
+  if (/^\s*\\?lim\s*_/.test(s)) return "limit";
+  return null;
+}
+// ∫_a^b f dx, ∫ f dx → { a, b, f, x } (a, b le pri določenem integralu)
+export function parseIntegral(text) {
+  const m = /∫\s*(?:_\(?([^\s^]+?)\)?\^\(?([^\s]+?)\)?)?\s*(.+?)\s*d([a-z])\s*$/.exec(String(text ?? "").replace(/\\int/g, "∫"));
+  return m ? { a: m[1], b: m[2], f: m[3], x: m[4] } : null;
+}
+// lim_(x->a) f, lim_{x\to a} f → { x, point, f }
+export function parseLimit(text) {
+  const m = /^\s*\\?lim\s*_\s*[({]?\s*([a-z])\s*(?:->|→|\\to)\s*([^)}]+?)\s*[)}]\s*(.+)$/.exec(String(text ?? ""));
+  return m ? { x: m[1], point: m[2], f: m[3].trim() } : null;
+}
+
 function check(problemText, ai) {
-  const kind = ai?.kind;
+  const kind = kindOfText(problemText) ?? ai?.kind;
   const v = /^[a-zA-Z]$/.test(ai?.variable || "") ? ai.variable : "x";
   try {
     if (kind === "system") {
@@ -362,15 +382,15 @@ function check(problemText, ai) {
       return { verified: compareFns((x) => (f({ [v]: x + 1e-5 }) - f({ [v]: x - 1e-5 })) / 2e-5, (x) => g({ [v]: x })), reason: "wrong" };
     }
     if (kind === "integral") {
-      const m = /∫\s*(?:_\(?([^\s^]+?)\)?\^\(?([^\s]+?)\)?)?\s*(.+?)\s*d([a-z])\s*$/.exec(String(problemText).replace(/\\int/g, "∫"));
+      const m = parseIntegral(problemText);
       const g = fnOf(ai.value);
       if (!m || !g) return { verified: false, reason: "parse" };
-      const f = fnOf(m[3]);
-      const x = m[4];
+      const f = fnOf(m.f);
+      const x = m.x;
       if (!f) return { verified: false, reason: "parse" };
-      if (m[1] !== undefined) {
-        const a = values(m[1])[0];
-        const b = values(m[2])[0];
+      if (m.a !== undefined) {
+        const a = values(m.a)[0];
+        const b = values(m.b)[0];
         const exact = integrate((t) => f({ [x]: t }), a, b);
         const val = g({});
         return { verified: fin(exact) && fin(val) && Math.abs(exact - val) < 1e-6 * Math.max(1, Math.abs(exact)), reason: "wrong" };
