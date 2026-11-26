@@ -23,44 +23,64 @@ namespace Evklid.Lekcije.MAT_OS_8.Razstavljanje
 /-! ## Zakaj se tega učimo -/
 
 /-- Zakaj se tega učimo: 3 · 5 = 15, 3 · 7 = 21, skupaj 36; 5 + 7 = 12 in 3 · 12 = 36; torej
-3 · 5 + 3 · 7 = 3 · (5 + 7). -/
+3 · 5 + 3 · 7 = 3 · (5 + 7).
+trditev: MAT-OS-8/razstavljanje#karo-papir
+besedilo: »$$3 \cdot 5 + 3 \cdot 7 = 3 \cdot (5 + 7)$$« -/
 theorem karo_papir :
     3 * 5 = 15 ∧ 3 * 7 = 21 ∧ 15 + 21 = 36 ∧ 5 + 7 = 12 ∧ 3 * 12 = 36 ∧ 3 * 5 + 3 * 7 = 3 * (5 + 7) := by
   norm_num
 
-/-- Zakaj se tega učimo: 3(2x + 5) = 6x + 15 (in obratno). -/
+/-- Zakaj se tega učimo: 3(2x + 5) = 6x + 15 (in obratno).
+trditev: MAT-OS-8/razstavljanje#uvod
+besedilo: »$3(2x + 5) = 6x + 15$« -/
 theorem uvod (x : ℝ) : 3 * (2 * x + 5) = 6 * x + 15 := by ring
 
-/-- Zakaj se tega učimo (na pamet): 37 · 15 + 37 · 85 = 37 · 100 = 3700. -/
+/-- Zakaj se tega učimo (na pamet): 37 · 15 + 37 · 85 = 37 · 100 = 3700.
+trditev: MAT-OS-8/razstavljanje#na-pamet
+besedilo: »$37 \cdot 15 + 37 \cdot 85 = 37 \cdot 100 = 3700$« -/
 theorem na_pamet : 37 * 15 + 37 * 85 = 37 * 100 ∧ 37 * 100 = 3700 := by norm_num
 
 /-! ## Razlaga -/
 
-/-- Razlaga 2, Povzetek in Bolj natančno (izpostavljanje skupnega faktorja): ab + ac = a(b + c) za vse a, b, c. -/
+/-- Razlaga 2, Povzetek in Bolj natančno (izpostavljanje skupnega faktorja): ab + ac = a(b + c) za vse a, b, c.
+trditev: MAT-OS-8/razstavljanje#izpostavljanje
+besedilo: »Izpostavljanje skupnega faktorja je obrnjen zakon o razčlenjevanju: $ab + ac = a(b + c)$.« -/
 theorem izpostavljanje (a b c : ℝ) : a * b + a * c = a * (b + c) := by ring
 
-/-- Primer 2 (formula): ab + ac + ad = a(b + c + d). -/
+/-- Primer 2 (formula): ab + ac + ad = a(b + c + d).
+trditev: MAT-OS-8/razstavljanje#izpostavljanje3
+besedilo: »$ab + ac + ad = a(b + c + d)$« -/
 theorem izpostavljanje3 (a b c d : ℝ) : a * b + a * c + a * d = a * (b + c + d) := by ring
 
-/-- Primer 4 (formula) in Povzetek: −ab − ac = −a(b + c); pri negativnem faktorju se predznaki v oklepaju obrnejo. -/
+/-- Primer 4 (formula) in Povzetek: −ab − ac = −a(b + c); pri negativnem faktorju se predznaki v oklepaju obrnejo.
+trditev: MAT-OS-8/razstavljanje#negativni-faktor
+besedilo: »$-ab - ac = -a(b + c)$« -/
 theorem negativni_faktor (a b c : ℝ) : -(a * b) - a * c = -a * (b + c) := by ring
 
-/-- Razlaga 2, hitra preizkušnja: 5 · 4 + 5 · 6 = 5 · (4 + 6) in 4 + 6 = 10. -/
+/-- Razlaga 2, hitra preizkušnja: 5 · 4 + 5 · 6 = 5 · (4 + 6) in 4 + 6 = 10.
+trditev: MAT-OS-8/razstavljanje#preizkusnja2
+besedilo: »$5 \cdot 4 + 5 \cdot 6 = 5 \cdot (\ldots)$. (V oklepaj gre $4 + 6 = 10$.)« -/
 theorem preizkusnja2 : 5 * 4 + 5 * 6 = 5 * (4 + 6) ∧ 4 + 6 = 10 := by norm_num
 
-/-- Razlaga 3: D(12, 18) = 6; 6 deli 12 in 18, vsak skupni delitelj pa je ≤ 6. Hitra preizkušnja: D(8, 12) = 4. -/
+/-- Razlaga 3: D(12, 18) = 6; 6 deli 12 in 18, vsak skupni delitelj pa je ≤ 6. Hitra preizkušnja: D(8, 12) = 4.
+trditev: MAT-OS-8/razstavljanje#nsd
+besedilo: »Za $12$ in $18$ je to $D(12, 18) = 6$, saj $6$ deli oba, večje število pa ne.« -/
 theorem nsd :
     Nat.gcd 12 18 = 6 ∧ 6 ∣ 12 ∧ 6 ∣ 18 ∧ (∀ d : ℕ, d ∣ 12 → d ∣ 18 → d ≤ 6) ∧ Nat.gcd 8 12 = 4 := by
   refine ⟨by norm_num, by norm_num, by norm_num, ?_, by norm_num⟩
   intro d h1 h2
   exact Nat.le_of_dvd (by norm_num) (Nat.dvd_gcd h1 h2)
 
-/-- Razlaga 4 in Bolj natančno (najmanjši eksponent): x³ = x² · x in x², zato 12x³ + 18x² = 6x²(2x + 3). -/
+/-- Razlaga 4 in Bolj natančno (najmanjši eksponent): x³ = x² · x in x², zato 12x³ + 18x² = 6x²(2x + 3).
+trditev: MAT-OS-8/razstavljanje#tabela-x
+besedilo: »Skupni faktor je $6x^2$.« -/
 theorem tabela_x (x : ℝ) : x ^ 3 = x ^ 2 * x ∧ 12 * x ^ 3 + 18 * x ^ 2 = 6 * x ^ 2 * (2 * x + 3) :=
   ⟨by ring, by ring⟩
 
 /-- Razlaga 4 in Povzetek (splošno): pri m ≤ n se iz xᵐa + xⁿb izpostavi xᵐ (najmanjši eksponent):
-xᵐa + xⁿb = xᵐ(a + xⁿ⁻ᵐb). -/
+xᵐa + xⁿb = xᵐ(a + xⁿ⁻ᵐb).
+trditev: MAT-OS-8/razstavljanje#najmanjsi-eksponent
+besedilo: »Izpostavimo samo spremenljivko, ki je v **vseh** členih, in sicer z **najmanjšim** eksponentom.« -/
 theorem najmanjsi_eksponent (x a b : ℝ) (m n : ℕ) (h : m ≤ n) :
     x ^ m * a + x ^ n * b = x ^ m * (a + x ^ (n - m) * b) := by
   obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le h
@@ -69,29 +89,41 @@ theorem najmanjsi_eksponent (x a b : ℝ) (m n : ℕ) (h : m ≤ n) :
 /-- Predpostavka `najmanjsi_eksponent` se da izpolniti (m = 2, n = 3). -/
 example : 2 ≤ 3 := by norm_num
 
-/-- Razlaga 4, hitra preizkušnja: skupni faktor x² in 5x je x: x² + 5x = x(x + 5). -/
+/-- Razlaga 4, hitra preizkušnja: skupni faktor x² in 5x je x: x² + 5x = x(x + 5).
+trditev: MAT-OS-8/razstavljanje#preizkusnja4
+besedilo: »kaj je skupni faktor izrazov $x^2$ in $5x$? (To je $x$.)« -/
 theorem preizkusnja4 (x : ℝ) : x ^ 2 + 5 * x = x * (x + 5) := by ring
 
-/-- Razlaga 5, Premisli: 4x + 4 = 4(x + 1); 4(x + 0) = 4x pa ni 4x + 4 (drugi člen bi izginil). -/
+/-- Razlaga 5, Premisli: 4x + 4 = 4(x + 1); 4(x + 0) = 4x pa ni 4x + 4 (drugi člen bi izginil).
+trditev: MAT-OS-8/razstavljanje#premisli-enica
+besedilo: »Na pike gre $1$, ker je $4 \cdot 1 = 4$. Če bi napisal $4(x + 0)$ ali samo $4x$, bi po množenju dobil $4x$ in drugi člen bi izginil.« -/
 theorem premisli_enica (x : ℝ) : 4 * x + 4 = 4 * (x + 1) ∧ 4 * (x + 0) ≠ 4 * x + 4 := by
   refine ⟨by ring, ?_⟩
   intro h; linarith
 
-/-- Razlaga 5 (simulacija, p = 3): x² + 3x = x(x + 3). -/
+/-- Razlaga 5 (simulacija, p = 3): x² + 3x = x(x + 3).
+trditev: MAT-OS-8/razstavljanje#ploscice
+besedilo: »$x^2 + 3x = x(x + 3)$« -/
 theorem ploscice (x : ℝ) : x ^ 2 + 3 * x = x * (x + 3) := by ring
 
-/-- Razlaga 6: −4x² − 10x = −2x(2x + 5); preverimo −2x · 2x = −4x² in −2x · 5 = −10x. -/
+/-- Razlaga 6: −4x² − 10x = −2x(2x + 5); preverimo −2x · 2x = −4x² in −2x · 5 = −10x.
+trditev: MAT-OS-8/razstavljanje#razlaga6
+besedilo: »$$-4x^2 - 10x = -2x(2x + 5)$$ Preverimo: $-2x \cdot 2x = -4x^2$ in $-2x \cdot 5 = -10x$.« -/
 theorem razlaga6 (x : ℝ) :
     -4 * x ^ 2 - 10 * x = -2 * x * (2 * x + 5) ∧ -2 * x * (2 * x) = -4 * x ^ 2 ∧ -2 * x * 5 = -10 * x :=
   ⟨by ring, by ring, by ring⟩
 
-/-- Razlaga 6, Premisli: −6x + 9 = −3(2x − 3), ker je −3 · (−3) = 9. -/
+/-- Razlaga 6, Premisli: −6x + 9 = −3(2x − 3), ker je −3 · (−3) = 9.
+trditev: MAT-OS-8/razstavljanje#razlaga6-premisli
+besedilo: »$-6x + 9 = -3(2x - 3)$. Prvi člen je bil negativen in v oklepaju postane pozitiven; drugi je bil pozitiven in postane negativen, ker je $-3 \cdot (-3) = 9$.« -/
 theorem razlaga6_premisli (x : ℝ) : -6 * x + 9 = -3 * (2 * x - 3) ∧ (-3 : ℝ) * (-3) = 9 :=
   ⟨by ring, by norm_num⟩
 
 /-! ## Rešeni primeri -/
 
-/-- Primer 1: D(6, 9) = 3; 3 · 2x = 6x, 3 · 3 = 9; 6x + 9 = 3 · 2x + 3 · 3 = 3(2x + 3). -/
+/-- Primer 1: D(6, 9) = 3; 3 · 2x = 6x, 3 · 3 = 9; 6x + 9 = 3 · 2x + 3 · 3 = 3(2x + 3).
+trditev: MAT-OS-8/razstavljanje#primer1
+besedilo: »Odgovor: $6x + 9 = 3(2x + 3)$.« -/
 theorem primer1 (x : ℝ) :
     Nat.gcd 6 9 = 3 ∧ 3 * (2 * x) = 6 * x ∧ 6 * x + 9 = 3 * (2 * x + 3) := by
   refine ⟨by norm_num, by ring, ?_⟩
@@ -99,7 +131,9 @@ theorem primer1 (x : ℝ) :
     _ = 3 * (2 * x + 3) := by ring
 
 /-- Primer 2: D(12, 18, 6) = 6; 6xy · 2x = 12x²y, 6xy · 3y = 18xy², 6xy · 1 = 6xy;
-12x²y − 18xy² + 6xy = 6xy(2x − 3y + 1). V oklepaju imajo koeficienti 2, 3, 1 NSD 1. -/
+12x²y − 18xy² + 6xy = 6xy(2x − 3y + 1). V oklepaju imajo koeficienti 2, 3, 1 NSD 1.
+trditev: MAT-OS-8/razstavljanje#primer2
+besedilo: »Odgovor: $12x^2y - 18xy^2 + 6xy = 6xy(2x - 3y + 1)$.« -/
 theorem primer2 (x y : ℝ) :
     Nat.gcd (Nat.gcd 12 18) 6 = 6 ∧ 6 * x * y * (2 * x) = 12 * x ^ 2 * y ∧ 6 * x * y * (3 * y) = 18 * x * y ^ 2 ∧
       6 * x * y * 1 = 6 * x * y ∧
@@ -107,12 +141,16 @@ theorem primer2 (x y : ℝ) :
       Nat.gcd (Nat.gcd 2 3) 1 = 1 :=
   ⟨by norm_num, by ring, by ring, by ring, by ring, by norm_num⟩
 
-/-- Primer 3 (terasa): D(8, 12) = 4; 4x · 2x = 8x², 4x · 3 = 12x, zato 8x² + 12x = 4x(2x + 3). -/
+/-- Primer 3 (terasa): D(8, 12) = 4; 4x · 2x = 8x², 4x · 3 = 12x, zato 8x² + 12x = 4x(2x + 3).
+trditev: MAT-OS-8/razstavljanje#primer3
+besedilo: »$4x \cdot 2x = 8x^2$ in $4x \cdot 3 = 12x$, zato je $S = 4x(2x + 3)$.« -/
 theorem primer3 (x : ℝ) :
     Nat.gcd 8 12 = 4 ∧ 4 * x * (2 * x) = 8 * x ^ 2 ∧ 4 * x * 3 = 12 * x ∧ 8 * x ^ 2 + 12 * x = 4 * x * (2 * x + 3) :=
   ⟨by norm_num, by ring, by ring, by ring⟩
 
-/-- Primer 3: druga stranica je natanko 2x + 3: če je 4x · s = 8x² + 12x in x ≠ 0, je s = 2x + 3. -/
+/-- Primer 3: druga stranica je natanko 2x + 3: če je 4x · s = 8x² + 12x in x ≠ 0, je s = 2x + 3.
+trditev: MAT-OS-8/razstavljanje#primer3-stranica
+besedilo: »Odgovor: druga stranica je dolga $(2x + 3)$ metrov« -/
 theorem primer3_stranica (x s : ℝ) (hx : x ≠ 0) : 4 * x * s = 8 * x ^ 2 + 12 * x ↔ s = 2 * x + 3 := by
   constructor
   · intro h
@@ -124,12 +162,16 @@ theorem primer3_stranica (x s : ℝ) (hx : x ≠ 0) : 4 * x * s = 8 * x ^ 2 + 12
 /-- Predpostavka `primer3_stranica` se da izpolniti (x = 5). -/
 example : (5 : ℝ) ≠ 0 := by norm_num
 
-/-- Primer 3, preverjanje pri x = 5: 8 · 25 + 12 · 5 = 200 + 60 = 260, 4 · 5 · 13 = 260; terasa 20 m × 13 m. -/
+/-- Primer 3, preverjanje pri x = 5: 8 · 25 + 12 · 5 = 200 + 60 = 260, 4 · 5 · 13 = 260; terasa 20 m × 13 m.
+trditev: MAT-OS-8/razstavljanje#primer3-x5
+besedilo: »Preverimo s številom $x = 5$: $8 \cdot 25 + 12 \cdot 5 = 200 + 60 = 260$ in $4 \cdot 5 \cdot 13 = 260$.« -/
 theorem primer3_x5 :
     (8 : ℝ) * 25 + 12 * 5 = 200 + 60 ∧ (200 : ℝ) + 60 = 260 ∧ (4 : ℝ) * 5 * 13 = 260 ∧
       (5 : ℝ) ^ 2 = 25 ∧ (4 : ℝ) * 5 = 20 ∧ (2 : ℝ) * 5 + 3 = 13 := by norm_num
 
-/-- Primer 4, Premisli: D(6, 15) = 3; −6x² − 15x = −3x(2x + 5); −3x · 2x = −6x², −3x · 5 = −15x. -/
+/-- Primer 4, Premisli: D(6, 15) = 3; −6x² − 15x = −3x(2x + 5); −3x · 2x = −6x², −3x · 5 = −15x.
+trditev: MAT-OS-8/razstavljanje#primer4
+besedilo: »$-6x^2 - 15x = -3x(2x + 5)$. Preverimo: $-3x \cdot 2x = -6x^2$ in $-3x \cdot 5 = -15x$.« -/
 theorem primer4 (x : ℝ) :
     Nat.gcd 6 15 = 3 ∧ -6 * x ^ 2 - 15 * x = -3 * x * (2 * x + 5) ∧ -3 * x * (2 * x) = -6 * x ^ 2 ∧
       -3 * x * 5 = -15 * x :=
@@ -137,20 +179,26 @@ theorem primer4 (x : ℝ) :
 
 /-! ## Pogoste napake -/
 
-/-- Pogoste napake (pozabljena enica): 3x + 3 = 3(x + 1), napačni 3x pa ni nikoli enak 3x + 3. -/
+/-- Pogoste napake (pozabljena enica): 3x + 3 = 3(x + 1), napačni 3x pa ni nikoli enak 3x + 3.
+trditev: MAT-OS-8/razstavljanje#pozabljena-enica
+besedilo: »Ne izgine, ker je $3 = 3 \cdot 1$. Pravilno: $3x + 3 = 3(x + 1)$.« -/
 theorem pozabljena_enica (x : ℝ) : 3 * x + 3 = 3 * (x + 1) ∧ 3 * x + 3 ≠ 3 * x := by
   refine ⟨by ring, ?_⟩
   intro h; linarith
 
 /-- Pogoste napake (faktor le pri enem členu) in Preveri se 1: 5x + 20 = 5(x + 4); 5x + 4 in 5 · x · 4 nista
-5(x + 4) (npr. pri x = 1: 9 in 20 proti 25). -/
+5(x + 4) (npr. pri x = 1: 9 in 20 proti 25).
+trditev: MAT-OS-8/razstavljanje#le-en-clen
+besedilo: »Pravilno: $5x + 20 = 5(x + 4)$.« -/
 theorem le_en_clen (x : ℝ) :
     5 * x + 20 = 5 * (x + 4) ∧ 5 * x + 4 ≠ 5 * (x + 4) ∧ (5 : ℝ) * 1 * 4 ≠ 5 * (1 + 4) := by
   refine ⟨by ring, ?_, by norm_num⟩
   intro h; linarith
 
 /-- Pogoste napake in Preveri se 3 (nepopolno izpostavljanje): 12x + 18 = 2(6x + 9) je pravilno, a
-6x + 9 = 3(2x + 3) (D(6, 9) = 3), zato 12x + 18 = 2 · 3 · (2x + 3) = 6(2x + 3); D(12, 18) = 6 in D(2, 3) = 1. -/
+6x + 9 = 3(2x + 3) (D(6, 9) = 3), zato 12x + 18 = 2 · 3 · (2x + 3) = 6(2x + 3); D(12, 18) = 6 in D(2, 3) = 1.
+trditev: MAT-OS-8/razstavljanje#nepopolno
+besedilo: »$$12x + 18 = 2 \cdot 3 \cdot (2x + 3) = 6(2x + 3)$$« -/
 theorem nepopolno (x : ℝ) :
     12 * x + 18 = 2 * (6 * x + 9) ∧ 6 * x + 9 = 3 * (2 * x + 3) ∧ Nat.gcd 6 9 = 3 ∧
       Nat.gcd 12 18 = 6 ∧ Nat.gcd 2 3 = 1 ∧ 12 * x + 18 = 6 * (2 * x + 3) := by
@@ -159,50 +207,70 @@ theorem nepopolno (x : ℝ) :
     _ = 2 * 3 * (2 * x + 3) := by ring
     _ = 6 * (2 * x + 3) := by ring
 
-/-- Pogoste napake (napačni predznaki): −2(x − 3) = −2x + 6, kar ni −2x − 6; pravilno −2x − 6 = −2(x + 3). -/
+/-- Pogoste napake (napačni predznaki): −2(x − 3) = −2x + 6, kar ni −2x − 6; pravilno −2x − 6 = −2(x + 3).
+trditev: MAT-OS-8/razstavljanje#napacni-predznaki
+besedilo: »Minus krat minus je plus, zato pravilno: $-2x - 6 = -2(x + 3)$.« -/
 theorem napacni_predznaki (x : ℝ) :
     -2 * (x - 3) = -2 * x + 6 ∧ -2 * x - 6 ≠ -2 * (x - 3) ∧ -2 * x - 6 = -2 * (x + 3) := by
   refine ⟨by ring, ?_, by ring⟩
   intro h; linarith
 
-/-- Pogoste napake (3x² + 5y): NSD koeficientov 3 in 5 je 1. -/
+/-- Pogoste napake (3x² + 5y): NSD koeficientov 3 in 5 je 1.
+trditev: MAT-OS-8/razstavljanje#brez-skupnega
+besedilo: »NSD koeficientov pa je $1$« -/
 theorem brez_skupnega : Nat.gcd 3 5 = 1 := by norm_num
 
 /-! ## Drugače -/
 
-/-- Na sliki: levi del 4x · 2x = 8x², desni 4x · 3 = 12x, skupaj 8x² + 12x = 4x(2x + 3). -/
+/-- Na sliki: levi del 4x · 2x = 8x², desni 4x · 3 = 12x, skupaj 8x² + 12x = 4x(2x + 3).
+trditev: MAT-OS-8/razstavljanje#na-sliki
+besedilo: »Levi del je širok $2x$ in ima ploščino $4x \cdot 2x = 8x^2$. Desni del je širok $3$ in ima ploščino $4x \cdot 3 = 12x$. Skupaj je to $8x^2 + 12x$. Isti lik pa je tudi **en** velik pravokotnik z višino $4x$ in širino $2x + 3$. Njegova ploščina je $4x(2x + 3)$.« -/
 theorem na_sliki (x : ℝ) :
     4 * x * (2 * x) = 8 * x ^ 2 ∧ 4 * x * 3 = 12 * x ∧ 4 * x * (2 * x) + 4 * x * 3 = 4 * x * (2 * x + 3) :=
   ⟨by ring, by ring, by ring⟩
 
-/-- Bolj natančno: zakon o razčlenjevanju a(b + c) = ab + ac (od leve proti desni odpravljamo oklepaj). -/
+/-- Bolj natančno: zakon o razčlenjevanju a(b + c) = ab + ac (od leve proti desni odpravljamo oklepaj).
+trditev: MAT-OS-8/razstavljanje#razclenjevanje
+besedilo: »Zakon o razčlenjevanju velja za poljubna števila ali izraze: $a(b + c) = ab + ac$.« -/
 theorem razclenjevanje (a b c : ℝ) : a * (b + c) = a * b + a * c := by ring
 
 /-! ## Preveri se -/
 
-/-- Preveri se 1: pravokotnik iz delov 5 × x in 5 × 4 ima ploščino 5(x + 4) = 5x + 20 (5 · 4 = 20). -/
+/-- Preveri se 1: pravokotnik iz delov 5 × x in 5 × 4 ima ploščino 5(x + 4) = 5x + 20 (5 · 4 = 20).
+trditev: MAT-OS-8/razstavljanje#kviz1
+besedilo: »zato je ploščina $5(x + 4) = 5x + 20$« -/
 theorem kviz1 (x : ℝ) : 5 * x + 5 * 4 = 5 * (x + 4) ∧ 5 * (x + 4) = 5 * x + 20 := ⟨by ring, by ring⟩
 
 /-- Preveri se 2: 49 · 13 + 49 · 7 = 49 · (13 + 7) = 49 · 20 = 980; napačna: 49 + 13 + 7 = 69,
-49 · 13 · 7 = 4459. -/
+49 · 13 · 7 = 4459.
+trditev: MAT-OS-8/razstavljanje#kviz2
+besedilo: »Izpostavimo $49$: $49 \cdot (13 + 7) = 49 \cdot 20 = 980$.« -/
 theorem kviz2 :
     49 * 13 + 49 * 7 = 49 * (13 + 7) ∧ 49 * (13 + 7) = 49 * 20 ∧ 49 * 20 = 980 ∧ 49 + 13 + 7 = 69 ∧
       49 * 13 * 7 = 4459 := by norm_num
 
-/-- Preveri se 3: 2 · 6x + 2 · 9 = 12x + 18 (enakost je pravilna); 18 nima x. -/
+/-- Preveri se 3: 2 · 6x + 2 · 9 = 12x + 18 (enakost je pravilna); 18 nima x.
+trditev: MAT-OS-8/razstavljanje#kviz3
+besedilo: »Enakost je pravilna: $2 \cdot 6x + 2 \cdot 9 = 12x + 18$.« -/
 theorem kviz3 (x : ℝ) : 2 * (6 * x) + 2 * 9 = 12 * x + 18 := by ring
 
 /-- Preveri se 4: −3x(2x − 5) = −6x² + 15x (−3x · 2x = −6x², −3x · (−5) = 15x); napačna −6x² − 15x (pri x = 1) in
-−6x + 15 (pri x = 0) nista enaka. -/
+−6x + 15 (pri x = 0) nista enaka.
+trditev: MAT-OS-8/razstavljanje#kviz4
+besedilo: »$-3x \cdot 2x = -6x^2$ in $-3x \cdot (-5) = 15x$, torej $-6x^2 + 15x$.« -/
 theorem kviz4 (x : ℝ) :
     -3 * x * (2 * x - 5) = -6 * x ^ 2 + 15 * x ∧ -3 * x * (-5) = 15 * x ∧
       (-6 : ℝ) * 1 ^ 2 - 15 * 1 ≠ -6 * 1 ^ 2 + 15 * 1 ∧ (-6 : ℝ) * 0 + 15 ≠ -6 * 0 ^ 2 + 15 * 0 :=
   ⟨by ring, by ring, by norm_num, by norm_num⟩
 
-/-- Preveri se 5: 6x² + 9x = 3x(2x + 3) (3x · 2x = 6x², 3x · 3 = 9x). -/
+/-- Preveri se 5: 6x² + 9x = 3x(2x + 3) (3x · 2x = 6x², 3x · 3 = 9x).
+trditev: MAT-OS-8/razstavljanje#kviz5
+besedilo: »$6x^2 + 9x = 3x(2x + 3)$, ker je $3x \cdot 2x = 6x^2$ in $3x \cdot 3 = 9x$.« -/
 theorem kviz5 (x : ℝ) : 6 * x ^ 2 + 9 * x = 3 * x * (2 * x + 3) ∧ 3 * x * 3 = 9 * x := ⟨by ring, by ring⟩
 
-/-- Preveri se 5: pri višini 3x (x ≠ 0) je dolžina natanko 2x + 3, torej ne 2x + 9 in ne 2x² + 3x. -/
+/-- Preveri se 5: pri višini 3x (x ≠ 0) je dolžina natanko 2x + 3, torej ne 2x + 9 in ne 2x² + 3x.
+trditev: MAT-OS-8/razstavljanje#kviz5-dolzina
+besedilo: »Stena je dolga $(2x + 3)$ dm.« -/
 theorem kviz5_dolzina (x s : ℝ) (hx : x ≠ 0) : 3 * x * s = 6 * x ^ 2 + 9 * x ↔ s = 2 * x + 3 := by
   constructor
   · intro h
@@ -214,7 +282,8 @@ theorem kviz5_dolzina (x s : ℝ) (hx : x ≠ 0) : 3 * x * s = 6 * x ^ 2 + 9 * x
 /-- Predpostavka `kviz5_dolzina` se da izpolniti (x = 1). -/
 example : (1 : ℝ) ≠ 0 := by norm_num
 
-/-- Preveri se 5, napačna odgovora: 2x + 9 in 2x² + 3x nista izraz 2x + 3; pri x = 2 sta 13 in 14, 2x + 3 pa 7. -/
+/-- Preveri se 5, napačna odgovora: 2x + 9 in 2x² + 3x nista izraz 2x + 3; pri x = 2 sta 13 in 14, 2x + 3 pa 7.
+pomozno – razlaga kviza 5 ne navaja vrednosti napačnih odgovorov (pri x = 2) -/
 theorem kviz5_napacna : (2 : ℝ) * 2 + 9 ≠ 2 * 2 + 3 ∧ (2 : ℝ) * 2 ^ 2 + 3 * 2 ≠ 2 * 2 + 3 := by norm_num
 
 end Evklid.Lekcije.MAT_OS_8.Razstavljanje

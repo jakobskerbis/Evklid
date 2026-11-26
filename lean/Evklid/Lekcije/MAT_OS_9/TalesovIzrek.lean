@@ -31,7 +31,9 @@ namespace Evklid.Lekcije.MAT_OS_9.TalesovIzrek
 /-! ## Sorazmerje: zmnožek zunanjih = zmnožek notranjih -/
 
 /-- Primer 1, korak 2 (pravilo): p : q = r : x natanko tedaj, ko je zmnožek zunanjih členov enak zmnožku
-notranjih, p·x = q·r (p, q, r ≠ 0; tudi pri x = 0, kjer v Leanu r/0 = 0, sta obe strani napačni). -/
+notranjih, p·x = q·r (p, q, r ≠ 0; tudi pri x = 0, kjer v Leanu r/0 = 0, sta obe strani napačni).
+trditev: MAT-OS-9/talesov-izrek#zunanji-notranji
+besedilo: »Zmnožek zunanjih členov je enak zmnožku notranjih« -/
 theorem sorazmerje (p q r x : ℝ) (hp : p ≠ 0) (hq : q ≠ 0) (hr : r ≠ 0) : p / q = r / x ↔ p * x = q * r := by
   by_cases hx : x = 0
   · subst hx
@@ -42,19 +44,22 @@ theorem sorazmerje (p q r x : ℝ) (hp : p ≠ 0) (hq : q ≠ 0) (hr : r ≠ 0) 
 /-- Predpostavke `sorazmerje` se dajo izpolniti (p = 3, q = 9, r = 4). -/
 example : (3:ℝ) ≠ 0 ∧ (9:ℝ) ≠ 0 ∧ (4:ℝ) ≠ 0 := by norm_num
 
-/-- Razdalja od S do S + a·u je |a|·‖u‖. -/
+/-- Razdalja od S do S + a·u je |a|·‖u‖.
+pomozno – orodje (razdalja na kraku kota v vektorskem zapisu) -/
 theorem dist_vrh {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V] (S u : V) (a : ℝ) :
     dist S (S + a • u) = |a| * ‖u‖ := by
   rw [dist_comm, dist_eq_norm, add_sub_cancel_left, norm_smul, Real.norm_eq_abs]
 
-/-- Razdalja med S + a·u in S + c·u je |a − c|·‖u‖. -/
+/-- Razdalja med S + a·u in S + c·u je |a − c|·‖u‖.
+pomozno – orodje (razdalja med točkama na istem kraku) -/
 theorem dist_krak {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V] (S u : V) (a c : ℝ) :
     dist (S + a • u) (S + c • u) = |a - c| * ‖u‖ := by
   rw [dist_eq_norm]
   have : S + a • u - (S + c • u) = (a - c) • u := by rw [sub_smul]; abel
   rw [this, norm_smul, Real.norm_eq_abs]
 
-/-- Vzporednost AB ∥ CD na krakih kota da c = t·a in d = t·b (zaradi linearne neodvisnosti u, v). -/
+/-- Vzporednost AB ∥ CD na krakih kota da c = t·a in d = t·b (zaradi linearne neodvisnosti u, v).
+pomozno – orodje (koeficienta vzporednice iz linearne neodvisnosti krakov) -/
 theorem vzporednost_koef {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V] (S u v : V)
     (hi : LinearIndependent ℝ ![u, v]) (a b c d t : ℝ)
     (ht : (S + d • v) - (S + c • u) = t • ((S + b • v) - (S + a • u))) : c = t * a ∧ d = t * b := by
@@ -63,7 +68,8 @@ theorem vzporednost_koef {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V] 
   obtain ⟨h1, h2⟩ := LinearIndependent.pair_iff.mp hi _ _ h0
   constructor <;> linarith
 
-/-- Konkretna slika kota: u = (1, 0), v = (0, 1) v ℝ × ℝ sta linearno neodvisna. -/
+/-- Konkretna slika kota: u = (1, 0), v = (0, 1) v ℝ × ℝ sta linearno neodvisna.
+pomozno – priča, da konkreten kot obstaja (linearna neodvisnost); ni v besedilu lekcije -/
 theorem primer_kota : LinearIndependent ℝ ![((1:ℝ), (0:ℝ)), ((0:ℝ), (1:ℝ))] := by
   rw [LinearIndependent.pair_iff]
   intro s t h
@@ -78,7 +84,9 @@ section Izrek
 
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
 
-/-- Razlaga 2 in Povzetek (Talesov izrek, cela odseka od vrha): če je AB ∥ CD, je SA : SC = SB : SD. -/
+/-- Razlaga 2 in Povzetek (Talesov izrek, cela odseka od vrha): če je AB ∥ CD, je SA : SC = SB : SD.
+trditev: MAT-OS-9/talesov-izrek#tales-cela
+besedilo: »Vzporednici odrežeta na obeh krakih **sorazmerne** odseke. Odsek od vrha do prve vzporednice primerjamo z odsekom od vrha do druge: $$SA : SC = SB : SD$$« -/
 theorem tales_cela (S u v : V) (hi : LinearIndependent ℝ ![u, v]) (a b c d : ℝ) (ha : 0 < a) (hac : a < c)
     (hb : 0 < b) (hd : 0 < d) (hpar : ∃ t : ℝ, (S + d • v) - (S + c • u) = t • ((S + b • v) - (S + a • u))) :
     dist S (S + a • u) / dist S (S + c • u) = dist S (S + b • v) / dist S (S + d • v) := by
@@ -98,7 +106,9 @@ example : ∃ t : ℝ, ((0:ℝ × ℝ) + (12:ℝ) • ((0:ℝ), (1:ℝ))) - (0 +
     (0:ℝ) < 3 ∧ (3:ℝ) < 9 ∧ (0:ℝ) < 4 ∧ (0:ℝ) < 12 ∧ LinearIndependent ℝ ![((1:ℝ), (0:ℝ)), ((0:ℝ), (1:ℝ))] :=
   ⟨3, by ext <;> simp <;> norm_num, by norm_num, by norm_num, by norm_num, by norm_num, primer_kota⟩
 
-/-- Razlaga 3 in Povzetek (odseka med vzporednicama): če je AB ∥ CD, je SA : AC = SB : BD. -/
+/-- Razlaga 3 in Povzetek (odseka med vzporednicama): če je AB ∥ CD, je SA : AC = SB : BD.
+trditev: MAT-OS-9/talesov-izrek#tales-deli
+besedilo: »Sorazmerje velja tudi, če namesto celega odseka vzamemo samo del **med** vzporednicama: $$SA : AC = SB : BD$$« -/
 theorem tales_deli (S u v : V) (hi : LinearIndependent ℝ ![u, v]) (a b c d : ℝ) (ha : 0 < a) (hac : a < c)
     (hb : 0 < b) (hpar : ∃ t : ℝ, (S + d • v) - (S + c • u) = t • ((S + b • v) - (S + a • u))) :
     dist S (S + a • u) / dist (S + a • u) (S + c • u) = dist S (S + b • v) / dist (S + b • v) (S + d • v) := by
@@ -113,7 +123,9 @@ theorem tales_deli (S u v : V) (hi : LinearIndependent ℝ ![u, v]) (a b c d : �
   rw [div_eq_div_iff (mul_ne_zero (by linarith) hu) (mul_ne_zero (by linarith) hv), hc', hd']
   ring
 
-/-- Razlaga 4 in Povzetek (vzporednici sami): če je AB ∥ CD, je SA : SC = AB : CD (s celima odsekoma od vrha). -/
+/-- Razlaga 4 in Povzetek (vzporednici sami): če je AB ∥ CD, je SA : SC = AB : CD (s celima odsekoma od vrha).
+trditev: MAT-OS-9/talesov-izrek#tales-vzporednici
+besedilo: »Zato v istem razmerju kot cela odseka od vrha stojita tudi vzporednici: $$SA : SC = AB : CD$$« -/
 theorem tales_vzporednici (S u v : V) (hi : LinearIndependent ℝ ![u, v]) (a b c d : ℝ) (ha : 0 < a)
     (hac : a < c) (hpar : ∃ t : ℝ, (S + d • v) - (S + c • u) = t • ((S + b • v) - (S + a • u))) :
     dist S (S + a • u) / dist S (S + c • u) = dist (S + a • u) (S + b • v) / dist (S + c • u) (S + d • v) := by
@@ -137,7 +149,9 @@ theorem tales_vzporednici (S u v : V) (hi : LinearIndependent ℝ ![u, v]) (a b 
   rw [hCD, dist_vrh, dist_vrh, abs_of_pos ha, abs_of_pos hc, hc']
   field_simp
 
-/-- Razlaga 5 in Povzetek (obrat): če je SA : SC = SB : SD, sta AB in CD vzporedni (D − C = (c/a)·(B − A)). -/
+/-- Razlaga 5 in Povzetek (obrat): če je SA : SC = SB : SD, sta AB in CD vzporedni (D − C = (c/a)·(B − A)).
+trditev: MAT-OS-9/talesov-izrek#tales-obrat
+besedilo: »Velja tudi obratno: če je $SA : SC = SB : SD$, sta $AB$ in $CD$ vzporedni.« -/
 theorem tales_obrat (S u v : V) (hi : LinearIndependent ℝ ![u, v]) (a b c d : ℝ) (ha : 0 < a) (hac : a < c)
     (hb : 0 < b) (hd : 0 < d)
     (h : dist S (S + a • u) / dist S (S + c • u) = dist S (S + b • v) / dist S (S + d • v)) :
@@ -174,7 +188,9 @@ end Izrek
 /-- Bolj natančno: iz SA : SC = AB : CD vzporednosti ne smemo sklepati, tudi ko je B' med S in D (bližje vrhu,
 kot v lekciji). Protiprimer v evklidski ravnini: S(0, 0), A(50, 0), C(100, 0), D(30, 40) in B'(21, 28) = 0,7·D
 na istem kraku kot D (SB' = 35 < SD = 50); AB' = √1625, CD = √6500 = 2√1625, zato SA : SC = AB' : CD = 1 : 2,
-a D − C = (−70, 40) ni večkratnik B' − A = (−29, 28) (vzporednica bi šla skozi (15, 20)). -/
+a D − C = (−70, 40) ni večkratnik B' − A = (−29, 28) (vzporednica bi šla skozi (15, 20)).
+trditev: MAT-OS-9/talesov-izrek#obrat-ne-za-vzporednici
+besedilo: »iz enakosti $SA : SC = AB : CD$ pa vzporednosti ne smemo sklepati.« -/
 theorem obrat_ne_za_vzporednici :
     let S : EuclideanSpace ℝ (Fin 2) := !₂[0, 0]
     let A : EuclideanSpace ℝ (Fin 2) := !₂[50, 0]
@@ -213,7 +229,9 @@ theorem obrat_ne_za_vzporednici :
 
 /-- Razlaga 4: sorazmerje SA : AC = AB : CD je napačno. Protiprimer z vzporednicama v evklidski ravnini:
 S(0, 0), A(3, 0), C(9, 0), B(0, 3), D(0, 9); D − C = 3·(B − A) (AB ∥ CD), SA : AC = 3 : 6 = 1/2, a
-AB : CD = √18 : (3√18) = 1/3. -/
+AB : CD = √18 : (3√18) = 1/3.
+trditev: MAT-OS-9/talesov-izrek#del-ni-za-vzporednici
+besedilo: »Sorazmerje $SA : AC = AB : CD$ je napačno.« -/
 theorem del_ni_za_vzporednici :
     let S : EuclideanSpace ℝ (Fin 2) := !₂[0, 0]
     let A : EuclideanSpace ℝ (Fin 2) := !₂[3, 0]
@@ -252,7 +270,9 @@ variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
 
 /-- Razlaga 7 in Povzetek (deljenje v razmerju m : n): z P_k = A + k·w (w ni vzporeden z AB) točka
 T = A + (m/(m+n))·(B − A) leži na vzporednici k P_{m+n}B skozi P_m; to je edina točka premice AB na tej
-vzporednici; in AT : TB = m : n. -/
+vzporednici; in AT : TB = m : n.
+trditev: MAT-OS-9/talesov-izrek#deljenje
+besedilo: »Ta seka $AB$ v točki $T$, za katero velja $AT : TB = m : n$.« -/
 theorem deljenje (A B w : V) (hi : LinearIndependent ℝ ![w, B - A]) (m n : ℝ) (hm : 0 < m) (hn : 0 < n) :
     (A + (m / (m + n)) • (B - A)) - (A + m • w) = (m / (m + n)) • (B - (A + (m + n) • w)) ∧
     (∀ s r : ℝ, (A + s • (B - A)) - (A + m • w) = r • (B - (A + (m + n) • w)) → s = m / (m + n)) ∧
@@ -291,7 +311,9 @@ example : LinearIndependent ℝ ![((0:ℝ), (1:ℝ)), ((10:ℝ), (0:ℝ)) - ((0:
   exact ⟨h2, h1⟩
 
 /-- Razlaga 6 (deljenje na N enakih delov), povezava s konstrukcijo: iz `deljenje` za m = k, n = N − k
-(0 < k < N): vzporednica skozi P_k = A + k·w k P_N B seka premico AB natanko v T_k = A + (k/N)·(B − A). -/
+(0 < k < N): vzporednica skozi P_k = A + k·w k P_N B seka premico AB natanko v T_k = A + (k/N)·(B − A).
+trditev: MAT-OS-9/talesov-izrek#konstrukcija-t
+besedilo: »Poltrak in $AB$ sta zdaj kraka kota z vrhom $A$. Več vzporednic odreže na obeh krakih sorazmerne odseke.« -/
 theorem konstrukcija_T (A B w : V) (hi : LinearIndependent ℝ ![w, B - A]) (N k : ℕ) (hk : 0 < k) (hkN : k < N) :
     (A + ((k:ℝ) / N) • (B - A)) - (A + (k:ℝ) • w) = ((k:ℝ) / N) • (B - (A + (N:ℝ) • w)) ∧
     (∀ s r : ℝ, (A + s • (B - A)) - (A + (k:ℝ) • w) = r • (B - (A + (N:ℝ) • w)) → s = (k:ℝ) / N) := by
@@ -315,7 +337,9 @@ example : LinearIndependent ℝ ![((0:ℝ), (1:ℝ)), ((10:ℝ), (0:ℝ)) - ((0:
   exact ⟨h2, h1⟩
 
 /-- Razlaga 6 (deljenje na N enakih delov): točke T_k = A + (k/N)·(B − A) (po `konstrukcija_T` presečišča
-vzporednic z AB) razdelijo AB na dele enake dolžine AB/N; T_0 = A, T_N = B. -/
+vzporednic z AB) razdelijo AB na dele enake dolžine AB/N; T_0 = A, T_N = B.
+trditev: MAT-OS-9/talesov-izrek#enaki-deli
+besedilo: »Na poltraku so vsi odseki enaki, zato so enaki tudi odseki na $AB$.« -/
 theorem enaki_deli (A B : V) (N : ℕ) (hN : 0 < N) (k : ℕ) :
     dist (A + ((k:ℝ) / N) • (B - A)) (A + (((k:ℝ) + 1) / N) • (B - A)) = dist A B / N ∧
     A + ((0:ℝ) / N) • (B - A) = A ∧ A + ((N:ℝ) / N) • (B - A) = B := by
@@ -332,29 +356,41 @@ example : 0 < 5 := by norm_num
 
 end Deljenje
 
-/-- Razlaga 6, preizkus: s 7 odseki na poltraku dobiš 7 enakih delov (vsak del je AB/7, sedem delov je AB). -/
+/-- Razlaga 6, preizkus: s 7 odseki na poltraku dobiš 7 enakih delov (vsak del je AB/7, sedem delov je AB).
+trditev: MAT-OS-9/talesov-izrek#sedem-delov
+besedilo: »Na $7$ enakih delov.« -/
 theorem sedem_delov (AB : ℝ) : 7 * (AB / 7) = AB := by ring
 
 /-! ## Preizkusi v razlagi -/
 
-/-- Razlaga 2, preizkus: 2 : 6 = 2,5 : SD natanko pri SD = 7,5 (SC je trikrat SA, SD = 3·2,5). -/
+/-- Razlaga 2, preizkus: 2 : 6 = 2,5 : SD natanko pri SD = 7,5 (SC je trikrat SA, SD = 3·2,5).
+trditev: MAT-OS-9/talesov-izrek#preizkus2
+besedilo: »$SC$ je trikrat daljši od $SA$, zato $SD = 3 \cdot 2{,}5 = 7{,}5\,\text{cm}$.« -/
 theorem preizkus2 (x : ℝ) : (2:ℝ) / 6 = (5/2) / x ↔ x = 15/2 := by
   rw [sorazmerje _ _ _ _ (by norm_num) (by norm_num) (by norm_num)]
   constructor <;> intro h <;> linarith
 
-/-- Razlaga 2, preizkus: SC = 3·SA (6 = 3·2) in SD = 3·2,5 = 7,5. -/
+/-- Razlaga 2, preizkus: SC = 3·SA (6 = 3·2) in SD = 3·2,5 = 7,5.
+trditev: MAT-OS-9/talesov-izrek#preizkus2-racun
+besedilo: »$SC$ je trikrat daljši od $SA$, zato $SD = 3 \cdot 2{,}5 = 7{,}5\,\text{cm}$.« -/
 theorem preizkus2_racun : (6:ℝ) = 3 * 2 ∧ (3:ℝ) * (5/2) = 15/2 := by norm_num
 
-/-- Razlaga 3, preizkus: 4 : 2 = 6 : BD natanko pri BD = 3 (= 6 : 2). -/
+/-- Razlaga 3, preizkus: 4 : 2 = 6 : BD natanko pri BD = 3 (= 6 : 2).
+trditev: MAT-OS-9/talesov-izrek#preizkus3
+besedilo: »$AC$ je pol od $SA$, zato $BD = 6 : 2 = 3\,\text{cm}$.« -/
 theorem preizkus3 (x : ℝ) : (4:ℝ) / 2 = 6 / x ↔ x = 3 := by
   rw [sorazmerje _ _ _ _ (by norm_num) (by norm_num) (by norm_num)]
   constructor <;> intro h <;> linarith
 
-/-- Razlaga 3, premisli: če je SC = 2,5·SA, je AC = SC − SA = 1,5·SA. -/
+/-- Razlaga 3, premisli: če je SC = 2,5·SA, je AC = SC − SA = 1,5·SA.
+trditev: MAT-OS-9/talesov-izrek#premisli3
+besedilo: »$AC = SC - SA = 2{,}5 \cdot SA - SA = 1{,}5 \cdot SA$.« -/
 theorem premisli3 (SA : ℝ) : 5/2 * SA - SA = 3/2 * SA := by ring
 
 /-- Bolj natančno (drugo sorazmerje iz prvega): če je SC = k·SA in SD = k·SB (k > 1), je AC = (k − 1)·SA,
-BD = (k − 1)·SB in SA : AC = SB : BD. -/
+BD = (k − 1)·SB in SA : AC = SB : BD.
+trditev: MAT-OS-9/talesov-izrek#drugo-iz-prvega
+besedilo: »Če je $SC = k \cdot SA$ in $SD = k \cdot SB$, je $AC = (k - 1) \cdot SA$ in $BD = (k - 1) \cdot SB$, torej $SA : AC = SB : BD$.« -/
 theorem drugo_iz_prvega (SA SB k : ℝ) (hA : 0 < SA) (hB : 0 < SB) (hk : 1 < k) :
     k * SA - SA = (k - 1) * SA ∧ k * SB - SB = (k - 1) * SB ∧ SA / (k * SA - SA) = SB / (k * SB - SB) := by
   refine ⟨by ring, by ring, ?_⟩
@@ -366,7 +402,9 @@ theorem drugo_iz_prvega (SA SB k : ℝ) (hA : 0 < SA) (hB : 0 < SB) (hk : 1 < k)
 example : (0:ℝ) < 3 ∧ (0:ℝ) < 4 ∧ (1:ℝ) < 5/2 := by norm_num
 
 /-- Razlaga 4, preizkus in Zakaj se tega učimo: 5 mm : 550 mm = CD : 384 000 km natanko pri
-CD = 384 000·5 : 550, kar je ≈ 3 491 km (|CD − 3 491| < 1/2), torej približno 3 500 km (|CD − 3 500| < 10). -/
+CD = 384 000·5 : 550, kar je ≈ 3 491 km (|CD − 3 491| < 1/2), torej približno 3 500 km (|CD − 3 500| < 10).
+trditev: MAT-OS-9/talesov-izrek#luna
+besedilo: »$CD = 384\,000 \cdot 5 : 550 \approx 3\,491\,\text{km}$, torej približno $3\,500\,\text{km}$.« -/
 theorem luna (x : ℝ) :
     ((5:ℝ) / 550 = x / 384000 ↔ x = 384000 * 5 / 550) ∧
     |(384000:ℝ) * 5 / 550 - 3491| < 1/2 ∧ |(384000:ℝ) * 5 / 550 - 3500| < 10 := by
@@ -376,31 +414,43 @@ theorem luna (x : ℝ) :
   · rw [abs_lt]; constructor <;> norm_num
   · rw [abs_lt]; constructor <;> norm_num
 
-/-- Razlaga 5, preizkus: 2 : 5 = 0,4 in 3 : 7,5 = 0,4. -/
+/-- Razlaga 5, preizkus: 2 : 5 = 0,4 in 3 : 7,5 = 0,4.
+trditev: MAT-OS-9/talesov-izrek#preizkus5
+besedilo: »$2 : 5 = 0{,}4$ in $3 : 7{,}5 = 0{,}4$« -/
 theorem preizkus5 : (2:ℝ) / 5 = 4/10 ∧ (3:ℝ) / (15/2) = 4/10 := by norm_num
 
 /-- Razlaga 7, premisli: pri 2 : 3 ima cela daljica 2 + 3 = 5 delov; s 3 odseki bi dobil 1 : 2 ali 2 : 1
-(1 + 2 = 3). -/
+(1 + 2 = 3).
+trditev: MAT-OS-9/talesov-izrek#premisli7
+besedilo: »$AT$ ima $2$ dela, $TB$ ima $3$ dele, cela daljica $AB$ pa $2 + 3 = 5$ delov.« -/
 theorem premisli7 : (2:ℕ) + 3 = 5 ∧ (1:ℕ) + 2 = 3 ∧ (2:ℕ) + 1 = 3 := by norm_num
 
 /-! ## Rešeni primeri -/
 
-/-- Primer 1: 3 : 9 = 4 : SD ima natanko rešitev SD = 12, po korakih: 3·SD = 9·4 = 36, SD = 36 : 3 = 12. -/
+/-- Primer 1: 3 : 9 = 4 : SD ima natanko rešitev SD = 12, po korakih: 3·SD = 9·4 = 36, SD = 36 : 3 = 12.
+trditev: MAT-OS-9/talesov-izrek#primer1
+besedilo: »Daljica $SD$ meri $12\,\text{cm}$.« -/
 theorem primer1 (x : ℝ) : (3:ℝ) / 9 = 4 / x ↔ x = 12 := by
   calc (3:ℝ) / 9 = 4 / x ↔ 3 * x = 9 * 4 := sorazmerje _ _ _ _ (by norm_num) (by norm_num) (by norm_num)
     _ ↔ 3 * x = 36 := by norm_num
     _ ↔ x = 36 / 3 := by constructor <;> intro h <;> linarith
     _ ↔ x = 12 := by norm_num
 
-/-- Primer 1, preizkus: 3 : 9 = 1/3 in 4 : 12 = 1/3. -/
+/-- Primer 1, preizkus: 3 : 9 = 1/3 in 4 : 12 = 1/3.
+trditev: MAT-OS-9/talesov-izrek#primer1-preizkus
+besedilo: »Preizkus: $3 : 9 = \dfrac{1}{3}$ in $4 : 12 = \dfrac{1}{3}$.« -/
 theorem primer1_preizkus : (3:ℝ) / 9 = 1/3 ∧ (4:ℝ) / 12 = 1/3 := by norm_num
 
-/-- Primer 2: en del d = 10 : 5 = 2 cm, AT = 2·2 = 4, TB = 3·2 = 6; preizkus 4 + 6 = 10 in 4 : 6 = 2 : 3. -/
+/-- Primer 2: en del d = 10 : 5 = 2 cm, AT = 2·2 = 4, TB = 3·2 = 6; preizkus 4 + 6 = 10 in 4 : 6 = 2 : 3.
+trditev: MAT-OS-9/talesov-izrek#primer2-racun
+besedilo: »$AT = 2 \cdot 2 = 4\,\text{cm}$ in $TB = 3 \cdot 2 = 6\,\text{cm}$.« -/
 theorem primer2_racun :
     (10:ℝ) / (2 + 3) = 10 / 5 ∧ (10:ℝ) / 5 = 2 ∧ (2:ℝ) * 2 = 4 ∧ (3:ℝ) * 2 = 6 ∧ (4:ℝ) + 6 = 10 ∧
     (4:ℝ) / 6 = 2 / 3 := by norm_num
 
-/-- Primer 2: AT + TB = 10 in AT : TB = 2 : 3 natanko pri AT = 4, TB = 6. -/
+/-- Primer 2: AT + TB = 10 in AT : TB = 2 : 3 natanko pri AT = 4, TB = 6.
+trditev: MAT-OS-9/talesov-izrek#primer2
+besedilo: »Točka $T$ je $4\,\text{cm}$ od $A$ in $6\,\text{cm}$ od $B$.« -/
 theorem primer2 (x y : ℝ) : (x + y = 10 ∧ x / y = 2 / 3) ↔ (x = 4 ∧ y = 6) := by
   constructor
   · rintro ⟨h1, h2⟩
@@ -411,7 +461,9 @@ theorem primer2 (x y : ℝ) : (x + y = 10 ∧ x / y = 2 / 3) ↔ (x = 4 ∧ y = 
   · rintro ⟨rfl, rfl⟩; norm_num
 
 /-- Primer 3: SA : 149 600 000 = 3 474 : 1 392 000 natanko pri SA = 149 600 000·3 474 : 1 392 000 ≈ 373 355 km
-(|SA − 373 355| < 1/2), približno 373 000 km (|SA − 373 000| < 500), in 357 000 < SA < 407 000. -/
+(|SA − 373 355| < 1/2), približno 373 000 km (|SA − 373 000| < 500), in 357 000 < SA < 407 000.
+trditev: MAT-OS-9/talesov-izrek#primer3
+besedilo: »Izračunamo: $SA \approx 373\,355\,\text{km}$, torej približno $373\,000\,\text{km}$.« -/
 theorem primer3 (x : ℝ) :
     (x / 149600000 = (3474:ℝ) / 1392000 ↔ x = 149600000 * 3474 / 1392000) ∧
     |(149600000:ℝ) * 3474 / 1392000 - 373355| < 1/2 ∧ |(149600000:ℝ) * 3474 / 1392000 - 373000| < 500 ∧
@@ -424,20 +476,25 @@ theorem primer3 (x : ℝ) :
   · rw [abs_lt]; constructor <;> norm_num
   · rw [abs_lt]; constructor <;> norm_num
 
-/-- Primer 4: 6 : 4 = 9 : BD ima natanko rešitev BD = 6, po korakih: 6·BD = 4·9 = 36, BD = 36 : 6 = 6. -/
+/-- Primer 4: 6 : 4 = 9 : BD ima natanko rešitev BD = 6, po korakih: 6·BD = 4·9 = 36, BD = 36 : 6 = 6.
+trditev: MAT-OS-9/talesov-izrek#primer4
+besedilo: »$6 \cdot BD = 36$, zato $BD = 36 : 6 = 6\,\text{cm}$.« -/
 theorem primer4 (x : ℝ) : (6:ℝ) / 4 = 9 / x ↔ x = 6 := by
   calc (6:ℝ) / 4 = 9 / x ↔ 6 * x = 4 * 9 := sorazmerje _ _ _ _ (by norm_num) (by norm_num) (by norm_num)
     _ ↔ 6 * x = 36 := by norm_num
     _ ↔ x = 36 / 6 := by constructor <;> intro h <;> linarith
     _ ↔ x = 6 := by norm_num
 
-/-- Primer 4, preizkus: 6 : 4 = 1,5 in 9 : 6 = 1,5. -/
+/-- Primer 4, preizkus: 6 : 4 = 1,5 in 9 : 6 = 1,5.
+trditev: MAT-OS-9/talesov-izrek#primer4-preizkus
+besedilo: »Preizkus: $6 : 4 = 1{,}5$ in $9 : 6 = 1{,}5$.« -/
 theorem primer4_preizkus : (6:ℝ) / 4 = 3/2 ∧ (9:ℝ) / 6 = 3/2 := by norm_num
 
 /-! ## Pogoste napake -/
 
 /-- Pogoste napake 1: napačno sorazmerje 6 : 4 = 9 : SD bi dalo SD = 6; pravilno je SA : SC = SB : SD s
-SC = 6 + 4 = 10, torej SD = 15 (= 9 + BD, BD = 6). -/
+SC = 6 + 4 = 10, torej SD = 15 (= 9 + BD, BD = 6).
+pomozno – lekcija napačnega rezultata SD = 6 in pravilnega SD = 15 ne navede (pove le, katera odseka vzeti) -/
 theorem napaka_cel_del (x : ℝ) : ((6:ℝ) / 4 = 9 / x ↔ x = 6) ∧ ((6:ℝ) / (6 + 4) = 9 / x ↔ x = 15) ∧
     (9:ℝ) + 6 = 15 := by
   refine ⟨primer4 x, ?_, by norm_num⟩
@@ -445,7 +502,9 @@ theorem napaka_cel_del (x : ℝ) : ((6:ℝ) / 4 = 9 / x ↔ x = 6) ∧ ((6:ℝ) 
   constructor <;> intro h <;> linarith
 
 /-- Pogoste napake 2: pri SA = 2, SC = 8 je SC štirikrat SA, zato je SD = 4·SB (iz 2 : 8 = SB : SD, SB ≠ 0);
-pravilo »za isto razliko« bi dalo SD = SB + 6, kar je pri SB ≠ 2 drugo število. -/
+pravilo »za isto razliko« bi dalo SD = SB + 6, kar je pri SB ≠ 2 drugo število.
+trditev: MAT-OS-9/talesov-izrek#napaka-razlika
+besedilo: »Pri $SA = 2$, $SC = 8$ je $SC$ štirikrat daljši, zato je tudi $SD = 4 \cdot SB$.« -/
 theorem napaka_razlika (SB SD : ℝ) (hB : SB ≠ 0) : ((2:ℝ) / 8 = SB / SD ↔ SD = 4 * SB) ∧ (8:ℝ) = 4 * 2 ∧
     (SB ≠ 2 → 4 * SB ≠ SB + 6) := by
   refine ⟨?_, by norm_num, fun h h' => h (by linarith)⟩
@@ -456,7 +515,9 @@ theorem napaka_razlika (SB SD : ℝ) (hB : SB ≠ 0) : ((2:ℝ) / 8 = SB / SD �
 example : (3:ℝ) ≠ 0 := by norm_num
 
 /-- Pogoste napake 3 (obrnjeno sorazmerje): če je 0 < SA < SC in 0 < SB < SD, je SA : SC < 1 < SD : SB, zato
-SA : SC = SD : SB ne more veljati. -/
+SA : SC = SD : SB ne more veljati.
+trditev: MAT-OS-9/talesov-izrek#napaka-obrnjeno
+besedilo: »Levo razmerje je zato manjše od $1$, desno večje od $1$, in ne moreta biti enaki.« -/
 theorem napaka_obrnjeno (SA SC SB SD : ℝ) (h1 : 0 < SA) (h2 : SA < SC) (h3 : 0 < SB) (h4 : SB < SD) :
     SA / SC < 1 ∧ 1 < SD / SB ∧ SA / SC ≠ SD / SB := by
   have a : SA / SC < 1 := (div_lt_one (by linarith)).mpr h2
@@ -466,7 +527,9 @@ theorem napaka_obrnjeno (SA SC SB SD : ℝ) (h1 : 0 < SA) (h2 : SA < SC) (h3 : 0
 /-- Predpostavke `napaka_obrnjeno` se dajo izpolniti (2, 6, 3, 9). -/
 example : (0:ℝ) < 2 ∧ (2:ℝ) < 6 ∧ (0:ℝ) < 3 ∧ (3:ℝ) < 9 := by norm_num
 
-/-- Pogoste napake 4: za AT : TB = 2 : 3 je en del AB : 5, ne AB : 3 (pri AB > 0). -/
+/-- Pogoste napake 4: za AT : TB = 2 : 3 je en del AB : 5, ne AB : 3 (pri AB > 0).
+trditev: MAT-OS-9/talesov-izrek#napaka-deli
+besedilo: »en del pa je $AB : 5$, ne $AB : 3$« -/
 theorem napaka_deli (AB : ℝ) (h : 0 < AB) : AB / (2 + 3) = AB / 5 ∧ AB / 5 ≠ AB / 3 := by
   refine ⟨by norm_num, ?_⟩
   intro h'
@@ -477,13 +540,16 @@ theorem napaka_deli (AB : ℝ) (h : 0 < AB) : AB / (2 + 3) = AB / 5 ∧ AB / 5 �
 example : (0:ℝ) < 10 := by norm_num
 
 /-- Pogoste napake 5 (različne enote): 1 m = 1000 mm, zato je količnik x : y (x v mm, y v m) 1000-krat
-količnik x : (1000y) (oba v mm); pri x ≠ 0, y ≠ 0 sta zato različna. -/
+količnik x : (1000y) (oba v mm); pri x ≠ 0, y ≠ 0 sta zato različna.
+trditev: MAT-OS-9/talesov-izrek#napaka-enote
+besedilo: »kdor ne pretvori, dobi rezultat, ki je za faktor $1\,000$ napačen.« -/
 theorem napaka_enote (x y : ℝ) : x / y = 1000 * (x / (1000 * y)) := by
   by_cases hy : y = 0
   · subst hy; simp
   · field_simp
 
-/-- Pogoste napake 5: pri x ≠ 0 in y ≠ 0 se razmerji x : y in x : (1000y) res razlikujeta. -/
+/-- Pogoste napake 5: pri x ≠ 0 in y ≠ 0 se razmerji x : y in x : (1000y) res razlikujeta.
+pomozno – izrek pove le, da se razmerji razlikujeta; faktor 1000 iz besedila dokaže izrek napaka_enote -/
 theorem napaka_enote_razlicno (x y : ℝ) (hx : x ≠ 0) (hy : y ≠ 0) : x / y ≠ x / (1000 * y) := by
   intro h
   rw [div_eq_div_iff hy (by positivity)] at h
@@ -496,14 +562,18 @@ example : (2:ℝ) ≠ 0 ∧ (3:ℝ) ≠ 0 := by norm_num
 /-! ## Drugače: Na sliki -/
 
 /-- Na sliki: 384 000 km = 38 400 000 000 cm; 38 400 000 000 : 55 je med 690 000 000 in 700 000 000
-(»skoraj 700 000 000-krat«). -/
+(»skoraj 700 000 000-krat«).
+trditev: MAT-OS-9/talesov-izrek#na-sliki
+besedilo: »Od očesa do krožca je $55\,\text{cm}$, do Lune pa skoraj $700\,000\,000$-krat dlje.« -/
 theorem na_sliki : (384000:ℝ) * 100000 = 38400000000 ∧ (690000000:ℝ) < 38400000000 / 55 ∧
     (38400000000:ℝ) / 55 < 700000000 := by norm_num
 
 /-! ## Preveri se -/
 
 /-- Preveri se 1: pri SA = 2, SC = 6, SB = 3 je SD = 9 edina pravilna vrednost (2 : 6 = 3 : SD ↔ SD = 9);
-SD = 7, SD = 3 (z SB = 9) in SD = 6 niso; 6 je BD iz 2 : 4 = 3 : 6, cel odsek je 3 + 6 = 9. -/
+SD = 7, SD = 3 (z SB = 9) in SD = 6 niso; 6 je BD iz 2 : 4 = 3 : 6, cel odsek je 3 + 6 = 9.
+trditev: MAT-OS-9/talesov-izrek#kviz1
+besedilo: »$SC$ je trikrat daljši od $SA$, zato mora biti $SD$ trikrat daljši od $SB$: $SD = 3 \cdot 3 = 9$.« -/
 theorem kviz1 (x : ℝ) :
     ((2:ℝ) / 6 = 3 / x ↔ x = 9) ∧ (2:ℝ) / 6 ≠ 3 / 7 ∧ (2:ℝ) / 6 ≠ 9 / 3 ∧ (2:ℝ) / 6 ≠ 3 / 6 ∧
     (2:ℝ) / (6 - 2) = 3 / 6 ∧ (3:ℝ) + 6 = 9 := by
@@ -513,7 +583,9 @@ theorem kviz1 (x : ℝ) :
 
 /-- Preveri se 2: 2,2 m = 220 cm; 2 : 220 = CD : 384 000 natanko pri CD = 384 000·2 : 220 ≈ 3 491
 (|CD − 3 491| < 1/2), približno 3 500 km. Napačni vrednosti: brez pretvorbe 384 000·2 : 2,2 ≈ 349 091,
-s 2 200 cm 384 000·2 : 2 200 ≈ 349, obrnjeno 384 000·220 : 2 = 42 240 000. -/
+s 2 200 cm 384 000·2 : 2 200 ≈ 349, obrnjeno 384 000·220 : 2 = 42 240 000.
+trditev: MAT-OS-9/talesov-izrek#kviz2
+besedilo: »$2 : 220 = CD : 384\,000\,\text{km}$, zato $CD = 384\,000 \cdot 2 : 220 \approx 3\,491\,\text{km}$, torej približno $3\,500\,\text{km}$.« -/
 theorem kviz2 (x : ℝ) :
     (22/10:ℝ) * 100 = 220 ∧ ((2:ℝ) / 220 = x / 384000 ↔ x = 384000 * 2 / 220) ∧
     |(384000:ℝ) * 2 / 220 - 3491| < 1/2 ∧ |(384000:ℝ) * 2 / 220 - 3500| < 10 ∧
@@ -524,17 +596,23 @@ theorem kviz2 (x : ℝ) :
     constructor <;> intro h <;> linarith
   all_goals (rw [abs_lt]; constructor <;> norm_num)
 
-/-- Preveri se 3: za 3 : 4 je vseh delov 3 + 4 = 7; za 1 : 1 sta 2 (sodo). -/
+/-- Preveri se 3: za 3 : 4 je vseh delov 3 + 4 = 7; za 1 : 1 sta 2 (sodo).
+trditev: MAT-OS-9/talesov-izrek#kviz3
+besedilo: »Razmerje $3 : 4$ primerja dva dela, skupaj sta $7$ delov.« -/
 theorem kviz3 : (3:ℕ) + 4 = 7 ∧ (1:ℕ) + 1 = 2 := by norm_num
 
-/-- Preveri se 4: AT : TB = 1 : 3 in AT = 3 natanko pri TB = 9, torej AB = 3 + 9 = 12 = 4·3. -/
+/-- Preveri se 4: AT : TB = 1 : 3 in AT = 3 natanko pri TB = 9, torej AB = 3 + 9 = 12 = 4·3.
+trditev: MAT-OS-9/talesov-izrek#kviz4
+besedilo: »En del meri $AT = 3\,\text{cm}$. Delov je $1 + 3 = 4$, zato $AB = 4 \cdot 3 = 12\,\text{cm}$.« -/
 theorem kviz4 (y : ℝ) : ((3:ℝ) / y = 1 / 3 ↔ y = 9) ∧ (3:ℝ) + 9 = 12 ∧ (4:ℝ) * 3 = 12 := by
   refine ⟨?_, by norm_num, by norm_num⟩
   rw [eq_comm, sorazmerje _ _ _ _ (by norm_num) (by norm_num) (by norm_num)]
   constructor <;> intro h <;> linarith
 
 /-- Preveri se 5: 1,2 : 1,8 = h : 60 natanko pri h = 60·1,2 : 1,8 = 40 m. Napačni vrednosti: obrnjeno
-60·1,8 : 1,2 = 90, »enaka razlika« 60 − (1,8 − 1,2) = 59,4. -/
+60·1,8 : 1,2 = 90, »enaka razlika« 60 − (1,8 − 1,2) = 59,4.
+trditev: MAT-OS-9/talesov-izrek#kviz5
+besedilo: »Od tod $h = 60 \cdot 1{,}2 : 1{,}8 = 40\,\text{m}$.« -/
 theorem kviz5 (h : ℝ) :
     ((12/10:ℝ) / (18/10) = h / 60 ↔ h = 40) ∧ (60:ℝ) * (12/10) / (18/10) = 40 ∧
     (60:ℝ) * (18/10) / (12/10) = 90 ∧ (60:ℝ) - (18/10 - 12/10) = 594/10 := by

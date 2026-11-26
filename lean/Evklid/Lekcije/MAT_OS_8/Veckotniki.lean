@@ -47,7 +47,9 @@ noncomputable def alfa' (n : ℕ) : ℝ := 360 / n
 
 /-- Zakaj se tega učimo: vsota notranjih kotov trikotnika je 180° (= π radianov), dokazano v evklidski
 ravnini za poljubne točke A, B, C z B ≠ A. To zajame vsak pravi trikotnik (tri nekolinearne točke), velja
-pa tudi za izrojene (npr. C = A, kjer Mathlib kotu z ničelnim vektorjem pripiše π/2). -/
+pa tudi za izrojene (npr. C = A, kjer Mathlib kotu z ničelnim vektorjem pripiše π/2).
+trditev: MAT-OS-8/veckotniki#trikotnik
+besedilo: »vsota notranjih kotov trikotnika je $180^\circ$« -/
 theorem trikotnik (A B C : EuclideanSpace ℝ (Fin 2)) (h : B ≠ A) :
     EuclideanGeometry.angle A B C + EuclideanGeometry.angle B C A + EuclideanGeometry.angle C A B =
       Real.pi :=
@@ -62,23 +64,31 @@ example : ∃ A B : EuclideanSpace ℝ (Fin 2), B ≠ A :=
 
 /-! ## Razlaga 2 in 4: diagonale -/
 
-/-- Razlaga 1: n-kotnik (n ≥ 3) ima n oglišč in n stranic (cikel na n ogliščih ima n povezav). -/
+/-- Razlaga 1: n-kotnik (n ≥ 3) ima n oglišč in n stranic (cikel na n ogliščih ima n povezav).
+trditev: MAT-OS-8/veckotniki#stranice
+besedilo: »Večkotnik z $n$ oglišči ima $n$ stranic« -/
 theorem stranice (m : ℕ) : #(cycleGraph (m + 3)).edgeFinset = m + 3 := by
   have h := sum_degrees_eq_twice_card_edges (cycleGraph (m + 3))
   simp only [cycleGraph_degree_three_le, sum_const, card_univ, Fintype.card_fin, smul_eq_mul] at h
   omega
 
-/-- Razlaga 2, Povzetek: iz vsakega oglišča n-kotnika (n ≥ 3) izhaja n − 3 diagonal. -/
+/-- Razlaga 2, Povzetek: iz vsakega oglišča n-kotnika (n ≥ 3) izhaja n − 3 diagonal.
+trditev: MAT-OS-8/veckotniki#diagonale-iz-oglisca
+besedilo: »Zato iz vsakega oglišča $n$-kotnika izhaja $n - 3$ diagonal.« -/
 theorem diagonale_iz_oglisca (m : ℕ) (v : Fin (m + 3)) : (cycleGraph (m + 3))ᶜ.degree v = m := by
   rw [degree_compl, cycleGraph_degree_three_le, Fintype.card_fin]
   omega
 
-/-- Razlaga 4, Preveri se 3: vsako diagonalo štejemo iz obeh krajišč: n · (n − 3) = 2 · D_n (n ≥ 3). -/
+/-- Razlaga 4, Preveri se 3: vsako diagonalo štejemo iz obeh krajišč: n · (n − 3) = 2 · D_n (n ≥ 3).
+trditev: MAT-OS-8/veckotniki#dvakrat-diagonale
+besedilo: »Diagonalo $AC$ štejemo pri $A$ in pri $C$, zato je produkt $n(n - 3)$ dvakrat prevelik.« -/
 theorem dvakrat_diagonale (m : ℕ) : 2 * #(cycleGraph (m + 3))ᶜ.edgeFinset = (m + 3) * m := by
   rw [← sum_degrees_eq_twice_card_edges]
   simp only [diagonale_iz_oglisca, sum_const, card_univ, Fintype.card_fin, smul_eq_mul]
 
-/-- Razlaga 4, Povzetek: število vseh diagonal n-kotnika (n ≥ 3) je D_n = n(n − 3)/2. -/
+/-- Razlaga 4, Povzetek: število vseh diagonal n-kotnika (n ≥ 3) je D_n = n(n − 3)/2.
+trditev: MAT-OS-8/veckotniki#diagonale
+besedilo: »Število vseh diagonal: $D_n = \dfrac{n(n - 3)}{2}$.« -/
 theorem diagonale (n : ℕ) (hn : 3 ≤ n) : #(cycleGraph n)ᶜ.edgeFinset = n * (n - 3) / 2 := by
   obtain ⟨m, rfl⟩ := Nat.exists_eq_add_of_le' hn
   have := dvakrat_diagonale m
@@ -89,14 +99,17 @@ theorem diagonale (n : ℕ) (hn : 3 ≤ n) : #(cycleGraph n)ᶜ.edgeFinset = n *
 example : 3 ≤ 5 := by norm_num
 
 /-- Razlaga 2, Premisli: n − 3 diagonal iz enega oglišča razreže lik na (n − 3) + 1 = n − 2 trikotnikov;
-šestkotnik 6 − 3 = 3 diagonale, 4 trikotniki; desetkotnik 10 − 3 = 7 diagonal, 8 trikotnikov. -/
+šestkotnik 6 − 3 = 3 diagonale, 4 trikotniki; desetkotnik 10 − 3 = 7 diagonal, 8 trikotnikov.
+pomozno – lekcija trdi razrez na trikotnike (trikotnikov za enega več kot diagonal); izrek dokaže le štetje (n − 3) + 1 = n − 2 in števila za 6- in 10-kotnik -/
 theorem pahljaca (n : ℕ) (hn : 3 ≤ n) :
     (n - 3) + 1 = n - 2 ∧ 6 - 3 = 3 ∧ 6 - 2 = 4 ∧ 10 - 3 = 7 ∧ 10 - 2 = 8 := by omega
 
 /-- Predpostavka `pahljaca` se da izpolniti (n = 6). -/
 example : 3 ≤ 6 := by norm_num
 
-/-- Razlaga 4: D_5 = 5 · 2/2 = 5, D_6 = 6 · 3/2 = 9. -/
+/-- Razlaga 4: D_5 = 5 · 2/2 = 5, D_6 = 6 · 3/2 = 9.
+trditev: MAT-OS-8/veckotniki#d5-d6
+besedilo: »Petkotnik: $D_5 = \dfrac{5 \cdot 2}{2} = 5$. Šestkotnik: $D_6 = \dfrac{6 \cdot 3}{2} = 9$.« -/
 theorem d5_d6 :
     #(cycleGraph 5)ᶜ.edgeFinset = 5 ∧ #(cycleGraph 6)ᶜ.edgeFinset = 9 ∧ 5 * 2 / 2 = 5 ∧
     6 * 3 / 2 = 9 := by
@@ -104,7 +117,9 @@ theorem d5_d6 :
   · rw [diagonale 5 (by norm_num)]
   · rw [diagonale 6 (by norm_num)]
 
-/-- Razlaga 5 (simulacija): število diagonal pri n = 3, …, 8 je 0, 2, 5, 9, 14, 20. -/
+/-- Razlaga 5 (simulacija): število diagonal pri n = 3, …, 8 je 0, 2, 5, 9, 14, 20.
+trditev: MAT-OS-8/veckotniki#simulacija-diagonale
+besedilo: »število diagonal pa raste vse hitreje ($0$, $2$, $5$, $9$, $14$, $20$)« -/
 theorem simulacija_diagonale :
     #(cycleGraph 3)ᶜ.edgeFinset = 0 ∧ #(cycleGraph 4)ᶜ.edgeFinset = 2 ∧
     #(cycleGraph 5)ᶜ.edgeFinset = 5 ∧ #(cycleGraph 6)ᶜ.edgeFinset = 9 ∧
@@ -114,7 +129,9 @@ theorem simulacija_diagonale :
 /-! ## Razlaga 3: vsota notranjih kotov (obrazec) -/
 
 /-- Razlaga 3, tabela: S_3 = 180, S_4 = 360, S_5 = 540, S_6 = 720, S_8 = 1080; število diagonal iz oglišča
-n − 3 je 0, 1, 2, 3, 5, število trikotnikov n − 2 je 1, 2, 3, 4, 6, za ena več (v ℕ). -/
+n − 3 je 0, 1, 2, 3, 5, število trikotnikov n − 2 je 1, 2, 3, 4, 6, za ena več (v ℕ).
+trditev: MAT-OS-8/veckotniki#tabela-vsot
+besedilo: »| $5$ | $2$ | $3$ | $540^\circ$ |« -/
 theorem tabela_vsot :
     S 3 = 1 * 180 ∧ S 4 = 2 * 180 ∧ S 5 = 3 * 180 ∧ S 6 = 4 * 180 ∧ S 8 = 6 * 180 ∧
     S 3 = 180 ∧ S 4 = 360 ∧ S 5 = 540 ∧ S 6 = 720 ∧ S 8 = 1080 ∧
@@ -124,13 +141,17 @@ theorem tabela_vsot :
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, by decide, by decide, by decide⟩ <;>
     (simp only [S]; norm_num)
 
-/-- Razlaga 3 in 5: ko dodamo eno oglišče, vsota kotov zraste za 180°. -/
+/-- Razlaga 3 in 5: ko dodamo eno oglišče, vsota kotov zraste za 180°.
+trditev: MAT-OS-8/veckotniki#vsota-raste
+besedilo: »vsota kotov vsakič zraste za enako ($180^\circ$)« -/
 theorem vsota_raste (n : ℕ) : S (n + 1) - S n = 180 := by
   simp only [S]; push_cast; ring
 
 /-! ## Razlaga 6–8: pravilni večkotnik, zunanji kot -/
 
-/-- Razlaga 6, Pogoste napake: notranji kot pravilnega n-kotnika (n ≥ 3) je α = 180° − 360°/n. -/
+/-- Razlaga 6, Pogoste napake: notranji kot pravilnega n-kotnika (n ≥ 3) je α = 180° − 360°/n.
+trditev: MAT-OS-8/veckotniki#alfa-eq
+besedilo: »Popravek: $\alpha = 180^\circ - \dfrac{360^\circ}{n}$, za šestkotnik $120^\circ$.« -/
 theorem alfa_eq (n : ℕ) (hn : 3 ≤ n) : alfa n = 180 - 360 / n := by
   have : (n:ℝ) ≠ 0 := by positivity
   simp only [alfa, S]
@@ -140,26 +161,35 @@ theorem alfa_eq (n : ℕ) (hn : 3 ≤ n) : alfa n = 180 - 360 / n := by
 /-- Predpostavka `alfa_eq` (in drugih trditev z n ≥ 3) se da izpolniti (n = 6). -/
 example : 3 ≤ 6 := by norm_num
 
-/-- Razlaga 7, Povzetek: notranji in zunanji kot skupaj tvorita iztegnjeni kot, α + α' = 180°. -/
+/-- Razlaga 7, Povzetek: notranji in zunanji kot skupaj tvorita iztegnjeni kot, α + α' = 180°.
+trditev: MAT-OS-8/veckotniki#alfa-plus-alfa-crtica
+besedilo: »$\alpha + \alpha' = 180^\circ$« -/
 theorem alfa_plus_alfa' (n : ℕ) (hn : 3 ≤ n) : alfa n + alfa' n = 180 := by
   rw [alfa_eq n hn, alfa']; ring
 
-/-- Razlaga 7: v pravilnem n-kotniku je vsota n enakih zunanjih kotov n · 360/n = 360°. -/
+/-- Razlaga 7: v pravilnem n-kotniku je vsota n enakih zunanjih kotov n · 360/n = 360°.
+pomozno – lekcija trdi 360° za vsak konveksni večkotnik, izrek le za pravilnega (n · 360/n = 360); stavka samo o pravilnem ni -/
 theorem vsota_zunanjih_pravilni (n : ℕ) (hn : 3 ≤ n) : n * alfa' n = 360 := by
   have : (n:ℝ) ≠ 0 := by positivity
   simp only [alfa']
   field_simp
 
 /-- Bolj natančno: vsota notranjih in zunanjih kotov je n · 180, zato je vsota zunanjih kotov
-n · 180 − (n − 2) · 180 = 2 · 180 = 360 (neodvisno od n). -/
+n · 180 − (n − 2) · 180 = 2 · 180 = 360 (neodvisno od n).
+trditev: MAT-OS-8/veckotniki#vsota-zunanjih
+besedilo: »n \cdot 180^\circ - (n - 2) \cdot 180^\circ = 2 \cdot 180^\circ = 360^\circ« -/
 theorem vsota_zunanjih (n : ℕ) : (n:ℝ) * 180 - S n = 2 * 180 ∧ (2:ℝ) * 180 = 360 := by
   simp only [S]; constructor <;> ring
 
-/-- Razlaga 6 in 7: pravilni šestkotnik α = 720/6 = 120, α' = 60, 120 + 60 = 180. -/
+/-- Razlaga 6 in 7: pravilni šestkotnik α = 720/6 = 120, α' = 60, 120 + 60 = 180.
+trditev: MAT-OS-8/veckotniki#sestkotnik
+besedilo: »Šestkotnik: $\alpha' = 60^\circ$, in res $120^\circ + 60^\circ = 180^\circ$.« -/
 theorem sestkotnik : alfa 6 = 720 / 6 ∧ (720:ℝ) / 6 = 120 ∧ alfa' 6 = 60 ∧ (120:ℝ) + 60 = 180 := by
   simp only [alfa, alfa', S]; norm_num
 
-/-- Razlaga 7, Premisli: notranji kot raste z n (3 ≤ n < m ⇒ α_n < α_m) … -/
+/-- Razlaga 7, Premisli: notranji kot raste z n (3 ≤ n < m ⇒ α_n < α_m) …
+trditev: MAT-OS-8/veckotniki#alfa-raste
+besedilo: »Notranji kot raste ($60^\circ$, $90^\circ$, $108^\circ$, $120^\circ$ …), ker se zunanji kot $\dfrac{360^\circ}{n}$ manjša.« -/
 theorem alfa_raste (n m : ℕ) (hn : 3 ≤ n) (hnm : n < m) : alfa n < alfa m := by
   rw [alfa_eq n hn, alfa_eq m (by omega)]
   have h1 : (0:ℝ) < n := by positivity
@@ -172,7 +202,9 @@ theorem alfa_raste (n m : ℕ) (hn : 3 ≤ n) (hnm : n < m) : alfa n < alfa m :=
 example : 3 ≤ 3 ∧ 3 < 4 := by norm_num
 
 /-- Razlaga 7, Premisli: … a 180° nikoli ne doseže (zunanji kot je vedno večji od 0°), se mu pa
-poljubno približa. Vrednosti 60, 90, 108, 120. -/
+poljubno približa. Vrednosti 60, 90, 108, 120.
+trditev: MAT-OS-8/veckotniki#alfa-pod-180
+besedilo: »Kota $180^\circ$ nikoli ne doseže, saj je zunanji kot vedno večji od $0^\circ$.« -/
 theorem alfa_pod_180 (n : ℕ) (hn : 3 ≤ n) :
     alfa n < 180 ∧ 0 < alfa' n ∧ Tendsto alfa atTop (𝓝 180) ∧
     alfa 3 = 60 ∧ alfa 4 = 90 ∧ alfa 5 = 108 ∧ alfa 6 = 120 := by
@@ -187,21 +219,26 @@ theorem alfa_pod_180 (n : ℕ) (hn : 3 ≤ n) :
   all_goals simp only [alfa, S]; norm_num
 
 /-- Razlaga 8: kota ob osnovnici karakterističnega trikotnika (vsak α/2) in središčni kot 360°/n dajo
-skupaj 180°, in središčni kot je enak zunanjemu (oba sta 360/n). -/
+skupaj 180°, in središčni kot je enak zunanjemu (oba sta 360/n).
+pomozno – le aritmetična skladnost α/2 + α/2 + 360/n = 180; geometrijske trditve o karakterističnem trikotniku (središčni kot, kota ob osnovnici) niso dokazane -/
 theorem karakteristicni (n : ℕ) (hn : 3 ≤ n) :
     alfa n / 2 + alfa n / 2 + 360 / n = 180 ∧ alfa' n = 360 / n :=
   ⟨by rw [alfa_eq n hn]; ring, rfl⟩
 
 /-! ## Rešeni primeri -/
 
-/-- Primer 1: S_7 = (7 − 2) · 180 = 5 · 180 = 900. -/
+/-- Primer 1: S_7 = (7 − 2) · 180 = 5 · 180 = 900.
+trditev: MAT-OS-8/veckotniki#primer1
+besedilo: »Odgovor: vsota notranjih kotov sedemkotnika je $900^\circ$.« -/
 theorem primer1 : S 7 = 900 := by
   calc S 7 = ((7:ℝ) - 2) * 180 := by simp [S]
     _ = 5 * 180 := by norm_num
     _ = 900 := by norm_num
 
 /-- Primer 2: S_12 = 10 · 180 = 1800, α = 1800/12 = 150; kontrola α' = 360/12 = 30, 180 − 30 = 150;
-12 − 3 = 9 diagonal iz oglišča, D_12 = 12 · 9/2 = 54. -/
+12 − 3 = 9 diagonal iz oglišča, D_12 = 12 · 9/2 = 54.
+trditev: MAT-OS-8/veckotniki#primer2
+besedilo: »Odgovor: notranji kot meri $150^\circ$, dvanajstkotnik ima $54$ diagonal.« -/
 theorem primer2 :
     S 12 = 10 * 180 ∧ (10:ℝ) * 180 = 1800 ∧ alfa 12 = 1800 / 12 ∧ (1800:ℝ) / 12 = 150 ∧
     alfa' 12 = 30 ∧ (180:ℝ) - 30 = 150 ∧ 12 - 3 = 9 ∧ #(cycleGraph 12)ᶜ.edgeFinset = 12 * 9 / 2 ∧
@@ -212,7 +249,9 @@ theorem primer2 :
   · simp only [alfa']; norm_num
   · rw [diagonale 12 (by norm_num)]
 
-/-- Primer 3: α' = 180 − 140 = 40, n = 360/40 = 9; D_9 = 9 · 6/2 = 27. -/
+/-- Primer 3: α' = 180 − 140 = 40, n = 360/40 = 9; D_9 = 9 · 6/2 = 27.
+trditev: MAT-OS-8/veckotniki#primer3-racuni
+besedilo: »Diagonale: $D_9 = \dfrac{9 \cdot 6}{2} = 27$.« -/
 theorem primer3_racuni :
     (180:ℝ) - 140 = 40 ∧ (360:ℝ) / 40 = 9 ∧ #(cycleGraph 9)ᶜ.edgeFinset = 9 * 6 / 2 ∧
     9 * 6 / 2 = 27 := by
@@ -220,7 +259,9 @@ theorem primer3_racuni :
   rw [diagonale 9 (by norm_num)]
 
 /-- Primer 3, korak 3: enačba (n − 2) · 180 = 140n ima edino rešitev n = 9
-(180n − 360 = 140n, 40n = 360). -/
+(180n − 360 = 140n, 40n = 360).
+trditev: MAT-OS-8/veckotniki#primer3-enacba
+besedilo: »$(n - 2) \cdot 180 = 140n$, torej $180n - 360 = 140n$, $40n = 360$, $n = 9$« -/
 theorem primer3_enacba (n : ℝ) : (n - 2) * 180 = 140 * n ↔ n = 9 := by
   constructor
   · intro h
@@ -230,7 +271,9 @@ theorem primer3_enacba (n : ℝ) : (n - 2) * 180 = 140 * n ↔ n = 9 := by
   · rintro rfl; norm_num
 
 /-- Primer 3: pravilni n-kotnik (n ≥ 3) ima notranji kot 140° natanko tedaj, ko je n = 9; enako
-zunanji kot 40° natanko pri n = 9. -/
+zunanji kot 40° natanko pri n = 9.
+trditev: MAT-OS-8/veckotniki#primer3
+besedilo: »Odgovor: to je pravilni devetkotnik« -/
 theorem primer3 (n : ℕ) (hn : 3 ≤ n) : (alfa n = 140 ↔ n = 9) ∧ (alfa' n = 40 ↔ n = 9) := by
   have h0 : (n:ℝ) ≠ 0 := by positivity
   have key : (360:ℝ) / n = 40 ↔ n = 9 := by
@@ -243,7 +286,9 @@ theorem primer3 (n : ℕ) (hn : 3 ≤ n) : (alfa n = 140 ↔ n = 9) ∧ (alfa' n
   constructor <;> intro h <;> linarith
 
 /-- Primer 4 s Premisli: (n − 2) · 180 = 1440 natanko tedaj, ko je n − 2 = 8, torej n = 10 (desetkotnik);
-preizkus 8 · 180 = 1440. -/
+preizkus 8 · 180 = 1440.
+trditev: MAT-OS-8/veckotniki#primer4
+besedilo: »$n = 10$, to je desetkotnik.« -/
 theorem primer4 (n : ℕ) : S n = 1440 ↔ n = 10 := by
   simp only [S]
   constructor
@@ -252,14 +297,18 @@ theorem primer4 (n : ℕ) : S n = 1440 ↔ n = 10 := by
     exact_mod_cast (show (n:ℝ) = 10 by linarith)
   · rintro rfl; norm_num
 
-/-- Primer 4, preizkus: 1440 : 180 = 8 in 8 · 180 = 1440. -/
+/-- Primer 4, preizkus: 1440 : 180 = 8 in 8 · 180 = 1440.
+trditev: MAT-OS-8/veckotniki#primer4-preizkus
+besedilo: »Preizkus: $8 \cdot 180^\circ = 1440^\circ$.« -/
 theorem primer4_preizkus : (1440:ℝ) / 180 = 8 ∧ (8:ℝ) * 180 = 1440 := by norm_num
 
 /-! ## Pogoste napake -/
 
 /-- Pogoste napake: n · 180 da za petkotnik 900 in za trikotnik 540, pravilno S_5 = 540, S_3 = 180;
 diagonale osemkotnika 8 · 5 = 40 je dvojno štetje, D_8 = 8 · 5/2 = 20, D_8 ≠ 8 − 3; 360/6 = 60 je zunanji
-kot, notranji je 180 − 60 = 120; 540 : 5 = 108 velja le za pravilni petkotnik. -/
+kot, notranji je 180 − 60 = 120; 540 : 5 = 108 velja le za pravilni petkotnik.
+trditev: MAT-OS-8/veckotniki#pogoste-napake
+besedilo: »Popravek: $D_8 = \dfrac{8 \cdot 5}{2} = 20$.« -/
 theorem pogoste_napake :
     (5:ℝ) * 180 = 900 ∧ (3:ℝ) * 180 = 540 ∧ S 5 = 540 ∧ S 3 = 180 ∧ 8 * 5 = 40 ∧
     #(cycleGraph 8)ᶜ.edgeFinset = 8 * 5 / 2 ∧ 8 * 5 / 2 = 20 ∧ #(cycleGraph 8)ᶜ.edgeFinset ≠ 8 - 3 ∧
@@ -269,17 +318,22 @@ theorem pogoste_napake :
     by norm_num, alfa_eq 6 (by norm_num), by norm_num, ?_⟩ <;> simp only [S] <;> norm_num
 
 /-- Pogoste napake, Preveri se 2: romb s kotom 70° ima sosednji kot 180 − 70 = 110, ki ni enak 70, zato
-koti niso vsi enaki. -/
+koti niso vsi enaki.
+pomozno – lekcija trdi, da ima romb kote 70° in 110° (geometrija paralelograma), izrek dokaže le 180 − 70 = 110 in 70 ≠ 110 -/
 theorem romb : (180:ℝ) - 70 = 110 ∧ (70:ℝ) ≠ 110 := by norm_num
 
 /-! ## Drugače -/
 
 /-- Na sliki: petkotnik razpade na 3 trikotnike, 3 · 180 = 540; pri šestkotniku 4, pri sedemkotniku 5
-trikotnikov. -/
+trikotnikov.
+trditev: MAT-OS-8/veckotniki#na-sliki
+besedilo: »$3 \cdot 180^\circ = 540^\circ$« -/
 theorem na_sliki : (5 - 2 = 3 ∧ (3:ℝ) * 180 = 540) ∧ 6 - 2 = 4 ∧ 7 - 2 = 5 := by norm_num
 
 /-- Iz vsakdanjega življenja, tlakovanje: 4 · 90 = 360, 6 · 60 = 360, 3 · 120 = 360; pravilni petkotnik ima
-kot 108°, in 360 : 108 ni celo število. -/
+kot 108°, in 360 : 108 ni celo število.
+trditev: MAT-OS-8/veckotniki#tlakovanje
+besedilo: »Pravilni petkotnik ima kot $108^\circ$, in $360 : 108$ ni celo število« -/
 theorem tlakovanje :
     (4:ℝ) * 90 = 360 ∧ (6:ℝ) * 60 = 360 ∧ (3:ℝ) * 120 = 360 ∧ alfa 5 = 108 ∧
     ¬ ∃ k : ℕ, (k:ℝ) * 108 = 360 := by
@@ -289,7 +343,9 @@ theorem tlakovanje :
   omega
 
 /-- Korak za korakom (pravilni petkotnik): 5 − 2 = 3, 3 · 180 = 540, 540 : 5 = 108, 360 : 5 = 72,
-108 + 72 = 180, 5 − 3 = 2, D_5 = 5 · 2/2 = 5. -/
+108 + 72 = 180, 5 − 3 = 2, D_5 = 5 · 2/2 = 5.
+trditev: MAT-OS-8/veckotniki#petkotnik
+besedilo: »En notranji kot: $540^\circ : 5 = 108^\circ$.« -/
 theorem petkotnik :
     5 - 2 = 3 ∧ (3:ℝ) * 180 = 540 ∧ (540:ℝ) / 5 = 108 ∧ alfa 5 = 108 ∧ alfa' 5 = 72 ∧
     (108:ℝ) + 72 = 180 ∧ 5 - 3 = 2 ∧ #(cycleGraph 5)ᶜ.edgeFinset = 5 * 2 / 2 := by
@@ -299,14 +355,18 @@ theorem petkotnik :
   · rw [diagonale 5 (by norm_num)]
 
 /-- Korak za korakom, tabela pravilnih večkotnikov: (α, α') = (60, 120), (90, 90), (120, 60), (135, 45),
-(144, 36) za n = 3, 4, 6, 8, 10; v vsaki vrstici je vsota 180. -/
+(144, 36) za n = 3, 4, 6, 8, 10; v vsaki vrstici je vsota 180.
+trditev: MAT-OS-8/veckotniki#tabela-pravilnih
+besedilo: »Opazi, da sta v vsaki vrstici kota skupaj $180^\circ$.« -/
 theorem tabela_pravilnih :
     (alfa 3 = 60 ∧ alfa' 3 = 120) ∧ (alfa 4 = 90 ∧ alfa' 4 = 90) ∧ (alfa 6 = 120 ∧ alfa' 6 = 60) ∧
     (alfa 8 = 135 ∧ alfa' 8 = 45) ∧ (alfa 10 = 144 ∧ alfa' 10 = 36) := by
   simp only [alfa, alfa', S]; norm_num
 
 /-- Bolj natančno: parov oglišč (povezav polnega grafa) je n(n − 1)/2, med njimi je n stranic, ostale so
-diagonale: D_n = n(n − 1)/2 − n (n ≥ 3). -/
+diagonale: D_n = n(n − 1)/2 − n (n ≥ 3).
+trditev: MAT-OS-8/veckotniki#diagonale-drugace
+besedilo: »Med temi daljicami je $n$ stranic, ostale so diagonale« -/
 theorem diagonale_drugace (m : ℕ) :
     #(⊤ : SimpleGraph (Fin (m + 3))).edgeFinset = (m + 3) * (m + 3 - 1) / 2 ∧
     #(cycleGraph (m + 3)).edgeFinset = m + 3 ∧
@@ -320,13 +380,17 @@ theorem diagonale_drugace (m : ℕ) :
   rw [h3]
   omega
 
-/-- Bolj natančno: n(n − 1)/2 − n = (n² − 3n)/2 = n(n − 3)/2 (računano v ℝ). -/
+/-- Bolj natančno: n(n − 1)/2 − n = (n² − 3n)/2 = n(n − 3)/2 (računano v ℝ).
+trditev: MAT-OS-8/veckotniki#diagonale-racun
+besedilo: »\frac{n(n - 1)}{2} - n = \frac{n^2 - 3n}{2} = \frac{n(n - 3)}{2}« -/
 theorem diagonale_racun (n : ℝ) : n * (n - 1) / 2 - n = (n ^ 2 - 3 * n) / 2 ∧
     (n ^ 2 - 3 * n) / 2 = n * (n - 3) / 2 := ⟨by ring, by ring⟩
 
 /-! ## Preveri se -/
 
-/-- Preveri se 1: vsota je (n − 2) · 180, ne n · 180 (razlika 360) in ne 360 (velja le za n = 4). -/
+/-- Preveri se 1: vsota je (n − 2) · 180, ne n · 180 (razlika 360) in ne 360 (velja le za n = 4).
+trditev: MAT-OS-8/veckotniki#preveri1
+besedilo: »To je vsota notranjih kotov le pri štirikotniku« -/
 theorem preveri1 (n : ℕ) : (n:ℝ) * 180 - S n = 360 ∧ (S n = 360 ↔ n = 4) := by
   refine ⟨by simp only [S]; ring, ?_⟩
   simp only [S]
@@ -335,7 +399,9 @@ theorem preveri1 (n : ℕ) : (n:ℝ) * 180 - S n = 360 ∧ (S n = 360 ↔ n = 4)
   · rintro rfl; norm_num
 
 /-- Preveri se 4: α = 6 · 180/8 = 1080/8 = 135; napačni odgovori: 360/8 = 45 (zunanji kot), 1080 (vsota),
-8 · 180/8 = 180. -/
+8 · 180/8 = 180.
+trditev: MAT-OS-8/veckotniki#preveri4
+besedilo: »$\alpha = \dfrac{6 \cdot 180^\circ}{8} = \dfrac{1080^\circ}{8} = 135^\circ$.« -/
 theorem preveri4 :
     alfa 8 = 6 * 180 / 8 ∧ (6:ℝ) * 180 / 8 = 1080 / 8 ∧ (1080:ℝ) / 8 = 135 ∧ alfa' 8 = 45 ∧
     (180:ℝ) - 45 = 135 ∧ S 8 = 1080 ∧ (8:ℝ) * 180 / 8 = 180 := by
@@ -344,7 +410,9 @@ theorem preveri4 :
   · simp only [alfa']; norm_num
   · simp only [S]; norm_num
 
-/-- Preveri se 5: D_7 = 7 · 4/2 = 14; napačna odgovora 7 · 4 = 28 in 7 − 3 = 4. -/
+/-- Preveri se 5: D_7 = 7 · 4/2 = 14; napačna odgovora 7 · 4 = 28 in 7 − 3 = 4.
+trditev: MAT-OS-8/veckotniki#preveri5
+besedilo: »$D_7 = \dfrac{7 \cdot 4}{2} = 14$.« -/
 theorem preveri5 :
     #(cycleGraph 7)ᶜ.edgeFinset = 7 * 4 / 2 ∧ 7 * 4 / 2 = 14 ∧ 7 * 4 = 28 ∧ 7 - 3 = 4 := by
   refine ⟨?_, by norm_num, by norm_num, by norm_num⟩
