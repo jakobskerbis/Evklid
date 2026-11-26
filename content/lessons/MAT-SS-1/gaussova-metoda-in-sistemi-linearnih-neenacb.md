@@ -218,7 +218,7 @@ Dobiš $0 = 0$, zato je rešitev neskončno. Izberemo $z = t$: $y = 1 + t$ in $x
 - Z ekvivalentnimi preoblikami spravi sistem v **trikotno obliko**: odstrani $x$ iz 2. in 3. enačbe, nato $y$ iz 3.
 - Nato vstavljaj nazaj od $z$ do $x$ in naredi preizkus.
 - Vrstica $0 = c$ ($c \neq 0$): sistem **nima rešitve**.
-- Vrstica $0 = 0$ (in nobene vrstice $0 = c$ s $c \neq 0$): **neskončno rešitev**; eno neznanko izberemo kot parameter $t$.
+- Vrstica $0 = 0$ (in ni nobene vrstice $0 = c$ s $c \neq 0$): **neskončno rešitev**; eno neznanko izberemo kot parameter $t$.
 
 **Neenačbe:**
 

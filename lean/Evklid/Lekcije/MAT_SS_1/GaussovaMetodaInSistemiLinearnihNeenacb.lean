@@ -1,6 +1,6 @@
 /-
 vir: content/lessons/MAT-SS-1/gaussova-metoda-in-sistemi-linearnih-neenacb.md
-sha256: 20f2bb2cb90d34463473d5cb6a32dc2459252a0d4d50e7b7c20e7779f832b163
+sha256: bcc3c184f8885173fa1d27ae0f3c3408bd0b589fff0ac9ca22e6c11e4c42d5cf
 Ni v Leanu: risbe in simulacija (številske premice, polravnine, »območje je trikotnik/štirikotnik«; dokazano
 je, katere točke so rešitve, oglišča kot presečišča robov in kateri robovi pripadajo območju); simulacija
 »B od« je dokazana za B = [b, ∞) (presek z [−1, 3) je prazen natanko pri b ≥ 3); geometrijska razlaga z

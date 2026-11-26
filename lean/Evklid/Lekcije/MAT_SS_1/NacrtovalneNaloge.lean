@@ -541,7 +541,7 @@ theorem kviz1 : (8 : ℝ) * (1 / 2) = 4 ∧ (4 : ℝ) < 6 ∧ (6 : ℝ) < 8 ∧ 
     (40 : ℝ) + 70 < 180 := by norm_num
 
 /-- Preveri se 1 (nabor c = 6, v_c = 2, α = 60°): krak {t(½ + (√3/2)i), t > 0} seka vzporednico Im z = 2 v eni sami
-točki C = 2/√3 + 2i, zato je trikotnik en sam. -/
+točki C = 2/√3 + 2i, zato je trikotnik en sam (na eni strani AB; zrcalni je skladen). -/
 theorem kviz1_visina (z : ℂ) :
     (z.im = 2 ∧ ∃ t : ℝ, 0 < t ∧ z = t * ⟨1 / 2, √3 / 2⟩) ↔ z = ⟨2 / √3, 2⟩ := by
   have h3 : (√3 : ℝ) ^ 2 = 3 := Real.sq_sqrt (by norm_num)

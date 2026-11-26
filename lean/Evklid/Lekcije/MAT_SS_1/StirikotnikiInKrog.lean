@@ -1,6 +1,6 @@
 /-
 vir: content/lessons/MAT-SS-1/stirikotniki-in-krog.md
-sha256: 0ea1b5b91f8cc4d073b1f4b91110f8fae2fd048a4743d9cc47bda310915aeb5e
+sha256: 2d43efe7086ac883129f769d620272fc764444d9942481f2adecaa06a4b75f4c
 Model: lastnosti likov so dokazane v realnem prostoru s skalarnim produktom `V` (točke so vektorji):
 paralelogram ABCD je B − A = C − D (u = B − A, w = D − A, C = A + u + w), pravokotnik še ⟪u, w⟫ = 0, romb še
 ‖u‖ = ‖w‖, trapez C − D = t(B − A) s t ≥ 0 (osnovnici vzporedni in enako usmerjeni), deltoid |AB| = |AD|,

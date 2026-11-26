@@ -32,7 +32,7 @@ Za vsak lik je najprej definicija, nato lastnosti:
 - **pravokotnik**: paralelogram s pravimi koti. Diagonali sta enako dolgi.
 - **romb**: paralelogram z enakimi stranicami. Diagonali sta pravokotni in razpolavljata kote.
 - **kvadrat**: pravokotnik z enakimi stranicami (hkrati romb). Ima vse lastnosti pravokotnika in romba.
-- **trapez**: vsaj en par vzporednih stranic (osnovnici $a$, $c$, kraka $b$, $d$). Srednjica (daljica med središčema krakov) je vzporedna osnovnicama; enakokraki trapez ima enaka kraka, ni paralelogram in ima enako dolgi diagonali.
+- **trapez**: vsaj en par vzporednih stranic (osnovnici $a$, $c$, kraka $b$, $d$). Srednjica (daljica med središčema krakov) je vzporedna osnovnicama; enakokraki trapez (enaka kraka, ni paralelogram) ima enako dolgi diagonali.
 - **deltoid**: dva para sosednjih enakih stranic. Diagonali sta pravokotni, ena diagonala je simetrala druge.
 
 Lastnosti so »podedovane«: vsak kvadrat je romb, vsak romb je paralelogram, paralelogram pa ni nujno pravokotnik. Kar velja za vsak paralelogram, zato velja tudi za pravokotnik, romb in kvadrat, ne da bi to dokazoval znova.
