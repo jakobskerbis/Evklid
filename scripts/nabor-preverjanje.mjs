@@ -750,7 +750,7 @@ if (v2.length < 1000) fail(`v2 ima le ${v2.length} trditev`);
 if (v2.filter((x) => !x.pravilno).length < 250) fail("v2 ima premalo napačnih trditev");
 zapisi(
   join(dirname(OUT), "nabor-v2.json"),
-  `Referenčni nabor v2 (N-01, docs/preverjanje.md): prvih ${V1} trditev je enakih kot v v1, ostale so nove družine. Resnica iz konstrukcije. Vseh ${v2.length - V1} novih trditev so pred zagonom preverjevalnikov na slepo (premešane, brez oznak) ocenili trije neodvisni pregledovalci (26. 11. 2026). Razhajanja: racun2-062 (5/5 + 5/5 = 2, ne 10/10 = 1) je pregledovalčeva napaka; racun2-084 in racun2-108 sta bili napaka nabora (−2^n namesto (−2)^n), popravljeni z oklepajem. Ustvari scripts/nabor-preverjanje.mjs; ne urejaj na roko.`,
+  `Referenčni nabor v2 (N-01, docs/preverjanje.md): prvih ${V1} trditev je enakih kot v v1, ostale so nove družine. Resnica iz konstrukcije. Vseh ${v2.length - V1} novih trditev so pred zagonom preverjevalnikov na slepo (premešane, brez oznak) ocenili trije neodvisni pregledovalci (ločeni agenti AI brez kode Evklida, ne človeški strokovnjaki; 26. 11. 2026). Razhajanja: racun2-062 (5/5 + 5/5 = 2, ne 10/10 = 1) je pregledovalčeva napaka; racun2-084 in racun2-108 sta bili napaka nabora (−2^n namesto (−2)^n), popravljeni z oklepajem. Ustvari scripts/nabor-preverjanje.mjs; ne urejaj na roko.`,
   v2,
   POLJA,
 );
