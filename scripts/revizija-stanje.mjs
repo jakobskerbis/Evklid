@@ -8,6 +8,7 @@
 //   node scripts/revizija-stanje.mjs --github              še odprti PR-ji z GitHuba (GITHUB_TOKEN ali GH_TOKEN)
 //   node scripts/revizija-stanje.mjs --pr-json pr.json     odprti PR-ji iz datoteke [{number, title, state}]
 //   node scripts/revizija-stanje.mjs --json izhod.json     poročilo še v JSON
+//   node scripts/revizija-stanje.mjs --repo lastnik/ime    drug repozitorij za --github (privzeto jakobskerbis/Evklid)
 //   node scripts/revizija-stanje.mjs --main <ref>          druga veja ali commit namesto origin/main
 //   node scripts/revizija-stanje.mjs --strogo              izhod 1, če je katera razlika (zahteva --github ali --pr-json)
 // Izhod 2 = napaka (ni registra, zgodovine ali odprtih PR-jev). Skripta ne dela fetch: refa najprej osveži sam.
@@ -21,12 +22,13 @@
 //   nepovezan   odprt PR v naslovu navaja AUDIT-NNN, vrstica NNN pa ga ne navaja (trk oznak ali manjka povezava)
 // Omejitev: združen PR, ki v naslovu omeni oznako le kot ozadje, šteje za popravek te ugotovitve.
 // Prisotnost oznake v testu ni dokaz, da test ponovi prvotni primer: to ostane ročni pregled (K-03).
-import { readFileSync, readdirSync, statSync, writeFileSync, existsSync } from "node:fs";
+import { readFileSync, readdirSync, writeFileSync, existsSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const REPO = "jakobskerbis/Evklid";
 
 export const STATUSI = [
   "NOVO",
@@ -149,9 +151,10 @@ function oznakeVsebine(besedilo) {
 export function oznakeVTestih(mapa = join(ROOT, "test")) {
   const out = new Map();
   const hodi = (m) => {
-    for (const ime of readdirSync(m)) {
+    for (const vnos of readdirSync(m, { withFileTypes: true })) {
+      const ime = vnos.name;
       const p = join(m, ime);
-      if (statSync(p).isDirectory()) hodi(p);
+      if (vnos.isDirectory()) hodi(p);
       // test tega skripta uporablja izmišljene oznake, zato ga preskočimo
       else if (/\.(c|m)?js$|\.json$/.test(ime) && ime !== "revizija-stanje.test.js") {
         for (const o of oznakeVsebine(String(readFileSync(p, "utf8")))) {
@@ -298,8 +301,8 @@ async function main() {
   try {
     if (arg("--pr-json")) odprti = JSON.parse(readFileSync(arg("--pr-json"), "utf8"));
     else if (process.argv.includes("--github")) {
-      const brand = JSON.parse(readFileSync(join(ROOT, "brand.json"), "utf8"));
-      const repo = (brand.repo || "").replace(/^https?:\/\/github\.com\//, "").replace(/\.git$/, "") || "jakobskerbis/Evklid";
+      const repo = arg("--repo") || REPO;
+      if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repo)) koncaj(`Neveljaven --repo: ${repo}`);
       odprti = await odprtiZGithuba(repo);
     }
   } catch (e) {
