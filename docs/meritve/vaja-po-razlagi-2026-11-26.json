@@ -4,7 +4,7 @@
  "ukaz": "node scripts/meri-vaja-po-razlagi.mjs --json <izid.json> --naloge <naloge.json>",
  "prej_commit": "c71794b9c2547cbd13f838501ada995ed6676f3f",
  "node": "v22.23.5",
- "ocenjevalec_nalog": "Claude Fable (model), en ocenjevalec; odstopanja preveril Claude (avtor PR), ne človek",
+ "ocenjevalec_nalog": "Claude Fable (model), en ocenjevalec; 168 nalog prej, 19 spremenjenih rešenih znova v dveh krogih; odstopanja preveril Claude (avtor PR), ne človek; popravke generatorjev je pregledal ločen pregledovalec Claude Fable",
  "izidi": {
   "potem": {
    "gumbov": 52,

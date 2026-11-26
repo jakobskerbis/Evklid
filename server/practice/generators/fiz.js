@@ -58,7 +58,7 @@ function prostiPad(level, r, topic) {
       solution: eqs("t", "\\sqrt{\\dfrac{2 \\cdot h}{g}}", `\\sqrt{\\dfrac{2 \\cdot ${qty(h, "m")}}{${qty(G_TEX, "m/s^2")}}}`, res(t, 2, "s")),
     };
   }
-  const t = level === 1 ? r.int(1, 5) : r.dec(0.5, 4, 1);
+  const t = level === 1 ? r.int(2, 8) : r.dec(0.5, 4, 1);
   if (level === 2) {
     // Pot v času t: h = g t² / 2.
     const h = (G * t * t) / 2;
@@ -78,7 +78,7 @@ function prostiPad(level, r, topic) {
   // Hitrost po času t: v = g t.
   const v = G * t;
   return {
-    text: `${Rec} spustimo z mostu. Kolikšna je ${rec === "kroglica" ? "njena" : "njegova"} hitrost po $${t}\\ \\mathrm{s}$ padanja, če zanemarimo zračni upor? Uporabi $g = ${G_TEX}\\ \\mathrm{m/s^2}$ in zaokroži na eno decimalko.`,
+    text: `${Rec} spustimo iz helikopterja, ki lebdi na mestu. Kolikšna je ${rec === "kroglica" ? "njena" : "njegova"} hitrost po $${t}\\ \\mathrm{s}$ padanja, če zanemarimo zračni upor? Uporabi $g = ${G_TEX}\\ \\mathrm{m/s^2}$ in zaokroži na eno decimalko.`,
     answer: num(v, "m/s", 1, {}, [
       [(G * t) / 2, "Pri hitrosti ni faktorja ½; ta je v formuli za pot."],
       [G / t, "Hitrost je g krat čas, ne deljeno s časom."],

@@ -31,7 +31,7 @@
   (`git checkout c71794b -- server/vaja-po-razlagi.js server/practice/generators public/sim/bio-data.js`).
 - »Potem«: glava tega PR (commit s tem poročilom), Node 22.23.
 - Ocenjevanje teme gumba: program (primerjava s sprejemljivimi temami). Ocenjevanje nalog: model Claude Fable je
-  naloge rešil sam, brez ključa (168 prej, nato 16 spremenjenih), in za vsako ocenil, ali je na temi in ali je
+  naloge rešil sam, brez ključa (168 prej, nato 19 spremenjenih v dveh krogih), in za vsako ocenil, ali je na temi in ali je
   besedilo nedvoumno. Odstopanja je ob kodi generatorja preveril Claude (avtor PR), ne človek. En ocenjevalec, zato
   ujemanja ni.
 
@@ -72,6 +72,11 @@ Naloge (popravljeno v generatorjih; velja tudi za Vadnico):
 - `s3-imunost` (`V173/2`): »Solna kislina v želodcu« je imela dva zagovorljiva odgovora, ker so pregrade del
   nespecifične obrambe. Kategoriji sta zdaj »pregrada (prva obrambna linija)« in »nespecifična obramba v telesu
   (druga linija)«.
+- Po pregledu vsebine (Claude Fable, ločen pregledovalec, ne človek): odštevanje ulomkov in vrstni red v 7. razredu ne
+  dasta več negativnega izida ali nič; pri ploščini iz obsega se sprejme tudi zaokrožen polmer (2 ali 3 decimalke, π ali
+  3,14); pri temi Krožni lok in krožni izsek ravni 1–2 mešata lok in izsek, raven 3 išče središčni kot iz dolžine loka,
+  polmer 2 je izločen (lok in izsek sta tedaj številsko enaka); prosti pad na ravni 1 ima čas 2–8 s (helikopter, ne most).
+  Od nalog v vzorcu so se spremenile `V005/2`, `V093/1`, `V096/1`; reševalec se je z vsemi ujemal.
 - Reševalec je po popravku označil `V008/3` (π ali 3,14) in `V097/3` (273 ali 273,15 K) kot nejasni, ker se rezultata
   pri zahtevanem zaokroževanju razlikujeta; preverjanje sprejme oba, zato nista šteta kot napaka.
 - Dvomljivo, ne šteto kot napaka: `V173/1` (serum: imunizacija ali specifična obramba), `V136/1–3` (Stehiometrija v SŠ 1
@@ -85,6 +90,8 @@ Naloge (popravljeno v generatorjih; velja tudi za Vadnico):
   (tema, generator) za vse generatorje z več temami.
 - Merjena je izbira teme iz besedila, ki ga bo pisal inštruktor; kako pogosto in s kakšnim besedilom ga bo res pisal,
   bo znano šele s pravilom v pozivu (profil B).
+- Naloge v že izdanih paketih brez povezave (`server/progress.js`, `server/zapiski.js`) se po objavi ocenjujejo z
+  novim generatorjem; pri spremenjenih generatorjih lahko isto seme da drugo nalogo kot na izdanem listu.
 - Odgovori nalog niso preračunani s SymPy (PV-10); 7 nalog ima odgovor s koeficienti (urejanje enačb), ki ga koda ne
   samopreveri; reševalec se je z vsemi 7 ujemal.
 
