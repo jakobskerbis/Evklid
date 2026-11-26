@@ -176,7 +176,7 @@ Pri prevzemu primerjaj rezultat s skico: lestev ne more segati višje, kot je do
 
 ## Drugače: Bolj natančno
 
-**Zakaj se odstotki ne izničijo.** Pocenitev in podražitev za isti delež $p$ dasta faktor $(1 - p)(1 + p) = 1 - p^2$. Za $p = 0{,}2$ je to $1 - 0{,}04 = 0{,}96$. Cena pade za $4\,\%$: $300 \cdot 0{,}96 = 288\,€$. Ker je $p^2$ vedno pozitiven, je končna cena vedno nižja od začetne, ne glede na vrstni red.
+**Zakaj se odstotki ne izničijo.** Pocenitev in podražitev za isti delež $p$ dasta faktor $(1 - p)(1 + p) = 1 - p^2$. Za $p = 0{,}2$ je to $1 - 0{,}04 = 0{,}96$. Cena pade za $4\,\%$: $300 \cdot 0{,}96 = 288\,€$. Ker je $p^2$ pri vsakem $p \neq 0$ pozitiven, je končna cena vedno nižja od začetne, ne glede na vrstni red.
 
 **Zakaj zaokrožiš šele na koncu.** Pri stebru je $V = 0{,}1\pi\,\mathrm{m^3}$. Če bi $\pi$ zaokrožil na $3$, bi dobil $0{,}3\,\mathrm{m^3}$ in le $25$ vreč, betona pa bi zmanjkalo. Vmesne rezultate zato piši na več decimalk ali pusti $\pi$ v zapisu, zaokrožiš šele odgovor.
 

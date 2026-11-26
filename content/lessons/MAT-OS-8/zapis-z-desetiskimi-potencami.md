@@ -23,7 +23,7 @@ Eksponent torej ne šteje ničel. Šteje, **za koliko mest premakneš decimalno 
 
 $$a \cdot 10^n, \qquad 1 \le a < 10$$
 
-Število $a$ ima pred vejico natanko eno števko, ki ni $0$. Eksponent $n$ pove, kolikokrat je treba $a$ pomnožiti z $10$, da dobiš prvotno število. Tak zapis imenujemo tudi **znanstveni zapis**.
+Število $a$ ima pred vejico natanko eno števko, ki ni $0$. Eksponent $n$ pove, kolikokrat je treba $a$ pomnožiti z $10$ (pri negativnem $n$ pa deliti z $10$), da dobiš prvotno število. Tak zapis imenujemo tudi **znanstveni zapis**.
 
 :::premisli
 Zapis $45 \cdot 10^5$ ima pravo vrednost, $4\,500\,000$. Zakaj ga vseeno ne štejemo za zapis z desetiško potenco?

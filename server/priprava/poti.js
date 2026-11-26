@@ -10,7 +10,7 @@ import { danIzbrisa } from "./ciscenje.js";
 import { uvoziVNiti, preberiVir, NapakaUvoza } from "./uvoz.js";
 import { shraniIzseke, razrezi, VRSTE, izbrisiPostavkeVira } from "./izseki.js";
 import { zemljevid } from "./teme.js";
-import { sestaviNacrt, ocenaTeme } from "./nacrt.js";
+import { sestaviNacrt, ocenaTeme, OPRAVLJENO_NALOG } from "./nacrt.js";
 import { STANJE_OCENE, LIST } from "../progress.js";
 import { rateLimiter } from "../vaja-iz-lista.js";
 import { razloziTemo, preveriRazlago, izberiIzseke, rezervaRazlage, odtisIzsekov, sporociloRazlage } from "./postavke.js";
@@ -68,6 +68,18 @@ const sklopiIz = (v) => {
   }
 };
 
+// Id teme iz kazala (MAT-SS-4/…): črke, števke, ločila poti; največ IZKLJUCENE_MAX tem.
+const TEMA_ID = /^[\w.:/-]{1,120}$/;
+const IZKLJUCENE_MAX = 200;
+const izkljuceneIz = (v) => {
+  try {
+    const a = JSON.parse(v || "[]");
+    return Array.isArray(a) ? a.filter((x) => typeof x === "string" && TEMA_ID.test(x)).slice(0, IZKLJUCENE_MAX) : [];
+  } catch {
+    return [];
+  }
+};
+
 const jsonIz = (v, privzeto) => {
   try {
     return v ? JSON.parse(v) : privzeto;
@@ -114,6 +126,8 @@ const pripravaVen = (r) => ({
   pot: r.pot ?? null,
   sklopi: sklopiIz(r.sklopi),
   dogodek_id: r.dogodek_id ?? null,
+  // Teme obsega, ki jih je učenec odstranil (PR 7, »tega ni na testu«).
+  izkljucene: izkljuceneIz(r.izkljucene),
   ...(r.virov !== undefined ? { virov: r.virov } : {}),
 });
 
@@ -255,7 +269,8 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     const p = ena(s, req);
     if (!p) return niPriprave(res);
     const b = req.body;
-    if (!b || typeof b !== "object" || Array.isArray(b) || (b.naslov === undefined && b.datum_testa === undefined)) return res.status(400).json({ error: "Ni sprememb." });
+    if (!b || typeof b !== "object" || Array.isArray(b) || (b.naslov === undefined && b.datum_testa === undefined && b.izkljucene === undefined))
+      return res.status(400).json({ error: "Ni sprememb." });
     const set = [];
     const args = [];
     if (b.naslov !== undefined) {
@@ -269,6 +284,13 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
       if (!d.ok) return res.status(400).json({ error: "Napačen datum testa." });
       set.push("datum_testa = ?");
       args.push(d.value);
+    }
+    if (b.izkljucene !== undefined) {
+      // Odstranjene teme obsega (PR 7): seznam id-jev tem; prazen seznam vrne vse teme v obseg.
+      const ok = Array.isArray(b.izkljucene) && b.izkljucene.length <= IZKLJUCENE_MAX && b.izkljucene.every((x) => typeof x === "string" && TEMA_ID.test(x));
+      if (!ok) return res.status(400).json({ error: "Napačen seznam tem.", code: "priprava_teme" });
+      set.push("izkljucene = ?");
+      args.push(b.izkljucene.length ? JSON.stringify([...new Set(b.izkljucene)]) : null);
     }
     set.push("zadnja_uporaba = ?");
     args.push(sqlCas(now()));
@@ -618,13 +640,13 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     const sled = db
       .prepare("SELECT COUNT(*) AS n, MAX(id) AS m, SUM(LENGTH(besedilo)) AS d, MAX(created_at) AS c FROM priprava_izseki WHERE priprava_id = ? AND student_id = ?")
       .get(p.id, s.id);
-    const kljuc = JSON.stringify([p.id, sled.n, sled.m, sled.d, sled.c, p.pot, p.sklopi, p.predmet, settings?.subject, settings?.curriculum_level, settings?.educational_track, settings?.school_system]);
+    const kljuc = JSON.stringify([p.id, sled.n, sled.m, sled.d, sled.c, p.pot, p.sklopi, p.izkljucene ?? null, p.predmet, settings?.subject, settings?.curriculum_level, settings?.educational_track, settings?.school_system]);
     if (zemljevidi.has(kljuc)) return zemljevidi.get(kljuc);
     const izseki = db
       .prepare("SELECT id, naslov, besedilo FROM priprava_izseki WHERE priprava_id = ? AND student_id = ? ORDER BY vir_id, zaporedje")
       .all(p.id, s.id)
       .map((r) => ({ id: r.id, naslov: r.naslov == null ? null : unseal(r.naslov), besedilo: unseal(r.besedilo) }));
-    const z = await zemljevid({ pot: p.pot, sklopi: sklopiIz(p.sklopi), predmet: p.predmet }, izseki, settings || {});
+    const z = await zemljevid({ pot: p.pot, sklopi: sklopiIz(p.sklopi), predmet: p.predmet, izkljucene: izkljuceneIz(p.izkljucene) }, izseki, settings || {});
     zemljevidi.set(kljuc, z);
     while (zemljevidi.size > 50) zemljevidi.delete(zemljevidi.keys().next().value);
     return z;
@@ -687,7 +709,9 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     const nacrt = sestaviNacrt({ danes, datum: p.datum_testa || null, teme, poskusniTest });
     zabeleziNapredek(s, p, danes, nacrt.pripravljenost);
     uporabljena(p);
-    res.set("Cache-Control", "no-store").json({ ...nacrt, obsegIzNacrta: !!z.obseg });
+    // Za »Danes« v vmesniku (PR 7): rešene naloge teme danes in koliko jih enota potrebuje (nacrt.js OPRAVLJENO_NALOG).
+    const nalogDanes = Object.fromEntries(teme.filter((t) => t.danesNalog).map((t) => [t.id, t.danesNalog]));
+    res.set("Cache-Control", "no-store").json({ ...nacrt, obsegIzNacrta: !!z.obseg, nalogDanes, potrebnoNalog: OPRAVLJENO_NALOG });
   });
 
   // Napredek priprave (PR 6): pripravljenost po dnevih (posnetek ob vsakem odprtju načrta ali napredka, en na dan) in

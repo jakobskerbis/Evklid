@@ -30,19 +30,25 @@ const list = emailList;
 
 const verifiedEmail = (p) => (p && !p.is_guest && p.email_verified_at ? String(p.email || "").trim().toLowerCase() : "");
 
-// Odmik Europe/Ljubljana od UTC (ms) ob trenutku t (CET +1 h, CEST +2 h).
+// Odmik Europe/Ljubljana od UTC (ms) ob trenutku t (CET +1 h, CEST +2 h). Oblikovalnik je en sam za modul: nov
+// Intl.DateTimeFormat na vsak klic je bil ~10 % procesorja na sporočilo inštruktorju (K-14, meritev 26. 11. 2026).
+const LJ_PARTS = new Intl.DateTimeFormat("en-US", { timeZone: "Europe/Ljubljana", hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" });
 function ljubljanaOffsetMs(t) {
-  const parts = Object.fromEntries(
-    new Intl.DateTimeFormat("en-US", { timeZone: "Europe/Ljubljana", hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" })
-      .formatToParts(new Date(t))
-      .map((x) => [x.type, x.value]),
-  );
+  const parts = Object.fromEntries(LJ_PARTS.formatToParts(new Date(t)).map((x) => [x.type, x.value]));
   return Date.UTC(+parts.year, +parts.month - 1, +parts.day, +parts.hour, +parts.minute, +parts.second) - t;
 }
-// Polnoč (začetek dneva) po slovenskem času za dan "YYYY-MM-DD" (ms).
+// Polnoč (začetek dneva) po slovenskem času za dan "YYYY-MM-DD" (ms). Izid je odvisen samo od dneva: zapomnimo si ga
+// (v praksi en sam dan, konec pilota; meja velikosti samo za vsak primer).
+const midnights = new Map();
 function ljubljanaMidnight(day) {
-  const utc = Date.parse(`${day}T00:00:00Z`);
-  return utc - ljubljanaOffsetMs(utc - ljubljanaOffsetMs(utc));
+  let ms = midnights.get(day);
+  if (ms === undefined) {
+    const utc = Date.parse(`${day}T00:00:00Z`);
+    ms = utc - ljubljanaOffsetMs(utc - ljubljanaOffsetMs(utc));
+    if (midnights.size >= 64) midnights.clear();
+    midnights.set(day, ms);
+  }
+  return ms;
 }
 const MAX_AHEAD_MS = 366 * 86400000;
 const warned = new Set();

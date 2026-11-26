@@ -575,7 +575,10 @@ export const MAT_GENERATORS = [
       "MAT-OS-7/mnozenje-in-deljenje-ulomkov",
       "MAT-OS-7/razsirjanje-in-krajsanje-ulomkov",
     ],
-    gen(level, r) {
+    gen(level, r, topic) {
+      // Naloga mora biti na temi (meritev K-08): pri seštevanju in odštevanju samo + in −, pri množenju in deljenju samo · in :.
+      const sestevanje = /sestevanje-in-odstevanje/.test(topic || "");
+      const mnozenje = /mnozenje-in-deljenje/.test(topic || "");
       if (level === 3) {
         // Večkoračne in besedilne naloge z ulomki.
         const name = r.pick(NAMES);
@@ -583,7 +586,7 @@ export const MAT_GENERATORS = [
           const d = r.int(2, maxD);
           return [r.int(1, d - 1), d];
         };
-        const kind = r.pick(["ostanek", "del-od", "vrstni-red"]);
+        const kind = r.pick(sestevanje ? ["ostanek"] : mnozenje ? ["del-od", "vrstni-red"] : ["ostanek", "del-od", "vrstni-red"]);
         if (kind === "ostanek") {
           let f1, f2;
           do {
@@ -643,7 +646,9 @@ export const MAT_GENERATORS = [
         const [a1, b1] = reduce(...pickFrac(6));
         const [a2, b2] = reduce(...pickFrac(6));
         const [a3, b3] = reduce(...pickFrac(6));
-        const op = r.pick(["+", "-"]);
+        let op = r.pick(["+", "-"]);
+        // V 7. razredu še ni negativnih števil: razlika ne sme biti negativna.
+        if (op === "-" && a1 * b2 * b3 <= a2 * a3 * b1) op = "+";
         const [pn, pd] = reduce(a2 * a3, b2 * b3);
         const [n, d] = reduce(a1 * pd + (op === "+" ? 1 : -1) * pn * b1, b1 * pd);
         const L = (b1 * pd) / gcd(b1, pd);
@@ -654,16 +659,19 @@ export const MAT_GENERATORS = [
           data: false,
           formula: ["\\frac{a}{b} \\cdot \\frac{c}{d} = \\frac{a \\cdot c}{b \\cdot d}", `\\frac{a}{n} ${op} \\frac{b}{n} = \\frac{a ${op} b}{n}`],
           solution: `Najprej množimo: $${frac(a2, b2)} \\cdot ${frac(a3, b3)} = ${frac(a2 * a3, b2 * b3)}${a2 * a3 === pn && b2 * b3 === pd ? "" : ` = ${fracTex(pn, pd)}`}$\nNato ${op === "+" ? "seštejemo" : "odštejemo"}: $${frac(a1, b1)} ${op} ${fracTex(pn, pd)} = ${frac(a1 * (L / b1), L)} ${op} ${frac(pn * (L / pd), L)} = ${frac(a1 * (L / b1) + (op === "+" ? 1 : -1) * pn * (L / pd), L)}$\nRezultat: $${fracTex(n, d)}$`,
-          inputHint: "npr. 3/4, -1/2 ali 1 1/3",
+          inputHint: "npr. 3/4 ali 1 1/3",
         };
       }
-      const d1 = r.int(2, level === 1 ? 6 : 10);
-      const d2 = level === 1 ? d1 : r.int(2, 10);
+      let d1 = r.int(2, level === 1 ? 6 : 10);
+      let d2 = level === 1 ? d1 : r.int(2, 10);
       let n1 = r.int(1, d1 * (level === 3 ? 2 : 1));
       let n2 = r.int(1, d2);
       if (n1 === d1) n1 = n1 > 1 ? n1 - 1 : n1 + 1;
       if (n2 === d2) n2 = n2 > 1 ? n2 - 1 : n2 + 1;
-      const op = level === 1 ? r.pick(["+", "-"]) : r.pick(["+", "-", "·", ":"]);
+      let op = r.pick(sestevanje ? ["+", "-"] : mnozenje ? ["·", ":"] : level === 1 ? ["+", "-"] : ["+", "-", "·", ":"]);
+      // V 7. razredu še ni negativnih števil in razlika 0 ni smiselna naloga: pri odštevanju je prvi ulomek večji.
+      if (op === "-" && n1 * d2 === n2 * d1) op = "+";
+      else if (op === "-" && n1 * d2 < n2 * d1) [n1, d1, n2, d2] = [n2, d2, n1, d1];
       let n, d;
       if (op === "+") [n, d] = [n1 * d2 + n2 * d1, d1 * d2];
       if (op === "-") [n, d] = [n1 * d2 - n2 * d1, d1 * d2];
@@ -701,7 +709,7 @@ export const MAT_GENERATORS = [
         formula,
         // Vsak korak v svoji vrstici.
         solution: [`${frac(n1, d1)} ${opTex} ${frac(n2, d2)}`, ...steps.filter(Boolean), fracTex(n, d)].map((x, i) => (i ? `$= ${x}$` : `$${x}$`)).join("\n"),
-        inputHint: "npr. 3/4, -1/2 ali 1 1/3",
+        inputHint: "npr. 3/4 ali 1 1/3",
       };
     },
   },
@@ -1040,10 +1048,12 @@ export const MAT_GENERATORS = [
   {
     id: "kvadratni-koren",
     topics: ["MAT-OS-8/kvadratni-koren", "MAT-OS-8/kvadrat-stevila", "MAT-OS-8/realna-stevila"],
-    gen(level, r) {
+    gen(level, r, topic) {
       if (level === 1) {
         const n = r.int(2, 20);
-        const sq = r.next() < 0.5;
+        // Na temi (meritev K-08): pri kvadratnem korenu koren, pri kvadratu števila kvadrat, sicer oboje.
+        const u = r.next();
+        const sq = /kvadrat-stevila/.test(topic || "") ? true : /kvadratni-koren/.test(topic || "") ? false : u < 0.5;
         return {
           text: sq ? `Izračunaj: $${n}^2$` : `Izračunaj: $\\sqrt{${n * n}}$`,
           answer: withMistakes({ type: "number", value: sq ? n * n : n }, sq ? [[2 * n, "Kvadrat ni podvojitev: število pomnoži samo s sabo."]] : [[(n * n) / 2, "Koren ni polovica števila: iščeš število, ki pomnoženo samo s sabo da to število."]]),
@@ -1325,13 +1335,19 @@ export const MAT_GENERATORS = [
   {
     id: "krog",
     topics: ["MAT-OS-8/obseg-in-ploscina-kroga", "MAT-OS-8/krozni-lok-in-krozni-izsek"],
-    gen(level, r) {
+    gen(level, r, topic) {
+      // Naloga mora biti na temi (meritev K-08): pri obsegu in ploščini kroga ni krožnega loka, pri loku in izseku ni
+      // samo obsega ali ploščine celega kroga.
+      const lok = /krozni-lok/.test(topic || "");
+      const obsegTema = /obseg-in-ploscina-kroga/.test(topic || "");
       const u = r.pick(["cm", "m"]);
       const u2 = `${u}²`;
-      const rad = level === 1 ? r.int(2, 15) : r.dec(1.5, 20, 1);
+      let rad = level === 1 ? r.int(2, 15) : r.dec(1.5, 20, 1);
+      // Pri r = 2 sta dolžina loka in ploščina izseka številsko enaki (p = l · r / 2): zamenjave ne bi opazili.
+      if (lok && Math.abs(rad - 2) < 1e-9) rad = 3;
       const piNote = "Uporabi $\\pi \\approx 3{,}14$ ali tipko $\\pi$ na računalu.";
       const rDat = dat("r", tx(rad), u);
-      if (level === 3) {
+      const dolzinaLoka = () => {
         const alpha = r.pick([30, 45, 60, 72, 90, 120, 135, 150]);
         const l = (Math.PI * rad * alpha) / 180;
         return {
@@ -1346,7 +1362,63 @@ export const MAT_GENERATORS = [
           formula: "l = \\dfrac{\\pi r \\alpha}{180^\\circ}",
           solution: `Lok je $\\dfrac{${alpha}^\\circ}{360^\\circ}$ obsega $2\\pi r$, zato $l = \\dfrac{\\pi r \\alpha}{180^\\circ}$.\n${eqs("l", `\\dfrac{\\pi \\cdot ${qty(tx(rad), u)} \\cdot ${alpha}^\\circ}{180^\\circ}`, `\\approx ${qty(tx(l, 2), u)}`)}`,
         };
+      };
+      if (lok && level === 3) {
+        // Iz dolžine loka in polmera središčni kot (obrat formule).
+        const alpha = r.pick([30, 40, 45, 60, 72, 80, 90, 100, 120, 135, 150]);
+        const l = Number(((Math.PI * rad * alpha) / 180).toFixed(2));
+        const a = (180 * l) / (Math.PI * rad);
+        return {
+          text: `Krožni lok na krožnici s polmerom $${tx(rad)}\\ \\mathrm{${u}}$ je dolg $${tx(l)}\\ \\mathrm{${u}}$. Kolikšen je pripadajoči središčni kot? Zaokroži na cele stopinje. ${piNote}`,
+          answer: withMistakes({ type: "number", value: a, alsoAccept: [(180 * l) / (3.14 * rad)], unit: "°", unitAlternatives: ["stopinj", "stopinje"], decimals: 0 }, [
+            [(360 * l) / (Math.PI * rad), "Lok je del obsega $2\\pi r$: $\\alpha = \\dfrac{180^\\circ \\cdot l}{\\pi r}$, ne $360^\\circ$ v števcu."],
+            [(180 * l) / (Math.PI * rad * rad), "V imenovalcu je $\\pi r$, ne $\\pi r^2$ (to bi bilo pri ploščini izseka)."],
+            [(l * Math.PI * rad) / 180, "Formulo $l = \\dfrac{\\pi r \\alpha}{180^\\circ}$ moraš obrniti in izraziti $\\alpha$."],
+          ]),
+          hint: "Iz $l = \\dfrac{\\pi r \\alpha}{180^\\circ}$ izrazi kot: $\\alpha = \\dfrac{180^\\circ \\cdot l}{\\pi r}$.",
+          data: { given: [`l = ${qty(tx(l), u)}`, rDat], find: ["\\alpha"] },
+          formula: "\\alpha = \\dfrac{180^\\circ \\cdot l}{\\pi r}",
+          solution: eqs("\\alpha", "\\dfrac{180^\\circ \\cdot l}{\\pi r}", `\\dfrac{180^\\circ \\cdot ${qty(tx(l), u)}}{\\pi \\cdot ${qty(tx(rad), u)}}`, `\\approx ${tx(a, 1)}^\\circ \\approx ${Math.round(a)}^\\circ`),
+        };
       }
+      if (lok && r.next() < 0.5) return dolzinaLoka();
+      if (lok) {
+        // Ploščina krožnega izseka.
+        const alpha = r.pick([30, 45, 60, 72, 90, 120, 135, 150]);
+        const pi = (Math.PI * rad * rad * alpha) / 360;
+        return {
+          text: `Krožni izsek s središčnim kotom $${alpha}^\\circ$ je del kroga s polmerom $${tx(rad)}\\ \\mathrm{${u}}$. Izračunaj njegovo ploščino. Zaokroži na dve decimalki. ${piNote}`,
+          answer: withMistakes({ type: "number", value: pi, alsoAccept: [(3.14 * rad * rad * alpha) / 360], unit: u2, decimals: 2 }, [
+            [(Math.PI * rad * alpha) / 180, "To je dolžina loka, ne ploščina izseka."],
+            [Math.PI * rad * rad, "To je ploščina celega kroga; izsek je le del, ki pripada kotu α."],
+            [(Math.PI * rad * alpha) / 360, "Polmer moraš kvadrirati: $p_i = \\dfrac{\\pi r^2 \\alpha}{360^\\circ}$."],
+          ]),
+          hint: "Izsek je tak del kroga, kot je kot $\\alpha$ del $360^\\circ$: $p_i = \\dfrac{\\pi r^2 \\alpha}{360^\\circ}$.",
+          data: { given: [`\\alpha = ${alpha}^\\circ`, rDat], find: ["p_i"] },
+          formula: "p_i = \\dfrac{\\pi r^2 \\alpha}{360^\\circ}",
+          solution: `Izsek je $\\dfrac{${alpha}^\\circ}{360^\\circ}$ kroga s ploščino $\\pi r^2$, zato $p_i = \\dfrac{\\pi r^2 \\alpha}{360^\\circ}$.\n${eqs("p_i", `\\dfrac{\\pi \\cdot (${qty(tx(rad), u)})^2 \\cdot ${alpha}^\\circ}{360^\\circ}`, `\\approx ${qty(tx(pi, 2), u2)}`)}`,
+        };
+      }
+      if (level === 3 && obsegTema) {
+        // Iz obsega polmer, nato ploščina (dva koraka).
+        const o = r.int(10, 120);
+        const rr = o / (2 * Math.PI);
+        const pl = Math.PI * rr * rr;
+        const r314 = o / (2 * 3.14);
+        return {
+          text: `Obseg kroga meri $${o}\\ \\mathrm{${u}}$. Izračunaj njegovo ploščino. Zaokroži na dve decimalki. ${piNote}`,
+          answer: withMistakes({ type: "number", value: pl, alsoAccept: [3.14 * r314 * r314, ...[2, 3].flatMap((d) => [Math.PI * Number(rr.toFixed(d)) ** 2, 3.14 * Number(r314.toFixed(d)) ** 2])], unit: u2, decimals: 2 }, [
+            [Math.PI * (o / Math.PI) ** 2, "Iz obsega dobiš premer $o/\\pi$; polmer je polovica premera."],
+            [Math.PI * o * o, "Najprej iz obsega izračunaj polmer: $r = \\dfrac{o}{2\\pi}$."],
+            [rr, "To je polmer; ploščina je $\\pi r^2$."],
+          ]),
+          hint: "Iz $o = 2\\pi r$ izrazi polmer, nato uporabi $p = \\pi r^2$.",
+          data: { given: [`o = ${qty(o, u)}`], find: ["p"] },
+          formula: ["r = \\dfrac{o}{2\\pi}", "p = \\pi r^2"],
+          solution: `${eqs("r", "\\dfrac{o}{2\\pi}", `\\dfrac{${qty(o, u)}}{2\\pi}`, `\\approx ${qty(tx(rr, 3), u)}`)}\n${eqs("p", "\\pi r^2", "\\pi \\cdot \\left(\\dfrac{o}{2\\pi}\\right)^2", "\\dfrac{o^2}{4\\pi}", `\\dfrac{(${qty(o, u)})^2}{4\\pi}`, `\\approx ${qty(tx(pl, 2), u2)}`)}`,
+        };
+      }
+      if (level === 3) return dolzinaLoka();
       const area = r.next() < 0.5;
       const v = area ? Math.PI * rad * rad : 2 * Math.PI * rad;
       const v314 = area ? 3.14 * rad * rad : 2 * 3.14 * rad;
