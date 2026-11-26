@@ -32,6 +32,8 @@ test("pregled: izgubljen interval je napaka, izgubljena posamezna rešitev brez 
   assert.equal(casStatus({ ok: false, vrsta: "izguba", why: "manjka del rešitve x ∈ (2, 3]" }), "napaka");
   assert.equal(casStatus({ ok: false, vrsta: "izguba", why: "izgubljena rešitev a = -17" }), "nepreverjeno");
   assert.equal(casStatus({ ok: false, vrsta: "napaka", why: "" }), "napaka");
+  // pri neenačbi je izgubljeno krajišče napaka
+  assert.equal(casStatus({ ok: false, vrsta: "izguba", why: "izgubljena rešitev x = 2" }, { prej: "2x >= 4", potem: "x > 2" }), "napaka");
 });
 
 test("pregled: identiteti zapored ali identiteta ob enačbi nista korak", { skip: !HAVE && "SymPy ni na voljo" }, async () => {
@@ -41,8 +43,10 @@ test("pregled: identiteti zapored ali identiteta ob enačbi nista korak", { skip
   assert.equal(await k("(x + 6)^2 = x^2 + 12x + 35", "(4x + 1)(x + 3) = 4x^2 + 13x + 2"), true);
   assert.equal(await k("(a + 4)^2 - a^2 = 8a + 16", "8a + 16 = 176", "a"), true);
   assert.equal(await k("2x + 3 = 7", "2x = 4"), false);
-  // pravi korak v protislovje ostane korak (ukaz ga označi za napako)
+  // napačen korak v protislovje ali v identiteto ostane korak (ukaz ga označi za napako)
   assert.equal(await k("x + 1 = 2", "x + 1 = x + 2"), false);
+  assert.equal(await k("2x + 3 = 7", "2x + 3 = 2x + 3"), false);
+  assert.equal(await k("3(x + 1) = 3x + 4", "3x + 3 = 3x + 3"), false);
 });
 
 test("koraki: čiste vrstice, »ali« kot ena trditev, kandidati in pogoji niso koraki", () => {
@@ -72,6 +76,8 @@ test("odgovor: ujemanje s končno vrednostjo katere od relacij, sicer brez statu
   assert.equal(t("$x_1 = 2$, $x_2 = 3$", 5), null);
   // pregled: pas so decimalke odgovora, ne zapisa (z = 2 ne potrdi 2,28)
   assert.equal(t("$z = \\dfrac{508 - 500}{4} = 2$", 2.28, 2), null);
+  assert.equal(t("$p(3) = 0$", 0.5), null);
+  assert.equal(t("$z = 2$", 2.4), null);
 });
 
 test("popis generatorjev: vsak generator dobi status, poročilo ima vse statuse", { skip: !HAVE && "SymPy ni na voljo" }, async () => {

@@ -142,8 +142,9 @@ export function statusOdgovoraNaloge(t) {
   for (let i = fs.length - 1; i >= 0; i--) {
     const z = zadnjeStevilo(`$${fs[i]}$`);
     if (!z) continue;
-    // tolerančni pas so decimalke odgovora (če jih naloga določa), sicer decimalke zapisa: z = 2 ne potrdi 2,28
-    const d = a.decimals ?? z.decimalk;
+    // pas so decimalke odgovora (z = 2 ne potrdi 2,28); brez njih decimalke vrednosti odgovora ali zapisa, kar je
+    // strožje (p(3) = 0 ne potrdi odgovora 0,5)
+    const d = a.decimals ?? Math.max(z.decimalk, (String(a.value).split(".")[1] || "").length);
     const tol = 0.5 * 10 ** -d + 1e-9 * Math.max(1, Math.abs(a.value));
     if (Math.abs(z.vrednost - roundHalfUp(a.value, d)) <= tol || Math.abs(z.vrednost - a.value) <= tol) return { status: "numericno", tex: z.tex };
   }
@@ -153,9 +154,11 @@ export function statusOdgovoraNaloge(t) {
 // Korak z izgubljeno rešitvijo (a² = 289 → a = 17 pri dolžini, x > 0 pri koncentraciji) je pravilen, če rešitev
 // izloči kontekst naloge, ki ga ukaz ne vidi: brez statusa, a naštet v poročilu. Napaka je le drugačna množica.
 // Izgubljen interval (2x > 4 → x > 3) ali zoženo območje je napaka: tega kontekst navadno ne opraviči.
-export const casStatus = (r) => {
+// Pri neenačbi je izgubljeno krajišče (2x ≥ 4 → x > 2) napaka: izjema velja le za korak med enačbama.
+export const casStatus = (r, k = null) => {
   if (r.ok === true) return r.how === "symbolic" ? "izracunano" : "numericno";
-  if (r.ok === false) return r.vrsta === "izguba" && /^izgubljena rešitev /.test(r.why || "") ? "nepreverjeno" : "napaka";
+  const enacbi = !k || ![k.prej, k.potem].some((z) => /<|>/.test(z));
+  if (r.ok === false) return r.vrsta === "izguba" && enacbi && /^izgubljena rešitev /.test(r.why || "") ? "nepreverjeno" : "napaka";
   return "nepreverjeno";
 };
 
@@ -171,11 +174,12 @@ async function mnozica(cas, zapis, x) {
   }
   return null;
 }
+// Identiteta za enačbo (2x + 3 = 7 → 2x + 3 = 2x + 3) je napačen korak, ki ga ukaz ujame: tak par ostane.
 export async function niKorak(cas, k) {
   const a = await mnozica(cas, k.prej, k.neznanka);
   if (a === "R") return true;
-  const b = await mnozica(cas, k.potem, k.neznanka);
-  return b === "R" || (a === "prazna" && b === "prazna");
+  if (a !== "prazna") return false;
+  return (await mnozica(cas, k.potem, k.neznanka)) === "prazna";
 }
 
 /** Trditve ene naloge: [{ vir: racun|korak|odgovor, tex, status, why? }]. */
@@ -185,7 +189,7 @@ export async function trditveNaloge(t, { cas = null } = {}) {
     for (const k of koraki(t.solution)) {
       if (await niKorak(cas, k)) continue;
       const r = await cas.casCheck("korak", [k.prej, k.potem, k.neznanka, ""]);
-      out.push({ vir: "korak", tex: k.tex.slice(0, 160), status: casStatus(r), why: r.why || "", vrsta: r.vrsta || null });
+      out.push({ vir: "korak", tex: k.tex.slice(0, 160), status: casStatus(r, k), why: r.why || "", vrsta: r.vrsta || null });
     }
   }
   const o = statusOdgovoraNaloge(t);

@@ -1,6 +1,6 @@
 # Status generatorjev nalog (PV-10), 2026-11-26
 
-- Commit: `2a124c4f4c579d7fe04c1cff78d024ff5aad6baa`; ukaz: `node scripts/status-generatorjev.mjs --semena 5 --strogo --json docs/meritve/generatorji-2026-11-26.json --porocilo docs/meritve/generatorji-2026-11-26.md --dodatek docs/meritve/generatorji-2026-11-26-pregled.md`; brez modela AI; SymPy prek server/cas.js (ukaz korak, PV-06)
+- Commit: `e35abe54b8685e7f19fedd4221ca4313fac26c31`; ukaz: `node scripts/status-generatorjev.mjs --semena 5 --strogo --json docs/meritve/generatorji-2026-11-26.json --porocilo docs/meritve/generatorji-2026-11-26.md --dodatek docs/meritve/generatorji-2026-11-26-pregled.md`; brez modela AI; SymPy prek server/cas.js (ukaz korak, PV-06)
 - Vzorec: vsak generator, ravni 1–3, semena 1–5 (prva tema generatorja). Imenovalec deležev so generatorji (704).
 - Status generatorja je najšibkejši člen trditev »račun« in »korak« v vzorcu (statusOdgovora); »odgovor« v status
   ne šteje (skladnost prikaza). Rešitev pokaže odgovor pri vseh številskih nalogah: 332/704 (47,2 %; 95-% interval 43,5 %–50,9 %) generatorjev.
@@ -95,6 +95,15 @@ skupaj 60 nalog: račune, algebro, predznake, kote linearnega programa, stehiome
 - »odgovor« je skladnost prikaza, ne preračun, zato ne šteje več v status generatorja; poročilo ga navede posebej.
 - `\log` brez osnove (v šoli desetiški, v workerju naravni), mešano število `2\frac{1}{2}` in `x^{2}3` se ne
   prevedejo več v korak.
+
+## Kontrola s 30 semeni
+
+Z `--semena 30` (39.220 številskih nalog) imata napako še dva generatorja, ki ju 5 semen ni zajelo:
+`dod-fiz-ss-indukcija` (raven 3: ploščina $S$ izpisana na eno decimalko, $3{,}3 \cdot 10^{-2}$ namesto
+$3{,}26 \cdot 10^{-2}\ \mathrm{m^2}$, zato zapisani račun da 90,2 V namesto zapisanih 89,10 V; prava napaka zapisa,
+popravek v ločenem PR) in `exi-mat-solids` (raven 3: $\frac{8}{10}\ \text{h} = 48\ \text{min}$ je pravilno; lažni
+alarm preračuna, ki ne pretvori ur v minute, prijavljen profilu B). Koraki: 1.848/1.863 izračunano, 14 brez
+statusa, 0 napak.
 
 ## Omejitve
 
