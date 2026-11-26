@@ -84,6 +84,145 @@ korena), vsakega z lastnim časovnim robom 1,5 s; Piecewise, ki je 0 povsod raze
 največ »Numerično preverjeno«, razen če je lokalna točna algebra odgovor dokazala. Bloka RACUN (`server/racun.js`,
 profil B) še ne preslikamo v statuse; ko ga, velja isto pravilo.
 
+## Preverjevalnik korakov (PV-06)
+
+Ukaz `korak` v workerju presodi en prehod reševanja: `casCheck("korak", [prej, potem, neznanka, območje])`.
+`prej` in `potem` sta enačbi, neenačbi (tudi dvojna, `-2<x<2`), več delov, povezanih z »ali« (`x-1=0 ali x+2=0`,
+tudi `x=2, x=3`), ali izraza brez relacije. Neznanka je lahko prazna, kadar ima zapis eno samo spremenljivko;
+območje (`x>0`, `[0, 2*pi)`) omeji primerjavo. Odgovor ima poleg `ok`, `why` in `how` še `vrsta`:
+
+| `vrsta` | `ok` | Pomen |
+| --- | --- | --- |
+| `ekvivalenca` | true | Enaka množica realnih rešitev; pri izrazih enaka vrednost povsod, kjer je prvotni izraz definiran (`why` pove pogoj, npr. »velja za x ≠ 0« pri x²/x → x). |
+| `posledica` | true | Nova enačba ima vse rešitve in še tuje (kvadriranje, združevanje logaritmov): veljaven vmesni korak, `why` našteje tuje rešitve, ki jih mora preizkus zavreči. Samo pri enačbah. |
+| `izguba` | false | Manjkajo rešitve ali del območja: deljenje z izrazom, ki je lahko 0 (`why` ga imenuje), ln(x²) → 2 ln x. |
+| `napaka` | false | Drugačna množica rešitev ali drugačna vrednost izraza (s protiprimerom); tudi končni odgovor `x = …` s tujo rešitvijo (manjka preizkus) in neenačba z odvečnim delom. |
+
+Kako: definicijsko območje (imenovalci ≠ 0, argument logaritma > 0, pod sodim korenom ≥ 0, tan/cot) se prebere iz
+zapisa, preden ga SymPy okrajša (`parse(..., evaluate=False)`), zato `x²/x = 0 → x = 0` ni enakovreden korak.
+Množici rešitev da `solveset` na realni osi (rešitve, ki niso v območju, izločimo); pri periodičnih rešitvah brez
+omejenega območja primerjamo [−20, 20] in `how` je `numeric`. Korak, ki obe strani pomnoži s številom (tudi s
+parametri), je enakovreden simbolno brez reševanja. Izraza primerja `is_zero`, nato 80 naključnih točk: točka, kjer
+je prvotni izraz realen, novi pa ne, je `izguba`; različni vrednosti sta `napaka`. Dvočrkovno ime je v koraku
+produkt (`2ab` = 2·a·b). Vejica med argumenti `log(x-2,2)`, `root(8,3)` … je ločilo, ne decimalna vejica (to velja
+za vse ukaze; prej je bil `log(x-2,2)` prebran kot `ln(x - 2.2)`).
+
+Česar ne zna, vrne `ok: null`: sistem, veriga enačb, korak iz izraza v enačbo; enačba ali neenačba s parametrom
+(`a·x = a → x = 1`: `solveset` predpostavi a ≠ 0), razen koraka, ki obe strani pomnoži s številom; periodične
+rešitve z dolgo ali neznano periodo (okno [−20, 20] mora pokriti vsaj štiri periode, sicer bi `sin(πx/30) = 0 → x = 0`
+prešel); lihi koren spremenljivke (`x^(1/3) = −2`: SymPy vzame kompleksni glavni koren). Znana meja: osamljene točke,
+kjer izraz s kotnimi funkcijami ni definiran (sin x → tan x · cos x), ostanejo nepreverjene; zoženje na intervalu
+(ln(x²) → 2 ln x) ujame vzorčenje.
+
+Meritev: `node scripts/meri-korake.mjs` na `test/fixtures/preverjanje/koraki-v1.json` (50 znanih napačnih prehodov,
+tipične napake učencev, in 200 pravilnih: 121 ročnih in 79 vzorčnih s stalnimi koeficienti; nabor je sestavil
+isti avtor kot ukaz). 26. 11. 2026: ujetih 50/50 (95-% interval 92,9 %–100 %), lažni alarmi 0/200 (0 %–1,9 %),
+brez sodbe 0/250, simbolni dokaz pri 234/250 sodbah. Neodvisni slepi nabor `koraki-slepi-v1.json` (40 napačnih,
+80 pravilnih) je sestavil ločen agent AI (ne človek) iz opisa vmesnika, preden je videl kodo: ujetih 39/40
+(87,1 %–99,6 %), potrjenih napačnih 0/40 (0 %–8,8 %), lažni alarmi 0/80 (0 %–4,6 %), brez sodbe en napačni
+(a·x = a → x = 1) in en pravilni (s parametrom). Pred popravki po pregledu je slepi nabor našel en potrjen napačen
+korak (parameter) in štiri lažne alarme zunaj nabora (`log(·, osnova)`); ti in ugotovitve pregleda kode so zdaj
+testi. Test `test/cas-korak.test.js` zahteva oboje. Ukaz še ni
+priključen nikamor v aplikacijo; uporaba (skener, rešitve generatorjev) je naslednji korak načrta.
+
+## Status generatorjev (PV-10)
+
+`node scripts/status-generatorjev.mjs [--semena 5] [--predpona mat-] [--json p.json] [--porocilo p.md] [--dodatek f.md]
+[--strogo]` (brez modela AI, z SymPy okoli 10 s) da vsakemu generatorju nalog status. Za vsak generator vzame naloge
+ravni 1–3 s semeni 1…N (prva tema generatorja) in v vsaki rešitvi preveri tri vrste trditev:
+
+- **račun**: formula z relacijo, kot v popisu PV-04 (`server/lesson-math.js`, `server/lesson-identity.js`);
+- **korak**: zaporedni enačbi ali neenačbi z isto edino neznanko v »čistih« vrsticah (same formule, ločene z vejico ali
+  »ali«), prevedeni iz TeX brez izgube (`\pm`, indeksi, besedilo, funkcije f(5) ostanejo zunaj), gredo skozi ukaz
+  SymPy `korak` (PV-06). Formule v vrstici, povezane z »ali«, in zaporedni kandidati `x = 9`, `x = -3` so ena trditev;
+  rešena oblika ni začetek koraka (za njo pridejo kandidati, preizkus ali pogoji); celoštevilski `n`, `k` izpustimo.
+  Identiteta ob enačbi (razširjen kvadrat) in par dveh »enačb« brez rešitve nista korak (sicer bi ∅ = ∅ potrdil dve
+  napačni identiteti). Korak z izgubljeno posamezno rešitvijo (a² = 289 → a = 17 pri dolžini) je brez statusa in
+  naštet v poročilu: pravilen je, če rešitev izloči kontekst, ki ga ukaz ne vidi; izgubljen interval je napaka;
+- **odgovor**: ali je odgovor naloge (v pasu decimalk odgovora) končna vrednost katere od relacij v rešitvi. To je
+  skladnost prikaza, ne neodvisen preračun: brez ujemanja trditev ostane brez statusa, ne napaka, in v status
+  generatorja ne šteje (poročilo ga navede posebej).
+
+Status generatorja je najšibkejši člen (`statusOdgovora`) trditev »račun« in »korak« v vzorcu. Neodvisnega preračuna
+odgovora iz podatkov in obrazca s SymPy ni: obrazci generatorjev so zapisani za učenca (besedilo, mešane enote), ne za
+stroj.
+
+Izhodišče `docs/meritve/generatorji-2026-11-26.md` (5 semen): od 704 generatorjev jih ima 12 status numerično, 454
+delno, 3 napako, 235 nobenega (večinoma izbirni odgovori in besedilne rešitve). SymPy je potrdil 301 od 305 korakov
+simbolno, 4 imajo izgubljeno posamezno rešitev v kontekstu (koncentracija), nobeden ni napačen. Vseh 7 zaznanih napak
+je pregledal model AI (ne človek): dve sta pravi napaki zapisa (`dod-fiz-ss-plinska-enacba`: tlak, zaokrožen na eno
+decimalko, ne da zapisanega rezultata; `exk-mole`: levi strani manjka ×10²³), popravljeni v #1166 (poročilo je izdelano na commitu pred popravkom); tretja je
+lažni alarm preračuna (`\text{…}` kot enota, AUDIT-087). Drugi model AI je ročno preračunal 60 nalog 30 naključnih
+generatorjev brez zaznane napake: 0/30 zgrešenih napak (95 % interval 0–11 %); 3/30 imajo zaokroženo vrednost za »=«
+(PV-07).
+
+## Status nalog na polah (PV-11)
+
+`node scripts/status-pol.mjs [--pola NPZ9-MAT] [--json p.json] [--porocilo p.md] [--dodatek f.md] [--strogo]` (brez
+modela AI, s SymPy nekaj minut) da status vsaki nalogi naših pol mature, poklicne mature in NPZ (`content/exam-papers`,
+31 datotek z 41 izpitnimi polami). Za vsak del naloge vzame odgovor, točkovnik, vse poti rešitve in pravilno izbiro
+(`mistake` in napačne izbire so namerno napačne in niso trditve) ter preveri dve vrsti trditev:
+
+- **račun**: formula z relacijo, kot v popisu PV-04;
+- **korak**: v poteh rešitve isti izbor kot pri generatorjih (PV-10) in še verige v besedilu: kosi ene formule, ločeni z
+  »⇒«, ter zaporedni formuli, med katerima je le veznik »torej«, »sledi«, »zato«, »od tod«, »dobimo« (»oziroma« ni
+  veznik, pogosto pomeni »po vrsti«). »In« veže le enačbi sredi izpeljave (»…, torej $5x^2 = 180$ in $x^2 = 36$«); na
+  začetku je seznam ali sistem (»enačbe $A$, $B$ in $C$«), pri neenačbah hkratni pogoji. Sklep po pogojih, povezanih z
+  »in«, ni korak, ker ne sledi le iz zadnjega pogoja. Zaporedni enačbi ali neenačbi z isto neznanko, povezani z »ali«,
+  sta ena trditev.
+
+Korak, katerega prva formula nima realne rešitve (x² + 6x + 34 = 0, tudi v obliki »ali« in pri neenačbi), je brez
+statusa: iz prazne množice sledi vsaka formula, zato bi ga ukaz potrdil ne glede na drugo stran (velja tudi za
+generatorje, `vrstaKoraka`). Par, kjer sta obe formuli brez rešitve, ni korak in ni štet. Protislovje, ki preide v
+identiteto, ostane korak in ga ukaz označi za napako. Posledica (korak, ki doda rešitev, npr. kvadriranje) šteje za
+pravilen korak.
+
+Status naloge je najšibkejši člen. Vsako število v končnem odgovoru dela mora biti rezultat (desna stran zadnje
+relacije) katere od preverjenih trditev dela, sicer dobi del trditev »odgovor« brez statusa. Odgovor z izbirno črko, z
+opisom zunaj formul (več kot dve besedi ali besedilo pred formulo) ali brez števila ni preverjen, tudi če so vmesni
+računi pravilni; števila v indeksih, eksponentih in `\mathrm{}` (C₆H₁₂) ne štejejo. Zato »numerično« pomeni, da je
+preverjen tudi odgovor vsakega dela.
+
+Zaznavanje napak meri skript sam: vsak potrjen korak pokvari dvakrat (zadnje celo število v drugi formuli koraka in
+posebej v prvi + 1, `mutiraj`) in prešteje ujete in napačno potrjene; `--strogo` pade, če je katera vstavljena napaka
+potrjena ali SymPy ni odgovoril. Izhodišče `docs/meritve/pole-2026-11-26.md`: od 626 nalog jih ima 2 status
+numerično, 398 delno, 0 napako in 226 nobenega (besedilne rešitve, biologija, izbire); SymPy je potrdil 160 od 162
+korakov, 2 imata izgubljeno posamezno rešitev v kontekstu; vstavljenih napak 320/320 ujetih, 0 potrjenih. Poročilo ima
+vrstico za vsako nalogo (oznaka: pola, sklop, številka). Dva neodvisna pregledovalca (modela AI, ne človek) sta ročno
+preverila 152 parov korakov iz besedila in vzorec 40 potrjenih korakov in 40 potrjenih računov: 0/80 napačno
+potrjenih (95 % interval 0–4,6 %).
+
+## Enote in zaokroževanje (PV-07)
+
+`node scripts/enote-generatorjev.mjs [--semena 5] [--predpona dod-fiz] [--json p.json] [--porocilo p.md] [--dodatek f.md]
+[--strogo]` (brez modela AI, s SymPy okoli 5 s za 5 semen) preveri v generatorjih nalog z enotami dve stvari:
+
+- **enote**: vsaka formula naloge (`t.formula`) mora biti dimenzijsko pravilna, ko količine nadomestimo z enotami iz
+  podatkov (`t.data.given`; le enota, brez vrednosti, vsaka količina s svojim faktorjem e^(1/p), da se člen ne izbriše
+  ali odšteje), iskano količino pa z enoto odgovora. Novi ukaz SymPy `dim` (`server/cas/worker.py`) izračuna
+  dimenzijo vsakega dela enačbe; napaka je različna dimenzija, seštevanje količin različnih dimenzij ali argument
+  sin/cos/exp z dimenzijo (logaritem sme imeti argument z enoto: pH = −log c). Formula, katere deli so vsi brez
+  dimenzije (koti, odstotki, verjetnosti), ostane brez statusa, ker dimenzija o njej ne pove ničesar. Pretvorbe brez
+  količin ($1\ \mathrm{km} = 1000\ \mathrm{m}$) preveri ukaz `units` tudi po vrednosti; pretvorba s °C je brez statusa.
+  Vmesna količina dobi enoto iz svoje definicije ($\omega = 2\pi\nu$); taka formula je definicija, ne preverjanje, in
+  ostane brez statusa, formula, ki to enoto uporabi (tudi različica F_max), pa je največ »delno«. Primerjava samih
+  količin, kjer je enota ene iz imena druge (F = F_{tr}), je brez statusa. Brez statusa ostanejo tudi: število brez enote
+  ob količini ($T = t + 273$), relativna atomska masa (dogovor $M = M_r \cdot \mathrm{g/mol}$), konstanta ravnotežja brez
+  enote, formule z besedilom ali absolutno vrednostjo in količine, ki jih podatki ne naštejejo. Privzete konstante so le
+  $g$, $N_A$, $k_B$, $\varepsilon_0$, $\mu_0$ (R, h, G, c so v nalogah pogosto upor, višina, nukleotid, koncentracija);
+- **zaokroževanje**: število decimalk, ki ga zahteva besedilo (zadnje navodilo: »Zaokroži na …«, »na cente«, »round to 2
+  decimal places«, »nearest tenth«; »zapiši na dve decimalki« le, če ni navodila z »zaokroži«), mora biti enako decimalkam odgovora, po katerih se ocenjuje.
+  »Na centimeter« ostane brez statusa, ker je odvisno od enote odgovora.
+
+Nabor z znano resnico `test/fixtures/preverjanje/enote-v1.json` (40 parov formul in 10 parov pretvorb, sestavil isti
+avtor): ujetih 50/50, lažnih alarmov 0/50. Slepi nabor `enote-slepi-v1.json` (72 parov, sestavil drug model AI le iz
+opisa vmesnika): prva meritev 69/72 ujetih, 0/72 napačno potrjenih, 0/72 lažnih alarmov; po popravkih pregleda 70/72.
+Izhodišče `docs/meritve/enote-2026-11-26.md` (5 semen, 421 generatorjev z enotami): preverjenih je 1.039 od 5.323 formul
+(19,5 %; fizika 34 %), napaka v 1 generatorju (izkustvena formula iz besedila naloge, dogovor), zaokroževanje skladno
+pri 3.204 od 3.205 nalog z zahtevo. Dve formuli s številom brez enote, ki ju je našel prvi popis, sta popravljeni v #1171.
+Kodo in rezultate sta pregledala dva neodvisna modela AI (ne človek); ugotovitve in popravki so v
+`docs/meritve/enote-2026-11-26-pregled.md`.
+
 ## Meritev (PV-02, N-01)
 
 Prvi referenčni nabor `test/fixtures/preverjanje/nabor-v1.json` (384 trditev, 191 pravilnih; od N-01 začetek nabora v2) ustvari

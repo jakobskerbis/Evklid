@@ -37,14 +37,17 @@ variable {V P : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [MetricS
 
 /-- Razlaga 3 in 7, Povzetek (Pitagorov izrek in obrat): v trikotniku ABC velja a² + b² = c² (a = |BC|, b = |AC|,
 c = |AB|) natanko tedaj, ko je kot pri C pravi. Smer ⇐ je izrek, smer ⇒ obrat (zidarski trik); »če enakost ne
-velja, kot ni pravi« je ista ekvivalenca. -/
+velja, kot ni pravi« je ista ekvivalenca.
+trditev: MAT-OS-8/pitagorov-izrek#pitagora
+besedilo: »**7. Izrek velja tudi obratno.** Če za tri dolžine velja $a^2 + b^2 = c^2$ (in je $c$ najdaljša), je trikotnik pravokoten.« -/
 theorem pitagora (A B C : P) :
     dist B C ^ 2 + dist A C ^ 2 = dist A B ^ 2 ↔ ∠ A C B = π / 2 := by
   rw [← dist_sq_eq_dist_sq_add_dist_sq_iff_angle_eq_pi_div_two A C B, dist_comm B C]
   constructor <;> intro h <;> nlinarith [h]
 
 /-- Pomožna trditev za `example`-e: za vsaka a, b ≥ 0 obstaja pravokotni trikotnik v ℝ² s pravim kotom pri C in
-katetama |BC| = a, |AC| = b (C = (0, 0), B = (a, 0), A = (0, b)). -/
+katetama |BC| = a, |AC| = b (C = (0, 0), B = (a, 0), A = (0, b)).
+pomozno – orodje za primere izpolnljivosti (obstoj pravokotnega trikotnika z danima katetama) -/
 theorem obstaja_pravokotni (a b : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) :
     ∃ A B C : EuclideanSpace ℝ (Fin 2), ∠ A C B = π / 2 ∧ dist B C = a ∧ dist A C = b := by
   refine ⟨!₂[0, b], !₂[a, 0], !₂[0, 0], ?_, ?_, ?_⟩
@@ -57,7 +60,9 @@ theorem obstaja_pravokotni (a b : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) :
 example : (0 : ℝ) ≤ 3 ∧ (0 : ℝ) ≤ 4 := by norm_num
 
 /-- Razlaga 1, Povzetek in Preveri se 1: hipotenuza je najdaljša stranica: v pravokotnem trikotniku (pravi kot pri C,
-A ≠ C, B ≠ C) je vsaka kateta krajša od hipotenuze. -/
+A ≠ C, B ≠ C) je vsaka kateta krajša od hipotenuze.
+trditev: MAT-OS-8/pitagorov-izrek#hipotenuza-najdaljsa
+besedilo: »Hipotenuza je vedno najdaljša stranica trikotnika.« -/
 theorem hipotenuza_najdaljsa (A B C : P) (h : ∠ A C B = π / 2) (hA : A ≠ C) (hB : B ≠ C) :
     dist B C < dist A B ∧ dist A C < dist A B := by
   have hp := (pitagora A B C).mpr h
@@ -74,7 +79,9 @@ example : ∃ A B C : EuclideanSpace ℝ (Fin 2), ∠ A C B = π / 2 ∧ A ≠ C
   · intro e; rw [e, dist_self] at ha; norm_num at ha
 
 /-- Razlaga 3, Premisli (»hipotenuza je bližnjica«): v nerazrojenem pravokotnem trikotniku je c < a + b, torej
-a + b ≠ c. -/
+a + b ≠ c.
+trditev: MAT-OS-8/pitagorov-izrek#bliznjica
+besedilo: »hipotenuza pa je ravna bližnjica med istima ogliščema, zato je krajša« -/
 theorem bliznjica (A B C : P) (h : ∠ A C B = π / 2) (hA : A ≠ C) (hB : B ≠ C) :
     dist A B < dist B C + dist A C := by
   have hp := (pitagora A B C).mpr h
@@ -90,7 +97,9 @@ example : ∃ A B C : EuclideanSpace ℝ (Fin 2), ∠ A C B = π / 2 ∧ A ≠ C
   · intro e; rw [e, dist_self] at hb; norm_num at hb
   · intro e; rw [e, dist_self] at ha; norm_num at ha
 
-/-- Razlaga 4 in Povzetek (hipotenuza): v pravokotnem trikotniku je c = √(a² + b²). -/
+/-- Razlaga 4 in Povzetek (hipotenuza): v pravokotnem trikotniku je c = √(a² + b²).
+trditev: MAT-OS-8/pitagorov-izrek#hipotenuza
+besedilo: »Hipotenuza: $c = \sqrt{a^2 + b^2}$.« -/
 theorem hipotenuza (A B C : P) (h : ∠ A C B = π / 2) :
     dist A B = Real.sqrt (dist B C ^ 2 + dist A C ^ 2) := by
   rw [(pitagora A B C).mpr h, Real.sqrt_sq dist_nonneg]
@@ -100,7 +109,9 @@ example : ∃ A B C : EuclideanSpace ℝ (Fin 2), ∠ A C B = π / 2 := by
   obtain ⟨A, B, C, h, -⟩ := obstaja_pravokotni 6 8 (by norm_num) (by norm_num)
   exact ⟨A, B, C, h⟩
 
-/-- Razlaga 5 in Povzetek (kateta): v pravokotnem trikotniku je a = √(c² − b²). -/
+/-- Razlaga 5 in Povzetek (kateta): v pravokotnem trikotniku je a = √(c² − b²).
+trditev: MAT-OS-8/pitagorov-izrek#kateta
+besedilo: »Kateta: $a = \sqrt{c^2 - b^2}$.« -/
 theorem kateta (A B C : P) (h : ∠ A C B = π / 2) :
     dist B C = Real.sqrt (dist A B ^ 2 - dist A C ^ 2) := by
   rw [← (pitagora A B C).mpr h, add_sub_cancel_right, Real.sqrt_sq dist_nonneg]
@@ -111,7 +122,8 @@ example : ∃ A B C : EuclideanSpace ℝ (Fin 2), ∠ A C B = π / 2 := by
   exact ⟨A, B, C, h⟩
 
 /-- Pogoste napake in Preveri se 1 (izrek brez pravega kota): v enakostraničnem trikotniku s stranico s > 0
-a² + b² ≠ c² (s² + s² ≠ s²); to je le algebra, da noben kot ni pravi, pove `enakostranicni_60` (vsi koti π/3). -/
+a² + b² ≠ c² (s² + s² ≠ s²); to je le algebra, da noben kot ni pravi, pove `enakostranicni_60` (vsi koti π/3).
+pomozno – lekcija enakosti s² + s² ≠ s² ne zapiše; splošno »drugače $a^2 + b^2$ ni enako $c^2$« dokaže pitagora, ne ta algebrski primer -/
 theorem enakostranicni (s : ℝ) (hs : 0 < s) : s ^ 2 + s ^ 2 ≠ s ^ 2 := by
   intro h; nlinarith
 
@@ -121,7 +133,9 @@ example : (0 : ℝ) < 4 := by norm_num
 /-! ## Zakaj se tega učimo -/
 
 /-- Zakaj se tega učimo (uganka z vrvjo): edina delitev 12 enot na tri cele stranice a ≤ b ≤ c, za katero je
-a² + b² = c² (trikotnik s pravim kotom, glej `pitagora`), je 3, 4, 5. -/
+a² + b² = c² (trikotnik s pravim kotom, glej `pitagora`), je 3, 4, 5.
+trditev: MAT-OS-8/pitagorov-izrek#uganka
+besedilo: »Pravi kot dobiš pri delitvi $3$, $4$, $5$« -/
 theorem uganka (a b c : ℕ) (ha : 0 < a) (hab : a ≤ b) (hbc : b ≤ c) (hs : a + b + c = 12) :
     a ^ 2 + b ^ 2 = c ^ 2 ↔ a = 3 ∧ b = 4 ∧ c = 5 := by
   constructor
@@ -136,10 +150,12 @@ theorem uganka (a b c : ℕ) (ha : 0 < a) (hab : a ≤ b) (hbc : b ≤ c) (hs : 
 /-- Predpostavke `uganka` se dajo izpolniti (3, 4, 5). -/
 example : 0 < 3 ∧ 3 ≤ 4 ∧ 4 ≤ 5 ∧ 3 + 4 + 5 = 12 := by norm_num
 
-/-- Zakaj se tega učimo: trikotnika 4, 4, 4 in 2, 5, 5 nista pravokotna (16 + 16 ≠ 16, 4 + 25 ≠ 25). -/
+/-- Zakaj se tega učimo: trikotnika 4, 4, 4 in 2, 5, 5 nista pravokotna (16 + 16 ≠ 16, 4 + 25 ≠ 25).
+pomozno – lekcija računa 16 + 16 ≠ 16, 4 + 25 ≠ 25 ne zapiše; trikotnika le opiše (enakostraničen, ozek in koničast) -/
 theorem nista_pravokotna : (4 : ℝ) ^ 2 + 4 ^ 2 ≠ 4 ^ 2 ∧ (2 : ℝ) ^ 2 + 5 ^ 2 ≠ 5 ^ 2 := by norm_num
 
-/-- Pomožno za `enakostranicni_60`: če so vse tri stranice 4, je kot pri srednjem oglišču π/3 (kosinusni izrek). -/
+/-- Pomožno za `enakostranicni_60`: če so vse tri stranice 4, je kot pri srednjem oglišču π/3 (kosinusni izrek).
+pomozno – orodje za enakostranicni_60 (kosinusni izrek) -/
 theorem kot_60 (A B C : P) (h1 : dist A B = 4) (h2 : dist B C = 4) (h3 : dist A C = 4) :
     ∠ A B C = π / 3 := by
   have h := dist_sq_eq_dist_sq_add_dist_sq_sub_two_mul_dist_mul_dist_mul_cos_angle A B C
@@ -149,7 +165,9 @@ theorem kot_60 (A B C : P) (h1 : dist A B = 4) (h2 : dist B C = 4) (h3 : dist A 
     ⟨by positivity, by linarith [Real.pi_pos]⟩ hc
 
 /-- Zakaj se tega učimo: v enakostraničnem trikotniku 4, 4, 4 merijo vsi trije koti 60° (π/3), po kosinusnem
-izreku; noben ni pravi. -/
+izreku; noben ni pravi.
+trditev: MAT-OS-8/pitagorov-izrek#enakostranicni-60
+besedilo: »Trikotnik $4$, $4$, $4$ je enakostraničen, vsi njegovi koti merijo $60^\circ$.« -/
 theorem enakostranicni_60 (A B C : P) (h1 : dist A B = 4) (h2 : dist B C = 4) (h3 : dist A C = 4) :
     ∠ B A C = π / 3 ∧ ∠ A B C = π / 3 ∧ ∠ A C B = π / 3 := by
   refine ⟨kot_60 B A C (by rw [dist_comm]; exact h1) h3 h2, kot_60 A B C h1 h2 h3,
@@ -164,7 +182,9 @@ example : ∃ A B C : EuclideanSpace ℝ (Fin 2), dist A B = 4 ∧ dist B C = 4 
     norm_num [Real.dist_eq, mul_pow]
 
 /-- Zakaj se tega učimo, Razlaga 7 in Preveri se 5 (zidarji, okvir): 60² + 80² = 3600 + 6400 = 10 000 = 100²
-in √10 000 = 100 (ne 60 + 80 = 140). -/
+in √10 000 = 100 (ne 60 + 80 = 140).
+trditev: MAT-OS-8/pitagorov-izrek#zidarji
+besedilo: »$60^2 + 80^2 = 3600 + 6400 = 10\,000 = 100^2$« -/
 theorem zidarji :
     (60 : ℝ) ^ 2 + 80 ^ 2 = 3600 + 6400 ∧ (3600 : ℝ) + 6400 = 10000 ∧ (10000 : ℝ) = 100 ^ 2 ∧
       Real.sqrt 10000 = 100 ∧ (60 : ℝ) + 80 = 140 :=
@@ -172,7 +192,9 @@ theorem zidarji :
     (Real.sqrt_eq_iff_mul_self_eq_of_pos (by norm_num)).mpr (by norm_num), by norm_num⟩
 
 /-- Zakaj se tega učimo in Razlaga 7: vogal z odmerjenima 60 cm in 80 cm ter razdaljo 100 cm med oznakama je
-pravi (obrat izreka). -/
+pravi (obrat izreka).
+trditev: MAT-OS-8/pitagorov-izrek#zidarski-vogal
+besedilo: »Na eni steni odmerijo $60\,\text{cm}$, na drugi $80\,\text{cm}$. Če je razdalja med oznakama natanko $100\,\text{cm}$, je vogal pravi.« -/
 theorem zidarski_vogal (A B C : P) (ha : dist B C = 60) (hb : dist A C = 80) (hc : dist A B = 100) :
     ∠ A C B = π / 2 := by
   rw [← pitagora, ha, hb, hc]; norm_num
@@ -188,16 +210,22 @@ example : ∃ A B C : EuclideanSpace ℝ (Fin 2), dist B C = 60 ∧ dist A C = 8
 /-! ## Razlaga: številke -/
 
 /-- Razlaga 2 (kvadrati nad 3, 4, 5 in tabela): 3² + 4² = 9 + 16 = 25 = 5², 36 + 64 = 100 = 10²,
-25 + 144 = 169 = 13². -/
+25 + 144 = 169 = 13².
+trditev: MAT-OS-8/pitagorov-izrek#tabela
+besedilo: »| $3$ | $4$ | $9 + 16 = 25$ | $5$ | | $6$ | $8$ | $36 + 64 = 100$ | $10$ | | $5$ | $12$ | $25 + 144 = 169$ | $13$ | V vsaki vrstici je vsota v tretjem stolpcu natanko kvadrat izmerjene hipotenuze: $25 = 5^2$, $100 = 10^2$, $169 = 13^2$.« -/
 theorem tabela :
     (3 : ℝ) ^ 2 + 4 ^ 2 = 9 + 16 ∧ (9 : ℝ) + 16 = 25 ∧ (25 : ℝ) = 5 ^ 2 ∧
     (6 : ℝ) ^ 2 + 8 ^ 2 = 36 + 64 ∧ (36 : ℝ) + 64 = 100 ∧ (100 : ℝ) = 10 ^ 2 ∧
     (5 : ℝ) ^ 2 + 12 ^ 2 = 25 + 144 ∧ (25 : ℝ) + 144 = 169 ∧ (169 : ℝ) = 13 ^ 2 := by norm_num
 
-/-- Razlaga 3, Premisli in Preveri se 1: pri 3, 4, 5 je 3 + 4 = 7 ≠ 5. -/
+/-- Razlaga 3, Premisli in Preveri se 1: pri 3, 4, 5 je 3 + 4 = 7 ≠ 5.
+trditev: MAT-OS-8/pitagorov-izrek#vsota-dolzin
+besedilo: »Ne velja: $3 + 4 = 7$, hipotenuza pa meri le $5$.« -/
 theorem vsota_dolzin : (3 : ℝ) + 4 = 7 ∧ (3 : ℝ) + 4 ≠ 5 := by norm_num
 
-/-- Razlaga 4, Preveri: kateti 6 in 8 dasta c² = 100 in c = √100 = 10 (za vsak tak pravokotni trikotnik). -/
+/-- Razlaga 4, Preveri: kateti 6 in 8 dasta c² = 100 in c = √100 = 10 (za vsak tak pravokotni trikotnik).
+trditev: MAT-OS-8/pitagorov-izrek#razlaga4
+besedilo: »$c^2 = 100$, $c = \sqrt{100} = 10$« -/
 theorem razlaga4 (A B C : P) (h : ∠ A C B = π / 2) (ha : dist B C = 6) (hb : dist A C = 8) :
     dist A B ^ 2 = 100 ∧ dist A B = 10 := by
   have hp := (pitagora A B C).mpr h
@@ -210,7 +238,9 @@ theorem razlaga4 (A B C : P) (h : ∠ A C B = π / 2) (ha : dist B C = 6) (hb : 
 example : ∃ A B C : EuclideanSpace ℝ (Fin 2), ∠ A C B = π / 2 ∧ dist B C = 6 ∧ dist A C = 8 :=
   obstaja_pravokotni 6 8 (by norm_num) (by norm_num)
 
-/-- Razlaga 5, Premisli: s hipotenuzo 10 in kateto 6 je druga kateta 8 (10² − 6² = 64), torej ne 12. -/
+/-- Razlaga 5, Premisli: s hipotenuzo 10 in kateto 6 je druga kateta 8 (10² − 6² = 64), torej ne 12.
+trditev: MAT-OS-8/pitagorov-izrek#razlaga5-premisli
+besedilo: »Račun to potrdi: $10^2 - 6^2 = 64$, druga kateta meri $8\,\text{cm}$.« -/
 theorem razlaga5_premisli (A B C : P) (h : ∠ A C B = π / 2) (hc : dist A B = 10) (hb : dist A C = 6) :
     dist B C = 8 := by
   rw [kateta A B C h, hc, hb]
@@ -224,7 +254,9 @@ example : ∃ A B C : EuclideanSpace ℝ (Fin 2), ∠ A C B = π / 2 ∧ dist A 
   rw [hipotenuza A B C h, ha, hb]
   exact (Real.sqrt_eq_iff_mul_self_eq_of_pos (by norm_num)).mpr (by norm_num)
 
-/-- Razlaga 5, Preveri: hipotenuza 13, kateta 12, druga kateta √(169 − 144) = √25 = 5. -/
+/-- Razlaga 5, Preveri: hipotenuza 13, kateta 12, druga kateta √(169 − 144) = √25 = 5.
+trditev: MAT-OS-8/pitagorov-izrek#razlaga5-preveri
+besedilo: »$\sqrt{169 - 144} = \sqrt{25} = 5$« -/
 theorem razlaga5_preveri (A B C : P) (h : ∠ A C B = π / 2) (hc : dist A B = 13) (hb : dist A C = 12) :
     dist B C = 5 := by
   rw [kateta A B C h, hc, hb]
@@ -239,19 +271,25 @@ example : ∃ A B C : EuclideanSpace ℝ (Fin 2), ∠ A C B = π / 2 ∧ dist A 
   rw [hipotenuza A B C h, ha, hb]
   exact (Real.sqrt_eq_iff_mul_self_eq_of_pos (by norm_num)).mpr (by norm_num)
 
-/-- Razlaga 6 in Povzetek: kateti 1 in 1 dasta c = √2, ki je iracionalen; c ≈ 1,41 (1,41 < √2 < 1,415). -/
+/-- Razlaga 6 in Povzetek: kateti 1 in 1 dasta c = √2, ki je iracionalen; c ≈ 1,41 (1,41 < √2 < 1,415).
+trditev: MAT-OS-8/pitagorov-izrek#koren2
+besedilo: »Pri katetah $1$ in $1$ dobimo $c^2 = 2$ in $c = \sqrt{2}$. To je iracionalno število, zato ga zapišemo približno: $c \approx 1{,}41$.« -/
 theorem koren2 :
     Real.sqrt ((1 : ℝ) ^ 2 + 1 ^ 2) = Real.sqrt 2 ∧ Irrational (Real.sqrt 2) ∧
       (141 : ℝ) / 100 < Real.sqrt 2 ∧ Real.sqrt 2 < 1415 / 1000 :=
   ⟨by norm_num, irrational_sqrt_two, (Real.lt_sqrt (by norm_num)).mpr (by norm_num),
     (Real.sqrt_lt' (by norm_num)).mpr (by norm_num)⟩
 
-/-- Razlaga 6, Preveri: kateti 1 in 2 dasta c = √5, in ker je 4 < 5 < 9, je 2 < √5 < 3. -/
+/-- Razlaga 6, Preveri: kateti 1 in 2 dasta c = √5, in ker je 4 < 5 < 9, je 2 < √5 < 3.
+trditev: MAT-OS-8/pitagorov-izrek#koren5
+besedilo: »$c = \sqrt{5}$; ker je $4 < 5 < 9$, je $c$ med $2$ in $3$.« -/
 theorem koren5 : Real.sqrt ((1 : ℝ) ^ 2 + 2 ^ 2) = Real.sqrt 5 ∧ (2 : ℝ) < Real.sqrt 5 ∧ Real.sqrt 5 < 3 :=
   ⟨by norm_num, (Real.lt_sqrt (by norm_num)).mpr (by norm_num), (Real.sqrt_lt' (by norm_num)).mpr (by norm_num)⟩
 
 /-- Razlaga 7, Preveri in Preveri se 1: trikotnik 4, 5, 6 nima pravega kota (16 + 25 = 41 ≠ 36 = 6²); za vsak
-trikotnik s temi stranicami (c = 6 nasproti C) noben kot ni pravi (pri A: 5² + 6² ≠ 4², pri B: 4² + 6² ≠ 5²). -/
+trikotnik s temi stranicami (c = 6 nasproti C) noben kot ni pravi (pri A: 5² + 6² ≠ 4², pri B: 4² + 6² ≠ 5²).
+trditev: MAT-OS-8/pitagorov-izrek#trikotnik456
+besedilo: »ne, ker je $16 + 25 = 41$, $6^2$ pa je $36$.« -/
 theorem trikotnik456 (A B C : P) (ha : dist B C = 4) (hb : dist A C = 5) (hc : dist A B = 6) :
     (16 : ℝ) + 25 = 41 ∧ (6 : ℝ) ^ 2 = 36 ∧ ∠ A C B ≠ π / 2 ∧ ∠ B A C ≠ π / 2 ∧ ∠ A B C ≠ π / 2 := by
   refine ⟨by norm_num, by norm_num, ?_, ?_, ?_⟩
@@ -271,7 +309,9 @@ example : ∃ A B C : EuclideanSpace ℝ (Fin 2), dist B C = 4 ∧ dist A C = 5 
 /-! ## Rešeni primeri -/
 
 /-- Primer 1 (poševna letev): kateti 80 in 150; 80² = 6400, 150² = 22 500, c² = 28 900, c = √28 900 = 170, kar je
-več od vsake katete. -/
+več od vsake katete.
+trditev: MAT-OS-8/pitagorov-izrek#primer1
+besedilo: »$c = \sqrt{28\,900} = 170\,\text{cm}$. 5. Preverimo smiselnost: $170\,\text{cm}$ je več kot vsaka kateta, kot mora biti.« -/
 theorem primer1 (A B C : P) (h : ∠ A C B = π / 2) (ha : dist B C = 80) (hb : dist A C = 150) :
     dist A B = 170 ∧ (80 : ℝ) < 170 ∧ (150 : ℝ) < 170 := by
   refine ⟨?_, by norm_num, by norm_num⟩
@@ -285,7 +325,9 @@ example : ∃ A B C : EuclideanSpace ℝ (Fin 2), ∠ A C B = π / 2 ∧ dist B 
   obstaja_pravokotni 80 150 (by norm_num) (by norm_num)
 
 /-- Primer 2 (lestev): hipotenuza 2,5, kateta 0,7; 2,5² = 6,25, 0,7² = 0,49, b² = 6,25 − 0,49 = 5,76,
-b = √5,76 = 2,4. -/
+b = √5,76 = 2,4.
+trditev: MAT-OS-8/pitagorov-izrek#primer2
+besedilo: »Odgovor: lestev sega $2{,}4\,\text{m}$ visoko.« -/
 theorem primer2 (A B C : P) (h : ∠ A C B = π / 2) (hc : dist A B = 5 / 2) (ha : dist A C = 7 / 10) :
     dist B C = 24 / 10 := by
   calc dist B C = Real.sqrt ((5 / 2) ^ 2 - (7 / 10) ^ 2) := by rw [kateta A B C h, hc, ha]
@@ -301,7 +343,9 @@ example : ∃ A B C : EuclideanSpace ℝ (Fin 2), ∠ A C B = π / 2 ∧ dist A 
   exact (Real.sqrt_eq_iff_mul_self_eq_of_pos (by norm_num)).mpr (by norm_num)
 
 /-- Primer 3 (strešni tram): a = 9,6 : 2 = 4,8, b = 1,4; 4,8² = 23,04, 1,4² = 1,96, c² = 25, c = 5; tram
-5 + 0,6 = 5,6. -/
+5 + 0,6 = 5,6.
+trditev: MAT-OS-8/pitagorov-izrek#primer3
+besedilo: »$c^2 = 23{,}04 + 1{,}96 = 25$, zato $c = \sqrt{25} = 5\,\text{m}$. 5. Prištejemo previs, ki ni del trikotnika: $5 + 0{,}6 = 5{,}6\,\text{m}$.« -/
 theorem primer3 (A B C : P) (h : ∠ A C B = π / 2) (ha : dist B C = 96 / 10 / 2) (hb : dist A C = 14 / 10) :
     (96 : ℝ) / 10 / 2 = 48 / 10 ∧ dist A B = 5 ∧ dist A B + 6 / 10 = 56 / 10 := by
   have hc : dist A B = 5 := by
@@ -317,7 +361,9 @@ example : ∃ A B C : EuclideanSpace ℝ (Fin 2), ∠ A C B = π / 2 ∧ dist B 
   obstaja_pravokotni (96 / 10 / 2) (14 / 10) (by norm_num) (by norm_num)
 
 /-- Primer 4 (uta 3 m × 5 m): c² = 3² + 5² = 9 + 25 = 34; 25 < 34 < 36, zato 5 < √34 < 6, bližje 6
-(√34 > 5,5); c ≈ 5,83 (5,825 < √34 < 5,835) in 5,83² = 33,9889. -/
+(√34 > 5,5); c ≈ 5,83 (5,825 < √34 < 5,835) in 5,83² = 33,9889.
+trditev: MAT-OS-8/pitagorov-izrek#primer4
+besedilo: »$c \approx 5{,}83\,\text{m}$. Ker je $25 < 34 < 36$, leži koren med $5$ in $6$, bližje $6$. Preizkus: $5{,}83^2 = 33{,}9889$« -/
 theorem primer4 (A B C : P) (h : ∠ A C B = π / 2) (ha : dist B C = 3) (hb : dist A C = 5) :
     dist A B = Real.sqrt 34 ∧ (5 : ℝ) < Real.sqrt 34 ∧ Real.sqrt 34 < 6 ∧ (55 : ℝ) / 10 < Real.sqrt 34 ∧
       (5825 : ℝ) / 1000 < Real.sqrt 34 ∧ Real.sqrt 34 < 5835 / 1000 ∧ ((583 : ℝ) / 100) ^ 2 = 339889 / 10000 := by
@@ -335,7 +381,9 @@ example : ∃ A B C : EuclideanSpace ℝ (Fin 2), ∠ A C B = π / 2 ∧ dist B 
 /-! ## Pogoste napake -/
 
 /-- Pogoste napake (hipotenuza na napačnem mestu, seštevanje pri kateti): če je 13 hipotenuza in 5 kateta, je
-druga kateta 12, napačni √(5² + 13²) = √194 pa je večji od 13 (13² + 5² = 194). -/
+druga kateta 12, napačni √(5² + 13²) = √194 pa je večji od 13 (13² + 5² = 194).
+trditev: MAT-OS-8/pitagorov-izrek#napacna-hipotenuza
+besedilo: »Učenec po navadi sešteje: $13^2 + 5^2 = 194$. Tako dobi kateto, daljšo od hipotenuze, kar je nemogoče.« -/
 theorem napacna_hipotenuza (A B C : P) (h : ∠ A C B = π / 2) (hc : dist A B = 13) (hb : dist A C = 5) :
     dist B C = 12 ∧ (13 : ℝ) ^ 2 + 5 ^ 2 = 194 ∧ (13 : ℝ) < Real.sqrt (5 ^ 2 + 13 ^ 2) := by
   refine ⟨?_, by norm_num, (Real.lt_sqrt (by norm_num)).mpr (by norm_num)⟩
@@ -351,7 +399,9 @@ example : ∃ A B C : EuclideanSpace ℝ (Fin 2), ∠ A C B = π / 2 ∧ dist A 
   rw [hipotenuza A B C h, ha, hb]
   exact (Real.sqrt_eq_iff_mul_self_eq_of_pos (by norm_num)).mpr (by norm_num)
 
-/-- Pogoste napake (pozabljen koren): iz c² = 100 sledi c = 10 (c ≥ 0), ne c = 100. -/
+/-- Pogoste napake (pozabljen koren): iz c² = 100 sledi c = 10 (c ≥ 0), ne c = 100.
+trditev: MAT-OS-8/pitagorov-izrek#pozabljen-koren
+besedilo: »To je ploščina kvadrata nad hipotenuzo, ne dolžina. Na koncu vedno korenimo: $c = 10$.« -/
 theorem pozabljen_koren (c : ℝ) (hc0 : 0 ≤ c) (h : c ^ 2 = 100) : c = 10 ∧ c ≠ 100 := by
   have : c = 10 := by nlinarith
   exact ⟨this, by rw [this]; norm_num⟩
@@ -359,7 +409,9 @@ theorem pozabljen_koren (c : ℝ) (hc0 : 0 ≤ c) (h : c ^ 2 = 100) : c = 10 ∧
 /-- Predpostavki `pozabljen_koren` se dajo izpolniti (c = 10). -/
 example : (0 : ℝ) ≤ 10 ∧ (10 : ℝ) ^ 2 = 100 := by norm_num
 
-/-- Pogoste napake in Preveri se 3: √(5² + 12²) = √(25 + 144) = √169 = 13, ne 5 + 12 = 17 (17² = 289 ≠ 169). -/
+/-- Pogoste napake in Preveri se 3: √(5² + 12²) = √(25 + 144) = √169 = 13, ne 5 + 12 = 17 (17² = 289 ≠ 169).
+trditev: MAT-OS-8/pitagorov-izrek#koren-vsote
+besedilo: »Koren vsote ni vsota korenov: $\sqrt{25 + 144} = \sqrt{169} = 13$.« -/
 theorem koren_vsote :
     Real.sqrt (5 ^ 2 + 12 ^ 2) = 13 ∧ Real.sqrt (5 ^ 2 + 12 ^ 2) ≠ 5 + 12 ∧ (17 : ℝ) ^ 2 = 289 := by
   have h : Real.sqrt (5 ^ 2 + 12 ^ 2) = 13 := by
@@ -371,7 +423,9 @@ theorem koren_vsote :
 /-! ## Drugače -/
 
 /-- Na sliki: 3 · 3 = 9 in 4 · 4 = 16 ploščic, skupaj 25 = 5 · 5; pri katetah 1 in 1 sta 2 kvadratka, hipotenuza
-√2 pa ni celo število (ni naravnega n z n² = 2). -/
+√2 pa ni celo število (ni naravnega n z n² = 2).
+trditev: MAT-OS-8/pitagorov-izrek#ploscice
+besedilo: »Nad kateto $3$ je kvadrat iz $3 \cdot 3 = 9$ ploščic, nad kateto $4$ kvadrat iz $16$ ploščic.« -/
 theorem ploscice : (3 : ℕ) * 3 = 9 ∧ (4 : ℕ) * 4 = 16 ∧ 9 + 16 = 5 * 5 ∧ ¬ ∃ n : ℕ, n ^ 2 = 2 := by
   refine ⟨by norm_num, by norm_num, by norm_num, ?_⟩
   rintro ⟨n, hn⟩
@@ -379,7 +433,9 @@ theorem ploscice : (3 : ℕ) * 3 = 9 ∧ (4 : ℕ) * 4 = 16 ∧ 9 + 16 = 5 * 5 �
   interval_cases n <;> omega
 
 /-- Bolj natančno (algebrski del dokaza): veliki kvadrat ima ploščino (a + b)² = a² + b² + 4 · (ab/2); če je
-pokrit s štirimi trikotniki in kvadratom c², je (a + b)² = c² + 4 · (ab/2), zato a² + b² = c². -/
+pokrit s štirimi trikotniki in kvadratom c², je (a + b)² = c² + 4 · (ab/2), zato a² + b² = c².
+trditev: MAT-OS-8/pitagorov-izrek#dokaz-ploscine
+besedilo: »Zato je tudi nepokrita ploščina enaka: $a^2 + b^2 = c^2$.« -/
 theorem dokaz_ploscine (a b c : ℝ) (h : (a + b) ^ 2 = c ^ 2 + 4 * (a * b / 2)) : a ^ 2 + b ^ 2 = c ^ 2 := by
   have e : (a + b) ^ 2 = a ^ 2 + b ^ 2 + 4 * (a * b / 2) := by ring
   linarith
@@ -387,12 +443,16 @@ theorem dokaz_ploscine (a b c : ℝ) (h : (a + b) ^ 2 = c ^ 2 + 4 * (a * b / 2))
 /-- Predpostavka `dokaz_ploscine` se da izpolniti (a = 3, b = 4, c = 5). -/
 example : ((3 : ℝ) + 4) ^ 2 = 5 ^ 2 + 4 * (3 * 4 / 2) := by norm_num
 
-/-- Bolj natančno (pitagorejske trojice): 3, 4, 5; 5, 12, 13; 8, 15, 17; 7, 24, 25; 6, 8, 10; 60, 80, 100. -/
+/-- Bolj natančno (pitagorejske trojice): 3, 4, 5; 5, 12, 13; 8, 15, 17; 7, 24, 25; 6, 8, 10; 60, 80, 100.
+trditev: MAT-OS-8/pitagorov-izrek#trojice
+besedilo: »Celoštevilske trojice, za katere izrek velja, so na primer $3, 4, 5$; $5, 12, 13$; $8, 15, 17$; $7, 24, 25$.« -/
 theorem trojice :
     3 ^ 2 + 4 ^ 2 = 5 ^ 2 ∧ 5 ^ 2 + 12 ^ 2 = 13 ^ 2 ∧ 8 ^ 2 + 15 ^ 2 = 17 ^ 2 ∧ 7 ^ 2 + 24 ^ 2 = 25 ^ 2 ∧
       6 ^ 2 + 8 ^ 2 = 10 ^ 2 ∧ 60 ^ 2 + 80 ^ 2 = 100 ^ 2 := by norm_num
 
-/-- Bolj natančno: večkratnik pitagorejske trojice je spet pitagorejska trojica. -/
+/-- Bolj natančno: večkratnik pitagorejske trojice je spet pitagorejska trojica.
+trditev: MAT-OS-8/pitagorov-izrek#veckratnik
+besedilo: »Velja tudi za njihove večkratnike« -/
 theorem veckratnik (a b c k : ℕ) (h : a ^ 2 + b ^ 2 = c ^ 2) : (k * a) ^ 2 + (k * b) ^ 2 = (k * c) ^ 2 := by
   calc (k * a) ^ 2 + (k * b) ^ 2 = k ^ 2 * (a ^ 2 + b ^ 2) := by ring
     _ = (k * c) ^ 2 := by rw [h]; ring
@@ -403,7 +463,9 @@ example : 3 ^ 2 + 4 ^ 2 = 5 ^ 2 := by norm_num
 /-! ## Preveri se -/
 
 /-- Preveri se 2: hipotenuza 13, kateta 5: b² = 169 − 25 = 144, b = 12; napačni odgovori: 13 − 5 = 8,
-√(13² + 5²) = √194 ≈ 13,9 (13,9 < √194 < 13,95), 144 je b². -/
+√(13² + 5²) = √194 ≈ 13,9 (13,9 < √194 < 13,95), 144 je b².
+trditev: MAT-OS-8/pitagorov-izrek#kviz2
+besedilo: »$b^2 = 13^2 - 5^2 = 169 - 25 = 144$, $b = \sqrt{144} = 12\,\text{cm}$.« -/
 theorem kviz2 (A B C : P) (h : ∠ A C B = π / 2) (hc : dist A B = 13) (hb : dist A C = 5) :
     dist B C = 12 ∧ dist B C ^ 2 = 144 ∧ (13 : ℝ) - 5 = 8 ∧ (139 : ℝ) / 10 < Real.sqrt (13 ^ 2 + 5 ^ 2) ∧
       Real.sqrt (13 ^ 2 + 5 ^ 2) < 1395 / 100 := by
@@ -419,13 +481,17 @@ example : ∃ A B C : EuclideanSpace ℝ (Fin 2), ∠ A C B = π / 2 ∧ dist A 
   exact (Real.sqrt_eq_iff_mul_self_eq_of_pos (by norm_num)).mpr (by norm_num)
 
 /-- Preveri se 4: A (6, 8, 10) je pravokoten (36 + 64 = 100 = 10²), B (5, 6, 8) ni (25 + 36 = 61 ≠ 64);
-5 + 6 > 8. -/
+5 + 6 > 8.
+trditev: MAT-OS-8/pitagorov-izrek#kviz4
+besedilo: »A: $6^2 + 8^2 = 100 = 10^2$« -/
 theorem kviz4 :
     (6 : ℝ) ^ 2 + 8 ^ 2 = 10 ^ 2 ∧ (5 : ℝ) ^ 2 + 6 ^ 2 = 61 ∧ (8 : ℝ) ^ 2 = 64 ∧ (61 : ℝ) ≠ 64 ∧
       (5 : ℝ) + 6 > 8 := by norm_num
 
 /-- Preveri se 4: za vsak trikotnik 5, 6, 8 (8 nasproti C) noben kot ni pravi (pri C: 25 + 36 ≠ 64, pri A:
-6² + 8² ≠ 5², pri B: 5² + 8² ≠ 6²). -/
+6² + 8² ≠ 5², pri B: 5² + 8² ≠ 6²).
+trditev: MAT-OS-8/pitagorov-izrek#kviz4-b
+besedilo: »B: $5^2 + 6^2 = 61$, $8^2 = 64$, ni pravokoten.« -/
 theorem kviz4_B (A B C : P) (ha : dist B C = 5) (hb : dist A C = 6) (hc : dist A B = 8) :
     ∠ A C B ≠ π / 2 ∧ ∠ B A C ≠ π / 2 ∧ ∠ A B C ≠ π / 2 := by
   refine ⟨?_, ?_, ?_⟩
@@ -443,7 +509,9 @@ example : ∃ A B C : EuclideanSpace ℝ (Fin 2), dist B C = 5 ∧ dist A C = 6 
     norm_num [Real.dist_eq, mul_pow, div_pow, abs_of_nonneg (Real.sqrt_nonneg 3591)]
 
 /-- Preveri se 5 (okvir 60 × 80): diagonala je 100; napačni odgovori: 60 + 80 = 140, c² = 10 000,
-√(80² − 60²) = √2800 ≈ 52,9 (52,9 < √2800 < 52,95). -/
+√(80² − 60²) = √2800 ≈ 52,9 (52,9 < √2800 < 52,95).
+trditev: MAT-OS-8/pitagorov-izrek#kviz5
+besedilo: »$c^2 = 60^2 + 80^2 = 3600 + 6400 = 10\,000$, $c = 100\,\text{cm}$.« -/
 theorem kviz5 (A B C : P) (h : ∠ A C B = π / 2) (ha : dist B C = 60) (hb : dist A C = 80) :
     dist A B = 100 ∧ dist A B ^ 2 = 10000 ∧ Real.sqrt (80 ^ 2 - 60 ^ 2) = Real.sqrt 2800 ∧
       (529 : ℝ) / 10 < Real.sqrt 2800 ∧ Real.sqrt 2800 < 5295 / 100 := by

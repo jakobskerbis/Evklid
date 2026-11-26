@@ -196,8 +196,9 @@ export const ENGINES = {
 const TRI_D = /^3d-([a-z0-9]+(?:-[a-z0-9]+)*)$/;
 export const hasEngine = (id) => Object.hasOwn(ENGINES, id) || TRI_D.test(id);
 
-// Nariše simulacijo v el. Vrne true, če je uspelo.
-export async function mountSim(id, el, opts = {}) {
+// Nariše simulacijo v el. Vrne true, če je uspelo. naslov: ime risbe za bralnik zaslona (ni del opts, ker so opts
+// del ključa shranjenih meritev laboratorija).
+export async function mountSim(id, el, opts = {}, naslov = "") {
   const m3 = TRI_D.exec(id);
   if (m3) opts = { ...(opts || {}), model: m3[1], noReset: true }; // pregledovalnik ima svoj »Ponastavi«
   const e = ENGINES[m3 ? "3d" : id];
@@ -218,9 +219,9 @@ export async function mountSim(id, el, opts = {}) {
     // »Začni znova« (obnovljene meritve) in »Ponastavi«: shranjene meritve pozabi in poskus postavi znova.
     if (el.classList.contains("lab") && labId) {
       const { pozabiMeritve } = await import("./lab.js");
-      el._labZnova = () => (pozabiMeritve(labId, el._labKljuc), mountSim(id, el, opts));
+      el._labZnova = () => (pozabiMeritve(labId, el._labKljuc), mountSim(id, el, opts, naslov));
     } else el._labZnova = null;
-    focusableTargets(el);
+    focusableTargets(el, naslov);
     // Ponastavi: simulacijo postavi znova v začetno stanje (ne pri zbirki, ki ima svoje podsimulacije).
     if (id !== "zbirka" && !opts?.noReset) {
       const b = document.createElement("button");
@@ -228,7 +229,7 @@ export async function mountSim(id, el, opts = {}) {
       b.className = "ghost small demo-reset";
       b.textContent = "↺ Ponastavi";
       b.setAttribute("aria-label", "Ponastavi simulacijo na začetek");
-      b.addEventListener("click", () => (el._labZnova && el.dataset.labId === labId ? el._labZnova() : mountSim(id, el, opts)));
+      b.addEventListener("click", () => (el._labZnova && el.dataset.labId === labId ? el._labZnova() : mountSim(id, el, opts, naslov)));
       el.append(b);
     }
     // Prikaz na grafu: gumbi za vklop in izklop krivulj, točk, oznak in mreže (public/sim/prikaz.js).
@@ -248,13 +249,19 @@ export async function mountSim(id, el, opts = {}) {
 
 // Elementi, ki se jih da klikniti ali vleči (.drag), so dosegljivi s tipko Tab; Enter ali preslednica
 // jih klikne (vlečenje s puščicami doda kit.draggable). Simulacije pogosto rišejo znova, zato opazujemo spremembe.
-function focusableTargets(el) {
-  const mark = () =>
+// Risba (svg role="img") brez opisa dobi ime (WCAG 1.1.1, axe svg-img-alt): naslov simulacije, če ga poznamo.
+function focusableTargets(el, naslov) {
+  const mark = () => {
     el.querySelectorAll(".drag:not([tabindex])").forEach((t) => {
       t.setAttribute("tabindex", "0");
       if (!t.getAttribute("role")) t.setAttribute("role", "button");
       if (!t.getAttribute("aria-label")) t.setAttribute("aria-label", (t.textContent || "").trim() || "Izberi");
     });
+    el.querySelectorAll('svg[role="img"]:not([aria-label]):not([aria-labelledby])').forEach((svg) => {
+      const ime = svg.querySelector(":scope > title")?.textContent?.trim();
+      svg.setAttribute("aria-label", ime || (naslov ? `Slika simulacije: ${naslov}` : "Slika simulacije"));
+    });
+  };
   mark();
   if (el.dataset.kbd) return;
   el.dataset.kbd = "1";
@@ -283,7 +290,7 @@ export function zbirka(el, { items = [] } = {}) {
     const inner = mk("div");
     box.replaceChildren(inner);
     const d = list[Number(sel.value)];
-    mountSim(d.id, inner, d.opts);
+    mountSim(d.id, inner, d.opts, d.title);
   };
   sel.addEventListener("change", show);
   el.append(lab, box);

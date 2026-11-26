@@ -28,65 +28,93 @@ open Polynomial
 /-! ## Zakaj se tega učimo -/
 
 /-- Zakaj se tega učimo: pekač 20 cm ima dno 20·20 = 400 cm², večji (25 cm) 25·25 = 625 cm²,
-napačna ocena 400 + 5² = 425 cm² zgreši za 200 cm², kar sta trakova 20 cm × 5 cm. -/
+napačna ocena 400 + 5² = 425 cm² zgreši za 200 cm², kar sta trakova 20 cm × 5 cm.
+trditev: MAT-SS-1/algebrski-izrazi#pekac
+besedilo: »Izmeri ali izračunaj: $25 \cdot 25 = 625\,\text{cm}^2$. Manjka kar $200\,\text{cm}^2$.« -/
 theorem pekac : (20 : ℝ) * 20 = 400 ∧ (400 : ℝ) + 5 ^ 2 = 425 ∧ (25 : ℝ) * 25 = 625 ∧
     (625 : ℝ) - 425 = 200 ∧ (2 * (20 * 5) : ℝ) = 200 ∧ (25 : ℝ) ^ 2 = 20 ^ 2 + 2 * (20 * 5) + 5 ^ 2 := by
   norm_num
 
 /-! ## Razlaga 1: vrednost izraza -/
 
-/-- Razlaga 1: vrednost 3x² − 5x + 2 pri x = 2 je 3·4 − 10 + 2 = 4. -/
+/-- Razlaga 1: vrednost 3x² − 5x + 2 pri x = 2 je 3·4 − 10 + 2 = 4.
+trditev: MAT-SS-1/algebrski-izrazi#vrednost-x2
+besedilo: »Pri $x = 2$ je njegova vrednost $3 \cdot 4 - 10 + 2 = 4$.« -/
 theorem vrednost_x2 : (3 : ℝ) * 2 ^ 2 - 5 * 2 + 2 = 4 := by
   calc (3 : ℝ) * 2 ^ 2 - 5 * 2 + 2 = 3 * 4 - 10 + 2 := by norm_num
     _ = 4 := by norm_num
 
-/-- Razlaga 1: vrednost 3x² − 5x + 2 pri x = −1 je 3·(−1)² − 5·(−1) + 2 = 3 + 5 + 2 = 10. -/
+/-- Razlaga 1: vrednost 3x² − 5x + 2 pri x = −1 je 3·(−1)² − 5·(−1) + 2 = 3 + 5 + 2 = 10.
+trditev: MAT-SS-1/algebrski-izrazi#vrednost-xm1
+besedilo: »Pri $x = -1$ je $3 \cdot (-1)^2 - 5 \cdot (-1) + 2 = 3 + 5 + 2 = 10$.« -/
 theorem vrednost_xm1 : (3 : ℝ) * (-1) ^ 2 - 5 * (-1) + 2 = 10 := by
   calc (3 : ℝ) * (-1) ^ 2 - 5 * (-1) + 2 = 3 + 5 + 2 := by norm_num
     _ = 10 := by norm_num
 
 /-! ## Razlaga 2: enočleniki -/
 
-/-- Razlaga 2: podobne enočlenike seštejemo s seštevanjem koeficientov: 5ab − 2ab = 3ab. -/
+/-- Razlaga 2: podobne enočlenike seštejemo s seštevanjem koeficientov: 5ab − 2ab = 3ab.
+trditev: MAT-SS-1/algebrski-izrazi#podobna
+besedilo: »Podobne enočlenike seštejemo tako, da seštejemo koeficiente, spremenljivi del pa ostane: $5ab - 2ab = 3ab$.« -/
 theorem podobna (a b : ℝ) : 5 * a * b - 2 * a * b = 3 * a * b := by ring
 
-/-- Razlaga 2 in Povzetek: aᵐ · aⁿ = aᵐ⁺ⁿ (m, n naravna). -/
+/-- Razlaga 2 in Povzetek: aᵐ · aⁿ = aᵐ⁺ⁿ (m, n naravna).
+trditev: MAT-SS-1/algebrski-izrazi#potenci
+besedilo: »po pravilu $a^m \cdot a^n = a^{m+n}$« -/
 theorem potenci (a : ℝ) (m n : ℕ) : a ^ m * a ^ n = a ^ (m + n) := (pow_add a m n).symm
 
-/-- Razlaga 2: (−3a²b)(4ab³) = −12a³b⁴. -/
+/-- Razlaga 2: (−3a²b)(4ab³) = −12a³b⁴.
+trditev: MAT-SS-1/algebrski-izrazi#enoclenika
+besedilo: »$(-3a^2b) \cdot (4ab^3) = -12a^3b^4$« -/
 theorem enoclenika (a b : ℝ) : (-3 * a ^ 2 * b) * (4 * a * b ^ 3) = -12 * a ^ 3 * b ^ 4 := by ring
 
 /-! ## Razlaga 3: mnogočleniki -/
 
-/-- Razlaga 3: mnogočlenik 2x³ − 5x + 7 ima stopnjo 3. -/
+/-- Razlaga 3: mnogočlenik 2x³ − 5x + 7 ima stopnjo 3.
+trditev: MAT-SS-1/algebrski-izrazi#stopnja
+besedilo: »pri $2x^3 - 5x + 7$ torej $3$« -/
 theorem stopnja : (2 * X ^ 3 - 5 * X + 7 : ℝ[X]).natDegree = 3 := by
   compute_degree!
 
-/-- Razlaga 3: (3x² − 2x + 1) − (x² + 4x − 5) = 3x² − 2x + 1 − x² − 4x + 5 = 2x² − 6x + 6. -/
+/-- Razlaga 3: (3x² − 2x + 1) − (x² + 4x − 5) = 3x² − 2x + 1 − x² − 4x + 5 = 2x² − 6x + 6.
+trditev: MAT-SS-1/algebrski-izrazi#razlika-mnogoclenikov
+besedilo: »$$(3x^2 - 2x + 1) - (x^2 + 4x - 5) = 3x^2 - 2x + 1 - x^2 - 4x + 5 = 2x^2 - 6x + 6$$« -/
 theorem razlika_mnogoclenikov (x : ℝ) :
     (3 * x ^ 2 - 2 * x + 1) - (x ^ 2 + 4 * x - 5) = 2 * x ^ 2 - 6 * x + 6 := by
   calc (3 * x ^ 2 - 2 * x + 1) - (x ^ 2 + 4 * x - 5) = 3 * x ^ 2 - 2 * x + 1 - x ^ 2 - 4 * x + 5 := by ring
     _ = 2 * x ^ 2 - 6 * x + 6 := by ring
 
 /-- Razlaga 3, Primer 1 (formula) in Povzetek: minus pred oklepajem spremeni predznak vsakemu členu:
-−(p + q − r) = −p − q + r. -/
+−(p + q − r) = −p − q + r.
+trditev: MAT-SS-1/algebrski-izrazi#minus-oklepaj
+besedilo: »$-(p + q - r) = -p - q + r$« -/
 theorem minus_oklepaj (p q r : ℝ) : -(p + q - r) = -p - q + r := by ring
 
-/-- Primer 1 (formula): podobne člene združimo, mxᵏ + nxᵏ = (m + n)xᵏ. -/
+/-- Primer 1 (formula): podobne člene združimo, mxᵏ + nxᵏ = (m + n)xᵏ.
+trditev: MAT-SS-1/algebrski-izrazi#zdruzi
+besedilo: »$m x^k + n x^k = (m + n) x^k$« -/
 theorem zdruzi (m n x : ℝ) (k : ℕ) : m * x ^ k + n * x ^ k = (m + n) * x ^ k := by ring
 
 /-! ## Razlaga 4 in 5: množenje -/
 
-/-- Razlaga 4: razčlenjevalni zakon a(b + c) = ab + ac. -/
+/-- Razlaga 4: razčlenjevalni zakon a(b + c) = ab + ac.
+trditev: MAT-SS-1/algebrski-izrazi#distributivnost
+besedilo: »razčlenjevalni zakon (distributivnost) $a(b + c) = ab + ac$« -/
 theorem distributivnost (a b c : ℝ) : a * (b + c) = a * b + a * c := mul_add a b c
 
-/-- Razlaga 4: −2x(3x² − x + 4) = −6x³ + 2x² − 8x. -/
+/-- Razlaga 4: −2x(3x² − x + 4) = −6x³ + 2x² − 8x.
+trditev: MAT-SS-1/algebrski-izrazi#enoclenik-krat
+besedilo: »$$-2x(3x^2 - x + 4) = -6x^3 + 2x^2 - 8x$$« -/
 theorem enoclenik_krat (x : ℝ) : -2 * x * (3 * x ^ 2 - x + 4) = -6 * x ^ 3 + 2 * x ^ 2 - 8 * x := by ring
 
-/-- Razlaga 5 in Povzetek: (a + b)(c + d) = ac + ad + bc + bd. -/
+/-- Razlaga 5 in Povzetek: (a + b)(c + d) = ac + ad + bc + bd.
+trditev: MAT-SS-1/algebrski-izrazi#vsak-z-vsakim
+besedilo: »$$(a + b)(c + d) = ac + ad + bc + bd.$$« -/
 theorem vsak_z_vsakim (a b c d : ℝ) : (a + b) * (c + d) = a * c + a * d + b * c + b * d := by ring
 
-/-- Razlaga 5: (2x + 3)(x − 5) = 2x² − 10x + 3x − 15 = 2x² − 7x − 15. -/
+/-- Razlaga 5: (2x + 3)(x − 5) = 2x² − 10x + 3x − 15 = 2x² − 7x − 15.
+trditev: MAT-SS-1/algebrski-izrazi#razlaga5-primer
+besedilo: »$(2x + 3)(x - 5) = 2x^2 - 10x + 3x - 15 = 2x^2 - 7x - 15$« -/
 theorem razlaga5_primer (x : ℝ) : (2 * x + 3) * (x - 5) = 2 * x ^ 2 - 7 * x - 15 := by
   calc (2 * x + 3) * (x - 5) = 2 * x ^ 2 - 10 * x + 3 * x - 15 := by ring
     _ = 2 * x ^ 2 - 7 * x - 15 := by ring
@@ -94,7 +122,9 @@ theorem razlaga5_primer (x : ℝ) : (2 * x + 3) * (x - 5) = 2 * x ^ 2 - 7 * x - 
 /-! ## Razlaga 6: kvadrat dvočlenika -/
 
 /-- Razlaga 6, tabela: (a + b)² in a² + b² za 3 + 2, 5 + 1, 4 + 3, 20 + 5 ter razlike 12, 10, 24, 200,
-ki so po vrsti 2·a·b. -/
+ki so po vrsti 2·a·b.
+trditev: MAT-SS-1/algebrski-izrazi#tabela
+besedilo: »| $3 + 2$ | $25$ | $13$ | | $5 + 1$ | $36$ | $26$ | | $4 + 3$ | $49$ | $25$ | | $20 + 5$ | $625$ | $425$ |« -/
 theorem tabela :
     ((3 + 2 : ℝ) ^ 2 = 25 ∧ (3 : ℝ) ^ 2 + 2 ^ 2 = 13 ∧ (25 : ℝ) - 13 = 12 ∧ (12 : ℝ) = 2 * 3 * 2) ∧
     ((5 + 1 : ℝ) ^ 2 = 36 ∧ (5 : ℝ) ^ 2 + 1 ^ 2 = 26 ∧ (36 : ℝ) - 26 = 10 ∧ (10 : ℝ) = 2 * 5 * 1) ∧
@@ -103,50 +133,72 @@ theorem tabela :
       (200 : ℝ) = 2 * 20 * 5) := by
   norm_num
 
-/-- Razlaga 6, Premisli: po vzorcu (10 + 3)² − (10² + 3²) = 2·10·3 = 60; preverba 169 − 109 = 60. -/
+/-- Razlaga 6, Premisli: po vzorcu (10 + 3)² − (10² + 3²) = 2·10·3 = 60; preverba 169 − 109 = 60.
+trditev: MAT-SS-1/algebrski-izrazi#premisli-10-3
+besedilo: »Po vzorcu je $2 \cdot 10 \cdot 3 = 60$. Preverba: $169 - 109 = 60$.« -/
 theorem premisli_10_3 : (10 + 3 : ℝ) ^ 2 - (10 ^ 2 + 3 ^ 2) = 2 * 10 * 3 ∧ (2 * 10 * 3 : ℝ) = 60 ∧
     (10 + 3 : ℝ) ^ 2 = 169 ∧ (10 ^ 2 + 3 ^ 2 : ℝ) = 109 ∧ (169 : ℝ) - 109 = 60 := by
   norm_num
 
-/-- Razlaga 6: razlika med kvadratom vsote in vsoto kvadratov je vedno 2ab. -/
+/-- Razlaga 6: razlika med kvadratom vsote in vsoto kvadratov je vedno 2ab.
+trditev: MAT-SS-1/algebrski-izrazi#razlika-vedno
+besedilo: »Razlika je torej vedno $2ab$.« -/
 theorem razlika_vedno (a b : ℝ) : (a + b) ^ 2 - (a ^ 2 + b ^ 2) = 2 * a * b := by ring
 
-/-- Razlaga 6 (razrez kvadrata): (a + b)² = (a + b)(a + b) = a² + ab + ba + b² = a² + 2ab + b². -/
+/-- Razlaga 6 (razrez kvadrata): (a + b)² = (a + b)(a + b) = a² + ab + ba + b² = a² + 2ab + b².
+trditev: MAT-SS-1/algebrski-izrazi#kvadrat-vsote
+besedilo: »$$(a + b)^2 = a^2 + 2ab + b^2$$« -/
 theorem kvadrat_vsote (a b : ℝ) : (a + b) ^ 2 = a ^ 2 + 2 * a * b + b ^ 2 := by
   calc (a + b) ^ 2 = (a + b) * (a + b) := sq (a + b)
     _ = a ^ 2 + a * b + b * a + b ^ 2 := by ring
     _ = a ^ 2 + 2 * a * b + b ^ 2 := by ring
 
-/-- Razlaga 6, Pregled, Povzetek: (a − b)² = a² − 2ab + b². -/
+/-- Razlaga 6, Pregled, Povzetek: (a − b)² = a² − 2ab + b².
+trditev: MAT-SS-1/algebrski-izrazi#kvadrat-razlike
+besedilo: »$$(a - b)^2 = a^2 - 2ab + b^2$$« -/
 theorem kvadrat_razlike (a b : ℝ) : (a - b) ^ 2 = a ^ 2 - 2 * a * b + b ^ 2 := by ring
 
-/-- Razlaga 6: pri razliki je minus le pri srednjem členu, ker je (−b)² = b². -/
+/-- Razlaga 6: pri razliki je minus le pri srednjem členu, ker je (−b)² = b².
+trditev: MAT-SS-1/algebrski-izrazi#minus-b-kvadrat
+besedilo: »Pri razliki je minus le pri srednjem členu, saj je $(-b)^2 = b^2$.« -/
 theorem minus_b_kvadrat (b : ℝ) : (-b) ^ 2 = b ^ 2 := neg_sq b
 
-/-- Razlaga 6: (x + 4)² = x² + 8x + 16. -/
+/-- Razlaga 6: (x + 4)² = x² + 8x + 16.
+trditev: MAT-SS-1/algebrski-izrazi#x-plus-4
+besedilo: »$(x + 4)^2 = x^2 + 8x + 16$« -/
 theorem x_plus_4 (x : ℝ) : (x + 4) ^ 2 = x ^ 2 + 8 * x + 16 := by ring
 
-/-- Razlaga 6: (3x − 2)² = (3x)² − 2·3x·2 + 2² = 9x² − 12x + 4. -/
+/-- Razlaga 6: (3x − 2)² = (3x)² − 2·3x·2 + 2² = 9x² − 12x + 4.
+trditev: MAT-SS-1/algebrski-izrazi#trix-minus-2
+besedilo: »$(3x - 2)^2 = (3x)^2 - 2 \cdot 3x \cdot 2 + 2^2 = 9x^2 - 12x + 4$« -/
 theorem trix_minus_2 (x : ℝ) : (3 * x - 2) ^ 2 = 9 * x ^ 2 - 12 * x + 4 := by
   calc (3 * x - 2) ^ 2 = (3 * x) ^ 2 - 2 * (3 * x) * 2 + 2 ^ 2 := by ring
     _ = 9 * x ^ 2 - 12 * x + 4 := by ring
 
-/-- Razlaga 6, simulacija: (x + 3)² razpade na x², dva pravokotnika 3x in 9: x² + 3x + 3x + 9 = x² + 6x + 9. -/
+/-- Razlaga 6, simulacija: (x + 3)² razpade na x², dva pravokotnika 3x in 9: x² + 3x + 3x + 9 = x² + 6x + 9.
+trditev: MAT-SS-1/algebrski-izrazi#simulacija-kvadrat
+besedilo: »Opazuj, da kvadrat $(x + 3)^2$ razpade na kvadrat $x^2$, dva enaka pravokotnika $3x$ in kvadratek $9$, kot napove $(x + 3)^2 = x^2 + 6x + 9$.« -/
 theorem simulacija_kvadrat (x : ℝ) : (x + 3) ^ 2 = x ^ 2 + 3 * x + 3 * x + 9 ∧
     x ^ 2 + 3 * x + 3 * x + 9 = x ^ 2 + 6 * x + 9 := by
   constructor <;> ring
 
 /-! ## Razlaga 7: zmnožek vsote in razlike -/
 
-/-- Razlaga 7: (a + b)(a − b) = a² − ab + ab − b² = a² − b². -/
+/-- Razlaga 7: (a + b)(a − b) = a² − ab + ab − b² = a² − b².
+trditev: MAT-SS-1/algebrski-izrazi#vsota-krat-razlika
+besedilo: »$$(a + b)(a - b) = a^2 - b^2.$$« -/
 theorem vsota_krat_razlika (a b : ℝ) : (a + b) * (a - b) = a ^ 2 - b ^ 2 := by
   calc (a + b) * (a - b) = a ^ 2 - a * b + a * b - b ^ 2 := by ring
     _ = a ^ 2 - b ^ 2 := by ring
 
-/-- Razlaga 7: (2x + 5)(2x − 5) = 4x² − 25. -/
+/-- Razlaga 7: (2x + 5)(2x − 5) = 4x² − 25.
+trditev: MAT-SS-1/algebrski-izrazi#razlaga7-primer
+besedilo: »Primer: $(2x + 5)(2x - 5) = 4x^2 - 25$.« -/
 theorem razlaga7_primer (x : ℝ) : (2 * x + 5) * (2 * x - 5) = 4 * x ^ 2 - 25 := by ring
 
-/-- Razlaga 7, simulacija: pravokotnika 3x in −3x se izničita: (x + 3)(x − 3) = x² + 3x − 3x − 9 = x² − 9. -/
+/-- Razlaga 7, simulacija: pravokotnika 3x in −3x se izničita: (x + 3)(x − 3) = x² + 3x − 3x − 9 = x² − 9.
+trditev: MAT-SS-1/algebrski-izrazi#simulacija-razlika
+besedilo: »pravokotnika $3x$ in $-3x$ se izničita (rdeči deli imajo negativno ploščino), zato ostane $(x + 3)(x - 3) = x^2 - 9$.« -/
 theorem simulacija_razlika (x : ℝ) : (x + 3) * (x - 3) = x ^ 2 + 3 * x - 3 * x - 9 ∧
     x ^ 2 + 3 * x - 3 * x - 9 = x ^ 2 - 9 := by
   constructor <;> ring
@@ -154,32 +206,42 @@ theorem simulacija_razlika (x : ℝ) : (x + 3) * (x - 3) = x ^ 2 + 3 * x - 3 * x
 /-! ## Razlaga 8: kub dvočlenika -/
 
 /-- Razlaga 8: kocka z robom 3 ima 3³ = 27 kock, ne 2³ + 1³ = 9; razrez 2 + 1 da 2·2·2 = 8, tri plošče
-2·2·1 (12), tri palčke 2·1·1 (6) in eno kocko: 8 + 12 + 6 + 1 = 27. -/
+2·2·1 (12), tri palčke 2·1·1 (6) in eno kocko: 8 + 12 + 6 + 1 = 27.
+trditev: MAT-SS-1/algebrski-izrazi#kocka-sladkorja
+besedilo: »Potrebuješ $3^3 = 27$ kock, ne pa $2^3 + 1^3 = 9$. Rob razdeli na $2 + 1$ in razstavi kocko: dobiš kocko $2 \cdot 2 \cdot 2 = 8$, tri plošče $2 \cdot 2 \cdot 1$ (skupaj $12$), tri palčke $2 \cdot 1 \cdot 1$ (skupaj $6$) in eno samo kocko. Res je $8 + 12 + 6 + 1 = 27$.« -/
 theorem kocka_sladkorja : (3 : ℝ) ^ 3 = 27 ∧ (2 : ℝ) ^ 3 + 1 ^ 3 = 9 ∧ (2 * 2 * 2 : ℝ) = 8 ∧
     3 * (2 * 2 * 1 : ℝ) = 12 ∧ 3 * (2 * 1 * 1 : ℝ) = 6 ∧ (8 + 12 + 6 + 1 : ℝ) = 27 := by
   norm_num
 
 /-- Razlaga 8 in Ustno vprašanje 2: (a + b)³ = (a + b)²(a + b) = (a² + 2ab + b²)(a + b)
-= a³ + a²b + 2a²b + 2ab² + ab² + b³ = a³ + 3a²b + 3ab² + b³. -/
+= a³ + a²b + 2a²b + 2ab² + ab² + b³ = a³ + 3a²b + 3ab² + b³.
+trditev: MAT-SS-1/algebrski-izrazi#kub-vsote
+besedilo: »$$(a + b)^3 = a^3 + 3a^2b + 3ab^2 + b^3$$« -/
 theorem kub_vsote (a b : ℝ) : (a + b) ^ 3 = a ^ 3 + 3 * a ^ 2 * b + 3 * a * b ^ 2 + b ^ 3 := by
   calc (a + b) ^ 3 = (a + b) ^ 2 * (a + b) := pow_succ (a + b) 2
     _ = (a ^ 2 + 2 * a * b + b ^ 2) * (a + b) := by rw [kvadrat_vsote]
     _ = a ^ 3 + a ^ 2 * b + 2 * a ^ 2 * b + 2 * a * b ^ 2 + a * b ^ 2 + b ^ 3 := by ring
     _ = a ^ 3 + 3 * a ^ 2 * b + 3 * a * b ^ 2 + b ^ 3 := by ring
 
-/-- Razlaga 8 in Ustno vprašanje 2: iz kuba vsote z −b namesto b: (a − b)³ = a³ − 3a²b + 3ab² − b³. -/
+/-- Razlaga 8 in Ustno vprašanje 2: iz kuba vsote z −b namesto b: (a − b)³ = a³ − 3a²b + 3ab² − b³.
+trditev: MAT-SS-1/algebrski-izrazi#kub-razlike
+besedilo: »Če namesto $b$ vstavimo $-b$, dobimo $(a - b)^3 = a^3 - 3a^2b + 3ab^2 - b^3$« -/
 theorem kub_razlike (a b : ℝ) : (a - b) ^ 3 = a ^ 3 - 3 * a ^ 2 * b + 3 * a * b ^ 2 - b ^ 3 := by
   calc (a - b) ^ 3 = (a + -b) ^ 3 := by ring
     _ = a ^ 3 + 3 * a ^ 2 * (-b) + 3 * a * (-b) ^ 2 + (-b) ^ 3 := kub_vsote a (-b)
     _ = a ^ 3 - 3 * a ^ 2 * b + 3 * a * b ^ 2 - b ^ 3 := by ring
 
-/-- Razlaga 8: (x + 2)³ = x³ + 6x² + 12x + 8 in (x − 2)³ = x³ − 6x² + 12x − 8. -/
+/-- Razlaga 8: (x + 2)³ = x³ + 6x² + 12x + 8 in (x − 2)³ = x³ − 6x² + 12x − 8.
+trditev: MAT-SS-1/algebrski-izrazi#razlaga8-primera
+besedilo: »Primera: $(x + 2)^3 = x^3 + 6x^2 + 12x + 8$ in $(x - 2)^3 = x^3 - 6x^2 + 12x - 8$.« -/
 theorem razlaga8_primera (x : ℝ) : (x + 2) ^ 3 = x ^ 3 + 6 * x ^ 2 + 12 * x + 8 ∧
     (x - 2) ^ 3 = x ^ 3 - 6 * x ^ 2 + 12 * x - 8 := by
   constructor <;> ring
 
 /-- Razlaga 8, Premisli: kocka z robom 4 = 3 + 1: plošče 3·3·1 (3·9 = 27), palčke 3·1·1 (9),
-27 + 27 + 9 + 1 = 64 = 4³. -/
+27 + 27 + 9 + 1 = 64 = 4³.
+trditev: MAT-SS-1/algebrski-izrazi#premisli-kocka4
+besedilo: »Plošče so $3 \cdot 3 \cdot 1$, skupaj $3 \cdot 9 = 27$ kock. Palčke so $3 \cdot 1 \cdot 1$, skupaj $9$ kock. Z veliko kocko $27$ in eno samo kocko je to $27 + 27 + 9 + 1 = 64 = 4^3$.« -/
 theorem premisli_kocka4 : 3 * (3 * 3 * 1 : ℝ) = 3 * 9 ∧ (3 * 9 : ℝ) = 27 ∧ 3 * (3 * 1 * 1 : ℝ) = 9 ∧
     (27 + 27 + 9 + 1 : ℝ) = 64 ∧ (64 : ℝ) = 4 ^ 3 ∧ (4 : ℝ) ^ 3 = (3 + 1) ^ 3 := by
   norm_num
@@ -187,26 +249,33 @@ theorem premisli_kocka4 : 3 * (3 * 3 * 1 : ℝ) = 3 * 9 ∧ (3 * 9 : ℝ) = 27 �
 /-! ## Razlaga 10: preizkus -/
 
 /-- Razlaga 10 in Pogoste napake: napačni razvoj x² + 6 namesto (x + 2)(x + 3) se pri x = 0 ujema, pri
-x = 1 pa ne; zato ničla napako skrije. -/
+x = 1 pa ne; zato ničla napako skrije.
+pomozno – izrek pokaže nasvet le na enem zgledu (x² + 6 namesto (x + 2)(x + 3)); lekcija trdi splošno -/
 theorem preizkus_nicla : (0 + 2 : ℝ) * (0 + 3) = 0 ^ 2 + 6 ∧ (1 + 2 : ℝ) * (1 + 3) ≠ 1 ^ 2 + 6 := by
   norm_num
 
 /-! ## Rešeni primeri -/
 
 /-- Primer 1, koraki 1–3: (2x² − 3x + 5) − (x² + 4x − 7) = 2x² − 3x + 5 − x² − 4x + 7 = x² − 7x + 12,
-z združitvami 2x² − x² = x², −3x − 4x = −7x, 5 + 7 = 12. -/
+z združitvami 2x² − x² = x², −3x − 4x = −7x, 5 + 7 = 12.
+trditev: MAT-SS-1/algebrski-izrazi#primer1
+besedilo: »Poenostavljen izraz je $x^2 - 7x + 12$.« -/
 theorem primer1 (x : ℝ) : (2 * x ^ 2 - 3 * x + 5) - (x ^ 2 + 4 * x - 7) = x ^ 2 - 7 * x + 12 ∧
     2 * x ^ 2 - x ^ 2 = x ^ 2 ∧ -3 * x - 4 * x = -7 * x ∧ (5 : ℝ) + 7 = 12 := by
   refine ⟨?_, by ring, by ring, by norm_num⟩
   calc (2 * x ^ 2 - 3 * x + 5) - (x ^ 2 + 4 * x - 7) = 2 * x ^ 2 - 3 * x + 5 - x ^ 2 - 4 * x + 7 := by ring
     _ = x ^ 2 - 7 * x + 12 := by ring
 
-/-- Primer 1, korak 4: vrednost pri x = 2 je 2² − 7·2 + 12 = 4 − 14 + 12 = 2. -/
+/-- Primer 1, korak 4: vrednost pri x = 2 je 2² − 7·2 + 12 = 4 − 14 + 12 = 2.
+trditev: MAT-SS-1/algebrski-izrazi#primer1-vrednost
+besedilo: »Vrednost pri $x = 2$: $2^2 - 7 \cdot 2 + 12 = 4 - 14 + 12 = 2$.« -/
 theorem primer1_vrednost : (2 : ℝ) ^ 2 - 7 * 2 + 12 = 2 := by
   calc (2 : ℝ) ^ 2 - 7 * 2 + 12 = 4 - 14 + 12 := by norm_num
     _ = 2 := by norm_num
 
-/-- Primer 1, korak 5: izvirni izraz pri x = 2: (2·4 − 6 + 5) − (4 + 8 − 7) = 7 − 5 = 2. -/
+/-- Primer 1, korak 5: izvirni izraz pri x = 2: (2·4 − 6 + 5) − (4 + 8 − 7) = 7 − 5 = 2.
+trditev: MAT-SS-1/algebrski-izrazi#primer1-preizkus
+besedilo: »Preizkus z izvirnim izrazom: $(2 \cdot 4 - 6 + 5) - (4 + 8 - 7) = 7 - 5 = 2$.« -/
 theorem primer1_preizkus :
     (2 * (2 : ℝ) ^ 2 - 3 * 2 + 5) - ((2 : ℝ) ^ 2 + 4 * 2 - 7) = 2 := by
   calc (2 * (2 : ℝ) ^ 2 - 3 * 2 + 5) - ((2 : ℝ) ^ 2 + 4 * 2 - 7) = (2 * 4 - 6 + 5) - (4 + 8 - 7) := by
@@ -214,20 +283,26 @@ theorem primer1_preizkus :
     _ = 7 - 5 := by norm_num
     _ = 2 := by norm_num
 
-/-- Primer 2, korak 1: (3x − 2)(2x + 5) = 6x² + 15x − 4x − 10 = 6x² + 11x − 10. -/
+/-- Primer 2, korak 1: (3x − 2)(2x + 5) = 6x² + 15x − 4x − 10 = 6x² + 11x − 10.
+trditev: MAT-SS-1/algebrski-izrazi#primer2-prvi
+besedilo: »$(3x - 2)(2x + 5) = 6x^2 + 15x - 4x - 10 = 6x^2 + 11x - 10$« -/
 theorem primer2_prvi (x : ℝ) : (3 * x - 2) * (2 * x + 5) = 6 * x ^ 2 + 11 * x - 10 := by
   calc (3 * x - 2) * (2 * x + 5) = 6 * x ^ 2 + 15 * x - 4 * x - 10 := by ring
     _ = 6 * x ^ 2 + 11 * x - 10 := by ring
 
 /-- Primer 2, koraki 1–4: (3x − 2)(2x + 5) − (x − 4)(x + 4) = (6x² + 11x − 10) − (x² − 16)
-= 6x² + 11x − 10 − x² + 16 = 5x² + 11x + 6. -/
+= 6x² + 11x − 10 − x² + 16 = 5x² + 11x + 6.
+trditev: MAT-SS-1/algebrski-izrazi#primer2
+besedilo: »Odgovor: izraz je enak $5x^2 + 11x + 6$.« -/
 theorem primer2 (x : ℝ) : (3 * x - 2) * (2 * x + 5) - (x - 4) * (x + 4) = 5 * x ^ 2 + 11 * x + 6 := by
   calc (3 * x - 2) * (2 * x + 5) - (x - 4) * (x + 4) = (6 * x ^ 2 + 11 * x - 10) - (x ^ 2 - 16) := by
         rw [primer2_prvi]; ring
     _ = 6 * x ^ 2 + 11 * x - 10 - x ^ 2 + 16 := by ring
     _ = 5 * x ^ 2 + 11 * x + 6 := by ring
 
-/-- Primer 2, korak 5: preizkus pri x = 1: (1)·(7) − (−3)·(5) = 7 + 15 = 22 in 5 + 11 + 6 = 22. -/
+/-- Primer 2, korak 5: preizkus pri x = 1: (1)·(7) − (−3)·(5) = 7 + 15 = 22 in 5 + 11 + 6 = 22.
+trditev: MAT-SS-1/algebrski-izrazi#primer2-preizkus
+besedilo: »Preizkus pri $x = 1$: izvirni izraz je $(1) \cdot (7) - (-3) \cdot (5) = 7 + 15 = 22$, rezultat pa $5 + 11 + 6 = 22$.« -/
 theorem primer2_preizkus : (3 * 1 - 2 : ℝ) * (2 * 1 + 5) - (1 - 4) * (1 + 4) = 22 ∧
     (5 * 1 ^ 2 + 11 * 1 + 6 : ℝ) = 22 := by
   constructor
@@ -237,7 +312,9 @@ theorem primer2_preizkus : (3 * 1 - 2 : ℝ) * (2 * 1 + 5) - (1 - 4) * (1 + 4) =
   · norm_num
 
 /-- Primer 3: sredica ima rob x − 1 − 1 = x − 2; skorja V = x³ − (x − 2)³ = x³ − x³ + 6x² − 12x + 8
-= 6x² − 12x + 8, kjer je (x − 2)³ = x³ − 6x² + 12x − 8. -/
+= 6x² − 12x + 8, kjer je (x − 2)³ = x³ − 6x² + 12x − 8.
+trditev: MAT-SS-1/algebrski-izrazi#primer3
+besedilo: »$V = x^3 - x^3 + 6x^2 - 12x + 8 = 6x^2 - 12x + 8$« -/
 theorem primer3 (x : ℝ) : x - 1 - 1 = x - 2 ∧ (x - 2) ^ 3 = x ^ 3 - 6 * x ^ 2 + 12 * x - 8 ∧
     x ^ 3 - (x - 2) ^ 3 = 6 * x ^ 2 - 12 * x + 8 := by
   refine ⟨by ring, by ring, ?_⟩
@@ -246,7 +323,9 @@ theorem primer3 (x : ℝ) : x - 1 - 1 = x - 2 ∧ (x - 2) ^ 3 = x ^ 3 - 6 * x ^ 
     _ = 6 * x ^ 2 - 12 * x + 8 := by ring
 
 /-- Primer 3, Premisli: pri x = 10 je V = 6·100 − 12·10 + 8 = 600 − 120 + 8 = 488; preizkus
-1000 − 512 = 488 = 10³ − 8³; to je manj kot polovica kocke (1000/2) in več kot 2/5 kocke. -/
+1000 − 512 = 488 = 10³ − 8³; to je manj kot polovica kocke (1000/2) in več kot 2/5 kocke.
+trditev: MAT-SS-1/algebrski-izrazi#primer3-vrednost
+besedilo: »$6 \cdot 100 - 12 \cdot 10 + 8 = 600 - 120 + 8 = 488$. Preizkus: $1000 - 512 = 488$. Kuhar odreže $488\,\text{cm}^3$ skorje, skoraj polovico kocke.« -/
 theorem primer3_vrednost : (6 * 10 ^ 2 - 12 * 10 + 8 : ℝ) = 488 ∧ (10 : ℝ) ^ 3 - 8 ^ 3 = 488 ∧
     (488 : ℝ) < 1000 / 2 ∧ (1000 : ℝ) * 2 / 5 < 488 := by
   refine ⟨?_, by norm_num, by norm_num, by norm_num⟩
@@ -257,7 +336,9 @@ theorem primer3_vrednost : (6 * 10 ^ 2 - 12 * 10 + 8 : ℝ) = 488 ∧ (10 : ℝ)
 /-! ## Pogoste napake -/
 
 /-- Pogoste napake 1 in Ustno vprašanje 1: (2 + 3)² = 25, 2² + 3² = 13, zato (a + b)² ≠ a² + b² v
-splošnem; prav tako (a + b)³ ≠ a³ + b³ v splošnem (2 + 1: 27 ≠ 9). -/
+splošnem; prav tako (a + b)³ ≠ a³ + b³ v splošnem (2 + 1: 27 ≠ 9).
+trditev: MAT-SS-1/algebrski-izrazi#napaka-kvadrat
+besedilo: »Preizkus: $(2 + 3)^2 = 25$, vendar $2^2 + 3^2 = 13$.« -/
 theorem napaka_kvadrat : (2 + 3 : ℝ) ^ 2 = 25 ∧ (2 : ℝ) ^ 2 + 3 ^ 2 = 13 ∧
     (¬ ∀ a b : ℝ, (a + b) ^ 2 = a ^ 2 + b ^ 2) ∧ (¬ ∀ a b : ℝ, (a + b) ^ 3 = a ^ 3 + b ^ 3) := by
   refine ⟨by norm_num, by norm_num, fun h => ?_, fun h => ?_⟩
@@ -265,7 +346,9 @@ theorem napaka_kvadrat : (2 + 3 : ℝ) ^ 2 = 25 ∧ (2 : ℝ) ^ 2 + 3 ^ 2 = 13 �
   · have := h 2 1; norm_num at this
 
 /-- Pogoste napake 2: (x − 3)² = x² − 6x + 9; izraza x² − 9 in x² − 6x − 9 nista enaka (x − 3)²;
-x² − 9 je (x − 3)(x + 3). -/
+x² − 9 je (x − 3)(x + 3).
+trditev: MAT-SS-1/algebrski-izrazi#napaka-x-minus-3
+besedilo: »Izraz $x^2 - 9$ je rezultat zmnožka $(x - 3)(x + 3)$, kar je drug primer. Pravilno: $(x - 3)^2 = x^2 - 6x + 9$.« -/
 theorem napaka_x_minus_3 :
     (∀ x : ℝ, (x - 3) ^ 2 = x ^ 2 - 6 * x + 9) ∧ (¬ ∀ x : ℝ, (x - 3) ^ 2 = x ^ 2 - 9) ∧
     (¬ ∀ x : ℝ, (x - 3) ^ 2 = x ^ 2 - 6 * x - 9) ∧ (∀ x : ℝ, (x - 3) * (x + 3) = x ^ 2 - 9) := by
@@ -273,7 +356,9 @@ theorem napaka_x_minus_3 :
   · have := h 0; norm_num at this
   · have := h 0; norm_num at this
 
-/-- Pogoste napake 3: 5x − (2x − 3) = 5x − 2x + 3 = 3x + 3, nikoli 3x − 3. -/
+/-- Pogoste napake 3: 5x − (2x − 3) = 5x − 2x + 3 = 3x + 3, nikoli 3x − 3.
+trditev: MAT-SS-1/algebrski-izrazi#napaka-minus
+besedilo: »Pravilno: $5x - (2x - 3) = 5x - 2x + 3 = 3x + 3$.« -/
 theorem napaka_minus (x : ℝ) : 5 * x - (2 * x - 3) = 3 * x + 3 ∧ 5 * x - (2 * x - 3) ≠ 3 * x - 3 := by
   have h : 5 * x - (2 * x - 3) = 3 * x + 3 := by
     calc 5 * x - (2 * x - 3) = 5 * x - 2 * x + 3 := by ring
@@ -281,7 +366,9 @@ theorem napaka_minus (x : ℝ) : 5 * x - (2 * x - 3) = 3 * x + 3 ∧ 5 * x - (2 
   refine ⟨h, ?_⟩
   rw [h]; intro h'; linarith
 
-/-- Pogoste napake 4: (x + 2)(x + 3) = x² + 3x + 2x + 6 = x² + 5x + 6, ne x² + 6. -/
+/-- Pogoste napake 4: (x + 2)(x + 3) = x² + 3x + 2x + 6 = x² + 5x + 6, ne x² + 6.
+trditev: MAT-SS-1/algebrski-izrazi#napaka-vsak-z-vsakim
+besedilo: »$(x + 2)(x + 3) = x^2 + 3x + 2x + 6 = x^2 + 5x + 6$« -/
 theorem napaka_vsak_z_vsakim : (∀ x : ℝ, (x + 2) * (x + 3) = x ^ 2 + 5 * x + 6) ∧
     (¬ ∀ x : ℝ, (x + 2) * (x + 3) = x ^ 2 + 6) := by
   refine ⟨fun x => ?_, fun h => ?_⟩
@@ -289,7 +376,9 @@ theorem napaka_vsak_z_vsakim : (∀ x : ℝ, (x + 2) * (x + 3) = x ^ 2 + 5 * x +
       _ = x ^ 2 + 5 * x + 6 := by ring
   · have := h 1; norm_num at this
 
-/-- Pogoste napake 5 in Ponovitev: 3x + 2x² ni 5x³, 3x·2x ni 6x; pravilno 3x + 2x = 5x in 3x·2x = 6x². -/
+/-- Pogoste napake 5 in Ponovitev: 3x + 2x² ni 5x³, 3x·2x ni 6x; pravilno 3x + 2x = 5x in 3x·2x = 6x².
+trditev: MAT-SS-1/algebrski-izrazi#napaka-enoclenika
+besedilo: »$3x + 2x = 5x$ in $3x \cdot 2x = 6x^2$« -/
 theorem napaka_enoclenika : (¬ ∀ x : ℝ, 3 * x + 2 * x ^ 2 = 5 * x ^ 3) ∧
     (¬ ∀ x : ℝ, 3 * x * (2 * x) = 6 * x) ∧ (∀ x : ℝ, 3 * x + 2 * x = 5 * x) ∧
     (∀ x : ℝ, 3 * x * (2 * x) = 6 * x ^ 2) := by
@@ -299,17 +388,23 @@ theorem napaka_enoclenika : (¬ ∀ x : ℝ, 3 * x + 2 * x ^ 2 = 5 * x ^ 3) ∧
 
 /-! ## Za maturo -/
 
-/-- Naloga 1: (x + 2)³ = x³ + 3·x²·2 + 3·x·2² + 2³ = x³ + 6x² + 12x + 8. -/
+/-- Naloga 1: (x + 2)³ = x³ + 3·x²·2 + 3·x·2² + 2³ = x³ + 6x² + 12x + 8.
+trditev: MAT-SS-1/algebrski-izrazi#naloga1-kub
+besedilo: »$(x + 2)^3 = x^3 + 3 \cdot x^2 \cdot 2 + 3 \cdot x \cdot 2^2 + 2^3 = x^3 + 6x^2 + 12x + 8$« -/
 theorem naloga1_kub (x : ℝ) : (x + 2) ^ 3 = x ^ 3 + 6 * x ^ 2 + 12 * x + 8 := by
   calc (x + 2) ^ 3 = x ^ 3 + 3 * x ^ 2 * 2 + 3 * x * 2 ^ 2 + 2 ^ 3 := kub_vsote x 2
     _ = x ^ 3 + 6 * x ^ 2 + 12 * x + 8 := by ring
 
-/-- Naloga 1: x(x + 3)² = x(x² + 6x + 9) = x³ + 6x² + 9x. -/
+/-- Naloga 1: x(x + 3)² = x(x² + 6x + 9) = x³ + 6x² + 9x.
+trditev: MAT-SS-1/algebrski-izrazi#naloga1-drugi
+besedilo: »$x(x + 3)^2 = x(x^2 + 6x + 9) = x^3 + 6x^2 + 9x$« -/
 theorem naloga1_drugi (x : ℝ) : x * (x + 3) ^ 2 = x ^ 3 + 6 * x ^ 2 + 9 * x := by
   calc x * (x + 3) ^ 2 = x * (x ^ 2 + 6 * x + 9) := by ring
     _ = x ^ 3 + 6 * x ^ 2 + 9 * x := by ring
 
-/-- Naloga 1: (x + 2)³ − x(x + 3)² = x³ + 6x² + 12x + 8 − x³ − 6x² − 9x = 3x + 8. -/
+/-- Naloga 1: (x + 2)³ − x(x + 3)² = x³ + 6x² + 12x + 8 − x³ − 6x² − 9x = 3x + 8.
+trditev: MAT-SS-1/algebrski-izrazi#naloga1
+besedilo: »Odgovor: $(x + 2)^3 - x(x + 3)^2 = 3x + 8$.« -/
 theorem naloga1 (x : ℝ) : (x + 2) ^ 3 - x * (x + 3) ^ 2 = 3 * x + 8 := by
   calc (x + 2) ^ 3 - x * (x + 3) ^ 2
       = (x ^ 3 + 6 * x ^ 2 + 12 * x + 8) - (x ^ 3 + 6 * x ^ 2 + 9 * x) := by
@@ -317,7 +412,9 @@ theorem naloga1 (x : ℝ) : (x + 2) ^ 3 - x * (x + 3) ^ 2 = 3 * x + 8 := by
     _ = x ^ 3 + 6 * x ^ 2 + 12 * x + 8 - x ^ 3 - 6 * x ^ 2 - 9 * x := by ring
     _ = 3 * x + 8 := by ring
 
-/-- Naloga 1, korak 4: preizkus pri x = 1: 3³ − 1·4² = 27 − 16 = 11 in 3 + 8 = 11. -/
+/-- Naloga 1, korak 4: preizkus pri x = 1: 3³ − 1·4² = 27 − 16 = 11 in 3 + 8 = 11.
+trditev: MAT-SS-1/algebrski-izrazi#naloga1-preizkus
+besedilo: »Preizkus pri $x = 1$: izvirni izraz je $3^3 - 1 \cdot 4^2 = 27 - 16 = 11$, rezultat pa $3 + 8 = 11$.« -/
 theorem naloga1_preizkus : (1 + 2 : ℝ) ^ 3 - 1 * (1 + 3) ^ 2 = 11 ∧ (3 * 1 + 8 : ℝ) = 11 := by
   constructor
   · calc (1 + 2 : ℝ) ^ 3 - 1 * (1 + 3) ^ 2 = 3 ^ 3 - 1 * 4 ^ 2 := by norm_num
@@ -325,14 +422,18 @@ theorem naloga1_preizkus : (1 + 2 : ℝ) ^ 3 - 1 * (1 + 3) ^ 2 = 11 ∧ (3 * 1 +
       _ = 11 := by norm_num
   · norm_num
 
-/-- Naloga 2 a): (x + 2)(x − 2) = x² − 4 in prostornina x(x + 2)(x − 2) = x(x² − 4) = x³ − 4x. -/
+/-- Naloga 2 a): (x + 2)(x − 2) = x² − 4 in prostornina x(x + 2)(x − 2) = x(x² − 4) = x³ − 4x.
+trditev: MAT-SS-1/algebrski-izrazi#naloga2a
+besedilo: »1. a) Zmnožek vsote in razlike: $(x + 2)(x - 2) = x^2 - 4$. 2. a) Prostornina kvadra: $x(x + 2)(x - 2) = x(x^2 - 4) = (x^3 - 4x)\,\text{cm}^3$.« -/
 theorem naloga2a (x : ℝ) : (x + 2) * (x - 2) = x ^ 2 - 4 ∧ x * (x + 2) * (x - 2) = x ^ 3 - 4 * x := by
   refine ⟨by ring, ?_⟩
   calc x * (x + 2) * (x - 2) = x * (x ^ 2 - 4) := by ring
     _ = x ^ 3 - 4 * x := by ring
 
 /-- Naloga 2 b): ploskve x(x + 2) = x² + 2x, x(x − 2) = x² − 2x, (x + 2)(x − 2) = x² − 4; površina
-2[(x² + 2x) + (x² − 2x) + (x² − 4)] = 2(3x² − 4) = 6x² − 8. -/
+2[(x² + 2x) + (x² − 2x) + (x² − 4)] = 2(3x² − 4) = 6x² − 8.
+trditev: MAT-SS-1/algebrski-izrazi#naloga2b
+besedilo: »3. b) Ploščine treh različnih ploskev: $x(x + 2) = x^2 + 2x$, $x(x - 2) = x^2 - 2x$ in $(x + 2)(x - 2) = x^2 - 4$. 4. b) Površina: $2\big[(x^2 + 2x) + (x^2 - 2x) + (x^2 - 4)\big] = 2(3x^2 - 4) = (6x^2 - 8)\,\text{cm}^2$.« -/
 theorem naloga2b (x : ℝ) : x * (x + 2) = x ^ 2 + 2 * x ∧ x * (x - 2) = x ^ 2 - 2 * x ∧
     (x + 2) * (x - 2) = x ^ 2 - 4 ∧
     2 * (x * (x + 2) + x * (x - 2) + (x + 2) * (x - 2)) = 6 * x ^ 2 - 8 := by
@@ -343,7 +444,9 @@ theorem naloga2b (x : ℝ) : x * (x + 2) = x ^ 2 + 2 * x ∧ x * (x - 2) = x ^ 2
     _ = 6 * x ^ 2 - 8 := by ring
 
 /-- Naloga 2 c): (x + 1)³ = x³ + 3x² + 3x + 1 in (x³ + 3x² + 3x + 1) − (x³ − 4x)
-= x³ + 3x² + 3x + 1 − x³ + 4x = 3x² + 7x + 1. -/
+= x³ + 3x² + 3x + 1 − x³ + 4x = 3x² + 7x + 1.
+trditev: MAT-SS-1/algebrski-izrazi#naloga2c
+besedilo: »5. c) Kub vsote: $(x + 1)^3 = x^3 + 3x^2 + 3x + 1$. 6. c) Razlika prostornin: $(x^3 + 3x^2 + 3x + 1) - (x^3 - 4x) = x^3 + 3x^2 + 3x + 1 - x^3 + 4x = 3x^2 + 7x + 1$.« -/
 theorem naloga2c (x : ℝ) : (x + 1) ^ 3 = x ^ 3 + 3 * x ^ 2 + 3 * x + 1 ∧
     (x + 1) ^ 3 - (x ^ 3 - 4 * x) = 3 * x ^ 2 + 7 * x + 1 := by
   refine ⟨by ring, ?_⟩
@@ -352,7 +455,9 @@ theorem naloga2c (x : ℝ) : (x + 1) ^ 3 = x ^ 3 + 3 * x ^ 2 + 3 * x + 1 ∧
     _ = 3 * x ^ 2 + 7 * x + 1 := by ring
 
 /-- Naloga 2 c), preizkus pri x = 5: rob kocke 6, robovi kvadra 5, 7, 3; 216 − 105 = 111 in
-3·25 + 7·5 + 1 = 111. -/
+3·25 + 7·5 + 1 = 111.
+trditev: MAT-SS-1/algebrski-izrazi#naloga2c-preizkus
+besedilo: »Preizkus pri $x = 5$: kocka ima rob $6$, kvader robove $5$, $7$ in $3$, zato je razlika $216 - 105 = 111$. Mnogočlenik da $3 \cdot 25 + 7 \cdot 5 + 1 = 111$.« -/
 theorem naloga2c_preizkus : (5 + 1 : ℝ) = 6 ∧ (5 + 2 : ℝ) = 7 ∧ (5 - 2 : ℝ) = 3 ∧
     (6 : ℝ) ^ 3 - 5 * 7 * 3 = 216 - 105 ∧ (216 - 105 : ℝ) = 111 ∧ (3 * 5 ^ 2 + 7 * 5 + 1 : ℝ) = 3 * 25 + 7 * 5 + 1 ∧
     (3 * 25 + 7 * 5 + 1 : ℝ) = 111 := by
@@ -360,25 +465,33 @@ theorem naloga2c_preizkus : (5 + 1 : ℝ) = 6 ∧ (5 + 2 : ℝ) = 7 ∧ (5 - 2 :
 
 /-! ## Drugače -/
 
-/-- Drugače (korak za korakom): (2x)² = 4x², −2·2x·5 = −20x, 5² = 25, (2x − 5)² = 4x² − 20x + 25. -/
+/-- Drugače (korak za korakom): (2x)² = 4x², −2·2x·5 = −20x, 5² = 25, (2x − 5)² = 4x² − 20x + 25.
+trditev: MAT-SS-1/algebrski-izrazi#drugace-2x-5
+besedilo: »2. Kvadriram prvi člen: $(2x)^2 = 4x^2$. 3. Dvakratni zmnožek obeh členov, predznak minus: $-2 \cdot 2x \cdot 5 = -20x$. 4. Kvadriram drugi člen (predznak je vedno plus): $5^2 = 25$. 5. Sestavim vse tri člene: $4x^2 - 20x + 25$.« -/
 theorem drugace_2x_5 (x : ℝ) : (2 * x) ^ 2 = 4 * x ^ 2 ∧ -2 * (2 * x) * 5 = -20 * x ∧ (5 : ℝ) ^ 2 = 25 ∧
     (2 * x - 5) ^ 2 = 4 * x ^ 2 - 20 * x + 25 := by
   refine ⟨by ring, by ring, by norm_num, ?_⟩
   calc (2 * x - 5) ^ 2 = (2 * x) ^ 2 - 2 * (2 * x) * 5 + 5 ^ 2 := kvadrat_razlike (2 * x) 5
     _ = 4 * x ^ 2 - 20 * x + 25 := by ring
 
-/-- Drugače, korak 6: preizkus pri x = 3: (6 − 5)² = 1 in 36 − 60 + 25 = 1. -/
+/-- Drugače, korak 6: preizkus pri x = 3: (6 − 5)² = 1 in 36 − 60 + 25 = 1.
+trditev: MAT-SS-1/algebrski-izrazi#drugace-preizkus
+besedilo: »Preizkus pri $x = 3$: $(6 - 5)^2 = 1$ in $36 - 60 + 25 = 1$.« -/
 theorem drugace_preizkus : (2 * 3 - 5 : ℝ) ^ 2 = 1 ∧ (4 * 3 ^ 2 - 20 * 3 + 25 : ℝ) = 36 - 60 + 25 ∧
     (36 - 60 + 25 : ℝ) = 1 := by
   norm_num
 
-/-- Drugače: (x − 1)³ = x³ − 3x² + 3x − 1 (1ᵏ = 1); preizkus pri x = 2: (2 − 1)³ = 1 in 8 − 12 + 6 − 1 = 1. -/
+/-- Drugače: (x − 1)³ = x³ − 3x² + 3x − 1 (1ᵏ = 1); preizkus pri x = 2: (2 − 1)³ = 1 in 8 − 12 + 6 − 1 = 1.
+trditev: MAT-SS-1/algebrski-izrazi#drugace-kub
+besedilo: »Dobimo $x^3 - 3x^2 + 3x - 1$. Preizkus pri $x = 2$: leva stran je $(2 - 1)^3 = 1$, desna pa $8 - 12 + 6 - 1 = 1$.« -/
 theorem drugace_kub : (∀ x : ℝ, (x - 1) ^ 3 = x ^ 3 - 3 * x ^ 2 + 3 * x - 1) ∧ (∀ k : ℕ, (1 : ℝ) ^ k = 1) ∧
     (2 - 1 : ℝ) ^ 3 = 1 ∧ (8 - 12 + 6 - 1 : ℝ) = 1 ∧ (2 : ℝ) ^ 3 - 3 * 2 ^ 2 + 3 * 2 - 1 = 8 - 12 + 6 - 1 := by
   exact ⟨fun x => by ring, fun k => one_pow k, by norm_num, by norm_num, by norm_num⟩
 
 /-- Drugače (zgodba): pekač 30 → 40 cm: 900 + 300 + 300 + 100 = 1600 = 40², povečanje 700 cm², ne 100;
-splošno novo dno a² + 2ab + b². -/
+splošno novo dno a² + 2ab + b².
+trditev: MAT-SS-1/algebrski-izrazi#zgodba
+besedilo: »Marko sešteje: $900 + 300 + 300 + 100 = 1600$. Dno se ni povečalo za $100\,\text{cm}^2$, ampak za $700\,\text{cm}^2$.« -/
 theorem zgodba : (30 : ℝ) ^ 2 = 900 ∧ (30 * 10 : ℝ) = 300 ∧ (10 * 10 : ℝ) = 100 ∧
     (900 + 300 + 300 + 100 : ℝ) = 1600 ∧ (40 : ℝ) ^ 2 = 1600 ∧ (1600 : ℝ) - 900 = 700 ∧ (700 : ℝ) ≠ 100 := by
   norm_num
@@ -386,18 +499,23 @@ theorem zgodba : (30 : ℝ) ^ 2 = 900 ∧ (30 * 10 : ℝ) = 300 ∧ (10 * 10 : �
 /-! ## Preveri se -/
 
 /-- Preveri se 1: kos torte s stranico x + 3: deli x·x, x·3, 3·x, 3·3, skupaj x² + 6x + 9; napačni razrezi
-x² + 9, x² + 3x + 9 in x² + 6 + 6 + 9 niso (x + 3)² (protiprimer x = 1). -/
+x² + 9, x² + 3x + 9 in x² + 6 + 6 + 9 niso (x + 3)² (protiprimer x = 1).
+trditev: MAT-SS-1/algebrski-izrazi#preveri1
+besedilo: »Deli so kvadrat $x \cdot x$, dva pravokotnika $x \cdot 3$ in kvadratek $3 \cdot 3$. Skupaj $(x + 3)^2 = x^2 + 6x + 9$.« -/
 theorem preveri1 (x : ℝ) : (x + 3) ^ 2 = x * x + x * 3 + 3 * x + 3 * 3 ∧ (x + 3) ^ 2 = x ^ 2 + 6 * x + 9 := by
   constructor <;> ring
 
-/-- Preveri se 1, napačni odgovori: (x + 3)² ni x² + 9, ni x² + 3x + 9 in ni x² + 6 + 6 + 9 (pri x = 1). -/
+/-- Preveri se 1, napačni odgovori: (x + 3)² ni x² + 9, ni x² + 3x + 9 in ni x² + 6 + 6 + 9 (pri x = 1).
+pomozno – povratne informacije kviza 1 napake le opišejo, protiprimera (x = 1) ne navedejo -/
 theorem preveri1_napacni : (¬ ∀ x : ℝ, (x + 3) ^ 2 = x ^ 2 + 9) ∧ (¬ ∀ x : ℝ, (x + 3) ^ 2 = x ^ 2 + 3 * x + 9) ∧
     (¬ ∀ x : ℝ, (x + 3) ^ 2 = x ^ 2 + 6 + 6 + 9) :=
   ⟨fun h => by have := h 1; norm_num at this, fun h => by have := h 1; norm_num at this,
     fun h => by have := h 1; norm_num at this⟩
 
 /-- Preveri se 2: 98² = (100 − 2)² = 10000 − 400 + 4 = 9604; napačne 9996, 10004, 9600 niso 98²;
-98² < 10000. -/
+98² < 10000.
+trditev: MAT-SS-1/algebrski-izrazi#preveri2
+besedilo: »$(100 - 2)^2 = 10\,000 - 400 + 4 = 9604$.« -/
 theorem preveri2 : (98 : ℝ) ^ 2 = 9604 ∧ (98 : ℝ) ^ 2 ≠ 9996 ∧ (98 : ℝ) ^ 2 ≠ 10004 ∧
     (98 : ℝ) ^ 2 ≠ 9600 ∧ (98 : ℝ) ^ 2 < 10000 := by
   refine ⟨?_, by norm_num, by norm_num, by norm_num, by norm_num⟩
@@ -406,7 +524,9 @@ theorem preveri2 : (98 : ℝ) ^ 2 = 9604 ∧ (98 : ℝ) ^ 2 ≠ 9996 ∧ (98 : �
     _ = 9604 := by norm_num
 
 /-- Preveri se 3: (−4)² = (−4)·(−4) = 16, zato (x − 4)² = x² − 8x + 16 (ne x² − 8x − 16 ne (x + 4)²);
-(x − 4)(x + 4) = x² − 16. -/
+(x − 4)(x + 4) = x² − 16.
+trditev: MAT-SS-1/algebrski-izrazi#preveri3
+besedilo: »Zmnožek dveh negativnih števil je pozitiven, zato $(x - 4)^2 = x^2 - 8x + 16$.« -/
 theorem preveri3 : (-4 : ℝ) ^ 2 = (-4) * (-4) ∧ (-4 : ℝ) * (-4) = 16 ∧
     (∀ x : ℝ, (x - 4) ^ 2 = x ^ 2 - 8 * x + 16) ∧ (¬ ∀ x : ℝ, (x - 4) ^ 2 = x ^ 2 - 8 * x - 16) ∧
     (¬ ∀ x : ℝ, (x - 4) ^ 2 = (x + 4) ^ 2) ∧ (∀ x : ℝ, (x - 4) * (x + 4) = x ^ 2 - 16) := by
@@ -415,7 +535,9 @@ theorem preveri3 : (-4 : ℝ) ^ 2 = (-4) * (-4) ∧ (-4 : ℝ) * (-4) = 16 ∧
   · have := h 1; norm_num at this
 
 /-- Preveri se 4: 9x² − 12x + 4 = (3x − 2)² = 9x² − 2·3x·2 + 4; ni (9x − 2)², (3x + 2)² ali (3x − 4)²
-(slednji je 9x² − 24x + 16). -/
+(slednji je 9x² − 24x + 16).
+trditev: MAT-SS-1/algebrski-izrazi#preveri4
+besedilo: »$(3x - 2)^2 = 9x^2 - 2 \cdot 3x \cdot 2 + 4 = 9x^2 - 12x + 4$.« -/
 theorem preveri4 : (∀ x : ℝ, (3 * x - 2) ^ 2 = 9 * x ^ 2 - 2 * (3 * x) * 2 + 4) ∧
     (∀ x : ℝ, 9 * x ^ 2 - 2 * (3 * x) * 2 + 4 = 9 * x ^ 2 - 12 * x + 4) ∧
     (¬ ∀ x : ℝ, (9 * x - 2) ^ 2 = 9 * x ^ 2 - 12 * x + 4) ∧
@@ -427,7 +549,9 @@ theorem preveri4 : (∀ x : ℝ, (3 * x - 2) ^ 2 = 9 * x ^ 2 - 2 * (3 * x) * 2 +
   · have := h 1; norm_num at this
   · have := h 0; norm_num at this
 
-/-- Preveri se 5: (n + 1)³ − n³ = 3n² + 3n + 1 (ne 1, ne 3n² + 1); pri n = 2: 12 + 6 + 1 = 19 = 27 − 8. -/
+/-- Preveri se 5: (n + 1)³ − n³ = 3n² + 3n + 1 (ne 1, ne 3n² + 1); pri n = 2: 12 + 6 + 1 = 19 = 27 − 8.
+trditev: MAT-SS-1/algebrski-izrazi#preveri5
+besedilo: »Dodati moraš $(n + 1)^3 - n^3 = 3n^2 + 3n + 1$: tri plošče $n \cdot n$, tri palčke dolžine $n$ in eno kocko v kotu. Pri $n = 2$ je to $12 + 6 + 1 = 19$, res $27 - 8 = 19$.« -/
 theorem preveri5 : (∀ n : ℝ, (n + 1) ^ 3 - n ^ 3 = 3 * n ^ 2 + 3 * n + 1) ∧
     (¬ ∀ n : ℝ, (n + 1) ^ 3 = n ^ 3 + 1) ∧ (¬ ∀ n : ℝ, (n + 1) ^ 3 - n ^ 3 = 3 * n ^ 2 + 1) ∧
     (3 * 2 ^ 2 + 3 * 2 + 1 : ℝ) = 12 + 6 + 1 ∧ (12 + 6 + 1 : ℝ) = 19 ∧ (27 - 8 : ℝ) = 19 ∧
@@ -436,7 +560,9 @@ theorem preveri5 : (∀ n : ℝ, (n + 1) ^ 3 - n ^ 3 = 3 * n ^ 2 + 3 * n + 1) �
   · have := h 1; norm_num at this
   · have := h 1; norm_num at this
 
-/-- Preveri se 6: 103·97 = (100 + 3)(100 − 3) = 100² − 3² = 10000 − 9 = 9991; ni 10009 ne 9997. -/
+/-- Preveri se 6: 103·97 = (100 + 3)(100 − 3) = 100² − 3² = 10000 − 9 = 9991; ni 10009 ne 9997.
+trditev: MAT-SS-1/algebrski-izrazi#preveri6
+besedilo: »$(100 + 3)(100 - 3) = 100^2 - 3^2 = 10\,000 - 9 = 9991$.« -/
 theorem preveri6 : (103 * 97 : ℝ) = 9991 ∧ (103 * 97 : ℝ) ≠ 10009 ∧ (103 * 97 : ℝ) ≠ 9997 := by
   refine ⟨?_, by norm_num, by norm_num⟩
   calc (103 * 97 : ℝ) = (100 + 3) * (100 - 3) := by norm_num
@@ -446,7 +572,8 @@ theorem preveri6 : (103 * 97 : ℝ) = 9991 ∧ (103 * 97 : ℝ) ≠ 10009 ∧ (1
 
 /-! ## RACUN -/
 
-/-- Blok RACUN: vse vrstice enako in vrednost. -/
+/-- Blok RACUN: vse vrstice enako in vrednost.
+pomozno – zbirka vrednosti iz skritega bloka RACUN -/
 theorem racun :
     (∀ x : ℝ, (2*x^2-3*x+5)-(x^2+4*x-7) = x^2-7*x+12) ∧ ((2:ℝ)^2-7*2+12 = 2) ∧
     (∀ x : ℝ, (3*x-2)*(2*x+5)-(x-4)*(x+4) = 5*x^2+11*x+6) ∧

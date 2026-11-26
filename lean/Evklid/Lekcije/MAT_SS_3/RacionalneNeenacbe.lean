@@ -24,22 +24,28 @@ open Filter Topology Set
 
 /-! ## Pomožne trditve in splošna pravila -/
 
-/-- Bolj natančno: za q ≠ 0 je p/q > 0 enakovredno p·q > 0 (množimo s q² > 0). -/
+/-- Bolj natančno: za q ≠ 0 je p/q > 0 enakovredno p·q > 0 (množimo s q² > 0).
+trditev: MAT-SS-3/racionalne-neenacbe#kolicnik-poz
+besedilo: »Za $q(x) \ne 0$ je $q(x)^2 > 0$, zato je $\frac{p(x)}{q(x)} > 0$ enakovredno $p(x) \cdot q(x) > 0$.« -/
 theorem kolicnik_poz (p q : ℝ) (hq : q ≠ 0) : 0 < p / q ↔ 0 < p * q := by
   have e : p / q = p * q / q ^ 2 := by field_simp
   rw [e, lt_div_iff₀ (by positivity), zero_mul]
 
-/-- Bolj natančno: za q ≠ 0 je p/q ≥ 0 enakovredno p·q ≥ 0 (pogoj q ≠ 0 izloči pole). -/
+/-- Bolj natančno: za q ≠ 0 je p/q ≥ 0 enakovredno p·q ≥ 0 (pogoj q ≠ 0 izloči pole).
+trditev: MAT-SS-3/racionalne-neenacbe#kolicnik-nenegativen
+besedilo: »Pri $\ge$ velja $p(x) \cdot q(x) \ge 0$ in hkrati $q(x) \ne 0$: drugi pogoj izloči pole.« -/
 theorem kolicnik_nenegativen (p q : ℝ) (hq : q ≠ 0) : 0 ≤ p / q ↔ 0 ≤ p * q := by
   have e : p / q = p * q / q ^ 2 := by field_simp
   rw [e, le_div_iff₀ (by positivity), zero_mul]
 
-/-- Bolj natančno (isto za <): za q ≠ 0 je p/q < 0 enakovredno p·q < 0. -/
+/-- Bolj natančno (isto za <): za q ≠ 0 je p/q < 0 enakovredno p·q < 0.
+pomozno -/
 theorem kolicnik_neg (p q : ℝ) (hq : q ≠ 0) : p / q < 0 ↔ p * q < 0 := by
   have e : p / q = p * q / q ^ 2 := by field_simp
   rw [e, div_lt_iff₀ (by positivity), zero_mul]
 
-/-- Bolj natančno (isto za ≤): za q ≠ 0 je p/q ≤ 0 enakovredno p·q ≤ 0. -/
+/-- Bolj natančno (isto za ≤): za q ≠ 0 je p/q ≤ 0 enakovredno p·q ≤ 0.
+pomozno -/
 theorem kolicnik_nepozitiven (p q : ℝ) (hq : q ≠ 0) : p / q ≤ 0 ↔ p * q ≤ 0 := by
   have e : p / q = p * q / q ^ 2 := by field_simp
   rw [e, div_le_iff₀ (by positivity), zero_mul]
@@ -51,7 +57,9 @@ example : (0 < (1 : ℝ) / 1 ↔ 0 < (1 : ℝ) * 1) ∧ (0 ≤ (1 : ℝ) / 1 ↔
   ⟨kolicnik_poz 1 1 one_ne_zero, kolicnik_nenegativen 1 1 one_ne_zero, kolicnik_neg 1 1 one_ne_zero,
     kolicnik_nepozitiven 1 1 one_ne_zero⟩
 
-/-- Razlaga 1: pri množenju s pozitivnim številom znak neenačbe ostane, pri množenju z negativnim se obrne. -/
+/-- Razlaga 1: pri množenju s pozitivnim številom znak neenačbe ostane, pri množenju z negativnim se obrne.
+trditev: MAT-SS-3/racionalne-neenacbe#mnozenje-znak
+besedilo: »Pri množenju s pozitivnim številom znak neenačbe ostane, pri množenju z negativnim se obrne.« -/
 theorem mnozenje_znak (a b c : ℝ) (h : a < b) : (0 < c → a * c < b * c) ∧ (c < 0 → b * c < a * c) :=
   ⟨fun hc => mul_lt_mul_of_pos_right h hc, fun hc => mul_lt_mul_of_neg_right h hc⟩
 
@@ -61,7 +69,9 @@ example : (0 < (3 : ℝ) → (1 : ℝ) * 3 < 2 * 3) ∧ ((-3 : ℝ) < 0 → (2 :
 
 /-- Razlaga 2, Bolj natančno, Povzetek (»na vsakem intervalu zadošča eno testno število«): zvezna funkcija
 brez ničel na intervalu (povezani množici S, npr. med sosednjima ničlama ali poloma) ima na njem stalen
-predznak; sicer bi po izreku o vmesni vrednosti imela vmes ničlo. -/
+predznak; sicer bi po izreku o vmesni vrednosti imela vmes ničlo.
+trditev: MAT-SS-3/racionalne-neenacbe#predznak-stalen
+besedilo: »Na vsakem je predznak stalen, zato zadošča eno testno število.« -/
 theorem predznak_stalen {f : ℝ → ℝ} {S : Set ℝ} (hS : S.OrdConnected) (hf : ContinuousOn f S)
     (h : ∀ x ∈ S, f x ≠ 0) : (∀ x ∈ S, 0 < f x) ∨ (∀ x ∈ S, f x < 0) := by
   by_contra hc
@@ -80,7 +90,9 @@ example : (∀ x ∈ (univ : Set ℝ), (0 : ℝ) < (fun _ => (1 : ℝ)) x) ∨
   predznak_stalen ordConnected_univ continuousOn_const (fun _ _ => one_ne_zero)
 
 /-- Razlaga 2 (»ulomek lahko zamenja predznak le tam, kjer je števec ali imenovalec 0«): če p in q na
-povezani množici S nimata ničel in sta tam zvezna, ima p/q na S stalen predznak. -/
+povezani množici S nimata ničel in sta tam zvezna, ima p/q na S stalen predznak.
+trditev: MAT-SS-3/racionalne-neenacbe#predznak-ulomka-stalen
+besedilo: »Ulomek lahko zamenja predznak le tam, kjer je števec ali imenovalec enak $0$.« -/
 theorem predznak_ulomka_stalen {p q : ℝ → ℝ} {S : Set ℝ} (hS : S.OrdConnected) (hp : ContinuousOn p S)
     (hq : ContinuousOn q S) (hp0 : ∀ x ∈ S, p x ≠ 0) (hq0 : ∀ x ∈ S, q x ≠ 0) :
     (∀ x ∈ S, 0 < p x / q x) ∨ (∀ x ∈ S, p x / q x < 0) :=
@@ -91,7 +103,8 @@ example : (∀ x ∈ Ioo (0 : ℝ) 1, 0 < (1 - x) / x) ∨ (∀ x ∈ Ioo (0 : �
   predznak_ulomka_stalen ordConnected_Ioo (by fun_prop) (by fun_prop)
     (fun x hx => by have := hx.2; intro e; linarith) (fun x hx => hx.1.ne')
 
-/-- Pomožna: zvezna g z g(c) ≠ 0 ima blizu c isti predznak kot v c. -/
+/-- Pomožna: zvezna g z g(c) ≠ 0 ima blizu c isti predznak kot v c.
+pomozno -/
 theorem blizu_isti_predznak {g : ℝ → ℝ} {c : ℝ} (hg : ContinuousAt g c) (h0 : g c ≠ 0) :
     ∃ δ > 0, ∀ x, |x - c| < δ → 0 < g x * g c := by
   have : ∀ᶠ x in 𝓝 c, 0 < g x * g c := by
@@ -105,7 +118,9 @@ example : ∃ δ > 0, ∀ x : ℝ, |x - 0| < δ → 0 < (fun _ => (1 : ℝ)) x *
   blizu_isti_predznak continuousAt_const one_ne_zero
 
 /-- Ustno vprašanje 2, Povzetek (»predznak se zamenja … le pri lihi stopnji«): f(x) = g(x)(x − c)ᵐ, g zvezna
-v c, g(c) ≠ 0, m lih: blizu c ima f levo in desno od c nasprotna predznaka (f(x)·f(y) < 0). -/
+v c, g(c) ≠ 0, m lih: blizu c ima f levo in desno od c nasprotna predznaka (f(x)·f(y) < 0).
+trditev: MAT-SS-3/racionalne-neenacbe#predznak-ob-tocki-liha
+besedilo: »Če je $c$ ničla ali pol stopnje $m$, ulomek vsebuje faktor $(x - c)^m$, ostali faktorji pa v $c$ ne zamenjajo predznaka; pri lihi stopnji $m$ ta faktor v $c$ zamenja predznak, zato ga zamenja tudi ulomek.« -/
 theorem predznak_ob_tocki_liha {g : ℝ → ℝ} {c : ℝ} {m : ℕ} (hg : ContinuousAt g c) (h0 : g c ≠ 0)
     (hm : Odd m) : ∃ δ > 0, ∀ x y, c - δ < x → x < c → c < y → y < c + δ →
       (g x * (x - c) ^ m) * (g y * (y - c) ^ m) < 0 := by
@@ -129,7 +144,9 @@ example : ∃ δ > 0, ∀ x y : ℝ, 0 - δ < x → x < 0 → 0 < y → y < 0 + 
   predznak_ob_tocki_liha continuousAt_const one_ne_zero odd_one
 
 /-- Razlaga 6, ustno vprašanje 2: pri sodi stopnji m ima f(x) = g(x)(x − c)ᵐ blizu c na obeh straneh isti
-predznak (f(x)·f(y) > 0). -/
+predznak (f(x)·f(y) > 0).
+trditev: MAT-SS-3/racionalne-neenacbe#predznak-ob-tocki-soda
+besedilo: »Pri sodi stopnji je faktor $(x - c)^m$ na obeh straneh točke $c$ pozitiven, zato predznak ulomka ostane enak.« -/
 theorem predznak_ob_tocki_soda {g : ℝ → ℝ} {c : ℝ} {m : ℕ} (hg : ContinuousAt g c) (h0 : g c ≠ 0)
     (hm : Even m) : ∃ δ > 0, ∀ x y, c - δ < x → x < c → c < y → y < c + δ →
       0 < (g x * (x - c) ^ m) * (g y * (y - c) ^ m) := by
@@ -152,11 +169,15 @@ example : ∃ δ > 0, ∀ x y : ℝ, 0 - δ < x → x < 0 → 0 < y → y < 0 + 
     0 < ((fun _ => (1 : ℝ)) x * (x - 0) ^ 2) * ((fun _ => (1 : ℝ)) y * (y - 0) ^ 2) :=
   predznak_ob_tocki_soda continuousAt_const one_ne_zero even_two
 
-/-- Razlaga 6: (x − 2)² je povsod nenegativen. -/
+/-- Razlaga 6: (x − 2)² je povsod nenegativen.
+trditev: MAT-SS-3/racionalne-neenacbe#kvadrat-nenegativen
+besedilo: »$(x - 2)^2$ je povsod nenegativen.« -/
 theorem kvadrat_nenegativen (x : ℝ) : 0 ≤ (x - 2) ^ 2 := sq_nonneg _
 
 /-- Razlaga 5 in Povzetek (krajišča): v ničli števca (q ≠ 0, p = 0) je p/q = 0, zato velja p/q ≥ 0 in
-p/q ≤ 0, ne pa p/q > 0 ali p/q < 0. -/
+p/q ≤ 0, ne pa p/q > 0 ali p/q < 0.
+trditev: MAT-SS-3/racionalne-neenacbe#krajisca-nicla
+besedilo: »Pri $<$ in $>$ so vsa krajišča odprta. Pri $\le$ in $\ge$ ničle vključiš, saj je ulomek tam $0$.« -/
 theorem krajisca_nicla (p q : ℝ) (hp : p = 0) :
     0 ≤ p / q ∧ p / q ≤ 0 ∧ ¬ (0 < p / q) ∧ ¬ (p / q < 0) := by
   subst hp; simp
@@ -167,16 +188,22 @@ example : 0 ≤ ((2 : ℝ) - 2) / 3 ∧ ((2 : ℝ) - 2) / 3 ≤ 0 ∧ ¬ (0 < ((
 
 /-! ## Zakaj se tega učimo in Razlaga: 1/x < 1 -/
 
-/-- Uvod: 1/(−2) = −0,5 < 1, čeprav −2 ni večje od 1 (naivno množenje z x da 1 < x in izgubi to rešitev). -/
+/-- Uvod: 1/(−2) = −0,5 < 1, čeprav −2 ni večje od 1 (naivno množenje z x da 1 < x in izgubi to rešitev).
+trditev: MAT-SS-3/racionalne-neenacbe#uvod
+besedilo: »Velja $\frac{1}{-2} = -0{,}5$, kar je manj kot $1$. Število $-2$ torej neenačbo reši, čeprav ni večje od $1$.« -/
 theorem uvod : (1 : ℝ) / (-2) = -1 / 2 ∧ (1 : ℝ) / (-2) < 1 ∧ ¬ ((1 : ℝ) < -2) := by norm_num
 
-/-- Razlaga 1: 1/x − 1 = (1 − x)/x za x ≠ 0. -/
+/-- Razlaga 1: 1/x − 1 = (1 − x)/x za x ≠ 0.
+trditev: MAT-SS-3/racionalne-neenacbe#en-ulomek
+besedilo: »$$\frac{1}{x} - 1 < 0$$ Nato zapišemo levo stran kot en ulomek: $$\frac{1 - x}{x} < 0$$« -/
 theorem en_ulomek (x : ℝ) (hx : x ≠ 0) : 1 / x - 1 = (1 - x) / x := by field_simp
 
 /-- Predpostavka `en_ulomek` se da izpolniti (x = 2). -/
 example : (1 : ℝ) / 2 - 1 = (1 - 2) / 2 := en_ulomek 2 (by norm_num)
 
-/-- Razlaga 2, tabela predznakov za (1 − x)/x na (−∞, 0), (0, 1), (1, ∞); pri x = 1 je ulomek 0. -/
+/-- Razlaga 2, tabela predznakov za (1 − x)/x na (−∞, 0), (0, 1), (1, ∞); pri x = 1 je ulomek 0.
+trditev: MAT-SS-3/racionalne-neenacbe#tabela-uvod
+besedilo: »| $(-\infty, 0)$ | $+$ | $-$ | $-$ | | $(0, 1)$ | $+$ | $+$ | $+$ | | $(1, \infty)$ | $-$ | $+$ | $-$ |« -/
 theorem tabela_uvod :
     (∀ x : ℝ, x < 0 → 0 < 1 - x ∧ x < 0 ∧ (1 - x) / x < 0) ∧
     (∀ x : ℝ, 0 < x → x < 1 → 0 < 1 - x ∧ 0 < x ∧ 0 < (1 - x) / x) ∧
@@ -186,7 +213,9 @@ theorem tabela_uvod :
     fun x h => ⟨by linarith, by linarith, div_neg_of_neg_of_pos (by linarith) (by linarith)⟩,
     by norm_num⟩
 
-/-- Razlaga 2 (RACUN neenacba): 1/x < 1 s pogojem x ≠ 0 ↔ x ∈ (−∞, 0) ∪ (1, ∞). -/
+/-- Razlaga 2 (RACUN neenacba): 1/x < 1 s pogojem x ≠ 0 ↔ x ∈ (−∞, 0) ∪ (1, ∞).
+trditev: MAT-SS-3/racionalne-neenacbe#resitev-uvod
+besedilo: »Iščemo negativne vrednosti: $x \in (-\infty, 0) \cup (1, \infty)$.« -/
 theorem resitev_uvod (x : ℝ) : (x ≠ 0 ∧ 1 / x < 1) ↔ x ∈ Iio 0 ∪ Ioi 1 := by
   simp only [mem_union, mem_Iio, mem_Ioi]
   constructor
@@ -203,7 +232,9 @@ theorem resitev_uvod (x : ℝ) : (x ≠ 0 ∧ 1 / x < 1) ↔ x ∈ Iio 0 ∪ Ioi
 /-! ## Razlaga: premisli -/
 
 /-- Razlaga 5, premisli: (x − 2)/(x + 1) ≥ 0 s pogojem x ≠ −1 ↔ x ∈ (−∞, −1) ∪ [2, ∞) (RACUN); preizkus
-x = −2 da 4, x = 0 da −2, x = 3 da 1/4. -/
+x = −2 da 4, x = 0 da −2, x = 3 da 1/4.
+trditev: MAT-SS-3/racionalne-neenacbe#premisli1
+besedilo: »Rešitev je $(-\infty, -1) \cup [2, \infty)$.« -/
 theorem premisli1 (x : ℝ) : (x ≠ -1 ∧ 0 ≤ (x - 2) / (x + 1)) ↔ x ∈ Iio (-1) ∪ Ici 2 := by
   simp only [mem_union, mem_Iio, mem_Ici]
   constructor
@@ -217,12 +248,16 @@ theorem premisli1 (x : ℝ) : (x ≠ -1 ∧ 0 ≤ (x - 2) / (x + 1)) ↔ x ∈ I
     · exact ⟨h.ne, div_nonneg_of_nonpos (by linarith) (by linarith)⟩
     · exact ⟨by intro e; linarith, div_nonneg (by linarith) (by linarith)⟩
 
-/-- Razlaga 5, premisli, preizkusi: (−2 − 2)/(−2 + 1) = 4, (0 − 2)/(0 + 1) = −2, (3 − 2)/(3 + 1) = 1/4. -/
+/-- Razlaga 5, premisli, preizkusi: (−2 − 2)/(−2 + 1) = 4, (0 − 2)/(0 + 1) = −2, (3 − 2)/(3 + 1) = 1/4.
+trditev: MAT-SS-3/racionalne-neenacbe#premisli1-preizkus
+besedilo: »(preizkus: $x = -2$ da $4$, $x = 0$ da $-2$, $x = 3$ da $\frac{1}{4}$)« -/
 theorem premisli1_preizkus : ((-2 : ℝ) - 2) / (-2 + 1) = 4 ∧ ((0 : ℝ) - 2) / (0 + 1) = -2 ∧
     ((3 : ℝ) - 2) / (3 + 1) = 1 / 4 := by norm_num
 
 /-- Razlaga 6, premisli (RACUN): (x − 2)²/(x + 3) > 0 ↔ x ∈ (−3, 2) ∪ (2, ∞); na (−∞, −3) je ulomek
-negativen (izmenično pisanje bi ta interval napačno vzelo). -/
+negativen (izmenično pisanje bi ta interval napačno vzelo).
+trditev: MAT-SS-3/racionalne-neenacbe#premisli2
+besedilo: »Rešitev je $(-3, 2) \cup (2, \infty)$.« -/
 theorem premisli2 (x : ℝ) : 0 < (x - 2) ^ 2 / (x + 3) ↔ x ∈ Ioo (-3) 2 ∪ Ioi 2 := by
   simp only [mem_union, mem_Ioo, mem_Ioi]
   constructor
@@ -239,7 +274,9 @@ theorem premisli2 (x : ℝ) : 0 < (x - 2) ^ 2 / (x + 3) ↔ x ∈ Ioo (-3) 2 ∪
     · exact div_pos (by nlinarith) (by linarith)
     · exact div_pos (by nlinarith) (by linarith)
 
-/-- Razlaga 6, premisli: za x < −3 je (x − 2)²/(x + 3) < 0 (interval (−∞, −3) ni v rešitvi). -/
+/-- Razlaga 6, premisli: za x < −3 je (x − 2)²/(x + 3) < 0 (interval (−∞, −3) ni v rešitvi).
+trditev: MAT-SS-3/racionalne-neenacbe#premisli2-levo
+besedilo: »Izmenično pisanje od desne bi interval $(-3, 2)$ napačno izločilo in $(-\infty, -3)$ napačno vzelo.« -/
 theorem premisli2_levo (x : ℝ) (hx : x < -3) : (x - 2) ^ 2 / (x + 3) < 0 :=
   div_neg_of_pos_of_neg (by nlinarith) (by linarith)
 
@@ -249,7 +286,9 @@ example : ((-4 : ℝ) - 2) ^ 2 / (-4 + 3) < 0 := premisli2_levo (-4) (by norm_nu
 /-! ## Primer 1: (x + 5)/(x − 1) ≥ 2 -/
 
 /-- Primer 1, koraka 1–2 (RACUN enako): (x + 5)/(x − 1) − 2 = (x + 5 − 2(x − 1))/(x − 1) = (7 − x)/(x − 1)
-(x ≠ 1). -/
+(x ≠ 1).
+trditev: MAT-SS-3/racionalne-neenacbe#primer1-ulomek
+besedilo: »$\frac{x + 5 - 2(x - 1)}{x - 1} = \frac{7 - x}{x - 1} \ge 0$« -/
 theorem primer1_ulomek (x : ℝ) (hx : x ≠ 1) :
     (x + 5) / (x - 1) - 2 = (x + 5 - 2 * (x - 1)) / (x - 1) ∧
     (x + 5 - 2 * (x - 1)) / (x - 1) = (7 - x) / (x - 1) := by
@@ -260,7 +299,9 @@ theorem primer1_ulomek (x : ℝ) (hx : x ≠ 1) :
 example : ((3 : ℝ) + 5) / (3 - 1) - 2 = (3 + 5 - 2 * (3 - 1)) / (3 - 1) ∧
     ((3 : ℝ) + 5 - 2 * (3 - 1)) / (3 - 1) = (7 - 3) / (3 - 1) := primer1_ulomek 3 (by norm_num)
 
-/-- Primer 1, korak 4: tabela predznakov (7 − x)/(x − 1): −, +, − na (−∞, 1), (1, 7), (7, ∞). -/
+/-- Primer 1, korak 4: tabela predznakov (7 − x)/(x − 1): −, +, − na (−∞, 1), (1, 7), (7, ∞).
+trditev: MAT-SS-3/racionalne-neenacbe#primer1-tabela
+besedilo: »| $(-\infty, 1)$ | $\frac{+}{-} = -$ | | $(1, 7)$ | $\frac{+}{+} = +$ | | $(7, \infty)$ | $\frac{-}{+} = -$ |« -/
 theorem primer1_tabela :
     (∀ x : ℝ, x < 1 → 0 < 7 - x ∧ x - 1 < 0 ∧ (7 - x) / (x - 1) < 0) ∧
     (∀ x : ℝ, 1 < x → x < 7 → 0 < 7 - x ∧ 0 < x - 1 ∧ 0 < (7 - x) / (x - 1)) ∧
@@ -269,7 +310,9 @@ theorem primer1_tabela :
     fun x h1 h2 => ⟨by linarith, by linarith, div_pos (by linarith) (by linarith)⟩,
     fun x h => ⟨by linarith, by linarith, div_neg_of_neg_of_pos (by linarith) (by linarith)⟩⟩
 
-/-- Primer 1 (RACUN neenacba): (x + 5)/(x − 1) ≥ 2 s pogojem x ≠ 1 ↔ x ∈ (1, 7]. -/
+/-- Primer 1 (RACUN neenacba): (x + 5)/(x − 1) ≥ 2 s pogojem x ≠ 1 ↔ x ∈ (1, 7].
+trditev: MAT-SS-3/racionalne-neenacbe#primer1
+besedilo: »Odgovor: $x \in (1, 7]$.« -/
 theorem primer1 (x : ℝ) : (x ≠ 1 ∧ 2 ≤ (x + 5) / (x - 1)) ↔ x ∈ Ioc 1 7 := by
   simp only [mem_Ioc]
   constructor
@@ -291,14 +334,18 @@ theorem primer1 (x : ℝ) : (x ≠ 1 ∧ 2 ≤ (x + 5) / (x - 1)) ↔ x ∈ Ioc 
     linarith [(primer1_ulomek x (by linarith)).1, (primer1_ulomek x (by linarith)).2]
 
 /-- Primer 1, korak 6, preizkus: pri x = 3 je 8/2 = 4 ≥ 2; pri x = 0 je 5/(−1) = −5 < 2, čeprav »pomnožena«
-neenačba x + 5 ≥ 2x − 2 (x ≤ 7) število 0 sprejme. -/
+neenačba x + 5 ≥ 2x − 2 (x ≤ 7) število 0 sprejme.
+trditev: MAT-SS-3/racionalne-neenacbe#primer1-preizkus
+besedilo: »Preizkus: pri $x = 3$ je $\frac{8}{2} = 4 \ge 2$. Pri $x = 0$ je $\frac{5}{-1} = -5$, kar ni $\ge 2$, čeprav bi »pomnožena« neenačba ($x + 5 \ge 2x - 2$, torej $x \le 7$) število $0$ sprejela.« -/
 theorem primer1_preizkus : ((3 : ℝ) + 5) / (3 - 1) = 8 / 2 ∧ (8 : ℝ) / 2 = 4 ∧ (2 : ℝ) ≤ 4 ∧
     ((0 : ℝ) + 5) / (0 - 1) = -5 ∧ ¬ ((2 : ℝ) ≤ -5) ∧ (0 : ℝ) + 5 ≥ 2 * 0 - 2 ∧
     (∀ x : ℝ, x + 5 ≥ 2 * x - 2 ↔ x ≤ 7) := by
   refine ⟨by norm_num, by norm_num, by norm_num, by norm_num, by norm_num, by norm_num,
     fun x => ⟨fun h => by linarith, fun h => by linarith⟩⟩
 
-/-- Bolj natančno, Primer 1 prek produkta: (7 − x)(x − 1) ≥ 0 ↔ x ∈ [1, 7]; brez pola x ≠ 1 ostane (1, 7]. -/
+/-- Bolj natančno, Primer 1 prek produkta: (7 − x)(x − 1) ≥ 0 ↔ x ∈ [1, 7]; brez pola x ≠ 1 ostane (1, 7].
+trditev: MAT-SS-3/racionalne-neenacbe#primer1-produkt
+besedilo: »Pri Primeru 1 to da $(7 - x)(x - 1) \ge 0$ in $x \ne 1$. Parabola z ničlama $1$ in $7$ je odprta navzdol, nenegativna je na $[1, 7]$; brez pola ostane $(1, 7]$.« -/
 theorem primer1_produkt (x : ℝ) : (0 ≤ (7 - x) * (x - 1) ↔ x ∈ Icc 1 7) ∧
     ((0 ≤ (7 - x) * (x - 1) ∧ x ≠ 1) ↔ x ∈ Ioc 1 7) := by
   have a : 0 ≤ (7 - x) * (x - 1) ↔ x ∈ Icc 1 7 := by
@@ -318,14 +365,18 @@ theorem primer1_produkt (x : ℝ) : (0 ≤ (7 - x) * (x - 1) ↔ x ∈ Icc 1 7) 
 /-! ## Primer 2: dvojna ničla -/
 
 /-- Primer 2, korak 1 (RACUN enako): x² − 4x + 4 = (x − 2)², x² − 9 = (x − 3)(x + 3); ničla 2 je dvojna,
-pola −3 in 3. -/
+pola −3 in 3.
+trditev: MAT-SS-3/racionalne-neenacbe#primer2-razcep
+besedilo: »$x^2 - 4x + 4 = (x - 2)^2$ in $x^2 - 9 = (x - 3)(x + 3)$;« -/
 theorem primer2_razcep (x : ℝ) : x ^ 2 - 4 * x + 4 = (x - 2) ^ 2 ∧ x ^ 2 - 9 = (x - 3) * (x + 3) ∧
     (x ^ 2 - 9 = 0 ↔ x = 3 ∨ x = -3) := by
   refine ⟨by ring, by ring, ?_⟩
   rw [show x ^ 2 - 9 = (x - 3) * (x + 3) by ring, mul_eq_zero, sub_eq_zero, add_eq_zero_iff_eq_neg]
 
 /-- Primer 2, korak 3: tabela predznakov (x − 2)²/(x² − 9): +, −, −, + na (−∞, −3), (−3, 2), (2, 3), (3, ∞);
-korak 4: v x = 2 je ulomek 0. -/
+korak 4: v x = 2 je ulomek 0.
+trditev: MAT-SS-3/racionalne-neenacbe#primer2-tabela
+besedilo: »| $(-\infty, -3)$ | $\frac{+}{+} = +$ | | $(-3, 2)$ | $\frac{+}{-} = -$ | | $(2, 3)$ | $\frac{+}{-} = -$ | | $(3, \infty)$ | $\frac{+}{+} = +$ |« -/
 theorem primer2_tabela :
     (∀ x : ℝ, x < -3 → 0 < (x - 2) ^ 2 / (x ^ 2 - 9)) ∧
     (∀ x : ℝ, -3 < x → x < 2 → (x - 2) ^ 2 / (x ^ 2 - 9) < 0) ∧
@@ -337,7 +388,9 @@ theorem primer2_tabela :
     fun x h => div_pos (by nlinarith) (by nlinarith), by norm_num⟩
 
 /-- Primer 2 (RACUN neenacba): (x² − 4x + 4)/(x² − 9) < 0 ↔ x ∈ (−3, 2) ∪ (2, 3). Pogoste napake: (−3, 3)
-ni rešitev, ker je v 2 ulomek 0. -/
+ni rešitev, ker je v 2 ulomek 0.
+trditev: MAT-SS-3/racionalne-neenacbe#primer2
+besedilo: »Odgovor: $x \in (-3, 2) \cup (2, 3)$.« -/
 theorem primer2 (x : ℝ) : (x ^ 2 - 4 * x + 4) / (x ^ 2 - 9) < 0 ↔ x ∈ Ioo (-3) 2 ∪ Ioo 2 3 := by
   simp only [mem_union, mem_Ioo]
   rw [(primer2_razcep x).1]
@@ -362,7 +415,9 @@ theorem primer2 (x : ℝ) : (x ^ 2 - 4 * x + 4) / (x ^ 2 - 9) < 0 ↔ x ∈ Ioo 
 /-! ## Primer 3: sirena -/
 
 /-- Primer 3, koraka 1–2 (RACUN enako): 340/(340 − v) − 17/16 = (16·340 − 17(340 − v))/(16(340 − v)) in
-16·340 − 17(340 − v) = 5440 − 5780 + 17v = 17v − 340 (v ≠ 340). -/
+16·340 − 17(340 − v) = 5440 − 5780 + 17v = 17v − 340 (v ≠ 340).
+trditev: MAT-SS-3/racionalne-neenacbe#primer3-ulomek
+besedilo: »$16 \cdot 340 - 17(340 - v) = 5440 - 5780 + 17v = 17v - 340$« -/
 theorem primer3_ulomek (v : ℝ) (hv : v ≠ 340) :
     340 / (340 - v) - 17 / 16 = (16 * 340 - 17 * (340 - v)) / (16 * (340 - v)) ∧
     16 * 340 - 17 * (340 - v) = 5440 - 5780 + 17 * v ∧ (5440 : ℝ) - 5780 + 17 * v = 17 * v - 340 := by
@@ -374,7 +429,9 @@ example : (340 : ℝ) / (340 - 0) - 17 / 16 = (16 * 340 - 17 * (340 - 0)) / (16 
     (16 : ℝ) * 340 - 17 * (340 - 0) = 5440 - 5780 + 17 * 0 ∧ (5440 : ℝ) - 5780 + 17 * 0 = 17 * 0 - 340 :=
   primer3_ulomek 0 (by norm_num)
 
-/-- Primer 3, koraka 3–4: ničla 20, pol 340; tabela predznakov (17v − 340)/(16(340 − v)): −, +, −. -/
+/-- Primer 3, koraka 3–4: ničla 20, pol 340; tabela predznakov (17v − 340)/(16(340 − v)): −, +, −.
+trditev: MAT-SS-3/racionalne-neenacbe#primer3-tabela
+besedilo: »| $(-\infty, 20)$ | $\frac{-}{+} = -$ | | $(20, 340)$ | $\frac{+}{+} = +$ | | $(340, \infty)$ | $\frac{+}{-} = -$ |« -/
 theorem primer3_tabela :
     (17 * (20 : ℝ) - 340 = 0) ∧ (16 * (340 - (340 : ℝ)) = 0) ∧
     (∀ v : ℝ, v < 20 → (17 * v - 340) / (16 * (340 - v)) < 0) ∧
@@ -385,7 +442,9 @@ theorem primer3_tabela :
     fun v h => div_neg_of_pos_of_neg (by linarith) (by linarith)⟩
 
 /-- Primer 3 (RACUN neenacba): 340/(340 − v) ≥ 17/16 s pogojem v ≠ 340 ↔ v ∈ [20, 340); skupaj s pogojem
-v ≥ 0 je rešitev ista. -/
+v ≥ 0 je rešitev ista.
+trditev: MAT-SS-3/racionalne-neenacbe#primer3
+besedilo: »Rešitev neenačbe je $[20, 340)$« -/
 theorem primer3 (v : ℝ) : (v ≠ 340 ∧ 17 / 16 ≤ 340 / (340 - v)) ↔ v ∈ Ico 20 340 := by
   simp only [mem_Ico]
   constructor
@@ -405,7 +464,9 @@ theorem primer3 (v : ℝ) : (v ≠ 340 ∧ 17 / 16 ≤ 340 / (340 - v)) ↔ v �
     have : 0 ≤ (17 * v - 340) / (16 * (340 - v)) := div_nonneg (by linarith) (by linarith)
     rw [← e3, ← e2, ← e1] at this; linarith
 
-/-- Primer 3, korak 5: s pogojem v ≥ 0 je rešitev ista. -/
+/-- Primer 3, korak 5: s pogojem v ≥ 0 je rešitev ista.
+trditev: MAT-SS-3/racionalne-neenacbe#primer3-v-nenegativen
+besedilo: »Rešitev neenačbe je $[20, 340)$; vsa ta števila so pozitivna, zato pogoj $v \ge 0$ ne spremeni ničesar.« -/
 theorem primer3_v_nenegativen (v : ℝ) :
     (0 ≤ v ∧ v ≠ 340 ∧ 17 / 16 ≤ 340 / (340 - v)) ↔ v ∈ Ico 20 340 := by
   rw [← primer3]
@@ -413,11 +474,15 @@ theorem primer3_v_nenegativen (v : ℝ) :
   · exact fun h => h.2
   · intro h; exact ⟨by have := (primer3 v).1 h; exact le_trans (by norm_num) this.1, h⟩
 
-/-- Primer 3, korak 6: 20 m/s = 20·3,6 km/h = 72 km/h (RACUN vrednost). -/
+/-- Primer 3, korak 6: 20 m/s = 20·3,6 km/h = 72 km/h (RACUN vrednost).
+trditev: MAT-SS-3/racionalne-neenacbe#primer3-pretvorba
+besedilo: »$20\,\mathrm{m/s} = 20 \cdot 3{,}6\,\mathrm{km/h} = 72\,\mathrm{km/h}$« -/
 theorem primer3_pretvorba : (20 : ℝ) * (36 / 10) = 72 := by norm_num
 
 /-- Primer 3, korak 7: »pomnožena« neenačba 16·340 ≥ 17(340 − v) da v ≥ 20, za v > 340 pa je razmerje
-340/(340 − v) negativno. -/
+340/(340 − v) negativno.
+trditev: MAT-SS-3/racionalne-neenacbe#primer3-naivno
+besedilo: »Množenje s $340 - v$ bi dalo $v \ge 20$ in sprejelo tudi $v > 340$, kjer je razmerje negativno in nima smisla.« -/
 theorem primer3_naivno : (∀ v : ℝ, (16 * 340 ≥ 17 * (340 - v) ↔ 20 ≤ v)) ∧
     (∀ v : ℝ, 340 < v → 340 / (340 - v) < 0) :=
   ⟨fun v => ⟨fun h => by linarith, fun h => by linarith⟩,
@@ -426,7 +491,9 @@ theorem primer3_naivno : (∀ v : ℝ, (16 * 340 ≥ 17 * (340 - v) ↔ 20 ≤ v
 /-! ## Primer 4 -/
 
 /-- Primer 4, koraka 1–2 (RACUN enako): x/(x + 2) − 1/x = (x² − x − 2)/(x(x + 2)) in
-x² − x − 2 = (x − 2)(x + 1) (x ≠ 0, x ≠ −2). -/
+x² − x − 2 = (x − 2)(x + 1) (x ≠ 0, x ≠ −2).
+trditev: MAT-SS-3/racionalne-neenacbe#primer4-ulomek
+besedilo: »$\frac{x}{x + 2} - \frac{1}{x} = \frac{x^2 - x - 2}{x(x + 2)} > 0$. 2. Števec razstavimo: $x^2 - x - 2 = (x - 2)(x + 1)$.« -/
 theorem primer4_ulomek (x : ℝ) (h0 : x ≠ 0) (h2 : x ≠ -2) :
     x / (x + 2) - 1 / x = (x ^ 2 - x - 2) / (x * (x + 2)) ∧ x ^ 2 - x - 2 = (x - 2) * (x + 1) := by
   have h : x + 2 ≠ 0 := fun e => h2 (by linarith)
@@ -437,7 +504,9 @@ example : (1 : ℝ) / (1 + 2) - 1 / 1 = (1 ^ 2 - 1 - 2) / (1 * (1 + 2)) ∧
     (1 : ℝ) ^ 2 - 1 - 2 = (1 - 2) * (1 + 1) := primer4_ulomek 1 one_ne_zero (by norm_num)
 
 /-- Primer 4, korak 3: predznaka števca (x − 2)(x + 1) in imenovalca x(x + 2) po intervalih:
-+/+, +/−, −/−, −/+, +/+. -/
++/+, +/−, −/−, −/+, +/+.
+trditev: MAT-SS-3/racionalne-neenacbe#primer4-tabela
+besedilo: »| $(-\infty, -2)$ | $\frac{+}{+}$ | | $(-2, -1)$ | $\frac{+}{-}$ | | $(-1, 0)$ | $\frac{-}{-}$ | | $(0, 2)$ | $\frac{-}{+}$ | | $(2, \infty)$ | $\frac{+}{+}$ |« -/
 theorem primer4_tabela :
     (∀ x : ℝ, x < -2 → 0 < (x - 2) * (x + 1) ∧ 0 < x * (x + 2)) ∧
     (∀ x : ℝ, -2 < x → x < -1 → 0 < (x - 2) * (x + 1) ∧ x * (x + 2) < 0) ∧
@@ -449,7 +518,9 @@ theorem primer4_tabela :
     fun x h => ⟨by nlinarith, by nlinarith⟩⟩
 
 /-- Primer 4, premisli (RACUN neenacba): x/(x + 2) > 1/x s pogojema x ≠ 0, x ≠ −2 ↔
-x ∈ (−∞, −2) ∪ (−1, 0) ∪ (2, ∞). -/
+x ∈ (−∞, −2) ∪ (−1, 0) ∪ (2, ∞).
+trditev: MAT-SS-3/racionalne-neenacbe#primer4
+besedilo: »Rešitev: $x \in (-\infty, -2) \cup (-1, 0) \cup (2, \infty)$.« -/
 theorem primer4 (x : ℝ) :
     (x ≠ 0 ∧ x ≠ -2 ∧ 1 / x < x / (x + 2)) ↔ x ∈ Iio (-2) ∪ Ioo (-1) 0 ∪ Ioi 2 := by
   simp only [mem_union, mem_Iio, mem_Ioo, mem_Ioi]
@@ -505,7 +576,9 @@ theorem primer4 (x : ℝ) :
 /-! ## Za maturo: naloga 1 -/
 
 /-- Naloga 1 a) (RACUN resi): (x + 3)/(x − 1) = x + 3 s pogojem x ≠ 1 ↔ x = −3 ali x = 2 (koraka
-x + 3 = (x + 3)(x − 1) in (x + 3)(x − 2) = 0); h(−3) = 0, h(2) = 5. -/
+x + 3 = (x + 3)(x − 1) in (x + 3)(x − 2) = 0); h(−3) = 0, h(2) = 5.
+trditev: MAT-SS-3/racionalne-neenacbe#matura1a
+besedilo: »Rešitvi sta $x = -3$ in $x = 2$« -/
 theorem matura1a (x : ℝ) : (x ≠ 1 ∧ (x + 3) / (x - 1) = x + 3) ↔ (x = -3 ∨ x = 2) := by
   constructor
   · rintro ⟨h1, h⟩
@@ -518,11 +591,15 @@ theorem matura1a (x : ℝ) : (x ≠ 1 ∧ (x + 3) / (x - 1) = x + 3) ↔ (x = -3
     · right; linarith
   · rintro (rfl | rfl) <;> norm_num
 
-/-- Naloga 1 a): presečišči (−3, 0) in (2, 5): h(−3) = 0, h(2) = 5. -/
+/-- Naloga 1 a): presečišči (−3, 0) in (2, 5): h(−3) = 0, h(2) = 5.
+trditev: MAT-SS-3/racionalne-neenacbe#matura1a-tocki
+besedilo: »$h(-3) = 0$, $h(2) = 5$. Presečišči sta $(-3, 0)$ in $(2, 5)$.« -/
 theorem matura1a_tocki : (-3 : ℝ) + 3 = 0 ∧ (2 : ℝ) + 3 = 5 := by norm_num
 
 /-- Naloga 1 b), korak 4 (RACUN enako): (x + 3)/(x − 1) − (x + 3) = (x + 3 − (x + 3)(x − 1))/(x − 1) =
-(x + 3)(2 − x)/(x − 1) (x ≠ 1). -/
+(x + 3)(2 − x)/(x − 1) (x ≠ 1).
+trditev: MAT-SS-3/racionalne-neenacbe#matura1-ulomek
+besedilo: »$\dfrac{x + 3 - (x + 3)(x - 1)}{x - 1} = \dfrac{(x + 3)(2 - x)}{x - 1} \ge 0$« -/
 theorem matura1_ulomek (x : ℝ) (hx : x ≠ 1) :
     (x + 3) / (x - 1) - (x + 3) = (x + 3 - (x + 3) * (x - 1)) / (x - 1) ∧
     (x + 3 - (x + 3) * (x - 1)) / (x - 1) = (x + 3) * (2 - x) / (x - 1) := by
@@ -534,7 +611,9 @@ example : ((0 : ℝ) + 3) / (0 - 1) - (0 + 3) = (0 + 3 - (0 + 3) * (0 - 1)) / (0
     ((0 : ℝ) + 3 - (0 + 3) * (0 - 1)) / (0 - 1) = (0 + 3) * (2 - 0) / (0 - 1) :=
   matura1_ulomek 0 (by norm_num)
 
-/-- Naloga 1 b), korak 5: tabela predznakov (x + 3)(2 − x)/(x − 1): +, −, +, −. -/
+/-- Naloga 1 b), korak 5: tabela predznakov (x + 3)(2 − x)/(x − 1): +, −, +, −.
+trditev: MAT-SS-3/racionalne-neenacbe#matura1-tabela
+besedilo: »| $(-\infty, -3)$ | $\frac{-}{-} = +$ | | $(-3, 1)$ | $\frac{+}{-} = -$ | | $(1, 2)$ | $\frac{+}{+} = +$ | | $(2, \infty)$ | $\frac{-}{+} = -$ |« -/
 theorem matura1_tabela :
     (∀ x : ℝ, x < -3 → 0 < (x + 3) * (2 - x) / (x - 1)) ∧
     (∀ x : ℝ, -3 < x → x < 1 → (x + 3) * (2 - x) / (x - 1) < 0) ∧
@@ -545,7 +624,9 @@ theorem matura1_tabela :
     fun x h1 h2 => div_pos (by nlinarith) (by linarith),
     fun x h => div_neg_of_neg_of_pos (by nlinarith) (by linarith)⟩
 
-/-- Naloga 1 b) (RACUN neenacba): g(x) ≥ h(x) s pogojem x ≠ 1 ↔ x ∈ (−∞, −3] ∪ (1, 2]. -/
+/-- Naloga 1 b) (RACUN neenacba): g(x) ≥ h(x) s pogojem x ≠ 1 ↔ x ∈ (−∞, −3] ∪ (1, 2].
+trditev: MAT-SS-3/racionalne-neenacbe#matura1b
+besedilo: »Rešitev: $x \in (-\infty, -3] \cup (1, 2]$.« -/
 theorem matura1b (x : ℝ) : (x ≠ 1 ∧ x + 3 ≤ (x + 3) / (x - 1)) ↔ x ∈ Iic (-3) ∪ Ioc 1 2 := by
   simp only [mem_union, mem_Iic, mem_Ioc]
   constructor
@@ -574,7 +655,9 @@ theorem matura1b (x : ℝ) : (x ≠ 1 ∧ x + 3 ≤ (x + 3) / (x - 1)) ↔ x ∈
         div_nonneg (mul_nonneg (by linarith) (by linarith)) (by linarith)
       linarith
 
-/-- Naloga 1 c) (RACUN neenacba): g(x) < h(x) s pogojem x ≠ 1 ↔ x ∈ (−3, 1) ∪ (2, ∞). -/
+/-- Naloga 1 c) (RACUN neenacba): g(x) < h(x) s pogojem x ≠ 1 ↔ x ∈ (−3, 1) ∪ (2, ∞).
+trditev: MAT-SS-3/racionalne-neenacbe#matura1c
+besedilo: »c) Graf $g$ leži pod grafom $h$, kjer je $g(x) < h(x)$, torej kjer je ulomek iz koraka 4 negativen. V $-3$ in $2$ sta vrednosti enaki, v $1$ funkcija $g$ ni definirana, zato so vsa krajišča odprta: $x \in (-3, 1) \cup (2, \infty)$.« -/
 theorem matura1c (x : ℝ) : (x ≠ 1 ∧ (x + 3) / (x - 1) < x + 3) ↔ x ∈ Ioo (-3) 1 ∪ Ioi 2 := by
   simp only [mem_union, mem_Ioo, mem_Ioi]
   constructor
@@ -603,7 +686,9 @@ theorem matura1c (x : ℝ) : (x ≠ 1 ∧ (x + 3) / (x - 1) < x + 3) ↔ x ∈ I
 /-- Naloga 2: c(t) = 30t/(t² + 9). -/
 noncomputable def konc (t : ℝ) : ℝ := 30 * t / (t ^ 2 + 9)
 
-/-- Naloga 2 a) (RACUN vrednost): c(1) = 30/(1 + 9) = 3, c(6) = 180/(36 + 9) = 4. -/
+/-- Naloga 2 a) (RACUN vrednost): c(1) = 30/(1 + 9) = 3, c(6) = 180/(36 + 9) = 4.
+trditev: MAT-SS-3/racionalne-neenacbe#matura2a
+besedilo: »a) $c(1) = \dfrac{30}{1 + 9} = 3$ in $c(6) = \dfrac{180}{36 + 9} = 4$.« -/
 theorem matura2a : konc 1 = 3 ∧ konc 6 = 4 := by
   constructor
   · calc konc 1 = 30 / (1 + 9) := by unfold konc; norm_num
@@ -611,7 +696,9 @@ theorem matura2a : konc 1 = 3 ∧ konc 6 = 4 := by
   · calc konc 6 = 180 / (36 + 9) := by unfold konc; norm_num
       _ = 4 := by norm_num
 
-/-- Naloga 2 b) (RACUN limita): vodoravna asimptota c = 0 (števec stopnje 1, imenovalec stopnje 2). -/
+/-- Naloga 2 b) (RACUN limita): vodoravna asimptota c = 0 (števec stopnje 1, imenovalec stopnje 2).
+trditev: MAT-SS-3/racionalne-neenacbe#matura2b
+besedilo: »b) Števec ima stopnjo $1$, imenovalec stopnjo $2$, zato je vodoravna asimptota $c = 0$ (os $t$).« -/
 theorem matura2b : Tendsto konc atTop (𝓝 0) := by
   have h : Tendsto (fun t : ℝ => 30 * t⁻¹ / (1 + 9 * t⁻¹ ^ 2)) atTop (𝓝 (30 * 0 / (1 + 9 * 0 ^ 2))) :=
     ((by fun_prop (disch := norm_num) : ContinuousAt (fun s : ℝ => 30 * s / (1 + 9 * s ^ 2)) 0).tendsto).comp
@@ -624,7 +711,9 @@ theorem matura2b : Tendsto konc atTop (𝓝 0) := by
   field_simp
 
 /-- Naloga 2 c), koraki 3–4 (RACUN enako): c(t) − 2,5 = (30t − 2,5(t² + 9))/(t² + 9) =
-−2,5(t² − 12t + 9)/(t² + 9); imenovalec je vedno pozitiven. -/
+−2,5(t² − 12t + 9)/(t² + 9); imenovalec je vedno pozitiven.
+trditev: MAT-SS-3/racionalne-neenacbe#matura2c-ulomek
+besedilo: »$\dfrac{30t - 2{,}5(t^2 + 9)}{t^2 + 9} = \dfrac{-2{,}5(t^2 - 12t + 9)}{t^2 + 9} \ge 0$« -/
 theorem matura2c_ulomek (t : ℝ) :
     konc t - 5 / 2 = (30 * t - 5 / 2 * (t ^ 2 + 9)) / (t ^ 2 + 9) ∧
     (30 * t - 5 / 2 * (t ^ 2 + 9)) / (t ^ 2 + 9) = -(5 / 2) * (t ^ 2 - 12 * t + 9) / (t ^ 2 + 9) ∧
@@ -632,7 +721,9 @@ theorem matura2c_ulomek (t : ℝ) :
   have h : t ^ 2 + 9 ≠ 0 := by positivity
   exact ⟨by unfold konc; field_simp, by congr 1; ring, by positivity⟩
 
-/-- Naloga 2 c), korak 4: c(t) ≥ 2,5 ↔ t² − 12t + 9 ≤ 0 (delimo z −2,5 in obrnemo znak). -/
+/-- Naloga 2 c), korak 4: c(t) ≥ 2,5 ↔ t² − 12t + 9 ≤ 0 (delimo z −2,5 in obrnemo znak).
+trditev: MAT-SS-3/racionalne-neenacbe#matura2c-kvadratna
+besedilo: »Delimo z $-2{,}5$ in obrnemo znak: $t^2 - 12t + 9 \le 0$.« -/
 theorem matura2c_kvadratna (t : ℝ) : 5 / 2 ≤ konc t ↔ t ^ 2 - 12 * t + 9 ≤ 0 := by
   obtain ⟨e1, e2, hp⟩ := matura2c_ulomek t
   have key : 5 / 2 ≤ konc t ↔ 0 ≤ -(5 / 2) * (t ^ 2 - 12 * t + 9) / (t ^ 2 + 9) := by
@@ -640,7 +731,9 @@ theorem matura2c_kvadratna (t : ℝ) : 5 / 2 ≤ konc t ↔ t ^ 2 - 12 * t + 9 �
   rw [key, le_div_iff₀ hp, zero_mul]
   constructor <;> intro h <;> linarith
 
-/-- Naloga 2 c), korak 5: ničli t₁,₂ = (12 ± √(144 − 36))/2 = 6 ± 3√3. -/
+/-- Naloga 2 c), korak 5: ničli t₁,₂ = (12 ± √(144 − 36))/2 = 6 ± 3√3.
+trditev: MAT-SS-3/racionalne-neenacbe#matura2c-nicli
+besedilo: »$t_{1,2} = \dfrac{12 \pm \sqrt{144 - 36}}{2} = 6 \pm 3\sqrt{3}$« -/
 theorem matura2c_nicli : (12 - Real.sqrt (144 - 36)) / 2 = 6 - 3 * Real.sqrt 3 ∧
     (12 + Real.sqrt (144 - 36)) / 2 = 6 + 3 * Real.sqrt 3 ∧
     (6 - 3 * Real.sqrt 3) ^ 2 - 12 * (6 - 3 * Real.sqrt 3) + 9 = 0 ∧
@@ -651,7 +744,9 @@ theorem matura2c_nicli : (12 - Real.sqrt (144 - 36)) / 2 = 6 - 3 * Real.sqrt 3 �
   refine ⟨by rw [s]; ring, by rw [s]; ring, by nlinarith, by nlinarith⟩
 
 /-- Naloga 2 c) (RACUN neenacba): c(t) ≥ 2,5 ↔ t ∈ [6 − 3√3, 6 + 3√3] (parabola odprta navzgor je
-nepozitivna med ničlama). -/
+nepozitivna med ničlama).
+trditev: MAT-SS-3/racionalne-neenacbe#matura2c
+besedilo: »Parabola je odprta navzgor, zato je izraz nepozitiven med ničlama: $t \in [6 - 3\sqrt{3}, 6 + 3\sqrt{3}]$.« -/
 theorem matura2c (t : ℝ) : 5 / 2 ≤ konc t ↔ t ∈ Icc (6 - 3 * Real.sqrt 3) (6 + 3 * Real.sqrt 3) := by
   rw [matura2c_kvadratna, mem_Icc]
   have h3 : Real.sqrt 3 ^ 2 = 3 := Real.sq_sqrt (by norm_num)
@@ -666,14 +761,17 @@ theorem matura2c (t : ℝ) : 5 / 2 ≤ konc t ↔ t ∈ Icc (6 - 3 * Real.sqrt 3
     · by_contra hc; push Not at hc; nlinarith
   · rintro ⟨h1, h2⟩; exact mul_nonpos_of_nonneg_of_nonpos (by linarith) (by linarith)
 
-/-- Pomožna: 1,7320508 < √3 < 1,7320509. -/
+/-- Pomožna: 1,7320508 < √3 < 1,7320509.
+pomozno -/
 theorem koren3 : (17320508 / 10000000 : ℝ) < Real.sqrt 3 ∧ Real.sqrt 3 < 17320509 / 10000000 := by
   constructor
   · rw [Real.lt_sqrt (by norm_num)]; norm_num
   · rw [Real.sqrt_lt' (by norm_num)]; norm_num
 
 /-- Naloga 2 c), koraki 5–7 (RACUN vrednost): t₁ ≈ 0,8038, t₂ ≈ 11,1962, (6 − 3√3)·60 ≈ 48,2,
-0,8038·60 ≈ 48,2, 0,1962·60 ≈ 11,8, t₂ − t₁ = 6√3 ≈ 10,3923, 0,3923·60 ≈ 23,5. -/
+0,8038·60 ≈ 48,2, 0,1962·60 ≈ 11,8, t₂ − t₁ = 6√3 ≈ 10,3923, 0,3923·60 ≈ 23,5.
+trditev: MAT-SS-3/racionalne-neenacbe#matura2c-priblizki
+besedilo: »$t_2 - t_1 = 6\sqrt{3} \approx 10{,}3923\,\mathrm{h}$ in $0{,}3923 \cdot 60 \approx 23{,}5$,« -/
 theorem matura2c_priblizki :
     |(6 - 3 * Real.sqrt 3) - 8038 / 10000| < 5 / 100000 ∧
     |(6 + 3 * Real.sqrt 3) - 111962 / 10000| < 5 / 100000 ∧
@@ -688,14 +786,18 @@ theorem matura2c_priblizki :
 
 /-- Naloga 2 c), korak 6–7 in odgovor: zaokroženo na celo minuto zdravilo učinkuje od 48 min do
 11 h 12 min, trajanje 10 h 24 min (časa v minutah: 60t₁ ≈ 48, 60t₂ ≈ 672 = 11·60 + 12,
-60(t₂ − t₁) ≈ 624 = 10·60 + 24). -/
+60(t₂ − t₁) ≈ 624 = 10·60 + 24).
+trditev: MAT-SS-3/racionalne-neenacbe#matura2c-minute
+besedilo: »c) zdravilo učinkuje od $48\,\mathrm{min}$ do $11\,\mathrm{h}\ 12\,\mathrm{min}$ po zaužitju, približno $10\,\mathrm{h}\ 24\,\mathrm{min}$« -/
 theorem matura2c_minute :
     |(6 - 3 * Real.sqrt 3) * 60 - 48| < 1 / 2 ∧ |(6 + 3 * Real.sqrt 3) * 60 - (11 * 60 + 12)| < 1 / 2 ∧
     |6 * Real.sqrt 3 * 60 - (10 * 60 + 24)| < 1 / 2 := by
   obtain ⟨a, b⟩ := koren3
   refine ⟨?_, ?_, ?_⟩ <;> rw [abs_lt] <;> constructor <;> linarith
 
-/-- Naloga 2 d), korak 8 (RACUN enako): c(t) − 5 = (30t − 5(t² + 9))/(t² + 9) = −5(t − 3)²/(t² + 9). -/
+/-- Naloga 2 d), korak 8 (RACUN enako): c(t) − 5 = (30t − 5(t² + 9))/(t² + 9) = −5(t − 3)²/(t² + 9).
+trditev: MAT-SS-3/racionalne-neenacbe#matura2d-ulomek
+besedilo: »$c(t) - 5 = \dfrac{30t - 5(t^2 + 9)}{t^2 + 9} = \dfrac{-5(t - 3)^2}{t^2 + 9}$« -/
 theorem matura2d_ulomek (t : ℝ) :
     konc t - 5 = (30 * t - 5 * (t ^ 2 + 9)) / (t ^ 2 + 9) ∧
     (30 * t - 5 * (t ^ 2 + 9)) / (t ^ 2 + 9) = -5 * (t - 3) ^ 2 / (t ^ 2 + 9) := by
@@ -703,7 +805,9 @@ theorem matura2d_ulomek (t : ℝ) :
   exact ⟨by unfold konc; field_simp, by congr 1; ring⟩
 
 /-- Naloga 2 d), korak 9 (RACUN neenacba): c(t) ≤ 5 za vsak t (rešitev (−∞, ∞)); enakost natanko pri
-t = 3, c(3) = 90/18 = 5. -/
+t = 3, c(3) = 90/18 = 5.
+trditev: MAT-SS-3/racionalne-neenacbe#matura2d
+besedilo: »Torej je $c(t) - 5 \le 0$ oziroma $c(t) \le 5$ za vsak $t \ge 0$. Ničla $t = 3$ je dvojna, zato predznak tam ostane enak; enakost velja le pri $t = 3$, preizkus $c(3) = \frac{90}{18} = 5$.« -/
 theorem matura2d : (∀ t : ℝ, konc t ≤ 5) ∧ (∀ t : ℝ, konc t = 5 ↔ t = 3) ∧ konc 3 = 90 / 18 ∧
     (90 : ℝ) / 18 = 5 := by
   have key : ∀ t : ℝ, konc t - 5 = -5 * (t - 3) ^ 2 / (t ^ 2 + 9) := fun t =>
@@ -725,7 +829,9 @@ theorem matura2d : (∀ t : ℝ, konc t ≤ 5) ∧ (∀ t : ℝ, konc t = 5 ↔ 
 
 /-! ## Ustno vprašanje 3 in Preveri se -/
 
-/-- Ustno vprašanje 3 (RACUN neenacba): (x + 2)/(x − 1) ≥ 0 s pogojem x ≠ 1 ↔ x ∈ (−∞, −2] ∪ (1, ∞). -/
+/-- Ustno vprašanje 3 (RACUN neenacba): (x + 2)/(x − 1) ≥ 0 s pogojem x ≠ 1 ↔ x ∈ (−∞, −2] ∪ (1, ∞).
+trditev: MAT-SS-3/racionalne-neenacbe#ustno3
+besedilo: »zato je rešitev $(-\infty, -2] \cup (1, \infty)$.« -/
 theorem ustno3 (x : ℝ) : (x ≠ 1 ∧ 0 ≤ (x + 2) / (x - 1)) ↔ x ∈ Iic (-2) ∪ Ioi 1 := by
   simp only [mem_union, mem_Iic, mem_Ioi]
   constructor
@@ -739,7 +845,9 @@ theorem ustno3 (x : ℝ) : (x ≠ 1 ∧ 0 ≤ (x + 2) / (x - 1)) ↔ x ∈ Iic (
     · exact ⟨by linarith, div_nonneg_of_nonpos (by linarith) (by linarith)⟩
     · exact ⟨by linarith, div_nonneg (by linarith) (by linarith)⟩
 
-/-- Preveri se, vprašanje 1 (RACUN neenacba): (x + 3)/(x − 2) ≤ 0 s pogojem x ≠ 2 ↔ x ∈ [−3, 2). -/
+/-- Preveri se, vprašanje 1 (RACUN neenacba): (x + 3)/(x − 2) ≤ 0 s pogojem x ≠ 2 ↔ x ∈ [−3, 2).
+trditev: MAT-SS-3/racionalne-neenacbe#preveri1
+besedilo: »Ničla $-3$, pol $2$; ulomek je nepozitiven na $[-3, 2)$.« -/
 theorem preveri1 (x : ℝ) : (x ≠ 2 ∧ (x + 3) / (x - 2) ≤ 0) ↔ x ∈ Ico (-3) 2 := by
   simp only [mem_Ico]
   constructor
@@ -754,7 +862,9 @@ theorem preveri1 (x : ℝ) : (x ≠ 2 ∧ (x + 3) / (x - 2) ≤ 0) ↔ x ∈ Ico
   · rintro ⟨h1, h2⟩
     exact ⟨h2.ne, div_nonpos_of_nonneg_of_nonpos (by linarith) (by linarith)⟩
 
-/-- Preveri se, vprašanje 1: neenačbo reši natanko 5 celih števil (−3, −2, −1, 0, 1). -/
+/-- Preveri se, vprašanje 1: neenačbo reši natanko 5 celih števil (−3, −2, −1, 0, 1).
+trditev: MAT-SS-3/racionalne-neenacbe#preveri1-cela
+besedilo: »Cela števila: $-3$, $-2$, $-1$, $0$, $1$.« -/
 theorem preveri1_cela : (∀ n : ℤ, ((n : ℝ) ≠ 2 ∧ ((n : ℝ) + 3) / ((n : ℝ) - 2) ≤ 0) ↔ n ∈ Finset.Ico (-3) 2) ∧
     (Finset.Ico (-3 : ℤ) 2).card = 5 := by
   refine ⟨fun n => ?_, by decide⟩
@@ -764,7 +874,9 @@ theorem preveri1_cela : (∀ n : ℤ, ((n : ℝ) ≠ 2 ∧ ((n : ℝ) + 3) / ((n
   · rintro ⟨a, b⟩; exact ⟨by exact_mod_cast a, by exact_mod_cast b⟩
 
 /-- Preveri se, vprašanje 2 (RACUN neenacba): (x − 4)/(x + 1) ≥ 0 s pogojem x ≠ −1 ↔ x ∈ (−∞, −1) ∪ [4, ∞);
-pol −1 ni v rešitvi. -/
+pol −1 ni v rešitvi.
+trditev: MAT-SS-3/racionalne-neenacbe#preveri2
+besedilo: »Rešitev je $(-\infty, -1) \cup [4, \infty)$: ničla $4$ je vključena, pol $-1$ ne.« -/
 theorem preveri2 (x : ℝ) : (x ≠ -1 ∧ 0 ≤ (x - 4) / (x + 1)) ↔ x ∈ Iio (-1) ∪ Ici 4 := by
   simp only [mem_union, mem_Iio, mem_Ici]
   constructor
@@ -779,7 +891,9 @@ theorem preveri2 (x : ℝ) : (x ≠ -1 ∧ 0 ≤ (x - 4) / (x + 1)) ↔ x ∈ Ii
     · exact ⟨by intro e; linarith, div_nonneg (by linarith) (by linarith)⟩
 
 /-- Preveri se, vprašanje 3: f(x) = (x − 1)²/(4(x + 2)); f ≥ 0 s pogojem x ≠ −2 ↔ x ∈ (−2, ∞), f > 0 ↔
-x ∈ (−2, 1) ∪ (1, ∞) (RACUN neenacba); f(1) = 0. -/
+x ∈ (−2, 1) ∪ (1, ∞) (RACUN neenacba); f(1) = 0.
+trditev: MAT-SS-3/racionalne-neenacbe#preveri3
+besedilo: »Pri $x = 1$ se graf osi le dotakne, $f(1) = 0$. Ker $0 > 0$ ne drži, točka $1$ izpade.« -/
 theorem preveri3 (x : ℝ) :
     ((x ≠ -2 ∧ 0 ≤ (x - 1) ^ 2 / (4 * (x + 2))) ↔ x ∈ Ioi (-2)) ∧
     (0 < (x - 1) ^ 2 / (4 * (x + 2)) ↔ x ∈ Ioo (-2) 1 ∪ Ioi 1) ∧
@@ -811,7 +925,9 @@ theorem preveri3 (x : ℝ) :
       · exact div_pos (by nlinarith) (by linarith)
 
 /-- Preveri se, vprašanje 4 (RACUN neenacba): (x + 6)/x ≥ 4 s pogojem x ≠ 0 ↔ x ∈ (0, 2], torej b = 2;
-(x + 6)/x − 4 = (6 − 3x)/x. -/
+(x + 6)/x − 4 = (6 − 3x)/x.
+trditev: MAT-SS-3/racionalne-neenacbe#preveri4
+besedilo: »$\frac{x + 6}{x} - 4 = \frac{6 - 3x}{x} \ge 0$. Ničla $2$ (vključena), pol $0$ (izločen), pozitivno med njima: $(0, 2]$.« -/
 theorem preveri4 (x : ℝ) : (x ≠ 0 → (x + 6) / x - 4 = (6 - 3 * x) / x) ∧
     ((x ≠ 0 ∧ 4 ≤ (x + 6) / x) ↔ x ∈ Ioc 0 2) := by
   have e : x ≠ 0 → (x + 6) / x - 4 = (6 - 3 * x) / x := fun h => by field_simp; ring

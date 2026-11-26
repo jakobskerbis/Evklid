@@ -4240,7 +4240,7 @@
   "gc.reg.quart": "Quartisch",
   "gc.reg.logistic": "Logistisch",
   "gc.reg.sin": "Sinusförmig",
-  "gc.reg.expe": "Exponentiell mit e (a·e^(bx))",
+  "gc.reg.expe": "Exponentiell mit e (a·eᵇˣ)",
   "gc.reg.inv": "Invers (a + b/x)",
   "chat.full": "Ganzen Lösungsweg zeigen",
   "chat.fullMsg": "Zeig mir den ganzen Lösungsweg dieser Aufgabe.",

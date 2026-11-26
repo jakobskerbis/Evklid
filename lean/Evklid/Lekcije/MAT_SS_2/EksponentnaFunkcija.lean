@@ -26,7 +26,8 @@ namespace Evklid.Lekcije.MAT_SS_2.EksponentnaFunkcija
 /-! ## Pomožne trditve -/
 
 /-- Pomožno (za vse približke): če je e·q = p in aᵠ < yᵖ < bᵠ (y > 0, a, b ≥ 0), potem leži y^e
-med a in b, ker je (y^e)^q = y^p (a < 0 je trivialno). -/
+med a in b, ker je (y^e)^q = y^p (a < 0 je trivialno).
+pomozno -/
 theorem koren_med {y a b e : ℝ} {p : ℤ} {q : ℕ} (hy : 0 < y)
     (hb : 0 ≤ b) (he : e * q = p) (h1 : a ^ q < y ^ p) (h2 : y ^ p < b ^ q) :
     a < y ^ e ∧ y ^ e < b := by
@@ -47,21 +48,37 @@ example : (0 : ℝ) < 4 ∧ (0 : ℝ) ≤ 3 ∧ (1 / 2 : ℝ) * ((2 : ℕ) : ℝ
 
 /-! ## Razlaga 5: lastnosti (najprej, ker jih rabijo primeri) -/
 
-/-- Razlaga 5: pri a > 1 je aˣ strogo naraščajoča. -/
+/-- Razlaga 5: pri a > 1 je aˣ strogo naraščajoča.
+trditev: MAT-SS-2/eksponentna-funkcija#narasca
+besedilo: »Ker je funkcija pri $a > 1$ strogo naraščajoča« -/
 theorem narasca (a : ℝ) (ha : 1 < a) : StrictMono fun x : ℝ => a ^ x :=
   fun _ _ h => (Real.rpow_lt_rpow_left_iff ha).mpr h
 
 /-- Predpostavke trditve `narasca` se dajo izpolniti (a = 2). -/
 example : (1 : ℝ) < 2 := by norm_num
 
-/-- Razlaga 5: pri 0 < a < 1 je aˣ strogo padajoča. -/
+/-- Predpostavke trditve `narasca` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) < 2 := by norm_num
+  narasca (ha := w)
+
+/-- Razlaga 5: pri 0 < a < 1 je aˣ strogo padajoča.
+trditev: MAT-SS-2/eksponentna-funkcija#pada
+besedilo: »Pri $0 < a < 1$ je strogo padajoča« -/
 theorem pada (a : ℝ) (h0 : 0 < a) (h1 : a < 1) : StrictAnti fun x : ℝ => a ^ x :=
   fun _ _ h => (Real.rpow_lt_rpow_left_iff_of_base_lt_one h0 h1).mpr h
 
 /-- Predpostavke trditve `pada` se dajo izpolniti (a = 1/2). -/
 example : (0 : ℝ) < 1 / 2 ∧ (1 / 2 : ℝ) < 1 := by norm_num
 
-/-- Razlaga 5 (injektivnost): za a > 0, a ≠ 1 je aᵘ = aᵛ natanko tedaj, ko je u = v. -/
+/-- Predpostavke trditve `pada` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 / 2 ∧ (1 / 2 : ℝ) < 1 := by norm_num
+  pada (h0 := w.1) (h1 := w.2)
+
+/-- Razlaga 5 (injektivnost): za a > 0, a ≠ 1 je aᵘ = aᵛ natanko tedaj, ko je u = v.
+trditev: MAT-SS-2/eksponentna-funkcija#injektivna
+besedilo: »Ker je funkcija strogo monotona, je **injektivna**: vsako vrednost doseže le pri enem $x$ (vodoravna premica seka graf največ enkrat).« -/
 theorem injektivna (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (u v : ℝ) : a ^ u = a ^ v ↔ u = v := by
   constructor
   · intro h
@@ -73,8 +90,15 @@ theorem injektivna (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (u v : ℝ) : a ^ u = 
 /-- Predpostavke trditve `injektivna` se dajo izpolniti (a = 2). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 := by norm_num
 
+/-- Predpostavke trditve `injektivna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 := by norm_num
+  injektivna (ha := w.1) (ha1 := w.2)
+
 /-- Razlaga 5: za a > 0, a ≠ 1 je zaloga vrednosti aˣ (definirane za vsak realen x) interval (0, ∞):
-vse vrednosti so pozitivne (ničel ni) in vsaka pozitivna vrednost je dosežena. -/
+vse vrednosti so pozitivne (ničel ni) in vsaka pozitivna vrednost je dosežena.
+trditev: MAT-SS-2/eksponentna-funkcija#zaloga
+besedilo: »Pri vsaki osnovi je definicijsko območje $\mathbb{R}$, zaloga vrednosti $(0, \infty)$ in presečišče z osjo $y$ točka $(0, 1)$.« -/
 theorem zaloga (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) :
     Set.range (fun x : ℝ => a ^ x) = Set.Ioi 0 := by
   ext y
@@ -85,8 +109,15 @@ theorem zaloga (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) :
 /-- Predpostavke trditve `zaloga` se dajo izpolniti (a = 2). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 := by norm_num
 
+/-- Predpostavke trditve `zaloga` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 := by norm_num
+  zaloga (ha := w.1) (ha1 := w.2)
+
 /-- Razlaga 5: graf gre skozi (0, 1) in (1, a); ničel ni; funkcija je navzdol omejena z 0, navzgor pa
-ni omejena (vsako mejo M preseže). -/
+ni omejena (vsako mejo M preseže).
+trditev: MAT-SS-2/eksponentna-funkcija#lastnosti
+besedilo: »Ničel ni. Funkcija je navzdol omejena (z $0$), navzgor ne« -/
 theorem lastnosti (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) :
     a ^ (0 : ℝ) = 1 ∧ a ^ (1 : ℝ) = a ∧ (∀ x : ℝ, a ^ x ≠ 0) ∧ (∀ x : ℝ, 0 < a ^ x) ∧
     (∀ M : ℝ, ∃ x : ℝ, M < a ^ x) := by
@@ -99,7 +130,14 @@ theorem lastnosti (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) :
 /-- Predpostavke trditve `lastnosti` se dajo izpolniti (a = 3). -/
 example : (0 : ℝ) < 3 ∧ (3 : ℝ) ≠ 1 := by norm_num
 
-/-- Razlaga 5 (tabela): pri a > 1 in x > 0 je aˣ > 1, pri 0 < a < 1 in x > 0 je 0 < aˣ < 1. -/
+/-- Predpostavke trditve `lastnosti` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 3 ∧ (3 : ℝ) ≠ 1 := by norm_num
+  lastnosti (ha := w.1) (ha1 := w.2)
+
+/-- Razlaga 5 (tabela): pri a > 1 in x > 0 je aˣ > 1, pri 0 < a < 1 in x > 0 je 0 < aˣ < 1.
+trditev: MAT-SS-2/eksponentna-funkcija#nad-pod-ena
+besedilo: »| $x > 0$ | $a^x > 1$ | $0 < a^x < 1$ |« -/
 theorem nad_pod_ena (a x : ℝ) (hx : 0 < x) :
     (1 < a → 1 < a ^ x) ∧ (0 < a → a < 1 → 0 < a ^ x ∧ a ^ x < 1) :=
   ⟨fun ha => Real.one_lt_rpow ha hx,
@@ -108,8 +146,15 @@ theorem nad_pod_ena (a x : ℝ) (hx : 0 < x) :
 /-- Predpostavke trditve `nad_pod_ena` se dajo izpolniti (x = 1, a = 2 ali a = 1/2). -/
 example : (0 : ℝ) < 1 ∧ (1 : ℝ) < 2 ∧ (0 : ℝ) < 1 / 2 ∧ (1 / 2 : ℝ) < 1 := by norm_num
 
+/-- Predpostavke trditve `nad_pod_ena` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 ∧ (1 : ℝ) < 2 ∧ (0 : ℝ) < 1 / 2 ∧ (1 / 2 : ℝ) < 1 := by norm_num
+  nad_pod_ena (hx := w.1)
+
 /-- Razlaga 5 (asimptota y = 0): pri a > 1 so vrednosti levo od neke meje poljubno blizu 0 (asimptota
-na levi), pri 0 < a < 1 pa desno od neke meje (asimptota na desni); 0 ni dosežena (`lastnosti`). -/
+na levi), pri 0 < a < 1 pa desno od neke meje (asimptota na desni); 0 ni dosežena (`lastnosti`).
+trditev: MAT-SS-2/eksponentna-funkcija#asimptota
+besedilo: »Os $x$ je **vodoravna asimptota**: graf se ji poljubno približa, a je ne doseže.« -/
 theorem asimptota (a : ℝ) (ε : ℝ) (hε : 0 < ε) :
     (1 < a → ∃ x₀ : ℝ, ∀ x, x < x₀ → a ^ x < ε) ∧
     (0 < a → a < 1 → ∃ x₀ : ℝ, ∀ x, x₀ < x → a ^ x < ε) := by
@@ -126,8 +171,15 @@ theorem asimptota (a : ℝ) (ε : ℝ) (hε : 0 < ε) :
 /-- Predpostavke trditve `asimptota` se dajo izpolniti (ε = 1/100, a = 2 ali a = 1/2). -/
 example : (0 : ℝ) < 1 / 100 ∧ (1 : ℝ) < 2 ∧ (0 : ℝ) < 1 / 2 ∧ (1 / 2 : ℝ) < 1 := by norm_num
 
+/-- Predpostavke trditve `asimptota` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 / 100 ∧ (1 : ℝ) < 2 ∧ (0 : ℝ) < 1 / 2 ∧ (1 / 2 : ℝ) < 1 := by norm_num
+  asimptota (hε := w.1)
+
 /-- Razlaga 5: korak za 1 v desno vrednost pomnoži z a: a^(x+1) = aˣ·a (a > 0); primerjava: 2ˣ pri
-x = 0, 1, 2, 3 da 1, 2, 4, 8, 2x + 1 pa 1, 3, 5, 7 (vsakič +2). -/
+x = 0, 1, 2, 3 da 1, 2, 4, 8, 2x + 1 pa 1, 3, 5, 7 (vsakič +2).
+trditev: MAT-SS-2/eksponentna-funkcija#korak
+besedilo: »Bistvena lastnost sledi iz pravila za množenje potenc: $a^{x+1} = a^x \cdot a$. Korak za $1$ v desno vrednost vedno **pomnoži** z $a$, pri linearni funkciji pa se ji prišteje $k$. Primerjaj vrednosti pri $x = 0, 1, 2, 3$: $2^x$ da $1, 2, 4, 8$ (vsakič krat $2$), $2x + 1$ pa $1, 3, 5, 7$ (vsakič plus $2$).« -/
 theorem korak (a x : ℝ) (ha : 0 < a) :
     a ^ (x + 1) = a ^ x * a ∧
     ((2 : ℝ) ^ (0 : ℝ) = 1 ∧ (2 : ℝ) ^ (1 : ℝ) = 2 ∧ (2 : ℝ) ^ (2 : ℝ) = 4 ∧ (2 : ℝ) ^ (3 : ℝ) = 8) ∧
@@ -139,7 +191,14 @@ example : (0 : ℝ) < 2 := by norm_num
 
 /-! ## Razlaga 1: oktave -/
 
-/-- Razlaga 1, tabela: 440·2ˣ pri x = −2, −1, 0, 1, 2 da 110, 220, 440, 880, 1760; 2^(1/2) = √2. -/
+/-- Predpostavke trditve `korak` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 := by norm_num
+  korak (ha := w)
+
+/-- Razlaga 1, tabela: 440·2ˣ pri x = −2, −1, 0, 1, 2 da 110, 220, 440, 880, 1760; 2^(1/2) = √2.
+trditev: MAT-SS-2/eksponentna-funkcija#oktave
+besedilo: »| $-2$ | $\frac{1}{4}$ | $110$ | | $-1$ | $\frac{1}{2}$ | $220$ | | $0$ | $1$ | $440$ | | $\frac{1}{2}$ | $\sqrt{2} \approx 1{,}4142$ | $\approx 622{,}25$ | | $1$ | $2$ | $880$ | | $2$ | $4$ | $1760$ |« -/
 theorem oktave :
     (2 : ℝ) ^ (-2 : ℝ) = 1 / 4 ∧ (440 : ℝ) * (1 / 4) = 110 ∧
     (2 : ℝ) ^ (-1 : ℝ) = 1 / 2 ∧ (440 : ℝ) * (1 / 2) = 220 ∧
@@ -153,7 +212,9 @@ theorem oktave :
 
 /-- Razlaga 1: √2 ≈ 1,4142 in 440·√2 ≈ 622,25 (ne 660); ena dvanajstina: 2^(1/12) ≈ 1,0595;
 prva zamisel: 880 − 440 = 440 in 440/12 ≈ 36,67; ton e² je 440·2^(7/12) ≈ 659,26, skoraj 660;
-na sliki: razlika 660 − 622,25 ≈ 38. -/
+na sliki: razlika 660 − 622,25 ≈ 38.
+trditev: MAT-SS-2/eksponentna-funkcija#oktave-priblizki
+besedilo: »Ton na sredini oktave, $6$ poltonov nad a¹, ima torej $440 \cdot \sqrt{2} \approx 622{,}25\,\mathrm{Hz}$ in ne $660\,\mathrm{Hz}$, kot bi dala Nikina prva zamisel. En polton je $\frac{1}{12}$ oktave, zato vsak polton frekvenco pomnoži z $2^{\frac{1}{12}} \approx 1{,}0595$.« -/
 theorem oktave_priblizki :
     (1.41415 < Real.sqrt 2 ∧ Real.sqrt 2 < 1.41425) ∧
     (622.245 < 440 * Real.sqrt 2 ∧ 440 * Real.sqrt 2 < 622.255) ∧
@@ -174,7 +235,9 @@ theorem oktave_priblizki :
     (by norm_num) (by norm_num)
 
 /-- Razlaga 1 (in slika): za 0 < n < 12 je pravilna uglasitev 440·2^(n/12) pod Nikino prvo zamislijo
-440 + 440·n/12 (stroga konveksnost eksponentne funkcije); na koncih (n = 0, n = 12) sta enaki. -/
+440 + 440·n/12 (stroga konveksnost eksponentne funkcije); na koncih (n = 0, n = 12) sta enaki.
+trditev: MAT-SS-2/eksponentna-funkcija#pod-premico
+besedilo: »Črti se ujemata le na robovih, pri a¹ in a²; vmes leži krivulja pod ravno črto.« -/
 theorem pod_premico (n : ℝ) (h0 : 0 < n) (h12 : n < 12) :
     440 * (2 : ℝ) ^ (n / 12) < 440 + 440 * n / 12 := by
   have t0 : 0 < n / 12 := by positivity
@@ -189,7 +252,14 @@ theorem pod_premico (n : ℝ) (h0 : 0 < n) (h12 : n < 12) :
 /-- Predpostavke trditve `pod_premico` se dajo izpolniti (n = 6). -/
 example : (0 : ℝ) < 6 ∧ (6 : ℝ) < 12 := by norm_num
 
-/-- Razlaga 1, premisli: 10 oktav pod a¹ je 440·2^(−10) = 440/1024 ≈ 0,43 Hz > 0. -/
+/-- Predpostavke trditve `pod_premico` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 6 ∧ (6 : ℝ) < 12 := by norm_num
+  pod_premico (h0 := w.1) (h12 := w.2)
+
+/-- Razlaga 1, premisli: 10 oktav pod a¹ je 440·2^(−10) = 440/1024 ≈ 0,43 Hz > 0.
+trditev: MAT-SS-2/eksponentna-funkcija#deset-oktav
+besedilo: »Pozitivna: $440 \cdot 2^{-10} = \dfrac{440}{1024} \approx 0{,}43\,\mathrm{Hz}$.« -/
 theorem deset_oktav : (440 : ℝ) * (2 : ℝ) ^ (-10 : ℝ) = 440 / 1024 ∧
     (0.425 : ℝ) < 440 / 1024 ∧ (440 : ℝ) / 1024 < 0.435 ∧ (0 : ℝ) < 440 / 1024 := by
   refine ⟨?_, by norm_num, by norm_num, by norm_num⟩
@@ -198,7 +268,9 @@ theorem deset_oktav : (440 : ℝ) * (2 : ℝ) ^ (-10 : ℝ) = 440 / 1024 ∧
 /-! ## Razlaga 3: definicija -/
 
 /-- Razlaga 3 (in ustno vprašanje 1): (−2)^(1/2) = √(−2) ni realno število (noben realen x nima
-kvadrata −2), pri a = 1 pa je 1ˣ = 1 za vsak x (konstantna funkcija). -/
+kvadrata −2), pri a = 1 pa je 1ˣ = 1 za vsak x (konstantna funkcija).
+trditev: MAT-SS-2/eksponentna-funkcija#zakaj-pogoji
+besedilo: »Že $(-2)^{\frac{1}{2}} = \sqrt{-2}$ ni realno število, graf bi imel luknje. Pri $a = 1$ bi bila funkcija konstantna, $1^x = 1$, zato tudi to osnovo izločimo.« -/
 theorem zakaj_pogoji : (¬ ∃ x : ℝ, x ^ 2 = -2) ∧ (∀ x : ℝ, (1 : ℝ) ^ x = 1) := by
   refine ⟨?_, fun x => Real.one_rpow x⟩
   rintro ⟨x, hx⟩
@@ -207,7 +279,9 @@ theorem zakaj_pogoji : (¬ ∃ x : ℝ, x ^ 2 = -2) ∧ (∀ x : ℝ, (1 : ℝ) 
 
 /-! ## Razlaga 4: tabela -/
 
-/-- Razlaga 4, tabela: 2ˣ in (1/2)ˣ pri x = −3, …, 3. -/
+/-- Razlaga 4, tabela: 2ˣ in (1/2)ˣ pri x = −3, …, 3.
+trditev: MAT-SS-2/eksponentna-funkcija#tabela
+besedilo: »| $-3$ | $\frac{1}{8}$ | $8$ | | $-2$ | $\frac{1}{4}$ | $4$ | | $-1$ | $\frac{1}{2}$ | $2$ | | $0$ | $1$ | $1$ | | $1$ | $2$ | $\frac{1}{2}$ | | $2$ | $4$ | $\frac{1}{4}$ | | $3$ | $8$ | $\frac{1}{8}$ |« -/
 theorem tabela :
     (2 : ℝ) ^ (-3 : ℝ) = 1 / 8 ∧ (1 / 2 : ℝ) ^ (-3 : ℝ) = 8 ∧
     (2 : ℝ) ^ (-2 : ℝ) = 1 / 4 ∧ (1 / 2 : ℝ) ^ (-2 : ℝ) = 4 ∧
@@ -218,7 +292,9 @@ theorem tabela :
     (2 : ℝ) ^ (3 : ℝ) = 8 ∧ (1 / 2 : ℝ) ^ (3 : ℝ) = 1 / 8 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> norm_num [Real.rpow_neg]
 
-/-- Razlaga 4: ob povečanju x za 1 se 2ˣ podvoji, (1/2)ˣ pa razpolovi; vrednosti so pozitivne. -/
+/-- Razlaga 4: ob povečanju x za 1 se 2ˣ podvoji, (1/2)ˣ pa razpolovi; vrednosti so pozitivne.
+trditev: MAT-SS-2/eksponentna-funkcija#podvoji
+besedilo: »Ob povečanju $x$ za $1$ se $2^x$ **podvoji**, $\left(\frac{1}{2}\right)^x$ pa **razpolovi**. Vrednosti so vedno pozitivne, tudi pri negativnih $x$: $2^{-3} = \dfrac{1}{8}$.« -/
 theorem podvoji (x : ℝ) : (2 : ℝ) ^ (x + 1) = 2 * (2 : ℝ) ^ x ∧
     (1 / 2 : ℝ) ^ (x + 1) = (1 / 2 : ℝ) ^ x / 2 ∧ 0 < (2 : ℝ) ^ x ∧ 0 < (1 / 2 : ℝ) ^ x := by
   refine ⟨?_, ?_, Real.rpow_pos_of_pos (by norm_num) x, Real.rpow_pos_of_pos (by norm_num) x⟩
@@ -227,12 +303,16 @@ theorem podvoji (x : ℝ) : (2 : ℝ) ^ (x + 1) = 2 * (2 : ℝ) ^ x ∧
 
 /-! ## Razlaga 6: vpliv osnove -/
 
-/-- Razlaga 6: od x = 1 do x = 2 zraste 2ˣ za 2, 3ˣ za 6, 4ˣ za 12. -/
+/-- Razlaga 6: od x = 1 do x = 2 zraste 2ˣ za 2, 3ˣ za 6, 4ˣ za 12.
+trditev: MAT-SS-2/eksponentna-funkcija#vpliv-osnove
+besedilo: »Vpliv osnove.** Pri $a > 1$ je graf za $x > 0$ tem strmejši, čim večja je osnova: od $x = 1$ do $x = 2$ zraste $2^x$ za $2$, $3^x$ za $6$, $4^x$ pa za $12$.« -/
 theorem vpliv_osnove : (2 : ℝ) ^ (2 : ℝ) - 2 ^ (1 : ℝ) = 2 ∧ (3 : ℝ) ^ (2 : ℝ) - 3 ^ (1 : ℝ) = 6 ∧
     (4 : ℝ) ^ (2 : ℝ) - 4 ^ (1 : ℝ) = 12 := by norm_num
 
 /-- Razlaga 6, premisli: 2^(−1) = 1/2 > 3^(−1) = 1/3; splošno za 0 < a < b: pri x > 0 je aˣ < bˣ,
-pri x < 0 pa bˣ < aˣ (levo od osi y je graf z večjo osnovo nižje). -/
+pri x < 0 pa bˣ < aˣ (levo od osi y je graf z večjo osnovo nižje).
+trditev: MAT-SS-2/eksponentna-funkcija#vecja-osnova
+besedilo: »Višje je $y = 2^x$, ker je $2^{-1} = \frac{1}{2}$ večje od $3^{-1} = \frac{1}{3}$. Negativni eksponent pomeni deljenje, večja osnova pa deli z večjim številom. Levo od osi $y$ je zato graf z večjo osnovo nižje in se tesneje prilega osi $x$.« -/
 theorem vecja_osnova : (2 : ℝ) ^ (-1 : ℝ) = 1 / 2 ∧ (3 : ℝ) ^ (-1 : ℝ) = 1 / 3 ∧
     (1 / 3 : ℝ) < 1 / 2 ∧
     ∀ a b x : ℝ, 0 < a → a < b → (0 < x → a ^ x < b ^ x) ∧ (x < 0 → b ^ x < a ^ x) := by
@@ -244,7 +324,9 @@ theorem vecja_osnova : (2 : ℝ) ^ (-1 : ℝ) = 1 / 2 ∧ (3 : ℝ) ^ (-1 : ℝ)
   exact inv_strictAnti₀ (Real.rpow_pos_of_pos ha _) h
 
 /-- Razlaga 6 (slika pri a = 2): stopnici od (−1, 1/2) do (0, 1) in od (0, 1) do (1, 2); pri a = 0,5 je
-graf zrcalna slika grafa pri a = 2: 0,5ˣ = 2^(−x). -/
+graf zrcalna slika grafa pri a = 2: 0,5ˣ = 2^(−x).
+trditev: MAT-SS-2/eksponentna-funkcija#stopnici
+besedilo: »Pod $1$ se obrneta navzdol in graf pada; pri $a = 0{,}5$ je natanko zrcalna slika grafa pri $a = 2$.« -/
 theorem stopnici (x : ℝ) : (2 : ℝ) ^ (-1 : ℝ) = 1 / 2 ∧ (2 : ℝ) ^ (0 : ℝ) = 1 ∧ (2 : ℝ) ^ (1 : ℝ) = 2 ∧
     (2 : ℝ) * (1 / 2) = 1 ∧ (0.5 : ℝ) ^ x = (2 : ℝ) ^ (-x) := by
   refine ⟨by norm_num, by norm_num, by norm_num, by norm_num, ?_⟩
@@ -253,21 +335,32 @@ theorem stopnici (x : ℝ) : (2 : ℝ) ^ (-1 : ℝ) = 1 / 2 ∧ (2 : ℝ) ^ (0 :
 /-! ## Razlaga 7: zrcaljenje -/
 
 /-- Razlaga 7 (in Povzetek, Ponovitev): (1/a)ˣ = a^(−x) za a > 0; vrednost 2ˣ pri x = 3 je enaka
-vrednosti (1/2)ˣ pri x = −3. -/
+vrednosti (1/2)ˣ pri x = −3.
+trditev: MAT-SS-2/eksponentna-funkcija#zrcaljenje
+besedilo: »Ker je $\left(\dfrac{1}{a}\right)^x = a^{-x}$, je graf funkcije $y = \left(\dfrac{1}{a}\right)^x$ zrcalna slika grafa $y = a^x$ čez os $y$.« -/
 theorem zrcaljenje (a x : ℝ) (ha : 0 < a) : (1 / a) ^ x = a ^ (-x) := by
   rw [one_div, Real.inv_rpow ha.le, Real.rpow_neg ha.le]
 
 /-- Predpostavke trditve `zrcaljenje` se dajo izpolniti (a = 2). -/
 example : (0 : ℝ) < 2 := by norm_num
 
-/-- Razlaga 7: 2³ = (1/2)^(−3) = 8. -/
+/-- Predpostavke trditve `zrcaljenje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 := by norm_num
+  zrcaljenje (ha := w)
+
+/-- Razlaga 7: 2³ = (1/2)^(−3) = 8.
+trditev: MAT-SS-2/eksponentna-funkcija#zrcaljenje-primer
+besedilo: »vrednost $2^x$ pri $x = 3$ je enaka vrednosti $\left(\frac{1}{2}\right)^x$ pri $x = -3$.« -/
 theorem zrcaljenje_primer : (2 : ℝ) ^ (3 : ℝ) = (1 / 2 : ℝ) ^ (-3 : ℝ) := by
   rw [zrcaljenje 2 (-3) (by norm_num), neg_neg]
 
 /-! ## Razlaga 8: število e -/
 
 /-- Razlaga 8: e = 2,71828… (2,71825 < e < 2,71835, torej e ≈ 2,718 in 2 < e < 3); zato za x > 0 leži
-eˣ med 2ˣ in 3ˣ, za x < 0 pa med 3ˣ in 2ˣ. -/
+eˣ med 2ˣ in 3ˣ, za x < 0 pa med 3ˣ in 2ˣ.
+trditev: MAT-SS-2/eksponentna-funkcija#stevilo-e
+besedilo: »Ker je $2 < e < 3$, leži njen graf med grafoma $2^x$ in $3^x$.« -/
 theorem stevilo_e :
     (2.71825 < Real.exp 1 ∧ Real.exp 1 < 2.71835) ∧ (2.7175 < Real.exp 1 ∧ Real.exp 1 < 2.7185) ∧
     (2 < Real.exp 1 ∧ Real.exp 1 < 3) ∧
@@ -285,14 +378,18 @@ theorem stevilo_e :
 
 set_option exponentiation.threshold 700 in
 /-- Razlaga 8: (1 + 1/n)ⁿ pri n = 1, 2, 12, 365 je 2; 2,25; ≈ 2,613; ≈ 2,7146 (meja za računanje
-velikih potenc je dvignjena, da norm_num izračuna 366³⁶⁵). -/
+velikih potenc je dvignjena, da norm_num izračuna 366³⁶⁵).
+trditev: MAT-SS-2/eksponentna-funkcija#obresti-e
+besedilo: »Po letu imamo $\left(1 + \frac{1}{n}\right)^n$ €: pri $n = 1, 2, 12, 365$ dobimo $2;\ 2{,}25;\ 2{,}613;\ 2{,}7146$.« -/
 theorem obresti_e :
     ((1 : ℝ) + 1 / 1) ^ 1 = 2 ∧ ((1 : ℝ) + 1 / 2) ^ 2 = 2.25 ∧
     (2.6125 < ((1 : ℝ) + 1 / 12) ^ 12 ∧ ((1 : ℝ) + 1 / 12) ^ 12 < 2.6135) ∧
     (2.71455 < ((1 : ℝ) + 1 / 365) ^ 365 ∧ ((1 : ℝ) + 1 / 365) ^ 365 < 2.71465) := by
   norm_num
 
-/-- Razlaga 8: z večanjem n se (1 + 1/n)ⁿ približuje številu e (limita). -/
+/-- Razlaga 8: z večanjem n se (1 + 1/n)ⁿ približuje številu e (limita).
+trditev: MAT-SS-2/eksponentna-funkcija#limita-e
+besedilo: »Z večanjem $n$ se vrednosti približujejo številu $e = 2{,}71828\ldots$.« -/
 theorem limita_e :
     Filter.Tendsto (fun n : ℕ => (1 + 1 / (n : ℝ)) ^ n) Filter.atTop (nhds (Real.exp 1)) :=
   Real.tendsto_one_add_div_pow_exp 1
@@ -301,7 +398,9 @@ theorem limita_e :
 
 /-- Razlaga 9 (in Povzetek): za a > 0, a ≠ 1 ima y = a^(x−p) + q zalogo vrednosti (q, ∞) (asimptota
 y = q), y = −aˣ zalogo (−∞, 0), y = c·aˣ (c > 0) zalogo (0, ∞) in gre skozi (0, c); graf a^(x−p) je
-graf aˣ, premaknjen za p (vrednost pri x + p je vrednost aˣ pri x). -/
+graf aˣ, premaknjen za p (vrednost pri x + p je vrednost aˣ pri x).
+trditev: MAT-SS-2/eksponentna-funkcija#premiki
+besedilo: »$y = a^x + q$: graf premaknemo za $q$ v smeri osi $y$; asimptota postane $y = q$, zaloga vrednosti $(q, \infty)$. - $y = a^{x - p}$: graf premaknemo za $p$ v smeri osi $x$ (pri $p > 0$ v desno); asimptota ostane $y = 0$. - $y = -a^x$: graf prezrcalimo čez os $x$; zaloga vrednosti postane $(-\infty, 0)$. - $y = c \cdot a^x$, $c > 0$: graf raztegnemo v smeri osi $y$; os $y$ seka v $(0, c)$, asimptota ostane $y = 0$.« -/
 theorem premiki (a p q c : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hc : 0 < c) :
     Set.range (fun x : ℝ => a ^ (x - p) + q) = Set.Ioi q ∧
     Set.range (fun x : ℝ => -a ^ x) = Set.Iio 0 ∧
@@ -342,8 +441,15 @@ theorem premiki (a p q c : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hc : 0 < c) :
 /-- Predpostavke trditve `premiki` se dajo izpolniti (a = 2, p = 2, q = −2, c = 3). -/
 example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 3 := by norm_num
 
+/-- Predpostavke trditve `premiki` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 3 := by norm_num
+  premiki (ha := w.1) (ha1 := w.2.1) (hc := w.2.2)
+
 /-- Razlaga 9, slika y = 2^(x−2) − 2: točka (0, 1) gre v (2, −1); edina ničla je x = 3 (2¹ − 2 = 0);
-pri q ≥ 0 je 2^(x−p) + q > 0, zato ničle ni. -/
+pri q ≥ 0 je 2^(x−p) + q > 0, zato ničle ni.
+trditev: MAT-SS-2/eksponentna-funkcija#premik-primer
+besedilo: »Slika kaže $y = 2^{x-2} - 2$: točka $(0, 1)$ osnovnega grafa se preseli v $(2, -1)$, asimptota pa z osi $x$ na premico $y = -2$. Ker je asimptota zdaj pod osjo $x$, graf seka os $x$: ničla je pri $x = 3$, saj je $2^{1} - 2 = 0$. V aplikaciji premikaj najprej samo $p$: graf drsi levo in desno, asimptota miruje. Nato samo $q$: asimptota se premika skupaj z grafom. Pri $q \ge 0$ ničla izgine, ker je ves graf nad osjo $x$.« -/
 theorem premik_primer :
     (2 : ℝ) ^ ((2 : ℝ) - 2) - 2 = -1 ∧ (2 : ℝ) ^ ((3 : ℝ) - 2) - 2 = 0 ∧
     (∀ x : ℝ, (2 : ℝ) ^ (x - 2) - 2 = 0 ↔ x = 3) ∧
@@ -359,13 +465,17 @@ theorem premik_primer :
   · linarith [Real.rpow_pos_of_pos (show (0 : ℝ) < 2 by norm_num) (x - p)]
 
 /-- Razlaga 9, simulacija: pri a = 2 in q = −2 gre točka (0, 1) v (0, −1) (asimptota y = −2), pri
-p = 1 pa v (1, −1). -/
+p = 1 pa v (1, −1).
+trditev: MAT-SS-2/eksponentna-funkcija#simulacija
+besedilo: »Opazuj, da se vodoravna asimptota premakne na $y = -2$, točka $(0, 1)$ pa v $(0, -1)$.« -/
 theorem simulacija : (2 : ℝ) ^ ((0 : ℝ) - 0) + (-2) = -1 ∧ (2 : ℝ) ^ ((1 : ℝ) - 1) + (-2) = -1 := by
   norm_num
 
 /-! ## Razlaga 10: primerjanje potenc -/
 
-/-- Razlaga 10: pri a > 1 iz x₁ < x₂ sledi a^x₁ < a^x₂, pri 0 < a < 1 pa a^x₁ > a^x₂. -/
+/-- Razlaga 10: pri a > 1 iz x₁ < x₂ sledi a^x₁ < a^x₂, pri 0 < a < 1 pa a^x₁ > a^x₂.
+trditev: MAT-SS-2/eksponentna-funkcija#primerjanje
+besedilo: »10. Primerjanje potenc.** Ker je funkcija pri $a > 1$ strogo naraščajoča, iz $x_1 < x_2$ sledi $a^{x_1} < a^{x_2}$. Pri $0 < a < 1$ je strogo padajoča, zato iz $x_1 < x_2$ sledi $a^{x_1} > a^{x_2}$. Potence z isto osnovo tako primerjamo brez računanja.« -/
 theorem primerjanje (a x₁ x₂ : ℝ) (h : x₁ < x₂) :
     (1 < a → a ^ x₁ < a ^ x₂) ∧ (0 < a → a < 1 → a ^ x₂ < a ^ x₁) :=
   ⟨fun ha => narasca a ha h, fun h0 h1 => pada a h0 h1 h⟩
@@ -375,8 +485,15 @@ example : (0 : ℝ) < 1 := by norm_num
 
 /-! ## Razlaga 11: potenčna ali eksponentna rast -/
 
+/-- Predpostavke trditve `primerjanje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 := by norm_num
+  primerjanje (h := w)
+
 /-- Razlaga 11: x² proti 2ˣ pri x = 1, 2, 3, 4, 5, 10: 1 < 2, 4 = 4, 9 > 8, 16 = 16, 25 < 32,
-100 < 1024; grafa se sekata v (2, 4) in (4, 16). -/
+100 < 1024; grafa se sekata v (2, 4) in (4, 16).
+trditev: MAT-SS-2/eksponentna-funkcija#potencna-eksponentna
+besedilo: »Potenčna ali eksponentna rast.** Primerjaj potenčno funkcijo $x^2$ in eksponentno $2^x$ pri $x = 1, 2, 3, 4, 5, 10$: $\;1 < 2,\; 4 = 4,\; 9 > 8,\; 16 = 16,\; 25 < 32,\; 100 < 1024$.« -/
 theorem potencna_eksponentna :
     (1 : ℝ) ^ 2 < (2 : ℝ) ^ (1 : ℝ) ∧ (2 : ℝ) ^ 2 = (2 : ℝ) ^ (2 : ℝ) ∧
     (2 : ℝ) ^ (3 : ℝ) < (3 : ℝ) ^ 2 ∧ (4 : ℝ) ^ 2 = (2 : ℝ) ^ (4 : ℝ) ∧
@@ -384,7 +501,9 @@ theorem potencna_eksponentna :
     (2 : ℝ) ^ (5 : ℝ) = 32 ∧ (2 : ℝ) ^ (10 : ℝ) = 1024 := by
   norm_num
 
-/-- Razlaga 11: za naravna n ≥ 5 je 2ⁿ > n² (za realne x > 4 glej `presecisca`). -/
+/-- Razlaga 11: za naravna n ≥ 5 je 2ⁿ > n² (za realne x > 4 glej `presecisca`).
+trditev: MAT-SS-2/eksponentna-funkcija#dve-na-n
+besedilo: »za $x > 4$ pa je $2^x$ večja.« -/
 theorem dve_na_n (n : ℕ) (hn : 5 ≤ n) : n ^ 2 < 2 ^ n := by
   induction n, hn using Nat.le_induction with
   | base => norm_num
@@ -396,8 +515,15 @@ theorem dve_na_n (n : ℕ) (hn : 5 ≤ n) : n ^ 2 < 2 ^ n := by
 /-- Predpostavke trditve `dve_na_n` se dajo izpolniti (n = 5). -/
 example : 5 ≤ 5 := le_rfl
 
+/-- Predpostavke trditve `dve_na_n` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : 5 ≤ 5 := le_rfl
+  dve_na_n (hn := w)
+
 /-- Razlaga 11: korak za 1 vrednost 2ˣ podvoji (2^(x+1)/2ˣ = 2), x² pa pomnoži z ((x+1)/x)² (x ≠ 0;
-v Leanu velja zapis tudi pri x = 0, ker je x/0 = 0). -/
+v Leanu velja zapis tudi pri x = 0, ker je x/0 = 0).
+trditev: MAT-SS-2/eksponentna-funkcija#razmerji
+besedilo: »Razlog: korak za $1$ vrednost $2^x$ vedno podvoji, vrednost $x^2$ pa pomnoži le z $\left(\frac{x+1}{x}\right)^2$, kar je pri velikih $x$ blizu $1$.« -/
 theorem razmerji (x : ℝ) :
     (2 : ℝ) ^ (x + 1) / (2 : ℝ) ^ x = 2 ∧ (x + 1) ^ 2 / x ^ 2 = ((x + 1) / x) ^ 2 := by
   refine ⟨?_, by rw [div_pow]⟩
@@ -405,7 +531,8 @@ theorem razmerji (x : ℝ) :
   have : (2 : ℝ) ^ x ≠ 0 := (Real.rpow_pos_of_pos (by norm_num) x).ne'
   field_simp
 
-/-- Pomožno (stroga konkavnost ln): za 0 < a < b < c je (c − a)·ln b > (c − b)·ln a + (b − a)·ln c. -/
+/-- Pomožno (stroga konkavnost ln): za 0 < a < b < c je (c − a)·ln b > (c − b)·ln a + (b − a)·ln c.
+pomozno -/
 theorem log_tri {a b c : ℝ} (ha : 0 < a) (hab : a < b) (hbc : b < c) :
     (c - b) * Real.log a + (b - a) * Real.log c < (c - a) * Real.log b := by
   have hca : 0 < c - a := by linarith
@@ -428,7 +555,9 @@ example : (0 : ℝ) < 2 ∧ (2 : ℝ) < 3 ∧ (3 : ℝ) < 4 := by norm_num
 
 /-- Razlaga 11: za x > 0 se grafa y = 2ˣ in y = x² sekata le v x = 2 in x = 4 (točki (2, 4) in
 (4, 16)), za x > 4 pa je 2ˣ > x². Dokaz: 2ˣ = x² ⟺ 2·ln x = x·ln 2, ln pa je strogo konkavna, zato
-tri različne rešitve niso mogoče. -/
+tri različne rešitve niso mogoče.
+trditev: MAT-SS-2/eksponentna-funkcija#presecisca
+besedilo: »Za $x > 0$ se grafa sekata v $(2, 4)$ in $(4, 16)$, za $x > 4$ pa je $2^x$ večja.« -/
 theorem presecisca : (∀ x : ℝ, 0 < x → ((2 : ℝ) ^ x = x ^ 2 ↔ x = 2 ∨ x = 4)) ∧
     ∀ x : ℝ, 4 < x → x ^ 2 < (2 : ℝ) ^ x := by
   have hsq : ∀ x : ℝ, 0 < x → x ^ 2 = Real.exp (2 * Real.log x) := by
@@ -465,7 +594,9 @@ theorem presecisca : (∀ x : ℝ, 0 < x → ((2 : ℝ) ^ x = x ^ 2 ↔ x = 2 �
     have e : (x - 2) * Real.log 4 - (x - 4) * Real.log 2 = Real.log 2 * x := by rw [h4]; ring
     linarith
 
-/-- Razlaga 11 (splošno): pri a > 1 aˣ sčasoma prehiti vsako potenco xⁿ (xⁿ = o(aˣ)). -/
+/-- Razlaga 11 (splošno): pri a > 1 aˣ sčasoma prehiti vsako potenco xⁿ (xⁿ = o(aˣ)).
+trditev: MAT-SS-2/eksponentna-funkcija#prehiti-vsako
+besedilo: »Splošno: pri $a > 1$ funkcija $a^x$ prej ali slej preseže vsako potenco $x^n$« -/
 theorem prehiti_vsako (a : ℝ) (ha : 1 < a) (n : ℕ) :
     Asymptotics.IsLittleO Filter.atTop (fun x : ℝ => x ^ n) (fun x : ℝ => a ^ x) := by
   have h := isLittleO_pow_exp_pos_mul_atTop n (Real.log_pos ha)
@@ -475,8 +606,15 @@ theorem prehiti_vsako (a : ℝ) (ha : 1 < a) (n : ℕ) :
 /-- Predpostavke trditve `prehiti_vsako` se dajo izpolniti (a = 1,1). -/
 example : (1 : ℝ) < 1.1 := by norm_num
 
+/-- Predpostavke trditve `prehiti_vsako` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) < 1.1 := by norm_num
+  prehiti_vsako (ha := w)
+
 set_option exponentiation.threshold 700 in
-/-- Razlaga 11 in RAČUN: 1,1⁶⁸⁵/685¹⁰ ≈ 0,993 < 1 in 1,1⁶⁸⁶/686¹⁰ ≈ 1,077 > 1. -/
+/-- Razlaga 11 in RAČUN: 1,1⁶⁸⁵/685¹⁰ ≈ 0,993 < 1 in 1,1⁶⁸⁶/686¹⁰ ≈ 1,077 > 1.
+trditev: MAT-SS-2/eksponentna-funkcija#prehiti
+besedilo: »$1{,}1^x$ prehiti $x^{10}$ pri $x \approx 685$.« -/
 theorem prehiti :
     ((0.9925 : ℝ) < 1.1 ^ 685 / 685 ^ 10 ∧ (1.1 : ℝ) ^ 685 / 685 ^ 10 < 0.9935) ∧
     ((1.0765 : ℝ) < 1.1 ^ 686 / 686 ^ 10 ∧ (1.1 : ℝ) ^ 686 / 686 ^ 10 < 1.0775) := by
@@ -486,7 +624,9 @@ theorem prehiti :
 
 /-- Primer 1: f(x) = 3ˣ; f(−2) = 1/3² = 1/9, f(0) = 1, f(1/2) = √3 ≈ 1,73, f(2) = 9; 1/9 < 1 < 1,73 < 9;
 od x = 0 do x = 2 zraste za 9 − 1 = 8, to je na 9-kratnik (9 = 3²); vsak korak za 2 pomnoži z 9
-(tudi od 1/9 do 1). -/
+(tudi od 1/9 do 1).
+trditev: MAT-SS-2/eksponentna-funkcija#primer1
+besedilo: »Odgovor: vrednosti so $\dfrac{1}{9}$, $1$, $\sqrt{3} \approx 1{,}73$ in $9$. Funkcija narašča in seka os $y$ v $(0, 1)$. Od $x = 0$ do $x = 2$ zraste za $8$, to je $9$-krat.« -/
 theorem primer1 :
     (3 : ℝ) ^ (-2 : ℝ) = 1 / 3 ^ 2 ∧ (1 : ℝ) / 3 ^ 2 = 1 / 9 ∧ (3 : ℝ) ^ (0 : ℝ) = 1 ∧
     (3 : ℝ) ^ (1 / 2 : ℝ) = Real.sqrt 3 ∧ (1.725 < Real.sqrt 3 ∧ Real.sqrt 3 < 1.735) ∧
@@ -501,13 +641,17 @@ theorem primer1 :
     by norm_num, by norm_num, by norm_num, by norm_num, fun x => ?_, by norm_num⟩
   rw [Real.rpow_add (by norm_num)]; norm_num; ring
 
-/-- Primer 1: osnova 3 > 1, zato je f(x) = 3ˣ strogo naraščajoča in seka os y v (0, 1). -/
+/-- Primer 1: osnova 3 > 1, zato je f(x) = 3ˣ strogo naraščajoča in seka os y v (0, 1).
+trditev: MAT-SS-2/eksponentna-funkcija#primer1-narasca
+besedilo: »Funkcija narašča in seka os $y$ v $(0, 1)$.« -/
 theorem primer1_narasca : StrictMono (fun x : ℝ => (3 : ℝ) ^ x) ∧ (3 : ℝ) ^ (0 : ℝ) = 1 :=
   ⟨narasca 3 (by norm_num), by norm_num⟩
 
 /-! ## Primer 2 -/
 
-/-- Primer 2: a) 2^0,4 < 2^0,7; b) 0,3^(−1,2) > 0,3^(−0,8); c) (1/2)^(−0,3) = 2^0,3 > 2^0,2. -/
+/-- Primer 2: a) 2^0,4 < 2^0,7; b) 0,3^(−1,2) > 0,3^(−0,8); c) (1/2)^(−0,3) = 2^0,3 > 2^0,2.
+trditev: MAT-SS-2/eksponentna-funkcija#primer2
+besedilo: »Osnova $2 > 1$, funkcija $2^x$ narašča. Ker je $0{,}4 < 0{,}7$, je $2^{0{,}4} < 2^{0{,}7}$. 2. b) Osnova $0{,}3$ je med $0$ in $1$, funkcija $0{,}3^x$ pada. Ker je $-1{,}2 < -0{,}8$, je $0{,}3^{-1{,}2} > 0{,}3^{-0{,}8}$. 3. c) Osnovi sta različni, zato prvo število najprej zapišemo z osnovo $2$: $\left(\frac{1}{2}\right)^{-0{,}3} = 2^{0{,}3}$. Funkcija $2^x$ narašča in $0{,}2 < 0{,}3$, zato je $2^{0{,}2} < 2^{0{,}3}$.« -/
 theorem primer2 :
     (2 : ℝ) ^ (0.4 : ℝ) < (2 : ℝ) ^ (0.7 : ℝ) ∧
     (0.3 : ℝ) ^ (-0.8 : ℝ) < (0.3 : ℝ) ^ (-1.2 : ℝ) ∧
@@ -517,7 +661,9 @@ theorem primer2 :
   rw [zrcaljenje 2 (-0.3) (by norm_num), neg_neg]
 
 /-- Primer 2, preizkus: 2^0,7 ≈ 1,62, 2^0,4 ≈ 1,32, 0,3^(−1,2) ≈ 4,24, 0,3^(−0,8) ≈ 2,62,
-2^0,3 ≈ 1,23, 2^0,2 ≈ 1,15. -/
+2^0,3 ≈ 1,23, 2^0,2 ≈ 1,15.
+trditev: MAT-SS-2/eksponentna-funkcija#primer2-preizkus
+besedilo: »Preizkus (z računalom, le za kontrolo): $2^{0{,}7} \approx 1{,}62 > 2^{0{,}4} \approx 1{,}32$; $0{,}3^{-1{,}2} \approx 4{,}24 > 0{,}3^{-0{,}8} \approx 2{,}62$; $2^{0{,}3} \approx 1{,}23 > 2^{0{,}2} \approx 1{,}15$.« -/
 theorem primer2_preizkus :
     (1.615 < (2 : ℝ) ^ (0.7 : ℝ) ∧ (2 : ℝ) ^ (0.7 : ℝ) < 1.625) ∧
     (1.315 < (2 : ℝ) ^ (0.4 : ℝ) ∧ (2 : ℝ) ^ (0.4 : ℝ) < 1.325) ∧
@@ -542,7 +688,9 @@ theorem primer2_preizkus :
 /-! ## Primer 3: prečke na kitari -/
 
 /-- Primer 3 a): 2^(−n/12) = (2^(−1/12))ⁿ (vsak realen n), 2^(−1/12) ≈ 0,9439, zato L(n) = 650·2^(−n/12)
-strogo pada; vsaka prečka skrajša za 1 − 2^(−1/12) ≈ 5,6 %. -/
+strogo pada; vsaka prečka skrajša za 1 − 2^(−1/12) ≈ 5,6 %.
+trditev: MAT-SS-2/eksponentna-funkcija#primer3a
+besedilo: »Predpis zapišemo z eno samo osnovo: $2^{-\frac{n}{12}} = \left(2^{-\frac{1}{12}}\right)^n$, osnova je $2^{-\frac{1}{12}} \approx 0{,}9439$. 2. Osnova je med $0$ in $1$, zato $L$ strogo pada. Vsaka prečka nihajoči del **pomnoži** z $0{,}9439$, torej ga skrajša za približno $5{,}6\,\%$.« -/
 theorem primer3a :
     (∀ n : ℝ, (2 : ℝ) ^ (-n / 12) = ((2 : ℝ) ^ (-1 / 12 : ℝ)) ^ n) ∧
     (0.94385 < (2 : ℝ) ^ (-1 / 12 : ℝ) ∧ (2 : ℝ) ^ (-1 / 12 : ℝ) < 0.94395) ∧
@@ -558,7 +706,9 @@ theorem primer3a :
     linarith
 
 /-- Primer 3 b): 2^(−5/12) ≈ 0,74915, 650·0,74915 ≈ 486,95 (tudi 650·2^(−5/12) ≈ 486,95), razdalja
-prečke od sedla 650 − 486,95 = 163,05 mm (≈ 163 mm). -/
+prečke od sedla 650 − 486,95 = 163,05 mm (≈ 163 mm).
+trditev: MAT-SS-2/eksponentna-funkcija#primer3b
+besedilo: »$L(5) = 650 \cdot 2^{-\frac{5}{12}}$. Z računalom: $650 \cdot 0{,}74915 \approx 486{,}95$, torej niha še $486{,}95\,\mathrm{mm}$ strune. 4. Prečka je od sedla oddaljena za preostanek: $650 - 486{,}95 = 163{,}05\,\mathrm{mm}$.« -/
 theorem primer3b :
     (0.749145 < (2 : ℝ) ^ (-5 / 12 : ℝ) ∧ (2 : ℝ) ^ (-5 / 12 : ℝ) < 0.749155) ∧
     (486.945 < (650 : ℝ) * 0.74915 ∧ (650 : ℝ) * 0.74915 < 486.955) ∧
@@ -572,7 +722,9 @@ theorem primer3b :
       (by norm_num) (by norm_num)
   exact ⟨hc, by norm_num, ⟨by linarith [hb.1], by linarith [hb.2]⟩, by norm_num⟩
 
-/-- Primer 3 c): 325 = 650·1/2 = 650·2^(−1); za realen n je 650·2^(−n/12) = 325 natanko pri n = 12. -/
+/-- Primer 3 c): 325 = 650·1/2 = 650·2^(−1); za realen n je 650·2^(−n/12) = 325 natanko pri n = 12.
+trditev: MAT-SS-2/eksponentna-funkcija#primer3c
+besedilo: »Ker je $325 = 650 \cdot \dfrac{1}{2} = 650 \cdot 2^{-1}$, mora biti eksponent $-\dfrac{n}{12}$ enak $-1$, torej $n = 12$. Ker $L$ strogo pada, drugega takega $n$ ni.« -/
 theorem primer3c (n : ℝ) : 650 * (2 : ℝ) ^ (-n / 12) = 325 ↔ n = 12 := by
   calc 650 * (2 : ℝ) ^ (-n / 12) = 325 ↔ (2 : ℝ) ^ (-n / 12) = (2 : ℝ) ^ (-1 : ℝ) := by
         rw [show (2 : ℝ) ^ (-1 : ℝ) = 1 / 2 by norm_num]
@@ -581,7 +733,9 @@ theorem primer3c (n : ℝ) : 650 * (2 : ℝ) ^ (-n / 12) = 325 ↔ n = 12 := by
     _ ↔ n = 12 := by constructor <;> intro h <;> linarith
 
 /-- Primer 3 d): L(1) ≈ 613,52, prvi razmik 650 − 613,52 = 36,48; L(11) ≈ 344,33, razmik med 11. in 12.
-prečko 344,33 − 325 = 19,33 (L(12) = 325). -/
+prečko 344,33 − 325 = 19,33 (L(12) = 325).
+trditev: MAT-SS-2/eksponentna-funkcija#primer3d
+besedilo: »Ta dolžina pada, zato padajo tudi razmiki: prvi meri $650 - 613{,}52 = 36{,}48\,\mathrm{mm}$, razmik med $11.$ in $12.$ prečko pa le še $344{,}33 - 325 = 19{,}33\,\mathrm{mm}$.« -/
 theorem primer3d :
     (613.515 < 650 * (2 : ℝ) ^ (-1 / 12 : ℝ) ∧ 650 * (2 : ℝ) ^ (-1 / 12 : ℝ) < 613.525) ∧
     (650 : ℝ) - 613.52 = 36.48 ∧
@@ -598,7 +752,9 @@ theorem primer3d :
 
 /-- Primer 3 d) (splošno): razmik med n-to in (n+1)-to prečko L(n) − L(n+1) je (1 − 2^(−1/12))·L(n),
 to je približno 5,6 % (0,0561 < 1 − 2^(−1/12) < 0,0562) dolžine L(n) = 650·2^(−n/12); ker L pada,
-razmiki strogo padajo. -/
+razmiki strogo padajo.
+trditev: MAT-SS-2/eksponentna-funkcija#primer3d-razmiki
+besedilo: »d) Vsak razmik je približno $5{,}6\,\%$ dolžine, ki še niha. Ta dolžina pada, zato padajo tudi razmiki: prvi meri $650 - 613{,}52 = 36{,}48\,\mathrm{mm}$, razmik med $11.$ in $12.$ prečko pa le še $344{,}33 - 325 = 19{,}33\,\mathrm{mm}$.« -/
 theorem primer3d_razmiki :
     (∀ n : ℝ, 650 * (2 : ℝ) ^ (-n / 12) - 650 * (2 : ℝ) ^ (-(n + 1) / 12) =
       (1 - (2 : ℝ) ^ (-1 / 12 : ℝ)) * (650 * (2 : ℝ) ^ (-n / 12))) ∧
@@ -622,7 +778,9 @@ theorem primer3d_razmiki :
 /-! ## Primer 4 -/
 
 /-- Primer 4: g(x) = 2^(x+1) − 4 = 2^(x−(−1)) − 4; D = ℝ, Z = (−4, ∞), g(0) = 2¹ − 4 = −2;
-g(1) = 2² − 4 = 0 je edina ničla; g(x) < 0 ⟺ x < 1; g(−1) = 2⁰ − 4 = −3, g(2) = 2³ − 4 = 4. -/
+g(1) = 2² − 4 = 0 je edina ničla; g(x) < 0 ⟺ x < 1; g(−1) = 2⁰ − 4 = −3, g(2) = 2³ − 4 = 4.
+trditev: MAT-SS-2/eksponentna-funkcija#primer4
+besedilo: »$g(1) = 2^2 - 4 = 0$, zato je $x = 1$ ničla. Osnova $2 > 1$, zato je $g$ strogo naraščajoča in vrednost $0$ doseže le enkrat: druge ničle ni. Levo od ničle so vrednosti manjše, $g(-1) = 2^0 - 4 = -3 < 0$, desno večje, $g(2) = 2^3 - 4 = 4 > 0$. Odgovor: edina ničla je $x = 1$, $g(x) < 0$ za $x \in (-\infty, 1)$.« -/
 theorem primer4 :
     (∀ x : ℝ, (2 : ℝ) ^ (x + 1) - 4 = (2 : ℝ) ^ (x - (-1)) - 4) ∧
     Set.range (fun x : ℝ => (2 : ℝ) ^ (x + 1) - 4) = Set.Ioi (-4) ∧
@@ -643,7 +801,9 @@ theorem primer4 :
 /-! ## Pogoste napake -/
 
 /-- Pogoste napake: 2³ = 8, 3² = 9, 2¹⁰ = 1024, 10² = 100; 2^(−3) = 1/8 ≠ −8; 2^(x−3) = 1 natanko pri
-x = 3; 0,5³ = 0,125 < 0,5² = 0,25; 8·0,5ˣ je padajoča. -/
+x = 3; 0,5³ = 0,125 < 0,5² = 0,25; 8·0,5ˣ je padajoča.
+trditev: MAT-SS-2/eksponentna-funkcija#napake
+besedilo: »**Zamenjava $2^x$ z $x^2$ ali z enakomerno rastjo.** Pri $x = 3$ je $2^3 = 8$ in $3^2 = 9$, pri $x = 10$ pa $2^{10} = 1024$ in $10^2 = 100$. Spremenljivka je v eksponentu, ne v osnovi. Tudi Nikina prva zamisel je taka napaka: korak $x$ za $1$ vrednost **pomnoži** z $a$, ne prišteje stalnega števila. - **Negativni eksponent da negativno vrednost.** $2^{-3} = -8$ ni res. Negativni eksponent pomeni obratno vrednost: $2^{-3} = \dfrac{1}{8}$. Vrednosti $a^x$ so **vedno pozitivne**, zato graf ne seka osi $x$. - **Smer premika.** Graf $y = 2^{x-3}$ ni premaknjen v levo, ampak za $3$ v **desno**. Vrednost $1$ ima $2^{x-3}$ šele pri $x = 3$. - **Napačna smer pri osnovi, manjši od $1$.** Pri $0 < a < 1$ funkcija pada, zato večji eksponent da manjšo vrednost: $0{,}5^3 = 0{,}125 < 0{,}5^2 = 0{,}25$. O smeri odloča le osnova, ne faktor pred potenco: $8 \cdot 0{,}5^x$ pada, čeprav je $8 > 1$.« -/
 theorem napake :
     (2 : ℝ) ^ (3 : ℝ) = 8 ∧ (3 : ℝ) ^ 2 = 9 ∧ (2 : ℝ) ^ (10 : ℝ) = 1024 ∧ (10 : ℝ) ^ 2 = 100 ∧
     (2 : ℝ) ^ (-3 : ℝ) = 1 / 8 ∧ (1 / 8 : ℝ) ≠ -8 ∧
@@ -661,7 +821,9 @@ theorem napake :
 /-! ## Za maturo -/
 
 /-- Za maturo, naloga 1: za c > 0, a > 0 iz c·a^(−1) = 12 in c·a = 3 sledi a² = (c·a)/(c·a^(−1)) = 3/12
-= 1/4; rešitev je natanko a = 1/2, c = 6 (preizkus 6·(1/2)^(−1) = 12). -/
+= 1/4; rešitev je natanko a = 1/2, c = 6 (preizkus 6·(1/2)^(−1) = 12).
+trditev: MAT-SS-2/eksponentna-funkcija#matura1
+besedilo: »Iz točk dobimo $c \cdot a^{-1} = 12$ in $c \cdot a = 3$. Drugo enačbo delimo s prvo: $\dfrac{c \cdot a}{c \cdot a^{-1}} = a^2 = \dfrac{3}{12} = \dfrac{1}{4}$. 2. Ker je $a > 0$, je $a = \dfrac{1}{2}$. Iz $c \cdot \dfrac{1}{2} = 3$ sledi $c = 6$. Preizkus: $6 \cdot \left(\dfrac{1}{2}\right)^{-1} = 6 \cdot 2 = 12$.« -/
 theorem matura1 (a c : ℝ) (ha : 0 < a) (hc : 0 < c) :
     (c * a ^ (-1 : ℝ) = 12 ∧ c * a = 3) ↔ (a = 1 / 2 ∧ c = 6) := by
   rw [Real.rpow_neg_one]
@@ -680,7 +842,14 @@ theorem matura1 (a c : ℝ) (ha : 0 < a) (hc : 0 < c) :
 /-- Predpostavke trditve `matura1` se dajo izpolniti (a = 1/2, c = 6). -/
 example : (0 : ℝ) < 1 / 2 ∧ (0 : ℝ) < 6 := by norm_num
 
-/-- Za maturo, naloga 1 in RAČUN: 3/12 = 1/4, 3/(1/2) = 6, 6·(1/2)^(−1) = 12; f(x) = 6·(1/2)ˣ pada. -/
+/-- Predpostavke trditve `matura1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 / 2 ∧ (0 : ℝ) < 6 := by norm_num
+  matura1 (ha := w.1) (hc := w.2)
+
+/-- Za maturo, naloga 1 in RAČUN: 3/12 = 1/4, 3/(1/2) = 6, 6·(1/2)^(−1) = 12; f(x) = 6·(1/2)ˣ pada.
+trditev: MAT-SS-2/eksponentna-funkcija#matura1-racun
+besedilo: »Odgovor: $a = \dfrac{1}{2}$, $c = 6$, torej $f(x) = 6 \cdot \left(\dfrac{1}{2}\right)^x$; funkcija je padajoča.« -/
 theorem matura1_racun : (3 : ℝ) / 12 = 1 / 4 ∧ (3 : ℝ) / (1 / 2) = 6 ∧ 6 * (1 / 2 : ℝ) ^ (-1 : ℝ) = 12 ∧
     StrictAnti (fun x : ℝ => 6 * (1 / 2 : ℝ) ^ x) := by
   refine ⟨by norm_num, by norm_num, by norm_num, fun x y h => ?_⟩
@@ -689,7 +858,9 @@ theorem matura1_racun : (3 : ℝ) / 12 = 1 / 4 ∧ (3 : ℝ) / (1 / 2) = 6 ∧ 6
   linarith
 
 /-- Za maturo, naloga 2 a), b), d) in RAČUN: faktor 1 − 0,15 = 0,85; m(3) = 400·0,85³ = 400·0,614125
-= 245,65 ≈ 246; m(4) ≈ 208,80, m(5) ≈ 177,48; 0,85² = 0,7225, 1 − 0,7225 = 0,2775 (27,75 % < 30 %). -/
+= 245,65 ≈ 246; m(4) ≈ 208,80, m(5) ≈ 177,48; 0,85² = 0,7225, 1 − 0,7225 = 0,2775 (27,75 % < 30 %).
+trditev: MAT-SS-2/eksponentna-funkcija#matura2
+besedilo: »V vsaki uri ostane $100\,\% - 15\,\% = 85\,\%$ količine, zato se količina vsako uro pomnoži z $0{,}85$. 2. a) Predpis je $m(t) = 400 \cdot 0{,}85^t$. 3. b) $m(3) = 400 \cdot 0{,}85^3 = 400 \cdot 0{,}614125 = 245{,}65$, zaokroženo $246\,\mathrm{mg}$. 4. c) Osnova $0{,}85$ je med $0$ in $1$, zato $m$ strogo pada. Izračunamo zaporedne vrednosti: $m(4) = 400 \cdot 0{,}85^4 \approx 208{,}80\,\mathrm{mg}$ in $m(5) = 400 \cdot 0{,}85^5 \approx 177{,}48\,\mathrm{mg}$. 5. c) Ker $m$ pada, je do četrte ure količina vedno vsaj $208{,}80\,\mathrm{mg}$, po peti uri pa manjša od $200\,\mathrm{mg}$. 6. d) V dveh urah se količina pomnoži z $0{,}85^2 = 0{,}7225$, ostane torej $72{,}25\,\%$ začetne količine. 7. d) Zmanjšanje je $100\,\% - 72{,}25\,\% = 27{,}75\,\%$, kar je manj kot $2 \cdot 15\,\% = 30\,\%$, ker druga ura vzame $15\,\%$ že manjše količine.« -/
 theorem matura2 :
     (1 : ℝ) - 0.15 = 0.85 ∧ (0.85 : ℝ) ^ (3 : ℝ) = 0.614125 ∧ (400 : ℝ) * 0.614125 = 245.65 ∧
     ((245.5 : ℝ) < 245.65 ∧ (245.65 : ℝ) < 246.5) ∧
@@ -699,7 +870,9 @@ theorem matura2 :
   norm_num
 
 /-- Za maturo, naloga 2 c): m strogo pada; v celih urah je 400·0,85ⁿ < 200 natanko za n ≥ 5 (do četrte
-ure je vsaj 400·0,85⁴ ≈ 208,8). -/
+ure je vsaj 400·0,85⁴ ≈ 208,8).
+trditev: MAT-SS-2/eksponentna-funkcija#matura2c
+besedilo: »Osnova $0{,}85$ je med $0$ in $1$, zato $m$ strogo pada. Izračunamo zaporedne vrednosti: $m(4) = 400 \cdot 0{,}85^4 \approx 208{,}80\,\mathrm{mg}$ in $m(5) = 400 \cdot 0{,}85^5 \approx 177{,}48\,\mathrm{mg}$. 5. c) Ker $m$ pada, je do četrte ure količina vedno vsaj $208{,}80\,\mathrm{mg}$, po peti uri pa manjša od $200\,\mathrm{mg}$.« -/
 theorem matura2c :
     StrictAnti (fun t : ℝ => 400 * (0.85 : ℝ) ^ t) ∧
     ∀ n : ℕ, (400 : ℝ) * 0.85 ^ n < 200 ↔ 5 ≤ n := by
@@ -720,7 +893,9 @@ theorem matura2c :
       linarith
 
 /-- Za maturo, naloga 3 a), b): f(x) = 2^(x−1) + 1 ima zalogo vrednosti (1, ∞) (asimptota y = 1),
-f(0) = 2^(−1) + 1 = 3/2, ničel nima (f(x) > 1 > 0). -/
+f(0) = 2^(−1) + 1 = 3/2, ničel nima (f(x) > 1 > 0).
+trditev: MAT-SS-2/eksponentna-funkcija#matura3ab
+besedilo: »Ker je $2^{x-1} > 0$, je $f(x) > 1$; zaloga vrednosti je $Z_f = (1, \infty)$, vodoravna asimptota pa premica $y = 1$. 3. b) $f(0) = 2^{-1} + 1 = \dfrac{3}{2}$, presečišče z osjo $y$ je točka $\left(0, \dfrac{3}{2}\right)$. 4. b) Ker je $f(x) > 1 > 0$ za vsak $x$, vrednosti $0$ funkcija ne doseže, zato nima ničel.« -/
 theorem matura3ab :
     Set.range (fun x : ℝ => (2 : ℝ) ^ (x - 1) + 1) = Set.Ioi 1 ∧
     (2 : ℝ) ^ ((0 : ℝ) - 1) + 1 = 3 / 2 ∧ (∀ x : ℝ, 0 < (2 : ℝ) ^ (x - 1) + 1) := by
@@ -728,7 +903,9 @@ theorem matura3ab :
   linarith [Real.rpow_pos_of_pos (show (0 : ℝ) < 2 by norm_num) (x - 1)]
 
 /-- Za maturo, naloga 3 c) in RAČUN: točke grafa f: (−2, 9/8), (−1, 5/4), (0, 3/2), (1, 2), (2, 3),
-(3, 5); premica g(x) = x + 1 gre skozi (−1, 0) in (0, 1). -/
+(3, 5); premica g(x) = x + 1 gre skozi (−1, 0) in (0, 1).
+trditev: MAT-SS-2/eksponentna-funkcija#matura3c
+besedilo: »c) Točke grafa $f$: $\left(-2, \dfrac{9}{8}\right)$, $\left(-1, \dfrac{5}{4}\right)$, $\left(0, \dfrac{3}{2}\right)$, $(1, 2)$, $(2, 3)$, $(3, 5)$; graf se na levi približuje asimptoti $y = 1$. Graf $g$ je premica skozi $(-1, 0)$ in $(0, 1)$.« -/
 theorem matura3c :
     (2 : ℝ) ^ ((-2 : ℝ) - 1) + 1 = 9 / 8 ∧ (2 : ℝ) ^ ((-1 : ℝ) - 1) + 1 = 5 / 4 ∧
     (2 : ℝ) ^ ((0 : ℝ) - 1) + 1 = 3 / 2 ∧ (2 : ℝ) ^ ((1 : ℝ) - 1) + 1 = 2 ∧
@@ -737,7 +914,8 @@ theorem matura3c :
   norm_num [Real.rpow_neg]
 
 /-- Pomožno: za t < 0 in t > 1 je 2ᵗ > 1 + t, za 0 ≤ t ≤ 1 pa 2ᵗ ≤ 1 + t (konveksnost eksponentne
-funkcije in ocena eᵘ ≥ 1 + u). -/
+funkcije in ocena eᵘ ≥ 1 + u).
+pomozno -/
 theorem dve_na_t (t : ℝ) : (t < 0 → 1 + t < (2 : ℝ) ^ t) ∧ (1 < t → 1 + t < (2 : ℝ) ^ t) ∧
     (0 ≤ t → t ≤ 1 → (2 : ℝ) ^ t ≤ 1 + t) := by
   have hl1 := Real.log_two_gt_d9
@@ -760,7 +938,9 @@ theorem dve_na_t (t : ℝ) : (t < 0 → 1 + t < (2 : ℝ) ^ t) ∧ (1 < t → 1 
 
 /-- Za maturo, naloga 3 d): f(1) = 2 = g(1), f(2) = 3 = g(2); f(3/2) = √2 + 1 < 5/2 = g(3/2)
 (√2 < 3/2); f(0) = 3/2 > 1 = g(0), f(3) = 5 > 4 = g(3); neenačba 2^(x−1) + 1 ≤ x + 1 velja natanko
-za x ∈ [1, 2] (za vsak realen x, torej tudi na [−2, 3]). -/
+za x ∈ [1, 2] (za vsak realen x, torej tudi na [−2, 3]).
+trditev: MAT-SS-2/eksponentna-funkcija#matura3d
+besedilo: »Z grafa razberemo, da se grafa sekata v točkah $(1, 2)$ in $(2, 3)$. Preverimo: $f(1) = 2^0 + 1 = 2 = g(1)$ in $f(2) = 2^1 + 1 = 3 = g(2)$. 7. d) Med presečiščema leži graf $f$ pod premico, na primer $f\!\left(\dfrac{3}{2}\right) = \sqrt{2} + 1 < \dfrac{5}{2} = g\!\left(\dfrac{3}{2}\right)$, ker je $\sqrt{2} < \dfrac{3}{2}$. Na preostalem delu intervala $[-2, 3]$, levo od $x = 1$ in desno od $x = 2$, leži nad njo, na primer $f(0) = \dfrac{3}{2} > 1 = g(0)$ in $f(3) = 5 > 4 = g(3)$.« -/
 theorem matura3d :
     (2 : ℝ) ^ ((1 : ℝ) - 1) + 1 = 1 + 1 ∧ (2 : ℝ) ^ ((2 : ℝ) - 1) + 1 = 2 + 1 ∧
     (2 : ℝ) ^ ((3 / 2 : ℝ) - 1) + 1 = Real.sqrt 2 + 1 ∧ Real.sqrt 2 < 3 / 2 ∧
@@ -784,7 +964,9 @@ theorem matura3d :
       linarith [hC (by linarith) (by linarith)]
 
 /-- Za maturo, naloga 3 e): za x > 1 je eˣ⁻¹ > 2ˣ⁻¹ (e > 2, pozitiven eksponent), zato
-h(x) = eˣ⁻¹ + 1 > 2ˣ⁻¹ + 1 = f(x). -/
+h(x) = eˣ⁻¹ + 1 > 2ˣ⁻¹ + 1 = f(x).
+trditev: MAT-SS-2/eksponentna-funkcija#matura3e
+besedilo: »e) Za $x > 1$ je eksponent $x - 1$ pozitiven. Pri pozitivnem eksponentu da večja osnova večjo potenco, in ker je $e \approx 2{,}718 > 2$, je $e^{x-1} > 2^{x-1}$. Zato je $h(x) = e^{x-1} + 1 > 2^{x-1} + 1 = f(x)$ za vsak $x > 1$.« -/
 theorem matura3e (x : ℝ) (hx : 1 < x) : (2 : ℝ) ^ (x - 1) + 1 < Real.exp (x - 1) + 1 := by
   have he : (2 : ℝ) < Real.exp 1 := by linarith [Real.exp_one_gt_d9]
   rw [← Real.exp_one_rpow]
@@ -793,7 +975,14 @@ theorem matura3e (x : ℝ) (hx : 1 < x) : (2 : ℝ) ^ (x - 1) + 1 < Real.exp (x 
 /-- Predpostavke trditve `matura3e` se dajo izpolniti (x = 2). -/
 example : (1 : ℝ) < 2 := by norm_num
 
-/-- RAČUN: 2^(3/2 − 1) + 1 ≈ 2,414 in (1 + 1/2)² = 2,25. -/
+/-- Predpostavke trditve `matura3e` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1 : ℝ) < 2 := by norm_num
+  matura3e (hx := w)
+
+/-- RAČUN: 2^(3/2 − 1) + 1 ≈ 2,414 in (1 + 1/2)² = 2,25.
+trditev: MAT-SS-2/eksponentna-funkcija#racun-sqrt
+besedilo: »pri $n = 1, 2, 12, 365$ dobimo $2;\ 2{,}25;\ 2{,}613;\ 2{,}7146$.« -/
 theorem racun_sqrt : (2.4135 < (2 : ℝ) ^ ((3 / 2 : ℝ) - 1) + 1 ∧ (2 : ℝ) ^ ((3 / 2 : ℝ) - 1) + 1 < 2.4145) ∧
     ((1 : ℝ) + 1 / 2) ^ 2 = 2.25 := by
   have hs : 1.4135 < (2 : ℝ) ^ (1 / 2 : ℝ) ∧ (2 : ℝ) ^ (1 / 2 : ℝ) < 1.4145 :=
@@ -805,7 +994,9 @@ theorem racun_sqrt : (2.4135 < (2 : ℝ) ^ ((3 / 2 : ℝ) - 1) + 1 ∧ (2 : ℝ)
 /-! ## Ustno vprašanje 2 in »Bolj natančno« -/
 
 /-- Ustno vprašanje 2 in Bolj natančno: za x₁ < x₂ je a^x₂ = a^x₁·a^(x₂−x₁); pri a > 1 je
-a^(x₂−x₁) > 1 in zato a^x₂ > a^x₁; pri 0 < a < 1 je a^(x₂−x₁) < 1 in neenakost se obrne. -/
+a^(x₂−x₁) > 1 in zato a^x₂ > a^x₁; pri 0 < a < 1 je a^(x₂−x₁) < 1 in neenakost se obrne.
+trditev: MAT-SS-2/eksponentna-funkcija#dokaz-monotonosti
+besedilo: »Naj bo $x_1 < x_2$. Potem je $x_2 - x_1 > 0$ in $$a^{x_2} = a^{x_1} \cdot a^{x_2 - x_1}.$$ Za $a > 1$ in pozitiven eksponent je $a^{x_2 - x_1} > 1$. Ker je $a^{x_1} > 0$, sledi $a^{x_2} > a^{x_1}$. Pri $0 < a < 1$ je $a^{x_2 - x_1} < 1$ in neenakost se obrne.« -/
 theorem dokaz_monotonosti (a x₁ x₂ : ℝ) (ha : 0 < a) (h : x₁ < x₂) :
     a ^ x₂ = a ^ x₁ * a ^ (x₂ - x₁) ∧
     (1 < a → 1 < a ^ (x₂ - x₁) ∧ a ^ x₁ < a ^ x₂) ∧
@@ -825,13 +1016,22 @@ theorem dokaz_monotonosti (a x₁ x₂ : ℝ) (ha : 0 < a) (h : x₁ < x₂) :
 /-- Predpostavke trditve `dokaz_monotonosti` se dajo izpolniti (a = 2, x₁ = 0, x₂ = 1). -/
 example : (0 : ℝ) < 2 ∧ (0 : ℝ) < 1 := by norm_num
 
-/-- Bolj natančno (iracionalni eksponenti): 2^1,4 < 2^1,41 < 2^1,414 < 2^1,5. -/
+/-- Predpostavke trditve `dokaz_monotonosti` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 ∧ (0 : ℝ) < 1 := by norm_num
+  dokaz_monotonosti (ha := w.1) (h := w.2)
+
+/-- Bolj natančno (iracionalni eksponenti): 2^1,4 < 2^1,41 < 2^1,414 < 2^1,5.
+trditev: MAT-SS-2/eksponentna-funkcija#iracionalni
+besedilo: »Potence $2^{1{,}4}$, $2^{1{,}41}$, $2^{1{,}414}$, … zaradi monotonosti naraščajo, so manjše od $2^{1{,}5}$« -/
 theorem iracionalni : (2 : ℝ) ^ (1.4 : ℝ) < (2 : ℝ) ^ (1.41 : ℝ) ∧
     (2 : ℝ) ^ (1.41 : ℝ) < (2 : ℝ) ^ (1.414 : ℝ) ∧ (2 : ℝ) ^ (1.414 : ℝ) < (2 : ℝ) ^ (1.5 : ℝ) := by
   refine ⟨?_, ?_, ?_⟩ <;> exact narasca 2 (by norm_num) (by norm_num)
 
 /-- Bolj natančno: 2^√2 ≈ 2,665 (2,6645 < 2^√2 < 2,6655), ker je 140/99 < √2 < 99/70 in potenca z
-osnovo 2 narašča. -/
+osnovo 2 narašča.
+trditev: MAT-SS-2/eksponentna-funkcija#dve-na-koren2
+besedilo: »$2^{\sqrt{2}} \approx 2{,}665$.« -/
 theorem dve_na_koren2 : 2.6645 < (2 : ℝ) ^ Real.sqrt 2 ∧ (2 : ℝ) ^ Real.sqrt 2 < 2.6655 := by
   have s1 : (140 / 99 : ℝ) < Real.sqrt 2 := by rw [Real.lt_sqrt (by norm_num)]; norm_num
   have s2 : Real.sqrt 2 < 99 / 70 := by rw [Real.sqrt_lt' (by norm_num)]; norm_num
@@ -843,21 +1043,32 @@ theorem dve_na_koren2 : 2.6645 < (2 : ℝ) ^ Real.sqrt 2 ∧ (2 : ℝ) ^ Real.sq
       (by norm_num) (by norm_num)).2
   exact ⟨b1.trans (narasca 2 (by norm_num) s1), (narasca 2 (by norm_num) s2).trans b2⟩
 
-/-- Bolj natančno (značilna lastnost): f(u + v) = f(u)·f(v) za f(x) = aˣ, a > 0. -/
+/-- Bolj natančno (značilna lastnost): f(u + v) = f(u)·f(v) za f(x) = aˣ, a > 0.
+trditev: MAT-SS-2/eksponentna-funkcija#produkt
+besedilo: »Značilna lastnost.** Za eksponentno funkcijo velja $f(u + v) = f(u) \cdot f(v)$, ker je $a^{u+v} = a^u \cdot a^v$.« -/
 theorem produkt (a u v : ℝ) (ha : 0 < a) : a ^ (u + v) = a ^ u * a ^ v := Real.rpow_add ha u v
 
 /-- Predpostavke trditve `produkt` se dajo izpolniti (a = 2). -/
 example : (0 : ℝ) < 2 := by norm_num
 
+/-- Predpostavke trditve `produkt` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 2 := by norm_num
+  produkt (ha := w)
+
 /-- Drugače, z analogijo: 0,1·2¹⁰ = 0,1·1024 = 102,4 mm > 100 mm; linearno 0,1 + 10·0,1 = 1,1 mm;
-polovica pozitivnega kosa je še vedno pozitivna ((1/2)ˣ > 0). -/
+polovica pozitivnega kosa je še vedno pozitivna ((1/2)ˣ > 0).
+trditev: MAT-SS-2/eksponentna-funkcija#analogija
+besedilo: »Če bi list lahko prepognil $10$-krat, bi bil debel že $0{,}1 \cdot 1024 = 102{,}4\,\mathrm{mm}$, več kot $10\,\mathrm{cm}$. Pri linearni rasti bi vsak pregib dodal le $0{,}1\,\mathrm{mm}$ in sveženj bi meril komaj $1{,}1\,\mathrm{mm}$. Padajoči graf $y = \left(\frac{1}{2}\right)^x$ je kot torta, ki jo vedno znova razrežeš na pol. Kos je vsakič manjši, a polovica kosa je še vedno kos, zato do nič nikoli ne prideš.« -/
 theorem analogija : (0.1 : ℝ) * 2 ^ 10 = 0.1 * 1024 ∧ (0.1 : ℝ) * 1024 = 102.4 ∧ (100 : ℝ) < 102.4 ∧
     (0.1 : ℝ) + 10 * 0.1 = 1.1 ∧ ∀ x : ℝ, 0 < (1 / 2 : ℝ) ^ x :=
   ⟨by norm_num, by norm_num, by norm_num, by norm_num, fun x => Real.rpow_pos_of_pos (by norm_num) x⟩
 
 /-! ## Preveri se -/
 
-/-- Preveri se 1: 0,5³ < 0,5^0,5 < 3⁰ = 1 < 3^0,2 < 0,5^(−2) = 4 (in 3^0,2 < 3¹ = 3). -/
+/-- Preveri se 1: 0,5³ < 0,5^0,5 < 3⁰ = 1 < 3^0,2 < 0,5^(−2) = 4 (in 3^0,2 < 3¹ = 3).
+trditev: MAT-SS-2/eksponentna-funkcija#kviz1
+besedilo: »Funkcija $0{,}5^x$ pada, zato je $0{,}5^3 < 0{,}5^{0{,}5} < 0{,}5^0 = 1$, pri negativnem eksponentu pa je vrednost nad $1$: $0{,}5^{-2} = 2^2 = 4$.« -/
 theorem kviz1 :
     (0.5 : ℝ) ^ (3 : ℝ) < (0.5 : ℝ) ^ (0.5 : ℝ) ∧ (0.5 : ℝ) ^ (0.5 : ℝ) < (3 : ℝ) ^ (0 : ℝ) ∧
     (3 : ℝ) ^ (0 : ℝ) < (3 : ℝ) ^ (0.2 : ℝ) ∧ (3 : ℝ) ^ (0.2 : ℝ) < (0.5 : ℝ) ^ (-2 : ℝ) ∧
@@ -871,7 +1082,9 @@ theorem kviz1 :
   exact Real.rpow_lt_one (by norm_num) (by norm_num) (by norm_num)
 
 /-- Preveri se 2: iz a^(−1) = 4 sledi a = 1/4; pri a = 4 bi bilo 4^(−1) = 1/4, pri a = 1/2 pa
-(1/2)^(−1) = 2. -/
+(1/2)^(−1) = 2.
+trditev: MAT-SS-2/eksponentna-funkcija#kviz2
+besedilo: »Iz točke $(-1, 4)$ sledi $a^{-1} = 4$, torej $\dfrac{1}{a} = 4$ in $a = \dfrac{1}{4}$.« -/
 theorem kviz2 (a : ℝ) : (a ^ (-1 : ℝ) = 4 ↔ a = 1 / 4) ∧
     (4 : ℝ) ^ (-1 : ℝ) = 1 / 4 ∧ (1 / 2 : ℝ) ^ (-1 : ℝ) = 2 := by
   refine ⟨?_, by norm_num, by norm_num⟩
@@ -883,14 +1096,18 @@ theorem kviz2 (a : ℝ) : (a ^ (-1 : ℝ) = 4 ↔ a = 1 / 4) ∧
   · intro h; rw [h]; norm_num
 
 /-- Preveri se 3: graf y = 2ˣ − 3 ima asimptoto y = −3 (zaloga (−3, ∞)), seka os y v 2⁰ − 3 = −2 in gre
-skozi (2, 1). -/
+skozi (2, 1).
+trditev: MAT-SS-2/eksponentna-funkcija#kviz3
+besedilo: »Na levi se graf prilega premici $y = -3$, to je asimptota $y = q$, zato je $q = -3$. Preizkus: $2^0 - 3 = -2$, graf res seka os $y$ pri $-2$.« -/
 theorem kviz3 :
     Set.range (fun x : ℝ => (2 : ℝ) ^ (x - 0) + (-3)) = Set.Ioi (-3) ∧
     (2 : ℝ) ^ (0 : ℝ) - 3 = -2 ∧ (2 : ℝ) ^ (2 : ℝ) - 3 = 1 :=
   ⟨(premiki 2 0 (-3) 1 (by norm_num) (by norm_num) (by norm_num)).1, by norm_num, by norm_num⟩
 
 /-- Preveri se 4: za a > 0 je aˣ > 0 za vsak x, zato y = aˣ nima ničel; parabola 1 − x² gre skozi (0, 1)
-in ima ničli ±1; 2^(−3) = 1/8. -/
+in ima ničli ±1; 2^(−3) = 1/8.
+trditev: MAT-SS-2/eksponentna-funkcija#kviz4
+besedilo: »Za $a > 0$ je $a^x > 0$ pri vsakem $x$, zato funkcija nima ničel.« -/
 theorem kviz4 (a : ℝ) (ha : 0 < a) : (∀ x : ℝ, 0 < a ^ x) ∧ (1 : ℝ) - 0 ^ 2 = 1 ∧
     (1 : ℝ) - (-1) ^ 2 = 0 ∧ (1 : ℝ) - 1 ^ 2 = 0 ∧ (2 : ℝ) ^ (-3 : ℝ) = 1 / 8 :=
   ⟨fun x => Real.rpow_pos_of_pos ha x, by norm_num, by norm_num, by norm_num, by norm_num [Real.rpow_neg]⟩
@@ -898,8 +1115,15 @@ theorem kviz4 (a : ℝ) (ha : 0 < a) : (∀ x : ℝ, 0 < a ^ x) ∧ (1 : ℝ) - 
 /-- Predpostavke trditve `kviz4` se dajo izpolniti (a = 1/2). -/
 example : (0 : ℝ) < 1 / 2 := by norm_num
 
+/-- Predpostavke trditve `kviz4` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 / 2 := by norm_num
+  kviz4 (ha := w)
+
 /-- Preveri se 5: 3^(x−2) ima vrednost 1 pri x = 2 (premik za 2 v desno); 3ˣ > 0; f(x) = 3^(x−2) − 1
-ima zalogo vrednosti (−1, ∞). -/
+ima zalogo vrednosti (−1, ∞).
+trditev: MAT-SS-2/eksponentna-funkcija#kviz5
+besedilo: »Pri $y = a^{x-p}$ se graf premakne za $p$ v **desno**: vrednost $1$, ki jo ima $3^x$ pri $x = 0$, ima $3^{x-2}$ šele pri $x = 2$.« -/
 theorem kviz5 : (3 : ℝ) ^ ((2 : ℝ) - 2) = 1 ∧ (∀ x : ℝ, 0 < (3 : ℝ) ^ x) ∧
     Set.range (fun x : ℝ => (3 : ℝ) ^ (x - 2) + (-1)) = Set.Ioi (-1) :=
   ⟨by norm_num, fun x => Real.rpow_pos_of_pos (by norm_num) x,
@@ -907,7 +1131,9 @@ theorem kviz5 : (3 : ℝ) ^ ((2 : ℝ) - 2) = 1 ∧ (∀ x : ℝ, 0 < (3 : ℝ) 
 
 /-- Preveri se 6: B: 3·2ˣ da 3, 6, 12, 24 (razmerja 2) in pri x = 4 vrednost 48 = 24·2; A ima stalne
 razlike +3 (naslednja 15) in nima stalnih razmerij (9/6 ≠ 6/3), C = x² + 3 (3, 4, 7, 12; naslednja 19) nima stalnih razmerij (4/3 ≠ 7/4);
-24 + 12 = 36. -/
+24 + 12 = 36.
+trditev: MAT-SS-2/eksponentna-funkcija#kviz6
+besedilo: »Funkcija je $3 \cdot 2^x$, zato je pri $x = 4$ vrednost $24 \cdot 2 = 48$.« -/
 theorem kviz6 :
     (3 : ℝ) * 2 ^ (0 : ℝ) = 3 ∧ (3 : ℝ) * 2 ^ (1 : ℝ) = 6 ∧ (3 : ℝ) * 2 ^ (2 : ℝ) = 12 ∧
     (3 : ℝ) * 2 ^ (3 : ℝ) = 24 ∧ (3 : ℝ) * 2 ^ (4 : ℝ) = 48 ∧ (24 : ℝ) * 2 = 48 ∧
@@ -917,7 +1143,9 @@ theorem kviz6 :
   norm_num
 
 /-- Preveri se 7 in RAČUN: 2,7 < e < 2,8, 2,7² = 7,29, 2,8² = 7,84, zato 7,29 < e² < 7,84 in celi del
-e² je 7; e² ≈ 7,389. -/
+e² je 7; e² ≈ 7,389.
+trditev: MAT-SS-2/eksponentna-funkcija#kviz7
+besedilo: »$2{,}7 < e < 2{,}8$, zato je $7{,}29 < e^2 < 7{,}84$.« -/
 theorem kviz7 : (2.7 < Real.exp 1 ∧ Real.exp 1 < 2.8) ∧ (2.7 : ℝ) ^ 2 = 7.29 ∧ (2.8 : ℝ) ^ 2 = 7.84 ∧
     (7.29 < Real.exp 2 ∧ Real.exp 2 < 7.84) ∧ ⌊Real.exp 2⌋ = 7 ∧
     (7.3885 < Real.exp 2 ∧ Real.exp 2 < 7.3895) := by
@@ -933,8 +1161,20 @@ theorem kviz7 : (2.7 < Real.exp 1 ∧ Real.exp 1 < 2.8) ∧ (2.7 : ℝ) ^ 2 = 7.
   rw [Int.floor_eq_iff]
   constructor <;> push_cast <;> linarith
 
-/-- RAČUN: exp(1) ≈ 2,71828. -/
+/-- RAČUN: exp(1) ≈ 2,71828.
+trditev: MAT-SS-2/eksponentna-funkcija#racun-e
+besedilo: »$e = 2{,}71828\ldots$« -/
 theorem racun_e : 2.718275 < Real.exp 1 ∧ Real.exp 1 < 2.718285 :=
   ⟨by linarith [Real.exp_one_gt_d9], by linarith [Real.exp_one_lt_d9]⟩
+
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `vecja_osnova` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  vecja_osnova.2.2.2 2 3 1 (by norm_num) (by norm_num)
+
+/-- Predpostavke trditve `presecisca` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  And.intro (presecisca.1 2 (by norm_num)) (presecisca.2 5 (by norm_num))
 
 end Evklid.Lekcije.MAT_SS_2.EksponentnaFunkcija

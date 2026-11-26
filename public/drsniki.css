@@ -42,3 +42,6 @@
   .tk-ctx { padding-bottom: 6px; }
   .chip-row { padding-bottom: 7px; }
 }
+/* Pogled, ki se pomika sam in ga drsniki.js naredi dosegljivega s tipko Tab: obroba fokusa znotraj roba, da je rob okna
+   ne odreže. */
+main.view[data-drs-fokus]:focus-visible { outline-offset: -3px; }

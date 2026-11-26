@@ -1418,7 +1418,7 @@ export const DODATNE_FIZ_SS = [
           [dat("V", V, "L"), dat("p", p, "bar"), `t = ${t}\\ ^\\circ\\mathrm{C}`, K.R],
           ["n"],
           ["p V = n R T"],
-          [`$p = ${qty(sci(p * 1e5, 1), "Pa")},\\ V = ${qty(sci(V * 1e-3, 1), "m^3")},\\ T = ${KT(t)}\\ \\mathrm{K}$`, `$n = \\dfrac{pV}{RT} = \\dfrac{${sci(p * 1e5, 1)} \\cdot ${sci(V * 1e-3, 1)}}{8{,}31 \\cdot ${KT(t)}}\\ \\mathrm{mol} ${res(nn, 1, "mol")}$`],
+          [`$p = ${qty(sci(p * 1e5, 2), "Pa")},\\ V = ${qty(sci(V * 1e-3, 1), "m^3")},\\ T = ${KT(t)}\\ \\mathrm{K}$`, `$n = \\dfrac{pV}{RT} = \\dfrac{${sci(p * 1e5, 2)} \\cdot ${sci(V * 1e-3, 1)}}{8{,}31 \\cdot ${KT(t)}}\\ \\mathrm{mol} ${res(nn, 1, "mol")}$`],
         );
       }
       const kind = r.pick(["masa", "mehurcek", "gostota"]);
@@ -1441,7 +1441,7 @@ export const DODATNE_FIZ_SS = [
           [dat("V", V, "L"), dat("p", p, "bar"), `t = ${t}\\ ^\\circ\\mathrm{C}`, dat("M", G.M, "g/mol"), K.R],
           ["m"],
           ["p V = \\dfrac{m}{M} R T", "m = \\dfrac{p V M}{R T}"],
-          [`$p = ${qty(sci(p * 1e5, 1), "Pa")},\\ V = ${qty(sci(V * 1e-3, 1), "m^3")},\\ T = ${KT(t)}\\ \\mathrm{K},\\ M = ${qty(tx(G.M / 1000), "kg/mol")}$`, `$n = \\dfrac{pV}{RT} ${res((p * 1e5 * V * 1e-3) / (R_GAS * KT(t)), 1, "mol")}$`, `$m = n M ${res(m, 2, "kg")}$`],
+          [`$p = ${qty(sci(p * 1e5, 2), "Pa")},\\ V = ${qty(sci(V * 1e-3, 1), "m^3")},\\ T = ${KT(t)}\\ \\mathrm{K},\\ M = ${qty(tx(G.M / 1000), "kg/mol")}$`, `$n = \\dfrac{pV}{RT} ${res((p * 1e5 * V * 1e-3) / (R_GAS * KT(t)), 1, "mol")}$`, `$m = n M ${res(m, 2, "kg")}$`],
         );
       }
       if (kind === "mehurcek") {
@@ -2370,7 +2370,7 @@ export const DODATNE_FIZ_SS = [
         [`N = ${N}`, dat("S", S, "cm^2"), dat("B", tx(B), "T"), dat("\\nu", nn, "obr/min")],
         ["U_0"],
         ["\\omega = 2\\pi\\nu", "U_0 = N B S \\omega"],
-        [`$\\nu = \\dfrac{${nn}}{60}\\ \\mathrm{s^{-1}} ${res(nn / 60, 3, "s^{-1}")},\\ \\omega = 2\\pi\\nu ${res(w, 2, "s^{-1}")}$`, `$S = ${qty(sci(S * 1e-4, 1), "m^2")}$`, `$U_0 = ${N} \\cdot ${tx(B)} \\cdot ${sci(S * 1e-4, 1)} \\cdot ${tx(w, 2)}\\ \\mathrm{V} ${res(U0, 2, "V")}$`],
+        [`$\\nu = \\dfrac{${nn}}{60}\\ \\mathrm{s^{-1}} ${res(nn / 60, 3, "s^{-1}")},\\ \\omega = 2\\pi\\nu ${res(w, 2, "s^{-1}")}$`, `$S = ${qty(sci(S * 1e-4, 2), "m^2")}$`, `$U_0 = ${N} \\cdot ${tx(B)} \\cdot ${sci(S * 1e-4, 2)} \\cdot ${tx(w, 2)}\\ \\mathrm{V} ${res(U0, 2, "V")}$`],
       );
     },
   },

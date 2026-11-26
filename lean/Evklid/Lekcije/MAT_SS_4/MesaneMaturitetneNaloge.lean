@@ -22,18 +22,21 @@ open Set Finset MeasureTheory ProbabilityTheory intervalIntegral
 
 /-! ## Pomožne trditve -/
 
-/-- Pomožna trditev: približek »≈ v« dokažemo z mejama `v − e ≤ x ≤ v + e`. -/
+/-- Pomožna trditev: približek »≈ v« dokažemo z mejama `v − e ≤ x ≤ v + e`.
+pomozno -/
 theorem blizu {x v e : ℝ} (h1 : v - e ≤ x) (h2 : x ≤ v + e) : |x - v| ≤ e :=
   abs_le.mpr ⟨by linarith, by linarith⟩
 
 /-- Pomožna trditev (Newton-Leibnizova formula): če je `F' = f` povsod in je `f` zvezna, je
-`∫ₐᵇ f = F(b) − F(a)`. -/
+`∫ₐᵇ f = F(b) − F(a)`.
+pomozno -/
 theorem newton_leibniz (F f : ℝ → ℝ) (a b : ℝ) (hF : ∀ x, HasDerivAt F (f x) x) (hf : Continuous f) :
     ∫ x in a..b, f x = F b - F a :=
   integral_eq_sub_of_hasDerivAt (fun x _ => hF x) (hf.intervalIntegrable a b)
 
 /-- Pomožna trditev: meje za `ln(1 − x)` iz vrste `−(x + x²/2 + … + xⁿ/n)` z oceno ostanka
-`|x|ⁿ⁺¹/(1 − |x|)`. -/
+`|x|ⁿ⁺¹/(1 − |x|)`.
+pomozno -/
 theorem log_meje (x : ℝ) (n : ℕ) (hx : |x| < 1) (lo hi : ℝ)
     (h1 : lo ≤ -(∑ i ∈ range n, x ^ (i + 1) / (i + 1)) - |x| ^ (n + 1) / (1 - |x|))
     (h2 : -(∑ i ∈ range n, x ^ (i + 1) / (i + 1)) + |x| ^ (n + 1) / (1 - |x|) ≤ hi) :
@@ -61,7 +64,9 @@ example : |(0:ℝ)| < 1 ∧
 noncomputable def razlicni (n : ℕ) : ℝ := ∏ i ∈ range n, ((365:ℝ) - i) / 365
 
 /-- Razlaga, korak 3 in »Bolj natančno«: produkt ulomkov je isti račun kot `Vₙᵏ/nᵏ`
-(`∏ (n − i)/n = Vₙᵏ / nᵏ` za `k ≤ n`). -/
+(`∏ (n − i)/n = Vₙᵏ / nᵏ` za `k ≤ n`).
+trditev: MAT-SS-4/mesane-maturitetne-naloge#produkt-variacije
+besedilo: »Produkt ulomkov je isti račun kot $\frac{V_{365}^{23}}{365^{23}}$, le po delih.« -/
 theorem produkt_variacije (n k : ℕ) (hn : n ≠ 0) (hk : k ≤ n) :
     ∏ i ∈ range k, ((n:ℝ) - i) / n = (n.descFactorial k : ℝ) / (n:ℝ) ^ k := by
   induction k with
@@ -75,15 +80,29 @@ theorem produkt_variacije (n k : ℕ) (hn : n ≠ 0) (hk : k ≤ n) :
 /-- Predpostavke trditve `produkt_variacije` se dajo izpolniti (`n = 365`, `k = 23`). -/
 example : (365:ℕ) ≠ 0 ∧ 23 ≤ 365 := by norm_num
 
-/-- Ponovitev: `Vₙᵏ = n!/(n − k)!` za `k ≤ n`. -/
+/-- Predpostavke trditve `produkt_variacije` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (365:ℕ) ≠ 0 ∧ 23 ≤ 365 := by norm_num
+  produkt_variacije (hn := w.1) (hk := w.2)
+
+/-- Ponovitev: `Vₙᵏ = n!/(n − k)!` za `k ≤ n`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#variacije
+besedilo: »$V_n^k = \frac{n!}{(n-k)!}$« -/
 theorem variacije (n k : ℕ) (hk : k ≤ n) : n.descFactorial k = n.factorial / (n - k).factorial :=
   Nat.descFactorial_eq_div hk
 
 /-- Predpostavka trditve `variacije` se da izpolniti. -/
 example : 2 ≤ 10 := by norm_num
 
+/-- Predpostavke trditve `variacije` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : 2 ≤ 10 := by norm_num
+  variacije (hk := w)
+
 /-- Razlaga: produkt `23` ulomkov je približno `0,493`, zato je `P(vsaj dva isti dan) ≈ 1 − 0,493 = 0,507`;
-parov je `C(23, 2) = 253`. -/
+parov je `C(23, 2) = 253`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#rojstni-dnevi
+besedilo: »Produkt vseh $23$ ulomkov je približno $0{,}493$. Torej je $$P(\text{vsaj dva isti dan}) \approx 1 - 0{,}493 = 0{,}507$$« -/
 theorem rojstni_dnevi :
     |razlicni 23 - 0.493| ≤ 0.0005 ∧ (1:ℝ) - 0.493 = 0.507 ∧ |1 - razlicni 23 - 0.507| ≤ 0.0005 ∧
       Nat.choose 23 2 = 253 := by
@@ -94,7 +113,9 @@ theorem rojstni_dnevi :
     blizu (by rw [e]; norm_num) (by rw [e]; norm_num), by decide⟩
 
 /-- Razlaga, premisli: pri `24` ljudeh je verjetnost približno `54 %`; novi človek prinese `23` novih
-parov, kar je dobrih `9 %` od `253`. -/
+parov, kar je dobrih `9 %` od `253`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#rojstni-dnevi-24
+besedilo: »Poveča se, a za malo (na približno $54\,\%$). Novi človek prinese $23$ novih parov, kar je le dobrih $9\,\%$ več parov kot prej ($253$).« -/
 theorem rojstni_dnevi_24 :
     |1 - razlicni 24 - 0.54| ≤ 0.005 ∧ Nat.choose 24 2 = 253 + 23 ∧
       (0.09:ℝ) < 23 / 253 ∧ (23:ℝ) / 253 < 0.1 := by
@@ -104,7 +125,9 @@ theorem rojstni_dnevi_24 :
   exact ⟨blizu (by rw [e]; norm_num) (by rw [e]; norm_num), by decide, by norm_num, by norm_num⟩
 
 /-- Drugače, bolj natančno: preglednica `P(vsaj dva isti dan)` za `n = 10, 30, 50` je `0,117`, `0,706`,
-`0,970`; pričakovano število parov z istim dnem pri `23` ljudeh je `253/365 ≈ 0,69`. -/
+`0,970`; pričakovano število parov z istim dnem pri `23` ljudeh je `253/365 ≈ 0,69`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#rojstni-dnevi-tabela
+besedilo: »| $10$ | $0{,}117$ | | $23$ | $0{,}507$ | | $30$ | $0{,}706$ | | $50$ | $0{,}970$ |« -/
 theorem rojstni_dnevi_tabela :
     |1 - razlicni 10 - 0.117| ≤ 0.0005 ∧ |1 - razlicni 30 - 0.706| ≤ 0.0005 ∧
       |1 - razlicni 50 - 0.970| ≤ 0.0005 ∧ |(253:ℝ) / 365 - 0.69| ≤ 0.005 := by
@@ -117,12 +140,16 @@ theorem rojstni_dnevi_tabela :
     blizu (by rw [e2]; norm_num) (by rw [e2]; norm_num),
     blizu (by rw [e3]; norm_num) (by rw [e3]; norm_num), blizu (by norm_num) (by norm_num)⟩
 
-/-- Drugače, bolj natančno: število parov je `C(n, 2) = n(n − 1)/2`. -/
+/-- Drugače, bolj natančno: število parov je `C(n, 2) = n(n − 1)/2`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#pari
+besedilo: »Razlog je število parov $\binom{n}{2} = \frac{n(n-1)}{2}$,« -/
 theorem pari (n : ℕ) : Nat.choose n 2 = n * (n - 1) / 2 := Nat.choose_two_right n
 
 /-! ## Formule: nasprotni dogodek in neodvisnost -/
 
-/-- Ključna beseda »vsaj« in ponovitev: `P(A) = 1 − P(Ā)` (za merljiv dogodek v verjetnostnem prostoru). -/
+/-- Ključna beseda »vsaj« in ponovitev: `P(A) = 1 − P(Ā)` (za merljiv dogodek v verjetnostnem prostoru).
+trditev: MAT-SS-4/mesane-maturitetne-naloge#nasprotni-dogodek
+besedilo: »»Vsaj« je skoraj vedno znak za nasprotni dogodek: $P(A) = 1 - P(\overline{A})$.« -/
 theorem nasprotni_dogodek {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
     (A : Set Ω) (hA : MeasurableSet A) : μ A = 1 - μ Aᶜ := by
   rw [prob_compl_eq_one_sub hA, ENNReal.sub_sub_cancel ENNReal.one_ne_top prob_le_one]
@@ -132,7 +159,9 @@ example : IsProbabilityMeasure (Measure.dirac true : Measure Bool) ∧ Measurabl
   ⟨inferInstance, measurableSet_singleton true⟩
 
 /-- Primer 1, formula in ustno vprašanje 1: neodvisna dogodka imata `P(A·B) = P(A)·P(B)`; enakost je
-tudi definicija neodvisnosti. -/
+tudi definicija neodvisnosti.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#neodvisna
+besedilo: »Za neodvisna dogodka je verjetnost produkta enaka produktu verjetnosti: $P(A \cdot B) = P(A) \cdot P(B)$. To enakost lahko vzamemo tudi za definicijo neodvisnosti.« -/
 theorem neodvisna {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
     (A B : Set Ω) (hA : MeasurableSet A) (hB : MeasurableSet B) :
     IndepSet A B μ ↔ μ (A ∩ B) = μ A * μ B :=
@@ -142,16 +171,26 @@ theorem neodvisna {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabi
 example : IsProbabilityMeasure (Measure.dirac true : Measure Bool) ∧ MeasurableSet (Set.univ : Set Bool) :=
   ⟨inferInstance, MeasurableSet.univ⟩
 
-/-- Ustno vprašanje 1: dva meta kovanca, verjetnost dveh grbov je `1/2 · 1/2 = 1/4`. -/
+/-- Predpostavke trditve `neodvisna` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  neodvisna (Measure.dirac true) Set.univ Set.univ MeasurableSet.univ MeasurableSet.univ
+
+/-- Ustno vprašanje 1: dva meta kovanca, verjetnost dveh grbov je `1/2 · 1/2 = 1/4`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#kovanec
+besedilo: »Primer sta dva meta kovanca: verjetnost, da obakrat pade grb, je $\frac{1}{2} \cdot \frac{1}{2} = \frac{1}{4}$.« -/
 theorem kovanec : (1:ℝ) / 2 * (1 / 2) = 1 / 4 := by norm_num
 
 /-! ## Primer 1: trije prosti meti -/
 
-/-- Primer 1, koraka 2 in 3: `0,8 · 0,8 · 0,8 = 0,512` in `1 − 0,512 = 0,488`. -/
+/-- Primer 1, koraka 2 in 3: `0,8 · 0,8 · 0,8 = 0,512` in `1 − 0,512 = 0,488`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#primer1
+besedilo: »$P(\text{vsaj en zgrešen}) = 1 - 0{,}512 = 0{,}488$« -/
 theorem primer1 : (0.8:ℝ) * 0.8 * 0.8 = 0.512 ∧ (1:ℝ) - 0.512 = 0.488 := by norm_num
 
 /-- Pogoste napake: vsota `0,2 + 0,2 + 0,2 = 0,6` ni `0,488`; pri štirih metih z `0,3` bi vsota dala
-`1,2 > 1`. -/
+`1,2 > 1`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#napaka-vsota
+besedilo: »Za »vsaj en zgrešen od treh metov« vsota $0{,}2 + 0{,}2 + 0{,}2$ ni prav, ker dogodki niso nezdružljivi (lahko zgreši dvakrat). Pri štirih metih z verjetnostjo zgrešitve $0{,}3$ bi dobil celo več kot $1$.« -/
 theorem napaka_vsota : (0.2:ℝ) + 0.2 + 0.2 = 0.6 ∧ (0.6:ℝ) ≠ 0.488 ∧ 4 * (0.3:ℝ) = 1.2 ∧ (1.2:ℝ) > 1 := by
   norm_num
 
@@ -160,14 +199,18 @@ theorem napaka_vsota : (0.2:ℝ) + 0.2 + 0.2 = 0.6 ∧ (0.6:ℝ) ≠ 0.488 ∧ 4
 /-- Višina žoge iz primera 2. -/
 noncomputable def h₂ (t : ℝ) : ℝ := -5 * t ^ 2 + 10 * t + 1
 
-/-- Primer 2, korak 1: `h'(t) = −10t + 10`. -/
+/-- Primer 2, korak 1: `h'(t) = −10t + 10`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#primer2-odvod
+besedilo: »Odvajamo: $h'(t) = -10t + 10$.« -/
 theorem primer2_odvod (t : ℝ) : HasDerivAt h₂ (-10 * t + 10) t := by
   unfold h₂
   exact ((((hasDerivAt_pow 2 t).const_mul (-5)).add ((hasDerivAt_id' t).const_mul 10)).add_const 1)
     |>.congr_deriv (by norm_num; ring)
 
 /-- Primer 2, koraka 2 in 3: `−10t + 10 = 0` natanko pri `t = 1`; višina vrha je
-`−5·1² + 10·1 + 1 = 6` in je največja (`h(t) ≤ 6` za vsak `t`). -/
+`−5·1² + 10·1 + 1 = 6` in je največja (`h(t) ≤ 6` za vsak `t`).
+trditev: MAT-SS-4/mesane-maturitetne-naloge#primer2-vrh
+besedilo: »Odgovor: žoga je najvišje po $1\,\mathrm{s}$, na višini $6\,\mathrm{m}$« -/
 theorem primer2_vrh :
     (∀ t : ℝ, -10 * t + 10 = 0 ↔ t = 1) ∧ h₂ 1 = -5 * 1 ^ 2 + 10 * 1 + 1 ∧
       (-5:ℝ) * 1 ^ 2 + 10 * 1 + 1 = 6 ∧ ∀ t, h₂ t ≤ 6 := by
@@ -177,7 +220,9 @@ theorem primer2_vrh :
   nlinarith [sq_nonneg (t - 1)]
 
 /-- Formula iz primera 2 v splošni obliki: za `a ≠ 0` in `D = b² − 4ac ≥ 0` je `ax² + bx + c = 0`
-natanko pri `x = (−b ± √D)/(2a)`; pri `D < 0` realne rešitve ni. -/
+natanko pri `x = (−b ± √D)/(2a)`; pri `D < 0` realne rešitve ni.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#kvadratna-formula
+besedilo: »rešitev kvadratne enačbe $t = \dfrac{-b \pm \sqrt{b^2 - 4ac}}{2a}$« -/
 theorem kvadratna_formula (a b c : ℝ) (ha : a ≠ 0) :
     discrim a b c = b ^ 2 - 4 * a * c ∧
     (0 ≤ b ^ 2 - 4 * a * c → ∀ x : ℝ, a * x ^ 2 + b * x + c = 0 ↔
@@ -195,8 +240,15 @@ theorem kvadratna_formula (a b c : ℝ) (ha : a ≠ 0) :
 /-- Predpostavka trditve `kvadratna_formula` se da izpolniti (`a = 5` iz primera 2). -/
 example : (5:ℝ) ≠ 0 := by norm_num
 
+/-- Predpostavke trditve `kvadratna_formula` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (5:ℝ) ≠ 0 := by norm_num
+  kvadratna_formula (ha := w)
+
 /-- Primer 2, koraki 4 in 5: `−5t² + 10t + 1 = 0` ⇔ `5t² − 10t − 1 = 0` ⇔ `t = (10 ± √120)/10`,
-diskriminanta `D = 100 + 20 = 120`. -/
+diskriminanta `D = 100 + 20 = 120`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#primer2-tla
+besedilo: »Diskriminanta: $D = 100 + 20 = 120$, torej $t = \dfrac{10 \pm \sqrt{120}}{10}$.« -/
 theorem primer2_tla (t : ℝ) :
     (h₂ t = 0 ↔ 5 * t ^ 2 - 10 * t - 1 = 0) ∧ ((-10:ℝ) ^ 2 - 4 * 5 * (-1) = 100 + 20) ∧
       (100:ℝ) + 20 = 120 ∧
@@ -215,7 +267,9 @@ theorem primer2_tla (t : ℝ) :
   · rintro (rfl | rfl) <;> ring
 
 /-- Primer 2, koraka 6 in 7: negativna rešitev `(10 − √120)/10 < 0` ni smiselna, pozitivna je
-`(10 + √120)/10 ≈ 2,10`, torej na tla pade po približno `2,1 s`. -/
+`(10 + √120)/10 ≈ 2,10`, torej na tla pade po približno `2,1 s`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#primer2-cas
+besedilo: »Negativna rešitev ni smiselna (čas pred udarcem), ostane $t \approx 2{,}10\,\mathrm{s}$.« -/
 theorem primer2_cas :
     (10 - Real.sqrt 120) / 10 < 0 ∧ |(10 + Real.sqrt 120) / 10 - 2.10| ≤ 0.005 ∧
       |(10 + Real.sqrt 120) / 10 - 2.1| ≤ 0.05 := by
@@ -230,14 +284,18 @@ theorem primer2_cas :
 /-- Hitrost kolesarja iz primera 3. -/
 noncomputable def v₃ (t : ℝ) : ℝ := 3 * t - 0.25 * t ^ 2
 
-/-- Primer 3, korak 1: `v'(t) = 3 − 0,5t`. -/
+/-- Primer 3, korak 1: `v'(t) = 3 − 0,5t`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#primer3-odvod
+besedilo: »Prvi člen verige je odvod: $v'(t) = 3 - 0{,}5t$.« -/
 theorem primer3_odvod (t : ℝ) : HasDerivAt v₃ (3 - 0.5 * t) t := by
   unfold v₃
   exact (((hasDerivAt_id' t).const_mul 3).sub ((hasDerivAt_pow 2 t).const_mul 0.25)).congr_deriv
     (by norm_num; ring)
 
 /-- Primer 3, koraka 2 in 3: `3 − 0,5t = 0` natanko pri `t = 6`; pred tem je `v' > 0`, po tem `v' < 0`;
-`v_max = 3·6 − 0,25·36 = 9` in `v(t) ≤ 9` za vsak `t`. -/
+`v_max = 3·6 − 0,25·36 = 9` in `v(t) ≤ 9` za vsak `t`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#primer3-maksimum
+besedilo: »Odgovor: največja hitrost je $9\,\mathrm{m/s}$ (po $6\,\mathrm{s}$)« -/
 theorem primer3_maksimum :
     (∀ t : ℝ, 3 - 0.5 * t = 0 ↔ t = 6) ∧ (∀ t : ℝ, t < 6 → 0 < 3 - 0.5 * t) ∧
       (∀ t : ℝ, 6 < t → 3 - 0.5 * t < 0) ∧ v₃ 6 = 3 * 6 - 0.25 * 36 ∧ (3:ℝ) * 6 - 0.25 * 36 = 9 ∧
@@ -248,7 +306,9 @@ theorem primer3_maksimum :
   nlinarith [sq_nonneg (t - 6)]
 
 /-- Primer 3, koraki 4 in 5: primitivna funkcija `1,5t² − t³/12`; pot je
-`∫₀¹² v = 1,5·144 − 1728/12 = 216 − 144 = 72`. -/
+`∫₀¹² v = 1,5·144 − 1728/12 = 216 − 144 = 72`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#primer3-pot
+besedilo: »Po Newton-Leibnizovi formuli: $1{,}5 \cdot 144 - \dfrac{1728}{12} = 216 - 144 = 72$, spodnja meja da $0$.« -/
 theorem primer3_pot : ∫ t in (0:ℝ)..12, v₃ t = 72 := by
   have hF : ∀ t, HasDerivAt (fun t : ℝ => 1.5 * t ^ 2 - t ^ 3 / 12) (v₃ t) t := by
     intro t
@@ -262,7 +322,9 @@ theorem primer3_pot : ∫ t in (0:ℝ)..12, v₃ t = 72 := by
     _ = 216 - 144 := by norm_num
     _ = 72 := by norm_num
 
-/-- Primer 3, korak 6: `v(12) = 36 − 36 = 0`, kolesar se ustavi. -/
+/-- Primer 3, korak 6: `v(12) = 36 − 36 = 0`, kolesar se ustavi.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#primer3-ustavi
+besedilo: »Preverimo smiselnost: $v(12) = 36 - 36 = 0$, kolesar se res ustavi.« -/
 theorem primer3_ustavi : v₃ 12 = 36 - 36 ∧ (36:ℝ) - 36 = 0 := by unfold v₃; norm_num
 
 /-! ## Primer 4: sezonske vstopnice -/
@@ -271,7 +333,9 @@ theorem primer3_ustavi : v₃ 12 = 36 - 36 ∧ (36:ℝ) - 36 = 0 := by unfold v�
 noncomputable def clen (a₁ q : ℝ) (n : ℕ) : ℝ := a₁ * q ^ (n - 1)
 
 /-- Ponovitev in ustno vprašanje 3: vsota prvih `n` členov `a₁ + a₁q + … + a₁qⁿ⁻¹ = a₁(qⁿ − 1)/(q − 1)`
-za `q ≠ 1`; izpeljava: `qSₙ − Sₙ = a₁qⁿ − a₁`. -/
+za `q ≠ 1`; izpeljava: `qSₙ − Sₙ = a₁qⁿ − a₁`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#geometrijska-vsota
+besedilo: »Ko od druge enakosti odštejemo prvo, se vsi vmesni členi izničijo in ostane $q S_n - S_n = a_1 q^n - a_1$. Ker je $q \neq 1$, smemo deliti s $q - 1$ in dobimo $S_n = a_1 \frac{q^n - 1}{q - 1}$.« -/
 theorem geometrijska_vsota (a₁ q : ℝ) (hq : q ≠ 1) (n : ℕ) :
     q * (∑ i ∈ range n, a₁ * q ^ i) - ∑ i ∈ range n, a₁ * q ^ i = a₁ * q ^ n - a₁ ∧
       ∑ i ∈ range n, a₁ * q ^ i = a₁ * (q ^ n - 1) / (q - 1) := by
@@ -284,13 +348,22 @@ theorem geometrijska_vsota (a₁ q : ℝ) (hq : q ≠ 1) (n : ℕ) :
 /-- Predpostavka trditve `geometrijska_vsota` se da izpolniti (`q = 1,05`). -/
 example : (1.05:ℝ) ≠ 1 := by norm_num
 
-/-- Primer 4, korak 2 in pogoste napake: `a₆ = 2000·1,05⁵ ≈ 2553` (eksponent `n − 1 = 5`, ne `6`). -/
+/-- Predpostavke trditve `geometrijska_vsota` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (1.05:ℝ) ≠ 1 := by norm_num
+  geometrijska_vsota (hq := w)
+
+/-- Primer 4, korak 2 in pogoste napake: `a₆ = 2000·1,05⁵ ≈ 2553` (eksponent `n − 1 = 5`, ne `6`).
+trditev: MAT-SS-4/mesane-maturitetne-naloge#primer4-clen
+besedilo: »$a_6 = 2000 \cdot 1{,}05^5 \approx 2553$ vstopnic (eksponent je $n - 1 = 5$).« -/
 theorem primer4_clen :
     clen 2000 1.05 6 = 2000 * 1.05 ^ 5 ∧ |2000 * (1.05:ℝ) ^ 5 - 2553| ≤ 0.5 ∧
       clen 2000 1.05 6 ≠ 2000 * 1.05 ^ 6 := by
   refine ⟨by norm_num [clen], blizu (by norm_num) (by norm_num), by norm_num [clen]⟩
 
-/-- Primer 4, premisli: `S₆ = 2000·(1,05⁶ − 1)/0,05 ≈ 13 604`, kar je vsota šestih sezon. -/
+/-- Primer 4, premisli: `S₆ = 2000·(1,05⁶ − 1)/0,05 ≈ 13 604`, kar je vsota šestih sezon.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#primer4-vsota
+besedilo: »$S_6 \approx 13\,604$ vstopnice v šestih sezonah.« -/
 theorem primer4_vsota :
     ∑ i ∈ range 6, 2000 * (1.05:ℝ) ^ i = 2000 * ((1.05:ℝ) ^ 6 - 1) / 0.05 ∧
       |2000 * ((1.05:ℝ) ^ 6 - 1) / 0.05 - 13604| ≤ 0.5 := by
@@ -302,7 +375,9 @@ theorem primer4_vsota :
 
 /-- Pogoste napake in Preveri se 3: doma in v gosteh je `V₁₀² = 10·9 = 90` tekem, ne `C(10, 2) = 45`;
 pri `20` ekipah `V₂₀² = 20·19 = 380`, kar je približno štirikrat več (`4 < 380/90 < 4,25`); deset novih
-ekip, vsaka z `2·19 = 38` tekmami. -/
+ekip, vsaka z `2·19 = 38` tekmami.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#liga
+besedilo: »Če vsaka ekipa igra z vsako doma in v gosteh, je vrstni red pomemben: $V_{10}^2 = 90$ tekem, ne $\binom{10}{2} = 45$.« -/
 theorem liga :
     Nat.descFactorial 10 2 = 10 * 9 ∧ 10 * 9 = 90 ∧ Nat.choose 10 2 = 45 ∧
       Nat.descFactorial 20 2 = 20 * 19 ∧ 20 * 19 = 380 ∧ (4:ℝ) < 380 / 90 ∧ (380:ℝ) / 90 < 4.25 ∧
@@ -318,7 +393,9 @@ def rdeca (i : Fin 8) : Prop := i.val < 5
 instance : DecidablePred rdeca := fun i => inferInstanceAs (Decidable (i.val < 5))
 
 /-- Naloga 1: dveh od `8` kroglic je `C(8, 2) = 8·7/2 = 28` izbir, izbir z eno rdečo in eno modro je
-`5·3 = 15`, zato je `P = 15/28`. -/
+`5·3 = 15`, zato je `P = 15/28`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#naloga1
+besedilo: »Odgovor: verjetnost, da sta kroglici različnih barv, je $\dfrac{15}{28}$.« -/
 theorem naloga1 :
     ((univ : Finset (Fin 8)).powersetCard 2).card = 28 ∧ (8 * 7 / 2 : ℕ) = 28 ∧
       (((univ : Finset (Fin 8)).powersetCard 2).filter (fun s => (s.filter rdeca).card = 1)).card = 15 ∧
@@ -330,7 +407,9 @@ theorem naloga1 :
 /-- Funkcija iz naloge 2: `f(x) = −x² + 4x`. -/
 noncomputable def f₂ (x : ℝ) : ℝ := -x ^ 2 + 4 * x
 
-/-- Naloga 2 a): `−x² + 4x = −x(x − 4) = 0` natanko pri `x = 0` ali `x = 4`. -/
+/-- Naloga 2 a): `−x² + 4x = −x(x − 4) = 0` natanko pri `x = 0` ali `x = 4`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#naloga2-nicli
+besedilo: »a) $-x^2 + 4x = -x(x - 4) = 0$, zato sta ničli $x_1 = 0$ in $x_2 = 4$.« -/
 theorem naloga2_nicli (x : ℝ) : (f₂ x = -x * (x - 4)) ∧ (f₂ x = 0 ↔ x = 0 ∨ x = 4) := by
   refine ⟨by unfold f₂; ring, ?_⟩
   unfold f₂
@@ -343,7 +422,9 @@ theorem naloga2_nicli (x : ℝ) : (f₂ x = -x * (x - 4)) ∧ (f₂ x = 0 ↔ x 
   · rintro (rfl | rfl) <;> norm_num
 
 /-- Naloga 2 a): presečišča `−x² + 4x = x` ⇔ `x² − 3x = x(x − 3) = 0` ⇔ `x = 0` ali `x = 3`;
-točki `A(0, 0)` in `B(3, 3)`. -/
+točki `A(0, 0)` in `B(3, 3)`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#naloga2-presecisca
+besedilo: »a) Presečišča: $-x^2 + 4x = x$ da $x^2 - 3x = 0$ oziroma $x(x - 3) = 0$, torej $x = 0$ ali $x = 3$. Presečišči sta $A(0, 0)$ in $B(3, 3)$.« -/
 theorem naloga2_presecisca (x : ℝ) :
     (f₂ x = x ↔ x ^ 2 - 3 * x = 0) ∧ (f₂ x = x ↔ x = 0 ∨ x = 3) ∧ f₂ 0 = 0 ∧ f₂ 3 = 3 := by
   refine ⟨by unfold f₂; constructor <;> intro h <;> linarith, ?_, by norm_num [f₂], by norm_num [f₂]⟩
@@ -357,7 +438,9 @@ theorem naloga2_presecisca (x : ℝ) :
   · rintro (rfl | rfl) <;> norm_num
 
 /-- Naloga 2 b): `f(1) = −1 + 4 = 3`, `f'(x) = −2x + 4`, `k = f'(1) = 2`; tangenta
-`y − 3 = 2(x − 1)` je `y = 2x + 1`. -/
+`y − 3 = 2(x − 1)` je `y = 2x + 1`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#naloga2-tangenta
+besedilo: »b) Tangenta skozi $(1, 3)$: $y - 3 = 2(x - 1)$, torej $y = 2x + 1$.« -/
 theorem naloga2_tangenta :
     f₂ 1 = -1 + 4 ∧ (-1:ℝ) + 4 = 3 ∧ (∀ x, HasDerivAt f₂ (-2 * x + 4) x) ∧ -2 * (1:ℝ) + 4 = 2 ∧
       ∀ x : ℝ, 3 + 2 * (x - 1) = 2 * x + 1 := by
@@ -367,7 +450,9 @@ theorem naloga2_tangenta :
     (by norm_num)
 
 /-- Naloga 2 c): na `[0, 3]` je graf nad premico (`x ≤ f(x)`, npr. `f(1) = 3 > 1`), ploščina je
-`∫₀³ (−x² + 4x − x) dx = ∫₀³ (−x² + 3x) dx = [−x³/3 + 3x²/2]₀³ = −9 + 27/2 = 9/2`. -/
+`∫₀³ (−x² + 4x − x) dx = ∫₀³ (−x² + 3x) dx = [−x³/3 + 3x²/2]₀³ = −9 + 27/2 = 9/2`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#naloga2-ploscina
+besedilo: »c) $S = \left[-\dfrac{x^3}{3} + \dfrac{3x^2}{2}\right]_0^3 = -9 + \dfrac{27}{2} = \dfrac{9}{2}$.« -/
 theorem naloga2_ploscina :
     (∀ x ∈ Icc (0:ℝ) 3, x ≤ f₂ x) ∧ f₂ 1 > 1 ∧
       ∫ x in (0:ℝ)..3, (f₂ x - x) = 9 / 2 := by
@@ -388,7 +473,9 @@ theorem naloga2_ploscina :
 /-! ## Za maturo, naloga 3 -/
 
 /-- Naloga 3 a): `P = C(10, 1)·0,04·0,96⁹ = 10·0,04·0,96⁹`; `0,96⁹ = 0,692533…`,
-`P = 0,277013… ≈ 0,2770`. -/
+`P = 0,277013… ≈ 0,2770`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#naloga3-a
+besedilo: »$P = 10 \cdot 0{,}04 \cdot 0{,}692533\ldots = 0{,}277013\ldots \approx 0{,}2770$« -/
 theorem naloga3_a :
     (Nat.choose 10 1 : ℝ) * 0.04 * 0.96 ^ 9 = 10 * 0.04 * 0.96 ^ 9 ∧
       (0.692533:ℝ) ≤ 0.96 ^ 9 ∧ (0.96:ℝ) ^ 9 < 0.692534 ∧ |(0.96:ℝ) ^ 9 - 0.692534| ≤ 0.0000005 ∧
@@ -397,14 +484,18 @@ theorem naloga3_a :
   refine ⟨by norm_num, by norm_num, by norm_num, blizu (by norm_num) (by norm_num), by norm_num,
     by norm_num, blizu (by norm_num) (by norm_num)⟩
 
-/-- Naloga 3 b): `0,96¹⁰ = 0,664832…`, `P = 1 − 0,96¹⁰ = 0,335167… ≈ 0,3352`. -/
+/-- Naloga 3 b): `0,96¹⁰ = 0,664832…`, `P = 1 − 0,96¹⁰ = 0,335167… ≈ 0,3352`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#naloga3-b
+besedilo: »$P = 1 - 0{,}96^{10} = 0{,}335167\ldots \approx 0{,}3352$« -/
 theorem naloga3_b :
     (0.664832:ℝ) ≤ 0.96 ^ 10 ∧ (0.96:ℝ) ^ 10 < 0.664833 ∧ (0.335167:ℝ) ≤ 1 - 0.96 ^ 10 ∧
       1 - (0.96:ℝ) ^ 10 < 0.335168 ∧ |1 - (0.96:ℝ) ^ 10 - 0.3352| ≤ 0.00005 := by
   refine ⟨by norm_num, by norm_num, by norm_num, by norm_num, blizu (by norm_num) (by norm_num)⟩
 
 /-- Naloga 3 c), koraka 5 in 6: `1 − 0,96ⁿ > 0,5` ⇔ `0,96ⁿ < 0,5` ⇔ `n ln 0,96 < ln 0,5` ⇔
-`n > ln 0,5 / ln 0,96` (ker je `ln 0,96 < 0`, se neenačaj obrne); velja za vsak realni `n`. -/
+`n > ln 0,5 / ln 0,96` (ker je `ln 0,96 < 0`, se neenačaj obrne); velja za vsak realni `n`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#naloga3-c-log
+besedilo: »c) Logaritmiramo: $n \ln 0{,}96 < \ln 0{,}5$. Ker je $\ln 0{,}96 < 0$, se pri deljenju znak neenakosti obrne: $n > \dfrac{\ln 0{,}5}{\ln 0{,}96} = 16{,}979\ldots$.« -/
 theorem naloga3_c_log (n : ℝ) :
     (1 - (0.96:ℝ) ^ n > 0.5 ↔ (0.96:ℝ) ^ n < 0.5) ∧
       ((0.96:ℝ) ^ n < 0.5 ↔ n * Real.log 0.96 < Real.log 0.5) ∧ Real.log 0.96 < 0 ∧
@@ -415,7 +506,9 @@ theorem naloga3_c_log (n : ℝ) :
       Real.log_rpow (by norm_num)]
   · rw [gt_iff_lt, div_lt_iff_of_neg hl]
 
-/-- Naloga 3 c), korak 6: `ln 0,5 / ln 0,96 = 16,979…` (meje za logaritma iz vrste za `ln(1 − x)`). -/
+/-- Naloga 3 c), korak 6: `ln 0,5 / ln 0,96 = 16,979…` (meje za logaritma iz vrste za `ln(1 − x)`).
+trditev: MAT-SS-4/mesane-maturitetne-naloge#naloga3-c-kvocient
+besedilo: »$n > \dfrac{\ln 0{,}5}{\ln 0{,}96} = 16{,}979\ldots$« -/
 theorem naloga3_c_kvocient :
     (16.979:ℝ) < Real.log 0.5 / Real.log 0.96 ∧ Real.log 0.5 / Real.log 0.96 < 16.98 := by
   obtain ⟨a1, a2⟩ := log_meje 0.5 40 (by norm_num [abs_of_pos]) (-0.6931471815) (-0.69314718)
@@ -429,7 +522,9 @@ theorem naloga3_c_kvocient :
   · rw [div_lt_iff_of_neg hl]; linarith
 
 /-- Naloga 3 c), korak 7: med naravnimi števili velja `0,96ⁿ < 0,5` natanko za `n ≥ 17`; preverba
-`0,96¹⁶ ≈ 0,5204 > 0,5`, `0,96¹⁷ ≈ 0,4996 < 0,5`. -/
+`0,96¹⁶ ≈ 0,5204 > 0,5`, `0,96¹⁷ ≈ 0,4996 < 0,5`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#naloga3-c
+besedilo: »c) Najmanjše naravno število je $n = 17$. Preverba: $0{,}96^{16} \approx 0{,}5204 > 0{,}5$ in $0{,}96^{17} \approx 0{,}4996 < 0{,}5$.« -/
 theorem naloga3_c :
     (∀ n : ℕ, 1 - (0.96:ℝ) ^ n > 0.5 ↔ 17 ≤ n) ∧ |(0.96:ℝ) ^ 16 - 0.5204| ≤ 0.00005 ∧
       |(0.96:ℝ) ^ 17 - 0.4996| ≤ 0.00005 ∧ (0.96:ℝ) ^ 16 > 0.5 ∧ (0.96:ℝ) ^ 17 < 0.5 := by
@@ -445,7 +540,9 @@ theorem naloga3_c :
     linarith
 
 /-- Naloga 3 d): `pₖ = 0,04·0,96ᵏ⁻¹` ima količnik `pₖ₊₁/pₖ = 0,96` za vsak `k ≥ 1`; vsota
-`p₁ + … + p₁₀ = 0,04·(0,96¹⁰ − 1)/(0,96 − 1) = 0,04·(1 − 0,96¹⁰)/0,04 = 1 − 0,96¹⁰ ≈ 0,3352`. -/
+`p₁ + … + p₁₀ = 0,04·(0,96¹⁰ − 1)/(0,96 − 1) = 0,04·(1 − 0,96¹⁰)/0,04 = 1 − 0,96¹⁰ ≈ 0,3352`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#naloga3-d
+besedilo: »d) zaporedje je geometrijsko s $q = 0{,}96$, vsota prvih desetih členov je $1 - 0{,}96^{10} \approx 0{,}3352$« -/
 theorem naloga3_d :
     (∀ k : ℕ, 1 ≤ k → (0.04 * (0.96:ℝ) ^ k) / (0.04 * 0.96 ^ (k - 1)) = 0.96) ∧
       ∑ k ∈ Finset.Icc 1 10, 0.04 * (0.96:ℝ) ^ (k - 1) = 1 - 0.96 ^ 10 ∧
@@ -466,7 +563,9 @@ theorem naloga3_d :
 /-! ## Ustno vprašanje 2 -/
 
 /-- Ustno vprašanje 2: če ima funkcija največjo vrednost na `[a, b]` v notranji točki `c`, kjer je
-odvedljiva, je `f'(c) = 0` (zato so kandidati stacionarne točke in krajišči). -/
+odvedljiva, je `f'(c) = 0` (zato so kandidati stacionarne točke in krajišči).
+trditev: MAT-SS-4/mesane-maturitetne-naloge#notranji-maksimum
+besedilo: »Kandidati za največjo vrednost so te stacionarne točke, točke, kjer funkcija ni odvedljiva, in obe krajišči $a$ in $b$.« -/
 theorem notranji_maksimum (f : ℝ → ℝ) (a b c f' : ℝ) (hc : c ∈ Ioo a b) (hmax : IsMaxOn f (Icc a b) c)
     (hf : HasDerivAt f f' c) : f' = 0 :=
   (hmax.isLocalMax (Icc_mem_nhds hc.1 hc.2)).hasDerivAt_eq_zero hf
@@ -477,8 +576,17 @@ example : (0:ℝ) ∈ Set.Ioo (-1) 1 ∧ IsMaxOn (fun x : ℝ => -x ^ 2) (Set.Ic
   refine ⟨⟨by norm_num, by norm_num⟩, fun x _ => by simp; positivity, ?_⟩
   exact (hasDerivAt_pow 2 (0:ℝ)).neg.congr_deriv (by norm_num)
 
+/-- Predpostavke trditve `notranji_maksimum` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) ∈ Set.Ioo (-1) 1 ∧ IsMaxOn (fun x : ℝ => -x ^ 2) (Set.Icc (-1) 1) 0 ∧ HasDerivAt (fun x : ℝ => -x ^ 2) 0 0 := by
+    refine ⟨⟨by norm_num, by norm_num⟩, fun x _ => by simp; positivity, ?_⟩
+    exact (hasDerivAt_pow 2 (0:ℝ)).neg.congr_deriv (by norm_num)
+  notranji_maksimum (hc := w.1) (hmax := w.2.1) (hf := w.2.2)
+
 /-- Ustno vprašanje 2, obstoj: zvezna funkcija na `[a, b]` doseže največjo vrednost v neki točki `c`;
-ta je krajišče `a` ali `b` ali pa notranja točka, kjer je (če je `f` tam odvedljiva) `f'(c) = 0`. -/
+ta je krajišče `a` ali `b` ali pa notranja točka, kjer je (če je `f` tam odvedljiva) `f'(c) = 0`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#maksimum-na-intervalu
+besedilo: »Kandidati za največjo vrednost so te stacionarne točke, točke, kjer funkcija ni odvedljiva, in obe krajišči $a$ in $b$.« -/
 theorem maksimum_na_intervalu (f : ℝ → ℝ) (a b : ℝ) (hab : a ≤ b) (hf : ContinuousOn f (Icc a b)) :
     ∃ c ∈ Icc a b, IsMaxOn f (Icc a b) c ∧
       (c = a ∨ c = b ∨ (c ∈ Ioo a b ∧ (DifferentiableAt ℝ f c → deriv f c = 0))) := by
@@ -496,12 +604,22 @@ example : (-1:ℝ) ≤ 1 ∧ ContinuousOn (fun x : ℝ => -x ^ 2) (Set.Icc (-1) 
 
 /-! ## Preveri se -/
 
-/-- Preveri se 1: naklon tangente na tir `h(t) = −5t² + 10t + 1` v `t = 1` je `h'(1) = 0`. -/
+/-- Predpostavke trditve `maksimum_na_intervalu` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (-1:ℝ) ≤ 1 ∧ ContinuousOn (fun x : ℝ => -x ^ 2) (Set.Icc (-1) 1) :=
+    ⟨by norm_num, by fun_prop⟩
+  maksimum_na_intervalu (hab := w.1) (hf := w.2)
+
+/-- Preveri se 1: naklon tangente na tir `h(t) = −5t² + 10t + 1` v `t = 1` je `h'(1) = 0`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#kviz1
+besedilo: »Vrh je tam, kjer se žoga neha dvigovati: $-10t + 10 = 0$, torej $t = 1\,\mathrm{s}$.« -/
 theorem kviz1 : HasDerivAt h₂ 0 1 := by
   simpa using primer2_odvod 1
 
 /-- Preveri se 4: verjetnost vsaj enega zadetka je `1 − 0,3·0,3 = 1 − 0,09 = 0,91`; `0,7 + 0,7 = 1,4 > 1`
-in `0,7·0,7 = 0,49` (obe). -/
+in `0,7·0,7 = 0,49` (obe).
+trditev: MAT-SS-4/mesane-maturitetne-naloge#kviz4
+besedilo: »Nasprotni dogodek: zgreši obe, $0{,}3 \cdot 0{,}3 = 0{,}09$. Torej $1 - 0{,}09 = 0{,}91$.« -/
 theorem kviz4 :
     (0.3:ℝ) * 0.3 = 0.09 ∧ (1:ℝ) - 0.09 = 0.91 ∧ (0.7:ℝ) + 0.7 = 1.4 ∧ (1.4:ℝ) > 1 ∧
       (0.7:ℝ) * 0.7 = 0.49 := by norm_num
@@ -510,7 +628,9 @@ theorem kviz4 :
 noncomputable def h₅ (t : ℝ) : ℝ := -5 * t ^ 2 + 15 * t
 
 /-- Preveri se 5: `h'(t) = −10t + 15 = 0` da `t = 1,5 s`; `h(1,5) = −11,25 + 22,5 = 11,25 m` je največja
-višina; `15·1,5 = 22,5`. -/
+višina; `15·1,5 = 22,5`.
+trditev: MAT-SS-4/mesane-maturitetne-naloge#kviz5
+besedilo: »$h'(t) = -10t + 15 = 0$ da $t = 1{,}5\,\mathrm{s}$; $h(1{,}5) = -11{,}25 + 22{,}5 = 11{,}25\,\mathrm{m}$.« -/
 theorem kviz5 :
     (∀ t, HasDerivAt h₅ (-10 * t + 15) t) ∧ (∀ t : ℝ, -10 * t + 15 = 0 ↔ t = 1.5) ∧
       h₅ 1.5 = -11.25 + 22.5 ∧ (-11.25:ℝ) + 22.5 = 11.25 ∧ (∀ t, h₅ t ≤ 11.25) ∧
@@ -525,7 +645,8 @@ theorem kviz5 :
 /-! ## Blok RACUN -/
 
 /-- RACUN: `8·7/2 = 28`, `5·3/28 = 15/28`, `−1² + 4·1 = 3`, `0,04·(0,96¹⁰ − 1)/(0,96 − 1) ≈ 0,3352`,
-`0,96¹⁰ ≈ 0,6648`, `ln 0,5/ln 0,96 ≈ 16,98`. -/
+`0,96¹⁰ ≈ 0,6648`, `ln 0,5/ln 0,96 ≈ 16,98`.
+pomozno -/
 theorem racun :
     (8:ℝ) * 7 / 2 = 28 ∧ (5:ℝ) * 3 / 28 = 15 / 28 ∧ -(1:ℝ) ^ 2 + 4 * 1 = 3 ∧
       |0.04 * ((0.96:ℝ) ^ 10 - 1) / (0.96 - 1) - 0.3352| ≤ 0.00005 ∧
@@ -533,5 +654,11 @@ theorem racun :
   obtain ⟨q1, q2⟩ := naloga3_c_kvocient
   exact ⟨by norm_num, by norm_num, by norm_num, blizu (by norm_num) (by norm_num),
     blizu (by norm_num) (by norm_num), blizu (by linarith) (by linarith)⟩
+
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `nasprotni_dogodek` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  nasprotni_dogodek (Measure.dirac true) {true} (measurableSet_singleton true)
 
 end Evklid.Lekcije.MAT_SS_4.MesaneMaturitetneNaloge

@@ -50,7 +50,7 @@
 /* Zvezdice letijo k zgornjemu znesku; »+15« pod njim, ko ni vira na zaslonu (igre v ozadju …). */
 .xp-fly { position: fixed; z-index: 70; pointer-events: none; transform: translate(-50%, -50%); }
 .xp-fly svg.i { width: 18px; height: 18px; color: var(--gold); fill: var(--gold); }
-.xp-plus { position: fixed; z-index: 70; pointer-events: none; transform: translateX(-50%); color: var(--gold); font-weight: 900; animation: xp-plus 1.3s ease both; }
+.xp-plus { position: fixed; z-index: 70; pointer-events: none; transform: translateX(-50%); color: var(--gold-text); font-weight: 900; animation: xp-plus 1.3s ease both; }
 @keyframes xp-plus { 0% { opacity: 0; transform: translate(-50%, 6px) scale(0.8); } 25% { opacity: 1; transform: translate(-50%, 0) scale(1.1); } 100% { opacity: 0; transform: translate(-50%, 14px); } }
 
 /* Pasica: dnevni cilj, mejnik. */
