@@ -57,7 +57,8 @@ theorem mnozenje (k A B : ℝ) (h : A = B) : k * A = k * B := by rw [h]
 example : (1:ℝ) = 1 := rfl
 
 /-- Bolj natančno: pri k = 0 dobimo 0 = 0 za vsak x (tudi tam, kjer A ≠ B): informacija se izgubi. -/
-theorem mnozenje_z_0 : (0:ℝ) * 1 = 0 * 2 ∧ (1:ℝ) ≠ 2 := by norm_num
+theorem mnozenje_z_0 : (∀ A B : ℝ, 0 * A = 0 * B) ∧ (0:ℝ) * 1 = 0 * 2 ∧ (1:ℝ) ≠ 2 := by
+  refine ⟨fun A B => by ring, by norm_num, by norm_num⟩
 
 /-- Razlaga 1: x/2 = 4 ⇔ (·2) x = 8. -/
 theorem razlaga1 (x : ℝ) : x / 2 = 4 ↔ x = 8 := ⟨fun h => by linarith, fun h => by linarith⟩
@@ -234,8 +235,10 @@ theorem preveri2_ocena :
 6·((x − 1)/3) = 2(x − 1), 6·2 = 12); pri desni 12 bi dobili 72; 6·(x/3) = 2x ≠ 3x (pri x ≠ 0). -/
 theorem preveri4 (x : ℝ) :
     6 * (x / 2 - (x - 1) / 3) = 3 * x - 2 * (x - 1) ∧ (6:ℝ) * 2 = 12 ∧ (6:ℝ) * 12 = 72 ∧
-      6 * (x / 3) = 2 * x ∧ (x / 2 - (x - 1) / 3 = 2 ↔ 3 * x - 2 * (x - 1) = 12) := by
-  refine ⟨by ring, by norm_num, by norm_num, by ring, ⟨fun h => by linarith, fun h => by linarith⟩⟩
+      6 * (x / 3) = 2 * x ∧ (x ≠ 0 → 2 * x ≠ 3 * x) ∧
+      (x / 2 - (x - 1) / 3 = 2 ↔ 3 * x - 2 * (x - 1) = 12) := by
+  refine ⟨by ring, by norm_num, by norm_num, by ring, fun hx h => hx (by linarith),
+    ⟨fun h => by linarith, fun h => by linarith⟩⟩
 
 /-- Preveri se 5: x/2 + x/3 + 30 = x ⇔ 3x + 2x + 180 = 6x ⇔ x = 180; preizkus 90 + 60 + 30 = 180. Napačno
 3x + 2x + 30 = 6x da x = 30; 30 l je šestina od 180, pet šestin od 36 pa je 30 (napačen odgovor 36). -/

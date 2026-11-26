@@ -154,7 +154,8 @@ example : (0:ℝ) ≤ 100 := by norm_num
 theorem primer3_preizkus :
     (45:ℝ) - 6/100 * 600 = 45 - 36 ∧ (45:ℝ) - 36 = 9 ∧ (45:ℝ) - 6/100 * 700 = 3 ∧ ¬ ((3:ℝ) ≥ 9) := by norm_num
 
-/-- Primer 3 (pozabljen obrat): x ≥ 600 ni pravilna množica rešitev: x = 0 je rešitev, x = 700 pa ne. -/
+/-- Primer 3 (pozabljen obrat): x ≥ 600 ni pravilna množica rešitev: x = 0 je rešitev neenačbe, ne izpolni pa
+x ≥ 600 (da x = 700 ni rešitev, je v `primer3_preizkus`). -/
 theorem primer3_brez_obrata : ¬ ∀ x : ℝ, (45 - 6/100 * x ≥ 9 ↔ x ≥ 600) := by
   intro h
   have := (h 0).mp (by norm_num)
@@ -264,6 +265,22 @@ theorem kviz3 (x : ℝ) : (3 * x > -12 ↔ x > -4) ∧ (3:ℝ) * 0 > -12 := by
 12/(−3) = −4). -/
 theorem kviz4 (x : ℝ) : (-3 * x < 12 ↔ x > -4) ∧ (-3:ℝ) * (-4) = 12 ∧ ¬ ((12:ℝ) < 12) ∧ (12:ℝ) / (-3) = -4 := by
   refine ⟨by constructor <;> intro h <;> linarith, by norm_num, by norm_num, by norm_num⟩
+
+/-- Preveri se 3, napačni odgovor x < −4: množica rešitev ni x < −4 (x = 0 je rešitev 3x > −12, ni pa < −4). -/
+theorem kviz3_napaka : ¬ ∀ x : ℝ, (3 * x > -12 ↔ x < -4) := by
+  intro h
+  have := (h 0).mp (by norm_num)
+  norm_num at this
+
+/-- Preveri se 4, napačni odgovori: rešitve −3x < 12 niso x < −4 (pobarvano levo) in niso x > 4 (krogec pri 4),
+ker je x = 0 rešitev; 12/(−3) = −4, ne 4; meja −4 ni rešitev (−3·(−4) = 12 < 12 ne drži), zato krogec ni poln. -/
+theorem kviz4_napake : ¬ (∀ x : ℝ, (-3 * x < 12 ↔ x < -4)) ∧ ¬ (∀ x : ℝ, (-3 * x < 12 ↔ x > 4)) ∧
+    (12:ℝ) / (-3) ≠ 4 ∧ ¬ ((-3:ℝ) * (-4) < 12) := by
+  refine ⟨fun h => ?_, fun h => ?_, by norm_num, by norm_num⟩
+  · have := (h 0).mp (by norm_num)
+    norm_num at this
+  · have := (h 0).mp (by norm_num)
+    norm_num at this
 
 /-- Preveri se 5: 40 − 16t ≤ 8 ima rešitve natanko t ≥ 2, po korakih: −16t ≤ −32, t ≥ 2. Po 2 urah ostane
 točno 8 km, po 1 uri še 24 km. -/

@@ -52,7 +52,7 @@ theorem urejeni_par (x y x' y' : ℝ) : (x, y) = (x', y') ↔ x = x' ∧ y = y' 
   ⟨fun h => ⟨congrArg Prod.fst h, congrArg Prod.snd h⟩, fun ⟨a, b⟩ => by rw [a, b]⟩
 
 /-- Razlaga 1, premisli: (5, 0) leži na osi x, (0, −4) na osi y, 4 enote pod izhodiščem. -/
-theorem premisli_osi : NaOsiX (5, 0) ∧ NaOsiY (0, -4) ∧ (0:ℝ) - (-4) = 4 := by
+theorem premisli_osi : NaOsiX (5, 0) ∧ NaOsiY (0, -4) ∧ (-4:ℝ) < 0 ∧ (0:ℝ) - (-4) = 4 := by
   unfold NaOsiX NaOsiY; norm_num
 
 /-- Razlaga 1: točka na osi ne leži v nobenem kvadrantu. -/
@@ -97,8 +97,8 @@ theorem riz_podvojitev (n : ℝ) : riz (2 * n) = 2 * riz n := by unfold riz; rin
 /-- Razlaga 2 (merilo): pri razdelku 40 g je 320 g natanko 8 razdelkov visoko. -/
 theorem riz_merilo : (320:ℝ) / 40 = 8 := by norm_num
 
-/-- Razlaga 2 in Povzetek: graf premega sorazmerja y = kx je premica skozi izhodišče: gre skozi (0, 0), in
-kolikokrat povečamo x, tolikokrat se poveča y. -/
+/-- Razlaga 2 in Povzetek: premo sorazmerje y = kx gre skozi (0, 0), in kolikokrat povečamo x, tolikokrat
+se poveča y (homogenost). Da je graf premica, je tu le model y = kx (risba ni v Leanu). -/
 theorem premo_sorazmerje (k c x : ℝ) : k * 0 = 0 ∧ k * (c * x) = c * (k * x) := by
   constructor <;> ring
 
@@ -125,7 +125,7 @@ theorem zelenjava_ni_premica :
 
 /-- Primer 1: A(4, 1) je v I., B(−2, 3) v II., C(−1, −4) v III. kvadrantu, D(0, −3) na osi y, 3 enote pod
 izhodiščem. -/
-theorem primer1 : KvI (4, 1) ∧ KvII (-2, 3) ∧ KvIII (-1, -4) ∧ NaOsiY (0, -3) ∧ (0:ℝ) - (-3) = 3 := by
+theorem primer1 : KvI (4, 1) ∧ KvII (-2, 3) ∧ KvIII (-1, -4) ∧ NaOsiY (0, -3) ∧ (-3:ℝ) < 0 ∧ (0:ℝ) - (-3) = 3 := by
   unfold KvI KvII KvIII NaOsiY; norm_num
 
 /-- Primer 1: D(0, −3) ne leži v nobenem kvadrantu. -/

@@ -20,7 +20,10 @@ ravnine (dokazano za vodoravne ravnine z = h v koordinatah); Cavalierijevo nače
 »lupina pomaranče pokrije štiri kroge« kot poskus; milni mehurček (izoperimetrična neenakost: zahtevno, še ni
 dokazano); dejstvo o polmerih Zemlje in Lune (podatek, dokazan je račun 3,7³); enote (cm², cm³,
 1 dm³ = 1 l je dokazano kot 10³ = 1000); navodila za računanje (koraki 1–5 v razlagi 6); besedilo napačnih
-odgovorov v Preveri se (dokazano je, da so napačne vrednosti take, kot pravi razlaga).
+odgovorov v Preveri se (dokazano je, da so napačne vrednosti take, kot pravi razlaga); »krogla nima ne
+osnovnih ploskev ne robov ne oglišč« (zahtevno, še ni dokazano); najmanjši valj okoli krogle (r, 2r) in
+»krogla se dotika obeh osnovnih ploskev in plašča« kot geometrijska trditev (zahtevno, še ni dokazano;
+dokazani so računi z r in 2r); zgodovinska opomba o Arhimedu (podatek).
 -/
 module
 

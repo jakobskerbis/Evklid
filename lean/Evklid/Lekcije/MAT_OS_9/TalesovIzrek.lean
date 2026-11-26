@@ -13,7 +13,7 @@ dokazani so le računi; »žarka sta kraka kota, krožec in Luna sta vzporedni d
 na smer pogleda« (geometrijski model, privzet); utemeljitev s podobnimi trikotniki (KK, enaki koti pri
 vzporednicah) in dokaz s ploščinami v »Bolj natančno« (izrek je dokazan drugače, z vektorji); konstrukcija s
 šestilom in ravnilom kot postopek (dokazano: vzporednica skozi P_m k P_{m+n}B seka AB v natanko eni točki T z
-AT : TB = m : n; pri m + n enakih odsekih so vsi deli enako dolgi); »Talesov izrek o kotu v polkrogu« (le omenjen);
+AT : TB = m : n; pri N enakih odsekih vzporednice sekajo AB v T_k = A + (k/N)·(B − A), deli so enako dolgi); »Talesov izrek o kotu v polkrogu« (le omenjen);
 opozorilo o Soncu; »Uporaba: višina iz sence« je dokazana le kot račun kviza 5 (vzporedni žarki so privzeti);
 »Drugače: Na sliki« (lijak, »povečane kopije«) kot slika: dokazano je le, da je 384 000 km : 55 cm med
 690 000 000 in 700 000 000; »prava vrednost 3 474 km« in razdalje Lune 357 000–407 000 km so podatki; »mrk je
@@ -171,34 +171,36 @@ example : dist (0:ℝ × ℝ) (0 + (2:ℝ) • ((1:ℝ), (0:ℝ))) / dist (0:ℝ
 
 end Izrek
 
-/-- Bolj natančno: iz SA : SC = AB : CD vzporednosti ne smemo sklepati. Protiprimer v evklidski ravnini: S(0, 0),
-A(10, 0), C(20, 0), D(2, 4) in B'(3, 6) na istem kraku kot D; AB' = √85, CD = √340 = 2√85, zato
-SA : SC = AB' : CD = 1 : 2, a D − C = (−18, 4) ni večkratnik B' − A = (−7, 6). -/
+/-- Bolj natančno: iz SA : SC = AB : CD vzporednosti ne smemo sklepati, tudi ko je B' med S in D (bližje vrhu,
+kot v lekciji). Protiprimer v evklidski ravnini: S(0, 0), A(50, 0), C(100, 0), D(30, 40) in B'(21, 28) = 0,7·D
+na istem kraku kot D (SB' = 35 < SD = 50); AB' = √1625, CD = √6500 = 2√1625, zato SA : SC = AB' : CD = 1 : 2,
+a D − C = (−70, 40) ni večkratnik B' − A = (−29, 28) (vzporednica bi šla skozi (15, 20)). -/
 theorem obrat_ne_za_vzporednici :
     let S : EuclideanSpace ℝ (Fin 2) := !₂[0, 0]
-    let A : EuclideanSpace ℝ (Fin 2) := !₂[10, 0]
-    let C : EuclideanSpace ℝ (Fin 2) := !₂[20, 0]
-    let B' : EuclideanSpace ℝ (Fin 2) := !₂[3, 6]
-    let D : EuclideanSpace ℝ (Fin 2) := !₂[2, 4]
-    B' = (3/2 : ℝ) • D ∧ dist S A / dist S C = dist A B' / dist C D ∧ ¬ ∃ t : ℝ, D - C = t • (B' - A) := by
+    let A : EuclideanSpace ℝ (Fin 2) := !₂[50, 0]
+    let C : EuclideanSpace ℝ (Fin 2) := !₂[100, 0]
+    let B' : EuclideanSpace ℝ (Fin 2) := !₂[21, 28]
+    let D : EuclideanSpace ℝ (Fin 2) := !₂[30, 40]
+    B' = (7/10 : ℝ) • D ∧ dist S A / dist S C = dist A B' / dist C D ∧ ¬ ∃ t : ℝ, D - C = t • (B' - A) := by
   intro S A C B' D
   refine ⟨?_, ?_, ?_⟩
   · ext i; fin_cases i <;> norm_num [B', D]
-  · have hSA : dist S A = 10 := by
+  · have hSA : dist S A = 50 := by
       simp only [EuclideanSpace.dist_eq, Fin.sum_univ_two, Real.dist_eq, S, A]
       simp
-    have hSC : dist S C = 20 := by
+    have hSC : dist S C = 100 := by
       simp only [EuclideanSpace.dist_eq, Fin.sum_univ_two, Real.dist_eq, S, C]
       simp
-    have hAB : dist A B' = Real.sqrt 85 := by
+    have hAB : dist A B' = Real.sqrt 1625 := by
       simp only [EuclideanSpace.dist_eq, Fin.sum_univ_two, Real.dist_eq, A, B']
       simp
       norm_num
-    have hCD : dist C D = 2 * Real.sqrt 85 := by
+    have hCD : dist C D = 2 * Real.sqrt 1625 := by
       simp only [EuclideanSpace.dist_eq, Fin.sum_univ_two, Real.dist_eq, C, D]
       simp
-      rw [show ((20:ℝ) - 2) ^ 2 + 4 ^ 2 = 2 ^ 2 * 85 by norm_num, Real.sqrt_mul (by norm_num), Real.sqrt_sq (by norm_num)]
-    have h85 : Real.sqrt 85 ≠ 0 := by positivity
+      rw [show ((100:ℝ) - 30) ^ 2 + 40 ^ 2 = 2 ^ 2 * 1625 by norm_num, Real.sqrt_mul (by norm_num),
+        Real.sqrt_sq (by norm_num)]
+    have h0 : Real.sqrt 1625 ≠ 0 := by positivity
     rw [hSA, hSC, hAB, hCD]
     field_simp
     norm_num
@@ -208,6 +210,39 @@ theorem obrat_ne_za_vzporednici :
     simp [C, D, A, B'] at h0 h1
     norm_num at h0 h1
     linarith
+
+/-- Razlaga 4: sorazmerje SA : AC = AB : CD je napačno. Protiprimer z vzporednicama v evklidski ravnini:
+S(0, 0), A(3, 0), C(9, 0), B(0, 3), D(0, 9); D − C = 3·(B − A) (AB ∥ CD), SA : AC = 3 : 6 = 1/2, a
+AB : CD = √18 : (3√18) = 1/3. -/
+theorem del_ni_za_vzporednici :
+    let S : EuclideanSpace ℝ (Fin 2) := !₂[0, 0]
+    let A : EuclideanSpace ℝ (Fin 2) := !₂[3, 0]
+    let C : EuclideanSpace ℝ (Fin 2) := !₂[9, 0]
+    let B : EuclideanSpace ℝ (Fin 2) := !₂[0, 3]
+    let D : EuclideanSpace ℝ (Fin 2) := !₂[0, 9]
+    D - C = (3:ℝ) • (B - A) ∧ dist S A / dist A C = 1 / 2 ∧ dist A B / dist C D = 1 / 3 ∧
+    dist S A / dist A C ≠ dist A B / dist C D := by
+  intro S A C B D
+  have hSA : dist S A = 3 := by
+    simp only [EuclideanSpace.dist_eq, Fin.sum_univ_two, Real.dist_eq, S, A]
+    simp
+  have hAC : dist A C = 6 := by
+    simp only [EuclideanSpace.dist_eq, Fin.sum_univ_two, Real.dist_eq, A, C]
+    norm_num
+  have hAB : dist A B = Real.sqrt 18 := by
+    simp only [EuclideanSpace.dist_eq, Fin.sum_univ_two, Real.dist_eq, A, B]
+    simp
+    norm_num
+  have hCD : dist C D = 3 * Real.sqrt 18 := by
+    simp only [EuclideanSpace.dist_eq, Fin.sum_univ_two, Real.dist_eq, C, D]
+    simp
+    rw [show (9:ℝ) ^ 2 + 9 ^ 2 = 3 ^ 2 * 18 by norm_num, Real.sqrt_mul (by norm_num),
+      Real.sqrt_sq (by norm_num)]
+  have h0 : Real.sqrt 18 ≠ 0 := by positivity
+  have h2 : dist A B / dist C D = 1 / 3 := by rw [hAB, hCD]; field_simp
+  refine ⟨?_, by rw [hSA, hAC]; norm_num, h2, ?_⟩
+  · ext i; fin_cases i <;> norm_num [B, A, C, D]
+  · rw [h2, hSA, hAC]; norm_num
 
 /-! ## Razlaga 6 in 7: deljenje daljice -/
 
@@ -255,8 +290,32 @@ example : LinearIndependent ℝ ![((0:ℝ), (1:ℝ)), ((10:ℝ), (0:ℝ)) - ((0:
   simp at h1 h2
   exact ⟨h2, h1⟩
 
-/-- Razlaga 6 (deljenje na N enakih delov): točke T_k = A + (k/N)·(B − A) razdelijo AB na dele enake dolžine
-AB/N; T_0 = A, T_N = B. -/
+/-- Razlaga 6 (deljenje na N enakih delov), povezava s konstrukcijo: iz `deljenje` za m = k, n = N − k
+(0 < k < N): vzporednica skozi P_k = A + k·w k P_N B seka premico AB natanko v T_k = A + (k/N)·(B − A). -/
+theorem konstrukcija_T (A B w : V) (hi : LinearIndependent ℝ ![w, B - A]) (N k : ℕ) (hk : 0 < k) (hkN : k < N) :
+    (A + ((k:ℝ) / N) • (B - A)) - (A + (k:ℝ) • w) = ((k:ℝ) / N) • (B - (A + (N:ℝ) • w)) ∧
+    (∀ s r : ℝ, (A + s • (B - A)) - (A + (k:ℝ) • w) = r • (B - (A + (N:ℝ) • w)) → s = (k:ℝ) / N) := by
+  have hk' : (0:ℝ) < k := by exact_mod_cast hk
+  have hkN' : (0:ℝ) < (N:ℝ) - k := by
+    have : (k:ℝ) < N := by exact_mod_cast hkN
+    linarith
+  have e : (k:ℝ) + ((N:ℝ) - k) = N := by ring
+  have h := deljenje A B w hi (k:ℝ) ((N:ℝ) - k) hk' hkN'
+  rw [e] at h
+  exact ⟨h.1, h.2.1⟩
+
+/-- Predpostavke `konstrukcija_T` se dajo izpolniti: A = (0, 0), B = (10, 0), w = (0, 1), N = 5, k = 2. -/
+example : LinearIndependent ℝ ![((0:ℝ), (1:ℝ)), ((10:ℝ), (0:ℝ)) - ((0:ℝ), (0:ℝ))] ∧ 0 < 2 ∧ 2 < 5 := by
+  refine ⟨?_, by norm_num, by norm_num⟩
+  rw [LinearIndependent.pair_iff]
+  intro s t h
+  have h1 := congrArg Prod.fst h
+  have h2 := congrArg Prod.snd h
+  simp at h1 h2
+  exact ⟨h2, h1⟩
+
+/-- Razlaga 6 (deljenje na N enakih delov): točke T_k = A + (k/N)·(B − A) (po `konstrukcija_T` presečišča
+vzporednic z AB) razdelijo AB na dele enake dolžine AB/N; T_0 = A, T_N = B. -/
 theorem enaki_deli (A B : V) (N : ℕ) (hN : 0 < N) (k : ℕ) :
     dist (A + ((k:ℝ) / N) • (B - A)) (A + (((k:ℝ) + 1) / N) • (B - A)) = dist A B / N ∧
     A + ((0:ℝ) / N) • (B - A) = A ∧ A + ((N:ℝ) / N) • (B - A) = B := by
@@ -417,12 +476,22 @@ theorem napaka_deli (AB : ℝ) (h : 0 < AB) : AB / (2 + 3) = AB / 5 ∧ AB / 5 �
 /-- Predpostavka `napaka_deli` se da izpolniti (AB = 10). -/
 example : (0:ℝ) < 10 := by norm_num
 
-/-- Pogoste napake 5 (različne enote): 1 m = 1000 mm, zato je razmerje x mm : y m za faktor 1000 drugačno od
-x mm : (1000y) mm. -/
+/-- Pogoste napake 5 (različne enote): 1 m = 1000 mm, zato je količnik x : y (x v mm, y v m) 1000-krat
+količnik x : (1000y) (oba v mm); pri x ≠ 0, y ≠ 0 sta zato različna. -/
 theorem napaka_enote (x y : ℝ) : x / y = 1000 * (x / (1000 * y)) := by
   by_cases hy : y = 0
   · subst hy; simp
   · field_simp
+
+/-- Pogoste napake 5: pri x ≠ 0 in y ≠ 0 se razmerji x : y in x : (1000y) res razlikujeta. -/
+theorem napaka_enote_razlicno (x y : ℝ) (hx : x ≠ 0) (hy : y ≠ 0) : x / y ≠ x / (1000 * y) := by
+  intro h
+  rw [div_eq_div_iff hy (by positivity)] at h
+  have : x * y * 999 = 0 := by linarith
+  simp_all
+
+/-- Predpostavki `napaka_enote_razlicno` se dasta izpolniti (x = 2, y = 3). -/
+example : (2:ℝ) ≠ 0 ∧ (3:ℝ) ≠ 0 := by norm_num
 
 /-! ## Drugače: Na sliki -/
 

@@ -128,6 +128,9 @@ theorem primer3 (t : ℝ) : 60 * t + 90 * (t - 1 / 6) = 60 ↔ t = 1 / 2 := by
 theorem primer3_racuna : (90 : ℝ) * (1 / 6) = 15 ∧ (1 : ℝ) / 2 * 60 = 30 ∧ (60 : ℝ) * (1 / 2) = 30 := by
   norm_num
 
+/-- Primer 3, smiselnost: rešitev t = 0,5 je vsaj 1/6, zato reševalci vozijo nenegativen čas t − 1/6 ≥ 0. -/
+theorem primer3_smiselno : (1 : ℝ) / 6 ≤ 1 / 2 ∧ (0 : ℝ) ≤ 1 / 2 - 1 / 6 := by norm_num
+
 /-- Primer 3, preizkus: reševalci vozijo 0,5 − 1/6 = 1/3 h (= 20 min), prevozijo 90 · 1/3 = 30 km,
 skupaj 30 + 30 = 60. -/
 theorem primer3_preizkus :
@@ -215,6 +218,12 @@ theorem kviz3 (t : ℝ) : 60 * t + 90 * t = 60 ↔ t = 4 / 10 := by
 /-- Preveri se, vprašanje 3: 0,4 h = 24 min < 30 min. -/
 theorem kviz3_minute : (4 : ℝ) / 10 * 60 = 24 ∧ (24 : ℝ) < 30 := by norm_num
 
+/-- Preveri se, vprašanje 3, napačni odgovor »ob isti uri«: če bi se srečala pri t = 0,5 h, bi reševalci vozili
+0,5 h namesto 1/3 h (10 min = 1/6 h dlje), prevozili 90 · 0,5 = 45 km, to je 15 km več kot 30 km, skupaj pa
+30 + 45 = 75 km, več kot 60 km. -/
+theorem kviz3_napaka : (1 : ℝ) / 2 - 1 / 3 = 1 / 6 ∧ (90 : ℝ) * (1 / 2) = 45 ∧ (45 : ℝ) - 30 = 15 ∧
+    (60 : ℝ) * (1 / 2) + 90 * (1 / 2) = 75 ∧ (60 : ℝ) < 75 := by norm_num
+
 /-- Preveri se, vprašanje 4: 1000 − 125x = 250 ima natanko rešitev x = 6 (−125x = −750). -/
 theorem kviz4 (x : ℝ) : 1000 - 125 * x = 250 ↔ x = 6 := by
   calc 1000 - 125 * x = 250 ↔ -125 * x = -750 := by constructor <;> intro h <;> linarith
@@ -232,5 +241,9 @@ theorem kviz5 (t : ℝ) : 60 * t = 40 * (t + 1 / 2) ↔ t = 1 := by
 
 /-- Preveri se, vprašanje 5: takrat sta oba 60 km od bolnišnice (60 · 1 = 40 · 1,5 = 60); kurir vozi 1,5 h. -/
 theorem kviz5_preizkus : (60 : ℝ) * 1 = 60 ∧ (40 : ℝ) * (1 + 1 / 2) = 60 := by norm_num
+
+/-- Preveri se, vprašanje 5, napačna odgovora: pri dohitevanju se razdalja manjša za 60 − 40 = 20 (km/h);
+čas vožnje kurirja je t + 0,5 = 1 + 0,5 = 1,5 (h). -/
+theorem kviz5_napake : (60 : ℝ) - 40 = 20 ∧ (1 : ℝ) + 1 / 2 = 3 / 2 := by norm_num
 
 end Evklid.Lekcije.MAT_OS_9.BesedilneNaloge

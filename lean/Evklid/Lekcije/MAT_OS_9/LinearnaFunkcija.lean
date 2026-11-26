@@ -168,7 +168,12 @@ theorem prazen_kozarec (x : ℝ) : f 4 12 x - f 4 0 x = 12 ∧ f 4 0 0 = 0 := by
 
 /-! ## Rešeni primeri -/
 
-/-- Primer 1: pri y = 2x + 3 je k = 2, n = 3 (`koeficienta`); vrednosti: 2 · 0 + 3 = 3, 2 · 1 + 3 = 5,
+/-- Primer 1: pri y = 2x + 3 je k = 2, n = 3: f 2 3 je ta predpis in vsak k, n z istim predpisom je k = 2, n = 3. -/
+theorem primer1_kn : (∀ x, f 2 3 x = 2 * x + 3) ∧ (∀ k n, (∀ x, f k n x = 2 * x + 3) → k = 2 ∧ n = 3) := by
+  refine ⟨fun x => by unfold f; ring, fun k n h => (koeficienta k n 2 3).1 fun x => ?_⟩
+  rw [h x]; unfold f; ring
+
+/-- Primer 1: vrednosti: 2 · 0 + 3 = 3, 2 · 1 + 3 = 5,
 2 · 4 + 3 = 8 + 3 = 11. -/
 theorem primer1 : f 2 3 0 = 3 ∧ f 2 3 1 = 5 ∧ f 2 3 4 = 11 := by
   refine ⟨?_, ?_, ?_⟩
@@ -271,14 +276,21 @@ theorem kviz2 : (f 2 (-1) 0 = -1 ∧ f 2 (-1) 1 = 1 ∧ f 2 (-1) 2 = 3) ∧
   unfold f; norm_num
 
 /-- Preveri se 4: y = −6x + 20 pri x = 2,2 je −13,2 + 20 = 6,8, približno 7 (|6,8 − 7| < 1/2). Napačni
-odgovori: 20 − 6 = 14, 6 · 2,2 + 20 = 33,2 ≈ 33, −6 · 2,2 = −13,2 ≈ −13. -/
+odgovori: 20 − 6 = 14, 6 · 2,2 + 20 = 33,2 ≈ 33, −6 · 2,2 = −13,2 ≈ −13 (|33,2 − 33| < 1/2, |−13,2 + 13| < 1/2). -/
 theorem kviz4 : f (-6) 20 (22 / 10) = 68 / 10 ∧ |(68 : ℝ) / 10 - 7| < 1 / 2 ∧
-    (20 : ℝ) - 6 = 14 ∧ f 6 20 (22 / 10) = 332 / 10 ∧ (-6 : ℝ) * (22 / 10) = -132 / 10 := by
-  refine ⟨?_, ?_, by norm_num, by unfold f; norm_num, by norm_num⟩
+    (20 : ℝ) - 6 = 14 ∧ f 6 20 (22 / 10) = 332 / 10 ∧ (-6 : ℝ) * (22 / 10) = -132 / 10 ∧
+    |(332 : ℝ) / 10 - 33| < 1 / 2 ∧ |(-132 : ℝ) / 10 + 13| < 1 / 2 := by
+  refine ⟨?_, ?_, by norm_num, by unfold f; norm_num, by norm_num, ?_, ?_⟩
   · calc f (-6) 20 (22 / 10) = -6 * (22 / 10) + 20 := rfl
       _ = -132 / 10 + 20 := by norm_num
       _ = 68 / 10 := by norm_num
   · rw [abs_lt]; constructor <;> norm_num
+  · rw [abs_lt]; constructor <;> norm_num
+  · rw [abs_lt]; constructor <;> norm_num
+
+/-- Preveri se 5, napačna odgovora: −8 = 22 − 30 je sprememba v 4 urah (ne deljena s 14 − 10), −1/2 je obrnjen
+kvocient (14 − 10)/(22 − 30). -/
+theorem kviz5_napake : (22 : ℝ) - 30 = -8 ∧ ((14 : ℝ) - 10) / (22 - 30) = -1 / 2 := by norm_num
 
 /-- Preveri se 5: sneg ob 10.00 30 cm, ob 14.00 22 cm: k = (22 − 30)/(14 − 10) = −8/4 = −2. -/
 theorem kviz5 : ((22 : ℝ) - 30) / (14 - 10) = -2 := by

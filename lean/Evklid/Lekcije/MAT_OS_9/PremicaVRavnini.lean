@@ -374,6 +374,12 @@ theorem kviz3 (x : ℝ) :
     (2 * x + 3) - (2 * x - 1) = 4 ∧ 2 * x + 3 ≠ 2 * x - 1 ∧ (x + 3 = 2 * x - 1 ↔ x = 4) ∧ (4:ℝ) + 3 = 7 := by
   refine ⟨by ring, fun h => by linarith, by constructor <;> intro h <;> linarith, by norm_num⟩
 
+/-- Preveri se 3, napačni odgovor »ena nad osjo x, druga pod njo«: obe premici prečkata os x (y = 2x + 3 pri
+x = −3/2, y = 2x − 1 pri x = 1/2) in imata točke nad njo in pod njo. -/
+theorem kviz3_napacni :
+    (2:ℝ) * (-3/2) + 3 = 0 ∧ (2:ℝ) * (1/2) - 1 = 0 ∧
+    (0:ℝ) < 2 * 0 + 3 ∧ (2:ℝ) * (-2) + 3 < 0 ∧ (0:ℝ) < 2 * 1 - 1 ∧ (2:ℝ) * 0 - 1 < 0 := by norm_num
+
 /-- Preveri se 4: premica skozi (1, 2) in (3, a) je vzporedna y = 3x natanko pri a = 8
 ((a − 2)/(3 − 1) = 3, a − 2 = 6); premica je y = 3x − 1. Napačni odgovor 9: točka (3, 9) je na y = 3x. -/
 theorem kviz4 (a : ℝ) : ((a - 2) / (3 - 1) = 3 ↔ a = 8) ∧ NaPremici 3 (-1) 1 2 ∧ NaPremici 3 (-1) 3 8 ∧
@@ -393,6 +399,11 @@ theorem kviz4_premica (a : ℝ) : (∃ k n, Vzporedni k n 3 0 ∧ NaPremici k n 
   · rintro ⟨k, n, rfl, h1, h2⟩; linarith
   · rintro rfl; exact ⟨3, -1, rfl, by norm_num, by norm_num⟩
 
+/-- Preveri se 4, napačni odgovor 5: korak 1 v desno da +3 (2 + 3 = 5), od x = 1 do x = 3 pa sta dva koraka
+(2 + 2·3 = 8); pri a = 5 bi bil k = (5 − 2)/(3 − 1) = 3/2 ≠ 3. -/
+theorem kviz4_napacni_5 : (2:ℝ) + 3 = 5 ∧ (2:ℝ) + 2 * 3 = 8 ∧ ((5:ℝ) - 2) / (3 - 1) = 3 / 2 ∧ (3:ℝ) / 2 ≠ 3 := by
+  norm_num
+
 /-- Preveri se 5: sonda B z enakim k = 30 skozi (2, 80) je natanko d = 30t + 20 (80 = 30·2 + n); je vzporedna
 d = 30t + 5 in ves čas 15 tisoč km pred A. Napačni d = 30t + 80 ne gre skozi (2, 80). -/
 theorem kviz5 (k n t : ℝ) :
@@ -404,5 +415,10 @@ theorem kviz5 (k n t : ℝ) :
   constructor
   · rintro ⟨rfl, h⟩; exact ⟨rfl, by linarith⟩
   · rintro ⟨rfl, rfl⟩; norm_num
+
+/-- Preveri se 5, napačni odgovor d = 40t: 80 : 2 = 40 je premo sorazmerje, premica d = 40t pa ni vzporedna
+d = 30t + 5 (k = 40 ≠ 30). -/
+theorem kviz5_napacni_40 : (80:ℝ) / 2 = 40 ∧ NaPremici 40 0 2 80 ∧ ¬ Vzporedni 40 0 30 5 := by
+  rw [vzporedni_iff]; unfold NaPremici; norm_num
 
 end Evklid.Lekcije.MAT_OS_9.PremicaVRavnini

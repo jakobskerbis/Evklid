@@ -14,7 +14,9 @@ plašč, robovi, pokončna/poševna/pravilna prizma, tristrana …, kvader je š
 pokončne prizme so pravokotniki in stranski rob je dolg v« kot geometrijska trditev; »pravokotnikov v plašču
 je toliko, kolikor stranic ima osnovna ploskev« (opis mreže); »višina enakokrakega trikotnika razpolovi
 osnovnico« (Primer 3) in »kateti sta pravokotni, zato je ena višina na drugo« (Primer 2) kot geometrijski
-trditvi (dokazana je Pitagorova enačba za h oziroma c); enote (1 dm³ = 1 l je dokazano kot 10³ = 1000) in
+trditvi (dokazana je Pitagorova enačba za h oziroma c), enako »višina trapeza je 4, ker je
+(10 − 4)/2 = 3« v Korak za korakom (dokazan je račun); »stranske ploskve so paralelogrami« (poševna
+prizma) kot geometrijska trditev (zahtevno, še ni dokazano); enote (1 dm³ = 1 l je dokazano kot 10³ = 1000) in
 nasvet o enotah; besedni premisli (zakaj 2O; kovček je »isto telo«: dokazana je enakost 15·4 = 12·5) in
 navodila (Povzetek, zadnja alineja); Preveri se (1) o tem, kaj je plašč (poimenovanje); besedilo napačnih
 odgovorov (dokazano je, da so napačne vrednosti take, kot pravi razlaga).

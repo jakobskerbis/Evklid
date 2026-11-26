@@ -8,9 +8,9 @@ Model: formule so funkcije na ℝ: `O4 a = a²` (kvadratna osnovna ploskev), `pl
 oglišča. Iz vᵢ² = … in vᵢ > 0 je vᵢ enolično določen (`koren_enolicno`). »≈« na dano mesto je |x − a| < pol enote
 zadnjega mesta. Količine so brez enot (cm, m, €).
 Ni v Leanu: pojmi (piramida, osnovna in stranske ploskve, robovi, plašč, poimenovanje po osnovni ploskvi, »od prizme
-do piramide«) kot definicije; tabela razlik prizma/piramida razen formul; risbe in mreža; »stranske ploskve
-pravilne piramide so skladni enakokraki trikotniki« splošno (dokazano je le, da so v modelu štiristrane piramide
-vsi štirje stranski robovi enako dolgi); da je v_s res višina stranskega trikotnika (pravokotnost) in da je v
+do piramide«) kot definicije; tabela razlik prizma/piramida razen formul piramide in V prizme (plašč o·v in
+površina 2O + pl prizme nista v Leanu); risbe in mreža; »stranske ploskve pravilne piramide so skladni
+enakokraki trikotniki« splošno (dokazano je le, da so v modelu štiristrane piramide vsi štirje stranski robovi enako dolgi); da je v_s res višina stranskega trikotnika (pravokotnost) in da je v
 razdalja vrha od osnovne ploskve (v modelu sta to definiciji); formula V = O·v/3 kot prostornina telesa (mera
 množice v ℝ³) — zahtevno, še ni dokazano, zato je V = O·v/3 tu definicija; razrez kocke na šest skladnih piramid
 (geometrijsko; dokazana je le aritmetika a²·(a/2)/3 = a³/6 in 6·a³/6 = a³); poskus z mivko (»natanko trikrat«; kot

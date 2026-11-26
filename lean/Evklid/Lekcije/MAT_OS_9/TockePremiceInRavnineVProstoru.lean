@@ -12,7 +12,7 @@ za korakom in Preveri se 2 so koordinate z robovi iz lekcije, v Primeru 2 kvader
 a, c > 0 (in poljubnim b). Zaokrožene vrednosti so dokazane kot |točna − približek| < pol enote zadnjega mesta.
 Ni v Leanu: risbe, simulacija in »križanje na risbi je le videz« kot trditev o risbi (dokazano je, da DC in
 BF nimata skupne točke in nista v isti ravnini); Žanov rob stropa in črta na tleh ter pajkova nit in rob
-v zgodbi kot opisa brez koordinat (isti položaj kot AB in FG oziroma AB in CG v kocki je dokazan); splošno
+v zgodbi kot opisa brez koordinat (isti položaj kot AB in FG oziroma EF in CG v kocki je dokazan); splošno
 pravilo »ravnino natanko določajo tri nekolinearne točke, premica in točka zunaj nje, dve sekajoči ali
 dve vzporedni premici« (zahtevno, še ni dokazano; dokazano je za A, B, C kocke, da je ravnina skozi njih ena
 sama in G ne leži v njej, ter da gre skozi tri kolinearne točke neskončno ravnin); splošno »dve ravnini sta
@@ -21,7 +21,12 @@ ABCD ∩ BCGF = BC); pravilo pravokotnosti na ravnino je dokazano v obliki »pra
 pravokotna na vsako smer αu + βv« in za tla kocke (vsaka smer v tleh); da je vsaka smer splošne ravnine
 oblike αu + βv, ni dokazano (zahtevno, še ni dokazano); vrtenje »kot vrata« v premisli je opis (dokazano
 je, da je pri eni pravokotnici smeri več, pri dveh pa le navpična); fizika (teža, napeta nit, majanje
-stojala) in poimenovanja; Preveri se (3) in (5) sta dokazani kot pravili, ne kot besedilo odgovorov.
+stojala) in poimenovanja; Preveri se (3) in (5) sta dokazani kot pravili, ne kot besedilo odgovorov; splošno »dve premici v prostoru
+so natanko ena od: sekajoči, vzporedni, mimobežni« in »v ravnini se dve premici sekata ali sta vzporedni«
+(zahtevno, še ni dokazano; dokazani so primeri v kocki); pri premici in ravnini je dokazano, da velja vsaj
+ena od treh leg, da se izključujejo, ni dokazano (zahtevno, še ni dokazano); v Korak za korakom »HG je
+vzporeden z AB« in »HE je vzporeden z BC« (dokazani sta nožišči in razdalji); besedilo napačnih odgovorov
+v Preveri se (dokazano je, da so napačne vrednosti take, kot pravi razlaga).
 -/
 module
 
@@ -119,8 +124,9 @@ theorem lezi (P Q n : V3) (c : ℝ) (hP : P ∈ ravnina n c) (hQ : Q ∈ ravnina
 /-- Predpostavke trditve `lezi` se dajo izpolniti (E, F v ravnini z = 1). -/
 example : kE ∈ ravnina (0, 0, 1) 1 ∧ kF ∈ ravnina (0, 0, 1) 1 := by norm_num [kE, kF, ravnina, sk]
 
-/-- Razlaga, Povzetek: premica in ravnina imajo tri možne lege: premica leži v ravnini, je z njo vzporedna
-(nimata skupne točke) ali jo prebada v natanko eni točki (prebodišču). -/
+/-- Razlaga, Povzetek: premica in ravnina imajo tri možne lege: velja vsaj ena od: premica leži v ravnini,
+je z njo vzporedna (nimata skupne točke) ali jo prebada v natanko eni točki (prebodišču); izključevanje ni
+dokazano (glej glavo). -/
 theorem premica_ravnina (P Q n : V3) (c : ℝ) :
     premica P Q ⊆ ravnina n c ∨ Disjoint (premica P Q) (ravnina n c) ∨
       ∃! X, X ∈ premica P Q ∧ X ∈ ravnina n c := by
@@ -667,17 +673,20 @@ theorem korak_za_korakom :
     razdalja_eq h6 (by norm_num [sk]) le_rfl⟩
 
 /-- Preveri se (2): kocka z robom 5, H(0, 5, 5), ravnina BCGF (x = 5): nožišče je G(5, 5, 5), razdalja 5;
-napačni: |HC| = √50 ≈ 7,07 (poševna daljica, daljša), 5/2 = 2,5 ≠ 5. -/
+napačni: |HC| = √50 ≈ 7,07 (poševna daljica, daljša), 5/2 = 2,5 ≠ 5 (to je razdalja središča kocke
+(2,5; 2,5; 2,5) od BCGF). -/
 theorem preveri2 :
     nozisce (0, 5, 5) (1, 0, 0) 5 = (5, 5, 5) ∧ razdalja (0, 5, 5) (1, 0, 0) 5 = 5 ∧
     sk ((0, 5, 5) - (5, 5, 0)) ((0, 5, 5) - (5, 5, 0)) = 50 ∧ |√(50:ℝ) - 7.07| < 0.005 ∧
-    (5:ℝ) < √50 ∧ (5:ℝ) / 2 = 2.5 := by
+    (5:ℝ) < √50 ∧ (5:ℝ) / 2 = 2.5 ∧ razdalja (2.5, 2.5, 2.5) (1, 0, 0) 5 = 2.5 := by
   have h1 : nozisce (0, 5, 5) (1, 0, 0) 5 = ((5:ℝ), (5:ℝ), (5:ℝ)) := by
     norm_num [nozisce, sk, Prod.ext_iff]
   have a1 : (7.065 : ℝ) < √50 := by rw [Real.lt_sqrt (by norm_num)]; norm_num
   have a2 : √50 < (7.075 : ℝ) := by rw [Real.sqrt_lt' (by norm_num)]; norm_num
+  have h2 : nozisce (2.5, 2.5, 2.5) (1, 0, 0) 5 = ((5:ℝ), (2.5:ℝ), (2.5:ℝ)) := by
+    norm_num [nozisce, sk, Prod.ext_iff]
   refine ⟨h1, razdalja_eq h1 (by norm_num [sk]) (by norm_num), by norm_num [sk], ?_, by linarith,
-    by norm_num⟩
+    by norm_num, razdalja_eq h2 (by norm_num [sk]) (by norm_num)⟩
   rw [abs_lt]; constructor <;> linarith
 
 end Evklid.Lekcije.MAT_OS_9.TockePremiceInRavnineVProstoru

@@ -251,13 +251,13 @@ theorem kviz2 : (R [12, 15, 0, 9, 14]).sum = 50 ∧ sr (R [12, 15, 0, 9, 14]) = 
   refine ⟨by norm_num [R], by norm_num [sr, R], by norm_num, by decide, by decide, by norm_num [med, R]⟩
 
 /-- Preveri se 4 (veter): A 10, 12, 11, 13, 54 in B 20, 21, 19, 20, 20 imata povprečje 20; mediana A je 12,
-mediana B 20; štirje dnevi na A (10, 11, 12, 13) so mirnejši od vseh dni na B (najmanj 19). -/
+mediana B 20; vsi dnevi na A razen dneva s 54 (torej štirje dnevi) so mirnejši od vseh dni na B (najmanj 19). -/
 theorem kviz4 : sr (R [10, 12, 11, 13, 54]) = 20 ∧ sr (R [20, 21, 19, 20, 20]) = 20 ∧
     ([10, 12, 11, 13, 54] : List ℤ).Perm [10, 11, 12, 13, 54] ∧ ([10, 11, 12, 13, 54] : List ℤ).Pairwise (· ≤ ·) ∧
     med (R [10, 11, 12, 13, 54]) = 12 ∧
     ([20, 21, 19, 20, 20] : List ℤ).Perm [19, 20, 20, 20, 21] ∧ ([19, 20, 20, 20, 21] : List ℤ).Pairwise (· ≤ ·) ∧
     med (R [19, 20, 20, 20, 21]) = 20 ∧
-    ∀ a ∈ ([10, 11, 12, 13] : List ℤ), ∀ b ∈ ([20, 21, 19, 20, 20] : List ℤ), a < b := by
+    ∀ a ∈ ([10, 12, 11, 13, 54] : List ℤ), a ≠ 54 → ∀ b ∈ ([20, 21, 19, 20, 20] : List ℤ), a < b := by
   refine ⟨by norm_num [sr, R], by norm_num [sr, R], by decide, by decide, by norm_num [med, R], by decide,
     by decide, by norm_num [med, R], by decide⟩
 

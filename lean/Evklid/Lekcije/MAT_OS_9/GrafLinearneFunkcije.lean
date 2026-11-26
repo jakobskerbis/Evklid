@@ -197,6 +197,15 @@ theorem primer2_pada : StrictAnti (fun x : ℝ => -(1 / 2) * x + 3) := by
   show -(1 / 2) * b + 3 < -(1 / 2) * a + 3
   linarith
 
+/-- Povzetek, Pogoste napake: splošno pravilo – pri k > 0 funkcija y = kx + n narašča, pri k < 0 pada. -/
+theorem narasca_pada (k n : ℝ) :
+    (0 < k → StrictMono (fun x : ℝ => k * x + n)) ∧ (k < 0 → StrictAnti (fun x : ℝ => k * x + n)) := by
+  refine ⟨fun hk a b hab => ?_, fun hk a b hab => ?_⟩
+  · show k * a + n < k * b + n
+    nlinarith
+  · show k * b + n < k * a + n
+    nlinarith
+
 /-! ## Primer 3 -/
 
 /-- Primer 3, korak 1: linearna funkcija y = kx + n z višino 60 pri x = 0 in padcem 1,5 m vsako sekundo je

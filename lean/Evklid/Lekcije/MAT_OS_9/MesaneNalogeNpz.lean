@@ -12,7 +12,9 @@ Ni v Leanu: zemljevid sklopov (tabela znakov), navodila za branje naloge, skice 
 gradbišča); simulacija razen računa 2³ = 8 in 2² = 4; »hipotenuza leži nasproti pravega kota« kot
 poimenovanje; definicije povprečja, mediane in modusa (v lekciji ni podatkov za račun); smiselnost
 (»steber ne more imeti več kot nekaj kubičnih metrov«) kot ocena; besedilo napačnih odgovorov v Preveri se
-(dokazano je, da so napačne vrednosti take, kot pravi razlaga).
+(dokazano je, da so napačne vrednosti take, kot pravi razlaga). Pitagorov izrek je zapisan brez pogoja
+p₁ ≠ p₂, p₃ ≠ p₂: pri izrojenem »trikotniku« je po Mathlibovem dogovoru kot z ničelnim vektorjem π/2,
+ekvivalenca velja tudi tedaj.
 -/
 module
 
@@ -41,12 +43,13 @@ theorem premisli_vrstni_red (x a b : ℝ) :
     (300:ℝ) * 1.2 = 360 ∧ (360:ℝ) * 0.8 = 288 ∧ x * a * b = x * b * a := ⟨by norm_num, by norm_num, by ring⟩
 
 /-- Bolj natančno: pocenitev in podražitev za isti delež p dasta faktor (1 − p)(1 + p) = 1 − p², v obeh
-vrstnih redih; za p = 0,2: 1 − 0,04 = 0,96 in 300·0,96 = 288; za p ≠ 0 je končna cena (x > 0) vedno nižja. -/
+vrstnih redih; za p = 0,2: 1 − 0,04 = 0,96 in 300·0,96 = 288, cena pade za
+1 − 0,96 = 0,04 = 4 %; za p ≠ 0 je končna cena (x > 0) vedno nižja. -/
 theorem odstotki_se_ne_iznicijo (p x : ℝ) (hp : p ≠ 0) (hx : 0 < x) :
     (1 - p) * (1 + p) = 1 - p ^ 2 ∧ (1 + p) * (1 - p) = 1 - p ^ 2 ∧ x * ((1 - p) * (1 + p)) < x ∧
-    (1:ℝ) - 0.2 ^ 2 = 1 - 0.04 ∧ (1:ℝ) - 0.04 = 0.96 ∧ (300:ℝ) * 0.96 = 288 := by
+    (1:ℝ) - 0.2 ^ 2 = 1 - 0.04 ∧ (1:ℝ) - 0.04 = 0.96 ∧ (300:ℝ) * 0.96 = 288 ∧ (1:ℝ) - 0.96 = 0.04 := by
   have hp2 : 0 < p ^ 2 := by positivity
-  refine ⟨by ring, by ring, by nlinarith, by norm_num, by norm_num, by norm_num⟩
+  refine ⟨by ring, by ring, by nlinarith, by norm_num, by norm_num, by norm_num, by norm_num⟩
 
 /-- Predpostavke trditve `odstotki_se_ne_iznicijo` se dajo izpolniti (p = 0,2, x = 300). -/
 example : (0.2 : ℝ) ≠ 0 ∧ (0:ℝ) < 300 := by norm_num
@@ -64,6 +67,13 @@ theorem vrtalnik (x : ℝ) :
 /-- Blok 2: c = 15x + 20; za 3 dni 15·3 + 20 = 65 €. -/
 theorem blok2 : (15:ℝ) * 3 + 20 = 65 := by norm_num
 
+/-- Blok 2, Povzetek: pri f(x) = kx + n je n začetna vrednost (f(0) = n), k pa sprememba na enoto
+(f(x + 1) − f(x) = k); za c(x) = 15x + 20: c(0) = 20 in c(x + 1) − c(x) = 15 (cena na dan). -/
+theorem k_in_n (k n x : ℝ) :
+    k * 0 + n = n ∧ (k * (x + 1) + n) - (k * x + n) = k ∧
+      (15:ℝ) * 0 + 20 = 20 ∧ (15 * (x + 1) + 20) - (15 * x + 20) = 15 :=
+  ⟨by ring, by ring, by ring, by ring⟩
+
 /-- Primer 4: 15x + 20 = 95 natanko pri x = 5 (15x = 75, x = 75 : 15 = 5); preizkus 15·5 + 20 = 95. -/
 theorem primer4 (x : ℝ) :
     (15 * x + 20 = 95 ↔ 15 * x = 75) ∧ (15 * x = 75 ↔ x = 5) ∧ (75:ℝ) / 15 = 5 ∧ (15:ℝ) * 5 + 20 = 95 := by
@@ -79,7 +89,7 @@ theorem preveri1 :
 
 /-! ## Blok 3: Pitagorov izrek -/
 
-/-- Blok 3, Povzetek: v trikotniku p₁p₂p₃ (evklidska ravnina) velja |p₁p₃|² = |p₁p₂|² + |p₃p₂|² natanko
+/-- Blok 3, Povzetek: v trikotniku p₁p₂p₃ (tudi izrojenem, glej glavo) (evklidska ravnina) velja |p₁p₃|² = |p₁p₂|² + |p₃p₂|² natanko
 tedaj, ko je kot pri p₂ pravi: zato zidarjev preizkus 60² + 80² = 100² zagotovi pravi vogal. -/
 theorem pitagora (p₁ p₂ p₃ : EuclideanSpace ℝ (Fin 2)) :
     dist p₁ p₃ * dist p₁ p₃ = dist p₁ p₂ * dist p₁ p₂ + dist p₃ p₂ * dist p₃ p₂ ↔

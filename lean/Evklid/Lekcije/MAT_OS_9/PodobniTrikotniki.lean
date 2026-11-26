@@ -13,7 +13,7 @@ vrednosti niso pravilne). Geometrija: trikotnik je trojica točk evklidskega pro
 podobnost je Mathlibova `Similar` (vse razdalje v istem razmerju), koti so `∠` v radianih (180° = π).
 Izreki KK, SKS, SSS so Mathlibovi (`similar_of_angle_angle`, `similar_of_side_angle_side`,
 `similar_of_dist_mul_eq_dist_mul_eq`). Kjer so podani le števila stranic, je »nista podobna« dokazano kot
-»ni k, da bi bile vse tri stranice pomnožene s k«. Ploščina pravokotnega trikotnika je račun ab/2 (obrazec
+»ni k, da bi bile vse tri stranice (urejene po velikosti, kot v `vrstni_red`) pomnožene s k«. Ploščina pravokotnega trikotnika je račun ab/2 (obrazec
 ni formaliziran kot mera). Decimalna števila so točna racionalna števila v ℝ.
 -/
 module
@@ -246,16 +246,18 @@ example : (2.5:ℝ) ≠ 0 := by norm_num
 theorem sestevanje : (15:ℝ) / 5 = 3 ∧ (3:ℝ) * 3 = 9 ∧ (3:ℝ) + 10 = 13 ∧ (9:ℝ) ≠ 13 := by norm_num
 
 /-- Pogoste napake 3, Povzetek, Z analogijo: prištevanje istega števila d > 0 spremeni razmerje, če stranici
-nista enaki: (a + d)/a ≠ (c + d)/c pri 0 < a < c. -/
-theorem pristevanje_splosno (a c d : ℝ) (ha : 0 < a) (hac : a < c) (hd : 0 < d) :
+nista enaki: (a + d)/a ≠ (c + d)/c pri a, c > 0, a ≠ c. -/
+theorem pristevanje_splosno (a c d : ℝ) (ha : 0 < a) (hc : 0 < c) (hac : a ≠ c) (hd : 0 < d) :
     (a + d) / a ≠ (c + d) / c := by
-  have hc : 0 < c := by linarith
   rw [Ne, div_eq_div_iff ha.ne' hc.ne']
   intro h
-  nlinarith
+  have : d * (c - a) = 0 := by linarith
+  rcases mul_eq_zero.mp this with h' | h'
+  · linarith
+  · exact hac (by linarith)
 
 /-- Predpostavke `pristevanje_splosno` se dajo izpolniti (a = 3, c = 5, d = 3). -/
-example : (0:ℝ) < 3 ∧ (3:ℝ) < 5 ∧ (0:ℝ) < 3 := by norm_num
+example : (0:ℝ) < 3 ∧ (0:ℝ) < 5 ∧ (3:ℝ) ≠ 5 ∧ (0:ℝ) < 3 := by norm_num
 
 /-- Z analogijo (recept): prištevanje c > 0 obema sestavinama a ≠ b (b > 0) pokvari razmerje: a/b ≠ (a + c)/(b + c). -/
 theorem recept (a b c : ℝ) (hb : 0 < b) (hab : a ≠ b) (hc : 0 < c) :
@@ -277,17 +279,17 @@ theorem recept_podvojen (a b : ℝ) : (2 * a) / (2 * b) = a / b := by
 
 /-- Pogoste napake 4: eno ujemajoče razmerje, enak obseg ali enakokrakost ne zadoščajo: 4, 6, 8 in 6, 9, 13
 (6/4 = 9/6, a 13/8 = 1,625 ≠ 1,5); 3, 4, 5 in 4, 4, 4 (oba obseg 12); 2, 2, 3 in 2, 2, 1 (oba enakokraka);
-v nobenem paru ni k, da bi bile vse tri stranice pomnožene s k. Vsi so trikotniki (trikotniška neenakost). -/
+v nobenem paru ni k, da bi bile vse tri stranice, urejene po velikosti (2, 2, 3 ↔ 1, 2, 2), pomnožene s k. Vsi so trikotniki (trikotniška neenakost). -/
 theorem premalo :
     ((6:ℝ) / 4 = 1.5 ∧ (9:ℝ) / 6 = 1.5 ∧ (13:ℝ) / 8 = 1.625 ∧ (1.625:ℝ) ≠ 1.5 ∧
       ¬ ∃ k : ℝ, 6 = k * 4 ∧ 9 = k * 6 ∧ 13 = k * 8) ∧ (13:ℝ) < 6 + 9 ∧
     ((3:ℝ) + 4 + 5 = 4 + 4 + 4 ∧ ¬ ∃ k : ℝ, 4 = k * 3 ∧ 4 = k * 4 ∧ 4 = k * 5) ∧
-    ((¬ ∃ k : ℝ, 2 = k * 2 ∧ 2 = k * 2 ∧ 1 = k * 3) ∧ (3:ℝ) < 2 + 2 ∧ (1:ℝ) < 2 + 2) := by
+    ((¬ ∃ k : ℝ, 1 = k * 2 ∧ 2 = k * 2 ∧ 2 = k * 3) ∧ (3:ℝ) < 2 + 2 ∧ (1:ℝ) < 2 + 2) := by
   refine ⟨⟨by norm_num, by norm_num, by norm_num, by norm_num, ?_⟩, by norm_num, ⟨by norm_num, ?_⟩,
     ⟨?_, by norm_num, by norm_num⟩⟩
   · rintro ⟨k, h1, _, h3⟩; linarith
   · rintro ⟨k, h1, h2, _⟩; linarith
-  · rintro ⟨k, h1, _, h3⟩; linarith
+  · rintro ⟨k, h1, h2, _⟩; linarith
 
 /-! ## Bolj natančno: ploščine -/
 
@@ -329,8 +331,9 @@ theorem preveri2 :
 
 /-- Preveri se 3: o' = 3o, kar ni o + 3 (razen pri o = 1,5) in ni 9o (razen pri o = 0). -/
 theorem preveri3 (a b c : ℝ) (ho : 0 < a + b + c) :
-    3 * a + 3 * b + 3 * c = 3 * (a + b + c) ∧ 3 * (a + b + c) ≠ 9 * (a + b + c) := by
-  refine ⟨by ring, fun h => by linarith⟩
+    3 * a + 3 * b + 3 * c = 3 * (a + b + c) ∧ 3 * (a + b + c) ≠ 9 * (a + b + c) ∧
+      (3 * (a + b + c) = (a + b + c) + 3 ↔ a + b + c = 1.5) := by
+  refine ⟨by ring, fun h => by linarith, ⟨fun h => by linarith, fun h => by rw [h]; norm_num⟩⟩
 
 /-- Predpostavka `preveri3` se da izpolniti (3 + 4 + 5 > 0). -/
 example : (0:ℝ) < 3 + 4 + 5 := by norm_num
