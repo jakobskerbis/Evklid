@@ -24,7 +24,7 @@ Taka števila srečuješ pogosto. Kvadratna nalepka za telefon s ploščino $2\,
 :::premisli
 Na zaslonu telefona sta $\dfrac{1}{7} = 0{,}1428571429$ in $\sqrt{2} = 1{,}414213562$ skoraj enako dolga. Zakaj je prvo število racionalno, drugo pa ne?
 ---
-Pri $\dfrac{1}{7}$ se skupina števk $142857$ ponavlja v nedogled; zaslon je le odrezal zapis. Pri $\sqrt{2}$ se tudi za zaslonom noben vzorec ne ponavlja. O vrsti števila ne odloča dolžina zapisa na zaslonu, ampak to, ali je zapis periodičen.
+Pri $\dfrac{1}{7}$ se skupina števk $142857$ ponavlja v nedogled; zaslon je zapis le zaokrožil. Pri $\sqrt{2}$ se tudi za zaslonom noben vzorec ne ponavlja. O vrsti števila ne odloča dolžina zapisa na zaslonu, ampak to, ali je zapis periodičen.
 :::
 
 **3. Kdaj je koren iracionalen?** Naj bo $n$ naravno število. Če je $n$ popolni kvadrat ($1$, $4$, $9$, $16$, $25$, …), je $\sqrt{n}$ naravno število, na primer $\sqrt{16} = 4$. Če $n$ ni popolni kvadrat, je $\sqrt{n}$ iracionalno, na primer $\sqrt{2}$, $\sqrt{7}$, $\sqrt{10}$.

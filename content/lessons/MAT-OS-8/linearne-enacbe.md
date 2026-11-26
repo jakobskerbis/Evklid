@@ -238,7 +238,7 @@ $$x = \frac{c - b}{a}$$
 ~ To je $4x$, ne $x$. Na koncu moraš obe strani deliti s $4$.
 + $x = 5$
 - $x = -5$
-~ Oba člena si prenesel z napačnim predznakom: $4x = -9 - 11 = -20$. Na obeh straneh moraš prišteti $9$.
+~ Obema številoma si dal napačen predznak: $4x = -11 - 9 = -20$. Na obeh straneh moraš prišteti $9$.
 > Na obeh straneh prištejemo $9$: $4x = 20$, nato delimo s $4$: $x = 5$. Preizkus: $4 \cdot 5 - 9 = 11$. ✓
 
 ? Kolikšna je rešitev enačbe $2(x - 3) = x + 4$?

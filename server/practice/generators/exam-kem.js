@@ -91,7 +91,7 @@ export const EXAM_KEM = [
             data: { given: [dq("m", m, "g"), dq("M", Mg, "g/mol"), "N_A = 6.022 \\times 10^{23}\\ \\mathrm{mol^{-1}}"], find: ["N_{atoms}"] },
             hint: L("Find the number of molecules, then multiply by the number of atoms in one molecule.", "अणुओं की संख्या ज्ञात कीजिए, फिर उसे एक अणु के परमाणुओं की संख्या से गुणा कीजिए।"),
             formula: ["n = \\dfrac{m}{M}", `N = n N_A \\cdot (\\text{${L("atoms per molecule", "प्रति अणु परमाणु")}})`],
-            solution: `${H("मोल: ")}$n = ${en(m)}/${Mg} \\approx ${en(m / Mg, 4)}\\ \\text{mol}$\n${L("Molecules", "अणु")}: $${en(m / Mg, 4)} \\cdot 6.022 \\approx ${en((m / Mg) * 6.022, 3)} \\times 10^{23}$\n${L("Atoms", "परमाणु")}: $\\times ${at} \\approx ${en(N, 2)} \\times 10^{23}$`,
+            solution: `${H("मोल: ")}$n = ${en(m)}/${Mg} \\approx ${en(m / Mg, 4)}\\ \\text{mol}$\n${L("Molecules", "अणु")}: $${en(m / Mg, 4)} \\cdot 6.022 \\times 10^{23} \\approx ${en((m / Mg) * 6.022, 3)} \\times 10^{23}$\n${L("Atoms", "परमाणु")}: $\\times ${at} \\approx ${en(N, 2)} \\times 10^{23}$`,
           });
         }
         const mm = (M / NA) * 1e23;
