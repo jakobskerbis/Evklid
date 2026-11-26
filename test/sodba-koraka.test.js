@@ -256,6 +256,9 @@ test("sodba koraka AUDIT-092 (pregled 2): stransko vprašanje inštruktorja brez
   assert.equal(v("Reši enačbo $x^2+2x+5=0$.", "Koliko je $-\\frac{b}{2a}$?", "x = -1"), null);
   assert.equal(v("Reši enačbo $x^2+4=0$.", "Vstavi kakšno število, npr. 2, in poglej, kaj dobiš.", "x = 2"), null);
   assert.equal(v("Reši enačbo $x^6=-64$.", "Koliko je $\\sqrt[6]{64}$? Zapiši kot x.", "x = 2"), null);
+  assert.equal(v("Reši enačbo $x^6 = -64$.", "Kaj pa, če bi bilo na desni strani $x^6 = -64$ pozitivno število? Koliko bi bil x?", "x = 2"), null);
+  assert.equal(v("Reši enačbo $x^2+2x+5=0$.", "Pri katerem x je leva stran enačbe $x^2 + 2x + 5 = 0$ najmanjša?", "x = -1"), null);
+  assert.equal(v("Reši enačbo $x^2+2x+5=0$.", "Pri katerem x je leva stran najmanjša?", "x = -1"), null);
   assert.equal(v("Reši enačbo $x^6 = -64$.", "Rešujemo $x^{6} = -64$. Kaj dobiš?", "x = 2")?.wrong, true);
   const t0 = performance.now();
   v("Reši enačbo $x^6 = -64$.", "Kaj narediš?", "x = 2" + " ".repeat(50000) + "a");

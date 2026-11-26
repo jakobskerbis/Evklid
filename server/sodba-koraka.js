@@ -401,6 +401,9 @@ function otherEquation(pre, prevTutor) {
     const task = [norm(p.problem), norm(p.problemTex)];
     const rest = String(prevTutor || "").replace(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$|\\\(([\s\S]+?)\\\)/g, (m, a, b, c) => (task.includes(norm(a ?? b ?? c)) ? " " : m));
     if (/[=$\d]|\\\(/.test(rest)) return true;
+    // Stransko ali »kaj če« vprašanje brez matematike (»Pri katerem x je leva stran najmanjša?«): sodba le ob splošnem
+    // »Kaj narediš?«.
+    if (/(?<!\p{L})(?:če bi|namesto|recimo|denimo|kaj pa|koliko|kater\p{L}*|kdaj|vstavi\p{L}*|poskus\p{L}*|preizk\p{L}*|najmanj\p{L}*|največ\p{L}*|lih\p{L}*|sod\p{L}*|primer\p{L}*|lev\p{L}*|desn\p{L}*|stran\p{L}*|what if|which|how many|smallest|largest)(?!\p{L})/iu.test(rest)) return true;
   }
   const t = tutorReference(prevTutor, v);
   if (t === null) return true;
