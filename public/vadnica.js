@@ -191,7 +191,7 @@ async function startSession(kind, body = {}) {
   // Izpiti (zunaj Slovenije): isti mehanizem, a z izpitnimi naslovi.
   if (examMode() && kind === "tek") cfg = { ...cfg, icon: "target", title: t("exam.train"), intro: t("exam.trainText") };
   if (examMode() && kind === "contest") cfg = { ...cfg, title: t("exam.mock"), intro: t("exam.mockIntro") };
-  setActiveMode({ review: "review", daily: "daily", "test-prep": "test" }[kind] || null);
+  setActiveMode({ review: "review", daily: "daily", "test-prep": "test", "priprava-kviz": "test" }[kind] || null);
   if (kind === "review" && state.pathKey) body = { path: state.pathKey, ...body }; // le izbrani predmet
   let out;
   try {
@@ -239,7 +239,7 @@ function rewardHtml(mode, n, xp) {
 // Slike pri nalogah (graf premice, številska premica): public/slike-nalog.js.
 
 // Na širokem zaslonu je med serijo nalog desno razlaga teme trenutne naloge (ne pri preizkusu znanja in tekmovanju).
-const SIDE_MODES = ["review", "daily", "unit", "test", "tek", "list"];
+const SIDE_MODES = ["review", "daily", "unit", "test", "tek", "list", "priprava"];
 async function showSideExplanation(task, ctx) {
   const side = $("#session-side");
   if (!side) return;

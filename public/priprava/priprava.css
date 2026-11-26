@@ -1,6 +1,8 @@
 /* Priprava na test (public/priprava/priprava.js, PR 7): isti deli na telefonu, iPadu in računalniku. Telefon en
    stolpec; od 820 px dva stolpca (Danes levo, teme desno); od 1200 px trije (pripravljenost in dnevi, Danes, teme).
    Samo barve iz :root (svetla in temna tema), dotik vsaj 44 px, brez vodoravnega drsenja. */
+/* Na zaslonih priprave vodi nazaj puščica v glavi (korak nazaj, »Danes«); splošni »← Učna pot« bi bil drugi gumb nazaj. */
+#view-topic:has(> #topic-content > .pr) #back-to-path { display: none; }
 .pr { display: flex; flex-direction: column; gap: 14px; max-width: 1400px; margin: 0 auto; }
 .pr h1, .pr h2, .pr h3, .pr p { margin: 0; }
 .pr .muted { color: var(--muted); }
@@ -74,8 +76,11 @@
 mark.pr-neg { background: color-mix(in srgb, var(--warm) 22%, transparent); color: inherit; border-radius: 4px; padding: 0 2px; font-weight: 700; }
 
 /* Danes */
-.pr-mreza { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; grid-template-areas: "a" "b" "c" "d" "e"; }
-.pr-a { grid-area: a; } .pr-b { grid-area: b; } .pr-c { grid-area: c; } .pr-d { grid-area: d; } .pr-e { grid-area: e; }
+/* Stolpci (pr-st-l: pripravljenost in dnevi, pr-st-m: Danes, pr-st-r: teme in povezave) so na telefonu »contents«:
+   en stolpec v vrstnem redu pripravljenost, Danes, dnevi, teme, povezave. */
+.pr-mreza { display: flex; flex-direction: column; gap: 14px; }
+.pr-st { display: contents; }
+.pr-a { order: 1; } .pr-b { order: 2; } .pr-c { order: 3; } .pr-d { order: 4; } .pr-e { order: 5; }
 .pr-junak { background: var(--hero-a); color: #fff; border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; gap: 10px; }
 .pr-junak-vrh { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: .95rem; }
 .pr-junak-vrh span { font-size: .82rem; opacity: .9; }
@@ -152,7 +157,13 @@ mark.pr-neg { background: color-mix(in srgb, var(--warm) 22%, transparent); colo
 
 /* iPad in širši: dva stolpca */
 @media (min-width: 820px) {
-  .pr-mreza { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "a d" "b d" "c e"; align-items: start; }
+  /* iPad: levo pripravljenost, Danes, dnevi; desno teme in povezave (svoj stolpec, brez praznih vrstic). */
+  .pr-mreza { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto auto 1fr; gap: 14px 18px; align-items: start; }
+  .pr-a { grid-column: 1; grid-row: 1; } .pr-b { grid-column: 1; grid-row: 2; } .pr-c { grid-column: 1; grid-row: 3; }
+  .pr-st-r { display: flex; flex-direction: column; gap: 14px; grid-column: 2; grid-row: 1 / -1; }
+  #view-topic:has(> #topic-content > .pr) .topic-top { justify-content: flex-end; }
+  .pr-povezava[data-pr-obseg] { display: none; } /* kartica »Teme testa« je že vidna ob strani */
+  .pr-povezave { grid-template-columns: minmax(0, 1fr); }
   .pr-tema-mreza { grid-template-columns: minmax(0, 1fr) 260px; align-items: start; }
   .pr-tema-dej { position: sticky; top: 0; }
   .pr-form, .pr > .pr-uvod, .pr > .pr-dodaj, .pr > .pr-prilepi, .pr > .pr-viri, .pr > .pr-seznam, .pr > .pr-datum, .pr > .pr-dno, .pr > .pr-koraki, .pr > .pr-err, .pr > .pr-mala { width: 100%; max-width: 640px; margin-inline: auto; box-sizing: border-box; }
@@ -160,7 +171,9 @@ mark.pr-neg { background: color-mix(in srgb, var(--warm) 22%, transparent); colo
 }
 /* računalnik: trije stolpci */
 @media (min-width: 1200px) {
-  .pr-mreza { grid-template-columns: 300px minmax(0, 1fr) 380px; grid-template-areas: "a b d" "c b d" "c b e"; }
+  .pr-mreza { grid-template-columns: 300px minmax(0, 1fr) 380px; grid-template-rows: auto; gap: 24px; }
+  .pr-st { display: flex; flex-direction: column; gap: 16px; grid-row: 1; min-width: 0; }
+  .pr-st-l { grid-column: 1; } .pr-st-m { grid-column: 2; } .pr-st-r { grid-column: 3; }
   .pr-c .pr-dnevi { grid-template-columns: minmax(0, 1fr); }
   .pr-c .pr-dnevi li { flex-direction: row; justify-content: space-between; align-items: center; min-height: 40px; }
 }

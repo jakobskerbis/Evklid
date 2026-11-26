@@ -277,8 +277,8 @@ function virVrstica(v) {
       <div class="muted pr-vir-meta">${esc(meta)}</div>
       ${v.stanje === "branje" ? `<div class="pr-tek" aria-hidden="true"><span></span></div>` : ""}
       ${skeni ? `<p class="muted pr-mala">${esc(t("pr.srcScanLeft"))}</p>` : ""}
-      ${v.stanje === "napaka" ? `<p class="pr-opozorilo ne">${esc(t(`pr.err.${v.napaka}`) !== `pr.err.${v.napaka}` ? t(`pr.err.${v.napaka}`) : t("pr.err.other"))}</p>` : ""}
-      ${neg ? `<p class="pr-opozorilo">${oznaciNegotovo(esc(t("pr.srcUnsure", { n: neg })))}</p>` : ""}
+      ${v.stanje === "napaka" ? `<p class="pr-opozorilo ne"><span>${esc(t(`pr.err.${v.napaka}`) !== `pr.err.${v.napaka}` ? t(`pr.err.${v.napaka}`) : t("pr.err.other"))}</span></p>` : ""}
+      ${neg ? `<p class="pr-opozorilo"><span>${oznaciNegotovo(esc(t("pr.srcUnsure", { n: neg })))}</span></p>` : ""}
       <div class="pr-vir-dej">${v.stanje === "napaka" && v.vrsta !== "slika" ? `<button type="button" class="text-btn" data-pr-znova-vir="${v.id}">${esc(t("pr.retry"))}</button>` : ""}
       <button type="button" class="text-btn pr-brisi" data-pr-brisi="${v.id}">${icon("trash-2")} ${esc(t("pr.srcDelete"))}</button></div>
     </li>`;
@@ -611,7 +611,7 @@ function izrisiDomov(n) {
   const stanje = new Map((napredek?.teme || []).map((x) => [x.id, x]));
   const teme = (napredek?.teme || []).map((x) => {
     const s = x.stanje === "zapiski" ? "zapiski" : x.nalog ? x.stanje : x.stanje === "nova" ? "brez" : x.stanje;
-    return `<li><button type="button" class="pr-tema-v" data-pr-tema-odpri="${esc(x.id)}"><span dir="auto">${esc(x.ime)}</span><span class="pr-chip ${RAZRED_STANJA[x.stanje] || "siv"}">${esc(t(`pr.s.${s}`))}</span>${icon("chevron-right")}</button></li>`;
+    return `<li><button type="button" class="pr-tema-v" data-pr-tema-odpri="${esc(x.id)}"><span dir="auto">${esc(x.ime)}</span><span class="pr-chip ${s === "brez" ? "siv" : RAZRED_STANJA[x.stanje] || "siv"}">${esc(t(`pr.s.${s}`))}</span>${icon("chevron-right")}</button></li>`;
   });
   const viri = priprava.viri.length;
   const izsekov = priprava.viri.reduce((a, v) => a + (v.izsekov || 0), 0);
@@ -621,7 +621,7 @@ function izrisiDomov(n) {
       pod: [priprava.naslov, plan?.unitTitles?.join(", ")].filter(Boolean).join(" · "),
       desno: `<button type="button" class="ghost icon-only" data-pr-nastavitve aria-label="${esc(t("pr.settings"))}" title="${esc(t("pr.settings"))}">${icon("settings")}</button>`,
     })}
-    <div class="pr-mreza">
+    <div class="pr-mreza"><div class="pr-st pr-st-l">
       <section class="pr-junak pr-a">
         <div class="pr-junak-vrh"><b>${esc(kdaj)}</b><span>${esc(datum(priprava.datum_testa, { weekday: "short", day: "numeric", month: "numeric" }))}</span></div>
         ${
@@ -631,11 +631,6 @@ function izrisiDomov(n) {
         <div class="pr-trak-napredka" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pr.odstotek}" aria-label="${esc(t("pr.ready"))}"><span style="width:${pr.odstotek}%"></span></div>
         <p>${esc(t("pr.readyText", { a: pr.obvladanih, b: pr.preverljivih }))}</p>`
         }
-      </section>
-      <section class="card pr-danes pr-b">
-        <h2 class="pr-h2">${esc(t("pr.todayTitle"))}</h2>
-        ${danes.length ? `<ul class="pr-enote">${danes.map((u, i) => enotaHtml(u, i, nacrt)).join("")}</ul>` : `<p class="muted">${esc(t("pr.todayEmpty"))}</p>`}
-        ${naprej ? `<button type="button" class="primary big pr-naprej" data-pr-enota="${naprejI}">${esc(t("pr.continue", { what: `${t(`pr.u.${naprej.vrsta}`).toLowerCase()}${naprej.tema ? ` ${naprej.tema.ime}` : ""}` }))}</button>` : ""}
       </section>
       <section class="pr-dnevi-o pr-c">
         <h2 class="pr-h2 muted">${esc(t("pr.nextDays"))}</h2>
@@ -647,6 +642,13 @@ function izrisiDomov(n) {
           .join("")}</ol>
         ${nacrt.stisnjeno ? `<p class="muted pr-mala">${esc(t("pr.squeezed", { n: nacrt.nePrideNaVrsto.length }))}</p>` : ""}
       </section>
+    </div><div class="pr-st pr-st-m">
+      <section class="card pr-danes pr-b">
+        <h2 class="pr-h2">${esc(t("pr.todayTitle"))}</h2>
+        ${danes.length ? `<ul class="pr-enote">${danes.map((u, i) => enotaHtml(u, i, nacrt)).join("")}</ul>` : `<p class="muted">${esc(t("pr.todayEmpty"))}</p>`}
+        ${naprej ? `<button type="button" class="primary big pr-naprej" data-pr-enota="${naprejI}">${esc(t("pr.continue", { what: `${t(`pr.u.${naprej.vrsta}`).toLowerCase()}${naprej.tema ? ` ${naprej.tema.ime}` : ""}` }))}</button>` : ""}
+      </section>
+    </div><div class="pr-st pr-st-r">
       <section class="card pr-teme-k pr-d">
         <div class="pr-h-vrsta"><h2 class="pr-h2">${esc(t("pr.topicsCard"))}</h2><button type="button" class="text-btn" data-pr-obseg>${esc(t("pr.editScope"))}</button></div>
         <ul class="pr-teme-seznam">${teme.join("")}</ul>
@@ -655,7 +657,7 @@ function izrisiDomov(n) {
         <button type="button" class="pr-povezava" data-pr-obseg><b>${esc(t("pr.topicsCard"))}</b><small>${esc(t("pr.topicsN", { n: napredek?.teme?.length || 0 }))}</small></button>
         <button type="button" class="pr-povezava" data-pr-zapiski><b>${esc(t("pr.myNotes"))}</b><small>${esc(t("pr.notesMeta", { a: t("pr.sourcesN", { n: viri }), b: t("pr.srcCuts", { n: izsekov }) }))}</small></button>
       </nav>
-    </div>`,
+    </div></div>`,
     n,
   );
   if (!el) return;
@@ -731,7 +733,7 @@ function izrisiTemo(n, tm, r, info, sporocilo = "") {
       ${r.odstavki.map(odstavekHtml).join("")}
       <p class="muted pr-mala">${r.zavrnjenih ? `${esc(t("pr.dropped", { n: r.zavrnjenih }))} ` : ""}${esc(t("pr.notCorrect"))}</p>`;
   } else if (izsekov) {
-    vsebina = `<div class="card pr-razlozi"><p>${esc(t("pr.makeExplText"))}${P.strani ? ` ${esc(t("pr.quota", { n: P.strani.left }))}` : ""}</p>
+    vsebina = `<div class="card pr-razlozi"><p>${esc(t("pr.makeExplText"))}${P.strani ? ` ${esc(t("pr.pagesLeft", { n: P.strani.left }))}` : ""}</p>
       <button type="button" class="primary" data-pr-razlozi="nova">${esc(t("pr.makeExpl"))}</button></div>`;
   } else vsebina = `<p class="card muted">${esc(t("pr.noCuts"))}</p>`;
   const el = izrisi(

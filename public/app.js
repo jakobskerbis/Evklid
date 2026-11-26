@@ -3844,55 +3844,28 @@ async function goNew({ skipHint = false } = {}) {
   if (m.newTopic.practice && !pretest) await nextPractice({ stay: true });
 }
 
-async function showTestPrep(edit = false) {
+// Priprava na test (public/priprava/priprava.js, docs/priprava.md PR 7): test, zapiski, teme, prvi kviz, »Danes« z
+// načrtom, pripravljenostjo iz izkazanega znanja in razlago teme iz zapiskov. Modul, slog in besedila ob prvem odprtju.
+const pripravaMod = lenModul("./priprava/priprava.js");
+function showTestPrep(edit = false) {
   setActiveMode("test");
-  const { plan } = await api(`/api/students/${state.student.id}/test-plan`);
-  showView("topic");
-  const box = $("#topic-content");
-  if (plan && !edit && plan.daysLeft >= 0) {
-    const when = plan.daysLeft === 0 ? t("test.today") : plan.daysLeft === 1 ? t("test.tomorrow") : t("test.inDays", { n: plan.daysLeft });
-    box.innerHTML = `<h1 class="with-icon">${icon("clipboard-check")} ${t("mode.test")}</h1>
-      <div class="card"><p>${t("test.when", { when, date: escapeHtml(new Date(plan.date).toLocaleDateString(locale())) })}</p>
-      <p class="muted">${t("test.material", { list: (plan.subject && state.pathSubject && plan.subject !== state.pathSubject ? `${escapeHtml(SUBJECT_NAMES[plan.subject] || plan.subject)} – ` : "") + plan.unitTitles.map(escapeHtml).join(", ") })}</p>
-      <p class="muted">${t("test.howto")}</p>
-      <div class="actions"><button class="primary" id="tp-start">${t("test.startToday")}</button><button id="tp-edit">${t("common.change")}</button></div></div>`;
-    $("#tp-start").addEventListener("click", () => startSession("test-prep"));
-    $("#tp-edit").addEventListener("click", () => showTestPrep(true));
-    return;
+  if (!pripravaMod.now()) {
+    showView("topic");
+    viewNote("#topic-content", "common.loading");
   }
-  const p = await api(`/api/students/${state.student.id}/path?key=${encodeURIComponent(state.pathKey || "")}`);
-  const today = new Date().toISOString().slice(0, 10);
-  const chosen = new Set(plan?.path === p.key ? plan.units : []);
-  box.innerHTML = `<h1 class="with-icon">${icon("clipboard-check")} ${t("mode.test")}</h1>
-    <form id="tp-form" class="card">
-      <p><b>${t("test.which")}</b> <span class="muted">(${escapeHtml(p.label || "")})</span></p>
-      <div class="tp-units">${p.units
-        .map((u, i) =>
-          u.hasPractice
-            ? `<label class="check"><input type="checkbox" name="unit" value="${i}" ${chosen.has(i) ? "checked" : ""}> ${escapeHtml(u.title)}</label>`
-            : "",
-        )
-        .join("")}</div>
-      <p><label><b>${t("test.date")}</b><br><input type="date" name="date" min="${today}" value="${plan?.date && plan.date >= today ? plan.date : ""}" required></label></p>
-      <div class="actions"><button class="primary">${t("test.saveStart")}</button>${plan ? `<button type="button" id="tp-del">${t("test.remove")}</button>` : ""}</div>
-      <div id="tp-err" class="muted"></div>
-    </form>`;
-  $("#tp-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const f = new FormData(e.target);
-    const units = f.getAll("unit").map(Number);
-    if (!units.length) return ($("#tp-err").textContent = t("test.pickUnit"));
-    try {
-      await api(`/api/students/${state.student.id}/test-plan`, { method: "POST", body: { path: p.key, units, date: f.get("date") } });
-      startSession("test-prep");
-    } catch (err) {
-      $("#tp-err").textContent = err.message;
-    }
-  });
-  $("#tp-del")?.addEventListener("click", async () => {
-    await api(`/api/students/${state.student.id}/test-plan`, { method: "DELETE" });
-    showTestPrep(true);
-  });
+  return pripravaMod.load().then(
+    (m) =>
+      m.odpri(
+        {
+          api, renderMath, toast, showView, setActiveMode, setBack, startSession, addSession, openTopic, nextPractice, learnWithTutor, openLesson,
+          getStudent: () => state.student,
+          pathKey: () => state.pathKey,
+          box: () => $("#topic-content"),
+        },
+        { uredi: edit },
+      ),
+    () => pripravaMod.now() || viewNote("#topic-content", "off.noConnection", true),
+  );
 }
 
 document.querySelectorAll("#modebar [data-mode]").forEach((b) =>

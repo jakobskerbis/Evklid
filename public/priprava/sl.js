@@ -138,6 +138,7 @@ export default {
   "pr.makeExpl": "Pripravi razlago",
   "pr.remakeExpl": "Pripravi znova",
   "pr.makeExplText": "Razlago sestavim samo iz tvojih zapiskov o tej temi; vsak odstavek ima navedek in stran. Porabi 1 stran iz mesečne meje.",
+  "pr.pagesLeft": { one: "Ta mesec še {n} stran.", two: "Ta mesec še {n} strani.", few: "Ta mesec še {n} strani.", other: "Ta mesec še {n} strani." },
   "pr.making": "Pripravljam razlago …",
   "pr.noCuts": "V tvojih zapiskih ni izsekov o tej temi. Uporabi lekcijo v učbeniku ali vadi naloge.",
   "pr.err.razlaga_nepreverjena": "Razlage ni bilo mogoče preveriti z zapiski. Poskusi znova ali dodaj zapiske.",
