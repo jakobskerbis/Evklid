@@ -36,9 +36,11 @@ približno minuto izpada, zato se nove različice objavljajo **samo ponoči med 
 času (j, 19. 11. 2026, »Noč zdaj, baza po pilotu«). Po pilotu (po 15. 12. 2026) se baza preseli izven
 Renderja; takrat objava ne bo več pomenila izpada in nočno okno ne bo več potrebno.
 
-**Do nadaljnjega (j, 24. 11. 2026): vsaka združitev v `main` se objavi takoj, ko so testi zeleni**, tudi
-podnevi in med uporabo (vsakič ~1 minuta izpada). Spodnja nočna pravila spet veljajo, ko v
-`scripts/render-objava.js` nastaviš `TAKOJ_DO = 0`.
+**Do 10. 12. 2026 (j, 24. 11. 2026): vsaka združitev v `main` se objavi takoj, ko so testi zeleni**, tudi
+podnevi in med uporabo (vsakič ~1 minuta izpada). **Od 10. 12. 2026 00:00 (začetek pilota) spet veljajo
+spodnja nočna pravila** (j, 26. 11. 2026, kartica »Nočno okno med pilotom«; `TAKOJ_DO` v
+`scripts/render-objava.js`). Pred objavo ni ločenega preizkusnega strežnika, zato je pomembna hitra vrnitev
+(spodaj, K-17).
 
 | Stanje | Kdaj se objavi |
 |---|---|
