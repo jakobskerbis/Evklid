@@ -8,6 +8,7 @@ import SL from "../public/i18n/sl.js";
 import { preveriPodatke, stevilaPodatkov, steviloOdgovora, cleanRacun, iskanaKolicina, istiPodatek, podatkiNaloge } from "../public/scan/podatki.js";
 import { cleanSolution, solvePrompt, solveWithAi, retryFeedback } from "../server/scan.js";
 import { setClient } from "../server/claude.js";
+import { prep } from "../public/scan/solvecore.js";
 import { LIVE_UI_LANGUAGES } from "../public/i18n/languages.js";
 
 const TRAPEZ = ["a = 10\\,\\text{cm}", "c = 6\\,\\text{cm}", "v = 4\\,\\text{cm}"];
@@ -208,6 +209,13 @@ test("poziv zahteva check le pri nalogi s podatki in iskano količino", () => {
   assert.match(solvePrompt("alpha=?", "slovenščina", null, null, TRIKOTNIK), /asked quantity named "alpha"/);
   assert.doesNotMatch(solvePrompt("S=?", "slovenščina"), /"check"/);
   assert.doesNotMatch(solvePrompt("x^2+b*x=0", "slovenščina", null, null, ["b = 2"]), /"check"/);
+  // zaslon pošlje prep(besedilo): »P=?« pride kot »P« (meritev 26. 11.: brez tega check ni bil nikoli zahtevan)
+  for (const [t, ime] of [["P=?", "P"], ["α=?", "α"], ["s_{10}=?", "s_10"], ["I=?", "I"]]) {
+    assert.equal(iskanaKolicina(prep(t)), ime, t);
+    assert.match(solvePrompt(prep(t), "slovenščina", null, null, TRAPEZ), /"check": \{"values"/, t);
+  }
+  assert.equal(preveriPodatke(prep("P=?"), TRAPEZ, { value: "32", answer_tex: "P = 32\\ \\mathrm{cm^2}", racun: cleanRacun({ values: { a: "10", c: "6", v: "4", P: "32" }, equations: ["P=(a+c)/2*v"] }) }).status, "partial");
+  for (const t of ["f(x)=?", "2*x+3", "x^2-4"]) assert.equal(iskanaKolicina(prep(t)), null, t);
 });
 
 test("AI: napačen račun pri nalogi s podatki sproži ponovitev, preverjen račun da »partial«", async () => {

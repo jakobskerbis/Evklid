@@ -26,9 +26,11 @@ const MAX_EQUATIONS = 12;
 const STOPINJA = Math.PI / 180;
 
 // Iskana količina iz besedila naloge »S=?«, »alpha=?«, »S_10=?« → ime spremenljivke (α, S_10), sicer null (f(x)=? ni število).
+// Zaslon in meritev pošljeta nalogo skozi prep(), ki »P=?« skrajša v »P«: tudi golo ime je iskana količina.
 export function iskanaKolicina(text) {
-  const m = /^\s*([^=]+?)\s*=\s*\?\s*$/.exec(String(text ?? ""));
-  return m ? imeKolicine(m[1]) : null;
+  const t = String(text ?? "");
+  const m = /^\s*([^=]+?)\s*=\s*\?\s*$/.exec(t);
+  return imeKolicine(m ? m[1] : t);
 }
 
 function imeKolicine(name) {
