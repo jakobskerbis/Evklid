@@ -4,7 +4,7 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 [README.md](README.md).
 
 **Zadnji pregledani `main`:** `3e2a78dbc742b3c2b0f174ed42ac57be4591d212` (25. 11. 2026)
-**Naslednji prosti ID:** AUDIT-098
+**Naslednji prosti ID:** AUDIT-101
 
 | ID | Prioriteta | Področje | Kratek opis | Status | Pregledani commit | Komentar | PR popravka |
 |---|---|---|---|---|---|---|---|
@@ -105,6 +105,9 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 | AUDIT-095 | P2 | Pilot, poročilo | Poročilo pilota nima povabljenih, odpadlih in zagotovila »brez pomoči«. Lastnik: nit pilota (j odobril po navedbi niti) | NOVO | `2275cc2` | Claude (nit pregleda pripravljenosti pilota, artefakt Sj5uu8iU8QjgvAppkho4fA), 26. 11. | – |
 | AUDIT-096 | P3 | Kalkulator, iPhone SE (WebKit) | Na iPhonu SE (WebKit, 375 × 667) je v zgodovini znanstvenega kalkulatorja viden tanek navpični drsnik (~120 px); posnetek `/mnt/project-files/evklid/ux-hitrost/k12/kalkulator-iphone-se.png`, matrika naprav K-12 na `main` `613278d`, pred #1181 (`87b705e`: `.sc-history` dobi `scrollbar-width: none` in `::-webkit-scrollbar {display: none}`, kot AUDIT-083). Verjetno že popravljeno; potrdi nov posnetek WebKit na trenutnem `main` (naročen pri niti UX). Lastnik: nit »Prevzemi kalkulator« | ZAKLJUČENO | `613278d` | Claude (nit »Prevzemi kalkulator«, vir nit »Izboljšaj UX in hitrost« K-12), 26. 11.; ponovni posnetek WebKit 26.6, 375 × 667, `main` `2275cc2`, korak 042-tel-kalkulator-sci-tel: drsnika ni (`/mnt/project-files/evklid/ux-hitrost/k12/kalkulator-iphone-se-main-2275cc2.png`, Claude pregledal) | [#1181](https://github.com/jakobskerbis/Evklid/pull/1181) |
 | AUDIT-097 | P3 | Klepet, preverjanje (`live-check.js`) | `claimNote` (`server/live-check.js`) sodi učenčev goli »x = …« proti rešitvam enačbe iz naloge, tudi ko naloga ali inštruktorjevo stransko vprašanje sprašuje po čem drugem (teme, minimum): naloga x² − 6x + 8 = 0, vprašanje »Kdaj je (x − 3)² − 1 najmanjši?«, odgovor »x = 3« → WRONG (prav); »Poišči teme parabole x² + 2x + 5« z »x = −1« enako. Vzrok: presolve ne hrani besedila naloge. Za naloge brez rešitve pokrije AUDIT-092 (veja `claude/project-thread-nlvj2s-prazna`); za naloge z rešitvami odprto. Lastnik: nit »Prevzemi kalkulator« | NOVO | `2275cc2` | Claude (nit »Prevzemi kalkulator«), 26. 11. | – |
+| AUDIT-098 | P3 | Vnos, izris v polju (skener) | `postavi()` v `public/predogled-vnosa.js` pomakne pogled le do `.vnos-kazalka`, ne do `.vnos-izbor`: pri dolgi nalogi na telefonu (390 px) je izbrani □ lahko zunaj vidnega dela polja. Lastnik: nit »Prevzemi kalkulator« | NOVO | `b7b9853` | Claude (nit »Prevzemi kalkulator«, vir nit »Naredi skener zanesljiv«, PR #1191), 26. 11. | – |
+| AUDIT-099 | P3 | Vnos, izris v polju (skener) | Ulomek `(a)/(b)` v izrisu polja poveča polje z 48 na 59 px, zato vrstica med tipkanjem poskoči. Lastnik: nit »Prevzemi kalkulator« | NOVO | `b7b9853` | Claude (nit »Prevzemi kalkulator«, vir nit »Naredi skener zanesljiv«, PR #1191), 26. 11. | – |
+| AUDIT-100 | P3 | Vnos, izris v polju (skener) | Izris v polju (`hasFormula`) ne izriše golih ulomkov in funkcij (»x/4«, »(x+1)/2«, `abs`, `log`), zato skener še potrebuje svoj prekrivni sloj zunaj polja. Lastnik: nit »Prevzemi kalkulator« | NOVO | `b7b9853` | Claude (nit »Prevzemi kalkulator«, vir nit »Naredi skener zanesljiv«, PR #1191), 26. 11. | – |
 
 ## Zgodovina statusov
 
@@ -182,3 +185,4 @@ Vsaka sprememba statusa: datum, ID, star → nov status, kdo, razlog ali dokaz (
 - 26. 11. 2026 (K-03): na evklid.app `2275cc2` ZAKLJUČENO 082, 083, 086; 084, 058, 061, 062, 087, 088 ostanejo PRIPRAVLJENO (testi z oznako obstajajo, preizkus v živo zahteva prijavo ali AI; 058 je P1).
 - 26. 11. 2026: AUDIT-092 NOVO → V IZVEDBI (#1190). Zunaj registra: #1183 (ReDoS v skritih opombah, IN-12, ni ID AUDIT) združen kot `8903f8f` na j-jevo kartico.
 - 26. 11. 2026: AUDIT-092 V IZVEDBI → PRIPRAVLJENO ZA PONOVNI PREGLED (#1190 združen, `b7b9853`).
+- 26. 11. 2026: AUDIT-098, 099, 100 NOVO (izris v polju skenerja, P3; iz PR #1191).
