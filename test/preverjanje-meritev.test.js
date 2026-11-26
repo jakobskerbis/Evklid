@@ -23,9 +23,10 @@ const IZHODISCE = {
   "skener-lokalno": {
     potrjene: [],
     previsoki: [],
-    sibke: ["periodicna-004", "periodicna-006", "periodicna-010", "druge-017"],
+    // Nepopolne periodične rešitve (manjkajoča veja, predolga perioda) so od revizije 26. 11. ujete napake, ne »delno«.
+    sibke: [],
     alarmi: LOKALNO_ALARMI,
-    ujete: 462,
+    ujete: 466,
     potrjena: 170,
   },
   // Surov SymPy z načinom (PV-03): simbolni dokaz → izracunano, številski ali vzorčeni »drži« → numericno.
