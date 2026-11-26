@@ -32,8 +32,8 @@ async function withApp(fn) {
   }
 }
 // Telefon z enim pogovorom (mehurček se pokaže, ko klepet ni na zaslonu).
-async function phone(base, viewport) {
-  const ctx = await chromium.newContext({ viewport, isMobile: true, hasTouch: true, serviceWorkers: "block" });
+async function phone(base, viewport, mobile = true) {
+  const ctx = await chromium.newContext({ viewport, isMobile: mobile, hasTouch: mobile, serviceWorkers: "block" });
   const p = await ctx.newPage();
   const errors = [];
   p.on("pageerror", (e) => errors.push(e.message));
@@ -359,3 +359,23 @@ test("iPad 820 × 1180 pokončno: oznake klepeta so cele in izbira načina je ta
     await ctx.close();
   });
 });
+
+// Klepet 630–699 px (okno računalnika 900–969 px s seznamom pogovorov, tablica): oznake gredo v svojo vrstico. Prej je
+// kasnejše splošno pravilo (.chat-head #chat-state { flex: 1 1 auto }) povozilo pravilo poizvedbe (flex: 1 1 100%),
+// oznake so ostale ob naslovu in naslov se je stisnil na 9–43 px (»K«).
+for (const w of [900, 960]) {
+  test(`računalnik ${w} × 800: ozek klepet ima oznake pod naslovom, naslov ni stisnjen`, opts, async () => {
+    await withApp(async (base) => {
+      const { ctx, p, errors } = await phone(base, { width: w, height: 800 }, false);
+      const m = await p.evaluate(() => {
+        const r = (s) => document.querySelector(s).getBoundingClientRect();
+        return { chat: Math.round(r("#view-chat .chat").width), naslov: Math.round(r("#chat-title").width), naslovDno: Math.round(r("#chat-title").bottom), oznakeVrh: Math.round(r("#chat-state").top) };
+      });
+      assert.ok(m.chat < 700, `klepet ožji od 700 px: ${JSON.stringify(m)}`);
+      assert.ok(m.oznakeVrh >= m.naslovDno, `oznake v vrstici pod naslovom: ${JSON.stringify(m)}`);
+      assert.ok(m.naslov >= 120, `naslov ni stisnjen: ${JSON.stringify(m)}`);
+      assert.deepEqual(errors, []);
+      await ctx.close();
+    });
+  });
+}
