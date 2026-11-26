@@ -293,7 +293,7 @@ theorem kviz2 : (R [12, 15, 0, 9, 14]).sum = 50 ∧ sr (R [12, 15, 0, 9, 14]) = 
 /-- Preveri se 4 (veter): A 10, 12, 11, 13, 54 in B 20, 21, 19, 20, 20 imata povprečje 20; mediana A je 12,
 mediana B 20; vsi dnevi na A razen dneva s 54 (torej štirje dnevi) so mirnejši od vseh dni na B (najmanj 19).
 trditev: MAT-OS-9/statisticna-raziskava#kviz4
-besedilo: »Štirje dnevi na A so bili mirnejši od vseh na B. > Mediana A je $12\,\mathrm{km/h}$, mediana B $20\,\mathrm{km/h}$.« -/
+besedilo: »Mediana A je $12\,\mathrm{km/h}$, mediana B $20\,\mathrm{km/h}$.« -/
 theorem kviz4 : sr (R [10, 12, 11, 13, 54]) = 20 ∧ sr (R [20, 21, 19, 20, 20]) = 20 ∧
     ([10, 12, 11, 13, 54] : List ℤ).Perm [10, 11, 12, 13, 54] ∧ ([10, 11, 12, 13, 54] : List ℤ).Pairwise (· ≤ ·) ∧
     med (R [10, 11, 12, 13, 54]) = 12 ∧

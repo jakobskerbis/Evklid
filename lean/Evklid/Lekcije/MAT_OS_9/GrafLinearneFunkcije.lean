@@ -258,7 +258,8 @@ theorem primer2_pada : StrictAnti (fun x : ℝ => -(1 / 2) * x + 3) := by
   linarith
 
 /-- Povzetek, Pogoste napake: splošno pravilo – pri k > 0 funkcija y = kx + n narašča, pri k < 0 pada.
-pomozno – splošnega pravila (k > 0 narašča, k < 0 pada) lekcija ne zapiše; ima le primera in »Negativen $k$ pomeni padajočo premico« -/
+trditev: MAT-OS-9/graf-linearne-funkcije#negativen-k-pada
+besedilo: »Negativen $k$ pomeni padajočo premico.« -/
 theorem narasca_pada (k n : ℝ) :
     (0 < k → StrictMono (fun x : ℝ => k * x + n)) ∧ (k < 0 → StrictAnti (fun x : ℝ => k * x + n)) := by
   refine ⟨fun hk a b hab => ?_, fun hk a b hab => ?_⟩

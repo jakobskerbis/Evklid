@@ -32,7 +32,8 @@ namespace Evklid.Lekcije.MAT_OS_9.TalesovIzrek
 
 /-- Primer 1, korak 2 (pravilo): p : q = r : x natanko tedaj, ko je zmnožek zunanjih členov enak zmnožku
 notranjih, p·x = q·r (p, q, r ≠ 0; tudi pri x = 0, kjer v Leanu r/0 = 0, sta obe strani napačni).
-pomozno – splošno pravilo o zmnožku zunanjih in notranjih členov (orodje); lekcija ga pove le z vrednostmi primerov 1 in 4, ki sta svoja izreka -/
+trditev: MAT-OS-9/talesov-izrek#zunanji-notranji
+besedilo: »Zmnožek zunanjih členov je enak zmnožku notranjih« -/
 theorem sorazmerje (p q r x : ℝ) (hp : p ≠ 0) (hq : q ≠ 0) (hr : r ≠ 0) : p / q = r / x ↔ p * x = q * r := by
   by_cases hx : x = 0
   · subst hx

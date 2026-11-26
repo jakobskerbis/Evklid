@@ -69,8 +69,7 @@ besedilo: »Iracionalnih števil, kot sta $\sqrt{2}$ in $\pi$« -/
 theorem iracionalni : Irrational (√2) ∧ Irrational π := ⟨irrational_sqrt_two, irrational_pi⟩
 
 /-- Razlaga 1, tabela: √2 ≈ 1,4; 1,41; 1,414.
-trditev: MAT-SS-1/priblizki-ter-absolutna-in-relativna-napaka#koren2
-besedilo: »| $1$ | $1{,}4$ | $3{,}1$ | | $2$ | $1{,}41$ | $3{,}14$ | | $3$ | $1{,}414$ | $3{,}142$ |« -/
+pomozno – vsaka vrstica tabele ima v istem stavku tudi približek π (tega dokaže pi_priblizki), zato navedek le o √2 ni mogoč -/
 theorem koren2 : zaokrozi (√2) 1 = 1.4 ∧ zaokrozi (√2) 2 = 1.41 ∧ zaokrozi (√2) 3 = 1.414 := by
   have h1 : (1.41421:ℝ) < √2 := by rw [Real.lt_sqrt (by norm_num)]; norm_num
   have h2 : √2 < (1.41422:ℝ) := by rw [Real.sqrt_lt' (by norm_num)]; norm_num

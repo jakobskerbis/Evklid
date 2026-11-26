@@ -147,7 +147,7 @@ theorem decimalke (m : ℝ) (k : ℕ) : (m / 10 ^ k) ^ 2 = m ^ 2 / 10 ^ (2 * k) 
 
 /-- Korak 5, Primer 2, Povzetek: decimalk je natanko dvakrat toliko: če ima m/10ᵏ natanko k decimalk
 (zadnja števka m ni 0, torej 10 ∤ m), tudi zadnja števka m² ni 0, zato ima m²/10²ᵏ natanko 2k decimalk.
-pomozno – lekcija ne pove, da se kvadrat števila, ki se ne konča z 0, tudi ne konča z 0; pravilo »dvakrat toliko decimalk« trdi več in ga navaja decimalke -/
+pomozno – lekcija ne pove, da se kvadrat naravnega števila, ki se ne konča z 0, tudi ne konča z 0; izrek je le korak k pravilu »dvakrat toliko decimalk« (skupaj z decimalke), ki ga sam ne dokaže -/
 theorem decimalke_natanko (m : ℕ) (hm : ¬ 10 ∣ m) : ¬ 10 ∣ m ^ 2 := by
   intro h
   apply hm

@@ -326,7 +326,7 @@ theorem kviz3 : ¬(True ∧ False) ∧ ¬(¬True ∧ ¬False) := by simp
 /-- Preveri se 5: pravilo »brusiš ⇒ očala« krši le Luka (brusi, brez očal); Tine (ne brusi, očala) in Ana
 (ne brusi, brez očal) ga ne kršita.
 trditev: MAT-SS-1/osnove-logike#kviz5
-besedilo: »Implikacija je nepravilna samo pri predpostavki P in posledici N: Luka brusi (P), očal nima (N).« -/
+besedilo: »Predpostavka je nepravilna, zato je implikacija pravilna.« -/
 theorem kviz5 :
     ((false = true) → (true = true)) ∧ ((false = true) → (false = true)) ∧
     ¬((true = true) → (false = true)) := by decide

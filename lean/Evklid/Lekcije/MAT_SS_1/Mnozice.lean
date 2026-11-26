@@ -75,8 +75,7 @@ besedilo: »Zato je $2 \in \{1, 2, 3\}$, toda $\{2\} \subseteq \{1, 2, 3\}$.« -
 theorem element_podmnozica : 2 ∈ ({1, 2, 3} : Finset ℕ) ∧ ({2} : Finset ℕ) ⊆ {1, 2, 3} := by decide
 
 /-- Razlaga 3: 𝒫({a, b}) = {∅, {a}, {b}, {a, b}} (tu a = 1, b = 2) in ima 2² = 4 elemente.
-trditev: MAT-SS-1/mnozice#potencna-ab
-besedilo: »$\mathcal{P}(\{a, b\}) = \{\emptyset, \{a\}, \{b\}, \{a, b\}\}$« -/
+pomozno – izrek preveri le {1, 2}; lekcija pravilo zapiše splošno za {a, b} in nima konkretne množice z dvema elementoma, ki bi jo lahko citirali -/
 theorem potencna_ab : ({1, 2} : Finset ℕ).powerset = {∅, {1}, {2}, {1, 2}} ∧
     ({1, 2} : Finset ℕ).powerset.card = 2 ^ 2 ∧ (2 : ℕ) ^ 2 = 4 := by decide
 

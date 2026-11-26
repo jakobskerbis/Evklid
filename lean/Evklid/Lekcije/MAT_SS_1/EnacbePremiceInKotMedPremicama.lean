@@ -402,7 +402,7 @@ example : (0:ℝ) ≤ π / 4 ∧ π / 4 < π ∧ π / 4 ≠ π / 2 ∧ tan (π /
 /-- Razlaga 6, Ustno 2: tan α = dvig/pomik = (kd)/d = k (neodvisno od d ≠ 0); pri k = 3/4: 4 v desno in 3
 gor; večji trikotnik (3t)/(4t) = 3/4.
 trditev: MAT-SS-1/enacbe-premice-in-kot-med-premicama#dvig-pomik
-besedilo: »Tangens kota je razmerje nasprotne in priležne katete, torej $\tan\alpha = \dfrac{kd}{d} = k$, kar je neodvisno od izbire $d$.« -/
+besedilo: »\dfrac{kd}{d} = k$, kar je neodvisno od izbire $d$.« -/
 theorem dvig_pomik (k d t : ℝ) (hd : d ≠ 0) (ht : t ≠ 0) : (k * d) / d = k ∧ (3 / 4 : ℝ) * 4 = 3 ∧
     (3 * t) / (4 * t) = 3 / 4 := by
   refine ⟨by field_simp, by norm_num, ?_⟩
