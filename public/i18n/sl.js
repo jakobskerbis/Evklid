@@ -484,6 +484,8 @@ export default {
   "chat.ctxLab": "Inštruktor bo videl nastavitve poskusa (v tabeli še ni meritev).",
   "chat.ctxLabRows": "Inštruktor bo videl nastavitve poskusa in meritve iz tabele (vrstic: {n}).",
   "chat.ctx3d": "Inštruktor bo videl izbrani del v 3D svetu.",
+  // Odgovor inštruktorja, odrezan na meji izhoda, ki ga strežnik ni mogel dokončati (P1-2, server/odrezan-odgovor.js).
+  "chat.cutNote": "Odgovor je bil predolg in je odrezan. Napiši »nadaljuj«, da ga dokončam.",
   "chat.list": "Pogovori",
   "chat.photoPreview": "Predogled fotografije",
   "chat.removeImage": "Odstrani sliko",
