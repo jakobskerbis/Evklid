@@ -1453,3 +1453,29 @@ test("K-13: vsa plačila so dejanja imetnika računa (zaklep računa), odstop os
   assert.ok(!ownerOnly("/billing/credit", "GET"), "osvežitev dokupa po plačilu ne zahteva gesla");
   assert.ok(!ownerOnly("/withdrawal", "POST"), "gumb za odstop brez ovir");
 });
+test("K-13: država za cene samo iz zanesljivega vira (EVKLID_ZAUPAJ_CF=1), sicer evri", async () => {
+  const cenik = async (zaupaj, headers, q = "") => {
+    const prej = process.env.EVKLID_ZAUPAJ_CF;
+    if (zaupaj) process.env.EVKLID_ZAUPAJ_CF = "1";
+    else delete process.env.EVKLID_ZAUPAJ_CF;
+    try {
+      const app = express();
+      mountAccounts(app, openDb(":memory:"), { accounts: true, scheduler: false, stripeKey: "sk_test_x", fetchFn: fakeStripe().fetchFn, log: { error() {} } });
+      const server = app.listen(0);
+      try {
+        return (await (await fetch(`http://127.0.0.1:${server.address().port}/api/account/prices${q}`, { headers })).json()).currency;
+      } finally {
+        server.close();
+      }
+    } finally {
+      if (prej === undefined) delete process.env.EVKLID_ZAUPAJ_CF;
+      else process.env.EVKLID_ZAUPAJ_CF = prej;
+    }
+  };
+  // Glavo in ?country= lahko pošlje vsak: brez zanesljivega vira ostane cena v evrih.
+  assert.equal(await cenik(false, { "cf-ipcountry": "IN" }), "EUR");
+  assert.equal(await cenik(false, {}, "?country=IN"), "EUR");
+  // Za posrednikom Cloudflare (glavo nastavi Cloudflare) regijska cena ostane.
+  assert.equal(await cenik(true, { "cf-ipcountry": "IN" }), "INR");
+  assert.equal(await cenik(true, { "cf-ipcountry": "SI" }), "EUR");
+});
