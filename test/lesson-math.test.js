@@ -343,6 +343,7 @@ test("AUDIT-087: potenca pred \\cdot in besedilo z več besedami nista lažna na
   assert.equal(mm("$1\\,\\mathrm{J} = 1\\,\\mathrm{N \\cdot m} = 2\\,\\mathrm{kg \\cdot m^2/s^2}$"), 1);
   assert.equal(mm("$\\dfrac{60\\,\\mathrm{^\\circ C}}{30\\,\\mathrm{^\\circ C}} = 3$"), 1);
   assert.equal(mm("$12 \\cdot 3 = 37\\ \\text{kosov jabolk}$"), 1);
+  assert.equal(mm("$\\text{od tega}\\ 3 \\cdot 4 = 13$"), 1);
   assert.equal(mm("$v = 72\\ \\text{km na uro} \\cdot 2 = 145\\ \\text{km na uro}$"), 1);
 });
 
