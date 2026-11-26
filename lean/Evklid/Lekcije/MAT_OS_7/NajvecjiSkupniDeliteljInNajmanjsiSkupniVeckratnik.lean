@@ -1,6 +1,6 @@
 /-
 vir: content/lessons/MAT-OS-7/najvecji-skupni-delitelj-in-najmanjsi-skupni-veckratnik.md
-sha256: 1e9954bc06b72176b03606eb1f20ee183aa75d6998494b63743da9210cf938c4
+sha256: faa5054fe6a7e897e5a48685de378703548a5318a247e4bb405e62afb3f70193
 Model: števila so naravna (ℕ); D(a) je `Nat.divisors a`, D(a, b) je `Nat.gcd a b`, v(a, b) je `Nat.lcm a b`,
 »a je večkratnik b« je b ∣ a, razcep na prafaktorje je `Nat.factorization` (eksponent prafaktorja p). Ulomki so
 v ℚ. Ura 6.00 je 6·60 minut.

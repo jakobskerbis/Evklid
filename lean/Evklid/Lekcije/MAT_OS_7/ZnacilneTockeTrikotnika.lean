@@ -364,6 +364,25 @@ theorem pravokotni_O_sredisce (t : Affine.Triangle ℝ V)
   obtain ⟨h1, h2⟩ := ocrtana_enolicna t _ hm _ hd
   exact ⟨h1.symm, h2.symm⟩
 
+/-- Predpostavka trditve `pravokotni_O_sredisce` se da izpolniti: trikotnik z oglišči 4, 2i, 0 v ℂ
+(oglišča niso kolinearna) ima pravi kot pri tretjem oglišču 0. -/
+example : ∃ t : Affine.Triangle ℝ ℂ, ⟪t.points 0 - t.points 2, t.points 1 - t.points 2⟫_ℝ = 0 := by
+  have hind : AffineIndependent ℝ ![(4 : ℂ), 2 * I, 0] := by
+    rw [affineIndependent_iff_linearIndependent_vsub ℝ _ (2 : Fin 3), Fintype.linearIndependent_iff]
+    intro g hg i
+    have e : (Finset.univ : Finset {x : Fin 3 // x ≠ 2}) = {⟨0, by decide⟩, ⟨1, by decide⟩} := by
+      decide
+    rw [e, Finset.sum_pair (by decide)] at hg
+    have hre := congrArg Complex.re hg
+    have him := congrArg Complex.im hg
+    simp at hre him
+    obtain ⟨i, hi⟩ := i
+    fin_cases i
+    · simpa using hre
+    · simpa using him
+    · exact absurd rfl hi
+  exact ⟨⟨_, hind⟩, by simp [Complex.inner]⟩
+
 end RavninaV
 
 /-- Zakaj se tega učimo, Kot zgodba (»štiri točke, štiri različna mesta«) in Preveri se 1: značilne točke

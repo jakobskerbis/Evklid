@@ -222,7 +222,7 @@ theorem preveri3 : (24:ℕ) / 6 = 4 ∧ (1:ℚ) / 4 = 6 / 24 ∧ (1:ℚ) / 6 = 4
     (10:ℚ) / 24 = 5 / 12 := by norm_num
 
 /-- Preveri se 4: v(4, 3) = 12; 3/4 + 2/3 = 9/12 + 8/12 = 17/12 = 1 5/12 ure = 1 ura 25 minut; napačna: seštevanje števcev in imenovalcev (3 + 2)/(4 + 3) = 5/7, razširjena le imenovalca
-3/12 + 2/12 = 5/12; obe nista pravi rezultat. -/
+3/12 + 2/12 = 5/12; nobena ni pravi rezultat. -/
 theorem preveri4 : Nat.lcm 4 3 = 12 ∧ (3:ℚ) / 4 + 2 / 3 = 1 + 5 / 12 ∧ (5:ℚ) / 12 * 60 = 25 ∧
     ((3:ℚ) + 2) / (4 + 3) = 5 / 7 ∧ (3:ℚ) / 12 + 2 / 12 = 5 / 12 ∧
     (3:ℚ) / 4 + 2 / 3 ≠ 5 / 7 ∧ (3:ℚ) / 4 + 2 / 3 ≠ 5 / 12 := by
