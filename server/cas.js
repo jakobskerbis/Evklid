@@ -35,9 +35,12 @@ function start() {
   const python = process.env.EVKLID_PYTHON || "python3";
   const pr = new Promise((resolve) => {
     let settled = false;
-    const done = (v) => {
+    // zabelezi = false: proces je namerno ustavil casStop (ali ga je zamenjal nov); to ni neuspel zagon, zato ne
+    // blokira novih zagonov za minuto (pregled K-04: ustavljen proces je sicer onemogočil naslednji test izpada).
+    const done = (v, zabelezi = true) => {
       if (settled) return;
       settled = true;
+      if (!zabelezi) return resolve(v);
       lastStart = v;
       if (!v) failedAt = Date.now();
       resolve(v);
@@ -70,7 +73,7 @@ function start() {
     });
     p.on("exit", () => {
       clearTimeout(boot);
-      done(false);
+      done(false, proc === p);
       // Proces, ki ga je že zamenjal nov (ubit ob roku), ne sme pobrisati stanja novega.
       if (proc !== p) return;
       proc = null;

@@ -5,67 +5,91 @@
 import { test, after } from "node:test";
 import assert from "node:assert/strict";
 import { fileURLToPath } from "node:url";
+import { mkdtempSync, readFileSync, existsSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import express from "express";
 import { naloziNabor, razvrsti } from "../scripts/meri-preverjanje.mjs";
 import { verifyAiFull, solveWithRetries, mountScan } from "../server/scan.js";
-import { casStop } from "../server/cas.js";
+import { casStop, casStanje } from "../server/cas.js";
 import { izSkenerja } from "../public/preverjanje/statusi.js";
 import { stanjePreverjevalnikov } from "../server/preverjevalniki.js";
 import { leanDokazi, oznakeIzDokazov } from "../server/oznake-vsebine.js";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 
-const primeri = naloziNabor().filter((p) => p.sol);
+const vsi = naloziNabor().filter((p) => p.sol);
+// Pri izpadih z rokom vsaka zahteva čaka rok: vsaka šesta trditev (vse skupine) je dovolj in test ostane hiter.
+const vzorec = vsi.filter((_, i) => i % 6 === 0);
 const lazni = (ime) => fileURLToPath(new URL(`./fixtures/odpoved/${ime}`, import.meta.url));
-const ENV = ["EVKLID_CAS", "EVKLID_PYTHON", "EVKLID_CAS_TIMEOUT_MS"];
+const mapa = mkdtempSync(join(tmpdir(), "evklid-k04-"));
+const ENV = ["EVKLID_CAS", "EVKLID_PYTHON", "EVKLID_CAS_TIMEOUT_MS", "EVKLID_K04_DNEVNIK"];
 const prej = Object.fromEntries(ENV.map((k) => [k, process.env[k]]));
 after(() => {
   casStop();
   for (const k of ENV) prej[k] === undefined ? delete process.env[k] : (process.env[k] = prej[k]);
+  rmSync(mapa, { recursive: true, force: true });
 });
 
-async function statusi(cas) {
+async function statusi(primeri, cas) {
   const out = new Map();
   for (const p of primeri) out.set(p.id, izSkenerja((await verifyAiFull(p.naloga, p.sol, { cas })).status));
   return out;
 }
 
-// Brez SymPy: dokazi, ki ostanejo (lokalna točna algebra in numerika). To je zgornja meja za vsak izpad.
-const lokalno = await statusi(false);
-
-// Vrstni red je pomemben: po neuspelem zagonu (»manjka«) cas.js minuto ne poskuša znova, zato je zadnji.
-const IZPADI = [
-  ["izklopljen (EVKLID_CAS=0)", { EVKLID_CAS: "0" }],
-  ["sesutje ob vsaki zahtevi", { EVKLID_PYTHON: lazni("sesutje.sh") }],
-  ["rok: worker ne odgovori", { EVKLID_PYTHON: lazni("rok.sh"), EVKLID_CAS_TIMEOUT_MS: "25" }],
-  ["nerazumljiv izpis", { EVKLID_PYTHON: lazni("smeti.sh"), EVKLID_CAS_TIMEOUT_MS: "25" }],
-  ["manjka program", { EVKLID_PYTHON: "/ni/tega/pythona" }],
-];
-
-// Teče pred izpadi: po »manjka program« cas.js minuto ne zažene novega procesa.
-test("kontrola: test zazna preverjevalnik, ki vse potrdi (sicer primerjava ne bi ničesar merila)", async () => {
+// Vsak izpad začne s čistim stanjem: ustavljen proces, samo njegove spremenljivke okolja, svoj dnevnik zahtev, ki ga
+// lažni worker piše ob vsaki prejeti zahtevi (dokaz, da je test res šel skozi izpad, ne mimo njega).
+let n = 0;
+function okolje(env) {
   casStop();
   for (const k of ENV) delete process.env[k];
-  process.env.EVKLID_PYTHON = lazni("lazniv.sh");
-  const st = await statusi(true);
-  casStop();
-  const dvignjeni = primeri.filter((p) => st.get(p.id) !== lokalno.get(p.id));
-  assert.ok(dvignjeni.length > 100, `le ${dvignjeni.length} razlik`);
+  const dnevnik = join(mapa, `zahteve-${++n}.txt`);
+  Object.assign(process.env, env, { EVKLID_K04_DNEVNIK: dnevnik });
+  return () => (existsSync(dnevnik) ? readFileSync(dnevnik, "utf8").split("\n").filter(Boolean).length : 0);
+}
+
+// Brez SymPy: dokazi, ki ostanejo (lokalna točna algebra in numerika). To je zgornja meja za vsak izpad.
+const lokalno = await statusi(vsi, false);
+
+test("izhodišče brez SymPy: nič napačno potrjenih ali previsokih, znane šibke (kot test/preverjanje-meritev)", () => {
+  // Pripeto, da pokvarjen lokalni del (npr. »ni znano« kot uspeh) ne premakne izhodišča skupaj z izpadi.
+  const razred = (r) => vsi.filter((p) => razvrsti(p, lokalno.get(p.id)) === r).map((p) => p.id);
+  assert.deepEqual(razred("napacno_potrjena"), []);
+  assert.deepEqual(razred("previsok_status"), []);
+  assert.deepEqual(razred("napacna_sibko"), ["periodicna-004", "periodicna-006", "periodicna-010", "druge-017"]);
+  assert.ok(![...lokalno.values()].includes("dokazano"));
 });
 
-for (const [ime, env] of IZPADI) {
+test("kontrola: test zazna preverjevalnik, ki vse potrdi (sicer primerjava ne bi ničesar merila)", async () => {
+  const zahtev = okolje({ EVKLID_PYTHON: lazni("lazniv.sh") });
+  const st = await statusi(vsi, true);
+  const dvignjeni = vsi.filter((p) => st.get(p.id) !== lokalno.get(p.id));
+  assert.ok(dvignjeni.length > 100, `le ${dvignjeni.length} razlik`);
+  assert.ok(zahtev() > 100, `lažni worker je dobil le ${zahtev()} zahtev`);
+});
+
+// [ime, okolje, trditve, najmanj zahtev, ki jih mora dobiti lažni worker]
+const IZPADI = [
+  ["izklopljen (EVKLID_CAS=0)", { EVKLID_CAS: "0" }, vsi, 0],
+  ["sesutje ob vsaki zahtevi", { EVKLID_PYTHON: lazni("sesutje.sh") }, vsi, 100],
+  ["rok: worker ne odgovori", { EVKLID_PYTHON: lazni("rok.sh"), EVKLID_CAS_TIMEOUT_MS: "25" }, vzorec, 20],
+  ["nerazumljiv izpis", { EVKLID_PYTHON: lazni("smeti.sh"), EVKLID_CAS_TIMEOUT_MS: "25" }, vzorec, 20],
+  ["manjka program", { EVKLID_PYTHON: "/ni/tega/pythona" }, vsi, 0],
+];
+
+for (const [ime, env, primeri, najmanj] of IZPADI) {
   test(`izpad SymPy – ${ime}: noben status nad lokalnimi dokazi, nič napačno potrjenih`, async () => {
-    casStop();
-    for (const k of ENV) delete process.env[k];
-    Object.assign(process.env, env);
-    const st = await statusi(true);
+    const zahtev = okolje(env);
+    const st = await statusi(primeri, true);
+    if (najmanj) assert.ok(zahtev() >= najmanj, `lažni worker je dobil le ${zahtev()} zahtev: izpad ni bil preizkušen`);
     const razlike = primeri.filter((p) => st.get(p.id) !== lokalno.get(p.id)).map((p) => `${p.id}: ${lokalno.get(p.id)} → ${st.get(p.id)}`);
     assert.deepEqual(razlike, [], "izpad je spremenil status");
     const potrjene = primeri.filter((p) => razvrsti(p, st.get(p.id)) === "napacno_potrjena").map((p) => p.id);
     assert.deepEqual(potrjene, [], "napačno potrjene ob izpadu");
     assert.ok(![...st.values()].includes("dokazano"), "»dokazano« brez Leana");
     // /healthz/stanje: SymPy je med preverjevalniki, ki ne delajo (izklopljen, zagon ni uspel, rok ali sesutje)
-    assert.ok(stanjePreverjevalnikov().nedelujejo.includes("sympy"), JSON.stringify(stanjePreverjevalnikov().sympy));
+    const s = stanjePreverjevalnikov({ cas: casStanje() });
+    assert.ok(s.nedelujejo.includes("sympy"), JSON.stringify(s.sympy));
   });
 }
 
@@ -87,7 +111,7 @@ test("izpad SymPy: /healthz pove, kateri preverjevalnik ne dela", () => {
 });
 
 test("/healthz/stanje vsebuje preverjevalnike (ob izpadu SymPy je »sympy« med nedelujočimi)", async () => {
-  // teče po izpadu »manjka program«: zadnji zagon ni uspel
+  okolje({ EVKLID_CAS: "0" });
   const app = createApp(openDb(":memory:"), { scheduler: false });
   const server = app.listen(0);
   try {
