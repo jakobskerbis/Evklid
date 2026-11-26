@@ -476,6 +476,26 @@ function visualOrder(s, A) {
           continue;
         }
       }
+      // root(x; n) → ⁿ√x in logb(x; b) → log_b x: drugi argument je v zapisu pred prvim (AUDIT-022)
+      if ((s.startsWith("root(", i) || s.startsWith("logb(", i)) && !/[A-Za-zčšž]/.test(s[i - 1] ?? "")) {
+        const o = i + 4;
+        const c = closeOf(o);
+        const g = c > 0 && c < hi ? slots(o, c) : null;
+        if (g?.length === 2) {
+          // ime: pri korenu je v zapisu \sqrt (ključi s, q, r, t), pri logb \log
+          if (s[i] === "r") out.push(...[..."sqrt"].map((k) => ({ k, s: i, e: o })));
+          else for (let q = i; q < o; q++) out.push(...(at.get(q) || []));
+          for (let q = i + 1; q <= o; q++) alias.set(q, o + 1); // v imenu = začetek prvega argumenta
+          walk(...g[1]);
+          // oklepaj in zaklepaj besedila sta oklepaja korenjenca oziroma logaritmanda: ⁿ√{x}, log_b(x)
+          out.push(...(at.get(o) || []));
+          walk(...g[0]);
+          out.push(...(at.get(c) || []));
+          moved = true;
+          i = c + 1;
+          continue;
+        }
+      }
       // limita in integriraj: tudi sredi izraza (2·limita(…), AUDIT-071), ne le kot cel vnos
       const lm = /^(?:limita|limit|integriraj|integrate)\s*\(/i.exec(s.slice(i, hi));
       let cmd = null;
