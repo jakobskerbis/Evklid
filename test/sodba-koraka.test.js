@@ -208,3 +208,49 @@ test("pregled sodbe: navodila zajamejo »Pravilno« pred namigom, dvom o praviln
   assert.match(system, /casting doubt on a right result or step/);
   assert.match(system, /pointing at a wrong place while the real error is elsewhere/);
 });
+
+// AUDIT-059: negotov rezultat z vprašajem (»x = 5?«) je trditev; sodba inštruktorja se preveri kot pri »x = 5«.
+test("AUDIT-059: »x = 5?«, »je 7 · 8 = 54?«, »mogoče 12?« so trditve, prava vprašanja ne", async () => {
+  for (const t of ["x = 5?", "a je x = 5?", "je 7 · 8 = 54?", "7·8=54?", "mogoče 12?", "12?", "x=-2?", "Je rezultat 3/4?"]) assert.equal(isClaim(t, ""), true, t);
+  for (const t of ["Koliko je 7 · 8?", "Zakaj ne smem deliti z 0?", "Kaj je x?", "Ali je to 3. naloga?", "Kaj pa 3x = 15?", "Reši 2x+3=11?"]) assert.equal(isClaim(t, ""), false, t);
+  // po poti klepeta: »x = 5?« pri 2x + 3 = 11 z odgovorom »Da, pravilno!« sproži ponovni odgovor (kot »x = 5«)
+  const { openDb } = await import("../server/db.js");
+  const run = async (msg) => {
+    const store = openDb(":memory:");
+    const calls = [];
+    const answers = ["Kaj narediš najprej?", "Da, pravilno! Zdaj naredi preizkus."];
+    const META = '\n<<META subject=MAT topic="x" error=0 mode=A flag=none done=0>>';
+    const streamFn = async ({ system, mode, onText }) => {
+      const isFix = String(system).startsWith("You fix");
+      calls.push(isFix ? "fix" : "chat");
+      const text = isFix ? "OK" : (answers.shift() ?? "Ne, preveri še enkrat.") + META;
+      if (!isFix) onText(text);
+      return { content: [{ type: "text", text }], text, stopReason: "end_turn", model: modeParams(mode).model, usage: { input_tokens: 100, output_tokens: 20 } };
+    };
+    const reviewCreateFn = async (p) => ({ content: [{ type: "text", text: "OK" }], stop_reason: "end_turn", model: p.model, usage: { input_tokens: 10, output_tokens: 5 } });
+    const server = createApp(store, { streamFn, reviewCreateFn }).listen(0);
+    const base = `http://127.0.0.1:${server.address().port}`;
+    const call = async (p, b) => {
+      const r = await fetch(base + p, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(b || {}) });
+      return (r.headers.get("content-type") || "").includes("json") ? r.json() : r.text();
+    };
+    try {
+      const s = await call("/api/students", { name: "Ana", settings: {} });
+      const c = await call(`/api/students/${s.id}/conversations`, {});
+      await call(`/api/conversations/${c.id}/messages`, { text: "Reši 2x + 3 = 11" });
+      await call(`/api/conversations/${c.id}/messages`, { text: msg });
+      return calls.filter((x) => x === "chat").length;
+    } finally {
+      server.close();
+    }
+  };
+  const plain = await run("x = 5");
+  assert.ok(plain >= 3, `»x = 5« sproži ponovni odgovor (${plain})`);
+  assert.equal(await run("x = 5?"), plain);
+});
+
+// AUDIT-059, pregled: trditev z vprašajem je le sporočilo, ki je v celoti predlog vrednosti.
+test("AUDIT-059 (pregled): prava vprašanja z vrednostjo niso trditve", () => {
+  for (const t of ["x=5 ?", "x = -3?", "x = 1/2?", "x = 0,5?", "morda 12?", "12 cm?", "-3?", "3,5?", "7·8=56, prav?", "Ali je rezultat 56?", "torej 56?", "x = 4, ne?", "x je 4?", "Je x = 4?", "y = 7?", "a = 3 cm?", "v = 20 m/s?", "F = 6 N?", "potem 8?", "rezultat je 8?", "x1 = 2?", "x = 2 ali x = 3?", "2x = 8?"]) assert.equal(isClaim(t, ""), true, t);
+  for (const t of ["Koliko je x, če je y = 3?", "Kaj je 2 + 2 = ?", "Kako rešim x^2 = 9?", "Kaj pomeni a = 5 v nalogi?", "Kaj dobim, če je x = 5?", "Kdaj velja a = b?", "Lahko narediš še eno z x = 2?", "A mi lahko daš nalogo 5?", "Kaj je naloga 12?", "Koliko je 15 % od 80?", "Kaj, če je g = 10?", "Ali lahko vzamem g = 10 m/s²?", "Kateri je naslednji korak pri 2x = 8?", "Kaj pomeni f(x) = 2x?"]) assert.equal(isClaim(t, ""), false, t);
+});
