@@ -29,7 +29,8 @@ open Real MeasureTheory
 /-- Periodični del 0,(p)(p)(p)…: perioda p z L mesti (enako kot v `RacionalnaStevila.lean`). -/
 noncomputable def rep (p : ℝ) (L : ℕ) : ℝ := ∑' k : ℕ, p * ((10 : ℝ) ^ L)⁻¹ ^ (k + 1)
 
-/-- Pomožno: 0,(p)(p)… = p / (10^L − 1). -/
+/-- Pomožno: 0,(p)(p)… = p / (10^L − 1).
+pomozno – orodje: vrednost periodičnega zapisa 0,(p) -/
 theorem rep_eq (p : ℝ) {L : ℕ} (hL : 1 ≤ L) : rep p L = p / (10 ^ L - 1) := by
   have h1 : (1 : ℝ) < 10 ^ L := one_lt_pow₀ (by norm_num) (by omega)
   have hr0 : 0 ≤ ((10 : ℝ) ^ L)⁻¹ := by positivity
@@ -45,7 +46,9 @@ theorem rep_eq (p : ℝ) {L : ℕ} (hL : 1 ≤ L) : rep p L = p / (10 ^ L - 1) :
   field_simp
 
 /-- Razlaga 1 in Povzetek: iracionalno število nima končnega (m / 10ᵏ) ne periodičnega
-(d / 10ⁿ + 0,(p)… / 10ⁿ) decimalnega zapisa. -/
+(d / 10ⁿ + 0,(p)… / 10ⁿ) decimalnega zapisa.
+trditev: MAT-SS-1/realna-stevila-in-intervali#iracionalno-neperiodicno
+besedilo: »Decimalni zapis iracionalnega števila je neskončen in **neperiodičen**.« -/
 theorem iracionalno_neperiodicno (x : ℝ) (hx : Irrational x) :
     (¬ ∃ m : ℤ, ∃ k : ℕ, x = m / 10 ^ k) ∧
     ¬ ∃ d p : ℤ, ∃ n L : ℕ, 1 ≤ L ∧ x = d / 10 ^ n + rep p L / 10 ^ n := by
@@ -57,7 +60,9 @@ theorem iracionalno_neperiodicno (x : ℝ) (hx : Irrational x) :
     rw [rep_eq _ hL]; push_cast; ring
 
 /-- Zakaj se tega učimo in Razlaga 1: diagonala kvadrata s stranico 1 ima d² = 1² + 1² = 2, zato d = √2; nobeno
-racionalno število na kvadrat ni 2, √2 je iracionalno. -/
+racionalno število na kvadrat ni 2, √2 je iracionalno.
+trditev: MAT-SS-1/realna-stevila-in-intervali#diagonala
+besedilo: »za katero velja $d^2 = 1^2 + 1^2 = 2$. Diagonala ima neko dolžino, ulomka, ki bi pomnožen sam s seboj dal $2$, pa ni.« -/
 theorem diagonala (d : ℝ) (hd : 0 < d) (h : d ^ 2 = 1 ^ 2 + 1 ^ 2) :
     (1 : ℝ) ^ 2 + 1 ^ 2 = 2 ∧ d = √2 ∧ (∀ q : ℚ, q ^ 2 ≠ 2) ∧ Irrational (√2) := by
   have h2 : d ^ 2 = 2 := by rw [h]; norm_num
@@ -70,7 +75,9 @@ theorem diagonala (d : ℝ) (hd : 0 < d) (h : d ^ 2 = 1 ^ 2 + 1 ^ 2) :
 /-- Predpostavke `diagonala` se dajo izpolniti (d = √2). -/
 example : 0 < √2 ∧ (√2) ^ 2 = 1 ^ 2 + 1 ^ 2 := ⟨by positivity, by rw [Real.sq_sqrt (by norm_num)]; norm_num⟩
 
-/-- Razlaga 1: π je iracionalen; √2 = 1,41421356… in π = 3,14159265… (prvih osem decimalk). -/
+/-- Razlaga 1: π je iracionalen; √2 = 1,41421356… in π = 3,14159265… (prvih osem decimalk).
+trditev: MAT-SS-1/realna-stevila-in-intervali#pi-sqrt2
+besedilo: »Primera sta $\sqrt{2} = 1{,}41421356\ldots$ in $\pi = 3{,}14159265\ldots$.« -/
 theorem pi_sqrt2 : Irrational π ∧ (1.41421356 : ℝ) < √2 ∧ √2 < 1.41421357 ∧ (3.14159265 : ℝ) < π ∧
     π < 3.14159266 := by
   refine ⟨irrational_pi, ?_, ?_, ?_, ?_⟩
@@ -80,7 +87,9 @@ theorem pi_sqrt2 : Irrational π ∧ (1.41421356 : ℝ) < √2 ∧ √2 < 1.4142
   · linarith [pi_lt_d20]
 
 /-- Razlaga 1 in Povzetek: ℝ = ℚ ∪ 𝕀 (vsako realno število je racionalno ali iracionalno; v Leanu to sledi iz
-definicije `Irrational`); ℚ ⊂ ℝ je prava (vsebina: √2 ni racionalno). -/
+definicije `Irrational`); ℚ ⊂ ℝ je prava (vsebina: √2 ni racionalno).
+trditev: MAT-SS-1/realna-stevila-in-intervali#r-q-i
+besedilo: »\mathbb{R} = \mathbb{Q} \cup \mathbb{I}« -/
 theorem r_q_i : Set.range ((↑) : ℚ → ℝ) ∪ {x | Irrational x} = Set.univ ∧
     Set.range ((↑) : ℚ → ℝ) ≠ Set.univ := by
   constructor
@@ -92,7 +101,9 @@ theorem r_q_i : Set.range ((↑) : ℚ → ℝ) ∪ {x | Irrational x} = Set.uni
     exact irrational_sqrt_two (h ▸ Set.mem_univ (√2))
 
 /-- Razlaga 1: koren naravnega števila je iracionalen natanko tedaj, ko število ni popoln kvadrat;
-če je n popoln kvadrat, je √n naravno število; √9 = 3, √16 = 4; √2, √3, √5 so iracionalni. -/
+če je n popoln kvadrat, je √n naravno število; √9 = 3, √16 = 4; √2, √3, √5 so iracionalni.
+trditev: MAT-SS-1/realna-stevila-in-intervali#koreni
+besedilo: »Koren naravnega števila je celo število, če je število popoln kvadrat ($\sqrt{9} = 3$, $\sqrt{16} = 4$), sicer je iracionalen ($\sqrt{2}$, $\sqrt{3}$, $\sqrt{5}$).« -/
 theorem koreni (n : ℕ) : (Irrational (√(n : ℝ)) ↔ ¬ IsSquare n) ∧ (IsSquare n → ∃ m : ℕ, √(n : ℝ) = m) ∧
     √(9 : ℝ) = 3 ∧ √(16 : ℝ) = 4 ∧
     Irrational (√(2 : ℝ)) ∧ Irrational (√(3 : ℝ)) ∧ Irrational (√(5 : ℝ)) := by
@@ -110,14 +121,18 @@ theorem koreni (n : ℕ) : (Irrational (√(n : ℝ)) ↔ ¬ IsSquare n) ∧ (Is
       interval_cases r <;> omega)
     simpa using this
 
-/-- Razlaga 1: 1,41² = 1,9881 in 1,42² = 2,0164, zato 1,41 < √2 < 1,42. -/
+/-- Razlaga 1: 1,41² = 1,9881 in 1,42² = 2,0164, zato 1,41 < √2 < 1,42.
+trditev: MAT-SS-1/realna-stevila-in-intervali#ocena-sqrt2
+besedilo: »ker je $1{,}41^2 = 1{,}9881$ in $1{,}42^2 = 2{,}0164$, velja $1{,}41 < \sqrt{2} < 1{,}42$« -/
 theorem ocena_sqrt2 : (1.41 : ℝ) ^ 2 = 1.9881 ∧ (1.42 : ℝ) ^ 2 = 2.0164 ∧ (1.41 : ℝ) < √2 ∧ √2 < 1.42 := by
   refine ⟨by norm_num, by norm_num, ?_, ?_⟩
   · rw [Real.lt_sqrt (by norm_num)]; norm_num
   · rw [Real.sqrt_lt' (by norm_num)]; norm_num
 
 /-- Zakaj se tega učimo in Razlaga 3: med temperaturami t < 38 ni največje ((t + 38)/2 je večja in še pod 38);
-37,9 < 37,99 < 37,999 < 38; pri t ≤ 38 je največja 38. -/
+37,9 < 37,99 < 37,999 < 38; pri t ≤ 38 je največja 38.
+trditev: MAT-SS-1/realna-stevila-in-intervali#ni-najvisje
+besedilo: »Za vsako tako temperaturo $t$ je število $\dfrac{t + 38}{2}$ bližje $38$ in še vedno manjše od $38$. Zato največjega elementa ni. Pri pogoju $t \le 38$ bi bil največji element ravno $38$.« -/
 theorem ni_najvisje : (¬ ∃ t : ℝ, t < 38 ∧ ∀ s, s < 38 → s ≤ t) ∧
     (∀ t : ℝ, t < 38 → t < (t + 38) / 2 ∧ (t + 38) / 2 < 38) ∧
     ((37.9 : ℝ) < 37.99 ∧ (37.99 : ℝ) < 37.999 ∧ (37.999 : ℝ) < 38) ∧ IsGreatest (Set.Iic (38 : ℝ)) 38 := by
@@ -128,28 +143,38 @@ theorem ni_najvisje : (¬ ∃ t : ℝ, t < 38 ∧ ∀ s, s < 38 → s ≤ t) ∧
 /-! ## Razlaga 2: absolutna vrednost -/
 
 /-- Razlaga 2 in Ustno vprašanje 1: |x| = x za x ≥ 0, |x| = −x za x < 0; |5| = 5, |−5| = 5, |0| = 0;
-|√2 − 2| = 2 − √2. -/
+|√2 − 2| = 2 − √2.
+trditev: MAT-SS-1/realna-stevila-in-intervali#absolutna
+besedilo: »Primeri: $|5| = 5$, $|-5| = 5$, $|0| = 0$. Pri $|\sqrt{2} - 2|$ je izraz znotraj absolutne vrednosti negativen, ker je $\sqrt{2} < 2$, zato je $|\sqrt{2} - 2| = 2 - \sqrt{2}$.« -/
 theorem absolutna (x : ℝ) : (0 ≤ x → |x| = x) ∧ (x < 0 → |x| = -x) ∧ |(5 : ℝ)| = 5 ∧ |(-5 : ℝ)| = 5 ∧
     |(0 : ℝ)| = 0 ∧ |√2 - 2| = 2 - √2 := by
   refine ⟨abs_of_nonneg, abs_of_neg, by norm_num, by norm_num, by norm_num, ?_⟩
   have : √2 < 2 := by rw [Real.sqrt_lt' (by norm_num)]; norm_num
   rw [abs_of_neg (by linarith)]; ring
 
-/-- Razlaga 2, premisli: |x| = −x natanko za x ≤ 0. -/
+/-- Razlaga 2, premisli: |x| = −x natanko za x ≤ 0.
+trditev: MAT-SS-1/realna-stevila-in-intervali#abs-eq-neg
+besedilo: »Za vsa $x \le 0$.« -/
 theorem abs_eq_neg (x : ℝ) : |x| = -x ↔ x ≤ 0 := abs_eq_neg_self
 
-/-- Razlaga 2, Povzetek in Ustno vprašanje 1: lastnosti absolutne vrednosti in razdalje. -/
+/-- Razlaga 2, Povzetek in Ustno vprašanje 1: lastnosti absolutne vrednosti in razdalje.
+trditev: MAT-SS-1/realna-stevila-in-intervali#lastnosti
+besedilo: »je $|a - b| = |b - a|$. Lastnosti: - $|x| \ge 0$ in $|x| = 0$ natanko tedaj, ko je $x = 0$, - $|-x| = |x|$, - $|a \cdot b| = |a| \cdot |b|$ in $\left|\dfrac{a}{b}\right| = \dfrac{|a|}{|b|}$ za $b \neq 0$, - trikotniška neenakost: $|a + b| \le |a| + |b|$.« -/
 theorem lastnosti (a b x : ℝ) :
     |a - b| = |b - a| ∧ 0 ≤ |x| ∧ (|x| = 0 ↔ x = 0) ∧ |-x| = |x| ∧ |a * b| = |a| * |b| ∧
     (b ≠ 0 → |a / b| = |a| / |b|) ∧ |a + b| ≤ |a| + |b| :=
   ⟨abs_sub_comm a b, abs_nonneg x, abs_eq_zero, abs_neg x, abs_mul a b, fun _ => abs_div a b, abs_add_le a b⟩
 
 /-- Razlaga 2 in Povzetek: enačba |x| = a: pri a > 0 je x = a ali x = −a, pri a = 0 je x = 0, pri a < 0 ni
-rešitve. -/
+rešitve.
+trditev: MAT-SS-1/realna-stevila-in-intervali#enacba-abs
+besedilo: »za $a > 0$ sta rešitvi $x = a$ in $x = -a$, - za $a = 0$ je edina rešitev $x = 0$, - za $a < 0$ rešitve ni, ker absolutna vrednost ni negativna.« -/
 theorem enacba_abs (x a : ℝ) : (0 < a → (|x| = a ↔ x = a ∨ x = -a)) ∧ (|x| = 0 ↔ x = 0) ∧ (a < 0 → |x| ≠ a) :=
   ⟨fun ha => abs_eq ha.le, abs_eq_zero, fun ha h => by linarith [abs_nonneg x]⟩
 
-/-- Razlaga 2: |x − c| = r (r > 0) ⇔ x = c − r ali x = c + r. -/
+/-- Razlaga 2: |x − c| = r (r > 0) ⇔ x = c − r ali x = c + r.
+trditev: MAT-SS-1/realna-stevila-in-intervali#enacba-abs-c
+besedilo: »Podobno je $|x - c| = r$ ($r > 0$) enačba točk, ki so od $c$ oddaljene za $r$: $x = c - r$ ali $x = c + r$.« -/
 theorem enacba_abs_c (x c r : ℝ) (hr : 0 < r) : |x - c| = r ↔ x = c - r ∨ x = c + r := by
   rw [abs_eq hr.le]
   constructor
@@ -163,7 +188,9 @@ theorem enacba_abs_c (x c r : ℝ) (hr : 0 < r) : |x - c| = r ↔ x = c - r ∨ 
 /-- Predpostavke `enacba_abs_c` se dajo izpolniti (r = 1). -/
 example : (0 : ℝ) < 1 := one_pos
 
-/-- Razlaga 2 in RACUN: |2x − 1| = 7 ⇔ x = 4 ali x = −3. -/
+/-- Razlaga 2 in RACUN: |2x − 1| = 7 ⇔ x = 4 ali x = −3.
+trditev: MAT-SS-1/realna-stevila-in-intervali#enacba-2x1
+besedilo: »Enačba $|2x - 1| = 7$ da $2x - 1 = 7$, torej $x = 4$, ali $2x - 1 = -7$, torej $x = -3$.« -/
 theorem enacba_2x1 (x : ℝ) : |2 * x - 1| = 7 ↔ x = 4 ∨ x = -3 := by
   rw [abs_eq (by norm_num : (0 : ℝ) ≤ 7)]
   constructor
@@ -174,7 +201,9 @@ theorem enacba_2x1 (x : ℝ) : |2 * x - 1| = 7 ↔ x = 4 ∨ x = -3 := by
     · left; rw [h]; norm_num
     · right; rw [h]; norm_num
 
-/-- Razlaga 2: |x − 3| = x − 3 za x ≥ 3, 3 − x za x < 3; za x < 3 je |x − 3| + x = (3 − x) + x = 3. -/
+/-- Razlaga 2: |x − 3| = x − 3 za x ≥ 3, 3 − x za x < 3; za x < 3 je |x − 3| + x = (3 − x) + x = 3.
+trditev: MAT-SS-1/realna-stevila-in-intervali#abs-x3
+besedilo: »|x - 3| = \begin{cases} x - 3, & x \ge 3 \\ 3 - x, & x < 3 \end{cases}$$ Če vemo, na katerem intervalu leži $x$, absolutno vrednost odpravimo. Za $x < 3$ je $|x - 3| + x = (3 - x) + x = 3$« -/
 theorem abs_x3 (x : ℝ) : (3 ≤ x → |x - 3| = x - 3) ∧ (x < 3 → |x - 3| = 3 - x) ∧
     (x < 3 → |x - 3| + x = (3 - x) + x ∧ (3 - x) + x = 3) := by
   refine ⟨fun h => abs_of_nonneg (by linarith), fun h => by rw [abs_of_neg (by linarith)]; ring, fun h => ?_⟩
@@ -182,7 +211,9 @@ theorem abs_x3 (x : ℝ) : (3 ≤ x → |x - 3| = x - 3) ∧ (x < 3 → |x - 3| 
 
 /-! ## Razlaga 3–4: intervali in operacije -/
 
-/-- Razlaga 3 (tabela): pomen vseh devetih vrst intervalov. -/
+/-- Razlaga 3 (tabela): pomen vseh devetih vrst intervalov.
+trditev: MAT-SS-1/realna-stevila-in-intervali#intervali
+besedilo: »| $(a, b)$ | $a < x < b$ | | $[a, b]$ | $a \le x \le b$ | | $[a, b)$ | $a \le x < b$ | | $(a, b]$ | $a < x \le b$ | | $(a, \infty)$ | $x > a$ | | $[a, \infty)$ | $x \ge a$ | | $(-\infty, b)$ | $x < b$ | | $(-\infty, b]$ | $x \le b$ | | $(-\infty, \infty)$ | vsak $x$ |« -/
 theorem intervali (a b x : ℝ) :
     (x ∈ Set.Ioo a b ↔ a < x ∧ x < b) ∧ (x ∈ Set.Icc a b ↔ a ≤ x ∧ x ≤ b) ∧
     (x ∈ Set.Ico a b ↔ a ≤ x ∧ x < b) ∧ (x ∈ Set.Ioc a b ↔ a < x ∧ x ≤ b) ∧
@@ -190,7 +221,9 @@ theorem intervali (a b x : ℝ) :
     x ∈ (Set.univ : Set ℝ) :=
   ⟨Iff.rfl, Iff.rfl, Iff.rfl, Iff.rfl, Iff.rfl, Iff.rfl, Iff.rfl, Iff.rfl, Set.mem_univ x⟩
 
-/-- Razlaga 3 in Pogoste napake 5: [2, 5] vsebuje tudi 2,5, π in √10; [3,5; 5,1] vsebuje 4,27 in √20. -/
+/-- Razlaga 3 in Pogoste napake 5: [2, 5] vsebuje tudi 2,5, π in √10; [3,5; 5,1] vsebuje 4,27 in √20.
+trditev: MAT-SS-1/realna-stevila-in-intervali#vsa-stevila
+besedilo: »ampak vsebuje tudi $2{,}5$, $\pi$ in $\sqrt{10}$« -/
 theorem vsa_stevila : (2.5 : ℝ) ∈ Set.Icc (2 : ℝ) 5 ∧ π ∈ Set.Icc (2 : ℝ) 5 ∧ √10 ∈ Set.Icc (2 : ℝ) 5 ∧
     (4.27 : ℝ) ∈ Set.Icc (3.5 : ℝ) 5.1 ∧ √20 ∈ Set.Icc (3.5 : ℝ) 5.1 := by
   refine ⟨by norm_num, ⟨by linarith [pi_gt_three], by linarith [pi_lt_four]⟩, ⟨?_, ?_⟩, by norm_num, ⟨?_, ?_⟩⟩
@@ -199,7 +232,9 @@ theorem vsa_stevila : (2.5 : ℝ) ∈ Set.Icc (2 : ℝ) 5 ∧ π ∈ Set.Icc (2 
   · rw [Real.le_sqrt (by norm_num) (by norm_num)]; norm_num
   · rw [Real.sqrt_le_left (by norm_num)]; norm_num
 
-/-- Razlaga 3: dolžina intervala [a, b] je b − a, središče (a + b)/2 leži v njem. -/
+/-- Razlaga 3: dolžina intervala [a, b] je b − a, središče (a + b)/2 leži v njem.
+trditev: MAT-SS-1/realna-stevila-in-intervali#dolzina-sredisce
+besedilo: »Dolžina intervala je $b - a$, njegovo središče pa $\dfrac{a + b}{2}$.« -/
 theorem dolzina_sredisce (a b : ℝ) (h : a < b) :
     volume (Set.Icc a b) = ENNReal.ofReal (b - a) ∧ (a + b) / 2 ∈ Set.Ioo a b :=
   ⟨Real.volume_Icc, ⟨by linarith, by linarith⟩⟩
@@ -207,7 +242,9 @@ theorem dolzina_sredisce (a b : ℝ) (h : a < b) :
 /-- Predpostavke `dolzina_sredisce` se dajo izpolniti (1 < 5). -/
 example : (1 : ℝ) < 5 := by norm_num
 
-/-- Razlaga 4: A = [1, 5], B = (3, 8): A ∩ B = (3, 5], A ∪ B = [1, 8), A ∖ B = [1, 3]. -/
+/-- Razlaga 4: A = [1, 5], B = (3, 8): A ∩ B = (3, 5], A ∪ B = [1, 8), A ∖ B = [1, 3].
+trditev: MAT-SS-1/realna-stevila-in-intervali#operacije-1-5-3-8
+besedilo: »Za $A = [1, 5]$ in $B = (3, 8)$ je $$A \cap B = (3, 5], \qquad A \cup B = [1, 8), \qquad A \setminus B = [1, 3].$$« -/
 theorem operacije_1_5_3_8 :
     Set.Icc (1 : ℝ) 5 ∩ Set.Ioo 3 8 = Set.Ioc 3 5 ∧ Set.Icc (1 : ℝ) 5 ∪ Set.Ioo 3 8 = Set.Ico 1 8 ∧
     Set.Icc (1 : ℝ) 5 \ Set.Ioo 3 8 = Set.Icc 1 3 := by
@@ -231,7 +268,9 @@ theorem operacije_1_5_3_8 :
       · exact ⟨h1, by linarith⟩
     · rintro ⟨h1, h2⟩; exact ⟨⟨h1, by linarith⟩, Or.inl h2⟩
 
-/-- Razlaga 4 (simulacija): [1, 5] ∩ [3, 8] = [3, 5] in [1, 5) ∩ [3, 8] = [3, 5). -/
+/-- Razlaga 4 (simulacija): [1, 5] ∩ [3, 8] = [3, 5] in [1, 5) ∩ [3, 8] = [3, 5).
+trditev: MAT-SS-1/realna-stevila-in-intervali#simulacija
+besedilo: »Opazuj, kako se presek iz $[3, 5]$ spremeni v $[3, 5)$« -/
 theorem simulacija : Set.Icc (1 : ℝ) 5 ∩ Set.Icc 3 8 = Set.Icc 3 5 ∧ Set.Ico (1 : ℝ) 5 ∩ Set.Icc 3 8 = Set.Ico 3 5 := by
   constructor
   · rw [Set.Icc_inter_Icc]; norm_num
@@ -240,14 +279,18 @@ theorem simulacija : Set.Icc (1 : ℝ) 5 ∩ Set.Icc 3 8 = Set.Icc 3 5 ∧ Set.I
     · rintro ⟨⟨_, h2⟩, h3, _⟩; exact ⟨h3, h2⟩
     · rintro ⟨h1, h2⟩; exact ⟨⟨by linarith, h2⟩, h1, by linarith⟩
 
-/-- Razlaga 4: (−∞, −2) ∪ (3, ∞) ni en interval: vsebuje −3 in 4, ne pa 0 med njima. -/
+/-- Razlaga 4: (−∞, −2) ∪ (3, ∞) ni en interval: vsebuje −3 in 4, ne pa 0 med njima.
+trditev: MAT-SS-1/realna-stevila-in-intervali#dva-dela
+besedilo: »Če se intervala ne dotikata, unija ostane iz dveh delov, npr. $(-\infty, -2) \cup (3, \infty)$.« -/
 theorem dva_dela : (-3 : ℝ) ∈ Set.Iio (-2) ∪ Set.Ioi 3 ∧ (4 : ℝ) ∈ Set.Iio (-2) ∪ Set.Ioi 3 ∧
     (0 : ℝ) ∉ Set.Iio (-2) ∪ Set.Ioi 3 := by
   simp only [Set.mem_union, Set.mem_Iio, Set.mem_Ioi]; norm_num
 
 /-! ## Razlaga 5: absolutna vrednost in intervali -/
 
-/-- Razlaga 5, Povzetek in Ustno vprašanje 3: |x − c| < r, ≤ r, > r, ≥ r kot interval oziroma unija. -/
+/-- Razlaga 5, Povzetek in Ustno vprašanje 3: |x − c| < r, ≤ r, > r, ≥ r kot interval oziroma unija.
+trditev: MAT-SS-1/realna-stevila-in-intervali#abs-intervali
+besedilo: »$|x - c| < r \iff c - r < x < c + r \iff x \in (c - r,\, c + r)$, - $|x - c| \le r \iff x \in [c - r,\, c + r]$, - $|x - c| > r \iff x \in (-\infty,\, c - r) \cup (c + r,\, \infty)$, - $|x - c| \ge r \iff x \in (-\infty,\, c - r] \cup [c + r,\, \infty)$.« -/
 theorem abs_intervali (x c r : ℝ) :
     (|x - c| < r ↔ x ∈ Set.Ioo (c - r) (c + r)) ∧ (|x - c| ≤ r ↔ x ∈ Set.Icc (c - r) (c + r)) ∧
     (r < |x - c| ↔ x ∈ Set.Iio (c - r) ∪ Set.Ioi (c + r)) ∧
@@ -272,7 +315,9 @@ theorem abs_intervali (x c r : ℝ) :
       · right; linarith
 
 /-- Razlaga 5 in Pogoste napake 3: |x| > 3 ni isto kot x > 3 (−4 je rešitev); |x| < 3 je (−3, 3), |x| > 3 je
-(−∞, −3) ∪ (3, ∞); |x − 2| < 3 ⇔ x ∈ (−1, 5). -/
+(−∞, −3) ∪ (3, ∞); |x − 2| < 3 ⇔ x ∈ (−1, 5).
+trditev: MAT-SS-1/realna-stevila-in-intervali#abs-primeri
+besedilo: »Pravilno: $|x| < 3$ je $(-3, 3)$, $|x| > 3$ pa je $(-\infty, -3) \cup (3, \infty)$.« -/
 theorem abs_primeri (x : ℝ) : (3 < |(-4 : ℝ)| ∧ ¬ (3 < (-4 : ℝ))) ∧ (|x| < 3 ↔ x ∈ Set.Ioo (-3) 3) ∧
     (3 < |x| ↔ x ∈ Set.Iio (-3) ∪ Set.Ioi 3) ∧ (|x - 2| < 3 ↔ x ∈ Set.Ioo (-1) 5) := by
   have h0 := abs_intervali x 0 3
@@ -281,7 +326,9 @@ theorem abs_primeri (x : ℝ) : (3 < |(-4 : ℝ)| ∧ ¬ (3 < (-4 : ℝ))) ∧ (
   norm_num at h2
   refine ⟨by norm_num, h0.1, h0.2.2.1, h2.1⟩
 
-/-- Razlaga 5, premisli: |x − 4| ≥ 1 ⇔ x ∈ (−∞, 3] ∪ [5, ∞); 4 ni rešitev, 3 in 5 sta. -/
+/-- Razlaga 5, premisli: |x − 4| ≥ 1 ⇔ x ∈ (−∞, 3] ∪ [5, ∞); 4 ni rešitev, 3 in 5 sta.
+trditev: MAT-SS-1/realna-stevila-in-intervali#premisli-4-1
+besedilo: »Iz dveh kosov, $(-\infty, 3] \cup [5, \infty)$: »vsaj $1$ stran od $4$« pomeni levo ali desno. Število $4$ ni v rešitvi, ker je $|4 - 4| = 0 < 1$. Krajišči $3$ in $5$ sta vključeni zaradi znaka $\ge$.« -/
 theorem premisli_4_1 (x : ℝ) : (1 ≤ |x - 4| ↔ x ∈ Set.Iic 3 ∪ Set.Ici 5) ∧ ¬ (1 ≤ |(4 : ℝ) - 4|) ∧
     1 ≤ |(3 : ℝ) - 4| ∧ 1 ≤ |(5 : ℝ) - 4| := by
   have h := (abs_intervali x 4 1).2.2.2
@@ -290,12 +337,16 @@ theorem premisli_4_1 (x : ℝ) : (1 ≤ |x - 4| ↔ x ∈ Set.Iic 3 ∪ Set.Ici 
 
 /-! ## Rešeni primeri -/
 
-/-- Primer 1: |−3| + |5 − 9| − |−2| = 3 + 4 − 2 = 5; |AB| = |3 − (−4)| = |7| = 7 = |−4 − 3|. -/
+/-- Primer 1: |−3| + |5 − 9| − |−2| = 3 + 4 − 2 = 5; |AB| = |3 − (−4)| = |7| = 7 = |−4 − 3|.
+trditev: MAT-SS-1/realna-stevila-in-intervali#primer1
+besedilo: »vrednost izraza je $5$, točki $A$ in $B$ sta oddaljeni za $7$ enot.« -/
 theorem primer1 : |(-3 : ℝ)| + |(5 : ℝ) - 9| - |(-2 : ℝ)| = 3 + 4 - 2 ∧ (3 : ℝ) + 4 - 2 = 5 ∧ (5 : ℝ) - 9 = -4 ∧
     |(3 : ℝ) - (-4)| = |(7 : ℝ)| ∧ |(7 : ℝ)| = 7 ∧ |(-4 : ℝ) - 3| = 7 := by norm_num
 
 /-- Primer 2: A = [−2, 4), B = (1, 6]: A ∩ B = (1, 4), A ∪ B = [−2, 6], A ∖ B = [−2, 1]; 1 ∈ A ∖ B, 4 ∈ A ∪ B,
-4 ∉ A ∩ B. -/
+4 ∉ A ∩ B.
+trditev: MAT-SS-1/realna-stevila-in-intervali#primer2
+besedilo: »Odgovor: $A \cap B = (1, 4)$, $A \cup B = [-2, 6]$, $A \setminus B = [-2, 1]$.« -/
 theorem primer2 :
     Set.Ico (-2 : ℝ) 4 ∩ Set.Ioc 1 6 = Set.Ioo 1 4 ∧ Set.Ico (-2 : ℝ) 4 ∪ Set.Ioc 1 6 = Set.Icc (-2) 6 ∧
     Set.Ico (-2 : ℝ) 4 \ Set.Ioc 1 6 = Set.Icc (-2) 1 ∧ (1 : ℝ) ∈ Set.Ico (-2 : ℝ) 4 \ Set.Ioc 1 6 ∧
@@ -325,7 +376,9 @@ theorem primer2 :
   · simp only [Set.mem_inter_iff, Set.mem_Ico, Set.mem_Ioc]; norm_num
 
 /-- Primer 3: [60, 100]; c = (60 + 100)/2 = 80, r = (100 − 60)/2 = 20; |x − 80| ≤ 20 ⇔ x ∈ [60, 100];
-|58 − 80| = 22 > 20 (ni normalen), |96 − 80| = 16 ≤ 20 (je normalen). -/
+|58 − 80| = 22 > 20 (ni normalen), |96 − 80| = 16 ≤ 20 (je normalen).
+trditev: MAT-SS-1/realna-stevila-in-intervali#primer3
+besedilo: »Odgovor: pogoj je $|x - 80| \le 20$, normalen je le utrip $96$ na minuto.« -/
 theorem primer3 (x : ℝ) :
     ((60 : ℝ) + 100) / 2 = 80 ∧ ((100 : ℝ) - 60) / 2 = 20 ∧ (|x - 80| ≤ 20 ↔ x ∈ Set.Icc (60 : ℝ) 100) ∧
     (80 : ℝ) - 20 = 60 ∧ (80 : ℝ) + 20 = 100 ∧ |(58 : ℝ) - 80| = 22 ∧ (20 : ℝ) < 22 ∧ |(96 : ℝ) - 80| = 16 ∧
@@ -335,7 +388,9 @@ theorem primer3 (x : ℝ) :
   exact ⟨by norm_num, by norm_num, h, by norm_num, by norm_num, by norm_num, by norm_num, by norm_num, by norm_num⟩
 
 /-- Primer 4 a): E = |x + 1| + |x − 3| je za −1 ≤ x < 3 enak (x + 1) + (3 − x) = 4, za x ≥ 3 pa
-(x + 1) + (x − 3) = 2x − 2; preizkusa |1| + |−3| = 4 in |6| + |2| = 8 = 2 · 5 − 2. -/
+(x + 1) + (x − 3) = 2x − 2; preizkusa |1| + |−3| = 4 in |6| + |2| = 8 = 2 · 5 − 2.
+trditev: MAT-SS-1/realna-stevila-in-intervali#primer4a
+besedilo: »za $-1 \le x < 3$ je $E = 4$, za $x \ge 3$ je $E = 2x - 2$.« -/
 theorem primer4a (x : ℝ) :
     (-1 ≤ x → x < 3 → |x + 1| + |x - 3| = (x + 1) + (3 - x) ∧ (x + 1) + (3 - x) = 4) ∧
     (3 ≤ x → |x + 1| + |x - 3| = (x + 1) + (x - 3) ∧ (x + 1) + (x - 3) = 2 * x - 2) ∧
@@ -345,7 +400,9 @@ theorem primer4a (x : ℝ) :
   · rw [abs_of_nonneg (by linarith), abs_of_nonneg (by linarith)]
 
 /-- Primer 4 b) in RACUN: |5 − 2x| = 3 ⇔ x = 1 ali x = 4 (5 − 2x = 3: −2x = −2; 5 − 2x = −3: −2x = −8);
-preizkus |5 − 2| = 3, |5 − 8| = 3. -/
+preizkus |5 − 2| = 3, |5 − 8| = 3.
+trditev: MAT-SS-1/realna-stevila-in-intervali#primer4b
+besedilo: »Rešitvi enačbe sta $x = 1$ in $x = 4$.« -/
 theorem primer4b (x : ℝ) : (|5 - 2 * x| = 3 ↔ x = 1 ∨ x = 4) ∧ |(5 : ℝ) - 2| = 3 ∧ |(5 : ℝ) - 8| = 3 := by
   refine ⟨?_, by norm_num, by norm_num⟩
   rw [abs_eq (by norm_num : (0 : ℝ) ≤ 3)]
@@ -359,22 +416,30 @@ theorem primer4b (x : ℝ) : (|5 - 2 * x| = 3 ↔ x = 1 ∨ x = 4) ∧ |(5 : ℝ
 
 /-! ## Pogoste napake -/
 
-/-- Pogoste napake 1: |a + b| = |a| + |b| velja natanko pri istem predznaku; |3 + (−5)| = 2, |3| + |−5| = 8. -/
+/-- Pogoste napake 1: |a + b| = |a| + |b| velja natanko pri istem predznaku; |3 + (−5)| = 2, |3| + |−5| = 8.
+trditev: MAT-SS-1/realna-stevila-in-intervali#napaka-vsota
+besedilo: »To velja le, če imata $a$ in $b$ isti predznak (ali je eno od njiju $0$). Za $a = 3$, $b = -5$ je $|3 + (-5)| = |{-2}| = 2$, medtem ko je $|3| + |{-5}| = 8$.« -/
 theorem napaka_vsota (a b : ℝ) : (|a + b| = |a| + |b| ↔ 0 ≤ a ∧ 0 ≤ b ∨ a ≤ 0 ∧ b ≤ 0) ∧
     |(3 : ℝ) + (-5)| = 2 ∧ |(3 : ℝ)| + |(-5 : ℝ)| = 8 :=
   ⟨abs_add_eq_add_abs_iff a b, by norm_num, by norm_num⟩
 
-/-- Pogoste napake 2: |2 − 5| = |−3| = 3, ne 7. -/
+/-- Pogoste napake 2: |2 − 5| = |−3| = 3, ne 7.
+trditev: MAT-SS-1/realna-stevila-in-intervali#napaka-minus
+besedilo: »Pravilno: $2 - 5 = -3$, ta vrednost je negativna, zato jo zamenjaš z nasprotno: $|{-3}| = 3$.« -/
 theorem napaka_minus : (2 : ℝ) - 5 = -3 ∧ |(2 : ℝ) - 5| = 3 ∧ |(2 : ℝ) - 5| ≠ 7 := by norm_num
 
-/-- Pogoste napake 4: x ≥ 2 je [2, ∞), 2 ≤ x ≤ 5 je [2, 5] in ne (2, 5) (2 ni v (2, 5)). -/
+/-- Pogoste napake 4: x ≥ 2 je [2, ∞), 2 ≤ x ≤ 5 je [2, 5] in ne (2, 5) (2 ni v (2, 5)).
+trditev: MAT-SS-1/realna-stevila-in-intervali#napaka-oklepaji
+besedilo: »Pravilno: $2 \le x \le 5$ je $[2, 5]$.« -/
 theorem napaka_oklepaji (x : ℝ) : (2 ≤ x ↔ x ∈ Set.Ici (2 : ℝ)) ∧ (2 ≤ x ∧ x ≤ 5 ↔ x ∈ Set.Icc (2 : ℝ) 5) ∧
     (2 : ℝ) ∉ Set.Ioo (2 : ℝ) 5 :=
   ⟨Iff.rfl, Iff.rfl, fun h => lt_irrefl _ h.1⟩
 
 /-! ## Za maturo -/
 
-/-- Naloga 1 in RACUN: 2|x + 1| − 3 = 5 ⇔ |x + 1| = 4 ⇔ x = 3 ali x = −5; preizkus 2|4| − 3 = 5, 2|−4| − 3 = 5. -/
+/-- Naloga 1 in RACUN: 2|x + 1| − 3 = 5 ⇔ |x + 1| = 4 ⇔ x = 3 ali x = −5; preizkus 2|4| − 3 = 5, 2|−4| − 3 = 5.
+trditev: MAT-SS-1/realna-stevila-in-intervali#naloga1
+besedilo: »Odgovor: rešitvi sta $x = 3$ in $x = -5$.« -/
 theorem naloga1 (x : ℝ) : (2 * |x + 1| - 3 = 5 ↔ |x + 1| = 4) ∧ (|x + 1| = 4 ↔ x = 3 ∨ x = -5) ∧
     2 * |(4 : ℝ)| - 3 = 5 ∧ 2 * |(-4 : ℝ)| - 3 = 5 := by
   refine ⟨⟨fun h => by linarith, fun h => by rw [h]; norm_num⟩, ?_, by norm_num, by norm_num⟩
@@ -388,7 +453,9 @@ theorem naloga1 (x : ℝ) : (2 * |x + 1| - 3 = 5 ↔ |x + 1| = 4) ∧ (|x + 1| =
     · right; rw [h]; norm_num
 
 /-- Naloga 2 a), b): 10 = 3² + 1², hipotenuza s katetama 3 in 1 je √(3² + 1²) = √10; 3² = 9 < 10 < 16 = 4², zato
-3 < √10 < 4. -/
+3 < √10 < 4.
+trditev: MAT-SS-1/realna-stevila-in-intervali#naloga2-ab
+besedilo: »Ker je $3^2 = 9 < 10 < 16 = 4^2$, velja $3 < \sqrt{10} < 4$.« -/
 theorem naloga2_ab : (10 : ℝ) = 3 ^ 2 + 1 ^ 2 ∧ √((3 : ℝ) ^ 2 + 1 ^ 2) = √10 ∧ (3 : ℝ) ^ 2 = 9 ∧ (9 : ℝ) < 10 ∧
     (10 : ℝ) < 16 ∧ (16 : ℝ) = 4 ^ 2 ∧ 3 < √10 ∧ √10 < 4 := by
   refine ⟨by norm_num, by norm_num, by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩
@@ -396,7 +463,9 @@ theorem naloga2_ab : (10 : ℝ) = 3 ^ 2 + 1 ^ 2 ∧ √((3 : ℝ) ^ 2 + 1 ^ 2) =
   · rw [Real.sqrt_lt' (by norm_num)]; norm_num
 
 /-- Naloga 2 c), d): A = (−3, √10], B = [0, 6): A ∩ B = [0, √10], A ∪ B = (−3, 6), A ∖ B = (−3, 0), celi števili
-v A ∖ B sta −2 in −1. -/
+v A ∖ B sta −2 in −1.
+trditev: MAT-SS-1/realna-stevila-in-intervali#naloga2-cd
+besedilo: »$A \cap B = [0, \sqrt{10}\,]$, $A \cup B = (-3, 6)$, v $A \setminus B$ sta celi števili $-2$ in $-1$« -/
 theorem naloga2_cd :
     Set.Ioc (-3 : ℝ) √10 ∩ Set.Ico 0 6 = Set.Icc 0 √10 ∧ Set.Ioc (-3 : ℝ) √10 ∪ Set.Ico 0 6 = Set.Ioo (-3) 6 ∧
     Set.Ioc (-3 : ℝ) √10 \ Set.Ico 0 6 = Set.Ioo (-3) 0 ∧
@@ -433,11 +502,15 @@ theorem naloga2_cd :
       omega
     · rintro (rfl | rfl) <;> norm_num
 
-/-- Naloga 3 a) in RACUN: števila, oddaljena od 2 največ za 3: |x − 2| ≤ 3 ⇔ x ∈ [2 − 3, 2 + 3] = [−1, 5]. -/
+/-- Naloga 3 a) in RACUN: števila, oddaljena od 2 največ za 3: |x − 2| ≤ 3 ⇔ x ∈ [2 − 3, 2 + 3] = [−1, 5].
+trditev: MAT-SS-1/realna-stevila-in-intervali#naloga3a
+besedilo: »pogoj je $|x - 2| \le 3$. Zato je $2 - 3 \le x \le 2 + 3$ in $A = [-1, 5]$.« -/
 theorem naloga3a (x : ℝ) : (|x - 2| ≤ 3 ↔ x ∈ Set.Icc (2 - 3 : ℝ) (2 + 3)) ∧ Set.Icc (2 - 3 : ℝ) (2 + 3) = Set.Icc (-1) 5 :=
   ⟨(abs_intervali x 2 3).2.1, by norm_num⟩
 
-/-- Naloga 3 b) in RACUN: |3 − 2x| > 5 ⇔ 3 − 2x < −5 ali 3 − 2x > 5 ⇔ x > 4 ali x < −1. -/
+/-- Naloga 3 b) in RACUN: |3 − 2x| > 5 ⇔ 3 − 2x < −5 ali 3 − 2x > 5 ⇔ x > 4 ali x < −1.
+trditev: MAT-SS-1/realna-stevila-in-intervali#naloga3b
+besedilo: »zato je $3 - 2x < -5$ ali $3 - 2x > 5$. 3. b) Prvi primer: $-2x < -8$. Delimo z negativnim številom $-2$, zato se znak obrne: $x > 4$. 4. b) Drugi primer: $-2x > 2$, po deljenju z $-2$ dobimo $x < -1$. Torej $B = (-\infty, -1) \cup (4, \infty)$.« -/
 theorem naloga3b (x : ℝ) : (5 < |3 - 2 * x| ↔ 3 - 2 * x < -5 ∨ 5 < 3 - 2 * x) ∧
     (3 - 2 * x < -5 ↔ 4 < x) ∧ (5 < 3 - 2 * x ↔ x < -1) ∧
     (5 < |3 - 2 * x| ↔ x ∈ Set.Iio (-1) ∪ Set.Ioi 4) := by
@@ -455,7 +528,9 @@ theorem naloga3b (x : ℝ) : (5 < |3 - 2 * x| ↔ 3 - 2 * x < -5 ∨ 5 < 3 - 2 *
   rw [e1, e2, e3, Set.mem_union, Set.mem_Iio, Set.mem_Ioi, or_comm]
 
 /-- Naloga 3 c), d) in RACUN: A = [−1, 5], B = (−∞, −1) ∪ (4, ∞): A ∩ B = (4, 5], A ∪ B = ℝ, A ∖ B = [−1, 4];
-c = (−1 + 4)/2 = 3/2, r = (4 − (−1))/2 = 5/2; [−1, 4] je množica rešitev |x − 3/2| ≤ 5/2 in |2x − 3| ≤ 5. -/
+c = (−1 + 4)/2 = 3/2, r = (4 − (−1))/2 = 5/2; [−1, 4] je množica rešitev |x − 3/2| ≤ 5/2 in |2x − 3| ≤ 5.
+trditev: MAT-SS-1/realna-stevila-in-intervali#naloga3cd
+besedilo: »$A \cap B = (4, 5]$, $A \cup B = \mathbb{R}$, $A \setminus B = [-1, 4]$, kar je množica rešitev neenačbe $\left|x - \dfrac{3}{2}\right| \le \dfrac{5}{2}$« -/
 theorem naloga3cd :
     Set.Icc (-1 : ℝ) 5 ∩ (Set.Iio (-1) ∪ Set.Ioi 4) = Set.Ioc 4 5 ∧
     Set.Icc (-1 : ℝ) 5 ∪ (Set.Iio (-1) ∪ Set.Ioi 4) = Set.univ ∧
@@ -484,13 +559,17 @@ theorem naloga3cd :
   · ext x; simp only [Set.mem_ofPred_eq, Set.mem_Icc, abs_le]
     constructor <;> rintro ⟨h1, h2⟩ <;> constructor <;> linarith
 
-/-- Ustno vprašanje 2: hipotenuza s katetama 1 in 1 meri √(1² + 1²) = √2. -/
+/-- Ustno vprašanje 2: hipotenuza s katetama 1 in 1 meri √(1² + 1²) = √2.
+trditev: MAT-SS-1/realna-stevila-in-intervali#ustno2
+besedilo: »Njegova hipotenuza po Pitagorovem izreku meri $\sqrt{1^2 + 1^2} = \sqrt{2}$.« -/
 theorem ustno2 : √((1 : ℝ) ^ 2 + 1 ^ 2) = √2 := by norm_num
 
 /-! ## Drugače -/
 
 /-- Kot zgodba: |38,2 − 37| = 1,2 = |35,8 − 37| (> 0,5, kliče); |37,3 − 37| = 0,3 ≤ 0,5 (ne kliče); mirne vrednosti
-|t − 37| ≤ 0,5 so [36,5; 37,5], klicati mora pri t ∈ (−∞; 36,5) ∪ (37,5; ∞). -/
+|t − 37| ≤ 0,5 so [36,5; 37,5], klicati mora pri t ∈ (−∞; 36,5) ∪ (37,5; ∞).
+trditev: MAT-SS-1/realna-stevila-in-intervali#kot-zgodba
+besedilo: »Mirne vrednosti so $|t - 37| \le 0{,}5$, torej interval $[36{,}5;\,37{,}5]$ s polnima krožcema. Klicati mora, ko je temperatura v enem od dveh kosov zunaj njega: $(-\infty;\,36{,}5) \cup (37{,}5;\,\infty)$.« -/
 theorem kot_zgodba (t : ℝ) :
     |(38.2 : ℝ) - 37| = 1.2 ∧ |(35.8 : ℝ) - 37| = 1.2 ∧ (0.5 : ℝ) < 1.2 ∧ |(37.3 : ℝ) - 37| = 0.3 ∧
     (0.3 : ℝ) ≤ 0.5 ∧ (|t - 37| ≤ 0.5 ↔ t ∈ Set.Icc (36.5 : ℝ) 37.5) ∧
@@ -499,7 +578,9 @@ theorem kot_zgodba (t : ℝ) :
   rw [show (37 : ℝ) - 0.5 = 36.5 by norm_num, show (37 : ℝ) + 0.5 = 37.5 by norm_num] at h
   refine ⟨by norm_num, by norm_num, by norm_num, by norm_num, by norm_num, h.2.1, h.2.2.1⟩
 
-/-- Korak za korakom: |2x − 1| < 5 ⇔ −5 < 2x − 1 < 5 ⇔ −4 < 2x < 6 ⇔ −2 < x < 3; preverbe pri 0, 3, −2, 4. -/
+/-- Korak za korakom: |2x − 1| < 5 ⇔ −5 < 2x − 1 < 5 ⇔ −4 < 2x < 6 ⇔ −2 < x < 3; preverbe pri 0, 3, −2, 4.
+trditev: MAT-SS-1/realna-stevila-in-intervali#korak-za-korakom
+besedilo: »| 1 | Pogoj »manj kot« pomeni, da je izraz $2x - 1$ med $-5$ in $5$. | $-5 < 2x - 1 < 5$ | | 2 | Vsem trem delom prištejemo $1$. | $-4 < 2x < 6$ | | 3 | Vse tri dele delimo z $2$ (pozitivno število, znaka se ne obrneta). | $-2 < x < 3$ | | 4 | Zapišemo interval. | $x \in (-2, 3)$ | | 5 | Preverba v sredini: $x = 0$ da $\lvert{-1}\rvert = 1 < 5$. | velja | | 6 | Preverba na krajiščih: $x = 3$ da $\lvert 5 \rvert = 5$, $x = -2$ da $\lvert{-5}\rvert = 5$. | ne velja, krajišči izključeni | | 7 | Preverba zunaj: $x = 4$ da $\lvert 7 \rvert = 7$. | ne velja |« -/
 theorem korak_za_korakom (x : ℝ) :
     (|2 * x - 1| < 5 ↔ -5 < 2 * x - 1 ∧ 2 * x - 1 < 5) ∧ (-5 < 2 * x - 1 ∧ 2 * x - 1 < 5 ↔ -4 < 2 * x ∧ 2 * x < 6) ∧
     (-4 < 2 * x ∧ 2 * x < 6 ↔ -2 < x ∧ x < 3) ∧ (-2 < x ∧ x < 3 ↔ x ∈ Set.Ioo (-2 : ℝ) 3) ∧
@@ -509,7 +590,9 @@ theorem korak_za_korakom (x : ℝ) :
     ⟨fun ⟨a, b⟩ => ⟨by linarith, by linarith⟩, fun ⟨a, b⟩ => ⟨by linarith, by linarith⟩⟩, Iff.rfl,
     by norm_num, by norm_num, by norm_num, by norm_num, by norm_num, by norm_num⟩
 
-/-- Korak za korakom: |x + 1| ≥ 2 ⇔ x ≤ −3 ali x ≥ 1; preverbe pri −3, 1 (|±2| = 2 ≥ 2) in 0 (|1| = 1 < 2). -/
+/-- Korak za korakom: |x + 1| ≥ 2 ⇔ x ≤ −3 ali x ≥ 1; preverbe pri −3, 1 (|±2| = 2 ≥ 2) in 0 (|1| = 1 < 2).
+trditev: MAT-SS-1/realna-stevila-in-intervali#korak-ge
+besedilo: »Prvi primer da $x \le -3$, drugi $x \ge 1$. Rešitev: $(-\infty, -3] \cup [1, \infty)$. Preverba: $x = -3$ da $|{-2}| = 2 \ge 2$, $x = 1$ da $|2| = 2 \ge 2$, $x = 0$ da $|1| = 1 < 2$« -/
 theorem korak_ge (x : ℝ) : (2 ≤ |x + 1| ↔ x ∈ Set.Iic (-3 : ℝ) ∪ Set.Ici 1) ∧ |(-3 : ℝ) + 1| = 2 ∧
     |(1 : ℝ) + 1| = 2 ∧ |(0 : ℝ) + 1| = 1 ∧ (1 : ℝ) < 2 := by
   have h := (abs_intervali x (-1) 2).2.2.2
@@ -519,32 +602,44 @@ theorem korak_ge (x : ℝ) : (2 ≤ |x + 1| ↔ x ∈ Set.Iic (-3 : ℝ) ∪ Set
 
 /-! ## Preveri se -/
 
-/-- Preveri se 1: [3,5; 5,1] vsebuje obe krajišči in vse vmes (npr. 4,27); (3,5; 5,1) krajišč ne vsebuje. -/
+/-- Preveri se 1: [3,5; 5,1] vsebuje obe krajišči in vse vmes (npr. 4,27); (3,5; 5,1) krajišč ne vsebuje.
+trditev: MAT-SS-1/realna-stevila-in-intervali#kviz1
+besedilo: »Oglata oklepaja povesta, da sta tudi $3{,}5$ in $5{,}1$ normalni vrednosti.« -/
 theorem kviz1 : (3.5 : ℝ) ∈ Set.Icc (3.5 : ℝ) 5.1 ∧ (5.1 : ℝ) ∈ Set.Icc (3.5 : ℝ) 5.1 ∧
     (4.27 : ℝ) ∈ Set.Icc (3.5 : ℝ) 5.1 ∧ (3.5 : ℝ) ∉ Set.Ioo (3.5 : ℝ) 5.1 := by
   refine ⟨by norm_num, by norm_num, by norm_num, fun h => lt_irrefl _ h.1⟩
 
-/-- Preveri se 2: p = |−7| = 7, q = |3 − 5| = 2, u = −|4| = −4, v = |0| = 0, zato u < v < q < p. -/
+/-- Preveri se 2: p = |−7| = 7, q = |3 − 5| = 2, u = −|4| = −4, v = |0| = 0, zato u < v < q < p.
+trditev: MAT-SS-1/realna-stevila-in-intervali#kviz2
+besedilo: »Vrednosti so $p = 7$, $q = 2$, $u = -4$ in $v = 0$.« -/
 theorem kviz2 : |(-7 : ℝ)| = 7 ∧ |(3 : ℝ) - 5| = 2 ∧ -|(4 : ℝ)| = -4 ∧ |(0 : ℝ)| = 0 ∧
     -|(4 : ℝ)| < |(0 : ℝ)| ∧ |(0 : ℝ)| < |(3 : ℝ) - 5| ∧ |(3 : ℝ) - 5| < |(-7 : ℝ)| := by norm_num
 
-/-- Preveri se 3: |x − 1| < 2 ⇔ x ∈ (−1, 3), |x − 1| ≥ 2 ⇔ x ∈ (−∞, −1] ∪ [3, ∞). -/
+/-- Preveri se 3: |x − 1| < 2 ⇔ x ∈ (−1, 3), |x − 1| ≥ 2 ⇔ x ∈ (−∞, −1] ∪ [3, ∞).
+trditev: MAT-SS-1/realna-stevila-in-intervali#kviz3
+besedilo: »Nova rešitev so vsa števila, ki jih stara ni vsebovala: dva kosa zunaj, s krajiščema, ker sta oddaljeni natanko $2$.« -/
 theorem kviz3 (x : ℝ) : (|x - 1| < 2 ↔ x ∈ Set.Ioo (-1 : ℝ) 3) ∧ (2 ≤ |x - 1| ↔ x ∈ Set.Iic (-1 : ℝ) ∪ Set.Ici 3) := by
   have h := abs_intervali x 1 2
   norm_num at h
   exact ⟨h.1, h.2.2.2⟩
 
-/-- Preveri se 4: |3 − 8| − |−2| = 5 − 2 = 3. -/
+/-- Preveri se 4: |3 − 8| − |−2| = 5 − 2 = 3.
+trditev: MAT-SS-1/realna-stevila-in-intervali#kviz4
+besedilo: »Najprej $3 - 8 = -5$, torej $|{-5}| = 5$. Nato $|{-2}| = 2$. Rezultat je $5 - 2 = 3$.« -/
 theorem kviz4 : |(3 : ℝ) - 8| - |(-2 : ℝ)| = 5 - 2 ∧ (5 : ℝ) - 2 = 3 := by norm_num
 
-/-- Preveri se 5: |m − 250| ≤ 15 ⇔ m ∈ [235, 265]; 234 ne ustreza (16 > 15), 265, 236, 250 ustrezajo. -/
+/-- Preveri se 5: |m − 250| ≤ 15 ⇔ m ∈ [235, 265]; 234 ne ustreza (16 > 15), 265, 236, 250 ustrezajo.
+trditev: MAT-SS-1/realna-stevila-in-intervali#kviz5
+besedilo: »Dovoljene mase so $[235, 265]\,\text{mg}$. Pri $234\,\text{mg}$ je odmik $|234 - 250| = 16 > 15$, zato tableta ne ustreza.« -/
 theorem kviz5 (m : ℝ) : (|m - 250| ≤ 15 ↔ m ∈ Set.Icc (235 : ℝ) 265) ∧ |(234 : ℝ) - 250| = 16 ∧
     ¬ (|(234 : ℝ) - 250| ≤ 15) ∧ |(265 : ℝ) - 250| ≤ 15 ∧ |(236 : ℝ) - 250| ≤ 15 ∧ |(250 : ℝ) - 250| ≤ 15 := by
   have h := (abs_intervali m 250 15).2.1
   norm_num at h
   refine ⟨h, by norm_num, by norm_num, by norm_num, by norm_num, by norm_num⟩
 
-/-- Preveri se 6 in RACUN: |2x − 5| = 9 ⇔ x = 7 ali x = −2; vsota 7 + (−2) = 5. -/
+/-- Preveri se 6 in RACUN: |2x − 5| = 9 ⇔ x = 7 ali x = −2; vsota 7 + (−2) = 5.
+trditev: MAT-SS-1/realna-stevila-in-intervali#kviz6
+besedilo: »$2x - 5 = 9$ da $x = 7$, $2x - 5 = -9$ pa $x = -2$. Vsota je $7 + (-2) = 5$.« -/
 theorem kviz6 (x : ℝ) : (|2 * x - 5| = 9 ↔ x = 7 ∨ x = -2) ∧ (7 : ℝ) + (-2) = 5 := by
   refine ⟨?_, by norm_num⟩
   rw [abs_eq (by norm_num : (0 : ℝ) ≤ 9)]
@@ -556,7 +651,9 @@ theorem kviz6 (x : ℝ) : (|2 * x - 5| = 9 ↔ x = 7 ∨ x = -2) ∧ (7 : ℝ) +
     · left; rw [h]; norm_num
     · right; rw [h]; norm_num
 
-/-- Preveri se 7: za x > 2 je |2 − x| = x − 2 in |2 − x| + x = 2x − 2. -/
+/-- Preveri se 7: za x > 2 je |2 − x| = x − 2 in |2 − x| + x = 2x − 2.
+trditev: MAT-SS-1/realna-stevila-in-intervali#kviz7
+besedilo: »Za $x > 2$ je $2 - x < 0$, zato je $|2 - x| = x - 2$ in $|2 - x| + x = x - 2 + x = 2x - 2$.« -/
 theorem kviz7 (x : ℝ) (hx : 2 < x) : |2 - x| = x - 2 ∧ |2 - x| + x = 2 * x - 2 := by
   rw [abs_of_neg (by linarith)]; constructor <;> ring
 
@@ -564,7 +661,8 @@ theorem kviz7 (x : ℝ) (hx : 2 < x) : |2 - x| = x - 2 ∧ |2 - x| + x = 2 * x -
 example : (2 : ℝ) < 3 := by norm_num
 
 /-- RACUN: vrstice »vrednost« (»resi« in »neenacba« so v `enacba_2x1`, `primer4b`, `kviz6`, `naloga1`,
-`naloga3a`, `naloga3b`, `naloga3cd`). -/
+`naloga3a`, `naloga3b`, `naloga3cd`).
+pomozno – računi iz bloka RACUN, ki ga učenec ne vidi -/
 theorem racun : |(2 : ℝ) - 5| + 5 = 8 ∧ |(0 : ℝ) + 1| + |(0 : ℝ) - 3| = 4 ∧ |(5 : ℝ) + 1| + |(5 : ℝ) - 3| = 8 ∧
     (2 : ℝ) * 5 - 2 = 8 ∧ 2 * |(4 : ℝ)| - 3 = 5 ∧ 2 * |(-4 : ℝ)| - 3 = 5 ∧ (3 : ℝ) ^ 2 + 1 ^ 2 = 10 ∧
     ((-1 : ℝ) + 4) / 2 = 3 / 2 ∧ ((4 : ℝ) - (-1)) / 2 = 5 / 2 := by norm_num

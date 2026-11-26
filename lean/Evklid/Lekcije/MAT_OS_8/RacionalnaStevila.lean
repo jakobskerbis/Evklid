@@ -26,7 +26,9 @@ namespace Evklid.Lekcije.MAT_OS_8.RacionalnaStevila
 /-! ## 1. Nova množica -/
 
 /-- Razlaga 1 in Povzetek 1: realno število je racionalno natanko tedaj, ko ga lahko zapišemo kot a/b s celima
-a, b in b ≠ 0. -/
+a, b in b ≠ 0.
+trditev: MAT-OS-8/racionalna-stevila#racionalno-iff
+besedilo: »**Racionalno število** je vsako število, ki ga lahko zapišemo kot ulomek $\frac{a}{b}$, kjer sta $a$ in $b$ celi števili in $b \neq 0$.« -/
 theorem racionalno_iff (x : ℝ) : x ∈ Set.range ((↑) : ℚ → ℝ) ↔ ∃ a b : ℤ, b ≠ 0 ∧ x = a / b := by
   constructor
   · rintro ⟨q, rfl⟩
@@ -37,17 +39,22 @@ theorem racionalno_iff (x : ℝ) : x ∈ Set.range ((↑) : ℚ → ℝ) ↔ ∃
     exact ⟨a / b, by push_cast; rfl⟩
 
 /-- Razlaga 1 in Preveri se 1: vsako celo število n je racionalno (kot realno število je v Set.range Rat.cast),
-ker je n = n/1 (npr. 5 = 5/1, −3 = −3/1, −7 = −7/1). -/
+ker je n = n/1 (npr. 5 = 5/1, −3 = −3/1, −7 = −7/1).
+trditev: MAT-OS-8/racionalna-stevila#celo-je-racionalno
+besedilo: »Vsako celo število $n$ lahko zapišemo kot $\frac{n}{1}$, zato je racionalno.« -/
 theorem celo_je_racionalno (n : ℤ) :
     (n : ℝ) ∈ Set.range ((↑) : ℚ → ℝ) ∧ ∃ a b : ℤ, b ≠ 0 ∧ (n : ℚ) = a / b :=
   ⟨⟨n, by push_cast; rfl⟩, n, 1, one_ne_zero, by simp⟩
 
-/-- Razlaga 1: 5 = 5/1, −3 = −3/1, −7 = −7/1, −0,4 = −2/5, −3/4 = (−3)/4. -/
+/-- Razlaga 1: 5 = 5/1, −3 = −3/1, −7 = −7/1, −0,4 = −2/5, −3/4 = (−3)/4.
+trditev: MAT-OS-8/racionalna-stevila#zapisi
+besedilo: »$5 = \frac{5}{1}$, $-3 = \frac{-3}{1}$« -/
 theorem zapisi : (5 : ℚ) = 5 / 1 ∧ (-3 : ℚ) = -3 / 1 ∧ (-7 : ℚ) = -7 / 1 ∧ (-0.4 : ℚ) = -(2 / 5) ∧
     -((3 : ℚ) / 4) = (-3) / 4 := by
   norm_num
 
-/-- Pomožno: 0,ccc… = ∑ c/10ⁿ⁺¹ = c/9. -/
+/-- Pomožno: 0,ccc… = ∑ c/10ⁿ⁺¹ = c/9.
+pomozno – pomožna vrsta 0,ccc… = c/9, iz katere sledita tretjina in dve_tretjini -/
 theorem periodicno (c : ℝ) : ∑' n : ℕ, c / 10 ^ (n + 1) = c / 9 := by
   have h : ∀ n : ℕ, c / 10 ^ (n + 1) = c / 10 * (1 / 10) ^ n := by
     intro n; rw [pow_succ, one_div_pow]; field_simp
@@ -56,16 +63,22 @@ theorem periodicno (c : ℝ) : ∑' n : ℕ, c / 10 ^ (n + 1) = c / 9 := by
   norm_num
   ring
 
-/-- Razlaga 1 in Preveri se 1: periodično število 0,333… je enako 1/3. -/
+/-- Razlaga 1 in Preveri se 1: periodično število 0,333… je enako 1/3.
+trditev: MAT-OS-8/racionalna-stevila#tretjina
+besedilo: »$\frac{1}{3} = 0{,}333\ldots$« -/
 theorem tretjina : ∑' n : ℕ, (3 : ℝ) / 10 ^ (n + 1) = 1 / 3 := by
   rw [periodicno]; norm_num
 
-/-- Razlaga 1 in Preveri se 1: periodično število 0,333… = 1/3 je racionalno. -/
+/-- Razlaga 1 in Preveri se 1: periodično število 0,333… = 1/3 je racionalno.
+trditev: MAT-OS-8/racionalna-stevila#tretjina-racionalna
+besedilo: »Periodično decimalno število je racionalno: $0{,}333\ldots = \frac{1}{3}$.« -/
 theorem tretjina_racionalna : (∑' n : ℕ, (3 : ℝ) / 10 ^ (n + 1)) ∈ Set.range ((↑) : ℚ → ℝ) :=
   ⟨1 / 3, by rw [tretjina]; push_cast; rfl⟩
 
 /-- Bolj natančno, »Periodično število kot ulomek«: premik vrste — 10·0,333… = 3,333… = 3 + 0,333…
-(prvi člen 10·3/10 = 3, ostali členi so spet vrsta 0,333…). -/
+(prvi člen 10·3/10 = 3, ostali členi so spet vrsta 0,333…).
+trditev: MAT-OS-8/racionalna-stevila#tretjina-premik
+besedilo: »Naj bo $x = 0{,}333\ldots$ Potem je $10x = 3{,}333\ldots$« -/
 theorem tretjina_premik :
     10 * ∑' n : ℕ, (3 : ℝ) / 10 ^ (n + 1) = 3 + ∑' n : ℕ, (3 : ℝ) / 10 ^ (n + 1) := by
   have hg : (fun n : ℕ => 10 * ((3 : ℝ) / 10 ^ (n + 1))) = fun n => 3 * (1 / 10) ^ n := by
@@ -78,7 +91,9 @@ theorem tretjina_premik :
   · congr 1; funext n; rw [pow_succ]; field_simp
 
 /-- Bolj natančno, »Periodično število kot ulomek«: za x = 0,333… je 10x = 3 + x (premik vrste, to je 3,333…),
-zato 9x = 3 in x = 1/3 (brez uporabe že znane vrednosti vrste). -/
+zato 9x = 3 in x = 1/3 (brez uporabe že znane vrednosti vrste).
+trditev: MAT-OS-8/racionalna-stevila#tretjina-korak
+besedilo: »Če odštejemo, dobimo $9x = 3$, torej $x = \frac{1}{3}$.« -/
 theorem tretjina_korak (x : ℝ) (hx : x = ∑' n : ℕ, (3 : ℝ) / 10 ^ (n + 1)) :
     10 * x = 3 + x ∧ 9 * x = 3 ∧ x = 1 / 3 := by
   have h : 10 * x = 3 + x := by rw [hx]; exact tretjina_premik
@@ -89,11 +104,15 @@ example : ∃ x : ℝ, x = ∑' n : ℕ, (3 : ℝ) / 10 ^ (n + 1) := ⟨_, rfl�
 
 /-! ## 2. Na premici -/
 
-/-- Razlaga 2: −2,5 je na sredini med −3 in −2; −2,8 je bližje −3 kot −2. -/
+/-- Razlaga 2: −2,5 je na sredini med −3 in −2; −2,8 je bližje −3 kot −2.
+trditev: MAT-OS-8/racionalna-stevila#na-premici
+besedilo: »Na številski premici leži $-2{,}5$ točno na sredini med $-3$ in $-2$; $-2{,}8$ pa je bližje $-3$« -/
 theorem na_premici : ((-3 : ℚ) + (-2)) / 2 = -2.5 ∧ |(-2.8 : ℚ) - (-3)| < |(-2.8 : ℚ) - (-2)| := by
   norm_num [abs_of_pos, abs_of_neg]
 
-/-- Razlaga 2 in Povzetek 2: od dveh negativnih števil je manjše tisto z večjo absolutno vrednostjo. -/
+/-- Razlaga 2 in Povzetek 2: od dveh negativnih števil je manjše tisto z večjo absolutno vrednostjo.
+trditev: MAT-OS-8/racionalna-stevila#negativni
+besedilo: »Zato ima od dveh negativnih števil večjo vrednost tisto z manjšo absolutno vrednostjo.« -/
 theorem negativni (a b : ℚ) (ha : a < 0) (hb : b < 0) : a < b ↔ |b| < |a| := by
   rw [abs_of_neg ha, abs_of_neg hb]
   constructor <;> intro h <;> linarith
@@ -102,43 +121,60 @@ theorem negativni (a b : ℚ) (ha : a < 0) (hb : b < 0) : a < b ↔ |b| < |a| :=
 example : (-2.8 : ℚ) < 0 ∧ (-2.5 : ℚ) < 0 := by norm_num
 
 /-- Zakaj se tega učimo, Razlaga 2, Pogoste napake 1: |−2,8| = 2,8 > 2,5 = |−2,5|, zato −2,8 < −2,5
-(Luka nima prav, zjutraj je bilo hladneje); sprememba −2,8 − (−2,5) = −0,3. -/
+(Luka nima prav, zjutraj je bilo hladneje); sprememba −2,8 − (−2,5) = −0,3.
+trditev: MAT-OS-8/racionalna-stevila#luka
+besedilo: »Absolutna vrednost $|{-2{,}8}| = 2{,}8$ je večja od $|{-2{,}5}| = 2{,}5$, torej je $-2{,}8 < -2{,}5$.« -/
 theorem luka : |(-2.8 : ℚ)| = 2.8 ∧ |(-2.5 : ℚ)| = 2.5 ∧ (-2.8 : ℚ) < -2.5 ∧ ¬ ((-2.8 : ℚ) > -2.5) ∧
     (-2.8 : ℚ) - (-2.5) = -0.3 := by
   norm_num [abs_of_neg]
 
-/-- Razlaga 2 (simulacija): −3/4 = −0,75 leži bolj levo kot −0,5. -/
+/-- Razlaga 2 (simulacija): −3/4 = −0,75 leži bolj levo kot −0,5.
+pomozno – besedilo ob simulaciji trditve −3/4 < −0,5 ne izreče, le vabi k opazovanju -/
 theorem sim : -((3 : ℚ) / 4) < -0.5 := by norm_num
 
-/-- Razlaga 2, »Hiter preizkus«: −1,2 > −1,25, ker |−1,2| < |−1,25|. -/
+/-- Razlaga 2, »Hiter preizkus«: −1,2 > −1,25, ker |−1,2| < |−1,25|.
+trditev: MAT-OS-8/racionalna-stevila#preizkus-12
+besedilo: »Število $-1{,}2$, ker ima manjšo absolutno vrednost.« -/
 theorem preizkus_12 : (-1.25 : ℚ) < -1.2 ∧ |(-1.2 : ℚ)| < |(-1.25 : ℚ)| := by
   norm_num [abs_of_neg]
 
 /-! ## 3. Seštevanje in odštevanje -/
 
-/-- Razlaga 3: −2,4 + 5,1 = 2,7. -/
+/-- Razlaga 3: −2,4 + 5,1 = 2,7.
+trditev: MAT-OS-8/racionalna-stevila#segreje
+besedilo: »torej $-2{,}4 + 5{,}1 = 2{,}7$« -/
 theorem segreje : (-2.4 : ℚ) + 5.1 = 2.7 := by norm_num
 
-/-- Razlaga 3: odštevanje je prištevanje nasprotnega števila, a − b = a + (−b). -/
+/-- Razlaga 3: odštevanje je prištevanje nasprotnega števila, a − b = a + (−b).
+trditev: MAT-OS-8/racionalna-stevila#odstevanje
+besedilo: »Odštevanje je prištevanje nasprotnega števila.« -/
 theorem odstevanje (a b : ℚ) : a - b = a + (-b) := sub_eq_add_neg a b
 
-/-- Razlaga 3 (formula): a/c + b/c = (a + b)/c. -/
+/-- Razlaga 3 (formula): a/c + b/c = (a + b)/c.
+trditev: MAT-OS-8/racionalna-stevila#skupni-imenovalec
+besedilo: »\frac{a}{c} + \frac{b}{c} = \frac{a + b}{c}« -/
 theorem skupni_imenovalec (a b c : ℚ) : a / c + b / c = (a + b) / c := (add_div a b c).symm
 
-/-- Razlaga 3: −1/2 − 1/3 = −3/6 − 2/6 = −5/6. -/
+/-- Razlaga 3: −1/2 − 1/3 = −3/6 − 2/6 = −5/6.
+trditev: MAT-OS-8/racionalna-stevila#polovica-tretjina
+besedilo: »Tako je $-\frac{1}{2} - \frac{1}{3} = -\frac{3}{6} - \frac{2}{6} = -\frac{5}{6}$.« -/
 theorem polovica_tretjina : -(1 : ℚ) / 2 - 1 / 3 = -5 / 6 := by
   calc -(1 : ℚ) / 2 - 1 / 3 = -3 / 6 - 2 / 6 := by norm_num
     _ = -5 / 6 := by norm_num
 
 /-- Razlaga 3, »Premisli« in Pogoste napake 2: 1/2 + 1/3 ≠ 2/5; 2/5 = 0,4 < 0,5 = 1/2; pravilno
-3/6 + 2/6 = 5/6. -/
+3/6 + 2/6 = 5/6.
+trditev: MAT-OS-8/racionalna-stevila#napaka-stevci
+besedilo: »Ker bi bil rezultat $\frac{2}{5} = 0{,}4$ manjši od $\frac{1}{2} = 0{,}5$, čeprav smo $\frac{1}{2}$ prišteli pozitivno število.« -/
 theorem napaka_stevci : (1 : ℚ) / 2 + 1 / 3 ≠ 2 / 5 ∧ (2 : ℚ) / 5 = 0.4 ∧ (0.4 : ℚ) < 0.5 ∧ (1 : ℚ) / 2 = 0.5 ∧
     (1 : ℚ) / 2 + 1 / 3 = 3 / 6 + 2 / 6 ∧ (3 : ℚ) / 6 + 2 / 6 = 5 / 6 := by
   norm_num
 
 /-! ## 4. Množenje in deljenje -/
 
-/-- Razlaga 4: predznak produkta in količnika: enaka predznaka dasta +, različna −. -/
+/-- Razlaga 4: predznak produkta in količnika: enaka predznaka dasta +, različna −.
+trditev: MAT-OS-8/racionalna-stevila#predznaki
+besedilo: »Predznak določimo kot pri celih številih: enaka predznaka dasta $+$, različna $-$.« -/
 theorem predznaki (a b : ℚ) :
     (a < 0 → b < 0 → 0 < a * b ∧ 0 < a / b) ∧ (0 < a → 0 < b → 0 < a * b ∧ 0 < a / b) ∧
       (a < 0 → 0 < b → a * b < 0 ∧ a / b < 0) ∧ (0 < a → b < 0 → a * b < 0 ∧ a / b < 0) := by
@@ -147,13 +183,19 @@ theorem predznaki (a b : ℚ) :
     fun ha hb => ⟨mul_neg_of_neg_of_pos ha hb, div_neg_of_neg_of_pos ha hb⟩,
     fun ha hb => ⟨mul_neg_of_pos_of_neg ha hb, div_neg_of_pos_of_neg ha hb⟩⟩
 
-/-- Razlaga 4: absolutni vrednosti zmnožimo ali delimo: |a·b| = |a|·|b| in |a : b| = |a| : |b|. -/
+/-- Razlaga 4: absolutni vrednosti zmnožimo ali delimo: |a·b| = |a|·|b| in |a : b| = |a| : |b|.
+trditev: MAT-OS-8/racionalna-stevila#absolutni
+besedilo: »Absolutni vrednosti nato zmnožimo ali delimo kot doslej.« -/
 theorem absolutni (a b : ℚ) : |a * b| = |a| * |b| ∧ |a / b| = |a| / |b| := ⟨abs_mul a b, abs_div a b⟩
 
-/-- Razlaga 4: ulomke množimo števec s števcem, imenovalec z imenovalcem. -/
+/-- Razlaga 4: ulomke množimo števec s števcem, imenovalec z imenovalcem.
+trditev: MAT-OS-8/racionalna-stevila#mnozenje
+besedilo: »Ulomke množimo števec s števcem in imenovalec z imenovalcem.« -/
 theorem mnozenje (a b c d : ℚ) : a / b * (c / d) = (a * c) / (b * d) := div_mul_div_comm a b c d
 
-/-- Razlaga 4 (formula): a/b : c/d = a/b · d/c, pri čemer so b, c, d ≠ 0. -/
+/-- Razlaga 4 (formula): a/b : c/d = a/b · d/c, pri čemer so b, c, d ≠ 0.
+trditev: MAT-OS-8/racionalna-stevila#deljenje
+besedilo: »\frac{a}{b} : \frac{c}{d} = \frac{a}{b} \cdot \frac{d}{c}« -/
 theorem deljenje (a b c d : ℚ) (_hb : b ≠ 0) (_hc : c ≠ 0) (_hd : d ≠ 0) : a / b / (c / d) = a / b * (d / c) := by
   rw [div_div_eq_mul_div, mul_div_assoc]
 
@@ -161,41 +203,55 @@ theorem deljenje (a b c d : ℚ) (_hb : b ≠ 0) (_hc : c ≠ 0) (_hd : d ≠ 0)
 example : (4 : ℚ) ≠ 0 ∧ (1 : ℚ) ≠ 0 := by norm_num
 
 /-- Razlaga 4, Pogoste napake 4, Preveri se 2: (−1/2)·(−4/3) = 4/6 = 2/3 (ne −2/3); napačna odgovora: vsota
-−1/2 + (−4/3) = −11/6 in količnik 1/2 : 4/3 = 3/8. -/
+−1/2 + (−4/3) = −11/6 in količnik 1/2 : 4/3 = 3/8.
+trditev: MAT-OS-8/racionalna-stevila#produkt
+besedilo: »$\left(-\frac{1}{2}\right)\cdot\left(-\frac{4}{3}\right) = \frac{4}{6} = \frac{2}{3}$« -/
 theorem produkt : (-(1 : ℚ) / 2) * (-(4 : ℚ) / 3) = 4 / 6 ∧ (4 : ℚ) / 6 = 2 / 3 ∧
     (-(1 : ℚ) / 2) * (-(4 : ℚ) / 3) ≠ -2 / 3 ∧ (1 * 4 : ℚ) / (2 * 3) = 4 / 6 ∧
     -(1 : ℚ) / 2 + (-(4 : ℚ) / 3) = -11 / 6 ∧ (1 : ℚ) / 2 / (4 / 3) = 3 / 8 := by
   norm_num
 
-/-- Razlaga 4: (−3/4) : (1/4) = −3/4 · 4 = −3; »Hiter preizkus«: (−0,5)·4 = −2. -/
+/-- Razlaga 4: (−3/4) : (1/4) = −3/4 · 4 = −3; »Hiter preizkus«: (−0,5)·4 = −2.
+trditev: MAT-OS-8/racionalna-stevila#kolicnik
+besedilo: »$\left(-\frac{3}{4}\right) : \frac{1}{4} = -\frac{3}{4} \cdot 4 = -3$« -/
 theorem kolicnik : (-(3 : ℚ) / 4) / (1 / 4) = -(3 : ℚ) / 4 * 4 ∧ -(3 : ℚ) / 4 * 4 = -3 ∧ (-0.5 : ℚ) * 4 = -2 := by
   norm_num
 
-/-- Pogoste napake 3: 1/2 : 1/4 = 1/2 · 4 = 2, ne 1/8. -/
+/-- Pogoste napake 3: 1/2 : 1/4 = 1/2 · 4 = 2, ne 1/8.
+trditev: MAT-OS-8/racionalna-stevila#napaka-obrat
+besedilo: »Polovica vsebuje dve četrtini, zato $\frac{1}{2} \cdot 4 = 2$.« -/
 theorem napaka_obrat : (1 : ℚ) / 2 / (1 / 4) = 1 / 2 * 4 ∧ (1 : ℚ) / 2 * 4 = 2 ∧ (1 : ℚ) / 2 / (1 / 4) ≠ 1 / 8 := by
   norm_num
 
 /-! ## 5. Številski izrazi -/
 
 /-- Razlaga 5 »Premisli«, Pogoste napake 5, Preveri se 3: 2 − 3·(−4) = 2 − (−12) = 14; Rokov (2 − 3)·(−4) =
-(−1)·(−4) = 4 je drug izraz. -/
+(−1)·(−4) = 4 je drug izraz.
+trditev: MAT-OS-8/racionalna-stevila#vrstni-red
+besedilo: »Najprej množimo: $3 \cdot (-4) = -12$, nato $2 - (-12) = 14$. Če bi najprej odštel, bi računal $(2 - 3)\cdot(-4) = 4$, kar je drug izraz.« -/
 theorem vrstni_red : (3 : ℚ) * (-4) = -12 ∧ (2 : ℚ) - 3 * (-4) = 2 - (-12) ∧ (2 : ℚ) - (-12) = 14 ∧
     ((2 : ℚ) - 3) * (-4) = (-1) * (-4) ∧ (-1 : ℚ) * (-4) = 4 ∧ (2 : ℚ) - 3 * (-4) ≠ 4 := by
   norm_num
 
 /-! ## Rešeni primeri -/
 
-/-- Primer 1: −3/4 = −0,75; 0,8 > 0,75 ⇒ −0,8 < −0,75; 0,5 < 2/3; vrstni red −0,8 < −3/4 < 0,5 < 2/3. -/
+/-- Primer 1: −3/4 = −0,75; 0,8 > 0,75 ⇒ −0,8 < −0,75; 0,5 < 2/3; vrstni red −0,8 < −3/4 < 0,5 < 2/3.
+trditev: MAT-OS-8/racionalna-stevila#primer1
+besedilo: »Odgovor: $-0{,}8\,\mathrm{m} < -\frac{3}{4}\,\mathrm{m} < 0{,}5\,\mathrm{m} < \frac{2}{3}\,\mathrm{m}$.« -/
 theorem primer1 : -((3 : ℚ) / 4) = -0.75 ∧ (-0.75 : ℚ) < 0 ∧ (-0.8 : ℚ) < 0 ∧ (0.8 : ℚ) > 0.75 ∧
     (-0.8 : ℚ) < -0.75 ∧ (0.5 : ℚ) < 2 / 3 ∧ ((-0.8 : ℚ) < -(3 / 4) ∧ -((3 : ℚ) / 4) < 0.5 ∧ (0.5 : ℚ) < 2 / 3) := by
   norm_num
 
-/-- Primer 1, korak 1: 2/3 = 0,666… (vrsta ∑ 6/10ⁿ⁺¹). -/
+/-- Primer 1, korak 1: 2/3 = 0,666… (vrsta ∑ 6/10ⁿ⁺¹).
+trditev: MAT-OS-8/racionalna-stevila#dve-tretjini
+besedilo: »$\frac{2}{3} = 0{,}666\ldots$« -/
 theorem dve_tretjini : ∑' n : ℕ, (6 : ℝ) / 10 ^ (n + 1) = 2 / 3 := by
   rw [periodicno]; norm_num
 
 /-- Primer 2: skupni imenovalec 12 (najmanjši skupni večkratnik 3, 6, 4); 2/3 = 8/12, 5/6 = 10/12, 1/4 = 3/12;
-2/3 − 5/6 + 1/4 = (8 − 10 + 3)/12 = 1/12, ki se ne da krajšati. -/
+2/3 − 5/6 + 1/4 = (8 − 10 + 3)/12 = 1/12, ki se ne da krajšati.
+trditev: MAT-OS-8/racionalna-stevila#primer2
+besedilo: »Odgovor: vrednost izraza je $\frac{1}{12}$, ki se ne da več krajšati.« -/
 theorem primer2 : Nat.lcm (Nat.lcm 3 6) 4 = 12 ∧ (2 : ℚ) / 3 = 8 / 12 ∧ (5 : ℚ) / 6 = 10 / 12 ∧
     (1 : ℚ) / 4 = 3 / 12 ∧ Nat.gcd 1 12 = 1 ∧ (2 : ℚ) / 3 - 5 / 6 + 1 / 4 = 1 / 12 := by
   refine ⟨by decide, by norm_num, by norm_num, by norm_num, by decide, ?_⟩
@@ -203,7 +259,9 @@ theorem primer2 : Nat.lcm (Nat.lcm 3 6) 4 = 12 ∧ (2 : ℚ) / 3 = 8 / 12 ∧ (5
     _ = (8 - 10 + 3) / 12 := by ring
     _ = 1 / 12 := by norm_num
 
-/-- Primer 3: povprečje (−3,5 + 1,2 + (−2,8)) : 3 = (−2,3 + (−2,8)) : 3 = −5,1 : 3 = −1,7; leži med −3,5 in 1,2. -/
+/-- Primer 3: povprečje (−3,5 + 1,2 + (−2,8)) : 3 = (−2,3 + (−2,8)) : 3 = −5,1 : 3 = −1,7; leži med −3,5 in 1,2.
+trditev: MAT-OS-8/racionalna-stevila#primer3
+besedilo: »Odgovor: povprečna jutranja temperatura je $-1{,}7\,^\circ\mathrm{C}$.« -/
 theorem primer3 : ((-3.5 : ℚ) + 1.2 + (-2.8)) / 3 = -1.7 ∧ (-3.5 : ℚ) < -1.7 ∧ (-1.7 : ℚ) < 1.2 := by
   refine ⟨?_, by norm_num, by norm_num⟩
   calc ((-3.5 : ℚ) + 1.2 + (-2.8)) / 3 = (-2.3 + (-2.8)) / 3 := by norm_num
@@ -211,7 +269,9 @@ theorem primer3 : ((-3.5 : ℚ) + 1.2 + (-2.8)) / 3 = -1.7 ∧ (-3.5 : ℚ) < -1
     _ = -1.7 := by norm_num
 
 /-- Primer 4: (−3/4 + 1/2) : (−1/8) − 3·5/6 = (−3/4 + 2/4) : (−1/8) − 3·5/6 = (−1/4)·(−8) − 3·5/6 =
-2 − 15/6 = 2 − 5/2 = 4/2 − 5/2 = −1/2; 3·5/6 > 2, zato je rezultat negativen. -/
+2 − 15/6 = 2 − 5/2 = 4/2 − 5/2 = −1/2; 3·5/6 > 2, zato je rezultat negativen.
+trditev: MAT-OS-8/racionalna-stevila#primer4
+besedilo: »Vrednost izraza je $-\frac{1}{2}$.« -/
 theorem primer4 : (-(3 : ℚ) / 4 + 1 / 2) / (-(1 : ℚ) / 8) - 3 * (5 / 6) = -1 / 2 ∧ (3 : ℚ) * (5 / 6) > 2 := by
   refine ⟨?_, by norm_num⟩
   calc (-(3 : ℚ) / 4 + 1 / 2) / (-(1 : ℚ) / 8) - 3 * (5 / 6)
@@ -226,7 +286,9 @@ theorem primer4 : (-(3 : ℚ) / 4 + 1 / 2) / (-(1 : ℚ) / 8) - 3 * (5 / 6) = -1
 /-! ## Drugače: Na sliki -/
 
 /-- Na sliki: kvadratek je 1/4 = 0,25; −3/4 je tri kvadratke levo od 0, 0,5 dva desno; −1,5 je na sredini med
-−2 in −1; −1,5 < −0,75 < 0,5; −1,5 + 2 = 0,5, 2 = 8 kvadratkov; (−2)·0,5 = −1, |−1| = 2·|0,5|. -/
+−2 in −1; −1,5 < −0,75 < 0,5; −1,5 + 2 = 0,5, 2 = 8 kvadratkov; (−2)·0,5 = −1, |−1| = 2·|0,5|.
+trditev: MAT-OS-8/racionalna-stevila#na-sliki
+besedilo: »Branje od leve proti desni da urejenost: $-1{,}5 < -0{,}75 < 0{,}5$.« -/
 theorem na_sliki : (1 : ℚ) / 4 = 0.25 ∧ -((3 : ℚ) / 4) = 0 - 3 * (1 / 4) ∧ (0.5 : ℚ) = 0 + 2 * (1 / 4) ∧
     ((-2 : ℚ) + (-1)) / 2 = -1.5 ∧ ((-1.5 : ℚ) < -0.75 ∧ (-0.75 : ℚ) < 0.5) ∧ (-1.5 : ℚ) + 2 = 0.5 ∧
     (2 : ℚ) = 8 * (1 / 4) ∧ (-2 : ℚ) * 0.5 = -1 ∧ |(-1 : ℚ)| = 2 * |(0.5 : ℚ)| := by
@@ -234,7 +296,9 @@ theorem na_sliki : (1 : ℚ) / 4 = 0.25 ∧ -((3 : ℚ) / 4) = 0 - 3 * (1 / 4) �
 
 /-! ## Drugače: Bolj natančno -/
 
-/-- Bolj natančno, »Enakost ulomkov«: a/b = c/d natanko tedaj, ko a·d = b·c (b, d ≠ 0). -/
+/-- Bolj natančno, »Enakost ulomkov«: a/b = c/d natanko tedaj, ko a·d = b·c (b, d ≠ 0).
+trditev: MAT-OS-8/racionalna-stevila#enakost-ulomkov
+besedilo: »Ulomka $\frac{a}{b}$ in $\frac{c}{d}$ sta isto racionalno število natanko tedaj, ko je $a \cdot d = b \cdot c$.« -/
 theorem enakost_ulomkov (a b c d : ℤ) (hb : b ≠ 0) (hd : d ≠ 0) :
     (a : ℚ) / b = c / d ↔ a * d = b * c := by
   have hb' : (b : ℚ) ≠ 0 := by exact_mod_cast hb
@@ -249,10 +313,13 @@ theorem enakost_ulomkov (a b c d : ℤ) (hb : b ≠ 0) (hd : d ≠ 0) :
 /-- Predpostavke `enakost_ulomkov` se dajo izpolniti (b = 3, d = 12). -/
 example : (3 : ℤ) ≠ 0 ∧ (12 : ℤ) ≠ 0 := by norm_num
 
-/-- Bolj natančno: 2/3 = 8/12, ker 2·12 = 3·8 = 24. -/
+/-- Bolj natančno: 2/3 = 8/12, ker 2·12 = 3·8 = 24.
+trditev: MAT-OS-8/racionalna-stevila#dve-tretjini-osem
+besedilo: »Zato je $\frac{2}{3} = \frac{8}{12}$: velja $2 \cdot 12 = 3 \cdot 8 = 24$.« -/
 theorem dve_tretjini_osem : (2 : ℚ) / 3 = 8 / 12 ∧ (2 : ℤ) * 12 = 24 ∧ (3 : ℤ) * 8 = 24 := by norm_num
 
-/-- Bolj natančno: eno racionalno število ima neskončno zapisov: a/b = (k·a)/(k·b) za vsak k ≠ 0. -/
+/-- Bolj natančno: eno racionalno število ima neskončno zapisov: a/b = (k·a)/(k·b) za vsak k ≠ 0.
+pomozno – lekcija pove le, da je zapisov neskončno (to dokaže neskoncno_celih_zapisov); enakosti a/b = ka/kb ne izreče -/
 theorem neskoncno_zapisov (a b k : ℚ) (hk : k ≠ 0) : a / b = (k * a) / (k * b) := by
   rw [mul_div_mul_left a b hk]
 
@@ -260,7 +327,9 @@ theorem neskoncno_zapisov (a b k : ℚ) (hk : k ≠ 0) : a / b = (k * a) / (k * 
 example : (4 : ℚ) ≠ 0 := by norm_num
 
 /-- Bolj natančno: ulomek a/b s celima a, b (b ≠ 0) ima neskončno zapisov s celimi števili: za vsak celi k ≠ 0 je
-a/b = (k·a)/(k·b), različni k pa dajo različne pare (k·a, k·b). -/
+a/b = (k·a)/(k·b), različni k pa dajo različne pare (k·a, k·b).
+trditev: MAT-OS-8/racionalna-stevila#neskoncno-celih-zapisov
+besedilo: »Eno racionalno število ima torej neskončno zapisov.« -/
 theorem neskoncno_celih_zapisov (a b : ℤ) (hb : b ≠ 0) :
     (∀ k : ℤ, k ≠ 0 → (a : ℚ) / b = ((k * a : ℤ) : ℚ) / ((k * b : ℤ) : ℚ)) ∧
       Function.Injective (fun k : ℤ => (k * a, k * b)) := by
@@ -272,26 +341,36 @@ theorem neskoncno_celih_zapisov (a b : ℤ) (hb : b ≠ 0) :
 example : (3 : ℤ) ≠ 0 := by norm_num
 
 /-- Bolj natančno, »Gostota«: med dvema različnima racionalnima številoma je njuno povprečje; zato ni
-»naslednjega« racionalnega števila. -/
+»naslednjega« racionalnega števila.
+trditev: MAT-OS-8/racionalna-stevila#gostota
+besedilo: »Med dvema različnima racionalnima številoma je vedno še eno, na primer njuno povprečje.« -/
 theorem gostota (a b : ℚ) (h : a < b) : a < (a + b) / 2 ∧ (a + b) / 2 < b := by
   constructor <;> linarith
 
 /-- Predpostavka `gostota` se da izpolniti (−2,8 < −2,5). -/
 example : (-2.8 : ℚ) < -2.5 := by norm_num
 
-/-- Bolj natančno: noben racionalni a nima naslednika: za vsak b > a obstaja c z a < c < b. -/
+/-- Bolj natančno: noben racionalni a nima naslednika: za vsak b > a obstaja c z a < c < b.
+trditev: MAT-OS-8/racionalna-stevila#ni-naslednika
+besedilo: »Zato pri racionalnih številih ni »naslednjega« števila« -/
 theorem ni_naslednika (a : ℚ) : ¬ ∃ b, a < b ∧ ∀ c, a < c → b ≤ c := by
   rintro ⟨b, hab, hb⟩
   have := hb ((a + b) / 2) (by linarith)
   linarith
 
-/-- Bolj natančno: med −2,8 in −2,5 leži (−2,8 + (−2,5)) : 2 = −2,65. -/
+/-- Bolj natančno: med −2,8 in −2,5 leži (−2,8 + (−2,5)) : 2 = −2,65.
+trditev: MAT-OS-8/racionalna-stevila#med-28-25
+besedilo: »Med $-2{,}8$ in $-2{,}5$ leži $(-2{,}8 + (-2{,}5)) : 2 = -2{,}65$.« -/
 theorem med_28_25 : ((-2.8 : ℚ) + (-2.5)) / 2 = -2.65 ∧ (-2.8 : ℚ) < -2.65 ∧ (-2.65 : ℚ) < -2.5 := by norm_num
 
-/-- Preveri se 1: med −1 in 0 ležita npr. −0,5 in −3/4. -/
+/-- Preveri se 1: med −1 in 0 ležita npr. −0,5 in −3/4.
+trditev: MAT-OS-8/racionalna-stevila#med-m1-0
+besedilo: »Med $-1$ in $0$ ležijo npr. $-0{,}5$ in $-\frac{3}{4}$.« -/
 theorem med_m1_0 : (-1 : ℚ) < -0.5 ∧ (-0.5 : ℚ) < 0 ∧ (-1 : ℚ) < -(3 / 4) ∧ -((3 : ℚ) / 4) < 0 := by norm_num
 
-/-- Bolj natančno, »Zakaj obratna vrednost?«: c/d · d/c = 1 in (a/b · d/c)·(c/d) = a/b (c, d ≠ 0). -/
+/-- Bolj natančno, »Zakaj obratna vrednost?«: c/d · d/c = 1 in (a/b · d/c)·(c/d) = a/b (c, d ≠ 0).
+trditev: MAT-OS-8/racionalna-stevila#obratna
+besedilo: »Ker je $\frac{c}{d} \cdot \frac{d}{c} = 1$, je $\frac{a}{b} \cdot \frac{d}{c}$ tisto število, ki ga moramo pomnožiti s $\frac{c}{d}$, da dobimo $\frac{a}{b}$.« -/
 theorem obratna (a b c d : ℚ) (hc : c ≠ 0) (hd : d ≠ 0) : c / d * (d / c) = 1 ∧ a / b * (d / c) * (c / d) = a / b := by
   constructor
   · field_simp
@@ -302,15 +381,21 @@ example : (1 : ℚ) ≠ 0 ∧ (4 : ℚ) ≠ 0 := by norm_num
 
 /-! ## Preveri se -/
 
-/-- Preveri se 4: −2/3 = −0,666… je večje od −3/4 = −0,75 (manjša absolutna vrednost), ulomka nista enaka. -/
+/-- Preveri se 4: −2/3 = −0,666… je večje od −3/4 = −0,75 (manjša absolutna vrednost), ulomka nista enaka.
+trditev: MAT-OS-8/racionalna-stevila#kviz4
+besedilo: »Prvo ima manjšo absolutno vrednost, zato je bližje $0$ in večje.« -/
 theorem kviz4 : -((3 : ℚ) / 4) < -(2 / 3) ∧ |(-(2 : ℚ) / 3)| < |(-(3 : ℚ) / 4)| ∧ -((2 : ℚ) / 3) ≠ -(3 / 4) ∧
     -((3 : ℚ) / 4) = -0.75 := by
   norm_num [abs_of_neg]
 
-/-- Preveri se 4: −2/3 = −0,666… (vrsta). -/
+/-- Preveri se 4: −2/3 = −0,666… (vrsta).
+trditev: MAT-OS-8/racionalna-stevila#kviz4-periodicno
+besedilo: »$-\frac{2}{3} = -0{,}666\ldots$« -/
 theorem kviz4_periodicno : -∑' n : ℕ, (6 : ℝ) / 10 ^ (n + 1) = -(2 / 3) := by rw [dve_tretjini]
 
-/-- Preveri se 5: sprememba 4,2 − (−1,5) = 4,2 + 1,5 = 5,7; napačna: 4,2 − 1,5 = 2,7 in −1,5 − 4,2 = −5,7. -/
+/-- Preveri se 5: sprememba 4,2 − (−1,5) = 4,2 + 1,5 = 5,7; napačna: 4,2 − 1,5 = 2,7 in −1,5 − 4,2 = −5,7.
+trditev: MAT-OS-8/racionalna-stevila#kviz5
+besedilo: »Sprememba je $4{,}2 - (-1{,}5) = 4{,}2 + 1{,}5 = 5{,}7$ stopinje.« -/
 theorem kviz5 : (4.2 : ℚ) - (-1.5) = 4.2 + 1.5 ∧ (4.2 : ℚ) + 1.5 = 5.7 ∧ (4.2 : ℚ) - 1.5 = 2.7 ∧
     (-1.5 : ℚ) - 4.2 = -5.7 := by
   norm_num
