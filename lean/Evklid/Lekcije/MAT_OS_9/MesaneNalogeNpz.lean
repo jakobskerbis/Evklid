@@ -1,6 +1,6 @@
 /-
 vir: content/lessons/MAT-OS-9/mesane-naloge-npz.md
-sha256: 2da05b20d2f3932d3cd4397f73a4efb8b1e868cb1c0c98a482cdf61b178abddc
+sha256: 5f77d23ae42f003ab8605e56559379b386cacd8a8d861e8cf5bbf144f81ec685
 Model: decimalna števila so točna racionalna števila v ℝ; odstotek je decimalno število (20 % = 0,2).
 Pitagorov izrek je dokazan z Mathlibovim izrekom za evklidske prostore (c² = a² + b² ⇔ pravi kot);
 formule za telesa (V = O·v, V = πr²v, tretjina za piramido in stožec) so obrazci iz lekcij o telesih;
