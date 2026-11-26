@@ -4240,7 +4240,7 @@
   "gc.reg.quart": "Quartic",
   "gc.reg.logistic": "Logistic",
   "gc.reg.sin": "Sinusoidal",
-  "gc.reg.expe": "Exponential with e (a·e^(bx))",
+  "gc.reg.expe": "Exponential with e (a·eᵇˣ)",
   "gc.reg.inv": "Inverse (a + b/x)",
   "chat.full": "Show the whole solution",
   "chat.fullMsg": "Show me the whole solution to this task.",

@@ -4508,7 +4508,7 @@ export default {
   "gc.reg.quart": "Kvartična",
   "gc.reg.logistic": "Logistična",
   "gc.reg.sin": "Sinusna",
-  "gc.reg.expe": "Eksponentna z e (a·e^(bx))",
+  "gc.reg.expe": "Eksponentna z e (a·eᵇˣ)",
   "gc.reg.inv": "Obratna (a + b/x)",
   // Pristajalna stran za nove obiskovalce pred prijavo (public/pristajalna.js, j 2026-11-04)
   "land.subjects": "Matematika · Fizika · Kemija · Biologija",
