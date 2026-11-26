@@ -136,7 +136,7 @@ def clean(text):
     return s
 
 
-def parse(text, variables=None, units=False):
+def parse(text, variables=None, units=False, evaluate=True):
     s = clean(text)
     if not s or len(s) > 600:
         raise Unsure("prazen ali predolg izraz")
@@ -156,7 +156,10 @@ def parse(text, variables=None, units=False):
     if units:
         # enote: brez implicitnega množenja imen (»kg« ni »k·g«)
         return parse_expr(s, local_dict=local, global_dict={"__builtins__": {}, **_base_globals()}, transformations=standard_transformations + (convert_xor,), evaluate=True)
-    return parse_expr(s, local_dict=local, global_dict={"__builtins__": {}, **_base_globals()}, transformations=TRANSFORMS, evaluate=True)
+    # evaluate=False (PV-06, definicijsko območje pred okrajšanjem): koda uporabi še Add/Mul/Pow; uporabnik jih ne more
+    # poklicati, ker imena, daljša od dveh črk, niso na belem seznamu (zgoraj)
+    g = {"__builtins__": {}, **_base_globals(), **({} if evaluate else {"Add": sp.Add, "Mul": sp.Mul, "Pow": sp.Pow})}
+    return parse_expr(s, local_dict=local, global_dict=g, transformations=TRANSFORMS, evaluate=evaluate)
 
 
 def _base_globals():
@@ -814,7 +817,352 @@ def op_units(expr, claimed):
     return ok, "" if ok else f"vrednost se ne ujema (razmerje {rv:.6g})"
 
 
-OPS = {"solve": op_solve, "equal": op_equal, "diff": op_diff, "int": op_int, "limit": op_limit, "value": op_value, "ineq": op_ineq, "units": op_units}
+# ---------------------------------------------------------------------------
+# PV-06: en korak reševanja (docs/preverjanje.md, »Preverjevalnik korakov«).
+#   noter: {"op": "korak", "args": [prej, potem, neznanka?, območje?]}
+#   prej, potem: enačba ali neenačba (več jih povežemo z »ali«: »x-1=0 ali x+2=0«) ali izraz brez relacije.
+#   neznanka: prazno = edina spremenljivka v zapisu. Območje: »x>0«, »[0, 2*pi)« …; brez njega realna os.
+#   ven: ok, why, how in vrsta:
+#     ekvivalenca  enaka množica rešitev; pri izrazih enaka vrednost, kjer je prvotni izraz definiran   ok true
+#     posledica    enačba ima vse prejšnje rešitve in še tuje (kvadriranje, množenje z izrazom): kandidate
+#                  je treba preveriti v prvotni enačbi; why jih našteje                                ok true
+#     izguba       manjkajo rešitve ali del območja (deljenje z izrazom, ki je lahko 0; ln(x²) → 2 ln x)  ok false
+#     napaka       drugačna množica rešitev ali drugačna vrednost izraza                                ok false
+# Definicijsko območje preberemo iz zapisa, preden SymPy kaj okrajša (x²/x → x izgubi pogoj x ≠ 0): imenovalci ≠ 0,
+# argument logaritma > 0, pod sodim korenom ≥ 0, tan/cot definiran.
+
+KREL = re.compile(r"(<=|>=|!=|=|<|>)")
+KALI = re.compile(r"\s+(?:ali|or)\s+|∨|\\lor|\\vee")
+KRELS = {"<": sp.Lt, ">": sp.Gt, "<=": sp.Le, ">=": sp.Ge}
+KOBRNI = {"<": ">", ">": "<", "<=": ">=", ">=": "<="}
+KOBMOCJE = sp.Interval(-20, 20)
+
+
+def _crke(s):
+    """V koraku je »2ab« produkt (parse bi »ab« prebral kot eno ime); funkcije, konstante in grške črke ostanejo."""
+    return re.sub(r"(?<![A-Za-z])([A-Za-z])([A-Za-z])(?![A-Za-z0-9(])", lambda m: m.group(0) if m.group(0) in CONSTS or m.group(0) in FUNCS or m.group(0) in GREEK else f"{m.group(1)}*{m.group(2)}", s)
+
+
+def _deli_koraka(text):
+    """»x-1=0 ali x+2=0« → [("=", "x-1", "0"), ("=", "x+2", "0")]; izraz brez relacije → [(None, izraz, None)];
+    dvojna neenačba »-2<x<2« → [("&", [("<", "-2", "x"), ("<", "x", "2")], None)]."""
+    out = []
+    for p in KALI.split(_crke(clean(text))):
+        if not p.strip():
+            continue
+        kosi = split_top(p)
+        if len(kosi) < 2 or not all(KREL.search(k) for k in kosi):
+            kosi = [p]  # vejica znotraj izraza (log(x, 2)) ali decimalna vejica
+        for k in kosi:
+            t = KREL.split(k)
+            if len(t) == 1:
+                out.append((None, t[0], None))
+            elif len(t) == 3 and t[1] != "!=" and t[0].strip() and t[2].strip():
+                out.append((t[1], t[0], t[2]))
+            elif len(t) == 5 and t[1] in KRELS and t[3] in KRELS and all(t[i].strip() for i in (0, 2, 4)):
+                out.append(("&", [(t[1], t[0], t[2]), (t[3], t[2], t[4])], None))
+            else:
+                raise Unsure("korak z verigo relacij ali »≠« ne znam preveriti")
+    if not out or (len(out) > 1 and any(r is None for r, _, _ in out)):
+        raise Unsure("korak ni ne izraz ne (ne)enačba")
+    return out
+
+
+def _pogoji(text, names):
+    """Pogoji definicijskega območja iz neokrajšanega zapisa (seznam relacij SymPy)."""
+    try:
+        u = parse(text, names, evaluate=False)
+    except Timeout:
+        raise
+    except Exception:
+        return []
+    pog = []
+    for a in sp.preorder_traversal(u):
+        if isinstance(a, sp.Pow) and a.args[1].is_number:
+            b, ex = a.args[0], sp.simplify(a.args[1])
+            if ex.is_negative:
+                pog.append(sp.Ne(b, 0))
+            if ex.is_Rational and not ex.is_integer and ex.q % 2 == 0:
+                pog.append(sp.Ge(b, 0))
+        elif isinstance(a, sp.log):
+            pog.append(sp.Gt(a.args[0], 0))
+            if len(a.args) > 1:
+                pog += [sp.Gt(a.args[1], 0), sp.Ne(a.args[1], 1)]
+        elif isinstance(a, (sp.tan, sp.sec)):
+            pog.append(sp.Ne(sp.cos(a.args[0]), 0))
+        elif isinstance(a, (sp.cot, sp.csc)):
+            pog.append(sp.Ne(sp.sin(a.args[0]), 0))
+    return [p for p in pog if p not in (sp.true,) and getattr(p, "free_symbols", None)]
+
+
+def _drzi(pog, pt):
+    """Ali pogoj velja v točki: True/False (ob dvomu številsko)."""
+    try:
+        v = pog.subs(pt)
+        if v in (sp.true, sp.false):
+            return bool(v)
+        a, b = v.lhs, v.rhs
+        av, bv = complex(sp.N(a, 30)), complex(sp.N(b, 30))
+    except Timeout:
+        raise
+    except Exception:
+        return False
+    oslabi("numeric")
+    if abs(av.imag) > 1e-12 or abs(bv.imag) > 1e-12:
+        return False
+    d = av.real - bv.real
+    eps = 1e-12
+    return {sp.Ne: abs(d) > eps, sp.Gt: d > eps, sp.Ge: d > -eps, sp.Lt: d < -eps, sp.Le: d < eps}.get(type(pog), False)
+
+
+def _obmocje_pogojev(pog, x):
+    """Množica realnih x, kjer veljajo vsi pogoji (le pogoji samo v x; drugače Unsure)."""
+    dom = sp.S.Reals
+    for p in pog:
+        if p.free_symbols - {x}:
+            raise Unsure("območje s parametri")
+        s = sp.solveset(p, x, sp.S.Reals)
+        if isinstance(s, sp.ConditionSet):
+            raise Unsure("definicijskega območja ne znam izračunati")
+        dom = sp.Intersection(dom, s)
+    return dom
+
+
+def _lepa(s):
+    """Množica, ki jo znamo primerjati: končna, interval ali unija intervalov in točk."""
+    if s.is_FiniteSet or s in (sp.S.EmptySet, sp.S.Reals) or isinstance(s, sp.Interval):
+        return True
+    return isinstance(s, (sp.Union, sp.Complement)) and all(_lepa(a) for a in s.args)
+
+
+def _mnozica_dela(rel, a_txt, b_txt, x, names, D):
+    """Realne rešitve enega dela koraka na območju D, z upoštevanim definicijskim območjem zapisa."""
+    if rel == "&":
+        return sp.Intersection(*[_mnozica_dela(r, a, b, x, names, D) for r, a, b in a_txt])
+    a, b = parse(a_txt, names), parse(b_txt, names)
+    pog = _pogoji(a_txt, names) + _pogoji(b_txt, names)
+    if rel == "=":
+        e = a - b
+        resi = lambda dom: _solutions(e, x, dom)
+    else:
+        ner = KRELS[rel](_racionalno(a), _racionalno(b))
+        e = a - b
+        resi = lambda dom: sp.solveset(ner, x, dom)
+    s = resi(D)
+    if s is not None and not isinstance(s, sp.ConditionSet) and not _lepa(s):
+        if D.is_subset(KOBMOCJE) is not True:
+            oslabi("numeric")  # periodične rešitve primerjamo le na [−20, 20]
+            D = sp.Intersection(D, KOBMOCJE)
+        s = resi(D)
+    if s is None or isinstance(s, sp.ConditionSet) or not _lepa(s):
+        raise Unsure("reševalnik ne najde vseh rešitev")
+    if s.is_FiniteSet:
+        return sp.FiniteSet(*[f for f in s if satisfies(e, {x: f}) is not False and _real_ok(e, x, f) and all(_drzi(p, {x: f}) for p in pog)])
+    if pog:
+        s = sp.Intersection(s, _obmocje_pogojev(pog, x))
+    # neenačba: logaritmi in koreni zunaj območja (solveset jih tu upošteva sam, pogoji zgoraj še imenovalce)
+    return s
+
+
+def _mnozica(deli, x, names, D):
+    s = sp.S.EmptySet
+    for rel, a, b in deli:
+        s = sp.Union(s, _mnozica_dela(rel, a, b, x, names, D))
+    return s
+
+
+def _razlika(A, B):
+    """(manjka, odveč): elementi A, ki jih ni v B, in obratno; seznama (končni množici) ali množici."""
+    if A.is_FiniteSet and B.is_FiniteSet:
+        def brez(P, Q):
+            out = []
+            for p in P:
+                r = [is_zero(p - q) for q in Q]
+                if True in r:
+                    continue
+                if None in r:
+                    raise Unsure("rešitev ne znam primerjati")
+                out.append(p)
+            return out
+        return brez(A, B), brez(B, A)
+    m, o = sp.simplify(sp.Complement(A, B)), sp.simplify(sp.Complement(B, A))
+    for z in (m, o):
+        if isinstance(z, sp.Complement) or not _lepa(z) and z != sp.S.EmptySet:
+            raise Unsure("množic rešitev ne znam primerjati")
+    return ([] if m == sp.S.EmptySet else m), ([] if o == sp.S.EmptySet else o)
+
+
+def _mn(s):
+    """Množica v šolskem zapisu: (−∞, −2) ∪ [3, 5], {1, 2}."""
+    if isinstance(s, sp.Interval):
+        a = "-∞" if s.start == -sp.oo else sp.sstr(s.start)
+        b = "∞" if s.end == sp.oo else sp.sstr(s.end)
+        return f"{'(' if s.left_open else '['}{a}, {b}{')' if s.right_open else ']'}"
+    if isinstance(s, sp.Union):
+        return " ∪ ".join(_mn(a) for a in s.args)
+    if s.is_FiniteSet:
+        return "{" + ", ".join(sp.sstr(a) for a in s) + "}"
+    return sp.sstr(s)
+
+
+def _niz(v, x):
+    if isinstance(v, list):
+        vec = len(v) > 4
+        return ", ".join(f"{x} = {sp.sstr(t)}" for t in v[:4]) + (f" … (skupaj {len(v)} na [−20, 20])" if vec else "")
+    return f"{x} ∈ {_mn(v)}"
+
+
+def _resena(deli, x, names):
+    """Ali je zapis končni odgovor: vsak del je »x = število« (ali »število = x«)."""
+    for rel, a, b in deli:
+        if rel != "=":
+            return False
+        l, d = parse(a, names), parse(b, names)
+        if not (l == x and x not in d.free_symbols or d == x and x not in l.free_symbols):
+            return False
+    return True
+
+
+def _razmerje(e1, e2):
+    """Konstanta r ≠ 0, za katero je e1 = r·e2 (korak pomnoži obe strani s številom), sicer None."""
+    try:
+        if e2 == 0:
+            return None
+        r = sp.simplify(e1 / e2)
+        if r.is_number and r.is_finite and r != 0 and not r.has(sp.I):
+            return r
+    except Timeout:
+        raise
+    except Exception:
+        pass
+    return None
+
+
+def _vrednost(e, pt):
+    """Realna vrednost izraza v točki ali None (ni definiran ali ni realen)."""
+    try:
+        v = complex(sp.N(e.subs(pt), 25))
+    except Timeout:
+        raise
+    except Exception:
+        return None
+    if v != v or abs(v) == float("inf") or abs(v.imag) > 1e-9 * max(1.0, abs(v.real)):
+        return None
+    return v.real
+
+
+def _korak_izraz(a_txt, b_txt, x, names, D):
+    A, B = parse(a_txt, names), parse(b_txt, names)
+    r = is_zero(A - B)
+    free = sorted((A.free_symbols | B.free_symbols), key=str)
+    rng = random.Random(11)
+    dobre, slaba, zozeno = 0, None, None
+    for _ in range(80):
+        pt = {s: sp.Rational(rng.randint(-400, 400), rng.randint(7, 37)) for s in free}
+        if x in pt and D != sp.S.Reals and D.contains(pt[x]) is not sp.true:
+            continue
+        va, vb = _vrednost(A, pt), _vrednost(B, pt)
+        if va is None:
+            continue
+        if vb is None:
+            zozeno = zozeno or pt
+            continue
+        if abs(va - vb) > 1e-9 * max(1.0, abs(va), abs(vb)):
+            slaba = slaba or pt
+        else:
+            dobre += 1
+    tocka = lambda pt: ", ".join(f"{s} = {sp.sstr(v)}" for s, v in pt.items())
+    if r is False or slaba:
+        oslabi("sampled" if slaba and r is not False else "symbolic")
+        primer = f" (pri {tocka(slaba)} prvi {_vrednost(A, slaba):.6g}, drugi {_vrednost(B, slaba):.6g})" if slaba else ""
+        return False, f"izraza nista enaka{primer}", {"vrsta": "napaka"}
+    if zozeno:
+        oslabi("sampled")
+        return False, f"novi izraz pri {tocka(zozeno)} ni definiran, prvotni je", {"vrsta": "izguba"}
+    if r is None:
+        if dobre < 8:
+            raise Unsure("enakosti ne znam potrditi")
+        oslabi("sampled")
+    why = ""
+    if len(free) == 1 and free[0] == x:
+        try:
+            DA = sp.Intersection(_obmocje_pogojev(_pogoji(a_txt, names), x), D)
+            DB = sp.Intersection(_obmocje_pogojev(_pogoji(b_txt, names), x), D)
+            if sp.simplify(sp.Complement(DB, DA)) != sp.S.EmptySet:
+                izven = sp.Complement(D, DA)
+                why = f"velja za {x} ≠ " + ", ".join(sp.sstr(t) for t in izven) if izven.is_FiniteSet else f"velja za {x} ∈ {_mn(sp.simplify(DA))}"
+        except Unsure:
+            pass
+    return True, why, {"vrsta": "ekvivalenca"}
+
+
+def op_korak(prej, potem, var="", obmocje=""):
+    d1, d2 = _deli_koraka(prej), _deli_koraka(potem)
+    izraz1, izraz2 = d1[0][0] is None, d2[0][0] is None
+    if izraz1 != izraz2:
+        raise Unsure("korak med izrazom in (ne)enačbo")
+    if var.strip():
+        x = syms_of(var)[0]
+        names = [str(x)]
+    else:
+        names = []
+        vse = set()
+        for rel, a, b in d1 + d2:
+            for t in (a if rel == "&" else [(rel, a, b)]):
+                for u in t[1:]:
+                    if u is not None:
+                        vse |= parse(u).free_symbols
+        x = next(iter(vse)) if len(vse) == 1 else (sp.Symbol("x", real=True) if not vse else None)
+    D = parse_set(obmocje, x) if obmocje.strip() and x is not None else sp.S.Reals
+    if izraz1:
+        return _korak_izraz(d1[0][1], d2[0][1], x, names, D)
+    # hitra simbolna pot: ena relacija na vsaki strani, druga je prva, pomnožena s številom (deluje tudi s parametri)
+    if len(d1) == 1 and len(d2) == 1 and D == sp.S.Reals and "&" not in (d1[0][0], d2[0][0]):
+        (r1, a1, b1), (r2, a2, b2) = d1[0], d2[0]
+        e1, e2 = parse(a1, names) - parse(b1, names), parse(a2, names) - parse(b2, names)
+        k = _razmerje(e1, e2)
+        p1 = _pogoji(a1, names) + _pogoji(b1, names)
+        p2 = _pogoji(a2, names) + _pogoji(b2, names)
+        if k is not None and set(p1) == set(p2):
+            if r1 == "=" and r2 == "=" or r1 != "=" and r2 == (r1 if k > 0 else KOBRNI[r1]):
+                return True, "", {"vrsta": "ekvivalenca"}
+            if r1 != "=" and r2 == (KOBRNI[r1] if k > 0 else r1) and x is None:
+                return False, "znak neenakosti se obrne le pri množenju ali deljenju z negativnim številom", {"vrsta": "napaka"}
+    if x is None:
+        raise Unsure("navedi neznanko (zapis ima več spremenljivk)")
+    S1, S2 = _mnozica(d1, x, names, D), _mnozica(d2, x, names, D)
+    manjka, odvec = _razlika(S1, S2)
+    if not manjka and not odvec:
+        return True, "", {"vrsta": "ekvivalenca"}
+    enacbe = all(r == "=" for r, _, _ in d1 + d2)
+    if not manjka and enacbe and isinstance(odvec, list) and _resena(d2, x, names):
+        # »x = 3 ali x = -3« je končni odgovor, ne vmesni korak: tuja rešitev v njem je napaka (manjka preizkus)
+        return False, f"{_niz(odvec, x)} ni rešitev prvotne enačbe (preizkus)", {"vrsta": "napaka"}
+    if not manjka and enacbe and isinstance(odvec, list):
+        return True, f"tuja rešitev {_niz(odvec, x)}: velja v novi enačbi, ne v prvotni; preveri kandidate v prvotni enačbi", {"vrsta": "posledica"}
+    if manjka and not odvec:
+        why = f"izgubljena rešitev {_niz(manjka, x)}" if isinstance(manjka, list) else f"manjka del rešitve {_niz(manjka, x)}"
+        if len(d1) == 1 and len(d2) == 1 and isinstance(manjka, list) and enacbe:
+            try:
+                e1 = parse(d1[0][1], names) - parse(d1[0][2], names)
+                e2 = parse(d2[0][1], names) - parse(d2[0][2], names)
+                k = sp.factor(sp.cancel(sp.together(e1 / e2)))
+                if x in k.free_symbols and k.is_rational_function(x) and all(is_zero(k.subs(x, m)) is True for m in manjka):
+                    why += f" (kot deljenje z {sp.sstr(k)}, ki je pri {_niz(manjka, x)} enako 0)"
+            except Timeout:
+                raise
+            except Exception:
+                pass
+        return False, why, {"vrsta": "izguba"}
+    deli = []
+    if odvec:
+        deli.append(f"odveč {_niz(odvec, x)}")
+    if manjka:
+        deli.append(f"manjka {_niz(manjka, x)}")
+    return False, "nova " + ("enačba" if enacbe else "relacija") + " ni enakovredna: " + "; ".join(deli), {"vrsta": "napaka"}
+
+
+OPS = {"korak": op_korak, "solve": op_solve, "equal": op_equal, "diff": op_diff, "int": op_int, "limit": op_limit, "value": op_value, "ineq": op_ineq, "units": op_units}
 
 
 DECIMALKA = re.compile(r"(?<![\w.])(?:\d+\.\d+(?:[eE][+-]?\d+)?|\d+[eE][+-]?\d+)(?![\w.])")
@@ -832,7 +1180,7 @@ def _z_ulomki(op, args):
     tocni = [DECIMALKA.sub(lambda m: "(" + str(sp.Rational(m.group(0))) + ")", _vejica(a)) for a in args]
     _nacin[0] = "symbolic"
     try:
-        ok, _ = op(*tocni)
+        ok = op(*tocni)[0]
     except (Exception, Timeout):  # prvi izid ostane, a le kot številski
         return "numeric"
     return "symbolic" if ok and _nacin[0] == "symbolic" else "numeric"
@@ -846,11 +1194,11 @@ def handle(req):
     _nacin[0] = "symbolic"
     try:
         args = [str(a) for a in req.get("args", [])]
-        ok, why = op(*args)
+        ok, why, *dodatno = op(*args)  # korak (PV-06) vrne še {"vrsta": …}
         how = _nacin[0]
         if ok and how == "symbolic" and any(DECIMALKA.search(_vejica(a)) for a in args):
             how = _z_ulomki(op, args)
-        return {"ok": bool(ok), "why": why or "", "how": how}
+        return {"ok": bool(ok), "why": why or "", "how": how, **(dodatno[0] if dodatno else {})}
     except Unsure as e:
         return {"ok": None, "why": str(e)}
     except Timeout:
