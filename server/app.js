@@ -63,6 +63,7 @@ import { competitionInfo, competitionKeyFor, isCompetitionPath } from "./competi
 import { PAPERS_SI, PAPERS_SOURCE } from "./exam-papers-si.js";
 import { examInfo, examKeyFor, isExamPath, examOf, examPrompt, taskLanguage, localizeExamView, localizeExamTopic, examRaven } from "./exams.js";
 import { compressedStatic, compressedJson, pickEncoding } from "./compress.js";
+import { skrciJs, skrciVklopljeno, skrciOznaka } from "./skrci.js";
 import { slZasloni } from "./i18n-jedro.js";
 import { startupFiles, moduleDeps } from "./startup-files.js";
 import { mountFeedback, feedbackAiOn, feedbackPromptOn, isLocalRequest } from "./feedback.js";
@@ -414,7 +415,9 @@ export function createApp(store, opts = {}) {
   // Service worker z različico knjižnic v imenu predpomnilnika (glej server/razlicica.js).
   // in z različico datotek aplikacije (APP): kopije iste različice se odprejo takoj, brez omrežja.
   // Različica datotek se ponovno izračuna, ko se public/ spremeni (domači strežnik po posodobitvi, razvoj).
-  const filesVersion = liveStaticVersion(publicDir); // tudi v vstopni strani, glavi X-Evklid-App in /healthz/stanje
+  // Skrčene datoteke JS (server/skrci.js) so del različice: vklop ali izklop brez nove gradnje da novo različico.
+  const skrci = process.env.EVKLID_COMPRESS !== "0" && skrciVklopljeno();
+  const filesVersion = liveStaticVersion(publicDir, undefined, skrci ? `skrci:${skrciOznaka}` : ""); // tudi v vstopni strani, glavi X-Evklid-App in /healthz/stanje
   const vendor = vendorVersion();
   let sw = { app: null, src: "" };
   const swSource = () => {
@@ -555,7 +558,7 @@ export function createApp(store, opts = {}) {
       // Iz server/practice samo check.js (kot spodaj brez stiskanja), ne cela mapa s kodo strežnika (točka 1.7).
       ["/practice/check.js", path.join(here, "practice", "check.js")],
       ["/", publicDir],
-    ]);
+    ], { skrci: skrci ? skrciJs : null });
     app.use(statics);
     // server/index.js po zagonu vnaprej stisne datoteke prvega odprtja strani (prvi obiski po posodobitvi hitri).
     // Paketi nalog iger (games/subjects/*.js) se v brskalniku naložijo z import() po predmetih, zato jih naštejemo posebej.

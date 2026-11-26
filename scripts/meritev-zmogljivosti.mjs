@@ -118,6 +118,7 @@ const OKOLJE = {
   ...cistoOkolje,
   EVKLID_MOCK: "1",
   EVKLID_MOCK_DELAY_MS: "0", // brez umetnega čakanja med kosi odgovora: merimo samo čas strežnika
+  EVKLID_SKRCI: process.env.MERITEV_SKRCI === "0" ? "0" : "1", // skrčene datoteke JS kot na produkciji (server/skrci.js); primerjava brez: MERITEV_SKRCI=0
   EVKLID_ACCOUNTS: "1",
   EVKLID_NEWS: "0",
   EVKLID_PASSWORD: "",
