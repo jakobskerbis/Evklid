@@ -4,7 +4,7 @@
 # 2. pravice mape C:\Evklid\lean-delavec: brez dedovanja (C:\ sicer da "Authenticated Users" pravico spreminjanja),
 #    SYSTEM, Administratorji in j polno, evklid-lean samo branje in zagon; pisanje samo v delo\;
 # 3. pravilo pozarnega zidu: lean.exe ne sme nikamor (izhodne povezave blokirane; Lean omrezja ne rabi);
-# 4. opravilo ob vklopu racunalnika kot evklid-lean ("zazeni, ce je uporabnik prijavljen ali ne"), brez casovne
+# 4. tuja opravila uporabnika evklid-lean izbrisana (pred pravicami), nase opravilo ob vklopu racunalnika kot evklid-lean ("zazeni, ce je uporabnik prijavljen ali ne"), brez casovne
 #    meje, tudi na bateriji, ob napaki znova vsako minuto.
 # Lean (otrok delavca) tece kot evklid-lean, zato ne more brati C:\Users\<j> (tja ima dostop samo lastnik).
 param(
@@ -32,6 +32,19 @@ Remove-LocalGroupMember -SID 'S-1-5-32-544' -Member $Ime -ErrorAction SilentlyCo
 $k = 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\SpecialAccounts\UserList'
 New-Item -Path $k -Force | Out-Null
 New-ItemProperty -Path $k -Name $Ime -Value 0 -PropertyType DWord -Force | Out-Null
+
+# Opravila, ki jih je evklid-lean morda registriral sam (standardni uporabnik to sme), bi lahko med spremembo pravic
+# spodaj znova zagnala njegov proces. Zato PRED pravicami izbrisemo VSA opravila tega uporabnika (tudi nase; na koncu
+# ga registriramo znova) in koncamo vse njegove procese.
+$sid = (Get-LocalUser -Name $Ime).SID.Value
+Get-ScheduledTask -ErrorAction SilentlyContinue | Where-Object {
+  $u = [string]$_.Principal.UserId
+  $u -eq $sid -or $u -ieq $Ime -or $u -ilike "*\$Ime"
+} | ForEach-Object { Unregister-ScheduledTask -TaskName $_.TaskName -TaskPath $_.TaskPath -Confirm:$false }
+# taskkill brez procesov javi napako na stderr: v PowerShell 5.1 bi jo 'Stop' spremenil v izjemo
+$ErrorActionPreference = 'Continue'
+& (Join-Path $env:SystemRoot 'System32\taskkill.exe') /F /T /FI "USERNAME eq $Ime" > $null 2> $null
+$ErrorActionPreference = 'Stop'
 
 # Pravice. Brez /T: otroci podedujejo od mape (nobena datoteka nima svojih pravic).
 $jaz = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name

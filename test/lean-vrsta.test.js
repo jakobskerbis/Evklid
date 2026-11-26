@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import express from "express";
 import { preveriTrditev, TAKTIKE, NAJVEC_ZNAKOV } from "../scripts/lean-delavec/trditev.mjs";
-import { predloga, preberiIzpis, ocistiSporocilo, ime, izrekDokaza } from "../scripts/lean-delavec/lean.mjs";
+import { predloga, preberiIzpis, ocistiSporocilo, ime, izrekDokaza, preveriElaboracijo, vrsticaPreverbe } from "../scripts/lean-delavec/lean.mjs";
 import { naloziNastavitve, preveriZLean, enKrog, naslednjiPremor, rokNaloge, nastaviMapo, leanOrodje, shraniLean, ukazZMejo } from "../scripts/lean-delavec/delavec.mjs";
 import { createLeanVrsta, mountLeanDelavec, mountLeanBranje, dokazIzLean, leanToken } from "../server/lean-vrsta.js";
 import { statusTrditve } from "../public/preverjanje/trditev.js";
@@ -48,6 +48,19 @@ test("lean filter: spusti matematične trditve", () => {
     "(2:ℕ) ^ 1000 > 0",
     "(123456789012 : ℕ) > 0",
     "True",
+    // pregled r2fun 4: sproščena pravila (tipe preveri Lean, glej »lean preverba tipov«)
+    "∀ (x : ℝ) (n : ℕ), x ^ (n + 1) = x * x ^ n",
+    "∀ (x : ℝ) (n : ℕ), x ^ (2 * n) = (x * x) ^ n",
+    "∀ x : ℝ, x ≥ 0 → x ^ (1/2 : ℝ) ≥ 0",
+    "∀ x : ℝ, x > 0 → x / (x + 1) < 1",
+    "∀ x : ℝ, x ≠ -1 → (x ^ 2 - 1) / (x + 1) = x - 1",
+    "∀ x : ℝ, (x ^ 2 + 1)⁻¹ > 0",
+    "Real.sqrt 16 = 4",
+    "Nat.gcd 12 18 = 6",
+    "Nat.Prime 7",
+    "1 + 1 = 2",
+    "{x : ℝ | x > 0} = {x : ℝ | 0 < x}",
+    "∀ x : ℝ, |x| = |x| ∧ {y : ℝ | y = |x|} = {y : ℝ | y = |x|}",
   ])
     assert.equal(preveriTrditev(s).ok, true, s);
   assert.equal(preveriTrditev("  (1:ℕ) + 1 = 2 ").trditev, "(1:ℕ) + 1 = 2");
@@ -62,23 +75,27 @@ test("lean filter: tipi vezav in števil, deljenje z 0, meje števil in potenc, 
     ["∃ x ∈ Finset.range 3, x = (1:ℕ)", /vezava brez tipa/],
     ["(fun x => x) (1:ℕ) = 1", /vezava brez tipa/],
     ["∀ (x) (y : ℝ), x = y", /vezava brez tipa/],
-    ["1 + 1 = 2", /števila brez tipa/],
-    ["2 - 3 = 0", /odštevanje|števila brez tipa/],
     ["∀ x : _, x - 1 < x + (1:ℝ)", /»_«/],
-    // en pripis ne tipizira drugih števil: vsak del (med ∧ ∨ → ↔ ¬ ,) ima svoj tip
-    ["∃ y : ℝ, 2 - 3 = 0", /odštevanje/],
-    ["∀ x : ℝ, x = x ∧ (5 - 7 = 0)", /odštevanje/],
-    ["(1:ℝ) = 1 ∧ 2 - 3 = 0", /odštevanje/],
-    ["∀ x : ℝ, x = x ∧ 2 + 2 = 4", /števila brez tipa/],
-    ["Nat.gcd 5 7 - 3 = (0:ℕ)", /odštevanje/],
+    // množica: vezava brez tipa (Lean vzame ℕ); pregled r2var 1
+    ["5 ∈ {x | x - 7 = 0} ∧ 1 ∈ {y | y = 1}", /množica brez tipa/],
+    ["{x | x - 7 = 0} = {x | x ≤ 7}", /množica brez tipa/],
+    ["{x | x + 3 = 1} = ∅", /množica brez tipa/],
+    // eksponent v oklepaju: vsaj ena spremenljivka, samo + - *, števila skupaj ≤ 1000, ne v fun
     ["∀ x : ℝ, x ^ (2 - 3) = 1", /eksponent/],
+    ["∀ n : ℕ, (2:ℕ) ^ (1000 * n + 1000) = 0", /eksponent/],
+    ["∀ n : ℕ, (2:ℕ) ^ (n * 999999999999) = 0", /eksponent/],
+    ["∀ (x : ℝ) (n : ℕ), x ^ (n / 2) = x", /eksponent/],
+    ["∀ (x : ℝ) (n : ℕ), x ^ (n + 1) ^ 2 = x", /potenca potence/],
+    ["deriv (fun x : ℝ => x ^ (x + 1)) 2 = 0", /v fun/],
+    ["∀ x : ℝ, x ^ (1/0 : ℝ) = 1", /eksponent/],
+    ["∀ x : ℝ, x ^ (1/2 : ℕ) = 1", /eksponent/],
     // deljenje z izrazom, ki je lahko 0 (Lean: x / 0 = 0, 0⁻¹ = 0)
-    ["∀ x : ℝ, x / 0 = 0", /deli samo/],
-    ["∀ x : ℝ, x / (0 : ℝ) = 0", /deli samo/],
-    ["∀ x : ℝ, x / 0.0 = 0", /deli samo/],
-    ["(0:ℝ)⁻¹ = 0", /deli samo/],
-    ["∀ x : ℝ, x / (1 - 1) = 0", /deli samo/],
-    ["(2:ℝ) % 0 = 0", /deli samo/],
+    ["∀ x : ℝ, x / 0 = 0", /delitelj/],
+    ["∀ x : ℝ, x / (0 : ℝ) = 0", /delitelj/],
+    ["∀ x : ℝ, x / 0.0 = 0", /delitelj/],
+    ["(0:ℝ)⁻¹ = 0", /delitelj/],
+    ["∀ x : ℝ, x / (1 - 1) = 0", /delitelj/],
+    ["(2:ℝ) % 0 = 0", /delitelj/],
     // pomnilnik: GMP pri potenci ne upošteva -M
     ["(2^16777215)^5000 % 7 = (2:ℕ)", /eksponent/],
     ["(2:ℕ) ^ 1001 = 0", /eksponent/],
@@ -93,8 +110,6 @@ test("lean filter: tipi vezav in števil, deljenje z 0, meje števil in potenc, 
     // pregledi PR #1172: eksponent je eno število ≤ 1000 ali ena spremenljivka
     ["(7:ℕ)^(1000*1000*1000*1000) % 5 = 1", /eksponent/],
     ["(2:ℕ)^(1000*1000*1000*1000) % 7 = 2", /eksponent/],
-    ["∀ x : ℝ, x ^ (1/2 : ℝ) ≥ 0", /eksponent/],
-    ["∀ (x : ℝ) (n : ℕ), x ^ (n + 1) = x * x ^ n", /eksponent/],
     ["(2:ℕ) ^ 2.5 = 0", /eksponent/],
     ["∀ x : ℝ, x ^ 2⁻¹ = x", /potenca potence/],
     // črka, »_« ali pika za številom: Lean prebere 0x…, 1e…, 0b…, 0o…, 2.5e3 kot eno število
@@ -213,40 +228,117 @@ test("lean predloga: ena vrstica na taktiko, #print axioms, filter še enkrat", 
   assert.equal(izrekDokaza("x", "polyrith"), null);
   const v = f.trimEnd().split("\n");
   assert.equal(v[0], "import Mathlib");
-  assert.equal(v.length, 3 + 2 * TAKTIKE.length);
-  assert.equal(v[3], "theorem evklid_t1 : (2:ℝ) + 2 = 4 := by intros; norm_num");
-  assert.equal(v[4], "#print axioms evklid_t1");
+  assert.equal(v.length, 4 + 2 * TAKTIKE.length);
+  assert.equal(v[3], vrsticaPreverbe("(2:ℝ) + 2 = 4"));
+  assert.match(v[3], /^set_option pp\.explicit true in .*set_option pp\.notation false in .*#check \(\(2:ℝ\) \+ 2 = 4 : Prop\)$/);
+  assert.equal(v[4], "theorem evklid_t1 : (2:ℝ) + 2 = 4 := by intros; norm_num");
+  assert.equal(v[5], "#print axioms evklid_t1");
   assert.ok(!TAKTIKE.includes("polyrith") && !TAKTIKE.includes("native_decide"));
   assert.throws(() => predloga("True\n#eval 1"), /zavrnjena/);
   assert.throws(() => predloga("(1:ℕ) = 1", ["polyrith"]), /ni dovoljena/);
 });
 
 const sp = (line, severity, data) => JSON.stringify({ pos: { line, column: 0 }, severity, data });
+// vrstice: preverba tipov v 4, izrek k v 5 + 2k, #print axioms v 6 + 2k
+const TIPI = sp(4, "information", "@Eq Real (@HAdd.hAdd Real Real Real (@instHAdd Real instAdd) (@OfNat.ofNat Real (nat_lit 2) _) (@OfNat.ofNat Real (nat_lit 2) _)) (@OfNat.ofNat Real (nat_lit 4) _) : Prop");
+const BREZ_AKSIOMOV = (k = 0) => sp(6 + 2 * k, "information", `'${ime(k)}' does not depend on any axioms`);
+const DOKAZ0 = [TIPI, BREZ_AKSIOMOV(0)].join("\n");
 test("lean izpis: prvi izrek brez napake in z dovoljenimi aksiomi zmaga; sorry in tuji aksiomi ne", () => {
-  // vrstice: izrek k je v vrstici 4 + 2k, #print v 5 + 2k
-  let izpis = [sp(4, "error", "linarith failed"), sp(5, "information", `'${ime(0)}' depends on axioms: [propext, sorryAx]`), sp(7, "information", `'${ime(1)}' depends on axioms: [propext, Classical.choice, Quot.sound]`)].join("\n");
+  let izpis = [TIPI, sp(5, "error", "linarith failed"), sp(6, "information", `'${ime(0)}' depends on axioms: [propext, sorryAx]`), sp(8, "information", `'${ime(1)}' depends on axioms: [propext, Classical.choice, Quot.sound]`)].join("\n");
   assert.deepEqual(preberiIzpis(izpis), { izid: "proved", taktika: TAKTIKE[1], aksiomi: ["propext", "Classical.choice", "Quot.sound"], sporocilo: `dokazano s taktiko ${TAKTIKE[1]}` });
-  izpis = sp(5, "information", `'${ime(0)}' does not depend on any axioms`);
-  assert.equal(preberiIzpis(izpis).izid, "proved");
+  assert.equal(preberiIzpis(DOKAZ0).izid, "proved");
   for (const [vrstica, sev, data] of [
-    [5, "information", `'${ime(0)}' depends on axioms: [propext, sorryAx]`],
-    [5, "information", `'${ime(0)}' depends on axioms: [Lean.ofReduceBool]`],
-    [5, "information", `'${ime(0)}' depends on axioms: [evil]`],
-    [5, "information", `'${ime(1)}' does not depend on any axioms`], // napačno ime pod izrekom 1
+    [6, "information", `'${ime(0)}' depends on axioms: [propext, sorryAx]`],
+    [6, "information", `'${ime(0)}' depends on axioms: [Lean.ofReduceBool]`],
+    [6, "information", `'${ime(0)}' depends on axioms: [evil]`],
+    [6, "information", `'${ime(1)}' does not depend on any axioms`], // napačno ime pod izrekom 1
   ])
-    assert.equal(preberiIzpis(sp(vrstica, sev, data)).izid, "failed", data);
-  izpis = [sp(4, "warning", "declaration uses 'sorry'"), sp(5, "information", `'${ime(0)}' does not depend on any axioms`)].join("\n");
+    assert.equal(preberiIzpis([TIPI, sp(vrstica, sev, data)].join("\n")).izid, "failed", data);
+  izpis = [TIPI, sp(5, "warning", "declaration uses 'sorry'"), BREZ_AKSIOMOV(0)].join("\n");
   assert.equal(preberiIzpis(izpis).izid, "failed", "opozorilo sorry");
-  const r = preberiIzpis([sp(4, "error", "unsolved goals\n⊢ False"), sp(5, "information", `'${ime(0)}' depends on axioms: [sorryAx]`), "{nepopoln"].join("\n"));
+  const r = preberiIzpis([TIPI, sp(5, "error", "unsolved goals\n⊢ False"), sp(6, "information", `'${ime(0)}' depends on axioms: [sorryAx]`), "{nepopoln"].join("\n"));
   assert.equal(r.izid, "failed");
   assert.match(r.sporocilo, /unsolved goals/);
   // pokvarjena namestitev ni »failed« (sicer bi trditev 7 dni veljala za nedokazano)
   assert.equal(preberiIzpis("").izid, "napaka", "brez izpisa");
-  assert.equal(preberiIzpis(sp(4, "error", "linarith failed")).izid, "napaka", "nobena vrstica #print axioms");
-  const g = preberiIzpis([sp(1, "error", "unknown module prefix 'Mathlib'"), sp(5, "error", `unknown constant '${ime(0)}'`)].join("\n"));
+  assert.equal(preberiIzpis([TIPI, sp(5, "error", "linarith failed")].join("\n")).izid, "napaka", "nobena vrstica #print axioms");
+  const g = preberiIzpis([sp(1, "error", "unknown module prefix 'Mathlib'"), sp(6, "error", `unknown constant '${ime(0)}'`)].join("\n"));
   assert.equal(g.izid, "napaka", "napaka v glavi");
   assert.match(g.sporocilo, /glavi/);
-  assert.equal(preberiIzpis(sp(5, "error", `unknown constant '${ime(0)}'`)).izid, "failed", "trditev se ne razčleni: izrek ne obstaja");
+  // trditev se ne elaborira: napaka že v preverbi tipov, izrek ne obstaja
+  assert.equal(preberiIzpis([sp(4, "error", "type mismatch"), sp(6, "error", `unknown constant '${ime(0)}'`)].join("\n")).izid, "failed");
+  // brez izpisa tipov nikoli »proved« (npr. odrezan izpis)
+  const brez = preberiIzpis(BREZ_AKSIOMOV(0));
+  assert.deepEqual([brez.izid, brez.sporocilo], ["rejected", "Lean ni izpisal tipov trditve"]);
+  // preverba tipov zavrne, tudi če je taktika »dokazala«
+  const nat = preberiIzpis([sp(4, "information", "@Eq Nat (@HSub.hSub Nat Nat Nat (@instHSub Nat instSubNat) 2 3) 0 : Prop"), BREZ_AKSIOMOV(0)].join("\n"));
+  assert.equal(nat.izid, "rejected");
+  assert.match(nat.sporocilo, /odštevanje v ℕ/);
+});
+
+// Pregledi r2var 1-2 in r2fun 2, 6 (PR #1172): trditev → filter → izpis tipov iz Leana (skrajšan resnični izpis s
+// pp.explicit in pp.notation false; preverjeno z resničnim Leanom, glej docs/lean.md) → izid.
+const N = (k) => `@OfNat.ofNat Nat (nat_lit ${k}) (instOfNatNat (nat_lit ${k}))`;
+const SUB_N = (a, b) => `@HSub.hSub Nat Nat Nat (@instHSub Nat instSubNat) ${a} ${b}`;
+const DIV_N = (a, b) => `@HDiv.hDiv Nat Nat Nat (@instHDiv Nat Nat.instDiv) ${a} ${b}`;
+const MOD_N = (a, b) => `@HMod.hMod Nat Nat Nat (@instHMod Nat Nat.instMod) ${a} ${b}`;
+const PRIMERI = [
+  // [trditev, razlog filtra ali null, izpis tipov, pričakovan izid]
+  ["∑ i ∈ Finset.range 4, (i - 2) = 1", null, `@Eq Nat (@Finset.sum Nat Nat Nat.instAddCommMonoid (Finset.range ${N(4)}) fun i => ${SUB_N("i", N(2))}) ${N(1)}`, "rejected"],
+  ["∑ i ∈ Finset.range 3, (7 / 2) ^ i = 13", null, `@Eq Nat (@Finset.sum Nat Nat _ (Finset.range ${N(3)}) fun i => @HPow.hPow Nat Nat Nat _ (${DIV_N(N(7), N(2))}) i) ${N(13)}`, "rejected"],
+  ["∑ i ∈ Finset.range 3, (i + 7) / 2 = 7", null, `@Eq Nat (@Finset.sum Nat Nat _ (Finset.range ${N(3)}) fun i => ${DIV_N("(@HAdd.hAdd Nat Nat Nat _ i 7)", N(2))}) ${N(7)}`, "rejected"],
+  ["∑ i ∈ Finset.range 4, i / 2 = 2", null, `@Eq Nat (@Finset.sum Nat Nat _ (Finset.range ${N(4)}) fun i => ${DIV_N("i", N(2))}) ${N(2)}`, "rejected"],
+  ["∀ n : ℕ, (7 / 2) ^ n = 3 ^ n", null, `∀ (n : Nat), @Eq Nat (@HPow.hPow Nat Nat Nat _ (${DIV_N(N(7), N(2))}) n) (@HPow.hPow Nat Nat Nat _ ${N(3)} n)`, "rejected"],
+  ["∀ n : ℕ, 7 / 2 + 0 ^ n = 3 + 0 ^ n", null, `∀ (n : Nat), @Eq Nat (@HAdd.hAdd Nat Nat Nat _ (${DIV_N(N(7), N(2))}) _) _`, "rejected"],
+  ["∀ x : ℝ, (7 / 2 = 3) = (x = x)", null, `∀ (x : Real), @Eq Prop (@Eq Nat (${DIV_N(N(7), N(2))}) ${N(3)}) (@Eq Real x x)`, "rejected"],
+  ["5 ∈ {x | x - 7 = 0} ∧ 1 ∈ {y | y = 1}", /množica brez tipa/],
+  ["{x | x - 7 = 0} = {x | x ≤ 7}", /množica brez tipa/],
+  // ↑(7 / 2) Lean elaborira v ℝ (7/2 = 3,5): ni zavrnjeno, a trditev x + 3,5 = x + 3 ni dokazana
+  ["∀ x : ℝ, x + ↑(7 / 2) = x + 3", null, "∀ (x : Real), @Eq Real (@HAdd.hAdd Real Real Real _ x (@HDiv.hDiv Real Real Real (@instHDiv Real (@DivInvMonoid.toDiv Real instDivInvMonoid)) _ _)) _ : Prop", "failed"],
+  ["(10 : ℕ) % 3 = 1", null, `@Eq Nat (${MOD_N(N(10), N(3))}) ${N(1)} : Prop`, "rejected"],
+  ["(7 : ℤ) / 2 = 3", null, "@Eq Int (@HDiv.hDiv Int Int Int (@instHDiv Int Int.instDivInt) _ _) _ : Prop", "rejected"],
+  ["∀ x : Fin 5, x + 1 ≠ 0", null, "∀ (x : Fin (@OfNat.ofNat Nat (nat_lit 5) _)), Not (@Eq (Fin _) (@HAdd.hAdd (Fin (@OfNat.ofNat Nat (nat_lit 5) _)) _ _ _ x _) _) : Prop", "rejected"],
+  ["0.1 + 0.2 = 0.3", null, "@Eq Float (@HAdd.hAdd Float Float Float (@instHAdd Float instAddFloat) _ _) _ : Prop", "rejected"],
+  ["∀ n : ℕ, n - 1 ≤ n", null, `∀ (n : Nat), @LE.le Nat instLENat (${SUB_N("n", N(1))}) n : Prop`, "rejected"],
+  // priča v ∃ obide meje filtra; ostanek % zavrne preverba tipov (r2var 2, r2fun 6)
+  ["∃ n : ℕ, n = 999999999999 ∧ 2 ^ n % 7 = 2", null, `@Exists Nat fun n => And (@Eq Nat n _) (@Eq Nat (${MOD_N("(@HPow.hPow Nat Nat Nat _ 2 n)", N(7))}) ${N(2)}) : Prop`, "rejected"],
+  ["∃ n : ℕ, n = 1000 ∧ ∃ m : ℕ, m = (999999999999:ℕ)^n ∧ (7:ℕ) ^ m % 5 = 1", null, `@Exists Nat fun n => And _ (@Exists Nat fun m => And _ (@Eq Nat (${MOD_N("_", N(5))}) _)) : Prop`, "rejected"],
+  ["∀ n : ℕ, n = 999999999999 → (2:ℕ)^n % 7 = 1", null, `∀ (n : Nat), @Eq Nat n _ → @Eq Nat (${MOD_N("_", N(7))}) _ : Prop`, "rejected"],
+  // dovoljeno: ℝ, ℤ odštevanje, Real.sqrt, Nat.Prime, Nat.gcd, (n : ℝ) - 1
+  ["∀ x : ℝ, (x + 1) ^ 2 = x ^ 2 + 2 * x + 1", null, "∀ (x : Real), @Eq Real (@HPow.hPow Real Nat Real _ (@HAdd.hAdd Real Real Real _ x _) _) _ : Prop", "proved"],
+  ["(2 : ℤ) - 3 = -1", null, "@Eq Int (@HSub.hSub Int Int Int (@instHSub Int Int.instSubInt) _ _) (@Neg.neg Int Int.instNegInt _) : Prop", "proved"],
+  ["Real.sqrt 16 = 4", null, "@Eq Real (Real.sqrt (@OfNat.ofNat Real (nat_lit 16) _)) _ : Prop", "proved"],
+  ["Nat.Prime 7", null, `Nat.Prime ${N(7)} : Prop`, "proved"],
+  ["Nat.gcd 12 18 = 6", null, `@Eq Nat (Nat.gcd ${N(12)} ${N(18)}) ${N(6)} : Prop`, "proved"],
+  ["∀ n : ℕ, (n : ℝ) - 1 < n", null, "∀ (n : Nat), @LT.lt Real instLT (@HSub.hSub Real Real Real (@instHSub Real instSub) (@Nat.cast Real instNatCast n) _) (@Nat.cast Real instNatCast n) : Prop", "proved"],
+];
+test("lean preverba tipov: primeri iz pregledov (trditev → filter → izpis Leana → izid)", () => {
+  for (const [t, razlogFiltra, tipi, izid] of PRIMERI) {
+    const f = preveriTrditev(t);
+    if (razlogFiltra) {
+      assert.equal(f.ok, false, t);
+      assert.match(f.razlog, razlogFiltra, t);
+      continue;
+    }
+    assert.equal(f.ok, true, `${t}: ${f.razlog}`);
+    // lažen Lean: izpis tipov; »failed« = taktike ne dokažejo, sicer prva taktika dokaže
+    const dokaz = izid === "failed" ? [sp(5, "error", "linarith failed"), sp(6, "information", `'${ime(0)}' depends on axioms: [sorryAx]`)] : [BREZ_AKSIOMOV(0)];
+    assert.equal(preberiIzpis([sp(4, "information", tipi), ...dokaz].join("\n")).izid, izid, t);
+  }
+  assert.equal(preveriElaboracijo(""), "ni izpisa tipov");
+  assert.match(preveriElaboracijo("@Eq Real (f ⋯) 0"), /skrajšan/);
+  assert.equal(preveriElaboracijo("instSubNat Nat.cast Int.natAbs Nat.sqrt Real.log Real.sqrt"), null, "imena, ki niso operacije v ℕ");
+  for (const ime of ["Nat.sub", "Nat.div", "Nat.mod", "Nat.pred", "Int.ediv", "Int.emod", "Int.tdiv", "Int.fdiv", "Int.toNat"]) assert.ok(preveriElaboracijo(`@Eq Nat (${ime} a b) 0`), ime);
+});
+
+// Ena resnična pot z Leanom (počasno, ~1 min na trditev): EVKLID_LEAN_E2E=<lean.json> (zapiše ga
+// `lake env node scripts/lean-delavec/delavec.mjs --shrani-lean <pot>`).
+test("lean delavec: resničen Lean – preverba tipov zavrne ℕ, dokaz v ℝ", { skip: !process.env.EVKLID_LEAN_E2E && "EVKLID_LEAN_E2E ni nastavljen" }, async () => {
+  const n = { leanJson: process.env.EVKLID_LEAN_E2E, projekt: "/tmp", pomnilnikMB: 6144, trdaMejaMB: 24576, rokS: 300 };
+  const r = await preveriZLean("∑ i ∈ Finset.range 4, (i - 2) = 1", n);
+  assert.deepEqual([r.izid, r.sporocilo], ["rejected", "Lean trditev razume drugače kot šola: odštevanje v ℕ (Lean: 2 - 3 = 0); piši v ℝ ali ℤ"]);
+  const d = await preveriZLean("∀ x : ℝ, (x + 1) ^ 2 = x ^ 2 + 2 * x + 1", n);
+  assert.equal(d.izid, "proved", d.sporocilo);
 });
 
 test("lean sporočilo: brez poti, uporabniškega imena in kontrolnih znakov, omejena dolžina", () => {
@@ -273,7 +365,7 @@ test("lean delavec: nastavitve zahtevajo https (razen lokalno) in dolg žeton", 
   assert.equal(rokNaloge({ rokS: 540 }, 300_000), 240, "vsaj 60 s pred koncem najema");
   assert.equal(rokNaloge({ rokS: 240 }, undefined), 240);
   assert.equal(naloziNastavitve(p).leanJson, `${dir}/orodja/lean.json`);
-  assert.equal(naloziNastavitve(p).trdaMejaMB, process.platform === "win32" ? 12288 : 24576);
+  assert.equal(naloziNastavitve(p).trdaMejaMB, process.platform === "win32" ? 10240 : 24576);
   // lean.json: brez lake in git med delom; samo absolutna pot do obstoječega Leana
   assert.throws(() => leanOrodje({ leanJson: `${dir}/ni.json` }), /lean\.json manjka/);
   assert.throws(() => leanOrodje({ lean: "lean", leanPath: "/x" }), /ni nameščen/, "brez golega »lean« iz PATH ali cwd");
@@ -291,7 +383,10 @@ test("lean delavec: nastavitve zahtevajo https (razen lokalno) in dolg žeton", 
   assert.ok(b.at(-1).endsWith("omeji.ps1") && !b.includes("-M6144"), "argumenti z »-« ne gredo PowerShellu");
   assert.deepEqual(okolje, { EVKLID_MEJA_MB: "12288", EVKLID_LEAN_UKAZ: JSON.stringify(["C:\\l\\lean.exe", "-M6144", "T.lean"]) });
   const ps1 = fs.readFileSync(new URL("../scripts/lean-delavec/omeji.ps1", import.meta.url), "utf8");
-  for (const v of ["JobObject", "PROCESS_MEMORY = 0x100", "KILL_ON_JOB_CLOSE = 0x2000", "AssignProcessToJobObject", "STARTF_USESTDHANDLES", "exit 125"]) assert.ok(ps1.includes(v), v);
+  for (const v of ["JobObject", "PROCESS_MEMORY = 0x100", "JOB_MEMORY = 0x200", "ACTIVE_PROCESS = 0x8", "ActiveProcessLimit = 3", "info.JobMemoryLimit =", "KILL_ON_JOB_CLOSE = 0x2000", "AssignProcessToJobObject", "STARTF_USESTDHANDLES", "exit 125"]) assert.ok(ps1.includes(v), v);
+  // PowerShell 5.1: JSON seznam po cevi je en objekt; zato [string[]](ConvertFrom-Json …)
+  assert.match(ps1, /\[string\[\]\]\(ConvertFrom-Json \$env:EVKLID_LEAN_UKAZ\)/);
+  assert.doesNotMatch(ps1, /\$env:EVKLID_LEAN_UKAZ \| ConvertFrom-Json/);
   fs.rmSync(dir, { recursive: true });
 });
 
@@ -319,6 +414,14 @@ test("lean namestitev (Windows skripte): vrstni red in zaščite", () => {
   assert.match(ps, /\/setowner '\*S-1-5-32-544'/);
   assert.match(ps, /New-NetFirewallRule -DisplayName \$pravilo -Direction Outbound -Action Block -Program \$lean/);
   assert.ok(!r("delavec.mjs").includes('"env", "lean"'), "delavec ne kliče lake");
+  // tuja opravila evklid-lean izbrisana in procesi končani pred spremembo pravic
+  assert.ok(ps.indexOf("Unregister-ScheduledTask") > 0 && ps.indexOf("Unregister-ScheduledTask") < ps.indexOf("Odstrani-Povezave $delo"), "opravila pred pravicami");
+  assert.ok(ps.indexOf("taskkill.exe") > ps.indexOf("Unregister-ScheduledTask") && ps.indexOf("taskkill.exe") < ps.indexOf("& $icacls $Mapa /inheritance:r"));
+  for (const v of ["windir", "SystemDrive", "ComSpec", "PSModulePath", "PROCESSOR_ARCHITECTURE", "NUMBER_OF_PROCESSORS"]) assert.ok(r("delavec.mjs").includes(`"${v}"`), v);
+  const nav = r("NAVODILA.md");
+  assert.match(nav, /Počakaj 2–5 minut/);
+  assert.match(nav, /preizkus Lean: napaka/);
+  assert.match(nav, /Win32_UserProfile .*Remove-CimInstance/);
 });
 
 test("lean vrsta: vpis samo trditve in vrste, dvojniki, polna vrsta", () => {
@@ -575,14 +678,28 @@ test("lean delavec: lažen Lean – dokaz, LEAN_PATH, trda meja, napaka zagona, 
   const t = "(2:ℝ) + 2 = 4";
   // Lean teče neposredno: LEAN_PATH iz lean.json, ulimit -v = trda meja, cwd = začasna mapa (ne projekt), brez žetona
   process.env.EVKLID_LEAN_TOKEN_TEST = "skrivnost";
-  n.lean = lazenLean(dir, "okolje", `[ "$LEAN_PATH" = "/pot/a:/pot/b" ] && [ "$(ulimit -v)" = "8388608" ] && [ "$PWD" != "${dir}" ] && [ -z "$EVKLID_LEAN_TOKEN_TEST" ] && [ "$1" = "--json" ] && [ "$2" = "-M2048" ] || exit 1\n${izpisi(sp(5, "information", `'${ime(0)}' does not depend on any axioms`))}`);
+  n.lean = lazenLean(dir, "okolje", `[ "$LEAN_PATH" = "/pot/a:/pot/b" ] && [ "$(ulimit -v)" = "8388608" ] && [ "$PWD" != "${dir}" ] && [ -z "$EVKLID_LEAN_TOKEN_TEST" ] && [ "$1" = "--json" ] && [ "$2" = "-M2048" ] || exit 1\n${izpisi(DOKAZ0)}`);
   assert.equal((await preveriZLean(t, n)).izid, "proved", "okolje Leana");
   delete process.env.EVKLID_LEAN_TOKEN_TEST;
   n.lean = lazenLean(dir, "gmp", `echo "GNU MP: Cannot allocate memory (size=536870912)" >&2\nexit 134`);
   const m = await preveriZLean(t, n);
   assert.deepEqual([m.izid, m.sporocilo], ["timeout", "Lean je presegel mejo pomnilnika (8192 MB)"], "trda meja: pretežka trditev, ne napaka namestitve");
-  n.lean = lazenLean(dir, "ok", izpisi(sp(5, "information", `'${ime(0)}' does not depend on any axioms`)));
+  n.lean = lazenLean(dir, "ok", izpisi(DOKAZ0));
   assert.equal((await preveriZLean(t, n)).izid, "proved");
+  // priča v ∃ obide meje filtra (r2var 2): prestane filter in preverbo tipov, ustavi jo trda meja → »timeout«
+  const prica = "∃ n : ℕ, n = 999999999999 ∧ ∑ i ∈ Finset.range n, i = 0";
+  assert.equal(preveriTrditev(prica).ok, true);
+  n.lean = lazenLean(dir, "prica", `${izpisi(sp(4, "information", "@Exists Nat fun n => And (@Eq Nat n _) (@Eq Nat (@Finset.sum Nat Nat _ (Finset.range n) fun i => i) _) : Prop"))}\necho "GNU MP: Cannot allocate memory (size=4294967296)" >&2\nexit 134`);
+  assert.equal((await preveriZLean(prica, n)).izid, "timeout");
+  // »napaka« nosi izhodno kodo in konec stderr (npr. omeji.ps1 125), brez poti
+  n.lean = lazenLean(dir, "stderr", `echo "omeji.ps1: SetInformationJobObject (Win32 87) ${dir}/x" >&2\nexit 125`);
+  const e = await preveriZLean(t, n);
+  assert.equal(e.izid, "napaka");
+  assert.match(e.sporocilo, /izhod 125; stderr: omeji\.ps1: SetInformationJobObject \(Win32 87\)/);
+  assert.doesNotMatch(e.sporocilo, new RegExp(dir));
+  // preverba tipov zavrne tudi, če je Lean pozneje presegel rok
+  n.lean = lazenLean(dir, "nat", `${izpisi(sp(4, "information", "@Eq Nat (@HSub.hSub Nat Nat Nat _ 2 3) 0 : Prop"))}\nsleep 1000`);
+  assert.equal((await preveriZLean("2 - 3 = 0", n, 2)).izid, "rejected");
   n.lean = lazenLean(dir, "glava", `${izpisi(sp(1, "error", "object file Mathlib.olean does not exist"))}\nexit 1`);
   assert.equal((await preveriZLean(t, n)).izid, "napaka", "zastarel Mathlib ni »failed«");
   n.lean = `${dir}/ni-izvedljiv`;
@@ -620,7 +737,7 @@ test("lean delavec: zanka – 409 po izidu ne ustavi dela, napaka namestitve in 
   const s = app.listen(0);
   const n = { streznik: `http://127.0.0.1:${s.address().port}`, zeton: ZETON, projekt: dir, pomnilnikMB: 2048, trdaMejaMB: 8192, rokS: 30, utripS: 60, leanPath: "/pot" };
   try {
-    n.lean = lazenLean(dir, "ok", izpisi(sp(5, "information", `'${ime(0)}' does not depend on any axioms`)));
+    n.lean = lazenLean(dir, "ok", izpisi(DOKAZ0));
     assert.equal(await enKrog(n), true);
     assert.equal(klici.at(-1)[1].izid, "proved");
     rezultat = 409;

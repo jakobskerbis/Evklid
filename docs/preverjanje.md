@@ -21,7 +21,7 @@ SymPy: `docs/preverjanje-s-kodo.md`.
 | Zaznana napaka | `napaka` | Preverjanje je pokazalo, da trditev ne drži (protiprimer, manjkajoča ali odvečna rešitev). |
 | Nepreverjeno | `nepreverjeno` | Noben motor trditve ne zna preveriti, ali pa se motorja ne strinjata. |
 
-**Lean dokaže trditev v svojih dogovorih, ne v šolskih** (`docs/lean.md`, L5): števila brez tipa so v ℕ (`2 - 3 = 0`), `x / 0 = 0`, `Real.sqrt (-4) = 0`, `Real.log 0 = 0`. Zato filter delavca zahteva tip pri vsaki vezavi in v vsakem delu trditve s števili (en pripis ne tipizira drugih števil: `(1:ℝ) = 1 ∧ 2 - 3 = 0` je zavrnjen), zavrne odštevanje golih števil in deljenje z izrazom, ki je lahko 0; prevod v Lean (L6) zapiše vsak podizraz s samimi števili s pripisom, uporablja ℝ ali ℤ in zapiše predpostavke (`x ≠ 0`, `x ≥ 0`). Trditev s predpostavkami (`→`) je »dokazano« šele z dokazom, da se predpostavke dajo izpolniti (sicer največ »delno«).
+**Lean dokaže trditev v svojih dogovorih, ne v šolskih** (`docs/lean.md`, L5): števila brez tipa so v ℕ (`2 - 3 = 0`, `7 / 2 = 3`; tudi ∑-indeks in `{x | …}`), `x / 0 = 0`, `x % 0 = x`, `Real.sqrt (-4) = 0`, `Real.log 0 = 0`. Zato delavec trditev najprej elaborira v Leanu in jo zavrne (`rejected`), če Lean računa z odštevanjem v ℕ, deljenjem v ℕ ali ℤ, ostankom `%`, v `Fin` ali s `Float`; filter besedila zahteva tip pri vsaki vezavi in množici (`{x : ℝ | …}`) in zavrne delitelj brez spremenljivke, ki ni število ≠ 0. Deljenje v ℝ z izrazom, ki je lahko 0, ter `Real.sqrt`/`Real.log` negativnega niso zavrnjeni: prevod v Lean (L6) uporablja ℝ ali ℤ in zapiše predpostavke (`x ≠ 0`, `x ≥ 0`). Trditev s predpostavkami (`→`) je »dokazano« šele z dokazom, da se predpostavke dajo izpolniti (sicer največ »delno«).
 
 Pravila:
 

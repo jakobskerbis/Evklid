@@ -11,12 +11,15 @@
 //     (BESEDE, IMENA: izbrana posebej, nobeno ne zna sestaviti ogromnega števila: ni pow, shiftLeft, factorial,
 //     choose, iterate, repeat, fib, rpow …);
 //   - števila (največ 12 števk, za njimi ne sme biti črka ali pika: 0x…, 1e5, 2x).
-// Pomnilnik (Lean računa z GMP, ki ne pogleda meje -M): eksponent je eno število ≤ 1000 ali ena spremenljivka,
-// nobena potenca potence, `fun` samo kot argument `deriv` (ni beta-redukcije na velikem številu), meje Finset.range
-// in Fin največ 100. Filter ni popoln dokaz, da Lean ne porabi veliko pomnilnika: trdo mejo postavi delavec
-// (Job Object na Windows, ulimit -v na Linuxu; docs/lean.md).
-// Tipi: vsaka vezava ima tip; vsak del trditve med ∧ ∨ → ↔ ¬ , => s števili ima tipizirano spremenljivko ali pripis
-// tipa; odštevanje dveh golih števil (ℕ: 2 - 3 = 0) in deljenje z izrazom, ki je lahko 0, sta zavrnjena.
+// Pomnilnik (Lean računa z GMP, ki ne pogleda meje -M): eksponent je število ≤ 1000, spremenljivka ali oklepaj s
+// spremenljivko, celimi števili in + - * (»vsebina števil« ∏(1+število) ≤ 1001) ali (p/q : ℝ); v telesu fun samo
+// število; nobena potenca potence, `fun` samo kot argument `deriv`, meje Finset.range in Fin največ 100. Filter NI
+// dokaz, da Lean ne porabi veliko pomnilnika: priča v ∃ (`∃ n : ℕ, n = 999999999999 ∧ 2 ^ n = 0`, simp jo vstavi)
+// obide meje eksponenta in naštevanja. Pravo varovalo je trda meja delavca (Job Object na Windows, ulimit -v na
+// Linuxu; docs/lean.md, (b)).
+// Tipi: ta filter tipov NE ugiba (ℕ ∑-indeks, ↑, množice … so preveč načinov). Zahteva samo tip pri vsaki vezavi
+// (∀ ∃ fun in {x : T | …}) in delitelj, ki ni 0 brez spremenljivke. Odštevanje in deljenje v ℕ (2 - 3 = 0, 7 / 2 = 3)
+// zavrne delavec po elaboraciji v Leanu (lean.mjs, preveriElaboracijo).
 // Nobena beseda z belega seznama ne začne ukaza, zato v trditev ni mogoče skriti ukaza. Trditev nikoli ne
 // vsebuje »:=«, »by«, komentarja, nove vrstice ali neuravnoteženih oklepajev. Ker so dovoljena le kratka imena
 // spremenljivk in matematična imena, trditev ne more nositi osebnih podatkov (imen, e-naslovov, besedila).
@@ -58,10 +61,12 @@ const POTENCE = new Set(["^", "²", "³"]);
 const SPREMENLJIVKA = new RegExp(`^[A-Za-z${GRSKE}](?:_?[0-9]+|[${INDEKSI}]+)?$`);
 // Tip za »:« (pripis tipa). Brez pripisa Lean števila privzame v ℕ (2 - 3 = 0).
 const TIPI = new Set(["ℝ", "ℤ", "ℚ", "ℕ", "ℂ", "Fin", "Set", "Finset", "Real", "Nat", "Int", "Rat", "Complex"]);
-// Ločila delov trditve (za pravilo tipov) in meje operanda pri odštevanju.
+// Ločila delov trditve in meje operanda (osnova potence).
 const DELI = new Set(["∧", "∨", "→", "↔", "¬", ",", "=>", "↦"]);
 const MEJE_OPERANDA = new Set([...DELI, "+", "-", "=", "<", ">", "≤", "≥", "≠", "∈", "∉", "⊆", "⊂", "⊇", "⊃", "∣", "|", "‖", ":", "∩", "∪", "×"]);
 
+// »|« v {x : ℝ | …} ni absolutna vrednost (za njim filter zahteva tip vezave, glej preveriMnozice).
+const lociloMnozice = (z) => z.at(-4)?.v === "{" && SPREMENLJIVKA.test(z.at(-3)?.v ?? "") && z.at(-2)?.v === ":" && TIPI.has(z.at(-1)?.v);
 const jeCrka = (c) => /[A-Za-z]/.test(c) || GRSKE.includes(c);
 const jeStevka = (c) => /[0-9]/.test(c);
 const jeSpr = (t) => t?.vrsta === "ime" && SPREMENLJIVKA.test(t.v);
@@ -138,7 +143,7 @@ export function preveriTrditev(vhod) {
     if ("([{⌊⌈".includes(c)) sklad.push(c);
     else if (PARI[c]) {
       if (sklad.pop() !== PARI[c]) return { ok: false, razlog: "oklepaji niso uravnoteženi" };
-    } else if (c === "|") abs++;
+    } else if (c === "|" && !lociloMnozice(z)) abs++;
     else if (c === "‖") norma++;
     const prej = z[z.length - 1];
     if (c === ">" && tesno && prej?.v === "=") prej.v = "=>";
@@ -147,10 +152,10 @@ export function preveriTrditev(vhod) {
     i++;
   }
   if (sklad.length) return { ok: false, razlog: "oklepaji niso uravnoteženi" };
-  if (abs % 2 || norma % 2) return { ok: false, razlog: "absolutne vrednosti niso v parih" };
   const vezave = najdiVezave(z);
   if (typeof vezave === "string") return { ok: false, razlog: vezave };
-  const napaka = preveriZnake(z) || preveriImenaZArgumenti(z) || preveriPotence(z) || preveriDeljenje(z) || preveriOdstevanje(z) || preveriTipe(z, vezave);
+  const pari = abs % 2 || norma % 2 ? "absolutne vrednosti niso v parih" : null;
+  const napaka = preveriMnozice(z) || pari || preveriZnake(z) || preveriImenaZArgumenti(z) || preveriPotence(z) || preveriDeljenje(z);
   if (napaka) return { ok: false, razlog: napaka };
   return { ok: true, trditev: s };
 }
@@ -209,9 +214,9 @@ function preveriImenaZArgumenti(z) {
   return null;
 }
 
-// Eksponent za ^ je eno število ≤ 1000 ali ena spremenljivka (ne oklepaj: (1000*1000*1000) ali (2 - 3) v ℕ);
-// v telesu fun samo število (spremenljivka iz fun dobi vrednost, npr. deriv (fun x : ℝ => 2^x) 999999999999).
-// Nobena potenca potence: a^b^c, (a^b)^c, (a^b)², x²².
+// Eksponent za ^: celo število ≤ 1000, spremenljivka ali oklepaj (glej eksponentVOklepaju); v telesu fun samo število
+// (spremenljivka iz fun dobi vrednost, npr. deriv (fun x : ℝ => 2^x) 999999999999). Nobena potenca potence: a^b^c,
+// (a^b)^c, (a^b)², x²².
 function preveriPotence(z) {
   const vFun = new Set();
   for (let k = 0; k < z.length; k++) if (z[k].v === "fun") for (let j = k; j < zaklepaj(z, k - 1); j++) vFun.add(j);
@@ -226,26 +231,48 @@ function preveriPotence(z) {
       continue;
     }
     const e = z[k + 1];
+    let za = k + 2; // žeton za eksponentom
     if (celo(e, NAJVEC_EKSPONENT)) {
       /* v redu */
     } else if (e?.vrsta === "st") return `eksponent je celo število največ ${NAJVEC_EKSPONENT}`;
     else if (jeSpr(e)) {
       if (vFun.has(k)) return "v fun je eksponent samo število";
-    } else return `eksponent je eno število ≤ ${NAJVEC_EKSPONENT} ali ena spremenljivka`;
-    const za = z[k + 2];
-    if (za && (POTENCE.has(za.v) || za.v === "⁻¹")) return "potenca potence ni dovoljena";
+    } else if (e?.v === "(") {
+      if (vFun.has(k)) return "v fun je eksponent samo število";
+      const kz = zaklepaj(z, k + 1);
+      if (!eksponentVOklepaju(z.slice(k + 2, kz))) return `eksponent v oklepaju: spremenljivke, cela števila in + - * (skupaj največ ${NAJVEC_EKSPONENT}) ali (p/q : ℝ)`;
+      za = kz + 1;
+    } else return `eksponent je število ≤ ${NAJVEC_EKSPONENT}, spremenljivka ali oklepaj`;
+    if (z[za] && (POTENCE.has(z[za].v) || z[za].v === "⁻¹")) return "potenca potence ni dovoljena";
   }
   return null;
 }
+// (n + 1), (2*n - 1): vsaj ena spremenljivka, samo spremenljivke, cela števila in + - *, ∏(1 + število) ≤ 1001 (to omeji
+// vsako vrednost, ki jo števila sestavijo s + in *, ko so spremenljivke 0). (1/2 : ℝ): realni eksponent (rpow se ne
+// računa), p in q cela števila ≤ 1000, q ≠ 0.
+function eksponentVOklepaju(g) {
+  if (g.length === 5 && celo(g[0], NAJVEC_EKSPONENT) && g[1].v === "/" && celo(g[2], NAJVEC_EKSPONENT) && !nic(g[2].v) && g[3].v === ":" && ["ℝ", "Real"].includes(g[4].v)) return true;
+  if (!g.some(jeSpr)) return false;
+  let produkt = 1;
+  for (const t of g) {
+    if (jeSpr(t) || ["+", "-", "*"].includes(t.v)) continue;
+    if (!celo(t, NAJVEC_EKSPONENT)) return false;
+    produkt *= 1 + Number(t.v);
+    if (produkt > NAJVEC_EKSPONENT + 1) return false;
+  }
+  return true;
+}
 
-// Delitelj (/, %) in osnova za ⁻¹: spremenljivka, število ≠ 0 ali oklepaj (x) / (2 : ℝ). Lean ima x / 0 = 0 in
-// 0⁻¹ = 0, zato bi bila »x / 0.0 = 0« ali »x / (1 - 1) = 0« dokazana.
+// Delitelj (/, %) in osnova za ⁻¹: izraz s spremenljivko (x / (x + 1), (x^2 + 1)⁻¹), število ≠ 0 ali (število ≠ 0 : tip).
+// Brez spremenljivke je delitelj lahko 0 (Lean: x / 0 = 0, 0⁻¹ = 0), zato bi bila »x / 0.0 = 0« ali »x / (1 - 1) = 0«
+// dokazana. Izraz s spremenljivko je lahko 0 za nekatere vrednosti (x / x ≤ 1 »drži«); L6 doda predpostavke.
 function varenDelitelj(g) {
-  if (g.length === 1) return jeSpr(g[0]) || (g[0].vrsta === "st" && !nic(g[0].v));
+  if (g.some(jeSpr)) return true;
+  if (g.length === 1) return g[0].vrsta === "st" && !nic(g[0].v);
   return g.length === 3 && g[0].vrsta === "st" && !nic(g[0].v) && g[1].v === ":" && TIPI.has(g[2].v);
 }
 function preveriDeljenje(z) {
-  const napaka = "deli samo s spremenljivko ali številom ≠ 0 (x / (x + 1) ni dovoljeno, ker je lahko 0)";
+  const napaka = "delitelj brez spremenljivke je samo število ≠ 0 (x / (1 - 1) = 0 v Leanu)";
   for (let k = 0; k < z.length; k++) {
     if (z[k].v === "/" || z[k].v === "%") {
       const n = z[k + 1];
@@ -262,29 +289,13 @@ function preveriDeljenje(z) {
   return null;
 }
 
-// Operand pri odštevanju: žetoni levo/desno od »-« do prvega ločila na isti globini oklepajev.
-function operand(z, k, smer) {
-  const out = [];
-  let d = 0;
-  for (let j = k + smer; j >= 0 && j < z.length; j += smer) {
-    const v = z[j].v;
-    if ((smer < 0 ? ZAPRI : ODPRI).has(v)) d++;
-    else if ((smer < 0 ? ODPRI : ZAPRI).has(v) && --d < 0) break;
-    if (d === 0 && MEJE_OPERANDA.has(v)) break;
-    out.push(z[j]);
-  }
-  return smer < 0 ? out.reverse() : out;
-}
-const tipiziran = (del) => del.some((t, q) => jeSpr(t) || (t.v === ":" && TIPI.has(del[q + 1]?.v)));
-// Odštevanje dveh golih števil (brez spremenljivke in pripisa) je lahko v ℕ: 2 - 3 = 0, x ^ (5 - 7). Zavrnjeno.
-function preveriOdstevanje(z) {
+// Množica {x | …} ima vezavo brez tipa (Lean vzame ℕ: {x | x + 3 = 1} = ∅ »drži«), zato samo {x : ℝ | …}.
+function preveriMnozice(z) {
   for (let k = 0; k < z.length; k++) {
-    if (z[k].v !== "-") continue;
-    const levo = operand(z, k, -1);
-    if (!levo.length) continue; // enočleni minus (-3) ali za |…|: v ℕ ni Neg, Lean javi napako
-    const desno = operand(z, k, 1);
-    const gol = (o) => !tipiziran(o);
-    if (gol(levo) && gol(desno)) return "odštevanje števil brez tipa (ℕ: 2 - 3 = 0); piši (2 : ℝ) - 3";
+    if (z[k].v !== "{") continue;
+    let j = k + 1;
+    while (jeSpr(z[j])) j++;
+    if (j > k + 1 && (z[j]?.v === "|" || z[j]?.v === "∈")) return "množica brez tipa (piši {x : ℝ | …})";
   }
   return null;
 }
@@ -332,22 +343,6 @@ function najdiVezave(z) {
     razponi.push([k, b]);
   }
   return razponi;
-}
-
-// Lean števila brez tipa privzame v ℕ: »2 - 3 = 0« bi bil »dokazan«. En pripis nekje v trditvi ne tipizira drugih
-// števil (»(1:ℝ) = 1 ∧ 2 - 3 = 0«), zato: vsak del med ∧ ∨ → ↔ ¬ , => (vezave izvzete) s števili ima
-// spremenljivko (vse imajo tip) ali pripis tipa.
-function preveriTipe(z, vezave) {
-  const loci = new Set();
-  for (const [od, doK] of vezave) for (let j = od; j <= doK; j++) loci.add(j);
-  let del = [];
-  for (let k = 0; k <= z.length; k++) {
-    if (k === z.length || loci.has(k) || DELI.has(z[k].v)) {
-      if (del.some((t) => t.vrsta === "st") && !tipiziran(del)) return "števila brez tipa (piši npr. (2 : ℝ) ali ∀ x : ℝ, …) v vsakem delu trditve";
-      del = [];
-    } else del.push(z[k]);
-  }
-  return null;
 }
 
 // Taktike, ki jih delavec poskusi po vrsti (vsaka v svojem izreku iste datoteke). Brez polyrith (uporablja

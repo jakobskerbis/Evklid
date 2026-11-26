@@ -30,9 +30,10 @@ export function naloziNastavitve(pot) {
     utripS: 60,
     rokS: Math.min(Math.max(Number(n.rokS) || 240, 30), 540), // < najem na strežniku (600 s); glej rokNaloge
     pomnilnikMB: Math.min(Math.max(Number(n.pomnilnikMB) || 6144, 2048), 65536), // Lean -M (mehka meja)
-    // Trda meja (Windows: zasedeni pomnilnik procesa v Job Object; Linux: navidezni naslovni prostor, ki vključuje
-    // preslikane .olean Mathliba, okoli 15 GB): Lean se ob prekoračitvi konča.
-    trdaMejaMB: Math.min(Math.max(Number(n.trdaMejaMB) || (process.platform === "win32" ? 12288 : 24576), 4096), 131072),
+    // Trda meja (Windows: zasedeni pomnilnik procesa in celega Joba v Job Object, 10 GB, da 16 GB prenosnik ne
+    // zamenjuje na disk; Linux: navidezni naslovni prostor, ki vključuje preslikane .olean Mathliba, okoli 15 GB):
+    // Lean se ob prekoračitvi konča.
+    trdaMejaMB: Math.min(Math.max(Number(n.trdaMejaMB) || (process.platform === "win32" ? 10240 : 24576), 4096), 131072),
     projekt: path.resolve(path.dirname(pot), n.projekt || "projekt"),
     // lean.json ({ lean, leanPath }): zapiše ga namestitev (`lake env node delavec.mjs --shrani-lean …`, kot skrbnik)
     leanJson: path.resolve(path.dirname(pot), n.leanJson || path.join("orodja", "lean.json")),
@@ -155,7 +156,7 @@ export function shraniLean(pot, env = process.env) {
 
 /**
  * Ukaz s trdo mejo pomnilnika: [program, argumenti, dodatno okolje]. Windows: powershell + omeji.ps1 (Job Object z
- * JOB_OBJECT_LIMIT_PROCESS_MEMORY in KILL_ON_JOB_CLOSE; Lean je njegov otrok; ukaz gre po okolju, ker PowerShell
+ * mejo pomnilnika procesa in Joba, največ 3 procesi, KILL_ON_JOB_CLOSE; Lean je njegov otrok; ukaz gre po okolju, ker PowerShell
  * argumente z »-« bere kot svoje). Linux/macOS: sh z »ulimit -v« (RLIMIT_AS), nato exec Leana (isti pid).
  */
 export function ukazZMejo(lean, args, mejaMB, platforma = process.platform) {
@@ -189,9 +190,10 @@ function ubijDrevo(p) {
   }
 }
 
-// Okolje za Lean: samo kar rabi (brez žetonov, ključev in drugih spremenljivk iz okna) in LEAN_PATH.
+// Okolje za Lean: samo kar rabi (brez žetonov, ključev in drugih spremenljivk iz okna) in LEAN_PATH. Windows: še
+// spremenljivke sistema brez skrivnosti, ki jih rabita PowerShell in Add-Type (csc.exe) v omeji.ps1.
 function cistoOkolje(leanPath) {
-  const keep = ["PATH", "Path", "SystemRoot", "SYSTEMROOT", "TEMP", "TMP", "HOME", "USERPROFILE", "LOCALAPPDATA", "APPDATA", "LANG"];
+  const keep = ["PATH", "Path", "SystemRoot", "SYSTEMROOT", "windir", "SystemDrive", "ComSpec", "PSModulePath", "PROCESSOR_ARCHITECTURE", "NUMBER_OF_PROCESSORS", "TEMP", "TMP", "HOME", "USERPROFILE", "LOCALAPPDATA", "APPDATA", "LANG"];
   return { ...Object.fromEntries(keep.filter((k) => process.env[k] != null).map((k) => [k, process.env[k]])), LEAN_PATH: leanPath };
 }
 
@@ -216,7 +218,7 @@ export async function preveriZLean(trditev, n, rokS = n.rokS) {
       fs.chmodSync(mapa, 0o755);
       Object.assign(opcije, { uid: n.linuxUid, gid: n.linuxUid });
     }
-    const { izpis, ubit, err = "", napaka: napakaZagona } = await new Promise((resolve) => {
+    const { izpis, ubit, err = "", koda = null, napaka: napakaZagona } = await new Promise((resolve) => {
       let p;
       try {
         p = spawn(ukaz, args, opcije);
@@ -249,20 +251,26 @@ export async function preveriZLean(trditev, n, rokS = n.rokS) {
         clearTimeout(rezerva);
         resolve({ izpis: "", ubit: false, napaka: e });
       });
-      p.on("close", () => {
+      p.on("close", (koda) => {
         clearTimeout(rok);
         clearTimeout(rezerva);
-        resolve({ izpis: out + "\n" + err.split("\n").filter((v) => v.startsWith("{")).join("\n"), ubit, err });
+        resolve({ izpis: out + "\n" + err.split("\n").filter((v) => v.startsWith("{")).join("\n"), ubit, err, koda });
       });
     });
     const ms = Date.now() - zacetek;
     if (napakaZagona) return { izid: "napaka", sporocilo: ocistiSporocilo(`Lean se ni zagnal: ${napakaZagona.message}`, [n.projekt, os.homedir()]), ms };
+    const poti = [datoteka, mapa, n.projekt, os.homedir()];
     const r = preberiIzpis(izpis);
     if (r.izid === "proved") return { ...r, ms };
+    // Preverba tipov je prva vrstica: »rejected« velja tudi, če je Lean pozneje presegel rok.
+    if (r.izid === "rejected") return { ...r, sporocilo: ocistiSporocilo(r.sporocilo, poti), ms };
     if (ubit) return { izid: "timeout", sporocilo: `Lean ni končal v ${rokS} s`, ms };
     // Trda meja pomnilnika (GMP ali Lean ne dobi pomnilnika): trditev je pretežka, ni napaka namestitve.
     if (/Cannot allocate memory|out of memory|bad_alloc|memory limit exceeded/i.test(err)) return { izid: "timeout", sporocilo: `Lean je presegel mejo pomnilnika (${n.trdaMejaMB} MB)`, ms };
-    return { ...r, sporocilo: ocistiSporocilo(r.sporocilo, [datoteka, mapa, n.projekt, os.homedir()]), ms };
+    // »napaka« (namestitev): zraven izhodna koda in konec stderr (omeji.ps1 125/126, manjkajoč Mathlib …) za dnevnik.
+    const rep = err.split("\n").filter((v) => v.trim() && !v.startsWith("{")).join(" | ").slice(-600);
+    const sporocilo = r.izid === "napaka" ? `${r.sporocilo}; izhod ${koda}${rep ? `; stderr: ${rep}` : ""}` : r.sporocilo;
+    return { ...r, sporocilo: ocistiSporocilo(sporocilo, poti), ms };
   } finally {
     try {
       fs.rmSync(mapa, { recursive: true, force: true });

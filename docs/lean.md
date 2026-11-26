@@ -126,7 +126,8 @@ beremo). Vseh klicev delavca največ 120 na minuto; telo največ 16 kB (413), po
 `IO`, `attribute [implemented_by]`, `open … in`, `set_option`, `#exit`). Zato Lean nikoli ne dobi besedila z ukazom:
 
 1. Naloga nosi samo trditev. Datoteko sestavi delavec sam iz stalne predloge (`scripts/lean-delavec/lean.mjs`):
-   `import Mathlib`, `set_option autoImplicit false`, `open Real`, nato za vsako taktiko (`norm_num`, `simp`, `ring`,
+   `import Mathlib`, `set_option autoImplicit false`, `open Real`, nato preverba tipov (`set_option pp.explicit true in
+   … pp.notation false … pp.proofs true … #check (<trditev> : Prop)`, glej »Tipi«), nato za vsako taktiko (`norm_num`, `simp`, `ring`,
    `ring_nf`, `linarith`, `nlinarith`, `positivity`, `omega`, `decide`, `field_simp`; brez `polyrith`, ki rabi omrežje, in
    brez `native_decide`) ena vrstica `theorem evklid_tK : <trditev> := by intros; <taktika>` in `#print axioms evklid_tK`.
 2. Filter (`scripts/lean-delavec/trditev.mjs`, isti na strežniku ob vpisu in na delavcu pred zagonom) je bel seznam,
@@ -142,24 +143,38 @@ beremo). Vseh klicev delavca največ 120 na minuto; telo največ 16 kB (413), po
    besedila učenca.
    Števila in pomnilnik (Lean računa velika števila z GMP, ki ne pogleda meje `-M`): število največ 12 števk, za njim ne
    sme biti črka, `_` ali pika (`0x…`, `0b…`, `1e5`, `2.5e3`, `2x`; Lean bi `1e999999999999` prebral kot 10^…); decimalno
-   število `0.5` je dovoljeno. Eksponent za `^` je eno celo število ≤ 1000 ali ena spremenljivka (ne oklepaj:
-   `(1000*1000*1000)`, `(n + 1)`, `(1/2 : ℝ)` so zavrnjeni; `x ^ (n + 1)` piši `x * x ^ n`); nobena potenca potence
-   (`a^b^c`, `(a^b)^c`, `(a^b)²`, `x²²`). `fun` je dovoljen samo kot argument `deriv` (`deriv (fun x : ℝ => x ^ 2) 3`),
+   število `0.5` je dovoljeno. Eksponent za `^` je celo število ≤ 1000, spremenljivka ali oklepaj s spremenljivko,
+   celimi števili in `+ - *` (`x ^ (n + 1)`, `x ^ (2 * n)`; števila skupaj ∏(1 + število) ≤ 1001, zato ne
+   `(1000 * n + 1000)` ali `(1000*1000*1000)`) ali `(p/q : ℝ)` (`x ^ (1/2 : ℝ)`; `rpow` se ne računa); nobena potenca
+   potence (`a^b^c`, `(a^b)^c`, `(a^b)²`, `x²²`). `fun` je dovoljen samo kot argument `deriv` (`deriv (fun x : ℝ => x ^ 2) 3`),
    v njegovem telesu je eksponent samo število (sicer `(fun n : ℕ => 2^n) 999999999999` ali `deriv (fun x : ℝ => 2^x)
    999999999999` izračuna ogromno potenco); največ dva `deriv` in dve vsoti `∑`; meje `Finset.range`, `Finset.Icc` …
-   in `Fin` so število ≤ 100, spremenljivka ali oklepaj s takimi in `+`, `-`.
-   Tipi (zakaj): Lean števila brez tipa privzame v ℕ, kjer je `2 - 3 = 0`, in ima »smetne« vrednosti `x / 0 = 0`,
-   `0⁻¹ = 0`, `Real.sqrt (-4) = 0`, `Real.log 0 = 0`. Tako bi bile šolsko napačne trditve »dokazane«. Zato:
-   vsaka vezava `∀`/`∃`/`fun` ima tip z belega seznama (`∀ x : ℝ, …`, `∀ (x : ℝ) (n : ℕ), …`; ne `∀ x, …`,
-   `∀ x > 0, …`, `∃ x ∈ S, …`, `∀ x : _, …`). **En pripis ne tipizira drugih števil**: `(1:ℝ) = 1 ∧ 2 - 3 = 0` ali
-   `∀ x : ℝ, x = x ∧ (5 - 7 = 0)` bi imela drugi del v ℕ. Zato ima vsak del trditve med `∧ ∨ → ↔ ¬ , =>` (vezave
-   izvzete), ki vsebuje števila, tipizirano spremenljivko ali pripis tipa; odštevanje, kjer na nobeni strani ni
-   spremenljivke ne pripisa (`2 - 3`, `Nat.gcd 5 7 - 3`), je zavrnjeno (piši `(2 : ℝ) - 3`). Delitelj pri `/` in `%`
-   ter osnova za `⁻¹` je spremenljivka, število ≠ 0 ali `(število ≠ 0 : tip)`; `x / 0.0`, `x / (1 - 1)`, `(0:ℝ)⁻¹`, pa
-   tudi `x / (x + 1)` so zavrnjeni. L6 mora zato vsak podizraz s samimi števili zapisati s pripisom. Ostane:
-   pripisan ℕ (`(2:ℕ) - 3 = 0`, `∀ n : ℕ, n - 5 …`) je namerno ℕ, deljenje s spremenljivko (`x / 0 = 0`, zato
-   `∀ x : ℝ, x / x ≤ 1` »drži«), `Real.sqrt` negativnega in `log 0` se dokažejo; L6 prevaja v ℝ ali ℤ in doda
-   predpostavke (`x ≠ 0`, `x ≥ 0`), drug model to preveri.
+   in `Fin` so število ≤ 100, spremenljivka ali oklepaj s takimi in `+`, `-`. Te meje NISO popolne: priča v `∃`
+   (`∃ n : ℕ, n = 999999999999 ∧ ∑ i ∈ Finset.range n, i = 0`; `simp` jo vstavi z `exists_eq_left`) jih obide. Pravo
+   varovalo sta trda meja pomnilnika in rok (3., (b)); test to preveri z lažnim Leanom (izid `timeout`).
+   **Tipi.** Lean števila brez tipa privzame v ℕ, kjer je `2 - 3 = 0` in `7 / 2 = 3` (tudi ∑-indeks in `{x | …}` sta
+   ℕ), in ima »smetne« vrednosti `x / 0 = 0`, `0⁻¹ = 0`, `x % 0 = x`, `Real.sqrt (-4) = 0`, `Real.log 0 = 0`. Šolsko
+   napačne trditve bi bile »dokazane«. Tipov iz besedila ni mogoče zanesljivo uganiti (pregledi so našli ∑-indeks,
+   `↑`, `(7 / 2) ^ n`, množice …), zato jih preveri **Lean sam**: prva vrstica za glavo predloge elaborira trditev z
+   izpisom vseh implicitnih argumentov (`pp.explicit`, brez zapisov `∑`/`↑` in skrajšav `⋯`), delavec izpis prebere
+   (`preveriElaboracijo` v `lean.mjs`) in vrne `rejected` z razlogom, če vsebuje odštevanje v ℕ (`@HSub.hSub Nat`),
+   deljenje v ℕ ali ℤ (`@HDiv.hDiv Nat`/`Int`), ostanek (`@HMod.hMod`, vsak tip), `Nat.sub`/`div`/`mod`/`pred`,
+   `Int.div`/`ediv`/`emod`/`tdiv`/`tmod`/`fdiv`/`fmod`/`bdiv`/`bmod`/`toNat`, računanje v `Fin` (po modulu), `Float`
+   (`0.5` brez tipa) ali `⋯`. `Nat.cast` takega izraza (`((n - 1 : ℕ) : ℝ)`) vsebuje operacijo v ℕ in je zavrnjen.
+   Brez izpisa tipov izid nikoli ni `proved`; `rejected` iz preverbe velja tudi, če Lean pozneje preseže rok.
+   Preverjeno z resničnim Leanom na vseh primerih iz pregledov PR #1172 (`∑ i ∈ Finset.range 4, (i - 2) = 1`,
+   `(7 / 2) ^ n`, `7 / 2 + 0 ^ n`, `(7 / 2 = 3) = (x = x)`, `∀ n : ℕ, n = 999999999999 → (2:ℕ)^n % 7 = 1` … →
+   `rejected`; `↑(7 / 2)` ob `x : ℝ` Lean elaborira v ℝ kot 3,5, zato ni zavrnjen, a tudi ni dokazan).
+   Filter besedila zato zahteva samo: tip pri vsaki vezavi `∀`/`∃`/`fun` (`∀ x : ℝ, …`, `∀ (x : ℝ) (n : ℕ), …`; ne
+   `∀ x, …`, `∀ x > 0, …`, `∃ x ∈ S, …`, `∀ x : _, …`) in v množici (`{x : ℝ | …}`, ne `{x | …}`: `{x | x + 3 = 1} = ∅`
+   je v ℕ resnična brez odštevanja) ter delitelj (`/`, `%`, osnova `⁻¹`), ki je izraz s spremenljivko (`x / (x + 1)`,
+   `(x ^ 2 + 1)⁻¹`), število ≠ 0 ali `(število ≠ 0 : tip)`: `x / 0.0`, `x / (1 - 1)`, `(0:ℝ)⁻¹` so zavrnjeni, ker
+   preverba tipov deljenja v ℝ ne zavrne. `Real.sqrt 16 = 4`, `Nat.gcd 12 18 = 6`, `Nat.Prime 7`, `1 + 1 = 2` so
+   dovoljeni (tip pove Lean). Namerno NI zavrnjeno (L6 mora zapisati predpostavke `x ≠ 0`, `x ≥ 0`, drug model to
+   preveri): deljenje v ℝ z izrazom, ki je lahko 0 (`∀ x : ℝ, x / x ≤ 1` »drži«), `Real.sqrt` in `Real.log`
+   negativnega ali 0 (Lean: 0). Pripisan ℕ z odštevanjem (`∀ n : ℕ, n - 1 ≤ n`) je zdaj zavrnjen; L6 piše
+   `(n : ℝ) - 1` ali ℤ. Preverba elaborira `(<trditev> : Prop)`, izrek isto besedilo kot svoj tip (ista elaboracija,
+   pričakovan tip `Prop` oziroma `Sort`).
 3. Lean teče neposredno (`lean.exe`, ne `lake`): ob namestitvi (kot skrbnik) `zazeni.bat` v `projekt\` požene
    `lake env node delavec.mjs --shrani-lean orodja\lean.json`, ki zapiše absolutno pot do Leana (`LEAN`) in `LEAN_PATH`
    (Windows nima `printenv`, zato Node). Delavec kot `evklid-lean` nato zažene samo ta `lean` z `LEAN_PATH` iz
@@ -172,7 +187,13 @@ beremo). Vseh klicev delavca največ 120 na minuto; telo največ 16 kB (413), po
    preverja ob dodeljevanju) in **trda meja** `trdaMejaMB`: Windows `omeji.ps1` (PowerShell `Add-Type` s P/Invoke:
    Job Object z `JOB_OBJECT_LIMIT_PROCESS_MEMORY`, `KILL_ON_JOB_CLOSE`, `DIE_ON_UNHANDLED_EXCEPTION`; PowerShell se
    dá v Job in nato s `CreateProcess` zažene Lean, ki je zato v istem Jobu; brez uspešno nastavljenega Joba se Lean ne
-   zažene), privzeto 12288 MB zasedenega pomnilnika na proces; Linux `sh -c 'ulimit -v …; exec lean …'` (RLIMIT_AS),
+   zažene), z `JOB_OBJECT_LIMIT_JOB_MEMORY` (isti znesek za ves Job) in `ActiveProcessLimit` 3 (PowerShell, Lean in morda
+   `conhost`; Lean ne zaganja otrok, zato luknja ne more zagnati drugih procesov), privzeto 10240 MB zasedenega
+   pomnilnika (da 16 GB prenosnik ne začne zamenjevati na disk). `omeji.ps1` bere ukaz z
+   `[string[]](ConvertFrom-Json …)` (PowerShell 5.1 da seznam po cevi kot en objekt) in ob izhodu 125/126 izpiše,
+   kateri klic Win32 ni uspel; izid `napaka` nosi izhodno kodo in konec stderr. Okolje za PowerShell in `Add-Type`
+   (`csc.exe`): poleg `PATH`, `SystemRoot`, `TEMP` … še `windir`, `SystemDrive`, `ComSpec`, `PSModulePath`,
+   `PROCESSOR_ARCHITECTURE`, `NUMBER_OF_PROCESSORS` (brez skrivnosti); Linux `sh -c 'ulimit -v …; exec lean …'` (RLIMIT_AS),
    privzeto 24576 MB, ker naslovni prostor vključuje preslikane `.olean` Mathliba (izmerjeno: VmPeak 14,6 GB, RSS
    5,4 GB pri `import Mathlib`). Ob prekoračitvi GMP ali Lean ne dobi pomnilnika in Lean se konča (preizkušeno na
    Linuxu: `Nat.shiftLeft 1 4294967295` pod mejo 7 GB → »GNU MP: Cannot allocate memory«, izhod 134); izid je
@@ -201,16 +222,21 @@ more brati `C:\Users\<j>` (tja ima dostop samo lastnik) in ne more spremeniti de
 Bere pa lahko, kar lahko bere vsak uporabnik računalnika (npr. `C:\Program Files`), in `nastavitve.json` (žeton, glej
 (c)). Ustavitev in posodobitev: `ustavi.bat` oziroma `zazeni.bat` opravilo najprej izklopi (sicer se ob napaki znova
 zažene), nato `schtasks /End` (konča samo `cmd.exe`) in `taskkill /F /T /FI "USERNAME eq evklid-lean"` (Node, Lean,
-PowerShell), zato po posodobitvi ne tečeta dva delavca. Odstranitev: NAVODILA.md, razdelek »Odstranitev« (opravilo,
-uporabnik, pravilo požarnega zidu, `rmdir /s /q C:\Evklid`, ki povezav ne sledi).
+PowerShell), zato po posodobitvi ne tečeta dva delavca. Opravila, ki bi jih `evklid-lean` registriral sam
+(standardni uporabnik to sme), `uporabnik.ps1` izbriše pred spremembo pravic (vsa opravila tega uporabnika, nato
+`taskkill /FI`; naše opravilo registrira znova na koncu), da noben njegov proces ne tekmuje z brisanjem povezav in
+`icacls`. Odstranitev: NAVODILA.md, razdelek »Odstranitev« (opravilo,
+profil `C:\Users\evklid-lean` (`Remove-CimInstance` na `Win32_UserProfile`), uporabnik, pravilo požarnega zidu,
+`rmdir /s /q C:\Evklid`, ki povezav ne sledi).
 
 **Preostala tveganja (pošteno).** (a) Varovalo pred kodo v trditvi je filter; če bi imel luknjo, bi program tekel kot
 `evklid-lean` (brez j-jevih datotek, glej zgoraj) brez omrežja za `lean.exe` (požarni zid; Node delavca omrežje ima).
 Na Linuxu `linuxUid` v `nastavitve.json`. (b) Pomnilnik: filter ne more dokazati, da noben dovoljen zapis ne zasede
 veliko pomnilnika (npr. `simp`, ki razpiše vsoto, ali odvod produkta), zato je pravo varovalo trda meja (Job Object,
-`ulimit -v`). Ta omeji en proces Leana, ne celega prenosnika: pri meji 12 GB na 16 GB prenosniku se lahko prenosnik
-nekaj minut upočasni. **Ni preizkušeno na Windows**: `omeji.ps1` (struktura `JOBOBJECT_EXTENDED_LIMIT_INFORMATION`,
-dedovanje stdout/stderr v Lean, ali se Mathlib naloži pod 12 GB zasedenega pomnilnika; če Lean `.olean` prebere v
+`ulimit -v`). Ta omeji Lean (proces in ves Job, 10 GB), ne celega prenosnika: na 16 GB prenosniku se lahko prenosnik
+nekaj minut upočasni. Filter in preverbo tipov prestanejo in jih ustavita samo trda meja ali rok: priča v `∃`
+(`∃ n : ℕ, n = 999999999999 ∧ ∑ i ∈ Finset.range n, i = 0`, `∃ n : ℕ, n = 999999999999 ∧ 2 ^ n = 0`). **Ni preizkušeno na Windows**: `omeji.ps1` (struktura `JOBOBJECT_EXTENDED_LIMIT_INFORMATION`,
+dedovanje stdout/stderr v Lean, ali se Mathlib naloži pod 10 GB zasedenega pomnilnika, ali `ActiveProcessLimit` 3 zadošča; če Lean `.olean` prebere v
 pomnilnik namesto preslikave, je treba `trdaMejaMB` povečati) in nič od zagona kot `evklid-lean` (ACL, požarni zid,
 `taskkill /FI`, Lean z `LEAN_PATH` iz mape skrbnika). Preizkus ob zagonu delavca to pokaže v `dnevnik.txt`
 (»preizkus Lean: proved«); pred spojitvijo naj ga j enkrat preveri (NAVODILA, »Kako vidim, da dela«). Preizkušeno na
@@ -243,7 +269,9 @@ oklepajih s potmi (`)` v imenu mape bi jih pokvaril). Linux (razvoj): v projektu
 
 **Modul.** `server/lean-vrsta.js` je nov: noben obstoječ modul nima vrste za zunanjega delavca z lastnim žetonom
 (`server/cas.js` zaganja SymPy na strežniku, `server/preverjevalniki.js` samo poroča stanje). Testi:
-`test/lean-vrsta.test.js` (filter z vsemi primeri iz pregledov PR #1172; lean.json, ukaz s trdo mejo; zanka delavca z
+`test/lean-vrsta.test.js` (filter z vsemi primeri iz pregledov PR #1172; preverba tipov: tabela trditev → filter →
+izpis Leana (skrajšan resnični izpis) → izid za vse primere iz pregledov; resničen Lean, kadar je nastavljen
+`EVKLID_LEAN_E2E=<lean.json>`; lean.json, ukaz s trdo mejo; zanka delavca z
 lažnim Leanom in strežnikom: dokaz, `LEAN_PATH`, `ulimit -v`, cwd, okolje brez žetona, meja pomnilnika → `timeout`,
 napaka zagona, zastarel Mathlib, rok ubije drevo procesov, 409, nedosegljiv strežnik, premor; vrstni red zaščit v
 Windows skriptah).
