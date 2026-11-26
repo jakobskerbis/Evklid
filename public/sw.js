@@ -1,7 +1,8 @@
 // Service worker: aplikacija se odpre tudi brez povezave in ponovno ne prenaša knjižnic.
 // - knjižnice in pisave (/vendor/): najprej iz predpomnilnika (se ne spreminjajo),
-// - vstopna stran (/ z ali brez poizvedbe, npr. /?pogled=chat, /?koda=): najprej omrežje s kratkim rokom (1 s; stran
-//   je majhna, ob nespremenjeni samo 304), ob izpadu ali počasni povezavi shranjena kopija (ena, pod »/«). Vsak odgovor strežnika pove
+// - vstopna stran (/ z ali brez poizvedbe, npr. /?pogled=chat, /?koda=): kopija iste različice takoj, omrežje jo preveri
+//   v ozadju (stale-while-revalidate, entryPage); brez take kopije najprej omrežje s kratkim rokom (1 s), ob izpadu ali
+//   počasni povezavi shranjena kopija (ena, pod »/«). Vsak odgovor strežnika pove
 //   različico datotek (glava X-Evklid-App, server/app.js). Če je drugačna od APP tega service workerja, ta do
 //   zamenjave ne postreže nobene shranjene kopije več (outdated): nova stran tako nikoli ne dobi starih modulov,
 // - stran, ki ji je bila postrežena shranjena (starejša) vstopna stran, ker je omrežje zamujalo, pove svojo
@@ -53,11 +54,16 @@ async function storePublicLesson(id) {
 }
 // Odgovor, ki ga strežnik označi kot zaseben, se ne shrani (tudi na javni poti).
 const privateRes = (res) => /no-store|private/i.test(res.headers.get("cache-control") || "");
-// Vstopna stran čaka omrežje največ 1 s (prej 2,5 s; j 2026-11-10, hiter zagon; 0,4 s je pri počasni povezavi
-// po objavi preveč pogosto dala staro kopijo in samodejno osvežitev; pregled #560): ob počasni ali šele vzpostavljeni
-// povezavi telefona se takoj odpre shranjena stran iste različice. Če strežnik medtem že ima novo različico, jo
-// odgovor v ozadju shrani, stran pa se sama osveži (public/app.js reloadOnceFor), kot prej po 2,5 s.
+// Vstopna stran (N-08b, j 26. 11. 2026 »Vse tri«, namesto pravila 10. 11. »čaka omrežje do 1 s«): shranjena kopija
+// različice tega service workerja se odpre takoj, brez čakanja omrežja (entryPage). Omrežje jo preveri v ozadju
+// (ENTRY_PREVERI ms po odprtju, da ne tekmuje z zagonom); če ima strežnik novo različico, se stran sama enkrat osveži
+// s posnetkom zaslona (public/app.js reloadOnceFor, zacetek.js PRENOS). Brez take kopije (prvi obisk, druga različica,
+// zastarelo) vstopna stran čaka omrežje največ 1 s (entry), nato shranjeno kopijo.
 const TIMEOUT = { entry: 1000, static: 4000, api: 7000 };
+const ENTRY_PREVERI = 3000;
+// Rok preverjanja v ozadju: dokler teče, je service worker zaseden (e.waitUntil) in nov service worker ga čaka; brez roka
+// bi ga zataknjena povezava (telefon med omrežji, tunel brez odgovora) zadržala za nedoločen čas.
+const ENTRY_ROK = 15000;
 // Strežnik je objavil novo različico datotek (vstopna stran z drugačno X-Evklid-App): stare kopije niso več sveže.
 let outdated = false;
 // Odprte strani in različica, ki jo izvajajo (clientId → APP strani; sporočilo »page-app«). Ob ponovnem zagonu
@@ -283,6 +289,57 @@ async function networkFirst(req, cacheName, ms, { entry = false, page = "", onPa
   }
 }
 
+// Vstopna stran: kopija različice tega service workerja takoj (stale-while-revalidate, N-08b), sicer networkFirst.
+// Preverjanje v ozadju (revalidateEntry) je zahteva brez navigacije, zato strežnik vrne javno stran (osebno stran z
+// začetnimi podatki sestavi samo za navigacijo, server/zacetni-podatki.js); zasebna ali no-store bi se vseeno prekinila
+// že ob glavah in ne bi bila shranjena. Javna z oznako te različice se shrani kot nova kopija; nova različica na
+// strežniku (glava STAMP) pobriše stare kopije, prijava z geslom (401, server/gate.js) pobriše kopijo vstopne strani,
+// da naslednje odprtje pokaže prijavo (sicer bi kopija vedno obšla prijavo in klici API bi vračali 401).
+async function entryPage(req, onPage, waitUntil) {
+  const cache = await caches.open(STATIC);
+  const hit = APP && !outdated ? await cache.match(ENTRY) : null;
+  if (!hit || hit.headers.get(STAMP) !== APP) return networkFirst(req, STATIC, TIMEOUT.entry, { entry: true, onPage });
+  onPage(APP);
+  // waitUntil po await: dovoljen, dokler je obljuba respondWith odprta (spec, Chromium, WebKit); če ga brskalnik vseeno
+  // zavrne (InvalidStateError), preverjanje teče brez podaljšanja življenja, stran pa pride (sicer napaka navigacije).
+  const later = revalidateEntry(cache);
+  try {
+    waitUntil(later);
+  } catch {}
+  return hit;
+}
+async function revalidateEntry(cache) {
+  await new Promise((r) => setTimeout(r, ENTRY_PREVERI));
+  const ctl = new AbortController();
+  const rok = setTimeout(() => ctl.abort(), ENTRY_ROK);
+  try {
+    // redirect: "manual" kot pri navigaciji: stara povezava (tunel ngrok ali Cloudflare) strežnik preusmeri na lastno
+    // domeno (server/app.js mountOldLinkRedirect). Sledenje bi preusmeritev na drug izvor končalo z napako (CORS) in
+    // kopija bi ostala za vedno: aplikacija na stari povezavi bi se vedno odprla iz predpomnilnika, klici API (tudi
+    // preusmerjeni) pa ne bi delali. Preusmeritev pomeni, da »/« tu ni več naša vstopna stran: kopijo pobrišemo, da
+    // naslednje odprtje gre na omrežje in brskalnik sledi preusmeritvi.
+    const res = await fetch(new URL(ENTRY, self.location.origin).href, { credentials: "same-origin", headers: { Accept: "text/html" }, redirect: "manual", signal: ctl.signal });
+    if (res.type === "opaqueredirect") return cache.delete(ENTRY);
+    if (tunnelDown(res)) return ctl.abort();
+    const v = noteVersion(res);
+    if (res.status === 401) {
+      ctl.abort();
+      return cache.delete(ENTRY);
+    }
+    if (v && v !== APP) {
+      ctl.abort();
+      return dropStale(v);
+    }
+    // Brez oznake strežnika (server/app.js jo da vsakemu odgovoru zunaj API) ni naša vstopna stran: npr. opozorilna stran
+    // ngrok (ERR_NGROK_6024, status 200) ali stran posrednika. put bi ji dal oznako APP in odpirala bi se takoj.
+    if (!res.ok || res.type !== "basic" || privateRes(res) || v !== APP) return ctl.abort();
+    await put(cache, ENTRY, res);
+  } catch {
+  } finally {
+    clearTimeout(rok);
+  }
+}
+
 // Nov poskus uvoza po napaki (?r=, public/app.js, games/subjects/index.js) je ista datoteka: shranimo in iščemo jo
 // brez r, da jo naslednji zagon brez povezave (uvoz brez ?r=) najde v predpomnilniku.
 function appFileKey(req) {
@@ -362,7 +419,9 @@ self.addEventListener("fetch", (e) => {
   // razreda /?koda=, /?ref=, /?vir= …; pregled A2 P1-1). Takoj iz predpomnilnika samo statične datoteke
   // aplikacije; strani, ki jih sestavi strežnik (/sole, /ucbenik/…, /3d, /kalkulator.html, manifest), ostanejo
   // najprej omrežje, tudi te pa preverijo različico (noteVersion v networkFirst).
-  const entry = (url.pathname === "/" || url.pathname === "/index.html") && (req.mode === "navigate" || !url.search);
+  // Povezava s skupnim geslom (/?geslo=, server/gate.js) ni vstopna stran: strežnik nastavi piškotek in geslo odstrani iz
+  // naslova (shranjena stran bi ga pustila v naslovu, novo geslo pa ne bi prišlo do strežnika).
+  const entry = (url.pathname === "/" || url.pathname === "/index.html") && (req.mode === "navigate" || !url.search) && !url.searchParams.has("geslo");
   // Zahteve nove strani dobijo kopije različice strani, ki jo je dobila (fresh): shranjena (starejša) stran svoje
   // stare module, nova stran nove. Zapis velja za novo stran (brskalnik lahko ob osvežitvi isti id uporabi znova).
   const id = req.mode === "navigate" ? e.resultingClientId || "" : "";
@@ -375,7 +434,7 @@ self.addEventListener("fetch", (e) => {
     else pages.delete(id);
   };
   if (entry) {
-    e.respondWith(networkFirst(req, STATIC, TIMEOUT.entry, { entry: true, onPage }));
+    e.respondWith(entryPage(req, onPage, (p) => e.waitUntil(p)));
     return;
   }
   if (APP_FILE.test(url.pathname) && req.mode !== "navigate") {

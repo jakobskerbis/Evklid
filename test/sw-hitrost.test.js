@@ -34,15 +34,25 @@ function loadSw(app, net = {}) {
     },
   };
   const calls = [];
-  const fetchFn = async (r) => {
+  const fetchFn = async (r, init) => {
     const url = key(r);
     calls.push(url);
-    if (net.hang) return new Promise(() => {});
+    // omrežje ne odgovori; kot pravi fetch se zahteva s signalom ob abort() konča z napako
+    if (net.hang) return new Promise((_, no) => init?.signal?.addEventListener("abort", () => no(new Error("abort"))));
+    // stara povezava (tunel) preusmeri »/« na lastno domeno (server/app.js mountOldLinkRedirect): navigacija in
+    // redirect: "manual" dobita opaqueredirect, sledenje preusmeritvi na drug izvor brez CORS pa konča z napako
+    if (net.redirectEntry && new URL(url).pathname === "/") {
+      if (r?.mode !== "navigate" && init?.redirect !== "manual") throw new TypeError("Failed to fetch");
+      const res = new Response(null, { status: 200 });
+      for (const [k, value] of Object.entries({ type: "opaqueredirect", status: 0, ok: false })) Object.defineProperty(res, k, { value });
+      return res;
+    }
     const headers = { "content-type": "text/plain" };
     // strežnik pošlje različico datotek na vsakem odgovoru zunaj API (server/app.js)
     if (net.served && !new URL(url).pathname.startsWith("/api/")) headers["X-Evklid-App"] = net.served;
     if (net.slowEntry && new URL(url).pathname === "/") await new Promise((r) => setTimeout(r, net.slowEntry));
-    const res = new Response(`net:${url}`, { status: 200, headers });
+    if (net.privateEntry && new URL(url).pathname === "/") headers["cache-control"] = "no-store";
+    const res = new Response(`net:${url}`, { status: net.status?.[new URL(url).pathname] || 200, headers });
     Object.defineProperty(res, "type", { value: "basic" });
     return res;
   };
@@ -51,12 +61,18 @@ function loadSw(app, net = {}) {
   const open = new Set(net.open || []); // odprte strani (id)
   const clients = { claim: async () => {}, matchAll: async () => [...open].map((id) => ({ id, postMessage() {} })), get: async (id) => (open.has(id) ? { id } : undefined) };
   const self = { addEventListener: (t, f) => (listeners[t] ||= []).push(f), location: { origin: ORIGIN }, skipWaiting() {}, clients, registration: { update: async () => void updates.push(1) } };
-  const src = fs.readFileSync(new URL("../public/sw.js", import.meta.url), "utf8").replace('const APP = "";', `const APP = "${app}";`);
-  vm.runInNewContext(src, { self, caches, fetch: fetchFn, Response, Headers, URL, setTimeout, clearTimeout, Promise, JSON, Error });
+  // preveri: ms do preverjanja shranjene vstopne strani v ozadju (ENTRY_PREVERI, v aplikaciji 3 s)
+  const src = fs
+    .readFileSync(new URL("../public/sw.js", import.meta.url), "utf8")
+    .replace('const APP = "";', `const APP = "${app}";`)
+    .replace(/const ENTRY_PREVERI = \d+;/, `const ENTRY_PREVERI = ${net.preveri ?? 20};`)
+    .replace(/const ENTRY_ROK = \d+;/, `const ENTRY_ROK = ${net.rok ?? 200};`);
+  vm.runInNewContext(src, { self, caches, fetch: fetchFn, Response, Headers, URL, setTimeout, clearTimeout, Promise, JSON, Error, AbortController });
+  const waits = []; // e.waitUntil(...) iz dogodkov fetch (preverjanje vstopne strani v ozadju)
   // ids: { clientId, resultingClientId } (stran, ki zahteva / stran, ki bo nastala z navigacijo)
   const get = async (path, mode = "no-cors", ids = {}) => {
     let p = null;
-    for (const f of listeners.fetch) f({ request: { method: "GET", url: new URL(path, ORIGIN).href, mode }, respondWith: (x) => (p = x), waitUntil() {}, ...ids });
+    for (const f of listeners.fetch) f({ request: { method: "GET", url: new URL(path, ORIGIN).href, mode }, respondWith: (x) => (p = x), waitUntil: (x) => void waits.push(x), ...ids });
     return p ? (await p).text() : null; // null: SW se ne vmeša (brskalnik gre sam na omrežje)
   };
   const message = (data, source) => {
@@ -64,7 +80,7 @@ function loadSw(app, net = {}) {
     for (const f of listeners.message) f({ data, source, ports: [], waitUntil: (x) => waits.push(x) });
     return Promise.all(waits);
   };
-  return { get, message, calls, caches, cacheFor, updates, open };
+  return { get, message, calls, caches, cacheFor, updates, open, waits };
 }
 
 test("datoteka aplikacije iste različice: takoj iz predpomnilnika, brez omrežja", async () => {
@@ -74,21 +90,30 @@ test("datoteka aplikacije iste različice: takoj iz predpomnilnika, brez omrežj
   sw.calls.length = 0;
   assert.equal(await sw.get("/graph/calc.js"), `net:${ORIGIN}/graph/calc.js`);
   assert.deepEqual(sw.calls, [], "druga zahteva ne sme na omrežje");
-  // vstopna stran pa vedno najprej omrežje (pregled PR #481, točka 1): po objavi pride nova stran takoj
+  // vstopna stran iste različice (N-08b, j 26. 11. 2026): takoj iz predpomnilnika, omrežje jo preveri šele v ozadju
   await sw.get("/", "navigate");
   await new Promise((r) => setTimeout(r, 10));
   sw.calls.length = 0;
-  await sw.get("/", "navigate");
-  assert.deepEqual(sw.calls, [`${ORIGIN}/`]);
+  assert.equal(await sw.get("/", "navigate"), `net:${ORIGIN}/`, "shranjena kopija (z omrežja ob prvem odprtju)");
+  assert.deepEqual(sw.calls, [], "odprtje ne čaka omrežja");
+  await new Promise((r) => setTimeout(r, 60));
+  assert.deepEqual(sw.calls, [`${ORIGIN}/`], "preverjanje v ozadju po ENTRY_PREVERI");
 });
 
 // Scenarij pregledovalca (swmix): telefon ima shranjeno različico »stara«, strežnik pa že teče z »nova«.
 // Prej: stara vstopna stran in stari app.js iz predpomnilnika, leni moduli pa z omrežja (nova) – mešanica.
-test("po objavi nove različice: nova vstopna stran in nobena stara kopija modula več (brez mešanja)", async () => {
+// N-08b (j 26. 11. 2026): prvo odprtje po objavi je takoj shranjena stran z moduli svoje različice (stran se sama
+// osveži, public/app.js reloadOnceFor); preverjanje v ozadju pobriše stare kopije, naslednje odprtje je nova stran.
+test("po objavi nove različice: stara stran takoj s svojimi moduli, nato nova vstopna stran in nobena stara kopija več (brez mešanja)", async () => {
   const sw = loadSw("stara", { served: "nova" });
   const st = await sw.caches.open("evklid-v1-static");
   for (const f of ["/", "/app.js", "/graph/tools.js"]) await st.put(`${ORIGIN}${f}`, new Response(`staro:${f}`, { headers: { "X-Evklid-App": "stara" } }));
-  assert.equal(await sw.get("/", "navigate"), `net:${ORIGIN}/`, "prvo odprtje po objavi: nova vstopna stran");
+  assert.equal(await sw.get("/", "navigate", { resultingClientId: "s" }), "staro:/", "prvo odprtje po objavi: shranjena stran takoj");
+  sw.open.add("s");
+  assert.equal(await sw.get("/app.js", "no-cors", { clientId: "s" }), "staro:/app.js", "stara stran: app.js njene različice");
+  await new Promise((r) => setTimeout(r, 60)); // preverjanje v ozadju najde novo različico
+  sw.open.delete("s"); // stran se osveži
+  assert.equal(await sw.get("/", "navigate"), `net:${ORIGIN}/`, "po preverjanju: nova vstopna stran");
   assert.equal(sw.updates.length, 0, "brez registration.update() iz fetch (nov SW bi obvisel v »waiting«, pregled B2 P1-2)");
   for (const f of ["/app.js", "/graph/tools.js"]) assert.equal(await sw.get(f), `net:${ORIGIN}${f}`, `${f}: nova različica, ne stara kopija`);
   await new Promise((r) => setTimeout(r, 10));
@@ -102,7 +127,9 @@ for (const q of ["/?pogled=chat", "/?koda=ABC123", "/index.html?ref=x"]) {
     const sw = loadSw("stara", { served: "nova" });
     const st = await sw.caches.open("evklid-v1-static");
     for (const f of ["/", "/app.js"]) await st.put(`${ORIGIN}${f}`, new Response(`staro:${f}`, { headers: { "X-Evklid-App": "stara" } }));
-    assert.equal(await sw.get(q, "navigate"), `net:${ORIGIN}${q}`);
+    assert.equal(await sw.get(q, "navigate"), "staro:/", "takoj shranjena vstopna stran (ista kopija kot »/«)");
+    await new Promise((r) => setTimeout(r, 60)); // preverjanje v ozadju najde novo različico
+    assert.equal(await sw.get(q, "navigate"), `net:${ORIGIN}${q}`, "naslednje odprtje: nova stran");
     assert.equal(await sw.get("/app.js"), `net:${ORIGIN}/app.js`, "app.js nove različice");
     await new Promise((r) => setTimeout(r, 10));
     assert.equal(await st.match(`${ORIGIN}${q}`), undefined, "kopija s poizvedbo se ne shrani posebej (samo »/«)");
@@ -120,11 +147,13 @@ test("kopija dobi oznako različice, ki jo je poslal strežnik (ne APP service w
 
 // Pregled B2 P2-1: stara stran iz predpomnilnika (vstopna stran zamuja) do osvežitve dobiva svoje lene module.
 test("počasna vstopna stran ob objavi: stara stran dobi lene module svoje različice, nova stran nove", async () => {
-  const sw = loadSw("stara", { served: "nova", slowEntry: 1500, open: ["stara-stran"] });
+  const sw = loadSw("stara", { served: "nova", slowEntry: 300, open: ["stara-stran"] });
   const st = await sw.caches.open("evklid-v1-static");
   for (const f of ["/", "/app.js", "/graph/tools.js"]) await st.put(`${ORIGIN}${f}`, new Response(`staro:${f}`, { headers: { "X-Evklid-App": "stara" } }));
-  assert.equal(await sw.get("/", "navigate", { resultingClientId: "stara-stran" }), "staro:/", "po roku vstopne strani (1 s) shranjena stran");
-  await new Promise((r) => setTimeout(r, 700)); // odgovor nove različice pride, kopije za odprto staro stran ostanejo
+  const t0 = Date.now();
+  assert.equal(await sw.get("/", "navigate", { resultingClientId: "stara-stran" }), "staro:/", "shranjena stran takoj");
+  assert.ok(Date.now() - t0 < 200, "brez čakanja na počasno omrežje");
+  await new Promise((r) => setTimeout(r, 500)); // preverjanje v ozadju najde novo različico, kopije za odprto staro stran ostanejo
   assert.equal(await sw.get("/graph/tools.js", "no-cors", { clientId: "stara-stran" }), "staro:/graph/tools.js");
   assert.equal(await sw.get("/graph/tools.js", "no-cors", { clientId: "nova-stran" }), `net:${ORIGIN}/graph/tools.js`);
 });
@@ -140,12 +169,12 @@ test("ista različica na strežniku: kopije modulov ostanejo takojšnje", async 
   assert.equal(sw.updates.length, 0);
 });
 
-test("vstopna stran brez povezave (omrežje ne odgovori): v kratkem roku shranjena kopija", async () => {
+test("vstopna stran brez povezave (omrežje ne odgovori): kopija iste različice takoj", async () => {
   const sw = loadSw("abc", { hang: true });
   await (await sw.caches.open("evklid-v1-static")).put(`${ORIGIN}/`, new Response("shranjena stran", { headers: { "X-Evklid-App": "abc" } }));
   const t0 = Date.now();
   assert.equal(await sw.get("/", "navigate"), "shranjena stran");
-  assert.ok(Date.now() - t0 < 2000, "rok vstopne strani je kratek (1 s)");
+  assert.ok(Date.now() - t0 < 2000, "kopija iste različice ne čaka omrežja");
 });
 
 test("nova različica aplikacije: stara kopija ni več sveža, gre na omrežje", async () => {
@@ -158,7 +187,7 @@ test("nova različica aplikacije: stara kopija ni več sveža, gre na omrežje",
 
 test("API, strani strežnika in poizvedbe ostanejo najprej omrežje", async () => {
   const sw = loadSw("abc123");
-  for (const path of ["/api/formulas", "/sole", "/3d/modeli/seznam.json", "/?ref=sola"]) {
+  for (const path of ["/api/formulas", "/sole", "/3d/modeli/seznam.json"]) {
     const mode = path.startsWith("/api") || path.endsWith(".json") ? "cors" : "navigate";
     await sw.get(path, mode);
     await new Promise((r) => setTimeout(r, 10));
@@ -169,6 +198,101 @@ test("API, strani strežnika in poizvedbe ostanejo najprej omrežje", async () =
   // prijava, plačila in osebni API (P7): SW se sploh ne vmeša, nič se ne shrani
   assert.equal(await sw.get("/api/auth/me", "cors"), null);
   assert.equal(await sw.get("/api/progress", "cors"), null);
+});
+
+test("vstopna stran (N-08b): osebna stran strežnika se v ozadju ne shrani, kopija ostane in se odpre takoj", async () => {
+  const sw = loadSw("abc", { served: "abc", privateEntry: true });
+  const st = await sw.caches.open("evklid-v1-static");
+  await st.put(`${ORIGIN}/`, new Response("javna kopija", { headers: { "X-Evklid-App": "abc" } }));
+  assert.equal(await sw.get("/", "navigate"), "javna kopija");
+  await new Promise((r) => setTimeout(r, 60));
+  assert.equal(await (await st.match(`${ORIGIN}/`)).text(), "javna kopija", "no-store ne zamenja kopije");
+  assert.equal(await sw.get("/?ref=sola", "navigate"), "javna kopija", "tudi vstop s poizvedbo");
+});
+
+test("vstopna stran (N-08b): prijava z geslom (401) pobriše kopijo, naslednje odprtje gre na omrežje (prijava)", async () => {
+  const sw = loadSw("abc", { served: "abc", status: { "/": 401 } });
+  const st = await sw.caches.open("evklid-v1-static");
+  await st.put(`${ORIGIN}/`, new Response("shranjena stran", { headers: { "X-Evklid-App": "abc" } }));
+  assert.equal(await sw.get("/", "navigate"), "shranjena stran");
+  await new Promise((r) => setTimeout(r, 60));
+  assert.equal(await st.match(`${ORIGIN}/`), undefined, "kopija pobrisana");
+  sw.calls.length = 0;
+  await sw.get("/", "navigate");
+  assert.deepEqual(sw.calls, [`${ORIGIN}/`], "naslednje odprtje: omrežje");
+});
+
+// Stara povezava (ngrok, trycloudflare.com) strežnik preusmeri na lastno domeno: shranjena kopija se ne sme odpirati za
+// vedno (aplikacija na stari povezavi bi bila brez delujočih klicev API); naslednje odprtje gre na omrežje (preusmeritev).
+test("vstopna stran (N-08b): preusmeritev »/« (stara povezava → lastna domena) pobriše kopijo, naslednje odprtje gre na omrežje", async () => {
+  const sw = loadSw("abc", { redirectEntry: true });
+  const st = await sw.caches.open("evklid-v1-static");
+  await st.put(`${ORIGIN}/`, new Response("shranjena stran", { headers: { "X-Evklid-App": "abc" } }));
+  assert.equal(await sw.get("/", "navigate"), "shranjena stran");
+  await Promise.all(sw.waits);
+  assert.equal(await st.match(`${ORIGIN}/`), undefined, "kopija pobrisana");
+  sw.calls.length = 0;
+  const p = await sw.get("/", "navigate").catch((e) => e);
+  assert.deepEqual(sw.calls, [`${ORIGIN}/`], "naslednje odprtje: omrežje (brskalnik sledi preusmeritvi)");
+  assert.notEqual(p, "shranjena stran");
+});
+
+// Preverjanje v ozadju drži service worker zaseden (e.waitUntil): nov service worker se aktivira šele, ko se konča. Brez
+// roka bi zataknjena povezava (telefon med omrežji) to zadržala za nedoločen čas.
+test("vstopna stran (N-08b): preverjanje v ozadju ima rok, zataknjeno omrežje ga ne drži odprtega", async () => {
+  const sw = loadSw("abc", { hang: true, preveri: 0, rok: 100 });
+  await (await sw.caches.open("evklid-v1-static")).put(`${ORIGIN}/`, new Response("shranjena stran", { headers: { "X-Evklid-App": "abc" } }));
+  assert.equal(await sw.get("/", "navigate"), "shranjena stran");
+  assert.equal(sw.waits.length, 1);
+  const konec = await Promise.race([Promise.all(sw.waits).then(() => "konec"), new Promise((r) => setTimeout(r, 1000, "visi"))]);
+  assert.equal(konec, "konec", "waitUntil se konča po roku");
+});
+
+// waitUntil se kliče po await (v respondWith): če ga brskalnik tedaj zavrne (InvalidStateError), mora stran vseeno priti.
+test("vstopna stran (N-08b): zavrnjen waitUntil ne pokvari odprtja (shranjena stran pride)", async () => {
+  const sw = loadSw("abc", { served: "abc" });
+  await (await sw.caches.open("evklid-v1-static")).put(`${ORIGIN}/`, new Response("shranjena stran", { headers: { "X-Evklid-App": "abc" } }));
+  const waitUntil = () => {
+    throw new Error("InvalidStateError");
+  };
+  assert.equal(await sw.get("/", "navigate", { waitUntil }), "shranjena stran");
+});
+
+// Odgovor brez oznake strežnika (X-Evklid-App, server/app.js jo da vsakemu odgovoru zunaj API) ni naša vstopna stran:
+// npr. opozorilna stran ngrok (ERR_NGROK_6024, status 200) ali stran posrednika. Shranjena bi se odpirala takoj namesto aplikacije.
+test("vstopna stran (N-08b): odgovor brez oznake strežnika ne zamenja shranjene kopije", async () => {
+  const sw = loadSw("abc");
+  const st = await sw.caches.open("evklid-v1-static");
+  await st.put(`${ORIGIN}/`, new Response("shranjena stran", { headers: { "X-Evklid-App": "abc" } }));
+  assert.equal(await sw.get("/", "navigate"), "shranjena stran");
+  await Promise.all(sw.waits);
+  assert.equal(await (await st.match(`${ORIGIN}/`)).text(), "shranjena stran");
+  assert.equal(await sw.get("/", "navigate"), "shranjena stran");
+  // naša javna stran iste različice pa zamenja kopijo
+  const sw2 = loadSw("abc", { served: "abc" });
+  const st2 = await sw2.caches.open("evklid-v1-static");
+  await st2.put(`${ORIGIN}/`, new Response("shranjena stran", { headers: { "X-Evklid-App": "abc" } }));
+  await sw2.get("/", "navigate");
+  await Promise.all(sw2.waits);
+  assert.equal(await (await st2.match(`${ORIGIN}/`)).text(), `net:${ORIGIN}/`);
+});
+
+// Povezava za prijatelje s skupnim geslom (scripts/telefon.js, /?geslo=…, server/gate.js): strežnik nastavi piškotek in
+// geslo odstrani iz naslova (303). Shranjena stran bi ga pustila v vrstici naslova in zgodovini, novo geslo pa ne bi prišlo
+// do strežnika (po menjavi gesla aplikacija brez prijave, klici API 401).
+test("vstopna stran (N-08b): povezava z geslom (/?geslo=) gre vedno na strežnik", async () => {
+  const sw = loadSw("abc", { served: "abc" });
+  await (await sw.caches.open("evklid-v1-static")).put(`${ORIGIN}/`, new Response("shranjena stran", { headers: { "X-Evklid-App": "abc" } }));
+  sw.calls.length = 0;
+  assert.equal(await sw.get("/?geslo=skrivnost", "navigate"), `net:${ORIGIN}/?geslo=skrivnost`);
+  assert.deepEqual(sw.calls, [`${ORIGIN}/?geslo=skrivnost`]);
+});
+
+test("vstopna stran (N-08b): kopija druge različice ni takojšnja (čaka omrežje do 1 s)", async () => {
+  const sw = loadSw("nova", { served: "nova" });
+  const st = await sw.caches.open("evklid-v1-static");
+  await st.put(`${ORIGIN}/`, new Response("stara kopija", { headers: { "X-Evklid-App": "stara" } }));
+  assert.equal(await sw.get("/", "navigate"), `net:${ORIGIN}/`);
 });
 
 test("brez različice (APP prazen): datoteke aplikacije kot prej najprej omrežje", async () => {
