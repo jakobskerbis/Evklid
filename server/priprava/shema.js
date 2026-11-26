@@ -46,6 +46,8 @@ export function migratePriprava(db) {
   if (!cols.includes("dogodek_id")) db.exec("ALTER TABLE priprave ADD COLUMN dogodek_id TEXT"); // test iz urnika
   if (!cols.includes("aktivna")) db.exec("ALTER TABLE priprave ADD COLUMN aktivna INTEGER NOT NULL DEFAULT 0");
   db.exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_priprave_aktivna ON priprave(student_id) WHERE aktivna = 1");
+  // PR 7: teme obsega, ki jih učenec odstrani (»tega ni na testu«): JSON id-jev tem; nov test začne brez njih.
+  if (!cols.includes("izkljucene")) db.exec("ALTER TABLE priprave ADD COLUMN izkljucene TEXT");
   // PR 3a: izseki virov (server/priprava/uvoz.js, izseki.js) in stanje obdelave vira.
   db.exec(`
     CREATE TABLE IF NOT EXISTS priprava_izseki (

@@ -219,17 +219,22 @@ export function inOtherSchools(db, schoolId, ids) {
     .map((r) => r.id);
 }
 
+// Stavek za šole učenca, pripravljen enkrat na bazo (schoolAccess je na sporočilo inštruktorju klican ~70-krat, K-14).
+const schoolsOfStudent = new WeakMap();
 // Šolske pravice učenca (za server/placila/pravice.js): null, če ni v razredu šole z veljavno licenco in prostim mestom.
 // { schoolId, schoolName, licenceId, plan, subjects, grades, validUntil, aiCapUsdMonth }
 export function schoolAccess(db, studentId, now = new Date()) {
   if (!ready(db)) return null;
   const today = day(now);
-  const schools = db
-    .prepare(
+  let q = schoolsOfStudent.get(db);
+  if (!q) {
+    q = db.prepare(
       `SELECT DISTINCT s.id, s.name, s.stage FROM class_members m JOIN classes c ON c.id = m.class_id JOIN schools s ON s.id = c.school_id
        WHERE m.student_id = ? AND c.kind = 'class' ORDER BY s.id`,
-    )
-    .all(studentId);
+    );
+    schoolsOfStudent.set(db, q);
+  }
+  const schools = q.all(studentId);
   for (const s of schools) {
     const lic = activeLicence(db, s.id, today);
     if (!lic) continue;
@@ -249,11 +254,18 @@ export function schoolAccess(db, studentId, now = new Date()) {
   return null;
 }
 
-// Ali so šolske tabele že ustvarjene (pravice.js lahko vpraša, preden se mountSchools izvede).
+// Ali so šolske tabele že ustvarjene (pravice.js lahko vpraša, preden se mountSchools izvede). Ko so, ostanejo (tabel in
+// stolpcev ne brišemo): »da« si zapomnimo za vsako bazo, sicer sta bila poizvedba po sqlite_master in PRAGMA na vsako
+// sporočilo inštruktorju in fotografijo (K-14, meritev 26. 11. 2026).
+const readyDbs = new WeakSet();
 function ready(db) {
+  if (readyDbs.has(db)) return true;
   try {
-    return !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'school_licences'").get() &&
+    const ok =
+      !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'school_licences'").get() &&
       db.prepare("PRAGMA table_info(classes)").all().some((c) => c.name === "offers_off");
+    if (ok) readyDbs.add(db);
+    return ok;
   } catch {
     return false;
   }

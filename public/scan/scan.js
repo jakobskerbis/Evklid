@@ -235,7 +235,7 @@ function renderCapture(box) {
       hist.length
         ? `<section class="scan-hist"><div class="scan-hist-head"><h2>${esc(t("scan.history"))}</h2><button type="button" class="text-btn" data-act="clear">${esc(t("scan.clearHistory"))}</button></div>
       <div class="card list-card">${hist
-        .map((h, i) => `<button type="button" class="list-row" data-hist="${i}"><span class="lr-text"><b class="scan-hist-tex">${math(h.tex || h.text)}</b>${h.answer ? `<small>${math(h.answer)}</small>` : ""}</span>${icon("chevron-right")}</button>`)
+        .map((h, i) => `<button type="button" class="list-row" data-hist="${i}" aria-label="${esc(h.text || `${t("scan.history")} ${i + 1}`)}"><span class="lr-text"><b class="scan-hist-tex">${math(h.tex || h.text)}</b>${h.answer ? `<small>${math(h.answer)}</small>` : ""}</span>${icon("chevron-right")}</button>`)
         .join("")}</div></section>`
         : ""
     }`;
@@ -1169,6 +1169,7 @@ function fromAi(sol) {
     // status s strežnika (public/scan/status.js); starejši strežnik pošlje samo verified
     status: STATUSES.includes(sol.status) ? sol.status : sol.verified ? "verified" : "unverified",
     attempts: Number.isInteger(sol.attempts) ? sol.attempts : 1, // klici AI (samodejne ponovitve na strežniku)
+    given: sol.check === "given", // naloga s podatki: »partial« pomeni preračunan račun, ne preverjene formule (public/scan/podatki.js)
     graph: graphOfProblem(sol.problem_tex, S.text),
   };
 }
@@ -1215,7 +1216,7 @@ function renderSolution(box) {
   const status = STATUSES.includes(r.status) ? r.status : r.verified ? "verified" : "unverified";
   // Pri »napačno« brez oznake »Rešil Evklid AI« (bi se brala kot »AI je rešil: napačno«); razlaga pove, da gre za odgovor AI.
   const badge = `${r.ai && status !== "wrong" ? `<span class="scan-badge ai">${icon("sparkles")}${esc(t("scan.st.ai"))}</span>` : ""}<span class="scan-badge ${STATUS_CLASS[status]}" data-status="${status}">${icon(STATUS_ICON[status])}${esc(t(`scan.st.${status}`))}</span>`;
-  const tipKey = status === "wrong" && r.attempts > 1 ? "scan.st.wrongTipRetried" : `scan.st.${status}Tip`;
+  const tipKey = status === "wrong" && r.attempts > 1 ? "scan.st.wrongTipRetried" : status === "partial" && r.given ? "scan.st.partialGivenTip" : `scan.st.${status}Tip`;
   const note = `<p class="scan-status-note">${esc(t(tipKey))}${r.ai && status !== "wrong" && status !== "unverified" ? ` ${esc(t("scan.st.aiSteps"))}` : ""}</p>`;
   if (status === "wrong") {
     // Napačna rešitev se ne pokaže kot odgovor (ne rezultat ne koraki). Strežnik je že sam poskusil večkrat

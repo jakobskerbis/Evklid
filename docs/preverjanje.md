@@ -84,6 +84,78 @@ korena), vsakega z lastnim časovnim robom 1,5 s; Piecewise, ki je 0 povsod raze
 največ »Numerično preverjeno«, razen če je lokalna točna algebra odgovor dokazala. Bloka RACUN (`server/racun.js`,
 profil B) še ne preslikamo v statuse; ko ga, velja isto pravilo.
 
+## Preverjevalnik korakov (PV-06)
+
+Ukaz `korak` v workerju presodi en prehod reševanja: `casCheck("korak", [prej, potem, neznanka, območje])`.
+`prej` in `potem` sta enačbi, neenačbi (tudi dvojna, `-2<x<2`), več delov, povezanih z »ali« (`x-1=0 ali x+2=0`,
+tudi `x=2, x=3`), ali izraza brez relacije. Neznanka je lahko prazna, kadar ima zapis eno samo spremenljivko;
+območje (`x>0`, `[0, 2*pi)`) omeji primerjavo. Odgovor ima poleg `ok`, `why` in `how` še `vrsta`:
+
+| `vrsta` | `ok` | Pomen |
+| --- | --- | --- |
+| `ekvivalenca` | true | Enaka množica realnih rešitev; pri izrazih enaka vrednost povsod, kjer je prvotni izraz definiran (`why` pove pogoj, npr. »velja za x ≠ 0« pri x²/x → x). |
+| `posledica` | true | Nova enačba ima vse rešitve in še tuje (kvadriranje, združevanje logaritmov): veljaven vmesni korak, `why` našteje tuje rešitve, ki jih mora preizkus zavreči. Samo pri enačbah. |
+| `izguba` | false | Manjkajo rešitve ali del območja: deljenje z izrazom, ki je lahko 0 (`why` ga imenuje), ln(x²) → 2 ln x. |
+| `napaka` | false | Drugačna množica rešitev ali drugačna vrednost izraza (s protiprimerom); tudi končni odgovor `x = …` s tujo rešitvijo (manjka preizkus) in neenačba z odvečnim delom. |
+
+Kako: definicijsko območje (imenovalci ≠ 0, argument logaritma > 0, pod sodim korenom ≥ 0, tan/cot) se prebere iz
+zapisa, preden ga SymPy okrajša (`parse(..., evaluate=False)`), zato `x²/x = 0 → x = 0` ni enakovreden korak.
+Množici rešitev da `solveset` na realni osi (rešitve, ki niso v območju, izločimo); pri periodičnih rešitvah brez
+omejenega območja primerjamo [−20, 20] in `how` je `numeric`. Korak, ki obe strani pomnoži s številom (tudi s
+parametri), je enakovreden simbolno brez reševanja. Izraza primerja `is_zero`, nato 80 naključnih točk: točka, kjer
+je prvotni izraz realen, novi pa ne, je `izguba`; različni vrednosti sta `napaka`. Dvočrkovno ime je v koraku
+produkt (`2ab` = 2·a·b). Vejica med argumenti `log(x-2,2)`, `root(8,3)` … je ločilo, ne decimalna vejica (to velja
+za vse ukaze; prej je bil `log(x-2,2)` prebran kot `ln(x - 2.2)`).
+
+Česar ne zna, vrne `ok: null`: sistem, veriga enačb, korak iz izraza v enačbo; enačba ali neenačba s parametrom
+(`a·x = a → x = 1`: `solveset` predpostavi a ≠ 0), razen koraka, ki obe strani pomnoži s številom; periodične
+rešitve z dolgo ali neznano periodo (okno [−20, 20] mora pokriti vsaj štiri periode, sicer bi `sin(πx/30) = 0 → x = 0`
+prešel); lihi koren spremenljivke (`x^(1/3) = −2`: SymPy vzame kompleksni glavni koren). Znana meja: osamljene točke,
+kjer izraz s kotnimi funkcijami ni definiran (sin x → tan x · cos x), ostanejo nepreverjene; zoženje na intervalu
+(ln(x²) → 2 ln x) ujame vzorčenje.
+
+Meritev: `node scripts/meri-korake.mjs` na `test/fixtures/preverjanje/koraki-v1.json` (50 znanih napačnih prehodov,
+tipične napake učencev, in 200 pravilnih: 121 ročnih in 79 vzorčnih s stalnimi koeficienti; nabor je sestavil
+isti avtor kot ukaz). 26. 11. 2026: ujetih 50/50 (95-% interval 92,9 %–100 %), lažni alarmi 0/200 (0 %–1,9 %),
+brez sodbe 0/250, simbolni dokaz pri 234/250 sodbah. Neodvisni slepi nabor `koraki-slepi-v1.json` (40 napačnih,
+80 pravilnih) je sestavil ločen agent AI (ne človek) iz opisa vmesnika, preden je videl kodo: ujetih 39/40
+(87,1 %–99,6 %), potrjenih napačnih 0/40 (0 %–8,8 %), lažni alarmi 0/80 (0 %–4,6 %), brez sodbe en napačni
+(a·x = a → x = 1) in en pravilni (s parametrom). Pred popravki po pregledu je slepi nabor našel en potrjen napačen
+korak (parameter) in štiri lažne alarme zunaj nabora (`log(·, osnova)`); ti in ugotovitve pregleda kode so zdaj
+testi. Test `test/cas-korak.test.js` zahteva oboje. Ukaz še ni
+priključen nikamor v aplikacijo; uporaba (skener, rešitve generatorjev) je naslednji korak načrta.
+
+## Status generatorjev (PV-10)
+
+`node scripts/status-generatorjev.mjs [--semena 5] [--predpona mat-] [--json p.json] [--porocilo p.md] [--dodatek f.md]
+[--strogo]` (brez modela AI, z SymPy okoli 10 s) da vsakemu generatorju nalog status. Za vsak generator vzame naloge
+ravni 1–3 s semeni 1…N (prva tema generatorja) in v vsaki rešitvi preveri tri vrste trditev:
+
+- **račun**: formula z relacijo, kot v popisu PV-04 (`server/lesson-math.js`, `server/lesson-identity.js`);
+- **korak**: zaporedni enačbi ali neenačbi z isto edino neznanko v »čistih« vrsticah (same formule, ločene z vejico ali
+  »ali«), prevedeni iz TeX brez izgube (`\pm`, indeksi, besedilo, funkcije f(5) ostanejo zunaj), gredo skozi ukaz
+  SymPy `korak` (PV-06). Formule v vrstici, povezane z »ali«, in zaporedni kandidati `x = 9`, `x = -3` so ena trditev;
+  rešena oblika ni začetek koraka (za njo pridejo kandidati, preizkus ali pogoji); celoštevilski `n`, `k` izpustimo.
+  Identiteta ob enačbi (razširjen kvadrat) in par dveh »enačb« brez rešitve nista korak (sicer bi ∅ = ∅ potrdil dve
+  napačni identiteti). Korak z izgubljeno posamezno rešitvijo (a² = 289 → a = 17 pri dolžini) je brez statusa in
+  naštet v poročilu: pravilen je, če rešitev izloči kontekst, ki ga ukaz ne vidi; izgubljen interval je napaka;
+- **odgovor**: ali je odgovor naloge (v pasu decimalk odgovora) končna vrednost katere od relacij v rešitvi. To je
+  skladnost prikaza, ne neodvisen preračun: brez ujemanja trditev ostane brez statusa, ne napaka, in v status
+  generatorja ne šteje (poročilo ga navede posebej).
+
+Status generatorja je najšibkejši člen (`statusOdgovora`) trditev »račun« in »korak« v vzorcu. Neodvisnega preračuna
+odgovora iz podatkov in obrazca s SymPy ni: obrazci generatorjev so zapisani za učenca (besedilo, mešane enote), ne za
+stroj.
+
+Izhodišče `docs/meritve/generatorji-2026-11-26.md` (5 semen): od 704 generatorjev jih ima 12 status numerično, 454
+delno, 3 napako, 235 nobenega (večinoma izbirni odgovori in besedilne rešitve). SymPy je potrdil 301 od 305 korakov
+simbolno, 4 imajo izgubljeno posamezno rešitev v kontekstu (koncentracija), nobeden ni napačen. Vseh 7 zaznanih napak
+je pregledal model AI (ne človek): dve sta pravi napaki zapisa (`dod-fiz-ss-plinska-enacba`: tlak, zaokrožen na eno
+decimalko, ne da zapisanega rezultata; `exk-mole`: levi strani manjka ×10²³), popravljeni v #1166 (poročilo je izdelano na commitu pred popravkom); tretja je
+lažni alarm preračuna (`\text{…}` kot enota, AUDIT-087). Drugi model AI je ročno preračunal 60 nalog 30 naključnih
+generatorjev brez zaznane napake: 0/30 zgrešenih napak (95 % interval 0–11 %); 3/30 imajo zaokroženo vrednost za »=«
+(PV-07).
+
 ## Meritev (PV-02, N-01)
 
 Prvi referenčni nabor `test/fixtures/preverjanje/nabor-v1.json` (384 trditev, 191 pravilnih; od N-01 začetek nabora v2) ustvari
@@ -100,7 +172,7 @@ odgovor ima mejo `najvec: "numericno"`.
 Dogovora: rešitve so realne (kompleksni rešitvi pri realni enačbi sta napaka); identiteta, kot je
 `(x^2-4)/(x-2) = x+2`, šteje kot pravilna poenostavitev (izključeno točko preverja skupina »luknja«).
 
-`node scripts/meri-preverjanje.mjs [--json pot] [--nabor pot]` (privzeto nabor v2) izmeri tri motorje: `sympy` (izid workerja z načinom `how`), `skener`
+`node scripts/meri-preverjanje.mjs [--json pot] [--porocilo pot.md] [--prej pot.json] [--nabor pot]` (privzeto nabor v2) izmeri tri motorje: `sympy` (izid workerja z načinom `how`), `skener`
 (`verifyAiFull`, kot ga vidi učenec) in `skener-lokalno` (isto brez SymPy). Razredi: napačno potrjena, previsok
 status, lažni alarm, napačna s šibkim statusom (učenec vidi »delno« ali »numerično«), izjema, ujeta napaka, potrjena,
 šibkejši status, nepreverjena. `test/preverjanje-meritev.test.js` (CI ima SymPy prek `npm ci`, postinstall) pade ob
@@ -165,7 +237,8 @@ zaporedja in kombinatorika. Ponovljene trditve generator izpusti (zato ima kakš
 družin imajo `resnica`; generator se ustavi, če je napačen odgovor enak resnici ali pravilen različen od nje.
 
 Pričakovano oceno vseh 636 novih trditev so pred prvim zagonom preverjevalnikov določili trije neodvisni pregledovalci
-na slepo (premešan seznam brez oznak, brez kode Evklida in brez SymPy, le ročno in s celimi števili). Ujemanje s
+na slepo (ločeni agenti AI, ne človeški strokovnjaki; premešan seznam brez oznak, brez kode Evklida in brez SymPy,
+le ročno in s celimi števili). Ujemanje s
 konstrukcijo: 633 od 636. Razhajanja: `racun2-062` je pregledovalčeva napaka (5/5 + 5/5 = 2, odgovor 10/10 = 1 je
 napačen); `racun2-084` in `racun2-108` sta bili napaki nabora (zapis `-2^n` je −(2ⁿ), mišljeno je (−2)ⁿ), popravljeni
 z oklepajem.
@@ -221,6 +294,59 @@ Ostaja:
   (`0.025*m^2`, `0.5*kg`) so `numericno`.
 - Generator: `binomial(10,3)` brez presledka worker prebere kot `binomial(10.3)` (decimalna vejica), zato nabor piše
   `binomial(10, 3)`.
+
+## Dnevna meritev (PV-05)
+
+`.github/workflows/meritev-preverjanja.yml` vsak dan ob 3.41 UTC (in ročno) na `main` požene meritev z SymPy in
+`--strogo`, brez modela AI in brez stroška. Poročilo po predlogi `docs/meritve/README.md` (povzetek zagona in artefakt
+»meritev-preverjanja«, 90 dni) ima za vsak motor merila kot k/n z imenovalcem in Wilsonovim 95-% intervalom:
+
+| Merilo | Imenovalec | Cilj |
+| --- | --- | --- |
+| napačno potrjene (»izračunano« ali »dokazano«) | napačne trditve | 0 |
+| status nad upravičenim | trditve z mejo `najvec` | 0 |
+| napačne s šibkim statusom (»numerično«, »delno«) | napačne trditve | čim manj |
+| zaznane napake | napačne trditve | čim več |
+| lažni alarmi | pravilne trditve | 0 |
+| pravilne potrjene (»izračunano« ali »dokazano«) | pravilne trditve | čim več |
+| pravilne s šibkim statusom (»numerično«, »delno«) | pravilne trditve | čim manj |
+| nepreverjene (in »v teku«) | trditve, ki jih motor oceni | čim manj |
+| pokritost: dokončna ocena (pravilna potrjena ali napaka zaznana) | trditve, ki jih motor oceni | čim več |
+| izjeme preverjevalnika | trditve, ki jih motor oceni | 0 |
+
+Poleg tega poročilo prešteje trditve, ki imajo obliko za motor (štetje celote, ne vzorec, brez intervala: lastnost
+nabora, ne motorja), in zahteve SymPy brez odgovora. Pokritost trditev po delih aplikacije meri PV-04. Intervali
+predpostavljajo neodvisne trditve; ker trditve nastanejo v družinah predlog, ki pogosto uspejo ali padejo skupaj, so
+preozki (poročilo to navede pod omejitvami). Stolpec »Prej« je zadnja meritev v repozitoriju
+(`docs/meritve/preverjanje-<datum>.json`, le na istih trditvah: sha256 trditev brez opisa); slabše merilo je opozorilo
+v povzetku zagona. Rdeč zagon in zadeva »Dnevna meritev preverjanja ne gre skozi« (odpre, dopolni, ob zelenem zapre):
+napačno potrjena trditev, status nad upravičenim, izjema, motor, ki ni tekel (npr. SymPy ni nameščen), ali vsaj ena
+zahteva SymPy brez odgovora (rok, sesutje; `casIzpadi()` v `server/cas.js`), ker bi statusi tiho padli na lokalno
+preverjanje (preizkus: SymPy, ki se sesuje sredi meritve, da skenerju 40 lažnih alarmov in zelen zagon brez tega
+pravila). Ob spremembi trditev nabora nova meritev v `docs/meritve` (test `test/preverjanje-porocilo.test.js` pade
+brez nje). Izhodišče: `docs/meritve/preverjanje-2026-11-26.md`.
+
+## Popis pokritosti (PV-04)
+
+`node scripts/popis-pokritosti.mjs [--json p.json] [--porocilo p.md] [--brez-sympy] [--strogo] [--dodatek f.md]`
+(skripta ne kliče modela AI; z SymPy okoli 40 s, brez njega 6 s) za vsako od 19 mest iz načrta PV pove, ali trditve
+tam dobijo status. Za vnaprej znano vsebino (razlaga lekcij, »Preveri se«, rešeni primeri, bloki RACUN, pole z
+rešitvami in točkovniki, rešitve generatorjev na ravneh 1–3 s semenom 1, tekmovalne naloge, fakultetne lekcije)
+zašteje formule z relacijo in status, ki ga dajo obstoječi preverjevalniki, uporabljeni na vsaki formuli posebej:
+preračun `server/lesson-math.js` (numerično, delno, napaka), preizkus identitet z naključnimi števili
+`server/lesson-identity.js` (le potrditev: numerično), za RACUN SymPy z načinom ali kemijski preizkus. Ostale so
+nepreverjene. Namerno napačne trditve (»Pogoste napake«, napačne možnosti in njihova pojasnila ~ v »Preveri se«,
+`mistake` in napačne izbire na polah) in vprašanja (?) so izločeni in našteti posebej. Stolpec »Preverjanje danes«
+pove, kaj od tega preračuna CI ob vsaki spremembi (koraki rešitev generatorjev in računi v »Preveri se«
+ne) in kaj preverijo mesta, kjer trditve nastanejo ob uporabi (inštruktor, kalkulatorji, skener …). Štetje
+celote, ne vzorec, zato brez intervala. `--strogo` vrne napako, če SymPy ni tekel ali ni odgovoril na zahtevo.
+
+Izhodišče `docs/meritve/pokritost-2026-11-26.md`: v vsebini, ki jo učenec vidi, je 11.615 od 85.362 formul z relacijo
+(13,6 %) v celoti preračunanih, 10.221 (12,0 %) delno, 63.517 (74,4 %) brez statusa; razlaga lekcij 16,2 %, fakultetne
+lekcije 8,3 % v celoti. Strojni bloki RACUN, ki ponovijo rezultate lekcij, so ločeni: 5.623 od 5.626. Vseh 9 zaznanih
+»napak« je pregledal model AI (ne človek): nobena ni napačen rezultat (napačen preračun lesson-math, AUDIT-087;
+zapisi, ki jih preračun ne pozna; trije nenatančni zapisi v naših generatorjih, popravek v ločenem PR #1160). Višji
+delež je boljši; formula brez statusa ni napačna, le noben program je ne preveri.
 
 ## Odpoved preverjevalnikov (K-04)
 

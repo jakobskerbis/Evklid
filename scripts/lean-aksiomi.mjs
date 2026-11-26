@@ -6,6 +6,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
+import { deklaracije } from "./lean-lekcije.mjs";
 
 const LEAN = path.resolve(import.meta.dirname, "..", "lean");
 const DOVOLJENI = new Set(["propext", "Classical.choice", "Quot.sound"]);
@@ -19,27 +20,29 @@ function walk(dir, out = []) {
   return out;
 }
 
-// Imena izrekov: `theorem ime` znotraj `namespace X` (gnezdenje imenskih prostorov upoštevano). `private theorem`
-// se izpusti: od zunaj ni dosegljiv, njegovi aksiomi pa se pokažejo pri javnih izrekih, ki ga uporabljajo.
+// Imena izrekov iz istega razčlenjevalnika kot scripts/lean-lekcije.mjs (zamaknjeni izreki, predpone in atributi,
+// »noncomputable section«, nizi in znakovni literali so upoštevani). `private theorem` se izpusti: od zunaj ni
+// dosegljiv, njegovi aksiomi pa se pokažejo pri javnih izrekih, ki ga uporabljajo (lean-lekcije.mjs ga dovoli le pri
+// »pomozno«).
 export function izreki(src) {
-  const ns = [];
-  const out = [];
-  for (const line of src.split("\n")) {
-    let m;
-    if ((m = line.match(/^namespace\s+(\S+)/))) ns.push(m[1]);
-    else if ((m = line.match(/^end\s+(\S+)/)) && ns.at(-1) === m[1]) ns.pop();
-    else if ((m = line.match(/^(?:protected\s+)?theorem\s+([^\s:({[]+)/))) out.push([...ns, m[1]].join("."));
-  }
-  return out;
+  return deklaracije(src).filter((d) => d.vrsta === "theorem" && !d.privatno).map((d) => d.polnoIme);
+}
+
+/** Vsa imena za #print axioms: izreki iz datotek in vsak »izrek« iz lean/trditve.json (če ime v kazalu ne obstaja,
+ * Lean javi napako, zato kazalo ne more kazati na napačen ali neobstoječ izrek). */
+export function imenaZaPreverjanje(imenaIzDatotek, kazalo) {
+  return [...new Set([...imenaIzDatotek, ...kazalo.map((t) => t.izrek)])];
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const imena = [];
+  const izDatotek = [];
   const moduli = [];
   for (const f of walk(path.join(LEAN, "Evklid"))) {
-    imena.push(...izreki(fs.readFileSync(f, "utf8")));
+    izDatotek.push(...izreki(fs.readFileSync(f, "utf8")));
     moduli.push(path.relative(LEAN, f).replace(/\.lean$/, "").split(path.sep).join("."));
   }
+  const kazalo = path.join(LEAN, "trditve.json");
+  const imena = imenaZaPreverjanje(izDatotek, fs.existsSync(kazalo) ? JSON.parse(fs.readFileSync(kazalo, "utf8")) : []);
   const tmp = path.join(LEAN, ".lake", "Aksiomi.lean");
   fs.writeFileSync(tmp, [...moduli.map((m) => `import ${m}`), ...imena.map((n) => `#print axioms ${n}`), ""].join("\n"));
   let izpis;

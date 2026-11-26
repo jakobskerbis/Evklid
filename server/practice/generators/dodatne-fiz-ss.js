@@ -1,6 +1,6 @@
 // Generatorji za teme, ki prej niso imele nalog (fiz-ss). Merila: docs/kakovost.md §2.
 // Gimnazija, 1.–4. letnik. Vsaka naloga: besedilo, odgovor (s tipičnimi napakami), namig, podatki, formula, rešitev po korakih.
-import { NAMES, g } from "../rng.js";
+import { NAMES, g, makeRng } from "../rng.js";
 import { roundHalfUp, fmt } from "../check.js";
 import { tx } from "./mat.js";
 
@@ -60,6 +60,16 @@ function sci(x, dm = 2) {
 }
 
 const M = (value, why) => ({ value, why });
+// Šolski zapis T = t + 273 K in natančni T = t + 273,15 K: f(K) da nalogo; če se rezultata pri zahtevanem zaokroževanju
+// razlikujeta, sprejmemo oba (učenca, ki računa s 273,15 K, preverjanje ne sme zavrniti; meritev K-08).
+function obaKelvina(f) {
+  const a = f(273);
+  const x = a.answer;
+  const y = f(273.15).answer;
+  const razlicna = (u, v) => (x.decimals == null ? Math.abs(u - v) > 1e-9 * Math.max(1, Math.abs(u)) : roundHalfUp(u, x.decimals) !== roundHalfUp(v, x.decimals));
+  if (x?.type === "number" && y?.type === "number" && Number.isFinite(y.value) && razlicna(x.value, y.value)) x.alsoAccept = [...(x.alsoAccept || []), y.value];
+  return a;
+}
 // Številski odgovor; tipične napake, ki bi se zaokrožile v pravilni rezultat ali se ponovijo, izpustimo.
 function num(value, unit, decimals, mistakes = [], extra = {}) {
   const same = (a, b) => (decimals == null ? Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(b)) : roundHalfUp(a, decimals) === roundHalfUp(b, decimals));
@@ -1341,9 +1351,13 @@ export const DODATNE_FIZ_SS = [
   {
     id: "dod-fiz-ss-plinska-enacba",
     topics: ["FIZ-SS-2/plinska-enacba"],
-    gen(level, r) {
+    gen(level, r0) {
+      // T = t + 273 K ali t + 273,15 K: obe računanji sta pravilni (meritev K-08).
+      const seme = r0.int(0, 2147483646);
+      return obaKelvina((KEL) => {
+      const r = makeRng(seme);
       const n = ime(r);
-      const KT = (t) => t + 273;
+      const KT = (t) => t + KEL;
       if (level === 1) {
         if (r.next() < 0.55) {
           const p1 = r.int(10, 30) * 10;
@@ -1396,7 +1410,7 @@ export const DODATNE_FIZ_SS = [
         const V = r.int(2, 50);
         const t = r.int(-10, 40);
         const nn = (p * 1e5 * V * 1e-3) / (R_GAS * KT(t));
-        const what = r.pick(["jeklenki", "posodi", "balonu za potapljanje", "rezervoarju"]);
+        const what = r.pick(["jeklenki", "posodi", "potapljaški jeklenki", "zaprti posodi"]); // »v njej«: samo ženski spol
         return T(
           `V ${what} s prostornino $${V}\\ \\mathrm{L}$ je plin pri tlaku $${p}\\ \\mathrm{bar}$ in temperaturi $${t}\\ ^\\circ\\mathrm{C}$. Koliko molov plina je v njej? ($R = 8{,}31\\ \\mathrm{J/(mol\\,K)}$, $1\\ \\mathrm{bar} = 10^5\\ \\mathrm{Pa}$) Zaokroži na eno decimalko.`,
           num(nn, "mol", 1, [M(t !== 0 ? (p * 1e5 * V * 1e-3) / (R_GAS * t) : NaN, "Temperaturo pretvori v kelvine."), M((p * V) / (R_GAS * KT(t)), "Tlak pretvori v pascale in prostornino v kubične metre.")]),
@@ -1404,7 +1418,7 @@ export const DODATNE_FIZ_SS = [
           [dat("V", V, "L"), dat("p", p, "bar"), `t = ${t}\\ ^\\circ\\mathrm{C}`, K.R],
           ["n"],
           ["p V = n R T"],
-          [`$p = ${qty(sci(p * 1e5, 1), "Pa")},\\ V = ${qty(sci(V * 1e-3, 1), "m^3")},\\ T = ${KT(t)}\\ \\mathrm{K}$`, `$n = \\dfrac{pV}{RT} = \\dfrac{${sci(p * 1e5, 1)} \\cdot ${sci(V * 1e-3, 1)}}{8{,}31 \\cdot ${KT(t)}}\\ \\mathrm{mol} ${res(nn, 1, "mol")}$`],
+          [`$p = ${qty(sci(p * 1e5, 2), "Pa")},\\ V = ${qty(sci(V * 1e-3, 1), "m^3")},\\ T = ${KT(t)}\\ \\mathrm{K}$`, `$n = \\dfrac{pV}{RT} = \\dfrac{${sci(p * 1e5, 2)} \\cdot ${sci(V * 1e-3, 1)}}{8{,}31 \\cdot ${KT(t)}}\\ \\mathrm{mol} ${res(nn, 1, "mol")}$`],
         );
       }
       const kind = r.pick(["masa", "mehurcek", "gostota"]);
@@ -1427,7 +1441,7 @@ export const DODATNE_FIZ_SS = [
           [dat("V", V, "L"), dat("p", p, "bar"), `t = ${t}\\ ^\\circ\\mathrm{C}`, dat("M", G.M, "g/mol"), K.R],
           ["m"],
           ["p V = \\dfrac{m}{M} R T", "m = \\dfrac{p V M}{R T}"],
-          [`$p = ${qty(sci(p * 1e5, 1), "Pa")},\\ V = ${qty(sci(V * 1e-3, 1), "m^3")},\\ T = ${KT(t)}\\ \\mathrm{K},\\ M = ${qty(tx(G.M / 1000), "kg/mol")}$`, `$n = \\dfrac{pV}{RT} ${res((p * 1e5 * V * 1e-3) / (R_GAS * KT(t)), 1, "mol")}$`, `$m = n M ${res(m, 2, "kg")}$`],
+          [`$p = ${qty(sci(p * 1e5, 2), "Pa")},\\ V = ${qty(sci(V * 1e-3, 1), "m^3")},\\ T = ${KT(t)}\\ \\mathrm{K},\\ M = ${qty(tx(G.M / 1000), "kg/mol")}$`, `$n = \\dfrac{pV}{RT} ${res((p * 1e5 * V * 1e-3) / (R_GAS * KT(t)), 1, "mol")}$`, `$m = n M ${res(m, 2, "kg")}$`],
         );
       }
       if (kind === "mehurcek") {
@@ -1461,6 +1475,7 @@ export const DODATNE_FIZ_SS = [
         ["pV = \\dfrac{m}{M} RT", "\\rho = \\dfrac{p M}{R T}"],
         [`$p = ${p * 1000}\\ \\mathrm{Pa},\\ T = ${KT(t)}\\ \\mathrm{K},\\ M = 0{,}029\\ \\mathrm{kg/mol}$`, `$\\rho = \\dfrac{p M}{R T} = \\dfrac{${p * 1000} \\cdot 0{,}029}{8{,}31 \\cdot ${KT(t)}}\\ \\mathrm{kg/m^3} ${res(rho, 3, "kg/m^3")}$`],
       );
+      });
     },
   },
   {
@@ -1549,7 +1564,11 @@ export const DODATNE_FIZ_SS = [
   {
     id: "dod-fiz-ss-toplotni-stroji",
     topics: ["FIZ-SS-2/termodinamika"],
-    gen(level, r) {
+    gen(level, r0) {
+      // T = t + 273 K ali t + 273,15 K: obe računanji sta pravilni (meritev K-08).
+      const seme = r0.int(0, 2147483646);
+      return obaKelvina((KEL) => {
+      const r = makeRng(seme);
       const n = ime(r);
       if (level === 1) {
         const S = r.pick(["Bencinski motor", "Parni stroj", "Dizelski motor", "Stirlingov motor", "Turbina v termoelektrarni"]);
@@ -1597,16 +1616,16 @@ export const DODATNE_FIZ_SS = [
         }
         const t1 = r.int(15, 60) * 10;
         const t2 = r.int(1, 8) * 5;
-        const eta = (1 - (t2 + 273) / (t1 + 273)) * 100;
+        const eta = (1 - (t2 + KEL) / (t1 + KEL)) * 100;
         const S = r.pick(["Parna turbina", "Plinska turbina", "Toplotni stroj", "Motor"]);
         return T(
           `${S} deluje med toplim rezervoarjem s temperaturo $${t1}\\ ^\\circ\\mathrm{C}$ in hladnim s temperaturo $${t2}\\ ^\\circ\\mathrm{C}$. Kolikšen je največji mogoči (Carnotov) izkoristek? Zaokroži na eno decimalko.`,
-          num(eta, "%", 1, [M((1 - t2 / t1) * 100, "Temperaturi pretvori v kelvine."), M(((t2 + 273) / (t1 + 273)) * 100, "Izkoristek je $1 - T_2/T_1$.")]),
+          num(eta, "%", 1, [M((1 - t2 / t1) * 100, "Temperaturi pretvori v kelvine."), M(((t2 + KEL) / (t1 + KEL)) * 100, "Izkoristek je $1 - T_2/T_1$.")]),
           "Največji izkoristek je odvisen le od absolutnih temperatur obeh rezervoarjev.",
           [`t_1 = ${t1}\\ ^\\circ\\mathrm{C}`, `t_2 = ${t2}\\ ^\\circ\\mathrm{C}`],
           ["\\eta_C"],
           ["\\eta_C = 1 - \\dfrac{T_2}{T_1}"],
-          [`$T_1 = ${t1 + 273}\\ \\mathrm{K},\\ T_2 = ${t2 + 273}\\ \\mathrm{K}$`, `$\\eta_C = 1 - \\dfrac{${t2 + 273}}{${t1 + 273}} \\approx ${tx(eta / 100, 4)}$`, `$\\eta_C ${res(eta, 1, "\\%")}$`],
+          [`$T_1 = ${t1 + KEL}\\ \\mathrm{K},\\ T_2 = ${t2 + KEL}\\ \\mathrm{K}$`, `$\\eta_C = 1 - \\dfrac{${t2 + KEL}}{${t1 + KEL}} \\approx ${tx(eta / 100, 4)}$`, `$\\eta_C ${res(eta, 1, "\\%")}$`],
         );
       }
       if (r.next() < 0.5) {
@@ -1632,16 +1651,17 @@ export const DODATNE_FIZ_SS = [
       }
       const t2 = r.int(1, 6) * 5;
       const eta = r.int(30, 65);
-      const T1 = (t2 + 273) / (1 - eta / 100);
+      const T1 = (t2 + KEL) / (1 - eta / 100);
       return T(
         `Hladni rezervoar toplotnega stroja ima temperaturo $${t2}\\ ^\\circ\\mathrm{C}$. Najmanj kolikšna mora biti temperatura toplega rezervoarja, da bi bil Carnotov izkoristek $${eta}\\ \\%$? Rezultat zapiši v $^\\circ\\mathrm{C}$ in zaokroži na celo število.`,
-        num(T1 - 273, "°C", 0, [M(T1, "To je temperatura v kelvinih; pretvori jo v stopinje Celzija."), M(t2 / (1 - eta / 100), "Računaj z absolutnimi temperaturami (v kelvinih)."), M((t2 + 273) * (1 + eta / 100) - 273, "Iz $\\eta = 1 - T_2/T_1$ izrazi $T_1 = T_2/(1-\\eta)$.")], { unitAlternatives: ["C", "stopinj"] }),
+        num(T1 - KEL, "°C", 0, [M(T1, "To je temperatura v kelvinih; pretvori jo v stopinje Celzija."), M(t2 / (1 - eta / 100), "Računaj z absolutnimi temperaturami (v kelvinih)."), M((t2 + KEL) * (1 + eta / 100) - 273, "Iz $\\eta = 1 - T_2/T_1$ izrazi $T_1 = T_2/(1-\\eta)$.")], { unitAlternatives: ["C", "stopinj"] }),
         "Iz $\\eta = 1 - \\dfrac{T_2}{T_1}$ izrazi $T_1$. Ne pozabi pretvoriti v kelvine in nazaj.",
         [`t_2 = ${t2}\\ ^\\circ\\mathrm{C}`, dat("\\eta_C", eta, "\\%")],
         ["t_1"],
         ["\\eta_C = 1 - \\dfrac{T_2}{T_1}", "T_1 = \\dfrac{T_2}{1 - \\eta_C}"],
-        [`$T_2 = ${t2 + 273}\\ \\mathrm{K}$`, `$T_1 = \\dfrac{${t2 + 273}}{1 - ${tx(eta / 100)}}\\ \\mathrm{K} ${res(T1, 1, "K")}$`, `$t_1 = T_1 - 273 ${eq(T1 - 273, 0)} ${tx(T1 - 273, 0)}\\ ^\\circ\\mathrm{C}$`],
+        [`$T_2 = ${t2 + KEL}\\ \\mathrm{K}$`, `$T_1 = \\dfrac{${t2 + KEL}}{1 - ${tx(eta / 100)}}\\ \\mathrm{K} ${res(T1, 1, "K")}$`, `$t_1 = T_1 - 273 ${eq(T1 - KEL, 0)} ${tx(T1 - KEL, 0)}\\ ^\\circ\\mathrm{C}$`],
       );
+      });
     },
   },
   {
@@ -4532,11 +4552,15 @@ export const DODATNE_FIZ_SS = [
   },
   {
     id: "dod-fiz-ss-stojece-pojmi",
-    topics: ["FIZ-SS-3/stojece-valovanje"],
-    gen(level, r) {
+    topics: ["FIZ-SS-3/stojece-valovanje", "FIZ-SS-3/valovanje"],
+    gen(level, r, topic) {
+      // Naloga mora biti na temi (meritev K-08): pojmi potujočega valovanja (gibanje delca, lom) gredo k temi Valovanje.
+      const stojece = /stojece-valovanje/.test(topic || "");
+      const valovanje = /\/valovanje$/.test(topic || "");
       const nm = ime(r);
       if (level === 1) {
-        if (r.next() < 0.5) {
+        // Odboj na krajišču je osnova stoječega valovanja; nihajni čas potujočega vala sodi k valovanju.
+        if (stojece || (!valovanje && r.next() < 0.5)) {
           const E = r.pick([
             { ctx: "Vrv je na drugem koncu privezana na kljuko zaprtih vrat.", fixed: true },
             { ctx: "Vrv se na drugem koncu konča z lahkim obročkom, ki brez trenja drsi po navpični palici.", fixed: false },
@@ -4579,7 +4603,7 @@ export const DODATNE_FIZ_SS = [
           [`V času $t_0$ se oblika premakne za $\\lambda$: $c = \\dfrac{\\lambda}{t_0}$.`, `$t_0 = \\dfrac{${tx(lam)}}{${tx(c)}}\\ \\mathrm{s} ${res(t0, td, "s")}$`],
         );
       }
-      if (level === 2) {
+      if (level === 2 && !stojece) {
         if (r.next() < 0.55) {
           const dir = r.pick(["desno", "levo"]);
           const side = r.pick(["desno", "levo", "vrh"]);
@@ -4625,7 +4649,8 @@ export const DODATNE_FIZ_SS = [
           [`$t_0 = \\dfrac{${tx(lam)}}{${tx(c)}}\\ \\mathrm{s} ${res(lam / c, 3, "s")}$`, `Od vrha do doline mine pol nihaja: $t = \\dfrac{t_0}{2} ${res(t, 2, "s")}$`],
         );
       }
-      if (r.next() < 0.5) {
+      // Pri stoječem valovanju samo struna (lastno nihanje), pri valovanju samo lom valov.
+      if (valovanje || (!stojece && r.next() < 0.5)) {
         const c1 = r.dec(3, 6, 1);
         const c2 = r.dec(1, c1 - 0.8, 1);
         const a = r.int(20, 70);

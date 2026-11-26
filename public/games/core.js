@@ -95,7 +95,7 @@ export function runGame(host, opts) {
         <div class="gm-qbox"><div class="gm-q" aria-live="polite"></div><div class="gm-fb" aria-live="assertive"></div></div>
         <div class="gm-stats">
           <span class="gm-score" title="${esc(t("games.score"))}">${icon("star")}<b>0</b></span>
-          <span class="gm-lives" aria-label="${esc(t("games.lives"))}"></span>
+          <span class="gm-lives" role="img" aria-label="${esc(t("games.lives"))}"></span>
         </div>
         <button type="button" class="gm-btn gm-sound" aria-label="${esc(t("games.sound"))}"></button>
         <button type="button" class="gm-btn gm-pause" aria-label="${esc(t("games.pause"))}">${icon("pause")}</button>

@@ -407,7 +407,15 @@ async function meritve(p, posnetek) {
       .evaluate(async (src) => {
         if (!window.axe) (0, eval)(src);
         const r = await window.axe.run(document, { runOnly: { type: "tag", values: ["wcag2a", "wcag21a", "wcag2aa", "wcag21aa", "wcag22aa"] }, resultTypes: ["violations"] });
-        return r.violations.map((v) => ({ id: v.id, vpliv: v.impact, n: v.nodes.length, primer: v.nodes[0]?.target?.join(" ") }));
+        // K-11 (WCAG 2.2 AA): vsa mesta (do 10) in pri kontrastu barvi in razmerje, da poročilo pove, kaj popraviti.
+        return r.violations.map((v) => ({
+          id: v.id,
+          vpliv: v.impact,
+          n: v.nodes.length,
+          primer: v.nodes[0]?.target?.join(" "),
+          mesta: v.nodes.slice(0, 10).map((x) => x.target?.join(" ")),
+          ...(v.id === "color-contrast" ? { kontrast: v.nodes.slice(0, 10).map((x) => { const d = x.any?.[0]?.data; return d ? `${d.fgColor} na ${d.bgColor}: ${d.contrastRatio} (potrebno ${d.expectedContrastRatio})` : null; }) } : {}),
+        }));
       }, AXE)
       .catch((e) => [{ id: "axe-napaka", primer: e.message.slice(0, 120) }]);
   }

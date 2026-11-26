@@ -25,6 +25,9 @@ let seq = 0;
 // zahtevi. Ena sama prepočasna naloga (ogromen izraz) ni izpad, zato šteje šele niz (server/preverjevalniki.js).
 const zahteve = { zapored: 0, razlog: "" };
 const neuspeh = (razlog) => Object.assign(zahteve, { zapored: zahteve.zapored + 1, razlog });
+// Vse zahteve brez odgovora od zagona procesa Node (PV-05): dnevna meritev z --strogo pade, če je SymPy sredi dela
+// izpadel (statusi bi tiho padli na lokalno preverjanje in meritev bi bila zelena z napačnimi številkami).
+const izpadi = { rok: 0, sesutje: 0, ni_na_voljo: 0 };
 const waiting = new Map(); // id → { resolve, timer }
 let buf = "";
 
@@ -83,6 +86,7 @@ function start() {
         w.resolve({ ok: null, why: "preverjevalnik se je ustavil" });
       }
       if (waiting.size) neuspeh("sesutje");
+      izpadi.sesutje += waiting.size;
       waiting.clear();
     });
     p.stdout.setEncoding("utf8");
@@ -108,8 +112,14 @@ function start() {
           waiting.delete(msg.id);
           clearTimeout(w.timer);
           zahteve.zapored = 0;
-          // how (PV-03): symbolic | numeric | sampled; samo, kadar ga worker pošlje
-          w.resolve({ ok: msg.ok, why: msg.why || "", ...(typeof msg.how === "string" ? { how: msg.how } : {}) });
+          // how (PV-03): symbolic | numeric | sampled; vrsta (PV-06, ukaz korak): ekvivalenca | posledica | izguba | napaka;
+          // samo, kadar ju worker pošlje
+          w.resolve({
+            ok: msg.ok,
+            why: msg.why || "",
+            ...(typeof msg.how === "string" ? { how: msg.how } : {}),
+            ...(typeof msg.vrsta === "string" ? { vrsta: msg.vrsta } : {}),
+          });
         }
       }
     });
@@ -122,9 +132,10 @@ function start() {
 }
 
 /**
- * Ena trditev: op ∈ solve | equal | diff | int | limit | value | ineq | units, args = deli ločeni z »|«.
- * @returns {Promise<{ok: boolean|null, why: string, how?: "symbolic"|"numeric"|"sampled"}>} ok null = koda ne zna
- *   preveriti (ni napaka); how = najšibkejši način, ki ga je worker uporabil (docs/preverjanje.md, PV-03).
+ * Ena trditev: op ∈ solve | equal | diff | int | limit | value | ineq | units | korak, args = deli ločeni z »|«.
+ * @returns {Promise<{ok: boolean|null, why: string, how?: "symbolic"|"numeric"|"sampled", vrsta?: string}>} ok null =
+ *   koda ne zna preveriti (ni napaka); how = najšibkejši način, ki ga je worker uporabil (docs/preverjanje.md, PV-03);
+ *   vrsta = vrsta prehoda pri ukazu korak (PV-06).
  */
 // Zahteve gredo v proces po vrsti: rok vsake teče šele, ko je poslana (sicer bi čakajoče v vrsti, npr. kartice
 // iz zapiskov s Promise.all, potekle in ubile proces sredi dela).
@@ -136,7 +147,10 @@ export function casCheck(op, args) {
 }
 
 async function casCheckNow(op, args) {
-  if (!(await start()) || !proc) return { ok: null, why: "preverjevalnik ni na voljo" };
+  if (!(await start()) || !proc) {
+    izpadi.ni_na_voljo++;
+    return { ok: null, why: "preverjevalnik ni na voljo" };
+  }
   const id = ++seq;
   const p = proc;
   return new Promise((resolve) => {
@@ -149,6 +163,7 @@ async function casCheckNow(op, args) {
         ready = null;
       }
       neuspeh("rok");
+      izpadi.rok++;
       resolve({ ok: null, why: "prepočasno" });
     }, TIMEOUT_MS());
     waiting.set(id, { resolve, timer });
@@ -157,6 +172,7 @@ async function casCheckNow(op, args) {
     } catch {
       clearTimeout(timer);
       waiting.delete(id);
+      izpadi.ni_na_voljo++;
       resolve({ ok: null, why: "preverjevalnik ni na voljo" });
     }
   });
@@ -178,6 +194,11 @@ export function casStanje() {
   if (proc && lastStart === true) return { vklopljen: true, deluje: true, ...niz };
   start().catch(() => {});
   return { vklopljen: true, deluje: lastStart === false ? false : null, ...niz };
+}
+
+/** Zahteve brez odgovora od zagona procesa Node: { rok, sesutje, ni_na_voljo, skupaj } (PV-05). */
+export function casIzpadi() {
+  return { ...izpadi, skupaj: izpadi.rok + izpadi.sesutje + izpadi.ni_na_voljo };
 }
 
 export function casStop() {

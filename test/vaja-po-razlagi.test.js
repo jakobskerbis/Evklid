@@ -36,6 +36,12 @@ test("tema z vajo: ime teme učenčeve stopnje najde temo z generatorjem", () =>
   assert.equal(temaZVajo("množina snovi", SS1K)?.topicId, "KEM-SS-1/mnozina-snovi");
   assert.equal(temaZVajo("logaritemska enačba", SS2)?.topicId, "MAT-SS-2/logaritemska-funkcija-in-enacbe");
   assert.ok(temaZVajo("kvadratna enačba", SS2).title.length > 3);
+  // Brez strešic (učenec jih pogosto ne piše, inštruktor ga lahko ponovi) in v obliki NFD: ista tema.
+  const OS7 = st("OSNOVNA_SOLA", "7. razred", "MAT");
+  const s = temaZVajo("seštevanje in odštevanje ulomkov", OS7)?.topicId;
+  assert.equal(s, "MAT-OS-7/sestevanje-in-odstevanje-ulomkov");
+  assert.equal(temaZVajo("sestevanje in odstevanje ulomkov", OS7)?.topicId, s);
+  assert.equal(temaZVajo("seštevanje in odštevanje ulomkov".normalize("NFD"), OS7)?.topicId, s);
 });
 
 test("tema z vajo: dvoumna ali neznana poizvedba ne da gumba (nikoli napačna tema)", () => {
@@ -44,7 +50,11 @@ test("tema z vajo: dvoumna ali neznana poizvedba ne da gumba (nikoli napačna te
   assert.equal(temaZVajo("", SS2), null);
   assert.equal(temaZVajo("xyzzy blabla", SS2), null);
   // Ena sama splošna beseda ni ime teme: brez gumba (prej bi našla naključno lekcijo s to besedo).
-  for (const [q, s] of [["enačba", SS2], ["kvadratna", SS2], ["kvadratna", OS6], ["ulomki", OS6], ["integral", SS2], ["celica", SS2B], ["mitoza", SS2B], ["sistem enačb", st("OSNOVNA_SOLA", "9. razred", "BIO")]])
+  for (const [q, s] of [["enačba", SS2], ["kvadratna", SS2], ["kvadratna", OS6], ["ulomki", OS6], ["integral", SS2], ["celica", SS2B], ["mitoza", SS2B], ["sistem enačb", st("OSNOVNA_SOLA", "9. razred", "BIO")],
+    // Isti koren, druga beseda (meritev K-08): »elektrika« ni »Elektromagnet«.
+    ["elektrika", OS9F],
+    // Samo tema iste šole (j 26. 11.): dijak ne dobi naloge iz OŠ, tudi če je snov tam (Lom svetlobe, OŠ 8).
+    ["lom svetlobe", st("SREDNJA_SOLA", "2. letnik", "FIZ")]])
     assert.equal(temaZVajo(q, s), null, q);
   // Brez slovenske stopnje (tuji šolski sistem) ni iskanja po lekcijah.
   assert.equal(temaZVajo("kvadratna enačba", normalizeSettings({ ...SS2, school_system: "GB" })), null);

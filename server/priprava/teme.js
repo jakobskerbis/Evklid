@@ -84,15 +84,20 @@ const temaVen = (id) => {
 /**
  * Zemljevid priprave iz izsekov ([{ id, naslov, besedilo }], že odšifrirani).
  * Vrne { iskanje, obseg: [{ id, ime, sklop, izsekov }] | null, pokritost: { pokrite, vseh } | null,
- *        teme: [{ id, ime, sklop, pot, izseki: [id], vObsegu }], samoVZapiskih: [id izseka], predznanje: [...] }.
+ *        teme: [{ id, ime, sklop, pot, izseki: [id], vObsegu }], samoVZapiskih: [id izseka], predznanje: [...],
+ *        izkljucene: [{ id, ime, sklop, pot }] }.
  */
-export async function zemljevid({ pot = null, sklopi = null, predmet = null }, izseki, settings = {}) {
+export async function zemljevid({ pot = null, sklopi = null, predmet = null, izkljucene = [] }, izseki, settings = {}) {
   const path = pot ? getPath(pot) : null;
   // Obseg samo za šolske poti (OŠ, SŠ); tekmovalne poti niso v kazalu tem, zato zanje ni pokritosti.
   const sola = !!path && (path.school === "OS" || path.school === "SS");
   // Teme samo za višjo raven gredo iz obsega učenca na osnovni ravni (»4. letnik OR«), kot na Učni poti in v testu.
   const zaRaven = ravenKeeps(ravenProfila(pot, settings?.curriculum_level));
-  const obsegTeme = sola ? temeObsega(pot, sklopi).filter(zaRaven) : [];
+  // Teme, ki jih je učenec odstranil iz obsega (PR 7), niso v obsegu, pokritosti ne načrtu; ostanejo naštete v izkljucene,
+  // da jih lahko vrne. Če bi odstranil vse, obseg ostane cel (test brez tem ni test).
+  const vsiObsega = sola ? temeObsega(pot, sklopi).filter(zaRaven) : [];
+  const ven = new Set(Array.isArray(izkljucene) ? izkljucene : []);
+  const obsegTeme = vsiObsega.some((t) => !ven.has(t.id)) ? vsiObsega.filter((t) => !ven.has(t.id)) : vsiObsega;
   const st = { ...(settings || {}), subject: path?.subject || predmet || settings?.subject };
   // Kazalo tem je do učenčeve ravni; test višje poti (ali zastarela raven v profilu) išče do ravni poti.
   if (sola) {
@@ -136,7 +141,9 @@ export async function zemljevid({ pot = null, sklopi = null, predmet = null }, i
   let predznanje = [];
   if (path && obsegTeme.length) {
     const vse = path.units.flatMap((u) => u.topics).filter(zaRaven);
-    const prva = vse.findIndex((t) => obseg.has(t.id));
+    // Predznanje je pred celim obsegom testa (odstranjena tema ni predznanje).
+    const celObseg = new Set(vsiObsega.map((t) => t.id));
+    const prva = vse.findIndex((t) => celObseg.has(t.id));
     predznanje = vse.slice(Math.max(0, prva - PREDZNANJE), prva).map((t) => temaVen(t.id));
   }
   return {
@@ -147,5 +154,6 @@ export async function zemljevid({ pot = null, sklopi = null, predmet = null }, i
     teme,
     samoVZapiskih,
     predznanje,
+    izkljucene: vsiObsega.filter((t) => !obsegTeme.includes(t)).map((t) => temaVen(t.id)),
   };
 }

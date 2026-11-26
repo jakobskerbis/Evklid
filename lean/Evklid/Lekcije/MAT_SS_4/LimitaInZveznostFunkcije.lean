@@ -23,16 +23,19 @@ namespace Evklid.Lekcije.MAT_SS_4.LimitaInZveznostFunkcije
 
 open Real Filter Topology Set
 
-/-- Pomožna: levi poltrak brez točke a leži v {a}ᶜ. -/
+/-- Pomožna: levi poltrak brez točke a leži v {a}ᶜ.
+pomozno -/
 theorem lt_podmn (a : ℝ) : Iio a ⊆ {a}ᶜ := fun x hx => by
   simp only [mem_compl_iff, mem_singleton_iff]; exact ne_of_lt hx
 
-/-- Pomožna: desni poltrak brez točke a leži v {a}ᶜ. -/
+/-- Pomožna: desni poltrak brez točke a leži v {a}ᶜ.
+pomozno -/
 theorem gt_podmn (a : ℝ) : Ioi a ⊆ {a}ᶜ := fun x hx => by
   simp only [mem_compl_iff, mem_singleton_iff]; exact ne_of_gt hx
 
 /-- Pomožna trditev za krajšanje: če je f(x) = g(x) za x ≠ a in je g zvezna v a, je
-lim_{x→a} f(x) = g(a). -/
+lim_{x→a} f(x) = g(a).
+pomozno -/
 theorem limita_okrajsaj (f g : ℝ → ℝ) (a : ℝ) (h : ∀ x, x ≠ a → f x = g x) (hg : ContinuousAt g a) :
     Tendsto f (𝓝[≠] a) (𝓝 (g a)) :=
   (hg.tendsto.mono_left nhdsWithin_le_nhds).congr' (eventually_nhdsWithin_of_forall fun x hx => (h x hx).symm)
@@ -41,7 +44,8 @@ theorem limita_okrajsaj (f g : ℝ → ℝ) (a : ℝ) (h : ∀ x, x ≠ a → f 
 example : (∀ x : ℝ, x ≠ 0 → x = x) ∧ ContinuousAt (fun x : ℝ => x) 0 := ⟨fun _ _ => rfl, continuousAt_id⟩
 
 /-- Pomožna trditev za pol: če gre števec proti c > 0, imenovalec pa proti 0 s pozitivne strani,
-ulomek raste čez vse meje. -/
+ulomek raste čez vse meje.
+pomozno -/
 theorem pol_atTop {l : Filter ℝ} (f g : ℝ → ℝ) (c : ℝ) (hc : 0 < c) (hf : Tendsto f l (𝓝 c))
     (hg : Tendsto g l (𝓝[>] 0)) : Tendsto (fun x => f x / g x) l atTop := by
   have := hf.pos_mul_atTop hc (tendsto_inv_nhdsGT_zero.comp hg)
@@ -52,7 +56,8 @@ example : Tendsto (fun _ : ℝ => (1:ℝ)) (𝓝[>] 0) (𝓝 1) ∧ Tendsto (fun
   ⟨tendsto_const_nhds, tendsto_id⟩
 
 /-- Pomožna trditev za pol: števec proti c > 0, imenovalec proti 0 z negativne strani ⇒ ulomek gre
-proti −∞. -/
+proti −∞.
+pomozno -/
 theorem pol_atBot {l : Filter ℝ} (f g : ℝ → ℝ) (c : ℝ) (hc : 0 < c) (hf : Tendsto f l (𝓝 c))
     (hg : Tendsto g l (𝓝[<] 0)) : Tendsto (fun x => f x / g x) l atBot := by
   have := hf.pos_mul_atBot hc (tendsto_inv_nhdsLT_zero.comp hg)
@@ -62,11 +67,15 @@ theorem pol_atBot {l : Filter ℝ} (f g : ℝ → ℝ) (c : ℝ) (hc : 0 < c) (h
 example : Tendsto (fun _ : ℝ => (1:ℝ)) (𝓝[<] 0) (𝓝 1) ∧ Tendsto (fun x : ℝ => x) (𝓝[<] 0) (𝓝[<] 0) :=
   ⟨tendsto_const_nhds, tendsto_id⟩
 
-/-- Razlaga, blok 1: f(x) = sin x / x je soda, f(−x) = f(x). -/
+/-- Razlaga, blok 1: f(x) = sin x / x je soda, f(−x) = f(x).
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#sinc-soda
+besedilo: »Ker je $\sin(-x) = -\sin x$, je $f(-x) = f(x)$, zato sta stolpca enaka.« -/
 theorem sinc_soda (x : ℝ) : sin (-x) / (-x) = sin x / x := by
   rw [sin_neg, neg_div_neg_eq]
 
-/-- Razlaga, blok 1, tabela: sin(0,01)/0,01 ≈ 0,999983 in sin(0,001)/0,001 ≈ 0,9999998. -/
+/-- Razlaga, blok 1, tabela: sin(0,01)/0,01 ≈ 0,999983 in sin(0,001)/0,001 ≈ 0,9999998.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#tabela
+besedilo: »| $0{,}01$ | $0{,}999983$ | $0{,}999983$ | | $0{,}001$ | $0{,}9999998$ | $0{,}9999998$ |« -/
 theorem tabela : |sin (0.01:ℝ) / 0.01 - 0.999983| < 0.0000005 ∧
     |sin (0.001:ℝ) / 0.001 - 0.9999998| < 0.00000005 := by
   have b1 := sin_bound (x := (0.01:ℝ)) (by norm_num [abs_of_pos])
@@ -79,11 +88,15 @@ theorem tabela : |sin (0.01:ℝ) / 0.01 - 0.999983| < 0.0000005 ∧
   · rw [lt_sub_iff_add_lt, lt_div_iff₀ (by norm_num)]; linarith
   · rw [sub_lt_iff_lt_add, div_lt_iff₀ (by norm_num)]; linarith
 
-/-- Razlaga, blok 1 (in povzetek): lim_{x→0} sin x / x = 1. -/
+/-- Razlaga, blok 1 (in povzetek): lim_{x→0} sin x / x = 1.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#limita-sinc
+besedilo: »$$\lim_{x \to 0} \frac{\sin x}{x} = 1$$« -/
 theorem limita_sinc : Tendsto (fun x : ℝ => sin x / x) (𝓝[≠] 0) (𝓝 1) := tendsto_sin_div_nhdsNE_zero
 
 /-- Razlaga, blok 2, »Premisli«: če funkciji sin x / x dodamo f(0) = 5, ostane limita 1
-(limita ne gleda vrednosti v točki). -/
+(limita ne gleda vrednosti v točki).
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#limita-ne-gleda-f0
+besedilo: »Ne, limita ostane $1$. Limita opazuje le vrednosti pri $x \ne 0$, te pa se niso spremenile.« -/
 theorem limita_ne_gleda_f0 :
     Tendsto (Function.update (fun x : ℝ => sin x / x) 0 5) (𝓝[≠] 0) (𝓝 1) := by
   refine limita_sinc.congr' (eventually_nhdsWithin_of_forall fun x hx => ?_)
@@ -92,7 +105,9 @@ theorem limita_ne_gleda_f0 :
 /-- Razlaga, blok 3: funkcija s skokom g(x) = x za x < 1, g(x) = x + 1 za x ≥ 1. -/
 noncomputable def g (x : ℝ) : ℝ := if x < 1 then x else x + 1
 
-/-- Razlaga, blok 3: leva limita g v 1 je 1, desna 2, limite v 1 ni; »Pogoste napake«: g(1) = 2. -/
+/-- Razlaga, blok 3: leva limita g v 1 je 1, desna 2, limite v 1 ni; »Pogoste napake«: g(1) = 2.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#skok
+besedilo: »Ko gre $x$ proti $1$ z leve ($x < 1$), se $g(x)$ bliža $1$. Pišemo $\lim\limits_{x \to 1^-} g(x) = 1$ (**leva limita**). Z desne se bliža $2$: $\lim\limits_{x \to 1^+} g(x) = 2$ (**desna limita**). Limita obstaja natanko tedaj, ko obstajata leva in desna limita in sta enaki. Pri $g$ v točki $1$ torej limite ni.« -/
 theorem skok : Tendsto g (𝓝[<] 1) (𝓝 1) ∧ Tendsto g (𝓝[>] 1) (𝓝 2) ∧
     (¬ ∃ L, Tendsto g (𝓝[≠] 1) (𝓝 L)) ∧ g 1 = 2 := by
   have hl : Tendsto g (𝓝[<] 1) (𝓝 1) := by
@@ -111,15 +126,21 @@ theorem skok : Tendsto g (𝓝[<] 1) (𝓝 1) ∧ Tendsto g (𝓝[>] 1) (𝓝 2)
   have h2 := tendsto_nhds_unique (hL.mono_left (nhdsWithin_mono _ (gt_podmn 1))) hr
   linarith
 
-/-- Razlaga, »Pogoste napake«: g(1) = 2, leva limita pa je 1. -/
+/-- Razlaga, »Pogoste napake«: g(1) = 2, leva limita pa je 1.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#g1
+besedilo: »Pri $g$ s skokom je $g(1) = 2$, leva limita pa $1$.« -/
 theorem g1 : g 1 = 2 := by norm_num [g]
 
-/-- Razlaga, blok 3: limita obstaja natanko tedaj, ko obstajata leva in desna limita in sta enaki. -/
+/-- Razlaga, blok 3: limita obstaja natanko tedaj, ko obstajata leva in desna limita in sta enaki.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#leva-desna
+besedilo: »Limita obstaja natanko tedaj, ko obstajata leva in desna limita in sta enaki.« -/
 theorem leva_desna (f : ℝ → ℝ) (a L : ℝ) :
     Tendsto f (𝓝[≠] a) (𝓝 L) ↔ Tendsto f (𝓝[<] a) (𝓝 L) ∧ Tendsto f (𝓝[>] a) (𝓝 L) := by
   rw [← nhdsLT_sup_nhdsGT, tendsto_sup]
 
-/-- Razlaga, blok 4: pravila za računanje z limitami (vsota, razlika, produkt, količnik pri B ≠ 0). -/
+/-- Razlaga, blok 4: pravila za računanje z limitami (vsota, razlika, produkt, količnik pri B ≠ 0).
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#pravila
+besedilo: »Potem je limita vsote $A + B$, razlike $A - B$, produkta $A \cdot B$ in količnika $\dfrac{A}{B}$, če je $B \ne 0$.« -/
 theorem pravila (f h : ℝ → ℝ) (a A B : ℝ) (hf : Tendsto f (𝓝[≠] a) (𝓝 A))
     (hh : Tendsto h (𝓝[≠] a) (𝓝 B)) :
     Tendsto (fun x => f x + h x) (𝓝[≠] a) (𝓝 (A + B)) ∧
@@ -131,7 +152,9 @@ theorem pravila (f h : ℝ → ℝ) (a A B : ℝ) (hf : Tendsto f (𝓝[≠] a) 
 /-- Predpostavke trditve `pravila` se dajo izpolniti (f = sin x / x, h = sin x / x v 0). -/
 example : Tendsto (fun x : ℝ => sin x / x) (𝓝[≠] 0) (𝓝 1) := limita_sinc
 
-/-- Razlaga, blok 4: lim_{x→2} (x³ − 4x + 1) = 8 − 8 + 1 = 1 (vstavljanje pri polinomu). -/
+/-- Razlaga, blok 4: lim_{x→2} (x³ − 4x + 1) = 8 − 8 + 1 = 1 (vstavljanje pri polinomu).
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#polinom
+besedilo: »Na primer $\lim\limits_{x \to 2} (x^3 - 4x + 1) = 8 - 8 + 1 = 1$.« -/
 theorem polinom : Tendsto (fun x : ℝ => x ^ 3 - 4 * x + 1) (𝓝 2) (𝓝 1) := by
   have h : Tendsto (fun x : ℝ => x ^ 3 - 4 * x + 1) (𝓝 2) (𝓝 (2 ^ 3 - 4 * 2 + 1)) :=
     (by fun_prop : Continuous fun x : ℝ => x ^ 3 - 4 * x + 1).tendsto 2
@@ -140,11 +163,15 @@ theorem polinom : Tendsto (fun x : ℝ => x ^ 3 - 4 * x + 1) (𝓝 2) (𝓝 1) :
       _ = 1 := by norm_num
   rwa [e] at h
 
-/-- Razlaga, blok 6, in ustno vprašanje 2: lim_{x→∞} 1/x = 0. -/
+/-- Razlaga, blok 6, in ustno vprašanje 2: lim_{x→∞} 1/x = 0.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#ena-skozi-x
+besedilo: »$\lim\limits_{x \to \infty} \dfrac{1}{x} = 0$« -/
 theorem ena_skozi_x : Tendsto (fun x : ℝ => 1 / x) atTop (𝓝 0) := by
   simpa using tendsto_inv_atTop_zero (𝕜 := ℝ)
 
-/-- Razlaga, blok 6: za P > 0 gre I = P/(4πr²) proti 0, ko r → ∞, in čez vse meje, ko r → 0⁺ (pol). -/
+/-- Razlaga, blok 6: za P > 0 gre I = P/(4πr²) proti 0, ko r → ∞, in čez vse meje, ko r → 0⁺ (pol).
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#jakost
+besedilo: »Ko gre $r \to \infty$, gre $I \to 0$: daleč od odra glasbe skoraj ne slišiš. Ko gre $r \to 0$, $I$ raste čez vse meje.« -/
 theorem jakost (P : ℝ) (hP : 0 < P) :
     Tendsto (fun r : ℝ => P / (4 * π * r ^ 2)) atTop (𝓝 0) ∧
       Tendsto (fun r : ℝ => P / (4 * π * r ^ 2)) (𝓝[>] 0) atTop := by
@@ -162,20 +189,33 @@ theorem jakost (P : ℝ) (hP : 0 < P) :
 /-- Predpostavka trditve `jakost` se da izpolniti (P = 1). -/
 example : (0 : ℝ) < 1 := one_pos
 
-/-- Razlaga, blok 6, »Premisli«: pri podvojeni razdalji je jakost četrtina, P/(4π(2r)²) = I/4. -/
+/-- Predpostavke trditve `jakost` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) < 1 := one_pos
+  jakost (hP := w)
+
+/-- Razlaga, blok 6, »Premisli«: pri podvojeni razdalji je jakost četrtina, P/(4π(2r)²) = I/4.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#podvojena-razdalja
+besedilo: »Jakost se zmanjša na četrtino. Razdalja je v imenovalcu na kvadrat: $(2r)^2 = 4r^2$, zato je nova jakost $\dfrac{P}{4\pi \cdot 4r^2} = \dfrac{I}{4}$.« -/
 theorem podvojena_razdalja (P r : ℝ) : P / (4 * π * (2 * r) ^ 2) = (P / (4 * π * r ^ 2)) / 4 := by
   rw [div_div]; congr 1; ring
 
-/-- Razlaga, blok 7: luknjo pri sin x / x zakrpamo z f(0) = 1; tako dopolnjena funkcija je zvezna v 0. -/
+/-- Razlaga, blok 7: luknjo pri sin x / x zakrpamo z f(0) = 1; tako dopolnjena funkcija je zvezna v 0.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#luknja-zakrpana
+besedilo: »luknjo »zakrpamo« z dodatkom $f(0) = 1$« -/
 theorem luknja_zakrpana : ContinuousAt (Function.update (fun x : ℝ => sin x / x) 0 1) 0 :=
   continuousAt_update_same.mpr limita_sinc
 
-/-- Razlaga, blok 8: √x je zvezna na [0, ∞) (v krajišču 0 šteje le desna limita). -/
+/-- Razlaga, blok 8: √x je zvezna na [0, ∞) (v krajišču 0 šteje le desna limita).
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#sqrt-zvezna
+besedilo: »Zato je $\sqrt{x}$ zvezna na $[0, \infty)$, čeprav leva limita v $0$ ne obstaja.« -/
 theorem sqrt_zvezna : ContinuousOn Real.sqrt (Ici 0) := Real.continuous_sqrt.continuousOn
 
 /-- Razlaga, blok 8, primer (in vrstica `resi: x^2-4=0`): x² − 4 = 0 natanko pri x = ±2;
 f(x) = (x + 1)/(x² − 4) je zvezna, kjer je x² − 4 ≠ 0 (torej na (−∞, −2), (−2, 2), (2, ∞)),
-in f(−1) = 0. -/
+in f(−1) = 0.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#intervali-zveznosti
+besedilo: »Na primer $f(x) = \dfrac{x + 1}{x^2 - 4}$ ni definirana pri $x = -2$ in $x = 2$, zato je zvezna na intervalih $(-\infty, -2)$, $(-2, 2)$ in $(2, \infty)$. Ničla števca $x = -1$ ni nezveznost, tam je le $f(-1) = 0$.« -/
 theorem intervali_zveznosti :
     (∀ x : ℝ, x ^ 2 - 4 = 0 ↔ x = -2 ∨ x = 2) ∧
       ContinuousOn (fun x : ℝ => (x + 1) / (x ^ 2 - 4)) {x | x ^ 2 - 4 ≠ 0} ∧
@@ -192,7 +232,9 @@ theorem intervali_zveznosti :
   · exact ContinuousOn.div (by fun_prop) (by fun_prop) fun x hx => hx
 
 /-- Primer 1, koraki 1–4: pri x = 3 sta števec 9 − 9 = 0 in imenovalec 3 − 3 = 0;
-(x² − 9)/(x − 3) = x + 3 za x ≠ 3 in lim_{x→3} (x² − 9)/(x − 3) = 3 + 3 = 6. -/
+(x² − 9)/(x − 3) = x + 3 za x ≠ 3 in lim_{x→3} (x² − 9)/(x − 3) = 3 + 3 = 6.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#primer1
+besedilo: »Vstavimo $x = 3$: števec je $9 - 9 = 0$, imenovalec $3 - 3 = 0$. Dobimo $\frac{0}{0}$, zato moramo preoblikovati. 2. Razstavimo števec kot razliko kvadratov: $\dfrac{(x - 3)(x + 3)}{x - 3}$. 3. Okrajšamo $(x - 3)$; to smemo, ker je pri limiti $x \ne 3$. Ostane $x + 3$. 4. Vstavimo: $3 + 3 = 6$.« -/
 theorem primer1 : (3:ℝ) ^ 2 - 9 = 0 ∧ (3:ℝ) - 3 = 0 ∧
     (∀ x : ℝ, x ≠ 3 → (x ^ 2 - 9) / (x - 3) = x + 3) ∧
     Tendsto (fun x : ℝ => (x ^ 2 - 9) / (x - 3)) (𝓝[≠] 3) (𝓝 6) := by
@@ -203,15 +245,24 @@ theorem primer1 : (3:ℝ) ^ 2 - 9 = 0 ∧ (3:ℝ) - 3 = 0 ∧
   have := limita_okrajsaj _ (fun x => x + 3) 3 hk (by fun_prop)
   norm_num at this; exact this
 
-/-- Pogoste napake, »Krajšanje členov«: (x² − 9)/(x − 3) ni x − 3 (za x ≠ 3 je enako x + 3). -/
+/-- Pogoste napake, »Krajšanje členov«: (x² − 9)/(x − 3) ni x − 3 (za x ≠ 3 je enako x + 3).
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#krajsanje-clenov
+besedilo: »Krajšanje členov namesto faktorjev.** »$\dfrac{x^2 - 9}{x - 3} = \dfrac{x^2}{x} - \dfrac{9}{3} = x - 3$« je napačno,« -/
 theorem krajsanje_clenov (x : ℝ) (hx : x ≠ 3) : (x ^ 2 - 9) / (x - 3) ≠ x - 3 := by
   rw [primer1.2.2.1 x hx]; intro h; linarith
 
 /-- Predpostavka trditve `krajsanje_clenov` se da izpolniti (x = 0). -/
 example : (0 : ℝ) ≠ 3 := by norm_num
 
+/-- Predpostavke trditve `krajsanje_clenov` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0 : ℝ) ≠ 3 := by norm_num
+  krajsanje_clenov (hx := w)
+
 /-- Primer 2: (3x² − 5x)/(6x² + 1) = (3 − 5/x)/(6 + 1/x²) za x ≠ 0 in
-lim_{x→∞} (3x² − 5x)/(6x² + 1) = 3/6 = 0,5. -/
+lim_{x→∞} (3x² − 5x)/(6x² + 1) = 3/6 = 0,5.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#primer2
+besedilo: »Delimo z $x^2$, najvišjo potenco v imenovalcu: $\dfrac{3 - \frac{5}{x}}{6 + \frac{1}{x^2}}$. 3. Ko gre $x \to \infty$, gresta $\frac{5}{x}$ in $\frac{1}{x^2}$ proti $0$. 4. Ostane $\dfrac{3}{6} = 0{,}5$.« -/
 theorem primer2 : (∀ x : ℝ, x ≠ 0 → (3 * x ^ 2 - 5 * x) / (6 * x ^ 2 + 1) = (3 - 5 / x) / (6 + 1 / x ^ 2)) ∧
     Tendsto (fun x : ℝ => (3 * x ^ 2 - 5 * x) / (6 * x ^ 2 + 1)) atTop (𝓝 0.5) := by
   have hdel : ∀ x : ℝ, x ≠ 0 → (3 * x ^ 2 - 5 * x) / (6 * x ^ 2 + 1) = (3 - 5 / x) / (6 + 1 / x ^ 2) := by
@@ -231,7 +282,9 @@ theorem primer2 : (∀ x : ℝ, x ≠ 0 → (3 * x ^ 2 - 5 * x) / (6 * x ^ 2 + 1
 /-- Primer 3: ovojnica glasnosti s parametrom k (v(t) = (t² + t − 6)/(t − 2) za t < 2, k t − 3 za t ≥ 2). -/
 noncomputable def v (k t : ℝ) : ℝ := if t < 2 then (t ^ 2 + t - 6) / (t - 2) else k * t - 3
 
-/-- Primer 3, koraki 1–2: t² + t − 6 = (t − 2)(t + 3) in leva limita v 2 je 2 + 3 = 5. -/
+/-- Primer 3, koraki 1–2: t² + t − 6 = (t − 2)(t + 3) in leva limita v 2 je 2 + 3 = 5.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#primer3-leva
+besedilo: »Leva limita: vstavljanje da $\frac{0}{0}$, zato razstavimo $t^2 + t - 6 = (t - 2)(t + 3)$. 2. Okrajšamo $(t - 2)$, ostane $t + 3$, zato je $\lim\limits_{t \to 2^-} v(t) = 2 + 3 = 5$.« -/
 theorem primer3_leva (k : ℝ) : (∀ t : ℝ, t ^ 2 + t - 6 = (t - 2) * (t + 3)) ∧
     Tendsto (v k) (𝓝[<] 2) (𝓝 5) := by
   refine ⟨fun t => by ring, ?_⟩
@@ -244,7 +297,9 @@ theorem primer3_leva (k : ℝ) : (∀ t : ℝ, t ^ 2 + t - 6 = (t - 2) * (t + 3)
   rw [show t ^ 2 + t - 6 = (t - 2) * (t + 3) by ring]; field_simp
 
 /-- Primer 3, koraki 3–6: v je zvezna pri t = 2 natanko tedaj, ko je 2k − 3 = 5, torej k = 4
-(preizkus 4 · 2 − 3 = 5). -/
+(preizkus 4 · 2 − 3 = 5).
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#primer3
+besedilo: »Desni del je polinom, torej zvezen: desna limita je enaka $v(2) = 2k - 3$. 4. Brez skoka morata biti enaki: $2k - 3 = 5$, od tod $2k = 8$ in $k = 4$. 5. Preizkus: $4 \cdot 2 - 3 = 5$, kar se ujema z levo limito. 6. Odgovor: pri $k = 4$ ovojnica nima skoka in zvočnik ne poči.« -/
 theorem primer3 (k : ℝ) : ContinuousAt (v k) 2 ↔ k = 4 := by
   have hv2 : v k 2 = 2 * k - 3 := by simp [v]; ring
   constructor
@@ -264,14 +319,18 @@ theorem primer3 (k : ℝ) : ContinuousAt (v k) 2 ↔ k = 4 := by
       refine this.congr' (eventually_nhdsWithin_of_forall fun t (ht : 2 < t) => ?_)
       simp [v, not_lt.mpr ht.le]
 
-/-- Primer 3, korak 4: 2k − 3 = 5 ⇔ k = 4. -/
+/-- Primer 3, korak 4: 2k − 3 = 5 ⇔ k = 4.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#primer3-k
+besedilo: »Brez skoka morata biti enaki: $2k - 3 = 5$, od tod $2k = 8$ in $k = 4$.« -/
 theorem primer3_k (k : ℝ) : 2 * k - 3 = 5 ↔ k = 4 := by constructor <;> intro h <;> linarith
 
 /-- Primer 4: f(x) = x + 2 za x ≤ 0, (x + 6)/(3 − x) za x > 0. -/
 noncomputable def f4 (x : ℝ) : ℝ := if x ≤ 0 then x + 2 else (x + 6) / (3 - x)
 
 /-- Primer 4, korak 4 (in vrstica `limita: (x+6)/(3-x)`): f(0) = 2, leva limita 2, desna (0 + 6)/(3 − 0) = 2,
-zato je f zvezna v 0. -/
+zato je f zvezna v 0.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#primer4-stik
+besedilo: »Točka stika $x = 0$: vrednost $f(0) = 0 + 2 = 2$, leva limita je $2$, desna pa $\dfrac{0 + 6}{3 - 0} = 2$. Vse tri se ujemajo, zato je $f$ v $0$ zvezna.« -/
 theorem primer4_stik : f4 0 = 2 ∧ Tendsto f4 (𝓝[<] 0) (𝓝 2) ∧ Tendsto f4 (𝓝[>] 0) (𝓝 2) ∧
     ContinuousAt f4 0 := by
   have h0 : f4 0 = 2 := by simp [f4]
@@ -292,7 +351,9 @@ theorem primer4_stik : f4 0 = 2 ∧ Tendsto f4 (𝓝[<] 0) (𝓝 2) ∧ Tendsto 
   exact ⟨by rw [ContinuousWithinAt, h0]; exact hl, by rw [ContinuousWithinAt, h0]; exact hr⟩
 
 /-- Primer 4, koraka 2–3 (in vrstica `resi: 3-x=0`): 3 − x = 0 natanko pri x = 3; pri x → 3 gre števec proti 9,
-imenovalec proti 0 in |f(x)| raste čez vse meje (pol), zato f v 3 ni zvezna. -/
+imenovalec proti 0 in |f(x)| raste čez vse meje (pol), zato f v 3 ni zvezna.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#primer4-pol
+besedilo: »Imenovalec $3 - x$ je enak $0$ pri $x = 3$, ta točka pa leži v območju $x > 0$. Tam $f(3)$ ne obstaja, zato $f$ v $3$ ni zvezna. Na $(0, 3)$ in $(3, \infty)$ je zvezna. 3. Pri $x \to 3$ gre števec proti $9$, imenovalec proti $0$: absolutne vrednosti funkcije rastejo čez vse meje, to je pol.« -/
 theorem primer4_pol : (∀ x : ℝ, 3 - x = 0 ↔ x = 3) ∧
     Tendsto (fun x => |f4 x|) (𝓝[≠] 3) atTop ∧ ¬ ContinuousAt f4 3 := by
   have hpol : Tendsto (fun x => |f4 x|) (𝓝[≠] 3) atTop := by
@@ -319,7 +380,9 @@ theorem primer4_pol : (∀ x : ℝ, 3 - x = 0 ↔ x = 3) ∧
     (h.tendsto.abs).mono_left nhdsWithin_le_nhds
   exact not_tendsto_nhds_of_tendsto_atTop hpol _ h1
 
-/-- Primer 4, odgovor: f je zvezna na (−∞, 3) in na (3, ∞). -/
+/-- Primer 4, odgovor: f je zvezna na (−∞, 3) in na (3, ∞).
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#primer4-intervali
+besedilo: »Odgovor: $f$ je zvezna na intervalih $(-\infty, 3)$ in $(3, \infty)$; edina nezveznost je pol pri $x = 3$.« -/
 theorem primer4_intervali : ContinuousOn f4 (Iio 3) ∧ ContinuousOn f4 (Ioi 3) := by
   have hat : ∀ x : ℝ, x ≠ 3 → ContinuousAt f4 x := by
     intro x hx
@@ -339,7 +402,9 @@ theorem primer4_intervali : ContinuousOn f4 (Iio 3) ∧ ContinuousOn f4 (Ioi 3) 
     fun x hx => (hat x (ne_of_gt hx)).continuousWithinAt⟩
 
 /-- Primer 5 (premisli): √4 − 2 = 0, 4 − 4 = 0; (√x − 2)(√x + 2) = x − 4 za x ≥ 0 in
-lim_{x→4} (√x − 2)/(x − 4) = 1/(2 + 2) = 1/4 = 0,25. -/
+lim_{x→4} (√x − 2)/(x − 4) = 1/(2 + 2) = 1/4 = 0,25.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#primer5
+besedilo: »Po krajšanju ostane $\dfrac{1}{\sqrt{x} + 2}$. Pri $x = 4$: $\dfrac{1}{2 + 2} = \dfrac{1}{4} = 0{,}25$.« -/
 theorem primer5 : √(4:ℝ) - 2 = 0 ∧ (4:ℝ) - 4 = 0 ∧
     (∀ x : ℝ, 0 ≤ x → (√x - 2) * (√x + 2) = x - 4) ∧
     Tendsto (fun x : ℝ => (√x - 2) / (x - 4)) (𝓝[≠] 4) (𝓝 0.25) := by
@@ -363,7 +428,9 @@ theorem primer5 : √(4:ℝ) - 2 = 0 ∧ (4:ℝ) - 4 = 0 ∧
 
 /-- Matura, naloga 1 (in vrstica `limita`): pri x = 1 sta števec 1 + 2 − 3 = 0 in imenovalec 1 − 1 = 0;
 x² + 2x − 3 = (x − 1)(x + 3), x² − 1 = (x − 1)(x + 1); po krajšanju (x + 3)/(x + 1) in limita
-(1 + 3)/(1 + 1) = 2. -/
+(1 + 3)/(1 + 1) = 2.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#matura1
+besedilo: »Vstavimo $x = 1$: števec je $1 + 2 - 3 = 0$, imenovalec $1 - 1 = 0$. Dobimo nedoločeni izraz $\frac{0}{0}$, zato izraz preoblikujemo. 2. Razstavimo: $x^2 + 2x - 3 = (x - 1)(x + 3)$ in $x^2 - 1 = (x - 1)(x + 1)$. 3. Okrajšamo $(x - 1)$, kar smemo, ker je pri limiti $x \ne 1$: ostane $\dfrac{x + 3}{x + 1}$. 4. Vstavimo: $\dfrac{1 + 3}{1 + 1} = 2$.« -/
 theorem matura1 : (1:ℝ) + 2 - 3 = 0 ∧ (1:ℝ) - 1 = 0 ∧
     (∀ x : ℝ, x ^ 2 + 2 * x - 3 = (x - 1) * (x + 3) ∧ x ^ 2 - 1 = (x - 1) * (x + 1)) ∧
     Tendsto (fun x : ℝ => (x ^ 2 + 2 * x - 3) / (x ^ 2 - 1)) (𝓝[≠] 1) (𝓝 2) := by
@@ -383,7 +450,9 @@ theorem matura1 : (1:ℝ) + 2 - 3 = 0 ∧ (1:ℝ) - 1 = 0 ∧
   field_simp
 
 /-- Matura, naloga 2 a): x² − x − 2 = (x − 2)(x + 1) je 0 natanko pri x = 2 ali x = −1, zato
-D_f = ℝ ∖ {−1, 2}. -/
+D_f = ℝ ∖ {−1, 2}.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#matura2a
+besedilo: »a) Imenovalec razstavimo: $x^2 - x - 2 = (x - 2)(x + 1)$. Enak je $0$ pri $x = 2$ in $x = -1$, zato je $D_f = \mathbb{R} \setminus \{-1, 2\}$.« -/
 theorem matura2a (x : ℝ) : x ^ 2 - x - 2 = (x - 2) * (x + 1) ∧ (x ^ 2 - x - 2 = 0 ↔ x = 2 ∨ x = -1) := by
   have h : x ^ 2 - x - 2 = (x - 2) * (x + 1) := by ring
   refine ⟨h, ?_⟩
@@ -397,7 +466,9 @@ theorem matura2a (x : ℝ) : x ^ 2 - x - 2 = (x - 2) * (x + 1) ∧ (x ^ 2 - x - 
     · right; linarith
 
 /-- Matura, naloga 2 b) (in vrstica `enako`): 2 · 4 − 8 = 0; 2x² − 8 = 2(x − 2)(x + 2) in na D_f je
-f(x) = 2(x + 2)/(x + 1). -/
+f(x) = 2(x + 2)/(x + 1).
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#matura2-okrajsano
+besedilo: »b) Pri $x = 2$ sta števec $2 \cdot 4 - 8 = 0$ in imenovalec enaka $0$, zato preoblikujemo. Števec: $2x^2 - 8 = 2(x - 2)(x + 2)$. Po krajšanju $(x - 2)$ ostane $\dfrac{2(x + 2)}{x + 1}$.« -/
 theorem matura2_okrajsano (x : ℝ) (h1 : x - 2 ≠ 0) (h2 : x + 1 ≠ 0) :
     (2:ℝ) * 4 - 8 = 0 ∧ 2 * x ^ 2 - 8 = 2 * (x - 2) * (x + 2) ∧
       (2 * x ^ 2 - 8) / (x ^ 2 - x - 2) = 2 * (x + 2) / (x + 1) := by
@@ -408,7 +479,14 @@ theorem matura2_okrajsano (x : ℝ) (h1 : x - 2 ≠ 0) (h2 : x + 1 ≠ 0) :
 /-- Predpostavke trditve `matura2_okrajsano` se dajo izpolniti (x = 0). -/
 example : (0:ℝ) - 2 ≠ 0 ∧ (0:ℝ) + 1 ≠ 0 := by norm_num
 
-/-- Matura, naloga 2 b) (in vrstica `limita ... | 2 | 8/3`): lim_{x→2} f(x) = 2 · 4/3 = 8/3 (luknja). -/
+/-- Predpostavke trditve `matura2_okrajsano` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) - 2 ≠ 0 ∧ (0:ℝ) + 1 ≠ 0 := by norm_num
+  matura2_okrajsano (h1 := w.1) (h2 := w.2)
+
+/-- Matura, naloga 2 b) (in vrstica `limita ... | 2 | 8/3`): lim_{x→2} f(x) = 2 · 4/3 = 8/3 (luknja).
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#matura2b
+besedilo: »b) $\lim\limits_{x \to 2} f(x) = \dfrac{2 \cdot 4}{3} = \dfrac{8}{3}$. Limita obstaja, vrednost $f(2)$ pa ne, zato ima $f$ pri $x = 2$ luknjo; zakrpamo jo z dodatkom $f(2) = \frac{8}{3}$.« -/
 theorem matura2b : Tendsto (fun x : ℝ => (2 * x ^ 2 - 8) / (x ^ 2 - x - 2)) (𝓝[≠] 2) (𝓝 (8 / 3)) := by
   have hc : ContinuousAt (fun x : ℝ => 2 * (x + 2) / (x + 1)) 2 :=
     ((continuous_const.mul (continuous_id.add continuous_const)).continuousAt).div
@@ -423,7 +501,9 @@ theorem matura2b : Tendsto (fun x : ℝ => (2 * x ^ 2 - 8) / (x ^ 2 - x - 2)) (�
   rw [(matura2_okrajsano x (sub_ne_zero.mpr hx) (by linarith)).2.2]
 
 /-- Matura, naloga 2 c): pri x → −1 gre števec 2(x + 2) proti 2 > 0; leva limita je −∞, desna +∞
-(pol, navpična asimptota x = −1). -/
+(pol, navpična asimptota x = −1).
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#matura2c
+besedilo: »c) Za $x$ blizu $-1$ je $f(x) = \dfrac{2(x + 2)}{x + 1}$. Števec gre proti $2 \cdot 1 = 2 > 0$, imenovalec proti $0$. Z leve je $x + 1 < 0$, zato $\lim\limits_{x \to -1^-} f(x) = -\infty$; z desne je $x + 1 > 0$, zato $\lim\limits_{x \to -1^+} f(x) = +\infty$.« -/
 theorem matura2c :
     Tendsto (fun x : ℝ => (2 * x ^ 2 - 8) / (x ^ 2 - x - 2)) (𝓝[<] (-1)) atBot ∧
       Tendsto (fun x : ℝ => (2 * x ^ 2 - 8) / (x ^ 2 - x - 2)) (𝓝[>] (-1)) atTop := by
@@ -457,7 +537,9 @@ theorem matura2c :
     rw [(matura2_okrajsano x h2 (by linarith)).2.2]
 
 /-- Matura, naloga 2 d) (in vrstica `limita ... | oo | 2`): f(x) = (2 − 8/x²)/(1 − 1/x − 2/x²) in
-lim_{x→∞} f(x) = 2/1 = 2 (vodoravna asimptota y = 2). -/
+lim_{x→∞} f(x) = 2/1 = 2 (vodoravna asimptota y = 2).
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#matura2d
+besedilo: »d) Števec in imenovalec delimo z $x^2$: $\dfrac{2 - \frac{8}{x^2}}{1 - \frac{1}{x} - \frac{2}{x^2}}$. Ulomki z $x$ v imenovalcu gredo proti $0$, zato je limita $\dfrac{2}{1} = 2$.« -/
 theorem matura2d : Tendsto (fun x : ℝ => (2 * x ^ 2 - 8) / (x ^ 2 - x - 2)) atTop (𝓝 2) := by
   have hi := tendsto_inv_atTop_zero (𝕜 := ℝ)
   have h : Tendsto (fun x : ℝ => (2 - 8 * (x⁻¹) ^ 2) / (1 - x⁻¹ - 2 * (x⁻¹) ^ 2)) atTop
@@ -479,7 +561,9 @@ noncomputable def f3 (b c x : ℝ) : ℝ :=
   if x < 0 then sin (2 * x) / x else if x = 0 then c else b * (√(x + 4) - 2) / x
 
 /-- Matura, naloga 3 a), koraka 1–2 (in vrstica `limita: sin(2*x)/x`): sin 2x / x = 2 · sin 2x/(2x) za
-x ≠ 0 in lim_{x→0} sin 2x / x = 2 · 1 = 2 (dvostranska, torej tudi leva limita). -/
+x ≠ 0 in lim_{x→0} sin 2x / x = 2 · 1 = 2 (dvostranska, torej tudi leva limita).
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#matura3a
+besedilo: »a) Za $x < 0$ ulomek pomnožimo in delimo z $2$: $\dfrac{\sin 2x}{x} = 2 \cdot \dfrac{\sin 2x}{2x}$. Zdaj je v imenovalcu isti kot $2x$ kot v sinusu. Ko gre $x \to 0$, gre tudi $2x \to 0$, zato se po znani limiti $\lim\limits_{x \to 0} \dfrac{\sin x}{x} = 1$, v kateri namesto $x$ stoji $2x$, ulomek $\dfrac{\sin 2x}{2x}$ približuje $1$. (Sam $\dfrac{\sin 2x}{x}$ ne gre proti $1$, ker kot v sinusu ($2x$) ni enak imenovalcu ($x$).) 2. a) $\lim\limits_{x \to 0^-} f(x) = 2 \cdot 1 = 2$.« -/
 theorem matura3a : (∀ x : ℝ, x ≠ 0 → sin (2 * x) / x = 2 * (sin (2 * x) / (2 * x))) ∧
     Tendsto (fun x : ℝ => sin (2 * x) / x) (𝓝[≠] 0) (𝓝 2) := by
   have hk : ∀ x : ℝ, x ≠ 0 → sin (2 * x) / x = 2 * (sin (2 * x) / (2 * x)) := fun x hx => by
@@ -498,7 +582,9 @@ theorem matura3a : (∀ x : ℝ, x ≠ 0 → sin (2 * x) / x = 2 * (sin (2 * x) 
 
 /-- Matura, naloga 3 b), koraki 3–5 (in vrstica `limita: (sqrt(x+4)-2)/x`):
 (√(x + 4) − 2)(√(x + 4) + 2) = x za x ≥ −4; po krajšanju b/(√(x + 4) + 2) in
-lim_{x→0} b(√(x + 4) − 2)/x = b/(√4 + 2) = b/4. -/
+lim_{x→0} b(√(x + 4) − 2)/x = b/(√4 + 2) = b/4.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#matura3b
+besedilo: »b) Vstavljanje da $\frac{0}{0}$, zato ulomek razširimo s $\sqrt{x + 4} + 2$: $\dfrac{b\,(\sqrt{x + 4} - 2)(\sqrt{x + 4} + 2)}{x\,(\sqrt{x + 4} + 2)} = \dfrac{b\,(x + 4 - 4)}{x\,(\sqrt{x + 4} + 2)}$. 4. b) Okrajšamo $x$ (pri limiti je $x \ne 0$): ostane $\dfrac{b}{\sqrt{x + 4} + 2}$. 5. b) $\lim\limits_{x \to 0^+} f(x) = \dfrac{b}{\sqrt{4} + 2} = \dfrac{b}{4}$.« -/
 theorem matura3b (b : ℝ) : (∀ x : ℝ, -4 ≤ x → (√(x + 4) - 2) * (√(x + 4) + 2) = x + 4 - 4) ∧
     Tendsto (fun x : ℝ => b * (√(x + 4) - 2) / x) (𝓝[≠] 0) (𝓝 (b / 4)) := by
   have hr : ∀ x : ℝ, -4 ≤ x → (√(x + 4) - 2) * (√(x + 4) + 2) = x + 4 - 4 := fun x hx => by
@@ -521,7 +607,9 @@ theorem matura3b (b : ℝ) : (∀ x : ℝ, -4 ≤ x → (√(x + 4) - 2) * (√(
     field_simp, hr x hpos.le]
   field_simp; ring
 
-/-- Matura, naloga 3 c): f je zvezna v 0 natanko tedaj, ko je b = 8 in f(0) = 2 (b/4 = 2). -/
+/-- Matura, naloga 3 c): f je zvezna v 0 natanko tedaj, ko je b = 8 in f(0) = 2 (b/4 = 2).
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#matura3c
+besedilo: »c) Iz $\dfrac{b}{4} = 2$ sledi $b = 8$. Tedaj je $\lim\limits_{x \to 0} f(x) = 2$, zato mora biti $f(0) = 2$.« -/
 theorem matura3c (b c : ℝ) : ContinuousAt (f3 b c) 0 ↔ b = 8 ∧ c = 2 := by
   have hc0 : f3 b c 0 = c := by simp [f3]
   have hl : Tendsto (f3 b c) (𝓝[<] 0) (𝓝 2) := by
@@ -543,7 +631,9 @@ theorem matura3c (b c : ℝ) : ContinuousAt (f3 b c) 0 ↔ b = 8 ∧ c = 2 := by
     norm_num at hr; exact hr
 
 /-- Matura, naloga 3 d) (in vrstici `limita: 8*(sqrt(x+4)-2)/x`): pri b = 8, f(0) = 2 je f zvezna na ℝ,
-za x > 0 je f(x) = 8/(√(x + 4) + 2) in lim_{x→∞} f(x) = 0; dvostranska limita 8(√(x + 4) − 2)/x v 0 je 2. -/
+za x > 0 je f(x) = 8/(√(x + 4) + 2) in lim_{x→∞} f(x) = 0; dvostranska limita 8(√(x + 4) − 2)/x v 0 je 2.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#matura3d
+besedilo: »d) Za $x < 0$ je $f$ količnik zveznih funkcij z neničelnim imenovalcem, za $x > 0$ prav tako (koren je definiran za $x \ge -4$). V točki $0$ je $f$ zvezna po c), zato je zvezna na vsem $\mathbb{R}$. 9. d) Za $x > 0$ je $f(x) = \dfrac{8}{\sqrt{x + 4} + 2}$. Imenovalec raste čez vse meje, zato je $\lim\limits_{x \to \infty} f(x) = 0$.« -/
 theorem matura3d : Continuous (f3 8 2) ∧ Tendsto (f3 8 2) atTop (𝓝 0) ∧
     Tendsto (fun x : ℝ => 8 * (√(x + 4) - 2) / x) (𝓝[≠] 0) (𝓝 2) := by
   have hkr : ∀ x : ℝ, 0 < x → f3 8 2 x = 8 / (√(x + 4) + 2) := by
@@ -574,10 +664,14 @@ theorem matura3d : Continuous (f3 8 2) ∧ Tendsto (f3 8 2) atTop (𝓝 0) ∧
     exact (hkr x hx).symm
   · have := (matura3b 8).2; norm_num at this; exact this
 
-/-- Matura, naloga 3 c), korak 7: b/4 = 2 ⇔ b = 8. -/
+/-- Matura, naloga 3 c), korak 7: b/4 = 2 ⇔ b = 8.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#matura3-b
+besedilo: »c) Iz $\dfrac{b}{4} = 2$ sledi $b = 8$.« -/
 theorem matura3_b (b : ℝ) : b / 4 = 2 ↔ b = 8 := by constructor <;> intro h <;> linarith
 
-/-- Ustno vprašanje 2: lim_{x→0} 1/x² = ∞ (pol, navpična asimptota). -/
+/-- Ustno vprašanje 2: lim_{x→0} 1/x² = ∞ (pol, navpična asimptota).
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#ena-skozi-x2
+besedilo: »$\lim\limits_{x \to 0} \frac{1}{x^2} = \infty$« -/
 theorem ena_skozi_x2 : Tendsto (fun x : ℝ => 1 / x ^ 2) (𝓝[≠] 0) atTop := by
   refine pol_atTop _ _ 1 one_pos tendsto_const_nhds ?_
   rw [tendsto_nhdsWithin_iff]
@@ -587,7 +681,9 @@ theorem ena_skozi_x2 : Tendsto (fun x : ℝ => 1 / x ^ 2) (𝓝[≠] 0) atTop :=
   simpa using this.mono_left nhdsWithin_le_nhds
 
 /-- Ustno vprašanje 3 in »Drugače: Bolj natančno«: za 0 < x < π/2 je sin x < x < tan x in zato
-cos x < sin x / x < 1; zaradi sodosti isto velja za −π/2 < x < 0. -/
+cos x < sin x / x < 1; zaradi sodosti isto velja za −π/2 < x < 0.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#sendvic
+besedilo: »Za $0 < x < \frac{\pi}{2}$ na enotski krožnici primerjamo ploščine dveh trikotnikov in krožnega izseka, kar da $\sin x < x < \tan x$. Neenakosti delimo s pozitivnim $\sin x$ in vzamemo obratne vrednosti, pa dobimo $\cos x < \frac{\sin x}{x} < 1$. Ker je $\frac{\sin x}{x}$ soda funkcija, ista neenakost velja tudi za $-\frac{\pi}{2} < x < 0$.« -/
 theorem sendvic (x : ℝ) (h0 : 0 < |x|) (h1 : |x| < π / 2) : cos x < sin x / x ∧ sin x / x < 1 := by
   have key : ∀ y : ℝ, 0 < y → y < π / 2 → cos y < sin y / y ∧ sin y / y < 1 := by
     intro y hy hy2
@@ -607,8 +703,16 @@ theorem sendvic (x : ℝ) (h0 : 0 < |x|) (h1 : |x| < π / 2) : cos x < sin x / x
 example : (0:ℝ) < |1| ∧ |(1:ℝ)| < π / 2 := by
   rw [abs_one]; exact ⟨one_pos, by linarith [pi_gt_three]⟩
 
+/-- Predpostavke trditve `sendvic` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < |1| ∧ |(1:ℝ)| < π / 2 := by
+    rw [abs_one]; exact ⟨one_pos, by linarith [pi_gt_three]⟩
+  sendvic (h0 := w.1) (h1 := w.2)
+
 /-- Drugače, bolj natančno: |2x + 1 − 7| = 2|x − 3| in z δ = ε/2 je lim_{x→3} (2x + 1) = 7 po
-definiciji ε-δ. -/
+definiciji ε-δ.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#epsilon-delta
+besedilo: »Primer: $\lim\limits_{x \to 3} (2x + 1) = 7$. Velja $|2x + 1 - 7| = 2\,|x - 3|$. Če izberemo $\delta = \dfrac{\varepsilon}{2}$, iz $|x - 3| < \delta$ sledi $|2x + 1 - 7| < 2 \cdot \dfrac{\varepsilon}{2} = \varepsilon$.« -/
 theorem epsilon_delta : (∀ x : ℝ, |2 * x + 1 - 7| = 2 * |x - 3|) ∧
     ∀ ε > 0, ∃ δ > 0, ∀ x : ℝ, 0 < |x - 3| → |x - 3| < δ → |2 * x + 1 - 7| < ε := by
   have he : ∀ x : ℝ, |2 * x + 1 - 7| = 2 * |x - 3| := fun x => by
@@ -617,7 +721,9 @@ theorem epsilon_delta : (∀ x : ℝ, |2 * x + 1 - 7| = 2 * |x - 3|) ∧
   rw [he]; linarith
 
 /-- Preveri se, vprašanje 2: A = lim_{x→∞} (2x + 1)/(x − 3) = 2, B = 1, C = lim_{x→2} (x² − 4)/(x − 2) = 4;
-torej B < A < C. -/
+torej B < A < C.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#kviz2
+besedilo: »$B = 1$, $A = \dfrac{2}{1} = 2$ (deljenje z $x$), $C = 4$ (razstavljanje $(x - 2)(x + 2)$).« -/
 theorem kviz2 : Tendsto (fun x : ℝ => (2 * x + 1) / (x - 3)) atTop (𝓝 2) ∧
     Tendsto (fun x : ℝ => sin x / x) (𝓝[≠] 0) (𝓝 1) ∧
     Tendsto (fun x : ℝ => (x ^ 2 - 4) / (x - 2)) (𝓝[≠] 2) (𝓝 4) ∧ (1:ℝ) < 2 ∧ (2:ℝ) < 4 := by
@@ -639,7 +745,9 @@ theorem kviz2 : Tendsto (fun x : ℝ => (2 * x + 1) / (x - 3)) atTop (𝓝 2) �
     have := limita_okrajsaj _ (fun x => x + 2) 2 hk (by fun_prop)
     norm_num at this; exact this
 
-/-- Preveri se, vprašanje 3: f(x) = 1/(x − 1)² raste čez vse meje, ko x → 1 (z obeh strani); pol pri 1. -/
+/-- Preveri se, vprašanje 3: f(x) = 1/(x − 1)² raste čez vse meje, ko x → 1 (z obeh strani); pol pri 1.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#kviz3
+besedilo: »Imenovalec je pozitiven in gre proti $0$, zato $f(x)$ raste čez vse meje: $\lim\limits_{x \to 1} f(x) = \infty$, navpična asimptota $x = 1$.« -/
 theorem kviz3 : Tendsto (fun x : ℝ => 1 / (x - 1) ^ 2) (𝓝[≠] 1) atTop := by
   refine pol_atTop _ _ 1 one_pos tendsto_const_nhds ?_
   rw [tendsto_nhdsWithin_iff]
@@ -649,7 +757,9 @@ theorem kviz3 : Tendsto (fun x : ℝ => 1 / (x - 1) ^ 2) (𝓝[≠] 1) atTop := 
     (by fun_prop : Continuous fun x : ℝ => (x - 1) ^ 2).tendsto 1
   simpa using this.mono_left nhdsWithin_le_nhds
 
-/-- Preveri se, vprašanje 4: x² + 5x + 6 = (x + 2)(x + 3) in lim_{x→−2} (x² + 5x + 6)/(x + 2) = −2 + 3 = 1. -/
+/-- Preveri se, vprašanje 4: x² + 5x + 6 = (x + 2)(x + 3) in lim_{x→−2} (x² + 5x + 6)/(x + 2) = −2 + 3 = 1.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#kviz4
+besedilo: »$x^2 + 5x + 6 = (x + 2)(x + 3)$; po krajšanju ostane $x + 3$, pri $x = -2$ je to $1$.« -/
 theorem kviz4 : Tendsto (fun x : ℝ => (x ^ 2 + 5 * x + 6) / (x + 2)) (𝓝[≠] (-2)) (𝓝 1) := by
   have hk : ∀ x : ℝ, x ≠ -2 → (x ^ 2 + 5 * x + 6) / (x + 2) = x + 3 := fun x hx => by
     have : x + 2 ≠ 0 := fun h => hx (by linarith)
@@ -657,7 +767,9 @@ theorem kviz4 : Tendsto (fun x : ℝ => (x ^ 2 + 5 * x + 6) / (x + 2)) (𝓝[≠
   have := limita_okrajsaj _ (fun x => x + 3) (-2) hk (by fun_prop)
   norm_num at this; exact this
 
-/-- Preveri se, vprašanje 5: v(0) = 1 in lim_{t→∞} (12t² + 5)/(4t² + 5) = 12/4 = 3. -/
+/-- Preveri se, vprašanje 5: v(0) = 1 in lim_{t→∞} (12t² + 5)/(4t² + 5) = 12/4 = 3.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#kviz5
+besedilo: »$\dfrac{12 + \frac{5}{t^2}}{4 + \frac{5}{t^2}} \to \dfrac{12}{4} = 3$« -/
 theorem kviz5 : ((12:ℝ) * 0 ^ 2 + 5) / (4 * 0 ^ 2 + 5) = 1 ∧
     Tendsto (fun t : ℝ => (12 * t ^ 2 + 5) / (4 * t ^ 2 + 5)) atTop (𝓝 3) := by
   refine ⟨by norm_num, ?_⟩
@@ -674,7 +786,9 @@ theorem kviz5 : ((12:ℝ) * 0 ^ 2 + 5) / (4 * 0 ^ 2 + 5) = 1 ∧
   field_simp
 
 /-- Preveri se, vprašanje 6 (in vrstica `resi: x^2-4*x=0`): x² − 4x = x(x − 4) = 0 natanko pri x = 0 ali
-x = 4; f(x) = (x + 1)/(x² − 4x) je zvezna na (−∞, 0), (0, 4) in (4, ∞); f(−1) = 0. -/
+x = 4; f(x) = (x + 1)/(x² − 4x) je zvezna na (−∞, 0), (0, 4) in (4, ∞); f(−1) = 0.
+trditev: MAT-SS-4/limita-in-zveznost-funkcije#kviz6
+besedilo: »$x^2 - 4x = x(x - 4)$ je enak $0$ pri $x = 0$ in $x = 4$. Drugod je $f$ racionalna funkcija z neničelnim imenovalcem, zato je zvezna na $(-\infty, 0)$, $(0, 4)$ in $(4, \infty)$.« -/
 theorem kviz6 : (∀ x : ℝ, x ^ 2 - 4 * x = 0 ↔ x = 0 ∨ x = 4) ∧
     ContinuousOn (fun x : ℝ => (x + 1) / (x ^ 2 - 4 * x)) (Iio 0) ∧
     ContinuousOn (fun x : ℝ => (x + 1) / (x ^ 2 - 4 * x)) (Ioo 0 4) ∧
@@ -698,5 +812,12 @@ theorem kviz6 : (∀ x : ℝ, x ^ 2 - 4 * x = 0 ↔ x = 0 ∨ x = 4) ∧
   refine ⟨hz, hc _ fun x (hx : x < 0) => ⟨by linarith, by linarith⟩,
     hc _ fun x hx => ⟨hx.1.ne', hx.2.ne⟩, hc _ fun x (hx : 4 < x) => ⟨by linarith, by linarith⟩,
     by norm_num⟩
+
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `pravila` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : Tendsto (fun x : ℝ => sin x / x) (𝓝[≠] 0) (𝓝 1) := limita_sinc
+  pravila (hf := w) (hh := w)
 
 end Evklid.Lekcije.MAT_SS_4.LimitaInZveznostFunkcije

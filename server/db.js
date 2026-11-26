@@ -473,7 +473,9 @@ export class Store {
     return this.db.prepare("SELECT * FROM students ORDER BY id").all().map(parseStudent);
   }
   getStudent(id) {
-    return parseStudent(this.db.prepare("SELECT * FROM students WHERE id = ?").get(id));
+    // Stavek pripravljen enkrat na bazo: getStudent je na sporočilo inštruktorju klican ~70-krat (K-14).
+    this._qStudent ??= this.db.prepare("SELECT * FROM students WHERE id = ?");
+    return parseStudent(this._qStudent.get(id));
   }
   // Isti učenec (ime in nastavitve), ustvarjen v zadnji minuti: dvojni klik ali ponovljena zahteva.
   recentDuplicate(name, settings = DEFAULT_SETTINGS) {

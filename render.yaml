@@ -21,6 +21,9 @@ services:
       # scrypt (RSS je rasel v stopnicah do ~400 MB in se ni vrnil). S temi tremi vrne velike kose sistemu: lokalno
       # (preizkusni način, enak promet) RSS strežnika po prometu 653 → 381 MB, v mirovanju po predgretju 384 → 240 MB.
       # Prebere jih glibc ob zagonu procesa, zato morajo biti tu (ne v kodi).
+      # Kopica V8 (K-14, 26. 11. 2026): Node v vsebniku s 512 MB pusti kopici mejo ~8 GB in pospravlja prepozno, zato je
+      # vsebnik pri 50 hkratnih učencih padel (OOM). »npm start« zato nastavi --max-old-space-size na EVKLID_KOPICA_MB
+      # (privzeto 256; vrh vsebnika pri obremenitvi 425 MB). Večji paket Render: EVKLID_KOPICA_MB nastavi višje.
       - key: MALLOC_ARENA_MAX
         value: "2"
       - key: MALLOC_TRIM_THRESHOLD_
