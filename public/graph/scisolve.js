@@ -578,7 +578,11 @@ function nearFraction(v, tol, maxQ = 1000) {
   }
   return null;
 }
-/** Osamljena točka c blizu b, kjer F ni definirana, levo in desno od nje pa je (luknja ali pol); sicer null. */
+/**
+ * Osamljena točka c blizu b, kjer F ni definirana, levo in desno od nje pa je in ostane omejena (odpravljiva luknja);
+ * sicer null. Pol (1/x pri 0) ni luknja: tam je F neomejena in rešitev tik ob polu (1/x = 50) ostane (pregled).
+ * Luknjo iščemo v »lepih« točkah: ulomek, koren ulomka, večkratnik π ali e, kratka decimalka (1,23456).
+ */
 function holeAt(F, b) {
   const tol = HOLE_D;
   const cands = [];
@@ -586,12 +590,20 @@ function holeAt(F, b) {
   if (q !== null) cands.push(q);
   const q2 = b !== 0 ? nearFraction(b * b, tol) : null;
   if (q2 !== null && q2 > 0) cands.push(Math.sign(b) * Math.sqrt(q2));
-  const qp = nearFraction(b / Math.PI, tol, 24);
-  if (qp !== null) cands.push(qp * Math.PI);
+  for (const k of [Math.PI, Math.E]) {
+    const qk = nearFraction(b / k, tol, 24);
+    if (qk !== null) cands.push(qk * k);
+  }
+  for (let n = 0; n <= 8; n++) cands.push(Number(b.toFixed(n)));
   for (const c of cands) {
     if (Math.abs(c - b) > tol * Math.max(1, Math.abs(c)) || fin(F(c))) continue;
     const d = HOLE_D * Math.max(1, Math.abs(c));
-    if (fin(F(c - d)) && fin(F(c + d))) return c;
+    const y = [F(c - d / 10), F(c + d / 10), F(c - d), F(c + d), F(c - 10 * d), F(c + 10 * d)];
+    if (!y.every(fin)) continue;
+    // omejena: pri d/10 ni dosti večja kot pri 10d (pri polu je 100-krat večja); šum krajšanja ob luknji
+    // ((1 − cos x)/x² pri 10⁻⁷) ostane pod 10
+    const far = Math.max(Math.abs(y[4]), Math.abs(y[5]));
+    if (Math.max(Math.abs(y[0]), Math.abs(y[1])) <= 10 * Math.max(1, far)) return c;
   }
   return null;
 }
@@ -608,8 +620,23 @@ function rootsNearHole(F, c, w) {
   const yl = F(c - d);
   const yr = F(c + d);
   if (fin(yl) && fin(yr) && yl !== yr && Math.sign(yl) !== Math.sign(yr)) {
-    const x = c - d - (yl * 2 * d) / (yr - yl);
-    if (Math.abs(x - c) <= 2 * d && Math.abs(x - c) > 1e-8 * m && isRoot(F, x)) out.push(x);
+    let x = c - d - (yl * 2 * d) / (yr - yl);
+    if (Math.abs(x - c) <= 2 * d && Math.abs(x - c) > 1e-8 * m) {
+      // izboljšamo z bisekcijo na strani luknje, kjer je ničla
+      const e = Math.abs(x - c) / 2;
+      let [lo, hi] = [x - e, x + e];
+      let fl = F(lo);
+      if (fin(fl) && fin(F(hi)) && Math.sign(fl) !== Math.sign(F(hi)))
+        for (let k = 0; k < 60; k++) {
+          const mid = (lo + hi) / 2;
+          const fm = F(mid);
+          if (!fin(fm) || mid === lo || mid === hi) break;
+          if (Math.sign(fm) === Math.sign(fl)) [lo, fl] = [mid, fm];
+          else hi = mid;
+        }
+      x = (lo + hi) / 2;
+      if (isRoot(F, x)) out.push(x);
+    }
   }
   return out;
 }
@@ -618,20 +645,40 @@ function rootsNearHole(F, c, w) {
  * krajšanju izgubijo mesta ((1 − cos x)/x² pri x ≈ 10⁻⁴ je šum), zato bi sicer šum dal desetine lažnih rešitev.
  */
 function smoothRoot(F, x, c) {
-  const e = Math.max(Math.abs(x - c) / 2, 1e-12 * Math.max(1, Math.abs(x)));
-  const slope = (h) => (F(x + h) - F(x - h)) / (2 * h);
-  const s1 = slope(e);
-  const s2 = slope(e / 4);
-  return fin(s1) && fin(s2) && s1 !== 0 && Math.sign(s1) === Math.sign(s2) && Math.abs(s1 - s2) <= 0.1 * Math.abs(s1);
+  // premica skozi 9 točk okoli x (vse na isti strani luknje): šum = odmik točk od premice. Rešitev drži, če se F na poti
+  // od x do luknje spremeni precej bolj (≥ 5-krat), kot je šum
+  const g = Math.abs(x - c);
+  const dl = g / 50;
+  const ks = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
+  const ys = ks.map((k) => F(x + k * dl));
+  if (!ys.every(fin)) return false;
+  const my = ys.reduce((p, q) => p + q, 0) / ks.length;
+  const slope = ks.reduce((p, k, i) => p + k * (ys[i] - my), 0) / (60 * dl); // Σk² = 60
+  const sigma = Math.sqrt(ks.reduce((p, k, i) => p + (ys[i] - my - slope * k * dl) ** 2, 0) / (ks.length - 2));
+  // predznak se zamenja natanko enkrat, konca sta merljivo stran od 0 (šum ob luknji niha okoli 0)
+  const sg = ys.map(Math.sign);
+  const flips = sg.slice(1).filter((t, i) => t !== sg[i]).length;
+  const ends = Math.min(Math.abs(ys[0]), Math.abs(ys[8]));
+  return slope !== 0 && sigma <= 0.2 * Math.abs(slope) * g && flips <= 2 && sg[0] !== sg[8] && ends > 3 * sigma;
 }
-/** Izloči kandidate v luknjah in doda rešitve tik ob njih (AUDIT-080). */
-function withoutHoles(F, cands, w) {
+// bisekcija ob robu območja se lahko ustavi na nedefinirani strani (√(x² − 2) pri 1,414213562373095): sosednja
+// predstavljiva števila, kjer je F definirana
+function onDomain(F, x) {
+  if (fin(F(x))) return x;
+  for (let k = 1; k <= 4; k++) for (const t of [x + k * Number.EPSILON * Math.max(1, Math.abs(x)), x - k * Number.EPSILON * Math.max(1, Math.abs(x))]) if (fin(F(t))) return t;
+  return x;
+}
+// ena rešitev, ki jo najdeta dve iskanji (mreža in okolica luknje), se razlikuje na ~10⁻¹¹
+const uniq = (xs) => xs.filter((x, i) => xs.findIndex((y) => near(x, y, 1e-9)) === i).sort((a, b) => a - b);
+/** Izloči kandidate v luknjah in doda rešitve tik ob njih (AUDIT-080). Vrne { roots, holes }. */
+function withoutHoles(F, cands0, w) {
+  const cands = cands0.map((x) => onDomain(F, x));
   const holes = [];
   for (const b of cands) {
     const c = holeAt(F, b);
     if (c !== null && !holes.some((h) => near(h, c, 1e-12))) holes.push(c);
   }
-  if (!holes.length) return cands.filter((x) => isRoot(F, x));
+  if (!holes.length) return { roots: cands.filter((x) => isRoot(F, x)), holes };
   const inHole = (x) => holes.some((c) => Math.abs(x - c) <= HOLE_D * Math.max(1, Math.abs(c)));
   // v okolici luknje (do w) ostanejo le rešitve, kjer F ni šum
   const nearHole = (x) => holes.find((c) => Math.abs(x - c) <= w);
@@ -640,7 +687,7 @@ function withoutHoles(F, cands, w) {
     return c === undefined || smoothRoot(F, x, c);
   };
   const roots = [...cands.filter((x) => !inHole(x) && isRoot(F, x)), ...holes.flatMap((c) => rootsNearHole(F, c, w))].filter(ok);
-  return roots.filter((x, i) => roots.findIndex((y) => near(x, y, 1e-12)) === i).sort((a, b) => a - b);
+  return { roots: uniq(roots), holes };
 }
 
 const isPeriodic = (F, P) =>
@@ -745,23 +792,31 @@ function solveOne(F, v, { comma, unit = "rad", src, pr = null, vf = null }) {
   const P = PERIOD[unit];
   if (TRIG.test(src) && isPeriodic(F, P)) {
     // periodična enačba: rešitve na eni periodi kota (v stopinjah [0°, 360°), v gradih [0, 400), v radianih [0, 2π))
-    const roots = criticalPoints(F, 0, P, 6000).filter((x) => isRoot(F, x) && x >= 0 && x < P - 1e-9);
+    // luknje tudi tu: sin(2x)/sin(x) = 2 pri x = 0 ni rešitev (AUDIT-080)
+    const roots = withoutHoles(F, criticalPoints(F, 0, P, 6000), (2 * P) / 6000).roots.filter((x) => x >= 0 && x < P - 1e-9);
     return withGx(F, { kind: "solve", v, roots, complex: [], interval: periodTex(unit, comma), periodic: true, ...(unit === "rad" ? {} : { [unit]: true }) }, vf);
   }
   const R = unit === "rad" ? RANGE : 10 * RANGE;
   const near0 = criticalPoints(F, -R, R);
   const step = (2 * R) / SAMPLES;
-  let roots = withoutHoles(F, near0, 2 * step);
+  const nh = withoutHoles(F, near0, 2 * step);
+  let roots = nh.roots;
+  const holes = [...nh.holes];
   if (roots.length > 12) roots = roots.filter((x) => Math.abs(x) <= 20).slice(0, 12);
   // zunaj ±R iščemo samo, kjer funkcija blizu 0 ne niha (sin x = x/1000 ima stotine rešitev: ostane, kot je bilo)
   else if (near0.length <= 12) {
     const fp = farPoints(F, R);
-    const all = [...roots, ...withoutHoles(F, fp, Math.max(step, ...fp.map((x) => Math.abs(x) * 0.012)))];
+    const fh = withoutHoles(F, fp, Math.max(step, ...fp.map((x) => Math.abs(x) * 0.012)));
+    holes.push(...fh.holes);
+    const all = uniq([...roots, ...fh.roots]);
     // največ 12, najbližje 0, nato po vrsti
     roots = all.sort((a, b) => Math.abs(a) - Math.abs(b)).slice(0, 12).sort((a, b) => a - b);
   }
   // brez rešitve na [−10¹², 10¹²] ne trdimo, da je ni nikjer (AUDIT-015): searched = preiskani interval
-  return withGx(F, { kind: "solve", v, roots, complex: [], ...(roots.length ? {} : { searched: FAR_TEX }) }, vf);
+  // rešitev tik ob luknji z dovolj mesti, da se ne izpiše kot luknja (1,0000001, ne »≈ 1«)
+  const gap = Math.min(Infinity, ...roots.flatMap((x) => holes.map((c) => Math.abs(x - c))));
+  const minDec = gap < 1e-6 ? Math.min(15, Math.ceil(-Math.log10(gap)) + 1) : 0;
+  return withGx(F, { kind: "solve", v, roots, complex: [], ...(minDec ? { minDec } : {}), ...(roots.length ? {} : { searched: FAR_TEX }) }, vf);
 }
 
 // Ali je število v zapisu točno: celo, kratek decimalni zapis (≤ 6 decimalk) ali točna oblika (ulomek, koren, π)
@@ -842,7 +897,7 @@ export function solutionTex(r, comma = true, mode = "auto", multText = MULT_SL) 
   const unsure = (i) => (i < r.roots.length ? r.runc?.[i] : (r.cerr?.[i - r.roots.length] || 0) !== 0);
   const tag = (i) => (!r.exact && ms[i] > 1 && !unsure(i) ? `\\;(\\text{${multText(ms[i]).replace(/[{}\\$&#%_^~]/g, "")}})` : "");
   const dec = decimalsFor(r.roots);
-  const decAll = decimalsFor([...r.roots, ...(r.complex || []).map((z) => z[0])]);
+  const decAll = Math.max(r.minDec || 0, decimalsFor([...r.roots, ...(r.complex || []).map((z) => z[0])]));
   if (r.exact)
     r.roots.forEach((x, i) => parts.push(`${name(i)} \\approx ${decTex(x, comma, mode, dec)}`));
   else if (r.deg || r.grad) r.roots.forEach((x, i) => parts.push(`${name(i)} ${Number(clean(x).toFixed(6)) === clean(x) && !(r.gx && !r.gx[i]) ? "=" : "\\approx"} ${decTex(x, comma, mode)}${ANGLE_SUP[r.grad ? "grad" : "deg"]}`));
