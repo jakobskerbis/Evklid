@@ -62,3 +62,17 @@ test("graf: drsnik v integrandu, ∫ po x; nedefinirana črka manjka (kot prej)"
   assert.ok(close(evaluate("∫(a;0;2)", { vars: { a: 3 }, funcs: {}, ans: 0, comma: true }).value, 6));
   assert.ok(close(run(["∫(sin(t);0;1)"])[0].value, 0.4596976941318602826));
 });
+
+// Pregled 2/3 (26. 11. 2026): črka za števko je spremenljivka integrala (∫(2t; 0; 1)); strežnik in graf (calcText brez
+// freeInt) ostaneta po x kot na main (∫(a; 0; 3) = 3a pri preverjanju odgovorov).
+test("∫(2t; 0; 1), ∫(3t²; 0; 2), f(x) = ∫(2t+1; 0; x); calcText privzeto po x", async () => {
+  assert.ok(close(run(["∫(2t;0;1)"])[0].value, 1));
+  assert.ok(close(run(["∫(3t²;0;2)"])[0].value, 8));
+  assert.ok(close(run(["f(x) = ∫(2t+1;0;x)", "f(2)"]).at(-1).value, 6));
+  const { calcText, intVar } = await import("../public/graph/math.js");
+  // »d/dx« v integrandu ni črka d
+  assert.equal(intVar("d/dx(t³)+t", null, "0 1"), "t");
+  assert.match(calcText("∫(a;0;3)"), /\) dx\)$/);
+  assert.match(calcText("∫(2t;0;1)"), /\) dx\)$/);
+  assert.match(calcText("∫(2t;0;1)", { freeInt: true }), /\) dt\)$/);
+});

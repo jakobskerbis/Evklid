@@ -30,7 +30,7 @@ export function prepare(text, { comma = true, names = null } = {}) {
   // Isto pravilo kot grafični kalkulator in preverjanje odgovorov (numberText v math.js).
   // Znanstveni zapis, ∫(f; a; b) in manjkajoči zaklepaji: skupna priprava z grafičnim kalkulatorjem (calcText).
   let s = String(text ?? "").trim().replace(/(?<![A-Za-z])Ans(?![A-Za-z])/g, ANS);
-  s = calcText(s, { comma, names, close: true });
+  s = calcText(s, { comma, names, close: true, freeInt: true }); // ∫(sin(t); 0; x) je po t (AUDIT-085)
   s = s.replace(DMS_RUN, (m) => `(${m.replace(/([°′])\s*(?=\d)/g, "$1+")})`);
   // ′ in ″ sta minuta in sekunda le za številom; f′(2) in (x³)′ ostaneta odvod (math.js ′ → ')
   // Enota se veže na število ali črko tik pred njo, močneje kot funkcija, potenca in deljenje (kot ° v grafičnem

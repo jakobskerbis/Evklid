@@ -6,7 +6,7 @@ import { vectorLine } from "./vektor.js";
 import { evaluate, compileLine, unknownsOf, functionDef, lineTex, splitTop, prepare, exactTex, toFraction, formatNumber, exactForm } from "./scicore.js";
 import { antiderivativeAst } from "./calculus.js";
 import { evalComplex, polyRoots } from "./toolscore.js";
-import { parseCommand, runCas, casInfo, commandStart } from "./cas.js";
+import { parseCommand, runCas, casInfo, commandStart, commandInside } from "./cas.js";
 import { polyRootsMult, polyRootsExact, polyRootsSym } from "./toolscore.js"; // večkratne ničle (AUDIT-009); ločena vrstica, da se ne prekriva z AUDIT-007
 import { exactPolyIn, symbolPolyIn, zeroAtExact } from "./cas.js";
 import { walk, fromTex } from "./math.js";
@@ -1510,8 +1510,9 @@ export function analyze(text, env = {}) {
     }
     return r;
   }
-  // razstavi(x² − 1)/(x + 1): ukaz, ki mu sledi še kaj, ni zmnožek črk r·a·z·s·t·a·v·i
-  if (commandStart(raw)) return { error: { code: "casTrailing", info: {} } };
+  // razstavi(x² − 1)/(x + 1): ukaz, ki mu sledi še kaj, ni zmnožek črk r·a·z·s·t·a·v·i; tudi ukaz sredi izraza
+  // (1 + integriraj(x), 2·limita(…)): predogled ga izriše kot matematiko, izračunati ga ne znamo
+  if (commandStart(raw) || commandInside(raw)) return { error: { code: "casTrailing", info: {} } };
 
   // definicija funkcije
   const def = functionDef(raw);

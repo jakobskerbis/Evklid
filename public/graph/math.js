@@ -307,9 +307,10 @@ export function splitTop(s, seps = ";") {
 // »∫(f, a, b)« (po argSeparators) → »∫_(a)^(b) (f) dx« (zapis, ki ga razume razčlenjevalnik)
 // AUDIT-070: spremenljivka integrala v ∫(f; a; b): x, sicer edina enočrkovna spremenljivka v f (∫(sin(t); 0; x) je po t)
 // (∫(x·t; 0; x): x je v meji, zato je spremenljivka t)
-function intVar(f, names, lims = "") {
+// Črka za števko je spremenljivka (∫(2t; 0; 1), ∫(3t²; 0; 2)); »d/dx« ni črka d (∫(d/dx(t²); 0; 1) je po t).
+export function intVar(f, names, lims = "") {
   const known = (c) => names && (names.has ? names.has(c) : c in names);
-  const letters = (u) => new Set((u.match(/(?<![A-Za-zα-ωΑ-Ω_\d])[A-Za-zα-ωΑ-Ω](?![A-Za-zα-ωΑ-Ω_\d(])/g) || []).filter((c) => !"eiπ".includes(c) && !known(c)));
+  const letters = (u) => new Set((u.replace(/d\/dx/g, " ").match(/(?<![A-Za-zα-ωΑ-Ω_])[A-Za-zα-ωΑ-Ω](?![A-Za-zα-ωΑ-Ω_\d(])/g) || []).filter((c) => !"eiπ".includes(c) && !known(c)));
   const ids = letters(f);
   const inLims = letters(lims);
   const free = [...ids].filter((c) => !inLims.has(c));
@@ -319,7 +320,7 @@ function intVar(f, names, lims = "") {
   if (ids.size === 1) return [...ids][0];
   return "x";
 }
-function rewriteIntegrals(s, names = null, freeInt = true) {
+function rewriteIntegrals(s, names = null, freeInt = false) {
   for (let guard = 0; guard < 20; guard++) {
     const i = s.indexOf("∫(");
     if (i < 0) break;
@@ -344,14 +345,15 @@ function rewriteIntegrals(s, names = null, freeInt = true) {
  *   decimalno ločilo. Drugače je e Eulerjevo število (»2e^x«, »2e3x« = 2·e·3·x, »2e-x«), E pa spremenljivka.
  *   »E« ostane spremenljivka tudi, kadar je E v names (graf z vrstico »E = …«, spremenljivka E v kalkulatorju):
  *   takrat je »3E-2« 3·E − 2. Število je v oklepaju (AUDIT-041): x/1e8 = x/10⁸, 2e3^2 = (2·10³)², −1e2 = −100,
- * - ∫(f; a; b) je določeni integral od a do b; spremenljivka integrala je x ali (freeInt, znanstveni kalkulator) edina
- *   druga črka v f, ki ni v names (AUDIT-085: k(x) = ∫(sin(t); 0; x)). Graf poda freeInt: false: tam je črka brez
- *   definicije parameter, za katerega graf ponudi drsnik (∫(a; 0; x) = a·x, kot prej), drsnik pa nikoli ni spremenljivka
- *   integrala (a = 3, y = ∫(a; 0; x) → 3x),
+ * - ∫(f; a; b) je določeni integral od a do b. Spremenljivka integrala je privzeto vedno x (freeInt: false), kot pred
+ *   AUDIT-085: tako berejo vrstico graf (črka brez definicije je parameter, za katerega graf ponudi drsnik:
+ *   ∫(a; 0; x) = a·x; drsnik a = 3 da 3x) in strežnik pri preverjanju odgovorov (server/live-check.js,
+ *   server/sodba-koraka.js, server/practice/check.js: ∫(a; 0; 3) = 3a). Le znanstveni kalkulator (scicore prepare)
+ *   poda freeInt: true: spremenljivka je x ali edina druga črka v f, ki ni v names (AUDIT-085: k(x) = ∫(sin(t); 0; x)),
  * - close: manjkajoče zaklepaje doda na konec (znanstveni kalkulator; grafični jih pokaže kot napako).
  * Pomen zapisa po razčlenitvi poenoti še calcRewrite (odstotki, round na decimalke).
  */
-export function calcText(s, { comma = true, names = null, close = false, freeInt = true } = {}) {
+export function calcText(s, { comma = true, names = null, close = false, freeInt = false } = {}) {
   let out = numberText(s, comma);
   const bigE = !(names && (names.has ? names.has("E") : "E" in names));
   out = out.replace(/(?<![A-Za-z_\d.])(\d+(?:\.\d+)?|\.\d+)([eE])([+\-−]?)(\d+)(?![\d.A-Za-zα-ωΑ-Ω_(])/g, (m, a, e, sign, d) =>

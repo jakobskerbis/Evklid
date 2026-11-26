@@ -7,8 +7,8 @@
 // Brez DOM; test/sci-vnos.test.js.
 import { previewTex, analyze, exactIntegral, calculusEnv } from "./scisolve.js";
 import { evaluate, functionDef } from "./scicore.js";
-import { parseCommand, COMMAND_NAMES } from "./cas.js";
-import { BUILTINS } from "./math.js";
+import { parseCommand, commandInside, COMMAND_NAMES } from "./cas.js";
+import { BUILTINS, intVar } from "./math.js";
 import { chemSub } from "./molska.js";
 
 // Barvi kazalca in okvirčka sta v graph.css (.sc-caret, .sc-hole: CSS spremenljivke, tudi temna tema).
@@ -38,24 +38,27 @@ export function analyzeLive(text, env = {}) {
   const cmd = parseCommand(text);
   if (cmd && ["integrate", "limit", "taylor", "det", "inverse"].includes(cmd.op) && !/[=<>≤≥]/.test(text)) return analyze(text, { ...env, live: true });
   // ukaz sredi izraza (2·limita(…)): CAS ga ne izračuna, zapis pa mora biti matematika, ne »l i m i t a(x; x; 0)« (AUDIT-071)
+  // Predogled je isti kot ob Izračunaj (kot na main): odvod v točki sredi računa (d/dx(tan(x); π/4)·2) ima vrednost
+  // (AUDIT-055), ukaz, ki ga Izračunaj ne zna (poenostavi(x)+1, 1+integriraj(x)), je napaka casTrailing (zapis vnosa
+  // pa je kljub temu matematika, liveTex); zapis brez rezultata ni »Pritisni =«, če ni enačbe
   if (!cmd && embeddedCmd(text)) {
     const tex = embeddedTex(String(text), env);
-    // odvod v točki sredi računa (d/dx(tan(x); π/4)·2) zna izračunati evaluate: vrednost ostane (AUDIT-055), zapis je lepši
-    if (!/[=<>≤≥]/.test(text)) {
-      let r = null;
-      try {
-        r = withChem(text, evaluate, env);
-      } catch {}
-      if (r && !r.error && Number.isFinite(r.value)) return { kind: "value", ...r, ...(tex ? { tex } : {}) };
-    }
-    if (tex) return { kind: "solve", tex };
+    const r = liveRest(text, env);
+    if (!r || r.error || !tex) return r;
+    if (r.kind === "solve" && (commandInside(text) || !/[=<>≤≥]/.test(text))) return { kind: "tex", tex };
+    return { ...r, tex };
   }
+  return liveRest(text, env);
+}
+
+function liveRest(text, env) {
   if (/[=<>≤≥;]/.test(text) && !functionDef(text)) {
     const r = withChem(text, evaluate, env);
     // ∫(1/√x; 0; 1): v predogledu isto kot ob Izračunaj (»= 2«, ne »≈ 2«)
     if (r && !r.error) return { kind: "value", ...(r.est ? exactIntegral(text, env, r) : r) };
     const tex = withChem(text, previewTex, env);
-    return tex ? { kind: "solve", tex } : null;
+    // »Pritisni = za rešitev« le pri enačbi ali neenačbi; (1; 2) ali nedokončan gcd(12; je samo zapis
+    return tex ? { kind: /[=<>≤≥]/.test(text) ? "solve" : "tex", tex } : null;
   }
   return withChem(text, analyze, env, { live: true });
 }
@@ -400,7 +403,7 @@ function textAtoms(s, hole) {
  * predlogo za dx (ne pred njim). Atomi obdržijo svoje položaje v besedilu (s, e), spremeni se le vrstni red.
  */
 const SUP_CH = /[⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺]/;
-function visualOrder(s, A) {
+function visualOrder(s, A, names = null) {
   const alias = new Map();
   const at = new Map();
   for (const a of A) at.has(a.s) ? at.get(a.s).push(a) : at.set(a.s, [a]);
@@ -447,7 +450,9 @@ function visualOrder(s, A) {
           walk(...g[1]);
           walk(...g[2]);
           walk(...g[0]);
-          out.push({ k: "d", s: c, e: c + 1 }, { k: "x", s: c, e: c + 1 });
+          // zaklepaj je »d x« oziroma »d t« (∫(t²; 0; 2) je po t, AUDIT-085): kazalec na koncu je za dt, ne med d in t
+          const v = intVar(s.slice(...g[0]), names, `${s.slice(...g[1])} ${s.slice(...g[2])}`);
+          out.push({ k: "d", s: c, e: c + 1 }, ...[...(TKEY[v] ?? v)].map((k) => ({ k, s: c, e: c + 1 })));
           moved = true;
           i = c + 1;
           continue;
@@ -661,7 +666,8 @@ export function entryBase(text, env = {}, render = (s) => liveTex(s, env)) {
   } catch {}
   if (!tex) return { ok: false, raw };
   let toks = lex(tex, hole);
-  const { A, alias } = visualOrder(done.text, absBars(done.text, textAtoms(done.text, hole)));
+  const names = new Set([...Object.keys(env.vars || {}), ...Object.keys(env.funcs || {})]);
+  const { A, alias } = visualOrder(done.text, absBars(done.text, textAtoms(done.text, hole)), names);
   let B = texAtoms(toks);
   let to = align(A, B);
   // oklepaj, ki ga je učenec odprl, previewTex pa ga je kot nepotrebnega odstranil, mora ostati viden:
@@ -1113,7 +1119,14 @@ export function stepCaret(base, text, p, d) {
   // prve reže, sredi imena brez oklepaja (»An|s«) ga ni
   const openers = [...t.matchAll(OPENERS_ALL)].map((m) => [m.index, m.index + m[0].length]);
   const fix = (x) => openers.find(([a, b]) => a < x && x < b)?.[1] ?? x;
-  const stops = base?.ok ? [...new Set([0, ...caretStops(base).map((x) => fix(x.p)), t.length])].filter((x) => !wordAround(t, x)).sort((x, y) => x - y) : [];
+  // za zaklepajem limite ali integrala sredi izraza ((limita(x; x; 0)|)²): zapis ga kaže za telesom, a je svoje mesto
+  // (vnos gre za ukaz, ne v telo); caretStops ga kot preslikan položaj izpusti
+  const after = [];
+  for (const m of t.matchAll(/(?<![A-Za-zčšž])(?:limita|limit|lim|integriraj|integrate)\s*\(/gi)) {
+    const c = closeAt(t, m.index + m[0].length - 1);
+    if (c >= 0 && c + 1 < t.length) after.push(c + 1);
+  }
+  const stops = base?.ok ? [...new Set([0, ...caretStops(base).map((x) => fix(x.p)), ...after, t.length])].filter((x) => !wordAround(t, x)).sort((x, y) => x - y) : [];
   if (stops.length) {
     const next = d > 0 ? stops.find((x) => x > p) : [...stops].reverse().find((x) => x < p);
     return next ?? (d > 0 ? Math.max(p, stops.at(-1)) : Math.min(p, stops[0]));
@@ -1354,18 +1367,24 @@ function texSemis(tex) {
 }
 
 // največ »;« v predlogi (reže − 1); brez imena (navaden oklepaj, točka, matrika) in seznami niso omejeni
-const SEMIS_MAX = { "∫": 2, "d/dx": 1, integriraj: 1, limita: 2, taylor: 3, reši: 1, resi: 1, nCr: 1, nPr: 1, gcd: Infinity, lcm: Infinity, mod: 1, round: 1, randint: 1, Pol: 1, Rec: 1, root: 1, logb: 1, mean: Infinity, median: Infinity, stdev: Infinity, stdevp: Infinity, min: Infinity, max: Infinity, total: Infinity };
+const SEMIS_MAX = { "∫": 2, "d/dx": 1, integriraj: 1, integrate: 1, limita: 2, limit: 2, lim: 2, taylor: 3, reši: 1, resi: 1, solve: 1, inverz: 0, inverse: 0, inv: 0, det: 0, nCr: 1, nPr: 1, gcd: Infinity, lcm: Infinity, mod: 1, round: 1, randint: 1, Pol: 1, Rec: 1, root: 1, logb: 1, mean: Infinity, median: Infinity, stdev: Infinity, stdevp: Infinity, min: Infinity, max: Infinity, total: Infinity };
 // ali sme »;« na mestu s: v najbolj notranji skupini, ki jo predloga dovoli (∫ ima 3 reže, sin, √ in xʸ eno)
-function semiAllowed(t, s) {
+// najbolj notranja odprta skupina okoli s: { o, name } (name: ime predloge pred oklepajem, »« za [ ali navaden oklepaj)
+function innerGroup(t, s) {
   const st = [];
   for (let i = 0; i < s; i++) {
     if (OPENERS.includes(t[i])) st.push(i);
     else if (CLOSERS.includes(t[i])) st.pop();
   }
-  if (!st.length) return true;
+  if (!st.length) return null;
   const o = st.at(-1);
-  if (t[o] === "[") return true;
-  const name = /(∫|d\/dx|[∑∏]_|\^|[√∛]|[A-Za-zčšžČŠŽ]+)\s*$/u.exec(t.slice(0, o))?.[1];
+  if (t[o] === "[") return { o, name: "" };
+  return { o, name: /(∫|d\/dx|[∑∏]_|\^|[√∛]|[A-Za-zčšžČŠŽ]+)\s*$/u.exec(t.slice(0, o))?.[1] || "" };
+}
+function semiAllowed(t, s) {
+  const g = innerGroup(t, s);
+  if (!g) return true;
+  const { o, name } = g;
   if (!name) return true;
   const max = SEMIS_MAX[name] ?? 0;
   const now = Number(groupsAt(t, o + 1).split(",").at(-1).split(":")[1]);
@@ -1386,7 +1405,8 @@ function nextSlot(t, s) {
       else d--;
     } else if (c === ";" && d === 0) {
       let p = j + 1;
-      while (t[p] === " ") p++;
+      // v naslednjo vrstico matrike: kazalec gre v njeno prvo celico (det([[1; 2]; [|; ]]), ne pred »[«
+      while (t[p] === " " || (t[p] === "[" && level > 0)) p++;
       if (level === 0) out.inner = p;
       else out.outer = p;
       break;
@@ -1408,8 +1428,22 @@ export function pressKey(text, s, ins, env = {}, { render, check } = {}) {
   if (ins === ")" || ins === "]") {
     if (t[s] === ins) return { text: t, pos: s + 1 };
     const g = groupsAt(t, s).split(",").filter(Boolean).at(-1);
-    if (!g || g.endsWith(":true")) return null; // ni odprte skupine ali je že zaprta
-    if (t[Number(g.split(":")[0])] !== (ins === ")" ? "(" : "[")) return null; // ] ne zapre (
+    // zaklepaj brez odprtega oklepaja (x+1 nato »)«) gre noter kot na main
+    if (!g) return insertKey(t, s, ins);
+    const [o, sep, closed] = g.split(":");
+    if (t[Number(o)] !== (ins === ")" ? "(" : "[")) return null; // ] ne zapre (
+    if (closed === "true") {
+      // skupina je že zaprta, ker je tipka »(« ali »√(« pred vsebino reže zaklepaj dodala sama na konec reže
+      // (√(|2+3×4) + ( → √((2+3×4))): zaklepaj se premakne na kazalec (√((2+3)×4), kot na main). Zaklepaj predloge
+      // z več režami (∫(x+1|;0;1)) ali skupine, za katero sledi še kaj (√((2+3×4)+5)), se ne premakne.
+      if (sep !== "0") return null;
+      const c = closeAt(t, Number(o));
+      let n = c + 1;
+      while (/\s/.test(t[n] ?? "")) n++;
+      if (c < 0 || !(n >= t.length || ";)]".includes(t[n]))) return null;
+      const moved = { text: t.slice(0, s) + ins + t.slice(s, c) + t.slice(c + 1), pos: s + 1 };
+      return keyGuard(t, moved, env, render, check);
+    }
     return keyGuard(t, insertKey(t, s, ins), env, render, check);
   }
   // »;« v predlogi: v naslednjo režo, če jo predloga že ima (∫(x|;;) → ∫(x;|;), kot ▶); sicer nova reža, kjer jo
@@ -1418,6 +1452,13 @@ export function pressKey(text, s, ins, env = {}, { render, check } = {}) {
     const next = nextSlot(t, s);
     if (next.inner >= 0) return { text: t, pos: next.inner };
     if (!semiAllowed(t, s)) return next.outer >= 0 ? { text: t, pos: next.outer } : null;
+    // v [ ali navadnem oklepaju (matrika na roko det([[1; 2]; …]), točka (1; 2)) je »;« ločilo, ki ga zapis pokaže:
+    // eno surovo ločilo več je dovoljeno; če se zapis ne izriše, gre kazalec v naslednjo režo zunanje predloge (kot ▶)
+    const g = innerGroup(t, s);
+    if (g && !g.name) {
+      const r = keyGuard(t, insertKey(t, s, ins), env, render, check, 1);
+      return r || (next.outer >= 0 ? { text: t, pos: next.outer } : null);
+    }
   }
   const r = insertKey(t, s, ins);
   // števka, črka ali operator: le varovalo izrisa (»0|,5« + x → 0x,5 ni zapis; AUDIT-071), reže se ne preverjajo
@@ -1428,7 +1469,7 @@ export function pressKey(text, s, ins, env = {}, { render, check } = {}) {
 }
 
 // r, če se zapis po njem izriše brez surovih ločil (in ga je bilo pred njim mogoče izrisati); sicer null
-function keyGuard(t, r, env, render, check) {
+function keyGuard(t, r, env, render, check, extraSemis = 0) {
   let b0 = null;
   let b = null;
   try {
@@ -1436,7 +1477,7 @@ function keyGuard(t, r, env, render, check) {
     b = entryBase(r.text, env, render);
   } catch {}
   if (t.trim() && !(b0?.ok && !/;;\)|undefined/.test(b0.tex))) return r;
-  if (!b?.ok || /;;\)|undefined/.test(b.tex) || texSemis(b.tex) > texSemis(b0?.tex)) return null;
+  if (!b?.ok || /;;\)|undefined/.test(b.tex) || texSemis(b.tex) > texSemis(b0?.tex) + extraSemis) return null;
   // izris v pravem KaTeX (kalkulator poda check): »(x+1)°^(2)« je dvojni eksponent
   if (check && !check(caretTex(b, r.pos))) return null;
   return r;
