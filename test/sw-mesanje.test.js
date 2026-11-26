@@ -91,15 +91,22 @@ async function installOld(ctx, base) {
 
 const opts = { skip: chromium ? false : "Playwright Chromium ni nameščen", timeout: 120000 };
 
-test("po objavi: prvo odprtje je nova vstopna stran z novim app.js, leni modul tudi nov (brez mešanja)", opts, async () => {
+// N-08b (j 26. 11. 2026): shranjena vstopna stran se odpre takoj, zato je prvo odprtje po objavi lahko še stara
+// stran (s starim app.js, brez mešanja), ki se v nekaj sekundah sama osveži v novo (public/app.js reloadOnceFor).
+const novaStran = (p) =>
+  p.waitForFunction(() => document.documentElement.outerHTML.includes("NOVA") && window.__evklidNova === 1, null, { timeout: 20000, polling: 200 });
+
+test("po objavi: stran se v nekaj sekundah sama odpre v novi različici z novim app.js, leni modul tudi nov (brez mešanja)", opts, async () => {
   await withDeploy(async (base, state) => {
     const ctx = await chromium.newContext({ serviceWorkers: "allow" });
     try {
       const p = await installOld(ctx, base);
       state.mode = "nova";
       await p.goto(base + "/");
-      assert.equal(await p.evaluate(() => document.documentElement.outerHTML.includes("NOVA")), true, "nova vstopna stran");
-      await p.waitForFunction(() => window.__evklidNova === 1, null, { timeout: 15000 });
+      // stara stran (če se pokaže) izvaja stari app.js: nova vstopna stran nikoli brez novega app.js
+      const mesano = await p.evaluate(() => document.documentElement.outerHTML.includes("NOVA") !== (window.__evklidNova === 1) && document.readyState === "complete");
+      assert.equal(mesano, false, "vstopna stran in app.js iste različice");
+      await novaStran(p);
       await p.waitForTimeout(3000); // nov service worker se medtem namesti in prevzame stran
       assert.equal(await p.evaluate(() => fetch("/graph/tools.js").then((r) => r.text()).then((t) => t.includes("//NOVA"))), true, "leni modul nove različice");
       assert.equal(await p.evaluate(() => window.__evklidNova), 1, "stran izvaja novi app.js (ni mešanice)");
@@ -111,15 +118,14 @@ test("po objavi: prvo odprtje je nova vstopna stran z novim app.js, leni modul t
 
 // Pregled A2 P1-1: bližnjice ikone (/?pogled=), koda razreda (/?koda=), vir (/?ref=) po objavi.
 for (const q of ["/?pogled=chat", "/?koda=ABC123"]) {
-  test(`po objavi, vstop s poizvedbo ${q}: nova stran z novim app.js (brez mešanja)`, opts, async () => {
+  test(`po objavi, vstop s poizvedbo ${q}: v nekaj sekundah nova stran z novim app.js (brez mešanja)`, opts, async () => {
     await withDeploy(async (base, state) => {
       const ctx = await chromium.newContext({ serviceWorkers: "allow" });
       try {
         const p = await installOld(ctx, base);
         state.mode = "nova";
         await p.goto(base + q);
-        assert.equal(await p.evaluate(() => document.documentElement.outerHTML.includes("NOVA")), true, "nova vstopna stran");
-        await p.waitForFunction(() => window.__evklidNova === 1, null, { timeout: 15000 });
+        await novaStran(p);
       } finally {
         await ctx.close();
       }

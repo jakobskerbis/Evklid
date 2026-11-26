@@ -82,6 +82,9 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
   (`SEJA_POZNEJE`), so v `<template data-evklid-slogi>` do konca zagona (`withSessionStyles`); skener, zbirke in lige
   (`ZASLONI_POZNEJE`) app.js naloži po zagonu (`lenModul`, `zasloniPozneje`). Pasici sta znani iz `/api/config`.
   Izklop: `EVKLID_ZACETNI_PODATKI=0`. Test `test/zacetni-podatki.test.js`.
+- Vstopna stran iz predpomnilnika (N-08b, j 26. 11. 2026): kopija različice service workerja se odpre takoj
+  (`public/sw.js entryPage`), omrežje jo preveri v ozadju po 3 s (`revalidateEntry`: osebna stran se prekine ob glavah,
+  javna se shrani, nova različica pobriše stare kopije, 401 prijave z geslom pobriše kopijo). Prej je čakala omrežje do 1 s.
 - Ponovni obisk prijavljenega (N-08, 25. 11. 2026): service worker postreže shranjeno vstopno stran (brez začetnih
   podatkov, ker je osebna stran `no-store`), zato `zacetek.js` (`vnaprejPaket`, samo ko stran nadzira service worker,
   podatkov v strani ni in je bila naprava že prijavljena, `evklid.racun`; brez računov ni klica) iste podatke zahteva v enem klicu `GET /api/zacetni-podatki` (`zacetniPodatkiKlic`: isti

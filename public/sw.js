@@ -53,11 +53,13 @@ async function storePublicLesson(id) {
 }
 // Odgovor, ki ga strežnik označi kot zaseben, se ne shrani (tudi na javni poti).
 const privateRes = (res) => /no-store|private/i.test(res.headers.get("cache-control") || "");
-// Vstopna stran čaka omrežje največ 1 s (prej 2,5 s; j 2026-11-10, hiter zagon; 0,4 s je pri počasni povezavi
-// po objavi preveč pogosto dala staro kopijo in samodejno osvežitev; pregled #560): ob počasni ali šele vzpostavljeni
-// povezavi telefona se takoj odpre shranjena stran iste različice. Če strežnik medtem že ima novo različico, jo
-// odgovor v ozadju shrani, stran pa se sama osveži (public/app.js reloadOnceFor), kot prej po 2,5 s.
+// Vstopna stran (N-08b, j 26. 11. 2026 »Vse tri«, namesto pravila 10. 11. »čaka omrežje do 1 s«): shranjena kopija
+// različice tega service workerja se odpre takoj, brez čakanja omrežja (entryPage). Omrežje jo preveri v ozadju
+// (ENTRY_PREVERI ms po odprtju, da ne tekmuje z zagonom); če ima strežnik novo različico, se stran sama enkrat osveži
+// s posnetkom zaslona (public/app.js reloadOnceFor, zacetek.js PRENOS). Brez take kopije (prvi obisk, druga različica,
+// zastarelo) vstopna stran čaka omrežje največ 1 s (entry), nato shranjeno kopijo.
 const TIMEOUT = { entry: 1000, static: 4000, api: 7000 };
+const ENTRY_PREVERI = 3000;
 // Strežnik je objavil novo različico datotek (vstopna stran z drugačno X-Evklid-App): stare kopije niso več sveže.
 let outdated = false;
 // Odprte strani in različica, ki jo izvajajo (clientId → APP strani; sporočilo »page-app«). Ob ponovnem zagonu
@@ -283,6 +285,39 @@ async function networkFirst(req, cacheName, ms, { entry = false, page = "", onPa
   }
 }
 
+// Vstopna stran: kopija različice tega service workerja takoj (stale-while-revalidate, N-08b), sicer networkFirst.
+// Preverjanje v ozadju (revalidateEntry) je zahteva brez navigacije: osebna stran (no-store, Učna pot strežnika) se
+// prekine že ob glavah (brez prenosa telesa na počasni povezavi), javna se shrani kot nova kopija; nova različica na
+// strežniku (glava STAMP) pobriše stare kopije, prijava z geslom (401, server/gate.js) pobriše kopijo vstopne strani,
+// da naslednje odprtje pokaže prijavo (sicer bi kopija vedno obšla prijavo in klici API bi vračali 401).
+async function entryPage(req, onPage, waitUntil) {
+  const cache = await caches.open(STATIC);
+  const hit = APP && !outdated ? await cache.match(ENTRY) : null;
+  if (!hit || hit.headers.get(STAMP) !== APP) return networkFirst(req, STATIC, TIMEOUT.entry, { entry: true, onPage });
+  onPage(APP);
+  waitUntil(revalidateEntry(cache));
+  return hit;
+}
+async function revalidateEntry(cache) {
+  await new Promise((r) => setTimeout(r, ENTRY_PREVERI));
+  const ctl = new AbortController();
+  try {
+    const res = await fetch(new URL(ENTRY, self.location.origin).href, { credentials: "same-origin", headers: { Accept: "text/html" }, signal: ctl.signal });
+    if (tunnelDown(res)) return ctl.abort();
+    const v = noteVersion(res);
+    if (res.status === 401) {
+      ctl.abort();
+      return cache.delete(ENTRY);
+    }
+    if (v && v !== APP) {
+      ctl.abort();
+      return dropStale(v);
+    }
+    if (!res.ok || res.type !== "basic" || privateRes(res)) return ctl.abort();
+    await put(cache, ENTRY, res);
+  } catch {}
+}
+
 // Nov poskus uvoza po napaki (?r=, public/app.js, games/subjects/index.js) je ista datoteka: shranimo in iščemo jo
 // brez r, da jo naslednji zagon brez povezave (uvoz brez ?r=) najde v predpomnilniku.
 function appFileKey(req) {
@@ -375,7 +410,7 @@ self.addEventListener("fetch", (e) => {
     else pages.delete(id);
   };
   if (entry) {
-    e.respondWith(networkFirst(req, STATIC, TIMEOUT.entry, { entry: true, onPage }));
+    e.respondWith(entryPage(req, onPage, (p) => e.waitUntil(p)));
     return;
   }
   if (APP_FILE.test(url.pathname) && req.mode !== "navigate") {
