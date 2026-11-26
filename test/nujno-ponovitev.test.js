@@ -3,6 +3,7 @@
 // števci za lastnika in zaprte vrzeli (»Razloži podrobneje«, dnevna in mesečna meja z računi).
 import test, { after } from "node:test";
 import assert from "node:assert/strict";
+import { APIConnectionError, APIConnectionTimeoutError, BadRequestError } from "@anthropic-ai/sdk";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import {
@@ -21,6 +22,9 @@ import {
   VAROVALKA,
   ROK_MS,
   ROK_PONOVITVE_MS,
+  OSTANEK_ZA_PONOVITEV_MS,
+  NEPREGLEDANO_ALARM_MS,
+  jeNapakaPovezave,
 } from "../server/nujno.js";
 
 const pocakaj = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -217,6 +221,141 @@ test("varnostniPregled ostane en sam poskus (živi preizkus filtra): brez ponovi
   assert.equal(usage.kv.has(STEVCI_KV), false);
 });
 
+// ---------------------------------------------------------------------------
+// 1b. Napaka povezave (U1, j 26. 11.): en takojšen ponovni klic v istem roku prvega poskusa
+
+const SKRIVNOST = "skrivnost-ki-ne-sme-v-dnevnik";
+const povezava = () => new APIConnectionError({ message: `Connection error. ${SKRIVNOST}`, cause: Object.assign(new Error(`socket hang up ${SKRIVNOST}`), { code: "ECONNRESET" }) });
+// Lažni pregled, ki vrže napake iz seznama (po vrsti), nato odgovori z `potem`.
+function napakePotem(napake, potem = "STISKA") {
+  const fn = async (body, ms) => {
+    fn.klici.push(ms);
+    const e = napake[fn.klici.length - 1];
+    if (e) throw e();
+    return odgovor(potem);
+  };
+  fn.klici = [];
+  return fn;
+}
+async function zDnevnikom(f) {
+  const opozorila = [];
+  const prej = console.warn;
+  console.warn = (...a) => opozorila.push(a.join(" "));
+  try {
+    await f();
+  } finally {
+    console.warn = prej;
+  }
+  return opozorila;
+}
+const CASI_POVEZAVA = { rokMs: 5000, rokPonovitveMs: 300, premorMs: 0 };
+
+test("povezava: kaj je napaka povezave (ne rok, ne 4xx/5xx)", () => {
+  assert.equal(jeNapakaPovezave(povezava()), true);
+  assert.equal(jeNapakaPovezave(Object.assign(new Error("socket hang up"), { code: "ECONNRESET" })), true);
+  assert.equal(jeNapakaPovezave(new Error("socket hang up")), false, "brez kode samo po besedilu vzroka, ne napake same");
+  assert.equal(jeNapakaPovezave(new Error("x", { cause: new Error("socket hang up") })), true);
+  assert.equal(jeNapakaPovezave(new APIConnectionTimeoutError()), false, "rok ni napaka povezave");
+  assert.equal(jeNapakaPovezave(new BadRequestError(400, { type: "error" }, "bad", new Headers())), false);
+  assert.equal(jeNapakaPovezave(Object.assign(new Error("529 overloaded"), { status: 529 })), false);
+  assert.equal(jeNapakaPovezave(null), false);
+});
+
+test("povezava: napaka povezave enkrat → takojšen ponovni klic v istem roku → zadetek prvega poskusa; v dnevniku razred in koda, ne besedilo", async () => {
+  const usage = fakeUsage();
+  const fn = napakePotem([povezava]);
+  let a;
+  const t0 = Date.now();
+  const dnevnik = await zDnevnikom(async () => {
+    a = pregledSPonovitvijo({ text: `pomagaj ${SKRIVNOST}`, usage, studentId: 7, createFn: fn, varovalka: false, casi: CASI_POVEZAVA });
+    assert.deepEqual(await a.prvi, { vrsta: "stiska", izid: "ok" });
+  });
+  assert.ok(Date.now() - t0 < CASI_POVEZAVA.rokMs, "v istem roku");
+  assert.equal(await a.pozno, null, "ponovitve v ozadju ni");
+  assert.equal(fn.klici.length, 2);
+  assert.equal(fn.klici[0], CASI_POVEZAVA.rokMs);
+  assert.ok(fn.klici[1] <= CASI_POVEZAVA.rokMs && fn.klici[1] >= OSTANEK_ZA_PONOVITEV_MS, `rok drugega klica je ostanek: ${fn.klici[1]}`);
+  assert.deepEqual(samo(danes(usage)), {}, "uspel prvi poskus ni ne napaka ne nepregledano");
+  assert.equal(usage.logs.length, 1);
+  assert.ok(dnevnik.some((o) => /napaka povezave \(APIConnectionError ECONNRESET\)/.test(o)), dnevnik.join("\n"));
+  assert.ok(dnevnik.every((o) => !o.includes(SKRIVNOST)), "ne besedilo napake ne sporočila");
+  // Enako za živi preizkus filtra (varnostniPregled: samo prvi poskus).
+  const fn2 = napakePotem([() => Object.assign(new Error("read ECONNRESET"), { code: "ECONNRESET" })], "NASILJE");
+  await zDnevnikom(async () => assert.equal(await varnostniPregled({ text: "x", usage, studentId: 1, createFn: fn2, varovalka: false }), "nasilje"));
+  assert.equal(fn2.klici.length, 2);
+});
+
+test("povezava: 4xx, 5xx in rok nimajo takojšnje ponovitve (ponovitev v ozadju kot doslej)", async () => {
+  for (const [napaka, izid] of [
+    [() => new BadRequestError(400, { type: "error" }, "bad", new Headers()), "napaka"],
+    [() => Object.assign(new Error("529 overloaded"), { status: 529 }), "napaka"],
+    [() => new APIConnectionTimeoutError(), "rok"],
+  ]) {
+    const usage = fakeUsage();
+    const fn = napakePotem([napaka], "NE");
+    let a;
+    await zDnevnikom(async () => {
+      a = pregledSPonovitvijo({ text: "x", usage, studentId: 7, createFn: fn, varovalka: false, casi: CASI_POVEZAVA });
+      assert.deepEqual(await a.prvi, { vrsta: null, izid });
+      assert.deepEqual(await a.pozno, { vrsta: null, izid: "ok" });
+    });
+    // Roki klicev: prvi poskus (5000) in ponovitev v ozadju (300); takojšnja ponovitev bi imela ostanek prvega roka.
+    assert.deepEqual(fn.klici, [CASI_POVEZAVA.rokMs, CASI_POVEZAVA.rokPonovitveMs], `${izid}: prvi poskus brez takojšnje ponovitve`);
+    assert.deepEqual(samo(danes(usage)), { [izid]: 1, ponovitve: 1 });
+  }
+});
+
+test("povezava: dve napaki povezave → kot doslej (napaka, ena ponovitev v ozadju brez takojšnje); premalo roka → brez takojšnje", async () => {
+  const usage = fakeUsage();
+  const fn = napakePotem([povezava, povezava, povezava]);
+  let a;
+  const dnevnik = await zDnevnikom(async () => {
+    a = pregledSPonovitvijo({ text: "x", usage, studentId: 7, createFn: fn, varovalka: false, casi: CASI_POVEZAVA });
+    assert.deepEqual(await a.prvi, { vrsta: null, izid: "napaka" });
+    assert.deepEqual(await a.pozno, { vrsta: null, izid: "napaka" });
+  });
+  // Prvi poskus: klic in takojšnja ponovitev z ostankom roka; ponovitev v ozadju ena sama (brez takojšnje).
+  assert.equal(fn.klici.length, 3);
+  assert.equal(fn.klici[0], CASI_POVEZAVA.rokMs);
+  assert.ok(fn.klici[1] <= CASI_POVEZAVA.rokMs && fn.klici[1] >= OSTANEK_ZA_PONOVITEV_MS, `ostanek roka: ${fn.klici[1]}`);
+  assert.equal(fn.klici[2], CASI_POVEZAVA.rokPonovitveMs);
+  assert.deepEqual(samo(danes(usage)), { napaka: 1, ponovitve: 1, nepregledano: 1 });
+  assert.ok(dnevnik.some((o) => /ni uspel: APIConnectionError ECONNRESET/.test(o)));
+  assert.ok(dnevnik.every((o) => !o.includes(SKRIVNOST)));
+  // Od roka ostane manj kot OSTANEK_ZA_PONOVITEV_MS: brez takojšnje ponovitve.
+  const pocasna = async (body, ms) => {
+    pocasna.klici.push(ms);
+    await pocakaj(250);
+    throw povezava();
+  };
+  pocasna.klici = [];
+  const u2 = fakeUsage();
+  const rokMs = OSTANEK_ZA_PONOVITEV_MS + 100;
+  await zDnevnikom(async () => {
+    const b = pregledSPonovitvijo({ text: "x", usage: u2, studentId: 7, createFn: pocasna, varovalka: false, casi: { rokMs, rokPonovitveMs: 300, premorMs: 0 } });
+    assert.deepEqual(await b.prvi, { vrsta: null, izid: "napaka" });
+    await b.pozno;
+  });
+  assert.deepEqual(pocasna.klici, [rokMs, 300], "prvi poskus brez takojšnje ponovitve, nato ponovitev v ozadju");
+});
+
+test("stanje: nepregledanoZadnjoUro je true samo prvo uro po nepregledanem sporočilu (alarm »varnost«)", () => {
+  const usage = fakeUsage();
+  assert.equal(varnostStanje(usage).nepregledanoZadnjoUro, false);
+  stej(usage, "nepregledano");
+  const zdaj = Date.now();
+  assert.equal(varnostStanje(usage, zdaj).nepregledanoZadnjoUro, true);
+  assert.equal(varnostStanje(usage, zdaj + NEPREGLEDANO_ALARM_MS + 60e3).nepregledanoZadnjoUro, false, "starejše od ure ni alarm");
+  assert.match(varnostStanje(usage).zadnjeNepregledano, /^\d{4}-\d\d-\d\d$/, "javno ostane samo datum");
+  const u2 = fakeUsage();
+  stej(u2, "brez_dobroimetja");
+  assert.equal(varnostStanje(u2).nepregledanoZadnjoUro, true, "tudi brez dobroimetja sporočilo ostane nepregledano");
+  const u3 = fakeUsage();
+  stej(u3, "napaka");
+  stej(u3, "rok");
+  assert.equal(varnostStanje(u3).nepregledanoZadnjoUro, false, "napaka prvega poskusa sama ni alarm");
+});
+
 test("števci: šifriran zapis z vsemi ključi vsak dan, 60 dni, neznano ime se ne zapiše; poročili za stanje in skrbnika", async () => {
   const usage = fakeUsage();
   stej(usage, "rok");
@@ -236,7 +375,7 @@ test("števci: šifriran zapis z vsemi ključi vsak dan, 60 dni, neznano ime se 
     assert.deepEqual(samo(danes(u)), { napaka: 1, pozni_zadetki: 1 });
     // Javno stanje: samo rok, napaka in nepregledano; nič o zadetkih.
     const javno = varnostStanje(u);
-    assert.deepEqual(Object.keys(javno).sort(), ["danes", "vceraj", "vklopljen", "zadnjeNepregledano"]);
+    assert.deepEqual(Object.keys(javno).sort(), ["danes", "vceraj", "vklopljen", "zadnjeNepregledano", "nepregledanoZadnjoUro"].sort());
     assert.deepEqual(javno.danes, { rok: 0, napaka: 1, nepregledano: 0 });
     assert.ok(!/zadet|pozn/.test(JSON.stringify(javno)));
     // Skrbnik: vsi števci 7 dni, najnovejši prvi.

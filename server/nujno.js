@@ -12,6 +12,9 @@
 //    toku, če je še odprt, sicer ob naslednjem odgovoru temu učencu (vrstaPoznihOken, samo v pomnilniku). Če ne uspe
 //    niti ponovitev, okna NI (izpad ponudnika ne sme sprožati lažnih alarmov); sporočilo se šteje kot nepregledano.
 //    Števci po dnevih (rok, napaka, pozni zadetki, nepregledano): stej, varnostStanje, varnostPorocilo.
+// 5. Napaka povezave (j 26. 11., U1 možnost a): prvi poskus ob APIConnectionError, ECONNRESET ali »socket hang up«
+//    takoj poskusi še enkrat v istem roku ROK_MS (ne ob roku, ne ob odgovoru 4xx/5xx). V dnevnik gre samo razred
+//    napake in koda vzroka, nikoli besedilo napake ali sporočila. /healthz/alarm ima kodo »varnost« (server/zdravje.js).
 import { getClient, isMockMode, quickParams } from "./claude.js";
 import { zaznajNujno, stevilke } from "../public/nujno.js";
 import { sealJson, unsealJson } from "./crypto-polje.js";
@@ -20,13 +23,16 @@ const env = (k, d) => (process.env[k] === undefined || process.env[k] === "" ? d
 export const VAROVALKA = Number(env("EVKLID_VARNOST_NA_DAN", 10));
 // Vedno najcenejši model (kartica: Haiku), tudi če je EVKLID_MODEL za inštruktorja večji (pregled A S1).
 export const MODEL_VARNOST = env("EVKLID_VARNOST_MODEL", "claude-haiku-5-5");
-// Učenec ob zavrnitvi ne sme čakati: kratek rok, brez ponovitev (pregled A V4). Velja za prvi poskus, na katerega
-// učenec čaka; ponovitev spodaj teče v ozadju in nikogar ne zadržuje.
+// Učenec ob zavrnitvi ne sme čakati: kratek rok, brez ponovitev SDK (pregled A V4); samo ob napaki povezave en
+// takojšen ponovni klic znotraj istega roka (5. zgoraj). Velja za prvi poskus, na katerega učenec čaka; ponovitev
+// spodaj teče v ozadju in nikogar ne zadržuje.
 export const ROK_MS = 5000;
 // En ponovni poskus v ozadju po roku ali napaki prvega: daljši rok (počasen ponudnik), spet brez ponovitev SDK.
 export const ROK_PONOVITVE_MS = 20000;
 // Po napaki (preobremenjen ponudnik, omejitev hitrosti, omrežje) kratek premor pred ponovitvijo; po roku je čakanja že dovolj.
 export const PREMOR_PONOVITVE_MS = 2000;
+// Takojšnja ponovitev ob napaki povezave (5. zgoraj) samo, če od roka poskusa ostane vsaj toliko.
+export const OSTANEK_ZA_PONOVITEV_MS = 1000;
 // Pozno okno čaka na naslednji odgovor učencu največ toliko (samo v pomnilniku; po tem času ne bi bilo več v zvezi s pogovorom).
 export const POZNO_VELJA_MS = 60 * 60 * 1000;
 // Odgovor je ena beseda (najdaljša NEVARNOST ~4 žetone), zato nizka meja izhoda: krajše čakanje, nižja rezerva.
@@ -96,6 +102,20 @@ export function pregledovDanes(usage, studentId) {
 
 // Rok ponudnika (SDK: APIConnectionTimeoutError »Request timed out.«) ali druga napaka klica.
 const jeRok = (err) => /timeout|timed out/i.test(`${err?.name} ${err?.message}`);
+// Napaka povezave (SDK APIConnectionError brez statusa, ali surova ECONNRESET / »socket hang up«), ne rok in ne
+// odgovor ponudnika s statusom (4xx, 5xx). APIConnectionTimeoutError je podrazred APIConnectionError, zato najprej jeRok.
+export function jeNapakaPovezave(err) {
+  if (!err || jeRok(err) || err.status != null) return false;
+  if (err.name === "APIConnectionError" || err.constructor?.name === "APIConnectionError") return true;
+  return /ECONNRESET|socket hang up/i.test(`${err.code} ${err.cause?.code} ${err.cause?.message}`);
+}
+// Za dnevnik: razred napake, status in koda vzroka (npr. »APIConnectionError ECONNRESET«); nikoli besedilo napake,
+// ki bi lahko nosilo podrobnosti zahteve.
+export function opisNapake(err) {
+  const razred = String(err?.constructor?.name && err.constructor.name !== "Object" ? err.constructor.name : err?.name || typeof err).replace(/[^\w.-]/g, "").slice(0, 40);
+  const koda = String(err?.cause?.code || err?.code || "").replace(/[^\w.-]/g, "").slice(0, 30);
+  return [razred, err?.status, koda].filter((x) => x != null && x !== "").join(" ");
+}
 
 /**
  * En poskus kratkega varnostnega pregleda z AI, z izidom. Vrne { vrsta, izid, razlog? }:
@@ -103,9 +123,11 @@ const jeRok = (err) => /timeout|timed out/i.test(`${err?.name} ${err?.message}`)
  * razbrati), "rok" in "napaka" (ponudnik ni odgovoril), "preskok" (klica ni bilo: razlog "mock", "dobroimetje" ali
  * "varovalka") ali "brez" (ni besedila).
  * varovalka=false (pregled vsakega sporočila pod mejo, ponovitev): brez dnevne varovalke in brez štetja vanjo.
- * @param {{ text: string, usage: object, studentId: number, createFn?: Function, varovalka?: boolean, rokMs?: number }} a
+ * povezava=true: ob napaki povezave (jeNapakaPovezave) en takojšen ponovni klic v istem roku rokMs, če ostane vsaj
+ * OSTANEK_ZA_PONOVITEV_MS (prvi poskus; ponovitev v ozadju ima svoj premor in je ne podvaja). createFn(body, rokMs).
+ * @param {{ text: string, usage: object, studentId: number, createFn?: Function, varovalka?: boolean, rokMs?: number, povezava?: boolean }} a
  */
-export async function pregledIzid({ text, usage, studentId, createFn = null, varovalka = true, rokMs = ROK_MS }) {
+export async function pregledIzid({ text, usage, studentId, createFn = null, varovalka = true, rokMs = ROK_MS, povezava = true }) {
   if (!text || !usage || studentId == null) return { vrsta: null, izid: "brez" };
   if (!createFn && isMockMode()) return { vrsta: null, izid: "preskok", razlog: "mock" };
   // Dobroimetje za AI porabljeno: klic bi zagotovo padel (pregled A V4).
@@ -116,14 +138,24 @@ export async function pregledIzid({ text, usage, studentId, createFn = null, var
     usage.kvSet(kljuc(studentId), pregledovDanes(usage, studentId) + 1);
   }
   try {
-    const create = createFn || ((body) => getClient().messages.create(body, { timeout: rokMs, maxRetries: 0 }));
-    const out = await create({
+    const create = createFn || ((body, ms) => getClient().messages.create(body, { timeout: ms, maxRetries: 0 }));
+    const body = {
       model: MODEL_VARNOST,
       max_tokens: MAX_TOKENS,
       ...quickParams(MODEL_VARNOST),
       system: NAVODILO,
       messages: [{ role: "user", content: ovij(text) }],
-    });
+    };
+    const t0 = Date.now();
+    let out;
+    try {
+      out = await create(body, rokMs);
+    } catch (err) {
+      const ostane = rokMs - (Date.now() - t0);
+      if (!povezava || !jeNapakaPovezave(err) || ostane < OSTANEK_ZA_PONOVITEV_MS) throw err;
+      console.warn(`[evklid] varnostni pregled: napaka povezave (${opisNapake(err)}), takojšen ponovni poskus v istem roku (še ${ostane} ms)`);
+      out = await create(body, ostane);
+    }
     // Strošek aplikacije (student_id NULL), ne učenca; vrsta »varnost« v Števcu porabe (tudi ponovitev v ozadju).
     // Napaka zapisa porabe ne sme zavreči zadetka.
     try {
@@ -140,7 +172,7 @@ export async function pregledIzid({ text, usage, studentId, createFn = null, var
     // Čez mejo raje lažni alarm; pri pregledu vsakega sporočila (B) neznan odgovor ne odpre okna.
     return { vrsta: varovalka ? "zdravje" : null, izid: "neznano" };
   } catch (err) {
-    console.warn(`[evklid] varnostni pregled ni uspel: ${err?.message || err}`);
+    console.warn(`[evklid] varnostni pregled ni uspel: ${opisNapake(err)}`);
     return { vrsta: null, izid: jeRok(err) ? "rok" : "napaka" };
   }
 }
@@ -227,7 +259,8 @@ const pocakaj = (ms) => new Promise((r) => setTimeout(r, ms).unref?.());
  */
 export function pregledSPonovitvijo({ text, usage, studentId, createFn = null, varovalka = true, casi = null }) {
   const c = { rokMs: ROK_MS, rokPonovitveMs: ROK_PONOVITVE_MS, premorMs: PREMOR_PONOVITVE_MS, ...casi };
-  const poskus = (v, rokMs, ozadje) => zRokom(pregledIzid({ text, usage, studentId, createFn, varovalka: v, rokMs }), rokMs, ozadje).catch(() => ({ vrsta: null, izid: "napaka" }));
+  // Takojšnja ponovitev ob napaki povezave (povezava) samo v prvem poskusu; ponovitev v ozadju je že ponovitev.
+  const poskus = (v, rokMs, ozadje) => zRokom(pregledIzid({ text, usage, studentId, createFn, varovalka: v, rokMs, povezava: !ozadje }), rokMs, ozadje).catch(() => ({ vrsta: null, izid: "napaka" }));
   const prvi = poskus(varovalka, c.rokMs, false).then((r) => {
     if (r.izid === "rok" || r.izid === "napaka" || r.izid === "neznano") stej(usage, r.izid);
     else if (r.izid === "preskok" && r.razlog === "dobroimetje") stej(usage, "brez_dobroimetja");
@@ -332,16 +365,22 @@ function vklop() {
   if (!vsakoVklopljeno()) return { vklopljen: false, razlog: "izklopljen s stikalom EVKLID_VARNOST_VSAKO=0 (pregled ostane samo čez mejo)" };
   return { vklopljen: true, razlog: null };
 }
+// nepregledanoZadnjoUro (alarm »varnost«): vsaj eno nepregledano sporočilo v toliko časa.
+export const NEPREGLEDANO_ALARM_MS = 60 * 60 * 1000;
 /**
  * Javni del za /healthz/stanje: ali pregled teče in kolikokrat ponudnik danes in včeraj (UTC) ni odgovoril.
  * Brez zadetkov in brez vsega, kar bi kaj povedalo o učencih. nepregledano = sporočila brez pregleda z AI, ker
  * ponudnik ni odgovoril niti ob ponovitvi ali je zmanjkalo dobroimetja.
+ * @param {number} [now] trenutni čas v ms (testi)
  */
-export function varnostStanje(usage) {
+export function varnostStanje(usage, now = Date.now()) {
   try {
     const javno = (d) => ({ rok: d.rok, napaka: d.napaka, nepregledano: d.nepregledano + d.brez_dobroimetja });
     const [d0, d1] = stevci(usage, 2);
-    return { vklopljen: vklop().vklopljen, danes: javno(d0), vceraj: javno(d1), zadnjeNepregledano: String(d0.zadnje_nepregledano || d1.zadnje_nepregledano || "").slice(0, 10) || null };
+    const zadnje = String(d0.zadnje_nepregledano || d1.zadnje_nepregledano || "");
+    // Javno samo datum in da/ne za zadnjo uro (alarm »varnost«), ne točen čas.
+    const ura = !!zadnje && now - Date.parse(zadnje) < NEPREGLEDANO_ALARM_MS;
+    return { vklopljen: vklop().vklopljen, danes: javno(d0), vceraj: javno(d1), zadnjeNepregledano: zadnje.slice(0, 10) || null, nepregledanoZadnjoUro: ura };
   } catch {
     return null; // stanje strežnika ne sme pasti zaradi števca
   }

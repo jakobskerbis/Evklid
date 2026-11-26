@@ -339,7 +339,7 @@ export function createApp(store, opts = {}) {
     res.json(stanje());
   });
   // Javni alarm za drugi monitor UptimeRobot (server/zdravje.js razlogiAlarma): 200 »ok« ali 503 s kratkimi kodami
-  // (baza, ai, posta, kopije, disk, pomnilnik, zagon) brez podrobnosti; podrobnosti so v /healthz/stanje.
+  // (baza, ai, posta, kopije, disk, pomnilnik, zagon, varnost) brez podrobnosti; podrobnosti so v /healthz/stanje.
   app.get("/healthz/alarm", (_req, res) => {
     res.set("Cache-Control", "no-store");
     let bazaOk = true;

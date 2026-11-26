@@ -117,6 +117,10 @@ export function razlogiAlarma(j, { bazaOk = true, now = Date.now() } = {}) {
   const pm = j.pomnilnik;
   if (pm && pm.najvecDelez > (pm.opozorilo ?? 85)) r.push("pomnilnik");
   if (j.zagoni?.zadnji && now - Date.parse(j.zagoni.zadnji) < SVEZ_ZAGON_MS) r.push("zagon");
+  // Varnostni pregled sporočil (server/nujno.js varnostStanje): ne teče, ali je v zadnji uri vsaj eno sporočilo
+  // ostalo brez pregleda z AI (ponudnik ni odgovoril niti ob ponovitvi, ni dobroimetja).
+  const vp = j.varnostniPregled;
+  if (vp && (vp.vklopljen === false || vp.nepregledanoZadnjoUro === true)) r.push("varnost");
   return r;
 }
 

@@ -33,6 +33,7 @@ Tri poti, neodvisne ena od druge:
 | Disk z bazo nad `EVKLID_DISK_OPOZORILO` (privzeto 90 %, računano kot `df`: rezerva ext4 ne šteje kot zasedena) (`disk`) | da, dokler traja | da, pregled na 10 min, največ en e-mail na 6 ur. Po prvi objavi preveri trenutno vrednost na https://evklid.app/healthz/stanje → `disk.delez` |
 | Vse e-pošte zgornjih treh vrstic skupaj (`server/zdravje.js`) | – | največ 12 pošiljk na dan (prejemnik × e-mail), od tega opomniki (isti izpad AI, disk ali zagon v 24 h) največ 8, da prvi e-mail nove okvare vedno pride; da ne porabijo kvote Resend za potrditve in gesla učencev. Čez mejo samo vrstica v dnevniku, e-mail pa ni zapisan kot poslan: poskusi se ob naslednji napaki |
 | Inštruktor v preizkusnem načinu (`mock: true`) | da, dokler traja | – (v produkciji se strežnik brez `ANTHROPIC_API_KEY` ne zažene, razen z izrecnim `EVKLID_MOCK=1`) |
+| Varnostni pregled sporočil z AI ne teče ali je v zadnji uri vsaj eno sporočilo ostalo nepregledano (`varnostniPregled`) | da, dokler traja (nepregledano: prvo uro) | – (koda `varnost` v `/healthz/alarm`) |
 | PDF učbenika se ne prenese; kopija v R2 ni nastavljena | samo vrstica »Opozorilo« v dnevniku Straže | – |
 
 Stanja, ki trajajo ves dan (strošek AI nad mejo, neuspel preizkus kopije, e-pošta), Stražo podrejo samo eno uro po
@@ -71,9 +72,22 @@ Actions → Straža → zadnji zagon → korak »Preveri živo spletišče«.
   ponovitev najde nujen primer, učenec dobi isto okno s številkami pomoči (še v istem odgovoru ali ob naslednjem).
   Če ne uspe niti ponovitev, okna **ni** (izpad ponudnika ni razlog za alarm), sporočilo pa se prešteje kot
   **nepregledano**.
+- **Napaka povezave** (j 26. 11. 2026, U1): ko prvi poskus pade zaradi povezave (`APIConnectionError`,
+  `ECONNRESET`, »socket hang up«), aplikacija takoj poskusi še enkrat v istih 5 s (le če ostane vsaj 1 s). Ob roku
+  in ob odgovoru ponudnika s statusom (4xx, 5xx) takojšnje ponovitve ni (ostane ponovitev v ozadju). V dnevnik
+  Renderja gre samo razred napake in koda vzroka, npr. `varnostni pregled: napaka povezave (APIConnectionError
+  ECONNRESET)` ali `varnostni pregled ni uspel: APIConnectionError ECONNRESET`, nikoli besedilo napake ali sporočila.
+- **Alarm `varnost`** (`/healthz/alarm`, drugi monitor UptimeRobot; Straža enako): ko pregled z AI ne teče
+  (`vklopljen: false`: preizkusni način ali `EVKLID_VARNOST_VSAKO=0`) ali je v zadnji uri vsaj eno sporočilo ostalo
+  nepregledano (`nepregledanoZadnjoUro: true`; tudi ob porabljenem dobroimetju). Takrat deluje samo lokalni
+  zaznavalnik (ujame večino jasnih nujnih primerov, ne vseh). Alarm sam mine eno uro po zadnjem nepregledanem
+  sporočilu. Ukrepaj: Render → Logs, išči `varnostni pregled` (koda vzroka); Anthropic Console → dobroimetje,
+  omejitve ključa in stran stanja ponudnika; pri `vklopljen: false` preveri `EVKLID_VARNOST_VSAKO` in
+  `ANTHROPIC_API_KEY`.
 - **Kje to vidiš (enkrat na teden):** https://evklid.app/healthz/stanje → `varnostniPregled`. `vklopljen` mora biti
   `true`, pri `danes` in `vceraj` pa `"nepregledano":0`. `rok` in `napaka` povesta, kolikokrat prvi poskus ni uspel
-  (posamezni so običajni, ponovitev jih večinoma reši); `zadnjeNepregledano` je datum (brez ure) zadnjega nepregledanega sporočila.
+  (posamezni so običajni, ponovitev jih večinoma reši); `zadnjeNepregledano` je datum (brez ure) zadnjega nepregledanega
+  sporočila, `nepregledanoZadnjoUro` samo da/ne za zadnjo uro (alarm `varnost`).
   Javno so samo ta števila o ponudniku, nič o učencih ali zadetkih.
 - **Več (samo skrbnik):** prijavljen odpri https://evklid.app/api/usage → `varnost` → `dnevi` (zadnjih 7 dni, po UTC):
   `pozni_zadetki` (ponovitev je našla nujen primer), `pozno_v_toku` in `pozno_naslednji` (učenec je okno dobil še v
@@ -101,7 +115,8 @@ Actions → Straža → zadnji zagon → korak »Preveri živo spletišče«.
    interval 5 minutes, obvestilo E-mail → Create monitor. Uspelo je, ko je monitor zelen (»Up«). Nato še drugi monitor
    enako na `https://evklid.app/healthz/alarm` (ime npr. »Evklid alarm«). Kode v odgovoru 503: `baza` (baza ne
    odgovori), `ai` (inštruktor ne dela), `posta` (Resend ne sprejema), `kopije` (dnevna kopija, kopija v R2 ali nočni
-   preizkus), `disk`, `pomnilnik`, `zagon` (nepričakovan ponovni zagon v zadnji uri). Podrobnosti so v
+   preizkus), `disk`, `pomnilnik`, `zagon` (nepričakovan ponovni zagon v zadnji uri), `varnost` (varnostni pregled
+   sporočil ne teče ali je v zadnji uri ostalo sporočilo nepregledano; »Varnostni pregled sporočil« zgoraj). Podrobnosti so v
    `/healthz/stanje`. Tudi drugi monitor ob vsaki objavi javi »Down« in v nekaj minutah »Up« (ponovni zagon). Po
    nepričakovanem ponovnem zagonu ostane namenoma eno uro na 503 `zagon`: to ni nov izpad, e-mail o zagonu je že
    prišel. `posta` velja pri prehodni napaki Resenda (omrežje, 429, 5xx) eno uro, pri napačnem ključu (401, 403) do
