@@ -82,6 +82,11 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
   (`SEJA_POZNEJE`), so v `<template data-evklid-slogi>` do konca zagona (`withSessionStyles`); skener, zbirke in lige
   (`ZASLONI_POZNEJE`) app.js naloži po zagonu (`lenModul`, `zasloniPozneje`). Pasici sta znani iz `/api/config`.
   Izklop: `EVKLID_ZACETNI_PODATKI=0`. Test `test/zacetni-podatki.test.js`.
+- Vstopna stran iz predpomnilnika (N-08b, j 26. 11. 2026): kopija različice service workerja se odpre takoj
+  (`public/sw.js entryPage`), omrežje jo preveri v ozadju po 3 s (`revalidateEntry`: osebna stran se prekine ob glavah,
+  javna z oznako različice se shrani, nova različica pobriše stare kopije, 401 prijave z geslom ali preusmeritev
+  (stara povezava tunela → lastna domena) pobriše kopijo; rok 15 s,
+  `ENTRY_ROK`). Povezava s skupnim geslom (`/?geslo=`) gre vedno na strežnik. Prej je čakala omrežje do 1 s.
 - Skrčene datoteke JS (N-08c, j 26. 11. 2026): `server/skrci.js` (esbuild `minifyWhitespace` + `minifySyntax`, imena
   ostanejo) pred stiskanjem v `server/compress.js`, samo `public/` (ne vendor, ne `sw.js`). Vklop na produkciji in v
   `scripts/preveri-aplikacijo.cjs`, izklop `EVKLID_SKRCI=0`. Prenos prvega odprtja ~27 % manjši. Test `test/skrci.test.js`.

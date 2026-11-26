@@ -50,12 +50,17 @@ async function withDeploy(fn) {
     if (changed) {
       let text = body.toString("utf8").split(old).join(NEW);
       if (url.pathname === "/" || url.pathname === "/index.html") text = text.replace("</body>", "<!--NOVA-->\n</body>");
-      if (url.pathname === "/app.js") text += "\n;window.__evklidNova = 1;\n";
+      // oznaka na začetku modula (za uvozi): app.js se lahko osveži (reloadOnceFor), preden pride do konca
+      if (url.pathname === "/app.js") text = "window.__evklidNova = 1;\n" + text;
       if (url.pathname === "/graph/tools.js") text += "\n//NOVA\n";
       body = Buffer.from(text);
       out["cache-control"] = "no-store";
       // fetch() je že razpakiral telo
       delete out["content-encoding"];
+    } else if (url.pathname === "/app.js" && r.ok) {
+      // stari app.js ima svojo oznako (window.__evklidStara), da test ve, katero različico stran res izvaja
+      body = Buffer.concat([Buffer.from("window.__evklidStara = 1;\n"), body]);
+      for (const k of ["content-encoding", "content-length", "transfer-encoding", "etag"]) delete out[k];
     } else {
       delete out["content-encoding"];
       delete out["content-length"];
@@ -91,15 +96,41 @@ async function installOld(ctx, base) {
 
 const opts = { skip: chromium ? false : "Playwright Chromium ni nameščen", timeout: 120000 };
 
-test("po objavi: prvo odprtje je nova vstopna stran z novim app.js, leni modul tudi nov (brez mešanja)", opts, async () => {
+// N-08b (j 26. 11. 2026): shranjena vstopna stran se odpre takoj, zato je prvo odprtje po objavi lahko še stara
+// stran (s starim app.js, brez mešanja), ki se v nekaj sekundah sama osveži v novo (public/app.js reloadOnceFor).
+const novaStran = (p) =>
+  p.waitForFunction(() => document.documentElement.outerHTML.includes("NOVA") && window.__evklidNova === 1, null, { timeout: 20000, polling: 200 });
+// Vsaka stran (dokument), ki se odpre po objavi, ob zagonu app.js zapiše različico vstopne strani (<meta name="evklid-app">)
+// in različico app.js, ki ga izvaja (oznaki __evklidNova / __evklidStara). Prej je test stran pogledal enkrat takoj po
+// goto: nova stran po samodejni osvežitvi je bila tedaj lahko že »complete«, app.js (uvozi ga zagon.js) pa še ne
+// izveden, kar je bila lažna mešanica (nestanoviten test). Zdaj se preveri vsaka stran, ko res teče njen app.js.
+async function zapisujStrani(p) {
+  const strani = [];
+  await p.exposeFunction("__evklidZapis", (z) => void strani.push(z));
+  await p.addInitScript((NEW) => {
+    const t = setInterval(() => {
+      const js = window.__evklidNova === 1 ? "nova" : window.__evklidStara === 1 ? "stara" : "";
+      if (!js) return;
+      clearInterval(t);
+      window.__evklidZapis({ stran: document.querySelector('meta[name="evklid-app"]')?.content === NEW ? "nova" : "stara", js });
+    }, 20);
+  }, NEW);
+  return strani;
+}
+
+test("po objavi: stran se v nekaj sekundah sama odpre v novi različici z novim app.js, leni modul tudi nov (brez mešanja)", opts, async () => {
   await withDeploy(async (base, state) => {
     const ctx = await chromium.newContext({ serviceWorkers: "allow" });
     try {
       const p = await installOld(ctx, base);
+      const strani = await zapisujStrani(p);
       state.mode = "nova";
       await p.goto(base + "/");
-      assert.equal(await p.evaluate(() => document.documentElement.outerHTML.includes("NOVA")), true, "nova vstopna stran");
-      await p.waitForFunction(() => window.__evklidNova === 1, null, { timeout: 15000 });
+      await novaStran(p);
+      // stara stran (če se pokaže) izvaja stari app.js, nova novega: nobena stran ne meša različic
+      await p.waitForTimeout(500);
+      assert.ok(strani.length > 0 && strani.at(-1).js === "nova", JSON.stringify(strani));
+      for (const s of strani) assert.equal(s.js, s.stran, `vstopna stran in app.js iste različice: ${JSON.stringify(strani)}`);
       await p.waitForTimeout(3000); // nov service worker se medtem namesti in prevzame stran
       assert.equal(await p.evaluate(() => fetch("/graph/tools.js").then((r) => r.text()).then((t) => t.includes("//NOVA"))), true, "leni modul nove različice");
       assert.equal(await p.evaluate(() => window.__evklidNova), 1, "stran izvaja novi app.js (ni mešanice)");
@@ -111,15 +142,18 @@ test("po objavi: prvo odprtje je nova vstopna stran z novim app.js, leni modul t
 
 // Pregled A2 P1-1: bližnjice ikone (/?pogled=), koda razreda (/?koda=), vir (/?ref=) po objavi.
 for (const q of ["/?pogled=chat", "/?koda=ABC123"]) {
-  test(`po objavi, vstop s poizvedbo ${q}: nova stran z novim app.js (brez mešanja)`, opts, async () => {
+  test(`po objavi, vstop s poizvedbo ${q}: v nekaj sekundah nova stran z novim app.js (brez mešanja)`, opts, async () => {
     await withDeploy(async (base, state) => {
       const ctx = await chromium.newContext({ serviceWorkers: "allow" });
       try {
         const p = await installOld(ctx, base);
+        const strani = await zapisujStrani(p);
         state.mode = "nova";
         await p.goto(base + q);
-        assert.equal(await p.evaluate(() => document.documentElement.outerHTML.includes("NOVA")), true, "nova vstopna stran");
-        await p.waitForFunction(() => window.__evklidNova === 1, null, { timeout: 15000 });
+        await novaStran(p);
+        await p.waitForTimeout(500);
+        assert.ok(strani.length > 0 && strani.at(-1).js === "nova", JSON.stringify(strani));
+        for (const s of strani) assert.equal(s.js, s.stran, `vstopna stran in app.js iste različice: ${JSON.stringify(strani)}`);
       } finally {
         await ctx.close();
       }
@@ -157,7 +191,7 @@ test("po objavi ob počasnem omrežju: stara stran iz predpomnilnika se sama osv
     try {
       const p = await installOld(ctx, base);
       state.mode = "nova";
-      state.delayEntry = 6000; // daljše od roka vstopne strani v sw.js: postreže se shranjena (stara) stran
+      state.delayEntry = 6000; // shranjena (stara) stran pride iz predpomnilnika takoj; počasno omrežje zadrži tudi preverjanje v ozadju
       await p.goto(base + "/");
       // do osvežitve stara stran dobiva lene module svoje različice (pregled B2 P2-1)
       const mixed = await p
