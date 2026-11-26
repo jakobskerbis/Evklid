@@ -231,3 +231,21 @@ test("sodba koraka AUDIT-092: naloga brez realne rešitve, »x = ±2« in popoln
   assert.equal(verdict("x = ±2", o("Reši enačbo $x^2 - 5x + 6 = 0$."))?.wrong, true);
   assert.equal(verdict("x = 2, x = 3, x = 4", o("Reši enačbo $x^2 - 5x + 6 = 0$."))?.wrong, true);
 });
+
+test("sodba koraka AUDIT-092 (pregled): brez lažnega alarma pri preizkusu vrednosti, drugi enačbi inštruktorja in kompleksnih rešitvah", () => {
+  const v = (naloga, ans, prevTutor = "Kaj narediš?") => stepVerdict(ans, { pre: presolve(naloga, { first: true }), prevTutor });
+  // Inštruktor je medtem zastavil drugo enačbo (tudi takšno, ki je koda ne zna rešiti).
+  assert.equal(v("Reši enačbo $x^2 = -4$.", "x = 2", "Poskusiva najprej preprostejšo: $x^2 = 4$. Koliko je x?"), null);
+  assert.equal(v("Reši enačbo $x^2 = -4$.", "x = ±2", "Recimo, da bi bilo $x^2 = 4$. Kaj bi bil x?"), null);
+  assert.equal(v("Reši enačbo $x^6 = -64$.", "x = 2", "Kaj pa enačba $x^6 = 64$?"), null);
+  // Vrednost v razlagi je preizkus, ne odgovor.
+  assert.equal(v("Reši enačbo $x^2 = -4$.", "x = ±2 ni rešitev, ker je kvadrat vedno pozitiven"), null);
+  assert.equal(v("Reši enačbo $x^6 = -64$.", "Ti si rekel x = 2, ampak 2^6 = 64. Torej ni rešitve."), null);
+  assert.equal(v("Reši enačbo $x^2 + 2x + 5 = 0$.", "Teme je pri x = -1. Ni ničel."), null);
+  // Kompleksne rešitve in »2 ± 1« niso realna vrednost 2.
+  assert.equal(v("Reši v množici kompleksnih števil: $x^2 + 2x + 5 = 0$", "x = -1 ± 2i"), null);
+  assert.equal(v("Reši enačbo $x^2 = -4$.", "x = 2 i"), null);
+  assert.equal(v("Reši enačbo $x^2 - 4x + 3 = 0$.", "x = 2 ± 1"), null);
+  // Presledek za ± je popoln odgovor.
+  for (const ans of ["x = ± 2", "x = +- 2", "x = +/- 2"]) assert.equal(v("Reši enačbo $x^2 = 4$.", ans)?.partial, false, ans);
+});

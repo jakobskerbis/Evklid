@@ -11,7 +11,7 @@
 // skrito ugotovitvijo (brez modela za pregled). Ob dvomu koda ne sodi: raje brez sodbe kot napačna sodba.
 import { solve, texToText, prep } from "../public/scan/solvecore.js";
 import { parse, compile, calcText, joinThousands, digitGap } from "../public/graph/math.js";
-import { NOTE_TAG, claimNote, hasExercise, solverValues } from "./live-check.js";
+import { NOTE_TAG, claimNote, hasExercise, solverValues, noSolution } from "./live-check.js";
 
 // Vrstica inštruktorja, ki navaja učenčevo (morda napačno) enačbo ali kandidata: ni enačba, ki se rešuje.
 const QUOTE_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|ne drži|ni prav|ni pravil|ne ustreza|ne zadošča|odpade|kandidat|definicijsk|tvoj|✗|(?<!\p{L})(?:napisal[a]?|zapisal[a]?|dobil[a]?|izračunal[a]?|ali (?:je|res|velja|drži)|wrong|incorrect|you wrote|you got|extraneous|reject)(?!\p{L})/iu;
@@ -373,7 +373,7 @@ export function stepVerdict(text, { pre = null, prevTutor = "" } = {}) {
 // ki ji sledi operator ali črka, je vmesni korak in ne šteje.
 function statedRoots(text, v) {
   const t = String(text || "").replace(/\$/g, " ").replace(/−/g, "-");
-  const re = new RegExp(`(?<![\\p{L}\\d\\\\])${v}(?:_?\\{?\\d\\}?)?\\s*=\\s*(±|\\\\pm\\s*|\\+-|\\+\\/-)?([-+]?\\d+(?:[.,]\\d+)?(?:\\/\\d+)?)(?![\\d\\/\\p{L}]|[.,]\\d)(?![ \\t]*[-+*/:·×÷^=(\\\\])`, "gu");
+  const re = new RegExp(`(?<![\\p{L}\\d\\\\])${v}(?:_?\\{?\\d\\}?)?\\s*=\\s*(?:(±|\\\\pm|\\+-|\\+\\/-)\\s*)?([-+]?\\d+(?:[.,]\\d+)?(?:\\/\\d+)?)(?![\\d\\/\\p{L}]|[.,]\\d)(?![ \\t]*(?:[-+*/:·×÷^=(\\\\±]|i(?!\\p{L})))`, "gu");
   const out = [];
   for (const m of t.matchAll(re)) {
     const [a, b] = m[2].replace(",", ".").split("/");
@@ -390,8 +390,12 @@ function statedRoots(text, v) {
 function otherEquation(pre, prevTutor) {
   const p = (pre?.problems || []).find((x) => x.type === "equation");
   if (!p) return false;
-  const v = solverValues(p.answerTex)[0]?.v;
+  const none = noSolution(p);
+  const v = solverValues(p.answerTex)[0]?.v || none?.[0];
   if (!v) return false;
+  // Naloga brez rešitve: vsaka enačba v inštruktorjevem zadnjem sporočilu (»Kaj pa $x^6 = 64$?«) je drug primer, tudi
+  // ko je solutionsOf ne zna rešiti (pregled AUDIT-092).
+  if (none && /=/.test(String(prevTutor || ""))) return true;
   const t = tutorReference(prevTutor, v);
   if (t === null) return true;
   if (!t) return false;

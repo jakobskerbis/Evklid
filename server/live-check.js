@@ -955,12 +955,12 @@ function claimValues(text, vars) {
   // o njem sodi model. Pri večkratni navedbi iste neznanke šteje zadnja (»x = 6 … torej x = 3«).
   const byKey = new Map();
   // »x = ±2«, »x = \pm 2«: obe vrednosti (AUDIT-092); sodi se, kot da bi učenec napisal obe.
-  for (const m of t.matchAll(/(?<![\p{L}\d])([a-zA-Z])(?:_?\{?(\d)\}?)?=(?:±|\\pm|\+-|\+\/-)\s*(\d+(?:[.,]\d+)?(?:\/\d+)?)(?![\d\/\p{L}]|[.,]\d)(?![ \t]*[-+*/:·×÷^=(\\])/gu)) {
+  for (const m of t.matchAll(/(?<![\p{L}\d])([a-zA-Z])(?:_?\{?(\d)\}?)?=(?:±|\\pm|\+-|\+\/-)\s*(\d+(?:[.,]\d+)?(?:\/\d+)?)(?![\d\/\p{L}]|[.,]\d)(?![ \t]*(?:[-+*/:·×÷^=(\\±]|i(?!\p{L})))/gu)) {
     if (!vars.includes(m[1])) continue;
     byKey.set(`${m[1]}${m[2] || ""}+`, { v: m[1], val: m[3], shown: `±${m[3]}` });
     byKey.set(`${m[1]}${m[2] || ""}-`, { v: m[1], val: `-${m[3]}`, shown: `±${m[3]}` });
   }
-  for (const m of t.matchAll(/(?<![\p{L}\d])([a-zA-Z])(?:_?\{?(\d)\}?)?=([-+]?\s*(?:\d{1,3}(?:\.\d{3})+(?!\d)|\d+(?:[.,]\d+)?(?:\/\d+)?|[.,]\d+))(?![\d\/\p{L}]|[.,]\d)(?![ \t]*[-+*/:·×÷^=(\\])/gu)) {
+  for (const m of t.matchAll(/(?<![\p{L}\d])([a-zA-Z])(?:_?\{?(\d)\}?)?=([-+]?\s*(?:\d{1,3}(?:\.\d{3})+(?!\d)|\d+(?:[.,]\d+)?(?:\/\d+)?|[.,]\d+))(?![\d\/\p{L}]|[.,]\d)(?![ \t]*(?:[-+*/:·×÷^=(\\±]|i(?!\p{L})))/gu)) {
     if (vars.includes(m[1])) byKey.set(m[1] + (m[2] || ""), { v: m[1], val: m[3].replace(/\s+/g, "") });
   }
   const out = [...byKey.values()];
@@ -982,7 +982,7 @@ export function claimReadings(val) {
 }
 
 // Reševalnik je pokazal, da enačba nima realne rešitve: [neznanka] ali null.
-function noSolution(p) {
+export function noSolution(p) {
   const a = String(p.answerTex || "").trim();
   const m = /^([a-zA-Z])\s*\\in\s*\\emptyset$/.exec(a);
   if (m) return [m[1]];
@@ -1003,7 +1003,11 @@ export function claimNote(text, pre) {
   // AUDIT-092: enačba brez realne rešitve ($x^6 = -64$ → $x \in \emptyset$, $x^2 = -4$ → $D < 0$). Vsako učenčevo
   // vrednost spodaj vstavi verifyAi, zato zadošča neznanka iz rešitve ali edina črka naloge.
   const none = p.type === "equation" ? noSolution(p) : null;
-  if (none && !vars.length) vars = none;
+  // Pri nalogi brez rešitve je vrednost v razlagi (»x = 2 ni rešitev«, »če bi bil x = 2«) preizkus, ne odgovor: le golo sporočilo.
+  if (none && !vars.length) {
+    if (!/^[\s$]*[a-zA-Z](?:_?\{?\d\}?)?\s*=\s*(?:±|\\pm|\+-|\+\/-)?\s*[-+]?\d+(?:[.,]\d+)?(?:\/\d+)?[\s$]*[.!]?\s*$/.test(String(text))) return null;
+    vars = none;
+  }
   if (!vars.length) return null;
   const claims = claimValues(text, vars);
   if (!claims.length) return null;
