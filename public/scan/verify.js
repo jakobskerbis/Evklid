@@ -5,7 +5,7 @@
 // Vsak izid ima status iz public/scan/status.js; numerična potrditev nikoli ni »Preverjeno« (AUDIT-001).
 import { parse, compile, integrate } from "../graph/math.js";
 import { prep, splitSystem, satisfies, equalNumerically, bigLiteral } from "./solvecore.js";
-import { tryPoly, withLimit, surdOf, polyEquationProof, polyGcd, inequalityCheck, qFromFloat, evalCs } from "./algebra.js";
+import { tryPoly, withLimit, surdOf, polyEquationProof, polyGcd, inequalityCheck, qFromFloat, evalCs, constQ, P, Q } from "./algebra.js";
 import { statusOf } from "./status.js";
 
 const fin = Number.isFinite;
@@ -19,8 +19,16 @@ function fnOf(text) {
 }
 
 // vrednost »2«, »-1/3«, »sqrt(2)«, »π/6 + 2kπ« (k = 0, 1, −1)
+// Zapis števila v rešitvi: »1.4e6«, »1e-3« → 1.4*10^(6), 10^(-3) (sicer bi »e« prebrali kot Eulerjevo število),
+// »−1.414« (unicode minus) in »- 1.414« (presledek za predznakom) → »-1.414«.
+const stevilo = (t) =>
+  String(t ?? "")
+    .replace(/−/g, "-")
+    .replace(/^\s*([+-])\s+/, "$1")
+    .replace(/(\d)[eE]([+-]?\d+)(?![\d.])/g, "$1*10^($2)");
+
 function values(expr) {
-  const f = fnOf(String(expr).replace(/\bk\b/g, "k"));
+  const f = fnOf(stevilo(expr));
   if (!f) return [];
   const out = [];
   for (const k of [0, 1, -1]) {
@@ -50,10 +58,25 @@ function scanRoots(eqText, v) {
     const x = 50 * Math.pow(2e4, i / 400);
     xs.push(x, -x);
   }
+  // Pol točno na mreži (1/(x − 1) = 1000 pri x = 1): ničla 1,001 leži v istem koraku kot pol in bi ostala skrita.
+  // Okoli vsake osamljene nedefinirane točke mreže (ne na robu območja, npr. √(x − 60)) dodamo točke na razdaljah 10⁻² … 10⁻¹⁰.
+  xs.sort((a, b) => a - b);
+  const fx = xs.map((t) => fin(g(t)));
+  const poli = xs.filter((t, i) => !fx[i] && fx[i - 1] !== false && fx[i + 1] !== false);
+  for (const x of poli) for (let k = 2; k <= 10; k++) xs.push(x - 10 ** -k * Math.max(1, Math.abs(x)), x + 10 ** -k * Math.max(1, Math.abs(x)));
   xs.sort((a, b) => a - b);
   const ys = xs.map(g);
   const roots = [];
+  // Odpravljiva vrzel ((x² − 1)/(x + 1) = −2 pri x = −1): iskanje najde »ničlo« tik ob točki, kjer enačba ni
+  // definirana, L − D pa je okoli nje zvezna in majhna (pri polu bi bila ogromna). Taka točka ni rešitev (N-01, luknja-009).
+  const hole = (r) =>
+    [1, 2, 3, 4, 5, 6, 8, 10, 12].some((k) => {
+      const s = Math.round(r * k) / k;
+      const h = 1e-6 * Math.max(1, Math.abs(s));
+      return Math.abs(r - s) <= 1e-6 * Math.max(1, Math.abs(s)) && !fin(g(s)) && [s - h, s + h].every((t) => fin(g(t)) && Math.abs(g(t)) <= 1e-3);
+    });
   const add = (r) => {
+    if (hole(r)) return;
     if (fin(g(r)) && Math.abs(g(r)) <= tol(r) && !roots.some((q) => Math.abs(q - r) < 1e-6 * Math.max(1, Math.abs(r)))) roots.push(r);
   };
   for (let i = 1; i < xs.length; i++) {
@@ -126,16 +149,53 @@ function sidesPoly(a, b, v) {
 // Zaokroženo decimalno število (»1.324718«): toleranca pol zadnjega mesta; drug zapis z decimalno piko: majhna
 // toleranca (vrednost je približek); brez decimalk 0 (vrednost je točna).
 function decimalTol(text) {
-  const t = String(text ?? "").trim();
+  const t = stevilo(text).trim();
   const m = /^[+-]?\d*\.(\d+)$/.exec(t);
   if (m) return 0.5 * 10 ** -m[1].length * 1.0001;
   return /\d\.\d/.test(t) ? 1e-12 : 0;
 }
 
+// Račun brez neznank z zaokroženim decimalnim rezultatom (1/3 → 0.33, √2 → 1.414): dovoljeno odstopanje (pol zadnjega
+// mesta) ali 0, kadar zaokrožitve ne smemo sprejeti (pregled N-01 popravka):
+//  - vsaj dve veljavni števki (»0.0« za 1/30000 in »0.3« za 1/3 nista preverljiva zaokrožitev);
+//  - točna vrednost nima kratkega decimalnega zapisa: 1/2 + 1/4 = 0.75 ni »0.8« (naloga ne pove, da zaokrožimo);
+//  - toleranca je velika v primerjavi s 53-bitno natančnostjo (15240740602.07 ni preverljiv s plavajočo vejico).
+export function zaokrozenRacun(problemText, value) {
+  const t = stevilo(String(value)).trim();
+  const m = /^[+-]?(\d*)[.,](\d+)$/.exec(t);
+  if (!m || (m[1] + m[2]).replace(/^0+/, "").length < 2) return 0;
+  const tol = 0.5 * 10 ** -m[2].length;
+  let v;
+  try {
+    v = compile(parse(prep(problemText)))({});
+  } catch {
+    return 0;
+  }
+  if (!fin(v) || tol < 1e-9 * Math.abs(v)) return 0;
+  // Racionalna vrednost: točno, imenovalec le s 2 in 5 pomeni končen decimalni zapis (1/2^13 = 0.0001220703125).
+  let q = null;
+  try {
+    q = withLimit(POLY_LIMIT, () => constQ(parse(prep(problemText))));
+  } catch {
+    q = null;
+  }
+  if (q) {
+    let d = q.d;
+    for (const p of [2n, 5n]) while (d % p === 0n) d /= p;
+    return d === 1n ? 0 : tol;
+  }
+  // Sicer (√, π, ln …) številsko: le dokler v · 10ᵏ ostane v natančnosti plavajoče vejice (√6.25 = 2.5).
+  for (let k = 0; k <= 12 && Math.abs(v * 10 ** k) <= 1e8; k++) {
+    const w = v * 10 ** k;
+    if (Math.abs(w - Math.round(w)) <= 1e-7) return 0; // kratek decimalni zapis
+  }
+  return tol;
+}
+
 // »2«, »-1/3«, »(1+sqrt(5))/2« → točno (Surd); sicer null
 function exactValue(text) {
   try {
-    return surdOf(parse(prep(text)));
+    return surdOf(parse(prep(stevilo(text))));
   } catch {
     return null;
   }
@@ -231,10 +291,17 @@ export function verifyAi(problemText, ai) {
   const ev = r.evidence || (r.verified ? { holds: true, how: "numeric", complete: r.partial ? "unknown" : "numeric" } : { holds: r.reason === "wrong" || r.reason === "missing" ? false : null });
   const status = statusOf(ev);
   const out = { ...r, partial: ev.complete === "unknown" || undefined, status };
+  // Točen protiprimer (ulomki, Sturm): strežnik ga ne sme preglasiti s SymPy (server/scan.js verifyAiFull). Ne, kadar
+  // naloga ali odgovor vsebuje i, I ali E: SymPy ju bere kot imaginarno enoto oz. konstanto, tryPoly kot spremenljivko.
+  // Gledamo le rešitve in vrednost, ne besedila korakov (»i« je beseda v hrvaščini in italijanščini).
+  if (ev.holds === false && ev.how === "exact" && !/(?<![A-Za-z])[iIE](?![A-Za-z])/.test(`${problemText} ${JSON.stringify([ai?.solutions, ai?.value])}`)) out.exact = true;
   delete out.evidence;
   if (!out.partial) delete out.partial;
   return r.verified ? { ...out, reason: null } : out;
 }
+
+// odvod polinoma po spremenljivki v (druge črke so konstante)
+const polyDiff = (p, v) => new P(p.terms().filter(({ m }) => m[v]).map(({ m, c }) => ({ m: { ...m, [v]: m[v] - 1 }, c: c.mul(Q.of(m[v])) })));
 
 function check(problemText, ai) {
   const kind = ai?.kind;
@@ -281,7 +348,7 @@ function check(problemText, ai) {
         if (claims.some((c) => !c.s && !Number.isFinite(c.num))) return { verified: false, reason: "parse" };
         const pe = polyEquationProof(cs, claims);
         if (pe) {
-          if (!pe.holds) return { verified: false, reason: "wrong" };
+          if (!pe.holds) return { verified: false, reason: "wrong", evidence: { holds: false, how: pe.exact ? "exact" : "numeric" } };
           if (pe.complete === false) return { verified: false, reason: "missing", missing: pe.missing };
           return { verified: true, evidence: { holds: true, how: pe.exact ? "exact" : "numeric", complete: pe.complete === true ? "exact" : "unknown" } };
         }
@@ -323,6 +390,15 @@ function check(problemText, ai) {
         const pb = tryPoly(b);
         return pa && pb ? pa.eq(pb) : null;
       });
+      // Zaokroženo decimalno število kot vrednost števila (1/3 → 0.33, √2 → 1.414; pogoji v zaokrozenRacun): drži numerično,
+      // če je razlika največ pol zadnjega mesta. Točna primerjava (ostane, kadar drži: 1.2·0.3 = 0.36) bi ga označila kot
+      // napačnega (N-01, skoraj-016/018/022).
+      const tol = kind === "arith" && ok !== true ? zaokrozenRacun(problemText, ai.value) : 0;
+      if (tol) {
+        const d = Math.abs(compile(a)({}) - compile(b)({}));
+        const drzi = d <= tol + 1e-12 * Math.abs(compile(a)({}));
+        if (fin(d)) return { verified: drzi, reason: "wrong", evidence: { holds: drzi, how: "numeric", complete: "na" } };
+      }
       if (ok !== null) return { verified: ok, reason: "wrong", evidence: { holds: ok, how: "exact", complete: "na" } };
       return { verified: equalNumerically(a, b), reason: "wrong" };
     }
@@ -337,23 +413,36 @@ function check(problemText, ai) {
         const y = [0.3, 1.7, -2.1].map((t) => f({ [v]: t }));
         if (y.every((w) => fin(w) && Math.abs(w - y[0]) < 1e-9)) return { verified: false, reason: "kind" };
       }
-      return { verified: compareFns((x) => (f({ [v]: x + 1e-5 }) - f({ [v]: x - 1e-5 })) / 2e-5, (x) => g({ [v]: x })), reason: "wrong" };
+      // polinom odvajamo točno (ulomki); numerični odvod v točkah ne loči koeficienta 5999999 od 6000000 (PV-02)
+      const ok = withLimit(POLY_LIMIT, () => {
+        const pf = tryPoly(parse(prep(izraz)));
+        const pg = tryPoly(parse(prep(ai.value)));
+        return pf && pg ? polyDiff(pf, v).eq(pg) : null;
+      });
+      if (ok !== null) return { verified: ok, reason: "wrong", evidence: { holds: ok, how: "exact", complete: "na" } };
+      return { verified: compareFns((x) => odvodV((t) => f({ [v]: t }), x), (x) => g({ [v]: x })), reason: "wrong" };
     }
     if (kind === "integral") {
-      const m = /∫\s*(?:_\(?([^\s^]+?)\)?\^\(?([^\s]+?)\)?)?\s*(.+?)\s*d([a-z])\s*$/.exec(String(problemText).replace(/\\int/g, "∫"));
+      // Meja je v oklepaju ali zaviti oklepaj, sicer cel žeton do presledka (»∫_0^pi«, »∫_1^10«; leno ujemanje je
+      // prej prebralo meji »p« in »1«, N-01 integral-019/021), brez presledka pa število ali π.
+      const MEJA = String.raw`\([^()]*\)|\{[^{}]*\}|[^\s(){}]+(?=\s)|-?\d+(?:[.,]\d+)?|π`;
+      const m = new RegExp(String.raw`∫\s*(?:_(\([^()]*\)|\{[^{}]*\}|[^\s^(){}]+)\^(${MEJA}))?\s*(\S.*?)\s*d([a-z])\s*$`).exec(String(problemText).replace(/\\int/g, "∫"));
       const g = fnOf(ai.value);
       if (!m || !g) return { verified: false, reason: "parse" };
       const f = fnOf(m[3]);
       const x = m[4];
       if (!f) return { verified: false, reason: "parse" };
       if (m[1] !== undefined) {
-        const a = values(m[1])[0];
-        const b = values(m[2])[0];
+        const meja = (t) => values(t.replace(/^[({](.*)[)}]$/, "$1"))[0];
+        const a = meja(m[1]);
+        const b = meja(m[2]);
         const exact = integrate((t) => f({ [x]: t }), a, b);
         const val = g({});
         return { verified: fin(exact) && fin(val) && Math.abs(exact - val) < 1e-6 * Math.max(1, Math.abs(exact)), reason: "wrong" };
       }
-      return { verified: compareFns((t) => f({ [x]: t }), (t) => (g({ [x]: t + 1e-5 }) - g({ [x]: t - 1e-5 })) / 2e-5), reason: "wrong" };
+      // Map namesto pisanja v objekt z imenom iz besedila (CodeQL js/remote-property-injection), kot pri sistemih
+      const env = (t) => Object.fromEntries(new Map([[x, t]]));
+      return { verified: compareFns((t) => f(env(t)), (t) => odvodV((u) => g(env(u)), t)), reason: "wrong" };
     }
   } catch {
     return { verified: false, reason: "error" };
@@ -479,6 +568,14 @@ function qFromFloatSafe(x) {
   } catch {
     return null;
   }
+}
+
+// Odvod v točki s petimi točkami: pri hitro nihajočih funkcijah (cos(x⁵) pri x = 5,3) je simetrična
+// razlika s tremi točkami netočna za ~10⁻³ in je sprožila lažni alarm (N-01, odvod2-027/043).
+function odvodV(f, x) {
+  const d = (h) => (f(x - 2 * h) - 8 * f(x - h) + 8 * f(x + h) - f(x + 2 * h)) / (12 * h);
+  // Richardsonova ekstrapolacija (napaka ~h⁶): cos(x⁶) pri x = 5,3 niha prehitro tudi za pet točk s h = 10⁻⁵.
+  return (16 * d(5e-6) - d(1e-5)) / 15;
 }
 
 function compareFns(f, g) {

@@ -233,7 +233,9 @@
   "FIZ-SS-3/indukcija": "Elektromágneses indukció",
   "FIZ-SS-3/izmenicni-tok-in-nihajni-krog": "Váltakozó áram és rezgőkör",
   "FIZ-SS-3/nihanje": "Rezgések",
+  "FIZ-SS-3/duseno-in-vsiljeno-nihanje": "Csillapított és kényszerrezgés",
   "FIZ-SS-3/valovanje": "Hullámok",
+  "FIZ-SS-3/stojece-valovanje": "Állóhullámok",
   "FIZ-SS-3/zvok": "Hang",
   "FIZ-SS-3/elektromagnetno-valovanje": "Elektromágneses hullámok",
   "FIZ-SS-3/geometrijska-optika": "Geometriai optika",
@@ -241,8 +243,10 @@
   "FIZ-SS-4/fotoefekt-in-foton": "Fényelektromos jelenség és foton",
   "FIZ-SS-4/atom": "Az atom",
   "FIZ-SS-4/jedro-in-radioaktivnost": "Atommag és radioaktivitás",
+  "FIZ-SS-4/jedrske-reakcije-in-reaktor": "Magreakciók és atomreaktor",
   "FIZ-SS-4/osoncje-in-gibanje-planetov": "A Naprendszer és a bolygók mozgása",
   "FIZ-SS-4/zvezde-in-vesolje": "Csillagok és a világegyetem",
+  "FIZ-SS-4/meritve-grafi-in-porocilo": "Mérések, grafikonok és jegyzőkönyv",
   "FIZ-SS-4/mesane-maturitetne-naloge": "Vegyes érettségi feladatok",
   "KEM-OS-8/varno-delo-v-laboratoriju": "Biztonságos munka a laboratóriumban",
   "KEM-OS-8/snovi-in-njihove-lastnosti": "Anyagok és tulajdonságaik",
@@ -281,6 +285,7 @@
   "KEM-SS-1/stehiometrija": "Sztöchiometria",
   "KEM-SS-1/plini": "Gázok",
   "KEM-SS-1/raztopine": "Oldatok",
+  "KEM-SS-1/topnost-in-sestava-raztopin": "Oldhatóság és az oldatok összetétele",
   "KEM-SS-1/urejanje-enacb": "Egyenletrendezés",
   "KEM-SS-1/energija-pri-reakcijah": "Termokémia",
   "KEM-SS-2/hitrost-reakcij": "Reakciósebesség",
@@ -289,6 +294,7 @@
   "KEM-SS-2/ph": "pH",
   "KEM-SS-2/sibke-kisline-in-baze": "Gyenge savak és bázisok",
   "KEM-SS-2/titracija": "Titrálás",
+  "KEM-SS-2/elektroliti-in-ionske-reakcije": "Elektrolitok és ionreakciók",
   "KEM-SS-2/oksidacijska-stevila": "Oxidációs számok",
   "KEM-SS-2/redoks-reakcije": "Redoxireakciók",
   "KEM-SS-2/galvanski-cleni-in-elektroliza": "Galvánelemek és elektrolízis",
@@ -304,6 +310,8 @@
   "KEM-SS-3/organske-reakcije": "Szerves kémiai reakciók",
   "KEM-SS-3/ogljikovi-hidrati-lipidi-beljakovine": "Szénhidrátok, lipidek, fehérjék",
   "KEM-SS-3/polimeri": "Polimerek",
+  "KEM-SS-4/prehodni-elementi-in-koordinacijske-spojine": "Átmenetifémek és koordinációs vegyületek",
+  "KEM-SS-4/anorganske-snovi-v-industriji-in-okolju": "Szervetlen anyagok az iparban és a környezetben",
   "KEM-SS-4/splosna-in-anorganska-kemija": "Általános és szervetlen kémia",
   "KEM-SS-4/organska-kemija": "Szerves kémia",
   "KEM-SS-4/kemijsko-racunanje": "Kémiai számítások"
@@ -388,6 +396,7 @@
   "Hitrost in ravnotežje": "Reakciósebesség és egyensúly",
   "Kisline in baze": "Savak és bázisok",
   "Redoks in elektrokemija": "Redoxireakciók és elektrokémia",
-  "Organska kemija": "Szerves kémia"
+  "Organska kemija": "Szerves kémia",
+  "Anorganska kemija": "Szervetlen kémia"
  }
 }

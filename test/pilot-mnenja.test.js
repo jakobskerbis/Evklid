@@ -63,13 +63,13 @@ const CONSENT = SL["mn.publish"];
 
 test("mnenje: samo za člane pilota; nečlan dobi member:false in 403", async () => {
   await withServer(async ({ client, store }) => {
-    const { call, sid } = await account(client, store, "ne@mnenje.si", 17);
+    const { call, sid } = await account(client, store, "ne@mnenje.si", 19);
     assert.deepEqual((await call(`/api/students/${sid}/pilot/mnenje`)).body, { member: false });
     assert.equal((await call(`/api/students/${sid}/pilot/mnenje`, { method: "POST", body: { stars: 5 } })).status, 403);
     assert.equal((await call(`/api/students/${sid}/pilot/mnenje/vprasano`, { method: "POST" })).status, 403);
     assert.equal((await call("/api/admin/pilot-mnenja")).status, 403);
     // Tuj profil: drug račun ne pride do stanja ali oddaje.
-    const other = await account(client, store, "drug@mnenje.si", 17);
+    const other = await account(client, store, "drug@mnenje.si", 19);
     setPilot(store, "ne@mnenje.si");
     assert.ok([403, 404].includes((await other.call(`/api/students/${sid}/pilot/mnenje`)).status));
     assert.ok([403, 404].includes((await other.call(`/api/students/${sid}/pilot/mnenje`, { method: "POST", body: { stars: 1 } })).status));
@@ -79,7 +79,7 @@ test("mnenje: samo za člane pilota; nečlan dobi member:false in 403", async ()
 
 test("mnenje: vprašanje šele po 3 dneh uporabe ali 10 rešenih nalogah, največ enkrat na teden, po oddaji ne prej kot čez 30 dni", async () => {
   await withServer(async ({ client, store }) => {
-    const { call, sid } = await account(client, store, "da@mnenje.si", 17);
+    const { call, sid } = await account(client, store, "da@mnenje.si", 19);
     setPilot(store, "da@mnenje.si");
     const due = (now) => opinionState(store.db, sid, now ? { now } : {}).due;
     assert.equal(due(), false);
@@ -101,7 +101,7 @@ test("mnenje: vprašanje šele po 3 dneh uporabe ali 10 rešenih nalogah, najve�
   });
   // Druga pot: 10 rešenih nalog (brez dni).
   await withServer(async ({ client, store }) => {
-    const { sid } = await account(client, store, "naloge@mnenje.si", 17);
+    const { sid } = await account(client, store, "naloge@mnenje.si", 19);
     setPilot(store, "naloge@mnenje.si");
     const add = (solved) => store.db.prepare("INSERT INTO tasks (student_id, topic_id, level, payload, solved) VALUES (?, 't', 1, '{}', ?)").run(sid, solved);
     for (let i = 0; i < MIN_SOLVED - 1; i++) add(1);
@@ -114,7 +114,7 @@ test("mnenje: vprašanje šele po 3 dneh uporabe ali 10 rešenih nalogah, najve�
 
 test("mnenje: ocena 1–5 je obvezna, besedili neobvezni, šifrirani in brez imena profila; največ nekaj na dan", async () => {
   await withServer(async ({ client, store }) => {
-    const { call, sid } = await account(client, store, "oddaja@mnenje.si", 17);
+    const { call, sid } = await account(client, store, "oddaja@mnenje.si", 19);
     setPilot(store, "oddaja@mnenje.si");
     const post = (body) => call(`/api/students/${sid}/pilot/mnenje`, { method: "POST", body });
     for (const stars of [0, 6, 2.5, "x", null, undefined, true, "5", [5]]) assert.equal((await post({ stars })).status, 400, String(stars));
@@ -140,7 +140,7 @@ test("mnenje: ocena 1–5 je obvezna, besedili neobvezni, šifrirani in brez ime
 
 test("mnenje: objava samo z izrecnim dovoljenjem (true + besedilo), preklic kadar koli", async () => {
   await withServer(async ({ client, store }) => {
-    const { call, sid } = await account(client, store, "objava@mnenje.si", 17);
+    const { call, sid } = await account(client, store, "objava@mnenje.si", 19);
     setPilot(store, "objava@mnenje.si");
     assert.equal((await call(`/api/students/${sid}/pilot/mnenje`)).body.canPublish, true);
     const post = (body) => call(`/api/students/${sid}/pilot/mnenje`, { method: "POST", body });
@@ -182,7 +182,7 @@ test("mnenje: objava samo z izrecnim dovoljenjem (true + besedilo), preklic kada
 
 test("mnenje: bivši član pilota vidi stanje dovoljenja in ga lahko prekliče, oddati ne more več", async () => {
   await withServer(async ({ client, store }) => {
-    const { call, sid } = await account(client, store, "bivsi@mnenje.si", 17);
+    const { call, sid } = await account(client, store, "bivsi@mnenje.si", 19);
     setPilot(store, "bivsi@mnenje.si");
     assert.equal((await call(`/api/students/${sid}/pilot/mnenje`, { method: "POST", body: { stars: 5, publish: true, consent_text: CONSENT } })).body.publish, true);
     store.db.prepare("UPDATE parents SET pilot_at = NULL WHERE email = 'bivsi@mnenje.si'").run();
@@ -200,7 +200,7 @@ test("mnenje: bivši član pilota vidi stanje dovoljenja in ga lahko prekliče, 
 // ta pa naloži mnenje.js (vrstica za preklic) tudi po osvežitvi strani, ko modul še ni naložen.
 test("mnenje: bivši član z dovoljenjem po osvežitvi dobi mnenje.js (app.js syncOpinion), brez dovoljenja ne", async () => {
   await withServer(async ({ client, store }) => {
-    const { call, sid } = await account(client, store, "osvezi@mnenje.si", 17);
+    const { call, sid } = await account(client, store, "osvezi@mnenje.si", 19);
     setPilot(store, "osvezi@mnenje.si");
     await call(`/api/students/${sid}/pilot/mnenje`, { method: "POST", body: { stars: 4, publish: true, consent_text: CONSENT } });
     store.db.prepare("UPDATE parents SET pilot_at = NULL WHERE email = 'osvezi@mnenje.si'").run();
@@ -252,7 +252,7 @@ test("mnenje: brez ključa za šifriranje se besedili ne shranita (samo ocena) i
   delete process.env.EVKLID_DATA_KEY;
   try {
     await withServer(async ({ client, store }) => {
-      const { call, sid } = await account(client, store, "brezkljuca@mnenje.si", 17);
+      const { call, sid } = await account(client, store, "brezkljuca@mnenje.si", 19);
       setPilot(store, "brezkljuca@mnenje.si");
       assert.equal((await call(`/api/students/${sid}/pilot/mnenje`)).body.canText, false);
       assert.equal((await call(`/api/students/${sid}/pilot/mnenje`, { method: "POST", body: { stars: 3, liked: "Skrivnost", bothers: "Tudi" } })).status, 201);
@@ -263,7 +263,7 @@ test("mnenje: brez ključa za šifriranje se besedili ne shranita (samo ocena) i
     process.env.EVKLID_DATA_KEY = key;
   }
   await withServer(async ({ client, store }) => {
-    const { call, sid } = await account(client, store, "skljucem@mnenje.si", 17);
+    const { call, sid } = await account(client, store, "skljucem@mnenje.si", 19);
     setPilot(store, "skljucem@mnenje.si");
     assert.equal((await call(`/api/students/${sid}/pilot/mnenje`)).body.canText, true);
   });
@@ -272,7 +272,8 @@ test("mnenje: brez ključa za šifriranje se besedili ne shranita (samo ocena) i
 
 test("mnenje: mlajši od 15 let (ali brez letnice) stikala ne dobi in strežnik dovoljenja ne sprejme", async () => {
   await withServer(async ({ client, store }) => {
-    // Starš z otrokom, starim 13 let.
+    // Starš z otrokom, starim 13 let. Pilot je samo za polnoletne (N-11, j 2026-11-25): otrok v pilotnem računu sploh ni
+    // član pilota, zato mnenja ne odda (prej: oddal brez dovoljenja za objavo).
     const call = client();
     const r = await call("/api/auth/register", { method: "POST", body: { email: "stars@mnenje.si", password: "geslo1234", accept_privacy: true, country: "SI", birth_date: "1985-04-12" } });
     assert.equal(r.status, 201);
@@ -280,12 +281,11 @@ test("mnenje: mlajši od 15 let (ali brez letnice) stikala ne dobi in strežnik 
     const y = new Date().getFullYear();
     const kid = (await call("/api/students", { method: "POST", body: { name: "Lan", birth_year: y - 13, consent: true } })).body;
     setPilot(store, "stars@mnenje.si");
-    assert.equal((await call(`/api/students/${kid.id}/pilot/mnenje`)).body.canPublish, false);
+    assert.deepEqual((await call(`/api/students/${kid.id}/pilot/mnenje`)).body, { member: false });
     const p = await call(`/api/students/${kid.id}/pilot/mnenje`, { method: "POST", body: { stars: 4, publish: true, consent_text: CONSENT } });
-    assert.equal(p.status, 201);
-    assert.equal(p.body.publish, false);
-    assert.equal(store.db.prepare("SELECT publish, consent FROM pilot_mnenja").get().publish, 0);
-    // Meja kot pri fotografijah pilota: v letu 15. rojstnega dne še ne.
+    assert.equal(p.status, 403);
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM pilot_mnenja").get().n, 0);
+    // Pravilo za objavo ostane (če bi kdaj spet veljalo za mlajše): v letu 15. rojstnega dne še ne.
     const set = (year) => store.db.prepare("UPDATE students SET birth_year = ? WHERE id = ?").run(year, kid.id);
     set(y - 15);
     assert.equal(publishAllowed(store.db, kid.id), false);
@@ -298,7 +298,7 @@ test("mnenje: mlajši od 15 let (ali brez letnice) stikala ne dobi in strežnik 
 
 test("mnenje: skrbnik vidi seznam brez imena, številke profila, e-naslova in ure; drugi ne", async () => {
   await withServer(async ({ client, store }) => {
-    const { call, sid } = await account(client, store, "clan@mnenje.si", 17);
+    const { call, sid } = await account(client, store, "clan@mnenje.si", 19);
     setPilot(store, "clan@mnenje.si");
     await call(`/api/students/${sid}/pilot/mnenje`, { method: "POST", body: { stars: 4, liked: "Maja ima rada grafe", bothers: "Počasno", publish: true, consent_text: CONSENT } });
     assert.equal((await call("/api/admin/pilot-mnenja")).status, 403);
@@ -340,7 +340,7 @@ test("mnenje: skrbnik vidi seznam brez imena, številke profila, e-naslova in ur
 
 test("mnenje: izvoz podatkov ga vsebuje (odšifrirano), izbris profila in računa ga izbriše", async () => {
   await withServer(async ({ client, store }) => {
-    const { call, sid } = await account(client, store, "gdpr@mnenje.si", 17);
+    const { call, sid } = await account(client, store, "gdpr@mnenje.si", 19);
     setPilot(store, "gdpr@mnenje.si");
     await call(`/api/students/${sid}/pilot/mnenje`, { method: "POST", body: { stars: 2, liked: "Učbenik", bothers: "Tipkovnica", publish: true, consent_text: CONSENT } });
     await call(`/api/students/${sid}/pilot/mnenje/vprasano`, { method: "POST" });
@@ -372,14 +372,14 @@ test("mnenje: izvoz podatkov ga vsebuje (odšifrirano), izbris profila in račun
 
 test("mnenje: izbris profila izbriše mnenja; brez danega dovoljenja ne ostane noben zapis", async () => {
   await withServer(async ({ client, store }) => {
-    // Starš z dvema otrokoma (16 in 17 let): prvi dovoli objavo, drugi ne.
+    // Starš z dvema polnoletnima profiloma (19 in 20 let; pilot je samo za polnoletne, N-11): prvi dovoli objavo, drugi ne.
     const call = client();
     const r = await call("/api/auth/register", { method: "POST", body: { email: "profil@mnenje.si", password: "geslo1234", accept_privacy: true, country: "SI", birth_date: "1980-04-12" } });
     assert.equal(r.status, 201);
     store.db.prepare("UPDATE parents SET email_verified_at = datetime('now'), pilot_at = datetime('now') WHERE email = 'profil@mnenje.si'").run();
     const y = new Date().getFullYear();
-    const a = (await call("/api/students", { method: "POST", body: { name: "Ana", birth_year: y - 17, consent: true } })).body;
-    const b = (await call("/api/students", { method: "POST", body: { name: "Bor", birth_year: y - 16, consent: true } })).body;
+    const a = (await call("/api/students", { method: "POST", body: { name: "Ana", birth_year: y - 20, consent: true } })).body;
+    const b = (await call("/api/students", { method: "POST", body: { name: "Bor", birth_year: y - 19, consent: true } })).body;
     assert.ok(a.id && b.id, JSON.stringify([a, b]));
     assert.equal((await call(`/api/students/${a.id}/pilot/mnenje`, { method: "POST", body: { stars: 5, liked: "Vse", publish: true, consent_text: CONSENT } })).body.publish, true);
     assert.equal((await call(`/api/students/${b.id}/pilot/mnenje`, { method: "POST", body: { stars: 2, bothers: "Nič" } })).status, 201);

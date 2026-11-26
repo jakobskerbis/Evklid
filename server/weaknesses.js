@@ -32,7 +32,7 @@ export const DAYS = 60;
 // Ena igra prinese veliko hitrih odgovorov; da igre ne preglasijo nalog in klepeta, šteje ena igra
 // največ GAME_MAX odgovorov (napake sorazmerno).
 export const GAME_MAX = 4;
-export const SOURCES = ["chat", "practice", "game", "lesson", "paper", "cards", "kviz", "scan", "lab", "atlas"];
+export const SOURCES = ["chat", "practice", "game", "lesson", "paper", "cards", "kviz", "scan", "lab", "atlas", "ustno"];
 // Orodja (P1-8, načrt treh prioritet, j 25. 11. 2026): skener (napaka v učenčevem rezultatu, ki jo potrdi preverjanje),
 // laboratorij (napoved, sklep, »Preveri moj račun«) in kviz atlasa. Vsako vprašanje šteje enkrat na dan, ena tema iz
 // enega orodja največ TOOL_DAY_MAX odgovorov na dan: kviz atlasa ima veliko hitrih vprašanj, ki jih oceni brskalnik,
@@ -40,7 +40,7 @@ export const SOURCES = ["chat", "practice", "game", "lesson", "paper", "cards", 
 // TOOL_STUDENT_DAY_MAX zapisov na učenca na dan (skupaj, vse teme).
 export const TOOL_SOURCES = ["scan", "lab", "atlas"];
 // lab 2 (pregled 3, #1094 laboratorij): sklepa in račun enega poskusa v enem dnevu sama ne naredita šibke teme.
-export const TOOL_DAY_MAX = { scan: 4, lab: 2, atlas: 2 };
+export const TOOL_DAY_MAX = { scan: 4, lab: 2, atlas: 2, ustno: 2 }; // ustno: recordUstno
 export const TOOL_STUDENT_DAY_MAX = 60;
 // Id vprašanja ali naloge, nikoli učenčevo besedilo ali vrednost (skill_seen hrani le, kaj je bilo šteto).
 const TOOL_ITEM = /^[A-Za-z0-9_:.\/-]{1,80}$/;
@@ -244,6 +244,31 @@ export function recordToolResult(db, studentId, { source, topicId, item, ok }) {
   return recordSkill(db, studentId, { source, topicId, n: 1, wrong: ok ? 0 : 1 });
 }
 
+// Ustno spraševanje (P1-4, načrt kakovosti pred obsegom, j 25. 11. 2026): ob koncu seje rezultati vprašanj, ki jih je
+// ocenilo spraševanje (koda ali model; »napačno« še pregleda drug model), brez samoocene in preskočenih. Na temo na dan
+// največ TOOL_DAY_MAX.ustno odgovorov, napake sorazmerno (kot GAME_MAX pri igrah), zato eno spraševanje samo ne naredi
+// šibke teme. Ena seja šteje enkrat (skill_seen). rezultati: [{ topicId, ok }].
+export function recordUstno(db, studentId, sejaId, rezultati = []) {
+  const day = new Date().toISOString().slice(0, 10);
+  const po = new Map();
+  for (const r of rezultati) {
+    if (typeof r?.ok !== "boolean" || !getTopic(String(r.topicId || ""))) continue;
+    const x = po.get(r.topicId) || { n: 0, wrong: 0 };
+    x.n++;
+    if (!r.ok) x.wrong++;
+    po.set(r.topicId, x);
+  }
+  let zapisano = 0;
+  for (const [topicId, x] of po) {
+    const today = db.prepare("SELECT n FROM skill_results WHERE student_id = ? AND day = date('now') AND source = 'ustno' AND key = ?").get(studentId, topicId);
+    const prostor = TOOL_DAY_MAX.ustno - (today?.n || 0);
+    if (prostor <= 0 || !firstTime(db, studentId, `U|${topicId}|${Number(sejaId)}|${day}`)) continue;
+    const n = Math.min(x.n, prostor);
+    if (recordSkill(db, studentId, { source: "ustno", topicId, n, wrong: Math.round((x.wrong * n) / x.n) })) zapisano += n;
+  }
+  return zapisano;
+}
+
 // ---------- Zapis iz brskalnika: »Preveri se« v učbeniku in »Imam prav« na naši poli ----------
 export function mountSkillChecks(app, store, { loadStudent }) {
   const db = store.db;
@@ -269,7 +294,8 @@ export function mountSkillChecks(app, store, { loadStudent }) {
     if (counted) recordSkill(db, s.id, { source: "lesson", topicId, n: 1, wrong: ok ? 0 : 1 });
     res.json({ counted });
   });
-  // Naša pola: deli, pri katerih je učenec odprl rešitev ali označil »Imam prav« (ok = označeno). Vsak del enkrat.
+  // Naša pola: deli, ki jih je učenec ob koncu preveril (ok = »Imam prav«). Izbirni del z enim pravilnim odgovorom pride
+  // z izbiro (sel: [indeks]); strežnik ga oceni sam in šteje vedno (pravi odgovor, ne le branje). Vsak del enkrat.
   app.post("/api/students/:id/paper-check", (req, res) => {
     const s = loadStudent(req, res);
     if (!s) return;
@@ -277,17 +303,21 @@ export function mountSkillChecks(app, store, { loadStudent }) {
     const paper = /^[A-Za-z0-9-]{3,80}$/.test(id) ? loadOurPaper(id) : null;
     if (!paper) return res.status(404).json({ error: "Pola ne obstaja." });
     const parts = Array.isArray(req.body?.parts) ? req.body.parts.slice(0, 120) : [];
-    const keys = new Set(paper.tasks.flatMap((tk) => tk.parts.map((p) => partKey(tk, p))));
+    const byKey = new Map(paper.tasks.flatMap((tk) => tk.parts.map((p) => [partKey(tk, p), p])));
+    // Izbira pri izbirnem delu z enim pravilnim odgovorom: true/false (oceni strežnik), sicer null.
+    const izbira = (p, sel) =>
+      p?.format === "choice" && Array.isArray(p.correct) && p.correct.length === 1 && Array.isArray(sel) && sel.length === 1 && Number.isInteger(sel[0]) ? sel[0] === p.correct[0] : null;
     const topics = paperTopics(id, paper);
     // Odprta rešitev brez »Imam prav« je napaka le, če je učenec v tem odpiranju označil vsaj en del
     // (torej pole res rešuje in si šteje točke); kdor le bere rešitve, nima napak.
-    const grading = parts.some((p) => p?.ok === true);
+    const grading = parts.some((p) => p?.ok === true || izbira(byKey.get(String(p?.key || "")), p?.sel) !== null);
     const perTopic = new Map();
     let counted = 0;
     for (const part of parts) {
       const key = String(part?.key || "");
-      const ok = part?.ok === true;
-      if (!keys.has(key) || (!ok && !grading)) continue;
+      const auto = izbira(byKey.get(key), part?.sel);
+      const ok = auto ?? part?.ok === true;
+      if (!byKey.has(key) || (!ok && !grading)) continue;
       const topicId = topics.get(key);
       if (!topicId || (perTopic.get(topicId) || 0) >= PAPER_MAX || !firstTime(db, s.id, `P|${id}|${key}`)) continue;
       perTopic.set(topicId, (perTopic.get(topicId) || 0) + 1);

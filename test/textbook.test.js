@@ -44,13 +44,16 @@ test("checkLessonSource: stanja osnutek / preverjeno / pregledano in polje pregl
     return { errors: r.errors.filter((e) => /stanje|pregled/.test(e)), warnings: r.warnings.filter((w) => /stanje|pregled/.test(w)) };
   };
   for (const s of ["osnutek", "preverjeno"]) assert.deepEqual(st(`stanje: ${s}`), { errors: [], warnings: [] }, s);
-  assert.deepEqual(st("stanje: pregledano\npregledal: Ana Novak"), { errors: [], warnings: [] });
+  // N-03: strokovni pregled mora biti dokazan v glavi (ime učitelja in datum pregleda), sicer je napaka.
+  assert.deepEqual(st("stanje: pregledano\npregledal: Ana Novak\npregledano: 2026-11-20"), { errors: [], warnings: [] });
+  assert.equal(st("stanje: pregledano\npregledal: Ana Novak").errors.length, 1, "pregledano brez datuma je napaka");
+  for (const d of ["20. 11. 2026", "2026-02-30", "2999-01-01"]) assert.equal(st(`stanje: pregledano\npregledal: Ana Novak\npregledano: ${d}`).errors.length, 1, `slab datum ${d}`);
   assert.equal(st("stanje: preverjen").errors.length, 1, "neznano stanje je napaka");
   assert.equal(st("").errors.length, 1, "brez stanja je napaka");
-  assert.equal(st("stanje: pregledano").warnings.length, 1, "pregledano brez imena učitelja je opozorilo");
+  assert.equal(st("stanje: pregledano\npregledano: 2026-11-20").errors.length, 1, "pregledano brez imena učitelja je napaka");
   assert.equal(st("stanje: preverjeno\npregledal: Ana Novak").warnings.length, 1, "ime učitelja brez stanja pregledano");
-  for (const ai of ["AI", "Claude Opus", "program"]) assert.equal(st(`stanje: pregledano\npregledal: ${ai}`).errors.length, 1, `AI ni pregledovalec: ${ai}`);
-  for (const ime of ["Kaia Kos", "Mihael Zupan", "Ana Čaić"]) assert.deepEqual(st(`stanje: pregledano\npregledal: ${ime}`).errors, [], `človek: ${ime}`);
+  for (const ai of ["AI", "Claude Opus", "program"]) assert.equal(st(`stanje: pregledano\npregledal: ${ai}\npregledano: 2026-11-20`).errors.length, 1, `AI ni pregledovalec: ${ai}`);
+  for (const ime of ["Kaia Kos", "Mihael Zupan", "Ana Čaić"]) assert.deepEqual(st(`stanje: pregledano\npregledal: ${ime}\npregledano: 2026-11-20`).errors, [], `človek: ${ime}`);
   assert.equal(parseLesson(src("stanje: pregledano\npregledal: Ana Novak")).meta.pregledal, "Ana Novak");
 });
 

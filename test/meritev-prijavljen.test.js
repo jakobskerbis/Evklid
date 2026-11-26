@@ -113,3 +113,34 @@ test("prijavljen: posrednik HTTP/2 prenese metodo, telo, glave, piškotke in tok
     fs.rmSync(mapa, { recursive: true, force: true });
   }
 });
+
+test("prijavljen: posrednik HTTP/2 doda X-Forwarded-For kot Render, zato merjeni učenec ni lokalni skrbnik", async (t) => {
+  if (spawnSync("openssl", ["version"]).status !== 0) return t.skip("ni openssl");
+  const { isLocalRequest } = await import("../server/feedback.js");
+  let lokalen = null;
+  const gor = http.createServer((req, res) => {
+    lokalen = isLocalRequest(req);
+    res.end(String(req.headers["x-forwarded-for"]));
+  });
+  await new Promise((r) => gor.listen(0, "127.0.0.1", r));
+  const mapa = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-posrednik-"));
+  const p = await zazeniHttp2Posrednik({ cilj: `http://127.0.0.1:${gor.address().port}`, mapa });
+  try {
+    const seja = http2.connect(p.base, { rejectUnauthorized: false });
+    const telo = await new Promise((res, rej) => {
+      const z = seja.request({ ":method": "GET", ":path": "/api/config" });
+      let b = "";
+      z.on("data", (d) => (b += d));
+      z.on("end", () => res(b));
+      z.on("error", rej);
+      z.end();
+    });
+    seja.close();
+    assert.equal(telo, "203.0.113.7");
+    assert.equal(lokalen, false);
+  } finally {
+    await p.ustavi();
+    gor.close();
+    fs.rmSync(mapa, { recursive: true, force: true });
+  }
+});

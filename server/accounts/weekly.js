@@ -28,7 +28,7 @@ const topicName = (id) => {
 };
 const subjectName = (code) => SUBJECT_NAMES[code] || code || "Drugo";
 // Kje so bile napake (viri šibkih točk, server/weaknesses.js), od največ napak.
-const SOURCE_SL = { chat: "v klepetu", practice: "pri vajah", game: "v igrah", lesson: "pri vprašanjih v učbeniku", paper: "na vadbenih polah", cards: "pri karticah", kviz: "v kvizu v razredu", scan: "pri skeniranih nalogah", lab: "v laboratoriju", atlas: "v kvizu 3D atlasa" };
+const SOURCE_SL = { chat: "v klepetu", practice: "pri vajah", game: "v igrah", lesson: "pri vprašanjih v učbeniku", paper: "na vadbenih polah", cards: "pri karticah", kviz: "v kvizu v razredu", scan: "pri skeniranih nalogah", lab: "v laboratoriju", atlas: "v kvizu 3D atlasa", ustno: "pri ustnem spraševanju" };
 export const sourceWords = (sources = {}) =>
   Object.entries(sources)
     .filter(([k, v]) => SOURCE_SL[k] && v.wrong > 0)

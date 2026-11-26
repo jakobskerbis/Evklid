@@ -188,6 +188,7 @@ function answersFor(a) {
 
 // ---------- brskalnik ----------
 let KEYS = [];
+let NEIZRISANO = null; // scripts/popis-formul.js neizrisanoVDom (iskanje neizrisane matematike na zaslonu)
 async function newPage(browser, phone, label, base) {
   const ctx = await browser.newContext({
     viewport: ZASLON || (phone ? { width: 360, height: 740 } : { width: 1280, height: 800 }),
@@ -334,8 +335,17 @@ async function screen(p, name) {
   if (r.down > 1) problem(`${p.label} ${name}`, `cela stran je za ${r.down} px višja od zaslona (drsi stran namesto pogleda)`);
   if (r.raw.length) problem(`${p.label} ${name}`, `neprevedeni ključi: ${r.raw.join(", ")}`);
   if (r.mini?.length) problem(`${p.label} ${name}`, `mali navpični drsnik (▲▼) v: ${r.mini.slice(0, 5).join(", ")} (docs/oblikovanje.md)`);
+  // Neizrisana matematika (N-07, j 25. 11. 2026: vsa matematika v KaTeX): napaka izrisa, surov LaTeX ali $…$ zunaj formul.
+  // V kalkulatorju (lastnik je druga seja, CLAUDE.md) samo opozorilo za register AUDIT.
+  for (const z of NEIZRISANO ? await p.evaluate(NEIZRISANO).catch(() => []) : []) {
+    const what = `neizrisana matematika (${z.vrsta}) v ${z.kje}: »${z.odlomek}«`;
+    if (z.kalk) opozorila.push({ where: `${p.label} ${name}`, what: `${what} – za register AUDIT (kalkulator)` });
+    else problem(`${p.label} ${name}`, what);
+  }
   const pokrito = await bubbleCovers(p);
   if (pokrito.length) problem(`${p.label} ${name}`, `mehurček inštruktorja prekriva: ${pokrito.join(", ")}`);
+  const obvestilo = await toastCovers(p);
+  if (obvestilo.length) problem(`${p.label} ${name}`, `obvestilo prekriva: ${obvestilo.join(", ")}`);
   if (SHOTS) {
     const file = path.join(SHOTS, `${String(++shotN).padStart(3, "0")}-${p.label}-${name}.png`.replace(/[^\w.\-]+/g, "_"));
     await p.screenshot({ path: file }).catch(() => {});
@@ -426,6 +436,32 @@ async function bubbleCovers(p) {
         out.push(`${el.nodeName.toLowerCase()}${el.className && typeof el.className === "string" ? "." + el.className.trim().split(/\s+/).slice(0, 2).join(".") : ""}${el.getAttribute("aria-label") ? ` »${el.getAttribute("aria-label").slice(0, 30)}«` : ""}`);
       }
       return [...new Set(out)].slice(0, 4);
+    })
+    .catch(() => []);
+}
+// Obvestilo (#toast, UX PR 1): ne sme prekriti polja, gumba ali površine data-ne-prekrij. Tapi gredo skozenj
+// (pointer-events: none), zato elementsFromPoint ne pomaga: šteje presek pravokotnikov z vidnimi kontrolniki.
+async function toastCovers(p) {
+  return p
+    .evaluate(() => {
+      const t = document.querySelector("#toast");
+      if (!t || t.hidden || !t.getClientRects().length) return [];
+      const r = t.getBoundingClientRect();
+      const sel = "main.view:not([hidden]) :is(button, a[href], input:not([type=hidden]), select, textarea, [role=button], [role=switch]), [data-ne-prekrij]";
+      // Šteje samo vidni del: kar je odrinjeno pod glavo, odreže rob pogleda (main.view).
+      const vidni = (el) => {
+        const s = el.getBoundingClientRect();
+        const v = (el.closest(".okno") || el.closest("main.view"))?.getBoundingClientRect();
+        return v ? { left: s.left, right: s.right, top: Math.max(s.top, v.top), bottom: Math.min(s.bottom, v.bottom) } : s;
+      };
+      return [...new Set([...document.querySelectorAll(sel)]
+        // Tudi v oknih in spodnjem listu: obvestilo je nad njimi (--z-okno < --z-obvestilo).
+        .filter((el) => !el.closest("[hidden], [inert]") && el.checkVisibility())
+        .filter((el) => {
+          const s = vidni(el);
+          return Math.min(r.right, s.right) - Math.max(r.left, s.left) >= 6 && Math.min(r.bottom, s.bottom) - Math.max(r.top, s.top) >= 6;
+        })
+        .map((el) => `${el.nodeName.toLowerCase()}${el.id ? "#" + el.id : ""}`))].slice(0, 4);
     })
     .catch(() => []);
 }
@@ -1131,9 +1167,12 @@ async function okna(p, label) {
     const b = await p.locator("#chat-bubble .cb-main").boundingBox();
     const vw = p.viewportSize().width;
     const vh = p.viewportSize().height;
-    await p.mouse.move(b.x + 28, b.y + 28);
+    // Prime sredino: na nizkem zaslonu je mehurček jeziček, širok 24 px (UX PR 1).
+    const cx = b.x + b.width / 2;
+    const cy = b.y + b.height / 2;
+    await p.mouse.move(cx, cy);
     await p.mouse.down();
-    for (let i = 1; i <= 12; i++) await p.mouse.move(b.x + 28 + (vw / 2 - 40 - b.x - 28) * (i / 12), b.y + 28 + (vh - 100 - b.y - 28) * (i / 12));
+    for (let i = 1; i <= 12; i++) await p.mouse.move(cx + (vw / 2 - 40 - cx) * (i / 12), cy + (vh - 100 - cy) * (i / 12));
     await settle(p, 150);
     if (!(await p.locator("#chat-bubble.magnet").count())) throw new Error("X ne privlači mehurčka");
     await screen(p, `mehurcek-x-${label}`);
@@ -1249,6 +1288,21 @@ async function examsView(p, label) {
   await p.waitForTimeout(300);
   if (await p.locator(".pv").count()) throw new Error("Esc ne zapre poskusnega izpita");
   await expectVisible(p, "#exams-content .exam-sims .sim-list li", "Tvoje poskusne pole", 8000);
+  // Naša pola (public/our-paper.js openOurPaper): izbirni odgovor z dotikom, rešitve samo na koncu (»Preveri rešitve«).
+  await click(p, "#exam-papers .pp-ours", { wait: 500 });
+  await expectVisible(p, ".pv.op [data-op-finish]", "naša pola: Preveri rešitve", 8000);
+  if (await p.locator(".pv.op .op-sol, .pv.op [data-op-show]").count()) throw new Error("naša pola: rešitve so vidne pred koncem");
+  if (await p.locator(".pv.op [data-op-ch]").count()) {
+    await click(p, ".pv.op [data-op-ch]", { wait: 100 });
+    if ((await p.locator(".pv.op [data-op-ch]").first().getAttribute("aria-pressed")) !== "true") throw new Error("naša pola: dotik ne izbere odgovora");
+  }
+  await screen(p, `nasa-pola-izbira-${label}`);
+  await click(p, ".pv.op [data-op-finish]", { wait: 300 });
+  await expectVisible(p, ".pv.op .op-sol", "naša pola: rešitve na koncu");
+  await screen(p, `nasa-pola-resitve-${label}`);
+  await p.keyboard.press("Escape");
+  await p.waitForTimeout(300);
+  if (await p.locator(".pv").count()) throw new Error("Esc ne zapre naše pole");
   await click(p, "#exams-content [data-er-practice]", { wait: 500 });
   await expectVisible(p, "#view-topic #practice .task", "vaja šibke teme");
   await click(p, "#back-to-path", { wait: 300 });
@@ -2478,6 +2532,7 @@ async function tujJezik(browser, app, phone) {
   process.removeAllListeners("warning");
   sqlite = require("node:sqlite");
   KEYS = Object.keys((await import(pathToFileURL(path.join(ROOT, "public/i18n/sl.js")))).default);
+  NEIZRISANO = (await import(pathToFileURL(path.join(ROOT, "scripts/popis-formul.js")))).neizrisanoVDom;
   if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true });
   if (!["chromium", "webkit"].includes(BRSKALNIK)) throw new Error(`--brskalnik: chromium ali webkit (ne »${BRSKALNIK}«)`);
   if (!NAPRAVA[JEZIK]) throw new Error(`--jezik: ${Object.keys(NAPRAVA).join(", ")} (ne »${JEZIK}«)`);

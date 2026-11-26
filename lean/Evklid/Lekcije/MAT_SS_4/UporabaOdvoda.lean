@@ -1,6 +1,6 @@
 /-
 vir: content/lessons/MAT-SS-4/uporaba-odvoda.md
-sha256: d5438bc87780029fa224101a9619c7995a5bb8016abfbe68b944b7074dd0b5ab
+sha256: 7d90d121be68e38e5bf2f260838f2ce733049e0a4c99e5bd8755a78980ab15ba
 Ni v Leanu: zgodba o peku in slika grafa (risba, številska premica); simulacija; formula za presečni kot
 tan φ = |(k₂ − k₁)/(1 + k₁k₂)| je dokazana kot tan(α₂ − α₁) = (k₂ − k₁)/(1 + k₁k₂) za smerna kota (`presecni_kot`),
 absolutna vrednost (izbira ostrega kota) pa je dogovor; približek φ ≈ 53,13° (53° 8′) v Primeru 5 (zahtevno,

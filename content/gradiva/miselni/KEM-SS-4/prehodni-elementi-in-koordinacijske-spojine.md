@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Bloki s, p, d, f
+  - zadnji elektron v orbitali s, p, d ali f
+  - prehodne kovine: blok d, skupine 3–12
+- Elektroni 4s odidejo prvi
+  - $\mathrm{Fe^{2+}}$: $[\mathrm{Ar}]\,3d^6$, ne $3d^4\,4s^2$
+  - $\mathrm{Fe^{3+}}$: $[\mathrm{Ar}]\,3d^5$, polovično zapolnjeno
+- Več oksidacijskih števil
+  - Fe +2, +3; Cu +1, +2; Mn +2, +4, +7
+  - ionizacijska energija raste postopno, skok pri notranjem elektronu
+- Barve
+  - delno zapolnjene orbitale d vpijajo svetlobo
+  - vidimo dopolnilno barvo: $\mathrm{Cu^{2+}}$ je modra
+  - $3d^{10}$ in $3d^0$ sta brezbarvna
+- Kompleksni ion
+  - centralni ion in ligandi s prostim elektronskim parom
+  - koordinacijsko število = število vezi
+  - ion zunaj oklepaja ni ligand
+- Naboj in ime
+  - $z_\mathrm{k} = x + \sum z_\mathrm{L}$
+  - tetraaminbakrov(II), diaminsrebrov(I), heksacianoferat(III)
+- Dokazovanje kationov
+  - $\mathrm{Cu^{2+}}$ + $\mathrm{NH_3}$: temno modra raztopina
+  - $\mathrm{Fe^{3+}}$ + $\mathrm{SCN^-}$: krvavo rdeča
+  - $\mathrm{Ag^+}$: $\mathrm{AgCl}$ se raztopi v $\mathrm{NH_3}$

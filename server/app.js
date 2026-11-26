@@ -53,6 +53,7 @@ import { lessonForQuestion, lessonNote } from "./lekcija-za-vprasanje.js";
 import { modeSwitchNote, asksForSolution, solveRequestNote } from "./nacin.js";
 import { resolveOpen } from "./odpri.js";
 import { ourPaperIds, loadOurPaper } from "./our-papers.js";
+import { oznakeLekcije, oznakePole, stanjeZaStare } from "./oznake-vsebine.js";
 import { mountPoskusnaPola, simHistory } from "./poskusna-pola.js";
 import { mountAccounts } from "./accounts/index.js";
 import { emailList } from "./accounts/pilot-meja.js";
@@ -70,6 +71,7 @@ import { createNameStream, withName, maskHistory, nameMasker, choiceAsToken, pup
 import { openMessage } from "./db.js";
 import { verifyAnswer, codeCheck, VERIFY_MODELS, VERIFY_DAILY_USD } from "./verify.js";
 import { checkAnswerClaims, hasClaimBlock, noteClaimStats } from "./racun.js";
+import { continueCut, cutNote } from "./odrezan-odgovor.js";
 import { replyReserveUsd, checkReserveUsd, summaryReserveUsd, callMaxUsd, imageCallReserveUsd, FALLBACK_MODES, fitLongPrompt } from "./meje-ai.js";
 import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, fixModeFor, insertFix, isClaim, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask, hasClaims, claimReviewFor, reviewCalls, reviewBlock, reviewPoolCaps, reviewKindFor, noteReviewSkip, REVIEW_KINDS, LIVE_REVIEW_POOL_RESERVE_USD } from "./live-check.js";
 import { stepVerdict, verdictIgnored } from "./sodba-koraka.js";
@@ -92,7 +94,7 @@ import { mountPriprave } from "./priprava/poti.js";
 import { appVersion, vendorVersion, liveStaticVersion } from "./razlicica.js";
 import { entryPage } from "./vstopna-stran.js";
 import { landingPage } from "./pristajalna-takoj.js";
-import { zacetniPodatki } from "./zacetni-podatki.js";
+import { zacetniPodatki, zacetniPodatkiKlic } from "./zacetni-podatki.js";
 import { potTakoj } from "./pot-takoj.js";
 // Moduli drugih zaslonov, ki jih app.js naloži po prvem izrisu (public/app.js lenModul): stisnemo jih ob zagonu kot igre.
 // Tudi knjižnice za izris formul (public/rich.js naloziKnjiznice) in moduli Učbenika, oznak formul, preverjanja, cel slovar (i18n.js) in tipkovnica.
@@ -454,6 +456,8 @@ export function createApp(store, opts = {}) {
   // Prijavljen učenec dobi začetne podatke Učne poti v strani (server/zacetni-podatki.js), brez verige klicev API po
   // zagonu app.js. EVKLID_ZACETNI_PODATKI=0 jih izklopi (primerjava hitrosti).
   const seja = accounts && process.env.EVKLID_ZACETNI_PODATKI !== "0" ? zacetniPodatki(app) : null;
+  // Isti podatki v enem klicu za stran iz service workerja (ponovni obisk, public/zacetek.js); brez njih 404 kot prej.
+  if (seja) app.get("/api/zacetni-podatki", zacetniPodatkiKlic(app));
   // Učna pot v prvem odgovoru strani (server/pot-takoj.js); EVKLID_POT_STREZNIK=0: okostje kot prej (izklop, primerjava).
   const pot = seja && process.env.EVKLID_POT_STREZNIK !== "0" ? potTakoj({ publicDir }) : null;
   app.use(entryPage(publicDir, { version: filesVersion, preload: process.env.EVKLID_MODULEPRELOAD !== "0", landing, seja, pot })); // =0: brez seznama (primerjava)
@@ -936,6 +940,22 @@ export function createApp(store, opts = {}) {
     const list = await resolveOpen(raw, student.settings, { canOpen, prefer });
     return list.length ? list : undefined;
   };
+  // Lekcija iz učbenika za prvo vprašanje (lessonForQuestion) kot viden gumb pod odgovorom (P1-9, del B; j 25. 11. 2026),
+  // ne le skrita opomba. Odgovor nosi skrit zapis (lessonRecord, kot actionNote), zato gumb ostane ob ponovnem odprtju;
+  // zapis doda le aplikacija (blok za odgovorom modela), ne pri zavrnitvi, popravku ali opozorilu (flag ni none).
+  const lessonRecord = (l) =>
+    `<orodje>App record, not shown to the student: under this reply the app showed a link to the textbook lesson »${l.name}« (${l.id}). Never mention or repeat this record.</orodje>`;
+  const LESSON_RECORD_RE = /^<orodje>App record, not shown to the student: under this reply the app showed a link to the textbook lesson »[^»«]*« \(([\w./-]+)\)/;
+  const lessonOpenOf = (content) => {
+    for (const b of Array.isArray(content) ? content.slice(1) : []) {
+      const id = b?.type === "text" && LESSON_RECORD_RE.exec(b.text || "")?.[1];
+      const name = id && getTopic(id)?.name;
+      if (name) return { kind: "lesson", id, title: name };
+    }
+    return null;
+  };
+  // Gumb lekcije za seznamom orodij iz blokov modela, brez podvajanja (isti id kot findLesson v server/odpri.js).
+  const withLesson = (list, item) => (!item || list?.some((o) => o.kind === "lesson" && o.id === item.id) ? list : [...(list || []), item]);
   // Gumbi z izbirami nosijo oznako imena (server/ime-oznaka.js), učenec vidi pravo ime.
   const choicesOf = (raw, name = "") => {
     const c = parseChoices(raw).map((x) => withName(x, name));
@@ -982,7 +1002,7 @@ export function createApp(store, opts = {}) {
     const offerOn = lastMsg?.role === "assistant" && last?.message_id === lastMsg.id && lastOk && !parseMeta(lastText(lastMsg))?.done && fullOffer(c.id);
     const owner = store.getStudent(c.student_id);
     const opens = new Map();
-    if (owner) for (const m of msgs) if (m.role === "assistant" && flagOk(rawOf(m))) opens.set(m.id, await openOf(rawOf(m), owner).catch(() => undefined));
+    if (owner) for (const m of msgs) if (m.role === "assistant" && flagOk(rawOf(m))) opens.set(m.id, withLesson(await openOf(rawOf(m), owner).catch(() => undefined), lessonOpenOf(m.api_content)));
     res.json({
       ...c,
       state: last ? { subject: last.subject, mode: last.mode } : null,
@@ -1254,6 +1274,8 @@ export function createApp(store, opts = {}) {
     }
     // Dodaten krog orodij (nastavitve iz klepeta) je nov klic: rezerva še enkrat, z izhodom prejšnjega kroga na vhodu.
     const roundReserve = () => mainReserve + callMaxUsd(modeParams(mode).model, modeParams(mode).max_tokens + 2000, 0);
+    // Nadaljevanje odrezanega odgovora (P1-2): najvišji strošek klica z delnim odgovorom in navodilom v pozivu.
+    const contReserve = (messages) => replyReserveUsd({ fallback: !noFallback, mode, system, messages, tools: SETTINGS_TOOLS, extraTokens: 2000 });
     // Dnevna meja vprašanj šteje tu (server/db.js question_log), ne po sporočilih: izbris pogovora je ne obide.
     userMsgId = store.addMessage(conv.id, "user", userContent, withName(text, student.name), !!image);
     store.logQuestion(student.id);
@@ -1512,7 +1534,7 @@ export function createApp(store, opts = {}) {
             return { content: [{ type: "text", text: t }], text: t, stopReason: "end_turn", usage: null, model: "cache" };
           }
         : streamFn;
-      const first = await run({
+      const firstArgs = {
         system,
         // Opus dobi samo zadnje izmenjave; Haiku daljše okno (predpomnjeno). Nadgrajen običajen
         // odgovor (proračun) ohrani celo okno, saj nadaljuje pogovor.
@@ -1546,7 +1568,20 @@ export function createApp(store, opts = {}) {
           const out = kept ? filter.push(kept) : "";
           if (out) claim ? held.push(out) : send("delta", { text: out });
         },
-      });
+      };
+      let first = await run(firstArgs);
+      let extraCost = 0;
+      // Odgovor, odrezan na meji izhoda (P1-2, j 26. 11. 2026, server/odrezan-odgovor.js): največ en klic brez razmisleka
+      // nadaljuje odgovor po istem toku (filter, zadržani deli pri sodbi), preden ga kdorkoli bere naprej (META, sodba,
+      // preverjanje, kartice, predpomnilnik, zgodovina). Rezerva prvega klica se prej zmanjša na njegov strošek.
+      // Po nadaljevanju ostane v rezervaciji strošek obeh klicev (spodaj ga zamenja zapis porabe). Z orodji (nastavitve iz
+      // klepeta) brez nadaljevanja: zgodovina nadaljevanja krogov orodij nima, učenec dobi opombo.
+      const contCost = (m, u) => costUsd(m || answerModelOf(mode, deep), u || {});
+      const contLost = (e) => e?.usage && (extraCost += usage.log(student.id, e.model || answerModelOf(mode, deep), e.usage, "prekinjeno"));
+      if (!cached && first.stopReason === "max_tokens" && !settingsTools.state.used) {
+        hold.settle(Math.max(0, hold.held - costUsd(first.model || answerModelOf(mode, deep), first.usage || {})));
+        first = await continueCut(first, { streamFn, args: firstArgs, hold, reserveUsd: contReserve, costOf: contCost, onLost: contLost });
+      }
       if (!cached && first.timing) {
         logCasi(store.db, {
           model: first.model || answerModelOf(mode, deep),
@@ -1566,7 +1601,6 @@ export function createApp(store, opts = {}) {
       let result = first;
       let { rest } = filter.end();
       let verdictChecked = false;
-      let extraCost = 0;
       const verdictReserve = checkReserveUsd(MODEL_MID, `${prevTutorText}${text}${result.text || ""}`);
       const judgeable = claim && result.text && result.stopReason !== "refusal" && !result.toolCalls && !settingsTools.state.used;
       // Koda je sodila, inštruktor pa ji ni sledil (»Prav!« ob napačnem koraku ali zavrnitev pravilnega): brez modela za
@@ -1589,7 +1623,7 @@ export function createApp(store, opts = {}) {
             // Napačna sodba: isti model odgovori še enkrat z ugotovitvijo preverjevalca v skriti opombi.
             const again2 = createStreamFilter({ language: jezik });
             held.length = 0;
-            const r2 = await streamFn({
+            const r2Args = {
               system,
               // Ob sodbi kode le ugotovitev za ponovni odgovor (prva opomba kode bi ji le ponovila).
               messages: withNote(history, [pre?.note, codeIgnored ? null : codeVerdict?.note, verdictNote(reason)].filter(Boolean).join("\n")),
@@ -1611,10 +1645,13 @@ export function createApp(store, opts = {}) {
                 const out = kept ? again2.push(kept) : "";
                 if (out) held.push(out);
               },
-            });
+            };
+            let r2 = await streamFn(r2Args);
+            // Tudi ponovni odgovor, odrezan na meji izhoda, dobi en klic nadaljevanja (P1-2).
+            if (!settingsTools.state.used) r2 = await continueCut(r2, { streamFn, args: r2Args, hold, reserveUsd: contReserve, costOf: contCost, onLost: contLost });
             if (controller.signal.aborted) throw Object.assign(new Error("aborted"), { usage: r2.usage, model: r2.model });
             extraCost += usage.log(student.id, r2.model || answerModelOf(mode, deep), r2.usage, "popravek");
-            hold.settle(mainReserve);
+            hold.settle(mainReserve + (r2.contCostUsd || 0)); // rezerva ponovnega odgovora in strošek nadaljevanja sta zapisana
             result = r2;
             rest = again2.end().rest;
           }
@@ -1627,6 +1664,10 @@ export function createApp(store, opts = {}) {
       phase(false); // preverjanje sodbe je končano: napis »Preverjam odgovor …« izgine
       for (const t of held) send("delta", { text: t });
       if (rest) send("delta", { text: rest });
+      // Odgovora ni bilo mogoče dokončati (ni prostora pod mejo AI, nadaljevanje je spet odrezano ali ni uspelo):
+      // vidna opomba, učenec napiše »nadaljuj« (P1-2). Ne gre v predpomnilnik (stopReason ni end_turn).
+      const odrezano = !cached && result.stopReason === "max_tokens" ? cutNote(jezik) : "";
+      if (odrezano) send("delta", { text: odrezano });
 
       // Preverjanje odgovora (server/live-check.js): koda vedno, model samo, kjer je potrebno.
       // Ob napaki en kratek »Popravek:«, ki se pripne odgovoru (prikaz in zgodovina).
@@ -1713,13 +1754,14 @@ export function createApp(store, opts = {}) {
       // Fotografija, ki ni učno gradivo (obraz, oseba, osebni dokument …): inštruktor jo zavrne z flag=photo,
       // slika pa se takoj odstrani iz shranjenega sporočila (j, 2026-10-30).
       if (image && meta?.flag === "photo") store.setMessageContent(userMsgId, withoutImages(userContent, PHOTO_REJECTED_TEXT), 2);
-      let display = (note || "") + replyText(result.text, { language: jezik }) + fix;
+      let display = (note || "") + replyText(result.text, { language: jezik }) + odrezano + fix;
       // V zgodovino shranimo samo besedilo (brez blokov razmišljanja): manj žetonov
       // pri naslednjih klicih in nobenih težav ob krajšanju zgodovine.
       // Popravek preverjanja zamenja konec odgovora: gumbi z izbirami ne veljajo več (ne ob ponovnem odprtju).
       let content = [{ type: "text", text: (fix ? insertFix(stripChoices(result.text), fix) : result.text) || "…" }];
       // Tudi zgodovina za model brez »s osnovo« in oznak (sicer jih model iz nje ponavlja); strojni bloki ostanejo.
       content[0].text = polishReply(content[0].text, { language: jezik });
+      if (odrezano) content[0].text += odrezano; // model ob »nadaljuj« ve, da je odgovor odrezan
       // Prvi odgovor gre v porabo kot »chat«; ponovni odgovor po napačni sodbi je že zabeležen kot »popravek« (extraCost).
       const cost = (cached ? 0 : usage.log(student.id, first.model || answerModelOf(mode, deep), first.usage, routed.boosted ? "boost" : "chat")) + extraCost;
       unlogged = null;
@@ -1778,6 +1820,10 @@ export function createApp(store, opts = {}) {
       if (!display) display = "…";
       const opomba = actionNote(settingsTools.state.done);
       if (opomba) content = [...content, { type: "text", text: opomba }];
+      // Gumb lekcije iz učbenika (P1-9, del B): pogoj kot za gumbe orodij v »done«.
+      const toolsOk = result.stopReason !== "refusal" && !fix && (!meta || meta.flag === "none");
+      const lessonOpen = toolsOk && lesson ? { kind: "lesson", id: lesson.id, title: lesson.name } : null;
+      if (lessonOpen) content = [...content, { type: "text", text: lessonRecord(lesson) }];
 
       // Prikaz s pravim imenom, zgodovina za API (content) z oznako (server/ime-oznaka.js).
       display = withName(display, student.name);
@@ -1878,7 +1924,7 @@ export function createApp(store, opts = {}) {
         // Brez gumbov ob predlogu nastavitev: aplikacija pokaže svoj gumb za potrditev.
         choices: choicesOf(result.stopReason !== "refusal" && !fix && !settingsTools.state.proposal && (!meta || meta.flag === "none") ? result.text : "", student.name),
         // Gumbi za orodja aplikacije (<<ODPRI …>>, <<GRAF …>>, <<SKICA …>>; server/odpri.js).
-        open: result.stopReason !== "refusal" && !fix && (!meta || meta.flag === "none") ? await openOf(result.text, student, kontekstNote && req.body?.kontekst?.sourceType === "lab" ? String(req.body.kontekst.sourceId || "") : "") : undefined,
+        open: toolsOk ? withLesson(await openOf(result.text, student, kontekstNote && req.body?.kontekst?.sourceType === "lab" ? String(req.body.kontekst.sourceId || "") : ""), lessonOpen) : undefined,
         cost_usd: Math.round(cost * 10000) / 10000,
       });
       res.end();
@@ -1992,7 +2038,9 @@ export function createApp(store, opts = {}) {
     const view = viewForClient(lessonView(String(req.query.id || "")), legacyClient(req));
     res.vary("x-app-kviz");
     if (!view) return res.status(404).json({ error: "Tema ne obstaja." });
-    res.json({ ...view, interactive: false, pretest_due: false, locked: { demo: view.demo?.title || null }, demos: [], demo: null, offline_copy: true });
+    const labels = view.lesson ? oznakeLekcije(view.id) : null; // poštene oznake (N-03); staro stanje nikoli močnejše (stari odjemalci)
+    if (view.lesson) view.lesson = { ...view.lesson, status: stanjeZaStare(view.lesson.status, labels) };
+    res.json({ ...view, labels, interactive: false, pretest_due: false, locked: { demo: view.demo?.title || null }, demos: [], demo: null, offline_copy: true });
   });
   // Lekcija za učenca. Interaktivni del (poskusi, simulacije, sprotno preverjanje)
   // je v plačljivem paketu in preizkusu; besedilo je za vse (tudi kot PDF).
@@ -2003,6 +2051,8 @@ export function createApp(store, opts = {}) {
     const view = viewForClient(lessonView(String(req.query.id || "")), legacyClient(req));
     res.vary("x-app-kviz");
     if (!view) return res.status(404).json({ error: "Tema ne obstaja." });
+    if (view.lesson) view.labels = oznakeLekcije(view.id); // poštene oznake (N-03, server/oznake-vsebine.js)
+    if (view.lesson) view.lesson = { ...view.lesson, status: stanjeZaStare(view.lesson.status, view.labels) }; // stari odjemalci
     const interactive = !accounts || accounts.lessonInteractive(s.id, view.id);
     // Nova tema z nalogami: na začetku lekcije povabilo na test predznanja.
     const st = progress.state(s.id, view.id);
@@ -2206,7 +2256,7 @@ export function createApp(store, opts = {}) {
     const paper = loadOurPaper(req.params.id);
     if (!paper) return res.status(404).json({ error: "Te pole še ni." });
     res.set("Cache-Control", "public, max-age=3600");
-    res.json(paper);
+    res.json({ ...paper, labels: oznakePole(req.params.id) });
   });
   app.post("/api/students/:id/competition-training", (req, res) => {
     const s = loadStudent(req, res);
@@ -2363,29 +2413,12 @@ export function createApp(store, opts = {}) {
   mountSchools(app, store, { loadStudent, leagues, accounts: !!accounts }); // šole, učitelji, licence, razredne naloge
   mountPilot(app, store, { accounts: !!accounts, isLocalRequest }); // merjenje v pilotu (skrbnik)
   mountOpinions(app, store, { loadStudent, accounts: !!accounts, isLocalRequest }); // mnenja članov pilota (zvezdice, objava samo z dovoljenjem)
-  // Teme poti učenca z vajami, po vrsti (ahead: sklop še ni na vrsti).
-  const pilotPathTopics = (s) => {
-    const v = progress.pathView(s.id, pathKeyFor(s.settings));
-    return v ? v.units.flatMap((u) => u.topics.map((t) => ({ id: t.id, status: t.status, practice: t.practice, ahead: !!u.ahead }))).filter((t) => t.practice) : [];
-  };
   mountPilotTasks(app, store, {
     loadStudent,
     progress,
     accounts: !!accounts,
     owner: accounts || null, // potrditev z geslom računa, zaklep profila (server/accounts/index.js)
     isLocalRequest,
-    // Preizkus znanja (server/pilot-ucinek.js): tema, ki se jo bo učenec učil naslednjo (še ni začeta, sicer še ni
-    // osvojena; nikoli osvojena), da ni na stropu (j, 6. 11.). Dodatne težje naloge ob 6/6: naslednja neosvojena tema.
-    topicFor: (s) => {
-      const ts = pilotPathTopics(s);
-      const open = ts.filter((t) => !t.ahead && t.status !== "mastered");
-      return (open.find((t) => t.status === "new") || open[0] || ts.find((t) => t.status !== "mastered"))?.id ?? null;
-    },
-    nextTopicFor: (s, id) => {
-      const ts = pilotPathTopics(s);
-      const i = ts.findIndex((t) => t.id === id);
-      return i < 0 ? null : (ts.slice(i + 1).find((t) => t.status !== "mastered")?.id ?? null);
-    },
   }); // naloge za člane pilota (Jaz → Pomagaj izboljšati Evklid)
   // Rast in vračanje (skrbnik): viri, prva naloga, vrnitev po 1 in 7 dneh; profili skrbnika se ne štejejo.
   const adminEmails = emailList(process.env.EVKLID_ADMIN_EMAILS); // isti razčlenjevalnik kot meja lastnika

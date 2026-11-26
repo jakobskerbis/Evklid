@@ -147,8 +147,19 @@ test("weak points API: lesson checks, our papers, games, cards and the progress 
     assert.equal(r.body.counted, 2);
     r = await call(`/api/students/${s.id}/paper-check`, { paper: pid, parts: [{ key: keys[0], ok: false }] });
     assert.equal(r.body.counted, 0);
-    const papers = store.db.prepare("SELECT SUM(n) AS n, SUM(wrong) AS w FROM skill_results WHERE source = 'paper'").get();
+    let papers = store.db.prepare("SELECT SUM(n) AS n, SUM(wrong) AS w FROM skill_results WHERE source = 'paper'").get();
     assert.deepEqual({ ...papers }, { n: 2, w: 1 });
+    // Izbirni del z enim pravilnim odgovorom: strežnik oceni izbiro sam (ok odjemalca ne velja) in jo šteje tudi brez
+    // »Imam prav« (pravi odgovor, ne le branje); neveljavna izbira je kot brez nje.
+    const ch = paper.tasks.flatMap((tk) => tk.parts.map((p) => ({ key: partKey(tk, p), p }))).filter((x) => x.p.format === "choice" && x.p.correct?.length === 1 && map.get(x.key) && !keys.includes(x.key));
+    assert.ok(ch.length >= 2, "pola ima izbirne dele");
+    const narobe = (x) => (x.p.correct[0] + 1) % x.p.choices.length;
+    r = await call(`/api/students/${s.id}/paper-check`, { paper: pid, parts: [{ key: ch[1].key, ok: false, sel: ["x"] }] });
+    assert.equal(r.body.counted, 0, "neveljavna izbira: kot le branje");
+    r = await call(`/api/students/${s.id}/paper-check`, { paper: pid, parts: [{ key: ch[0].key, ok: true, sel: [narobe(ch[0])] }] });
+    assert.equal(r.body.counted, 1, "izbira šteje tudi brez označenega dela");
+    papers = store.db.prepare("SELECT SUM(n) AS n, SUM(wrong) AS w FROM skill_results WHERE source = 'paper'").get();
+    assert.deepEqual({ ...papers }, { n: 3, w: 2 }, "napačna izbira je napaka, čeprav odjemalec pošlje ok");
     assert.ok(paper.tasks.some((tk) => tk.parts.some((p) => partKey(tk, p) === keys[0])));
 
     // Igra: pojem → tema poti (frac_add → seštevanje ulomkov), največ GAME_MAX odgovorov na igro.

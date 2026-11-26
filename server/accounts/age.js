@@ -15,6 +15,9 @@ const MIN_AGE = {
 };
 export const DEFAULT_MIN_AGE = 16;
 export const ADULT_AGE = 18;
+// Prvi stavek soglasja »Zame« (profil je imetnikov, server/accounts/index.js SELF_CONSENT_TEXT): po njem prepoznamo
+// lasten profil imetnika (tudi pri starih soglasjih po preimenovanju aplikacije v nadaljevanju besedila).
+export const SELF_CONSENT_PREFIX = "Profil je moj.";
 // Najnižja starost imetnika računa: mlajši datum je zatipkan (npr. 2025 namesto 1985), ne pravi.
 export const MIN_HOLDER_AGE = 5;
 // Odgovor plačilnih poti, ko račun nima datuma rojstva (star račun, »Pozneje«): vsako plačilo ga zahteva (j 2026-11-06).
@@ -50,3 +53,6 @@ export function ageOn(birth, now = new Date()) {
   const y = Number(parts.year), m = Number(parts.month), d = Number(parts.day);
   return y - b.y - (m < b.m || (m === b.m && d < b.d) ? 1 : 0);
 }
+
+// Najmanjša mogoča starost ob znani samo letnici rojstva (rojen 31. 12. tistega leta): previdno, za mejo »polnoleten«.
+export const minAgeFromYear = (y, now = new Date()) => (Number.isInteger(y) ? ageOn({ y, m: 12, d: 31 }, now) : null);
