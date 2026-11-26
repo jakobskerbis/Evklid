@@ -3,7 +3,7 @@
 //   1. Vadnica → fotografija zapisa (branje rokopisa) → preverjanje odgovora → napredek
 //   2. Priprava na test iz zapiskov → kviz (naloge Vadnice) → napredek priprave in skupni napredek
 //   3. Pogovor z inštruktorjem → kartice za ponavljanje → ponovitev kartice → napredek
-//   4. Registracija → profil → plačilo (Stripe v testnem načinu, webhook) → pravice (inštruktor, skeniranje)
+//   4. Registracija → profil → plačilo (Stripe v testnem načinu, webhook) → pravice (inštruktor, kamera v inštruktorju)
 import test from "node:test";
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
@@ -11,6 +11,8 @@ import fs from "node:fs";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { signWebhook } from "../server/accounts/stripe.js";
+import { fmt } from "../server/practice/check.js";
+import { getTopic } from "../server/curriculum.js";
 
 process.env.EVKLID_DATA_KEY ||= crypto.randomBytes(32).toString("base64");
 
@@ -19,11 +21,12 @@ const SECRET = "whsec_integracija";
 const TIHO = { log() {}, info() {}, warn() {}, error() {} };
 const PNG = "data:image/png;base64,iVBORw0KGgo=";
 
-// Pravilen odgovor iz zapisa naloge (payload.answer), kot bi ga vpisal učenec.
+// Pravilen odgovor iz zapisa naloge (payload.answer), kot bi ga vpisal učenec: zaokrožen kot v šoli (fmt iz preverjanja,
+// 5 navzgor; toFixed bi 1854,4049999 zaokrožil na 1854,40 in preverjanje bi reklo »zaokroževanje«).
 function pravilno(a) {
   if (a.type === "number") {
-    const v = Number.isInteger(a.decimals) ? a.value.toFixed(a.decimals) : String(a.value);
-    return `${v.replace(".", ",")}${a.unit ? ` ${a.unit}` : ""}`;
+    const v = fmt(a.value, Number.isInteger(a.decimals) ? a.decimals : null).replace("−", "-");
+    return `${v}${a.unit ? ` ${a.unit}` : ""}`;
   }
   if (a.type === "fraction") return `${a.num}/${a.den}`;
   if (a.type === "choice") return String(a.index);
@@ -147,34 +150,51 @@ test("K-09 pot 2: priprava iz zapiskov → kviz z nalogami Vadnice → napredek 
     const s = (await klic("/api/students", { method: "POST", body: { name: "Eva", settings: { curriculum_level: "4. letnik", educational_track: "SREDNJA_SOLA", subject: "MAT" } } })).body;
     const p = (await klic(`/api/students/${s.id}/priprave`, { method: "POST", body: { naslov: "Integrali", predmet: "MAT" } })).body.priprava;
     const zap = fs.readFileSync(new URL("./fixtures/priprava/mat-integrali.md", import.meta.url), "utf8");
+    assert.equal((await klic(`/api/students/${s.id}/priprave/${p.id}/teme`)).body.teme.length, 0, "brez zapiskov ni tem");
     assert.equal((await klic(`/api/students/${s.id}/priprave/${p.id}/viri`, { method: "POST", body: { besedilo: zap } })).status, 201);
-    store.db.prepare("UPDATE priprave SET pot = 'MAT-SS-4', sklopi = '[2]' WHERE id = ?").run(p.id); // obseg kot po prepoznavi tem
+
+    // Teme priprave prepozna koda iz zapiskov (brez načrta testa): obe temi integralov z izseki zapiskov.
+    const iz = (await klic(`/api/students/${s.id}/priprave/${p.id}/teme`)).body;
+    const izZapiskov = new Map(iz.teme.filter((t) => t.izseki.length > 0).map((t) => [t.id, t.izseki.length]));
+    for (const id of ["MAT-SS-4/nedoloceni-integral", "MAT-SS-4/doloceni-integral"]) assert.ok(izZapiskov.has(id), `${id} iz zapiskov: ${JSON.stringify([...izZapiskov])}`);
 
     const pred = (await klic(`/api/students/${s.id}/priprave/${p.id}/napredek`)).body;
     assert.ok(pred.teme.length > 0, "načrt ima teme");
     const vse = (x) => x.teme.reduce((a, t) => a + t.nalog, 0);
     assert.equal(vse(pred), 0, "pred kvizom ni rešenih nalog");
 
-    // Kviz: seja »list« z nalogami Vadnice; vse odgovorimo pravilno.
+    // Kviz: seja »list« z nalogami Vadnice iz tem zapiskov; vse odgovorimo pravilno, dokler seja ne pokaže povzetka.
     let kv = await klic(`/api/students/${s.id}/priprave/${p.id}/kviz`, { method: "POST", body: { dolzina: 6 } });
     assert.equal(kv.status, 200, JSON.stringify(kv.body));
+    const seja = kv.body.sessionId;
     const resene = [];
-    for (let i = 0; i < 12 && kv.body?.task; i++) {
+    for (let i = 0; i < 8 && kv.body?.task; i++) {
+      assert.equal(kv.body.sessionId, seja, "ista seja kviza");
       const id = kv.body.task.id;
       const a = await klic(`/api/students/${s.id}/tasks/${id}/answer`, { method: "POST", body: { answer: pravilno(naloga(store, id).answer) } });
       assert.equal(a.status, 200, JSON.stringify(a.body));
       assert.equal(a.body.kind, "correct", `${JSON.stringify(naloga(store, id).answer)} → ${JSON.stringify(a.body)}`);
       resene.push(id);
-      kv = await klic(`/api/students/${s.id}/priprave/${p.id}/kviz`, { method: "POST", body: { dolzina: 6 } });
+      kv = { body: a.body.next };
+      if (i === 2) {
+        // Ponovno odprt kviz (drug zavihek, vrnitev) istega dne nadaljuje isto sejo pri isti nalogi.
+        const znova = await klic(`/api/students/${s.id}/priprave/${p.id}/kviz`, { method: "POST", body: { dolzina: 6 } });
+        assert.deepEqual([znova.body.sessionId, znova.body.task?.id], [seja, kv.body.task?.id], "nadaljevanje kviza");
+      }
     }
-    assert.ok(resene.length >= 2, `rešenih nalog kviza: ${resene.length}`);
+    assert.equal(resene.length, 6, `rešenih nalog kviza: ${resene.length}`);
+    assert.equal(kv.body.finished, true, `konec kviza: ${JSON.stringify(kv.body).slice(0, 300)}`);
+    assert.deepEqual([kv.body.sessionId, kv.body.kind, kv.body.total, kv.body.correct], [seja, "list", 6, 6]);
+    assert.ok(kv.body.list, "povzetek kviza po temah");
     const teme = [...new Set(resene.map((id) => store.db.prepare("SELECT topic_id FROM tasks WHERE id = ?").get(id).topic_id))];
+    const izTem = new Set([...izZapiskov.keys()].flatMap((id) => [id, ...(getTopic(id)?.base || [])]));
+    for (const tema of teme) assert.ok(izTem.has(tema), `naloga kviza iz teme zapiskov (ali njene osnovne teme): ${tema}`);
 
     // Napredek priprave šteje rešene naloge kviza (pravilne v prvo); skupni napredek pozna iste teme.
     const po = (await klic(`/api/students/${s.id}/priprave/${p.id}/napredek`)).body;
     const ok = po.teme.reduce((a, t) => a + t.pravilnihVPrvo, 0);
     assert.ok(vse(po) >= resene.length && ok >= resene.length, JSON.stringify(po.teme.map((t) => [t.id, t.nalog, t.pravilnihVPrvo])));
-    assert.ok(po.pripravljenost >= pred.pripravljenost, `pripravljenost ${pred.pripravljenost} → ${po.pripravljenost}`);
+    assert.ok(po.pripravljenost.odstotek > (pred.pripravljenost.odstotek ?? 0), `pripravljenost ${JSON.stringify(pred.pripravljenost)} → ${JSON.stringify(po.pripravljenost)}`);
     for (const tema of teme) {
       const t = await temaNapredka(klic, s.id, tema);
       assert.ok(t && t.turns >= 1 && t.errors === 0, `${tema}: ${JSON.stringify(t)}`);
@@ -205,15 +225,24 @@ test("K-09 pot 3: pogovor z inštruktorjem → kartice → ponovitev kartice →
     assert.ok(k, `kartica iz pogovora: ${JSON.stringify(kartice).slice(0, 300)}`);
     assert.equal(store.db.prepare("SELECT conversation_id FROM flashcards WHERE id = ?").get(k.id)?.conversation_id, c.id);
 
-    // Ponovitev kartice (pravilno) premakne naslednjo ponovitev naprej.
+    // Napaka iz pogovora (META error=1) je v napredku kot napaka teme iz klepeta.
+    const pitagora = (x) => /pitagor/i.test(`${x.topic} ${x.topic_id}`);
+    const pred = (await klic(`/api/students/${s.id}/progress`)).body.topics.find(pitagora);
+    assert.ok(pred, "tema iz pogovora v napredku");
+    assert.ok(pred.errors >= 1, JSON.stringify(pred));
+    const kartic = () => store.db.prepare("SELECT COALESCE(SUM(n), 0) AS n, COALESCE(SUM(wrong), 0) AS w FROM skill_results WHERE student_id = ? AND source = 'cards'").get(s.id);
+    assert.deepEqual({ ...kartic() }, { n: 0, w: 0 }, "pred ponovitvijo ni rezultata kartic");
+
+    // Ponovitev kartice (»znal sem«): kartica gre v naslednji predal z datumom v prihodnosti, rezultat gre v šibke točke
+    // pod temo pogovora, napredek teme pa ga šteje.
     const rev = await klic(`/api/students/${s.id}/flashcards/${k.id}/review`, { method: "POST", body: { ok: true } });
     assert.equal(rev.status, 200, JSON.stringify(rev.body));
-
-    // Napaka iz pogovora (META error=1) je v napredku kot napaka teme iz klepeta.
-    const napredek = (await klic(`/api/students/${s.id}/progress`)).body;
-    const t = napredek.topics.find((x) => /pitagor/i.test(`${x.topic} ${x.topic_id}`));
-    assert.ok(t, `tema iz pogovora v napredku: ${JSON.stringify(napredek.topics).slice(0, 400)}`);
-    assert.ok(t.errors >= 1, JSON.stringify(t));
+    assert.equal(rev.body.card.box, k.box + 1, JSON.stringify(rev.body.card));
+    assert.ok(rev.body.card.due > store.db.prepare("SELECT datetime('now') AS t").get().t, `naslednja ponovitev v prihodnosti: ${rev.body.card.due}`);
+    assert.equal(rev.body.due, 0, "danes ni več kartic za ponovitev");
+    assert.deepEqual({ ...kartic() }, { n: 1, w: 0 });
+    const po = (await klic(`/api/students/${s.id}/progress`)).body.topics.find(pitagora);
+    assert.equal(po.turns, pred.turns + 1, `ponovitev kartice v napredku: ${JSON.stringify(pred)} → ${JSON.stringify(po)}`);
   } finally {
     await konec();
   }
@@ -221,10 +250,14 @@ test("K-09 pot 3: pogovor z inštruktorjem → kartice → ponovitev kartice →
 
 test("K-09 pot 4: registracija → profil → plačilo (Stripe, testni način) → pravice inštruktorja in skeniranja", async () => {
   const prev = process.env.EVKLID_FREE_DAILY_QUESTIONS;
-  process.env.EVKLID_FREE_DAILY_QUESTIONS = "1";
-  const scanReadFn = async () => ({ problems: [{ text: "$x + 2 = 5$" }], usage: { input_tokens: 500, output_tokens: 20 }, model: "claude-haiku-5-5" });
-  const { store, klic, klici, konec } = await streznik({ racuni: true, odgovor: 'Poglejva.\n<<META subject=MAT topic="-" error=0 mode=A flag=none>>', scanReadFn });
+  let srv = null;
   try {
+    process.env.EVKLID_FREE_DAILY_QUESTIONS = "1";
+    // Kamera v inštruktorju (scan/read-task) je plačljiva pravica: velja dnevna meja brezplačnih vprašanj.
+    const branj = [];
+    const scanReadTaskFn = async () => (branj.push(1), { text: "Reši enačbo $x + 2 = 5$.", usage: { input_tokens: 500, output_tokens: 20 }, model: "claude-haiku-5-5" });
+    srv = await streznik({ racuni: true, odgovor: 'Poglejva.\n<<META subject=MAT topic="-" error=0 mode=A flag=none>>', scanReadTaskFn });
+    const { store, klic, klici } = srv;
     const reg = await klic("/api/auth/register", { method: "POST", body: { email: "integracija@primer.si", password: "geslo1234", accept_privacy: true, birth_date: "1985-04-12" } });
     assert.equal(reg.status, 201, JSON.stringify(reg.body));
     const mail = klici.filter((c) => c.host === "api.resend.com").at(-1);
@@ -242,6 +275,11 @@ test("K-09 pot 4: registracija → profil → plačilo (Stripe, testni način) �
     assert.equal(blok.status, 429, "brezplačna meja");
     assert.equal(blok.body.code, "block.freeDaily");
     assert.equal((await klic("/api/account")).body.access.tier === "paid", false);
+    const skeniraj = () => klic(`/api/students/${sid}/scan/read-task`, { method: "POST", body: { image: PNG } });
+    const skenPred = await skeniraj();
+    assert.equal(skenPred.status, 429, `kamera pred plačilom: ${JSON.stringify(skenPred.body)}`);
+    assert.equal(skenPred.body.code, "block.freeDaily");
+    assert.equal(branj.length, 0, "branje pred plačilom ne kliče modela");
 
     // Plačilo v testnem načinu: checkout s soglasji, nato webhook Stripa (podpisan) aktivira naročnino.
     const co = await klic("/api/billing/checkout", { method: "POST", body: { seats: 1, interval: "year", adult: true, withdrawal: true, terms: true } });
@@ -261,13 +299,14 @@ test("K-09 pot 4: registracija → profil → plačilo (Stripe, testni način) �
     // Pravice po plačilu: račun plačan, inštruktor odgovarja naprej, skeniranje bere in zapiše porabo.
     assert.equal((await klic("/api/account")).body.access.tier, "paid");
     assert.equal((await vprasaj("tretje")).status, 200, "po plačilu ni brezplačne meje");
-    const sken = await klic(`/api/students/${sid}/scan/read`, { method: "POST", body: { image: PNG } });
+    const sken = await skeniraj();
     assert.equal(sken.status, 200, JSON.stringify(sken.body));
-    assert.equal(sken.body.problems.length, 1);
-    assert.ok(store.db.prepare("SELECT COUNT(*) AS n FROM usage WHERE student_id = ? AND kind = 'skeniranje'").get(sid).n >= 1);
+    assert.match(sken.body.text, /x \+ 2 = 5/);
+    assert.equal(branj.length, 1);
+    assert.equal(store.db.prepare("SELECT COUNT(*) AS n FROM usage WHERE student_id = ? AND kind = 'skeniranje'").get(sid).n, 1, "branje je zapisano v porabi");
   } finally {
     if (prev === undefined) delete process.env.EVKLID_FREE_DAILY_QUESTIONS;
     else process.env.EVKLID_FREE_DAILY_QUESTIONS = prev;
-    await konec();
+    await srv?.konec();
   }
 });
