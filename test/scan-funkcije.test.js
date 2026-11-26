@@ -6,7 +6,7 @@ import { prep, kombinatorika } from "../public/scan/solvecore.js";
 import { verifyAi } from "../public/scan/verify.js";
 import { casText } from "../server/scan.js";
 
-test("prep: imena funkcij v zapis kalkulatorja", () => {
+test("AUDIT-090: prep: imena funkcij v zapis kalkulatorja", () => {
   assert.equal(prep("log(x-3, 2)=4"), "logb(x-3, 2)=4");
   assert.equal(prep("log(log(81,3), 2)"), "logb(logb(81, 3), 2)");
   assert.equal(prep("factorial(14)/factorial(4)"), "(14)!/(4)!");
@@ -17,13 +17,16 @@ test("prep: imena funkcij v zapis kalkulatorja", () => {
   assert.equal(prep("log(100)"), "log(100)");
 });
 
-test("casText: SymPy dobi binomial, factorial in log z osnovo", () => {
+test("AUDIT-090, AUDIT-091: casText: SymPy dobi binomial, factorial in log z osnovo", () => {
+  // AUDIT-091: C(10,3) in V(5,2) s SymPy nista lažno »Napačno«
+  assert.equal(casText("C(10,3)"), "binomial(10, 3)");
+  assert.equal(casText("V(5,2)"), "(factorial(5)/factorial((5)-(2)))");
   assert.equal(casText(prep("nCr(10,3)+V(5,2)")), "binomial(10, 3)+(factorial(5)/factorial((5)-(2)))");
   assert.equal(casText(prep("log(x-3, 2)=4")), "log(x-3, 2)=4");
   assert.equal(casText(prep("factorial(14)/factorial(4)")), "(14)!/(4)!");
 });
 
-test("verifyAi: pravilno ni »Napačno«, napačno ni potrjeno", () => {
+test("AUDIT-090, AUDIT-101: verifyAi: pravilno ni »Napačno«, napačno ni potrjeno", () => {
   const st = (t, sol) => verifyAi(t, sol).status;
   assert.notEqual(st("log(15625, 5)", { kind: "arith", value: "6" }), "wrong");
   assert.equal(st("log(15625, 5)", { kind: "arith", value: "5" }), "wrong");
@@ -40,7 +43,7 @@ test("verifyAi: pravilno ni »Napačno«, napačno ni potrjeno", () => {
   assert.notEqual(st("factorial(n)/factorial(n-2)", { kind: "expression", value: "n*(n-1)" }), "wrong");
   assert.equal(st("factorial(n)/factorial(n-2)", { kind: "expression", value: "n*(n-1)*(n-2)" }), "wrong");
   assert.equal(st("log(8, 2, 3)", { kind: "arith", value: "3" }), "unverified");
-  // decimalna vejica v klicu funkcije (AUDIT-096): »arcsin(0,5)« = 30° ni »Napačno«; »log(0,5)« je lahko log 0,5
+  // decimalna vejica v klicu funkcije (AUDIT-101): »arcsin(0,5)« = 30° ni »Napačno«; »log(0,5)« je lahko log 0,5
   // ali log z osnovo 5, zato brez sodbe; s presledkom (»log(15625, 5)«) in pri kombinatoriki sta to dva argumenta
   assert.equal(st("arcsin(0,5)", { kind: "arith", value: "30°" }), "unverified");
   assert.equal(st("sqrt(2,25)", { kind: "arith", value: "1,5" }), "unverified");
