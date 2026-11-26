@@ -34,4 +34,17 @@ Pregledovalec je prejel kodo brez avtorjevih sklepov. Ugotovitve in popravki:
 7. 22 generatorjev je imelo navodilo za zaokroževanje, ki ga skript ni prepoznal (»na cente«, »na dve decimalki« brez
    »zaokroži«, »na cel mililiter«, »nearest tenth«). Popravek; »na centimeter« ostane brez statusa (odvisno od enote).
 
+Ponovni pregled popravkov je našel še tri luknje, popravljene: različica definirane količine (F_max) je obšla omejitev
+»delno«; faktorja √2 in √3 sta se z malimi koeficienti izničila (3a² − 2b², zdaj e^(1/p)); opis »cene so zapisane na dve
+decimalki« je prevladal nad navodilom »zaokroži na cele evre«.
+
+## Neodvisni pregled rezultatov (prehod 3, model AI, ne človek)
+
+Drugi pregledovalec je ponovil popis s 3 semeni in ročno preveril naključni vzorec (seme 20261126): 40 potrjenih formul
+je dimenzijsko pravilnih in nobena ni trivialna (0/40 napačno potrjenih, 95 % interval 0–8,8 %); 20 potrjenih navodil
+za zaokroževanje se ujema z odgovorom (0/20); 15 delnih in 15 nepreverjenih ima pošten status in nobena ni zgrešena
+napaka. Številke obeh naborov se ujemajo s poročilom. Pet potrditev, kjer je bila enota obeh strani le iz imena
+(F = F_{tr}, P_1 = P_2), je zdaj brez statusa. Ostane za pozneje: `\sin x` brez oklepaja in `\mathrm{\mu C}` se ne
+prevedeta (formula ostane brez statusa).
+
 Vsi popravki imajo teste v `test/enote-generatorjev.test.js`.
