@@ -7,6 +7,7 @@ import { NOTE_TAG } from "./live-check.js";
 import { checkAnswer, fmt } from "./practice/check.js";
 import * as MATH from "../public/graph/math.js";
 import { ONE_SHOT } from "./progress.js";
+import { optionsAreTex } from "./practice/index.js";
 
 // Naloga z enim poskusom (preizkus, tekmovanje, test predznanja), ki še ni oddana: brez pomoči in brez rezultata.
 export const oddajaOdprta = (task) => !!task && ONE_SHOT.includes(task.mode) && !task.solved && !(task.attempts >= 1);
@@ -62,14 +63,18 @@ export function diagnoza(payload, lastAnswer) {
   return { pravilno, zaokrozitev, napaka: !pravilno && !zaokrozitev && why && !izdaRezultat(why, answer) ? String(why).trim() : null };
 }
 
-// Učenčev odgovor, kot ga je videl: pri izbiri besedilo izbrane možnosti, ne indeks.
-function odgovorZaOpombo(answer, lastAnswer) {
+// Učenčev odgovor, kot ga je videl: pri izbiri besedilo izbrane možnosti, ne indeks (Vadnica shrani indeks).
+// tex: možnosti so čisti TeX brez $ (optionsAreTex), zato jih ovijemo v $…$, da jih sporočilo učenca nariše.
+export function prikazOdgovora(answer, lastAnswer, { tex = false } = {}) {
   if (answer?.type === "choice" && /^\d+$/.test(String(lastAnswer).trim())) {
     const o = answer.options?.[Number(lastAnswer)];
-    if (o != null) return `»${o}«`;
+    if (o != null) return tex ? `$${String(o).slice(0, 200)}$` : String(o).slice(0, 200);
   }
-  return `»${String(lastAnswer).slice(0, 200)}«`;
+  return String(lastAnswer).slice(0, 200);
 }
+// Odgovor v sporočilu učenca (pomoč iz Vadnice): možnosti v čistem TeX narisane kot formula.
+export const odgovorVSporocilu = (payload, lastAnswer) => prikazOdgovora(payload?.answer, lastAnswer, { tex: !!payload && optionsAreTex(payload) });
+const odgovorZaOpombo = (answer, lastAnswer) =>`»${prikazOdgovora(answer, lastAnswer)}«`;
 
 const besediloZgleda = (s) => (Array.isArray(s) ? s.join("\n") : typeof s === "string" ? s : "").trim().slice(0, MAX_SOLUTION);
 
