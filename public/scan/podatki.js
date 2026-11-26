@@ -3,10 +3,11 @@
 // postaviti formule. Zato AI ob rešitvi vrne še »check«: vrednosti vseh količin in formule, ki jih je uporabil. Tu jih
 // sami preračunamo in preverimo:
 //   1. vsak podatek naloge je uporabljen kot vrednost ali število v formuli, z istim predznakom, v svoji enoti ali
-//      pretvorjen v osnovno enoto SI, ki jo določa enota ob podatku (2 kW → 2000, 72 km/h → 20; »4 cm« ne sme biti 40);
+//      pretvorjen v osnovno enoto SI, ki jo določa enota ob podatku (2 kW → 2000, 72 km/h → 20; »4 cm« ne sme biti 40),
+//      in vsi zapisi skupaj so v enem sistemu enot (ne 36 km z 20 m/s, ne 3 min z 2 m/s);
 //   2. vrednost iskane količine je število v končnem odgovoru (value, solutions in answer_tex, vsa, ista enota);
 //   3. z vrednostmi drži vsaka formula: podatki so točni, zaokrožene vrednosti in decimalna števila v formuli imajo
-//      pol zadnjega mesta; koti veljajo v stopinjah ali v radianih (obe branji, kot v kalkulatorju);
+//      pol zadnjega mesta; koti v radianih, v stopinjah pa le, ko naloga ali rešitev piše kote s °;
 //   4. formule iz podatkov določijo vse druge količine (rang Jacobijeve matrike) in iskana je odvisna od vsakega
 //      podatka (zapis »S=32« ali »S=S« ne velja); formula z iskano količino nima druge rešitve, ki bi prav tako
 //      ustrezala (c = −6,40 pri c² = a² + b², t = 3 pri dveh pozitivnih časih).
@@ -74,32 +75,69 @@ function vrednost(text) {
   return { n, deg, d, dc: Math.max(d, cel, 1e-3 * Math.abs(n)) };
 }
 
-// Enote ob podatkih → faktor do osnovne enote SI. Neznana enota: le faktor 1 (podatek mora biti zapisan, kot je).
+// Enote ob podatkih → faktor do osnovne enote SI in dimenzija [L, M, T, I, Θ, N]. Neznana enota: le faktor 1
+// (podatek mora biti zapisan, kot je).
 const PREDPONE = { G: 1e9, M: 1e6, k: 1e3, h: 1e2, d: 1e-1, c: 1e-2, m: 1e-3, µ: 1e-6, u: 1e-6, n: 1e-9 };
-const OSNOVE = { m: 1, g: 1e-3, s: 1, W: 1, J: 1, V: 1, A: 1, N: 1, Pa: 1, Hz: 1, Wh: 3600, eV: 1.602176634e-19, mol: 1, bar: 1e5, L: 1e-3, l: 1e-3, Ω: 1, C: 1, K: 1, t: 1000 };
-const POSEBNE = new Map([["min", 60], ["h", 3600], ["dan", 86400], ["%", 0.01], ["‰", 0.001]]);
+const E = [2, 1, -2, 0, 0, 0];
+const OSNOVE = {
+  m: [1, [1, 0, 0, 0, 0, 0]],
+  g: [1e-3, [0, 1, 0, 0, 0, 0]],
+  t: [1000, [0, 1, 0, 0, 0, 0]],
+  s: [1, [0, 0, 1, 0, 0, 0]],
+  A: [1, [0, 0, 0, 1, 0, 0]],
+  K: [1, [0, 0, 0, 0, 1, 0]],
+  mol: [1, [0, 0, 0, 0, 0, 1]],
+  N: [1, [1, 1, -2, 0, 0, 0]],
+  J: [1, E],
+  Wh: [3600, E],
+  eV: [1.602176634e-19, E],
+  W: [1, [2, 1, -3, 0, 0, 0]],
+  V: [1, [2, 1, -3, -1, 0, 0]],
+  Ω: [1, [2, 1, -3, -2, 0, 0]],
+  C: [1, [0, 0, 1, 1, 0, 0]],
+  Pa: [1, [-1, 1, -2, 0, 0, 0]],
+  bar: [1e5, [-1, 1, -2, 0, 0, 0]],
+  Hz: [1, [0, 0, -1, 0, 0, 0]],
+  L: [1e-3, [3, 0, 0, 0, 0, 0]],
+  l: [1e-3, [3, 0, 0, 0, 0, 0]],
+};
+const CAS = [0, 0, 1, 0, 0, 0];
+const POSEBNE = new Map([["min", [60, CAS]], ["h", [3600, CAS]], ["dan", [86400, CAS]], ["%", [0.01, null]], ["‰", [0.001, null]]]);
 function faktorEnote(tok) {
   const m = /^([^^]+)(?:\^p(-?\d))?$/.exec(tok);
   if (!m) return null;
   const pot = Number(m[2] || 1);
-  if (POSEBNE.has(m[1])) return POSEBNE.get(m[1]) ** pot;
-  const b = /^(G|M|k|h|d|c|m|µ|u|n)?(Pa|Hz|Wh|eV|mol|bar|m|g|s|W|J|V|A|N|L|l|Ω|C|K|t)$/.exec(m[1]);
-  return b ? ((b[1] ? PREDPONE[b[1]] : 1) * OSNOVE[b[2]]) ** pot : null;
+  let f;
+  let dim;
+  if (POSEBNE.has(m[1])) [f, dim] = POSEBNE.get(m[1]);
+  else {
+    const b = /^(G|M|k|h|d|c|m|µ|u|n)?(Pa|Hz|Wh|eV|mol|bar|m|g|s|W|J|V|A|N|L|l|Ω|C|K|t)$/.exec(m[1]);
+    if (!b) return null;
+    [f, dim] = OSNOVE[b[2]];
+    f *= b[1] ? PREDPONE[b[1]] : 1;
+  }
+  return { f: f ** pot, dim: dim && dim.map((x) => x * pot) };
 }
+// Zapis enote (»km/h«, »J/(kg K)«, »m^p2«) → { f, dim, toks } ali null (neznana); dim je null pri odstotkih;
+// toks: posamezne enote zapisa (km in h), vsaka s svojim faktorjem in dimenzijo (v imenovalcu z obratnim predznakom).
 function faktorZapisa(u) {
   const deli = u.replace(/[()]/g, " ").split("/");
   if (deli.length > 2) return null;
   let f = 1;
+  let dim = [0, 0, 0, 0, 0, 0];
+  const toks = [];
   for (let i = 0; i < deli.length; i++) {
-    const toks = deli[i].split(/[\s·*]+/).filter(Boolean);
-    if (!toks.length) return null;
-    for (const t of toks) {
+    const enote = deli[i].split(/[\s·*]+/).filter(Boolean);
+    if (!enote.length) return null;
+    for (const t of enote) {
       const g = faktorEnote(t);
       if (g === null) return null;
-      f = i ? f / g : f * g;
+      f = i ? f / g.f : f * g.f;
+      dim = dim && g.dim ? dim.map((x, j) => x + (i ? -g.dim[j] : g.dim[j])) : null;
+      if (g.dim) toks.push({ f: i ? 1 / g.f : g.f, dim: g.dim.map((x) => (i ? -x : x)) });
     }
   }
-  return f;
+  return { f, dim, toks };
 }
 
 // Podatki naloge (LaTeX) → [{ n, f: [[faktor, toleranca]], k: [premik] }]. »m = 1{,}5\ \mathrm{kg}« → 1,5 (faktor 1),
@@ -135,18 +173,35 @@ export function podatkiNaloge(given = []) {
       const u = s.slice(m.index + m[0].length, i + 1 < ms.length ? ms[i + 1].index : s.length).split(/[,;=]/)[0].trim();
       const f = [[1, 1e-9]];
       const k = [];
+      let enota = null; // { f: faktor do SI, dim } za preverjanje enotnega sistema enot (glej sistemEnot)
+      let kot = false;
       if (/^°\s*C\b/.test(u)) k.push(273.15, 273);
-      else if (/^°/.test(u)) f.push([STOPINJA, 1e-3]);
-      else if (u) {
-        const x = faktorZapisa(u);
-        if (x !== null && x !== 1) f.push([x, 1e-9]);
+      else if (/^°/.test(u)) {
+        kot = true;
+        f.push([STOPINJA, 1e-3]);
+      } else if (u) {
+        enota = faktorZapisa(u);
+        if (enota && enota.f !== 1) f.push([enota.f, 1e-9]);
+        if (enota && !enota.dim) enota = null; // odstotek: brez dimenzije (20 % je lahko 20 v formuli z /100)
       }
-      out.push({ n, f, k });
+      out.push({ n, f, k, enota, kot });
     });
   }
   return out;
 }
 export const stevilaPodatkov = (given) => podatkiNaloge(given).map((p) => p.n);
+
+// Enoten sistem enot: vsak podatek z znano enoto je v rešitvi zapisan v svoji enoti (cm, km, min) ali v osnovni enoti SI.
+// Mešanica ni dovoljena, če ni sistema enot, v katerem bi bili vsi zapisi hkrati pravi: 36 km in 20 m/s (namesto
+// 72 km/h) ali 3 min in 2 m/s dasta napačen rezultat, ki bi se sicer »ujemal«. Vsaka enota v zapisu podatka (km in h
+// pri km/h) da vrstico log(faktor) = Σ_j dim_j · log(b_j) za merila osnovnih enot b (dolžina, masa, čas, …): faktor
+// enote, če je podatek zapisan v svoji enoti, in 1 (log 0), če je pretvorjen v SI. Sistem obstaja, ko je rang
+// dimenzij enak rangu razširjene matrike.
+function sistemEnot(rabe) {
+  const rows = rabe.map(({ dim, f }) => [...dim, Math.log(f)]);
+  if (!rows.length) return true;
+  return rang(rows.map((r) => r.slice(0, 6))) === rang(rows);
+}
 
 // Pogoji v podatkih (x > 0, t ∈ [0, 5], a ≠ 1): koda jih ne preverja, zato naloga s pogojem ostane nepreverjena.
 const POGOJ = /[<>≤≥∈≠]|\\(?:le|ge|leq|geq|lt|gt|in|neq|ne)(?![a-z])/;
@@ -371,6 +426,14 @@ export function preveriPodatke(text, given, sol) {
   const pool = [...names.filter((x) => x !== iskana).map((x) => values.get(x).n), ...equations.flatMap((e) => e.lits)];
   if (data.some((p) => p.n !== 0 && !pool.some((v) => istiPodatek(p, v)))) return nic("unused datum");
   const podatek = new Set(names.filter((x) => x !== iskana && data.some((p) => istiPodatek(p, values.get(x).n))));
+  const rabe = [];
+  for (const p of data) {
+    if (!p.enota || !p.n) continue;
+    const kot = (x) => pool.some((v) => Math.abs(v - p.n * x) <= 1e-9 * Math.abs(p.n * x));
+    if (kot(1)) rabe.push(...p.enota.toks);
+    if (p.enota.f !== 1 && kot(p.enota.f)) rabe.push(...p.enota.toks.map((t) => ({ dim: t.dim, f: 1 })));
+  }
+  if (!sistemEnot(rabe)) return nic("mixed units");
 
   // 2. vrednost iskane količine je vsako število v končnem odgovoru (ista enota). Pred preizkusom formul: »wrong«
   // sme reči le račun, ki pripelje do prikazanega odgovora; neskladen pomožni zapis ne skrije morda pravilne rešitve.
@@ -386,7 +449,12 @@ export function preveriPodatke(text, given, sol) {
   let ok = null;
   let ohlapno = false;
   let prvi = null;
-  for (const nacin of ["rad", "deg"]) {
+  // Branje v stopinjah le, ko naloga ali rešitev kote res piše s ° (sicer bi y = A·sin(ω·t) v stopinjah »držal« za
+  // napačen odgovor kalkulatorja v načinu DEG). V radianih kot iz podatka s ° ne sme biti golo število (30 kot 30 rad).
+  const stopinje = data.some((p) => p.kot) || names.some((x) => values.get(x).deg) || /°|\\circ/.test([sol?.value, sol?.answer_tex, ...(Array.isArray(sol?.solutions) ? sol.solutions : [])].join(" "));
+  const goliKot = names.some((x) => !values.get(x).deg && data.some((p) => p.kot && p.n && Math.abs(values.get(x).n - p.n) <= 1e-9 * Math.abs(p.n)));
+  const nacini = [...(goliKot ? [] : ["rad"]), ...(stopinje ? ["deg"] : [])];
+  for (const nacin of nacini) {
     const N = NACINI[nacin];
     const env = Object.fromEntries(names.map((x) => [x, N.v(values.get(x))]));
     const strogo = Object.fromEntries(names.map((x) => [x, jePodatek(x) ? 0 : values.get(x).d * N.k(values.get(x))]));
@@ -406,7 +474,8 @@ export function preveriPodatke(text, given, sol) {
     if (ohlapno) return nic("rounded");
     const e = equations[prvi.fail];
     const s = e[prvi.nacin];
-    return { verified: false, reason: "wrong", status: statusOf({ holds: false }), note: `with your values ${e.text} gives ${fmt(s.L(prvi.env))} on the left and ${fmt(s.R(prvi.env))} on the right` };
+    const brezStopinj = !stopinje && names.some((x) => /^[α-ω](_|$)/.test(x)) ? " (if a value is an angle in degrees, write it with °)" : "";
+    return { verified: false, reason: "wrong", status: statusOf({ holds: false }), note: `with your values ${e.text} gives ${fmt(s.L(prvi.env))} on the left and ${fmt(s.R(prvi.env))} on the right${brezStopinj}` };
   }
   const { env, J, nacin } = ok;
 

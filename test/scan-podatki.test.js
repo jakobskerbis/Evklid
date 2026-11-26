@@ -106,6 +106,28 @@ test("pregled 2: koti v stopinjah brez trigonometrije, vsa števila odgovora, po
   assert.match(solvePrompt("S_{10}=?", "slovenščina", null, null, ["a_1 = 2"]), /named "S_10"/);
 });
 
+test("pregled 3: način kotov in enoten sistem enot", () => {
+  const NIHALO = ["A = 5\\,\\mathrm{cm}", "\\omega = 2\\,\\mathrm{s^{-1}}", "t = 1\\,\\mathrm{s}"];
+  // brez ° nikjer: trigonometrija v radianih (odgovor kalkulatorja v načinu DEG je napačen)
+  assert.equal(status("y=?", NIHALO, sol({ A: "5", omega: "2", t: "1", y: "0.17" }, ["y=A*sin(omega*t)"], { value: "0.17" })), "wrong");
+  assert.equal(status("y=?", NIHALO, sol({ A: "5", omega: "2", t: "1", y: "4.55" }, ["y=A*sin(omega*t)"], { value: "4.55" })), "partial");
+  // podatek s ° kot golo število ni v radianih (sin 30 rad)
+  assert.equal(status("h=?", ["\\alpha = 30^\\circ", "c = 10"], sol({ alpha: "30", c: "10", h: "-9.88" }, ["h=c*sin(alpha)"], { value: "-9.88" })), "wrong");
+  assert.equal(status("h=?", ["\\alpha = 30^\\circ", "c = 10"], sol({ alpha: "30", c: "10", h: "5" }, ["h=c*sin(alpha)"], { value: "5" })), "partial");
+  // ponovitev dobi namig za ° pri kotu brez stopinj
+  assert.match(preveriPodatke("alpha=?", TRIKOTNIK, sol({ a: "5", b: "12", alpha: "22.62" }, ["tan(alpha)=a/b"], { value: "22.62" })).note, /write it with °/);
+  // mešane enote: del podatkov v svoji enoti, del v SI
+  assert.equal(status("S=?", TRAPEZ, sol({ a: "10", c: "6", v: "0.04", S: "0.32" }, ["S=(a+c)/2*v"], { value: "0.32" })), "unverified");
+  assert.equal(status("S=?", TRAPEZ, sol({ a: "0.1", c: "0.06", v: "0.04", S: "0.0032" }, ["S=(a+c)/2*v"], { value: "0.0032" })), "partial");
+  const POT = ["s = 36\\,\\mathrm{km}", "v = 72\\,\\mathrm{km/h}"];
+  assert.equal(status("t=?", POT, sol({ s: "36", v: "20", t: "1.8" }, ["t=s/v"], { value: "1.8" })), "unverified");
+  assert.equal(status("t=?", POT, sol({ s: "36", v: "72", t: "0.5" }, ["t=s/v"], { value: "0.5" })), "partial");
+  assert.equal(status("t=?", POT, sol({ s: "36000", v: "20", t: "1800" }, ["t=s/v"], { value: "1800" })), "partial");
+  const HOJA = ["v = 2\\,\\mathrm{m/s}", "t = 3\\,\\mathrm{min}"];
+  assert.equal(status("s=?", HOJA, sol({ v: "2", t: "3", s: "6" }, ["s=v*t"], { value: "6" })), "unverified");
+  assert.equal(status("s=?", HOJA, sol({ v: "2", t: "180", s: "360" }, ["s=v*t"], { value: "360" })), "partial");
+});
+
 test("česar ne znamo preveriti, ostane »unverified« (brez ponovitve)", () => {
   const nic = (text, given, s, why) => {
     const r = preveriPodatke(text, given, s);
