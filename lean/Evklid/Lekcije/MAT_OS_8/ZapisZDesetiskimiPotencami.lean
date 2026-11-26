@@ -141,6 +141,7 @@ theorem predznak_eksponenta (a : ℝ) (n : ℤ) (ha : 1 ≤ a ∧ a < 10) :
       have : (10 : ℝ) ^ (1 : ℤ) ≤ 10 ^ n := zpow_le_zpow_right₀ (by norm_num) (by omega)
       rw [zpow_one] at this; linarith
 
+/-- Predpostavka `predznak_eksponenta` se da izpolniti (a = 1). -/
 example : ∃ a : ℝ, 1 ≤ a ∧ a < 10 := ⟨1, by norm_num⟩
 
 /-- Primer 3 (formula) in Povzetek: 10ᵐ · 10ⁿ = 10ᵐ⁺ⁿ; pri množenju množiš števili a in seštevaš eksponenta. -/

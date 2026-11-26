@@ -144,7 +144,7 @@ theorem nic_cela_dvanajst : ∑' k : ℕ, (12 : ℝ) / (10 ^ 2) ^ (k + 1) = 4 / 
 /-- Razlaga 2 (premisli): pri 1/7 se skupina 142857 ponavlja v nedogled (1/7 = 0,142857142857…), zaslon
 pa zapis le zaokroži (|1/7 − 0,1428571429| < 10⁻¹⁰); √2 je iracionalen. -/
 theorem ena_sedmina :
-    ∑' k : ℕ, (142857 : ℝ) / (10 ^ 6) ^ (k + 1) = 1 / 7 ∧ |(1 / 7 : ℝ) - 0.1428571429| < 1 / 10 ^ 10 ∧
+    ∑' k : ℕ, (142857 : ℝ) / (10 ^ 6) ^ (k + 1) = 1 / 7 ∧ |(1 / 7 : ℝ) - 0.1428571429| < 1 / (2 * 10 ^ 10) ∧
       Irrational √2 := by
   refine ⟨?_, ?_, irrational_sqrt_two⟩
   · rw [periodicni 142857 6 (by norm_num)]; norm_num

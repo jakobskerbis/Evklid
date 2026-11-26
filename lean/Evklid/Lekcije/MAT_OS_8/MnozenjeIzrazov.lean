@@ -231,8 +231,8 @@ theorem kviz2 (b : ℝ) : (∀ x : ℝ, (x + 4) * (x + 6) = x ^ 2 + b * x + 24) 
   · intro h; have := h 1; linarith
   · rintro rfl x; ring
 
-/-- Preveri se 2, napačni odgovori: 24 = 4·6 je zadnji člen; b = 0 bi dobil le s prvim s prvim in zadnjim z
-zadnjim (manjkata 6x in 4x); 2 = 6 − 4, pravilno pa je x·6 + 4·x = 6x + 4x = 10x. -/
+/-- Preveri se 2, napačni odgovori: 24 = 4·6 je zadnji člen; b = 0 bi dobil, če bi množil le prvi člen s prvim in
+zadnji z zadnjim (manjkata 6x in 4x); 2 = 6 − 4, pravilno pa je x·6 + 4·x = 6x + 4x = 10x. -/
 theorem kviz2_napacni : (4 : ℝ) * 6 = 24 ∧ (∀ x : ℝ, (x + 4) * (x + 6) - (x ^ 2 + 24) = 6 * x + 4 * x) ∧
     (6 : ℝ) - 4 = 2 ∧ ∀ x : ℝ, x * 6 + 4 * x = 10 * x := by
   refine ⟨by norm_num, fun x => by ring, by norm_num, fun x => by ring⟩

@@ -1,6 +1,6 @@
 /-
 vir: content/lessons/MAT-OS-8/pitagorov-izrek.md
-sha256: 986de14222066ac68cf65990181fcdeba5ea0957aab8105e4a178a24aa95274c
+sha256: f6342dbbdbdd2ed10b980bd3e9507ae50dc9a5e651a925232b70ef08f769a6e7
 Model: trikotnik ABC v evklidskem afinem prostoru (ravnina je poseben primer), pravi kot je pri C (∠ A C B = π/2),
 kateti sta a = |BC| in b = |AC|, hipotenuza c = |AB|. Pitagorov izrek in njegov obrat sta ena trditev ↔ (Mathlib
 `dist_sq_eq_dist_sq_add_dist_sq_iff_angle_eq_pi_div_two`). Rešeni primeri so dokazani za vsak pravokotni trikotnik
@@ -17,8 +17,8 @@ trikotnik); zaokroževanje »na milimeter ali centimeter, kolikor meri meter« i
 izmerjene hipotenuze v tabeli (meritev; dokazano je, da so vsote kvadratov 5², 10², 13²); »5 + 6 > 8 pove, da trikotnik
 obstaja« (dokazano je le 5 + 6 > 8); »kot med stranicama 3 in 4 je pravi« v uvodu kot trditev o vrvi (dokazana sta
 uganka 3, 4, 5 in obrat izreka `pitagora`); »diagonala razdeli pravokotnik na dva pravokotna trikotnika« (Primer 4;
-dokazan je le račun za pravokotni trikotnik s katetama 3 in 5); »če zidar izmeri 5,83 m, so vogali na centimeter
-natančno pravi« (praktična, približna trditev; dokazano je 5,825 < √34 < 5,835).
+dokazan je le račun za pravokotni trikotnik s katetama 3 in 5); »če zidar izmeri 5,83 m, se diagonala na centimeter
+natančno ujema z izračunom, zato so vogali pravi« (praktična, približna trditev; dokazano je 5,825 < √34 < 5,835).
 -/
 module
 
