@@ -297,3 +297,18 @@ test("AUDIT-062 (pregled): h:mm ni deljenje, »45 € : 3« se preračuna", () =
   for (const t of [R`$1:30\,\mathrm{h} = 90\,\mathrm{min}$`, R`$8:05 = 8\,\mathrm{h}\,5\,\mathrm{min}$`, R`$45\ € : 3 = 15\ €$`]) assert.deepEqual(checkArithmetic(t).mismatches, [], t);
   assert.equal(checkArithmetic(R`$45\ € : 3 = 12\ €$`).mismatches.length, 1);
 });
+
+// Prevzem (26. 11.): po združitvi AUDIT-058/061/062 popis pokritosti ni smel dobiti lažnih napak.
+test("AUDIT-058 + 061 po združitvi: račun v SI brez enot, zaokrožen faktor, zaokrožen vmesni korak", () => {
+  const R = String.raw;
+  for (const t of [
+    R`$F = 1000\cdot 9{,}81\cdot 0{,}25\cdot 1{,}05 \approx 2{,}58\ \mathrm{kN}$`,
+    R`$n = 0{,}02\cdot 0{,}01819 = 0{,}3638\ \mathrm{mmol}$`,
+    R`$P_\mathrm{max} = \frac{0{,}8^2}{4 \cdot 200} = 0{,}8\,\mathrm{mW}$`,
+    R`$t = \dfrac{4756{,}7\ \mathrm{s}}{60} \approx 79{,}3\ \mathrm{min}$`,
+    R`$y = 10 \cdot 3 - 4{,}905 \cdot 3^2 = 30 - 44{,}1 = -14{,}1\,\text{m}$`,
+  ])
+    assert.deepEqual(checkArithmetic(t).mismatches, [], t);
+  for (const t of [R`$F = 1000\cdot 9{,}81\cdot 0{,}25\cdot 1{,}05 \approx 25{,}8\ \mathrm{kN}$`, R`$n = 0{,}02\cdot 0{,}01819 = 3{,}638\ \mathrm{mmol}$`, R`$4{,}905 \cdot 2 + 1 = 10 + 1$`])
+    assert.equal(checkArithmetic(t).mismatches.length, 1, t);
+});
