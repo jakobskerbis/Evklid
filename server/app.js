@@ -63,6 +63,7 @@ import { competitionInfo, competitionKeyFor, isCompetitionPath } from "./competi
 import { PAPERS_SI, PAPERS_SOURCE } from "./exam-papers-si.js";
 import { examInfo, examKeyFor, isExamPath, examOf, examPrompt, taskLanguage, localizeExamView, localizeExamTopic, examRaven } from "./exams.js";
 import { compressedStatic, compressedJson, pickEncoding } from "./compress.js";
+import { skrciJs, skrciVklopljeno } from "./skrci.js";
 import { slZasloni } from "./i18n-jedro.js";
 import { startupFiles, moduleDeps } from "./startup-files.js";
 import { mountFeedback, feedbackAiOn, feedbackPromptOn, isLocalRequest } from "./feedback.js";
@@ -555,7 +556,7 @@ export function createApp(store, opts = {}) {
       // Iz server/practice samo check.js (kot spodaj brez stiskanja), ne cela mapa s kodo strežnika (točka 1.7).
       ["/practice/check.js", path.join(here, "practice", "check.js")],
       ["/", publicDir],
-    ]);
+    ], { skrci: skrciVklopljeno() ? skrciJs : null });
     app.use(statics);
     // server/index.js po zagonu vnaprej stisne datoteke prvega odprtja strani (prvi obiski po posodobitvi hitri).
     // Paketi nalog iger (games/subjects/*.js) se v brskalniku naložijo z import() po predmetih, zato jih naštejemo posebej.

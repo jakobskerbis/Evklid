@@ -107,6 +107,7 @@ async function startServer(extraEnv = {}) {
     ...process.env,
     PORT: String(port),
     EVKLID_MOCK: "1",
+    EVKLID_SKRCI: "1", // skrčene datoteke JS kot na produkciji (server/skrci.js)
     EVKLID_MOCK_DELAY_MS: "0",
     EVKLID_NEWS: "0",
     EVKLID_DB: path.join(dir, "t.db"),

@@ -82,6 +82,9 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
   (`SEJA_POZNEJE`), so v `<template data-evklid-slogi>` do konca zagona (`withSessionStyles`); skener, zbirke in lige
   (`ZASLONI_POZNEJE`) app.js naloži po zagonu (`lenModul`, `zasloniPozneje`). Pasici sta znani iz `/api/config`.
   Izklop: `EVKLID_ZACETNI_PODATKI=0`. Test `test/zacetni-podatki.test.js`.
+- Skrčene datoteke JS (N-08c, j 26. 11. 2026): `server/skrci.js` (esbuild `minifyWhitespace` + `minifySyntax`, imena
+  ostanejo) pred stiskanjem v `server/compress.js`, samo `public/` (ne vendor, ne `sw.js`). Vklop na produkciji in v
+  `scripts/preveri-aplikacijo.cjs`, izklop `EVKLID_SKRCI=0`. Prenos prvega odprtja ~27 % manjši. Test `test/skrci.test.js`.
 - Ponovni obisk prijavljenega (N-08, 25. 11. 2026): service worker postreže shranjeno vstopno stran (brez začetnih
   podatkov, ker je osebna stran `no-store`), zato `zacetek.js` (`vnaprejPaket`, samo ko stran nadzira service worker,
   podatkov v strani ni in je bila naprava že prijavljena, `evklid.racun`; brez računov ni klica) iste podatke zahteva v enem klicu `GET /api/zacetni-podatki` (`zacetniPodatkiKlic`: isti
