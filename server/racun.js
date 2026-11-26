@@ -16,7 +16,7 @@ import { parseSpecies } from "../public/graph/chemcore.js";
 import { MASSES } from "../public/graph/pse-data.js";
 import { texToText } from "../public/scan/solvecore.js";
 import { parse, compile, calcText } from "../public/graph/math.js";
-import { notClaimAt, hasExercise, TEX_SHORT } from "./live-check.js";
+import { notClaimAt, hasExercise, TEX_SHORT } from "./besedilo-trditev.js";
 
 // Tudi »RAČUN« (model piše slovensko); bloka učenec v nobeni obliki ne vidi (server/meta.js).
 const BLOCK_RE = /<<\s*RA[CČ]UN\b([\s\S]*?)>>/g;

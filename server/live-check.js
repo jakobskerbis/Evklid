@@ -20,6 +20,8 @@ import { verifyAi } from "../public/scan/verify.js";
 import { checkArithmetic } from "./lesson-math.js";
 import { askModel, checkerUser, SYSTEM as CHECKER_SYSTEM } from "./verify.js";
 import { MODEL_MID, addUsage } from "./claude.js";
+import { SKIP_LINE, notClaimAt, TEX_SHORT, EXERCISE_RE, hasExercise } from "./besedilo-trditev.js";
+export { SKIP_LINE, notClaimAt, TEX_SHORT, hasExercise };
 
 export const liveCheckOn = () => process.env.EVKLID_LIVE_CHECK !== "0";
 // Največ toliko USD na dan za pregled z modelom (vrsta »preverjanje«); negativno = brez meje.
@@ -147,7 +149,6 @@ export const looksLikeTask = (text) => stripLead(text).task || !!presolve(text, 
  * @returns {{ problems: Array<{type, problem, problemTex, answer, answerTex}>, note: string } | null}
  */
 // »\frac14«, »\frac12 x«, »\sqrt4« brez oklepajev: texToText jih bere narobe, zato koda o njih ne sodi.
-export const TEX_SHORT = /\\(?:d|t)?(?:frac|sqrt)(?![a-zA-Z])\s*[^{\s\\[]/;
 export function presolve(text, { first = true, narrow = true } = {}) {
   const src = String(text || "");
   if (!src.trim() || src.length > 600) return null;
@@ -198,12 +199,10 @@ export function withNote(messages, note) {
 
 // Vrstice, kjer napačna vrednost lahko stoji namenoma (učenčeva napaka, vprašanje, »če bi …«).
 // Tudi učenčev zapis (»Ti si napisal …«), zavrnjeni kandidati (»$x = 1$ odpade«) in poskusi.
-export const SKIP_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|ne drži|ni prav|ni pravil|ne ustreza|ne zadošča|odpade|ni rešitev|kandidat|definicijsk|poskus|tvoj|✗|\?|(?<!\p{L})(če|ali|bi|if|wrong|incorrect|you|napisal[a]?|zapisal[a]?|dobil[a]?|izračunal[a]?|extraneous|reject)(?!\p{L})/iu;
 
 // Računi in končne vrednosti (AUDIT-066, pregled prevzema 3): vrstica se preskoči kot na main (SKIP_LINE: vprašanje,
 // »če«, »ali«, »bi«, učenčev zapis …). Izjema za račune za »če« je odstranjena: »Če zanemarimo predznak, dobimo
 // $(-2)^3 = 8$« je namerno napačen zapis.
-export const notClaimAt = (line) => SKIP_LINE.test(String(line || ""));
 
 // Zadnja navedena vrednost vsake neznanke (»$x = 4$«, »$x_1 = \frac{1}{2}$«, »$x = \frac{8}{2} = 4$«).
 // Vrednost, ki jo je napisal tudi učenec, se preverja (pregled prevzema, P1): »Da, $x = 5$ je pravilno« ob učenčevem
@@ -1069,10 +1068,8 @@ const val = (x) => (typeof x === "function" ? x() : x);
 // Vaja: oznaka z dvopičjem v svoji vrstici (»**Vaja:**«, ki jo zahteva prompt, »Dodatna vaja:«, »Za vajo:«,
 // »Practice:«). Sam okvir »Zapomni si« je v večini razlag, zato šteje le ob oznaki rešene naloge (Podatki,
 // Iščemo ali Preverba iz vzorca za računske naloge).
-const EXERCISE_RE = /(?:^|\n)[ \t>*_]*(?:dodatna vaja|vaja|za vajo|practice(?: exercise)?)[*_ \t]*[:：]/iu;
 const BOX_RE = /📌|zapomni si/iu;
 const SOLVED_RE = /(?:^|\n)[ \t>*_\d.]*(?:podatki|iščemo|preverba)[*_ \t]*[:：]/iu;
-export const hasExercise = (answer) => EXERCISE_RE.test(String(answer || ""));
 // Načrt poskusa v odgovoru (»Boljši načrt«, »Izboljšan načrt«, »načrt poskusa«, kontrolna skupina). Pregled PR #848: tudi
 // odgovor samo z načrtom (brez vaje ali okvirja) gre v pregled (j: natančnost).
 const PLAN_RE = /(?<!\p{L})(?:(?:boljši|izboljšan\p{L}*|popravljen\p{L}*|nov\p{L}*)\s+načrt|načrt\p{L}*\s+poskus\p{L}*|kontroln\p{L}*\s+skupin\p{L}*|improved\s+plan|experimental\s+design)/iu;
