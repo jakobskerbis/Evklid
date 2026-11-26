@@ -44,10 +44,14 @@ test("zaslon Skeniraj: polje kaže zaPolje, reševanje dobi nespremenjeno prebra
   const conf = src.slice(src.indexOf("function renderConfirm(box)"), src.indexOf("// Negotovo branje (P3-5): obvestilo o branju"));
   assert.match(conf, /value="\$\{esc\(zaPolje\(S\.text\)\)\}"/);
   assert.match(conf, /const naloga = \(\) => \(input\.value === field\.shown \? field\.text : izPolja\(input\.value\)\);/);
-  assert.doesNotMatch(conf.replace(/input\.value === field\.shown|izPolja\(input\.value\)|input\.value = field\.shown|input\.value\.trim\(\)|prevField = input\.value|\{ shown: input\.value|input\.isConnected && input\.value/g, ""), /input\.value/, "nalogo bere le naloga()");
+  assert.doesNotMatch(conf.replace(/input\.value === field\.shown|izPolja\(input\.value\)|input\.value = field\.shown|input\.value\.trim\(\)|prevField = input\.value|\{ shown: input\.value|input\.isConnected && input\.value|const v = input\.value;|input\.value\.indexOf\(VIDNA_OZNAKA/g, ""), /input\.value/, "nalogo bere le naloga()");
   const css = fs.readFileSync(new URL("../public/scan.css", import.meta.url), "utf8");
   assert.match(css, /\.scan-input-wrap \.vnos-izrisan ~ \.scan-input-izris \{ display: none; \}/, "skupni izris vnosa ima prednost");
   assert.match(css, /\.scan-input-wrap\.ima-izris input \{ -webkit-text-fill-color: transparent;/, "barva polja ostane (skupni izris jo prevzame)");
   assert.doesNotMatch(css, /\.ima-izris input \{ color: transparent/);
   assert.match(conf, /m\.initPredogledVnosa\(\);\s*if \(input\.isConnected && input\.value\) input\.dispatchEvent\(new Event\("change"/, "prebrana naloga se izriše brez vnosa");
+  // j 26. 11.: dotik na □ okence označi (vpis ga zamenja); dotik v »Prebral sem« izbere isto okence
+  assert.match(conf, /if \(at >= 0\) input\.setSelectionRange\(at, at \+ VIDNA_OZNAKA\.length\);/);
+  assert.match(conf, /wrap\.addEventListener\("focusin"/, "brez »click« (premik zaslona ob tipkovnici) velja fokus");
+  assert.match(conf, /prev\.addEventListener\("click"/);
 });

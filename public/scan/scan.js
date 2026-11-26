@@ -801,6 +801,60 @@ function renderConfirm(box) {
     // poljem jo pokaže celo)
     if (html && (fieldIzris.scrollWidth > fieldIzris.clientWidth + 1 || fieldIzris.scrollHeight > fieldIzris.clientHeight + 1)) wrap.classList.remove("ima-izris");
   };
+  // j 26. 11.: dotik na okence □ ga označi, vpisan znak (s katerekoli tipkovnice) ga zamenja. Dotik, ki polje šele
+  // odpre, označi okence, najbližje mestu dotika (prej je bil tam izris formule, zapis pod njim je drugače dolg).
+  const okenceOb = (p) => {
+    const v = input.value;
+    if (v[p] === VIDNA_OZNAKA) return p;
+    if (v[p - 1] === VIDNA_OZNAKA) return p - 1;
+    return -1;
+  };
+  // Ob odprtju se zaslon lahko premakne (Evklidova tipkovnica), zato »click« včasih ne pride: takrat velja fokus.
+  let zaprtoOb = 0; // čas dotika, ki je polje šele odprl (velja le za ta dotik)
+  let dotik = 0;
+  const sveze = () => performance.now() - zaprtoOb < 700;
+  const oznaciOkence = (odprl) => {
+    if (document.activeElement !== input || input.selectionStart !== input.selectionEnd) return;
+    const p = input.selectionStart;
+    let at = okenceOb(p);
+    if (at < 0 && odprl) at = najblizjeOkence(p);
+    if (at >= 0) input.setSelectionRange(at, at + VIDNA_OZNAKA.length);
+  };
+  wrap.addEventListener("pointerdown", () => (zaprtoOb = document.activeElement !== input ? performance.now() : 0), true);
+  wrap.addEventListener("focusin", () => {
+    if (!sveze()) return;
+    const n = ++dotik;
+    setTimeout(() => n === dotik && oznaciOkence(true), 300);
+  });
+  wrap.addEventListener("click", () => {
+    const odprl = sveze();
+    zaprtoOb = 0;
+    dotik++;
+    // po skupnem izrisu vnosa, ki ob dotiku sam postavi kazalec
+    requestAnimationFrame(() => oznaciOkence(odprl));
+  });
+  // vpis ali premik s tipkami prekliče čakajočo izbiro okenca
+  for (const ev of ["keydown", "input"]) input.addEventListener(ev, () => dotik++);
+  const okenca = () => {
+    const out = [];
+    for (let i = input.value.indexOf(VIDNA_OZNAKA); i >= 0; i = input.value.indexOf(VIDNA_OZNAKA, i + 1)) out.push(i);
+    return out;
+  };
+  const najblizjeOkence = (p) => okenca().reduce((a, b) => (a < 0 || Math.abs(b - p) < Math.abs(a - p) ? b : a), -1);
+  // dotik na označeno mesto v »Prebral sem« izbere isto okence v polju
+  prev.addEventListener("click", (e) => {
+    const mesta = [...prev.querySelectorAll(".boxpad, .scan-unclear-mark")];
+    const i = mesta.findIndex((m) => {
+      const r = m.getBoundingClientRect();
+      return e.clientX >= r.left - 6 && e.clientX <= r.right + 6 && e.clientY >= r.top - 6 && e.clientY <= r.bottom + 6;
+    });
+    const vsa = okenca();
+    // le ko se mesta v izrisu ujemajo z okenci v polju (modelov LaTeX ima lahko drugačno število okvirjev)
+    if (i < 0 || mesta.length !== vsa.length) return;
+    const at = vsa[i];
+    input.focus();
+    input.setSelectionRange(at, at + VIDNA_OZNAKA.length);
+  });
   const update = () => {
     showField();
     // možnosti ostalih oznak ostanejo poravnane, ko učenec eno popravi s tipkami

@@ -192,3 +192,5 @@
 .scan-input-wrap.ima-izris:focus-within input { -webkit-text-fill-color: currentColor; }
 /* ko polje izriše skupni izris vnosa (public/predogled-vnosa.js, kot v klepetu), ta izris odstopi */
 .scan-input-wrap .vnos-izrisan ~ .scan-input-izris { display: none; }
+/* dotik na nejasno mesto v »Prebral sem« izbere okence v polju */
+.scan-preview .boxpad, .scan-preview .scan-unclear-mark { cursor: pointer; }
