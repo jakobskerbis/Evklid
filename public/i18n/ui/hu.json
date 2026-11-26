@@ -2992,7 +2992,7 @@
   "scan.st.numeric": "Numerikusan ellenőrizve",
   "scan.st.numericTip": "Az Evklid számokkal (tizedes közelítésekkel) ellenőrizte az eredményt, nem pontos számolással. Ez nem bizonyítja, hogy az eredmény pontos, és hogy egyetlen megoldás sem hiányzik.",
   "scan.st.unverified": "Nincs ellenőrizve",
-  "scan.st.unverifiedTip": "Ezt az Evklid nem tudta ellenőrizni. Ellenőrizd az eredményt behelyettesítéssel, vagy kérdezd meg az oktatót.",
+  "scan.st.unverifiedTip": "Ezt az eredményt az Evklid nem tudja önállóan ellenőrizni, ezért nem állítja, hogy helyes vagy hibás. Ellenőrizd behelyettesítéssel, vagy kérdezd meg az oktatót.",
   "scan.st.wrong": "Hibás",
   "scan.st.wrongTip": "Az ellenőrzés szerint az Evklid AI válasza nem helyes, vagy hiányzik belőle egy megoldás, ezért nem mutatunk megoldást. Kérdezd meg az oktatót.",
   "scan.st.wrongTipRetried": "Az Evklid AI többször is magától megoldotta a feladatot, de az ellenőrzés szerint egyik válasz sem helyes, ezért nem mutatunk megoldást. Kérdezd meg az oktatót.",
