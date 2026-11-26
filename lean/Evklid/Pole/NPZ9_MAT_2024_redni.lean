@@ -16,7 +16,8 @@ dokazano); obrazec (n − 2)·180° in vsota zunanjih kotov 360° sta uporabljen
 računi s 3,14 in meja napake |2π − 6,28| < 0,004. 7 telo je zapisano v koordinatah (zgornja ploskev kocke
 z = 8, oglišča (0,0), (8,0), (8,8), (0,8), vrh nad središčem (4,4)); razdalja je zapisana kot koren vsote
 kvadratov razlik koordinat (Pitagorov izrek v prostoru); 7b štetje robov (12 + 4) je razmislek o telesu,
-dokazan je račun; 7a »skica ne kaže pravih dolžin« je razlaga. 8 pravilo iz slik (stranica n + 2, beli
+dokazan je račun; 7a: dokazano je, da ima stranska ploskev v modelu (oglišča (0,0,8), (8,0,8) in vrh
+(4,4,8 + √32) iz 7c) vse tri stranice 8; »skica ne kaže pravih dolžin« je razlaga. 8 pravilo iz slik (stranica n + 2, beli
 kvadrat n × n, črni rob 4n + 4) je zapisano kot definicija; da so prve štiri slike take, je odčitek s slike
 (1. slika: 8 črnih, 1 bel). 6 »praštevilo« in »delitelji« sta pojma na ℕ: število iz seznama (v ℚ) je
 naravno, če je enako (n : ℚ) za neki n : ℕ. 3b »preizkus v izhodiščni enačbi« je navodilo (dokazan je
@@ -398,6 +399,9 @@ example : ∃ A B D : ℂ, dist A B = 8 ∧ dist A D = 10 ∧ dist B D = 6 := by
   obtain ⟨-, h2, -, h4, h5, -⟩ := n4a_model
   exact ⟨0, 8, 8 + 6 * I, h2, h5, h4⟩
 
+/-- Naloga 4b, napaka: zapis 8² + 10² = 6² je napačen (164 ≠ 36); na desni je kvadrat najdaljše stranice. -/
+theorem n4b_napaka : (8:ℝ) ^ 2 + 10 ^ 2 = 164 ∧ (6:ℝ) ^ 2 = 36 ∧ (8:ℝ) ^ 2 + 10 ^ 2 ≠ 6 ^ 2 := by norm_num
+
 /-- Naloga 4c, pot »Po korakih«: ker je BD ⟂ AB, je B najbližja točka premice AB točki D: za vsako točko X
 premice AB (X = B + t·(A − B)) je |DB| ≤ |DX|; višina na stranico a je v_a = |BD| = 6 in
 p = a·v_a = 8·6 = 48. -/
@@ -628,9 +632,35 @@ theorem n6e_napaka : (-9 : ℚ) / 1 = -9 ∧ (-9 : ℚ) ≠ 9 := by norm_num
 
 /-! ## Naloga 7 -/
 
-/-- Naloga 7a, pot »Po razmisleku«: stranska ploskev ima stranice 8, 8, 8 (enakostranični trikotnik); ni
-pravokotna (8² + 8² ≠ 8², po Pitagorovem izreku ni pravega kota) in ni enakokraka z drugačno osnovnico. -/
-theorem n7a : (8 : ℝ) = 8 ∧ (8 : ℝ) ^ 2 + 8 ^ 2 ≠ 8 ^ 2 := by norm_num
+/-- Razdalja v prostoru (koren vsote kvadratov razlik koordinat). -/
+noncomputable def d3 (p q : ℝ × ℝ × ℝ) : ℝ :=
+  √((p.1 - q.1) ^ 2 + (p.2.1 - q.2.1) ^ 2 + (p.2.2 - q.2.2) ^ 2)
+
+/-- Naloga 7a, pot »Po razmisleku«, v koordinatnem modelu iz 7c: stranska ploskev ima oglišča P = (0, 0, 8),
+Q = (8, 0, 8) (osnovni rob na zgornji ploskvi kocke) in vrh V = (4, 4, 8 + √32) (`n7c_vrh`). Vse tri
+stranice merijo 8, zato je ploskev enakostranični trikotnik. Je pravi trikotnik (V ne leži v ravnini z = 8,
+v kateri sta P in Q, zato P, Q, V niso na eni premici) s tremi oglišči, torej ni kvadrat (kvadrat je osnovna
+ploskev); ni pravokotna (8² + 8² ≠ 8²: hipotenuza bi bila daljša od katet) in ni »enakokraka, ki ni
+enakostranična« (stranska robova sta enaka osnovnemu). -/
+theorem n7a :
+    d3 (0, 0, 8) (8, 0, 8) = 8 ∧ d3 (4, 4, 8 + √32) (0, 0, 8) = 8 ∧ d3 (4, 4, 8 + √32) (8, 0, 8) = 8 ∧
+    (8 + √32 : ℝ) ≠ 8 ∧
+    d3 (4, 4, 8 + √32) (0, 0, 8) = d3 (0, 0, 8) (8, 0, 8) ∧
+    d3 (4, 4, 8 + √32) (8, 0, 8) = d3 (0, 0, 8) (8, 0, 8) ∧
+    d3 (0, 0, 8) (8, 0, 8) ^ 2 + d3 (4, 4, 8 + √32) (0, 0, 8) ^ 2 ≠ d3 (4, 4, 8 + √32) (8, 0, 8) ^ 2 := by
+  have h32 := Real.sq_sqrt (show (0:ℝ) ≤ 32 by norm_num)
+  have hpos : (0:ℝ) < √32 := by positivity
+  have hPQ : d3 (0, 0, 8) (8, 0, 8) = 8 := by
+    unfold d3; rw [show ((0:ℝ) - 8) ^ 2 + (0 - 0) ^ 2 + (8 - 8) ^ 2 = 8 ^ 2 by norm_num,
+      Real.sqrt_sq (by norm_num)]
+  have hVP : d3 (4, 4, 8 + √32) (0, 0, 8) = 8 := by
+    unfold d3; rw [show ((4:ℝ) - 0) ^ 2 + (4 - 0) ^ 2 + (8 + √32 - 8) ^ 2 = 8 ^ 2 by nlinarith,
+      Real.sqrt_sq (by norm_num)]
+  have hVQ : d3 (4, 4, 8 + √32) (8, 0, 8) = 8 := by
+    unfold d3; rw [show ((4:ℝ) - 8) ^ 2 + (4 - 0) ^ 2 + (8 + √32 - 8) ^ 2 = 8 ^ 2 by nlinarith,
+      Real.sqrt_sq (by norm_num)]
+  refine ⟨hPQ, hVP, hVQ, by linarith, by rw [hVP, hPQ], by rw [hVQ, hPQ], ?_⟩
+  rw [hPQ, hVP, hVQ]; norm_num
 
 /-- Naloga 7b, pot »S štetjem robov«: 12 + 4 = 16 robov po 8 cm: 16·8 = 128. -/
 theorem n7b : 12 + 4 = 16 ∧ 16 * 8 = 128 := by norm_num
@@ -796,10 +826,16 @@ theorem n9b : preskoki.count 60 = 4 ∧ ∀ x : ℕ, x ≠ 60 → preskoki.count
     rcases hm with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;> first | exact absurd rfl hx | decide
   · rw [List.count_eq_zero.2 hm]; norm_num
 
-/-- Naloga 9c, pot »Po definiciji«: ugodna sta C in H (2 od 10), P = 2/10 = 1/5 (okrajšan ulomek). -/
-theorem n9c : preskoki.count 64 = 2 ∧ (2 / 10 : ℚ) = 1 / 5 ∧ Nat.Coprime 1 5 ∧
+/-- Naloga 9c, pot »Po definiciji«: ugodna sta C in H (2 od 10), P = 2/10 = 1/5; okrajšan ulomek ima števec
+1 in imenovalec 5 (krajšamo z gcd(2, 10) = 2). -/
+theorem n9c : preskoki.count 64 = 2 ∧ (2 / 10 : ℚ) = 1 / 5 ∧ (2 / 10 : ℚ).num = 1 ∧ (2 / 10 : ℚ).den = 5 ∧
     Nat.gcd 2 10 = 2 := by
-  refine ⟨by decide, by norm_num, by norm_num, by norm_num⟩
+  refine ⟨by decide, by norm_num, ?_, ?_, by norm_num⟩
+  · rw [show (2 / 10 : ℚ) = ((1 : ℤ) : ℚ) / ((5 : ℤ) : ℚ) by norm_num,
+      Rat.num_div_eq_of_coprime (by norm_num) (by norm_num)]
+  · rw [show (2 / 10 : ℚ) = ((1 : ℤ) : ℚ) / ((5 : ℤ) : ℚ) by norm_num]
+    have h := Rat.den_div_eq_of_coprime (a := 1) (b := 5) (by norm_num) (by norm_num)
+    exact_mod_cast h
 
 /-- Naloga 9d, pot »Po korakih«: 30 % od 10 je 3; natanko trikrat se pojavi samo 55 (A, F, I), zato je
 verjetnost 3/10 = 30 %. -/

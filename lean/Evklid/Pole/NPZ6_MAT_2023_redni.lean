@@ -13,7 +13,8 @@ Ni v Leanu:
 - 7a, 7b, 7c, 7d, 7e: lega premic in meritve kotov in dolžin na sliki (70°, 115°, 25 mm, AB ≈ 27 mm) so
   meritve na risbi; dokazani so: 180° − 115° = 65°, 180° − 70° = 110°, 70° < 90°, 2,5 cm = 25 mm, splošno
   pravilo, da se nevzporedni premici v ravnini sekata, in da je poševna daljica med vzporednicama daljša od
-  pravokotne;
+  pravokotne; 7a »Dodatno potrdilo«: geometrijsko pravilo »če premica c seka premici a in b pod enakima
+  kotoma (enakoležna kota), sta a in b vzporedni« je uporabljeno kot pravilo in ni dokazano;
 - 9b: risanje stolpcev (risba); dokazana so števila kvadratkov;
 - razlage napak v besedah (npr. »nesmiseln rezultat«, enota m namesto m², znak ∈ namesto ⊂); števila iz razlag
   napak, ki so račun, so dokazana.
@@ -40,12 +41,12 @@ theorem n1a_odgovor :
   · rw [abs_le]; norm_num
 
 /-- Naloga 1a, »Po korakih (pisno seštevanje)«: enice 7 + 8 = 15, desetice 8 + 4 + 1 = 13, stotice
-6 + 9 + 1 = 16, tisočice 5 + 1 = 6; vsota 6 635 (razvoj po desetiških enotah). Števka desetic 6 635 je 3 < 5,
-zato navzdol na 6 600. -/
+6 + 9 + 1 = 16, tisočice 5 + 1 = 6; vsota 6 635 (razvoj po desetiških enotah). Števka stotic je 6; števka
+desetic 6 635 je 3 < 5, zato navzdol na 6 600. -/
 theorem n1a_pot1 :
     7 + 8 = 15 ∧ 8 + 4 + 1 = 13 ∧ 6 + 9 + 1 = 16 ∧ 5 + 1 = 6 ∧
-    (5687 + 948 = 6635) ∧ (6635 / 10) % 10 = 3 ∧ 3 < 5 := by
-  refine ⟨rfl, rfl, rfl, rfl, ?_, rfl, by norm_num⟩
+    (5687 + 948 = 6635) ∧ (6635 / 100) % 10 = 6 ∧ (6635 / 10) % 10 = 3 ∧ 3 < 5 := by
+  refine ⟨rfl, rfl, rfl, rfl, ?_, rfl, rfl, by norm_num⟩
   calc 5687 + 948 = 5 * 1000 + (6 + 9) * 100 + (8 + 4) * 10 + (7 + 8) := by norm_num
     _ = 5 * 1000 + (6 + 9) * 100 + (8 + 4 + 1) * 10 + 5 := by norm_num
     _ = (5 + 1) * 1000 + 6 * 100 + 3 * 10 + 5 := by norm_num
@@ -396,9 +397,9 @@ theorem n6d :
   refine ⟨by decide, by decide, by decide, by decide, by decide, by decide, by decide, rfl,
     by decide, by decide, by decide⟩
 
-/-- Naloga 6e (odgovor in pot »Element ali podmnožica«): 27 ∉ B (27 = 6 · 4 + 3) in {12, 36} ⊆ A. -/
-theorem n6e : 27 ∉ B ∧ 27 = 6 * 4 + 3 ∧ ({12, 36} : Finset ℕ) ⊆ A := by
-  refine ⟨by decide, rfl, by decide⟩
+/-- Naloga 6e (odgovor in pot »Element ali podmnožica«): 27 ∉ B (27 = 6 · 4 + 3) in {12, 36} ⊂ A (prava podmnožica, torej tudi ⊆). -/
+theorem n6e : 27 ∉ B ∧ 27 = 6 * 4 + 3 ∧ ({12, 36} : Finset ℕ) ⊆ A ∧ ({12, 36} : Finset ℕ) ⊂ A := by
+  refine ⟨by decide, rfl, by decide, by decide⟩
 
 /-! ## Naloga 7 -/
 
@@ -520,7 +521,7 @@ theorem n9a :
 /-- Naloga 9b (odgovor in obe poti): 45 : 5 = 9, 60 : 5 = 12, 55 : 5 = 11 kvadratkov (5 · 9 = 45,
 5 · 11 = 55, 5 · 12 = 60); stolpec 6. razreda je najvišji, 4. najnižji (60 > 55 > 45). -/
 theorem n9b :
-    ucenci 3 / 5 = 9 ∧ ucenci 5 / 5 = 12 ∧ ucenci 1 / 5 = 11 ∧
+    ucenci 3 = 5 * 9 ∧ ucenci 5 = 5 * 12 ∧ ucenci 1 = 5 * 11 ∧
     5 * 9 = 45 ∧ 5 * 11 = 55 ∧ 5 * 12 = 60 ∧ 60 > 55 ∧ 55 > 45 := by
   decide
 

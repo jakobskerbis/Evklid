@@ -392,6 +392,17 @@ theorem n4_preizkus : Zaokr 2 7852.20 (6500 * 1.032 ^ 6) ∧ (6500 : ℝ) * 1.03
     Zaokr 2 8103.47 (6500 * 1.032 ^ 7) ∧ (8000 : ℝ) < 6500 * 1.032 ^ 7 := by
   unfold Zaokr; norm_num
 
+/-- Naloga 4, napaka: z napačnim faktorjem 3,2 namesto 1,032 bi bilo že po enem letu 6500 · 3,2 = 20 800 > 8000
+(»odgovor« 1 leto), s faktorjem 0,032 pa glavnica pade in 8000 € ni dosežena nikoli: 6500 · 0,032ⁿ < 8000 za
+vsak n ≥ 1. -/
+theorem n4_napaka_faktor : (6500 : ℝ) * 3.2 = 20800 ∧ (8000 : ℝ) < 6500 * 3.2 ∧
+    ∀ n : ℕ, 1 ≤ n → (6500 : ℝ) * 0.032 ^ n < 8000 := by
+  refine ⟨by norm_num, by norm_num, fun n hn => ?_⟩
+  have h : (0.032 : ℝ) ^ n ≤ 0.032 ^ 1 :=
+    pow_le_pow_of_le_one (by norm_num) (by norm_num) hn
+  norm_num at h ⊢
+  nlinarith
+
 /-! ## 1. del, naloga 5 -/
 
 /-- Naloga 5, pogoji: vsi ulomki (x² − 4 ≠ 0, x + 2 ≠ 0 in (x + 5)/(x + 2) ≠ 0 za obratno vrednost) so
@@ -409,14 +420,18 @@ theorem n5_pogoji (x : ℝ) :
     have : x ^ 2 - 4 = (x - 2) * (x + 2) := by ring
     rw [this]; exact mul_ne_zero a b
 
-/-- Naloga 5, uradni odgovor in pot »Po korakih«: (x + 5)/(x + 2))⁻¹ = (x + 2)/(x + 5);
+/-- Naloga 5, uradni odgovor in pot »Po korakih«: ((x + 5)/(x + 2))⁻¹ = (x + 2)/(x + 5);
 x² + 2x − 15 = (x + 5)(x − 3) (5 · (−3) = −15, 5 + (−3) = 2); x² − 4 = (x − 2)(x + 2); po krajšanju
 (x − 3)/(x − 2), za x ≠ 2, x ≠ −2, x ≠ −5. -/
 theorem n5_odgovor (x : ℝ) (h1 : x ≠ 2) (h2 : x ≠ -2) (h3 : x ≠ -5) :
+    ((x + 5) / (x + 2))⁻¹ = (x + 2) / (x + 5) ∧
+    (5 : ℝ) * (-3) = -15 ∧ (5 : ℝ) + (-3) = 2 ∧ x ^ 2 + 2 * x - 15 = (x + 5) * (x - 3) ∧
+    x ^ 2 - 4 = (x - 2) * (x + 2) ∧
     (x ^ 2 + 2 * x - 15) / (x ^ 2 - 4) * ((x + 5) / (x + 2))⁻¹ = (x - 3) / (x - 2) := by
   have a : x - 2 ≠ 0 := sub_ne_zero.mpr h1
   have b : x + 2 ≠ 0 := fun h => h2 (by linarith)
   have c : x + 5 ≠ 0 := fun h => h3 (by linarith)
+  refine ⟨inv_div _ _, by norm_num, by norm_num, by ring, by ring, ?_⟩
   calc (x ^ 2 + 2 * x - 15) / (x ^ 2 - 4) * ((x + 5) / (x + 2))⁻¹
       = (x ^ 2 + 2 * x - 15) / (x ^ 2 - 4) * ((x + 2) / (x + 5)) := by rw [inv_div]
     _ = ((x + 5) * (x - 3)) / ((x - 2) * (x + 2)) * ((x + 2) / (x + 5)) := by ring_nf

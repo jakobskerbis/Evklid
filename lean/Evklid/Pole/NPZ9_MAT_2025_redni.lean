@@ -407,14 +407,18 @@ theorem n4a_vc :
 
 /-- Naloga 4b, uradni odgovor in pot »S Talesovim izrekom«: središče očrtane krožnice je razpolovišče
 M = 6 + 5/2·i hipotenuze AB; |MA| = |MB| = |MC| = 13/2 = 6,5; M je edina točka, enako oddaljena od A, B in C;
-M ni oglišče C (izjava B je napačna). -/
+M ni oglišče C (izjava B je napačna); M = A + ½·(B − A) leži na stranici AB (izjavi C »zunaj trikotnika« in
+D »v notranjosti« sta napačni: točka na stranici ni ne zunaj ne v notranjosti). -/
 theorem n4b : midpoint ℝ (12 : ℂ) (5 * I) = 6 + 5 / 2 * I ∧
     dist (6 + 5 / 2 * I : ℂ) 12 = 13 / 2 ∧ dist (6 + 5 / 2 * I : ℂ) (5 * I) = 13 / 2 ∧
     dist (6 + 5 / 2 * I : ℂ) 0 = 13 / 2 ∧ (13 / 2 : ℝ) = 6.5 ∧
     (∀ z : ℂ, (dist z 12 = dist z (5 * I) ∧ dist z (5 * I) = dist z 0) ↔ z = 6 + 5 / 2 * I) ∧
-    (6 + 5 / 2 * I : ℂ) ≠ 0 := by
+    (6 + 5 / 2 * I : ℂ) ≠ 0 ∧
+    AffineMap.lineMap (12 : ℂ) (5 * I) (1 / 2 : ℝ) = 6 + 5 / 2 * I ∧ (6 + 5 / 2 * I : ℂ) ∈ segment ℝ 12 (5 * I) := by
+  have hl : AffineMap.lineMap (12 : ℂ) (5 * I) (1 / 2 : ℝ) = 6 + 5 / 2 * I := by
+    rw [AffineMap.lineMap_apply]; apply Complex.ext <;> simp <;> norm_num
   refine ⟨?_, dist_iz_sq (by norm_num) (by simp; norm_num), dist_iz_sq (by norm_num) (by simp; norm_num),
-    dist_iz_sq (by norm_num) (by simp; norm_num), by norm_num, fun z => ?_, ?_⟩
+    dist_iz_sq (by norm_num) (by simp; norm_num), by norm_num, fun z => ?_, ?_, hl, ?_⟩
   · rw [midpoint_eq_smul_add]; apply Complex.ext <;> simp <;> norm_num
   · rw [deq, deq]
     simp
@@ -423,6 +427,7 @@ theorem n4b : midpoint ℝ (12 : ℂ) (5 * I) = 6 + 5 / 2 * I ∧
       apply Complex.ext <;> simp <;> nlinarith
     · rintro rfl; simp; norm_num
   · intro h; have := congrArg Complex.re h; simp at this
+  · rw [← hl, segment_eq_image_lineMap]; exact ⟨1 / 2, ⟨by norm_num, by norm_num⟩, rfl⟩
 
 /-- Naloga 4b, pot »Drugače: s simetralama katet«: simetrala katete a (BC) je vodoravna premica Im z = 5/2,
 simetrala katete b (CA) je navpična premica Re z = 6; sekata se v točki 6 + 5/2·i, ki je od C oddaljena 6
@@ -455,6 +460,12 @@ theorem n4c_napaka : ∀ (P : ℂ) (r : ℝ), dist P 12 = r → dist P (5 * I) =
   have h := dist_triangle (12 : ℂ) P (5 * I)
   rw [n4_model.2.2.1, dist_comm, h1, h2] at h
   linarith
+
+/-- Naloga 4c, napaka: pravokotnica iz C na AB je višina v_c, ne simetrala: njeno nožišče
+H = 300/169 + 720/169·i (`n4a_vc`) ni razpolovišče S = 6 + 5/2·i stranice AB. -/
+theorem n4c_napaka_visina : AffineMap.lineMap (12 : ℂ) (5 * I) (144 / 169 : ℝ) ≠ midpoint ℝ (12 : ℂ) (5 * I) := by
+  rw [n4a_vc.1, n4b.1]
+  intro h; have := congrArg Complex.re h; simp at this; norm_num at this
 
 /-- Predpostavke trditve `n4c_napaka` se dajo izpolniti (P = S, r = 13/2). -/
 example : ∃ (P : ℂ) (r : ℝ), dist P 12 = r ∧ dist P (5 * I) = r :=

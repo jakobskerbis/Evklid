@@ -31,7 +31,8 @@ Ni v Leanu:
   (pot 2; »stran« je zapisana s funkcijo f(P) = ⟨P − B, A − B⟩/16 + ⟨P − B, C − B⟩/9 − 1, ki je na
   premici AC enaka 0, pri B pa −1), pravi koti, |AC| = |BD| = 5, S je edino presečišče premic AC in BD
   in je od oglišč oddaljeno 2,5, razdalja med AC in vzporednico p skozi B je 2,4 (najmanjša razdalja med
-  točkama obeh premic, dosežena v nožišču F); 9b je risba (premica sega čez oglišči), brez trditve;
+  točkama obeh premic, dosežena v nožišču F), in pravilo »dve pravokotnici na isto premico sta vzporedni«
+  za pot 2 pri 9d (vsaka smer, pravokotna na BF, je večkratnik C − A); 9b je risba (premica sega čez oglišči), brez trditve;
 - 9d, »Za radovedne«: ploščina trikotnika kot polovica zmnožka osnovnice in višine je obrazec (ni
   dokazan geometrijsko); dokazan je račun 4 · 3 = 12, 12 : 2 = 6, 5 · h = 12 ⇔ h = 2,4 in neodvisno
   razdalja 2,4;
@@ -1083,6 +1084,44 @@ theorem n9d (A B C : E2) (hAB : dist A B = 4) (hBC : dist B C = 3)
   · have e : B + c - (B + (9 / 25 : ℝ) • (B + c - (B + a))) = (9 / 25 : ℝ) • a + (16 / 25 : ℝ) • c := by
       module
     rw [dist_eq_norm, e]; exact norm_iz a c ha hc hpr _ _ _ (by norm_num) (by norm_num)
+
+/-- Naloga 9d, pot »Drugače: z dvema pravokotnicama«: F = A + (16/25)·(C − A) je nožišče pravokotnice iz B
+na AC (`n9d`). Pravilo »premici, pravokotni na isto premico, sta vzporedni« v ravnini: vsaka smer w,
+pravokotna na BF, je večkratnik smeri C − A; zato je pravokotnica na BF skozi B ravno premica p
+= {B + s·(C − A)}. -/
+theorem n9d_pravokotnici (A B C : E2) (hAB : dist A B = 4) (hBC : dist B C = 3)
+    (hpr : inner ℝ (A - B) (C - B) = 0) (w : E2)
+    (hw : inner ℝ w (B - (A + (16 / 25 : ℝ) • (C - A))) = 0) :
+    ∃ k : ℝ, k • (C - A) = w := by
+  have hF := (n9d A B C hAB hBC hpr).2.1
+  have hperp := (n9d A B C hAB hBC hpr).2.2.1
+  have hu : B - (A + (16 / 25 : ℝ) • (C - A)) ≠ 0 := by
+    intro h0
+    rw [dist_comm, dist_eq_norm, h0, norm_zero] at hF
+    norm_num at hF
+  have hv : C - A ≠ 0 := by
+    intro h0
+    have h5 := (n9c A B C hAB hBC hpr).1
+    rw [dist_comm, dist_eq_norm, h0, norm_zero] at h5
+    norm_num at h5
+  set u := B - (A + (16 / 25 : ℝ) • (C - A))
+  have hle : (ℝ ∙ (C - A)) ≤ (ℝ ∙ u)ᗮ := by
+    rw [Submodule.span_singleton_le_iff_mem, Submodule.mem_orthogonal_singleton_iff_inner_right,
+      real_inner_comm]
+    rw [real_inner_comm]; exact hperp
+  have : Fact (Module.finrank ℝ E2 = 1 + 1) := ⟨by simp⟩
+  have heq : (ℝ ∙ (C - A)) = (ℝ ∙ u)ᗮ := by
+    apply Submodule.eq_of_le_of_finrank_eq hle
+    rw [finrank_span_singleton hv, Submodule.finrank_orthogonal_span_singleton (𝕜 := ℝ) (n := 1) hu]
+  have hwm : w ∈ (ℝ ∙ u)ᗮ := by
+    rw [Submodule.mem_orthogonal_singleton_iff_inner_right, real_inner_comm]
+    exact hw
+  rw [← heq, Submodule.mem_span_singleton] at hwm
+  exact hwm
+
+/-- Predpostavke trditve `n9d_pravokotnici` se dajo izpolniti: za A, B, C vzemi model iz zgornjega
+primera (0, 0), (4, 0), (4, 3), za w pa ničelni vektor (pravokoten na vsak vektor). -/
+example (u : E2) : inner ℝ (0 : E2) u = 0 := inner_zero_left _
 
 /-- Naloga 9d, »Za radovedne«: 4 · 3 = 12; 12 : 2 = 6; |AC| = 5 (`n9c`); 5 · h = 12 ⇔ h = 12 : 5 = 2,4. -/
 theorem n9d_racun (h : ℚ) :

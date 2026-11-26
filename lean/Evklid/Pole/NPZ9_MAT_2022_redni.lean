@@ -9,11 +9,18 @@ obstaja natanko ena premica, vzporedna q); 5b meritev kotov s slike (58° in 122
 meritev iz koordinat slike ±2° je zahtevna, še ni dokazana; dokazano je, da sta kota sokota in da iz 58° sledi
 122°, iz 56°..60° pa 120°..124°); 7a v koordinatnem modelu kvadra (A = (0,0,0), B = (12,0,0), C = (12,5,0),
 D = (0,5,0), E = (0,0,8), F = (12,0,8), G = (12,5,8), H = (0,5,8)) – »pravokotni ravnini« ni definiran pojem v
-Mathlibu za ravnine v ℝ³, zato je B dokazana kot: ravnini ADH in BCG sta disjunktni (vzporedni), pravokotni
-ravnini pa se vedno sekata; primerjava s sobo (7a, pot 2) je ponazoritev; 8a odčitek tehtnice s slike
+Mathlibu za ravnine v ℝ³, zato je B dokazana kot: ravnini ADH in BCG sta disjunktni (vzporedni) in njuni
+normali (1,0,0), (1,0,0) nista pravokotni (skalarni produkt 1 ≠ 0); da se pravokotni ravnini vedno sekata,
+je razlaga (ni dokazano); primer iz pole »pravokotni bi bili ADH in ABC« je dokazan z normalama (1,0,0) in
+(0,0,1) (skalarni produkt 0) in skupno premico AD; »pravokotni ravnini« tu pomeni »normali sta pravokotni«
+(definicija, ne izrek); 5a napaka »D = S: kota ni« je razlaga (v Leanu je ∠BSS = π/2 po dogovoru),
+dokazana je napaka »D na poltraku SC da ∠BSD = ∠BSC (oster)«; primerjava s sobo (7a, pot 2) je ponazoritev; 8a odčitek tehtnice s slike
 (1 300 g; dokazan je račun 1 000 + 3·100 = 1 300 in vse nadaljnje); 8b odčitek števca s slike (48 736,2 km);
 9a »stalno pravilo« razlik je zapisano kot predpostavka (razlike se ponavljajo s periodo 3), ker preglednica
-pravila ne določa enolično. Dolžine stopal v 9b so v milimetrih (ℕ), da Lean preveri urejenost seznama z
+pravila ne določa enolično: tudi pravilo s periodo 4 (razlike 0,6; 0,7; 0,7; 0,6; 0,6; 0,7; 0,7; 0,6 …) se
+ujema z vsemi podatki preglednice (tudi z 27,2 pri številki 43), a da 25,8; 26,5; 27,8. Dokaz pri 9a privzame
+pravilo s periodo 3, kot ga uporablja pola; da bi bila rešitev pole edina, ni dokazano (s samimi podatki
+preglednice tudi ne velja). Dolžine stopal v 9b so v milimetrih (ℕ), da Lean preveri urejenost seznama z
 `decide`; 252 mm = 25,2 cm je dokazano posebej. Zaokroževanje je Mathlibov `round` (⌊x + 1/2⌋, za pozitivna
 števila enako šolskemu pravilu »5 ali več navzgor«). Decimalna števila so točna racionalna števila. Ure so
 zapisane v minutah po polnoči. V ℕ je odštevanje odrezano (a − b = 0 pri a < b); vse uporabljene razlike so
@@ -326,6 +333,24 @@ example : Sbtw ℝ (1:ℂ) 0 (-1) ∧ ∠ (1:ℂ) 0 1 < Real.pi / 2 := by
   · rw [EuclideanGeometry.angle, vsub_eq_sub, sub_zero, InnerProductGeometry.angle_self one_ne_zero]
     positivity
 
+/-- Naloga 5a, napaka: če D leži na poltraku SC (D − S = r·(C − S), r > 0, torej na isti strani S kot C), je
+∠BSD kar ∠BSC, ki je oster. -/
+theorem n5a_napaka {V P : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [MetricSpace P]
+    [NormedAddTorsor V P] (B S C D : P) (r : ℝ) (hr : 0 < r) (hD : D -ᵥ S = r • (C -ᵥ S))
+    (hostri : ∠ B S C < Real.pi / 2) :
+    ∠ B S D = ∠ B S C ∧ ∠ B S D < Real.pi / 2 := by
+  have h : ∠ B S D = ∠ B S C := by
+    rw [EuclideanGeometry.angle, EuclideanGeometry.angle, hD,
+      InnerProductGeometry.angle_smul_right_of_pos _ _ hr]
+  exact ⟨h, h ▸ hostri⟩
+
+/-- Predpostavke trditve `n5a_napaka` se dajo izpolniti (v ℂ: S = 0, B = C = 1, D = 2, r = 2). -/
+example : (2:ℂ) -ᵥ 0 = (2:ℝ) • ((1:ℂ) -ᵥ 0) ∧ ∠ (1:ℂ) 0 1 < Real.pi / 2 := by
+  constructor
+  · simp [vsub_eq_sub]
+  · rw [EuclideanGeometry.angle, vsub_eq_sub, sub_zero, InnerProductGeometry.angle_self one_ne_zero]
+    positivity
+
 /-- Naloga 5b, pot »Preizkus: sokota«: SA in SB sta nasprotna poltraka premice p (S strogo med A in B), zato
 ∠BSC + ∠ASC = 180°; iz izmerjenega ∠BSC = 58° sledi ∠ASC = 122° in 58° + 122° = 180°. -/
 theorem n5b {V P : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [MetricSpace P]
@@ -478,8 +503,9 @@ theorem n7a_A :
   intro t h
   simp [Prod.ext_iff] at h
 
-/-- Naloga 7a, izjava B (nepravilna): ravnina ADH je x = 0, ravnina BCG je x = 12; ravnini sta disjunktni
-(vzporedni nasprotni ploskvi), pravokotni ravnini pa imata skupno premico, zato nista pravokotni. -/
+/-- Naloga 7a, izjava B (nepravilna): ravnina ADH je x = 0, ravnina BCG je x = 12; dokazano je, da sta ravnini
+disjunktni (vzporedni nasprotni ploskvi). Sklep »pravokotni ravnini imata skupno premico, zato nista
+pravokotni« je razlaga (ni dokazan); z normalama glej `n7a_B_normali`. -/
 theorem n7a_B :
     tA.1 = 0 ∧ tD.1 = 0 ∧ tH.1 = 0 ∧ tB.1 = 12 ∧ tC.1 = 12 ∧ tG.1 = 12 ∧
     Disjoint {p : ℝ × ℝ × ℝ | p.1 = 0} {p : ℝ × ℝ × ℝ | p.1 = 12} := by
@@ -487,6 +513,20 @@ theorem n7a_B :
   rw [Set.disjoint_left]
   intro p (h1 : p.1 = 0) (h2 : p.1 = 12)
   rw [h1] at h2; norm_num at h2
+
+/-- Skalarni produkt v ℝ³. -/
+def sk (u v : ℝ × ℝ × ℝ) : ℝ := u.1 * v.1 + u.2.1 * v.2.1 + u.2.2 * v.2.2
+
+/-- Naloga 7a, izjava B z normalama: n = (1,0,0) je pravokoten na smeri D − A, H − A ravnine ADH in na smeri
+C − B, G − B ravnine BCG; normali obeh ravnin nista pravokotni (n·n = 1 ≠ 0), zato ravnini nista pravokotni.
+Primer iz pole: ravnina ABC ima normalo (0,0,1) (pravokotno na B − A in C − A), ki je pravokotna na (1,0,0),
+in A, D ležita v obeh ravninah ADH (x = 0) in ABC (z = 0): ADH in ABC sta pravokotni s skupno premico AD. -/
+theorem n7a_B_normali :
+    sk (1, 0, 0) (tD - tA) = 0 ∧ sk (1, 0, 0) (tH - tA) = 0 ∧ sk (1, 0, 0) (tC - tB) = 0 ∧
+    sk (1, 0, 0) (tG - tB) = 0 ∧ sk (1, 0, 0) (1, 0, 0) ≠ 0 ∧
+    sk (0, 0, 1) (tB - tA) = 0 ∧ sk (0, 0, 1) (tC - tA) = 0 ∧ sk (1, 0, 0) (0, 0, 1) = 0 ∧
+    tA.1 = 0 ∧ tD.1 = 0 ∧ tA.2.2 = 0 ∧ tD.2.2 = 0 := by
+  simp [sk]
 
 /-- Naloga 7a, izjava C (pravilna): premica AE prebode osnovno ploskev (z = 0) samo v A, A ne leži na BC,
 premici AE in BC se ne sekata in nista vzporedni (smeri (0,0,8) in (0,5,0) nista sorazmerni) – mimobežni. -/

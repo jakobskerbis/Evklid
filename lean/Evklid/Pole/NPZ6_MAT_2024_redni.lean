@@ -48,10 +48,12 @@ theorem n1a_pot1 : (15 : ℚ) = 15.00 ∧ (15.00 : ℚ) - 6.38 = 8.62 := by norm
 /-- Naloga 1a, »Preizkus«: 15 − 8,62 = 6,38. -/
 theorem n1a_pot2 : (15 : ℚ) - 8.62 = 6.38 := by norm_num
 
-/-- Naloga 1a, napaka: 15 − 6 = 9 in dopisano 0,62 dá 9,62, a 15 − 9,62 ≠ 6,38; od 15,00 − 0,38 = 14,62
-ostane 14 celih, torej po odštetju 6 celih 8 celih (14 − 6 = 8). -/
+/-- Naloga 1a, napaka: 15 − 6 = 9 in dopisano 0,62 dá 9,62, a 15 − 9,62 ≠ 6,38. Pot pole: ko od 15,00
+odštejemo 0,38, si izposodimo eno celo, zato od 9 celih ostane le 8 celih (9 − 1 = 8). Isto drugače:
+15,00 − 0,38 = 14,62, ostane 14 celih, in 14 − 6 = 8. -/
 theorem n1a_napaka :
     (15 : ℚ) - 6 = 9 ∧ (9 : ℚ) + 0.62 = 9.62 ∧ (15 : ℚ) - 9.62 ≠ 6.38 ∧
+    (9 : ℚ) - 1 = 8 ∧ (15 : ℚ) - 6.38 = (9 - 1) + 0.62 ∧
     (15.00 : ℚ) - 0.38 = 14.62 ∧ (14 : ℚ) - 6 = 8 := by norm_num
 
 /-- Naloga 1b (odgovor, ↔): 4,27 + x = 7 natanko tedaj, ko je x = 2,73. -/
@@ -663,13 +665,29 @@ theorem n8a_pot1 : (24 : ℚ) - 9 - 7 = 8 ∧ (7 : ℚ) + 6 = 13 ∧ (13 : ℚ) 
 /-- Naloga 8a, »Drugače: s premiki stranic«: 9 + 7 + 8 = 24 in 10 + 3 = 7 + 6. -/
 theorem n8a_pot2 : (9 : ℚ) + 7 + 8 = 24 ∧ (10 : ℚ) + 3 = 7 + 6 := by norm_num
 
+/-- Oglišča vrta s skice (v metrih). -/
+def oA : ℤ × ℤ := (0, 0)
+def oB : ℤ × ℤ := (24, 0)
+def oC : ℤ × ℤ := (24, 7)
+def oD : ℤ × ℤ := (16, 7)
+def oE : ℤ × ℤ := (16, 13)
+def oF : ℤ × ℤ := (9, 13)
+def oG : ℤ × ℤ := (9, 10)
+def oH : ℤ × ℤ := (0, 10)
+
 /-- Naloga 8, oglišča A(0, 0), B(24, 0), C(24, 7), D(16, 7), E(16, 13), F(9, 13), G(9, 10), H(0, 10): stranice
 so izmenično vodoravne in navpične (sosednje pravokotne) in merijo |AB| = 24, |BC| = 7, |CD| = 8, |DE| = 6,
-|EF| = 7, |FG| = 3, |GH| = 9, |HA| = 10. -/
+|EF| = 7, |FG| = 3, |GH| = 9, |HA| = 10; te dolžine izpolnjujejo obe enačbi iz `n8a_odgovor`
+(|AB| = |GH| + |FE| + |CD| s c = |CD| = 8 in |BC| + |DE| = |HA| + |FG| s f = |FG| = 3). -/
 theorem n8_oglisca :
-    (24 - 0 = 24 ∧ 0 - 0 = 0) ∧ (24 - 24 = 0 ∧ 7 - 0 = 7) ∧ (24 - 16 = 8 ∧ 7 - 7 = 0) ∧
-    (16 - 16 = 0 ∧ 13 - 7 = 6) ∧ (16 - 9 = 7 ∧ 13 - 13 = 0) ∧ (9 - 9 = 0 ∧ 13 - 10 = 3) ∧
-    (9 - 0 = 9 ∧ 10 - 10 = 0) ∧ (0 - 0 = 0 ∧ 10 - 0 = 10) := by decide
+    (oB.1 - oA.1 = 24 ∧ oB.2 - oA.2 = 0) ∧ (oC.1 - oB.1 = 0 ∧ oC.2 - oB.2 = 7) ∧
+    (oC.1 - oD.1 = 8 ∧ oD.2 - oC.2 = 0) ∧ (oE.1 - oD.1 = 0 ∧ oE.2 - oD.2 = 6) ∧
+    (oE.1 - oF.1 = 7 ∧ oF.2 - oE.2 = 0) ∧ (oF.1 - oG.1 = 0 ∧ oF.2 - oG.2 = 3) ∧
+    (oG.1 - oH.1 = 9 ∧ oG.2 - oH.2 = 0) ∧ (oH.1 - oA.1 = 0 ∧ oH.2 - oA.2 = 10) ∧
+    (oB.1 - oA.1 = (oG.1 - oH.1) + (oE.1 - oF.1) + (oC.1 - oD.1) ∧
+      (oC.2 - oB.2) + (oE.2 - oD.2) = (oH.2 - oA.2) + (oF.2 - oG.2)) ∧
+    ((24 : ℚ) = 9 + 7 + (oC.1 - oD.1 : ℤ) ∧ (7 : ℚ) + 6 = 10 + (oF.2 - oG.2 : ℤ)) := by
+  norm_num [oA, oB, oC, oD, oE, oF, oG, oH]
 
 /-- Naloga 8b (odgovor in pot »Seštej vse stranice«): 24 + 7 + 8 + 6 + 7 + 3 + 9 + 10 = 74 m. -/
 theorem n8b_pot1 : 24 + 7 + 8 + 6 + 7 + 3 + 9 + 10 = 74 := by decide

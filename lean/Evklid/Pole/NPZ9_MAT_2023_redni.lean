@@ -18,7 +18,9 @@ je projekcija EF« je ponazoritev. Naloga 9: modus je definiran tako kot v reši
 vsaj dvakrat in večkrat kot vsak drug podatek; brez ponovitev modusa ni), mediana kot srednji podatek
 urejenega seznama oziroma sredina obeh srednjih; v 9c je število v okvirčku poljubno realno, v 9d naravno.
 Decimalna števila so točna racionalna števila. Lean: a⁰ = 1 tudi za a = 0 (pogoj a ≠ 0 iz besedila je
-ohranjen); √ in deljenje se uporabljata le za pozitivna števila.
+ohranjen); √ in deljenje se uporabljata le za pozitivna števila. Besedilne razlage napak, ki niso števila, niso
+trditve; številske napake (tudi 3a: 80 centov prišteti celotnemu znesku; 3b: popust le na kg nad 5 in kot
+rezultat zapisan le popust) so dokazane kot računi.
 4a: pola zdaj navaja približno 8,49 cm in s √2 ≈ 1,41 8,46 cm (prej samo 8,46); oboje dokazano v
 `n4a_priblizek`.
 -/
@@ -213,6 +215,10 @@ theorem n3a :
     (87.5:ℚ) / 25 = 3.5 ∧ (80:ℚ) / 100 = 0.8 ∧ (3.5:ℚ) + 0.8 = 4.3 ∧
     (3.5:ℚ) + 80 ≠ 4.3 ∧ (3.5:ℚ) + 0.08 ≠ 4.3 := by norm_num
 
+/-- Naloga 3a, napaka: kdor 80 centov prišteje celotnemu znesku, dobi 87,50 + 0,80 = 88,30 € in na kilogram
+88,30 : 25 = 3,532 € ≠ 4,30 €. -/
+theorem n3a_napaka : (87.5:ℚ) + 0.8 = 88.3 ∧ (88.3:ℚ) / 25 = 3.532 ∧ (3.532:ℚ) ≠ 4.3 := by norm_num
+
 /-- Naloga 3a, pot »Drugače: v centih«: 87,50 € = 8750 centov; 8750 : 25 = 350; 350 + 80 = 430 centov =
 4,30 €; preizkus 25 · 3,50 = 87,50. -/
 theorem n3a_pot2 :
@@ -224,6 +230,12 @@ theorem n3a_pot2 :
 theorem n3b :
     (5:ℚ) < 8 ∧ (8:ℚ) * 4.3 = 34.4 ∧ (10:ℚ) / 100 * 34.4 = 34.4 / 10 ∧ (34.4:ℚ) / 10 = 3.44 ∧
     (34.4:ℚ) - 3.44 = 30.96 ∧ (34.4:ℚ) - 10 = 24.4 ∧ (24.4:ℚ) ≠ 30.96 := by norm_num
+
+/-- Naloga 3b, napaki: s popustom le na 3 kg nad 5 kg bi bilo 5 · 4,30 + 3 · 4,30 · 0,9 = 21,50 + 11,61 =
+33,11 € ≠ 30,96 €; sam popust 3,44 € ni znesek plačila (3,44 ≠ 30,96). -/
+theorem n3b_napaka :
+    (5:ℚ) * 4.3 = 21.5 ∧ (3:ℚ) * 4.3 * 0.9 = 11.61 ∧ (21.5:ℚ) + 11.61 = 33.11 ∧ (33.11:ℚ) ≠ 30.96 ∧
+    (3.44:ℚ) ≠ 30.96 := by norm_num
 
 /-- Naloga 3b, pot »Drugače: z deležem«: 100 % − 10 % = 90 %; 0,9 · 4,30 = 3,87; 8 · 3,87 = 30,96; ocena
 8 · 4 = 32 in 30,96 < 32. -/
@@ -253,7 +265,7 @@ theorem dist2 (x y : E2) : dist x y = Real.sqrt ((x 0 - y 0) ^ 2 + (x 1 - y 1) ^
 
 /-- Naloga 4a, stranica očrtanega kvadrata, pot »Po korakih«: oglišča A, B, C, D ležijo na krožnici
 (|SA| = … = 6) in so razpolovišča stranic očrtanega kvadrata; krožnica leži v kvadratu |x| ≤ 6, |y| ≤ 6 (se
-stranic le dotika); stranica očrtanega kvadrata je 2r = 2·6 = 12. -/
+stranic dotika v A, B, C, D); stranica očrtanega kvadrata je 2r = 2·6 = 12. -/
 theorem n4a_ocrtani :
     dist kA kS = 6 ∧ dist kB kS = 6 ∧ dist kC kS = 6 ∧ dist kD kS = 6 ∧
     kA = midpoint ℝ kK4 kK1 ∧ kB = midpoint ℝ kK1 kK2 ∧ kC = midpoint ℝ kK2 kK3 ∧ kD = midpoint ℝ kK3 kK4 ∧
@@ -744,7 +756,8 @@ theorem n9a :
     sredina [34, 27, 41, 27, 46] = 35 ∧ ((34:ℝ) + 27 + 41 + 27 + 46) / 5 = 175 / 5 ∧ (175:ℝ) / 5 = 35 ∧
     jeModus [34, 27, 41, 27, 46] 27 ∧ (∀ m, jeModus [34, 27, 41, 27, 46] m → m = 27) ∧
     ([34, 27, 41, 27, 46] : List ℝ).insertionSort (· ≤ ·) = [27, 27, 34, 41, 46] ∧
-    mediana [34, 27, 41, 27, 46] = 34 ∧ ¬ jeModus [34, 27, 41, 27, 46] 2 := by
+    mediana [34, 27, 41, 27, 46] = 34 ∧ ¬ jeModus [34, 27, 41, 27, 46] 2 ∧
+    ([34, 27, 41, 27, 46] : List ℝ)[2]? = some 41 ∧ (41:ℝ) ≠ 34 := by
   have hm : jeModus [34, 27, 41, 27, 46] 27 := by
     refine ⟨by norm_num [List.count_cons], ?_⟩
     intro y hy hne
@@ -756,7 +769,8 @@ theorem n9a :
       List.insertionSort_nil, List.orderedInsert_nil]
   · norm_num [mediana, List.insertionSort_cons, List.orderedInsert_cons,
       List.insertionSort_nil, List.orderedInsert_nil]
-  · intro h; have := h.1; norm_num [List.count_cons] at this
+  · refine ⟨?_, by norm_num, by norm_num⟩
+    intro h; have := h.1; norm_num [List.count_cons] at this
 
 /-- Naloga 9a, pot »Drugače: sredina z odmiki«: odmiki od 30 so +4, −3, +11, −3, +16, vsota 25, 25 : 5 = 5,
 sredina 30 + 5 = 35. -/

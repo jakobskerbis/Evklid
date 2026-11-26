@@ -609,17 +609,22 @@ theorem n7a_zaporedje : (List.range 5).map (fun i => (rob (i + 1)).card) = [4, 8
   · simp [List.range_succ, card_lik]
 
 /-- Naloga 7b, uradni odgovor in pot »Preverimo vsako trditev«: stranice 2, 3, 4; diagonala kvadrata
-√(a² + a²) = a√2 (a ≥ 0). A: 16/4 = 4 ≠ 2; B: 4√2/(2√2) = 2 (drži); C: 16/8 = 2 ≠ 4; D: 9/4 = 2,25,
+√(a² + a²) = a√2 (a ≥ 0). A: 16/4 = 4 ≠ 2; B: √(4² + 4²) = 4√2, √(2² + 2²) = 2√2, 4√2/(2√2) = 2, torej
+√(4² + 4²) = 2·√(2² + 2²) (drži); C: 16/8 = 2 ≠ 4; D: 9/4 = 2,25,
 (9 − 4)/4 = 125 %, ni 50 %. -/
 theorem n7b : (∀ a : ℝ, 0 ≤ a → √(a ^ 2 + a ^ 2) = a * √2) ∧
     ((4 : ℚ) ^ 2 = 16 ∧ (2 : ℚ) ^ 2 = 4 ∧ (16 / 4 : ℚ) = 4 ∧ (16 / 4 : ℚ) ≠ 2) ∧
     (4 * √2 / (2 * √2) = (2 : ℝ)) ∧
+    (√((4 : ℝ) ^ 2 + 4 ^ 2) = 4 * √2 ∧ √((2 : ℝ) ^ 2 + 2 ^ 2) = 2 * √2 ∧
+      √((4 : ℝ) ^ 2 + 4 ^ 2) = 2 * √((2 : ℝ) ^ 2 + 2 ^ 2)) ∧
     ((4 * 4 : ℚ) = 16 ∧ (4 * 2 : ℚ) = 8 ∧ (16 / 8 : ℚ) = 2 ∧ (16 / 8 : ℚ) ≠ 4) ∧
     ((3 : ℚ) ^ 2 = 9 ∧ (9 / 4 : ℚ) = 2.25 ∧ ((9 - 4) / 4 : ℚ) = 125 / 100 ∧ (9 : ℚ) ≠ 4 + 4 / 2) := by
-  refine ⟨fun a ha => ?_, by norm_num, ?_, by norm_num, by norm_num⟩
-  · rw [show a ^ 2 + a ^ 2 = a ^ 2 * 2 by ring, Real.sqrt_mul (by positivity), Real.sqrt_sq ha]
+  have hd : ∀ a : ℝ, 0 ≤ a → √(a ^ 2 + a ^ 2) = a * √2 := fun a ha => by
+    rw [show a ^ 2 + a ^ 2 = a ^ 2 * 2 by ring, Real.sqrt_mul (by positivity), Real.sqrt_sq ha]
+  refine ⟨hd, by norm_num, ?_, ⟨hd 4 (by norm_num), hd 2 (by norm_num), ?_⟩, by norm_num, by norm_num⟩
   · have : (0 : ℝ) < √2 := by positivity
     field_simp; ring
+  · rw [hd 4 (by norm_num), hd 2 (by norm_num)]; ring
 
 /-- Naloga 7b, pot »Drugače: s podobnostjo«: 4 : 2 = 2; dolžine (stranica, diagonala, obseg) v razmerju 2,
 ploščini v razmerju 2² = 4. -/
