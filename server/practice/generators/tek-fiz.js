@@ -1,7 +1,7 @@
 // Tekmovalne naloge iz fizike (Stefanovo priznanje, fizikalna olimpijada), OŠ in SŠ.
 // Vse količine in odgovori so izračunani v kodi.
 import { NAMES, g } from "../rng.js";
-import { tx, qty, dat, res, num, roundHalfUp, withMistakes } from "./tek-util.js";
+import { tx, qty, dat, res, korak, num, roundHalfUp, withMistakes } from "./tek-util.js";
 
 const OS = (slug) => `FIZ-TEK-OS/${slug}`;
 const SS = (slug) => `FIZ-TEK-SS/${slug}`;
@@ -998,7 +998,7 @@ export const TEK_FIZ = [
         hint: "$C = \\varepsilon_0 \\dfrac{S}{d}$ in $W = \\tfrac{1}{2} C U^2$.",
         data: { given: [dat("S", S, "cm^2"), dat("d", tx(d), "mm"), dat("U", U, "V"), "\\varepsilon_0 = 8{,}85 \\cdot 10^{-12}\\ \\mathrm{As/(Vm)}"], find: ["W"] },
         formula: ["C = \\varepsilon_0 \\dfrac{S}{d}", "W = \\tfrac{1}{2} C U^2"],
-        solution: `$C = 8{,}85 \\cdot 10^{-12} \\cdot \\dfrac{${S} \\cdot 10^{-4}}{${tx(d)} \\cdot 10^{-3}} ${res(C * 1e12, 2)} \\cdot 10^{-12}\\ \\mathrm{F} = ${tx(C * 1e12, 2)}\\ \\mathrm{pF}$.\n$W = \\tfrac{1}{2} \\cdot ${tx(C * 1e12, 2)} \\cdot 10^{-12} \\cdot ${U}^2 ${res(W * 1e6, 3, "\\mu J")}$.`,
+        solution: `$C = 8{,}85 \\cdot 10^{-12} \\cdot \\dfrac{${S} \\cdot 10^{-4}}{${tx(d)} \\cdot 10^{-3}} ${korak(C * 1e12, 2)} \\cdot 10^{-12}\\ \\mathrm{F} = ${tx(C * 1e12, 2)}\\ \\mathrm{pF}$.\n$W = \\tfrac{1}{2} \\cdot ${tx(C * 1e12, 2)} \\cdot 10^{-12} \\cdot ${U}^2 ${korak(W * 1e6, 3)} \\cdot 10^{-6}\\ \\mathrm{J} = ${tx(W * 1e6, 3)}\\ \\mathrm{\\mu J}$.`,
       };
     },
   },
