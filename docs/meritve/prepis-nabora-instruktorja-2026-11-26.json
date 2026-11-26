@@ -1,0 +1,23 @@
+{
+ "meritev": "pravilnost prepisa uradnih nalog v nabor inštruktorja (K-06, K-16)",
+ "datum": "2026-11-26",
+ "commit_main": "8fc9ec2584ad1b1209abdb58194669d40d07fdb1",
+ "ukaz": "node scripts/nabor-vzorec.mjs --prestej <k06-nabor/uradno> <k06-nabor/preverjanje-*.json>",
+ "prepisi_sha256_po_popravkih": "0a4e8b691740a5d7f534d6eb72a87db24f90fea8cf261a76af492b6046fb01d0",
+ "vzorec": { "n": 83, "od": 1272, "izbira": "5 % na datoteko, najmanj 2, sha256('vz1' + id)", "v_koncnem_naboru": 80 },
+ "ocenjevalec": "Claude Fable (model iste družine kot prepisovalec), en ocenjevalec na postavko",
+ "skupine": { "matura MAT": 34, "NPZ MAT": 20, "matura FIZ/KEM/BIO": 29 },
+ "izidi": {
+  "katerakoli_napaka": { "k": 3, "n": 83, "wilson95": [0.012, 0.101] },
+  "besedilo_napaka": { "k": 0, "n": 83, "wilson95": [0.0, 0.044] },
+  "odgovor_napaka": { "k": 2, "n": 83, "wilson95": [0.007, 0.084] },
+  "ni_resljivo": { "k": 1, "n": 83, "wilson95": [0.002, 0.065] },
+  "tema_napaka": { "k": 0, "n": 83, "wilson95": [0.0, 0.044] },
+  "katerakoli_napaka_v_koncnem_naboru": { "k": 2, "n": 80, "wilson95": [0.007, 0.087] }
+ },
+ "neuspehi": [
+  { "id": "N251-401-3-1/8.d", "merilo": "odgovor", "ukrep": "odstranjena oblika, ki je navodila ne dovolijo" },
+  { "id": "M252-421-1-2/5.4", "merilo": "odgovor", "ukrep": "odstranjen dodatek, ki ga navodila ne navajajo" },
+  { "id": "N261-401-2-1/7.a", "merilo": "resljivo", "ukrep": "označena kot negotova, izločena iz nabora" }
+ ]
+}
