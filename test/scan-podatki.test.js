@@ -8,6 +8,7 @@ import SL from "../public/i18n/sl.js";
 import { preveriPodatke, stevilaPodatkov, steviloOdgovora, cleanRacun, iskanaKolicina, istiPodatek, podatkiNaloge } from "../public/scan/podatki.js";
 import { cleanSolution, solvePrompt, solveWithAi, retryFeedback } from "../server/scan.js";
 import { setClient } from "../server/claude.js";
+import { prep } from "../public/scan/solvecore.js";
 import { LIVE_UI_LANGUAGES } from "../public/i18n/languages.js";
 
 const TRAPEZ = ["a = 10\\,\\text{cm}", "c = 6\\,\\text{cm}", "v = 4\\,\\text{cm}"];
@@ -208,6 +209,27 @@ test("poziv zahteva check le pri nalogi s podatki in iskano količino", () => {
   assert.match(solvePrompt("alpha=?", "slovenščina", null, null, TRIKOTNIK), /asked quantity named "alpha"/);
   assert.doesNotMatch(solvePrompt("S=?", "slovenščina"), /"check"/);
   assert.doesNotMatch(solvePrompt("x^2+b*x=0", "slovenščina", null, null, ["b = 2"]), /"check"/);
+  // zaslon pošlje prep(besedilo): »P=?« pride kot »P« (meritev 26. 11.: brez tega check ni bil nikoli zahtevan)
+  for (const [t, ime] of [["P=?", "P"], ["α=?", "α"], ["s_{10}=?", "s_10"], ["I=?", "I"]]) {
+    assert.equal(iskanaKolicina(prep(t)), ime, t);
+    assert.match(solvePrompt(prep(t), "slovenščina", null, null, TRAPEZ), /"check": \{"values"/, t);
+  }
+  assert.match(solvePrompt(prep("s_{10}=?"), "slovenščina", null, null, TRAPEZ), /asked quantity named "s_10"/);
+  assert.equal(preveriPodatke(prep("P=?"), TRAPEZ, { value: "32", answer_tex: "P = 32\\ \\mathrm{cm^2}", racun: cleanRacun({ values: { a: "10", c: "6", v: "4", P: "32" }, equations: ["P=(a+c)/2*v"] }) }).status, "partial");
+  for (const t of ["f(x)=?", "2*x+3", "x^2-4"]) assert.equal(iskanaKolicina(prep(t)), null, t);
+  // pregled: formula ali enačba v podatkih (koda je ne preveri) → nepreverjeno; več podatkov v enem zapisu je v redu
+  const R = (t, g, v, eq, val) => preveriPodatke(prep(t), g, { value: val, answer_tex: `${t.replace("=?", "")} = ${val}`, racun: cleanRacun({ values: v, equations: eq }) });
+  assert.equal(R("a=?", ["f(x) = a \\cdot 2^x", "T(1, 6)"], { a: "4", x: "1", f: "6" }, ["f=a+2*x"], "4").why, "formula in data");
+  assert.equal(R("k=?", ["f(x) = kx + 2", "f(1) = 5"], { k: "3", x: "1", f: "5" }, ["f=k*x+2"], "3").why, "formula in data");
+  assert.equal(R("x=?", ["2x + y = 5", "x - y = 1"], { x: "3", y: "1" }, ["x=2*y+1"], "3").why, "formula in data");
+  assert.equal(R("y=?", ["y = kx + 2", "k = 2", "x = 1"], { y: "4", k: "2", x: "1" }, ["y=k*x+2"], "4").why, "formula in data");
+  assert.equal(R("c=?", ["a = 3\\ \\mathrm{cm},\\ b = 4\\ \\mathrm{cm}"], { a: "3", b: "4", c: "5" }, ["c^2=a^2+b^2"], "5").status, "partial");
+  assert.equal(R("y=?", ["A = 5\\,\\mathrm{cm}", "\\omega = 2\\,\\mathrm{s^{-1}}", "t = 1\\,\\mathrm{s}"], { A: "5", omega: "2", t: "1", y: "4.55" }, ["y=A*sin(omega*t)"], "4.55").status, "partial");
+  assert.equal(R("s=?", ["s = 5t^2", "t = 2\\,\\mathrm{s}"], { s: "15", k: "5", t: "2" }, ["s=k*t+5"], "15").why, "formula in data");
+  assert.equal(R("s=?", ["s = 5\\,t^{2}", "t = 2\\,\\mathrm{s}"], { s: "15", k: "5", t: "2" }, ["s=k*t+5"], "15").why, "formula in data");
+  assert.equal(R("h=?", ["h = 20t", "t = 3\\,\\mathrm{s}"], { h: "23", k: "20", t: "3" }, ["h=k+t"], "23").why, "formula in data");
+  // druga, negativna ničla, ki ni zrcalna (x = −4 ob x = 2), ni prikazana → nepreverjeno
+  assert.equal(R("x=?", ["a = 1", "b = 2", "c = -8"], { a: "1", b: "2", c: "-8", x: "2" }, ["a*x^2+b*x+c=0"], "2").why, "another solution");
 });
 
 test("AI: napačen račun pri nalogi s podatki sproži ponovitev, preverjen račun da »partial«", async () => {
