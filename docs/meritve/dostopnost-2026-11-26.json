@@ -14,8 +14,8 @@
   "critical"
  ],
  "ukaz": "node scripts/preveri-aplikacijo.cjs --posnetki <mapa> --meritve [--tema temna]",
- "prejMain": "5b8130ae",
- "potemOsnova": "a0f1eea480a0f8d3a4143a2a89493350b4e8f2b5",
+ "prejMain": "5b8130ae064212121a81f6cb4f24c475c60add78",
+ "potemOsnova": "e787bd065a167b814ac58437d6096ab6e5129f22",
  "veja": "claude/project-thread-g6oklx-dostopnost",
  "glavniZasloni": [
   {
@@ -311,15 +311,18 @@
     }
    ],
    "vsehPosnetkov": 225,
-   "vsehZResnimi": 4,
+   "vsehZResnimi": 5,
    "poPravilu": {
     "label": [
      "035-pc-kalkulator-tools-OS",
      "189-tel-kalkulator-tools-tel"
     ],
     "target-size": [
-     "105-pc-trening-konec-SS",
+     "104-pc-nova-raven",
      "125-pc-tema-UNI"
+    ],
+    "button-name": [
+     "147-pc-izpit-trening"
     ]
    }
   },
@@ -1010,7 +1013,7 @@
        "vpliv": "serious",
        "n": 1,
        "mesta": [
-        "span[data-fx=\"s.3A.4019.3At\"]"
+        "span[data-fx=\"s.3A.4020.3At\"]"
        ]
       }
      ]
@@ -1154,17 +1157,19 @@
     }
    ],
    "vsehPosnetkov": 225,
-   "vsehZResnimi": 4,
+   "vsehZResnimi": 5,
    "poPravilu": {
     "label": [
      "035-pc-kalkulator-tools-OS",
      "189-tel-kalkulator-tools-tel"
     ],
     "target-size": [
-     "104-pc-nova-raven",
+     "050-pc-nova-raven",
+     "105-pc-trening-konec-SS",
      "125-pc-tema-UNI"
     ]
    }
   }
- }
+ },
+ "potemVeja": "0f160681"
 }

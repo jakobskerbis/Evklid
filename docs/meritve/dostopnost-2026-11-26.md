@@ -9,9 +9,9 @@ Naloga K-11 načrta dviga kakovosti po reviziji (j odobril 26. 11. 2026). Merilo
   Edina preostala kršitev je `target-size` na eni črki formule v razlagi teme (1 posnetek od 60). Ta črka je del
   formule v besedilu, zato zanjo po naši presoji velja izjema »Inline« iz WCAG 2.5.8 (glej Napake). S to izjemo, ki jo
   presodimo sami in ki ni ugotovitev axe, so vsi zasloni brez kršitev: 20 od 20.
-- Vsi posnetki dimnega testa: **4 od 225** posnetkov imajo resno kršitev. Prej jih je imelo 88 od 224.
-  Od teh štirih sta 2 v kalkulatorju (`label`, AUDIT-086, lastnik je kalkulatorska seja) in 2 sta ista izjema
-  »Inline« za črko formule.
+- Vsi posnetki dimnega testa: **5 od 225** posnetkov imajo resno kršitev. Prej jih je imelo 88 od 224.
+  2 sta v kalkulatorju (`label`, AUDIT-086, lastnik je kalkulatorska seja), 2 sta ista izjema »Inline« za črko
+  formule, 1 so gumbi z izbiro odgovora, ki so samo formula (`button-name`, Vadba za izpit; glej Napake, ni popravljeno).
 - Pomeni: axe na posnetih stanjih glavnih zaslonov ne najde več gumba, vrstice napredka, risbe simulacije ali
   vnosnega polja brez imena, ne besedila s premajhnim kontrastom in ne drsnega področja, ki ga s tipko Tab ne dosežemo.
   Rdeče besedilo in zlato besedilo »+XP« (naloga, igre) imata v svetli temi kontrast vsaj 4,5 : 1.
@@ -66,13 +66,13 @@ Naloga K-11 načrta dviga kakovosti po reviziji (j odobril 26. 11. 2026). Merilo
 |---|---|---|---|---|---|
 | Glavni zasloni brez resnih kršitev axe | 19 od 20 | 20 zaslonov | 76–99 % | 20 od 20 | 12 od 20 |
 | Posnetki glavnih zaslonov z resno kršitvijo | 1 od 60 | 60 posnetkov | 0,3–8,9 % | 0 | 23 od 60 |
-| Vsi posnetki z resno kršitvijo | 4 od 225 | 225 posnetkov | 0,7–4,5 % | – | 88 od 224 |
+| Vsi posnetki z resno kršitvijo | 5 od 225 | 225 posnetkov | 1,0–5,1 % | – | 88 od 224 |
 | Dimni test: najdene težave | 0 | 225 posnetkov | – | 0 | 0 |
 | Temna tema: glavni zasloni brez resnih kršitev | 19 od 20 | 20 zaslonov | 76–99 % | 20 od 20 | – |
-| Temna tema: vsi posnetki z resno kršitvijo | 4 od 225 | 225 posnetkov | 0,7–4,5 % | – | – |
+| Temna tema: vsi posnetki z resno kršitvijo | 5 od 225 | 225 posnetkov | 1,0–5,1 % | – | – |
 
 Resne kršitve po pravilu axe (število posnetkov, prej → zdaj): `aria-allowed-attr` 47 → 0, `color-contrast` 26 → 0,
-`aria-progressbar-name` 22 → 0, `svg-img-alt` 17 → 0, `listitem` 8 → 0, `button-name` 8 → 0,
+`aria-progressbar-name` 22 → 0, `svg-img-alt` 17 → 0, `listitem` 8 → 0, `button-name` 8 → 1 (izbire s samo formulo),
 `scrollable-region-focusable` 5 → 0, `aria-prohibited-attr` 4 → 0, `label` 3 → 2 (kalkulator),
 `aria-required-children` 2 → 0, `target-size` 1 → 2 (črka formule, glej Napake).
 
@@ -97,17 +97,24 @@ Kaj je popravljeno:
   Po naši presoji zanjo velja izjema »Inline« iz WCAG 2.5.8 (velikost omejuje višina vrstice besedila okoli nje).
   axe izjemo prepozna pri večini takih črk, pri teh dveh pa ne. To je presoja, ne dokaz. Če izjemo zavrnemo, bi
   popravek pomenil drugačno postavitev formul, kar spremeni videz in je odločitev za j-ja. Na katerem posnetku axe
-  črko najde, se med zagoni spreminja (prej 1 posnetek, zdaj 2; posnetka 104 in 105 sta ista naloga ob drugem
-  trenutku), zato porast z 1 na 2 ni posledica teh sprememb.
+  črko najde, se med zagoni spreminja (prej 1 posnetek, zdaj 2 v svetli in 3 v temni temi; 050, 104 in 105 so
+  čestitka za novo raven čez isto nalogo ali konec treninga), zato porast ni posledica teh sprememb.
+- `button-name`, 147-pc-izpit-trening (samo v svetli temi, naloge so naključne): gumbi z izbiro odgovora, ki so samo
+  formula (npr. $[0,\pi] - \{\frac{\pi}{2}\}$), nimajo imena. To ni le omejitev axe: Chrome za tak gumb izračuna prazno
+  ime (preverjeno z drevesom dostopnosti prek CDP), ker MathML v gumbu ne šteje v ime. Bralnik zaslona tako prebere le
+  »gumb«. Isto velja za vse izbire s samo formulo (vadnica, kviz, pilotne naloge), ne le za ta zaslon. Popravek
+  potrebuje izgovor formul v slovenščini (ime gumba iz zapisa LaTeX), kar je ločena naloga; v tem PR ni popravljeno.
 - `label`, kalkulator Orodja (035-pc, 189-tel): polja `input.tl-ra` in `input.tl-co` v `public/graph/tools.js` nimajo
   imena (napis je samo črka v KaTeX). Kalkulator ureja ena sama seja (CLAUDE.md), zato smo ga le prijavili: register
   `docs/revizija/register.md`, AUDIT-086 (P2), popravek pripravi lastnik kalkulatorja.
 - Napačno potrjenih trditev v tej meritvi ni, ker axe ne potrjuje matematike.
 
 ## Omejitve
-- Samo Chromium. Temna tema (`--tema temna`) je izmerjena v istem zagonu skripte z istimi zasloni in ima enak izid:
-  isti 2 polji v kalkulatorju in 2 črki formule (104-pc-nova-raven in 125-pc-tema-UNI). Izhodišča »prej« za temno temo
-  nimamo. WebKit in Firefox: naloga K-12.
+- Samo Chromium. Temna tema (`--tema temna`) je izmerjena z isto skripto in istimi zasloni: 19 od 20 glavnih
+  zaslonov, isti 2 polji v kalkulatorju in črka formule na 3 posnetkih. Izhodišča »prej« za temno temo nimamo.
+  WebKit in Firefox: naloga K-12.
+- Naloge v dimnem testu so deloma naključne, zato se posamezni posnetki med zagoni razlikujejo (npr. izbire s samo
+  formulo v Vadbi za izpit).
 - Samo širini 1280 in 360 px. Druge naprave so v K-12 (`scripts/posnetki-naprave.cjs`).
 - axe vidi stanje zaslona ob posnetku, ne vseh stanj (odprti meniji, napake obrazcev, vsi koraki lekcij).
 - Samodejno preverjanje ne nadomesti pregleda z bralnikom zaslona in tipkovnico ter pregleda človeka.
