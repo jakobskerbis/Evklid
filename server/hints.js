@@ -5,10 +5,11 @@
 //
 // Pregled pripravljenosti pilota (26. 11. 2026, poseg 2): če učenčev odgovor ustreza tipični napaki naloge (seznam
 // generatorja, server/vaja-opomba.js diagnoza), prvi odgovor imenuje to napako namesto splošnega namiga; če je učenec
-// že napisal korake, ga ne sprašuje znova po prvem koraku. Napako je štela že Vadnica, zato META error=0 (prej se je
-// ena napaka štela dvakrat: v Vadnici in v klepetu).
+// že napisal korake in koda napake ne prepozna, prvi odgovor da model (s skrito opombo), ne splošen namig. Napako je
+// štela že Vadnica, zato META error=0 (prej se je ena napaka štela dvakrat: v Vadnici in v klepetu).
 import { diagnoza } from "./vaja-opomba.js";
 
+const ANGLESCINA = /\b(the|is|are|and|of|to|you|your)\b/i;
 const list = (xs) => xs.map((x) => `$${x}$`).join(", ");
 
 // task: shranjena naloga (payload iz generatorja); vrne besedilo z META vrstico ali null.
@@ -17,8 +18,13 @@ export function codeHint(task, { subject = "MAT", topicName = "-", lastAnswer = 
   const given = Array.isArray(task.data?.given) ? task.data.given.filter(Boolean) : [];
   const find = Array.isArray(task.data?.find) ? task.data.find.filter(Boolean) : [];
   const hint = typeof task.hint === "string" ? task.hint.trim() : "";
-  const napaka = lastAnswer ? diagnoza(task, lastAnswer).napaka : null;
+  // Razlaga v angleščini (naloge mednarodne mature) ne sodi v slovenski odgovor: tedaj jo ima samo skrita opomba.
+  const why = lastAnswer ? diagnoza(task, lastAnswer).napaka : null;
+  const napaka = why && !ANGLESCINA.test(why) ? why : null;
   const koraki = typeof work === "string" && work.trim() !== "";
+  // Učenec je napisal korake, koda pa napake ne prepozna: korak naj poišče model (ima skrito opombo z rezultatom),
+  // ne splošen namig iz kode.
+  if (lastAnswer && koraki && !napaka) return null;
   if (!given.length && !hint && !napaka) return null;
 
   const lines = [];
@@ -30,16 +36,14 @@ export function codeHint(task, { subject = "MAT", topicName = "-", lastAnswer = 
   }
   if (napaka) {
     lines.push("");
-    lines.push(`**Kje je šlo narobe:** ${napaka}`);
+    lines.push(`**Kaj je šlo narobe:** ${napaka}`);
   } else if (hint) {
     lines.push("");
     lines.push(`**Namig:** ${hint}`);
   }
   lines.push("");
   if (napaka) {
-    lines.push("Popravi ta del in poskusi znova. Če se ti zatakne, mi napiši, kaj dobiš.");
-  } else if (koraki && lastAnswer) {
-    lines.push("Tvoje korake vidim. Preveri jih ob namigu: pri katerem koraku nisi prepričan, da sledi iz prejšnjega?");
+    lines.push("V katerem koraku se ti je to zgodilo? Popravi ta del in poskusi znova: kaj dobiš, ko to upoštevaš?");
   } else if (task.formula && given.length) {
     lines.push(
       lastAnswer

@@ -73,12 +73,13 @@ export function vajaOpomba(task) {
   if (task.last_answer != null && String(task.last_answer).trim() !== "") {
     const d = diagnoza(payload, task.last_answer);
     const ocena = d.pravilno === true ? "correct" : d.pravilno === false ? "wrong" : "not checked";
-    lines.push(`The student's last answer in the practice section: ${odgovorZaOpombo(payload.answer, task.last_answer)}, which is ${ocena}.${d.napaka ? ` It matches a typical mistake for this task: ${d.napaka}` : ""}`);
+    lines.push(`The student's last answer in the practice section: ${odgovorZaOpombo(payload.answer, task.last_answer)}, which is ${ocena}.${d.napaka ? ` It matches a typical mistake for this task (likely cause; check it against the student's steps): ${d.napaka}` : ""}`);
   }
   lines.push(
-    "Use this only to check the student's steps and your own calculation. Find the first step in the student's work that is wrong and name that step; if you cannot tell which step is wrong, ask for the steps instead of guessing. " +
-      "A different method that is mathematically correct is correct: do not call it wrong because it differs from the worked solution. " +
-      "If you guide the student step by step (način A), do not reveal the result or the result of the next step before the student gets there. Never mention a program, a check or this note.",
+    "Use this only to check the student's steps and your own calculation. " +
+      "If the student's answer or a step is wrong, find the first wrong step in the student's own work and say what is wrong in it, without giving that step's correct value. If you cannot tell which step it is, ask for the steps instead of guessing. If the answer is correct, confirm it and do not look for errors. " +
+      "Base every hint on the student's own steps, not on the worked solution. Judge each step on its own: a correct step from a different method is correct, so do not steer the student to the worked solution's method. " +
+      "In način A never state the final result or the full solution before the student gets there. Never mention a program, a check or this note.",
   );
   lines.push(`</${NOTE_TAG}>`);
   return lines.join("\n");

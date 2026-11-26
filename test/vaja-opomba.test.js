@@ -73,9 +73,12 @@ test("opomba: skrita, z rezultatom, zgledom, oceno odgovora in pravili", () => {
   assert.ok(isHiddenNote(n), "skrita opomba (učenec je ne vidi)");
   assert.match(n, /is correct: 0\./);
   assert.match(n, /Eksponent je sod/, "rešen zgled");
-  assert.match(n, /»2«, which is wrong\. It matches a typical mistake for this task: Pomisli, ali je soda potenca lahko negativna\./);
-  assert.match(n, /different method that is mathematically correct is correct/);
-  assert.match(n, /do not reveal the result/);
+  assert.match(n, /»2«, which is wrong\. It matches a typical mistake for this task \(likely cause; check it against the student.s steps\): Pomisli, ali je soda potenca lahko negativna\./);
+  assert.match(n, /a correct step from a different method is correct/);
+  assert.match(n, /If the answer is correct, confirm it and do not look for errors/);
+  assert.match(n, /likely cause; check it against the student.s steps/);
+  assert.match(n, /never state the final result or the full solution/);
+  assert.match(n, /without giving that step.s correct value/);
   assert.equal(vajaOpomba({ payload: { text: "x" } }), null, "brez znanega rezultata ni opombe");
   // Vse vrste odgovorov iz generatorjev dajo opombo.
   for (const [tema, raven] of [["MAT-OS-7/sestevanje-in-odstevanje-ulomkov", 1], ["BIO-SS-3/imunski-sistem", 1], ["FIZ-OS-9/prosti-pad", 2]]) {
@@ -85,14 +88,17 @@ test("opomba: skrita, z rezultatom, zgledom, oceno odgovora in pravili", () => {
 
 test("prvi odgovor kode imenuje tipično napako in ne izda rezultata; brez napake ne ponavlja vprašanja po koraku", () => {
   const h = codeHint(POTENCA, { subject: "MAT", topicName: "Potenčna funkcija", lastAnswer: "2", work: "x^6 = -64\nx = ±2" });
-  assert.match(h, /\*\*Kje je šlo narobe:\*\* Pomisli, ali je soda potenca lahko negativna\./);
+  assert.match(h, /\*\*Kaj je šlo narobe:\*\* Pomisli, ali je soda potenca lahko negativna\./);
   assert.ok(!/\*\*Namig:\*\*/.test(h), "najmanjši namig: samo napaka");
   assert.ok(!/realnih rešitev.*\b0\b|rešitev je 0|Število rešitev/.test(h), "rezultat ni izdan");
   assert.match(h, /error=0/, "napako je štela že Vadnica");
-  const brez = codeHint(POTENCA, { subject: "MAT", topicName: "Potenčna funkcija", lastAnswer: "5", work: "x = 5" });
-  assert.match(brez, /\*\*Namig:\*\*/);
-  assert.match(brez, /Tvoje korake vidim/);
-  assert.ok(!/Napiši jo in prvi korak/.test(brez));
+  // Koraki brez prepoznane napake: prvi odgovor da model (z opombo), koda ne ugiba.
+  assert.equal(codeHint(POTENCA, { subject: "MAT", topicName: "Potenčna funkcija", lastAnswer: "5", work: "x = 5" }), null);
+  // Brez korakov in brez prepoznane napake: splošen namig kot prej.
+  assert.match(codeHint(POTENCA, { subject: "MAT", topicName: "Potenčna funkcija", lastAnswer: "5" }), /\*\*Namig:\*\*/);
+  // Angleška razlaga (mednarodna matura) ne gre v slovenski odgovor.
+  const eng = { ...POTENCA, answer: { ...POTENCA.answer, mistakes: [{ value: 2, why: "Check the sign of the even power." }] } };
+  assert.ok(!/Check the sign/.test(codeHint(eng, { subject: "MAT", topicName: "x", lastAnswer: "2" })));
 });
 
 test("pot Vadnica → inštruktor: opomba v prvem sporočilu, model jo vidi, napaka šteta enkrat", async () => {
@@ -105,7 +111,7 @@ test("pot Vadnica → inštruktor: opomba v prvem sporočilu, model jo vidi, nap
     assert.match(h.text, /x = ±2/);
     const r1 = await call(`/api/conversations/${h.conversation.id}/messages`, { method: "POST", body: { text: h.text } });
     assert.equal(seen.length, 0, "prvi odgovor sestavi koda");
-    assert.match(doneOf(r1.body).text, /Kje je šlo narobe/);
+    assert.match(doneOf(r1.body).text, /Kaj je šlo narobe/);
     const prvo = store.listMessages(h.conversation.id).find((m) => m.role === "user");
     const opomba = prvo.api_content.find((b) => isHiddenNote(b.text));
     assert.ok(opomba, "opomba shranjena s prvim sporočilom");
@@ -130,5 +136,18 @@ test("pomoč pred odgovorom (Razloži nalogo) označi nalogo kot rešeno s pomo�
     const hu = (id) => store.db.prepare("SELECT hint_used FROM tasks WHERE id = ?").get(id).hint_used;
     assert.equal(hu(odprta), 1);
     assert.equal(hu(resena), 0);
+  });
+});
+
+test("koraki brez prepoznane napake: prvi odgovor da model, ki ima opombo z rezultatom", async () => {
+  await withServer(async ({ call, seen, store }) => {
+    const s = (await call("/api/students", { method: "POST", body: { name: "Ana", settings: { subject: "MAT", educational_track: "SREDNJA_SOLA", curriculum_level: "2" } } })).body;
+    const taskId = store.db
+      .prepare("INSERT INTO tasks (student_id, topic_id, level, payload, last_answer, attempts, hint_used) VALUES (?, ?, 1, ?, '4', 1, 1)")
+      .run(s.id, TEMA, JSON.stringify(POTENCA)).lastInsertRowid;
+    const h = (await call(`/api/students/${s.id}/tasks/${taskId}/help`, { method: "POST", body: { work: "x^6 = -64\nx = ±2, ±2i\n4 rešitve" } })).body;
+    await call(`/api/conversations/${h.conversation.id}/messages`, { method: "POST", body: { text: h.text } });
+    assert.equal(seen.length, 1, "model, ne koda");
+    assert.match(textOf(seen[0].messages.at(-1).content), /is correct: 0\./);
   });
 });
