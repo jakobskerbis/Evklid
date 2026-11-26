@@ -1176,7 +1176,7 @@
   "sc.memory": "Spremljeno",
   "sc.recent": "Nedavno",
   "sc.insert": "Umetni u račun",
-  "sc.removeRecent": "Ukloni iz Nedavno: {v}",
+  "sc.removeRecent": "Ukloni iz »Nedavno«: {v}",
   "sc.pressSolve": "Pritisni = za rješenje",
   "sc.fmHint": "Umjesto poznatih slova upiši brojeve, nepoznanicu ostavi i pritisni =.",
   "sc.fmRad": "Kalkulator je sada u načinu RAD (kutovi u radijanima).",

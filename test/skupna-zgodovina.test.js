@@ -99,6 +99,7 @@ test("skupna zgodovina: PSE → Znanstveni (čip), Znanstveni → Grafični (drs
       assert.deepEqual(await recentTexts(), ["63,546", "3,5", "18,015"], where);
       const x = page.locator('.sc-recent-x[data-rm="1"]');
       assert.match(await x.getAttribute("aria-label"), /^sc\.removeRecent/, where);
+      assert.ok(await page.evaluate(() => { const v = document.querySelector(".sc-vars"); return v.scrollHeight <= v.clientHeight; }), `${where}: vrstica »Nedavno« brez navpičnega drsenja`);
       const box = await x.boundingBox();
       assert.ok(box.width >= 40 && box.height >= 40, `${where}: ${box.width}×${box.height}`);
       await tap('.sc-recent-x[data-rm="1"]');

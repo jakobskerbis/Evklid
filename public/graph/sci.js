@@ -1005,7 +1005,7 @@ export function createScientific(root, opts) {
             .map(
               (r, i) =>
                 `<span class="sc-recent-w"><button type="button" class="chip sc-var sc-recent" data-ins="${esc(r.text)}" title="${esc(t("sc.insert"))}" aria-label="${esc(`${t("sc.insert")}: ${r.text} (${srcName(r.src)})`)}"><span class="sc-recent-src">${esc(srcName(r.src))}</span> ${texHtml(r.text.replace(/E(-?\d+)$/, "\\cdot 10^{$1}").replace(/(\d),(\d)/, "$1{,}$2"))}</button>` +
-                (opts.removeRecent ? `<button type="button" class="ghost sc-recent-x" data-rm="${i}" title="${esc(t("sc.removeRecent", { v: r.text }))}" aria-label="${esc(t("sc.removeRecent", { v: r.text }))}">${icon("x")}</button>` : "") +
+                (opts.removeRecent ? `<button type="button" class="ghost sc-recent-x" data-rm="${i}" title="${esc(t("sc.removeRecent", { v: `${r.text} (${srcName(r.src)})` }))}" aria-label="${esc(t("sc.removeRecent", { v: `${r.text} (${srcName(r.src)})` }))}">${icon("x")}</button>` : "") +
                 `</span>`,
             )
             .join("")
@@ -1141,7 +1141,10 @@ export function createScientific(root, opts) {
       const kb = document.activeElement === x;
       opts.removeRecent?.({ text: r.text, src: r.src });
       renderVars();
-      if (kb) (varsBar.querySelector(`[data-rm="${i}"]`) || varsBar.querySelector(`[data-rm="${i - 1}"]`) || (touch ? null : input))?.focus({ preventScroll: true });
+      if (!kb) return;
+      const next = varsBar.querySelector(`[data-rm="${i}"]`) || varsBar.querySelector(`[data-rm="${i - 1}"]`);
+      if (next) next.focus(); // vrstica se po potrebi pomakne do njega
+      else if (!touch) input.focus({ preventScroll: true });
       return;
     }
     const b = e.target.closest("[data-ins]");
