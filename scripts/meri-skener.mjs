@@ -228,7 +228,7 @@ async function meriSliko(s, x) {
     if (soughtNeedsAi(r, { sought: p.sought, goal: p.goal })) r = { ok: false, goals: r.goals || [] };
     if (r.ok) {
       const dobljeno = { answer_tex: r.answer?.tex || "" };
-      x.resitev = { vir: "lastni reševalnik", answer_tex: dobljeno.answer_tex, preverjeno: !!r.verified };
+      x.resitev = { vir: "lastni reševalnik", answer_tex: dobljeno.answer_tex, preverjeno: !!r.verified, status: r.status || (r.verified ? "verified" : "unverified") };
       x.ocena.resitev = { naloga: i, pravilno: oceniResitev(n, dobljeno), preverjeno: !!r.verified };
     } else {
       const goal = r.goal || p.goal || null;
@@ -239,7 +239,7 @@ async function meriSliko(s, x) {
       rezerviraj(REZERVA.resevanje(body), "reševanje", s.id);
       try {
         const { solution } = await post(`/api/students/${st.id}/scan/solve`, body);
-        x.resitev = { vir: "AI", answer_tex: solution.answer_tex || "", solutions: solution.solutions || [], value: solution.value || "", preverjeno: !!solution.verified, check: solution.check || null };
+        x.resitev = { vir: "AI", answer_tex: solution.answer_tex || "", solutions: solution.solutions || [], value: solution.value || "", preverjeno: !!solution.verified, status: solution.status || null, check: solution.check || null, poskusi: solution.attempts || 1 };
         x.ocena.resitev = { naloga: i, pravilno: oceniResitev(n, solution), preverjeno: !!solution.verified };
       } catch (e) {
         x.napake.push(`reševanje: ${e.message}`);
@@ -268,7 +268,7 @@ for (const s of slike) {
       `${s.id}: prepis ${o.prepis ? (o.prepis.ok ? "OK" : `ne (števila ${o.prepis.stevila}, operacije ${o.prepis.operatorji}, besede ${o.prepis.besede})`) : "–"}` +
         `${o.prepis ? `, slika ${o.prepis.figure ? "OK" : "ne"}, več ${o.prepis.more && o.prepis.tasks ? "OK" : "ne"}` : ""}; ` +
         `branje ${o.branje ? `${o.branje.prva?.ok ? "OK" : "ne"} (${o.branje.vse}/${o.branje.pricakovano} nalog)` : "–"}; ` +
-        `rešitev ${o.resitev ? `${o.resitev.pravilno === null ? "brez pričakovane" : o.resitev.pravilno ? "pravilna" : "NAPAČNA"} (${x.resitev?.vir || "napaka"}${o.resitev.preverjeno ? ", preverjena" : ""})` : "–"}; ` +
+        `rešitev ${o.resitev ? `${o.resitev.pravilno === null ? "brez pričakovane" : o.resitev.pravilno ? "pravilna" : "NAPAČNA"} (${x.resitev?.vir || "napaka"}${o.resitev.preverjeno ? ", preverjena" : ""}${x.resitev?.status ? `, status ${x.resitev.status}` : ""}${x.resitev?.poskusi > 1 ? `, poskusov ${x.resitev.poskusi}` : ""})` : "–"}; ` +
         `${x.usd.toFixed(4)} $, skupaj ${porabljeno().toFixed(4)} $${x.napake.length ? `; napake: ${x.napake.join(" | ")}` : ""}`,
     );
   }
@@ -293,7 +293,7 @@ console.log(
     `slika ${st((x) => x.ocena.prepis?.figure)}/${sPrepisom.length}, več nalog ${st((x) => x.ocena.prepis?.more && x.ocena.prepis?.tasks)}/${sPrepisom.length}; ` +
     `Skeniraj (prva naloga) ${st((x) => x.ocena.branje?.prva?.ok)}/${zBranjem.length}, vse naloge ${st((x) => x.ocena.branje && x.ocena.branje.vse === x.ocena.branje.pricakovano)}/${zBranjem.length}; ` +
     `branje z ugibanjem ${st((x) => x.ocena.branje?.ugibano > 0)}/${zBranjem.length} slik (merilo 0), označenih znakov ${zBranjem.reduce((a, x) => a + (x.ocena.branje.oznaceno || 0), 0)} (brez prave možnosti ${zBranjem.reduce((a, x) => a + (x.ocena.branje.moznostiZgresene || 0), 0)}), odvečnih branj ${zBranjem.reduce((a, x) => a + (x.ocena.branje.odvecna || 0), 0)}; ` +
-    `rešitev ${st((x) => x.ocena.resitev?.pravilno)}/${zResitvijo.length} pravilnih (lastni reševalnik ${st((x) => x.resitev?.vir === "lastni reševalnik")}, AI ${st((x) => x.resitev?.vir === "AI")}, preverjenih ${st((x) => x.ocena.resitev?.preverjeno)}); ` +
+    `rešitev ${st((x) => x.ocena.resitev?.pravilno)}/${zResitvijo.length} pravilnih (lastni reševalnik ${st((x) => x.resitev?.vir === "lastni reševalnik")}, AI ${st((x) => x.resitev?.vir === "AI")}, preverjenih ${st((x) => x.ocena.resitev?.preverjeno)}; statusi ${["verified", "partial", "numeric", "unverified", "wrong"].map((k) => `${k} ${st((x) => x.resitev?.status === k)}`).join(", ")}); ` +
     `strošek ${porabljeno().toFixed(4)} $${ustavljeno ? ` (ustavljeno pred mejo ${MAX_USD} $)` : ""}. Izid: ${OUT}`,
 );
 fs.rmSync(tmp, { recursive: true, force: true });

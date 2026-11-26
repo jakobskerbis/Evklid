@@ -1,0 +1,1175 @@
+{
+ "naloga": "K-11",
+ "datum": "2026-11-26",
+ "axe": "4.11.0",
+ "pravila": [
+  "wcag2a",
+  "wcag21a",
+  "wcag2aa",
+  "wcag21aa",
+  "wcag22aa"
+ ],
+ "resno": [
+  "serious",
+  "critical"
+ ],
+ "ukaz": "node scripts/preveri-aplikacijo.cjs --posnetki <mapa> --meritve [--tema temna]",
+ "prejMain": "5b8130ae064212121a81f6cb4f24c475c60add78",
+ "potemOsnova": "e787bd065a167b814ac58437d6096ab6e5129f22",
+ "veja": "claude/project-thread-g6oklx-dostopnost",
+ "glavniZasloni": [
+  {
+   "zaslon": "Pristajalna stran",
+   "vzorec": "/racun-pristajalna$/"
+  },
+  {
+   "zaslon": "Prijava",
+   "vzorec": "/racun-prijava$/"
+  },
+  {
+   "zaslon": "Registracija",
+   "vzorec": "/racun-registracija$/"
+  },
+  {
+   "zaslon": "Nov profil (uvod)",
+   "vzorec": "/-uvod-(Ana|Bor|Cene)$/"
+  },
+  {
+   "zaslon": "Učna pot",
+   "vzorec": "/-(pot-(Ana|Bor|Cene)|tel-pot)$/"
+  },
+  {
+   "zaslon": "Tema",
+   "vzorec": "/-(tema|tema-SS|tema-UNI|tel-tema)$/"
+  },
+  {
+   "zaslon": "Naloga",
+   "vzorec": "/-(naloga-namigi|naloga-narobe|naloga-prav|tel-naloga)$/"
+  },
+  {
+   "zaslon": "Učbenik",
+   "vzorec": "/-(ucbenik-(OS|SS|UNI|tel))$/"
+  },
+  {
+   "zaslon": "Lekcija",
+   "vzorec": "/-(lekcija-(OS|SS|UNI|tel))$/"
+  },
+  {
+   "zaslon": "Simulacija",
+   "vzorec": "/-simulacija-(OS|SS|tel)$/"
+  },
+  {
+   "zaslon": "Inštruktor (klepet)",
+   "vzorec": "/-klepet-(OS|SS|UNI|tel|racun)$/"
+  },
+  {
+   "zaslon": "Kalkulator (znanstveni)",
+   "vzorec": "/-kalkulator-sci-(OS|tel)$/"
+  },
+  {
+   "zaslon": "Skeniraj",
+   "vzorec": "/-skeniraj-(OS|tel)$/"
+  },
+  {
+   "zaslon": "Tekmovanja",
+   "vzorec": "/-(tekmovanja-(OS|SS)|tel-competition)$/"
+  },
+  {
+   "zaslon": "Igre",
+   "vzorec": "/-(igre-(OS|tel))$/"
+  },
+  {
+   "zaslon": "Napredek",
+   "vzorec": "/-(progress-(OS|SS|UNI)|tel-jaz-progress)$/"
+  },
+  {
+   "zaslon": "Nastavitve",
+   "vzorec": "/-(settings-(OS|SS|UNI)|tel-jaz-settings)$/"
+  },
+  {
+   "zaslon": "Jaz (telefon)",
+   "vzorec": "/-tel-jaz$/"
+  },
+  {
+   "zaslon": "NPZ in matura (pole)",
+   "vzorec": "/-npz-matura-pole-(OS|SS)$/"
+  },
+  {
+   "zaslon": "Račun",
+   "vzorec": "/racun-racun$/"
+  }
+ ],
+ "svetla": {
+  "zdaj": {
+   "glavniZaslonov": 20,
+   "glavniBrezResnih": 19,
+   "glavniBrezPosnetka": [],
+   "glavniPosnetkov": 60,
+   "glavni": [
+    {
+     "ime": "Pristajalna stran",
+     "posnetkov": 1,
+     "sirine": [
+      1280
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Prijava",
+     "posnetkov": 1,
+     "sirine": [
+      1280
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Registracija",
+     "posnetkov": 1,
+     "sirine": [
+      1280
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Nov profil (uvod)",
+     "posnetkov": 3,
+     "sirine": [
+      1280
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Učna pot",
+     "posnetkov": 4,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Tema",
+     "posnetkov": 6,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 1,
+     "krsitve": [
+      {
+       "posnetek": "125-pc-tema-UNI",
+       "id": "target-size",
+       "vpliv": "serious",
+       "n": 1,
+       "mesta": [
+        "span[data-fx=\"s.3A.4019.3At\"]"
+       ]
+      }
+     ]
+    },
+    {
+     "ime": "Naloga",
+     "posnetkov": 4,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Učbenik",
+     "posnetkov": 4,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Lekcija",
+     "posnetkov": 4,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Simulacija",
+     "posnetkov": 3,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Inštruktor (klepet)",
+     "posnetkov": 8,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Kalkulator (znanstveni)",
+     "posnetkov": 2,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Skeniraj",
+     "posnetkov": 2,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Tekmovanja",
+     "posnetkov": 3,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Igre",
+     "posnetkov": 2,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Napredek",
+     "posnetkov": 4,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Nastavitve",
+     "posnetkov": 4,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Jaz (telefon)",
+     "posnetkov": 1,
+     "sirine": [
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "NPZ in matura (pole)",
+     "posnetkov": 2,
+     "sirine": [
+      1280
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Račun",
+     "posnetkov": 1,
+     "sirine": [
+      1280
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    }
+   ],
+   "vsehPosnetkov": 225,
+   "vsehZResnimi": 5,
+   "poPravilu": {
+    "label": [
+     "035-pc-kalkulator-tools-OS",
+     "189-tel-kalkulator-tools-tel"
+    ],
+    "target-size": [
+     "104-pc-nova-raven",
+     "125-pc-tema-UNI"
+    ],
+    "button-name": [
+     "147-pc-izpit-trening"
+    ]
+   }
+  },
+  "prej": {
+   "glavniZaslonov": 20,
+   "glavniBrezResnih": 12,
+   "glavniBrezPosnetka": [],
+   "glavniPosnetkov": 60,
+   "glavni": [
+    {
+     "ime": "Pristajalna stran",
+     "posnetkov": 1,
+     "sirine": [
+      1280
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Prijava",
+     "posnetkov": 1,
+     "sirine": [
+      1280
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Registracija",
+     "posnetkov": 1,
+     "sirine": [
+      1280
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Nov profil (uvod)",
+     "posnetkov": 3,
+     "sirine": [
+      1280
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Učna pot",
+     "posnetkov": 4,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 1,
+     "krsitve": [
+      {
+       "posnetek": "002-pc-pot-Ana",
+       "id": "color-contrast",
+       "vpliv": "serious",
+       "n": 1
+      }
+     ]
+    },
+    {
+     "ime": "Tema",
+     "posnetkov": 6,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 6,
+     "krsitve": [
+      {
+       "posnetek": "003-pc-tema",
+       "id": "aria-allowed-attr",
+       "vpliv": "critical",
+       "n": 11
+      },
+      {
+       "posnetek": "014-pc-nadaljuj-tema",
+       "id": "aria-allowed-attr",
+       "vpliv": "critical",
+       "n": 11
+      },
+      {
+       "posnetek": "089-pc-tema-SS",
+       "id": "aria-allowed-attr",
+       "vpliv": "critical",
+       "n": 50
+      },
+      {
+       "posnetek": "125-pc-tema-UNI",
+       "id": "aria-allowed-attr",
+       "vpliv": "critical",
+       "n": 30
+      },
+      {
+       "posnetek": "125-pc-tema-UNI",
+       "id": "target-size",
+       "vpliv": "serious",
+       "n": 1
+      },
+      {
+       "posnetek": "169-tel-tema",
+       "id": "aria-allowed-attr",
+       "vpliv": "critical",
+       "n": 11
+      },
+      {
+       "posnetek": "172-tel-nadaljuj-tema",
+       "id": "aria-allowed-attr",
+       "vpliv": "critical",
+       "n": 11
+      }
+     ]
+    },
+    {
+     "ime": "Naloga",
+     "posnetkov": 4,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 4,
+     "krsitve": [
+      {
+       "posnetek": "006-pc-naloga-namigi",
+       "id": "aria-allowed-attr",
+       "vpliv": "critical",
+       "n": 11
+      },
+      {
+       "posnetek": "007-pc-naloga-narobe",
+       "id": "aria-allowed-attr",
+       "vpliv": "critical",
+       "n": 11
+      },
+      {
+       "posnetek": "007-pc-naloga-narobe",
+       "id": "color-contrast",
+       "vpliv": "serious",
+       "n": 1
+      },
+      {
+       "posnetek": "008-pc-naloga-prav",
+       "id": "aria-allowed-attr",
+       "vpliv": "critical",
+       "n": 11
+      },
+      {
+       "posnetek": "008-pc-naloga-prav",
+       "id": "color-contrast",
+       "vpliv": "serious",
+       "n": 1
+      },
+      {
+       "posnetek": "170-tel-naloga",
+       "id": "aria-allowed-attr",
+       "vpliv": "critical",
+       "n": 11
+      }
+     ]
+    },
+    {
+     "ime": "Učbenik",
+     "posnetkov": 4,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Lekcija",
+     "posnetkov": 4,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 4,
+     "krsitve": [
+      {
+       "posnetek": "021-pc-lekcija-OS",
+       "id": "aria-allowed-attr",
+       "vpliv": "critical",
+       "n": 3
+      },
+      {
+       "posnetek": "021-pc-lekcija-OS",
+       "id": "aria-progressbar-name",
+       "vpliv": "serious",
+       "n": 1
+      },
+      {
+       "posnetek": "021-pc-lekcija-OS",
+       "id": "svg-img-alt",
+       "vpliv": "serious",
+       "n": 1
+      },
+      {
+       "posnetek": "091-pc-lekcija-SS",
+       "id": "aria-allowed-attr",
+       "vpliv": "critical",
+       "n": 4
+      },
+      {
+       "posnetek": "091-pc-lekcija-SS",
+       "id": "aria-progressbar-name",
+       "vpliv": "serious",
+       "n": 1
+      },
+      {
+       "posnetek": "091-pc-lekcija-SS",
+       "id": "svg-img-alt",
+       "vpliv": "serious",
+       "n": 2
+      },
+      {
+       "posnetek": "127-pc-lekcija-UNI",
+       "id": "aria-progressbar-name",
+       "vpliv": "serious",
+       "n": 1
+      },
+      {
+       "posnetek": "181-tel-lekcija-tel",
+       "id": "aria-allowed-attr",
+       "vpliv": "critical",
+       "n": 3
+      },
+      {
+       "posnetek": "181-tel-lekcija-tel",
+       "id": "aria-progressbar-name",
+       "vpliv": "serious",
+       "n": 1
+      }
+     ]
+    },
+    {
+     "ime": "Simulacija",
+     "posnetkov": 3,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 3,
+     "krsitve": [
+      {
+       "posnetek": "024-pc-simulacija-OS",
+       "id": "aria-allowed-attr",
+       "vpliv": "critical",
+       "n": 3
+      },
+      {
+       "posnetek": "024-pc-simulacija-OS",
+       "id": "aria-progressbar-name",
+       "vpliv": "serious",
+       "n": 1
+      },
+      {
+       "posnetek": "024-pc-simulacija-OS",
+       "id": "color-contrast",
+       "vpliv": "serious",
+       "n": 1
+      },
+      {
+       "posnetek": "024-pc-simulacija-OS",
+       "id": "svg-img-alt",
+       "vpliv": "serious",
+       "n": 1
+      },
+      {
+       "posnetek": "094-pc-simulacija-SS",
+       "id": "aria-allowed-attr",
+       "vpliv": "critical",
+       "n": 4
+      },
+      {
+       "posnetek": "094-pc-simulacija-SS",
+       "id": "aria-progressbar-name",
+       "vpliv": "serious",
+       "n": 1
+      },
+      {
+       "posnetek": "094-pc-simulacija-SS",
+       "id": "svg-img-alt",
+       "vpliv": "serious",
+       "n": 2
+      },
+      {
+       "posnetek": "185-tel-simulacija-tel",
+       "id": "aria-allowed-attr",
+       "vpliv": "critical",
+       "n": 14
+      },
+      {
+       "posnetek": "185-tel-simulacija-tel",
+       "id": "aria-progressbar-name",
+       "vpliv": "serious",
+       "n": 1
+      },
+      {
+       "posnetek": "185-tel-simulacija-tel",
+       "id": "color-contrast",
+       "vpliv": "serious",
+       "n": 1
+      },
+      {
+       "posnetek": "185-tel-simulacija-tel",
+       "id": "svg-img-alt",
+       "vpliv": "serious",
+       "n": 1
+      }
+     ]
+    },
+    {
+     "ime": "Inštruktor (klepet)",
+     "posnetkov": 8,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Kalkulator (znanstveni)",
+     "posnetkov": 2,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 1,
+     "krsitve": [
+      {
+       "posnetek": "187-tel-kalkulator-sci-tel",
+       "id": "button-name",
+       "vpliv": "critical",
+       "n": 1
+      }
+     ]
+    },
+    {
+     "ime": "Skeniraj",
+     "posnetkov": 2,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Tekmovanja",
+     "posnetkov": 3,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Igre",
+     "posnetkov": 2,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Napredek",
+     "posnetkov": 4,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 3,
+     "krsitve": [
+      {
+       "posnetek": "119-pc-progress-SS",
+       "id": "scrollable-region-focusable",
+       "vpliv": "serious",
+       "n": 1
+      },
+      {
+       "posnetek": "141-pc-progress-UNI",
+       "id": "scrollable-region-focusable",
+       "vpliv": "serious",
+       "n": 1
+      },
+      {
+       "posnetek": "165-tel-jaz-progress",
+       "id": "color-contrast",
+       "vpliv": "serious",
+       "n": 1
+      },
+      {
+       "posnetek": "165-tel-jaz-progress",
+       "id": "scrollable-region-focusable",
+       "vpliv": "serious",
+       "n": 1
+      }
+     ]
+    },
+    {
+     "ime": "Nastavitve",
+     "posnetkov": 4,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Jaz (telefon)",
+     "posnetkov": 1,
+     "sirine": [
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "NPZ in matura (pole)",
+     "posnetkov": 2,
+     "sirine": [
+      1280
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Račun",
+     "posnetkov": 1,
+     "sirine": [
+      1280
+     ],
+     "zResnimi": 1,
+     "krsitve": [
+      {
+       "posnetek": "215-racun-racun",
+       "id": "label",
+       "vpliv": "critical",
+       "n": 1
+      }
+     ]
+    }
+   ],
+   "vsehPosnetkov": 224,
+   "vsehZResnimi": 88,
+   "poPravilu": {
+    "color-contrast": [
+     "002-pc-pot-Ana",
+     "007-pc-naloga-narobe",
+     "008-pc-naloga-prav",
+     "010-pc-zanimanja-Ana",
+     "011-pc-uvodni-ogled",
+     "013-pc-nadaljuj-meni",
+     "015-pc-predmet-klobuk-OS",
+     "016-pc-predmet-profil-OS",
+     "024-pc-simulacija-OS",
+     "025-pc-lekcija-korak-OS",
+     "050-pc-nova-raven",
+     "051-pc-trening-konec-OS",
+     "067-pc-trening-konec-OS-npz",
+     "082-pc-urnik-izpolnjen",
+     "084-pc-skeniraj-linearna-OS",
+     "085-pc-skeniraj-kvadratna-OS",
+     "104-pc-nova-raven",
+     "105-pc-trening-konec-SS",
+     "132-pc-predmet-klobuk-UNI",
+     "133-pc-predmet-profil-UNI",
+     "158-tel-jaz-zbirke",
+     "165-tel-jaz-progress",
+     "185-tel-simulacija-tel",
+     "206-tel-skeniraj-linearna-tel",
+     "207-tel-skeniraj-kvadratna-tel",
+     "214-racun-pot-otroka"
+    ],
+    "aria-allowed-attr": [
+     "003-pc-tema",
+     "004-pc-test-predznanja",
+     "005-pc-zgled",
+     "006-pc-naloga-namigi",
+     "007-pc-naloga-narobe",
+     "008-pc-naloga-prav",
+     "009-pc-naloga-kalkulator",
+     "012-pc-dnevni-trening",
+     "014-pc-nadaljuj-tema",
+     "021-pc-lekcija-OS",
+     "022-pc-lekcija-gradiva-OS",
+     "023-pc-lekcija-prijava-OS",
+     "024-pc-simulacija-OS",
+     "025-pc-lekcija-korak-OS",
+     "037-pc-kalkulator-formulas-OS",
+     "041-pc-lekcija-povezave-OS",
+     "050-pc-nova-raven",
+     "051-pc-trening-konec-OS",
+     "056-pc-poskusni-izpit-pisanje-OS",
+     "057-pc-poskusni-izpit-ocena-OS",
+     "059-pc-nasa-pola-izbira-OS",
+     "060-pc-nasa-pola-resitve-OS",
+     "067-pc-trening-konec-OS-npz",
+     "089-pc-tema-SS",
+     "091-pc-lekcija-SS",
+     "092-pc-lekcija-gradiva-SS",
+     "093-pc-lekcija-prijava-SS",
+     "094-pc-simulacija-SS",
+     "095-pc-lekcija-korak-SS",
+     "104-pc-nova-raven",
+     "105-pc-trening-konec-SS",
+     "108-pc-poskusni-izpit-pisanje-SS",
+     "109-pc-poskusni-izpit-ocena-SS",
+     "111-pc-nasa-pola-izbira-SS",
+     "112-pc-nasa-pola-resitve-SS",
+     "125-pc-tema-UNI",
+     "130-pc-lekcija-korak-UNI",
+     "169-tel-tema",
+     "170-tel-naloga",
+     "172-tel-nadaljuj-tema",
+     "181-tel-lekcija-tel",
+     "182-tel-lekcija-gradiva-tel",
+     "183-tel-lekcija-prijava-tel",
+     "184-tel-lekcija-korak-tel",
+     "185-tel-simulacija-tel",
+     "191-tel-kalkulator-formulas-tel",
+     "196-tel-lekcija-povezave-tel"
+    ],
+    "aria-progressbar-name": [
+     "021-pc-lekcija-OS",
+     "022-pc-lekcija-gradiva-OS",
+     "023-pc-lekcija-prijava-OS",
+     "024-pc-simulacija-OS",
+     "025-pc-lekcija-korak-OS",
+     "041-pc-lekcija-povezave-OS",
+     "091-pc-lekcija-SS",
+     "092-pc-lekcija-gradiva-SS",
+     "093-pc-lekcija-prijava-SS",
+     "094-pc-simulacija-SS",
+     "095-pc-lekcija-korak-SS",
+     "127-pc-lekcija-UNI",
+     "128-pc-lekcija-gradiva-UNI",
+     "129-pc-lekcija-prijava-UNI",
+     "130-pc-lekcija-korak-UNI",
+     "158-tel-jaz-zbirke",
+     "181-tel-lekcija-tel",
+     "182-tel-lekcija-gradiva-tel",
+     "183-tel-lekcija-prijava-tel",
+     "184-tel-lekcija-korak-tel",
+     "185-tel-simulacija-tel",
+     "196-tel-lekcija-povezave-tel"
+    ],
+    "svg-img-alt": [
+     "021-pc-lekcija-OS",
+     "022-pc-lekcija-gradiva-OS",
+     "023-pc-lekcija-prijava-OS",
+     "024-pc-simulacija-OS",
+     "025-pc-lekcija-korak-OS",
+     "032-pc-klepet-poskus-OS",
+     "041-pc-lekcija-povezave-OS",
+     "091-pc-lekcija-SS",
+     "092-pc-lekcija-gradiva-SS",
+     "093-pc-lekcija-prijava-SS",
+     "094-pc-simulacija-SS",
+     "095-pc-lekcija-korak-SS",
+     "102-pc-klepet-poskus-SS",
+     "139-pc-klepet-poskus-UNI",
+     "178-tel-klepet-poskus-tel",
+     "185-tel-simulacija-tel",
+     "221-racun-klepet-poskus-racun"
+    ],
+    "label": [
+     "035-pc-kalkulator-tools-OS",
+     "189-tel-kalkulator-tools-tel",
+     "215-racun-racun"
+    ],
+    "listitem": [
+     "056-pc-poskusni-izpit-pisanje-OS",
+     "057-pc-poskusni-izpit-ocena-OS",
+     "059-pc-nasa-pola-izbira-OS",
+     "060-pc-nasa-pola-resitve-OS",
+     "108-pc-poskusni-izpit-pisanje-SS",
+     "109-pc-poskusni-izpit-ocena-SS",
+     "111-pc-nasa-pola-izbira-SS",
+     "112-pc-nasa-pola-resitve-SS"
+    ],
+    "aria-prohibited-attr": [
+     "071-pc-igra-OS",
+     "072-pc-igra-konec-OS",
+     "203-tel-igra-tel",
+     "204-tel-igra-konec-tel"
+    ],
+    "aria-required-children": [
+     "078-pc-mnenje-OS",
+     "168-tel-jaz-feedback"
+    ],
+    "button-name": [
+     "086-pc-skeniraj-zgodovina-OS",
+     "164-tel-jaz-graph",
+     "187-tel-kalkulator-sci-tel",
+     "188-tel-kalkulator-graph-tel",
+     "189-tel-kalkulator-tools-tel",
+     "190-tel-kalkulator-pse-tel",
+     "191-tel-kalkulator-formulas-tel",
+     "208-tel-skeniraj-zgodovina-tel"
+    ],
+    "scrollable-region-focusable": [
+     "119-pc-progress-SS",
+     "141-pc-progress-UNI",
+     "165-tel-jaz-progress",
+     "206-tel-skeniraj-linearna-tel",
+     "207-tel-skeniraj-kvadratna-tel"
+    ],
+    "target-size": [
+     "125-pc-tema-UNI"
+    ]
+   }
+  }
+ },
+ "temna": {
+  "zdaj": {
+   "glavniZaslonov": 20,
+   "glavniBrezResnih": 19,
+   "glavniBrezPosnetka": [],
+   "glavniPosnetkov": 60,
+   "glavni": [
+    {
+     "ime": "Pristajalna stran",
+     "posnetkov": 1,
+     "sirine": [
+      1280
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Prijava",
+     "posnetkov": 1,
+     "sirine": [
+      1280
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Registracija",
+     "posnetkov": 1,
+     "sirine": [
+      1280
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Nov profil (uvod)",
+     "posnetkov": 3,
+     "sirine": [
+      1280
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Učna pot",
+     "posnetkov": 4,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Tema",
+     "posnetkov": 6,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 1,
+     "krsitve": [
+      {
+       "posnetek": "125-pc-tema-UNI",
+       "id": "target-size",
+       "vpliv": "serious",
+       "n": 1,
+       "mesta": [
+        "span[data-fx=\"s.3A.4020.3At\"]"
+       ]
+      }
+     ]
+    },
+    {
+     "ime": "Naloga",
+     "posnetkov": 4,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Učbenik",
+     "posnetkov": 4,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Lekcija",
+     "posnetkov": 4,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Simulacija",
+     "posnetkov": 3,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Inštruktor (klepet)",
+     "posnetkov": 8,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Kalkulator (znanstveni)",
+     "posnetkov": 2,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Skeniraj",
+     "posnetkov": 2,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Tekmovanja",
+     "posnetkov": 3,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Igre",
+     "posnetkov": 2,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Napredek",
+     "posnetkov": 4,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Nastavitve",
+     "posnetkov": 4,
+     "sirine": [
+      1280,
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Jaz (telefon)",
+     "posnetkov": 1,
+     "sirine": [
+      360
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "NPZ in matura (pole)",
+     "posnetkov": 2,
+     "sirine": [
+      1280
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    },
+    {
+     "ime": "Račun",
+     "posnetkov": 1,
+     "sirine": [
+      1280
+     ],
+     "zResnimi": 0,
+     "krsitve": []
+    }
+   ],
+   "vsehPosnetkov": 225,
+   "vsehZResnimi": 5,
+   "poPravilu": {
+    "label": [
+     "035-pc-kalkulator-tools-OS",
+     "189-tel-kalkulator-tools-tel"
+    ],
+    "target-size": [
+     "050-pc-nova-raven",
+     "105-pc-trening-konec-SS",
+     "125-pc-tema-UNI"
+    ]
+   }
+  }
+ },
+ "potemVeja": "0f160681"
+}

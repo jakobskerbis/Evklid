@@ -31,7 +31,8 @@ variable {V P : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [MetricS
 /-! ## Pomožne numerične ocene (Taylorjev polinom stopnje 9 z ostankom, kot v `MAT_SS_3`) -/
 
 /-- Pomožna trditev (Taylor z ostankom iz `Complex.exp_bound`, n = 10): za `|x| ≤ 1` sta `cos x` in `sin x`
-oddaljena od Taylorjevih polinomov največ `|x|¹⁰·11/36288000`. -/
+oddaljena od Taylorjevih polinomov največ `|x|¹⁰·11/36288000`.
+pomozno -/
 theorem taylor_sin_cos (x : ℝ) (hx : |x| ≤ 1) :
     |Real.cos x - (1 - x ^ 2 / 2 + x ^ 4 / 24 - x ^ 6 / 720 + x ^ 8 / 40320)| ≤ |x| ^ 10 * (11 / 36288000) ∧
     |Real.sin x - (x - x ^ 3 / 6 + x ^ 5 / 120 - x ^ 7 / 5040 + x ^ 9 / 362880)| ≤
@@ -74,14 +75,16 @@ theorem taylor_sin_cos (x : ℝ) (hx : |x| ≤ 1) :
 /-- Predpostavke trditve `taylor_sin_cos` se dajo izpolniti (`x = 0`). -/
 example : |(0:ℝ)| ≤ 1 := by norm_num
 
-/-- Pomožna trditev: `|π − 3,1415926536| ≤ 10⁻¹⁰` (iz `pi_gt_d20`, `pi_lt_d20`). -/
+/-- Pomožna trditev: `|π − 3,1415926536| ≤ 10⁻¹⁰` (iz `pi_gt_d20`, `pi_lt_d20`).
+pomozno -/
 theorem pi_blizu : |π - 3.1415926536| ≤ 1 / 10 ^ 10 := by
   have h1 := pi_gt_d20
   have h2 := pi_lt_d20
   rw [abs_le]; constructor <;> norm_num at * <;> linarith
 
 /-- Pomožna trditev: `cos` pri kotu `θ°` (`0 ≤ θ ≤ 57`) je blizu Taylorjevega polinoma v
-`q = θ·3,1415926536/180`. -/
+`q = θ·3,1415926536/180`.
+pomozno -/
 theorem cos_stopinj (θ q : ℝ) (hq : q = θ * 3.1415926536 / 180) (h0 : 0 ≤ θ) (h1 : θ ≤ 57) :
     |Real.cos (θ * π / 180) - (1 - q ^ 2 / 2 + q ^ 4 / 24 - q ^ 6 / 720 + q ^ 8 / 40320)| ≤
       θ / 180 * (1 / 10 ^ 10) + q ^ 10 * (11 / 36288000) := by
@@ -101,7 +104,8 @@ theorem cos_stopinj (θ q : ℝ) (hq : q = θ * 3.1415926536 / 180) (h0 : 0 ≤ 
 example : (0:ℝ) = 0 * 3.1415926536 / 180 ∧ (0:ℝ) ≤ 0 ∧ (0:ℝ) ≤ 57 := by norm_num
 
 /-- Pomožna trditev: `sin` pri kotu `θ°` (`0 ≤ θ ≤ 57`) je blizu Taylorjevega polinoma v
-`q = θ·3,1415926536/180`. -/
+`q = θ·3,1415926536/180`.
+pomozno -/
 theorem sin_stopinj (θ q : ℝ) (hq : q = θ * 3.1415926536 / 180) (h0 : 0 ≤ θ) (h1 : θ ≤ 57) :
     |Real.sin (θ * π / 180) - (q - q ^ 3 / 6 + q ^ 5 / 120 - q ^ 7 / 5040 + q ^ 9 / 362880)| ≤
       θ / 180 * (1 / 10 ^ 10) + q ^ 10 * (11 / 36288000) := by
@@ -117,7 +121,8 @@ theorem sin_stopinj (θ q : ℝ) (hq : q = θ * 3.1415926536 / 180) (h0 : 0 ≤ 
         (Real.sin q - (q - q ^ 3 / 6 + q ^ 5 / 120 - q ^ 7 / 5040 + q ^ 9 / 362880))| := by ring_nf
     _ ≤ _ := (abs_add_le _ _).trans (add_le_add ((abs_sin_sub_sin_le _ _).trans hd) ht)
 
-/-- Pomožna trditev: spodnja in zgornja meja za `sin θ°` (`0 ≤ θ ≤ 57`); pogoja na meje preveri `norm_num`. -/
+/-- Pomožna trditev: spodnja in zgornja meja za `sin θ°` (`0 ≤ θ ≤ 57`); pogoja na meje preveri `norm_num`.
+pomozno -/
 theorem sin_meja (θ lo hi : ℝ) (h0 : 0 ≤ θ) (h1 : θ ≤ 57)
     (hlo : lo ≤ ((θ * 3.1415926536 / 180) - (θ * 3.1415926536 / 180) ^ 3 / 6 +
       (θ * 3.1415926536 / 180) ^ 5 / 120 - (θ * 3.1415926536 / 180) ^ 7 / 5040 +
@@ -143,7 +148,8 @@ example : (-1:ℝ) ≤ ((0 * 3.1415926536 / 180) - (0 * 3.1415926536 / 180) ^ 3 
       (0 / 180 * (1 / 10 ^ 10) + (0 * 3.1415926536 / 180) ^ 10 * (11 / 36288000)) ≤ (1:ℝ) := by
   constructor <;> norm_num
 
-/-- Pomožna trditev: spodnja in zgornja meja za `cos θ°` (`0 ≤ θ ≤ 57`); pogoja na meje preveri `norm_num`. -/
+/-- Pomožna trditev: spodnja in zgornja meja za `cos θ°` (`0 ≤ θ ≤ 57`); pogoja na meje preveri `norm_num`.
+pomozno -/
 theorem cos_meja (θ lo hi : ℝ) (h0 : 0 ≤ θ) (h1 : θ ≤ 57)
     (hlo : lo ≤ (1 - (θ * 3.1415926536 / 180) ^ 2 / 2 + (θ * 3.1415926536 / 180) ^ 4 / 24 -
       (θ * 3.1415926536 / 180) ^ 6 / 720 + (θ * 3.1415926536 / 180) ^ 8 / 40320) -
@@ -166,7 +172,8 @@ example : (0:ℝ) ≤ (1 - (0 * 3.1415926536 / 180) ^ 2 / 2 + (0 * 3.1415926536 
   constructor <;> norm_num
 
 /-- Pomožna trditev: če je tan lo° < v < tan hi° (zapisano kot sin lo° < v·cos lo° in v·cos hi° < sin hi°) za
-0 ≤ lo ≤ hi ≤ 57, je lo < arctan v · 180/π < hi (kot v stopinjah). -/
+0 ≤ lo ≤ hi ≤ 57, je lo < arctan v · 180/π < hi (kot v stopinjah).
+pomozno -/
 theorem arctan_stopinj (v lo hi : ℝ) (h0 : 0 ≤ lo) (hlh : lo ≤ hi) (h1 : hi ≤ 57)
     (hs1 : Real.sin (lo * π / 180) < v * Real.cos (lo * π / 180))
     (hs2 : v * Real.cos (hi * π / 180) < Real.sin (hi * π / 180)) :
@@ -201,14 +208,16 @@ example : Real.sin (0 * π / 180) < 1 * Real.cos (0 * π / 180) ∧
 
 /-! ## Pomožne trditve -/
 
-/-- Pomožna trditev: če je lo·y < x < hi·y za y > 0, je lo < x/y < hi. -/
+/-- Pomožna trditev: če je lo·y < x < hi·y za y > 0, je lo < x/y < hi.
+pomozno -/
 theorem div_med (x y lo hi : ℝ) (hy : 0 < y) (h1 : lo * y < x) (h2 : x < hi * y) : lo < x / y ∧ x / y < hi :=
   ⟨(lt_div_iff₀ hy).mpr h1, (div_lt_iff₀ hy).mpr h2⟩
 
 /-- Predpostavke `div_med` se dajo izpolniti (x = y = 1, lo = 0, hi = 2). -/
 example : (0:ℝ) < 1 ∧ (0:ℝ) * 1 < 1 ∧ (1:ℝ) < 2 * 1 := by norm_num
 
-/-- Pomožna trditev: cos θ° > 0 za 0 ≤ θ ≤ 57. -/
+/-- Pomožna trditev: cos θ° > 0 za 0 ≤ θ ≤ 57.
+pomozno -/
 theorem cos_poz (θ : ℝ) (h0 : 0 ≤ θ) (h1 : θ ≤ 57) : 0 < cos (θ * π / 180) := by
   have hp := pi_pos
   exact cos_pos_of_mem_Ioo ⟨by nlinarith, by nlinarith⟩
@@ -216,17 +225,20 @@ theorem cos_poz (θ : ℝ) (h0 : 0 ≤ θ) (h1 : θ ≤ 57) : 0 < cos (θ * π /
 /-- Predpostavke `cos_poz` se dajo izpolniti (θ = 0). -/
 example : (0:ℝ) ≤ 0 ∧ (0:ℝ) ≤ 57 := by norm_num
 
-/-- Pomožna trditev: 1,732050 < √3 < 1,732051 in (√3)² = 3. -/
+/-- Pomožna trditev: 1,732050 < √3 < 1,732051 in (√3)² = 3.
+pomozno -/
 theorem koren3 : (1.732050 : ℝ) < √3 ∧ √3 < 1.732051 ∧ √3 ^ 2 = 3 :=
   ⟨by rw [Real.lt_sqrt (by norm_num)]; norm_num, by rw [Real.sqrt_lt' (by norm_num)]; norm_num,
     Real.sq_sqrt (by norm_num)⟩
 
-/-- Pomožna trditev: 1,41421 < √2 < 1,41422 in (√2)² = 2. -/
+/-- Pomožna trditev: 1,41421 < √2 < 1,41422 in (√2)² = 2.
+pomozno -/
 theorem koren2 : (1.41421 : ℝ) < √2 ∧ √2 < 1.41422 ∧ √2 ^ 2 = 2 :=
   ⟨by rw [Real.lt_sqrt (by norm_num)]; norm_num, by rw [Real.sqrt_lt' (by norm_num)]; norm_num,
     Real.sq_sqrt (by norm_num)⟩
 
-/-- Pomožna trditev (kot v stopinjah): 70° = 90° − 20°, zato sin 70° = cos 20° in cos 70° = sin 20°. -/
+/-- Pomožna trditev (kot v stopinjah): 70° = 90° − 20°, zato sin 70° = cos 20° in cos 70° = sin 20°.
+pomozno -/
 theorem kot70 : sin (70 * π / 180) = cos (20 * π / 180) ∧ cos (70 * π / 180) = sin (20 * π / 180) := by
   rw [show (70:ℝ) * π / 180 = π / 2 - 20 * π / 180 by ring, sin_pi_div_two_sub, cos_pi_div_two_sub]
   exact ⟨rfl, rfl⟩
@@ -235,7 +247,9 @@ theorem kot70 : sin (70 * π / 180) = cos (20 * π / 180) ∧ cos (70 * π / 180
 
 /-- Razlaga 1, 2, Povzetek in Ustno vprašanje 1 (definicije): v trikotniku ABC s pravim kotom pri C je za
 α = ∠CAB in β = ∠CBA (a = |BC|, b = |AC|, c = |AB|): sin α = a/c, cos α = b/c, tan α = a/b, cot α = b/a,
-sin β = b/c, cos β = a/c, tan β = b/a in α + β = 90°. -/
+sin β = b/c, cos β = a/c, tan β = b/a in α + β = 90°.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#definicije
+besedilo: »$$\sin \alpha = \frac{\text{nasprotna kateta}}{\text{hipotenuza}} = \frac{a}{c}$$ $$\cos \alpha = \frac{\text{priležna kateta}}{\text{hipotenuza}} = \frac{b}{c}$$ $$\tan \alpha = \frac{\text{nasprotna kateta}}{\text{priležna kateta}} = \frac{a}{b}$$ Za kot $\beta$ velja $\sin \beta = \dfrac{b}{c}$, $\cos \beta = \dfrac{a}{c}$, $\tan \beta = \dfrac{b}{a}$. Tangens ponekod pišejo tudi $\operatorname{tg} \alpha$. Obratna vrednost tangensa je **kotangens**, $\cot \alpha = \dfrac{b}{a}$.« -/
 theorem definicije {A B C : P} (h : ∠ B C A = π / 2) (hA : A ≠ C) (hB : B ≠ C) :
     sin (∠ C A B) = dist B C / dist A B ∧ cos (∠ C A B) = dist A C / dist A B ∧
     tan (∠ C A B) = dist B C / dist A C ∧ cot (∠ C A B) = dist A C / dist B C ∧
@@ -261,7 +275,17 @@ example : ∠ Complex.I (0:ℂ) 1 = π / 2 ∧ (1:ℂ) ≠ 0 ∧ Complex.I ≠ 0
   rw [EuclideanGeometry.angle, ← InnerProductGeometry.inner_eq_zero_iff_angle_eq_pi_div_two]
   simp [Complex.inner]
 
-/-- Povzetek »Iz stranice in kota« in Ponovitev: a = c·sin α, b = c·cos α, a = b·tan α. -/
+/-- Predpostavke trditve `definicije` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∠ Complex.I (0:ℂ) 1 = π / 2 ∧ (1:ℂ) ≠ 0 ∧ Complex.I ≠ 0 := by
+    refine ⟨?_, one_ne_zero, Complex.I_ne_zero⟩
+    rw [EuclideanGeometry.angle, ← InnerProductGeometry.inner_eq_zero_iff_angle_eq_pi_div_two]
+    simp [Complex.inner]
+  definicije (h := w.1) (hA := w.2.1) (hB := w.2.2)
+
+/-- Povzetek »Iz stranice in kota« in Ponovitev: a = c·sin α, b = c·cos α, a = b·tan α.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#iz-stranice-in-kota
+besedilo: »$$a = c \sin \alpha, \quad b = c \cos \alpha$$ $$a = b \tan \alpha$$« -/
 theorem iz_stranice_in_kota {A B C : P} (h : ∠ B C A = π / 2) (hA : A ≠ C) :
     dist B C = dist A B * sin (∠ C A B) ∧ dist A C = dist A B * cos (∠ C A B) ∧
     dist B C = dist A C * tan (∠ C A B) := by
@@ -277,9 +301,19 @@ example : ∠ Complex.I (0:ℂ) 1 = π / 2 ∧ (1:ℂ) ≠ 0 := by
   rw [EuclideanGeometry.angle, ← InnerProductGeometry.inner_eq_zero_iff_angle_eq_pi_div_two]
   simp [Complex.inner]
 
+/-- Predpostavke trditve `iz_stranice_in_kota` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∠ Complex.I (0:ℂ) 1 = π / 2 ∧ (1:ℂ) ≠ 0 := by
+    refine ⟨?_, one_ne_zero⟩
+    rw [EuclideanGeometry.angle, ← InnerProductGeometry.inner_eq_zero_iff_angle_eq_pi_div_two]
+    simp [Complex.inner]
+  iz_stranice_in_kota (h := w.1) (hA := w.2)
+
 /-- Ustno vprašanje 1, Drugače: Bolj natančno in Preveri se 3: vrednost je odvisna le od kota: dva pravokotna
 trikotnika z enakim ostrim kotom imata enako razmerje nasprotne katete in hipotenuze; pri podobnih trikotnikih
-(a' = ka, c' = kc, k > 0) je a'/c' = a/c. -/
+(a' = ka, c' = kc, k > 0) je a'/c' = a/c.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#le-od-kota
+besedilo: »Sledi $\dfrac{a'}{c'} = \dfrac{k a}{k c} = \dfrac{a}{c}$. Razmerje torej ni odvisno od velikosti trikotnika, ampak le od kota, in vsakemu ostremu kotu priredi natanko eno število.« -/
 theorem le_od_kota {A B C A' B' C' : P} (h : ∠ B C A = π / 2) (h' : ∠ B' C' A' = π / 2) (hB : B ≠ C)
     (hB' : B' ≠ C') (hα : ∠ C A B = ∠ C' A' B') :
     dist B C / dist B A = dist B' C' / dist B' A' ∧ ∀ a c k : ℝ, 0 < k → (k * a) / (k * c) = a / c := by
@@ -293,7 +327,8 @@ example : ∠ Complex.I (0:ℂ) 1 = π / 2 ∧ Complex.I ≠ 0 := by
   simp [Complex.inner]
 
 /-- Zakaj se tega učimo in Razlaga 2 (senca): s = 1,75 m / tan 25° ≈ 3,75 m, kar je več od 1,75 m (senca je daljša).
--/
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#senca
+besedilo: »$s = \dfrac{1{,}75\,\text{m}}{\tan 25^\circ} \approx 3{,}75\,\text{m}$« -/
 theorem senca : |1.75 / tan (25 * π / 180) - 3.75| < 0.005 ∧ 1.75 < 1.75 / tan (25 * π / 180) := by
   obtain ⟨s1, s2⟩ := sin_meja 25 0.422618261655 0.422618261835 (by norm_num) (by norm_num) (by norm_num) (by norm_num)
   obtain ⟨c1, c2⟩ := cos_meja 25 0.906307787015 0.906307787195 (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -302,11 +337,13 @@ theorem senca : |1.75 / tan (25 * π / 180) - 3.75| < 0.005 ∧ 1.75 < 1.75 / ta
     (by linarith) (by linarith)
   exact ⟨by rw [abs_lt]; constructor <;> linarith, by linarith⟩
 
-/-- Pomožna trditev (ravnina ℂ): razdalja točk z razliko a + bi je √(a² + b²). -/
+/-- Pomožna trditev (ravnina ℂ): razdalja točk z razliko a + bi je √(a² + b²).
+pomozno -/
 theorem razd (z w : ℂ) (a b : ℝ) (h : z - w = a + b * Complex.I) : dist z w = √(a ^ 2 + b ^ 2) := by
   rw [dist_eq_norm, h, Complex.norm_def, Complex.normSq_apply]; simp; ring_nf
 
-/-- Pomožna trditev (ravnina ℂ): kosinus kota ∠ABC iz koordinat vektorjev BA→ = a + bi in BC→ = c + di. -/
+/-- Pomožna trditev (ravnina ℂ): kosinus kota ∠ABC iz koordinat vektorjev BA→ = a + bi in BC→ = c + di.
+pomozno -/
 theorem kos (A B C : ℂ) (a b c d : ℝ) (h1 : A - B = a + b * Complex.I) (h2 : C - B = c + d * Complex.I) :
     cos (∠ A B C) = (a * c + b * d) / (√(a ^ 2 + b ^ 2) * √(c ^ 2 + d ^ 2)) := by
   rw [EuclideanGeometry.angle, InnerProductGeometry.cos_angle, vsub_eq_sub, vsub_eq_sub,
@@ -314,7 +351,8 @@ theorem kos (A B C : ℂ) (a b c d : ℝ) (h1 : A - B = a + b * Complex.I) (h2 :
   simp [Complex.inner]; ring
 
 /-- Pomožna trditev (ravnina ℂ): če je skalarni produkt vektorjev BA→ = a + bi in BC→ = c + di enak 0, je
-∠ABC = 90°. -/
+∠ABC = 90°.
+pomozno -/
 theorem pravi (A B C : ℂ) (a b c d : ℝ) (h1 : A - B = a + b * Complex.I) (h2 : C - B = c + d * Complex.I)
     (h : a * c + b * d = 0) : ∠ A B C = π / 2 := by
   rw [EuclideanGeometry.angle, ← InnerProductGeometry.inner_eq_zero_iff_angle_eq_pi_div_two, vsub_eq_sub,
@@ -328,7 +366,9 @@ example : (1:ℂ) - 0 = ((1:ℝ):ℂ) + ((0:ℝ):ℂ) * Complex.I ∧ Complex.I 
 
 /-- Naloga 2 (romb): če se diagonali sekata v M, ki razpolavlja BD (MD→ = −MB→), in sta stranici AB in AD enako
 dolgi, je ∠AMB = 90° (diagonali romba sta pravokotni): |AB|² = |MA→ − MB→|² in |AD|² = |MA→ + MB→|² se razlikujeta
-za 4·⟨MA→, MB→⟩. -/
+za 4·⟨MA→, MB→⟩.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#romb-pravi-kot
+besedilo: »Diagonali romba se razpolavljata in sta pravokotni« -/
 theorem romb_pravi_kot {A B D M : P} (hM : D -ᵥ M = -(B -ᵥ M)) (h : dist A B = dist A D) :
     ∠ A M B = π / 2 := by
   rw [EuclideanGeometry.angle, ← InnerProductGeometry.inner_eq_zero_iff_angle_eq_pi_div_two]
@@ -345,9 +385,18 @@ example : (3 * Complex.I : ℂ) -ᵥ (0:ℂ) = -((-3 * Complex.I : ℂ) -ᵥ (0:
   refine ⟨by simp, ?_⟩
   rw [razd _ _ (-5) 3 (by push_cast; ring), razd _ _ (-5) (-3) (by push_cast; ring)]; norm_num
 
+/-- Predpostavke trditve `romb_pravi_kot` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (3 * Complex.I : ℂ) -ᵥ (0:ℂ) = -((-3 * Complex.I : ℂ) -ᵥ (0:ℂ)) ∧ dist (-5:ℂ) (-3 * Complex.I) = dist (-5:ℂ) (3 * Complex.I) := by
+    refine ⟨by simp, ?_⟩
+    rw [razd _ _ (-5) 3 (by push_cast; ring), razd _ _ (-5) (-3) (by push_cast; ring)]; norm_num
+  romb_pravi_kot (hM := w.1) (h := w.2)
+
 /-- Razlaga 2, Preizkus: v trikotniku C = 0, A = 4, B = 3i (v ℂ) s pravim kotom pri C je a = |BC| = 3, b = |AC| = 4,
 c = |AB| = 5 (3² + 4² = 5²), zato je po `definicije` cos α = cos ∠CAB = b/c = 4/5. Drugače: Na sliki: pri c = 1 je
-sin α = a/1 = a in cos α = b/1 = b. -/
+sin α = a/1 = a in cos α = b/1 = b.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#preizkus2
+besedilo: »trikotnik ima $a = 3$, $b = 4$, $c = 5$. Koliko je $\cos \alpha$? ($\dfrac{4}{5}$.)« -/
 theorem preizkus2 :
     ∠ (3 * Complex.I) (0:ℂ) 4 = π / 2 ∧ dist (3 * Complex.I) (0:ℂ) = 3 ∧ dist (4:ℂ) 0 = 4 ∧
     dist (4:ℂ) (3 * Complex.I) = 5 ∧ (3:ℝ) ^ 2 + 4 ^ 2 = 5 ^ 2 ∧ cos (∠ (0:ℂ) 4 (3 * Complex.I)) = 4 / 5 ∧
@@ -363,7 +412,9 @@ theorem preizkus2 :
     by norm_num, by rw [c, dA, dAB], fun a b => ⟨div_one a, div_one b⟩⟩
 
 /-- Razlaga 3 in Povzetek: za ostri kot je 0 < sin α < 1, 0 < cos α < 1 in tan α > 0; tan 45° = 1; tangens je
-lahko poljubno velik (za vsak M obstaja ostri kot s tan α > M). -/
+lahko poljubno velik (za vsak M obstaja ostri kot s tan α > M).
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#ostri-kot
+besedilo: »Za ostri kot je $0 < \sin \alpha < 1$, $0 < \cos \alpha < 1$ in $\tan \alpha > 0$.« -/
 theorem ostri_kot :
     (∀ α : ℝ, 0 < α → α < π / 2 → (0 < sin α ∧ sin α < 1) ∧ (0 < cos α ∧ cos α < 1) ∧ 0 < tan α) ∧
     tan (π / 4) = 1 ∧ ∀ M : ℝ, ∃ α : ℝ, 0 < α ∧ α < π / 2 ∧ M < tan α := by
@@ -377,7 +428,9 @@ theorem ostri_kot :
     exact cos_lt_cos_of_nonneg_of_le_pi le_rfl (by linarith) h0
   · rw [tan_arctan]; linarith [le_abs_self M]
 
-/-- Razlaga 3, Premisli 1: sin α = 1,2 ni mogoč (sin ≤ 1); tan α = 1,2 pa da α = arctan 1,2 ≈ 50,19° > 45°. -/
+/-- Razlaga 3, Premisli 1: sin α = 1,2 ni mogoč (sin ≤ 1); tan α = 1,2 pa da α = arctan 1,2 ≈ 50,19° > 45°.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#premisli1
+besedilo: »Sinus ne, ker bi bila kateta daljša od hipotenuze. Tangens pa lahko: nasprotna kateta je lahko daljša od priležne. To se zgodi pri kotih nad $45^\circ$, za $\tan \alpha = 1{,}2$ je $\alpha \approx 50{,}19^\circ$.« -/
 theorem premisli1 :
     (∀ α : ℝ, sin α ≠ 1.2) ∧ tan (arctan 1.2) = 1.2 ∧ π / 4 < arctan 1.2 ∧
     |arctan 1.2 * 180 / π - 50.19| < 0.005 := by
@@ -397,7 +450,9 @@ theorem premisli1 :
 
 /-- Razlaga 4, Povzetek, Ponovitev in Ustno vprašanje 3: sin²α + cos²α = 1 in tan α = sin α/cos α; izpeljava iz
 trikotnika: iz a² + b² = c² (c ≠ 0) je (a/c)² + (b/c)² = 1 in (a/c)/(b/c) = a/b; preizkus: 0,5² + 0,5² = 0,5 ≠ 1,
-zato sin α in cos α nista hkrati 0,5. -/
+zato sin α in cos α nista hkrati 0,5.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#zveze
+besedilo: »$$\sin^2 \alpha + \cos^2 \alpha = 1, \qquad \tan \alpha = \frac{\sin \alpha}{\cos \alpha}$$« -/
 theorem zveze :
     (∀ α : ℝ, sin α ^ 2 + cos α ^ 2 = 1 ∧ tan α = sin α / cos α) ∧
     (∀ a b c : ℝ, c ≠ 0 → a ^ 2 + b ^ 2 = c ^ 2 → (a / c) ^ 2 + (b / c) ^ 2 = 1) ∧
@@ -411,7 +466,9 @@ theorem zveze :
 example : (5:ℝ) ≠ 0 ∧ (3:ℝ) ^ 2 + 4 ^ 2 = 5 ^ 2 := by norm_num
 
 /-- Razlaga 5, Povzetek in Premisli 2: sin α = cos(90° − α), cos α = sin(90° − α); sin 30° = cos 60°;
-sin 20° = cos 70° (20° + 70° = 90°). -/
+sin 20° = cos 70° (20° + 70° = 90°).
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#komplementarna
+besedilo: »$$\sin \alpha = \cos (90^\circ - \alpha), \qquad \cos \alpha = \sin (90^\circ - \alpha)$$« -/
 theorem komplementarna :
     (∀ α : ℝ, sin α = cos (π / 2 - α) ∧ cos α = sin (π / 2 - α)) ∧ sin (π / 6) = cos (π / 3) ∧
     sin (20 * π / 180) = cos (70 * π / 180) ∧ (20:ℝ) + 70 = 90 := by
@@ -420,7 +477,9 @@ theorem komplementarna :
 
 /-- Razlaga 6 (tabela), Povzetek, Ponovitev, Ustno vprašanje 2 in Preveri se 1: sin 30° = 1/2, cos 30° = √3/2,
 tan 30° = √3/3; sin 45° = cos 45° = √2/2, tan 45° = 1; sin 60° = √3/2, cos 60° = 1/2, tan 60° = √3; preizkus
-tan 30°·tan 60° = 1. -/
+tan 30°·tan 60° = 1.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#posebne-vrednosti
+besedilo: »| $\sin \alpha$ | $\frac{1}{2}$ | $\frac{\sqrt{2}}{2}$ | $\frac{\sqrt{3}}{2}$ | | $\cos \alpha$ | $\frac{\sqrt{3}}{2}$ | $\frac{\sqrt{2}}{2}$ | $\frac{1}{2}$ | | $\tan \alpha$ | $\frac{\sqrt{3}}{3}$ | $1$ | $\sqrt{3}$ |« -/
 theorem posebne_vrednosti :
     sin (π / 6) = 1 / 2 ∧ cos (π / 6) = √3 / 2 ∧ tan (π / 6) = √3 / 3 ∧ sin (π / 4) = √2 / 2 ∧
     cos (π / 4) = √2 / 2 ∧ tan (π / 4) = 1 ∧ sin (π / 3) = √3 / 2 ∧ cos (π / 3) = 1 / 2 ∧ tan (π / 3) = √3 ∧
@@ -435,7 +494,9 @@ theorem posebne_vrednosti :
   rw [t6, tan_pi_div_three]; nlinarith [h3]
 
 /-- Razlaga 7, Pogoste napake: iz sin α = 0,5 dobimo α = sin⁻¹ 0,5 = 30° (π/6), medtem ko je 1/sin 30° = 2;
-22,62° ≈ 22°37' (0,62·60' = 37,2'), 40,5° = 40°30' (0,5·60' = 30'). -/
+22,62° ≈ 22°37' (0,62·60' = 37,2'), 40,5° = 40°30' (0,5·60' = 30').
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#racunalo
+besedilo: »Iz $\sin \alpha = 0{,}5$ dobiš $\alpha = 30^\circ$, medtem ko je $\dfrac{1}{\sin 30^\circ} = 2$.« -/
 theorem racunalo :
     arcsin 0.5 = π / 6 ∧ 1 / sin (π / 6) = 2 ∧ (0.62:ℝ) * 60 = 37.2 ∧ |(37.2:ℝ) - 37| < 0.5 ∧
     (0.5:ℝ) * 60 = 30 := by
@@ -446,7 +507,9 @@ theorem racunalo :
 /-! ## Rešeni primeri -/
 
 /-- Primer 1, koraka 1 in 2: c = √(5² + 12²) = √169 = 13; sin α = 5/13 ≈ 0,3846, cos α = 12/13 ≈ 0,9231,
-tan α = 5/12 ≈ 0,4167. -/
+tan α = 5/12 ≈ 0,4167.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#primer1-vrednosti
+besedilo: »Hipotenuza: $c = \sqrt{5^2 + 12^2}\,\text{cm} = \sqrt{169}\,\text{cm} = 13\,\text{cm}$. 2. $\sin \alpha = \dfrac{5}{13} \approx 0{,}3846$, $\;\cos \alpha = \dfrac{12}{13} \approx 0{,}9231$, $\;\tan \alpha = \dfrac{5}{12} \approx 0{,}4167$.« -/
 theorem primer1_vrednosti :
     √((5:ℝ) ^ 2 + 12 ^ 2) = √169 ∧ √(169:ℝ) = 13 ∧ |(5:ℝ) / 13 - 0.3846| < 0.00005 ∧
     |(12:ℝ) / 13 - 0.9231| < 0.00005 ∧ |(5:ℝ) / 12 - 0.4167| < 0.00005 := by
@@ -455,7 +518,9 @@ theorem primer1_vrednosti :
   all_goals rw [abs_lt]; constructor <;> norm_num
 
 /-- Primer 1, koraki 3–5 (in Razlaga 7): α = tan⁻¹(5/12) ≈ 22,62° in res sin α = 5/13, cos α = 12/13; preizkus
-25/169 + 144/169 = 1. -/
+25/169 + 144/169 = 1.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#primer1-kot
+besedilo: »Odgovor: hipotenuza meri $13\,\text{cm}$, $\sin \alpha = \dfrac{5}{13}$, $\cos \alpha = \dfrac{12}{13}$, $\tan \alpha = \dfrac{5}{12}$ in $\alpha \approx 22{,}62^\circ$ (približno $22^\circ 37'$).« -/
 theorem primer1_kot :
     |arctan (5 / 12) * 180 / π - 22.62| < 0.005 ∧ sin (arctan (5 / 12)) = 5 / 13 ∧
     cos (arctan (5 / 12)) = 12 / 13 ∧ (25:ℝ) / 169 + 144 / 169 = 1 := by
@@ -476,7 +541,9 @@ theorem primer1_kot :
 
 /-- Primer 2: a = 8·sin 35° ≈ 8·0,5736 ≈ 4,59 cm (nezaokroženo 4,5886), b = 8·cos 35° ≈ 8·0,8192 ≈ 6,55 cm
 (6,5532), β = 90° − 35° = 55°, S = ab/2 ≈ 15,04 cm² (tudi 4,5886·6,5532/2 ≈ 15,04); preizkus a² + b² = 64 = 8²
-(4,5886² ≈ 21,06, 6,5532² ≈ 42,94, 21,06 + 42,94 = 64); Pogoste napake: 8/sin 35° ≈ 13,95 > 8 (napačna formula). -/
+(4,5886² ≈ 21,06, 6,5532² ≈ 42,94, 21,06 + 42,94 = 64); Pogoste napake: 8/sin 35° ≈ 13,95 > 8 (napačna formula).
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#primer2
+besedilo: »Odgovor: kateti merita približno $4{,}59\,\text{cm}$ in $6{,}55\,\text{cm}$, drugi ostri kot je $55^\circ$, ploščina pa je približno $15{,}04\,\text{cm}^2$.« -/
 theorem primer2 :
     |sin (35 * π / 180) - 0.5736| < 0.00005 ∧ |8 * sin (35 * π / 180) - 4.5886| < 0.00005 ∧
     |8 * sin (35 * π / 180) - 4.59| < 0.005 ∧ |cos (35 * π / 180) - 0.8192| < 0.00005 ∧
@@ -502,7 +569,9 @@ theorem primer2 :
 
 /-- Primer 3, koraki 2–5: za d > 0 iz tan 45° = h/d sledi h = d, iz tan 30° = h/(d + 20) sledi h = (d + 20)/√3;
 z d = h in množenjem s √3 dobimo √3·h = h + 20, h(√3 − 1) = 20 in h = 20/(√3 − 1); skupaj natanko h = d in
-h = 20/(√3 − 1) = 20(√3 + 1)/(3 − 1) = 10(√3 + 1) m ≈ 27,32 m. -/
+h = 20/(√3 − 1) = 20(√3 + 1)/(3 − 1) = 10(√3 + 1) m ≈ 27,32 m.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#primer3
+besedilo: »$h = \dfrac{20(\sqrt{3} + 1)}{3 - 1}\,\text{m} = 10(\sqrt{3} + 1)\,\text{m} \approx 27{,}32\,\text{m}$« -/
 theorem primer3 :
     (∀ h d : ℝ, 0 < d → tan (π / 4) = h / d → tan (π / 6) = h / (d + 20) →
       h = d ∧ h = (d + 20) / √3 ∧ √3 * h = h + 20 ∧ h * (√3 - 1) = 20 ∧ h = 20 / (√3 - 1)) ∧
@@ -544,7 +613,9 @@ theorem primer3 :
 example : (0:ℝ) < 10 * (√3 + 1) := by positivity
 
 /-- Primer 3, korak 6: bolj oddaljeno opazovališče je 10(√3 + 1) + 20 ≈ 47,32 m od vznožja; 47,32·0,5774 ≈ 27,32
-in 47,32·tan 30° ≈ 27,32; tan 30° ≈ 0,5774. -/
+in 47,32·tan 30° ≈ 27,32; tan 30° ≈ 0,5774.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#primer3-preverjanje
+besedilo: »Preverjanje: bolj oddaljeno opazovališče je od vznožja oddaljeno $47{,}32\,\text{m}$; $\;47{,}32 \cdot \tan 30^\circ \approx 47{,}32 \cdot 0{,}5774 \approx 27{,}32$. ✓« -/
 theorem primer3_preverjanje :
     |10 * (√3 + 1) + 20 - 47.32| < 0.005 ∧ |(47.32:ℝ) * 0.5774 - 27.32| < 0.005 ∧
     |47.32 * tan (π / 6) - 27.32| < 0.005 ∧ |tan (π / 6) - 0.5774| < 0.00005 := by
@@ -554,7 +625,9 @@ theorem primer3_preverjanje :
     rw [t, abs_lt] <;> constructor <;> linarith
 
 /-- Primer 4: h = 15 km·tan 6°, tan 6° ≈ 0,1051, h ≈ 15·0,1051 ≈ 1,58 km; senca je približno desetkrat (med 9- in
-10-krat) daljša od višine gore. -/
+10-krat) daljša od višine gore.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#primer4
+besedilo: »$\tan 6^\circ \approx 0{,}1051$, zato je $h \approx 15\,\text{km} \cdot 0{,}1051 \approx 1{,}58\,\text{km}$. Ker je Sonce nizko, je senca približno desetkrat daljša od višine gore.« -/
 theorem primer4 :
     |tan (6 * π / 180) - 0.1051| < 0.00005 ∧ |15 * tan (6 * π / 180) - 1.58| < 0.005 ∧
     |(15:ℝ) * 0.1051 - 1.58| < 0.005 ∧ 9 < 15 / (15 * tan (6 * π / 180)) ∧ 15 / (15 * tan (6 * π / 180)) < 10 := by
@@ -571,7 +644,9 @@ theorem primer4 :
 
 /-! ## Pogoste napake -/
 
-/-- Pogoste napake (računalo v radianih): sin 30 (radianov) ≈ −0,988, v stopinjah pa sin 30° = 0,5. -/
+/-- Pogoste napake (računalo v radianih): sin 30 (radianov) ≈ −0,988, v stopinjah pa sin 30° = 0,5.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#radiani
+besedilo: »Če dobiš $\sin 30^\circ \approx -0{,}988$, je računalo nastavljeno na radiane (RAD). Nastavi ga na stopinje (DEG) in preveri: $\sin 30^\circ = 0{,}5$.« -/
 theorem radiani : |sin 30 - (-0.988)| < 0.0005 ∧ sin (30 * π / 180) = 0.5 := by
   have p1 := pi_gt_d6
   have p2 := pi_lt_d6
@@ -592,7 +667,9 @@ theorem radiani : |sin 30 - (-0.988)| < 0.0005 ∧ sin (30 * π / 180) = 0.5 := 
 /-! ## Preveri se -/
 
 /-- Preveri se 1: pri 60° je (sin, cos, tan) = (√3/2, 1/2, √3); trojica (1/2, √3/2, √3/3) spada k 30°, (√2/2, √2/2, 1)
-k 45°, obrnjeni tangens √3/3 pa ni tan 60°. -/
+k 45°, obrnjeni tangens √3/3 pa ni tan 60°.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#kviz1
+besedilo: »Pri $60^\circ$ je $\sin 60^\circ = \dfrac{\sqrt{3}}{2}$, $\cos 60^\circ = \dfrac{1}{2}$ in $\tan 60^\circ = \sqrt{3}$.« -/
 theorem kviz1 :
     (sin (π / 3), cos (π / 3), tan (π / 3)) = (√3 / 2, 1 / 2, √3) ∧
     (sin (π / 6), cos (π / 6), tan (π / 6)) = (1 / 2, √3 / 2, √3 / 3) ∧
@@ -602,7 +679,9 @@ theorem kviz1 :
   refine ⟨by rw [a7, a8, a9], by rw [a1, a2, a3], by rw [a4, a5, a6], fun h => by linarith, by
     rw [a7, a8]; linarith⟩
 
-/-- Preveri se 2: sin 30° = 0,5 < sin 40° < sin 45° ≈ 0,71, sin 40° ≈ 0,643 (sinus ostrega kota raste). -/
+/-- Preveri se 2: sin 30° = 0,5 < sin 40° < sin 45° ≈ 0,71, sin 40° ≈ 0,643 (sinus ostrega kota raste).
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#kviz2
+besedilo: »Sinus ostrega kota raste: $\sin 30^\circ = 0{,}5$ in $\sin 45^\circ \approx 0{,}71$, vmes je $\sin 40^\circ$. Računalo da $\sin 40^\circ \approx 0{,}643$.« -/
 theorem kviz2 :
     (0.5:ℝ) < sin (40 * π / 180) ∧ sin (40 * π / 180) < 0.71 ∧ |sin (40 * π / 180) - 0.643| < 0.0005 ∧
     sin (π / 6) < sin (40 * π / 180) ∧ sin (40 * π / 180) < sin (π / 4) ∧ |sin (π / 4) - 0.71| < 0.005 := by
@@ -615,7 +694,9 @@ theorem kviz2 :
   · rw [sin_pi_div_four, abs_lt]; constructor <;> linarith
 
 /-- Preveri se 4: tan α = 1,5/2,6 ≈ 0,577 in α = tan⁻¹(1,5/2,6) ≈ 29,98° ≈ 30°; v radianih je kot ≈ 0,52, obratna
-vrednost razmerja pa 2,6/1,5 ≈ 1,73. -/
+vrednost razmerja pa 2,6/1,5 ≈ 1,73.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#kviz4
+besedilo: »$\tan \alpha = \dfrac{1{,}5\,\text{m}}{2{,}6\,\text{m}} \approx 0{,}577$, zato je $\alpha = \tan^{-1} 0{,}577 \approx 30^\circ$ (natančneje $29{,}98^\circ$).« -/
 theorem kviz4 :
     |(1.5:ℝ) / 2.6 - 0.577| < 0.0005 ∧ |arctan (1.5 / 2.6) * 180 / π - 29.98| < 0.005 ∧
     |arctan (1.5 / 2.6) * 180 / π - 30| < 0.5 ∧ |arctan (1.5 / 2.6) - 0.52| < 0.005 ∧
@@ -640,7 +721,9 @@ theorem kviz4 :
   rw [abs_lt]; constructor <;> nlinarith
 
 /-- Preveri se 5: lestev 5 m pod kotom 70°: h = 5·sin 70° ≈ 4,70 m; napačni odgovori 5·cos 70° ≈ 1,71,
-5/sin 70° ≈ 5,32, 5·tan 70° ≈ 13,74. -/
+5/sin 70° ≈ 5,32, 5·tan 70° ≈ 13,74.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#kviz5
+besedilo: »Lestev je hipotenuza, višina je nasprotna kateta kota ob tleh: $h = 5\,\text{m} \cdot \sin 70^\circ \approx 4{,}70\,\text{m}$.« -/
 theorem kviz5 :
     |5 * sin (70 * π / 180) - 4.70| < 0.005 ∧ |5 * cos (70 * π / 180) - 1.71| < 0.005 ∧
     |5 / sin (70 * π / 180) - 5.32| < 0.005 ∧ |5 * tan (70 * π / 180) - 13.74| < 0.005 := by
@@ -655,7 +738,9 @@ theorem kviz5 :
     (by linarith)
   refine ⟨?_, ?_, ?_, ?_⟩ <;> rw [abs_lt] <;> constructor <;> linarith
 
-/-- Preveri se 6: kateta 7 cm nasproti 30°: sin 30° = a/c = 1/2, zato c = 2a = 14 cm (napaka 7·sin 30° = 3,5). -/
+/-- Preveri se 6: kateta 7 cm nasproti 30°: sin 30° = a/c = 1/2, zato c = 2a = 14 cm (napaka 7·sin 30° = 3,5).
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#kviz6
+besedilo: »$\sin 30^\circ = \dfrac{a}{c} = \dfrac{1}{2}$, zato je $c = 2a = 2 \cdot 7\,\text{cm} = 14\,\text{cm}$.« -/
 theorem kviz6 (c : ℝ) (hc : 0 < c) : (sin (π / 6) = 7 / c ↔ c = 14) ∧ 7 * sin (π / 6) = 3.5 := by
   rw [sin_pi_div_six]
   refine ⟨⟨fun h => ?_, fun h => by rw [h]; norm_num⟩, by norm_num⟩
@@ -666,9 +751,16 @@ example : (0:ℝ) < 14 := by norm_num
 
 /-! ## Drugače -/
 
+/-- Predpostavke trditve `kviz6` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 14 := by norm_num
+  kviz6 (hc := w)
+
 /-- Drugače: Korak za korakom: kvadrat s stranico 1 ima diagonalo √(1 + 1) = √2, sin 45° = 1/√2 = √2/2 ≈ 0,7071;
 enakostranični trikotnik s stranico 2 ima višino √(4 − 1) = √3, cos 30° = √3/2 ≈ 0,8660, tan 30° = 1/√3 = √3/3 ≈
-0,5774, tan 60° = √3 ≈ 1,7321. -/
+0,5774, tan 60° = √3 ≈ 1,7321.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#korak-za-korakom
+besedilo: »Krajša kateta leži nasproti kota $30^\circ$: $\sin 30^\circ = \dfrac{1}{2}$, $\cos 30^\circ = \dfrac{\sqrt{3}}{2} \approx 0{,}8660$, $\tan 30^\circ = \dfrac{1}{\sqrt{3}} = \dfrac{\sqrt{3}}{3} \approx 0{,}5774$.« -/
 theorem korak_za_korakom :
     √((1:ℝ) + 1) = √2 ∧ 1 / √2 = √2 / 2 ∧ |√2 / 2 - 0.7071| < 0.00005 ∧ √((4:ℝ) - 1) = √3 ∧
     |√3 / 2 - 0.8660| < 0.00005 ∧ 1 / √3 = √3 / 3 ∧ |√3 / 3 - 0.5774| < 0.00005 ∧ |√3 - 1.7321| < 0.00005 := by
@@ -681,7 +773,9 @@ theorem korak_za_korakom :
     by rw [abs_lt]; constructor <;> linarith⟩
 
 /-- Drugače: Bolj natančno: za ostri kot s sin α = 3/5 je cos α = √(1 − 9/25) = 4/5 in tan α = (3/5)/(4/5) = 3/4;
-1 + tan²α = 1/cos²α (cos α ≠ 0). -/
+1 + tan²α = 1/cos²α (cos α ≠ 0).
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#iz-ene-vrednosti
+besedilo: »Iz $\sin \alpha = \dfrac{3}{5}$ sledi $\cos \alpha = \sqrt{1 - \dfrac{9}{25}} = \dfrac{4}{5}$ (pozitivni koren, ker je kot oster) in $\tan \alpha = \dfrac{3/5}{4/5} = \dfrac{3}{4}$. Iz zvez sledi še $1 + \tan^2 \alpha = \dfrac{1}{\cos^2 \alpha}$« -/
 theorem iz_ene_vrednosti :
     (∀ α : ℝ, 0 < α → α < π / 2 → sin α = 3 / 5 → cos α = 4 / 5 ∧ tan α = 3 / 4) ∧
     √(1 - 9 / 25 : ℝ) = 4 / 5 ∧ (∀ α : ℝ, cos α ≠ 0 → 1 + tan α ^ 2 = 1 / cos α ^ 2) := by
@@ -701,7 +795,9 @@ example : 0 < arcsin (3 / 5 : ℝ) ∧ arcsin (3 / 5 : ℝ) < π / 2 ∧ sin (ar
   ⟨arcsin_pos.mpr (by norm_num), arcsin_lt_pi_div_two.mpr (by norm_num), sin_arcsin (by norm_num) (by norm_num)⟩
 
 /-- Razlaga 3 in Drugače: Bolj natančno (monotonost): na (0°, 90°) sinus in tangens strogo naraščata, kosinus
-strogo pada, zato vrednost kotne funkcije določa ostri kot enolično. -/
+strogo pada, zato vrednost kotne funkcije določa ostri kot enolično.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#monotonost
+besedilo: »Zato na intervalu $(0^\circ, 90^\circ)$ sinus in tangens naraščata, kosinus pa pada. Zaradi tega iz vrednosti kotne funkcije ostri kot določimo enolično.« -/
 theorem monotonost :
     StrictMonoOn sin (Ioo 0 (π / 2)) ∧ StrictAntiOn cos (Ioo 0 (π / 2)) ∧ StrictMonoOn tan (Ioo 0 (π / 2)) ∧
     InjOn sin (Ioo 0 (π / 2)) ∧ InjOn cos (Ioo 0 (π / 2)) ∧ InjOn tan (Ioo 0 (π / 2)) := by
@@ -717,7 +813,9 @@ theorem monotonost :
 /-! ## Za maturo -/
 
 /-- Naloga 1: za ostri kot s tan α = 2 je α = tan⁻¹ 2 (kateti 2 in 1, c = √(2² + 1²) = √5), sin α = 2/√5 = 2√5/5,
-cos α = 1/√5 = √5/5 (blok RACUN); preizkus 4/5 + 1/5 = 1. -/
+cos α = 1/√5 = √5/5 (blok RACUN); preizkus 4/5 + 1/5 = 1.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#naloga1
+besedilo: »$\sin \alpha = \dfrac{a}{c} = \dfrac{2}{\sqrt{5}} = \dfrac{2\sqrt{5}}{5}$ in $\cos \alpha = \dfrac{b}{c} = \dfrac{1}{\sqrt{5}} = \dfrac{\sqrt{5}}{5}$.« -/
 theorem naloga1 :
     √((2:ℝ) ^ 2 + 1 ^ 2) = √5 ∧
     (∀ α : ℝ, 0 < α → α < π / 2 → tan α = 2 → α = arctan 2 ∧ sin α = 2 * √5 / 5 ∧ cos α = √5 / 5) ∧
@@ -733,7 +831,9 @@ theorem naloga1 :
   · rw [ha, sin_arctan, r, e1]
   · rw [ha, cos_arctan, r, e2]
 
-/-- Naloga 1 (blok RACUN): sin(tan⁻¹ 2) = 2√5/5 in cos(tan⁻¹ 2) = √5/5. -/
+/-- Naloga 1 (blok RACUN): sin(tan⁻¹ 2) = 2√5/5 in cos(tan⁻¹ 2) = √5/5.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#racun-naloga1
+besedilo: »Odgovor: $\sin \alpha = \dfrac{2\sqrt{5}}{5}$ in $\cos \alpha = \dfrac{\sqrt{5}}{5}$.« -/
 theorem racun_naloga1 : sin (arctan 2) = 2 * √5 / 5 ∧ cos (arctan 2) = √5 / 5 := by
   obtain ⟨-, h, -⟩ := naloga1
   have := h (arctan 2) (arctan_pos.mpr (by norm_num)) (arctan_lt_pi_div_two _) (tan_arctan _)
@@ -743,7 +843,9 @@ theorem racun_naloga1 : sin (arctan 2) = 2 * √5 / 5 ∧ cos (arctan 2) = √5 
 example : 0 < arctan (2:ℝ) ∧ arctan (2:ℝ) < π / 2 ∧ tan (arctan (2:ℝ)) = 2 :=
   ⟨arctan_pos.mpr (by norm_num), arctan_lt_pi_div_two _, tan_arctan _⟩
 
-/-- Naloga 2 a) (in blok RACUN): |AM| = 10/2 = 5, |BM| = 6/2 = 3, |AB| = √(5² + 3²) = √34 ≈ 5,8310 ≈ 5,83 cm. -/
+/-- Naloga 2 a) (in blok RACUN): |AM| = 10/2 = 5, |BM| = 6/2 = 3, |AB| = √(5² + 3²) = √34 ≈ 5,8310 ≈ 5,83 cm.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#naloga2-a
+besedilo: »$|AB| = \sqrt{5^2 + 3^2}\,\text{cm} = \sqrt{34}\,\text{cm} \approx 5{,}8310\,\text{cm} \approx 5{,}83\,\text{cm}$« -/
 theorem naloga2_a :
     (10:ℝ) / 2 = 5 ∧ (6:ℝ) / 2 = 3 ∧ √((5:ℝ) ^ 2 + 3 ^ 2) = √34 ∧ |√(34:ℝ) - 5.8310| < 0.00005 ∧
     |√(34:ℝ) - 5.83| < 0.005 := by
@@ -752,7 +854,9 @@ theorem naloga2_a :
   refine ⟨by norm_num, by norm_num, by norm_num, ?_, ?_⟩ <;> rw [abs_lt] <;> constructor <;> linarith
 
 /-- Naloga 2 b) (in blok RACUN): ∠MAB = tan⁻¹(3/5) (dokazano v `naloga2_romb`) ≈ 30,9638°, ∠DAB = 2∠MAB ≈ 61,9275° ≈ 61,93°,
-∠ABC = 180° − ∠DAB ≈ 118,0725° ≈ 118,07°. -/
+∠ABC = 180° − ∠DAB ≈ 118,0725° ≈ 118,07°.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#naloga2-b
+besedilo: »b) kot pri $A$ meri približno $61{,}93^\circ$, kot pri $B$ približno $118{,}07^\circ$« -/
 theorem naloga2_b :
     |arctan (3 / 5) * 180 / π - 30.9638| < 0.00005 ∧
     |2 * arctan (3 / 5) * 180 / π - 61.9275| < 0.00005 ∧ |2 * arctan (3 / 5) * 180 / π - 61.93| < 0.005 ∧
@@ -773,7 +877,9 @@ theorem naloga2_b :
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> rw [abs_lt] <;> constructor <;> linarith
 
 /-- Naloga 2 c) (in blok RACUN): sin(2·tan⁻¹(3/5)) = 15/17, zato v = √34·sin ∠DAB = √34·15/17 = 30/√34 ≈ 5,14496 ≈
-5,14 cm; preizkus s ploščino 10·6/2 = 30 = |AB|·v; z zaokroženim kotom 61,93° je √34·sin 61,93° ≈ 5,15. -/
+5,14 cm; preizkus s ploščino 10·6/2 = 30 = |AB|·v; z zaokroženim kotom 61,93° je √34·sin 61,93° ≈ 5,15.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#naloga2-c
+besedilo: »c) Preverimo s ploščino: ploščina romba je $\dfrac{e \cdot f}{2} = \dfrac{10 \cdot 6}{2} = 30\,\text{cm}^2$, hkrati pa $|AB| \cdot v$, zato $v = \dfrac{30}{\sqrt{34}}\,\text{cm} \approx 5{,}14\,\text{cm}$. ✓« -/
 theorem naloga2_c :
     sin (2 * arctan (3 / 5)) = 15 / 17 ∧ √34 * sin (2 * arctan (3 / 5)) = 30 / √34 ∧
     |30 / √(34:ℝ) - 5.14496| < 0.000005 ∧ |30 / √(34:ℝ) - 5.14| < 0.005 ∧ (10:ℝ) * 6 / 2 = 30 ∧
@@ -812,7 +918,9 @@ D = 3i, M = 0): vse stranice merijo √34, |AC| = 10, |BD| = 6, M je razpoloviš
 (∠AMB = 90°, iz |AB| = |AD| z `romb_pravi_kot`); |AM| = 5, |BM| = 3 in po `definicije` tan ∠MAB = |BM|/|AM|, zato
 ∠MAB = tan⁻¹(3/5); diagonala razpolavlja kot (tudi ∠MAD = tan⁻¹(3/5)), ∠DAB = 2·tan⁻¹(3/5); sosednja kota sta
 suplementarna (∠ABC = 180° − ∠DAB); nožišče višine iz D je H = −45/17 − 24/17·i = A + 8/17·(B − A) na stranici AB
-z ∠DHA = 90° in višina v = |DH| = |AD|·sin ∠DAB. -/
+z ∠DHA = 90° in višina v = |DH| = |AD|·sin ∠DAB.
+trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#naloga2-romb
+besedilo: »b) Diagonala $AC$ razpolavlja kot pri oglišču $A$. V trikotniku $AMB$ je $|BM|$ nasprotna, $|AM|$ pa priležna kateta kota $\angle MAB$, zato je $\tan \angle MAB = \dfrac{3}{5}$ in $\angle MAB \approx 30{,}9638^\circ$.« -/
 theorem naloga2_romb :
     dist (-5:ℂ) (-3 * Complex.I) = √34 ∧ dist (-3 * Complex.I) (5:ℂ) = √34 ∧
     dist (5:ℂ) (3 * Complex.I) = √34 ∧ dist (3 * Complex.I) (-5:ℂ) = √34 ∧
@@ -894,5 +1002,15 @@ theorem naloga2_romb :
       (by norm_num)
   · rw [dDH, dAD, eDAB, sDAB, div_eq_iff hp.ne']
     linear_combination (-15 / 17 : ℝ) * h34
+
+/-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/
+
+/-- Predpostavke trditve `le_od_kota` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ∠ Complex.I (0:ℂ) 1 = π / 2 ∧ Complex.I ≠ 0 := by
+    refine ⟨?_, Complex.I_ne_zero⟩
+    rw [EuclideanGeometry.angle, ← InnerProductGeometry.inner_eq_zero_iff_angle_eq_pi_div_two]
+    simp [Complex.inner]
+  le_od_kota (h := w.1) (h' := w.1) (hB := w.2) (hB' := w.2) (hα := rfl)
 
 end Evklid.Lekcije.MAT_SS_2.KotneFunkcijeVPravokotnemTrikotniku

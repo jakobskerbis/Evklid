@@ -5,10 +5,10 @@ name: lean
 
 on:
   pull_request:
-    paths: ["lean/**", ".github/workflows/lean.yml"]
+    paths: ["lean/**", ".github/workflows/lean.yml", "scripts/lean-aksiomi.mjs", "scripts/lean-lekcije.mjs"]
   push:
     branches: [main]
-    paths: ["lean/**", ".github/workflows/lean.yml"]
+    paths: ["lean/**", ".github/workflows/lean.yml", "scripts/lean-aksiomi.mjs", "scripts/lean-lekcije.mjs"]
   workflow_dispatch:
 
 permissions:

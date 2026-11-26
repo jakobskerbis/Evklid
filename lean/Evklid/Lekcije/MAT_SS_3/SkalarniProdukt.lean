@@ -29,41 +29,53 @@ abbrev R2 := EuclideanSpace ℝ (Fin 2)
 /-- Prostor ℝ³ (vektor `!₂[a_x, a_y, a_z]`). -/
 abbrev R3 := EuclideanSpace ℝ (Fin 3)
 
-/-- Razlaga in Povzetek (po komponentah): a⃗·b⃗ = a_x b_x + a_y b_y v ravnini. -/
+/-- Razlaga in Povzetek (po komponentah): a⃗·b⃗ = a_x b_x + a_y b_y v ravnini.
+trditev: MAT-SS-3/skalarni-produkt#skalarni2
+besedilo: »$\quad \vec a \cdot \vec b = a_x b_x + a_y b_y$« -/
 theorem skalarni2 (a₁ a₂ b₁ b₂ : ℝ) : inner ℝ (!₂[a₁, a₂] : R2) !₂[b₁, b₂] = a₁ * b₁ + a₂ * b₂ := by
   simp [EuclideanSpace.inner_eq_star_dotProduct, dotProduct, Fin.sum_univ_two]; ring
 
-/-- Razlaga in Povzetek (po komponentah): a⃗·b⃗ = a_x b_x + a_y b_y + a_z b_z v prostoru. -/
+/-- Razlaga in Povzetek (po komponentah): a⃗·b⃗ = a_x b_x + a_y b_y + a_z b_z v prostoru.
+trditev: MAT-SS-3/skalarni-produkt#skalarni3
+besedilo: »$$\vec a \cdot \vec b = a_x b_x + a_y b_y + a_z b_z$$« -/
 theorem skalarni3 (a₁ a₂ a₃ b₁ b₂ b₃ : ℝ) :
     inner ℝ (!₂[a₁, a₂, a₃] : R3) !₂[b₁, b₂, b₃] = a₁ * b₁ + a₂ * b₂ + a₃ * b₃ := by
   simp [EuclideanSpace.inner_eq_star_dotProduct, dotProduct, Fin.sum_univ_three]; ring
 
-/-- Razlaga: dolžina v ravnini |a⃗| = √(a_x² + a_y²). -/
+/-- Razlaga: dolžina v ravnini |a⃗| = √(a_x² + a_y²).
+trditev: MAT-SS-3/skalarni-produkt#dolzina2
+besedilo: »Od tod dobiš dolžino iz komponent: $|\vec a| = \sqrt{a_x^2 + a_y^2}$.« -/
 theorem dolzina2 (a₁ a₂ : ℝ) : ‖(!₂[a₁, a₂] : R2)‖ = √(a₁ ^ 2 + a₂ ^ 2) := by
   rw [EuclideanSpace.norm_eq]; simp [Fin.sum_univ_two]
 
-/-- Dolžina v prostoru |a⃗| = √(a_x² + a_y² + a_z²). -/
+/-- Dolžina v prostoru |a⃗| = √(a_x² + a_y² + a_z²).
+pomozno -/
 theorem dolzina3 (a₁ a₂ a₃ : ℝ) : ‖(!₂[a₁, a₂, a₃] : R3)‖ = √(a₁ ^ 2 + a₂ ^ 2 + a₃ ^ 2) := by
   rw [EuclideanSpace.norm_eq]; simp [Fin.sum_univ_three]
 
-/-- Pomožno: razlika po komponentah v ravnini. -/
+/-- Pomožno: razlika po komponentah v ravnini.
+pomozno -/
 theorem razlika2 (a₁ a₂ b₁ b₂ : ℝ) : (!₂[a₁, a₂] : R2) - !₂[b₁, b₂] = !₂[a₁ - b₁, a₂ - b₂] := by
   ext i; fin_cases i <;> simp
 
-/-- Pomožno: razlika po komponentah v prostoru. -/
+/-- Pomožno: razlika po komponentah v prostoru.
+pomozno -/
 theorem razlika3 (a₁ a₂ a₃ b₁ b₂ b₃ : ℝ) :
     (!₂[a₁, a₂, a₃] : R3) - !₂[b₁, b₂, b₃] = !₂[a₁ - b₁, a₂ - b₂, a₃ - b₃] := by
   ext i; fin_cases i <;> simp
 
-/-- Pomožno: večkratnik po komponentah v ravnini. -/
+/-- Pomožno: večkratnik po komponentah v ravnini.
+pomozno -/
 theorem produkt2 (k a₁ a₂ : ℝ) : k • (!₂[a₁, a₂] : R2) = !₂[k * a₁, k * a₂] := by
   ext i; fin_cases i <;> simp
 
-/-- Pomožno: večkratnik po komponentah v prostoru. -/
+/-- Pomožno: večkratnik po komponentah v prostoru.
+pomozno -/
 theorem produkt3 (k a₁ a₂ a₃ : ℝ) : k • (!₂[a₁, a₂, a₃] : R3) = !₂[k * a₁, k * a₂, k * a₃] := by
   ext i; fin_cases i <;> simp
 
-/-- Pomožno: √(x²) = x za x ≥ 0 v obliki, ki jo potrebujejo računi dolžin. -/
+/-- Pomožno: √(x²) = x za x ≥ 0 v obliki, ki jo potrebujejo računi dolžin.
+pomozno -/
 theorem koren_kvadrata {s x : ℝ} (hx : 0 ≤ x) (h : s = x ^ 2) : √s = x := by
   rw [h, Real.sqrt_sq hx]
 
@@ -75,7 +87,9 @@ variable {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
 /-! ## Splošna pravila (realni prostor s skalarnim produktom) -/
 
 /-- Razlaga in Povzetek (definicija): a⃗·b⃗ = |a⃗||b⃗|cos φ, kjer je φ kot med vektorjema, 0 ≤ φ ≤ π; velja
-cos φ = a⃗·b⃗/(|a⃗||b⃗|) in a⃗·a⃗ = |a⃗|². -/
+cos φ = a⃗·b⃗/(|a⃗||b⃗|) in a⃗·a⃗ = |a⃗|².
+trditev: MAT-SS-3/skalarni-produkt#definicija
+besedilo: »Skalarni produkt vektorjev $\vec a$ in $\vec b$ je število $\vec a \cdot \vec b = |\vec a|\,|\vec b|\cos\varphi$, kjer je $\varphi$ kot med vektorjema s skupnim začetkom in $0^\circ \le \varphi \le 180^\circ$.« -/
 theorem definicija (a b : V) :
     inner ℝ a b = ‖a‖ * ‖b‖ * Real.cos (angle a b) ∧ 0 ≤ angle a b ∧ angle a b ≤ π ∧
     Real.cos (angle a b) = inner ℝ a b / (‖a‖ * ‖b‖) ∧ inner ℝ a a = ‖a‖ ^ 2 := by
@@ -83,21 +97,27 @@ theorem definicija (a b : V) :
     real_inner_self_eq_norm_sq a⟩
 
 /-- Razlaga (pravokotnost in predznak): a⃗·b⃗ = 0 ↔ φ = π/2; a⃗·b⃗ > 0 ↔ φ < π/2 (oster kot);
-a⃗·b⃗ < 0 ↔ φ > π/2 (top kot). -/
+a⃗·b⃗ < 0 ↔ φ > π/2 (top kot).
+trditev: MAT-SS-3/skalarni-produkt#predznak
+besedilo: »Iz predznaka skalarnega produkta torej takoj razbereš vrsto kota: pozitiven pomeni oster kot, nič pravi kot, negativen top kot.« -/
 theorem predznak (a b : V) :
     (inner ℝ a b = 0 ↔ angle a b = π / 2) ∧ (0 < inner ℝ a b ↔ angle a b < π / 2) ∧
     (inner ℝ a b < 0 ↔ π / 2 < angle a b) := by
   refine ⟨inner_eq_zero_iff_angle_eq_pi_div_two a b, ?_, inner_neg_iff_pi_div_two_lt_angle⟩
   rw [← not_le, ← not_le, inner_nonpos_iff_pi_div_two_le_angle]
 
-/-- Razlaga (pravila računanja): a⃗·b⃗ = b⃗·a⃗, a⃗·(b⃗ + c⃗) = a⃗·b⃗ + a⃗·c⃗, (k a⃗)·b⃗ = k(a⃗·b⃗). -/
+/-- Razlaga (pravila računanja): a⃗·b⃗ = b⃗·a⃗, a⃗·(b⃗ + c⃗) = a⃗·b⃗ + a⃗·c⃗, (k a⃗)·b⃗ = k(a⃗·b⃗).
+trditev: MAT-SS-3/skalarni-produkt#pravila
+besedilo: »Za računanje velja še: $\vec a \cdot \vec b = \vec b \cdot \vec a$, $\vec a \cdot (\vec b + \vec c) = \vec a \cdot \vec b + \vec a \cdot \vec c$ in $(k\vec a) \cdot \vec b = k(\vec a \cdot \vec b)$.« -/
 theorem pravila (a b c : V) (k : ℝ) :
     inner ℝ a b = inner ℝ b a ∧ inner ℝ a (b + c) = inner ℝ a b + inner ℝ a c ∧
     inner ℝ (k • a) b = k * inner ℝ a b :=
   ⟨real_inner_comm b a, inner_add_right a b c, real_inner_smul_left a b k⟩
 
 /-- Razlaga (premica pravokotna na ravnino): če je n⃗ pravokoten na u⃗ in v⃗, je pravokoten na vsak vektor
-ravnine α u⃗ + β v⃗. -/
+ravnine α u⃗ + β v⃗.
+trditev: MAT-SS-3/skalarni-produkt#pravokotno-na-ravnino
+besedilo: »Premica je pravokotna na ravnino, ko je vektor v njeni smeri pravokoten na dva nekolinearna vektorja te ravnine.« -/
 theorem pravokotno_na_ravnino (n u v : V) (hu : inner ℝ n u = 0) (hv : inner ℝ n v = 0) (α β : ℝ) :
     inner ℝ n (α • u + β • v) = 0 := by
   rw [inner_add_right, real_inner_smul_right, real_inner_smul_right, hu, hv]; ring
@@ -106,8 +126,16 @@ theorem pravokotno_na_ravnino (n u v : V) (hu : inner ℝ n u = 0) (hv : inner �
 example : inner ℝ (!₂[0, 0, 1] : R3) !₂[1, 0, 0] = 0 ∧ inner ℝ (!₂[0, 0, 1] : R3) !₂[0, 1, 0] = 0 := by
   rw [skalarni3, skalarni3]; norm_num
 
+/-- Predpostavke trditve `pravokotno_na_ravnino` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : inner ℝ (!₂[0, 0, 1] : R3) !₂[1, 0, 0] = 0 ∧ inner ℝ (!₂[0, 0, 1] : R3) !₂[0, 1, 0] = 0 := by
+    rw [skalarni3, skalarni3]; norm_num
+  pravokotno_na_ravnino (hu := w.1) (hv := w.2)
+
 /-- Razlaga (kosinusni izrek, Ustno vprašanje 2): |a⃗ − b⃗|² = a⃗·a⃗ − 2a⃗·b⃗ + b⃗·b⃗ = |a⃗|² + |b⃗|² − 2|a⃗||b⃗|cos γ;
-pri γ = π/2 ostane Pitagorov izrek. -/
+pri γ = π/2 ostane Pitagorov izrek.
+trditev: MAT-SS-3/skalarni-produkt#kosinusni-izrek
+besedilo: »Kvadrat dolžine vektorja je skalarni produkt vektorja s samim seboj, zato je $c^2 = (\vec a - \vec b) \cdot (\vec a - \vec b) = \vec a \cdot \vec a - 2\,\vec a \cdot \vec b + \vec b \cdot \vec b$. Ko vstavimo $\vec a \cdot \vec a = a^2$, $\vec b \cdot \vec b = b^2$ in $\vec a \cdot \vec b = ab\cos\gamma$, dobimo $c^2 = a^2 + b^2 - 2ab\cos\gamma$. Pri $\gamma = 90^\circ$ je $\cos\gamma = 0$ in izrek preide v Pitagorov izrek.« -/
 theorem kosinusni_izrek (a b : V) :
     ‖a - b‖ ^ 2 = inner ℝ (a - b) (a - b) ∧
     inner ℝ (a - b) (a - b) = inner ℝ a a - 2 * inner ℝ a b + inner ℝ b b ∧
@@ -119,7 +147,9 @@ theorem kosinusni_izrek (a b : V) :
   rw [inner_sub_left, inner_sub_right, inner_sub_right, real_inner_comm a b]; ring
 
 /-- Razlaga (pravokotna projekcija): b⃗_a = (a⃗·b⃗/|a⃗|²) a⃗; ostanek b⃗ − b⃗_a je pravokoten na a⃗; predznačena dolžina
-je |b⃗|cos φ = a⃗·b⃗/|a⃗|, b⃗_a = (|b⃗|cos φ)·(a⃗/|a⃗|), dolžina |b⃗_a| = |a⃗·b⃗|/|a⃗| (za a⃗ ≠ 0⃗). -/
+je |b⃗|cos φ = a⃗·b⃗/|a⃗|, b⃗_a = (|b⃗|cos φ)·(a⃗/|a⃗|), dolžina |b⃗_a| = |a⃗·b⃗|/|a⃗| (za a⃗ ≠ 0⃗).
+trditev: MAT-SS-3/skalarni-produkt#projekcija
+besedilo: »Njegova predznačena dolžina je senca $|\vec b|\cos\varphi = \dfrac{\vec a \cdot \vec b}{|\vec a|}$, smer pa mu da enotski vektor $\dfrac{\vec a}{|\vec a|}$. Zmnožimo: $$\vec b_a = \frac{\vec a \cdot \vec b}{|\vec a|^2}\,\vec a$$« -/
 theorem projekcija (a b : V) (ha : a ≠ 0) :
     inner ℝ a (b - (inner ℝ a b / ‖a‖ ^ 2) • a) = 0 ∧
     ‖b‖ * Real.cos (angle a b) = inner ℝ a b / ‖a‖ ∧
@@ -135,7 +165,9 @@ theorem projekcija (a b : V) (ha : a ≠ 0) :
     field_simp
 
 /-- Razlaga: pri negativnem produktu kaže b⃗_a nasprotno od a⃗ (koeficient a⃗·b⃗/|a⃗|² je negativen, b⃗_a je
-pozitiven večkratnik −a⃗). -/
+pozitiven večkratnik −a⃗).
+trditev: MAT-SS-3/skalarni-produkt#projekcija-nazaj
+besedilo: »Pri negativnem produktu kaže $\vec b_a$ nasprotno od $\vec a$.« -/
 theorem projekcija_nazaj (a b : V) (ha : a ≠ 0) (h : inner ℝ a b < 0) :
     inner ℝ a b / ‖a‖ ^ 2 < 0 ∧ SameRay ℝ (-a) ((inner ℝ a b / ‖a‖ ^ 2) • a) := by
   have hn : 0 < ‖a‖ ^ 2 := by have := norm_pos_iff.2 ha; positivity
@@ -149,11 +181,26 @@ example : (!₂[2, 2] : R2) ≠ 0 ∧ inner ℝ (!₂[2, 2] : R2) !₂[-3, 0] < 
   refine ⟨fun h => ?_, by rw [skalarni2]; norm_num⟩
   have := congrArg (fun v : R2 => v 0) h; simp at this
 
+/-- Predpostavke trditve `projekcija_nazaj` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (!₂[2, 2] : R2) ≠ 0 ∧ inner ℝ (!₂[2, 2] : R2) !₂[-3, 0] < 0 := by
+    refine ⟨fun h => ?_, by rw [skalarni2]; norm_num⟩
+    have := congrArg (fun v : R2 => v 0) h; simp at this
+  projekcija_nazaj (ha := w.1) (h := w.2)
+
 /-- Predpostavka `projekcija` se da izpolniti (a⃗ = (4, 2)). -/
 example : (!₂[4, 2] : R2) ≠ 0 := by
   intro h; have := congrArg (fun v : R2 => v 0) h; simp at this
 
-/-- Razlaga (projekcija daljice): pri ostrem kotu φ (φ ≤ π/2) je dolžina projekcije |b⃗|cos φ. -/
+/-- Predpostavke trditve `projekcija` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (!₂[4, 2] : R2) ≠ 0 := by
+    intro h; have := congrArg (fun v : R2 => v 0) h; simp at this
+  projekcija (ha := w)
+
+/-- Razlaga (projekcija daljice): pri ostrem kotu φ (φ ≤ π/2) je dolžina projekcije |b⃗|cos φ.
+trditev: MAT-SS-3/skalarni-produkt#projekcija-daljice
+besedilo: »Če daljica s premico oklepa oster kot $\varphi$, je $|A'B'| = |AB|\cos\varphi$.« -/
 theorem projekcija_daljice (a b : V) (ha : a ≠ 0) (hφ : angle a b ≤ π / 2) :
     ‖(inner ℝ a b / ‖a‖ ^ 2) • a‖ = ‖b‖ * Real.cos (angle a b) := by
   have hi : 0 ≤ inner ℝ a b := by
@@ -166,8 +213,18 @@ example : (!₂[4, 2] : R2) ≠ 0 ∧ angle (!₂[4, 2] : R2) !₂[1, 3] ≤ π 
   · have := congrArg (fun v : R2 => v 0) h; simp at this
   · exact ((predznak _ _).2.1.1 (by rw [skalarni2]; norm_num)).le
 
+/-- Predpostavke trditve `projekcija_daljice` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (!₂[4, 2] : R2) ≠ 0 ∧ angle (!₂[4, 2] : R2) !₂[1, 3] ≤ π / 2 := by
+    refine ⟨fun h => ?_, ?_⟩
+    · have := congrArg (fun v : R2 => v 0) h; simp at this
+    · exact ((predznak _ _).2.1.1 (by rw [skalarni2]; norm_num)).le
+  projekcija_daljice (ha := w.1) (hφ := w.2)
+
 /-- Premisli 3 in Preveri se 3: pri k > 0 je a⃗·(k b⃗) = k(a⃗·b⃗) (trikrat daljši b⃗ potroji produkt), kot pa ostane
-enak. -/
+enak.
+trditev: MAT-SS-3/skalarni-produkt#raztezanje
+besedilo: »Skalarni produkt se potroji, ker se potroji senca. Kot ostane enak: v formuli za $\cos\varphi$ se trojka pojavi v števcu in imenovalcu ter se pokrajša.« -/
 theorem raztezanje (a b : V) (k : ℝ) (hk : 0 < k) :
     inner ℝ a (k • b) = k * inner ℝ a b ∧ angle a (k • b) = angle a b :=
   ⟨real_inner_smul_right a b k, angle_smul_right_of_pos a b hk⟩
@@ -175,14 +232,22 @@ theorem raztezanje (a b : V) (k : ℝ) (hk : 0 < k) :
 /-- Predpostavka `raztezanje` se da izpolniti (k = 3 oziroma k = 2). -/
 example : (0:ℝ) < 3 ∧ (0:ℝ) < 2 := by norm_num
 
-/-- Pogoste napake (kot iz napačnih vektorjev): angle(AB⃗, BC⃗) = π − angle(BA⃗, BC⃗) = 180° − β. -/
+/-- Predpostavke trditve `raztezanje` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  raztezanje (0 : EuclideanSpace ℝ (Fin 2)) 0 3 (by norm_num)
+
+/-- Pogoste napake (kot iz napačnih vektorjev): angle(AB⃗, BC⃗) = π − angle(BA⃗, BC⃗) = 180° − β.
+trditev: MAT-SS-3/skalarni-produkt#napacen-kot
+besedilo: »Ta vektorja nimata skupnega začetka, zato dobiš $180^\circ - \beta$.« -/
 theorem napacen_kot (A B C : V) : angle (B - A) (C - B) = π - angle (A - B) (C - B) := by
   rw [show B - A = -(A - B) by abel, angle_neg_left]
 
 /-! ## Razlaga: številski primeri -/
 
 /-- Razlaga, tabela sence za |b⃗| = 10: 10·cos 0 = 10, 10·cos 60° = 5, 10·cos 90° = 0, 10·cos 120° = −5,
-10·cos 180° = −10. -/
+10·cos 180° = −10.
+trditev: MAT-SS-3/skalarni-produkt#tabela-sence
+besedilo: »| $0^\circ$ | $1$ | $10$ | naprej | | $60^\circ$ | $0{,}5$ | $5$ | naprej | | $90^\circ$ | $0$ | $0$ | v točko | | $120^\circ$ | $-0{,}5$ | $-5$ | nazaj | | $180^\circ$ | $-1$ | $-10$ | nazaj |« -/
 theorem tabela_sence :
     10 * Real.cos 0 = 10 ∧ 10 * Real.cos (π / 3) = 5 ∧ 10 * Real.cos (π / 2) = 0 ∧
     10 * Real.cos (2 * π / 3) = -5 ∧ 10 * Real.cos π = -10 := by
@@ -190,11 +255,15 @@ theorem tabela_sence :
     rw [show 2 * π / 3 = π - π / 3 by ring, Real.cos_pi_sub, Real.cos_pi_div_three]; norm_num
   refine ⟨by simp, by rw [Real.cos_pi_div_three]; norm_num, by simp, by rw [h120]; norm_num, by simp⟩
 
-/-- Zakaj se tega učimo: 5·cos 60° = 2,5 km in 20·cos 60° = 10 km/h. -/
+/-- Zakaj se tega učimo: 5·cos 60° = 2,5 km in 20·cos 60° = 10 km/h.
+trditev: MAT-SS-3/skalarni-produkt#uvod
+besedilo: »Ne $5\,\mathrm{km}$, ampak samo $2{,}5\,\mathrm{km}$.« -/
 theorem uvod : 5 * Real.cos (π / 3) = 2.5 ∧ 20 * Real.cos (π / 3) = 10 := by
   rw [Real.cos_pi_div_three]; norm_num
 
-/-- Premisli 1: pri kotu 150° je cos φ < 0, zato je produkt neničelnih vektorjev negativen. -/
+/-- Premisli 1: pri kotu 150° je cos φ < 0, zato je produkt neničelnih vektorjev negativen.
+trditev: MAT-SS-3/skalarni-produkt#premisli-150
+besedilo: »Negativen. Kosinus topega kota je negativen, zato senca pade nazaj, dolžini pa sta pozitivni.« -/
 theorem premisli_150 (a b : V) (ha : a ≠ 0) (hb : b ≠ 0) (h : angle a b = 5 * π / 6) :
     Real.cos (5 * π / 6) < 0 ∧ inner ℝ a b < 0 := by
   have hc : Real.cos (5 * π / 6) < 0 := by
@@ -220,12 +289,32 @@ example : (!₂[1, 0] : R2) ≠ 0 ∧ (!₂[-Real.sqrt 3, 1] : R2) ≠ 0 ∧
       rw [show 5 * π / 6 = π - π / 6 by ring, Real.cos_pi_sub, Real.cos_pi_div_six]; ring]
     exact Real.arccos_cos (by positivity) (by nlinarith [Real.pi_pos])
 
-/-- Razlaga (zakaj po komponentah): enotska vektorja i⃗ = (1, 0), j⃗ = (0, 1): i⃗·i⃗ = j⃗·j⃗ = 1, i⃗·j⃗ = 0. -/
+/-- Predpostavke trditve `premisli_150` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (!₂[1, 0] : R2) ≠ 0 ∧ (!₂[-Real.sqrt 3, 1] : R2) ≠ 0 ∧ angle (!₂[1, 0] : R2) !₂[-Real.sqrt 3, 1] = 5 * π / 6 := by
+    have h3 : Real.sqrt 3 ^ 2 = 3 := Real.sq_sqrt (by norm_num)
+    have n1 : ‖(!₂[1, 0] : R2)‖ = 1 := by rw [dolzina2]; exact koren_kvadrata (by norm_num) (by norm_num)
+    have n2 : ‖(!₂[-Real.sqrt 3, 1] : R2)‖ = 2 := by
+      rw [dolzina2]; exact koren_kvadrata (by norm_num) (by rw [neg_sq, h3]; norm_num)
+    refine ⟨fun h => ?_, fun h => ?_, ?_⟩
+    · have := congrArg (fun v : R2 => v 0) h; simp at this
+    · have := congrArg (fun v : R2 => v 1) h; simp at this
+    · unfold angle
+      rw [skalarni2, n1, n2, show (1 * -Real.sqrt 3 + 0 * 1) / (1 * 2) = Real.cos (5 * π / 6) by
+        rw [show 5 * π / 6 = π - π / 6 by ring, Real.cos_pi_sub, Real.cos_pi_div_six]; ring]
+      exact Real.arccos_cos (by positivity) (by nlinarith [Real.pi_pos])
+  premisli_150 (ha := w.1) (hb := w.2.1) (h := w.2.2)
+
+/-- Razlaga (zakaj po komponentah): enotska vektorja i⃗ = (1, 0), j⃗ = (0, 1): i⃗·i⃗ = j⃗·j⃗ = 1, i⃗·j⃗ = 0.
+trditev: MAT-SS-3/skalarni-produkt#enotska
+besedilo: »Vektorja dolžine $1$ v smereh osi $x$ in $y$ sta pravokotna. Produkt vsakega s samim seboj je $1$, njun medsebojni produkt pa $0$.« -/
 theorem enotska : inner ℝ (!₂[1, 0] : R2) !₂[1, 0] = 1 ∧ inner ℝ (!₂[0, 1] : R2) !₂[0, 1] = 1 ∧
     inner ℝ (!₂[1, 0] : R2) !₂[0, 1] = 0 := by
   refine ⟨?_, ?_, ?_⟩ <;> rw [skalarni2] <;> norm_num
 
-/-- Razlaga (preizkus): a⃗ = (3, 0), b⃗ = (2, 2), |a⃗| = 3, |b⃗| = 2√2, kot π/4: 3·2√2·(√2/2) = 6 = 3·2 + 0·2. -/
+/-- Razlaga (preizkus): a⃗ = (3, 0), b⃗ = (2, 2), |a⃗| = 3, |b⃗| = 2√2, kot π/4: 3·2√2·(√2/2) = 6 = 3·2 + 0·2.
+trditev: MAT-SS-3/skalarni-produkt#preizkus-45
+besedilo: »Preizkus: $\vec a = (3, 0)$ in $\vec b = (2, 2)$ oklepata $45^\circ$, $|\vec a| = 3$, $|\vec b| = 2\sqrt 2$. Po definiciji $3 \cdot 2\sqrt2 \cdot \frac{\sqrt2}{2} = 6$, po komponentah $3 \cdot 2 + 0 \cdot 2 = 6$.« -/
 theorem preizkus_45 :
     ‖(!₂[3, 0] : R2)‖ = 3 ∧ ‖(!₂[2, 2] : R2)‖ = 2 * √2 ∧ angle (!₂[3, 0] : R2) !₂[2, 2] = π / 4 ∧
     3 * (2 * √2) * (√2 / 2) = 6 ∧ inner ℝ (!₂[3, 0] : R2) !₂[2, 2] = 3 * 2 + 0 * 2 ∧ (3:ℝ) * 2 + 0 * 2 = 6 := by
@@ -240,7 +329,9 @@ theorem preizkus_45 :
   exact Real.arccos_cos (by positivity) (by nlinarith [Real.pi_pos])
 
 /-- Razlaga (projekcija, slika): a⃗ = (4, 2), b⃗ = (1, 3): a⃗·b⃗ = 4 + 6 = 10, |a⃗|² = 20, b⃗_a = (10/20)(4, 2) = (2, 1),
-ostanek (−1, 2) z 4·(−1) + 2·2 = 0; palica: 2·cos 60° = 1. -/
+ostanek (−1, 2) z 4·(−1) + 2·2 = 0; palica: 2·cos 60° = 1.
+trditev: MAT-SS-3/skalarni-produkt#projekcija-primer
+besedilo: »Za $\vec a = (4, 2)$ in $\vec b = (1, 3)$ je $\vec a \cdot \vec b = 4 + 6 = 10$ in $|\vec a|^2 = 20$, zato je $\vec b_a = \frac{10}{20}(4, 2) = (2, 1)$: Ostanek $\vec b - \vec b_a = (-1, 2)$ je pravokoten na $\vec a$, saj je $4 \cdot (-1) + 2 \cdot 2 = 0$.« -/
 theorem projekcija_primer :
     inner ℝ (!₂[4, 2] : R2) !₂[1, 3] = 10 ∧ ‖(!₂[4, 2] : R2)‖ ^ 2 = 20 ∧
     (10 / 20 : ℝ) • (!₂[4, 2] : R2) = !₂[2, 1] ∧ (!₂[1, 3] : R2) - !₂[2, 1] = !₂[-1, 2] ∧
@@ -251,7 +342,9 @@ theorem projekcija_primer :
 
 /-! ## Rešeni primeri -/
 
-/-- Primer 1: pri |a⃗| = 4, |b⃗| = 5 in kotu 60° je cos 60° = 0,5 in a⃗·b⃗ = 4·5·0,5 = 10 > 0. -/
+/-- Primer 1: pri |a⃗| = 4, |b⃗| = 5 in kotu 60° je cos 60° = 0,5 in a⃗·b⃗ = 4·5·0,5 = 10 > 0.
+trditev: MAT-SS-3/skalarni-produkt#primer1
+besedilo: »Kosinus kota: $\cos 60^\circ = 0{,}5$. 2. Vstavimo, ker poznamo obe dolžini in kot: $\vec a \cdot \vec b = 4 \cdot 5 \cdot 0{,}5 = 10$. 3. Odgovor: skalarni produkt je $10$; pozitiven je, ker je kot oster.« -/
 theorem primer1 (a b : V) (ha : ‖a‖ = 4) (hb : ‖b‖ = 5) (h : angle a b = π / 3) :
     Real.cos (π / 3) = 0.5 ∧ inner ℝ a b = 4 * 5 * 0.5 ∧ (4:ℝ) * 5 * 0.5 = 10 ∧ 0 < inner ℝ a b := by
   have hc : Real.cos (π / 3) = 0.5 := by rw [Real.cos_pi_div_three]; norm_num
@@ -271,8 +364,24 @@ example : ‖(!₂[4, 0] : R2)‖ = 4 ∧ ‖(!₂[5 / 2, 5 * Real.sqrt 3 / 2] :
     rw [Real.cos_pi_div_three]; norm_num]
   exact Real.arccos_cos (by positivity) (by nlinarith [Real.pi_pos])
 
+/-- Predpostavke trditve `primer1` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ‖(!₂[4, 0] : R2)‖ = 4 ∧ ‖(!₂[5 / 2, 5 * Real.sqrt 3 / 2] : R2)‖ = 5 ∧ angle (!₂[4, 0] : R2) !₂[5 / 2, 5 * Real.sqrt 3 / 2] = π / 3 := by
+    have h3 : Real.sqrt 3 ^ 2 = 3 := Real.sq_sqrt (by norm_num)
+    have n1 : ‖(!₂[4, 0] : R2)‖ = 4 := by rw [dolzina2]; exact koren_kvadrata (by norm_num) (by norm_num)
+    have n2 : ‖(!₂[5 / 2, 5 * Real.sqrt 3 / 2] : R2)‖ = 5 := by
+      rw [dolzina2]; exact koren_kvadrata (by norm_num) (by linear_combination (25 / 4) * h3)
+    refine ⟨n1, n2, ?_⟩
+    unfold angle
+    rw [skalarni2, n1, n2, show (4 * (5 / 2) + 0 * (5 * Real.sqrt 3 / 2)) / (4 * 5) = Real.cos (π / 3) by
+      rw [Real.cos_pi_div_three]; norm_num]
+    exact Real.arccos_cos (by positivity) (by nlinarith [Real.pi_pos])
+  primer1 (ha := w.1) (hb := w.2.1) (h := w.2.2)
+
 /-- Primer 2: (3, 4)·(5, −12) = 15 − 48 = −33 < 0 (top kot); |a⃗| = √(9 + 16) = 5, |b⃗| = √(25 + 144) = 13;
-cos φ = −33/65 ≈ −0,508. -/
+cos φ = −33/65 ≈ −0,508.
+trditev: MAT-SS-3/skalarni-produkt#primer2
+besedilo: »Skalarni produkt po komponentah: $3 \cdot 5 + 4 \cdot (-12) = 15 - 48 = -33$. Že predznak pove, da bo kot top. 2. Dolžini: $|\vec a| = \sqrt{9 + 16} = 5$, $|\vec b| = \sqrt{25 + 144} = 13$. 3. Kosinus: $\cos\varphi = \dfrac{-33}{5 \cdot 13} = \dfrac{-33}{65} \approx -0{,}508$.« -/
 theorem primer2 :
     inner ℝ (!₂[3, 4] : R2) !₂[5, -12] = 3 * 5 + 4 * (-12) ∧ (3:ℝ) * 5 + 4 * (-12) = 15 - 48 ∧
     (15:ℝ) - 48 = -33 ∧ ‖(!₂[3, 4] : R2)‖ = √(9 + 16) ∧ √((9:ℝ) + 16) = 5 ∧
@@ -289,7 +398,9 @@ theorem primer2 :
 
 /-- Primer 3: BA⃗ = (1 − 5, 2 − 4) = (−4, −2), BC⃗ = (3 − 5, 8 − 4) = (−2, 4), BA⃗·BC⃗ = 8 − 8 = 0, kot pri B je π/2;
 AB⃗ = (4, 2), AC⃗ = (2, 6), AB⃗·AC⃗ = 8 + 12 = 20, |AB⃗| = √20, |AC⃗| = √40, cos α = 20/√800 = √2/2 ≈ 0,707, α = π/4;
-|BA⃗| = |BC⃗| = √20 (enakokrak pravokoten trikotnik). -/
+|BA⃗| = |BC⃗| = √20 (enakokrak pravokoten trikotnik).
+trditev: MAT-SS-3/skalarni-produkt#primer3
+besedilo: »Vektorja iz $B$: $\overrightarrow{BA} = (1 - 5,\ 2 - 4) = (-4, -2)$, $\overrightarrow{BC} = (3 - 5,\ 8 - 4) = (-2, 4)$. 2. Produkt: $(-4) \cdot (-2) + (-2) \cdot 4 = 8 - 8 = 0$. Cesti sta pravokotni, kot pri $B$ je $90^\circ$. 3. Za kot pri $A$ vzamemo vektorja z začetkom v $A$: $\overrightarrow{AB} = (4, 2)$, $\overrightarrow{AC} = (2, 6)$. 4. Produkt: $4 \cdot 2 + 2 \cdot 6 = 8 + 12 = 20$. Dolžini: $|\overrightarrow{AB}| = \sqrt{20}$, $|\overrightarrow{AC}| = \sqrt{40}$. 5. Kosinus: $\cos\alpha = \dfrac{20}{\sqrt{20}\,\sqrt{40}} = \dfrac{20}{\sqrt{800}} \approx 0{,}707$, zato $\alpha = 45^\circ$. 6. Odgovor: cesti v $B$ se srečata pod pravim kotom, kot pri $A$ meri $45^\circ$. Trikotnik je enakokrak pravokoten, saj $|\overrightarrow{BA}| = |\overrightarrow{BC}| = \sqrt{20}$.« -/
 theorem primer3 :
     (!₂[1, 2] : R2) - !₂[5, 4] = !₂[-4, -2] ∧ (!₂[3, 8] : R2) - !₂[5, 4] = !₂[-2, 4] ∧
     inner ℝ (!₂[-4, -2] : R2) !₂[-2, 4] = 8 - 8 ∧ angle (!₂[-4, -2] : R2) !₂[-2, 4] = π / 2 ∧
@@ -314,7 +425,9 @@ theorem primer3 :
   rw [n1, n2, skalarni2, hm, show ((4:ℝ) * 2 + 2 * 6) = 20 by norm_num, hc, ← Real.cos_pi_div_four]
   exact Real.arccos_cos (by positivity) (by nlinarith [Real.pi_pos])
 
-/-- Primer 4: (4, 3)·(6, t) = 0 ↔ 24 + 3t = 0 ↔ 3t = −24 ↔ t = −8; preizkus 4·6 + 3·(−8) = 24 − 24 = 0. -/
+/-- Primer 4: (4, 3)·(6, t) = 0 ↔ 24 + 3t = 0 ↔ 3t = −24 ↔ t = −8; preizkus 4·6 + 3·(−8) = 24 − 24 = 0.
+trditev: MAT-SS-3/skalarni-produkt#primer4
+besedilo: »$3t = -24$, zato $t = -8$. Preizkus: $4 \cdot 6 + 3 \cdot (-8) = 24 - 24 = 0$. Pešpot ima smer $(6, -8)$.« -/
 theorem primer4 (t : ℝ) :
     (inner ℝ (!₂[4, 3] : R2) !₂[6, t] = 0 ↔ 4 * 6 + 3 * t = 0) ∧ (4 * 6 + 3 * t = 0 ↔ 24 + 3 * t = 0) ∧
     (24 + 3 * t = 0 ↔ 3 * t = -24) ∧ (3 * t = -24 ↔ t = -8) ∧ (4:ℝ) * 6 + 3 * (-8) = 24 - 24 ∧
@@ -323,7 +436,9 @@ theorem primer4 (t : ℝ) :
     ⟨fun h => by linarith, fun h => by rw [h]; norm_num⟩, by norm_num, by norm_num⟩
 
 /-- Primer 5: pri |a⃗| = 3, |b⃗| = 5 in kotu 120° (cos 120° = −0,5) je a⃗·b⃗ = 3·5·(−0,5) = −7,5,
-|a⃗ − b⃗|² = 9 − 2·(−7,5) + 25 = 49 in |a⃗ − b⃗| = √49 = 7. -/
+|a⃗ − b⃗|² = 9 − 2·(−7,5) + 25 = 49 in |a⃗ − b⃗| = √49 = 7.
+trditev: MAT-SS-3/skalarni-produkt#primer5
+besedilo: »Skalarni produkt: $\vec a \cdot \vec b = 3 \cdot 5 \cdot (-0{,}5) = -7{,}5$. Kot je top: $\cos 120^\circ = -0{,}5$. 2. Kvadrat dolžine: $|\vec a - \vec b|^2 = 9 - 2 \cdot (-7{,}5) + 25 = 49$. Minus krat minus da plus, zato je stranica daljša kot pri pravem kotu. 3. Odgovor: $|\vec a - \vec b| = \sqrt{49} = 7$.« -/
 theorem primer5 (a b : V) (ha : ‖a‖ = 3) (hb : ‖b‖ = 5) (h : angle a b = 2 * π / 3) :
     Real.cos (2 * π / 3) = -0.5 ∧ inner ℝ a b = 3 * 5 * (-0.5) ∧ (3:ℝ) * 5 * (-0.5) = -7.5 ∧
     ‖a - b‖ ^ 2 = 9 - 2 * (-7.5) + 25 ∧ (9:ℝ) - 2 * (-7.5) + 25 = 49 ∧ ‖a - b‖ = √49 ∧ √(49:ℝ) = 7 := by
@@ -347,9 +462,25 @@ example : ‖(!₂[3, 0] : R2)‖ = 3 ∧ ‖(!₂[-5 / 2, 5 * Real.sqrt 3 / 2] 
     rw [show 2 * π / 3 = π - π / 3 by ring, Real.cos_pi_sub, Real.cos_pi_div_three]; norm_num]
   exact Real.arccos_cos (by positivity) (by nlinarith [Real.pi_pos])
 
+/-- Predpostavke trditve `primer5` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : ‖(!₂[3, 0] : R2)‖ = 3 ∧ ‖(!₂[-5 / 2, 5 * Real.sqrt 3 / 2] : R2)‖ = 5 ∧ angle (!₂[3, 0] : R2) !₂[-5 / 2, 5 * Real.sqrt 3 / 2] = 2 * π / 3 := by
+    have h3 : Real.sqrt 3 ^ 2 = 3 := Real.sq_sqrt (by norm_num)
+    have n1 : ‖(!₂[3, 0] : R2)‖ = 3 := by rw [dolzina2]; exact koren_kvadrata (by norm_num) (by norm_num)
+    have n2 : ‖(!₂[-5 / 2, 5 * Real.sqrt 3 / 2] : R2)‖ = 5 := by
+      rw [dolzina2]; exact koren_kvadrata (by norm_num) (by linear_combination (25 / 4) * h3)
+    refine ⟨n1, n2, ?_⟩
+    unfold angle
+    rw [skalarni2, n1, n2, show (3 * (-5 / 2) + 0 * (5 * Real.sqrt 3 / 2)) / (3 * 5) = Real.cos (2 * π / 3) by
+      rw [show 2 * π / 3 = π - π / 3 by ring, Real.cos_pi_sub, Real.cos_pi_div_three]; norm_num]
+    exact Real.arccos_cos (by positivity) (by nlinarith [Real.pi_pos])
+  primer5 (ha := w.1) (hb := w.2.1) (h := w.2.2)
+
 /-- Primer 6: a⃗·F⃗ = 4·20 + 3·90 = 350 > 0, |a⃗|² = 25, |a⃗| = 5; F⃗_a = (350/25)(4, 3) = 14·(4, 3) = (56, 42), dolžina
 350/5 = 70 = √(56² + 42²); F⃗_⊥ = (20 − 56, 90 − 42) = (−36, 48), dolžina 60; 4·(−36) + 3·48 = 0;
-70² + 60² = 8500 = 20² + 90². -/
+70² + 60² = 8500 = 20² + 90².
+trditev: MAT-SS-3/skalarni-produkt#primer6
+besedilo: »Skalarni produkt: $\vec a \cdot \vec F = 4 \cdot 20 + 3 \cdot 90 = 350$. Pozitiven je, zato vrv vleče naprej vzdolž kanala. 2. Dolžina smeri: $|\vec a|^2 = 4^2 + 3^2 = 25$, torej $|\vec a| = 5$. 3. Projekcija: $\vec F_a = \frac{350}{25}\,(4, 3) = 14 \cdot (4, 3) = (56, 42)\,\mathrm{N}$. Njena dolžina je $\frac{350}{5} = 70\,\mathrm{N}$. 4. Pravokotni del: $\vec F_\perp = (20 - 56,\ 90 - 42) = (-36, 48)\,\mathrm{N}$, njegova dolžina je $\sqrt{36^2 + 48^2} = 60\,\mathrm{N}$. 5. Preizkus: $4 \cdot (-36) + 3 \cdot 48 = 0$, del je res pravokoten na kanal. Tudi $70^2 + 60^2 = 8500 = 20^2 + 90^2$.« -/
 theorem primer6 :
     inner ℝ (!₂[4, 3] : R2) !₂[20, 90] = 4 * 20 + 3 * 90 ∧ (4:ℝ) * 20 + 3 * 90 = 350 ∧
     ‖(!₂[4, 3] : R2)‖ ^ 2 = 4 ^ 2 + 3 ^ 2 ∧ (4:ℝ) ^ 2 + 3 ^ 2 = 25 ∧ ‖(!₂[4, 3] : R2)‖ = 5 ∧
@@ -369,7 +500,9 @@ theorem primer6 :
 
 /-- Pogoste napake: (3, 4)·(5, −12) je število 15 + (−48) = −33 (ne vektor (15, −48)); brez deljenja z dolžinama
 bi bil »cos φ« = −33 < −1, kar ni kosinus nobenega kota; pri dolžini projekcije b⃗ = (7, 1) na a⃗ = (3, 4) je
-25/25 = 1 le koeficient, dolžina je 25/5 = 5; neničelna (1, 0) in (0, 1) imata produkt 0. -/
+25/25 = 1 le koeficient, dolžina je 25/5 = 5; neničelna (1, 0) in (0, 1) imata produkt 0.
+trditev: MAT-SS-3/skalarni-produkt#napake
+besedilo: »Kdor računa $(3, 4) \cdot (5, -12) = (15, -48)$, je komponente zmnožil, ni pa jih seštel. Skalarni produkt je eno samo število: $15 + (-48) = -33$.« -/
 theorem napake :
     inner ℝ (!₂[3, 4] : R2) !₂[5, -12] = 15 + (-48) ∧ (15:ℝ) + (-48) = -33 ∧
     (∀ φ : ℝ, Real.cos φ ≠ -33) ∧ (25:ℝ) / 25 = 1 ∧ (25:ℝ) / 5 = 5 ∧
@@ -382,7 +515,9 @@ theorem napake :
 /-! ## Za maturo -/
 
 /-- Naloga 1: a⃗ = (n, 2, −1) in b⃗ = (n, n, 8) nista ničelna; a⃗·b⃗ = n² + 2n − 8 = (n + 4)(n − 2), zato sta
-pravokotna natanko pri n = −4 ali n = 2 (preizkus 4 + 4 − 8 = 0 in 16 − 8 − 8 = 0). -/
+pravokotna natanko pri n = −4 ali n = 2 (preizkus 4 + 4 − 8 = 0 in 16 − 8 − 8 = 0).
+trditev: MAT-SS-3/skalarni-produkt#naloga1
+besedilo: »Vektorja nista ničelna (druga komponenta $\vec a$ je $2$, tretja komponenta $\vec b$ je $8$), zato sta pravokotna natanko tedaj, ko je $\vec a \cdot \vec b = 0$. 2. Po komponentah: $n \cdot n + 2 \cdot n + (-1) \cdot 8 = 0$, torej $n^2 + 2n - 8 = 0$. 3. Razcep: $(n + 4)(n - 2) = 0$, zato je $n = -4$ ali $n = 2$. 4. Preizkus: pri $n = 2$ je $\vec a \cdot \vec b = 4 + 4 - 8 = 0$, pri $n = -4$ je $16 - 8 - 8 = 0$.« -/
 theorem naloga1 (n : ℝ) :
     (!₂[n, 2, -1] : R3) ≠ 0 ∧ (!₂[n, n, 8] : R3) ≠ 0 ∧
     inner ℝ (!₂[n, 2, -1] : R3) !₂[n, n, 8] = n ^ 2 + 2 * n - 8 ∧ n ^ 2 + 2 * n - 8 = (n + 4) * (n - 2) ∧
@@ -402,7 +537,9 @@ theorem naloga1 (n : ℝ) :
       · right; linarith
 
 /-- Naloga 2 a): AB⃗ = (3 − 1, 0 + 1, 4 − 2) = (2, 1, 2), AC⃗ = (2 − 1, 3 + 1, 1 − 2) = (1, 4, −1),
-AB⃗·AC⃗ = 2 + 4 − 2 = 4, |AB⃗| = √9 = 3, |AC⃗| = √18 = 3√2, cos α = 4/(3·3√2) = 4/(9√2) ≈ 0,314270. -/
+AB⃗·AC⃗ = 2 + 4 − 2 = 4, |AB⃗| = √9 = 3, |AC⃗| = √18 = 3√2, cos α = 4/(3·3√2) = 4/(9√2) ≈ 0,314270.
+trditev: MAT-SS-3/skalarni-produkt#naloga2a
+besedilo: »Oba vektorja izhajata iz vrha kota $A$: $\overrightarrow{AB} = (3 - 1,\ 0 + 1,\ 4 - 2) = (2, 1, 2)$ in $\overrightarrow{AC} = (2 - 1,\ 3 + 1,\ 1 - 2) = (1, 4, -1)$. 2. a) Skalarni produkt: $\overrightarrow{AB} \cdot \overrightarrow{AC} = 2 \cdot 1 + 1 \cdot 4 + 2 \cdot (-1) = 4$. Dolžini: $|\overrightarrow{AB}| = \sqrt{4 + 1 + 4} = 3$ in $|\overrightarrow{AC}| = \sqrt{1 + 16 + 1} = \sqrt{18} = 3\sqrt{2}$. 3. a) $\cos\alpha = \dfrac{4}{3 \cdot 3\sqrt{2}} = \dfrac{4}{9\sqrt{2}} \approx 0{,}314270$« -/
 theorem naloga2a :
     (!₂[3, 0, 4] : R3) - !₂[1, -1, 2] = !₂[2, 1, 2] ∧ (!₂[2, 3, 1] : R3) - !₂[1, -1, 2] = !₂[1, 4, -1] ∧
     inner ℝ (!₂[2, 1, 2] : R3) !₂[1, 4, -1] = 4 ∧ ‖(!₂[2, 1, 2] : R3)‖ = 3 ∧
@@ -423,7 +560,9 @@ theorem naloga2a :
   · rw [sub_lt_iff_lt_add, div_lt_iff₀ (by positivity)]; nlinarith
 
 /-- Naloga 2 b): dolžina projekcije AC⃗ na AB⃗ je |AC⃗|cos α = AB⃗·AC⃗/|AB⃗| = 4/3; projekcija je
-(4/3)·(1/3)(2, 1, 2) = (4/9)(2, 1, 2) = (8/9, 4/9, 8/9) (= (AB⃗·AC⃗/|AB⃗|²)·AB⃗). -/
+(4/3)·(1/3)(2, 1, 2) = (4/9)(2, 1, 2) = (8/9, 4/9, 8/9) (= (AB⃗·AC⃗/|AB⃗|²)·AB⃗).
+trditev: MAT-SS-3/skalarni-produkt#naloga2b
+besedilo: »Dolžina projekcije je $|\overrightarrow{AC}|\cos\alpha = \dfrac{\overrightarrow{AB} \cdot \overrightarrow{AC}}{|\overrightarrow{AB}|} = \dfrac{4}{3}$. 5. b) Skalarni produkt je pozitiven, zato projekcija kaže v smer $\overrightarrow{AB}$. Enotski vektor v tej smeri je $\frac{1}{3}(2, 1, 2)$, projekcija pa $\frac{4}{3} \cdot \frac{1}{3}(2, 1, 2) = \frac{4}{9}(2, 1, 2) = \left(\frac{8}{9}, \frac{4}{9}, \frac{8}{9}\right)$.« -/
 theorem naloga2b :
     ‖(!₂[1, 4, -1] : R3)‖ * Real.cos (angle (!₂[2, 1, 2] : R3) !₂[1, 4, -1]) = 4 / 3 ∧
     (4 / 3 * (1 / 3) : ℝ) • (!₂[2, 1, 2] : R3) = (4 / 9 : ℝ) • !₂[2, 1, 2] ∧
@@ -438,7 +577,9 @@ theorem naloga2b :
     by rw [hi, n1, produkt3]; norm_num, by norm_num⟩
 
 /-- Naloga 2 c): v_c² = 18 − 16/9 = 146/9 (višina je razdalja C do premice AB: |AC⃗ − projekcija|² = 146/9),
-v_c = √146/3 ≈ 4,03; S = |AB⃗|·v_c/2 = √146/2 ≈ 6,04 = (1/2)|AB⃗||AC⃗| sin α. -/
+v_c = √146/3 ≈ 4,03; S = |AB⃗|·v_c/2 = √146/2 ≈ 6,04 = (1/2)|AB⃗||AC⃗| sin α.
+trditev: MAT-SS-3/skalarni-produkt#naloga2c
+besedilo: »Zato je $v_c^2 = 18 - \frac{16}{9} = \frac{146}{9}$ in $v_c = \frac{\sqrt{146}}{3} \approx 4{,}0277$, torej $v_c \approx 4{,}03$. 7. c) Ploščina: $S = \dfrac{|\overrightarrow{AB}| \cdot v_c}{2} = \dfrac{\sqrt{146}}{2} \approx 6{,}0415$, torej $S \approx 6{,}04$. Enako dobimo iz $S = \frac{1}{2}\,|\overrightarrow{AB}|\,|\overrightarrow{AC}| \sin\alpha$.« -/
 theorem naloga2c :
     (18:ℝ) - 16 / 9 = 146 / 9 ∧
     ‖(!₂[1, 4, -1] : R3) - !₂[8 / 9, 4 / 9, 8 / 9]‖ ^ 2 = 146 / 9 ∧ √((146:ℝ) / 9) = √146 / 3 ∧
@@ -469,7 +610,9 @@ theorem naloga2c :
     nlinarith [s2]
 
 /-- Ustno vprašanje 3 in Preveri se 1: (1, 2, 2)·(2, 1, −2) = 2 + 2 − 4 = 0, vektorja sta neničelna in kot je
-π/2; enako za neničelno smer letenja in vetra s produktom 0. -/
+π/2; enako za neničelno smer letenja in vetra s produktom 0.
+trditev: MAT-SS-3/skalarni-produkt#ustno3
+besedilo: »Njun skalarni produkt po komponentah je $1 \cdot 2 + 2 \cdot 1 + 2 \cdot (-2) = 0$. Ker sta vektorja neničelna, iz $|\vec a|\,|\vec b|\cos\varphi = 0$ sledi $\cos\varphi = 0$ in zato $\varphi = 90^\circ$.« -/
 theorem ustno3 :
     inner ℝ (!₂[1, 2, 2] : R3) !₂[2, 1, -2] = 1 * 2 + 2 * 1 + 2 * (-2) ∧ (1:ℝ) * 2 + 2 * 1 + 2 * (-2) = 0 ∧
     (!₂[1, 2, 2] : R3) ≠ 0 ∧ (!₂[2, 1, -2] : R3) ≠ 0 ∧ angle (!₂[1, 2, 2] : R3) !₂[2, 1, -2] = π / 2 := by
@@ -481,7 +624,9 @@ theorem ustno3 :
 /-! ## Preveri se -/
 
 /-- Preveri se 2: pri enakih dolžinah L > 0 je L²cos 20° > L²cos 90° = 0 > L²cos 135°; cos 20° ≈ 0,94,
-cos 135° = −√2/2 ≈ −0,71. -/
+cos 135° = −√2/2 ≈ −0,71.
+trditev: MAT-SS-3/skalarni-produkt#kviz2
+besedilo: »Pri enakih dolžinah odloča $\cos\varphi$: $\cos 20^\circ \approx 0{,}94$, $\cos 90^\circ = 0$, $\cos 135^\circ \approx -0{,}71$.« -/
 theorem kviz2 (L : ℝ) (hL : 0 < L) :
     L * L * Real.cos (π / 2) < L * L * Real.cos (π / 9) ∧ L * L * Real.cos (3 * π / 4) < L * L * Real.cos (π / 2) ∧
     |Real.cos (π / 9) - 0.94| < 0.005 ∧ Real.cos (3 * π / 4) = -(√2 / 2) ∧ |-(√2 / 2) - (-0.71)| < 0.005 := by
@@ -509,13 +654,22 @@ theorem kviz2 (L : ℝ) (hL : 0 < L) :
 /-- Predpostavka `kviz2` se da izpolniti (L = 1). -/
 example : (0:ℝ) < 1 := one_pos
 
-/-- Preveri se 4: (2, −1, 3)·(1, 4, 2) = 2 − 4 + 6 = 4 (napačno 12 = 2 + 4 + 6, če izpustimo predznak). -/
+/-- Predpostavke trditve `kviz2` se dajo izpolniti: izrek, uporabljen na primeru. -/
+example :=
+  have w : (0:ℝ) < 1 := one_pos
+  kviz2 (hL := w)
+
+/-- Preveri se 4: (2, −1, 3)·(1, 4, 2) = 2 − 4 + 6 = 4 (napačno 12 = 2 + 4 + 6, če izpustimo predznak).
+trditev: MAT-SS-3/skalarni-produkt#kviz4
+besedilo: »$2 \cdot 1 + (-1) \cdot 4 + 3 \cdot 2 = 2 - 4 + 6 = 4$« -/
 theorem kviz4 :
     inner ℝ (!₂[2, -1, 3] : R3) !₂[1, 4, 2] = 2 * 1 + (-1) * 4 + 3 * 2 ∧ (2:ℝ) * 1 + (-1) * 4 + 3 * 2 = 2 - 4 + 6 ∧
     (2:ℝ) - 4 + 6 = 4 ∧ (2:ℝ) + 4 + 6 = 12 := by
   refine ⟨skalarni3 _ _ _ _ _ _, by norm_num, by norm_num, by norm_num⟩
 
-/-- Preveri se 5: (2, 2)·(−3, 0) = −6, |a⃗| = 2√2, |b⃗| = 3, cos φ = −6/(6√2) = −√2/2 ≈ −0,707, φ = 3π/4 = 135°. -/
+/-- Preveri se 5: (2, 2)·(−3, 0) = −6, |a⃗| = 2√2, |b⃗| = 3, cos φ = −6/(6√2) = −√2/2 ≈ −0,707, φ = 3π/4 = 135°.
+trditev: MAT-SS-3/skalarni-produkt#kviz5
+besedilo: »$\vec a \cdot \vec b = -6$, $|\vec a| = 2\sqrt2$, $|\vec b| = 3$, $\cos\varphi = \dfrac{-6}{6\sqrt2} \approx -0{,}707$, zato $\varphi = 135^\circ$.« -/
 theorem kviz5 :
     inner ℝ (!₂[2, 2] : R2) !₂[-3, 0] = -6 ∧ ‖(!₂[2, 2] : R2)‖ = 2 * √2 ∧ ‖(!₂[-3, 0] : R2)‖ = 3 ∧
     (-6:ℝ) / (2 * √2 * 3) = -(√2 / 2) ∧ |-(√2 / 2) - (-0.707)| < 0.0005 ∧
@@ -535,7 +689,9 @@ theorem kviz5 :
   exact Real.arccos_cos (by positivity) (by nlinarith [Real.pi_pos])
 
 /-- Preveri se 6: b⃗ = (7, 1) na a⃗ = (3, 4): a⃗·b⃗ = 21 + 4 = 25, |a⃗| = 5, dolžina projekcije 25/5 = 5, projekcija
-(25/25)a⃗ = (3, 4); napačni 25 (produkt), 1 (koeficient), |b⃗| = √50 ≈ 7,07. -/
+(25/25)a⃗ = (3, 4); napačni 25 (produkt), 1 (koeficient), |b⃗| = √50 ≈ 7,07.
+trditev: MAT-SS-3/skalarni-produkt#kviz6
+besedilo: »$\vec a \cdot \vec b = 21 + 4 = 25$ in $|\vec a| = 5$, zato je dolžina projekcije $\frac{25}{5} = 5$. Projekcija je $\frac{25}{25}\vec a = (3, 4)$.« -/
 theorem kviz6 :
     inner ℝ (!₂[3, 4] : R2) !₂[7, 1] = 25 ∧ ‖(!₂[3, 4] : R2)‖ = 5 ∧
     ‖(inner ℝ (!₂[3, 4] : R2) !₂[7, 1] / ‖(!₂[3, 4] : R2)‖ ^ 2) • (!₂[3, 4] : R2)‖ = 5 ∧
@@ -550,7 +706,9 @@ theorem kviz6 :
   rw [abs_lt]; constructor <;> linarith
 
 /-- Preveri se 7: AG⃗ = (4, 4, 4), BD⃗ = D − B = (−4, 4, 0), AG⃗·BD⃗ = −16 + 16 + 0 = 0 (pravokotni mimobežnici);
-napačno 32 = (4, 4, 4)·(4, 4, 0) (B + D namesto D − B). -/
+napačno 32 = (4, 4, 4)·(4, 4, 0) (B + D namesto D − B).
+trditev: MAT-SS-3/skalarni-produkt#kviz7
+besedilo: »$\overrightarrow{AG} = (4, 4, 4)$ in $\overrightarrow{BD} = (-4, 4, 0)$, produkt je $-16 + 16 + 0 = 0$. Diagonali sta pravokotni mimobežnici.« -/
 theorem kviz7 :
     (!₂[4, 4, 4] : R3) - !₂[0, 0, 0] = !₂[4, 4, 4] ∧ (!₂[0, 4, 0] : R3) - !₂[4, 0, 0] = !₂[-4, 4, 0] ∧
     inner ℝ (!₂[4, 4, 4] : R3) !₂[-4, 4, 0] = 0 ∧ inner ℝ (!₂[4, 4, 4] : R3) !₂[4, 4, 0] = 32 := by
@@ -559,7 +717,9 @@ theorem kviz7 :
 
 /-- Blok RACUN: √(3² + 5² − 2·3·5·cos 120°) = 7, n² + 2n − 8 = 0 ↔ n ∈ {−4, 2}, 4·(1 − 2) + 2·(3 − 1) = 0,
 (3·7 + 4·1)/√(3² + 4²) = 5, 10/20·4 = 2, 10/20·2 = 1, 350/25 = 14, 14·4 = 56, 14·3 = 42,
-√((20 − 56)² + (90 − 42)²) = 60. -/
+√((20 − 56)² + (90 − 42)²) = 60.
+trditev: MAT-SS-3/skalarni-produkt#racun
+besedilo: »Projekcija: $\vec F_a = \frac{350}{25}\,(4, 3) = 14 \cdot (4, 3) = (56, 42)\,\mathrm{N}$. Njena dolžina je $\frac{350}{5} = 70\,\mathrm{N}$.« -/
 theorem racun :
     √((3:ℝ) ^ 2 + 5 ^ 2 - 2 * 3 * 5 * Real.cos (2 * π / 3)) = 7 ∧
     (∀ n : ℝ, n ^ 2 + 2 * n - 8 = 0 ↔ n = -4 ∨ n = 2) ∧ 4 * ((1:ℝ) - 2) + 2 * (3 - 1) = 0 ∧
@@ -581,7 +741,8 @@ theorem racun :
 
 /-! ## Koti v stopinjah (ocene) -/
 
-/-- Pomožno: če je cos θ₂ < c < cos θ₁ za 0 ≤ θ₁ ≤ θ₂ ≤ π, je θ₁ < arccos c < θ₂ (kosinus na [0, π] pada). -/
+/-- Pomožno: če je cos θ₂ < c < cos θ₁ za 0 ≤ θ₁ ≤ θ₂ ≤ π, je θ₁ < arccos c < θ₂ (kosinus na [0, π] pada).
+pomozno -/
 theorem kot_med {c θ₁ θ₂ : ℝ} (h1 : 0 ≤ θ₁) (h12 : θ₁ ≤ θ₂) (h2 : θ₂ ≤ π) (hc1 : c < Real.cos θ₁)
     (hc2 : Real.cos θ₂ < c) : θ₁ < Real.arccos c ∧ Real.arccos c < θ₂ := by
   have hm : -1 ≤ Real.cos θ₂ := Real.neg_one_le_cos θ₂
@@ -598,7 +759,9 @@ example : (0:ℝ) ≤ π / 3 ∧ π / 3 ≤ 2 * π / 3 ∧ 2 * π / 3 ≤ π ∧
   refine ⟨by positivity, by linarith, by linarith, by rw [Real.cos_pi_div_three]; norm_num, ?_⟩
   rw [show 2 * π / 3 = π - π / 3 by ring, Real.cos_pi_sub, Real.cos_pi_div_three]; norm_num
 
-/-- Primer 2, korak 4: φ = arccos(−33/65) ≈ 120,5° (natančneje 120,45° < φ < 120,55°). -/
+/-- Primer 2, korak 4: φ = arccos(−33/65) ≈ 120,5° (natančneje 120,45° < φ < 120,55°).
+trditev: MAT-SS-3/skalarni-produkt#primer2-kot
+besedilo: »$\varphi = \arccos(-0{,}508) \approx 120{,}5^\circ$« -/
 theorem primer2_kot : |angle (!₂[3, 4] : R2) !₂[5, -12] * 180 / π - 120.5| < 0.05 := by
   have n1 : ‖(!₂[3, 4] : R2)‖ = 5 := by rw [dolzina2]; exact koren_kvadrata (by norm_num) (by norm_num)
   have n2 : ‖(!₂[5, -12] : R2)‖ = 13 := by rw [dolzina2]; exact koren_kvadrata (by norm_num) (by norm_num)
@@ -638,7 +801,9 @@ theorem primer2_kot : |angle (!₂[3, 4] : R2) !₂[5, -12] * 180 / π - 120.5| 
   · rw [sub_lt_iff_lt_add, div_lt_iff₀ (by positivity)]; nlinarith
 
 /-- Naloga 2 a): α = arccos(4/(9√2)) ≈ 71,68° (natančneje 71,675° < α < 71,685°; ocena s
-cos 72° = (√5 − 1)/4 in kotom 72° − α). -/
+cos 72° = (√5 − 1)/4 in kotom 72° − α).
+trditev: MAT-SS-3/skalarni-produkt#naloga2a-kot
+besedilo: »a) $\cos\alpha = \dfrac{4}{3 \cdot 3\sqrt{2}} = \dfrac{4}{9\sqrt{2}} \approx 0{,}314270$, zato je $\alpha = \arccos 0{,}314270 \approx 71{,}6833^\circ \approx 71{,}68^\circ$.« -/
 theorem naloga2a_kot : |angle (!₂[2, 1, 2] : R3) !₂[1, 4, -1] * 180 / π - 71.68| < 0.005 := by
   have h18 : √(18:ℝ) = 3 * √2 := by
     rw [show (18:ℝ) = 3 ^ 2 * 2 by norm_num, Real.sqrt_mul (by norm_num), Real.sqrt_sq (by norm_num)]
@@ -700,7 +865,9 @@ theorem naloga2a_kot : |angle (!₂[2, 1, 2] : R3) !₂[1, 4, -1] * 180 / π - 7
   · rw [lt_sub_iff_add_lt, lt_div_iff₀ (by positivity)]; nlinarith
   · rw [sub_lt_iff_lt_add, div_lt_iff₀ (by positivity)]; nlinarith
 
-/-- Naloga 2 c), vmesni vrednosti: v_c = √146/3 ≈ 4,0277 in S = √146/2 ≈ 6,0415. -/
+/-- Naloga 2 c), vmesni vrednosti: v_c = √146/3 ≈ 4,0277 in S = √146/2 ≈ 6,0415.
+trditev: MAT-SS-3/skalarni-produkt#naloga2c-stiri-decimalke
+besedilo: »$v_c = \frac{\sqrt{146}}{3} \approx 4{,}0277$, torej $v_c \approx 4{,}03$. 7. c) Ploščina: $S = \dfrac{|\overrightarrow{AB}| \cdot v_c}{2} = \dfrac{\sqrt{146}}{2} \approx 6{,}0415$« -/
 theorem naloga2c_stiri_decimalke : |√146 / 3 - 4.0277| < 0.00005 ∧ |√146 / 2 - 6.0415| < 0.00005 := by
   have a : (12.08304:ℝ) < √146 := (Real.lt_sqrt (by norm_num)).2 (by norm_num)
   have b : √146 < (12.08305:ℝ) := (Real.sqrt_lt' (by norm_num)).2 (by norm_num)
