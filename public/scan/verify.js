@@ -57,7 +57,10 @@ function druzineResitev(solutions) {
       if (fin(x)) vrednosti.push(x);
     }
     if (!vrednosti.length) return null;
-    out.push({ vrednosti, tol: decimalTol(raw) || 0, konst: vrednosti.every((x) => Math.abs(x - vrednosti[0]) < 1e-12 * Math.max(1, Math.abs(x))) });
+    // linearna družina a + b·k: k izračunamo neposredno (kπ/100 ima na [−20, 20] več kot 800 vrednosti)
+    const [f0, f1, f2] = [0, 1, 2].map((k) => f({ k }));
+    const linearna = [f0, f1, f2].every(fin) && Math.abs(f2 - 2 * f1 + f0) <= 1e-9 * Math.max(1, Math.abs(f0), Math.abs(f2));
+    out.push({ f, vrednosti, linearna: linearna && Math.abs(f1 - f0) > 1e-12 ? { a: f0, b: f1 - f0 } : null, tol: decimalTol(raw) || 0, konst: vrednosti.every((x) => Math.abs(x - vrednosti[0]) < 1e-12 * Math.max(1, Math.abs(x))) });
   }
   return out;
 }
@@ -106,8 +109,12 @@ function manjkajoceDruzine(problemText, v, druzine) {
     const y = d({ [v]: r });
     return fin(y) && Math.abs(y) < 1e-6 * Math.max(1, Math.abs(r)); // ničla je najdena na ~10⁻⁸
   });
-  const pokrita = (r) => druzine.some(({ vrednosti, tol }) => {
+  const pokrita = (r) => druzine.some(({ f, vrednosti, linearna, tol }) => {
     const meja = Math.max(1e-6 * Math.max(1, Math.abs(r)), tol * 1.0001);
+    if (linearna) {
+      const k = Math.round((r - linearna.a) / linearna.b);
+      return Math.abs(f({ k }) - r) <= meja;
+    }
     return vrednosti.some((x) => Math.abs(x - r) <= meja);
   });
   return scanRoots(problemText, v)

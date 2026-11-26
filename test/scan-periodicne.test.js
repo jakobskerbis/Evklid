@@ -34,6 +34,7 @@ test("popolne periodične rešitve ostanejo »delno« (okno [−20, 20] ni dokaz
     ["cos(x)=1/2", ["x = π/3 + 2kπ", "x = -π/3 + 2kπ"]], // »2kπ«: prej ni veljalo za periodično (lažni alarm)
     ["2*sin(x)^2-1=0", ["pi/4+k*pi/2"]],
     ["sin(x)+cos(x)=1", ["2*k*pi", "pi/2+2*k*pi"]],
+    ["sin(100*x)=0", ["k*pi/100"]], // več kot 800 ničel na oknu
   ]) {
     const r = verifyAi(naloga, eq(sol));
     assert.equal(r.status, "partial", `${naloga} ${sol}`);
