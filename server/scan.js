@@ -1,5 +1,6 @@
 // Skeniranje nalog (zaslon »Skeniraj«, public/scan/):
-//   POST /api/students/:id/scan/read   { image: dataURL }  → { problems: [{ text, tex, goal, given?, sought? }] }  prepis s fotografije
+//   POST /api/students/:id/scan/read   { image: dataURL }  → { problems: [{ text, tex, goal, given?, sought?, unclear? }] }  prepis s fotografije
+//        (nejasen znak je [?] v text/given, unclear = možnosti za vsako oznako v text; public/scan/nejasno.js)
 //   POST /api/students/:id/scan/solve  { text, goal?, given?, sought? } → { solution }       AI rešitev po korakih
 // Večino nalog reši brez AI že vmesnik (public/scan/solvecore.js). AI pride na vrsto le pri nalogah, ki jih
 // ta ne zna (koreni, logaritmi, trigonometrija, integrali …). AI rešitev strežnik preveri z isto kodo kot vmesnik
@@ -8,6 +9,7 @@ import { AI_JSON } from "./ai-oznaka.js";
 import { getClient, isMockMode, quickParams, MODEL, MODEL_MID, errorText, apiErrorCode } from "./claude.js";
 import { verifyAi, normalizeSet } from "../public/scan/verify.js";
 import { prep, splitSystem } from "../public/scan/solvecore.js";
+import { cleanUnclear, unclearCount, hasUnclear, normalizeUnclear } from "../public/scan/nejasno.js";
 import { casCheck } from "./cas.js";
 import { STATUSES } from "../public/scan/status.js";
 
@@ -176,6 +178,10 @@ export const READ_PROMPT =
   "a double inequality as a<x<b; a logarithm with its base as log_10(x), log_2(x), log_a(x). Keep the student's letters for variables. " +
   "Copy every base, index and exponent exactly as written: never replace a written digit by a letter (log_10 stays log_10, not log_a). " +
   "Read every sign and digit with care (x+b and x-b; 1, 4 and 7, which look alike in handwriting). If one is unclear, the student's next lines may help with a sign or a letter, but the task line always wins: never change a written value to match the working. " +
+  // P3-5: nejasen znak ni ugibanje (public/scan/nejasno.js); učenec ga popravi pred reševanjem.
+  "Never guess: if a digit, sign, letter, exponent, index or bracket of the task could really be read two ways (smudged, blurred, cut off at the edge, 1 or 7, + or -, x or a times sign) and nothing in the task itself settles it (the student's working may only confirm a sign or a letter, never a digit), " +
+  'write [?] in its place in "text" and \\\\boxed{?} in "tex", and add "unclear": one list per [?], in the order they stand in "text", of what it could be (most likely first, at most 3, each as it would stand in "text", e.g. [["1","7"]]). ' +
+  'An unclear value in "given" is written as [?] there too, not \\\\boxed{?} (no list); never put [?] in "sought". Mark only a real doubt: a clearly written character is never [?].\n' +
   "Coordinates of a point and the values in conditions are numbers unless a letter is clearly written.\n" +
   'Each "text" is one expression, one equation or one inequality (or a system): never chain several = or a definition and an inequality: give only the part that is the task (x^2>4 for h(x)=x^2>4, nCr(5,2) for nCr(5,2)=5!/(2!*3!)); a right-hand side that is working or a result is left out.\n' +
   '- "given": only if the task states data or conditions needed to solve it (a measured quantity with its unit such as a = 3 cm, m = 2 kg or α = 30°, ' +
@@ -186,7 +192,7 @@ export const READ_PROMPT =
   "For a word or geometry problem without one equation or expression, give as \"text\" only the unknown asked for in calculator syntax as <letter>=? (e.g. P=?, v=?), never a sentence, and every stated value in \"given\".\n" +
   '- "tex": the same problem in LaTeX.\n' +
   "Ignore task numbers (1., a)), the wording of instructions (but keep their conditions in \"given\") and crossed-out work. If the instruction says what to do (Razstavi / factor, Poenostavi / simplify, Izračunaj / evaluate, Odvajaj / differentiate), add \"goal\": factor|simplify|evaluate|derivative|solve; if there is neither such an instruction nor an equation or inequality to solve, leave \"goal\" out.\n" +
-  'Return only JSON: {"problems":[{"text":"...","tex":"...","goal":"...","given":["..."],"sought":"..."}]} (most prominent problem first, at most 6). If no maths is readable: {"problems":[]}.\n' +
+  'Return only JSON: {"problems":[{"text":"...","tex":"...","goal":"...","given":["..."],"sought":"...","unclear":[["...","..."]]}]} (most prominent problem first, at most 6). If no maths is readable: {"problems":[]}.\n' +
   // Fotografije, ki niso učno gradivo, zavrnemo (j, 2026-10-30); slike strežnik nikoli ne shrani.
   'Accept schoolwork even if people appear in the frame (book illustrations, a teacher at a whiteboard, hands). Only if a person or a private item is the main subject (face, selfie, ID or other personal document, private message) or it is a random scene, do not describe it and return only {"problems":[],"unrelated":true}. If unsure, read it.';
 
@@ -223,12 +229,16 @@ export function cleanProblems(list) {
     .map((p) => {
       const given = cleanGiven(p.given);
       const sought = cleanSought(p.sought);
+      const text = normalizeUnclear(p.text).trim().slice(0, MAX_TEXT);
+      const unclear = cleanUnclear(p.unclear, unclearCount(text));
       return {
-        text: p.text.trim().slice(0, MAX_TEXT),
-        tex: typeof p.tex === "string" ? p.tex.trim().slice(0, MAX_TEXT * 2) : "",
+        text,
+        // »\b« iz neubežanega \boxed v JSON je znak backspace (JSON.parse): popravimo, da se oznaka izriše
+        tex: typeof p.tex === "string" ? p.tex.replace(/\x08oxed/g, "\\boxed").trim().slice(0, MAX_TEXT * 2) : "",
         goal: GOALS.includes(p.goal) ? p.goal : null,
         ...(given.length ? { given } : {}),
         ...(sought ? { sought } : {}),
+        ...(unclear.length ? { unclear } : {}),
       };
     });
 }
@@ -240,11 +250,12 @@ export function cleanGiven(list) {
   return (Array.isArray(list) ? list : [])
     .filter((g) => typeof g === "string" && g.trim())
     .slice(0, MAX_GIVEN)
-    .map((g) => g.replace(/\s+/g, " ").trim().slice(0, MAX_GIVEN_LEN)); // brez novih vrstic v pozivu
+    .map((g) => normalizeUnclear(g).replace(/\s+/g, " ").trim().slice(0, MAX_GIVEN_LEN)); // brez novih vrstic v pozivu
 }
 // Iskana količina (»kot, pod katerim graf seka os x«): ni podatek, zato ne v given (j 16. 11. 2026: »to ni podatek«).
 // Ne izklopi lastnega reševalnika ne SymPy (ti gledata le given); AI jo dobi, da ve, kaj iskati.
-export const cleanSought = (v) => (typeof v === "string" ? v.replace(/\s+/g, " ").trim().slice(0, MAX_GIVEN_LEN) : "");
+// Oznaka [?] sodi le v račun in podatke; v opisu iskanega je navaden vprašaj (učenec je tam ne more popraviti).
+export const cleanSought = (v) => (typeof v === "string" ? normalizeUnclear(v).split("[?]").join("?").replace(/\s+/g, " ").trim().slice(0, MAX_GIVEN_LEN) : "");
 
 // Cilj, ki ga je učenec izbral na zaslonu (npr. »Razstavi«): brez njega bi AI izraz morda le poenostavil.
 const GOAL_TEXT = {
@@ -485,6 +496,8 @@ export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, sol
     const rawSought = req.body?.sought ?? "";
     if (typeof rawSought !== "string" || rawSought.length > MAX_GIVEN_LEN) return res.status(400).json({ error: "Podatki naloge niso veljavni." });
     const sought = cleanSought(rawSought);
+    // Neprebran znak [?] (P3-5) mora učenec popraviti; AI ga ne sme uganiti namesto njega.
+    if ([text, ...given].some(hasUnclear)) return res.status(400).json({ error: "V nalogi so še neprebrani znaki (?). Popravi jih in poskusi znova.", unclear: true });
     const blocked = usage?.blockInfo(s.id);
     if (blocked) return res.status(429).json(blocked);
     // Do SOLVE_ATTEMPTS klicev (samodejne ponovitve ob napačni rešitvi), vsak z navodili, nalogo, podatki,
