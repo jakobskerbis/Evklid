@@ -100,7 +100,7 @@ odgovor ima mejo `najvec: "numericno"`.
 Dogovora: rešitve so realne (kompleksni rešitvi pri realni enačbi sta napaka); identiteta, kot je
 `(x^2-4)/(x-2) = x+2`, šteje kot pravilna poenostavitev (izključeno točko preverja skupina »luknja«).
 
-`node scripts/meri-preverjanje.mjs [--json pot] [--nabor pot]` (privzeto nabor v2) izmeri tri motorje: `sympy` (izid workerja z načinom `how`), `skener`
+`node scripts/meri-preverjanje.mjs [--json pot] [--porocilo pot.md] [--prej pot.json] [--nabor pot]` (privzeto nabor v2) izmeri tri motorje: `sympy` (izid workerja z načinom `how`), `skener`
 (`verifyAiFull`, kot ga vidi učenec) in `skener-lokalno` (isto brez SymPy). Razredi: napačno potrjena, previsok
 status, lažni alarm, napačna s šibkim statusom (učenec vidi »delno« ali »numerično«), izjema, ujeta napaka, potrjena,
 šibkejši status, nepreverjena. `test/preverjanje-meritev.test.js` (CI ima SymPy prek `npm ci`, postinstall) pade ob
@@ -165,7 +165,8 @@ zaporedja in kombinatorika. Ponovljene trditve generator izpusti (zato ima kakš
 družin imajo `resnica`; generator se ustavi, če je napačen odgovor enak resnici ali pravilen različen od nje.
 
 Pričakovano oceno vseh 636 novih trditev so pred prvim zagonom preverjevalnikov določili trije neodvisni pregledovalci
-na slepo (premešan seznam brez oznak, brez kode Evklida in brez SymPy, le ročno in s celimi števili). Ujemanje s
+na slepo (ločeni agenti AI, ne človeški strokovnjaki; premešan seznam brez oznak, brez kode Evklida in brez SymPy,
+le ročno in s celimi števili). Ujemanje s
 konstrukcijo: 633 od 636. Razhajanja: `racun2-062` je pregledovalčeva napaka (5/5 + 5/5 = 2, odgovor 10/10 = 1 je
 napačen); `racun2-084` in `racun2-108` sta bili napaki nabora (zapis `-2^n` je −(2ⁿ), mišljeno je (−2)ⁿ), popravljeni
 z oklepajem.
@@ -221,6 +222,30 @@ Ostaja:
   (`0.025*m^2`, `0.5*kg`) so `numericno`.
 - Generator: `binomial(10,3)` brez presledka worker prebere kot `binomial(10.3)` (decimalna vejica), zato nabor piše
   `binomial(10, 3)`.
+
+## Dnevna meritev (PV-05)
+
+`.github/workflows/meritev-preverjanja.yml` vsak dan ob 3.41 UTC (in ročno) na `main` požene meritev z SymPy in
+`--strogo`, brez modela AI in brez stroška. Poročilo po predlogi `docs/meritve/README.md` (povzetek zagona in artefakt
+»meritev-preverjanja«, 90 dni) ima za vsak motor merila kot k/n z imenovalcem in Wilsonovim 95-% intervalom:
+
+| Merilo | Imenovalec | Cilj |
+| --- | --- | --- |
+| napačno potrjene (»izračunano« ali »dokazano«) | napačne trditve | 0 |
+| status nad upravičenim | trditve z mejo `najvec` | 0 |
+| napačne s šibkim statusom (»numerično«, »delno«) | napačne trditve | čim manj |
+| zaznane napake | napačne trditve | čim več |
+| lažni alarmi | pravilne trditve | 0 |
+| nepreverjene (in »v teku«) | trditve, ki jih motor oceni | čim manj |
+| izjeme preverjevalnika | trditve, ki jih motor oceni | 0 |
+| pokritost nabora | vse trditve nabora | čim več |
+
+Pokritost tu pomeni le delež trditev nabora, ki jih motor zna oceniti; pokritost trditev po delih aplikacije meri
+PV-04. Stolpec »Prej« je zadnja meritev v repozitoriju (`docs/meritve/preverjanje-<datum>.json`, isti nabor, preveri
+sha256); slabše merilo je opozorilo v povzetku zagona. Rdeč zagon in zadeva »Dnevna meritev preverjanja ne gre skozi«
+(odpre, dopolni, ob zelenem zapre): napačno potrjena trditev, status nad upravičenim, izjema ali motor, ki ni tekel
+(npr. SymPy ni nameščen). Ob spremembi nabora ali preverjevalnikov nova meritev v `docs/meritve` (test
+`test/preverjanje-porocilo.test.js` pade, če se nabor spremeni brez nje). Izhodišče: `docs/meritve/preverjanje-2026-11-26.md`.
 
 ## Odpoved preverjevalnikov (K-04)
 
