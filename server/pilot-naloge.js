@@ -19,6 +19,7 @@ import { cleanText } from "./settings.js";
 import { schoolAccess } from "./schools.js";
 import { ensureKnowledgeTables } from "./zbirke.js";
 import { audit } from "./dnevnik-dostopov.js";
+import { ageOn, ADULT_AGE, SELF_CONSENT_PREFIX, minAgeFromYear } from "./accounts/age.js";
 import { quizState, wtpState, impactReport, mountPilotImpact, block, shownN } from "./pilot-ucinek.js";
 
 export const SCAN_CONDITIONS = ["light", "dark", "tilted", "handwritten", "printed", "board", "screen", "crumpled", "many", "notation"];
@@ -132,19 +133,50 @@ export function migratePilotTasks(db) {
 const hasParents = (db) => !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'parents'").get();
 const hasCol = (db, t, c) => db.prepare(`PRAGMA table_info(${t})`).all().some((x) => x.name === c);
 
-// Ali je profil v pilotu: "all" (EVKLID_PILOT_VSI=1), "account" (skrbnik označil račun), "school" (pilotna šola) ali null.
+// Pilot samo s polnoletnimi (j 2026-11-25, kartica N-11): imetnik računa z znanim (veljavnim) datumom rojstva, star
+// vsaj 18 let. Brez datuma rojstva (stari računi) ne vemo, zato ne.
+export const adultParent = (p, now = new Date()) => !!p?.birth_date && ageOn(p.birth_date, now) >= ADULT_AGE;
+
+// Ali je profil zanesljivo polnoleten: lasten profil imetnika (soglasje »Zame«) po imetnikovem datumu rojstva, a samo,
+// če se letnica profila ujema z imetnikovo (sicer to ni imetnik: npr. profil gosta, ki se je ob prijavi preselil v
+// starševski račun, ali otrokov profil, pomotoma dodan kot »Zame«, pregled #1121). Vsak drug profil samo po letnici,
+// previdno (rojen 31. 12.): v letu 18. rojstnega dne še ne. Brez letnice ne.
+export function pilotAdult(db, studentId, now = new Date()) {
+  try {
+    if (!hasCol(db, "students", "birth_year")) return false;
+    const s = db.prepare(`SELECT birth_year, ${hasCol(db, "students", "parent_id") ? "parent_id" : "NULL AS parent_id"} FROM students WHERE id = ?`).get(studentId);
+    if (!s) return false;
+    if (s.parent_id != null && hasParents(db) && hasCol(db, "parents", "birth_date")) {
+      const self = db
+        .prepare("SELECT 1 FROM consents WHERE student_id = ? AND parent_id = ? AND substr(text, 1, ?) = ? LIMIT 1")
+        .get(studentId, s.parent_id, SELF_CONSENT_PREFIX.length, SELF_CONSENT_PREFIX);
+      const p = self ? db.prepare("SELECT birth_date FROM parents WHERE id = ?").get(s.parent_id) : null;
+      if (p?.birth_date && Number(String(p.birth_date).slice(0, 4)) === s.birth_year) return adultParent(p, now);
+    }
+    return (minAgeFromYear(s.birth_year, now) ?? -1) >= ADULT_AGE;
+  } catch {
+    return false;
+  }
+}
+
+// Ali je profil v pilotu: "all" (EVKLID_PILOT_VSI=1, ne v produkciji), "account" (skrbnik označil račun), "school" (pilotna šola) ali null.
+// Mlajši od 18 let (ali brez znane starosti) ni v pilotu, tudi če je račun označen (naloge, preizkus, fotografije, mnenja).
 export function pilotMember(db, studentId) {
-  if (process.env.EVKLID_PILOT_VSI === "1") return "all";
+  // EVKLID_PILOT_VSI=1: vsi profili, samo za preizkus na lastnem računalniku (v produkciji se ne upošteva, pregled #1121).
+  if (process.env.EVKLID_PILOT_VSI === "1" && process.env.NODE_ENV !== "production") return "all";
+  let kind = null;
   try {
     if (hasParents(db) && hasCol(db, "parents", "pilot_at")) {
       const r = db.prepare("SELECT p.pilot_at FROM students s JOIN parents p ON p.id = s.parent_id WHERE s.id = ?").get(studentId);
-      if (r?.pilot_at) return "account";
+      if (r?.pilot_at) kind = "account";
     }
   } catch {}
-  try {
-    if (schoolAccess(db, studentId)?.plan === "pilot") return "school";
-  } catch {}
-  return null;
+  if (!kind) {
+    try {
+      if (schoolAccess(db, studentId)?.plan === "pilot") kind = "school";
+    } catch {}
+  }
+  return kind && pilotAdult(db, studentId) ? kind : null;
 }
 
 // Fotografijo smemo ponuditi samo profilu z znano letnico rojstva, ki ni mlajši od 15 (previdno kot pri soglasjih:
@@ -585,9 +617,14 @@ export function mountPilotTasks(app, store, { loadStudent, progress = null, acco
     if (!isAdmin(req)) return res.status(403).json({ error: "Samo za skrbnika." });
     const email = typeof req.body?.email === "string" ? req.body.email.trim() : "";
     if (!email || email.length > 200) return res.status(400).json({ error: "Vpiši e-naslov." });
-    const p = db.prepare("SELECT id FROM parents WHERE email = ?").get(email);
+    const p = db.prepare(`SELECT id, ${hasCol(db, "parents", "birth_date") ? "birth_date" : "NULL AS birth_date"} FROM parents WHERE email = ?`).get(email);
     if (!p) return res.status(404).json({ error: "Račun s tem e-naslovom ne obstaja." });
     const on = req.body?.on !== false;
+    // Pilot samo s polnoletnimi (N-11): račun brez datuma rojstva ali mlajšega imetnika ne dodamo (odstranitev gre vedno).
+    if (on && !adultParent(p)) {
+      audit(db, { req, parentId: req.parent?.id ?? null, actor: "admin", action: "pilot_add_minor", ok: false, target: `parent:${p.id}` });
+      return res.status(400).json({ error: p.birth_date ? "Imetnik računa je mlajši od 18 let. Pilot je samo za polnoletne." : "Račun nima datuma rojstva. Pilot je samo za polnoletne: imetnik naj datum vpiše v zavihku Račun.", minor: true });
+    }
     if (on) db.prepare("UPDATE parents SET pilot_at = COALESCE(pilot_at, datetime('now')) WHERE id = ?").run(p.id);
     else endAccountPilot(db, p.id); // tudi član iz kode vabila izgubi mejo pilota (pilot-meja.js isPilotParent, #819)
     audit(db, { req, parentId: req.parent?.id ?? null, actor: "admin", action: on ? "pilot_add" : "pilot_remove", target: `parent:${p.id}` });
