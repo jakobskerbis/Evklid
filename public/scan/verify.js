@@ -284,7 +284,22 @@ function compileValue(e) {
  * ne manjka (lahko le numerično); partial: true = popolnosti (ni drugih rešitev) nismo preverili (sistem,
  * periodične rešitve). status: public/scan/status.js.
  */
+// Ime funkcije, ki je razčlenjevalnik ne pozna (»gamma(5)« bi bil g·a·m·m·a·5): lokalno ni mogoče izračunati,
+// zato ni sodbe (»Nepreverjeno«), ne »Napačno« (meritev brez SymPy 26. 11.: factorial, log z osnovo).
+function neznanaFunkcija(t) {
+  for (const m of prep(String(t ?? "")).matchAll(/(?<![A-Za-z_])([A-Za-z]{2,})\s*\(/g)) {
+    if (m[1] === "pi") continue; // pi(x+1) je π·(x+1)
+    try {
+      if (parse(`${m[1]}(2)`).k !== "call") return true;
+    } catch {
+      return true;
+    }
+  }
+  return false;
+}
+
 export function verifyAi(problemText, ai) {
+  if ([problemText, ai?.value, ...(Array.isArray(ai?.solutions) ? ai.solutions : [])].some(neznanaFunkcija)) return { verified: false, reason: "parse", status: "unverified" };
   // prevelika števila: prebrana vrednost ni vrednost iz naloge, odloči SymPy (status »unverified«)
   if (bigLiteral(problemText) || [...(ai?.solutions || []), ai?.value].some((x) => bigLiteral(x))) return { verified: false, reason: "big", status: "unverified" };
   const r = check(problemText, ai);

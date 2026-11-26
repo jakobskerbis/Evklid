@@ -2992,7 +2992,7 @@
   "scan.st.numeric": "Numerisch überprüft",
   "scan.st.numericTip": "Evklid hat das Ergebnis mit Zahlen (Dezimalnäherungen) überprüft, nicht mit exakter Rechnung. Das beweist nicht, dass das Ergebnis exakt ist und keine Lösung fehlt.",
   "scan.st.unverified": "Nicht überprüft",
-  "scan.st.unverifiedTip": "Evklid konnte das nicht überprüfen. Mach selbst die Probe oder frag den Tutor.",
+  "scan.st.unverifiedTip": "Evklid kann dieses Ergebnis nicht selbst überprüfen und sagt daher nicht, ob es richtig oder falsch ist. Mach selbst die Probe oder frag den Tutor.",
   "scan.st.wrong": "Falsch",
   "scan.st.wrongTip": "Die Prüfung hat gezeigt, dass die Antwort von Evklid AI nicht stimmt oder dass eine Lösung fehlt, deshalb zeigen wir keine Lösung an. Frag den Tutor.",
   "scan.st.wrongTipRetried": "Evklid AI hat die Aufgabe selbst mehrmals gelöst, aber die Prüfung hat gezeigt, dass keine Antwort stimmt, deshalb zeigen wir keine Lösung an. Frag den Tutor.",

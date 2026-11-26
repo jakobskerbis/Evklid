@@ -51,10 +51,46 @@ export function prep(text) {
     // cela beseda: »factorial(14)« ni ukaz »factor« + »ial(14)« (N-01, racun2-118)
     .replace(/^\s*(reši|izračunaj|poenostavi|razstavi|odvajaj|solve|calculate|simplify|factori[sz]e|factor)(?![a-zA-Zčšžćđ])\s*[:.]?\s*/i, "")
     .trim();
+  s = klici(s);
   // a/b z dvema celima številoma je ulomek: 3/4·2/5 = (3/4)·(2/5), ne ((3/4)·2)/5.
   // Ne pri znanstvenem zapisu v imenovalcu (»2/1e8« = 2/10⁸, ne (2/1)·10⁸; AUDIT-042).
   s = s.replace(/(?<![\^/\d.,])(\d+)\s*\/\s*(\d+)(?![\d.,]*\s*[\^!]|[\d.,]*[eE][+\-−]?\d)/g, "($1/$2)");
   return s;
+}
+
+// Funkcije, ki jih kalkulator (public/graph/math.js) pozna pod drugim imenom: log(a, b) → logb(a, b) (logaritem z
+// osnovo b), factorial(n) → (n)!, binomial(n, k) → nCr(n, k), C(n, k) → nCr, V(n, k) → nPr (le s celima številoma:
+// »C(1, 2)« je lahko točka). Brez tega razčlenjevalnik vrže napako ali »factorial« prebere kot f·a·c·t·o·r·i·a·l, in
+// pravilen odgovor bi bil »Napačno« (meritev brez SymPy 26. 11.: 40/468, družini log in racun2).
+const KLIC = /(?<![A-Za-z_])(log|factorial|binomial|C|V)\s*\(/g;
+function klici(s) {
+  let out = "";
+  let i = 0;
+  for (const m of s.matchAll(KLIC)) {
+    if (m.index < i) continue;
+    let d = 1;
+    let j = m.index + m[0].length;
+    const args = [];
+    let start = j;
+    for (; j < s.length && d; j++) {
+      if (s[j] === "(") d++;
+      else if (s[j] === ")") d--;
+      if ((d === 1 && s[j] === ",") || d === 0) (args.push(s.slice(start, j)), (start = j + 1));
+    }
+    if (d) break; // brez zaklepaja: pustimo
+    const a = args.map((x) => klici(x).trim());
+    const cela = a.every((x) => /^\d+$/.test(x));
+    const ime = m[1];
+    let nov = null;
+    if (ime === "log" && a.length === 2) nov = `logb(${a[0]}, ${a[1]})`;
+    else if (ime === "factorial" && a.length === 1) nov = `(${a[0]})!`;
+    else if (ime === "binomial" && a.length === 2) nov = `nCr(${a[0]}, ${a[1]})`;
+    else if ((ime === "C" || ime === "V") && a.length === 2 && cela) nov = `${ime === "C" ? "nCr" : "nPr"}(${a[0]}, ${a[1]})`;
+    if (nov === null) continue;
+    out += s.slice(i, m.index) + nov;
+    i = j;
+  }
+  return out + s.slice(i);
 }
 
 // Sistem: dve (ali več) enačb, ločenih s podpičjem, novo vrstico ali », « (decimalna vejica nima presledka).
