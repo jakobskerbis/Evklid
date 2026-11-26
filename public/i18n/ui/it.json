@@ -4242,7 +4242,7 @@
   "gc.reg.quart": "Quartica",
   "gc.reg.logistic": "Logistica",
   "gc.reg.sin": "Sinusoidale",
-  "gc.reg.expe": "Esponenziale con e (a·e^(bx))",
+  "gc.reg.expe": "Esponenziale con e (a·eᵇˣ)",
   "gc.reg.inv": "Inversa (a + b/x)",
   "chat.full": "Mostra tutto il procedimento",
   "chat.fullMsg": "Mostrami tutto il procedimento di questo esercizio.",

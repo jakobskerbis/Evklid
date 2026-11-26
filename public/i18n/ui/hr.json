@@ -4272,7 +4272,7 @@
   "gc.reg.quart": "Kvartična",
   "gc.reg.logistic": "Logistička",
   "gc.reg.sin": "Sinusoidna",
-  "gc.reg.expe": "Eksponencijalna s e (a·e^(bx))",
+  "gc.reg.expe": "Eksponencijalna s e (a·eᵇˣ)",
   "gc.reg.inv": "Recipročna (a + b/x)",
   "chat.full": "Prikaži cijeli postupak",
   "chat.fullMsg": "Pokaži mi cijeli postupak ovog zadatka.",
