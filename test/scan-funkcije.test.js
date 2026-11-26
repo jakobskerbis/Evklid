@@ -45,7 +45,10 @@ test("verifyAi: pravilno ni »Napačno«, napačno ni potrjeno", () => {
   assert.equal(st("arcsin(0,5)", { kind: "arith", value: "30°" }), "unverified");
   assert.equal(st("sqrt(2,25)", { kind: "arith", value: "1,5" }), "unverified");
   assert.equal(st("log(0,5)", { kind: "arith", value: "-0,30103" }), "unverified");
+  for (const [t, v] of [["(2,5+1)*2", "7"], ["(0,5)^2", "0,25"], ["√(2,25)", "1,5"], ["e^(0,5)", "1,6487"], ["sin²(0,5)", "0,2298"], ["sin^2(0,5)", "0,2298"], ["arcsin(0, 5)", "30°"]])
+    assert.equal(st(t, { kind: "arith", value: v }), "unverified", t);
   assert.equal(st("C(5,2)", { kind: "arith", value: "11" }), "wrong");
+  assert.equal(st("(2+3)*4", { kind: "arith", value: "21" }), "wrong");
   assert.equal(st("2,5+1", { kind: "arith", value: "3,5" }), "verified");
   // veljaven zapis ni »neznana funkcija«: d/dx(…), produkt črk pred oklepajem
   assert.equal(st("d/dx(x^2)", { kind: "derivative", value: "3x" }), "wrong");

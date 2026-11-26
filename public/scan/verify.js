@@ -290,18 +290,23 @@ function compileValue(e) {
 // - log z več kot dvema argumentoma, ostanek C(…)/V(…), ki ni kombinatorika s celimi števili;
 // - kombinatorika s spremenljivko (n!, nCr(n, 2)): kalkulator jo izračuna tudi za n = −4 ali n = 2,5 (gama).
 const NEZNANE = /(?<![A-Za-z_])(?:factorial|gamma|Gamma|digamma|perm|comb|choose|fact|erf|beta|zeta|Sum|summation|product|integrate|diff|limit|Matrix|det|rank|Mod|arg|re|im|conjugate|Abs|Max|Min|Rational)\s*\(/;
-function neizracunljivo(t, { identiteta = false } = {}) {
+const ENOMESTNE = /^(?:a?(?:sin|cos|tan|tg|ctg|cot)h?|arc(?:sin|cos|tan|tg|ctg|cot)|ln|lg|sqrt|exp|abs)$/;
+function neizracunljivo(t, { identiteta = false, resitev = false } = {}) {
   if (t === undefined || t === null || t === "") return false;
   const s = prep(String(t));
   if (NEZNANE.test(s) || /(?<![A-Za-z_])[CV]\s*\(/.test(s)) return true;
-  // Decimalna vejica v klicu funkcije (»arcsin(0,5)«, »log(0,5)«): ni jasno, ali je to 0,5 ali dva argumenta.
-  // Lokalno bi »arcsin(0,5)« = 30° razglasili za napačno (AUDIT-096); kombinatorika ima vedno cela števila.
+  // Decimalna vejica v oklepaju (»arcsin(0,5)«, »(2,5+1)·2«, »sin²(0,5)«, »log(0,5)«): ni jasno, ali je to 0,5 ali
+  // dva argumenta (točka). Lokalno bi »arcsin(0,5)« = 30° razglasili za napačno (AUDIT-096). Kombinatorika ima vedno
+  // cela števila; funkcija z enim argumentom pa dveh ne sprejme, tudi s presledkom (»arcsin(0, 5)«).
   // Gleda prvotni zapis: prep iz »log(0,5)« naredi »logb(0, 5)«.
   const z = String(t);
-  for (const m of z.matchAll(/(?<![A-Za-z_])([A-Za-z_]\w*)\s*\(/g)) {
-    if (/^(?:nCr|nPr|C|V|binomial)$/.test(m[1])) continue;
-    const k = argumentiKlica(z, m.index + m[0].length);
-    if (k && k.args.length > 1 && /\d,\d/.test(z.slice(m.index, k.end))) return true;
+  for (let i = z.indexOf("("); i >= 0; i = z.indexOf("(", i + 1)) {
+    const k = argumentiKlica(z, i + 1);
+    if (!k || k.args.length < 2) continue;
+    const ime = /([A-Za-z_]\w*)\s*(?:\^\s*\d+|[²³])?\s*$/.exec(z.slice(0, i))?.[1] || "";
+    // rešitev neenačbe je interval »(0,1)« (brez imena funkcije)
+    if (/^(?:nCr|nPr|C|V|binomial)$/.test(ime) || (resitev && !ime)) continue;
+    if (/\d,\d/.test(z.slice(i, k.end)) || ENOMESTNE.test(ime)) return true;
   }
   for (const m of s.matchAll(/(?<![A-Za-z_])(log|nCr|nPr)\s*\(/g)) {
     const k = argumentiKlica(s, m.index + m[0].length);
@@ -328,7 +333,9 @@ export function verifyAi(problemText0, ai0) {
   const problemText = kombinatorika(problemText0);
   const ai = ai0 && { ...ai0, value: kombinatorika(ai0.value), ...(Array.isArray(ai0.solutions) ? { solutions: ai0.solutions.map(kombinatorika) } : {}) };
   const identiteta = ai?.kind === "expression" || ai?.kind === "arith";
-  if ([problemText, ai?.value, ...(Array.isArray(ai?.solutions) ? ai.solutions : [])].some((t) => neizracunljivo(t, { identiteta }))) return { verified: false, reason: "parse", status: "unverified" };
+  // rešitev (in vrednost pri neenačbi) je lahko interval »(0,1)«
+  const resitve = [...(ai?.kind === "inequality" ? [ai?.value] : []), ...(Array.isArray(ai?.solutions) ? ai.solutions : [])];
+  if (neizracunljivo(problemText, { identiteta }) || (ai?.kind !== "inequality" && neizracunljivo(ai?.value, { identiteta })) || resitve.some((t) => neizracunljivo(t, { identiteta, resitev: true }))) return { verified: false, reason: "parse", status: "unverified" };
   // prevelika števila: prebrana vrednost ni vrednost iz naloge, odloči SymPy (status »unverified«)
   if (bigLiteral(problemText) || [...(ai?.solutions || []), ai?.value].some((x) => bigLiteral(x))) return { verified: false, reason: "big", status: "unverified" };
   const r = check(problemText, ai);
