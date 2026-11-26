@@ -1308,8 +1308,20 @@ test("pregled prevzema (6): delni korak vodenega odgovora (vprašanje ali namig 
     R`Potenčno pravilo da $y' = 5(3x+1)^4$. Ne pozabi na verižno pravilo!`,
     R`Pravilo za potenco: $y' = 5(3x+1)^4$. Kaj pa še manjka?`,
   ]) assert.equal(codeFindings(a, presolve(q), q).issue, null, a);
-  // končni napačen zapis brez nadaljevanja ostane ulovljen
-  assert.ok(codeFindings(R`Uporabimo potenčno pravilo:` + "\n" + R`$y' = 5(3x+1)^4$`, presolve(q), q).issue);
+  for (const a of [
+    "Zunanji odvod:\n" + R`$$y' = 5(3x+1)^4$$`,
+    "Korak 1:\n" + R`$y' = 5(3x+1)^4$`,
+    "Najprej uporabimo potenčno pravilo.\n" + R`$y' = 5(3x+1)^4$`,
+    "Potenčno pravilo:\n" + R`$y' = 5(3x+1)^4$` + "\n\nZdaj še odvod oklepaja.",
+    "Potenčno pravilo:\n" + R`$y' = 5(3x+1)^4$` + "\n\nTo ni vse.",
+  ]) assert.equal(codeFindings(a, presolve(q), q).issue, null, a);
+  // končni napačen zapis (cel odgovor, »Torej«, »Odvod je«, krepko) ostane ulovljen
+  for (const a of [
+    R`$y' = 5(3x+1)^4$`,
+    R`Torej $y' = 5(3x+1)^4$.`,
+    "Odvod je:\n" + R`$y' = 5(3x+1)^4$`,
+    R`Po pravilu za potenco: **$y' = 5(3x+1)^4$**`,
+  ]) assert.ok(codeFindings(a, presolve(q), q).issue, a);
 });
 
 test("pregled prevzema (5): »če«, poskus in pogosta zmota niso trditev; »Če najprej množimo: …« je", () => {
@@ -1375,7 +1387,7 @@ test("pregled prevzema 2 (AUDIT-063): opomnik pravila, druga funkcija, pogosta n
     ["Odvajaj $f(x) = x^3 + 1$.", R`$f'(x) = 3x^2 \Rightarrow f'(1) = 3$`],
   ];
   for (const [q, a] of none) assert.equal(codeFindings(a, presolve(q), q).issue, null, a);
-  for (const [q, a] of [["Odvajaj $f(x) = x^2 e^x$.", R`Produktno pravilo: $f'(x) = 2x e^x$.`], ["Odvajaj $x^3$.", R`$y = x^3$, zato $y' = 2x$.`]]) {
+  for (const [q, a] of [["Odvajaj $f(x) = x^2 e^x$.", R`Po produktnem pravilu je torej $f'(x) = 2x e^x$.`], ["Odvajaj $x^3$.", R`$y = x^3$, zato $y' = 2x$.`]]) {
     assert.ok(codeFindings(a, presolve(q), q).issue, a);
   }
 });

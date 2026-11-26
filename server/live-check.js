@@ -383,6 +383,17 @@ function derivativeIssue(answer, p) {
   // pravilo!«) pomeni, da je zapis delni korak vodenega odgovora: brez sodbe (pregled prevzema 6).
   const tail = [lines[found.at(-1).line].slice(found.at(-1).end), ...lines.slice(found.at(-1).line + 1)].join("\n");
   if (/\?/.test(tail) || DERIV_SKIP_LINE.test(tail) || SKIP_LINE.test(tail)) return null;
+  // Sodi se le zapis, ki je očitno končni odgovor (pregled prevzema 7): cel odgovor je ta zapis, zapis je krepak, ali
+  // njegova vrstica oziroma prejšnja neprazna vrstica pove, da je to rezultat (»Torej«, »Odvod je«, »Rezultat:«).
+  // Oznaka v vrstici pred zapisom (»Zunanji odvod:⏎$$y' = …$$«, »Korak 1:«) je delni korak: brez sodbe.
+  const fl = found.at(-1).line;
+  let prev = "";
+  for (let j = fl - 1; j >= 0 && j >= fl - 20; j--) if (lines[j].trim()) { prev = lines[j]; break; }
+  if (prev && (SKIP_LINE.test(prev) || DERIV_SKIP_LINE.test(prev))) return null;
+  const rest = String(answer).replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, "").replace(/[\s*_.!:,;]/g, "");
+  const bold = /\*\*\s*\$[^$\n]+\$\s*\*\*/.test(lines[fl]);
+  const FINAL = /(?<!\p{L})(?:torej|zato|rezultat\p{L}*|odgovor\p{L}*|končn\p{L}*|skupaj|odvod (?:je|funkcije|naloge)|thus|therefore|hence|result|answer|final|so)(?!\p{L})/iu;
+  if (rest && !bold && !FINAL.test(lines[fl]) && !FINAL.test(prev)) return null;
   const judge = (rhs) => sameFn(want, derivFn(rhs));
   if (found.some((f) => f.rhs.map(judge).includes("match"))) return { checked: 1, issue: null };
   // Pravilen odvod kjerkoli v odgovoru (tudi brez »f'(x) =«, v vrstici, ki se preskoči): »f'(x) = 3x^2« je bil delni
