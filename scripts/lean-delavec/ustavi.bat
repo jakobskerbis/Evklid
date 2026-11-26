@@ -3,8 +3,11 @@
 rem Ustavi delavca Lean in ga izklopi ob vklopu (NAVODILA.md). Znova: dvoklik na zazeni.bat.
 "%SystemRoot%\System32\net.exe" session >nul 2>&1
 if errorlevel 1 goto povisaj
-"%SystemRoot%\System32\schtasks.exe" /End /TN "Evklid Lean delavec"
+rem najprej izklopi (da se ob napaki ne zazene znova), nato ustavi
 "%SystemRoot%\System32\schtasks.exe" /Change /TN "Evklid Lean delavec" /DISABLE
+"%SystemRoot%\System32\schtasks.exe" /End /TN "Evklid Lean delavec"
+rem /End konca samo cmd.exe: ubij se node.exe, Lean in PowerShell uporabnika evklid-lean
+"%SystemRoot%\System32\taskkill.exe" /F /T /FI "USERNAME eq evklid-lean" >nul 2>&1
 echo  Delavec Lean je ustavljen. Znova ga zazenes z dvoklikom na zazeni.bat.
 pause
 exit /b

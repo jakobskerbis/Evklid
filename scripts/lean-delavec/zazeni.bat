@@ -9,7 +9,8 @@ rem "zazeni.bat delavec" zazene opravilo (kot evklid-lean): samo zanka delavca.
 rem Brez oklepajev okoli ukazov s potmi (pot z ")" bi pokvarila blok): samo goto.
 set "S32=%SystemRoot%\System32"
 set "PS=%S32%\WindowsPowerShell\v1.0\powershell.exe"
-set "CILJ=C:\Evklid\lean-delavec"
+set "KOREN=C:\Evklid"
+set "CILJ=%KOREN%\lean-delavec"
 set "UPORABNIK=evklid-lean"
 set "OPRAVILO=Evklid Lean delavec"
 set "TU=%~dp0"
@@ -33,13 +34,29 @@ if /i "%~1"=="delavec" goto delavec
 
 rem ================= namestitev (j, dvoklik) =================
 title Evklid - namestitev delavca Lean
+rem ---- mapa mora biti razpakirana (dvoklik v zip zazene samo to datoteko iz zacasne mape) ----
+if not exist "%TU%delavec.mjs" goto ni_razpakirano
+if not exist "%TU%projekt\lean-toolchain" goto ni_razpakirano
+if not exist "%TU%omeji.ps1" goto ni_razpakirano
 "%S32%\net.exe" session >nul 2>&1
 if errorlevel 1 goto povisaj
+
+rem ---- C:\Evklid: lastnik Administratorji, brez podedovanih pravic (C:\ da "Authenticated Users" spreminjanje),
+rem      PREDEN se karkoli skopira ali prenese ----
+if not exist "%KOREN%" mkdir "%KOREN%"
+"%S32%\icacls.exe" "%KOREN%" /setowner *S-1-5-32-544 /Q >nul
+if errorlevel 1 goto napaka
+"%S32%\icacls.exe" "%KOREN%" /inheritance:r /grant:r *S-1-5-18:(OI)(CI)F *S-1-5-32-544:(OI)(CI)F "%USERDOMAIN%\%USERNAME%":(OI)(CI)F *S-1-5-32-545:RX /Q >nul
+if errorlevel 1 goto napaka
+if not exist "%CILJ%" goto ni_cilja
+"%S32%\icacls.exe" "%CILJ%" /setowner *S-1-5-32-544 /Q >nul
+if errorlevel 1 goto napaka
+:ni_cilja
 
 rem ---- vedno v C:\Evklid\lean-delavec (ne namizje, ne OneDrive) ----
 if /i "%TU%"=="%CILJ%\" goto na_mestu
 echo  Kopiram delavca v %CILJ% ...
-"%S32%\schtasks.exe" /End /TN "%OPRAVILO%" >nul 2>&1
+call :ustavi
 "%S32%\robocopy.exe" "%TU%." "%CILJ%" /E /XD orodja delo .lake /XF nastavitve.json stanje.json dnevnik.txt* /NFL /NDL /NJH /NJS /NP >nul
 if errorlevel 8 goto napaka
 call "%CILJ%\zazeni.bat"
@@ -57,7 +74,7 @@ echo.
 echo  Evklid: namestitev delavca Lean (dokazuje matematicne trditve)
 echo  Okno pusti odprto. Ne klikaj v okno (to ustavi izpis; ce se je ustavilo, pritisni Esc).
 echo.
-"%S32%\schtasks.exe" /End /TN "%OPRAVILO%" >nul 2>&1
+call :ustavi
 if not exist "%ORODJA%" mkdir "%ORODJA%"
 
 rem ---- Node (prenosna kopija v orodja\node) ----
@@ -97,6 +114,13 @@ if not "%RC%"=="0" goto napaka
 move /y "%ORODJA%\mathlib-zdaj.txt" "%ORODJA%\mathlib-rev.txt" >nul
 :imam_mathlib
 
+rem ---- lean.json: pot do lean.exe in LEAN_PATH (delavec nato tece brez lake in git) ----
+pushd "%CILJ%\projekt"
+"%LAKE%" env "%NODE%" "%CILJ%\delavec.mjs" --shrani-lean "%ORODJA%\lean.json"
+set "RC=%ERRORLEVEL%"
+popd
+if not "%RC%"=="0" goto napaka
+
 rem ---- nastavitve.json z zetonom (prvic) ----
 if not exist "%CILJ%\delo" mkdir "%CILJ%\delo"
 "%NODE%" "%CILJ%\delavec.mjs" --pripravi
@@ -104,7 +128,7 @@ if not exist "%CILJ%\nastavitve.json" goto napaka
 
 rem ---- uporabnik evklid-lean, pravice map, opravilo ob vklopu ----
 echo  Pripravljam uporabnika %UPORABNIK% in opravilo "%OPRAVILO%" ...
-"%PS%" -NoProfile -ExecutionPolicy Bypass -File "%CILJ%\uporabnik.ps1" -Mapa "%CILJ%" -Ime "%UPORABNIK%" -Opravilo "%OPRAVILO%"
+"%PS%" -NoProfile -ExecutionPolicy Bypass -File "%CILJ%\uporabnik.ps1" -Mapa "%CILJ%" -Ime "%UPORABNIK%" -Opravilo "%OPRAVILO%" -LeanJson "%ORODJA%\lean.json"
 if errorlevel 1 goto napaka
 rem pokrov zaprt na polnilcu: ne naredi nic (prenosnik ne zaspi)
 "%S32%\powercfg.exe" /setacvalueindex SCHEME_CURRENT SUB_BUTTONS LIDACTION 0 >nul 2>&1
@@ -134,6 +158,15 @@ rem ce se kdaj konca, ga po 30 s znova zazenemo (ping: timeout.exe v opravilu br
 "%S32%\PING.EXE" -n 31 127.0.0.1 >nul
 goto zanka
 
+rem ---- ustavi opravilo in VSE procese uporabnika evklid-lean (schtasks /End konca samo cmd.exe; node.exe, Lean
+rem      in PowerShell bi tekli naprej, po /Run pa bi tekla dva delavca) ----
+:ustavi
+rem izklop najprej: opravilo se ob napaki znova zazene (vsako minuto); uporabnik.ps1 ga na koncu spet vklopi
+"%S32%\schtasks.exe" /Change /TN "%OPRAVILO%" /DISABLE >nul 2>&1
+"%S32%\schtasks.exe" /End /TN "%OPRAVILO%" >nul 2>&1
+"%S32%\taskkill.exe" /F /T /FI "USERNAME eq %UPORABNIK%" >nul 2>&1
+exit /b 0
+
 rem ---- prenos + SHA-256 + razpakiranje: %1 naslov, %2 datoteka, %3 sha256, %4 mapa ----
 :prenesi
 "%S32%\curl.exe" -L --fail --retry 5 -o "%~2" "%~1"
@@ -150,6 +183,18 @@ exit /b 0
 :pokvarjeno
 del "%~2"
 echo  NAPAKA: prenesena datoteka je pokvarjena (SHA-256), izbrisana.
+exit /b 1
+
+:ni_razpakirano
+echo.
+echo  ============================================
+echo   MAPA NI RAZPAKIRANA.
+echo   Zapri to okno. Desni klik na datoteko .zip, izberi
+echo   "Izvleci vse" in v razpakirani mapi lean-delavec
+echo   znova dvakrat klikni zazeni.bat.
+echo  ============================================
+echo.
+pause
 exit /b 1
 
 :napaka

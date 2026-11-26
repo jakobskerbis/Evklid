@@ -14,19 +14,24 @@ Potrebuješ: Windows 10 ali 11, okoli 10 GB prostora na disku C:, internet. Prvi
 
 ## Namestitev (enkrat)
 
-1. Mapo `lean-delavec` dobiš od Claude ali z GitHuba (`scripts/lean-delavec` v repozitoriju Evklid). Kje je, ni
-   pomembno: program se sam skopira v `C:\Evklid\lean-delavec` (ne na namizje in ne v OneDrive).
-2. Odpri mapo in **dvakrat klikni `zazeni.bat`**.
+1. Mapo `lean-delavec` dobiš od Claude ali z GitHuba (`scripts/lean-delavec` v repozitoriju Evklid), običajno kot
+   datoteko `.zip`. **Najprej jo razpakiraj: desni klik na `.zip` → Izvleči vse → Izvleči.** Kje je, ni pomembno:
+   program se sam skopira v `C:\Evklid\lean-delavec` (ne na namizje in ne v OneDrive).
+2. Odpri razpakirano mapo `lean-delavec` in **dvakrat klikni `zazeni.bat`**.
+   - Če okno izpiše **MAPA NI RAZPAKIRANA**, si kliknil v `.zip`: zapri okno in naredi 1. korak.
    - Če Windows pokaže modro okno »Windows je zaščitil vaš računalnik«, klikni **Več informacij** → **Vseeno zaženi**.
    - Windows vpraša »Ali želite tej aplikaciji dovoliti, da spremeni napravo?« → **Da**.
 3. Počakaj. Program sam prenese Node, Git, Lean in Mathlib (vsak prenos preveri s kontrolno vsoto SHA-256).
    Mathlib je velik: to lahko traja od pol ure do nekaj ur. Okno pusti odprto.
    - **Ne klikaj v okno.** Klik ustavi izpis (in prenos počaka). Če se je izpis ustavil, pritisni **Esc**.
-4. Okno izpiše **NOV ŽETON** (dolga vrsta črk in števk). To je geslo med prenosnikom in evklid.app. Shranjen je tudi
-   v `C:\Evklid\lean-delavec\nastavitve.json`. Žetona ne pošiljaj nikomur in ga ne prilepi v klepet.
+4. Okno izpiše **NOV ŽETON** (dolga vrsta črk in števk). To je geslo med prenosnikom in evklid.app. Žetona ne
+   pošiljaj nikomur in ga ne prilepi v klepet.
 5. Žeton vpiši na Render:
    - Odpri <https://dashboard.render.com> → storitev **evklid** → **Environment** → **Add Environment Variable**.
-   - Key: `EVKLID_LEAN_TOKEN`, Value: žeton iz okna (označi ga z miško, desni klik kopira) → **Save Changes**.
+   - Žeton kopiraš tako: v Raziskovalcu odpri `C:\Evklid\lean-delavec`, desni klik na `nastavitve.json` →
+     **Odpri z** → **Beležnica**. Označi besedilo med narekovaji za `"zeton":` (brez narekovajev), **Ctrl+C**.
+     Beležnico zapri brez shranjevanja.
+   - Key: `EVKLID_LEAN_TOKEN`, Value: prilepi žeton (**Ctrl+V**) → **Save Changes**.
    - Render se znova zažene (nekaj minut).
    - **Dokler žetona ni na Renderju, je v dnevniku vrstica »NAPAKA … HTTP 404«. To je pričakovano**, ni treba
      ničesar narediti; izgine, ko se Render znova zažene.
@@ -41,6 +46,8 @@ Potrebuješ: Windows 10 ali 11, okoli 10 GB prostora na disku C:, internet. Prvi
   trditev dokazal.
 - `C:\Evklid\lean-delavec\delo\stanje.json`: `"stanje": "caka"` (čaka nalogo) ali `"dela"`, `"utrip"` je čas
   zadnjega klica.
+- Ob vsakem zagonu delavec enkrat preizkusi Lean: vrstica »preizkus Lean: proved« v `dnevnik.txt` pomeni, da Lean
+  deluje.
 - Claude lahko preveri na strežniku: `/healthz/stanje` → `leanDelavec.naVoljo: true`.
 
 ## Kako ga ustavim
@@ -51,10 +58,19 @@ Dokler delavec teče, prenosnik ne zaspi sam od sebe (zaslon sme ugasniti).
 
 ## Posodobitev
 
-1. Claude ti da novo mapo `lean-delavec` (ali jo prenesi z GitHuba), kamorkoli.
-2. Dvakrat klikni `zazeni.bat` v novi mapi. Program ustavi delavca, skopira nove datoteke v `C:\Evklid\lean-delavec`
+1. Claude ti da novo mapo `lean-delavec` (ali jo prenesi z GitHuba), kamorkoli. `.zip` najprej razpakiraj (desni
+   klik → **Izvleči vse**).
+2. Dvakrat klikni `zazeni.bat` v novi razpakirani mapi. Program ustavi delavca, skopira nove datoteke v `C:\Evklid\lean-delavec`
    (žeton v `nastavitve.json` in prenesen Mathlib ostaneta) in ga znova zažene. Če se je spremenila različica Leana ali
    Mathliba, ju sam prenese znova.
+
+## Odstranitev
+
+1. Dvakrat klikni `ustavi.bat` (v `C:\Evklid\lean-delavec`) in klikni **Da**.
+2. Klikni **Start**, vpiši `powershell`, desni klik na **Windows PowerShell** → **Zaženi kot skrbnik** → **Da**.
+3. V modro okno prilepi to vrstico in pritisni **Enter**:
+   `schtasks /Delete /TN "Evklid Lean delavec" /F; net user evklid-lean /delete; Remove-NetFirewallRule -DisplayName "Evklid Lean brez omrezja"; cmd /c rmdir /s /q C:\Evklid`
+4. Na Renderju izbriši `EVKLID_LEAN_TOKEN` (Environment → koš ob vrstici → **Save Changes**).
 
 ## Če gre kaj narobe
 

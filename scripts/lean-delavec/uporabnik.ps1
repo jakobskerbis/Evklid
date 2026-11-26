@@ -3,13 +3,15 @@
 #    vsaki namestitvi; gesla nihce ne pozna in ni nikjer zapisano (shrani ga samo Razporejevalnik opravil);
 # 2. pravice mape C:\Evklid\lean-delavec: brez dedovanja (C:\ sicer da "Authenticated Users" pravico spreminjanja),
 #    SYSTEM, Administratorji in j polno, evklid-lean samo branje in zagon; pisanje samo v delo\;
-# 3. opravilo ob vklopu racunalnika kot evklid-lean ("zazeni, ce je uporabnik prijavljen ali ne"), brez casovne
+# 3. pravilo pozarnega zidu: lean.exe ne sme nikamor (izhodne povezave blokirane; Lean omrezja ne rabi);
+# 4. opravilo ob vklopu racunalnika kot evklid-lean ("zazeni, ce je uporabnik prijavljen ali ne"), brez casovne
 #    meje, tudi na bateriji, ob napaki znova vsako minuto.
 # Lean (otrok delavca) tece kot evklid-lean, zato ne more brati C:\Users\<j> (tja ima dostop samo lastnik).
 param(
   [Parameter(Mandatory = $true)][string]$Mapa,
   [Parameter(Mandatory = $true)][string]$Ime,
-  [Parameter(Mandatory = $true)][string]$Opravilo
+  [Parameter(Mandatory = $true)][string]$Opravilo,
+  [Parameter(Mandatory = $true)][string]$LeanJson
 )
 $ErrorActionPreference = 'Stop'
 
@@ -34,12 +36,35 @@ New-ItemProperty -Path $k -Name $Ime -Value 0 -PropertyType DWord -Force | Out-N
 # Pravice. Brez /T: otroci podedujejo od mape (nobena datoteka nima svojih pravic).
 $jaz = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
 $icacls = Join-Path $env:SystemRoot 'System32\icacls.exe'
+& $icacls $Mapa /setowner '*S-1-5-32-544' /Q | Out-Null
+if ($LASTEXITCODE -ne 0) { throw "icacls /setowner $Mapa" }
+# delo\ lahko spreminja evklid-lean: preden skrbnik tam spreminja pravice (icacls se razsiri na otroke), odstrani vse
+# povezave (junction, simbolna povezava), da icacls ne sledi povezavi na drugo mesto. Brisanje povezave ne brise cilja.
+function Odstrani-Povezave([string]$pot) {
+  foreach ($e in [System.IO.Directory]::GetFileSystemEntries($pot)) {
+    $a = [System.IO.File]::GetAttributes($e)
+    if ($a -band [System.IO.FileAttributes]::ReparsePoint) {
+      if ($a -band [System.IO.FileAttributes]::Directory) { [System.IO.Directory]::Delete($e, $false) } else { [System.IO.File]::Delete($e) }
+    } elseif ($a -band [System.IO.FileAttributes]::Directory) { Odstrani-Povezave $e }
+  }
+}
+$delo = Join-Path $Mapa 'delo'
+if (Test-Path -LiteralPath $delo) {
+  if ([System.IO.File]::GetAttributes($delo) -band [System.IO.FileAttributes]::ReparsePoint) { [System.IO.Directory]::Delete($delo, $false) }
+  else { Odstrani-Povezave $delo }
+}
 & $icacls $Mapa /inheritance:r /grant:r '*S-1-5-18:(OI)(CI)F' '*S-1-5-32-544:(OI)(CI)F' "${jaz}:(OI)(CI)F" "${Ime}:(OI)(CI)RX" /Q | Out-Null
 if ($LASTEXITCODE -ne 0) { throw "icacls $Mapa" }
-$delo = Join-Path $Mapa 'delo'
 New-Item -ItemType Directory -Path (Join-Path $delo 'tmp') -Force | Out-Null
 & $icacls $delo /grant "${Ime}:(OI)(CI)M" /Q | Out-Null
 if ($LASTEXITCODE -ne 0) { throw "icacls $delo" }
+
+# Pozarni zid: izhodne povezave lean.exe blokirane (pot iz lean.json; pravilo se ob vsaki namestitvi naredi znova).
+$lean = (Get-Content -LiteralPath $LeanJson -Raw | ConvertFrom-Json).lean
+if (-not $lean -or -not (Test-Path -LiteralPath $lean)) { throw "lean.exe ni v $LeanJson" }
+$pravilo = 'Evklid Lean brez omrezja'
+Get-NetFirewallRule -DisplayName $pravilo -ErrorAction SilentlyContinue | Remove-NetFirewallRule
+New-NetFirewallRule -DisplayName $pravilo -Direction Outbound -Action Block -Program $lean -Profile Any | Out-Null
 
 $bat = Join-Path $Mapa 'zazeni.bat'
 $akcija = New-ScheduledTaskAction -Execute (Join-Path $env:SystemRoot 'System32\cmd.exe') -Argument "/d /c `"`"$bat`" delavec`"" -WorkingDirectory $Mapa
