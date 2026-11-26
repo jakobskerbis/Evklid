@@ -143,13 +143,13 @@ test("meritev: napačno branje brez oznake je ugibanje, označeno mesto ni", () 
 test("zaslon Skeniraj: oznake se pokažejo, Reši je zaprt, dokler je [?]; besedila v živih jezikih", () => {
   const src = fs.readFileSync(new URL("../public/scan/scan.js", import.meta.url), "utf8");
   const go = src.slice(src.indexOf("const go = () => {"), src.indexOf("solveNow();", src.indexOf("const go = () => {")));
-  assert.match(go, /if \(hasUnclear\(input\.value\) \|\| S\.given\.some\(hasUnclear\)\) \{\s*S\.text = input\.value;\s*S\.unclearNeed = true;[\s\S]*?return;/);
-  assert.ok(go.indexOf("hasUnclear(input.value)") < go.indexOf("analyze(input.value)"), "oznaka se preveri pred reševanjem");
+  assert.match(go, /if \(hasUnclear\(naloga\(\)\) \|\| S\.given\.some\(hasUnclear\)\) \{\s*S\.text = naloga\(\);\s*S\.unclearNeed = true;[\s\S]*?return;/);
+  assert.ok(go.indexOf("hasUnclear(naloga())") < go.indexOf("analyze(naloga())"), "oznaka se preveri pred reševanjem");
   assert.match(src, /S\.unclear = \(S\.problems\[0\]\.unclear \|\| \[\]\)/);
   assert.match(src, /S\.unclear = \(p\.unclear \|\| \[\]\)/);
   assert.match(src, /class="scan-unclear-host" aria-live="polite"/);
   assert.match(src, /S\.unclearNeed \? `<p class="scan-unclear-need">/, "sporočilo o [?] je v obvestilu o branju, ne rdeča napaka");
-  assert.match(src, /keepOptions\(S\.text, input\.value, S\.unclear\)/);
+  assert.match(src, /keepOptions\(izPolja\(prevField\), izPolja\(input\.value\), S\.unclear\)/);
   // j 26. 11.: polje kaže nalogo kot formulo, surov zapis le med urejanjem
   assert.match(src, /<div class="scan-input-izris" aria-hidden="true"><\/div>/);
   assert.match(src, /wrap\.classList\.toggle\("ima-izris", !!html\)/);

@@ -10,7 +10,8 @@ import { configureKeyboard, toggleKeyboard, keyboardOpenFor, keyboardLayer, hide
 import { measureSource, problemOf, tiltAngle } from "./kakovost.js";
 import { answerParts, soughtParts, soughtNeedsAi } from "./odgovor.js";
 import { STATUSES } from "./status.js";
-import { unclearCount, hasUnclear, fillUnclear, firstUnclear, markUnclear, keepOptions } from "./nejasno.js";
+import { unclearCount, hasUnclear, fillUnclear, markUnclear, keepOptions } from "./nejasno.js";
+import { zaPolje, izPolja, VIDNA_OZNAKA } from "./zapis-polja.js";
 import { plottableFromText } from "../graph/math.js";
 import { izrisi } from "../mat/izris.js";
 
@@ -738,7 +739,7 @@ function renderConfirm(box) {
       <label class="scan-label" for="scan-input">${esc(S.problems.length ? t("scan.inputLabel") : t("scan.typeLabel"))}</label>
       <div class="scan-input-row">
         <div class="scan-input-wrap">
-          <input id="scan-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="text" placeholder="${esc(t("scan.placeholder"))}" value="${esc(S.text)}">
+          <input id="scan-input" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="text" placeholder="${esc(t("scan.placeholder"))}" value="${esc(zaPolje(S.text))}">
           <div class="scan-input-izris" aria-hidden="true"></div>
         </div>
         <button type="button" class="ghost icon-only" data-act="sym" aria-label="${esc(t("scan.symbols"))}" title="${esc(t("scan.symbols"))}" aria-expanded="false">${icon("sigma")}</button>
@@ -751,6 +752,25 @@ function renderConfirm(box) {
     </div>`;
   if (pilotTask && S.shot && S.readOk) bindPilotRate(box);
   const input = box.querySelector("#scan-input");
+  // Polje kaže zapis s tipkovnice (zaPolje: ·, √, □ za [?]); naloga (S.text) ostane v prebrani obliki. Dokler učenec
+  // polja ne spremeni, gre v reševanje natanko prebrani zapis. naloga() = trenutna naloga iz polja.
+  let field = { shown: input.value, text: S.text };
+  const naloga = () => (input.value === field.shown ? field.text : izPolja(input.value));
+  // Skupni izris vnosa (public/predogled-vnosa.js, kot v klepetu) izriše polje ob prvem vnosu; prebrano nalogo naj
+  // izriše že ob odprtju in po izbiri možnosti (»change«: naš poslušalec »input« se ne sproži).
+  const izrisPolja = () =>
+    import("../predogled-vnosa.js")
+      .then((m) => {
+        m.initPredogledVnosa();
+        if (input.isConnected && input.value) input.dispatchEvent(new Event("change", { bubbles: true }));
+      })
+      .catch(() => {});
+  const setNaloga = (text) => {
+    field = { shown: zaPolje(text), text };
+    input.value = field.shown;
+    izrisPolja();
+  };
+  let prevField = input.value;
   const prev = box.querySelector(".scan-preview");
   const err = box.querySelector(".scan-err");
   const unclearHost = box.querySelector(".scan-unclear-host");
@@ -774,7 +794,7 @@ function renderConfirm(box) {
   const wrap = box.querySelector(".scan-input-wrap");
   const fieldIzris = wrap.querySelector(".scan-input-izris");
   const showField = () => {
-    const html = input.value.trim() ? inputFormulaHtml(input.value) : "";
+    const html = input.value.trim() ? inputFormulaHtml(naloga()) : "";
     fieldIzris.innerHTML = html;
     wrap.classList.toggle("ima-izris", !!html);
     // formula, ki ne gre v polje (dolga, visoka), ostane surov zapis: ne pokažemo odrezanega dela (»Prebral sem« nad
@@ -784,14 +804,16 @@ function renderConfirm(box) {
   const update = () => {
     showField();
     // možnosti ostalih oznak ostanejo poravnane, ko učenec eno popravi s tipkami
-    const kept = keepOptions(S.text, input.value, S.unclear);
+    const text = naloga();
+    const kept = keepOptions(izPolja(prevField), izPolja(input.value), S.unclear);
+    prevField = input.value;
     if (kept) S.unclear = kept;
-    else if (!hasUnclear(input.value)) S.unclear = [];
-    S.text = input.value;
+    else if (!hasUnclear(text)) S.unclear = [];
+    S.text = text;
     showUnclear();
-    const info = analyze(input.value);
+    const info = analyze(text);
     err.hidden = true;
-    if (!input.value.trim()) {
+    if (!text.trim()) {
       // izbrisana naloga: podatki prejšnje ne smejo k novi, vpisani
       S.given = [];
       S.unclear = [];
@@ -801,15 +823,15 @@ function renderConfirm(box) {
       return (prev.innerHTML = "");
     }
     // nejasni znaki: nespremenjen prepis pokažemo z modelovim LaTeX (\boxed{?}), sicer zapis z označenimi mesti
-    if (hasUnclear(input.value)) {
-      const read = S.problems.find((p) => p.text === input.value && /\\boxed\{\?\}/.test(p.tex || ""));
-      return (prev.innerHTML = read ? math(read.tex, true) : `<p class="scan-unclear-text">${markUnclear(input.value, esc)}</p>`);
+    if (hasUnclear(text)) {
+      const read = S.problems.find((p) => p.text === text && /\\boxed\{\?\}/.test(p.tex || ""));
+      return (prev.innerHTML = read ? math(read.tex, true) : `<p class="scan-unclear-text">${markUnclear(text, esc)}</p>`);
     }
     if (info.type === "error") {
       prev.innerHTML = "";
       return;
     }
-    prev.innerHTML = problemTexOf(input.value);
+    prev.innerHTML = problemTexOf(text);
   };
   input.addEventListener("input", () => {
     S.unclearNeed = false;
@@ -820,7 +842,7 @@ function renderConfirm(box) {
     const b = e.target.closest("[data-fill]");
     if (!b) return;
     const i = Number(b.dataset.fill);
-    input.value = fillUnclear(input.value, i, b.dataset.val);
+    setNaloga(fillUnclear(naloga(), i, b.dataset.val));
     update(); // keepOptions odstrani možnosti zapolnjene oznake
     // fokus na naslednjo izbiro (ne v polje: tam bi se namesto formule pokazal surov zapis)
     (unclearHost.querySelector("[data-fill], [data-given-fill]") || box.querySelector('[data-act="solve"]'))?.focus();
@@ -895,8 +917,8 @@ function renderConfirm(box) {
     // P3-5: neprebran znak popravi učenec, nihče ga ne ugiba (tudi strežnik zavrne [?])
     // vpisan znak v podatku velja tudi brez ✓
     const filled = fillGiven(false);
-    if (hasUnclear(input.value) || S.given.some(hasUnclear)) {
-      S.text = input.value;
+    if (hasUnclear(naloga()) || S.given.some(hasUnclear)) {
+      S.text = naloga();
       S.unclearNeed = true; // sporočilo v obvestilu o branju (ni napaka v zapisu ali računu)
       if (filled) {
         hideKeyboard();
@@ -906,26 +928,29 @@ function renderConfirm(box) {
       S.unclearNeed = false; // velja do naslednjega vnosa (zaslon ga že kaže)
       // na prvo izbiro; brez možnosti v polje z izbrano oznako
       const in2 = box.querySelector("#scan-input");
-      const at = firstUnclear(in2.value);
+      // oznaka je v polju □ (ali »[?]«, če jo je učenec vpisal sam)
+      const mark = in2.value.includes(VIDNA_OZNAKA) ? VIDNA_OZNAKA : "[?]";
+      const at = in2.value.indexOf(mark);
       const choice = box.querySelector("[data-fill], [data-given-fill]");
       if (choice) choice.focus();
       else if (at >= 0) {
         in2.focus();
-        in2.setSelectionRange(at, at + 3);
+        in2.setSelectionRange(at, at + mark.length);
       }
       return;
     }
-    const info = analyze(input.value);
+    const info = analyze(naloga());
     if (info.type === "error" || info.type === "empty") {
       err.textContent = t("scan.parseErr");
       err.hidden = false;
       input.focus();
       return;
     }
-    S.text = input.value;
+    S.text = naloga();
     solveNow();
   };
   box.querySelector('[data-act="solve"]').addEventListener("click", go);
+  izrisPolja();
   if (!S.problems.length && !coarse()) input.focus();
 }
 

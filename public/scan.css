@@ -186,6 +186,9 @@
 .scan-input-izris { position: absolute; inset: 2px 12px; display: none; align-items: center; overflow: hidden; white-space: nowrap; pointer-events: none; color: var(--text); font-size: 1.1rem; }
 .scan-input-izris .katex { font-size: 1.15em; }
 .scan-input-wrap.ima-izris .scan-input-izris { display: flex; }
-.scan-input-wrap.ima-izris input { color: transparent; caret-color: var(--text); }
+/* skrije le zapis (ne barve): skupni izris vnosa prevzame barvo polja */
+.scan-input-wrap.ima-izris input { -webkit-text-fill-color: transparent; caret-color: var(--text); }
 .scan-input-wrap.ima-izris:focus-within .scan-input-izris { display: none; }
-.scan-input-wrap.ima-izris:focus-within input { color: var(--text); }
+.scan-input-wrap.ima-izris:focus-within input { -webkit-text-fill-color: currentColor; }
+/* ko polje izriše skupni izris vnosa (public/predogled-vnosa.js, kot v klepetu), ta izris odstopi */
+.scan-input-wrap .vnos-izrisan ~ .scan-input-izris { display: none; }
