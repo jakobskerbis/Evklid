@@ -59,6 +59,10 @@ export function presojaStanja(j, now = Date.now()) {
   // SymPy (server/cas.js) se ni zagnal: skener in inštruktor preverjata samo numerično, nobena AI rešitev ne more
   // dobiti statusa »Preverjeno« (skener P3-3). Ob zagonu strežnika je deluje še null (se šele zaganja).
   if (j.cas?.vklopljen && j.cas.deluje === false) napake.push("SymPy (točno preverjanje rešitev) na strežniku ne teče: skener lahko pokaže največ »Numerično preverjeno«");
+  // Varnostni pregled sporočil (server/nujno.js): enako pravilo kot koda »varnost« v /healthz/alarm (server/zdravje.js).
+  const vp = j.varnostniPregled;
+  if (vp?.vklopljen === false) napake.push("varnostni pregled sporočil z AI ne teče (preizkusni način ali EVKLID_VARNOST_VSAKO=0): ostane samo lokalni zaznavalnik");
+  if (vp?.nepregledanoZadnjoUro === true) napake.push("v zadnji uri je vsaj eno sporočilo ostalo brez varnostnega pregleda z AI (ponudnik ni odgovoril niti ob ponovitvi ali ni dobroimetja)");
   if (j.pdfUcbenika?.napaka) opozorila.push(`PDF učbenika: ${j.pdfUcbenika.napaka} (aplikacija ponudi tiskanje)`);
   if (j.kopije && !j.kopijeZunaj) opozorila.push("kopija baze zunaj Renderja (R2) ni nastavljena");
   return { napake, opozorila };
