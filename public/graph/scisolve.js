@@ -600,10 +600,11 @@ function holeAt(F, b) {
     const d = HOLE_D * Math.max(1, Math.abs(c));
     const y = [F(c - d / 10), F(c + d / 10), F(c - d), F(c + d), F(c - 10 * d), F(c + 10 * d)];
     if (!y.every(fin)) continue;
-    // omejena: pri d/10 ni dosti večja kot pri 10d (pri polu je 100-krat večja); šum krajšanja ob luknji
-    // ((1 − cos x)/x² pri 10⁻⁷) ostane pod 10
-    const far = Math.max(Math.abs(y[4]), Math.abs(y[5]));
-    if (Math.max(Math.abs(y[0]), Math.abs(y[1])) <= 10 * Math.max(1, far)) return c;
+    // omejena: od 10d do d/10 se F spremeni za največ 10-kratnik spremembe čez luknjo pri 10d (pri polu ostanku r je
+    // sprememba ~10r/d, čez luknjo pa ~0,2r/d); razlike, ne absolutne vrednosti, da desna stran (1/x = 10⁷) ne skrije
+    // pola (pregled); šum krajšanja ob luknji ((1 − cos x)/x² pri 10⁻⁷) ostane pod 10
+    const across = Math.abs(y[5] - y[4]);
+    if (Math.max(Math.abs(y[0] - y[4]), Math.abs(y[1] - y[5])) <= 10 * Math.max(1, across)) return c;
   }
   return null;
 }
@@ -799,23 +800,24 @@ function solveOne(F, v, { comma, unit = "rad", src, pr = null, vf = null }) {
   const R = unit === "rad" ? RANGE : 10 * RANGE;
   const near0 = criticalPoints(F, -R, R);
   const step = (2 * R) / SAMPLES;
-  const nh = withoutHoles(F, near0, 2 * step);
-  let roots = nh.roots;
-  const holes = [...nh.holes];
+  let roots = withoutHoles(F, near0, 2 * step).roots;
   if (roots.length > 12) roots = roots.filter((x) => Math.abs(x) <= 20).slice(0, 12);
   // zunaj ±R iščemo samo, kjer funkcija blizu 0 ne niha (sin x = x/1000 ima stotine rešitev: ostane, kot je bilo)
   else if (near0.length <= 12) {
     const fp = farPoints(F, R);
-    const fh = withoutHoles(F, fp, Math.max(step, ...fp.map((x) => Math.abs(x) * 0.012)));
-    holes.push(...fh.holes);
-    const all = uniq([...roots, ...fh.roots]);
+    const all = uniq([...roots, ...withoutHoles(F, fp, Math.max(step, ...fp.map((x) => Math.abs(x) * 0.012))).roots]);
     // največ 12, najbližje 0, nato po vrsti
     roots = all.sort((a, b) => Math.abs(a) - Math.abs(b)).slice(0, 12).sort((a, b) => a - b);
   }
   // brez rešitve na [−10¹², 10¹²] ne trdimo, da je ni nikjer (AUDIT-015): searched = preiskani interval
-  // rešitev tik ob luknji z dovolj mesti, da se ne izpiše kot luknja (1,0000001, ne »≈ 1«)
-  const gap = Math.min(Infinity, ...roots.flatMap((x) => holes.map((c) => Math.abs(x - c))));
-  const minDec = gap < 1e-6 ? Math.min(15, Math.ceil(-Math.log10(gap)) + 1) : 0;
+  // rešitev tik ob luknji ali polu z dovolj mesti, da se ne izpiše kot točka, kjer F ni definirana
+  // ((x² − 1)/(x − 1) = 2,0000001: 1,0000001, ne »≈ 1«; 1/(x² − 4) = 10⁶: 2,0000003, ne »≈ 2«)
+  let minDec = 0;
+  for (const x of roots) {
+    let k = 6;
+    while (k < 15 && Math.abs(x) >= 1e-3 && !fin(F(Number(x.toFixed(k))))) k++;
+    if (k > 6) minDec = Math.max(minDec, k);
+  }
   return withGx(F, { kind: "solve", v, roots, complex: [], ...(minDec ? { minDec } : {}), ...(roots.length ? {} : { searched: FAR_TEX }) }, vf);
 }
 

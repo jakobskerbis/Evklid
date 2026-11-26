@@ -92,3 +92,12 @@ test("AUDIT-080 (pregled): luknje v e, v decimalki in v periodičnih enačbah", 
   // rešitev tik ob luknji se ne izpiše kot luknja (»≈ 1«)
   assert.match(solutionTex(an("(x^2-1)/(x-1)=2,0000001")), /1\{,\}0000001/);
 });
+
+test("AUDIT-080 (pregled 2): pol z veliko desno stranjo ni luknja", () => {
+  const n = (s) => roots(s).length;
+  assert.equal(n("tan(x)=1000000"), 2);
+  assert.ok(close(roots("1/x=10000000")[0], 1e-7));
+  assert.equal(n("1/(x^2-4)=1000000"), 2);
+  assert.equal(n("tan(2x)=1000000"), 4);
+  assert.ok(close(roots("1/x=1000000")[0], 1e-6));
+});
