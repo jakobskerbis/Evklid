@@ -252,23 +252,72 @@ export function verifyAi(problemText, ai) {
 const polyDiff = (p, v) => new P(p.terms().filter(({ m }) => m[v]).map(({ m, c }) => ({ m: { ...m, [v]: m[v] - 1 }, c: c.mul(Q.of(m[v])) })));
 
 // Vrsta naloge iz zapisa: integral in limito prepoznamo po zapisu, ne po tem, kako ju je AI poimenoval (meritev 26. 11.:
-// integral z odgovorom 0 namesto 6 je ostal nepreverjen, ker AI ni rekel »integral«, in se ni ponovil).
+// integral z odgovorom 0 namesto 6 je ostal nepreverjen, ker AI ni rekel »integral«, in se ni ponovil). Le, ko zapis
+// z njima začne: »2∫…«, »d/dx ∫…« in enačbe z integralom ali limito odloči vrsta, ki jo je dal AI (pregled).
 export function kindOfText(text) {
   const s = String(text ?? "").replace(/\\int/g, "∫");
-  if (/[=<>≤≥]/.test(s.replace(/->/g, "→"))) return null; // enačba ali neenačba z integralom ali limito ostane enačba
-  if (s.includes("∫")) return "integral";
-  if (/^\s*\\?lim\s*_/.test(s)) return "limit";
+  if (/[=<>≤≥]/.test(s.replace(/->/g, "→"))) return null;
+  if (parseIntegral(s)) return "integral";
+  if (parseLimit(s)) return "limit";
   return null;
 }
-// ∫_a^b f dx, ∫ f dx → { a, b, f, x } (a, b le pri določenem integralu)
-export function parseIntegral(text) {
-  const m = /∫\s*(?:_\(?([^\s^]+?)\)?\^\(?([^\s]+?)\)?)?\s*(.+?)\s*d([a-z])\s*$/.exec(String(text ?? "").replace(/\\int/g, "∫"));
-  return m ? { a: m[1], b: m[2], f: m[3], x: m[4] } : null;
+// meja integrala ali točka limite: {…}, (…) ali eno število ali ime (»10«, »-1«, »pi«, »oo«, »a«)
+function bound(s, i) {
+  const open = s[i];
+  if (open === "{" || open === "(") {
+    const close = open === "{" ? "}" : ")";
+    let d = 0;
+    for (let j = i; j < s.length; j++) {
+      if (s[j] === open) d++;
+      else if (s[j] === close && --d === 0) return { v: s.slice(i + 1, j).trim(), end: j + 1 };
+    }
+    return null;
+  }
+  const m = /^[-−]?(?:\d+(?:[.,]\d+)?|\\infty|[a-zA-Zπ∞]+)/.exec(s.slice(i));
+  return m ? { v: m[0], end: i + m[0].length } : null;
 }
-// lim_(x->a) f, lim_{x\to a} f → { x, point, f }
+// ∫_a^b f dx, ∫ f dx (zapis se začne z ∫) → { a, b, f, x } (a, b le pri določenem integralu)
+export function parseIntegral(text) {
+  const s = String(text ?? "").replace(/\\int/g, "∫").trim();
+  if (!s.startsWith("∫")) return null;
+  let i = 1;
+  let a;
+  let b;
+  if (s[i] === "_") {
+    const lo = bound(s, i + 1);
+    if (!lo || s[lo.end] !== "^") return null;
+    const hi = bound(s, lo.end + 1);
+    if (!hi) return null;
+    [a, b, i] = [lo.v, hi.v, hi.end];
+  }
+  const m = /^\s*(.+?)\s*(?:[*·]\s*)?(?:\\,\s*)?d([a-z])\s*$/.exec(s.slice(i));
+  if (!m || /[∫]/.test(m[1])) return null;
+  const meja = (v) => v?.replace(/\\pi/g, "pi").replace(/\\infty|∞/g, "oo");
+  return { a: meja(a), b: meja(b), f: m[1], x: m[2] };
+}
+// Nedoločeni integral: »F + C« → »F« (konstanta je poljubna); null, če je C (ali K) še kje drugje (x^2 + C*x ni
+// pravilen odgovor, SymPy pa bi C nadomestil z 0).
+export function bezKonstante(value) {
+  const v = String(value ?? "").replace(/\s*\+\s*[CK]\s*$/, "");
+  return /(?<![A-Za-z])[CK](?![A-Za-z])/.test(v) ? null : v;
+}
+// lim_(x->a) f, lim_{x\to a} f (zapis se začne z lim) → { x, point, f }; točka za SymPy (oo, 0+, 0-)
 export function parseLimit(text) {
-  const m = /^\s*\\?lim\s*_\s*[({]?\s*([a-z])\s*(?:->|→|\\to)\s*([^)}]+?)\s*[)}]\s*(.+)$/.exec(String(text ?? ""));
-  return m ? { x: m[1], point: m[2], f: m[3].trim() } : null;
+  const m = /^\s*\\?lim\s*_\s*([({])\s*([a-z])\s*(?:->|→|\\to)\s*/.exec(String(text ?? ""));
+  if (!m) return null;
+  const s = String(text);
+  const close = m[1] === "{" ? "}" : ")";
+  let d = 1;
+  let j = m[0].length;
+  for (; j < s.length && d; j++) d += s[j] === m[1] ? 1 : s[j] === close ? -1 : 0;
+  if (d) return null;
+  const point = s
+    .slice(m[0].length, j - 1)
+    .replace(/\\infty|∞/g, "oo")
+    .replace(/\^\s*\{?\s*([+-])\s*\}?\s*$/, "$1")
+    .replace(/\s+/g, "");
+  const f = s.slice(j).trim();
+  return point && f ? { x: m[2], point, f } : null;
 }
 
 function check(problemText, ai) {
@@ -383,7 +432,7 @@ function check(problemText, ai) {
     }
     if (kind === "integral") {
       const m = parseIntegral(problemText);
-      const g = fnOf(ai.value);
+      const g = fnOf(m?.a !== undefined ? ai.value : (bezKonstante(ai.value) ?? ""));
       if (!m || !g) return { verified: false, reason: "parse" };
       const f = fnOf(m.f);
       const x = m.x;

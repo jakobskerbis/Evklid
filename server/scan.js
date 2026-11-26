@@ -7,7 +7,7 @@
 // (public/scan/verify.js); vsaka rešitev dobi enega od petih statusov (public/scan/status.js), »Preverjeno« samo z dokazom.
 import { AI_JSON } from "./ai-oznaka.js";
 import { getClient, isMockMode, quickParams, MODEL, MODEL_MID, errorText, apiErrorCode } from "./claude.js";
-import { verifyAi, normalizeSet, kindOfText, parseIntegral, parseLimit } from "../public/scan/verify.js";
+import { verifyAi, normalizeSet, kindOfText, parseIntegral, parseLimit, bezKonstante } from "../public/scan/verify.js";
 import { prep, splitSystem } from "../public/scan/solvecore.js";
 import { cleanUnclear, unclearCount, hasUnclear, normalizeUnclear } from "../public/scan/nejasno.js";
 import { casCheck } from "./cas.js";
@@ -118,7 +118,9 @@ async function casScan(text, sol) {
     const m = parseIntegral(text);
     if (!m || !sol?.value) return { ok: null };
     const f = casText(prep(m.f));
-    return m.a !== undefined ? casCheck("int", [f, m.x, casText(prep(m.a)), casText(prep(m.b)), casText(prep(sol.value))]) : casCheck("int", [f, m.x, casText(prep(sol.value))]);
+    if (m.a !== undefined) return casCheck("int", [f, m.x, casText(prep(m.a)), casText(prep(m.b)), casText(prep(sol.value))]);
+    const F = bezKonstante(sol.value);
+    return F ? casCheck("int", [f, m.x, casText(prep(F))]) : { ok: null };
   }
   if (kind === "limit") {
     const m = parseLimit(text);

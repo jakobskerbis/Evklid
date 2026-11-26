@@ -5,7 +5,7 @@
 import test, { after } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { kindOfText, parseIntegral, parseLimit, verifyAi } from "../public/scan/verify.js";
+import { kindOfText, parseIntegral, parseLimit, verifyAi, bezKonstante } from "../public/scan/verify.js";
 import { verifyAiFull, READ_PROMPT } from "../server/scan.js";
 import { casAvailable, casStop } from "../server/cas.js";
 
@@ -27,6 +27,20 @@ test("vrsta naloge iz zapisa: integral in limita, ne enačba z njima", () => {
   assert.deepEqual(parseIntegral("∫ x^2 dx"), { a: undefined, b: undefined, f: "x^2", x: "x" });
   assert.deepEqual(parseLimit("lim_(x->oo) 1/x"), { x: "x", point: "oo", f: "1/x" });
   assert.deepEqual(parseLimit("\\lim_{x\\to 0} sin(x)/x"), { x: "x", point: "0", f: "sin(x)/x" });
+  // pregled: večmestne in oklepajne meje, faktor pred ∫, d/dx ∫, x*dx, enostranske in neskončne točke
+  assert.deepEqual(parseIntegral("∫_0^10 x dx"), { a: "0", b: "10", f: "x", x: "x" });
+  assert.deepEqual(parseIntegral("∫_{-1}^{1} x^2 dx"), { a: "-1", b: "1", f: "x^2", x: "x" });
+  assert.deepEqual(parseIntegral("\\int_0^{\\pi} sin(x)\\,dx"), { a: "0", b: "pi", f: "sin(x)", x: "x" });
+  assert.equal(parseIntegral("∫ x*dx").f, "x");
+  for (const t of ["2∫_0^1 x dx", "π∫_0^2 x^2 dx", "d/dx ∫_0^x t^2 dt"]) assert.equal(kindOfText(t), null, t);
+  assert.equal(parseLimit("lim_{x\\to 0^+} 1/x").point, "0+");
+  assert.equal(parseLimit("lim_{x\\to\\infty} 1/x").point, "oo");
+  assert.equal(parseLimit("lim_(x→-∞) e^x").point, "-oo");
+  assert.deepEqual(parseLimit("lim_(x->(1/2)) 2*x"), { x: "x", point: "(1/2)", f: "2*x" });
+  assert.equal(bezKonstante("x^2 + C"), "x^2");
+  assert.equal(bezKonstante("x^2"), "x^2");
+  assert.equal(bezKonstante("x^2 + C*x"), null, "C ni le prištet");
+  assert.equal(bezKonstante("cos(x)+K"), "cos(x)");
 });
 
 test("integral: napačen odgovor je »napačno« (sproži ponovitev), ne glede na vrsto, ki jo je dal AI", () => {
@@ -59,4 +73,16 @@ cas("SymPy: določeni in nedoločeni integral, limita (tudi v ∞), napačen odg
   assert.match(l.cas, /limita je -4/);
   assert.equal((await verifyAiFull("lim_(x->oo) (2*x+1)/(x-3)", { kind: "limit", value: "2" })).status, "verified");
   assert.equal((await verifyAiFull("lim_(x->0) sin(x)/x", { kind: "limit", value: "1" })).status, "verified");
+  // pregled: nobena napačna trditev ni »preverjena«
+  const st = async (t, value) => (await verifyAiFull(t, { kind: "other", value })).status;
+  assert.equal(await st("∫_0^10 x dx", "0"), "wrong");
+  assert.equal(await st("∫_0^10 x dx", "50"), "verified");
+  assert.equal(await st("∫_{-1}^{1} x^2 dx", "2/3"), "verified");
+  assert.notEqual(await st("2∫_0^1 x dx", "1/2"), "verified");
+  assert.notEqual(await st("π∫_0^2 x^2 dx", "8/3"), "verified");
+  assert.notEqual(await st("∫ 2*x dx", "x^2 + C*x"), "verified");
+  assert.equal(await st("∫ cos(x) dx", "sin(x)+C"), "verified");
+  assert.equal(await st("∫_0^pi sin(x) dx", "0"), "wrong");
+  assert.equal(await st("lim_{x\\to 0^+} 1/x", "oo"), "verified");
+  assert.equal(await st("lim_{x\\to\\infty} 1/x", "0"), "verified");
 });
