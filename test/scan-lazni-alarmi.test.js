@@ -48,6 +48,11 @@ test("račun z zaokroženim decimalnim rezultatom je numerično pravilen, ne nap
   assert.equal(ar("sqrt(2)", "1.415"), "wrong");
   assert.equal(ar("1/3", "0,33"), "numeric");
   assert.equal(ar("pi", "3.14"), "numeric");
+  // tudi pri večjih vrednostih (pregled: številski preizkus »kratkega zapisa« jih je prej zavrnil)
+  assert.equal(ar("100*pi", "314.16"), "numeric");
+  assert.equal(ar("100*pi", "314.15"), "wrong");
+  assert.equal(ar("2000/3", "666.67"), "numeric");
+  assert.equal(ar("sqrt(500000)", "707.11"), "numeric");
   // točna decimalna vrednost ostane točno preverjena
   assert.equal(ar("1.2*0.3", "0.36"), "verified");
   // pregled: zaokrožitev ni sprejeta pri kratkem točnem decimalnem zapisu, pri eni sami števki in pri velikih številih

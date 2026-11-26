@@ -5,7 +5,7 @@
 // Vsak izid ima status iz public/scan/status.js; numerična potrditev nikoli ni »Preverjeno« (AUDIT-001).
 import { parse, compile, integrate } from "../graph/math.js";
 import { prep, splitSystem, satisfies, equalNumerically, bigLiteral } from "./solvecore.js";
-import { tryPoly, withLimit, surdOf, polyEquationProof, polyGcd, inequalityCheck, qFromFloat, evalCs, P, Q } from "./algebra.js";
+import { tryPoly, withLimit, surdOf, polyEquationProof, polyGcd, inequalityCheck, qFromFloat, evalCs, constQ, P, Q } from "./algebra.js";
 import { statusOf } from "./status.js";
 
 const fin = Number.isFinite;
@@ -172,9 +172,22 @@ export function zaokrozenRacun(problemText, value) {
     return 0;
   }
   if (!fin(v) || tol < 1e-9 * Math.abs(v)) return 0;
-  for (let k = 0; k <= 12; k++) {
+  // Racionalna vrednost: točno, imenovalec le s 2 in 5 pomeni končen decimalni zapis (1/2^13 = 0.0001220703125).
+  let q = null;
+  try {
+    q = withLimit(POLY_LIMIT, () => constQ(parse(prep(problemText))));
+  } catch {
+    q = null;
+  }
+  if (q) {
+    let d = q.d;
+    for (const p of [2n, 5n]) while (d % p === 0n) d /= p;
+    return d === 1n ? 0 : tol;
+  }
+  // Sicer (√, π, ln …) številsko: le dokler v · 10ᵏ ostane v natančnosti plavajoče vejice (√6.25 = 2.5).
+  for (let k = 0; k <= 12 && Math.abs(v * 10 ** k) <= 1e8; k++) {
     const w = v * 10 ** k;
-    if (Math.abs(w - Math.round(w)) <= Math.max(1e-7, 1e-15 * Math.abs(w))) return 0; // kratek decimalni zapis
+    if (Math.abs(w - Math.round(w)) <= 1e-7) return 0; // kratek decimalni zapis
   }
   return tol;
 }
