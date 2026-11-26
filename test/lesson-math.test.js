@@ -224,6 +224,26 @@ test("AUDIT-061: 305 − 7 = 297 in 1000 − 1 = 990 se ujameta, zaokrožitve in
   }
 });
 
+// AUDIT-062: »:« med števili je deljenje, € je enota, % sredi računa je količnik.
+test("AUDIT-062: 48 : 6 = 7, 20 % · 60 = 3 in 80 € · 0,75 = 65 € se ujamejo", () => {
+  const R = String.raw;
+  for (const t of [R`$48 : 6 = 7$`, R`$(12 - 4) : 2 = 8 : 2 = 3$`, R`$20\ \% \cdot 60 = 3$`, R`$80\ € \cdot 0{,}75 = 65\ €$`]) assert.equal(checkArithmetic(t).mismatches.length, 1, t);
+  for (const t of [
+    R`$48 : 6 = 8$`,
+    R`$20\ \% \cdot 60 = 12$`,
+    R`$80\ € \cdot 0{,}75 = 60\ €$`,
+    R`$0{,}10 \cdot 100 = 10\,\%$`,
+    R`$\dfrac{1}{51} \cdot 100\,\% \approx 2{,}0\,\%$`,
+    R`$\frac{42}{100} = 0{,}42\,\%\ \mathrm{C}$`,
+    R`$3 : 4 : 5$`,
+    R`$1 : 2 = 2 : 4$`,
+    "$7 : 4 = 1$, ostane $3$", // deljenje z ostankom
+    R`$50\,\text{cm} : 2\,\text{m} = 50 : 200 = 1 : 4$`, // razmerje količin
+  ]) {
+    assert.deepEqual(checkArithmetic(t).mismatches, [], t);
+  }
+});
+
 test("AUDIT-061 (pregled): zaokrožen rezultat z ničlami na koncu ob decimalnem podatku ni napaka", () => {
   const R = String.raw;
   for (const t of [R`$0{,}5 \cdot 1500 \cdot 25^2 = 469\,000$`, R`$9{,}81 \cdot 125 = 1230$`, R`$1200 \cdot 1{,}035^5 = 1430$`]) assert.deepEqual(checkArithmetic(t).mismatches, [], t);
@@ -270,4 +290,10 @@ test("AUDIT-058 (pregled): merilo, napaka v razlagi in pretvorbeni faktor niso n
   const R = String.raw;
   for (const t of [R`$1\ \mathrm{cm} = 500\ \mathrm{m}$ v naravi (merilo $1 : 50\,000$)`, R`Druga napaka je $35\,\mathrm{dag} = 35\,\mathrm{g}$.`, R`$v = 0{,}6\,\mathrm{cm/min} \cdot 60 = 36\,\mathrm{cm/h}$`]) assert.deepEqual(checkArithmetic(t).mismatches, [], t);
   for (const t of [R`$W = 50\ \mathrm{N} \cdot 2\ \mathrm{cm} = 100\ \mathrm{J}$`, R`$P = \frac{600\ \mathrm{J}}{2\ \mathrm{min}} = 300\ \mathrm{W}$`, R`$1\ \mathrm{mm} = 100\ \mu\mathrm{m}$`, R`$Q = 4200\ \mathrm{J/(kg\,K)} \cdot 0{,}5\ \mathrm{kg} \cdot 20\ \mathrm{K} = 4{,}2\ \mathrm{kJ}$`]) assert.equal(checkArithmetic(t).mismatches.length, 1, t);
+});
+
+test("AUDIT-062 (pregled): h:mm ni deljenje, »45 € : 3« se preračuna", () => {
+  const R = String.raw;
+  for (const t of [R`$1:30\,\mathrm{h} = 90\,\mathrm{min}$`, R`$8:05 = 8\,\mathrm{h}\,5\,\mathrm{min}$`, R`$45\ € : 3 = 15\ €$`]) assert.deepEqual(checkArithmetic(t).mismatches, [], t);
+  assert.equal(checkArithmetic(R`$45\ € : 3 = 12\ €$`).mismatches.length, 1);
 });
