@@ -202,6 +202,7 @@ html.k3-stran {
   --font: var(--k3-font, "Instrument Sans Variable", system-ui, sans-serif); --text: #e8ecf3; --muted: #9aa6ba; --accent: #6e9bff; --accent-text: #0b0f16;
   --accent-soft: #1a2540; --surface: #141a25; --surface-2: #1b2331; --border: #273142; --press: #273142; --radius-sm: 10px;
   --shadow: 0 -8px 30px rgba(0, 0, 0, 0.45); --menu: #141a25; --menu-text: #e8ecf3; --menu-muted: #9aa6ba; --menu-border: #273142;
+  --z-tipkovnica: 500; /* plast tipkovnice kot v style.css (UX PR 1) */
   --menu-accent: #6e9bff; --menu-accent-text: #0b0f16;
 }
 body.tk-open .k3-glavni, body.tk-open .k3-model, body.tk-open .a3 { bottom: var(--tk-h, 0px); }

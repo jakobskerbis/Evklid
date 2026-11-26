@@ -300,7 +300,7 @@ async function renderHome() {
       <h1>${ic("book-open")}${esc(t("nav.textbook"))}</h1>
       <p class="muted">${esc(t(tb.browse ? "tbk.introBrowse" : "tbk.intro"))}</p>
       <div class="tb-search">
-        <input id="tb-q" type="search" placeholder="${esc(t("tbk.searchPh"))}" value="${esc(tb.query)}" aria-label="${esc(t("tbk.searchAria"))}" autocomplete="off">
+        <input id="tb-q" type="search" data-ne-prekrij placeholder="${esc(t("tbk.searchPh"))}" value="${esc(tb.query)}" aria-label="${esc(t("tbk.searchAria"))}" autocomplete="off">
       </div>
       ${tb.browse ? "" : `<button type="button" class="text-btn tb-browse" id="tb-browse">${ic("library")}${esc(t("tbk.browse"))}</button>`}
       <div class="tb-filters"${tb.browse ? "" : " hidden"}>
@@ -642,7 +642,7 @@ async function renderLesson(topicId, name = "") {
   const locked = !L.interactive && !!L.locked?.demo;
   const demos = L.demos || (L.demo ? [L.demo] : []);
   const demoHtml = demos.length
-    ? demos.map((d, i) => `<section class="card tb-demo"><h2>${ic("flask-conical")}Preizkusi sam: ${esc(d.title)}</h2><div class="tb-demo-mount" data-sim="${i}"></div></section>`).join("")
+    ? demos.map((d, i) => `<section class="card tb-demo"><h2>${ic("flask-conical")}Preizkusi sam: ${esc(d.title)}</h2><div class="tb-demo-mount" data-sim="${i}" data-ne-prekrij></div></section>`).join("")
     : locked
       ? `<section class="card tb-locked"><h2>${ic("lock")}Poskus: ${esc(L.locked.demo)}</h2>
           <p>Interaktivni poskusi, simulacije in sprotno preverjanje so na voljo v plačljivem paketu in med 7-dnevnim preizkusom. Besedilo lekcije in PDF sta brezplačna.</p>

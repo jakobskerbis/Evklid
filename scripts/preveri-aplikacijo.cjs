@@ -344,6 +344,8 @@ async function screen(p, name) {
   }
   const pokrito = await bubbleCovers(p);
   if (pokrito.length) problem(`${p.label} ${name}`, `mehurček inštruktorja prekriva: ${pokrito.join(", ")}`);
+  const obvestilo = await toastCovers(p);
+  if (obvestilo.length) problem(`${p.label} ${name}`, `obvestilo prekriva: ${obvestilo.join(", ")}`);
   if (SHOTS) {
     const file = path.join(SHOTS, `${String(++shotN).padStart(3, "0")}-${p.label}-${name}.png`.replace(/[^\w.\-]+/g, "_"));
     await p.screenshot({ path: file }).catch(() => {});
@@ -434,6 +436,32 @@ async function bubbleCovers(p) {
         out.push(`${el.nodeName.toLowerCase()}${el.className && typeof el.className === "string" ? "." + el.className.trim().split(/\s+/).slice(0, 2).join(".") : ""}${el.getAttribute("aria-label") ? ` »${el.getAttribute("aria-label").slice(0, 30)}«` : ""}`);
       }
       return [...new Set(out)].slice(0, 4);
+    })
+    .catch(() => []);
+}
+// Obvestilo (#toast, UX PR 1): ne sme prekriti polja, gumba ali površine data-ne-prekrij. Tapi gredo skozenj
+// (pointer-events: none), zato elementsFromPoint ne pomaga: šteje presek pravokotnikov z vidnimi kontrolniki.
+async function toastCovers(p) {
+  return p
+    .evaluate(() => {
+      const t = document.querySelector("#toast");
+      if (!t || t.hidden || !t.getClientRects().length) return [];
+      const r = t.getBoundingClientRect();
+      const sel = "main.view:not([hidden]) :is(button, a[href], input:not([type=hidden]), select, textarea, [role=button], [role=switch]), [data-ne-prekrij]";
+      // Šteje samo vidni del: kar je odrinjeno pod glavo, odreže rob pogleda (main.view).
+      const vidni = (el) => {
+        const s = el.getBoundingClientRect();
+        const v = (el.closest(".okno") || el.closest("main.view"))?.getBoundingClientRect();
+        return v ? { left: s.left, right: s.right, top: Math.max(s.top, v.top), bottom: Math.min(s.bottom, v.bottom) } : s;
+      };
+      return [...new Set([...document.querySelectorAll(sel)]
+        // Tudi v oknih in spodnjem listu: obvestilo je nad njimi (--z-okno < --z-obvestilo).
+        .filter((el) => !el.closest("[hidden], [inert]") && el.checkVisibility())
+        .filter((el) => {
+          const s = vidni(el);
+          return Math.min(r.right, s.right) - Math.max(r.left, s.left) >= 6 && Math.min(r.bottom, s.bottom) - Math.max(r.top, s.top) >= 6;
+        })
+        .map((el) => `${el.nodeName.toLowerCase()}${el.id ? "#" + el.id : ""}`))].slice(0, 4);
     })
     .catch(() => []);
 }
@@ -1139,9 +1167,12 @@ async function okna(p, label) {
     const b = await p.locator("#chat-bubble .cb-main").boundingBox();
     const vw = p.viewportSize().width;
     const vh = p.viewportSize().height;
-    await p.mouse.move(b.x + 28, b.y + 28);
+    // Prime sredino: na nizkem zaslonu je mehurček jeziček, širok 24 px (UX PR 1).
+    const cx = b.x + b.width / 2;
+    const cy = b.y + b.height / 2;
+    await p.mouse.move(cx, cy);
     await p.mouse.down();
-    for (let i = 1; i <= 12; i++) await p.mouse.move(b.x + 28 + (vw / 2 - 40 - b.x - 28) * (i / 12), b.y + 28 + (vh - 100 - b.y - 28) * (i / 12));
+    for (let i = 1; i <= 12; i++) await p.mouse.move(cx + (vw / 2 - 40 - cx) * (i / 12), cy + (vh - 100 - cy) * (i / 12));
     await settle(p, 150);
     if (!(await p.locator("#chat-bubble.magnet").count())) throw new Error("X ne privlači mehurčka");
     await screen(p, `mehurcek-x-${label}`);
