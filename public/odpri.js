@@ -128,7 +128,7 @@ async function openSim(x, from) {
   document.body.append(box);
   simOpen = { box, from, onKey, sprosti: zadrziFokus(box, { zacetni: close, prej: from }) };
   document.body.classList.add("open-sim-on");
-  const ok = await mountSim(x.id, body, x.opts || {});
+  const ok = await mountSim(x.id, body, x.opts || {}, x.title);
   if (!ok) body.replaceChildren(el("p", "muted", D.t("open.failed")));
   else if (x.set) applySet(body, x.set);
 }

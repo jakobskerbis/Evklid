@@ -63,8 +63,9 @@ test("kontrole brez vidnega napisa imajo ime, vloge ARIA so dovoljene", () => {
   assert.match(fb, /aria-pressed="\$\{tab === "chat"\}"/);
   // <ul> z vlogo group nima več elementov seznama (axe listitem)
   assert.doesNotMatch(read("our-paper.js"), /<ul class="op-choices[^"]*"[^>]*role="group"/);
-  // vrstica zgodovine skenerja: ime iz naloge in odgovora
-  assert.match(read("scan/scan.js"), /aria-label="\$\{esc\(\[h\.text \|\| h\.tex, h\.answer\]/);
+  // vrstica zgodovine skenerja: ime iz besedila naloge, nikoli surov LaTeX (bralnik bi ga bral znak za znakom)
+  assert.match(read("scan/scan.js"), /class="list-row" data-hist="\$\{i\}" aria-label="\$\{esc\(h\.text \|\| `\$\{t\("scan\.history"\)\}/);
+  assert.doesNotMatch(read("scan/scan.js"), /aria-label="\$\{esc\(\[?h\.tex\b/);
 });
 
 test("ponovljena črka formule nima aria-label in aria-expanded brez vloge gumba", () => {
@@ -77,11 +78,25 @@ test("ponovljena črka formule nima aria-label in aria-expanded brez vloge gumba
 test("risba simulacije (svg role=img) dobi ime", () => {
   const src = read("sim/index.js");
   assert.match(src, /svg\[role="img"\]:not\(\[aria-label\]\):not\(\[aria-labelledby\]\)/);
-  assert.match(src, /focusableTargets\(el, opts\?\.title\)/);
+  assert.match(src, /focusableTargets\(el, naslov\)/);
+  // naslov ni v opts: opts so del ključa shranjenih meritev laboratorija (labId), ki se ne sme spremeniti
+  assert.match(src, /export async function mountSim\(id, el, opts = \{\}, naslov = ""\)/);
+  assert.match(read("textbook.js"), /mountSim\(d\.id, m, d\.opts, d\.title\)/);
+  assert.match(read("laboratorij.js"), /mountSim\(x\.id, m, x\.opts, x\.title\)/);
+  assert.match(read("odpri.js"), /mountSim\(x\.id, body, x\.opts \|\| \{\}, x\.title\)/);
 });
 
-// Lažen element: dovolj za dosegljiva() brez brskalnika. fokus: null (nič za fokus), "viden" ali "skrit".
-function el({ tabindex = null, fokus = null } = {}) {
+test("zlato besedilo uporablja --gold-text (igre, +XP), temni bloki strani so enaki :root.dark", () => {
+  const brez = (f) => read(f).replace(/\/\*[\s\S]*?\*\//g, "");
+  assert.match(brez("games.css"), /\.gm-record \{[^}]*color: var\(--gold-text\)/);
+  assert.match(brez("games.css"), /\.gm-xp \{ color: var\(--gold-text\); \}/);
+  assert.match(brez("xp.css"), /\.xp-plus \{[^}]*color: var\(--gold-text\)/);
+  for (const f of ["videz-naprave.css", "o-evklidu.html", "zakaj-evklid.html"]) assert.match(read(f), /--gold-text: var\(--gold\);/, f);
+});
+
+// Lažen element: dovolj za dosegljiva() brez brskalnika. fokus: null (nič za fokus), "viden" ali "skrit";
+// gumb: element je sam gumb ali je v gumbu.
+function el({ tabindex = null, fokus = null, gumb = false } = {}) {
   const a = new Map(tabindex === null ? [] : [["tabindex", tabindex]]);
   return {
     dataset: {},
@@ -90,6 +105,8 @@ function el({ tabindex = null, fokus = null } = {}) {
     setAttribute: (k, v) => a.set(k, String(v)),
     removeAttribute: (k) => a.delete(k),
     querySelectorAll: () => (fokus ? [{ checkVisibility: () => fokus === "viden" }] : []),
+    matches: () => gumb === "sam",
+    parentElement: { closest: () => (gumb === "v" ? {} : null) },
     set fokus(v) {
       fokus = v;
     },
@@ -123,6 +140,14 @@ test("dosegljiva: skrit gumb (display: none) ne šteje kot nekaj za fokus", () =
   const e = el({ fokus: "skrit" }); // Napredek na računalniku: »← Jaz« je skrit
   dosegljiva(e, true);
   assert.equal(e.getAttribute("tabindex"), "0");
+});
+
+test("dosegljiva: vrstica v gumbu ali sama gumb ne dobi tabindex (brez gnezdenega interaktivnega elementa)", () => {
+  for (const gumb of ["sam", "v"]) {
+    const e = el({ gumb }); // npr. izraz v vrstici zgodovine skenerja (<button class="list-row">)
+    dosegljiva(e, true);
+    assert.equal(e.hasAttribute("tabindex"), false, gumb);
+  }
 });
 
 test("dosegljiva: tabindex, ki ga je element imel že prej, ostane nespremenjen", () => {

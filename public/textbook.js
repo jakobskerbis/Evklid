@@ -853,7 +853,7 @@ async function renderLesson(topicId, name = "") {
   );
   box.querySelectorAll(".tb-demo-mount").forEach((m) => {
     const d = demos[Number(m.dataset.sim)];
-    mountSim(d.id, m, d.opts);
+    mountSim(d.id, m, d.opts, d.title);
   });
   // Zavihek Račun se izriše ob kliku nanj (account.js); sam showView bi pokazal prazen pogled.
   $("#tb-upgrade")?.addEventListener("click", () => document.querySelector("#account-tab")?.click());

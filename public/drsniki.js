@@ -74,11 +74,15 @@ function uporabi({ el, cw, sw, max, at, ox, rtl }) {
 // ki smo ga dodali, odstranimo; tabindex, ki ga je element imel že prej, ostane, kot je.
 const FOKUS = "a[href],button,input,select,textarea,summary,[tabindex]:not([tabindex^=\"-\"])";
 // Skrit gumb (npr. »← Jaz« v Napredku na računalniku, display: none) ne šteje: s tipko Tab do njega ne pridemo.
+// Vrstica, ki je sama gumb ali je v gumbu ali povezavi (izraz v vrstici zgodovine skenerja), je že dosegljiva:
+// tabindex tam bi bil gnezden interaktivni element (axe nested-interactive) in odvečen korak tipke Tab.
 const vidna = (x) => (x.checkVisibility ? x.checkVisibility() : x.getClientRects().length > 0);
+const INTERAKTIVNO = "a[href],button,summary,[role=button],[role=link]";
 export function dosegljiva(el, vec) {
   const nase = !!el.dataset.drsFokus;
   if (!nase && el.hasAttribute("tabindex")) return;
-  const rabi = vec && ![...el.querySelectorAll(FOKUS)].some(vidna);
+  const vGumbu = el.matches(INTERAKTIVNO) || !!el.parentElement?.closest(INTERAKTIVNO);
+  const rabi = vec && !vGumbu && ![...el.querySelectorAll(FOKUS)].some(vidna);
   if (rabi && !nase) {
     el.setAttribute("tabindex", "0");
     el.dataset.drsFokus = "1";
@@ -163,6 +167,8 @@ function preglej() {
     else {
       const v = kje.closest(POGLED);
       if (v) pogledKmalu(v);
+      // sprememba okoli pogleda (velikost premičnega okna, public/okna.js) ali pogled, ki se pravkar pokaže v njem
+      else kje.querySelectorAll(POGLED).forEach(pogledKmalu);
     }
     const gor = kje !== document && kje.closest(SEL);
     if (gor) najdeni.add(gor);

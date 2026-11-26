@@ -12,8 +12,9 @@ Naloga K-11 načrta dviga kakovosti po reviziji (j odobril 26. 11. 2026). Merilo
 - Vsi posnetki dimnega testa: **4 od 225** posnetkov imajo resno kršitev. Prej jih je imelo 88 od 224.
   Od teh štirih sta 2 v kalkulatorju (`label`, AUDIT-086, lastnik je kalkulatorska seja) in 2 sta ista izjema
   »Inline« za črko formule.
-- Pomeni: bralnik zaslona dobi ime za vsak gumb, vrstico napredka, risbo simulacije in vnosno polje na glavnih
-  zaslonih. Rdeče in zlato besedilo ima kontrast vsaj 4,5 : 1. Pogled, ki se pomika sam, je dosegljiv s tipko Tab.
+- Pomeni: axe na posnetih stanjih glavnih zaslonov ne najde več gumba, vrstice napredka, risbe simulacije ali
+  vnosnega polja brez imena, ne besedila s premajhnim kontrastom in ne drsnega področja, ki ga s tipko Tab ne dosežemo.
+  Rdeče besedilo in zlato besedilo »+XP« (naloga, igre) imata v svetli temi kontrast vsaj 4,5 : 1.
 - Ne pomeni: da je Evklid dostopen po WCAG 2.2 AA v celoti. axe samodejno najde le del napak (po Deque okoli 57 %).
   Ročni pregled z bralnikom zaslona (NVDA, VoiceOver, TalkBack), pregled vrstnega reda fokusa in pregled z osebo,
   ki bralnik uporablja, še nista bila narejena.
@@ -54,8 +55,8 @@ Naloga K-11 načrta dviga kakovosti po reviziji (j odobril 26. 11. 2026). Merilo
 - Ukaz: `npm install --no-save axe-core@4.11.0`, nato
   `node scripts/preveri-aplikacijo.cjs --posnetki <mapa> --meritve` (polni zagon, ne `--samo`). Zapis
   `<mapa>/meritve.jsonl` povzame skripta, ki je opisana v `.json` (vzorci imen zaslonov, »resno« = serious ali critical).
-- Prej: `main` 5b8130ae (26. 11. 2026, pred popravki). Potem: `main` a0f1eea4 s popravki te veje
-  (`claude/project-thread-g6oklx-dostopnost`). Razlika med 5b8130ae in a0f1eea4 je samo #1146 (gumb »Danes imaš« 40 px).
+- Prej: `main` 5b8130ae064212121a81f6cb4f24c475c60add78 (26. 11. 2026, pred popravki). Potem: `main`
+  e787bd065a167b814ac58437d6096ab6e5129f22 s popravki te veje (`claude/project-thread-g6oklx-dostopnost`).
 - Stroj in okolje: oblačni vsebnik Linux s 4 jedri, Node 22.23, Playwright 1.63 s Chromiumom, preizkusni strežnik
   (`EVKLID_MOCK=1`, začasna baza, brez ključev API).
 - Ocenjevanje: program (axe-core). Ocene človeka ni.
@@ -91,14 +92,16 @@ Kaj je popravljeno:
 - Regresijski testi: `test/dostopnost-k11.test.js` (kontrast žetonov, imena, vloge, `dosegljiva`).
 
 ## Napake in neuspehi
-- `target-size`, 125-pc-tema-UNI in 105-pc-trening-konec-SS: posamezna črka v formuli (`span[data-fx]`, odpre opis
+- `target-size`, 125-pc-tema-UNI in 105-pc-trening-konec-SS (v temni temi 125 in 104-pc-nova-raven): posamezna črka v formuli (`span[data-fx]`, odpre opis
   količine) je manjša od 24 × 24 px in preblizu sosednje črke. Črka je del formule v besedilu razlage ali naloge.
   Po naši presoji zanjo velja izjema »Inline« iz WCAG 2.5.8 (velikost omejuje višina vrstice besedila okoli nje).
   axe izjemo prepozna pri večini takih črk, pri teh dveh pa ne. To je presoja, ne dokaz. Če izjemo zavrnemo, bi
-  popravek pomenil drugačno postavitev formul, kar spremeni videz in je odločitev za j-ja.
+  popravek pomenil drugačno postavitev formul, kar spremeni videz in je odločitev za j-ja. Na katerem posnetku axe
+  črko najde, se med zagoni spreminja (prej 1 posnetek, zdaj 2; posnetka 104 in 105 sta ista naloga ob drugem
+  trenutku), zato porast z 1 na 2 ni posledica teh sprememb.
 - `label`, kalkulator Orodja (035-pc, 189-tel): polja `input.tl-ra` in `input.tl-co` v `public/graph/tools.js` nimajo
-  imena (napis je samo črka v KaTeX). Kalkulator ni naš (CLAUDE.md): vpisano v register kot AUDIT-086 (P2, predano
-  profilu B v #539).
+  imena (napis je samo črka v KaTeX). Kalkulator ureja ena sama seja (CLAUDE.md), zato smo ga le prijavili: register
+  `docs/revizija/register.md`, AUDIT-086 (P2), popravek pripravi lastnik kalkulatorja.
 - Napačno potrjenih trditev v tej meritvi ni, ker axe ne potrjuje matematike.
 
 ## Omejitve

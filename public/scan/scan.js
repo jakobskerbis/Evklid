@@ -235,7 +235,7 @@ function renderCapture(box) {
       hist.length
         ? `<section class="scan-hist"><div class="scan-hist-head"><h2>${esc(t("scan.history"))}</h2><button type="button" class="text-btn" data-act="clear">${esc(t("scan.clearHistory"))}</button></div>
       <div class="card list-card">${hist
-        .map((h, i) => `<button type="button" class="list-row" data-hist="${i}" aria-label="${esc([h.text || h.tex, h.answer].filter(Boolean).join(" = "))}"><span class="lr-text"><b class="scan-hist-tex">${math(h.tex || h.text)}</b>${h.answer ? `<small>${math(h.answer)}</small>` : ""}</span>${icon("chevron-right")}</button>`)
+        .map((h, i) => `<button type="button" class="list-row" data-hist="${i}" aria-label="${esc(h.text || `${t("scan.history")} ${i + 1}`)}"><span class="lr-text"><b class="scan-hist-tex">${math(h.tex || h.text)}</b>${h.answer ? `<small>${math(h.answer)}</small>` : ""}</span>${icon("chevron-right")}</button>`)
         .join("")}</div></section>`
         : ""
     }`;
