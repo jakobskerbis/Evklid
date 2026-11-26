@@ -294,6 +294,30 @@ for (const v of [L, { width: 740, height: 360 }, { width: 640, height: 360 }]) {
   });
 }
 
+test("ležeč telefon 844 × 390: obvestilo med pisanjem je vidno levo od tipkovnice", opts, async () => {
+  await withApp(async (base) => {
+    const { ctx, p, errors } = await phone(base, L);
+    await p.locator("#input").tap();
+    await p.waitForSelector(".tk:not([hidden])");
+    await p.evaluate(() => {
+      const t = document.querySelector("#toast");
+      t.textContent = "Napaka je zapisana. Najdeš jo v Računu pod »Prijave napak«.";
+      t.hidden = false;
+      t.dataset.at = Date.now();
+    });
+    await p.waitForTimeout(400);
+    const m = await p.evaluate(() => {
+      const t = document.querySelector("#toast");
+      const r = t.getBoundingClientRect();
+      const tk = document.querySelector(".tk:not([hidden])").getBoundingClientRect();
+      return { skrito: t.hidden, levo: Math.round(r.left), desno: Math.round(r.right), vrh: Math.round(r.top), dno: Math.round(r.bottom), tk: Math.round(tk.left), h: innerHeight };
+    });
+    assert.ok(!m.skrito && m.levo >= 0 && m.desno <= m.tk + 1 && m.vrh >= 0 && m.dno <= m.h, `obvestilo vidno levo od tipkovnice: ${JSON.stringify(m)}`);
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+});
+
 // Najnižji ležeč telefon (640 × 360): plošča je višja od zaslona; s flex-end je bil zgornji del (čipi) odrezan in nedosegljiv.
 test("ležeč telefon 640 × 360: vse plasti tipkovnice so cele na zaslonu", opts, async () => {
   await withApp(async (base) => {

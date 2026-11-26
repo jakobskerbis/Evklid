@@ -145,6 +145,7 @@ body.tk-open :is(.graph-overlay, .overlay, .corner-board) { bottom: calc(var(--t
   body.tk-open { --tk-h: 0px; padding-bottom: var(--tk-vv, 0px); padding-right: min(480px, 56vw); }
   /* Okno s celim besedilom (razpri.js, npr. dolg vnos v klepetu) na sredini prostora levo od tipkovnice, ne pod njo
      (prej sta bila × in desni del besedila skrita pod tipkami). */
+  body.tk-open .toast { left: calc((100vw - min(480px, 56vw)) / 2); max-width: calc(100vw - min(480px, 56vw) - 32px); }
   body.tk-open .razpri { left: calc((100vw - min(480px, 56vw)) / 2); width: min(640px, calc(100vw - min(480px, 56vw) - 24px)); }
   /* Med pisanjem zgornja vrstica (števci, profil) ne vzame 56 px nalogi; ⌄ zapre tipkovnico in vrstica se vrne. */
   body.tk-open > .topbar { display: none; }
