@@ -440,7 +440,9 @@ function check(problemText, ai) {
         const val = g({});
         return { verified: fin(exact) && fin(val) && Math.abs(exact - val) < 1e-6 * Math.max(1, Math.abs(exact)), reason: "wrong" };
       }
-      return { verified: compareFns((t) => f({ [x]: t }), (t) => odvodV((u) => g({ [x]: u }), t)), reason: "wrong" };
+      // okolje iz stalnega seznama črk (ime spremenljivke iz besedila ni ključ za pisanje; CodeQL js/remote-property-injection)
+      const env = OKOLJE[x];
+      return { verified: compareFns((t) => f(env(t)), (t) => odvodV((u) => g(env(u)), t)), reason: "wrong" };
     }
   } catch {
     return { verified: false, reason: "error" };
@@ -567,6 +569,9 @@ function qFromFloatSafe(x) {
     return null;
   }
 }
+
+// {črka: vrednost} za vsako malo črko; ključ pride iz stalnega niza, ne iz besedila naloge
+const OKOLJE = Object.fromEntries([..."abcdefghijklmnopqrstuvwxyz"].map((c) => [c, (t) => ({ [c]: t })]));
 
 // Odvod v točki s petimi točkami: pri hitro nihajočih funkcijah (cos(x⁵) pri x = 5,3) je simetrična
 // razlika s tremi točkami netočna za ~10⁻³ in je sprožila lažni alarm (N-01, odvod2-027/043).
