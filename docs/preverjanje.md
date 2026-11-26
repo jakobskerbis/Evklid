@@ -236,16 +236,23 @@ Ostaja:
 | napačne s šibkim statusom (»numerično«, »delno«) | napačne trditve | čim manj |
 | zaznane napake | napačne trditve | čim več |
 | lažni alarmi | pravilne trditve | 0 |
+| pravilne potrjene (»izračunano« ali »dokazano«) | pravilne trditve | čim več |
+| pravilne s šibkim statusom (»numerično«, »delno«) | pravilne trditve | čim manj |
 | nepreverjene (in »v teku«) | trditve, ki jih motor oceni | čim manj |
+| pokritost: dokončna ocena (pravilna potrjena ali napaka zaznana) | trditve, ki jih motor oceni | čim več |
 | izjeme preverjevalnika | trditve, ki jih motor oceni | 0 |
-| pokritost nabora | vse trditve nabora | čim več |
 
-Pokritost tu pomeni le delež trditev nabora, ki jih motor zna oceniti; pokritost trditev po delih aplikacije meri
-PV-04. Stolpec »Prej« je zadnja meritev v repozitoriju (`docs/meritve/preverjanje-<datum>.json`, isti nabor, preveri
-sha256); slabše merilo je opozorilo v povzetku zagona. Rdeč zagon in zadeva »Dnevna meritev preverjanja ne gre skozi«
-(odpre, dopolni, ob zelenem zapre): napačno potrjena trditev, status nad upravičenim, izjema ali motor, ki ni tekel
-(npr. SymPy ni nameščen). Ob spremembi nabora ali preverjevalnikov nova meritev v `docs/meritve` (test
-`test/preverjanje-porocilo.test.js` pade, če se nabor spremeni brez nje). Izhodišče: `docs/meritve/preverjanje-2026-11-26.md`.
+Poleg tega poročilo prešteje trditve, ki imajo obliko za motor (štetje celote, ne vzorec, brez intervala: lastnost
+nabora, ne motorja), in zahteve SymPy brez odgovora. Pokritost trditev po delih aplikacije meri PV-04. Intervali
+predpostavljajo neodvisne trditve; ker trditve nastanejo v družinah predlog, ki pogosto uspejo ali padejo skupaj, so
+preozki (poročilo to navede pod omejitvami). Stolpec »Prej« je zadnja meritev v repozitoriju
+(`docs/meritve/preverjanje-<datum>.json`, le na istih trditvah: sha256 trditev brez opisa); slabše merilo je opozorilo
+v povzetku zagona. Rdeč zagon in zadeva »Dnevna meritev preverjanja ne gre skozi« (odpre, dopolni, ob zelenem zapre):
+napačno potrjena trditev, status nad upravičenim, izjema, motor, ki ni tekel (npr. SymPy ni nameščen), ali vsaj ena
+zahteva SymPy brez odgovora (rok, sesutje; `casIzpadi()` v `server/cas.js`), ker bi statusi tiho padli na lokalno
+preverjanje (preizkus: SymPy, ki se sesuje sredi meritve, da skenerju 40 lažnih alarmov in zelen zagon brez tega
+pravila). Ob spremembi trditev nabora nova meritev v `docs/meritve` (test `test/preverjanje-porocilo.test.js` pade
+brez nje). Izhodišče: `docs/meritve/preverjanje-2026-11-26.md`.
 
 ## Odpoved preverjevalnikov (K-04)
 
