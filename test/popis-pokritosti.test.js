@@ -18,6 +18,8 @@ test("trditev je formula z relacijo; status iz preračuna lesson-math", () => {
   // identiteto potrdi preizkus z naključnimi števili (lesson-identity); neujemanje brez okolice ni napaka (lahko je enačba)
   assert.deepEqual(statusi("Velja $(a+b)^2 = a^2 + 2ab + b^2$."), ["numericno"]);
   assert.deepEqual(statusi("Rešimo $2x + 3 = 7$."), ["nepreverjeno"]);
+  // potrjena le prva relacija verige: delno, ne numerično
+  assert.deepEqual(statusi("$(a+b)^2 = a^2 + 2ab + b^2 = c$"), ["delno"]);
   // ubežni znak \$ ni začetek formule
   assert.deepEqual(statusi("Cena je 5 \\$ in $3 \\cdot 4 = 12$"), ["numericno"]);
 });
@@ -48,6 +50,10 @@ test("lekcija: razlaga, »Preveri se«, rešeni primeri, namerno napačne in vpr
   assert.equal(trditveIzBesedila(d.namerne).length, 1);
   assert.equal(trditveIzBesedila(d.napacneMoznosti).length, 3);
   assert.equal(trditveIzBesedila(d.vprasanja).length, 1);
+  // vprašanje v več vrsticah (navaja napačen korak) je podatek naloge do prvega odgovora
+  const q = deliLekcije("## Preveri se\n? Maja računa:\n1) $2+2=5$;\nKateri korak je napačen?\n- korak 1\n+ $2+2=4$\n");
+  assert.equal(trditveIzBesedila(q.vprasanja).length, 1);
+  assert.deepEqual(statusi(q.preveri), ["numericno"]);
   assert.ok(!/RACUN|id: x/.test(Object.values(d).join("\n")));
 });
 

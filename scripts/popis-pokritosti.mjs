@@ -57,7 +57,8 @@ export function statusFormule(tex, vrstica = "", prejsnja = null) {
   // simbolna enakost: server/lesson-identity.js vstavi naključna števila (CI lekcij). Brez okolice lekcije (definicije,
   // »enačba«) neujemanje ni dokaz napake (enačba ni identiteta), zato šteje le potrditev.
   const id = checkIdentities(`${besede} $${t}$`);
-  return id.checked && !id.mismatches.length ? "numericno" : "nepreverjeno";
+  if (!id.checked || id.mismatches.length) return "nepreverjeno";
+  return id.checked >= n ? "numericno" : "delno";
 }
 
 /** Vse trditve v besedilu (markdown s TeX): [{ tex, vrstica, status }]. */
@@ -102,19 +103,24 @@ export function deliLekcije(src) {
   const out = { razlaga: [], preveri: [], primeri: [], namerne: [], napacneMoznosti: [], vprasanja: [] };
   let kam = "razlaga";
   let preveri = false;
+  let vVprasanju = false;
   for (const l of body.split("\n")) {
     const h = l.match(/^## +(.*)/);
     if (h) {
       const t = h[1].trim();
       preveri = /^preveri/i.test(t);
+      vVprasanju = false;
       kam = /^pogoste/i.test(t) ? "namerne" : /^rešen/i.test(t) ? "primeri" : "razlaga";
       out[kam].push("");
       continue;
     }
     // »Preveri se«: pravilni odgovor (+), pojasnilo (>), razvrščanje in nadaljevanja so vsebina; napačne možnosti (-)
-    // in njihova pojasnila (~, pogosto ponovijo napačen račun) so namerno napačne; vprašanje (?) je podatek naloge.
+    // in njihova pojasnila (~, pogosto ponovijo napačen račun) so namerno napačne; vprašanje (?) z vrsticami do prvega
+    // odgovora je podatek naloge (lahko navaja tudi napačen korak, »Kateri korak je napačen?«).
     if (preveri) {
-      const kamP = /^[-~] /.test(l) ? "napacneMoznosti" : /^\? /.test(l) ? "vprasanja" : "preveri";
+      if (/^\? /.test(l)) vVprasanju = true;
+      else if (!l.trim() || /^(?:[-+~>=]|\d+\.) /.test(l)) vVprasanju = false;
+      const kamP = vVprasanju ? "vprasanja" : /^[-~] /.test(l) ? "napacneMoznosti" : "preveri";
       for (const k of ["preveri", "napacneMoznosti", "vprasanja"]) out[k].push(k === kamP ? l : "");
       continue;
     }
@@ -253,7 +259,7 @@ export const MESTA = [
   { st: 6, mesto: "Učbenik: bloki RACUN (strojni zapis, učenec jih ne vidi)", enota: "vrstica RACUN", staticno: "racun", ci: "da: check-lesson.js (SymPy)", lastnik: "A" },
   { st: 7, mesto: "Rešeni primeri v lekcijah", enota: "formula z relacijo", staticno: "primeri", ci: "da: check-lesson.js (računi; od identitet le rešitve)", lastnik: "A" },
   { st: 8, mesto: "Vadnica: generatorji (rešitve)", enota: "formula z relacijo v rešitvi", staticno: "generatorji", ci: "ne: preveri-generatorje.js preveri odgovor naloge, korakov rešitve ne", lastnik: "A" },
-  { st: 9, mesto: "Matura in NPZ: naše pole (rešitve)", enota: "formula z relacijo v rešitvi", staticno: "pole", ci: "delno: test pol preračuna odgovor, točkovnik in »mistake«, poti rešitve ne", lastnik: "A" },
+  { st: 9, mesto: "Matura in NPZ: naše pole (rešitve)", enota: "formula z relacijo v rešitvi", staticno: "pole", ci: "da: test pol (our-papers.js) preračuna odgovor, točkovnik, »mistake« in poti rešitve", lastnik: "A" },
   { st: 10, mesto: "Tekmovalne naloge (generatorji tek-*)", enota: "formula z relacijo v rešitvi", staticno: "tekmovanja", ci: "ne: kot generatorji", lastnik: "A" },
   { st: 11, mesto: "Priprava na test", enota: "naloga iz zapiskov", staticno: null, poTrditvi: "naloga, v kateri koda najde računsko napako, se izloči (codeCheck); statusa ni", lastnik: "A" },
   { st: 12, mesto: "Uvoženi zapiski in kartice", enota: "trditev zapiska", staticno: null, poTrditvi: "zapiski: trditve RACUN; vaja iz lista: ne", lastnik: "A" },
@@ -322,7 +328,7 @@ export function porocilo(m, { datum, commit, ukaz = "", okolje = "", dodatek = "
   v.push("", "## Omejitve");
   v.push("- Trditev je formula z relacijo: besedne trditve (»funkcija je naraščajoča«) in formule brez relacije niso štete, zato je pravo število trditev večje.");
   v.push("- Ena formula z več relacijami je ena trditev; »delno« pomeni, da je program preračunal le del verige.");
-  v.push("- Popis uporabi preverjevalnike na vsaki formuli posebej, tudi tam, kjer jih CI ne (generatorji, računi v »Preveri se«, poti rešitev na polah); brez okolice lekcije preizkus identitet le potrjuje, zato je del simbolnih trditev, ki jih CI lekcij preizkusi, tu »Nepreverjeno«.");
+  v.push("- Popis uporabi preverjevalnike na vsaki formuli posebej, tudi tam, kjer jih CI ne (generatorji, računi v »Preveri se«); brez okolice lekcije preizkus identitet le potrjuje, zato je del simbolnih trditev, ki jih CI lekcij preizkusi, tu »Nepreverjeno«.");
   v.push("- »Numerično« je preračun s plavajočo vejico ali preizkus z naključnimi števili, ne dokaz; »napaka« je lahko tudi pretvorba enote, zapis ure ali ocena reda velikosti, ki je lesson-math ne prepozna (glej pregled zgoraj).");
   v.push("- Izločene skupine niso vse napačne: »Pogoste napake« vsebujejo tudi pravilne različice, pojasnila ~ tudi pravilne račune.");
   v.push("- Bloki RACUN ponovijo rezultate vidne vsebine (content/lessons/README.md), zato so ločeni od glavne številke.");
