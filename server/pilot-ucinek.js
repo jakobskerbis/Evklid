@@ -11,6 +11,20 @@
 // vpliva na napredek, ravni ali lige. Prejšnji preizkus (6 nalog iz naslednje teme na poti) ostane v bazi kot
 // pre-v1/post-v1 (izvoz in izbris kot prej), v poročilu ga ni.
 //
+// Brez pomoči (j 26. 11. 2026, pregled pripravljenosti pilota, poseg 3): navodilo pove, da kandidat rešuje sam (brez
+// inštruktorja, skenerja in drugih ljudi; računalo sme). Po zadnji nalogi ga vprašamo »Si pri kateri nalogi uporabil
+// pomoč?« (help: yes | no); preizkus je končan (finished_at, rezultat, XP) šele z odgovorom. Takrat zapišemo še, ali je
+// med reševanjem uporabil inštruktorja ali skener ali vadil (aided; okna do 30 min pred vsakim odgovorom, times, glej
+// aidedDuring), pri drugem preizkusu pa tudi, katera mesta je med preizkusoma vadil (practiced). Vse to se ob koncu zapiše enkrat in se ne spreminja več, zato
+// se paketi po 5 (zasebnost) ne spremenijo, ko kdo pozneje odgovori ali izbriše pogovor (pregled 2). Drugi preizkus s
+// pomočjo ni v glavnem izidu.
+//
+// Glavni izid (isti pregled): pari (kandidat, mesto v obliki), kjer je kandidat nalogo v prvem preizkusu rešil napačno
+// ali z »Ne vem«, in delež tistih, ki jih je čez 14 dni brez pomoči rešil pravilno (vzporedna naloga istega koncepta),
+// ločeno za koncepte, ki jih je vmes vadil v Evklidu (vadnica, inštruktor ali vaja drugje s to temo med koncem prvega in
+// začetkom drugega preizkusa), in tiste, ki jih ni; skupina šele od praga kandidatov. Poročilo šteje še povabljene (člane
+// pilota), začete, končane, pare in odpadle (prvi končan, drugega ni končal v ODPAD_DAYS dneh po odprtju).
+//
 // Plačilo: enkrat, 14 dni po začetku pilota; »Ali bi plačal?« (Da / Mogoče / Ne / Raje ne povem) in pri Da ali Mogoče
 // še »Koliko na mesec?« (razponi v evrih ali Raje ne povem). Brez XP.
 //
@@ -27,6 +41,9 @@ export const QUIZ = JSON.parse(fs.readFileSync(new URL("../content/pilot-preizku
 export const QUIZ_FORMS = ["A", "B"];
 export const QUIZ_LEN = QUIZ.slots.length;
 export const QUIZ_GAP_DAYS = 14;
+export const ODPAD_DAYS = 7; // drugi preizkus ni končan 7 dni po odprtju → odpadel
+export const QUIZ_HELP = ["yes", "no"];
+const MIN_ITEMS = 10; // delež in interval skupine šele od 10 nalog naprej
 export const WTP_AFTER_DAYS = 14;
 export const WTP_PAY = ["yes", "maybe", "no", "skip"];
 export const WTP_AMOUNT = ["lt5", "5to10", "10to15", "15to20", "gt20", "skip"];
@@ -48,7 +65,15 @@ export function migratePilotImpact(db) {
       PRIMARY KEY (student_id, phase)
     );
   `);
-  if (!db.prepare("PRAGMA table_info(pilot_quiz)").all().some((c) => c.name === "form")) db.exec("ALTER TABLE pilot_quiz ADD COLUMN form TEXT");
+  const cols = db.prepare("PRAGMA table_info(pilot_quiz)").all().map((c) => c.name);
+  if (!cols.includes("form")) db.exec("ALTER TABLE pilot_quiz ADD COLUMN form TEXT");
+  // aided: 1 = med preizkusom je uporabil inštruktorja ali skener (zapiše se ob koncu); help: odgovor kandidata.
+  if (!cols.includes("aided")) db.exec("ALTER TABLE pilot_quiz ADD COLUMN aided INTEGER");
+  if (!cols.includes("help")) db.exec("ALTER TABLE pilot_quiz ADD COLUMN help TEXT");
+  // times: JSON časov odgovorov (za pomoč samo v času reševanja, ne med premorom).
+  if (!cols.includes("times")) db.exec("ALTER TABLE pilot_quiz ADD COLUMN times TEXT");
+  // practiced (samo drugi preizkus): JSON mest [0..11], katerih temo je vadil med preizkusoma (zapiše se ob koncu).
+  if (!cols.includes("practiced")) db.exec("ALTER TABLE pilot_quiz ADD COLUMN practiced TEXT");
   // Prejšnji preizkus (pred N-10) se umakne pod pre-v1/post-v1: ostane v izvozu, nov preizkus začne znova. OR IGNORE:
   // vrstica brez oblike, ki bi jo ob vrnitvi na staro različico napisala stara koda ob obstoječi pre-v1, ne ustavi
   // zagona; dobi oznako s časom nastanka.
@@ -93,8 +118,46 @@ const phaseView = (row) => {
   if (!row) return { started: false, done: false };
   const answers = parse(row.answers, []);
   const done = row.finished_at != null;
-  return { started: true, done, index: answers.filter((a) => a != null).length, total: answers.length, ...(done ? { score: row.score } : {}) };
+  // askHelp: vse naloge so odgovorjene, preizkus se konča z odgovorom na vprašanje o pomoči.
+  const askHelp = !done && answers.length > 0 && answers.every((a) => a != null);
+  return { started: true, done, index: answers.filter((a) => a != null).length, total: answers.length, ...(done ? { score: row.score } : {}), ...(askHelp ? { askHelp } : {}) };
 };
+
+// Pomoč med reševanjem: v oknu do HELP_WINDOW_MIN minut pred vsakim odgovorom (a ne pred prejšnjim odgovorom oziroma
+// začetkom preizkusa), da premor sredi preizkusa (npr. teden vaje) ne šteje kot pomoč (pregled 3). Pomoč je: klic AI
+// inštruktorja ali skenerja (HELP_KINDS v usage, tudi odgovor iz predpomnilnika), sporočilo inštruktorju, odgovor na
+// nalogo vadnice ali vaja drugje (skill_results.last_at: pole, kviz, kartice …). Brez tabel: ne vemo → false.
+export const HELP_WINDOW_MIN = 30;
+export const HELP_KINDS = ["chat", "boost", "popravek", "prekinjeno", "sodba", "preverjanje", "verify", "reuse", "hint", "skeniranje"];
+const sqlTimeOf = (d) => d.toISOString().replace("T", " ").slice(0, 19);
+export function helpWindows(start, times) {
+  const out = [];
+  let prev = start;
+  for (const t of times) {
+    if (!t) continue;
+    const from = sqlTimeOf(new Date(Math.max(sqlDate(prev).getTime(), sqlDate(t).getTime() - HELP_WINDOW_MIN * 60000)));
+    out.push([from, t]);
+    prev = t;
+  }
+  return out;
+}
+export function aidedDuring(db, sid, windows) {
+  const kinds = HELP_KINDS.map(() => "?").join(",");
+  const any = (sql, from, to, extra = []) => {
+    try {
+      return !!db.prepare(sql).get(sid, ...extra, from, to);
+    } catch {
+      return false;
+    }
+  };
+  return windows.some(
+    ([from, to]) =>
+      any(`SELECT 1 FROM usage WHERE student_id = ? AND kind IN (${kinds}) AND created_at >= ? AND created_at <= ? LIMIT 1`, from, to, HELP_KINDS) ||
+      any("SELECT 1 FROM messages m JOIN conversations c ON c.id = m.conversation_id WHERE c.student_id = ? AND m.role = 'user' AND m.created_at >= ? AND m.created_at <= ? LIMIT 1", from, to) ||
+      any("SELECT 1 FROM tasks WHERE student_id = ? AND answered_at >= ? AND answered_at <= ? LIMIT 1", from, to) ||
+      any("SELECT 1 FROM skill_results WHERE student_id = ? AND last_at >= ? AND last_at <= ? LIMIT 1", from, to),
+  );
+}
 
 /** Stanje preizkusa za zaslon »Pomagaj izboljšati Evklid«. */
 export function quizState(db, sid, now = new Date()) {
@@ -145,10 +208,48 @@ export const shownN = (n, min) => (n > 0 && n < min ? `< ${min}` : n);
 // Pri plačilu je prag višji (j, 6. 11.): skrbnik pozna vse račune v pilotu.
 export const WTP_MIN = 5;
 
-export function impactReport(db, minGroup) {
+// Wilsonov 95-% interval za delež k/n (zaokrožen na tri decimalke); pri n = 0 null.
+export function wilson(k, n, z = 1.96) {
+  if (!n) return null;
+  const p = k / n;
+  const d = 1 + (z * z) / n;
+  const c = (p + (z * z) / (2 * n)) / d;
+  const h = (z * Math.sqrt((p * (1 - p)) / n + (z * z) / (4 * n * n))) / d;
+  return [Math.max(0, Math.round((c - h) * 1000) / 1000), Math.min(1, Math.round((c + h) * 1000) / 1000)];
+}
+
+// Teme mesta i (tema sklopa in tema nalog obeh oblik).
+const slotTopics = (i) => [...new Set([QUIZ.slots[i].topic, ...QUIZ_FORMS.map((f) => QUIZ.forms[f][i]?.topicId)].filter(Boolean))];
+
+// Ali je učenec temo mesta vadil med `from` in `to`: odgovor na nalogo vadnice te teme (tasks.answered_at), korak pri
+// inštruktorju s to temo (events.topic_id) ali vaja drugje (skill_results, po dnevih). Mesto ima samo svojo temo
+// (sosednja tema, npr. uporaba odvoda pri mestu »odvod«, ne šteje).
+export function practicedTopics(db, sid, from, to) {
+  const out = new Set();
+  const q = (sql, args = [sid, from, to]) => {
+    try {
+      for (const r of db.prepare(sql).all(...args)) out.add(r.t);
+    } catch {}
+  };
+  q("SELECT DISTINCT topic_id AS t FROM tasks WHERE student_id = ? AND mode IN ('practice', 'review', 'list') AND answered_at >= ? AND answered_at < ?");
+  q("SELECT DISTINCT topic_id AS t FROM events WHERE student_id = ? AND topic_id IS NOT NULL AND created_at >= ? AND created_at < ?");
+  // Pole mature in NPZ, poskusne pole, »Preveri se« v lekcijah, kviz, kartice, igre, ustno (po dnevih, UTC).
+  // Vmesni dnevi v celoti; na mejnih dnevih (konec prvega, začetek drugega preizkusa) samo po last_at (pregled 3).
+  q("SELECT DISTINCT topic_id AS t FROM skill_results WHERE student_id = ? AND topic_id IS NOT NULL AND ((day > substr(?, 1, 10) AND day < substr(?, 1, 10)) OR (last_at >= ? AND last_at < ?))", [sid, from, to, from, to]);
+  return out;
+}
+
+// Mesta, katerih temo je učenec vadil med `from` in `to` (zapiše se ob koncu drugega preizkusa).
+export const practicedSlots = (db, sid, from, to) => {
+  const done = practicedTopics(db, sid, from, to);
+  return QUIZ.slots.map((_, i) => i).filter((i) => slotTopics(i).some((t) => done.has(t)));
+};
+
+// opts.invited: število članov pilota (profilov), ki lahko rešujejo preizkus; opts.now: za odpadle.
+export function impactReport(db, minGroup, { invited = null, now = new Date() } = {}) {
   migratePilotImpact(db);
   const rows = db
-    .prepare("SELECT rowid, student_id, phase, score, form, answers, finished_at FROM pilot_quiz WHERE finished_at IS NOT NULL AND phase IN ('pre', 'post') AND form IS NOT NULL ORDER BY finished_at, rowid")
+    .prepare("SELECT rowid, student_id, phase, score, form, answers, created_at, finished_at, aided, help, practiced FROM pilot_quiz WHERE finished_at IS NOT NULL AND phase IN ('pre', 'post') AND form IS NOT NULL ORDER BY finished_at, rowid")
     .all();
   const pct = (r) => r.score / Math.max(1, parse(r.answers, []).length);
   const avg = (xs) => (xs.length ? Math.round((xs.reduce((s, x) => s + x, 0) / xs.length) * 1000) / 1000 : null);
@@ -204,6 +305,63 @@ export function impactReport(db, minGroup) {
     const h = (tCrit(d.length - 1) * sd) / Math.sqrt(d.length);
     ci95 = [Math.round((m - h) * 1000) / 1000, Math.round((m + h) * 1000) / 1000];
   }
+  // Glavni izid po konceptu: samo pari, kjer drugi preizkus ni bil s pomočjo (aided ali »Da«), v LASTNIH paketih po
+  // minGroup po obliki in času konca (pomoč, vaja in odgovori se zapišejo ob koncu in se ne spreminjajo; pregled 2).
+  // Preizkusi pred to različico (aided NULL) štejejo kot brez zapisa pomoči.
+  const helped = (r) => r.aided === 1 || r.help === "yes";
+  const soloAll = pairAll.filter((r) => usable(r) && !helped(postBy.get(r.student_id)));
+  const solo = QUIZ_FORMS.flatMap((f) => block(soloAll.filter((r) => r.form === f), minGroup));
+  // [napačno ali »Ne vem« prvič, od tega pravilno drugič, kandidati v skupini]
+  const cnt = { all: [0, 0, new Set()], practiced: [0, 0, new Set()], notPracticed: [0, 0, new Set()] };
+  const gaps = [];
+  for (const r of solo) {
+    const p = postBy.get(r.student_id);
+    const a = parse(r.answers, []);
+    const b = parse(p.answers, []);
+    const done = new Set(parse(p.practiced, null) || []);
+    gaps.push((sqlDate(p.finished_at) - sqlDate(r.finished_at)) / 864e5);
+    QUIZ.slots.forEach((_, i) => {
+      if (a[i] === 1) return;
+      for (const g of [cnt.all, cnt[done.has(i) ? "practiced" : "notPracticed"]]) {
+        g[0]++;
+        if (b[i] === 1) g[1]++;
+        g[2].add(r.student_id);
+      }
+    });
+  }
+  // Skupina »vadil« ali »ni vadil« se pokaže šele z vsaj minGroup kandidati (sicer bi lahko opisala enega človeka), delež
+  // in interval šele od MIN_ITEMS nalog naprej (pregled 3).
+  const outcome = ([n, k, who]) =>
+    who.size < minGroup
+      ? { hidden: true, candidates: shownN(who.size, minGroup) }
+      : { candidates: who.size, n, improved: k, share: n >= MIN_ITEMS ? Math.round((k / n) * 1000) / 1000 : null, ci95: n >= MIN_ITEMS ? wilson(k, n) : null };
+  const median = (xs) => {
+    const v = [...xs].sort((x, y) => x - y);
+    return v.length ? Math.round((v.length % 2 ? v[(v.length - 1) / 2] : (v[v.length / 2 - 1] + v[v.length / 2]) / 2) * 10) / 10 : null;
+  };
+  // Če je ena od podskupin skrita in ni prazna, skrijemo tudi drugo: sicer bi skupaj − druga dala skrito skupino
+  // (pregled 3, PR #1188). Prazna skupina (0 kandidatov) ne pove ničesar, zato druga ostane vidna.
+  let practiced = outcome(cnt.practiced);
+  let notPracticed = outcome(cnt.notPracticed);
+  if ((practiced.hidden && cnt.practiced[2].size) || (notPracticed.hidden && cnt.notPracticed[2].size)) {
+    practiced = { hidden: true, candidates: practiced.hidden ? practiced.candidates : `≥ ${minGroup}` };
+    notPracticed = { hidden: true, candidates: notPracticed.hidden ? notPracticed.candidates : `≥ ${minGroup}` };
+  }
+  const concept = solo.length ? { candidates: solo.length, gapDays: median(gaps), all: outcome(cnt.all), practiced, notPracticed } : null;
+  // Potek: začeli (prvi preizkus odprt), končali prvega, oba, odpadli (drugega niso končali ODPAD_DAYS dni po odprtju) in
+  // tisti, ki še lahko končajo. Začeli, odpadli in še čakajo samo v korakih po minGroup (»10+«), da razlika dveh poročil
+  // ne pove, kdo je odpadel ali odprl preizkus (pregled 3, PR #1188); pod pragom »< prag«.
+  const stepN = (n) => (n === 0 ? 0 : n < minGroup ? `< ${minGroup}` : `${Math.floor(n / minGroup) * minGroup}+`);
+  const started = db.prepare("SELECT COUNT(*) AS n FROM pilot_quiz WHERE phase = 'pre' AND form IS NOT NULL").get().n;
+  const postDone = new Set(rows.filter((r) => r.phase === "post").map((r) => r.student_id));
+  let dropped = 0;
+  let waiting = 0;
+  for (const r of preAll) {
+    if (postDone.has(r.student_id)) continue;
+    if (now >= addDays(r.finished_at, QUIZ_GAP_DAYS + ODPAD_DAYS)) dropped++;
+    else waiting++;
+  }
+  const blocked = QUIZ_FORMS.flatMap((f) => pairBlocks[f]);
   const orders = Object.values(byOrder);
   const diffBalanced = orders.every(Boolean) ? Math.round(((orders[0].diff + orders[1].diff) / 2) * 1000) / 1000 : null;
   // Natančno je samo skupno število; štetja po skupinah so samo znotraj paketov.
@@ -223,6 +381,19 @@ export function impactReport(db, minGroup) {
     byForm,
     byOrder,
     slots,
+    invited: invited == null ? null : shownN(invited, minGroup),
+    started: stepN(started),
+    dropped: stepN(dropped),
+    waiting: stepN(waiting),
+    dropDays: ODPAD_DAYS,
+    // Pari v ZAPRTIH paketih, kjer je bil drugi preizkus s pomočjo (niso v glavnem izidu). Šteje se samo v paketih, da se
+    // število spremeni le s celim paketom (pregled 3, PR #1188); pod pragom »< prag«.
+    helped: shownN(blocked.filter((r) => helped(postBy.get(r.student_id))).length, minGroup),
+    helpedAuto: shownN(blocked.filter((r) => postBy.get(r.student_id).aided === 1).length, minGroup),
+    helpedSelf: shownN(blocked.filter((r) => postBy.get(r.student_id).help === "yes").length, minGroup),
+    // Pari, kjer je bil s pomočjo PRVI preizkus (ostanejo v izidu; nižji imenovalec »napačno prvič«).
+    helpedPre: shownN(blocked.filter(helped).length, minGroup),
+    concept,
     allSkip: QUIZ_FORMS.reduce((n, f) => n + preBlocks[f].filter(allSkip).length + pairBlocks[f].filter((r) => !allSkip(r) && allSkip(postBy.get(r.student_id))).length, 0),
   };
   let wtp = { n: 0, shown: 0, min: WTP_MIN, pay: null, amount: null };
@@ -305,15 +476,38 @@ export function mountPilotImpact(app, db, { member, reward, reply, accounts, isM
       ok = r.kind === "correct" || r.kind === "rounding" || r.kind === "simplify";
     }
     answers[i] = b.skip === true ? -1 : ok ? 1 : 0; // -1 = »Ne vem« (šteje kot nepravilno, a ločeno od napačnega)
-    const last = answers.every((a) => a != null);
-    const score = answers.filter((a) => a === 1).length;
+    // Po zadnji nalogi preizkus še ni končan: konča ga odgovor na vprašanje o pomoči (/quiz/help).
+    const times = parse(row.times, null) || [];
+    times[i] = sqlTimeOf(new Date());
     const n = db
-      .prepare(`UPDATE pilot_quiz SET answers = ?${last ? ", score = ?, finished_at = datetime('now')" : ""} WHERE student_id = ? AND phase = ? AND answers = ?`)
-      .run(...[JSON.stringify(answers), ...(last ? [score] : []), s.id, b.phase, row.answers]).changes;
+      .prepare("UPDATE pilot_quiz SET answers = ?, times = ? WHERE student_id = ? AND phase = ? AND answers = ? AND finished_at IS NULL")
+      .run(JSON.stringify(answers), JSON.stringify(times), s.id, b.phase, row.answers).changes;
     if (!n) return res.status(409).json({ error: "Ta naloga je že zaključena." });
+    reply(res, s, 0, { run: publicQuiz(rowOf(db, s.id, b.phase)) });
+  });
+
+  // Konec preizkusa: »Si pri kateri nalogi uporabil pomoč?« { phase, help: "yes" | "no" }, ko so odgovorjene vse naloge.
+  // Šele zdaj: rezultat, čas konca, zapis pomoči (aided), pri drugem preizkusu vadena mesta, XP (enkrat na fazo).
+  app.post("/api/students/:id/pilot/quiz/help", (req, res) => {
+    const s = member(req, res);
+    if (!s) return;
+    const b = req.body || {};
+    if (!PHASES.includes(b.phase) || !QUIZ_HELP.includes(b.help)) return res.status(400).json({ error: "Napačna zahteva." });
+    const row = rowOf(db, s.id, b.phase);
+    if (!row) return res.status(400).json({ error: "Napačna zahteva." });
+    if (row.finished_at) return res.status(409).json({ error: "Ta preizkus je že končan." });
+    const answers = parse(row.answers, []);
+    if (!answers.length || answers.some((a) => a == null)) return res.status(409).json({ error: "Najprej odgovori na vse naloge." });
+    const score = answers.filter((a) => a === 1).length;
+    const aided = aidedDuring(db, s.id, helpWindows(row.created_at, parse(row.times, null) || [])) ? 1 : 0;
+    const pre = b.phase === "post" ? rowOf(db, s.id, "pre") : null;
+    const practiced = pre?.finished_at ? JSON.stringify(practicedSlots(db, s.id, pre.finished_at, row.created_at)) : null;
+    const n = db
+      .prepare("UPDATE pilot_quiz SET help = ?, score = ?, aided = ?, practiced = ?, finished_at = datetime('now') WHERE student_id = ? AND phase = ? AND finished_at IS NULL AND answers = ?")
+      .run(b.help, score, aided, practiced, s.id, b.phase, row.answers).changes;
+    if (!n) return res.status(409).json({ error: "Ta preizkus je že končan." });
     // XP samo za opravljen preizkus, enkrat na fazo (ne za rezultat).
-    const gained = last ? reward(s.id, `quiz:${b.phase}`) : 0;
-    reply(res, s, gained, { run: publicQuiz(rowOf(db, s.id, b.phase)) });
+    reply(res, s, reward(s.id, `quiz:${b.phase}`), { run: publicQuiz(rowOf(db, s.id, b.phase)) });
   });
 
   // Vprašanje o plačilu (Račun, samo lastnik računa, z geslom računa): { pay, amount?, password }

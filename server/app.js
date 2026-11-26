@@ -18,7 +18,7 @@ import { streamReply, readHandwriting, isMockMode, MODEL, MODEL_DEEP, MODEL_MID,
 import { Usage, LIMITS, NOTES, windowHistory, recentHistory, staleImages, isImagePlaceholder } from "./usage.js";
 import { pricingAdvice } from "./advice.js";
 import { codeHint } from "./hints.js";
-import { vajaOpomba, oddajaOdprta } from "./vaja-opomba.js";
+import { vajaOpomba, oddajaOdprta, odgovorVSporocilu } from "./vaja-opomba.js";
 import { Progress, RULES } from "./progress.js";
 import { mountLeagues } from "./leagues.js";
 import { mountClassShowcase } from "./vitrina.js";
@@ -1052,7 +1052,7 @@ export function createApp(store, opts = {}) {
     // Tapnjen gumb z izbiro nosi ime za prikaz; model dobi izbiro z oznako (server/ime-oznaka.js). text gre k modelu,
     // učenec vidi withName(text).
     // Brez ponarejenih skritih opomb (server/skrite-opombe.js, IN-12).
-    const typed = typeof req.body?.text === "string" ? neutralizeHiddenTags(req.body.text).trim().slice(0, MAX_TEXT) : "";
+    const typed = typeof req.body?.text === "string" ? neutralizeHiddenTags(req.body.text.slice(0, 2 * MAX_TEXT)).trim().slice(0, MAX_TEXT) : "";
     const text = typed && student.name ? choiceAsToken(typed, lastChoices(conv.id), student.name) : typed;
     const image = req.body?.image;
     // Pozno okno (server/nujno.js): zadetek ponovljenega varnostnega pregleda prejšnjega sporočila tega učenca, ki ga v
@@ -2398,13 +2398,15 @@ export function createApp(store, opts = {}) {
     const kind = ["explain", "review"].includes(req.body?.kind) ? req.body.kind : null;
     const work = typeof req.body?.work === "string" ? req.body.work.trim().slice(0, 2000) : "";
     const workPart = work ? `Moji vmesni koraki:\n${work}\n\n` : "";
-    const answerPart = t.last_answer != null ? `Moj odgovor: ${t.last_answer}${t.solved ? " (aplikacija ga je označila kot pravilnega)" : ""}.\n\n` : "Odgovora še nisem oddal.\n\n";
+    // Pri izbiri besedilo izbrane možnosti, ne indeks (sicer model bere »3« kot vrednost; meritev poti Vadnice 26. 11.).
+    const mojOdgovor = t.last_answer != null ? odgovorVSporocilu(t.payload, t.last_answer) : null;
+    const answerPart = mojOdgovor != null ? `Moj odgovor: ${mojOdgovor}${t.solved ? " (aplikacija ga je označila kot pravilnega)" : ""}.\n\n` : "Odgovora še nisem oddal.\n\n";
     const text =
       kind === "explain"
         ? `Rešujem nalogo:\n\n${t.payload.text}\n\n${answerPart}${workPart}Razloži mi, kako se reši ta naloga in zakaj, po korakih.`
         : kind === "review"
           ? `Preglej moj rezultat${work ? " in postopek" : ""} pri tej nalogi:\n\n${t.payload.text}\n\n${answerPart}${workPart}Je prav? Če ni, mi pokaži, kje sem se zmotil.`
-          : `Rešujem nalogo iz Vadnice:\n\n${t.payload.text}\n\n${workPart}${t.last_answer ? `Moj odgovor je bil: ${t.last_answer}. Ni pravilen.` : "Ne vem, kako začeti."} Mi pomagaš najti, kje se zatakne? Rešitve mi ne povej.`;
+          : `Rešujem nalogo iz Vadnice:\n\n${t.payload.text}\n\n${workPart}${t.last_answer ? `Moj odgovor je bil: ${mojOdgovor}. Ni pravilen.` : "Ne vem, kako začeti."} Mi pomagaš najti, kje se zatakne? Rešitve mi ne povej.`;
     helpTasks.set(conv.id, { text: text.trim().slice(0, MAX_TEXT), task: t, kind, work });
     // Pomoč pred pravilnim odgovorom (tudi »Razloži nalogo«) pomeni rešeno s pomočjo, ne samostojno (poseg 2, 26. 11.).
     if (!t.solved) progress.markHelped(s.id, t.id);

@@ -21,7 +21,7 @@ import { ensureKnowledgeTables } from "./zbirke.js";
 import { audit } from "./dnevnik-dostopov.js";
 import { ageOn, ADULT_AGE, SELF_CONSENT_PREFIX, minAgeFromYear } from "./accounts/age.js";
 import { quizState, wtpState, impactReport, mountPilotImpact, block, shownN } from "./pilot-ucinek.js";
-import { pilotMetricsWeekly, PRAG } from "./pilot-meritve.js";
+import { pilotMetricsWeekly, pilotCohortSize, PRAG } from "./pilot-meritve.js";
 
 export const SCAN_CONDITIONS = ["light", "dark", "tilted", "handwritten", "printed", "board", "screen", "crumpled", "many", "notation"];
 // Pet delov aplikacije za preizkus; »exams« (NPZ in matura) ima, kdor ima ta zavihek, drugi »3d«.
@@ -374,7 +374,7 @@ export function pilotTasksReport(db) {
     members,
     minGroup: MIN_GROUP,
     // Preizkus znanja in meritve pilota (N-09, N-10): šele od PRAG (5) učencev naprej.
-    impact: impactReport(db, PRAG),
+    impact: impactReport(db, PRAG, { invited: pilotCohortSize(db, (id) => !!pilotMember(db, id)) }),
     meritve: pilotMetricsWeekly(db, { isMember: (id) => !!pilotMember(db, id) }),
     scans,
     features,
@@ -405,6 +405,7 @@ export function pilotTasksMarkdown(r) {
       ``,
       `## Preizkus znanja (matura MAT, ${q.total} nalog, obliki A in B)`,
       ``,
+      `- potek: povabljeni ${q.invited ?? "–"}, začeli prvi preizkus ${q.started}, končali prvega ${q.nPre}, končali oba ${q.nPaired}, odpadli ${q.dropped} (drugega niso končali v ${q.dropDays} dneh po odprtju), še lahko končajo ${q.waiting}`,
       `- začetni preizkusi skupaj: ${q.nPre}; povprečje ${pc(q.pre)}`,
       `- oba preizkusa (isti učenci) skupaj: ${q.nPaired}; prej ${pc(q.pairedPre)}, po 14 dneh ${pc(q.pairedPost)}, razlika ${pp(q.diff)}${q.ci95 ? ` (95 % interval ${pp(q.ci95[0])} do ${pp(q.ci95[1])})` : ""}`,
     );
@@ -413,6 +414,24 @@ export function pilotTasksMarkdown(r) {
     for (const f of Object.keys(q.byForm || {})) if (q.byForm[f]) lines.push(`- začetni preizkus z obliko ${f}: ${q.byForm[f].n}, povprečje ${pc(q.byForm[f].avg)}`);
     for (const k of Object.keys(q.byOrder || {})) if (q.byOrder[k]) lines.push(`- vrstni red ${k[0]} nato ${k[1]}: ${q.byOrder[k].n}, prej ${pc(q.byOrder[k].pre)}, po ${pc(q.byOrder[k].post)}, razlika ${pp(q.byOrder[k].diff)}`);
     if (q.allSkip) lines.push(`- preizkusi samo z »Ne vem« (niso v povprečjih): ${q.allSkip}`);
+    if (q.concept) {
+      const c = q.concept;
+      const row = (name, o) =>
+        o.hidden ? `| ${name} | ${o.candidates} | premalo kandidatov | | | |` : `| ${name} | ${o.candidates} | ${o.n} | ${o.improved} | ${pc(o.share)} | ${o.ci95 ? `${pc(o.ci95[0])}–${pc(o.ci95[1])}` : "–"} |`;
+      lines.push(
+        ``,
+        `Glavni izid: naloge, ki jih je kandidat v prvem preizkusu rešil napačno ali s »Tega še ne znam«, in koliko jih je drugič brez pomoči rešil pravilno (vzporedna naloga istega koncepta); kandidatov: ${c.candidates}, mediana časa med preizkusoma: ${c.gapDays ?? "–"} dni.`,
+        `Izločeni, ker so imeli pri drugem preizkusu pomoč: ${q.helped} (zaznana pomoč v Evklidu ${q.helpedAuto}, sami povedali ${q.helpedSelf}); s pomočjo pri prvem preizkusu (ostanejo v izidu): ${q.helpedPre}.`,
+        ``,
+        `| Skupina konceptov | Kandidatov | Napačno prvič | Pravilno drugič | Delež | 95 % interval |`,
+        `|---|---|---|---|---|---|`,
+        row("vmes vadil v Evklidu", c.practiced),
+        row("vmes ni vadil", c.notPracticed),
+        row("skupaj", c.all),
+        ``,
+        `Interval je preozek (podcenjuje negotovost), ker naloge istega kandidata niso neodvisne; razlika vadil / ni vadil ni dokaz učinka (kandidat sam izbere, kaj vadi). Skupina se pokaže od ${PRAG} kandidatov, delež in interval od 10 nalog naprej.`,
+      );
+    }
     if (q.slots) {
       lines.push(``, `| Sklop kataloga | Prej | Po |`, `|---|---|---|`);
       for (const sl of q.slots) lines.push(`| ${sl.sklop} | ${pc(sl.pre)} | ${pc(sl.post)} |`);

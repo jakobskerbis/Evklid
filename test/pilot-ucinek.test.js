@@ -122,6 +122,12 @@ test("preizkus znanja: samo člani, 12 nalog, oblika A nato B (naslednji učenec
       out = await call(`/api/students/${sid}/pilot/quiz/answer`, { method: "POST", body: { phase: "pre", index: 1, answer: "123457" } });
       assert.equal(out.status, 200, JSON.stringify(out.body));
       for (let i = 2; i < 12; i++) out = await call(`/api/students/${sid}/pilot/quiz/answer`, { method: "POST", body: { phase: "pre", index: i, skip: true } });
+      // Po zadnji nalogi preizkus še ni končan: konča ga odgovor na vprašanje o pomoči.
+      assert.equal(out.body.gained, 0);
+      assert.equal(out.body.run.done, false);
+      assert.equal(out.body.run.askHelp, true);
+      out = await call(`/api/students/${sid}/pilot/quiz/help`, { method: "POST", body: { phase: "pre", help: "no" } });
+      assert.equal(out.status, 200, JSON.stringify(out.body));
       assert.equal(out.body.gained, XP.quiz);
       assert.equal(out.body.run.done, true);
       assert.equal(out.body.run.score, 1);
@@ -154,6 +160,7 @@ test("preizkus znanja: samo člani, 12 nalog, oblika A nato B (naslednji učenec
         out = await call(`/api/students/${sid}/pilot/quiz/answer`, { method: "POST", body: { phase: "post", index: i, answer: rightAnswer(post, i) } });
         assert.equal(out.status, 200, `${i}: ${JSON.stringify(out.body)}`);
       }
+      out = await call(`/api/students/${sid}/pilot/quiz/help`, { method: "POST", body: { phase: "post", help: "no" } });
       assert.equal(out.body.run.score, 12);
       assert.equal(out.body.gained, XP.quiz);
       assert.equal(out.body.done, 2);

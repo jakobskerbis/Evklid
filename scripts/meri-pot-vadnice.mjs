@@ -150,7 +150,8 @@ async function main() {
     const body = await klic(`/api/conversations/${convId}/messages`, { text });
     const done = [...String(body).matchAll(/event: done\ndata: (.*)\n/g)].at(-1);
     if (!done) throw new Error(`brez dogodka done: ${String(body).slice(-200)}`);
-    const model = store.db.prepare("SELECT COUNT(*) AS n FROM usage WHERE id > ? AND model NOT IN ('koda', 'cache') AND cost_usd > 0").get(zacetek).n > 0;
+    // Odgovor modela je v porabi kot »chat« ali »boost«; drugi plačani klici (npr. pregled odgovora) ga ne pomenijo.
+    const model = store.db.prepare("SELECT COUNT(*) AS n FROM usage WHERE id > ? AND kind IN ('chat', 'boost') AND model NOT IN ('koda', 'cache')").get(zacetek).n > 0;
     return { besedilo: JSON.parse(done[1]).text, vir: model ? "model" : "koda" };
   };
 

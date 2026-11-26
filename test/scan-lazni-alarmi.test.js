@@ -12,7 +12,7 @@ after(() => casStop());
 const status = (naloga, sol) => verifyAi(naloga, sol).status;
 
 test("prep: ukaz odreže le kot celo besedo (factorial ni »factor« + »ial«)", () => {
-  assert.equal(prep("factorial(14)/factorial(4)"), "factorial(14)/factorial(4)");
+  assert.equal(prep("factorial(14)/factorial(4)"), "(14)!/(4)!"); // ne »factor« + »ial«; factorial je n! (poseg 1 pilota)
   assert.equal(prep("Factorise x^2-4"), "x^2-4");
   assert.equal(prep("factorize: x^2-4"), "x^2-4");
   assert.equal(prep("factor x^2-4"), "x^2-4");

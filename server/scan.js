@@ -8,7 +8,7 @@
 import { AI_JSON } from "./ai-oznaka.js";
 import { getClient, isMockMode, quickParams, MODEL, MODEL_MID, errorText, apiErrorCode } from "./claude.js";
 import { verifyAi, normalizeSet, zaokrozenRacun, kindOfText, parseIntegral, parseLimit, bezKonstante } from "../public/scan/verify.js";
-import { prep, splitSystem } from "../public/scan/solvecore.js";
+import { prep, splitSystem, kombinatorika, argumentiKlica } from "../public/scan/solvecore.js";
 import { cleanUnclear, unclearCount, hasUnclear, normalizeUnclear } from "../public/scan/nejasno.js";
 import { casCheck } from "./cas.js";
 import { STATUSES } from "../public/scan/status.js";
@@ -62,8 +62,27 @@ const statusRank = (s) => STATUSES.length - STATUSES.indexOf(s || "unverified");
 // Zapis za SymPy (server/cas/worker.py). Tam je log brez osnove ln, v šoli in v public/graph/math.js pa desetiški,
 // zato log(x) → lg(x); log_b(x), log_(b)(x), log_{b}(x) → log(x, b) (tako ga piše READ_PROMPT); √2 → sqrt(2).
 // Z imeni spremenljivk sistema še implicitno množenje (xy → x*y; worker bi »xy« prebral kot eno ime). Pregled #935.
+// Imena kalkulatorja, ki jih SymPy ne pozna (prep v solvecore jih napiše): nCr(n, k) → binomial(n, k),
+// nPr(n, k) → factorial(n)/factorial(n-k), logb(a, b) → log(a, b); C(n, k) in V(n, k) s celima številoma prav tako
+// (sicer jih SymPy bere kot neznano funkcijo). casText je le za preverjanje, ne gre ne učencu ne AI.
+const CAS_KLIC = /(?<![A-Za-z_])(nCr|nPr|logb)\s*\(/g;
+function casKlici(s) {
+  let out = "";
+  let i = 0;
+  for (const m of s.matchAll(CAS_KLIC)) {
+    if (m.index < i) continue;
+    const k = argumentiKlica(s, m.index + m[0].length);
+    if (!k) break;
+    if (k.args.length !== 2) continue;
+    const [a, b] = k.args.map((x) => casKlici(x).trim());
+    out += s.slice(i, m.index) + (m[1] === "nCr" ? `binomial(${a}, ${b})` : m[1] === "nPr" ? `(factorial(${a})/factorial((${a})-(${b})))` : `log(${a}, ${b})`);
+    i = k.end;
+  }
+  return out + s.slice(i);
+}
+
 export function casText(text, names = []) {
-  let t = String(text).replace(/√\s*\(/g, "sqrt(").replace(/√\s*([0-9]+(?:[.,][0-9]+)?|[a-zA-Z])/g, "sqrt($1)");
+  let t = casKlici(kombinatorika(String(text))).replace(/√\s*\(/g, "sqrt(").replace(/√\s*([0-9]+(?:[.,][0-9]+)?|[a-zA-Z])/g, "sqrt($1)");
   const head = /(?<![A-Za-z_])log(?:_(?:\{([^{}]+)\}|\(([^()]+)\)|([0-9]+|[a-zA-Z])))?\s*\(/y;
   let out = "";
   for (let i = 0; i < t.length; ) {

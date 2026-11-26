@@ -11,7 +11,7 @@
 // skrito ugotovitvijo (brez modela za pregled). Ob dvomu koda ne sodi: raje brez sodbe kot napačna sodba.
 import { solve, texToText, prep } from "../public/scan/solvecore.js";
 import { parse, compile, calcText, joinThousands, digitGap } from "../public/graph/math.js";
-import { NOTE_TAG, claimNote, hasExercise, solverValues } from "./live-check.js";
+import { NOTE_TAG, claimNote, hasExercise, solverValues, noSolution } from "./live-check.js";
 
 // Vrstica inštruktorja, ki navaja učenčevo (morda napačno) enačbo ali kandidata: ni enačba, ki se rešuje.
 const QUOTE_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|ne drži|ni prav|ni pravil|ne ustreza|ne zadošča|odpade|kandidat|definicijsk|tvoj|✗|(?<!\p{L})(?:napisal[a]?|zapisal[a]?|dobil[a]?|izračunal[a]?|ali (?:je|res|velja|drži)|wrong|incorrect|you wrote|you got|extraneous|reject)(?!\p{L})/iu;
@@ -346,12 +346,15 @@ export function stepVerdict(text, { pre = null, prevTutor = "" } = {}) {
     // »Skoraj, manjka še ena« ni zavrnitev pravilnega, zato ob njem ni ponovnega odgovora (partial).
     const sols = solverValues((pre.problems || []).find((x) => x.type === "equation")?.answerTex);
     const roots = sols.length > 1 ? rootList(text, sols[0].v) : null;
-    const partial = sols.length > 1 && !(roots && sameSet(roots.map((r) => r.x), sols.map((s) => s.x), Math.max(...roots.map((r) => decimalsTol(r.src)))));
+    // AUDIT-092: »x = 2 in x = 3« in »x = ±2« sta popolna odgovora, čeprav nista oštevilčena.
+    const stated = sols.length > 1 ? statedRoots(text, sols[0].v) : [];
+    const complete = (xs, tol) => sameSet([...new Set(xs)], sols.map((s) => s.x), tol);
+    const partial = sols.length > 1 && !(roots && complete(roots.map((r) => r.x), Math.max(...roots.map((r) => decimalsTol(r.src))))) && !(stated.length && complete(stated.map((r) => r.x), Math.max(...stated.map((r) => r.tol))));
     // Nepopoln odgovor: opomba »CORRECT« je inštruktorja zavedla v »sta pravilna« brez druge rešitve (meritev 19. 11.,
     // brezplačni paket, (x - 2)^2 = 9 → »x = 5«). Opomba zato pove, da je odgovor nepopoln.
     // rootList bere le oštevilčene rešitve (x1 = …, x2 = …): »x = 5 ali x = -1« je zanj tudi partial. Opomba
     // »INCOMPLETE« bi tedaj zavrnila popoln odgovor, zato le, ko kakšne rešitve ni nikjer med števili v sporočilu.
-    const nums = [...plain(text).matchAll(/(?<![\d.,])([-−]?\d+(?:[.,]\d+)?)(?:\s*\/\s*(\d+))?/g)].map((m) => ({ x: Number(m[1].replace("−", "-").replace(",", ".")) / (m[2] ? Number(m[2]) : 1), tol: m[2] ? 0 : decimalsTol(m[1]) }));
+    const nums = [...plain(text).matchAll(/(?<![\d.,])([-−]?\d+(?:[.,]\d+)?)(?:\s*\/\s*(\d+))?/g)].map((m) => ({ x: Number(m[1].replace("−", "-").replace(",", ".")) / (m[2] ? Number(m[2]) : 1), tol: m[2] ? 0 : decimalsTol(m[1]) })).concat(stated);
     const incomplete = partial && sols.some((s) => !nums.some((n) => has([n.x], s.x, n.tol)));
     if (incomplete) {
       const finding = `the student's value is one of the solutions, but the answer is INCOMPLETE: the task has ${sols.length} solutions (exact result of the task: ${/is CORRECT \(exact result of the task: (.+?)\)\.\n/.exec(claim)?.[1] || "several values"})`;
@@ -366,12 +369,42 @@ export function stepVerdict(text, { pre = null, prevTutor = "" } = {}) {
   return null;
 }
 
+// Vse učenčeve končne vrednosti neznanke v sporočilu (»x = 2 in x = 3«, »x1 = 2, x2 = 3«, »x = ±2«); vrednost,
+// ki ji sledi operator ali črka, je vmesni korak in ne šteje.
+function statedRoots(text, v) {
+  const t = String(text || "").replace(/\$/g, " ").replace(/−/g, "-");
+  const re = new RegExp(`(?<![\\p{L}\\d\\\\])${v}(?:_?\\{?\\d\\}?)?\\s*=\\s*(?:(±|\\\\pm|\\+-|\\+\\/-)\\s*)?([-+]?\\d+(?:[.,]\\d+)?(?:\\/\\d+)?)(?![\\d\\/\\p{L}]|[.,]\\d)(?![ \\t]*(?:[-+*/:·×÷^=(\\\\±]|i(?!\\p{L})))`, "gu");
+  const out = [];
+  for (const m of t.matchAll(re)) {
+    const [a, b] = m[2].replace(",", ".").split("/");
+    const x = Number(a) / (b ? Number(b) : 1);
+    if (!Number.isFinite(x)) return [];
+    const tol = b ? 0 : decimalsTol(m[2]);
+    out.push({ x, tol });
+    if (m[1]) out.push({ x: -x, tol });
+  }
+  return out;
+}
+
 // Inštruktorjevo zadnje sporočilo vsebuje enačbo z drugimi rešitvami kot naloga (nov primer): sodba proti nalogi ne velja.
 function otherEquation(pre, prevTutor) {
   const p = (pre?.problems || []).find((x) => x.type === "equation");
   if (!p) return false;
-  const v = solverValues(p.answerTex)[0]?.v;
+  const none = noSolution(p);
+  const v = solverValues(p.answerTex)[0]?.v || none?.[0];
   if (!v) return false;
+  // Naloga brez rešitve: vsaka matematika v inštruktorjevem zadnjem sporočilu razen same naloge (»Kaj pa $x^6 = 64$?«,
+  // »Pri katerem x je $(x+1)^2$ enako 0?«, »npr. 2«) je lahko drugo vprašanje z odgovorom »x = …«, zato brez sodbe
+  // (pregled AUDIT-092).
+  if (none) {
+    const norm = (t) => String(t || "").replace(/\\left|\\right|\\[,;! ]|[\s{}]/g, "");
+    const task = [norm(p.problem), norm(p.problemTex)];
+    const rest = String(prevTutor || "").replace(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$|\\\(([\s\S]+?)\\\)/g, (m, a, b, c) => (task.includes(norm(a ?? b ?? c)) ? " " : m));
+    if (/[=$\d]|\\\(/.test(rest)) return true;
+    // Stransko ali »kaj če« vprašanje brez matematike (»Pri katerem x je leva stran najmanjša?«): sodba le ob splošnem
+    // »Kaj narediš?«.
+    if (/(?<!\p{L})(?:če bi|namesto|recimo|denimo|kaj pa|koliko|kater\p{L}*|kdaj|vstavi\p{L}*|poskus\p{L}*|preizk\p{L}*|najmanj\p{L}*|največ\p{L}*|lih\p{L}*|sod\p{L}*|primer\p{L}*|lev\p{L}*|desn\p{L}*|stran\p{L}*|what if|which|how many|smallest|largest)(?!\p{L})/iu.test(rest)) return true;
+  }
   const t = tutorReference(prevTutor, v);
   if (t === null) return true;
   if (!t) return false;
