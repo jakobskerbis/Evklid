@@ -471,7 +471,7 @@ export function nalogeGeneratorja(g, semena) {
   return out;
 }
 
-const RED = ["napaka", "nepreverjeno", "numericno", "izracunano"];
+const RED = ["napaka", "nepreverjeno", "delno", "numericno", "izracunano"];
 const najsibkejsi = (st) => (st.length ? (st.includes("napaka") ? "napaka" : st.every((s) => s === "izracunano") ? "izracunano" : st.every((s) => s === "izracunano" || s === "numericno") ? "numericno" : st.some((s) => s !== "nepreverjeno") ? "delno" : "nepreverjeno") : null);
 
 /** Predmet generatorja iz prve teme (FIZ-TEK-OS/… → FIZ; UNI-… po imenu teme). */
@@ -570,6 +570,7 @@ export function porocilo(gen, { datum, commit, semena, ukaz = "", dodatek = "", 
   v.push("## Formule (trditve »enote«)", "");
   const e = p.enote;
   v.push(`- Preverjene: ${ki(e.izracunano + e.numericno + e.napaka, e.vse)}; od tega izračunano ${tocke(e.izracunano)}, številsko ${tocke(e.numericno)}, napaka ${tocke(e.napaka)}.`);
+  v.push(`- Delno (enota vmesne količine iz definicije v nalogi, ki je ne preverimo): ${ki(e.delno, e.vse)}.`);
   v.push(`- Brez statusa: ${ki(e.nepreverjeno, e.vse)} (formule z besedilom, absolutno vrednostjo, količino brez enote …).`, "");
   v.push("## Generatorji", "");
   v.push("| Status enot | Generatorjev |", "| --- | --- |");
