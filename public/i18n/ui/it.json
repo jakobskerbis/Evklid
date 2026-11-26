@@ -2989,6 +2989,7 @@
   "scan.st.verifiedTip": "Evklid ha dimostrato il risultato con un calcolo esatto. Per equazioni e disequazioni significa che non manca nessuna soluzione e nessuna è di troppo.",
   "scan.st.partial": "Verificato in parte",
   "scan.st.partialTip": "Evklid ha verificato ogni soluzione indicata sostituendola. Non ha dimostrato che non ce ne siano altre.",
+  "scan.st.partialGivenTip": "Evklid ha rifatto da solo il calcolo con i dati del problema e il risultato coincide. Non ha controllato se le formule sono quelle giuste per questo problema e se ogni dato è inserito al posto giusto nell'unità giusta.",
   "scan.st.numeric": "Verificato numericamente",
   "scan.st.numericTip": "Evklid ha verificato il risultato con i numeri (approssimazioni decimali), non con un calcolo esatto. Questo non dimostra che il risultato sia esatto né che non manchi nessuna soluzione.",
   "scan.st.unverified": "Non verificato",
