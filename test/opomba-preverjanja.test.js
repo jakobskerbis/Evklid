@@ -4,9 +4,9 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { checkNoteFor, factText } from "../server/opomba-preverjanja.js";
 import { codeFindings, presolve, isClaim } from "../server/live-check.js";
-import { stepVerdict, verdictIgnored } from "../server/sodba-koraka.js";
+import { stepVerdict, verdictIgnored, verdictNoteSafe } from "../server/sodba-koraka.js";
 import { visibleFinding, parseClaims } from "../server/racun.js";
-import { calcFact, calcToTex, plainToTex, numTex } from "../server/besedilo-trditev.js";
+import { calcFact, calcToTex, plainToTex, numTex, noteLine, valueTex } from "../server/besedilo-trditev.js";
 import { LIVE_UI_LANGUAGES } from "../public/i18n/languages.js";
 
 const R = String.raw;
@@ -150,14 +150,11 @@ test("časovna meja: nova koda na 60 000 znakih pod 200 ms", () => {
   assert.ok(ms(() => calcToTex("1*".repeat(30000))) < 200);
 });
 
-test("AUDIT-059: končni rezultat na »Kaj dobiš na koncu?«, potrditev s ponovljeno vrednostjo, zavrnitev pravilnega", () => {
+test("AUDIT-059: »Kaj dobiš na koncu?« brez sodbe, potrditev s ponovljeno vrednostjo, zavrnitev pravilnega", () => {
   const T = presolve(R`Izračunaj $9 \cdot 7 - 3$.`, { first: true, narrow: false });
   const E = presolve("Reši enačbo $3x + 7 = 22$.", { first: true, narrow: false });
-  const fin = stepVerdict("mogoče 54?", { pre: T, prevTutor: "Kaj dobiš na koncu?" });
-  assert.equal(fin?.wrong, true);
-  assert.equal(verdictIgnored("Bravo!", fin), true);
-  assert.equal(verdictIgnored("Ne, preveri še enkrat.", fin), false);
-  assert.match(checkNoteFor(fin.fact), /\$9 \\cdot 7 - 3 = 54\$ ne drži, ker je \$9 \\cdot 7 - 3 = 60\$/);
+  // pregled B (7f565d941): golo število na vprašanje brez računa (»Kaj dobiš na koncu?«) koda ne sodi (kot main)
+  assert.equal(stepVerdict("mogoče 54?", { pre: T, prevTutor: "Kaj dobiš na koncu?" }), null);
   assert.notEqual(stepVerdict("mogoče 60?", { pre: T, prevTutor: "Kaj dobiš na koncu?" })?.wrong, true);
   const six = stepVerdict("x = 6?", { pre: E, prevTutor: "Koliko je $x$?" });
   for (const a of [R`Da, $x = 6$ je pravilno.`, "Ja, 6 drži!"]) assert.equal(verdictIgnored(a, six), true, a);
@@ -168,3 +165,130 @@ test("AUDIT-059: končni rezultat na »Kaj dobiš na koncu?«, potrditev s ponov
   for (const a of [R`Ne, $x = 5$ je pravilno!`, R`Hmm, $22 - 7 = 15$, torej $x = 5$.`, "Da!", "Ne pozabi na preizkus."]) assert.equal(verdictIgnored(a, five), false, a);
   assert.match(checkNoteFor(five.fact, "sl", { verdict: true }), /\$x = 5\$ je pravilna rešitev enačbe \$3x \+ 7 = 22\$/);
 });
+
+// Pregled B (7f565d941): lažni alarmi, ki jih main nima. Brez sodbe in brez opombe.
+const B_ASKED = [
+  [R`Izračunaj $7 \cdot 8 + 2$.`, R`Odlično! Zdaj pa reši še $x + 3 = 5$. Kaj dobiš na koncu?`, "2?", "Da, 2."],
+  [R`Izračunaj $7 \cdot 8 + 2$.`, R`Zdaj pa še nova vaja: $3 \cdot 4 + 1$. Kaj je končni rezultat?`, "13?", "Da."],
+  [R`Izračunaj $7 \cdot 8 + 2$.`, "Kaj pa če bi namesto 2 prišteli 5? Kaj dobiš na koncu?", "61?", "Da."],
+  [R`Izračunaj $7 \cdot 8 + 2$.`, "Kaj dobiš na koncu, če namesto 8 vzameš 9?", "65?", "Da."],
+  [R`Izračunaj $(7 \cdot 8 + 2) \cdot 2$.`, "Koliko je vsebina oklepaja na koncu?", "58?", "Da."],
+  [R`Izračunaj $7 \cdot 8 + 2$.`, R`Koliko je $45° + 45°$?`, "90?", "Da."],
+  [R`Izračunaj $7 \cdot 8 + 2$.`, R`Koliko je $90° : 2$?`, "45?", "Da."],
+  [R`Izračunaj $7 \cdot 8 + 2$.`, R`Koliko je $360° : 6$?`, "60?", "Da."],
+  [R`Izračunaj $7 \cdot 8 + 2$.`, R`Koliko je $180° - 50°$?`, "130?", "Da."],
+  [R`Izračunaj $7 \cdot 8 + 2$.`, R`Koliko je $10 : 3$?`, "3?", "Da, 3."],
+  [R`Izračunaj $7 \cdot 8 + 2$.`, R`Deljenje z ostankom. Koliko je $10 : 3$?`, "3,33?", "Ne."],
+  [R`Izračunaj $7 \cdot 8 + 2$.`, "Koliko je 10 : 4?", "2?", "Da."],
+];
+export const B_TEXTS = {
+  soft: [R`Ali veš, da je $\frac{1}{3} = 0{,}(3)$?`, R`Če zapišemo periodično, je $\frac{1}{9} = 0{,}(1)$.`, R`Ali je $1.000 + 1 = 1.001$?`],
+  hard: [R`Torej je $\frac{1}{3} = 0{,}(3)$.`, R`$\frac{1}{7} = 0{,}(142857)$`, R`$\frac{1}{6} = 0{,}1(6)$`, R`$2.500 + 500 = 3.000$`, R`Skupaj: $1.200 + 300 = 1.500$ €.`, R`$\frac{1}{3} = 0{,}\overline{3}$`, R`$\frac{1}{3} = 0{,}\dot{3}$`],
+};
+test("pregled B: »na koncu« po novi vaji, stopinje in deljenje z ostankom brez sodbe vprašanja-predloga", () => {
+  for (const [task, prev, q, a] of B_ASKED) {
+    const v = stepVerdict(q, { pre: presolve(task, { first: true, narrow: false }), prevTutor: prev });
+    assert.ok(!v || !verdictIgnored(a, v), `${prev} ${q}: ${v?.finding}`);
+    assert.notEqual(v?.wrong, true, `${prev} ${q}`);
+  }
+  // celo deljenje ostane: »Koliko je $10 : 2$?« → »4?« je napaka, »5?« pravilno (zaokroženo z »≈«)
+  assert.equal(stepVerdict("4?", { prevTutor: R`Koliko je $10 : 2$?` })?.wrong, true);
+  // zaokrožen rezultat ni sodba (pregled A): »0,33?« na $1/3$, »6,28?« na $2 \cdot \pi$, »3,33?« na $10 : 3$; točen da
+  for (const [prev, q] of [[R`Koliko je $\sqrt{2} + 0$?`, "1,41?"], [R`Koliko je $1/3$?`, "0,33?"], [R`Koliko je $2 \cdot \pi$?`, "6,28?"], [R`Koliko je $\pi \cdot 2$?`, "6,28?"], [R`Koliko je $10 : 3$?`, "3,33?"], [R`Koliko je $2 : 3$?`, "0,67?"]]) {
+    assert.equal(stepVerdict(q, { prevTutor: prev }), null, `${prev} ${q}`);
+  }
+  assert.equal(stepVerdict("2,25?", { prevTutor: R`Koliko je $1{,}5 \cdot 1{,}5$?` }).fact.eq, R`1{,}5 \cdot 1{,}5 = 2{,}25`);
+});
+test("pregled B: periodični zapis in pika za tisočice nista ugotovitev kode", () => {
+  for (const a of [...B_TEXTS.soft, ...B_TEXTS.hard]) assert.equal(codeFindings(a, null, "").issue, null, a);
+  assert.ok(codeFindings(R`Torej $7 \cdot 8 = 54$.`, null, "").issue);
+  assert.ok(codeFindings(R`Torej $2{,}5 + 0{,}5 = 4$.`, null, "").issue);
+});
+
+// Pregled A (7f565d941): lažni alarmi main pri pravilnih odgovorih. Ugotovitev za popravek ostane (kot main), opombe
+// brez modela ni (fact null); nikoli besedilni zapis računa ali decimalna pika.
+export const A_VALUE = [
+  [R`Reši enačbo $x^2 - 6x + 5 = 0$.`, R`Rešitvi sta $x_1 = 1$ in $x_2 = 5$. Simetrala parabole je premica $x = 3$.`],
+  [R`Reši enačbo $5x = 100$.`, R`$x = 20$ (to je $x = 0{,}2$ m).`],
+  [R`Reši enačbo $x - 2 = 0$ v cm.`, R`Rešitev: $x = 2$ cm, kar je $x = 20$ mm.`],
+  [R`Reši enačbo $4x + 2 = 18$.`, R`Pomagaj si z obratnimi operacijami. Npr. pri $x + 3 = 5$ odšteješ 3 in dobiš $x = 2$. Kaj narediš pri svoji enačbi najprej?`],
+  [R`Reši enačbo $3x - 4 = 11$.`, R`Poglejmo na podobnem primeru: iz $2x = 6$ sledi $x = 3$. Zdaj poskusi sam: kaj je prvi korak pri $3x - 4 = 11$?`],
+  [R`Reši enačbo $6x = 42$.`, R`Pomisli, katero število pomnoženo s 6 da 42. Ugani in preveri – na primer za $x = 6$ dobiš $36$, kar je premalo.`],
+  [R`Reši enačbo $2x - 1 = 5$.`, R`$2x = 6$, $x = 3$. Za vajo: reši še $2x - 1 = 7$ (rešitev $x = 4$).`],
+  [R`Reši enačbo $2x + 4 = 10$.`, R`$x = 3$. Pogosta napaka je $x = 7$ (ko pozabiš deliti z 2).`],
+  [R`Reši enačbo $3x = 12$.`, R`$x = 4$. Zdaj ti: reši $3x = 15$. (Namig: $x = 5$.)`],
+  [R`Reši enačbo $x^3 - x = 0$.`, R`$x(x^2 - 1) = 0$: $x = 0$, $x = 1$, $x = -1$. Lokalni ekstrem pri $x = \frac{1}{\sqrt{3}}$.`],
+  [R`Reši enačbo $x^2 - 2x - 3 = 0$.`, R`$(x - 3)(x + 1) = 0$, rešitvi $x_1 = 3$, $x_2 = -1$. Teme parabole je pri $x = 1$, kar je ravno sredina med ničlama.`],
+  [R`Reši enačbo $x^2 - 4 = 0$.`, R`Rešitvi sta $x = 2$ in $x = -2$; za $x = 0$ je vrednost $-4$.`],
+  [R`Reši enačbo $x^2 - 1 = 0$.`, R`Rešitvi sta $x = 1$ in $x = -1$. Graf $y = x^2 - 1$ ima teme v točki, kjer je $x = 0$.`],
+  [R`Reši enačbo $x^2 - 9 = 0$.`, R`$x = \pm 3$. Za $x = 0$ dobimo $-9$.`],
+  [R`Reši enačbo $x^2 - 5x + 6 = 0$.`, R`Rešitvi: $x = 2$, $x = 3$. Teme je pri $x = 2{,}5$.`],
+  [R`Reši enačbo $\frac{x}{x - 1} = 2$.`, R`$x = 2$. Navpična asimptota je $x = 1$.`],
+  [R`Reši enačbo $x + 5 = 9$.`, R`$x = 4$. Graf: premica $y = x + 5$ seka os y pri $x = 0$.`],
+];
+test("pregled A: vrednost pri temenu, osi, zgledu, vaji, enoti ali ob vseh pravih rešitvah brez opombe", () => {
+  for (const [q, a] of A_VALUE) {
+    const f = codeFindings(a, presolve(q), q);
+    assert.ok(!f.soft, a);
+    assert.equal(f.fact ?? null, null, `${a}: ${JSON.stringify(f.fact)}`);
+  }
+  // ura: račun ostane ugotovitev, opombe ni
+  const ura = codeFindings(R`$23 + 3 = 2$ (ura po polnoči).`, null, "Ura?");
+  assert.ok(ura.issue);
+  assert.equal(ura.fact, null);
+  // prava napaka ostane s konkretno opombo, z decimalno vejico
+  const v = codeFindings(R`$5x = 1$, torej $x = 2.5$.`, presolve(R`Reši enačbo $5x = 1$.`), "");
+  assert.match(checkNoteFor(v.fact), /\$x = 2\{,\}5\$ ni rešitev/);
+  assert.match(checkNoteFor(codeFindings(R`$2x = 8$, torej $x = 5$.`, presolve(R`Reši enačbo $2x + 3 = 11$.`), "").fact), /\$x = 5\$ ni rešitev enačbe \$2x \+ 3 = 11\$/);
+  assert.match(checkNoteFor(codeFindings(R`$v = g t = 10 \cdot 3 = 13\,\mathrm{m/s}$`, null, "").fact), /Opomba: \$10 \\cdot 3 = 13\\,\\mathrm\{m\/s\}\$ ne drži/);
+  // besedilni zapis računa nikoli v opombi; decimalna pika → vejica (razen v angleščini)
+  assert.equal(valueTex("((1)/(sqrt(3)))"), null);
+  assert.equal(valueTex(R`\frac{1}{\sqrt{3}}`), R`\frac{1}{\sqrt{3}}`);
+  assert.equal(valueTex(" 0.2 "), "0{,}2");
+  assert.doesNotMatch(checkNoteFor({ kind: "value", wrong: "x = ((1)/(sqrt(3)))", eq: "x^3 - x = 0", right: "x = 0" }), /sqrt\(/);
+  assert.match(checkNoteFor({ kind: "value", wrong: "x = 0.2", eq: "5x = 100", right: "x = 20" }), /\$x = 0\{,\}2\$/);
+  assert.match(checkNoteFor({ kind: "value", wrong: "x = 0.2", eq: "5x = 100", right: "x = 20" }, "en"), /\$x = 0\.2\$/);
+  for (const l of ["Teme je pri $x = 1$.", "Rešitev: $x = 2$ cm", "Za vajo: $x = 4$", "$x = 3$ (ura)"]) assert.equal(noteLine(l), false, l);
+  assert.equal(noteLine(R`$v = 10 \cdot 3 = 13\,\mathrm{m/s}$`, { value: false }), true);
+  assert.equal(noteLine("Torej je $x = 5$."), true);
+});
+
+test("pregled A: 059 golo število le proti vprašanju z računom, zaokroženo in ostanek brez sodbe", () => {
+  const A1 = R`Izračunaj $(12 - 4) \cdot 3$.`;
+  const A2 = R`Izračunaj $(12 - 4) \cdot 3 + 5$.`;
+  const T1 = R`Izračunaj $7 \cdot 8 + 2$.`;
+  const cases = [
+    [A1, "Super. Koliko dobiš na koncu za oklepaj?", "8?", "Da, 8. Zdaj pomnoži s 3."],
+    [A1, "Najprej izračunaj oklepaj. Koliko dobiš na koncu za oklepaj?", "8?", "Da, 8."],
+    [A2, "Prvi korak je oklepaj, drugi množenje. Kaj dobiš na koncu drugega koraka?", "24?", "Da, pravilno! Zdaj še prištej 5."],
+    [A1, "Kaj dobiš na koncu drugega koraka?", "8?", "Da, 8."],
+    [T1, R`Koliko je $1/3$?`, "0,33?", R`Ne. Pusti ulomek: $\frac{1}{3}$.`],
+    [T1, R`Koliko je $2 \cdot \pi$?`, "6,28?", R`Ne. Pusti kar $2\pi$.`],
+    [T1, R`Koliko je $10 : 3$?`, "3,33?", "Ne."],
+    [T1, R`Koliko je $10 : 3$?`, "3?", "Da, 3. Ostanek je 1."],
+    [T1, R`Koliko je $10 : 3$?`, "3?", "Da, 3 in ostanek 1."],
+    [T1, R`Koliko je $\sqrt{50}$?`, "7,07?", R`Ne. Delno koreni: $5\sqrt{2}$.`],
+    [T1, R`Koliko je $7 \cdot 8$?`, "58?", "Ne."], // vmesni korak: 58 ni odgovor na $7 \cdot 8$, »Ne.« je prav
+    // golo število proti nalogi in zaokrožena decimalka: sodba kot main, zavrnitev pa ni prezrta (noReject)
+    [T1, "Kaj pa če bi namesto 2 prišteli 5? Kaj dobiš na koncu?", "58?", "Ne."],
+    [T1, "Kaj dobiš na koncu?", "58?", "Ne."],
+    [R`Izračunaj $\frac{1}{3} + \frac{1}{6}$.`, "Kakšen je končni rezultat? Zapiši ga kot ulomek.", "0,5?", "Ne, kot ulomek, prosim."],
+  ];
+  for (const [task, prev, q, a] of cases) {
+    const v = stepVerdict(q, { pre: presolve(task, { first: true, narrow: false }), prevTutor: prev });
+    assert.ok(!v || !verdictIgnored(a, v), `${prev} ${q} → ${a}: ${v?.finding}`);
+    if (v && !v.wrong) assert.equal(v.noReject, true, `${prev} ${q}: zavrnitev ni prezrta, brez opombe »je pravilen«`);
+  }
+});
+
+test("pregled A: opomba ob prezrti sodbi le ob izrecni potrditvi napačnega koraka", () => {
+  const T = R`Reši enačbo $3x + 7 = 22$.`;
+  const v = stepVerdict("x = 6", { pre: presolve(T), prevTutor: R`Koliko je $x$?` });
+  assert.equal(v?.wrong, true);
+  assert.equal(verdictNoteSafe(R`Ne. $3 \cdot 6 + 7 = 25$, ne 22.`, v), false);
+  assert.equal(verdictNoteSafe("Odlično, $x = 6$ je pravilno.", v), true);
+  const v5 = stepVerdict("x = 5", { pre: presolve(R`Reši enačbo $2x + 3 = 11$.`), prevTutor: "Kaj dobiš za x?" });
+  assert.equal(verdictNoteSafe(R`Napisal si $x = 5$. Vstavi v enačbo: $2 \cdot 5 + 3 = 13$, kar ni 11. Poskusi znova.`, v5), false);
+  assert.equal(verdictNoteSafe("Da, pravilno!", v5), true);
+});
+

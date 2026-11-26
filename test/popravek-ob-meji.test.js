@@ -284,11 +284,11 @@ test("opomba ne razkrije oznak", async () => {
   assert.doesNotMatch(r.display, /preverjen_racun|<<|NOTE/);
 });
 
-test("AUDIT-059: »mogoče 54?« na »Kaj dobiš na koncu?«, »Da, $x = 6$ je pravilno.«, zavrnjen pravilen »x = 5?«", async () => {
+test("AUDIT-059: »mogoče 54?« na »Kaj dobiš na koncu?« brez sodbe, »Da, $x = 6$ je pravilno.«, zavrnjen pravilen »x = 5?«", async () => {
   const T = R`Izračunaj $9 \cdot 7 - 3$.`;
   const E = R`Reši enačbo $3x + 7 = 22$.`;
   const fin = await run({ answers: ["Kaj dobiš na koncu?", "Bravo!"], n: 2, msgs: [T, "mogoče 54?"] });
-  has(fin, R`*(Opomba: $9 \cdot 7 - 3 = 54$ ne drži, ker je $9 \cdot 7 - 3 = 60$. Preveri še sam.)*`);
+  none(fin); // pregled B: vprašanje brez računa ni vezano na nalogo (kot main)
   const echo = await run({ answers: [R`Koliko je $x$?`, R`Da, $x = 6$ je pravilno.`], n: 2, msgs: [E, "x = 6?"] });
   has(echo, R`*(Opomba: $x = 6$ ni rešitev enačbe $3x + 7 = 22$ (rešitev: $x = 5$). Preveri še sam.)*`);
   const rej = await run({ answers: [R`Koliko je $x$?`, "Ne, to ni prav."], n: 2, msgs: [E, "x = 5?"] });
@@ -299,3 +299,68 @@ test("AUDIT-059: »mogoče 54?« na »Kaj dobiš na koncu?«, »Da, $x = 6$ je p
   const ok = await run({ answers: ["Kaj dobiš na koncu?", "Ja, 60 je pravilno!"], n: 2, msgs: [T, "mogoče 60?"] });
   none(ok);
 });
+
+// Pregled B (7f565d941): lažni alarmi iz pregleda, celotna pot v klepetu. Brez ponovnega odgovora in brez opombe.
+test("pregled B: vprašanja-predlogi po novi vaji, s stopinjami in deljenjem; periodični zapis in tisočice", async () => {
+  const T = R`Izračunaj $7 \cdot 8 + 2$.`;
+  for (const [prev, q, a] of [
+    [R`Odlično! Zdaj pa reši še $x + 3 = 5$. Kaj dobiš na koncu?`, "2?", "Da, 2."],
+    [R`Zdaj pa še nova vaja: $3 \cdot 4 + 1$. Kaj je končni rezultat?`, "13?", "Da."],
+    ["Kaj pa če bi namesto 2 prišteli 5? Kaj dobiš na koncu?", "61?", "Da."],
+    ["Kaj dobiš na koncu, če namesto 8 vzameš 9?", "65?", "Da."],
+    [R`Koliko je $45° + 45°$?`, "90?", "Da."],
+    [R`Koliko je $360° : 6$?`, "60?", "Da."],
+    [R`Koliko je $10 : 3$?`, "3?", "Da, 3."],
+    [R`Deljenje z ostankom. Koliko je $10 : 3$?`, "3,33?", "Ne."],
+    ["Koliko je 10 : 4?", "2?", "Da."],
+  ]) {
+    for (const n of [2, null]) {
+      const r = await run({ answers: [prev, a], n, msgs: [T, q] });
+      assert.equal(r.calls.filter((c) => c === "chat").length, 2, `${prev} ${q}`);
+      none(r);
+    }
+  }
+  const oklepaj = await run({ answers: ["Koliko je vsebina oklepaja na koncu?", "Da."], n: 2, msgs: [R`Izračunaj $(7 \cdot 8 + 2) \cdot 2$.`, "58?"] });
+  none(oklepaj);
+  for (const a of [R`Ali veš, da je $\frac{1}{3} = 0{,}(3)$?`, R`Če zapišemo periodično, je $\frac{1}{9} = 0{,}(1)$.`, R`Ali je $1.000 + 1 = 1.001$?`, R`Torej je $\frac{1}{3} = 0{,}(3)$.`, R`$\frac{1}{7} = 0{,}(142857)$`, R`$\frac{1}{6} = 0{,}1(6)$`, R`$2.500 + 500 = 3.000$`, R`Skupaj: $1.200 + 300 = 1.500$ €.`]) {
+    for (const opt of [{ n: 1 }, { n: null, fixText: "OK" }]) {
+      const r = await run({ answers: [a], msgs: ["Razloži mi to."], ...opt });
+      assert.ok(!r.calls.includes("fix"), `${a}: brez klica popravka`);
+      none(r);
+    }
+  }
+});
+
+// Pregled A (7f565d941): pravilni odgovori, ki jih main pošlje v popravek, na meji in ob napaki klica brez opombe.
+test("pregled A: lažni alarmi main pri vrednosti, uri, bloku RACUN in zavrnitvi brez opombe na meji", async () => {
+  const cases = [
+    [R`Reši enačbo $x^2 - 6x + 5 = 0$.`, R`Rešitvi sta $x_1 = 1$ in $x_2 = 5$. Simetrala parabole je premica $x = 3$.`],
+    [R`Reši enačbo $5x = 100$.`, R`$x = 20$ (to je $x = 0{,}2$ m).`],
+    [R`Reši enačbo $x - 2 = 0$ v cm.`, R`Rešitev: $x = 2$ cm, kar je $x = 20$ mm.`],
+    [R`Reši enačbo $4x + 2 = 18$.`, R`Pomagaj si z obratnimi operacijami. Npr. pri $x + 3 = 5$ odšteješ 3 in dobiš $x = 2$. Kaj narediš pri svoji enačbi najprej?`],
+    [R`Reši enačbo $2x - 1 = 5$.`, R`$2x = 6$, $x = 3$. Za vajo: reši še $2x - 1 = 7$ (rešitev $x = 4$).`],
+    [R`Reši enačbo $2x + 4 = 10$.`, R`$x = 3$. Pogosta napaka je $x = 7$ (ko pozabiš deliti z 2).`],
+    [R`Reši enačbo $x^3 - x = 0$.`, R`$x(x^2 - 1) = 0$: $x = 0$, $x = 1$, $x = -1$. Lokalni ekstrem pri $x = \frac{1}{\sqrt{3}}$.`],
+    [R`Reši enačbo $x^2 - 2x - 3 = 0$.`, R`$(x - 3)(x + 1) = 0$, rešitvi $x_1 = 3$, $x_2 = -1$. Teme parabole je pri $x = 1$, kar je ravno sredina med ničlama.`],
+    [R`Reši enačbo $x^2 - 4 = 0$.`, R`Rešitvi sta $x = 2$ in $x = -2$; za $x = 0$ je vrednost $-4$.`],
+    ["Ura?", R`$23 + 3 = 2$ (ura po polnoči).`],
+    [R`Reši enačbo $2x + 3 = 11$.`, "$2x = 8$, torej $x = 4$.\n<<RACUN\nresi: 2*x+3=11 | x | 5\n>>"],
+  ];
+  for (const [q, a] of cases) {
+    for (const opt of [{ n: 1 }, { n: null, fixText: null }]) {
+      const r = await run({ answers: [a], msgs: [q], ...opt });
+      none(r);
+    }
+  }
+  // prezrta sodba brez izrecne potrditve (»Ne. …«, »… kar ni 11. Poskusi znova.«): ponovni odgovor kot main, na meji brez opombe
+  for (const [task, ans] of [
+    [R`Reši enačbo $3x + 7 = 22$.`, R`Ne. $3 \cdot 6 + 7 = 25$, ne 22.`],
+    [R`Reši enačbo $2x + 3 = 11$.`, R`Napisal si $x = 6$. Vstavi v enačbo: $2 \cdot 6 + 3 = 15$, kar ni 11. Poskusi znova.`],
+  ]) {
+    for (const opt of [{ n: 2 }, { n: null, chatFail: 3 }]) {
+      const r = await run({ answers: ["Kaj dobiš za x?", ans], msgs: [task, "x = 6"], ...opt });
+      none(r);
+    }
+  }
+});
+

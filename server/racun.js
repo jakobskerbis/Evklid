@@ -16,7 +16,7 @@ import { parseSpecies } from "../public/graph/chemcore.js";
 import { MASSES } from "../public/graph/pse-data.js";
 import { texToText } from "../public/scan/solvecore.js";
 import { parse, compile, calcText } from "../public/graph/math.js";
-import { notClaimAt, hasExercise, TEX_SHORT, numTex, calcToTex } from "./besedilo-trditev.js";
+import { notClaimAt, hasExercise, TEX_SHORT, numTex, calcToTex, noteLine } from "./besedilo-trditev.js";
 
 // Tudi »RAČUN« (model piše slovensko); bloka učenec v nobeni obliki ne vidi (server/meta.js).
 const BLOCK_RE = /<<\s*RA[CČ]UN\b([\s\S]*?)>>/g;
@@ -286,7 +286,10 @@ export function visibleFinding(text, claims) {
       const rights = s.vals.map((x, i) => valTex(x, s.raw[i]));
       const right = rights.every(Boolean) ? rights.map((r) => `${v} = ${r}`).join(",\\; ") : null;
       const eq = new Set(s.eqs).size === 1 ? calcToTex(s.eqs[0]) : null;
-      return { issue, fact: wrong && right ? { kind: "value", wrong, eq, right } : null };
+      // Vrstica z vrednostjo neznanke kaže na zgled, vajo, teme, os, enoto … (noteLine): brez opombe (pregled A).
+      const varLine = new RegExp(`\\$[^$\n]*(?<![a-zA-Z\\\\])${v}(?:_\\{?\\d+\\}?)?\\s*(?:=|\\\\approx)`);
+      const safe = plain.split("\n").filter((l) => varLine.test(l)).every(noteLine);
+      return { issue, fact: wrong && right && safe ? { kind: "value", wrong, eq, right } : null };
     }
   }
   return null;

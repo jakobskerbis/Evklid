@@ -351,7 +351,19 @@ export function stepVerdict(text, opts = {}) {
     .replace(ASK_TAIL, ""); // »7 · 8 = 54, ne?«, »x = 5, kajne?« (AUDIT-059, dokončanje)
   // »7 · 8 je 54?« → »7 · 8 = 54«
   if (!core.includes("=")) core = core.replace(/^([\d(][\d\s.,+\-−*·×:/()^]*?[\d)])\s+je\s+([-−+]?\d+(?:[.,]\d+)?)$/u, "$1 = $2");
-  const v = judgeStep(core, opts) || guessVerdict(core, opts);
+  // Golo število (»58?«) na inštruktorjevo vprašanje z računom (»Koliko je $7 \\cdot 8$?«) sodi le proti temu računu,
+  // ne proti nalogi: »58« je tam napačen odgovor na vmesni korak (pregled A, 7f565d941). Brez računa v vprašanju kot
+  // main (judgeStep: le končni rezultat naloge; FINAL_ASK ostane odstranjen).
+  const asks = /^[-−+]?\d+(?:[.,]\d+)?$/.test(core.trim()) && TUTOR_ASK.test(String(opts.prevTutor || "").slice(-400).trim());
+  let v = asks ? guessVerdict(core, opts) : null;
+  if (!v) {
+    v = judgeStep(core, opts);
+    // Pravilno po kodi, a zavrnitev je lahko prav (kot main, brez ponovnega odgovora in opombe): golo število proti
+    // nalogi (inštruktor je morda medtem vprašal kaj drugega, pregled B) in zaokrožena decimalka (»0,5?« pri »zapiši
+    // kot ulomek«, »x = 1,41?«; pregled A). Le točen odgovor na inštruktorjev račun (guessVerdict) brani zavrnjenega.
+    const bare = /^[-−+]?\d+(?:[.,]\d+)?$/.test(core.trim());
+    if (v && !v.wrong && (bare || /\d[.,]\d/.test(core))) v = { ...v, noReject: true };
+  }
   // vrednosti predloga (»x = 5«): drugačna vrednost iste neznanke v odgovoru je popravek
   const vals = [...core.matchAll(/(?<![\p{L}\d])([a-zA-Z])(?:_?\d)?\s*=\s*([-−]?\d+(?:[.,]\d+)?)(?!\d|[.,]\d)/gu)].map((m) => ({ v: m[1], x: num(m[2]) }));
   // število, ki ga je učenec predlagal (»54« v »7 · 8 = 54?« ali »54?«): inštruktorjev »Da, 54.« ga ponovi
@@ -363,32 +375,30 @@ const ASK_TAIL = /(?:(?:\s*,\s*|\s+)(?:ali|ne|prav|kajne|a ne|res|right))+\s*$/i
 // Inštruktorjevo zadnje vprašanje je en sam račun (»Koliko je $7 \cdot 8$?«): golo število v učenčevem predlogu
 // (»54?«) je odgovor nanj in koda ga preračuna (AUDIT-059, dokončanje 27. 11.).
 const TUTOR_ASK = /(?:^|[.!:\n]\s*)[*_\s]*(?:koliko je|koliko dobiš|koliko znaša|what is|how much is)\s+(?:\$([^$\n]{1,80})\$|(\d[\d +\-−·×*/:()^,.]{0,60}?))\s*\?[*_\s]*$/iu;
-// Inštruktor vpraša po končnem rezultatu naloge (»Kaj dobiš na koncu?«): golo število je odgovor na nalogo.
-const FINAL_ASK = /(?<!\p{L})(?:na koncu|končn\p{L}* (?:rezultat|odgovor|vrednost)|rezultat naloge|celoten rezultat|in the end|final (?:result|answer))(?!\p{L})[^?\n]{0,40}\?[*_\s]*$/iu;
-function guessVerdict(core, { pre = null, prevTutor = "" } = {}) {
+// Le inštruktorjevo vprašanje z računom (pregled B, 7f565d941): »Kaj dobiš na koncu?« po novi vaji ali »kaj če«
+// ni vezano na nalogo, zato golo število brez računa v vprašanju ostane brez sodbe (kot main).
+function guessVerdict(core, { prevTutor = "" } = {}) {
   const c = String(core || "").trim();
   if (!/^[-−+]?\d+(?:[.,]\d+)?$/.test(c)) return null;
   const tail = String(prevTutor || "").slice(-400).trim();
   const m = TUTOR_ASK.exec(tail);
-  if (!m) {
-    const task = (pre?.problems || []).filter((p) => p.type === "arith" && !p.narrow);
-    if (task.length !== 1 || !FINAL_ASK.test(tail) || hasExercise(prevTutor)) return null;
-    const p = task[0];
-    const y = value(texToText(String(p.answerTex)));
-    const x = value(c);
-    if (y === null || x === null || same(c, x, String(y), y)) return null; // pravilen končni rezultat sodi claimNote
-    const said = plainToTex(c);
-    const finding = `the student's final result ${c} is wrong: $${p.problemTex} = ${p.answerTex}$`;
-    return { wrong: true, finding, fact: { kind: "calc", wrong: `${p.problemTex} = ${said}`, right: `${p.problemTex} = ${p.answerTex}` }, note: `<${NOTE_TAG}>\nAn exact check found an error in the student's last message: ${finding}.\n${WRONG_RULES}\n</${NOTE_TAG}>` };
-  }
+  if (!m) return null;
+  const raw = m[1] ?? m[2];
+  // Stopinje (»$45° + 45°$« bi brali kot radiane) in deljenje z ostankom (»10 : 3« → 3 ostanek 1): brez sodbe.
+  if (/°|\\circ|\\degree|['′]/.test(raw) || /ostan|remainder/i.test(tail)) return null;
   const expr = (m[1] != null ? plain(`$${m[1]}$`) : m[2]).trim();
   if (/[a-zA-Z]/.test(expr.replace(/sqrt|pi/g, "")) || !/[+\-−*/^·×÷:√]/.test(expr.replace(/^[-−]/, ""))) return null;
   const y = value(expr);
   const x = value(c);
   if (y === null || x === null) return null;
+  // Deljenje z necelim količnikom (»10 : 3«, »10 : 4«): učenec lahko misli celi del z ostankom, brez sodbe.
+  if (/[:÷/]|\\div|\\frac/.test(raw + expr) && !Number.isInteger(y)) return null;
   const tex = m[1] != null ? m[1].trim() : plainToTex(m[2]);
   const said = plainToTex(c);
   if (same(c, x, expr, y)) {
+    // Zaokrožen rezultat (»0,33« za $1/3$, »6,28« za $2\pi$) ni sodba: inštruktor ga sme zavrniti (»Pusti ulomek«),
+    // koda pa ga ne razglasi za pravilnega (pregled A, 7f565d941). Le točna vrednost.
+    if (Math.abs(x - y) > 1e-9 * Math.max(1, Math.abs(y))) return null;
     const finding = `the student's result ${c} for $${tex}$ is correct`;
     return { wrong: false, finding, fact: { kind: "rightCalc", stmt: said, eq: `${tex} = ${said}` }, note: `<${NOTE_TAG}>\nAn exact check compared the student's last message with the tutor's question: ${finding}.\n${RIGHT_RULES}\n</${NOTE_TAG}>` };
   }
@@ -545,6 +555,20 @@ function echoes(head, vals) {
 const firstSentence = (s) => (/^[\s\S]{0,240}?(?:[.!?](?=\s|$)|\n|$)/.exec(String(s || "").trim())?.[0] || "");
 
 /** Ali odgovor nasprotuje sodbi kode (potrdi napačen korak ali zavrne pravilnega)? */
+/**
+ * Opomba brez modela ob prezrti sodbi (meja porabe, napaka ponovnega odgovora; AUDIT-060) le ob izrecni potrditvi
+ * napačnega koraka (»Odlično, $x = 5$ …«). Odgovor brez znaka napake (»Ne. $3 \cdot 6 + 7 = 25$, ne 22.«, »Napisal si
+ * $x = 5$ … kar ni 11. Poskusi znova.«) je za ponovni odgovor dovolj (kot main), za vidno opombo pa ne: pogosto je
+ * pravilna zavrnitev in opomba bi le razkrila rešitev (pregled A, 7f565d941). Vprašanje-predlog in zavrnjen pravilen
+ * korak že zahtevata izrecen začetek.
+ */
+export function verdictNoteSafe(answer, verdict) {
+  if (!verdict || !verdictIgnored(answer, verdict)) return false;
+  if (verdict.asked || !verdict.wrong) return true;
+  const head = firstSentence(answer);
+  return POSITIVE_OPEN.test(head) && !ERROR_MARK.test(head.replace(SOFT_MARK, "")) && !NEGATIVE_OPEN.test(head);
+}
+
 export function verdictIgnored(answer, verdict) {
   if (!verdict) return false;
   const head = firstSentence(answer);
@@ -555,7 +579,7 @@ export function verdictIgnored(answer, verdict) {
     // Napačen predlog: izrecna potrditev (»Da, pravilno!«) ali potrditev, ki ponovi učenčevo vrednost (»Da, $x = 6$ je
     // pravilno.«, »Ja, 54.«), brez popravka kjerkoli v odgovoru. Pravilen predlog: le izrecna zavrnitev (»Ne, to ni
     // prav.«), ne dvoumen začetek (»Hmm, $8 : 2 = 4$ …«).
-    if (!verdict.wrong) return !verdict.partial && REJECT_OPEN.test(head) && !/\d/.test(head);
+    if (!verdict.wrong) return !verdict.partial && !verdict.noReject && REJECT_OPEN.test(head) && !/\d/.test(head);
     return (CONFIRM_OPEN.test(head) || (POSITIVE_OPEN.test(head) && echoes(head, verdict.vals || []))) && !correctsLater(String(answer || ""), verdict.vals || []);
   }
   if (verdict.wrong) return (POSITIVE_OPEN.test(head) && !ERROR_MARK.test(head.replace(SOFT_MARK, ""))) || !ERROR_MARK.test(String(answer || ""));

@@ -26,11 +26,14 @@ function uiString(key, language) {
   return SL[key] || "";
 }
 
-// Del zapisa za opombo: brez »$« in prelomov, ne predolg (sicer null in splošna opomba).
-function part(s) {
+// Del zapisa za opombo: brez »$« in prelomov, ne predolg (sicer null in splošna opomba). Besedilni zapis računa
+// (»((1)/(sqrt(3)))«, »x**2«) ni TeX: null. Decimalna vejica (razen v angleščini): »0.2« → »0{,}2« (pregled A).
+function partIn(s, language = "sl") {
   if (s == null) return null;
-  const t = String(s).replace(/\$/g, "").replace(/\s+/g, " ").trim();
+  let t = String(s).replace(/\$/g, "").replace(/\s+/g, " ").trim();
   if (!t || t.length > MAX_PART) return null;
+  if (/(?<![\\a-zA-Z])(?:sqrt|sin|cos|tan|log|ln|exp|pi)\s*\(|\)\s*\/\s*\(|\*\*|\(\(/.test(t)) return null;
+  if (!/^en\b/i.test(language || "")) t = t.replace(/(\d)\.(?=\d)/g, "$1{,}");
   // neuravnoteženi oklepaji TeX bi pokvarili prikaz
   let depth = 0;
   for (const ch of t) {
@@ -45,6 +48,7 @@ const fill = (t, vars) => t.replace(/\{(\w+)\}/g, (m, k) => (vars[k] != null ? v
 /** Besedilo opombe (brez oblikovanja) ali null, ko iz ugotovitve ni mogoče sestaviti konkretnega zapisa. */
 export function factText(fact, language = "sl", { soft = false } = {}) {
   if (!fact) return null;
+  const part = (s) => partIn(s, language);
   const wrong = part(fact.wrong);
   if (soft) {
     if (fact.kind !== "calc" || !wrong) return null;
