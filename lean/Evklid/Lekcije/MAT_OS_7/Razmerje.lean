@@ -98,7 +98,7 @@ theorem pristevanje_ne_ohrani : ¬ ∀ a b c : ℚ, (a + c) / (b + c) = a / b :=
 /-- Razlaga 3 (premisli) v splošnem: prištevanje istega števila c obema členoma (b ≠ 0, b + c ≠ 0)
 ohrani razmerje natanko tedaj, ko je c = 0 ali a = b; pri 2 : 3 in c ≠ 0 se razmerje torej vedno spremeni.
 trditev: MAT-OS-7/razmerje#pristevanje-splosno
-besedilo: »Člena smeš le množiti ali deliti z istim številom.« -/
+besedilo: »Prištevanje spremeni razmerje.« -/
 theorem pristevanje_splosno (a b c : ℚ) (hb : b ≠ 0) (hbc : b + c ≠ 0) :
     (a + c) / (b + c) = a / b ↔ c = 0 ∨ a = b := by
   rw [div_eq_div_iff hbc hb]

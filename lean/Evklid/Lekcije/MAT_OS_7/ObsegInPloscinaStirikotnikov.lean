@@ -350,7 +350,7 @@ besedilo: »$v = 96 : 10 = 9{,}6\,\text{m}$. Odgovor: led pokriva $96\,\text{m}^
 theorem primer4 (v : ℝ) : (16 : ℝ) * 12 / 2 = 96 ∧ (96 = 10 * v ↔ v = 9.6) ∧ (9.6 : ℝ) < 10 := by
   refine ⟨by norm_num, ⟨fun h => by linarith, fun h => by rw [h]; norm_num⟩, by norm_num⟩
 
-/-- Primer 4 (skladnost podatkov): romb z diagonalama 16 in 12 ima stranico √(8² + 6²) = 10.
+/-- Skladnost podatkov: romb z diagonalama 16 in 12 ima stranico √(8² + 6²) = 10.
 pomozno – skladnost podatkov naloge (stranica 10 iz diagonal 16 in 12); lekcija tega ne trdi -/
 theorem primer4_stranica : √((8 : ℝ) ^ 2 + 6 ^ 2) = 10 := by
   rw [show ((8 : ℝ) ^ 2 + 6 ^ 2) = 10 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]

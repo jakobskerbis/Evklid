@@ -242,7 +242,7 @@ example := enakokraki (V := ℂ) 1 (-1) I (by
 (osi simetrije) težišče T in vsaka točka X na nosilkah višin iz A in B (višinska točka V); središče O
 očrtane krožnice leži na njej po `ocrtana`.
 trditev: MAT-OS-7/znacilne-tocke-trikotnika#enakokraki-tocke
-besedilo: »vse štiri točke ležijo na njeni nosilki, ki je os simetrije.« -/
+besedilo: »ležijo na njeni nosilki, ki je os simetrije.« -/
 theorem enakokraki_tocke (A B C X : V) (h : ‖A - C‖ = ‖B - C‖) (ha : ⟪X - A, B - C⟫_ℝ = 0)
     (hb : ⟪X - B, C - A⟫_ℝ = 0) :
     (1 / 3 : ℝ) • (A + B + C) ∈ AffineSubspace.perpBisector A B ∧
@@ -278,7 +278,7 @@ example := enakokraki_tocke (V := ℂ) 1 (-1) I I (by
 /-- Razlaga (posebni trikotniki) in Povzetek: v enakostraničnem trikotniku je težišče T enako oddaljeno
 od vseh oglišč (je središče očrtane krožnice) in leži na vseh treh nosilkah višin (je višinska točka).
 trditev: MAT-OS-7/znacilne-tocke-trikotnika#enakostranicni
-besedilo: »V enakostraničnem trikotniku vse štiri točke sovpadajo.« -/
+besedilo: »V enakostraničnem trikotniku je vsaka višina hkrati težiščnica, simetrala stranice« -/
 theorem enakostranicni (A B C : V) (s : ℝ) (h1 : ‖A - B‖ = s) (h2 : ‖B - C‖ = s) (h3 : ‖C - A‖ = s) :
     ‖(1 / 3 : ℝ) • (A + B + C) - A‖ = ‖(1 / 3 : ℝ) • (A + B + C) - B‖ ∧
       ‖(1 / 3 : ℝ) • (A + B + C) - B‖ = ‖(1 / 3 : ℝ) • (A + B + C) - C‖ ∧
@@ -365,7 +365,7 @@ example := ocrtana_enolicna (V := ℂ) (P := ℂ) ⟨_, oglisca_4_2i_0⟩ _
 (Trditev velja tudi, če C sovpada z A ali B, a le zaradi dogovora, da je kot z ničelnim vektorjem π/2;
 za pravi trikotnik je C ≠ A, B.)
 trditev: MAT-OS-7/znacilne-tocke-trikotnika#tretji-kot
-besedilo: »$\gamma = 180^\circ - \alpha - \beta$; pri topokotnem trikotniku« -/
+besedilo: »$\gamma = 180^\circ - \alpha - \beta$« -/
 theorem tretji_kot (A B C : P) (h : B ≠ A) : ∠ B C A = π - ∠ A B C - ∠ C A B := by
   have := EuclideanGeometry.angle_add_angle_add_angle_eq_pi C h
   linarith
@@ -438,7 +438,7 @@ vseh nosilkah višin (V = C, `pravokotni_V`), težišče je T = (4 + 2i)/3. Velj
 oddaljen od A in C (|TA|² = 68/9, |TC|² = 20/9), C pa ne od A in C (|CA| = 4, |CC| = 0). Središče S
 včrtane krožnice ni formalizirano.
 trditev: MAT-OS-7/znacilne-tocke-trikotnika#tocke-razlicne
-besedilo: »Štiri točke, štiri različna mesta.« -/
+besedilo: »Težiščnice dajo težišče $T$, točko ravnovesja, ki v splošnem ni enako oddaljena od oglišč.« -/
 theorem tocke_razlicne :
     ⟪(4 : ℂ) - 0, 2 * I - 0⟫_ℝ = 0 ∧ (1 / 2 : ℝ) • ((4 : ℂ) + 2 * I) = 2 + I ∧
       (1 / 3 : ℝ) • ((4 : ℂ) + 2 * I + 0) = 4 / 3 + 2 / 3 * I ∧

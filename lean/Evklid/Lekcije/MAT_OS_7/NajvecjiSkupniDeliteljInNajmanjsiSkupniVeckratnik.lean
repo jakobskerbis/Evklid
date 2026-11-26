@@ -301,8 +301,7 @@ theorem primer4 :
 /-! ## Pogoste napake -/
 
 /-- Pogoste napake 1: D(12, 18) = 6, ne 36 (36 ne deli 12).
-trditev: MAT-OS-7/najvecji-skupni-delitelj-in-najmanjsi-skupni-veckratnik#napaka-zamenjava
-besedilo: »Delitelj pa ne more biti večji od števila, ki ga deli.« -/
+pomozno – lekcija tu ne zapiše D(12, 18) = 6 niti 36 ∤ 12, le splošno pravilo -/
 theorem napaka_zamenjava : Nat.gcd 12 18 = 6 ∧ ¬ 36 ∣ 12 := by decide
 
 /-- Pogoste napake 2 in kviz 3: 12 = 2²·3, 30 = 2·3·5; 2·3 = 6 ni večkratnik 12; v(12, 30) = 2²·3·5 = 60;

@@ -286,7 +286,7 @@ example := delitelj_iff 84 6 (by norm_num)
 
 /-- Razlaga (kaj Tjaši pove razcep): iz 2, 2, 3, 7 dobimo 2·3 = 6, 7, 2·2·3 = 12 in 2·7 = 14; vsi delijo 84.
 trditev: MAT-OS-7/prastevila-in-razcep#tjasa-84
-besedilo: »Vsak delitelj števila $84$ je zmnožek nekaterih njegovih prafaktorjev.« -/
+besedilo: »Iz $2, 2, 3, 7$ sestavi velikosti med $5$ in $15$: $2 \cdot 3 = 6$, $7$, $2 \cdot 2 \cdot 3 = 12$ in $2 \cdot 7 = 14$.« -/
 theorem tjasa_84 :
     2 * 3 = 6 ∧ 2 * 2 * 3 = 12 ∧ 2 * 7 = 14 ∧ 6 ∣ 84 ∧ 7 ∣ 84 ∧ 12 ∣ 84 ∧ 14 ∣ 84 := by decide
 

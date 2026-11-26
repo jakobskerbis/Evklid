@@ -99,11 +99,10 @@ theorem inner_vsota_razlika (x y : V) : inner ℝ (x + y) (x - y) = ‖x‖ ^ 2 
 
 /-! ## Paralelogram -/
 
-set_option linter.unusedSectionVars false in
 /-- Razlaga, Povzetek, tabela: v paralelogramu sta nasprotni stranici enako dolgi (|AB| = |DC|, |BC| = |AD|).
 trditev: MAT-OS-7/vrste-stirikotnikov#par-stranice
 besedilo: »Na sliki zgoraj levo vidiš njegove lastnosti: nasprotni stranici sta enako dolgi« -/
-theorem par_stranice (A B C D : V) (h : paralelogram A B C D) : dist A B = dist D C ∧ dist B C = dist A D := by
+theorem par_stranice {V : Type*} [NormedAddCommGroup V] (A B C D : V) (h : paralelogram A B C D) : dist A B = dist D C ∧ dist B C = dist A D := by
   unfold paralelogram at h
   have hC : C = B - A + D := by rw [h]; abel
   subst hC
@@ -344,7 +343,7 @@ example :=
 /-- Razlaga (romb), Povzetek, tabela, Preveri se 3: v rombu so vse štiri stranice enako dolge; paralelogram ima
 pravokotni diagonali natanko tedaj, ko je romb.
 trditev: MAT-OS-7/vrste-stirikotnikov#romb-diagonali
-besedilo: »**Romb** ima štiri enako dolge stranice; njegovi diagonali sta pravokotni in razpolavljata notranje kote.« -/
+besedilo: »**Romb** ima štiri enako dolge stranice; njegovi diagonali sta pravokotni« -/
 theorem romb_diagonali (A B C D : V) (h : paralelogram A B C D) :
     (dist A B = dist A D ↔ inner ℝ (C - A) (D - B) = 0) ∧
     (dist A B = dist A D → dist A B = dist B C ∧ dist B C = dist C D ∧ dist C D = dist D A) := by
@@ -465,7 +464,7 @@ example :=
 /-- Razlaga (romb), Povzetek: diagonali romba razpolavljata vse štiri notranje kote (AC kota pri A in C, BD kota
 pri B in D), ker je romb deltoid glede na obe diagonali.
 trditev: MAT-OS-7/vrste-stirikotnikov#romb-razpolavlja
-besedilo: »Romb: vse stranice enake, diagonali pravokotni in razpolavljata kote.« -/
+besedilo: »Diagonala romba razpolavlja kota, skozi katera gre« -/
 theorem romb_razpolavlja (A B C D : V) (h : romb A B C D) :
     ∠ B A C = ∠ D A C ∧ ∠ B C A = ∠ D C A ∧ ∠ C B D = ∠ A B D ∧ ∠ C D B = ∠ A D B := by
   obtain ⟨hp, hr⟩ := h

@@ -78,7 +78,7 @@ example := ulomek_faktor 4 9 6 3 2 (by norm_num) (by norm_num) (by norm_num) (by
 /-- Korak 3 in Bolj natančno (enoličnost): če je x·f(x) = k za vse x ≠ 0 in je f(3) = 8 (3 zidarji, 8 dni),
 je k = 24 in f(x) = 24/x za vsak x ≠ 0.
 trditev: MAT-OS-7/obratno-sorazmerje#stalen-zmnozek
-besedilo: »Stalen je **zmnožek**: $x \cdot y = k$; $k$ je koeficient obratnega sorazmerja.« -/
+besedilo: »To ni naključje: $24$ je količina dela, izražena v »zidar-dnevih«.« -/
 theorem enolicnost (f : ℚ → ℚ) (k : ℚ) (hf : ∀ x, x ≠ 0 → x * f x = k) (h3 : f 3 = 8) :
     k = 24 ∧ ∀ x, x ≠ 0 → f x = 24 / x := by
   have hk : k = 24 := by rw [← hf 3 (by norm_num), h3]; norm_num
@@ -340,8 +340,7 @@ theorem kviz5 (t : ℚ) : ((6 : ℚ) * 10 = 60 ∧ (6 : ℚ) * 4 = 24 ∧ (60 : 
 /-! ## Pogoj -/
 
 /-- Pogoj: po računu bi 240 zidarjev zid pozidalo v 24 : 240 = 1/10 dneva (desetinka).
-trditev: MAT-OS-7/obratno-sorazmerje#pogoj
-besedilo: »$240$ zidarjev ne pozida zida v desetinki dneva« -/
+pomozno – lekcija pravi, da model tu odpove; računa 1/10 ne navaja -/
 theorem pogoj : (24 : ℚ) / 240 = 1 / 10 := by norm_num
 
 end Evklid.Lekcije.MAT_OS_7.ObratnoSorazmerje

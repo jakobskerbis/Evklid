@@ -86,7 +86,7 @@ example := poln_obrat dve_premici.1 dve_premici.2
 /-- Bolj natančno (vzporedni kraki): če oba kraka kažeta v isto smer (r, s > 0), sta kota enaka; Lipova ulica in
 premisli 3: premik kota (kraki ostanejo vzporedni) ne spremeni kota.
 trditev: MAT-OS-7/vrste-kotov-in-pari-kotov#kraki-ista-smer
-besedilo: »oba kraka kažeta v isto smer ali oba v nasprotno smer: kota sta enaka;« -/
+besedilo: »oba kraka kažeta v isto smer« -/
 theorem kraki_ista_smer (x y : V) {r s : ℝ} (hr : 0 < r) (hs : 0 < s) :
     InnerProductGeometry.angle (r • x) (s • y) = InnerProductGeometry.angle x y := by
   rw [InnerProductGeometry.angle_smul_left_of_pos _ _ hr, InnerProductGeometry.angle_smul_right_of_pos _ _ hs]
@@ -132,8 +132,7 @@ theorem kraki_ena_nasprotna' (x y : V) {r s : ℝ} (hr : r < 0) (hs : 0 < s) :
 example := kraki_ena_nasprotna' (1 : ℂ) 1 (r := -1) (s := 1) (by norm_num) (by norm_num)
 
 /-- Kota z vzporednimi kraki (r, s ≠ 0) sta vedno enaka ali skupaj merita π.
-trditev: MAT-OS-7/vrste-kotov-in-pari-kotov#vzporedni-kraki
-besedilo: »Za taka kota velja: - če sta oba ostra ali oba topa, sta **enaka**; - če je eden ostri in drugi topi, je njuna vsota $180^\circ$.« -/
+pomozno – most med smermi krakov in pravilom po vrstah (`vrste`); lekcija zveze »enaka ali 180°« brez vrst ne zapiše -/
 theorem vzporedni_kraki (x y : V) {r s : ℝ} (hr : r ≠ 0) (hs : s ≠ 0) :
     InnerProductGeometry.angle (r • x) (s • y) = InnerProductGeometry.angle x y ∨
       InnerProductGeometry.angle (r • x) (s • y) = π - InnerProductGeometry.angle x y := by
@@ -340,7 +339,7 @@ example := kviz3 50 60 50 130 60 120 rfl (by norm_num) rfl (by norm_num) (by nor
 
 /-- Preveri se 4: sokot kota 123° je 57° (ne 123 − 90 = 33, ne 360 − 123 = 237, ne 123); topi kot ima ostri sokot.
 trditev: MAT-OS-7/vrste-kotov-in-pari-kotov#kviz4
-besedilo: »$180^\circ - 123^\circ = 57^\circ$. Topi kot ima vedno ostri sokot.« -/
+besedilo: »$180^\circ - 123^\circ = 57^\circ$.« -/
 theorem kviz4 (β : ℝ) : 123 + β = 180 ↔ β = 57 := by
   constructor <;> intro h <;> linarith
 

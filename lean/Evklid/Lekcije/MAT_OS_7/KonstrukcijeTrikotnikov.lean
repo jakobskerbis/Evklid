@@ -336,7 +336,7 @@ example := splosceni (A := (0 : ℂ)) (B := 7) (C := 3)
 /-- Razlaga 5 (obstoj): za a, b, c > 0, ki zadoščajo trikotniški neenakosti, v ℂ obstaja trikotnik z |BC| = a,
 |CA| = b, |AB| = c, ki ni izrojen (A, B na realni osi, Im C > 0).
 trditev: MAT-OS-7/konstrukcije-trikotnikov#obstoj-trikotnika
-besedilo: »Obstoj: krajši stranici skupaj daljši od najdaljše; dva kota skupaj manj kot $180^\circ$.« -/
+besedilo: »Obstoj: krajši stranici skupaj daljši od najdaljše« -/
 theorem obstoj_trikotnika (a b c : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) (h1 : a < b + c) (h2 : b < a + c)
     (h3 : c < a + b) :
     ∃ A B C : ℂ, dist B C = a ∧ dist C A = b ∧ dist A B = c ∧ ¬ Collinear ℝ ({A, B, C} : Set ℂ) := by
@@ -511,7 +511,7 @@ theorem primer3_racun : (180 : ℝ) - 45 - 75 = 60 ∧ (45 : ℝ) + 60 = 105 ∧
 /-- Primer 3: v vsakem trikotniku s c = |AB| = 6, α = π/4 (45°) in γ = 5π/12 (75°) je β = π/3 (60°), po sinusnem
 izreku a = 6 · sin 45°/sin 75° in b = 6 · sin 60°/sin 75°.
 trditev: MAT-OS-7/konstrukcije-trikotnikov#primer3
-besedilo: »V $B$ konstruiraš $60^\circ$ na isto stran $AB$; kraka se sekata v $C$. Preizkus s kotomerom: kot pri $C$ meri $75^\circ$.« -/
+besedilo: »$\beta = 180^\circ - 45^\circ - 75^\circ = 60^\circ$« -/
 theorem primer3 {A B C : P} (hn : ¬ Collinear ℝ ({A, B, C} : Set P)) (hc : dist A B = 6)
     (hα : ∠ C A B = π / 4) (hγ : ∠ B C A = 5 * π / 12) :
     ∠ A B C = π / 3 ∧ dist B C = 6 * sin (π / 4) / sin (5 * π / 12) ∧
@@ -829,7 +829,7 @@ example := kviz5 (A := (0 : ℂ)) (B := 8) (dist_c (by norm_num) (by simp))
 /-- Preveri se 3, Pogoste napake 5 in `RACUN`: 50 + 60 + 70 = 180 (tak trikotnik obstaja, a ga koti ne določajo:
 `kkk_ne`); `RACUN`: 5 + 4 = 9, 180 − 45 − 75 = 60, 45 + 60 = 105, 3 + 4 = 7, 4 + 7 = 11, 7 − 4 = 3.
 trditev: MAT-OS-7/konstrukcije-trikotnikov#racun
-besedilo: »Seštej: $50^\circ + 60^\circ + 70^\circ = 180^\circ$, tak trikotnik obstaja.« -/
+besedilo: »Seštej: $50^\circ + 60^\circ + 70^\circ = 180^\circ$« -/
 theorem racun : (50 : ℝ) + 60 + 70 = 180 ∧ (5 : ℝ) + 4 = 9 ∧ (180 : ℝ) - 45 - 75 = 60 ∧ (45 : ℝ) + 60 = 105 ∧
     (3 : ℝ) + 4 = 7 ∧ (4 : ℝ) + 7 = 11 ∧ (7 : ℝ) - 4 = 3 := by norm_num
 

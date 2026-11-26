@@ -487,9 +487,8 @@ besedilo: »Tako upoštevaš le dva podatka. Sredina mora upoštevati vse podatk
 theorem kviz1_napacni : ((2 : ℝ) + 9) / 2 = 55 / 10 ∧ (55 / 10 : ℝ) ≠ sr [2, 4, 9] ∧ (4 : ℝ) ≠ sr [2, 4, 9] := by
   norm_num [sr]
 
-/-- Kviz 3 (primer): podatkom 2, 4, 9 (sredina 5) dodamo 7 > 5; nova sredina 22/4 = 5,5 je večja.
-trditev: MAT-OS-7/aritmeticna-sredina#kviz-3
-besedilo: »Novi podatek ima pozitiven odmik od stare sredine, zato se točka ravnovesja premakne proti njemu.« -/
+/-- Kviz 3, številsko: podatkom 2, 4, 9 (sredina 5) dodamo 7 > 5; nova sredina 22/4 = 5,5 je večja.
+pomozno – lekcija pri kvizu 3 ne navaja števil; splošno pravilo je `dodan_podatek_vpliv` -/
 theorem kviz3_primer : sr [2, 4, 9, 7] = 55 / 10 ∧ sr [2, 4, 9] < sr [2, 4, 9, 7] := by
   norm_num [sr]
 
