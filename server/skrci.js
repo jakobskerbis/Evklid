@@ -12,6 +12,7 @@ import { jeProdukcija } from "./crypto-polje.js";
 export const skrciVklopljeno = (env = process.env) => env.EVKLID_SKRCI === "1" || (env.EVKLID_SKRCI !== "0" && jeProdukcija(env));
 
 let esbuild = null;
+let opozorjeno = false;
 const IZPUSTI = /(^|[\\/])sw\.js$/;
 
 // Največ NAENKRAT krčenj hkrati. Prvo odprtje po objavi (prazen predpomnilnik) zahteva ~130 modulov naenkrat; brez
@@ -50,8 +51,15 @@ export async function skrciJs(buf, file) {
       legalComments: "inline",
       charset: "utf8",
       sourcefile: file,
+      // Navadni skripti v slogu ES5 (zacetek.js v <head>, sole.js …) ostanejo ES5: brez »catch {}« (ES2019).
+      supported: { "optional-catch-binding": false },
     });
     return Buffer.from(code);
+  } catch (e) {
+    // Datoteka gre nespremenjena (server/compress.js); enkrat v dnevnik, da izpad krčenja (manjka esbuild) ni tih.
+    if (!opozorjeno) console.warn(`[evklid] krčenje JS ni uspelo (${file}), datoteke gredo nespremenjene: ${e?.message || e}`);
+    opozorjeno = true;
+    throw e;
   } finally {
     vrni();
   }

@@ -35,6 +35,16 @@ test("skrciJs: brez komentarjev, imena ostanejo, koda se razčleni; sw.js in ne-
   assert.equal(await skrciJs(Buffer.from("body{}"), "public/style.css"), null);
 });
 
+test("skrciJs: navadni skripti ES5 ostanejo ES5 (catch z imenom); napaka krčenja enkrat v dnevnik", async (t) => {
+  const out = (await skrciJs(Buffer.from("var a;\ntry { a = f(); } catch (e) { a = 0; }\n"), "zacetek.js")).toString();
+  assert.match(out, /catch\(e\)/, out);
+  const warn = t.mock.method(console, "warn", () => {});
+  await assert.rejects(skrciJs(Buffer.from("const = ;"), "slaba1.js"));
+  await assert.rejects(skrciJs(Buffer.from("let let;"), "slaba2.js"));
+  assert.equal(warn.mock.callCount(), 1);
+  assert.match(String(warn.mock.calls[0].arguments[0]), /krčenje JS ni uspelo \(slaba1\.js\)/);
+});
+
 test("skrciJs: največ dve krčenji hkrati (prvo odprtje po objavi: ~130 modulov naenkrat, esbuild sicer zraste)", async () => {
   const src = fs.readFileSync(new URL("../public/app.js", import.meta.url));
   const vse = Array.from({ length: 12 }, (_, i) => skrciJs(src, `public/a${i}.js`));
