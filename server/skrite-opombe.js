@@ -11,7 +11,7 @@ export const isHiddenNote = (text) => typeof text === "string" && HEADS.some((h)
 // &lt;), presledkom ali pomišljajem namesto »_« ter nevidne znake (ZWSP, U+2063, izbirniki različic …) med znaki
 // oznake. Nevidni znaki drugje ostanejo (ZWJ v emojijih, npr. 👨‍👩‍👧).
 const IGN = "\\p{Default_Ignorable_Code_Point}";
-const DVOJNIKI = { a: "а", c: "с", e: "е", i: "іı", j: "ј", o: "оο", p: "р", s: "ѕ", k: "к" };
+const DVOJNIKI = { a: "а", c: "сčć", e: "е", i: "іı", j: "ј", o: "оο", p: "р", s: "ѕ", k: "к" };
 const LOCILO = "_\\uFF3F\\s\\-\\u2010-\\u2015";
 const znak = (c) => (c === "_" ? `[${LOCILO}]` : `[${c}${String.fromCodePoint(c.codePointAt(0) + 0xfee0)}${DVOJNIKI[c] || ""}]`);
 const ODPRI = "(?:[<\\uFF1C\\uFE64\\u3008\\u27E8\\u2329\\u02C2]|&lt;?|&#0*60;?|&#x0*3c;?)";
@@ -26,5 +26,10 @@ const ime = (m) => {
   const ujema = (h) => h.length === t.length && [...h].every((c, i) => c === t[i] || (DVOJNIKI[c] || "").includes(t[i]));
   return HIDDEN_TAGS.find(ujema) || t.join("");
 };
+// Bloki strežnika <<META, <<RACUN, <<KARTICA, <<IZBIRE (AUDIT-065, prevzem #1018) dobijo ‹‹ … ››: učenec jih ne more
+// podtakniti kot strežnikov preverjen račun ali kartico.
+const BLOK = /<<(\s*(?:META|RA[CČ]UN|KARTICA|IZBIRE)\b)(?:([\s\S]*?)>>)?/giu;
 export const neutralizeHiddenTags = (text) =>
-  typeof text === "string" ? text.replace(OZNAKA, (_, sl, tag, close) => `‹${sl}${ime(tag)}${close ? "›" : ""}`) : text;
+  typeof text === "string"
+    ? text.replace(OZNAKA, (_, sl, tag, close) => `‹${sl}${ime(tag)}${close ? "›" : ""}`).replace(BLOK, (_, b, body) => `‹‹${b}${body === undefined ? "" : `${body}››`}`)
+    : text;
