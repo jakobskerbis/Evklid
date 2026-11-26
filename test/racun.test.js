@@ -314,3 +314,31 @@ test("parseClaims: odgovor inštruktorja do MAX_CLAIMS, lekcija (max = Infinity)
   assert.equal(parseClaims(text).length, MAX_CLAIMS);
   assert.equal(parseClaims(text, Infinity).length, MAX_CLAIMS + 5);
 });
+
+// AUDIT-064: rešitev iz bloka RACUN se mora ujemati z vrednostjo neznanke v vidnem besedilu.
+test("AUDIT-064: vidna »x = 5« ob bloku »| x | 4« je napaka; brez navedene vrednosti in ob ujemanju ne", async () => {
+  const { visibleIssue } = await import("../server/racun.js");
+  const R = String.raw;
+  const block = (b) => `\n<<RACUN\n${b}\n>>`;
+  const cases = [
+    [R`Torej $x = 5$.` + block("resi: 2*x+3=11 | x | 4"), true],
+    [R`$x_1 = 2$, $x_2 = 4$` + block("resi: x^2-5*x+6=0 | x | 2, 3"), true],
+    [R`Torej $x = 4$.` + block("resi: 2*x+3=11 | x | 4"), false],
+    ["Kaj narediš najprej?" + block("resi: 2*x+3=11 | x | 4"), false], // način A: rezultat ni naveden
+    [R`Rešitvi sta $x_1 = 2$ in $x_2 = 3$.` + block("resi: x^2-5*x+6=0 | x | 2, 3"), false],
+    [R`$x = \frac{8}{2} = 4$` + block("resi: 2*x=8 | x | 4"), false],
+    [R`$x = 0{,}5$` + block("resi: 2*x=1 | x | 1/2"), false],
+    [R`$x = \pm 2$` + block("resi: x^2=4 | x | -2, 2"), false],
+  ];
+  for (const [t, bad] of cases) assert.equal(!!visibleIssue(t, parseClaims(t)), bad, t);
+});
+
+test("AUDIT-064 (pregled): zaokrožene vrednosti in zapis števil kot v kalkulatorjih", async () => {
+  const { visibleIssue } = await import("../server/racun.js");
+  const R = String.raw;
+  const block = (b) => `\n<<RACUN\n${b}\n>>`;
+  for (const t of [R`$x = 1{,}41$ (zaokroženo)` + block("resi: x^2=2 | x | sqrt(2)"), R`$x = 0{,}33$` + block("resi: 3*x=1 | x | 1/3"), R`$x = 2,5$` + block("resi: 2*x=5 | x | 5/2"), R`$x = 1\,000$` + block("resi: log10(x)=3 | x | 1000"), R`$x = 1.000$` + block("resi: log10(x)=3 | x | 1000"), R`$x = 7{,}39$` + block("resi: ln(x)=2 | x | exp(2)")]) {
+    assert.equal(visibleIssue(t, parseClaims(t)), null, t);
+  }
+  assert.ok(visibleIssue(R`$x = 1{,}5$` + block("resi: x^2=2 | x | sqrt(2)"), parseClaims(R`$x = 1{,}5$` + block("resi: x^2=2 | x | sqrt(2)"))));
+});
