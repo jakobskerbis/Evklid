@@ -40,6 +40,14 @@ export function analyzeLive(text, env = {}) {
   // ukaz sredi izraza (2·limita(…)): CAS ga ne izračuna, zapis pa mora biti matematika, ne »l i m i t a(x; x; 0)« (AUDIT-071)
   if (!cmd && embeddedCmd(text)) {
     const tex = embeddedTex(String(text), env);
+    // odvod v točki sredi računa (d/dx(tan(x); π/4)·2) zna izračunati evaluate: vrednost ostane (AUDIT-055), zapis je lepši
+    if (!/[=<>≤≥]/.test(text)) {
+      let r = null;
+      try {
+        r = withChem(text, evaluate, env);
+      } catch {}
+      if (r && !r.error && Number.isFinite(r.value)) return { kind: "value", ...r, ...(tex ? { tex } : {}) };
+    }
     if (tex) return { kind: "solve", tex };
   }
   if (/[=<>≤≥;]/.test(text) && !functionDef(text)) {
