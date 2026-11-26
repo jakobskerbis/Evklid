@@ -189,5 +189,3 @@
 .scan-input-wrap.ima-izris input { color: transparent; caret-color: var(--text); }
 .scan-input-wrap.ima-izris:focus-within .scan-input-izris { display: none; }
 .scan-input-wrap.ima-izris:focus-within input { color: var(--text); }
-/* Ko polje samo kaže formulo, je »Prebral sem« nad njim podvojen; ob urejanju (surov zapis) se spet pokaže. */
-.scan-confirm:has(.scan-input-wrap.ima-izris:not(:focus-within)) :is(.scan-read-label, .scan-preview) { display: none; }

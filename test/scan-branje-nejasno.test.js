@@ -155,6 +155,9 @@ test("zaslon Skeniraj: oznake se pokažejo, Reši je zaprt, dokler je [?]; besed
   assert.match(src, /wrap\.classList\.toggle\("ima-izris", !!html\)/);
   const css = fs.readFileSync(new URL("../public/scan.css", import.meta.url), "utf8");
   assert.match(css, /\.scan-input-wrap\.ima-izris:focus-within \.scan-input-izris \{ display: none; \}/);
+  assert.doesNotMatch(css, /:has\(\.scan-input-wrap/, "fokus ne sme premikati postavitve (izgubljeni kliki)");
+  assert.match(src, /scrollWidth > fieldIzris\.clientWidth \+ 1/, "preširoka formula ostane surov zapis");
+  assert.match(fs.readFileSync(new URL("../public/sirina.js", import.meta.url), "utf8"), /\.sc, \.scan-input-izris"\)\) return null;/);
   for (const k of ["scan.unclearTitle", "scan.unclear", "scan.unclearOne", "scan.unclearApply", "scan.unclearGivenOnly", "scan.unclearN", "scan.unclearErr", "scan.unclearGiven"]) {
     assert.ok(SL[k], k);
     for (const lang of ["en", "de", "hr", "it", "hu"]) {

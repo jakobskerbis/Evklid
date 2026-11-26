@@ -730,7 +730,7 @@ function renderConfirm(box) {
     ${S.note ? `<p class="scan-note card">${icon("info")}<span>${esc(S.note)}</span></p>` : ""}
     ${multi ? `<p class="scan-label">${esc(t("scan.pick"))}</p><div class="scan-picks">${S.problems.map((p, i) => `<button type="button" class="scan-pick${p.text === S.text ? " on" : ""}" data-pick="${i}" aria-pressed="${p.text === S.text}">${math(p.tex || p.text)}</button>`).join("")}</div>` : ""}
     <div class="card scan-confirm">
-      ${S.problems.length ? `<p class="scan-label scan-read-label">${esc(t("scan.readAs"))}</p>` : ""}
+      ${S.problems.length ? `<p class="scan-label">${esc(t("scan.readAs"))}</p>` : ""}
       <div class="scan-preview" aria-live="polite"></div>
       <div class="scan-unclear-host" aria-live="polite"></div>
       ${S.given.length ? `<p class="scan-given"><span class="scan-label">${esc(t("scan.given"))}</span>${S.given.map((g) => `<span class="scan-given-item${hasUnclear(g) ? " scan-given-unclear" : ""}">${math(boxUnclear(g))}</span>`).join("")}</p>` : ""}
@@ -777,6 +777,9 @@ function renderConfirm(box) {
     const html = input.value.trim() ? inputFormulaHtml(input.value) : "";
     fieldIzris.innerHTML = html;
     wrap.classList.toggle("ima-izris", !!html);
+    // formula, ki ne gre v polje (dolga, visoka), ostane surov zapis: ne pokažemo odrezanega dela (»Prebral sem« nad
+    // poljem jo pokaže celo)
+    if (html && (fieldIzris.scrollWidth > fieldIzris.clientWidth + 1 || fieldIzris.scrollHeight > fieldIzris.clientHeight + 1)) wrap.classList.remove("ima-izris");
   };
   const update = () => {
     showField();
