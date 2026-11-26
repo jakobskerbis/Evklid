@@ -67,6 +67,48 @@ function uporabi({ el, cw, sw, max, at, ox, rtl }) {
     nastavi(el, "--drs-x", `${((rtl ? 1 - p : p) * 100).toFixed(1)}%`);
   }
   if (vec && !pokukano.has(el)) io?.observe(el);
+  dosegljiva(el, vec);
+}
+// Drsna vrstica brez ničesar za fokus (formula, tabela) je dosegljiva s tipko Tab, da jo puščice pomikajo
+// (WCAG 2.1.1, axe scrollable-region-focusable). Ko vrstica ni več drsna ali dobi kaj za fokus, tabindex,
+// ki smo ga dodali, odstranimo; tabindex, ki ga je element imel že prej, ostane, kot je.
+const FOKUS = "a[href],button,input,select,textarea,summary,[tabindex]:not([tabindex^=\"-\"])";
+// Skrit gumb (npr. »← Jaz« v Napredku na računalniku, display: none) ne šteje: s tipko Tab do njega ne pridemo.
+const vidna = (x) => (x.checkVisibility ? x.checkVisibility() : x.getClientRects().length > 0);
+export function dosegljiva(el, vec) {
+  const nase = !!el.dataset.drsFokus;
+  if (!nase && el.hasAttribute("tabindex")) return;
+  const rabi = vec && ![...el.querySelectorAll(FOKUS)].some(vidna);
+  if (rabi && !nase) {
+    el.setAttribute("tabindex", "0");
+    el.dataset.drsFokus = "1";
+  } else if (!rabi && nase) {
+    el.removeAttribute("tabindex");
+    delete el.dataset.drsFokus;
+  }
+}
+// Pogled, ki se na računalniku pomika sam (».narrow« z »overflow-y: auto«, npr. Napredek), brez česar koli za fokus,
+// prav tako (axe na #view-progress, K-11). Merimo ga po izrisu (requestAnimationFrame + setTimeout), ko je postavitev
+// že narejena, zato branje višine ne vsili nove postavitve; spremembe vsebine pripelje opazovalec sprememb spodaj.
+export const POGLED = "main.view";
+let pogledi = new Set();
+let pogledCaka = false;
+function preveriPoglede() {
+  pogledCaka = false;
+  const vsi = pogledi;
+  pogledi = new Set();
+  vsi.forEach((v) => {
+    if (!v.isConnected) return;
+    const vec = !v.hidden && /^(auto|scroll)$/.test(getComputedStyle(v).overflowY) && v.scrollHeight - v.clientHeight > 1;
+    dosegljiva(v, vec);
+  });
+}
+function pogledKmalu(v) {
+  if (v) pogledi.add(v);
+  else document.querySelectorAll(POGLED).forEach((x) => pogledi.add(x));
+  if (pogledCaka) return;
+  pogledCaka = true;
+  requestAnimationFrame(() => setTimeout(preveriPoglede, 0));
 }
 export function oznaci(el) {
   uporabi(izmeri(el));
@@ -117,6 +159,11 @@ function preglej() {
   sledeni.forEach((el) => el.isConnected || (ro.unobserve(el), io?.unobserve(el), sledeni.delete(el)));
   const najdeni = new Set();
   for (const kje of deli) {
+    if (kje === document) pogledKmalu();
+    else {
+      const v = kje.closest(POGLED);
+      if (v) pogledKmalu(v);
+    }
     const gor = kje !== document && kje.closest(SEL);
     if (gor) najdeni.add(gor);
     kje.querySelectorAll(SEL).forEach((el) => najdeni.add(el));
@@ -170,6 +217,7 @@ export function initDrsniki() {
       else kmalu(m.type === "characterData" ? m.target.parentElement || document : m.target);
     }
   }).observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeOldValue: true, attributeFilter: ["style", "hidden", "open"] });
+  addEventListener("resize", () => pogledKmalu(), { passive: true }); // ožje okno: pogled lahko postane drsen
   document.fonts?.ready?.then(() => kmalu());
   // Pisava, naložena pozneje (npr. pisave KaTeX ob prvi formuli), spremeni širino vsebine, ne pa vedno okvirja vrstice.
   document.fonts?.addEventListener?.("loadingdone", () => kmalu());

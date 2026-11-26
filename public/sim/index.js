@@ -220,7 +220,7 @@ export async function mountSim(id, el, opts = {}) {
       const { pozabiMeritve } = await import("./lab.js");
       el._labZnova = () => (pozabiMeritve(labId, el._labKljuc), mountSim(id, el, opts));
     } else el._labZnova = null;
-    focusableTargets(el);
+    focusableTargets(el, opts?.title);
     // Ponastavi: simulacijo postavi znova v začetno stanje (ne pri zbirki, ki ima svoje podsimulacije).
     if (id !== "zbirka" && !opts?.noReset) {
       const b = document.createElement("button");
@@ -248,13 +248,19 @@ export async function mountSim(id, el, opts = {}) {
 
 // Elementi, ki se jih da klikniti ali vleči (.drag), so dosegljivi s tipko Tab; Enter ali preslednica
 // jih klikne (vlečenje s puščicami doda kit.draggable). Simulacije pogosto rišejo znova, zato opazujemo spremembe.
-function focusableTargets(el) {
-  const mark = () =>
+// Risba (svg role="img") brez opisa dobi ime (WCAG 1.1.1, axe svg-img-alt): naslov simulacije, če ga poznamo.
+function focusableTargets(el, naslov) {
+  const mark = () => {
     el.querySelectorAll(".drag:not([tabindex])").forEach((t) => {
       t.setAttribute("tabindex", "0");
       if (!t.getAttribute("role")) t.setAttribute("role", "button");
       if (!t.getAttribute("aria-label")) t.setAttribute("aria-label", (t.textContent || "").trim() || "Izberi");
     });
+    el.querySelectorAll('svg[role="img"]:not([aria-label]):not([aria-labelledby])').forEach((svg) => {
+      const ime = svg.querySelector(":scope > title")?.textContent?.trim();
+      svg.setAttribute("aria-label", ime || (naslov ? `Slika simulacije: ${naslov}` : "Slika simulacije"));
+    });
+  };
   mark();
   if (el.dataset.kbd) return;
   el.dataset.kbd = "1";

@@ -271,12 +271,19 @@ function refreshMarks() {
       const dup = p.dup && el !== openEl;
       if (el.classList.contains("fx-dup") !== dup) {
         el.classList.toggle("fx-dup", dup);
+        // Ponovljena črka je navadno besedilo: brez vloge tudi brez aria-label in aria-expanded (WCAG 4.1.2, axe
+        // aria-allowed-attr; bralnik prebere samo črko). Oznako hranimo v data-fx-label za vrnitev v gumb.
         if (dup) {
           el.removeAttribute("role");
           el.setAttribute("tabindex", "-1");
+          if (el.hasAttribute("aria-label")) el.dataset.fxLabel = el.getAttribute("aria-label");
+          el.removeAttribute("aria-label");
+          el.removeAttribute("aria-expanded");
         } else {
           el.setAttribute("role", "button");
           el.setAttribute("tabindex", "0");
+          if (el.dataset.fxLabel) el.setAttribute("aria-label", el.dataset.fxLabel);
+          el.setAttribute("aria-expanded", "false");
         }
       }
       const tone = p.tone && !dup ? String(p.tone) : null;

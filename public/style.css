@@ -18,11 +18,12 @@
   --hero-a: #2353d1;  /* podlaga pod belim besedilom (kartica Današnji trening, logotip) */
   --hero-b: #3563dc;
   --gold: #f5a524;
+  --gold-text: #975800; /* zlato za besedilo na svetli podlagi (kontrast 5,7 : 1, WCAG 1.4.3) */
   --user-bubble: var(--accent);
   --user-text: #ffffff;
   --ok: #1e7a4c;
   --ok-bg: #e5f4ec;
-  --danger: #d33a3f;
+  --danger: #c8323a; /* 4,6 : 1 na --danger-bg (WCAG 1.4.3) */
   --danger-bg: #fdecec;
   --warm: #b0500a;   /* niz dni, odštevanje do cilja */
   --radius: 14px;
@@ -54,6 +55,7 @@
   --ok: #4cd38c;
   --ok-bg: #12301f;
   --danger: #ff6b6e;
+  --gold-text: var(--gold);
   --danger-bg: #3a1a1f;
   --warm: #f5a35c;
   --shadow: none;
@@ -677,7 +679,7 @@ button.mic-btn.rec { color: var(--danger); background: color-mix(in srgb, var(--
 .card.xp-card { padding: 0; overflow: hidden; }
 .hero { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; padding: 20px; background: linear-gradient(135deg, var(--hero-a), var(--hero-b)); color: #fff; }
 .hero h2 { margin: 0; font-size: 1.25rem; }
-.hero p { margin: 2px 0 0; opacity: 0.9; font-weight: 600; }
+.hero p { margin: 2px 0 0; color: rgb(255 255 255 / 0.92); font-weight: 600; } /* barva namesto opacity: axe sicer zgreši podlago (preliv) */
 .hero-icon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 16px; background: rgba(255, 255, 255, 0.18); }
 .hero-icon svg.i { width: 28px; height: 28px; color: #ffe27a; fill: #ffe27a; }
 .hero.danes .hero-icon svg.i { fill: none; } /* tarča (cilj matura) kot obris, ne polna pika */
@@ -817,7 +819,7 @@ button.mic-btn.rec { color: var(--danger); background: color-mix(in srgb, var(--
 .fb.info > svg.i { color: var(--accent); }
 .fb.mastered { background: #fff3d4; color: #6b4e00; }
 .dark .fb.mastered { background: #3a2f12; color: #f6d77f; }
-.xp-gain { flex: none !important; font-weight: 900; color: var(--gold); background: var(--surface); border-radius: 999px; padding: 2px 10px; animation: float-up 1s ease both; }
+.xp-gain { flex: none !important; font-weight: 900; color: var(--gold-text); background: var(--surface); border-radius: 999px; padding: 2px 10px; animation: float-up 1s ease both; }
 @keyframes float-up { 0% { opacity: 0; transform: translateY(8px) scale(0.8); } 40% { opacity: 1; transform: translateY(-4px) scale(1.12); } 100% { transform: none; } }
 .pop { animation: pop 0.35s ease; }
 @keyframes pop { 0% { transform: scale(0.96); opacity: 0; } 60% { transform: scale(1.02); opacity: 1; } 100% { transform: scale(1); } }

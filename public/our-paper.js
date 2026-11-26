@@ -73,7 +73,7 @@ export function izrisPole(paper, rich) {
       else if (izb.konec && on) (cls += " narobe"), (znak = `<span class="op-ch-z">${icon("x")}<span class="sr-only">${esc(t("pp.oursWrong"))}</span></span>`);
       return `<li><button type="button" class="choice op-ch${cls}" data-op-ch="${i}" aria-pressed="${on}"${izb.konec ? ' aria-disabled="true"' : ""}><span class="op-ch-l" aria-hidden="true">${crka}</span><span class="sr-only">${crka}.</span><span class="op-ch-t">${rich(c)}</span>${znak}</button></li>`;
     });
-    return `<ul class="op-choices op-chs" role="group" aria-label="${esc(t(vec ? "pp.oursPickMany" : "pp.oursPickOne"))}">${items.join("")}</ul>`;
+    return `<ul class="op-choices op-chs" aria-label="${esc(t(vec ? "pp.oursPickMany" : "pp.oursPickOne"))}">${items.join("")}</ul>`;
   };
   const question = (tk, p, izb = null) => {
     const choices = p.format === "choice" && p.choices ? choiceList(p, izb) : "";
