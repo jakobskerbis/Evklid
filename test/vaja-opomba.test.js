@@ -1,4 +1,4 @@
-// Pot Vadnica → »Vprašaj inštruktorja« (pregled pripravljenosti pilota 26. 11. 2026, poseg 2): inštruktor dobi preverjeni
+// AUDIT-094. Pot Vadnica → »Vprašaj inštruktorja« (pregled pripravljenosti pilota 26. 11. 2026, poseg 2): inštruktor dobi preverjeni
 // rezultat generatorja kot skrito opombo, prvi odgovor imenuje tipično napako, napaka se šteje enkrat, pomoč pred
 // odgovorom pomeni »s pomočjo«.
 import test from "node:test";
