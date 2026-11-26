@@ -11,6 +11,7 @@ import { t as tg, currentLang, locale } from "../i18n.js";
 import { uiDicts } from "../i18n/languages.js";
 import { icon } from "../icons.js";
 import { dateText } from "../datum.js";
+import { jsonAliNic } from "../odgovor.js";
 import { stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj, opomba } from "../nujno.js";
 import SL from "./sl.js";
 import { esc, besediloZFormulami, oznaciNegotovo, dniMed, negotovihPoViru, RAZRED_STANJA, naslednjaEnota, danesLokalno, fokusTeme } from "./izris.js";
@@ -51,7 +52,7 @@ function naloziBesedila() {
     kode.map(async (k) => {
       try {
         const r = await fetch(`/priprava/i18n/${k}.json`);
-        return r.ok ? await r.json() : null;
+        return await jsonAliNic(r, null);
       } catch {
         return null;
       }
@@ -394,19 +395,17 @@ async function poslji(file, poskus = 0) {
     headers: { "Content-Type": file.type || "application/octet-stream", "X-Ime-Datoteke": encodeURIComponent(file.name || "") },
     body: file,
   });
-  // Prejšnje nalaganje se na strežniku še zapira (več datotek naenkrat): kratek premor in nov poskus.
-  if (res.status === 429 && poskus < 3) {
-    const b = await res.clone().json().catch(() => ({}));
-    if (b.code === "priprava_zasedeno") {
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    // Prejšnje nalaganje se na strežniku še zapira (več datotek naenkrat): kratek premor in nov poskus.
+    if (res.status === 429 && body.code === "priprava_zasedeno" && poskus < 3) {
       await new Promise((ok) => setTimeout(ok, 1500));
       return poslji(file, poskus + 1);
     }
-  }
-  sprememba();
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
+    sprememba();
     throw Object.assign(new Error(body.error || t("pr.err.other")), { status: res.status, body });
   }
+  sprememba();
   return res.json();
 }
 
