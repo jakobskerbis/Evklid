@@ -60,17 +60,27 @@ ne prekine testa v Render Shell (dokler velja »takoj«, ga lahko).
 j, 26. 11. 2026: »Vzpostavi postopno uvajanje produkcijskih sprememb in možnost hitre vrnitve na prejšnjo
 različico.« Če nova različica na evklid.app ne dela prav:
 
-1. GitHub → Actions → Render → Run workflow, v polje »vrni_na« prilepi polni SHA (40 znakov) zadnjega dobrega commita
-   iz `main` (GitHub → Commits; ali `razlicica` iz `https://evklid.app/healthz/stanje` pred pokvarjeno objavo).
-2. Skripta preveri, da je commit v zgodovini `main` in da so bili njegovi testi zeleni (v sili »brez_testov«), in ga
-   objavi z Render Deploy Hook (`?ref=<sha>`). Objava traja nekaj minut, kot vsaka druga.
-3. Po vrnitvi samodejne objave (ob urniku, ob koncu testov, »takoj«, `[nujno]`) pokvarjene različice ne objavijo
-   znova. Zaklep se sprosti sam, ko se v `main` združi nov commit (popravek); običajen ročni zagon brez »vrni_na«
-   ga sprosti takoj.
+1. Poišči zadnjo dobro različico: Render → evklid → Events (vsaka objava ima commit) ali GitHub → Commits na `main`.
+   Dovolj je prvih 7 ali več znakov SHA.
+2. GitHub → Actions → Render → Run workflow, »Use workflow from« pusti **main**, v polje »vrni_na« prilepi SHA.
+3. Skripta preveri, da je commit v zgodovini `main` in da so bili njegovi testi zeleni (v sili »brez_testov«), ga
+   objavi z Render Deploy Hook (`?ref=<sha>`) in do 15 minut preverja, da evklid.app res teče na njem (`/healthz/stanje`).
+4. Dokler se `main` ne spremeni, samodejne objave (urnik, konec testov, »takoj«, `[nujno]`) pokvarjene različice ne
+   objavijo znova.
 
-Baza ostane, kakršna je: migracije v `server/db.js` dodajajo tabele in stolpce (ali tabelo obnovijo z istimi stolpci), ki jih starejša koda ne bere.
-Če bi kdaj sprememba baze odstranila ali preimenovala stolpec, ki ga starejša koda potrebuje, vrnitev čez tisto
-združitev ni varna; tak PR mora to napisati v opisu.
+Pazi: **vsaka** nova združitev v `main` zaklep sprosti in objavi vrh `main`. Zato po vrnitvi najprej združi
+popravek ali razveljavitev (revert) pokvarjenega PR-ja in do takrat ustavi druge združitve (tudi samodejne, npr.
+kalkulatorja). Običajen ročni zagon brez »vrni_na« takoj objavi vrh `main`, torej znova pokvarjeno različico, če ta
+še ni popravljena.
+
+Vrnitev velja samo za evklid.app; telefoni, ki so posodobitev že dobili prek `ota.yml`, ostanejo na novi različici.
+
+Baza ostane, kakršna je, zato vrnitev ni varna čez združitev, ki je bazo spremenila nazaj nezdružljivo:
+
+- #1086 (25. 11. 2026, `75cf119`) je tabelo `test_plans` preselila v priprave in jo izbrisala; koda pred tem
+  commitom vidi prazne načrte testov, dokler se ne vrneš naprej.
+
+Vsak nov PR, ki odstrani ali preimenuje tabelo ali stolpec, to napiše v opis in doda vrstico v ta seznam.
 
 ### Objava samo po zelenih testih
 

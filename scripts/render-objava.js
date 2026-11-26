@@ -86,7 +86,7 @@ export function jeZaklenjeno(zadnja, mainSha) {
  * `sha...main` vrne »ahead« ali »identical«) in imeti zelene teste (razen z izrecnim brezTestov).
  */
 export function preveriVrnitev({ sha, primerjava, testi, brezTestov = false }) {
-  if (!SHA40.test(String(sha || ""))) return { ok: false, zakaj: "VRNI_NA mora biti polni SHA (40 znakov 0-9a-f)" };
+  if (!SHA40.test(String(sha || ""))) return { ok: false, zakaj: "commita ni bilo mogoče najti (vpiši vsaj 7 znakov SHA iz main)" };
   if (!primerjava || !["ahead", "identical"].includes(primerjava.status)) return { ok: false, zakaj: `${sha.slice(0, 12)} ni v zgodovini main (${primerjava?.status || "ni znano"})` };
   if (!brezTestov && testi?.stanje !== "uspeh") return { ok: false, zakaj: `testi za ${sha.slice(0, 12)} niso zeleni (${testi?.zakaj || "ni znano"}); v sili izberi »brez_testov«` };
   return { ok: true, zakaj: primerjava.status === "identical" ? "vrnitev na vrh main" : `vrnitev za ${primerjava.ahead_by} commitov nazaj` };
@@ -172,8 +172,12 @@ async function main() {
       return { stanje: "caka", zakaj: `stanja testov ni bilo mogoče prebrati: ${e.message}` };
     }
   };
-  const VRNI_NA = String(process.env.VRNI_NA || "").trim().toLowerCase();
-  if (VRNI_NA) {
+  const vnos = String(process.env.VRNI_NA || "").trim().toLowerCase();
+  if (vnos) {
+    // Zapis o vrnitvi je v predpomnilniku veje, iz katere teče zagon; samodejni teki berejo samo predpomnilnik main.
+    if (process.env.VEJA && process.env.VEJA !== "refs/heads/main") throw new Error("Vrnitev zaženi z veje main (Use workflow from: main).");
+    if (!/^[0-9a-f]{7,40}$/.test(vnos)) throw new Error("Vrnitev zavrnjena: vrni_na mora biti SHA commita (7–40 znakov 0-9a-f).");
+    const VRNI_NA = (await gh(`commits/${vnos}`).catch(() => null))?.sha || "";
     const mainSha = (await gh("commits/main")).sha;
     let primerjava = null;
     if (SHA40.test(VRNI_NA)) primerjava = await gh(`compare/${VRNI_NA}...${mainSha}`).catch(() => null);
@@ -186,7 +190,17 @@ async function main() {
     if (!r.ok) throw new Error(`Render ni sprejel vrnitve na ${VRNI_NA.slice(0, 12)}: ${r.status}`);
     fs.writeFileSync(file, JSON.stringify({ sha: VRNI_NA, at: Date.now(), vrnitev: true, mainOb: mainSha }));
     if (process.env.GITHUB_OUTPUT) fs.appendFileSync(process.env.GITHUB_OUTPUT, "sprozeno=1\n");
-    return console.log(`Vrnitev sprožena: ${VRNI_NA.slice(0, 12)} (${p.zakaj}). Samodejne objave počakajo na nov commit v main.`);
+    console.log(`Vrnitev sprožena: ${VRNI_NA.slice(0, 12)} (${p.zakaj}). Samodejne objave počakajo na nov commit v main.`);
+    // Preverim, da Render res teče na zahtevani različici (do 15 minut).
+    for (let i = 0; i < 30; i++) {
+      await new Promise((res) => setTimeout(res, 30000));
+      try {
+        const r2 = await fetch(`${url}/healthz/stanje`, { signal: AbortSignal.timeout(10000) });
+        const raz = r2.ok ? (await r2.json()).razlicica : null;
+        if (raz && VRNI_NA.startsWith(raz)) return console.log(`evklid.app teče na ${raz}: vrnitev uspela.`);
+      } catch {}
+    }
+    return console.log(`::warning::Render po 15 minutah še ne kaže različice ${VRNI_NA.slice(0, 12)}; preveri Render → Events.`);
   }
   for (;;) {
     let mainSha;

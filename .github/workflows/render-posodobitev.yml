@@ -30,7 +30,7 @@ on:
         type: boolean
         default: false
       vrni_na:
-        description: "Vrnitev (K-17): polni SHA starejšega commita iz main; prazno = običajna objava vrha main"
+        description: "Vrnitev (K-17): SHA starejšega dobrega commita iz main (vsaj 7 znakov); prazno = običajna objava vrha main"
         type: string
         default: ""
 permissions:
@@ -74,6 +74,7 @@ jobs:
           # Tudi urnik čaka: novi tek (cancel-in-progress) prekine čakajočega, zato mora čakati naprej sam.
           CAKAJ: ${{ github.event_name != 'workflow_dispatch' && '1' || '0' }}
           VRNI_NA: ${{ github.event_name == 'workflow_dispatch' && inputs.vrni_na || '' }}
+          VEJA: ${{ github.ref }}
         run: node scripts/render-objava.js
       - uses: actions/cache/save@v6
         # always(): shrani tudi, če novejši tek prekliče ta tek takoj po sprožitvi.

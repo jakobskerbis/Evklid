@@ -36,5 +36,6 @@ test("delovni tok poda vrni_na samo iz ročnega zagona, prek okolja (ne v ukazu)
   const wf = fs.readFileSync(new URL("../.github/workflows/render-posodobitev.yml", import.meta.url), "utf8");
   assert.match(wf, /vrni_na:\n\s+description:/);
   assert.match(wf, /VRNI_NA: \$\{\{ github\.event_name == 'workflow_dispatch' && inputs\.vrni_na \|\| '' \}\}/);
-  assert.doesNotMatch(wf, /run:[^\n]*inputs\.vrni_na/);
+  assert.equal(wf.match(/inputs\.vrni_na/g).length, 1, "inputs.vrni_na samo v okolju, nikjer v ukazih");
+  assert.match(wf, /VEJA: \$\{\{ github\.ref \}\}/);
 });
