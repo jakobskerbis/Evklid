@@ -175,19 +175,32 @@ async function mnozica(cas, zapis, x) {
   return null;
 }
 // Identiteta za enačbo (2x + 3 = 7 → 2x + 3 = 2x + 3) je napačen korak, ki ga ukaz ujame: tak par ostane.
-export async function niKorak(cas, k) {
+// Prvotna enačba brez realne rešitve (x² + 6x + 34 = 0) za korak ne pove ničesar: iz prazne množice sledi vsaka
+// enačba, zato bi ukaz korak potrdil karkoli (pregled PV-11 z vstavljenimi napakami). Tak korak je »prazen«
+// (nepreverjen): na realnih številih ga ne moremo potrditi, v kompleksnih je lahko pravilen.
+/** "ni" (ni korak), "prazen" (prvotna enačba nima realne rešitve, ostali ni) ali "korak". */
+export async function vrstaKoraka(cas, k) {
   const a = await mnozica(cas, k.prej, k.neznanka);
-  if (a === "R") return true;
-  if (a !== "prazna") return false;
-  return (await mnozica(cas, k.potem, k.neznanka)) === "prazna";
+  if (a === "R") return "ni";
+  if (a !== "prazna") return "korak";
+  const b = await mnozica(cas, k.potem, k.neznanka);
+  // protislovje → identiteta (3x + 3 = 3x + 4 → 3x + 3 = 3x + 3) ukaz ujame kot napako: to ostane korak
+  return b === "prazna" ? "ni" : b === "R" ? "korak" : "prazen";
 }
+export const niKorak = async (cas, k) => (await vrstaKoraka(cas, k)) === "ni";
+export const PRAZEN = "prvotna enačba nima realne rešitve, zato iz nje sledi vsaka enačba: korak ni preverljiv";
 
 /** Trditve ene naloge: [{ vir: racun|korak|odgovor, tex, status, why? }]. */
 export async function trditveNaloge(t, { cas = null } = {}) {
   const out = trditveIzBesedila(t.solution).map((x) => ({ vir: "racun", tex: x.tex, status: x.status }));
   if (cas) {
     for (const k of koraki(t.solution)) {
-      if (await niKorak(cas, k)) continue;
+      const v = await vrstaKoraka(cas, k);
+      if (v === "ni") continue;
+      if (v === "prazen") {
+        out.push({ vir: "korak", tex: k.tex.slice(0, 160), status: "nepreverjeno", why: PRAZEN, vrsta: "prazen" });
+        continue;
+      }
       const r = await cas.casCheck("korak", [k.prej, k.potem, k.neznanka, ""]);
       out.push({ vir: "korak", tex: k.tex.slice(0, 160), status: casStatus(r, k), why: r.why || "", vrsta: r.vrsta || null });
     }

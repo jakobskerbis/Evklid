@@ -1,7 +1,7 @@
 // PV-10 (docs/preverjanje.md, »Status generatorjev«): status vsakega generatorja iz računov, korakov in odgovora.
 import { test, after } from "node:test";
 import assert from "node:assert/strict";
-import { vZapisZaKorak, koraki, statusOdgovoraNaloge, popisGeneratorjev, povzemi, porocilo, niKorak, casStatus } from "../scripts/status-generatorjev.mjs";
+import { vZapisZaKorak, koraki, statusOdgovoraNaloge, popisGeneratorjev, povzemi, porocilo, niKorak, vrstaKoraka, casStatus } from "../scripts/status-generatorjev.mjs";
 import * as cas from "../server/cas.js";
 
 const HAVE = await cas.casAvailable();
@@ -47,6 +47,16 @@ test("pregled: identiteti zapored ali identiteta ob enačbi nista korak", { skip
   assert.equal(await k("x + 1 = 2", "x + 1 = x + 2"), false);
   assert.equal(await k("2x + 3 = 7", "2x + 3 = 2x + 3"), false);
   assert.equal(await k("3(x + 1) = 3x + 4", "3x + 3 = 3x + 3"), false);
+});
+
+test("pregled PV-11: iz enačbe brez realne rešitve sledi vsaka, zato korak ni preverljiv", { skip: !HAVE && "SymPy ni na voljo" }, async () => {
+  const v = (prej, potem) => vrstaKoraka(cas, { prej, potem, neznanka: "x" });
+  // napačen korak (x² + 6x + 34 = 0 nima realne rešitve) ne sme dobiti potrditve
+  assert.equal(await v("x^2 + 6x + 34 = 0", "9x^2 - 12x + 4 = 1"), "prazen");
+  assert.equal(await v("3x + 3 = 3x + 4", "x = 5"), "prazen");
+  assert.equal(await v("3(x + 1) = 3x + 4", "3x + 3 = 3x + 3"), "korak");
+  assert.equal(await v("x^2 + 1 = 0", "x^2 = -1"), "ni");
+  assert.equal(await v("2x + 3 = 7", "2x = 4"), "korak");
 });
 
 test("koraki: čiste vrstice, »ali« kot ena trditev, kandidati in pogoji niso koraki", () => {
