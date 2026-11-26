@@ -55,6 +55,9 @@ services:
         sync: false
       - key: EVKLID_ADMIN_EMAILS
         sync: false
+      # Žeton delavca Lean na j-jevem prenosniku (docs/lean.md L5, scripts/lean-delavec); prazno = delavec izklopljen.
+      - key: EVKLID_LEAN_TOKEN
+        sync: false
       # Namestnik, ki dobi e-mail ob oznaki stiske (server/stiska-obvestilo.js); neobvezno. EVKLID_STISKA_EMAIL=0 izklopi e-mail.
       - key: EVKLID_STISKA_EMAIL_NAMESTNIK
         sync: false

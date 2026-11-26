@@ -10,3 +10,10 @@ __pycache__/
 # Preizkus 3: naloge v čistem besedilu nikoli v repozitorij (šifrirane so v scripts/preizkus3-naloge.enc)
 preizkus3-naloge*.json
 glas/model/
+
+# delavec Lean na prenosniku (scripts/lean-delavec): žeton, stanje, dnevnik, orodja, Mathlib
+scripts/lean-delavec/nastavitve.json
+scripts/lean-delavec/stanje.json
+scripts/lean-delavec/dnevnik.txt*
+scripts/lean-delavec/orodja/
+scripts/lean-delavec/projekt/.lake/

@@ -1,0 +1,8 @@
+# Projekt delavca Lean (scripts/lean-delavec, docs/lean.md L5): samo Mathlib, brez lastnih datotek. Različici Leana in
+# Mathliba sta enaki kot v lean/ (test/lean-vrsta.test.js to preveri). Datoteke z nalogami so v začasni mapi.
+name = "evklid_delavec"
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4"
+rev = "v4.36.0"
