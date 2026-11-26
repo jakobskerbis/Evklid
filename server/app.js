@@ -102,7 +102,7 @@ import { potTakoj } from "./pot-takoj.js";
 const ZASLONI_POZNEJE = ["vendor/katex/katex.min.js", "vendor/marked/lib/marked.umd.js", "vendor/dompurify/purify.min.js", "formula-info.js", "sirina.js", "textbook.js", "vadnica.js", "kalkulator-zaslon.js", "schedule.js", "racun.js", "flashcards.js", "odpri.js", "laboratorij.js", "corner.js", "pilot-naloge.js", "chat-settings.js", "prijave.js", "i18n-zasloni.js", "scan/scan.js", "zbirke-view.js", "leagues.js", "our-paper.js", "practice/check.js", "graph/math.js", "i18n.js", "tipkovnica.js", "tipkovnica-data.js"];
 // Leni moduli, ki jih odjemalec naloži z vsemi odvisnostmi hkrati (/lene-odvisnosti.js, public/kliki.js vzporedno;
 // app.js lenModul ob prvem nalaganju): brez tega brskalnik odkriva uvoze raven za ravnijo.
-const LENI_MODULI = ["graph/sci.js", "graph/calc.js", "graph/tools.js", "games/index.js", "textbook.js", "scan/scan.js", "zbirke-view.js", "leagues.js", "vadnica.js", "kalkulator-zaslon.js", "schedule.js", "racun.js", "flashcards.js", "laboratorij.js", "corner.js"];
+const LENI_MODULI = ["graph/sci.js", "graph/calc.js", "graph/tools.js", "games/index.js", "textbook.js", "scan/scan.js", "zbirke-view.js", "leagues.js", "vadnica.js", "kalkulator-zaslon.js", "schedule.js", "racun.js", "flashcards.js", "laboratorij.js", "corner.js", "priprava/priprava.js"];
 import { BRAND } from "./brand.js";
 import { mobileClient, mountMobile } from "./mobile/index.js";
 import { blockStoreAppPurchases, storeAppRequest, storeAppPages } from "./mobile/trgovina.js";
