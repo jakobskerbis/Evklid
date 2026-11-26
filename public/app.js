@@ -5,6 +5,7 @@ import { jsonAliNic } from "./odgovor.js";
 import { icon, hydrateIcons } from "./icons.js";
 import { greekFactHtml, wireGreekFacts } from "./greek.js";
 import { t, locale, currentLang, currentRegion, regionFor, setLanguage, deviceRegion, naloziVse } from "./i18n-osnova.js";
+import { uiChain } from "./i18n/languages.js";
 import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj, izsiljevanje, opomba, ogrej as ogrejNujno } from "./nujno.js";
 import { systemForCountry, isRegional, SCHOOL_SYSTEMS, brezUcnegaNacrta } from "./regions.js";
 import { mountLanguageCard } from "./language.js";
@@ -2820,6 +2821,9 @@ poZagonu(() => vnaprejGotovo.then(() => whenIdle(() =>
 // Evklidova tipkovnica (public/tipkovnica.js): na dotik za vsa polja, Σ jo odpre na plasti simbolov (tudi na računalniku).
 initKeyboard();
 initDrsniki();
+// Izgovor formul (public/mat/govor.js): gumb, ki je samo formula (izbira odgovora), dobi ime za bralnik zaslona.
+// Naloži se po prvem izrisu (ni del prvega odprtja Učne poti).
+setTimeout(() => import("./mat/govor.js").then((m) => m.initIzgovor(currentLang, uiChain)).catch(() => {}), 0);
 document.addEventListener("input", (e) => hasFormula(e.target.value || "") && import("./predogled-vnosa.js").then((m) => m.initPredogledVnosa(e.target)), true);
 setKeyboardContext({ settings: () => state.student?.settings, chapter: calcChapter });
 mountKeyboardSettings($("#tipkovnica-card"));
