@@ -653,6 +653,12 @@ const OKNA_KONTROLE = ".okno:not([hidden]) :is(input:not([type=hidden]), select,
 const TOAST_OVIRE = `${CONTROLS}, ${OKNA_KONTROLE}, ${NE_PREKRIJ}, body > main.view:not([hidden]):not(.in-okno) :is(.composer-row, .answer-row), #chat-bubble:not([hidden]):not(.umaknjen) .cb-main`;
 const GLAVE = "body > :is(.topbar, #mock-banner, #test-notice):not([hidden]), body > main.view:not([hidden]):not(.in-okno) :is(.chat-head, .topic-top)";
 let toastProst = false; // obvestilo je od prikaza (opazovalec v initOkna) že imelo prosto mesto
+let toastOd = 0; // čas prikaza ali novega besedila (performance.now)
+let toastDejanje = false; // učenec je od prikaza obvestila kliknil ali pisal (initOkna preveriMesto)
+// Isto dejanje, ki pokaže obvestilo, pogosto takoj zamenja stanje (pogled, list, obrazec; app.js hideOldToast šteje 500 ms):
+// tako obvestilo ne izgine, ker mu je novo stanje vzelo prosto mesto, ampak velja, kot da se je pokazalo že v njem (pregled 3).
+// Novo dejanje (klik ali vnos po prikazu) ali več kot 700 ms: staro obvestilo se umakne kot prej.
+const ISTO_DEJANJE = 700;
 export function placeToast() {
   const el = $("#toast");
   if (!el || el.hidden) return;
@@ -713,12 +719,13 @@ export function placeToast() {
     // Obvestilo, ki je imelo prosto mesto, nato pa mu je novo stanje vzelo vsakega (npr. list kalkulatorja čez ves zaslon),
     // se skrije prej, namesto da bi prekrivalo gumbe novega stanja (dimni test 25. 11.: PSE v listu). Obvestilo, ki se pokaže
     // že v takem stanju, ostane ves čas na mestu z najmanj prekrivanji (pregled 2: sicer bi bilo vidno le sekundo).
-    if (best.n && toastProst) {
+    if (best.n && toastProst && (toastDejanje || performance.now() - toastOd > ISTO_DEJANJE)) {
       el.hidden = true;
       return;
     }
   }
   if (!best.n) toastProst = true;
+  else toastProst = false; // prosto mesto je izgubilo isto dejanje: obvestilo ostane ves čas na mestu z najmanj prekrivanji
   if (best.y === r.top) return;
   el.style.bottom = "auto";
   el.style.top = `${Math.round(best.y)}px`;
@@ -899,6 +906,7 @@ export function initOkna(opts) {
   // ko se izriše (sicer je mehurček ostal na novih gumbih, dimni test 25. 11.: iskanje v učbeniku na iPadu).
   let poVnosu = 0;
   const preveriMesto = () => {
+    toastDejanje = true;
     clearTimeout(poVnosu);
     poVnosu = setTimeout(() => {
       if (bubble && !bubble.hidden && !bubble.classList.contains("dragging")) placeBubble();
@@ -932,6 +940,8 @@ export function initOkna(opts) {
   if (obvestilo)
     new MutationObserver(() => {
       toastProst = false;
+      toastOd = performance.now();
+      toastDejanje = false;
       placeToast();
       clearInterval(straza);
       straza = obvestilo.hidden ? 0 : setInterval(() => (obvestilo.hidden ? (clearInterval(straza), (straza = 0)) : placeToast()), 200);

@@ -448,3 +448,55 @@ test("telefon 360 × 740, klepet: obvestilo med dvigom (animacija prikaza) ne zd
     await ctx.close();
   });
 });
+
+test("telefon 390 × 844: obvestilo, ki mu isto dejanje takoj vzame prosto mesto, ne izgine v trenutku (pregled 3)", opts, async () => {
+  await withApp(async (base) => {
+    const { ctx, p, errors } = await phone(base, { width: 390, height: 844 });
+    await p.evaluate(() => window.evklid.showView("path"));
+    await p.waitForTimeout(800);
+    const skrito = await p.evaluate(
+      () =>
+        new Promise((res) => {
+          const t = document.querySelector("#toast");
+          t.textContent = "Zdaj si v 9. razredu";
+          t.hidden = false;
+          t.dataset.at = Date.now();
+          // Isto dejanje 150 ms pozneje odpre list čez ves zaslon (kot PSE v listu).
+          setTimeout(() => {
+            const box = document.createElement("div");
+            box.className = "okno";
+            box.id = "list-isto";
+            box.style.cssText = "position:fixed;inset:0;display:grid;grid-template-columns:repeat(6,1fr);gap:2px;z-index:45;width:auto;height:auto";
+            for (let i = 0; i < 96; i++) box.append(Object.assign(document.createElement("button"), { textContent: String(i) }));
+            document.body.append(box);
+          }, 150);
+          setTimeout(() => res(t.hidden), 1500);
+        }),
+    );
+    assert.equal(skrito, false, "obvestilo istega dejanja je izginilo, preden ga je bilo mogoče prebrati");
+    // Novo dejanje (klik) po prikazu, nato list brez prostega mesta: staro obvestilo se umakne takoj (dimni test: PSE v listu).
+    await p.evaluate(() => document.querySelector("#list-isto").remove());
+    await p.waitForTimeout(4500); // prejšnje obvestilo je izginilo
+    const umaknjeno = await p.evaluate(
+      () =>
+        new Promise((res) => {
+          const t = document.querySelector("#toast");
+          t.textContent = "Zahteva je zapisana";
+          t.hidden = false;
+          t.dataset.at = Date.now();
+          setTimeout(() => document.body.dispatchEvent(new MouseEvent("click", { bubbles: true })), 80);
+          setTimeout(() => {
+            const box = document.createElement("div");
+            box.className = "okno";
+            box.style.cssText = "position:fixed;inset:0;display:grid;grid-template-columns:repeat(6,1fr);gap:2px;z-index:45;width:auto;height:auto";
+            for (let i = 0; i < 96; i++) box.append(Object.assign(document.createElement("button"), { textContent: String(i) }));
+            document.body.append(box);
+          }, 150);
+          setTimeout(() => res(t.hidden), 600);
+        }),
+    );
+    assert.equal(umaknjeno, true, "obvestilo prejšnjega dejanja prekriva gumbe lista, ki ga je odprlo novo dejanje");
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+});
