@@ -13,6 +13,9 @@ permissions:
 concurrency:
   group: revizija-stanje
   cancel-in-progress: true
+defaults:
+  run:
+    shell: bash
 jobs:
   stanje:
     runs-on: ubuntu-24.04
@@ -25,22 +28,27 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
-      - name: Veja registra
-        run: git fetch --no-tags origin review/chatgpt-audit:refs/remotes/origin/review/chatgpt-audit
       - name: Primerjava
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          node scripts/revizija-stanje.mjs --github --json revizija-stanje.json | tee revizija-stanje.txt
+          set +e
+          node scripts/revizija-stanje.mjs --github --json revizija-stanje.json > revizija-stanje.txt 2>&1
+          izhod=$?
+          set -e
+          cat revizija-stanje.txt
           {
             echo '## Register revizije proti GitHubu'
             echo '```'
             cat revizija-stanje.txt
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+          exit "$izhod"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
         with:
           name: revizija-stanje
+          if-no-files-found: ignore
           path: |
             revizija-stanje.txt
             revizija-stanje.json

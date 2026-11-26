@@ -28,7 +28,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const REPO = "jakobskerbis/Evklid";
+const REPO = "jakobskerbis/Evklid"; // ob preimenovanju repozitorija popravi tudi tu (brand.json → repo)
 
 export const STATUSI = [
   "NOVO",
@@ -302,7 +302,7 @@ async function main() {
     if (arg("--pr-json")) odprti = JSON.parse(readFileSync(arg("--pr-json"), "utf8"));
     else if (process.argv.includes("--github")) {
       const repo = arg("--repo") || REPO;
-      if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repo)) koncaj(`Neveljaven --repo: ${repo}`);
+      if (!/^[A-Za-z0-9_-][A-Za-z0-9_.-]*\/[A-Za-z0-9_-][A-Za-z0-9_.-]*$/.test(repo)) koncaj(`Neveljaven --repo: ${repo}`);
       odprti = await odprtiZGithuba(repo);
     }
   } catch (e) {
