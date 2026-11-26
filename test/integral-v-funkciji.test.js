@@ -84,3 +84,13 @@ test("∫(τ; 0; 1), ∫(2πt; 0; 1), ∫(∑_(n=1)^(3) n; 0; 1)", async () => {
   assert.ok(close(run(["∫(∑_(n=1)^(3) n;0;1)"])[0].value, 6));
   assert.ok(close(run(["∫(∑_(n=1)^(3) n·t;0;1)"])[0].value, 3));
 });
+
+// PR #1193 (CI, meri-skener s11-integral): Leibnizovo pravilo velja le za integral po drugi spremenljivki. Skener naloge
+// »∫_0^2 (3x² − 2x + 1) dx« ne bere kot odvoda (prej f′(x) = 0), kot na main.
+test("skener: določeni integral po x ni odvod", async () => {
+  const { solve } = await import("../public/scan/solvecore.js");
+  const r = solve("∫_0^2 (3*x^2-2*x+1) dx");
+  assert.notEqual(r?.kind, "derivative", JSON.stringify(r));
+  assert.ok(!/f'\(x\)/.test(JSON.stringify(r)), JSON.stringify(r));
+  assert.ok(close(run(["d/dx(∫(sin(t);0;x);π/2)"])[0].value, 1));
+});

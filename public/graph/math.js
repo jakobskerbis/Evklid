@@ -2806,7 +2806,10 @@ export function diff(node, v, ctx = {}) {
       }
       // AUDIT-070: Leibnizovo pravilo d/dv ∫_a(v)^b(v) f(t, v) dt = f(b, v)·b′ − f(a, v)·a′ + ∫_a^b ∂f/∂v dt
       // (d/dx ∫_0^x sin t dt = sin x; meje g(x) po verižnem pravilu)
+      // Integral po isti spremenljivki, po kateri odvajamo (∫_0^2 f(x) dx, odvod po x), ostane brez odvoda kot prej:
+      // skener naloge »∫_0^2 (3x² − 2x + 1) dx« ne sme brati kot odvoda (f′(x) = 0), CAS in kalkulator ga ne potrebujeta
       const t = n.v;
+      if (t === v) throw new MathError("noDiff", { f: "∫" });
       const at = (lim) => substitute(n.a, { [t]: lim });
       let out = null;
       const plus = (x) => (out = out ? add(out, x) : x);
