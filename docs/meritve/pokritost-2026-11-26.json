@@ -1,0 +1,133 @@
+{
+ "datum": "2026-11-26",
+ "commit": "9b064b711e03da08c698f5edc0e4479935d1d1f0",
+ "ukaz": "node scripts/popis-pokritosti.mjs --strogo --dodatek docs/meritve/pokritost-2026-11-26-pregled.md --json docs/meritve/pokritost-2026-11-26.json --porocilo docs/meritve/pokritost-2026-11-26.md",
+ "okolje": "Node v22.23.5, SymPy 1.14.0",
+ "mesta": {
+  "lekcije": {
+   "dokazano": 0,
+   "izracunano": 0,
+   "numericno": 3145,
+   "delno": 1039,
+   "v_teku": 0,
+   "napaka": 0,
+   "nepreverjeno": 15284,
+   "vse": 19468,
+   "namerne": 1776,
+   "vprasanja": 0,
+   "enot": 521,
+   "primeri": []
+  },
+  "preveri": {
+   "dokazano": 0,
+   "izracunano": 0,
+   "numericno": 924,
+   "delno": 829,
+   "v_teku": 0,
+   "napaka": 3,
+   "nepreverjeno": 1884,
+   "vse": 3640,
+   "namerne": 2124,
+   "vprasanja": 1144,
+   "enot": 515,
+   "primeri": [
+    "BIO-SS-4/geni-in-razvoj-cloveka: $2^{10} \\approx 10^3$",
+    "BIO-SS-4/geni-in-razvoj-cloveka: $10^{12} = (10^3)^4 \\approx 2^{40}$",
+    "MAT-OS-8/zapis-z-desetiskimi-potencami: $10^4 \\cdot 10^1 = 10^5$"
+   ]
+  },
+  "primeri": {
+   "dokazano": 0,
+   "izracunano": 0,
+   "numericno": 2569,
+   "delno": 2616,
+   "v_teku": 0,
+   "napaka": 0,
+   "nepreverjeno": 12140,
+   "vse": 17325,
+   "namerne": 0,
+   "vprasanja": 0,
+   "enot": 518,
+   "primeri": []
+  },
+  "racun": {
+   "dokazano": 0,
+   "izracunano": 4324,
+   "numericno": 1299,
+   "delno": 0,
+   "v_teku": 0,
+   "napaka": 0,
+   "nepreverjeno": 3,
+   "vse": 5626,
+   "namerne": 0,
+   "vprasanja": 0,
+   "enot": 313,
+   "primeri": []
+  },
+  "fakulteta": {
+   "dokazano": 0,
+   "izracunano": 0,
+   "numericno": 2698,
+   "delno": 3407,
+   "v_teku": 0,
+   "napaka": 0,
+   "nepreverjeno": 26339,
+   "vse": 32444,
+   "namerne": 1364,
+   "vprasanja": 547,
+   "enot": 245,
+   "primeri": []
+  },
+  "pole": {
+   "dokazano": 0,
+   "izracunano": 0,
+   "numericno": 1899,
+   "delno": 1127,
+   "v_teku": 0,
+   "napaka": 0,
+   "nepreverjeno": 5772,
+   "vse": 8798,
+   "namerne": 640,
+   "vprasanja": 0,
+   "enot": 31,
+   "primeri": []
+  },
+  "generatorji": {
+   "dokazano": 0,
+   "izracunano": 0,
+   "numericno": 277,
+   "delno": 1005,
+   "v_teku": 0,
+   "napaka": 3,
+   "nepreverjeno": 1853,
+   "vse": 3138,
+   "namerne": 0,
+   "vprasanja": 0,
+   "enot": 618,
+   "primeri": [
+    "periodni-sistem r2: $N(\\text{zunanjih } e^-) = \\text{št. skupine} - 10 = 16 - 10 = 6$",
+    "periodni-sistem r3: $N(\\text{zunanjih } e^-) = \\text{št. skupine} - 10 = 16 - 10 = 6$",
+    "exi-mat-solids r3: $t = \\dfrac{8}{10}\\ \\text{h} = \\dfrac{8 \\times 60}{10}\\ \\text{min} = 48\\ \\text{min}$"
+   ]
+  },
+  "tekmovanja": {
+   "dokazano": 0,
+   "izracunano": 0,
+   "numericno": 103,
+   "delno": 198,
+   "v_teku": 0,
+   "napaka": 3,
+   "nepreverjeno": 245,
+   "vse": 549,
+   "namerne": 0,
+   "vprasanja": 0,
+   "enot": 86,
+   "primeri": [
+    "tek-simetrija-os r2: $12.00 - 7.05 = 4.55$",
+    "tek-fiz-elektrostatika r3: $C = 8{,}85 \\cdot 10^{-12} \\cdot \\dfrac{332 \\cdot 10^{-4}}{0{,}5 \\cdot 10^{-3}} = 587{,}64$",
+    "tek-kem-termokemija r3: $Q = 1000 \\cdot 4{,}18 \\cdot 82 = 342{,}8$"
+   ]
+  },
+  "izpadi_cas": 0
+ }
+}

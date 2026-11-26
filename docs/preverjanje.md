@@ -254,6 +254,28 @@ preverjanje (preizkus: SymPy, ki se sesuje sredi meritve, da skenerju 40 lažnih
 pravila). Ob spremembi trditev nabora nova meritev v `docs/meritve` (test `test/preverjanje-porocilo.test.js` pade
 brez nje). Izhodišče: `docs/meritve/preverjanje-2026-11-26.md`.
 
+## Popis pokritosti (PV-04)
+
+`node scripts/popis-pokritosti.mjs [--json p.json] [--porocilo p.md] [--brez-sympy] [--strogo] [--dodatek f.md]`
+(skripta ne kliče modela AI; z SymPy okoli 40 s, brez njega 6 s) za vsako od 19 mest iz načrta PV pove, ali trditve
+tam dobijo status. Za vnaprej znano vsebino (razlaga lekcij, »Preveri se«, rešeni primeri, bloki RACUN, pole z
+rešitvami in točkovniki, rešitve generatorjev na ravneh 1–3 s semenom 1, tekmovalne naloge, fakultetne lekcije)
+zašteje formule z relacijo in status, ki ga dajo obstoječi preverjevalniki, uporabljeni na vsaki formuli posebej:
+preračun `server/lesson-math.js` (numerično, delno, napaka), preizkus identitet z naključnimi števili
+`server/lesson-identity.js` (le potrditev: numerično), za RACUN SymPy z načinom ali kemijski preizkus. Ostale so
+nepreverjene. Namerno napačne trditve (»Pogoste napake«, napačne možnosti in njihova pojasnila ~ v »Preveri se«,
+`mistake` in napačne izbire na polah) in vprašanja (?) so izločeni in našteti posebej. Stolpec »Preverjanje danes«
+pove, kaj od tega preračuna CI ob vsaki spremembi (koraki rešitev generatorjev in računi v »Preveri se«
+ne) in kaj preverijo mesta, kjer trditve nastanejo ob uporabi (inštruktor, kalkulatorji, skener …). Štetje
+celote, ne vzorec, zato brez intervala. `--strogo` vrne napako, če SymPy ni tekel ali ni odgovoril na zahtevo.
+
+Izhodišče `docs/meritve/pokritost-2026-11-26.md`: v vsebini, ki jo učenec vidi, je 11.615 od 85.362 formul z relacijo
+(13,6 %) v celoti preračunanih, 10.221 (12,0 %) delno, 63.517 (74,4 %) brez statusa; razlaga lekcij 16,2 %, fakultetne
+lekcije 8,3 % v celoti. Strojni bloki RACUN, ki ponovijo rezultate lekcij, so ločeni: 5.623 od 5.626. Vseh 9 zaznanih
+»napak« je pregledal model AI (ne človek): nobena ni napačen rezultat (napačen preračun lesson-math, AUDIT-087;
+zapisi, ki jih preračun ne pozna; trije nenatančni zapisi v naših generatorjih, popravek v ločenem PR #1160). Višji
+delež je boljši; formula brez statusa ni napačna, le noben program je ne preveri.
+
 ## Odpoved preverjevalnikov (K-04)
 
 Ob izpadu preverjevalnika status nobene trditve ne sme biti višji, kot ga dovoljujejo preostali dokazi.
