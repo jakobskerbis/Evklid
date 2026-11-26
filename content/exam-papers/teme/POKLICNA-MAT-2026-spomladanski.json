@@ -1,0 +1,22 @@
+{
+  "paper": "POKLICNA-MAT-2026-spomladanski",
+  "parts": {
+    "A1": "MAT-SS-1/racionalna-stevila",
+    "A2": "MAT-SS-1/naravna-in-cela-stevila",
+    "A3": "MAT-SS-1/stirikotniki-in-krog",
+    "A4": "MAT-SS-2/kvadratna-funkcija",
+    "A5": "MAT-SS-3/graf-polinoma",
+    "A6": "MAT-SS-4/mesane-maturitetne-naloge",
+    "A7": "MAT-SS-3/grafi-kotnih-funkcij",
+    "A8": "MAT-OS-7/razmerje",
+    "A9": "MAT-SS-3/povrsina-in-prostornina-teles",
+    "A10": "MAT-SS-3/racionalne-funkcije",
+    "A11": "MAT-SS-3/sinusni-in-kosinusni-izrek",
+    "B1a": "MAT-SS-3/graf-polinoma",
+    "B1b": "MAT-SS-4/uporaba-odvoda",
+    "B2a": "MAT-SS-1/obdelava-podatkov",
+    "B2b": "MAT-SS-4/verjetnost",
+    "B3a": "MAT-SS-2/mesane-naloge-1-in-2-letnika",
+    "B3b": "MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje"
+  }
+}

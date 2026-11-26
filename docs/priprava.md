@@ -114,6 +114,122 @@ ponovna obdelava briše s `secure_delete`); `priprava_viri` ima `stanje` (caka, 
 branjem izbrisan, 404); poti `POST …/viri/:vid/obdelaj` in `GET …/priprave/:pid/izseki[?vir=&vrsta=]`. Strošek AI 0.
 Test: `test/priprava-uvoz.test.js`.
 
+### PR 3b (branje fotografij in skeniranih strani, 25. 11. 2026)
+
+`POST …/priprave/:pid/viri/:vid/preberi` prebere fotografijo vira ali skenirane strani PDF (strani z manj kot 20 znaki
+iz PR 3a, največ 5 na zahtevek) z istim branjem kot »Moji zapiski« (`server/zapiski.js` `readNotePhoto`: prepis brez
+popravkov, imena → `[ime]`, zavrnitev neučnih fotografij, zastavica stiske odpre okno nujne pomoči in pride v vsak
+odgovor, tudi ob napaki ali izbrisu med branjem). Ista mesečna meja strani `STRANI` (ena slika = ena stran, skupaj z
+zapiski) in trda meja AI (`readReserveUsd`, `usage.guard`); strošek se zapiše kot `priprava`; neuspel klic ali način
+brez ključa strani ne porabi. Stran PDF: `sken.js` v ločeni niti vzame največjo sliko strani, jo pretvori v sivine,
+zmanjša na 1568 točk in zapiše kot PNG; slike nad 40 milijonov točk pdfjs ne dekodira (`maxImageSize`). Stran brez
+slike (`sken_ni_slike`) in prazna stran (manj kot 0,02 % temnih točk, `prazno`) gresta brez klica modela in brez strani
+iz meje; če nit pade, se strani poskusijo ena po ena in stran, ki pade tudi sama, dobi `sken_napaka`. Fotografija JPEG
+nad mejo modela (5 MB base64) se zmanjša po isti poti (zavita v PDF z eno stranjo, zasukana po EXIF); druga prevelika
+slika 413 (`branje_velika`). Obdelava vira, ki se ravno bere, vrne 409.
+Prepisi strani se hranijo šifrirano (`priprava_prepisi`, v `SEALED`, kaskada z virom), zato ponovno branje ali
+ponovna obdelava ne kliče modela znova; fotografijo prebere znova `?znova=1`, slabši izid (neučno, prazno) pa ne
+zamenja dobrega prepisa. Izseki iz prepisa imajo stolpec `ai` in v odgovoru oznako `ai_generated`. Vir PDF ostane
+»branje«, dokler ima neprebrane skenirane strani. Test: `test/priprava-branje.test.js`.
+
+### PR 4 (tematski zemljevid, 25. 11. 2026)
+
+`server/priprava/teme.js`, pot `GET …/priprave/:pid/teme`. Brez AI: tema izseka je iskanje po kazalu tem
+(`server/lekcija-za-vprasanje.js` `rankLessons`, ista pravila kot `topicForName`: beseda iz naslova teme, najmanjša
+ocena, prednost pred drugo temo). Najprej začetek besedila izseka, nato naslov razdelka; naslov, ki imenuje več tem
+(»Kemijske reakcije in množina snovi«), ne da teme. Formula da eno besedo po prednosti (`\int` z mejama → določeni
+integral, `\lim` → limita, `\det` → determinanta …; `\sqrt` nič). Izsek brez jasne teme ostane `samoVZapiskih` (ne
+ugibamo). Obseg testa so teme sklopov iz načrta testa (`pot`, `sklopi`, samo šolske poti; iskanje do ravni poti, če je
+višja od ravni v profilu); tema iz obsega ima prednost, če ima vsaj 80 % ocene najboljše in ni dvoumna (cel naslov,
+dve besedi naslova ali besede, ki jih nima nobena druga tema). Merjeno na 133 izsekih (23 zapiskov, OŠ in SŠ):
+natančnost 0,99, priklic 0,57. Največ 5000 izsekov na izračun (`delno`), računanje prepušča zanko drugim zahtevkom,
+zadnji izračuni so v predpomnilniku. Vrne teme v vrstnem redu učnega načrta (z id-ji izsekov in `vObsegu`), obseg z `izsekov` na temo,
+`pokritost` (pokrite / vse teme obsega) in `predznanje` (5 tem poti pred prvim sklopom testa, brez trditev o znanju).
+Računa se sproti iz trenutnih izsekov, zato tabela `priprava_teme` ni potrebna. Faks in tuji šolski sistemi: `iskanje:
+false`, vse ostane v zapiskih. Test: `test/priprava-teme.test.js`.
+
+### PR 5 (načrtovalnik, 25. 11. 2026)
+
+`server/priprava/nacrt.js`, poti `GET …/priprave/:pid/nacrt` in `POST …/priprave/:pid/nacrt/prebrano` (`{ tema_id,
+prebrano? }`, tabela `priprava_prebrano`). Koda, ne model; brez napovedi ocen. Teme so obseg testa (brez načrta testa
+teme iz zapiskov, PR 4; na osnovni ravni mature brez tem samo za višjo raven, `exams.js ravenProfila`).
+Ocena teme: `progress.js topicScore` (ista lestvica kot pripravljenost na izpit; velja boljša od teme in njenih osnovnih
+tem): nova 0, v učenju 0,2–0,6, za ponovitev 0,8, obvladana 1. Strogo izkazano: samo ročna oznaka »obvladano« šteje 0,4
+(dokler je ne potrdita 2 pravilni ponovitvi ali 8 pravilnih nalog), obvladana tema z zgrešeno ponovitvijo brez poznejše
+pravilne naloge 0,6 (pripravljenost na izpit zaenkrat ostaja brez tega; odloči j).
+Enote: nova → nova snov, vaja, ponovitev; v učenju → vaja, ponovitev; za ponovitev → ponovitev; obvladana → ponovitev na
+dan ponovitve Evklida (`review_due`), sicer neobvezna osvežitev v zadnjih 3 učnih dneh (enkrat, samo v prostor, ki ostane po obveznih enotah); tema
+brez nalog v Vadnici → »zapiski« (ni preverljiva, največ ena na dan, za preverljivimi enotami, opravljena, ko je
+označena kot prebrana; ne šteje v pripravljenost).
+Razmiki veljajo med dnevi, ker se načrt vsak dan računa znova iz zgodovine: tema v učenju dobi naslednjo vajo 1–2 dni
+po zadnji vaji (ne vsak dan), ponovitev pride tretjino preostalega časa pozneje, največ 7 dni. Najšibkejše prve; najprej
+prve enote vseh tem, nato druge in tretje; samo en učni dan → najprej teme v učenju. Največ 3 enote na dan; kar ne gre,
+je v `nePrideNaVrsto` (`stisnjeno`). Zadnji dan pred testom (tudi, ko je to danes) poskusni test (obstoječi `/test-prep`: aktivna priprava,
+izbrani sklopi in vsaj ena tema z nalogami). Brez datuma en teden; test mimo → `mimo`; test danes → prazen načrt.
+Danes: šteje samo vaja, ponavljanje in vaja iz lista (ne test, uvrstitev ali tekmovanje); nova snov in vaja sta opravljeni
+po 3 odgovorjenih nalogah teme ta dan (tudi napačnih) (slovenski dan izdaje naloge), ponovitev po 2 (kot ponavljanje Evklida); `naslednja` je
+prva neopravljena preverljiva enota (»Nadaljuj učenje«); teme, vadene danes, ostanejo danes (opravljene), druge enote se ne
+premaknejo v danes. Tabela `priprava_nacrti` ni potrebna.
+`pripravljenost`: povprečje ocen preverljivih tem, število obvladanih, preverljivih in nepreverljivih. Test:
+`test/priprava-nacrt.test.js`.
+
+### PR 6a (kviz in napredek, 25. 11. 2026)
+
+Brez AI. `POST …/priprave/:pid/kviz` (`{ dolzina: 6 | 12 | 20, teme? }`): obstoječa seja »list« (`progress.js startList`,
+naloge Vadnice, ki jih preveri koda; namigi, povzetek po temah) s parametrom `priprava`. Ob koncu kviza izkazano znanje
+premakne stanje teme (`listSummary`): »ok« (vsaj 2 nalogi, ≥ 3/4 v prvem poskusu) → stopnja višje (nova → učim se,
+stopnja 2), »few« → nova tema »učim se«, »more« pri novi temi nič (ostane nova snov; napačen odgovor ne dvigne
+pripravljenosti), pri obvladani kot doslej ponovitev; obvladanje ostane
+pravilo `checkMastery`. Tako kviz spremeni načrt in pripravljenost. Privzeto najšibkejše teme obsega (obvladane samo,
+če drugih ni), največ `dolzina/2` tem, da ima vsaka vsaj dve nalogi; `teme` mora biti neprazen seznam id-jev iz načrta
+te priprave z nalogami, največ 20 (sicer 400 `kviz_teme`; od izbranih gre v kviz prvih `dolzina/2`); tema brez lastnih
+nalog vzame naloge osnovne teme (ena veščina na osnovno temo). Nedokončan kviz z istim izborom (samodejno ali iste
+teme) in dolžino istega slovenskega dne se nadaljuje; največ 20 novih kvizov na profil v 10 minutah (429
+`kviz_hitro`). Kviz ostane v zgodovini vaje profila tudi po izbrisu priprave (samo id-ji tem, kot vsa vaja).
+`GET …/priprave/:pid/napredek`: pripravljenost (kot načrt), posnetki po dnevih (tabela `priprava_napredek`, en na dan,
+zapiše se ob odprtju načrta ali napredka, do dneva testa; kaskadni izbris; odprtje šteje kot uporaba priprave za
+samodejni izbris) in stanje vsake teme (`nova | ucim | ponovitev | obvladana | zapiski`, vse odgovorjene naloge vaje,
+ponavljanja in lista, tudi osnovnih tem, pravilne v prvem poskusu). Vmesnik pokaže posnetke samo kot izkazano znanje
+po dnevih, nikoli kot trend do testa ali napoved ocene (odstotek ni ocena in lahko pade, ko pridejo ponovitve).
+Test: `test/priprava-kviz.test.js`. Razlaga z izvorom (AI) je PR 6b.
+
+### PR 6b (razlaga teme z izvorom, 25. 11. 2026)
+
+`server/priprava/postavke.js`, poti `POST …/priprave/:pid/razlaga` (`{ tema_id, znova? }`) in `GET …?tema_id=`. Način A:
+model (`EVKLID_PRIPRAVA_RAZLAGA_MODEL`, privzeto srednji model) dobi samo izseke te teme (največ 12 in 9000 znakov,
+očiščene kot zapiski: nevidni znaki, oznake `<izseki>`, ponarejene glave izsekov) v oznakah kot podatek, brez orodij,
+odgovor samo JSON. Koda obdrži odstavek le, če: navaja samo poslane izseke; ima dobeseden navedek (20–200 znakov, vsaj 3
+besede ali cela formula; enoten zapis presledkov, narekovajev in pomišljajev, NFC; velike črke štejejo; vsak navedek
+enkrat) iz enega od navedenih izsekov, ki je o istem kot odstavek (vsaj polovica njegovih vsebinskih besed, njegova
+formula ali vsa njegova števila so v odstavku); je vsaka njegova formula cela v navedenih izsekih (primerjava po žetonih:
+`500` ni začetek `5000`, `E = 5` ni začetek `E = 5 \cdot 10^3`; meja formule ali vrstice v zapiskih je meja izraza; brez
+besed v formuli, npr. `$Definicija$`; enačba mora v zapiskih končati, `$a_{n+1} = 2$` ni iz `2a_n`); je vsako število,
+tudi v formulah, v navedenih izsekih (NFKC, nadpisane števke kot potenca, predznak in potenca sta del števila: `-2`,
+`10^-6`, `2·10^-6` ni `10^-6`; meje integrala sta dve števili; števke zunaj ASCII → odstavek odpade), rezultat v besedilu
+(za »je«, »znaša«, »=«, …) je rezultat tudi v izseku (»determinanta je 2« ne gre, če je 2 le element matrike), število z
+enoto pa ima v izseku isto enoto (»sila 5000 N« ne gre, če je 5000 N/C jakost); izsek, iz katerega je število, je med viri;
+ne razreši negotovega branja `x2 [?]` (zapis `x^2`, `x_2`, `x²`, `H2SO4` brez `[?]` odpade, če ponovi vrstico z negotovim
+branjem ali če je branje v navedenem izseku, zapisa pa v navedenih izsekih ni); se formule izrišejo s KaTeX (brez
+nezaprtih `$`, `\(`, `\[`); `codeCheck` ne najde računske napake (vsak račun, tudi v besedilu, npr. `8 - 4 = 5`,
+`12 : 4 = 4`, `2 ⋅ 3 = 7`, `2³ = 9`, v svoji vrstici, da ga besede »ne velja«, »narobe« ne izpustijo; napačen primer iz
+zapiskov zato odpade).
+Izhod brez oznak HTML (samo prave oznake; `a<b in b>c` ostane) in povezav; odjemalec ga izriše kot besedilo s KaTeX, ne kot
+HTML. `viri` so samo izseki, ki odstavek res podpirajo (navedek ali formula z vsaj tremi žetoni); `negotovo`, ko podporni
+izsek ima `[?]`, odstavek pa ne. To je
+»podprto z zapiski« (`preverjeno: "zapiski"`), ne »pravilno«. Česar koda ne ujame: števila z besedo (»petsto«),
+zanikanje (»tudi pri živalih« ob navedku »samo pri rastlinah« z istimi besedami), negotovo branje, razrešeno z besedo
+(»x na kvadrat«), rezultat, pripisan drugemu računu istih izsekov. Poleg tega: napačna vrstica v zapiskih lahko ostane, če je koda ne
+preračuna (vmesnik ne sme pisati »pravilno«). Brez preverljivega odstavka 422 (`razlaga_nepreverjena`, s stanjem strani),
+nič se ne shrani. Shramba: šifrirano (`priprava_postavke`, SEALED; kaskadni izbris), z id-ji izsekov in odtisom
+(id-ji, naslovi in besedila); drugačen odtis = `zastarela` (id-ji izsekov se po izbrisu ponovijo), model se ne kliče znova,
+dokler je odtis enak (`znova: true` za novo razlago). Izbris ali ponovna obdelava vira izbriše razlage iz njegovih
+izsekov; če se izseki spremenijo med klicem modela, se odtis tik pred zapisom preveri znova in razlaga se ne shrani (409
+`razlaga_zapiski_spremenjeni`, stran ostane porabljena, ker je klic plačan). Strošek: ena stran iz mesečne meje zapiskov (`STRANI`; ob napaki modela se vrne, ob 422 ostane, ker je klic
+plačan), trda meja AI (`usage.guard` z rezervo iz dejanskega sporočila po pravilu `meje-ai.js`), zapis porabe »priprava«;
+hkrati ena razlaga na profil (409). Stiska v izsekih (lokalni zaznavalnik, brez AI) → `nujno` v odgovoru, tudi ob branju shranjene razlage (GET). Odgovor nosi
+oznako AI, vire (izsek, vir, stran) in navedek. Ključ predpomnilnika zemljevida ima zdaj tudi dolžino in čas izsekov.
+Test: `test/priprava-razlaga.test.js` (model nadomeščen; tudi `napad.md` in stiska).
+
 ## Testni nabor
 
 `test/fixtures/priprava/` ima besedilne vire in `pricakovano.json` (kaj mora uvoz najti, kaj označiti kot

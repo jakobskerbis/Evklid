@@ -186,6 +186,7 @@ const TEK_OPTS = Object.entries(TEKOCINE_EL).map(([k, v]) => [k, v.name + (v.for
 const VODA_BARVA = [196, 222, 242]; // bistra tekočina v steklu je rahlo modrikasta (risba)
 export function labElektroliza(el) {
   const B = new ElektrolizaBench({ seed: seme() });
+  el._labBench = B; // maturitetni poskus (lab-matura.js): matura/lab-elektroliza.js (prava vrednost je konstanta F modela)
   const W = 400, H = 458, S = 6.4, ML = 0.641 * S; // 1 cm = 6,4 enote, 1 mL v cevi = 4,1 enote
   const svg = svgBox(W, H, "lab-bench lab-ek lab-ek-hof");
   gradienti(svg);

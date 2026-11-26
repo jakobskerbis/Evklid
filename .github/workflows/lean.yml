@@ -36,15 +36,20 @@ jobs:
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
       - name: Prenesi prevedeno knjižnico Mathlib
         run: lake exe cache get
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
       - name: Preveri vse dokaze (opozorilo, npr. »declaration uses 'sorry'«, je napaka)
         run: lake build --wfail
+      - name: Vsak dokaz stoji samo na propext, Classical.choice in Quot.sound
+        run: node ../scripts/lean-aksiomi.mjs
       - name: Brez dodatnih aksiomov (axiom, native_decide) in vsaka datoteka v Evklid/ je uvožena
         run: |
           set +e
-          grep -rnwE "axiom|native_decide|sorry|admit" --include=*.lean Evklid Evklid.lean
+          grep -rnE "\b(axiom|native_decide|sorry|admit|skipKernelTC|ofReduceBool|implemented_by|extern)\b" --include=*.lean Evklid Evklid.lean
           rc=$?
           set -e
-          if [ "$rc" -eq 0 ]; then echo "::error::sorry, admit, axiom ali native_decide v lean/ (docs/lean.md)"; exit 1; fi
+          if [ "$rc" -eq 0 ]; then echo "::error::sorry, admit, axiom, native_decide, skipKernelTC, ofReduceBool, implemented_by ali extern v lean/ (docs/lean.md)"; exit 1; fi
           if [ "$rc" -ge 2 ]; then echo "::error::grep ni mogel prebrati lean/"; exit 1; fi
           for f in $(find Evklid -name '*.lean'); do
             m=$(echo "${f%.lean}" | tr / .)

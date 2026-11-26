@@ -14,7 +14,7 @@ import { topicForName } from "./lekcija-za-vprasanje.js";
 import { stopnja } from "../public/stopnja.js";
 import { loadLesson, legacyChecks, legacyClient } from "./textbook.js";
 import { checkNumber, orderOk } from "../public/preveri-se.js";
-import { loadOurPaper } from "./our-papers.js";
+import { loadOurPaper, ourPaperTopicTags } from "./our-papers.js";
 import { partKey } from "../public/our-paper-key.js";
 import { hasGenerator } from "./practice/index.js";
 
@@ -32,14 +32,15 @@ export const DAYS = 60;
 // Ena igra prinese veliko hitrih odgovorov; da igre ne preglasijo nalog in klepeta, šteje ena igra
 // največ GAME_MAX odgovorov (napake sorazmerno).
 export const GAME_MAX = 4;
-export const SOURCES = ["chat", "practice", "game", "lesson", "paper", "cards", "kviz", "scan", "lab", "atlas"];
+export const SOURCES = ["chat", "practice", "game", "lesson", "paper", "cards", "kviz", "scan", "lab", "atlas", "ustno"];
 // Orodja (P1-8, načrt treh prioritet, j 25. 11. 2026): skener (napaka v učenčevem rezultatu, ki jo potrdi preverjanje),
 // laboratorij (napoved, sklep, »Preveri moj račun«) in kviz atlasa. Vsako vprašanje šteje enkrat na dan, ena tema iz
 // enega orodja največ TOOL_DAY_MAX odgovorov na dan: kviz atlasa ima veliko hitrih vprašanj, ki jih oceni brskalnik,
 // zato sam v enem dnevu ne naredi šibke teme (potrebna je še napaka drug dan ali drugje). Iz brskalnika največ
 // TOOL_STUDENT_DAY_MAX zapisov na učenca na dan (skupaj, vse teme).
 export const TOOL_SOURCES = ["scan", "lab", "atlas"];
-export const TOOL_DAY_MAX = { scan: 4, lab: 3, atlas: 2 };
+// lab 2 (pregled 3, #1094 laboratorij): sklepa in račun enega poskusa v enem dnevu sama ne naredita šibke teme.
+export const TOOL_DAY_MAX = { scan: 4, lab: 2, atlas: 2, ustno: 2 }; // ustno: recordUstno
 export const TOOL_STUDENT_DAY_MAX = 60;
 // Id vprašanja ali naloge, nikoli učenčevo besedilo ali vrednost (skill_seen hrani le, kaj je bilo šteto).
 const TOOL_ITEM = /^[A-Za-z0-9_:.\/-]{1,80}$/;
@@ -180,8 +181,9 @@ export function topicForGame(lessonTopics = [], year = 8) {
 }
 
 // ---------- Naše pole NPZ/mature: del pole → tema učne poti ----------
-// Pole nimajo oznak tem, zato temo poiščemo lokalno iz besedila naloge in naslovov rešitev (enako iskanje kot
-// za ime iz klepeta). Sprejmemo le jasna ujemanja; del brez teme se ne šteje. Izračun enkrat na polo.
+// Teme delov so označene v content/exam-papers/teme/<id>.json (ourPaperTopicTags). Za del brez oznake (nova pola)
+// temo poiščemo lokalno iz besedila naloge in naslovov rešitev (enako iskanje kot za ime iz klepeta). Sprejmemo le
+// jasna ujemanja; del brez teme se ne šteje. Izračun enkrat na polo.
 const PAPER_LEVEL = {
   NPZ6: { curriculum_level: "6. razred", educational_track: "OSNOVNA_SOLA" },
   NPZ9: { curriculum_level: "9. razred", educational_track: "OSNOVNA_SOLA" },
@@ -194,12 +196,18 @@ export function paperTopics(id, paper) {
   if (paperMaps.has(id)) return paperMaps.get(id);
   const map = new Map();
   const lvl = PAPER_LEVEL[paper?.exam];
+  const tags = ourPaperTopicTags(id); // označene teme (content/exam-papers/teme) imajo prednost pred ugibanjem po besedah
   if (lvl && paper.subject)
     for (const tk of paper.tasks || [])
       for (const p of tk.parts || []) {
+        const key = partKey(tk, p);
+        if (Object.hasOwn(tags, key) && (tags[key] === null || getTopic(tags[key]))) {
+          if (tags[key]) map.set(key, tags[key]);
+          continue;
+        }
         const text = noMath(`${tk.intro || ""} ${p.text || ""} ${(p.ways || []).map((w) => `${w.title || ""} ${w.text || ""}`).join(" ")}`);
         const topicId = topicForName(text, { ...lvl, subject: paper.subject, school_system: "SI" });
-        if (topicId) map.set(partKey(tk, p), topicId);
+        if (topicId) map.set(key, topicId);
       }
   paperMaps.set(id, map);
   return map;
@@ -234,6 +242,31 @@ export function recordToolResult(db, studentId, { source, topicId, item, ok }) {
   if ((today?.n || 0) >= TOOL_DAY_MAX[source]) return false;
   if (!firstTime(db, studentId, `T|${source}|${topicId}|${item}|${day}`)) return false;
   return recordSkill(db, studentId, { source, topicId, n: 1, wrong: ok ? 0 : 1 });
+}
+
+// Ustno spraševanje (P1-4, načrt kakovosti pred obsegom, j 25. 11. 2026): ob koncu seje rezultati vprašanj, ki jih je
+// ocenilo spraševanje (koda ali model; »napačno« še pregleda drug model), brez samoocene in preskočenih. Na temo na dan
+// največ TOOL_DAY_MAX.ustno odgovorov, napake sorazmerno (kot GAME_MAX pri igrah), zato eno spraševanje samo ne naredi
+// šibke teme. Ena seja šteje enkrat (skill_seen). rezultati: [{ topicId, ok }].
+export function recordUstno(db, studentId, sejaId, rezultati = []) {
+  const day = new Date().toISOString().slice(0, 10);
+  const po = new Map();
+  for (const r of rezultati) {
+    if (typeof r?.ok !== "boolean" || !getTopic(String(r.topicId || ""))) continue;
+    const x = po.get(r.topicId) || { n: 0, wrong: 0 };
+    x.n++;
+    if (!r.ok) x.wrong++;
+    po.set(r.topicId, x);
+  }
+  let zapisano = 0;
+  for (const [topicId, x] of po) {
+    const today = db.prepare("SELECT n FROM skill_results WHERE student_id = ? AND day = date('now') AND source = 'ustno' AND key = ?").get(studentId, topicId);
+    const prostor = TOOL_DAY_MAX.ustno - (today?.n || 0);
+    if (prostor <= 0 || !firstTime(db, studentId, `U|${topicId}|${Number(sejaId)}|${day}`)) continue;
+    const n = Math.min(x.n, prostor);
+    if (recordSkill(db, studentId, { source: "ustno", topicId, n, wrong: Math.round((x.wrong * n) / x.n) })) zapisano += n;
+  }
+  return zapisano;
 }
 
 // ---------- Zapis iz brskalnika: »Preveri se« v učbeniku in »Imam prav« na naši poli ----------

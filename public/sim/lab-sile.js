@@ -76,6 +76,7 @@ const tekCls = (id) => `lab-sil-tek lab-sil-${id}`;
 export function labHooke(el) {
   const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
   const B = new HookeBench({ seed: zap.seed });
+  el._labBench = B; // maturitetni poskus (lab-matura.js): pravi prožnostni koeficient mehke vzmeti (B.kNom.mehka)
   const W = 400, H = 340, Y0 = 34, PX = 500; // ničla ravnila pri Y0, 1 cm = 5 px
   const svg = svgBox(W, H, "lab-bench lab-sil lab-sil-hooke");
   const log = eventLog();

@@ -1,0 +1,30 @@
+{
+  "paper": "NPZ9-MAT-2022-redni",
+  "parts": {
+    "1a": "MAT-OS-6/zapis-in-urejanje-velikih-stevil",
+    "1b": "MAT-OS-6/zapis-in-urejanje-velikih-stevil",
+    "1c": "MAT-OS-6/deljivost",
+    "1d": "MAT-OS-6/veckratniki-in-delitelji",
+    "2a": "MAT-OS-6/racunske-operacije-in-lastnosti",
+    "2b": "MAT-OS-6/racunanje-z-decimalnimi-stevili",
+    "2c": "MAT-OS-6/racunanje-z-decimalnimi-stevili",
+    "3a": "MAT-OS-8/potence-z-naravnimi-eksponenti",
+    "3b": "MAT-OS-8/potence-z-naravnimi-eksponenti",
+    "3c": "MAT-OS-8/kvadratni-koren",
+    "3d": "MAT-OS-8/kvadratni-koren",
+    "4a": "MAT-OS-8/linearne-enacbe",
+    "4b": "MAT-OS-8/linearne-enacbe",
+    "5a": "MAT-OS-7/vrste-kotov-in-pari-kotov",
+    "5b": "MAT-OS-6/kot",
+    "5c": "MAT-OS-6/osnovni-geometrijski-pojmi",
+    "6a": "MAT-OS-8/algebrski-izrazi",
+    "6b": "MAT-OS-8/algebrski-izrazi",
+    "6c": "MAT-OS-9/linearne-enacbe-z-ulomki",
+    "7a": "MAT-OS-9/tocke-premice-in-ravnine-v-prostoru",
+    "7b": "MAT-OS-6/kocka-in-kvader",
+    "8a": "MAT-OS-6/merske-enote",
+    "8b": "MAT-OS-6/merske-enote",
+    "9a": null,
+    "9b": "MAT-OS-9/statisticna-raziskava"
+  }
+}

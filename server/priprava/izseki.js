@@ -187,6 +187,13 @@ export function razrezi(strani) {
  * Vir je lahko med branjem PDF izginil (izbris, čiščenje): takrat ne zapiše ničesar in vrne false.
  * seal: crypto-polje.js seal (podan, da modul ostane brez stanja).
  */
+// Postavke (razlage), nastale iz izsekov vira, gredo z njimi: ob ponovni obdelavi in izbrisu vira (navedki iz zapiskov).
+export function izbrisiPostavkeVira(db, vir) {
+  db.prepare(
+    `DELETE FROM priprava_postavke WHERE priprava_id = ? AND EXISTS (
+       SELECT 1 FROM json_each(priprava_postavke.izseki) j WHERE j.value IN (SELECT id FROM priprava_izseki WHERE vir_id = ?))`,
+  ).run(vir.priprava_id, vir.id);
+}
 export function shraniIzseke(db, args) {
   // Stari izseki (ponovna obdelava) se izbrišejo s secure_delete, kot vsi podatki priprave.
   return zVarnimBrisanjem(db, () => shrani(db, args));
@@ -198,12 +205,13 @@ function shrani(db, { vir, izseki, strani, opozorila = [], stanje = "obdelan", s
       db.exec("ROLLBACK");
       return false;
     }
+    izbrisiPostavkeVira(db, vir);
     db.prepare("DELETE FROM priprava_izseki WHERE vir_id = ?").run(vir.id);
     const vpis = db.prepare(
-      "INSERT INTO priprava_izseki (priprava_id, vir_id, student_id, stran, zaporedje, vrsta, naslov, besedilo, negotovo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO priprava_izseki (priprava_id, vir_id, student_id, stran, zaporedje, vrsta, naslov, besedilo, negotovo, ai) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
     );
     for (const i of izseki)
-      vpis.run(vir.priprava_id, vir.id, vir.student_id, i.stran ?? null, i.zaporedje, i.vrsta, i.naslov == null ? null : seal(i.naslov), seal(i.besedilo), i.negotovo?.length ? seal(JSON.stringify(i.negotovo)) : null);
+      vpis.run(vir.priprava_id, vir.id, vir.student_id, i.stran ?? null, i.zaporedje, i.vrsta, i.naslov == null ? null : seal(i.naslov), seal(i.besedilo), i.negotovo?.length ? seal(JSON.stringify(i.negotovo)) : null, i.ai ? 1 : 0);
     db.prepare("UPDATE priprava_viri SET stanje = ?, strani = ?, napaka = NULL, opozorila = ? WHERE id = ?").run(stanje, strani, opozorila.length ? JSON.stringify(opozorila) : null, vir.id);
     db.exec("COMMIT");
     return true;

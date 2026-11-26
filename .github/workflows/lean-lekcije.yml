@@ -1,0 +1,26 @@
+# Ali Lean dokazi lekcij (lean/Evklid/Lekcije) še veljajo za trenutno besedilo lekcij (docs/lean.md, L2).
+# Hitro, brez Leana: primerja sha256 v glavi dokaza z lekcijo. Ni med testi za objavo: spremenjena lekcija
+# ne zadrži objave na evklid.app, le opozori, da je treba dokaz pregledati.
+name: lean-lekcije
+
+on:
+  pull_request:
+    paths: ["content/lessons/**", "lean/Evklid/Lekcije/**", "scripts/lean-lekcije.mjs", ".github/workflows/lean-lekcije.yml"]
+  push:
+    branches: [main]
+    paths: ["content/lessons/**", "lean/Evklid/Lekcije/**", "scripts/lean-lekcije.mjs", ".github/workflows/lean-lekcije.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lekcije:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - run: node scripts/lean-lekcije.mjs

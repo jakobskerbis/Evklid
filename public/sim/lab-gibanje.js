@@ -424,6 +424,7 @@ function lupaPrerez(svg, x, y, w, hh, zarek, newton) {
 export function labProstiPad(el) {
   const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
   const B = new PadBench({ seed: zap.seed });
+  el._labBench = B; // maturitetni poskus (lab-matura.js): neznanka je težni pospešek modela (G_LJ)
   const W = 400, H = 300, P = 120, yTla = 292, y0 = yTla - PAD.visina * P, xs = 80;
   const svg = svgBox(W, H, "lab-bench lab-gib lab-gib-pad");
   const log = eventLog();
@@ -669,6 +670,7 @@ function lupaZgoraj(svg, x, y, w, hh, B, Pr) {
 export function labNewton2(el) {
   const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
   const B = new ProgaBench({ seed: zap.seed, skripec: true });
+  el._labBench = B; // maturitetni poskus (lab-matura.js): masa, ki jo pospešuje sila obešala (z vrtenjem koles in škripca)
   B.nacin = "vrata";
   const W = 400, H = 326, P = 270, X0 = 20, yMiza = 74, yTla = yMiza + SKRIPEC.miza * P, yPolica = yMiza + 120;
   const svg = svgBox(W, H, "lab-bench lab-gib lab-gib-newton");

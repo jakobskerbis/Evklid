@@ -37,6 +37,7 @@ export function indikatorIzMeritev(rs) {
 export function labTitracija(el) {
   const zap = shramba(el); // titracije in krivulja ostanejo ob vrnitvi (lab.js); isto seme: ista neznana koncentracija
   const B = new TitrBench({ seed: zap.seed });
+  el._labBench = B; // maturitetni poskus (lab-matura.js): prava koncentracija vzorca
   const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
   const W = 400, H = 566;
   const svg = svgBox(W, H, "lab-bench lab-tit");

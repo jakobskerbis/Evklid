@@ -5,9 +5,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import http from "node:http";
+import fs from "node:fs";
+import zlib from "node:zlib";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
-import { varenJson, zaZacetnePodatke, notranjiGet } from "../server/zacetni-podatki.js";
+import { varenJson, zaZacetnePodatke, zaZacetnePodatkeKlic, notranjiGet } from "../server/zacetni-podatki.js";
 import { entryHtml, withSessionStyles, SEJA_POZNEJE } from "../server/vstopna-stran.js";
 
 const quiet = { error() {}, warn() {}, info() {}, log() {} };
@@ -205,4 +207,95 @@ test("slogi seje: v <template> samo slogi zaslonov, ki jih Učna pot ne uporablj
   const zunaj = out.replace(/<template data-evklid-slogi>.*?<\/template>/gs, "");
   for (const f of SEJA_POZNEJE) assert.ok(!zunaj.includes(`href="${f}"`), f);
   assert.equal(out.slice(out.indexOf("</head>")), html.slice(html.indexOf("</head>")), "telo strani enako");
+});
+
+// Ponovni obisk (N-08, 25. 11. 2026): service worker postreže shranjeno vstopno stran brez podatkov, zato zacetek.js iste
+// podatke zahteva v enem klicu (GET /api/zacetni-podatki) namesto verige klicev po zagonu app.js.
+const KLIC = { "sec-fetch-site": "same-origin", "sec-fetch-mode": "cors", "sec-fetch-dest": "empty", "accept-encoding": "br", accept: "application/json" };
+const klic = (base, c, headers = KLIC, path = "/api/zacetni-podatki") =>
+  new Promise((ok, bad) => {
+    http
+      .get(base + path, { headers: { cookie: Object.entries(c.jar).map(([k, v]) => `${k}=${v}`).join("; "), ...headers } }, (r) => {
+        const b = [];
+        r.on("data", (x) => b.push(x));
+        r.on("end", () => {
+          let raw = Buffer.concat(b);
+          if (r.headers["content-encoding"] === "br") raw = zlib.brotliDecompressSync(raw);
+          let data = null;
+          try {
+            data = raw.length ? JSON.parse(raw.toString("utf8")) : null;
+          } catch {}
+          ok({ status: r.statusCode, headers: r.headers, data });
+        });
+      })
+      .on("error", bad);
+  });
+
+test("klic začetnih podatkov: samo fetch iz istega izvora s sejo in napravo (ne navigacija, ne tuja stran, ne mobilni odjemalec)", () => {
+  const req = (h) => ({ method: "GET", headers: { cookie: "sm_session=abc; sm_device=dddddddddddddddddddddd", ...KLIC, ...h } });
+  assert.equal(zaZacetnePodatkeKlic(req({})), true);
+  assert.equal(zaZacetnePodatkeKlic(req({ "sec-fetch-site": undefined })), true, "brskalnik brez Sec-Fetch: piškotek SameSite in CORS kot pri vsakem klicu API");
+  assert.equal(zaZacetnePodatkeKlic(req({ "sec-fetch-site": "cross-site" })), false);
+  assert.equal(zaZacetnePodatkeKlic(req({ "sec-fetch-site": "same-site" })), false);
+  assert.equal(zaZacetnePodatkeKlic(req({ "sec-fetch-site": "none" })), false, "vpisan naslov v brskalnik");
+  assert.equal(zaZacetnePodatkeKlic(req({ "sec-fetch-mode": "navigate", "sec-fetch-dest": "document" })), false, "navigacija: podatki so v strani");
+  assert.equal(zaZacetnePodatkeKlic(req({ "x-app-client": "android" })), false);
+  assert.equal(zaZacetnePodatkeKlic(req({ "sec-purpose": "prefetch" })), false);
+  assert.equal(zaZacetnePodatkeKlic(req({ cookie: "sm_session=abc" })), false, "brez naprave");
+  assert.equal(zaZacetnePodatkeKlic(req({ cookie: "sm_device=dddddddddddddddddddddd" })), false, "brez seje");
+  assert.equal(zaZacetnePodatkeKlic({ ...req({}), method: "POST" }), false);
+});
+
+test("klic začetnih podatkov: isti odgovori kot v strani in kot API, stisnjen, no-store brez ETag", async () => {
+  await withServer(async ({ signup, base }) => {
+    const { c, ids } = await signup("ana@primer.si", ["Ana </script>"]);
+    const [sid] = ids;
+    const stran = podatki((await c.page()).html).data;
+    const r = await klic(base, c);
+    assert.equal(r.status, 200);
+    assert.equal(r.headers["cache-control"], "no-store");
+    assert.equal(r.headers.etag, undefined);
+    assert.equal(r.headers["content-encoding"], "br");
+    assert.match(r.headers["content-type"], /application\/json/);
+    assert.equal(r.data.s, sid);
+    assert.deepEqual(Object.keys(r.data.d).sort(), Object.keys(stran.d).sort(), "isti klici kot v strani");
+    for (const url of Object.keys(r.data.d)) assert.deepEqual(r.data.d[url], (await c(url)).body, url);
+    assert.ok(r.data.d[`/api/students/${sid}/path`]?.units, "Učna pot");
+    // Vsak naslov odgovora zacetek.js prepozna kot del paketa (app.js počaka paket, ne pokliče sam).
+    const PAKET = new RegExp(fs.readFileSync(new URL("../public/zacetek.js", import.meta.url), "utf8").match(/var PAKET = \/(.+)\/;/)[1]);
+    for (const url of Object.keys(r.data.d)) assert.ok(PAKET.test(url), url);
+    for (const url of [`/api/students/${sid}/flashcards?path=X`, `/api/students/${sid}/tasks`, "/api/usage", `/api/students/${sid}/pathx`]) assert.ok(!PAKET.test(url), url);
+    await new Promise((res) => setTimeout(res, 50));
+    assert.equal((await (await fetch(`${base}/healthz/stanje`)).json()).aktivni, 0, "notranji klici zaprti");
+  });
+});
+
+test("klic začetnih podatkov, zasebnost: svoj račun; brez seje, z neveljavno sejo ali od drugje 204; več profilov brez profila", async () => {
+  await withServer(async ({ signup, client, base }) => {
+    const a = await signup("ana@primer.si", ["Ana"]);
+    const b = await signup("bor@primer.si", ["Bor"]);
+    const rb = await klic(base, b.c);
+    assert.equal(rb.data.s, b.ids[0]);
+    assert.ok(!JSON.stringify(rb.data).includes("Ana"));
+    assert.ok(!Object.keys(rb.data.d).some((u) => u.includes(`/students/${a.ids[0]}/`)));
+    // Brez veljavne seje: zavrnitev prijave kot pri vsakem klicu API (zacetek.js nato pokliče posamezne klice).
+    const anon = client();
+    const ra = await klic(base, anon);
+    assert.ok([401, 204].includes(ra.status), String(ra.status));
+    assert.equal(ra.data?.d, undefined);
+    const fake = client();
+    fake.jar.sm_session = "x".repeat(43);
+    fake.jar.sm_device = "d".repeat(43);
+    const f = await klic(base, fake);
+    assert.ok([401, 204].includes(f.status), String(f.status));
+    assert.equal(f.data?.d, undefined);
+    assert.equal((await klic(base, a.c, { ...KLIC, "sec-fetch-site": "cross-site" })).status, 204);
+    const mob = await klic(base, a.c, { ...KLIC, "x-app-client": "android" });
+    assert.notEqual(mob.status, 200, "mobilni odjemalec API: brez podatkov");
+    assert.equal(mob.data?.d, undefined);
+    const c = await signup("cene@primer.si", ["Cene", "Cvetka"]);
+    const rc = await klic(base, c.c);
+    assert.equal(rc.data.s, null);
+    assert.deepEqual(Object.keys(rc.data.d).sort(), ["/api/account/status", "/api/config", "/api/students"]);
+  });
 });

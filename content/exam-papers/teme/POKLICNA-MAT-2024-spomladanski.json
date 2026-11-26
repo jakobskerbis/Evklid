@@ -1,0 +1,23 @@
+{
+  "paper": "POKLICNA-MAT-2024-spomladanski",
+  "parts": {
+    "A1": "MAT-SS-1/racionalna-stevila",
+    "A2": "MAT-SS-1/naravna-in-cela-stevila",
+    "A3": "MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku",
+    "A4": "MAT-SS-4/obrestni-racun",
+    "A5": "MAT-SS-1/ulomljeni-izrazi",
+    "A6": "MAT-SS-4/verjetnost",
+    "A7": "MAT-SS-2/kvadratna-enacba",
+    "A8": "MAT-SS-4/odvod",
+    "A9": "MAT-SS-3/povrsina-in-prostornina-teles",
+    "A10": "MAT-SS-3/grafi-kotnih-funkcij",
+    "A11a": "MAT-SS-1/linearna-funkcija",
+    "A11b": "MAT-SS-1/linearna-funkcija",
+    "B1a": "MAT-SS-3/polinomi",
+    "B1b": "MAT-SS-3/polinomi",
+    "B2a": "MAT-SS-1/obdelava-podatkov",
+    "B2b": "MAT-SS-4/odvod",
+    "B3a": "MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje",
+    "B3b": "MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje"
+  }
+}

@@ -16,6 +16,7 @@ import { captureSource, currentSource } from "./vir.js";
 import { showFull, closeFull, fullOpen } from "./razpri.js";
 import { makeSplitter } from "./razdelilnik.js";
 import { nastaviNogo } from "./noga.js";
+import { initObrat } from "./obrat.js";
 import { initOkna, isFloating, openWindow, closeWindow, focusWindow, refreshBubble, chatReply, restoreWindows, windowsOn, tabHint, floatingViews, syncTabbarH, setTabbarH } from "./okna.js";
 import { initProfileMenu, refreshProfileButton, closeProfileMenu } from "./profile-menu.js";
 import { initQuickStart, closeQuickStart } from "./quick-start.js";
@@ -2703,7 +2704,9 @@ const input = $("#input");
 function autoGrow(stick, again) {
   const box = $("#messages");
   const atBottom = typeof stick === "boolean" ? stick : box.scrollHeight - box.scrollTop - box.clientHeight < 80;
-  const max = Math.max(80, Math.round((window.visualViewport?.height || window.innerHeight) * 0.4));
+  // Ležeč telefon (UX PR 2): dolgo vprašanje (npr. iz 3D sveta ali poskusa) ne vzame sporočil, polje največ tri vrstice.
+  const lezece = matchMedia("(orientation: landscape) and (max-height: 500px)").matches;
+  const max = lezece ? 72 : Math.max(80, Math.round((window.visualViewport?.height || window.innerHeight) * 0.4));
   input.style.maxHeight = `${max}px`;
   input.style.height = "auto";
   // Formule (ulomek, koren …) se izrišejo kar v polju (public/predogled-vnosa.js): višina po izrisu, ne po surovem zapisu.
@@ -2749,7 +2752,13 @@ input.addEventListener("vnos-izris-visina", () => autoGrow());
       text = `${words.join(" ")} …`;
     }
     shown = text;
-    if (input.placeholder !== text) input.placeholder = text;
+    if (input.placeholder === text) return;
+    const krajsi = text.length < input.placeholder.length;
+    input.placeholder = text;
+    // Prazno polje je visoko kot namig: autoGrow (rAF) teče pred ResizeObserverjem, zato je izmeril še dolg, prelomljen
+    // namig (ležeče ob odprtju tipkovnice: 66 px in »multi«). Krajši namig izmerimo znova; daljšega ne, sicer bi se
+    // v zelo ozkem oknu »multi« (širše polje, daljši namig) in ozko polje menjala v neskončnost.
+    if (krajsi && !input.value) requestAnimationFrame(() => input.offsetParent && autoGrow());
   };
   if (window.ResizeObserver) new ResizeObserver(fit).observe(input);
   new MutationObserver(() => input.placeholder !== shown && fit()).observe(input, { attributes: true, attributeFilter: ["placeholder"] });
@@ -4428,6 +4437,7 @@ async function openFromTutor({ view, mode } = {}) {
   }
   calc();
 }
+initObrat(); // bralni položaj ob obratu zaslona (UX PR 2)
 initOkna({
   showView,
   initView: (name) => (name === "account" ? renderAccount() : initView(name)),
@@ -4610,6 +4620,7 @@ initUci({
 initTextbook({
   api,
   renderRich,
+  renderMath,
   escapeHtml,
   getStudent: () => state.student,
   openTopic,

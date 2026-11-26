@@ -8,6 +8,11 @@
 //   numeric     Numerično preverjeno preizkus s števili brez dokaza (odvod, integral, neenačba na mreži, ničle na omejenem območju)
 //   unverified  Nepreverjeno         koda naloge ne zna preveriti (limite, besedilne naloge, naloge s podatki)
 //   wrong       Napačno              preverjanje je padlo: rešitev ne drži ali katera manjka
+//
+// Od PV-01 (docs/preverjanje.md) pravila določa skupna definicija za ves Evklid (public/preverjanje/statusi.js, sedem
+// statusov); tukaj jih samo prevedemo v pet statusov skenerja, zato so izidi in besedila na zaslonu enaki kot prej.
+import { statusIzDokazov, vSkener } from "../preverjanje/statusi.js";
+
 export const STATUSES = ["verified", "partial", "numeric", "unverified", "wrong"];
 
 /**
@@ -18,11 +23,8 @@ export const STATUSES = ["verified", "partial", "numeric", "unverified", "wrong"
  *             | "numeric" (iskanje na omejenem območju) | "unknown" (ni preverjena) | false (katera rešitev manjka)
  */
 export function statusOf({ holds = null, how = "numeric", complete = "unknown" } = {}) {
-  if (holds === false || complete === false) return "wrong";
-  if (holds !== true) return "unverified";
-  if (complete === "unknown") return "partial";
-  if (how === "exact" && (complete === "exact" || complete === "na")) return "verified";
-  return "numeric";
+  // Skener ne pozna Leana: »formal« šteje kot doslej (neznana vrednost = numerično), da je izid za vsak vhod enak.
+  return vSkener(statusIzDokazov({ holds, how: how === "exact" ? "exact" : "numeric", complete: complete === "formal" ? "numeric" : complete }));
 }
 
 // Ali rezultat sme biti prikazan kot odgovor (napačen in nepreverjen lastni rezultat gre k AI).

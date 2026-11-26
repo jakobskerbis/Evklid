@@ -896,7 +896,7 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
 }
 
 /* Strežnik ni dosegljiv ob odprtju (public/app.js bootFailed) */
-.boot-down { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 16px; background: var(--bg); }
+.boot-down { position: fixed; inset: 0; z-index: var(--z-zagon, 1000); display: grid; place-items: center; padding: 16px; background: var(--bg); }
 .boot-down .card { max-width: 360px; text-align: center; display: grid; gap: 14px; justify-items: center; }
 .boot-down .card svg { width: 40px; height: 40px; color: var(--muted, #8b949e); }
 .boot-down p { margin: 0; }
