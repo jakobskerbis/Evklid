@@ -1,7 +1,7 @@
 # Pokritost matematičnih trditev po delih aplikacije (2026-11-26)
 
 ## Povzetek
-- Glavna številka: 12.032 trditev od 85.437 v vsebini, ki jo učenec vidi (14,1 %), je program v celoti preračunal (izračunano ali numerično). Delno (le del verige): 9.836 (11,5 %). Brez statusa (»Nepreverjeno«): 63.560 (74,4 %). Cilj: višje je bolje. Štetje celote, ne vzorec, zato brez intervala.
+- Glavna številka: 11.615 trditev od 85.362 v vsebini, ki jo učenec vidi (13,6 %), je program v celoti preračunal (izračunano ali numerično). Delno (le del verige): 10.221 (12,0 %). Brez statusa (»Nepreverjeno«): 63.517 (74,4 %). Cilj: višje je bolje. Štetje celote, ne vzorec, zato brez intervala.
 - Strojni bloki RACUN, ločeno: 5.623 trditev od 5.626 (99,9 %) v celoti preveri SymPy ali kemijski preizkus. Ponovijo rezultate vidne vsebine, zato niso v glavni številki.
 - Pomeni: koliko formul z relacijo v lekcijah, rešenih primerih, polah in rešitvah generatorjev dobi status, ko obstoječe preverjevalnike (lesson-math, preizkus identitet, SymPy) uporabimo na vsaki formuli posebej. Zaznanih napak: 9.
 - Ne pomeni: da so formule brez statusa napačne, niti da je »numerično« dokaz. Tudi ne, da vse te statuse danes izračuna CI ali vidi učenec: stolpec »Preverjanje danes« pove, kaj se preračuna ob vsaki spremembi (koraki rešitev generatorjev in računi v »Preveri se« se ne). Oznaka lekcije »Strojno preverjeno« pomeni, da program preračuna vsaj en račun brez napake, ne da ima vsaka trditev status.
@@ -12,7 +12,7 @@
 
 ## Metoda
 - Ukaz: `node scripts/popis-pokritosti.mjs --strogo --dodatek docs/meritve/pokritost-2026-11-26-pregled.md --json docs/meritve/pokritost-2026-11-26.json --porocilo docs/meritve/pokritost-2026-11-26.md`
-- Commit: `d0f555ee1c5401b4851dbcb4c8aeb65287a134e5` (veja PR; vsebina je enaka kot na `main` po združitvi); skripta ne kliče modela AI; Node v22.23.5, SymPy 1.14.0
+- Commit: `9b064b711e03da08c698f5edc0e4479935d1d1f0` (veja PR; vsebina je enaka kot na `main` po združitvi); skripta ne kliče modela AI; Node v22.23.5, SymPy 1.14.0
 - Trditev = formula $…$ ali $$…$$ z relacijo (=, ≈, <, >, ≤, ≥, ≠, ∈, ⇒ …); vrstica RACUN = ena trditev. Status: preračun server/lesson-math.js (numerično, delno, napaka); simbolna enakost, ki jo potrdi preizkus z naključnimi števili server/lesson-identity.js, je numerično (neujemanje brez okolice lekcije ne šteje kot napaka, ker je lahko enačba); RACUN: SymPy z načinom (izračunano ali numerično), uravnotežena enačba izračunano, molska masa z dopustom numerično.
 - Izločeno in našteto posebej: namerno napačne (»Pogoste napake« v celoti, napačne možnosti v »Preveri se« in njihova pojasnila ~, »mistake« in napačne izbire na polah) in vprašanja (? v »Preveri se«: podatek naloge, ne trditev).
 
@@ -25,12 +25,12 @@
 | 3 | Shranjeni odgovori in kartice | kartica | ob uporabi | – | – | – | – | – | – | pravilno ali napačno, brez sedmih statusov | lastnik B |
 | 4 | Znanstveni kalkulator | rezultat | ob uporabi | – | – | – | – | – | – | rezultat, ki ne prestane številske preizkušnje, se ne pokaže; statusa ni | lastnik B |
 | 5 | Grafični kalkulator, CAS | rezultat | ob uporabi | – | – | – | – | – | – | CAS rezultat preizkusi s števili in neprestanega ne pokaže (casUnverified); statusa ni | lastnik B |
-| 6 | Učbenik: razlaga | formula z relacijo | 19.468 | 3.259 (16,7 %) | 925 | 0 | 15.284 (78,5 %) | 0 / 3.259 | 1.776 / 0 | da: check-lesson.js preračuna račune in identitete | 521 lekcij |
-| 6 | Učbenik: »Preveri se« (pravilni odgovor, pojasnilo) | formula z relacijo | 3.715 | 949 (25,5 %) | 836 | 3 | 1.927 (51,9 %) | 0 / 949 | 2.124 / 1.069 | delno: check-lesson.js preizkusi identitete v vrsticah + in >, računov ne preračuna | 515 lekcij s »Preveri se« |
+| 6 | Učbenik: razlaga | formula z relacijo | 19.468 | 3.145 (16,2 %) | 1.039 | 0 | 15.284 (78,5 %) | 0 / 3.145 | 1.776 / 0 | da: check-lesson.js preračuna račune in identitete | 521 lekcij |
+| 6 | Učbenik: »Preveri se« (pravilni odgovor, pojasnilo) | formula z relacijo | 3.640 | 924 (25,4 %) | 829 | 3 | 1.884 (51,8 %) | 0 / 924 | 2.124 / 1.144 | delno: check-lesson.js preizkusi identitete v vrsticah + in >, računov ne preračuna | 515 lekcij s »Preveri se« |
 | 6 | Učbenik: bloki RACUN (strojni zapis, učenec jih ne vidi) | vrstica RACUN | 5.626 | 5.623 (99,9 %) | 0 | 0 | 3 (0,1 %) | 4.324 / 1.299 | 0 / 0 | da: check-lesson.js (SymPy) | 313 lekcij z RACUN |
-| 7 | Rešeni primeri v lekcijah | formula z relacijo | 17.325 | 2.613 (15,1 %) | 2.572 | 0 | 12.140 (70,1 %) | 0 / 2.613 | 0 / 0 | da: check-lesson.js (računi; od identitet le rešitve) | 518 lekcij s primeri |
-| 8 | Vadnica: generatorji (rešitve) | formula z relacijo v rešitvi | 3.138 | 288 (9,2 %) | 994 | 3 | 1.853 (59,1 %) | 0 / 288 | 0 / 0 | ne: preveri-generatorje.js preveri odgovor naloge, korakov rešitve ne | 618 generatorjev |
-| 9 | Matura in NPZ: naše pole (rešitve) | formula z relacijo v rešitvi | 8.798 | 1.990 (22,6 %) | 1.036 | 0 | 5.772 (65,6 %) | 0 / 1.990 | 640 / 0 | delno: test pol preračuna odgovor, točkovnik in »mistake«, poti rešitve ne | 31 pol |
+| 7 | Rešeni primeri v lekcijah | formula z relacijo | 17.325 | 2.569 (14,8 %) | 2.616 | 0 | 12.140 (70,1 %) | 0 / 2.569 | 0 / 0 | da: check-lesson.js (računi; od identitet le rešitve) | 518 lekcij s primeri |
+| 8 | Vadnica: generatorji (rešitve) | formula z relacijo v rešitvi | 3.138 | 277 (8,8 %) | 1.005 | 3 | 1.853 (59,1 %) | 0 / 277 | 0 / 0 | ne: preveri-generatorje.js preveri odgovor naloge, korakov rešitve ne | 618 generatorjev |
+| 9 | Matura in NPZ: naše pole (rešitve) | formula z relacijo v rešitvi | 8.798 | 1.899 (21,6 %) | 1.127 | 0 | 5.772 (65,6 %) | 0 / 1.899 | 640 / 0 | da: test pol (our-papers.js) preračuna odgovor, točkovnik, »mistake« in poti rešitve | 31 pol |
 | 10 | Tekmovalne naloge (generatorji tek-*) | formula z relacijo v rešitvi | 549 | 103 (18,8 %) | 198 | 3 | 245 (44,6 %) | 0 / 103 | 0 / 0 | ne: kot generatorji | 86 generatorjev |
 | 11 | Priprava na test | naloga iz zapiskov | ob uporabi | – | – | – | – | – | – | naloga, v kateri koda najde računsko napako, se izloči (codeCheck); statusa ni | lastnik A |
 | 12 | Uvoženi zapiski in kartice | trditev zapiska | ob uporabi | – | – | – | – | – | – | zapiski: trditve RACUN; vaja iz lista: ne | lastnik A |
@@ -39,7 +39,7 @@
 | 15 | Interaktivne simulacije | formula na zaslonu | ob uporabi | – | – | – | – | – | – | ne (sim.test.js preizkusi fiziko, formul na zaslonu ne popiše) | lastnik A |
 | 16 | Formule v 3D svetu | formula | ob uporabi | – | – | – | – | – | – | ne (ni popisa) | lastnik A |
 | 17 | Fizikalni in kemijski izračuni | rezultat z enoto | ob uporabi | – | – | – | – | – | – | enote in kemija v RACUN, sicer ne | lastnik skupno |
-| 18 | Fakultetna matematika (lekcije UNI-*) | formula z relacijo | 32.444 | 2.830 (8,7 %) | 3.275 | 0 | 26.339 (81,2 %) | 0 / 2.830 | 1.364 / 547 | kot učbenik; zbirke server/university-*.js niso zajete | 245 lekcij |
+| 18 | Fakultetna matematika (lekcije UNI-*) | formula z relacijo | 32.444 | 2.698 (8,3 %) | 3.407 | 0 | 26.339 (81,2 %) | 0 / 2.698 | 1.364 / 547 | kot učbenik; zbirke server/university-*.js niso zajete | 245 lekcij |
 | 19 | Ustno spraševanje, kvizi, dnevna uganka | odgovor | ob uporabi | – | – | – | – | – | – | pravila po vrsti vprašanja, ne status | lastnik A |
 
 ## Napake in neuspehi
@@ -63,7 +63,7 @@ ponovila. Nobena ni napačen rezultat:
 ## Omejitve
 - Trditev je formula z relacijo: besedne trditve (»funkcija je naraščajoča«) in formule brez relacije niso štete, zato je pravo število trditev večje.
 - Ena formula z več relacijami je ena trditev; »delno« pomeni, da je program preračunal le del verige.
-- Popis uporabi preverjevalnike na vsaki formuli posebej, tudi tam, kjer jih CI ne (generatorji, računi v »Preveri se«, poti rešitev na polah); brez okolice lekcije preizkus identitet le potrjuje, zato je del simbolnih trditev, ki jih CI lekcij preizkusi, tu »Nepreverjeno«.
+- Popis uporabi preverjevalnike na vsaki formuli posebej, tudi tam, kjer jih CI ne (generatorji, računi v »Preveri se«); brez okolice lekcije preizkus identitet le potrjuje, zato je del simbolnih trditev, ki jih CI lekcij preizkusi, tu »Nepreverjeno«.
 - »Numerično« je preračun s plavajočo vejico ali preizkus z naključnimi števili, ne dokaz; »napaka« je lahko tudi pretvorba enote, zapis ure ali ocena reda velikosti, ki je lesson-math ne prepozna (glej pregled zgoraj).
 - Izločene skupine niso vse napačne: »Pogoste napake« vsebujejo tudi pravilne različice, pojasnila ~ tudi pravilne račune.
 - Bloki RACUN ponovijo rezultate vidne vsebine (content/lessons/README.md), zato so ločeni od glavne številke.

@@ -269,9 +269,9 @@ pove, kaj od tega preračuna CI ob vsaki spremembi (koraki rešitev generatorjev
 ne) in kaj preverijo mesta, kjer trditve nastanejo ob uporabi (inštruktor, kalkulatorji, skener …). Štetje
 celote, ne vzorec, zato brez intervala. `--strogo` vrne napako, če SymPy ni tekel ali ni odgovoril na zahtevo.
 
-Izhodišče `docs/meritve/pokritost-2026-11-26.md`: v vsebini, ki jo učenec vidi, je 12.032 od 85.437 formul z relacijo
-(14,1 %) v celoti preračunanih, 9.836 (11,5 %) delno, 63.560 (74,4 %) brez statusa; razlaga lekcij 16,7 %, fakultetne
-lekcije 8,7 % v celoti. Strojni bloki RACUN, ki ponovijo rezultate lekcij, so ločeni: 5.623 od 5.626. Vseh 9 zaznanih
+Izhodišče `docs/meritve/pokritost-2026-11-26.md`: v vsebini, ki jo učenec vidi, je 11.615 od 85.362 formul z relacijo
+(13,6 %) v celoti preračunanih, 10.221 (12,0 %) delno, 63.517 (74,4 %) brez statusa; razlaga lekcij 16,2 %, fakultetne
+lekcije 8,3 % v celoti. Strojni bloki RACUN, ki ponovijo rezultate lekcij, so ločeni: 5.623 od 5.626. Vseh 9 zaznanih
 »napak« je pregledal model AI (ne človek): nobena ni napačen rezultat (napačen preračun lesson-math, AUDIT-087;
 zapisi, ki jih preračun ne pozna; trije nenatančni zapisi v naših generatorjih, popravek v ločenem PR #1160). Višji
 delež je boljši; formula brez statusa ni napačna, le noben program je ne preveri.
