@@ -4447,7 +4447,6 @@
   "pilot.n.few": "Gösterilecek kadar yanıt yok (en az {n}).",
   "zb.fromPilot": "Pilottaki yardımın için",
   "pn.quizTitle": "Bilgi testi",
-  "pn.quizText": "Matura konularından on iki kısa soru (matematik, temel seviye). Soruda aksi belirtilmedikçe hesap makinesi kullanabilirsin. 14 gün sonra bir kez daha, benzer sorular ve farklı sayılarla, ne kadar ilerlediğini görmek için. Not yok ve bir şeyi bilmemen sorun değil. Sonucu kaydederiz, yönetici yalnızca isimsiz toplu ortalamaları görür.",
   "pn.quizStart": "Teste başla",
   "pn.quizContinue": "Teste devam et",
   "pn.quizPost": "İkinci teste başla",

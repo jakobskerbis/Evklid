@@ -46,6 +46,9 @@ function candidates(db) {
   return db.prepare(`SELECT DISTINCT id FROM (${parts.join(" UNION ")}) ORDER BY id`).all().map((r) => r.id);
 }
 
+// Število članov pilota (povabljeni profili, ki lahko rešujejo naloge in preizkus), za poročilo preizkusa.
+export const pilotCohortSize = (db, isMember) => candidates(db).filter((id) => isMember(id)).length;
+
 // Začetek v pilotu: prej od »račun je v pilotu« (pilot_at) in »profil je prvič odprl naloge« (pilot_state), sicer
 // nastanek profila (pilotna šola).
 function startsOf(db, ids) {
