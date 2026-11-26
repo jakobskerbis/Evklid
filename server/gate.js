@@ -73,26 +73,40 @@ export function gateNeeded(env = process.env) {
   return env.EVKLID_ACCOUNTS !== "1" || env.EVKLID_GATE === "1";
 }
 
+// Omejitev ugibanja skupnega gesla: 20 napačnih z enega naslova ali 200 skupaj v 15 minutah.
+export const GATE_FAILS_IP = 20;
+export const GATE_FAILS_ALL = 200;
+const GATE_WINDOW_MS = 15 * 60 * 1000;
+
 export function passwordGate(password) {
   const expected = Buffer.from(password);
   const token = crypto.createHmac("sha256", password).update(`${BRAND.slug}-gate-v1`).digest("hex");
   const legacyTokens = LEGACY_COOKIES.map((c) => ({ ...c, token: crypto.createHmac("sha256", password).update(c.salt).digest("hex") }));
   const fails = new Map(); // ip -> { n, until }
+  const vsi = { n: 0, until: 0 }; // vsi napačni poskusi skupaj (K-13): menjava naslova IP omejitve ne obide
   const matches = (value) => {
     const b = Buffer.from(String(value ?? ""));
     return b.length === expected.length && crypto.timingSafeEqual(b, expected);
   };
-  const clientIp = (req) => String(req.headers["x-forwarded-for"] || "").split(",")[0].trim() || req.socket.remoteAddress || "";
+  // Kot server/vabila.js: s trust proxy req.ip, sicer glava Cloudflare (tunel do domačega računalnika), nato vtičnica.
+  // Prvi vnos X-Forwarded-For pošlje odjemalec sam, zato ga ne beremo (K-13).
+  const clientIp = (req) => String((req.app?.get("trust proxy") ? req.ip : req.headers["cf-connecting-ip"]) || req.socket?.remoteAddress || "");
   const blocked = (req) => {
+    const now = Date.now();
+    if (vsi.n >= GATE_FAILS_ALL && vsi.until > now) return true;
     const f = fails.get(clientIp(req));
-    return f && f.n >= 20 && f.until > Date.now();
+    return !!f && f.n >= GATE_FAILS_IP && f.until > now;
   };
   const fail = (req) => {
     const ip = clientIp(req);
-    const f = fails.get(ip);
     const now = Date.now();
-    if (!f || f.until < now) fails.set(ip, { n: 1, until: now + 15 * 60 * 1000 });
-    else f.n++;
+    if (vsi.until < now) Object.assign(vsi, { n: 1, until: now + GATE_WINDOW_MS });
+    else vsi.n++;
+    const f = fails.get(ip);
+    if (!f || f.until < now) {
+      if (fails.size > 10000) for (const [k, v] of fails) if (v.until < now) fails.delete(k);
+      fails.set(ip, { n: 1, until: now + GATE_WINDOW_MS });
+    } else f.n++;
   };
   const cookieMatches = (req, name, want) => {
     const m = String(req.headers.cookie || "").match(new RegExp(`(?:^|;\\s*)${name}=([a-f0-9]{64})`));
@@ -100,10 +114,14 @@ export function passwordGate(password) {
   };
   const hasCookie = (req) => cookieMatches(req, COOKIE, token);
   const hasLegacyCookie = (req) => legacyTokens.some((c) => cookieMatches(req, c.name, c.token));
+  // HTTP Basic šteje napačne poskuse kot obrazec (K-13); ob blokadi se geslo sploh ne preveri.
   const hasBasic = (req) => {
     const [scheme, b64] = String(req.headers.authorization || "").split(" ");
     if (!/^basic$/i.test(scheme || "")) return false;
-    return matches(Buffer.from(b64 || "", "base64").toString().split(":").slice(1).join(":"));
+    if (blocked(req)) return false;
+    if (matches(Buffer.from(b64 || "", "base64").toString().split(":").slice(1).join(":"))) return true;
+    fail(req);
+    return false;
   };
   const setCookie = (req, res) => {
     const secure = req.secure || req.headers["x-forwarded-proto"] === "https";

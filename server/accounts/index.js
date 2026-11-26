@@ -1945,9 +1945,15 @@ export function mountAccounts(app, store, opts = {}) {
     res.json({ ok: true });
   });
 
-  // Država za ceno: Cloudflare (CF-IPCountry, npr. tunel ali gostovanje za Cloudflare), sicer
-  // država, shranjena ob registraciji, sicer Slovenija. Naročnina ostane v valuti, v kateri je sklenjena.
+  // Država za ceno: Cloudflare (CF-IPCountry), sicer država, shranjena ob registraciji, sicer Slovenija. Naročnina
+  // ostane v valuti, v kateri je sklenjena.
+  // K-13 (26. 11. 2026): glavo CF-IPCountry in državo ob registraciji lahko pošlje kdorkoli (evklid.app je pri Cloudflare
+  // samo DNS, zahteve ne gredo skozi Cloudflare). Regijske cene zato veljajo samo, ko je vir zanesljiv:
+  // EVKLID_ZAUPAJ_CF=1 nastavi, kdor ima strežnik res za posrednikom Cloudflare (in izvor sprejema samo od njega).
+  // Brez tega je cenik za vse v evrih (slovenske cene).
+  const cfZaupanja = env.EVKLID_ZAUPAJ_CF === "1";
   const countryOf = (req, p) => {
+    if (!cfZaupanja) return "SI";
     const cf = String(req.headers["cf-ipcountry"] || "").toUpperCase();
     return /^[A-Z]{2}$/.test(cf) && cf !== "XX" && cf !== "T1" ? cf : p?.country || "SI";
   };
@@ -2681,6 +2687,25 @@ export function mountAccounts(app, store, opts = {}) {
     const up = upgradeFor(p);
     const to = up?.options.find((o) => o.key === req.body?.plan);
     if (!to) return res.status(400).json({ error: "Ta nadgradnja ni mogoča." });
+    // K-13 (26. 11. 2026): nadgradnja takoj bremeni shranjeno kartico. Seja računa je skupna profilom na napravi,
+    // zato kot ob nakupu iste potrditve in zapis o njih, poleg tega geslo računa (kot izvoz; prijava z Apple: reauthHooks).
+    if (req.body?.adult !== true || req.body?.withdrawal !== true) return res.status(400).json({ error: "Pred plačilom so potrebne vse potrditve.", consent: true });
+    if (!termsAccepted(req.body)) return res.status(400).json(TERMS_ERROR);
+    const upKey = `upgrade${p.id}|${req.ip}`;
+    if (throttle.blocked(upKey)) return res.status(429).json({ error: "Preveč poskusov. Poskusi čez 15 minut." });
+    if (acrossThrottle.blocked(`acct${p.id}`)) return res.status(429).json({ error: ACCT_BLOCKED });
+    const reauth = async () => {
+      for (const fn of reauthHooks) if (await fn(req, p, { revoke: false })) return true;
+      return false;
+    };
+    if (!(await verifyPassword(String(req.body?.password || ""), p.password_hash)) && !(await reauth())) {
+      throttle.fail(upKey);
+      acrossThrottle.fail(`acct${p.id}`);
+      audit(db, { req, parentId: p.id, actor: "parent", action: "plan_upgrade", ok: false });
+      return res.status(401).json({ error: "Napačno geslo.", password: true });
+    }
+    // Zapis potrditev pred bremenitvijo (kot ob nakupu: zapis obstaja, tudi če plačilo nato ne uspe).
+    insertBillingConsent(db, { parentId: p.id, email: p.email, kind: "upgrade", lines: [ADULT_TEXT, WITHDRAWAL_TEXT], lang: req.body?.lang, item: subItem(to), odstop: WITHDRAWAL_VERSION });
     try {
       const sub = await stripe.request("GET", `/subscriptions/${p.sub_id}`);
       const item = sub.items?.data?.[0];

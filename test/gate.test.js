@@ -76,3 +76,33 @@ test("z računi skupnega gesla ni (vstop je prijava v račun), razen z EVKLID_GA
   assert.equal(gateNeeded({ EVKLID_PASSWORD: "x", EVKLID_ACCOUNTS: "1", EVKLID_GATE: "1" }), true);
   assert.equal(gateNeeded({ EVKLID_ACCOUNTS: "1", EVKLID_GATE: "1" }), false);
 });
+
+// K-13 (26. 11. 2026): napačni poskusi prek HTTP Basic se štejejo, menjava X-Forwarded-For omejitve ne obide,
+// skupna meja ustavi ugibanje z mnogih naslovov.
+const basic = (geslo) => ({ authorization: "Basic " + Buffer.from(`x:${geslo}`).toString("base64") });
+test("ugibanje gesla: Basic šteje napake, X-Forwarded-For ne pomaga", () => withServer(async (base) => {
+  for (let i = 0; i < 20; i++) {
+    const r = await fetch(base + "/api/x", { headers: { ...basic(`napacno${i}`), "x-forwarded-for": `10.0.0.${i}` } });
+    assert.equal(r.status, 401);
+  }
+  // Po 20 napakah z istega naslova tudi pravo geslo ne odpre (ne prek Basic ne prek obrazca), ne glede na glavo.
+  const r = await fetch(base + "/api/x", { headers: { ...basic("skrivno geslo"), "x-forwarded-for": "10.9.9.9" } });
+  assert.equal(r.status, 401);
+  const f = await fetch(base + "/prijava", { method: "POST", redirect: "manual", headers: { "content-type": "application/x-www-form-urlencoded", "x-forwarded-for": "10.9.9.8" }, body: "geslo=skrivno+geslo" });
+  assert.equal(f.status, 429);
+}));
+
+test("ugibanje gesla: skupna meja velja tudi za različne naslove (cf-connecting-ip)", () => withServer(async (base) => {
+  const { GATE_FAILS_ALL, GATE_FAILS_IP } = await import("../server/gate.js");
+  const prijava = await fetch(base + "/api/x", { headers: basic("skrivno geslo") });
+  assert.equal(prijava.status, 200);
+  const piskotek = cookieOf(prijava);
+  for (let i = 0; i < GATE_FAILS_ALL; i++) {
+    await fetch(base + "/api/x", { headers: { ...basic("napacno"), "cf-connecting-ip": `198.51.100.${i % 250}` } });
+  }
+  assert.ok(GATE_FAILS_ALL / 250 < GATE_FAILS_IP, "noben posamezen naslov ni dosegel svoje meje");
+  const r = await fetch(base + "/api/x", { headers: { ...basic("skrivno geslo"), "cf-connecting-ip": "203.0.113.7" } });
+  assert.equal(r.status, 401);
+  // Kdor že ima piškotek, ostane prijavljen.
+  assert.equal((await fetch(base + "/api/x", { headers: { cookie: piskotek } })).status, 200);
+}));

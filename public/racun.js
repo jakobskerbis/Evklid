@@ -75,8 +75,11 @@ function upgradeBox(acc) {
   const up = acc.upgrade;
   if (!up?.options?.length || acc.parent.minor) return "";
   if (acc.parent.birth_missing) return `<div class="plan-upgrade"><p class="muted">${esc(t("birth.payMissing"))}</p></div>`;
-  return `<div class="plan-upgrade"><p><b>${esc(t("up.title"))}</b><br><span class="muted">${esc(t("up.text"))}</span></p>
-    <div class="form-actions">${up.options.map((o) => `<button type="button" class="secondary" data-upgrade="${esc(o.key)}">${esc(t("up.btn", { name: planName(o) }))} · ${money(o.amount, o.currency)} ${esc(t(o.interval === "year" ? "mob.perYear" : "mob.perMonth"))}</button>`).join("")}</div></div>`;
+  // K-13: nadgradnja takoj bremeni kartico, zato iste potrditve kot ob nakupu in geslo računa.
+  return `<form class="plan-upgrade" id="upgrade-form"><p><b>${esc(t("up.title"))}</b><br><span class="muted">${esc(t("up.text"))}</span></p>
+    ${consentFields()}
+    ${acc.parent.has_password === false ? "" : `<label>${esc(t("guest.loginPassword"))} <input name="password" type="password" maxlength="200" autocomplete="current-password" required></label>`}
+    <div class="form-actions">${up.options.map((o) => `<button type="submit" class="secondary" name="plan" value="${esc(o.key)}" data-upgrade="${esc(o.key)}">${esc(t("up.btn", { name: planName(o) }))} · ${money(o.amount, o.currency)} ${esc(t(o.interval === "year" ? "mob.perYear" : "mob.perMonth"))}</button>`).join("")}</div></form>`;
 }
 
 function plansPicker(acc) {
@@ -994,20 +997,23 @@ async function renderAccount() {
     }
   });
   // Nadgradnja: Stripe zaračuna razliko za preostanek obdobja, višja stopnja je odprta takoj.
-  document.querySelectorAll("[data-upgrade]").forEach((b) =>
-    b.addEventListener("click", async () => {
-      b.disabled = true;
-      try {
-        await api("/api/billing/upgrade", { method: "POST", body: { plan: b.dataset.upgrade } });
-        toast(t("up.done"));
-        await onReadyCb?.({ keepView: true });
-        renderAccount();
-      } catch (err) {
-        b.disabled = false;
-        toast(err.message);
-      }
-    }),
-  );
+  $("#upgrade-form")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = e.target;
+    const b = e.submitter?.dataset.upgrade ? e.submitter : null;
+    if (!b) return;
+    if (!consentsOk(f)) return showError(f, new Error(consentMessage(f, "payp.consentMissing")));
+    b.disabled = true;
+    try {
+      await api("/api/billing/upgrade", { method: "POST", body: { plan: b.dataset.upgrade, password: f.password?.value || "", ...consentBody() } });
+      toast(t("up.done"));
+      await onReadyCb?.({ keepView: true });
+      renderAccount();
+    } catch (err) {
+      b.disabled = false;
+      showError(f, err);
+    }
+  });
   // Nepotrjen e-naslov (#747): zaslon »Potrdi e-naslov« (Pošlji znova, Sem potrdil(a), Nazaj na učenje).
   $("#verify-open")?.addEventListener("click", async () => {
     setStatus(await api("/api/account/status"));
