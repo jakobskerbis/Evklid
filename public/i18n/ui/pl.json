@@ -4517,7 +4517,6 @@
   "pilot.n.few": "Za mało odpowiedzi, by je pokazać (co najmniej {n}).",
   "zb.fromPilot": "Za pomoc w pilotażu",
   "pn.quizTitle": "Sprawdzian wiedzy",
-  "pn.quizText": "Dwanaście krótkich zadań z materiału maturalnego (matematyka, poziom podstawowy). Możesz używać kalkulatora, chyba że zadanie mówi inaczej. Za 14 dni jeszcze raz, z podobnymi zadaniami i innymi liczbami, żeby zobaczyć, jakie robisz postępy. Nie ma oceny i nic się nie stanie, jeśli czegoś nie wiesz. Wynik zapisujemy, a administrator widzi tylko zbiorcze średnie, bez imion i nazwisk.",
   "pn.quizStart": "Zacznij sprawdzian",
   "pn.quizContinue": "Kontynuuj sprawdzian",
   "pn.quizPost": "Zacznij drugi sprawdzian",

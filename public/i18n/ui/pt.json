@@ -4454,7 +4454,6 @@
   "pilot.n.few": "Respostas a menos para mostrar (pelo menos {n}).",
   "zb.fromPilot": "Pela ajuda no piloto",
   "pn.quizTitle": "Teste de conhecimentos",
-  "pn.quizText": "Doze exercícios curtos da matéria da Matura (matemática, nível básico). Podes usar calculadora, exceto quando o exercício disser o contrário. Daqui a 14 dias, outra vez, com exercícios semelhantes e outros números, para ver quanto progrides. Não há nota e não faz mal se não souberes alguma coisa. Guardamos o resultado e o administrador só vê médias globais, sem nomes.",
   "pn.quizStart": "Começar o teste",
   "pn.quizContinue": "Continuar o teste",
   "pn.quizPost": "Começar o segundo teste",
