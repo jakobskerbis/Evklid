@@ -38,7 +38,7 @@ const NOTE_TEX = /\\(?:pmod|bmod|equiv|oplus|lor|vee)(?![a-zA-Z])|\\mathbb\s*\{?
 // Drug številski sistem, ostanki, ura ali logika kjerkoli v odgovoru (pregled A in B, 018af7ab6): »$1 + 1 = 10$« v
 // dvojiškem, »$3 + 4 = 2$« v $\mathbb{Z}_5$, »$22 + 5 = 3$ zjutraj«, »Dan v tednu: $6 + 3 = 2$«, »Logično ALI: $1 + 1 = 1$«.
 // Tak račun ne dobi nobene opombe brez modela (ne trdne ne blage).
-const OTHER_SYSTEM_WORDS = /(?<!\p{L})(?:mod|modul\p{L}*|dvojišk\p{L}*|binar\p{L}*|šestnajst\p{L}*|osmišk\p{L}*|boole\p{L}*|logičn\p{L}*|binary|modulo|hex\p{L}*|na uri|ura (?:je|bo|kaže)|uri kaže|zjutraj|zvečer|ponoči|popoldn\p{L}*|dopoldn\p{L}*|opoldn\p{L}*|polnoč\p{L}*|dan v tednu|dnevi v tednu|dni v tednu|clock|o'clock|minut\p{L}*|ob\s+\d+)(?!\p{L})|(?<![\p{L}/])h(?![\p{L}/])/iu;
+const OTHER_SYSTEM_WORDS = /(?<!\p{L})(?:mod|modul\p{L}*|dvojišk\p{L}*|binar\p{L}*|šestnajst\p{L}*|osmišk\p{L}*|boole\p{L}*|logičn\p{L}*|binary|modulo|hex\p{L}*|na uri|ura (?:je|bo|kaže)|uri kaže|zjutraj|zvečer|ponoči|popoldn\p{L}*|dopoldn\p{L}*|opoldn\p{L}*|polnoč\p{L}*|dan v tednu|dnevi v tednu|dni v tednu|clock|o'clock|hour\p{L}*|a\.m|p\.m|minut\p{L}*|ob\s+\d+|ur[aeio]|urah)(?!\p{L})|(?<![\p{L}/])h(?![\p{L}/])/iu;
 const OTHER_SYSTEM_TEX = /\\(?:pmod|bmod|mod|equiv|oplus|lor|vee|land|wedge)(?![a-zA-Z])|\\mathbb\s*\{?\s*Z|(?<![\p{L}\\])Z_\{?\d/u;
 const LOGIC_UPPER = /(?<!\p{L})(?:ALI|OR|XOR|AND|NOT)(?!\p{L})/u;
 // besede in »h« (ura) le zunaj formul: »$h = \sqrt{16}$« je višina

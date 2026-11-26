@@ -1527,7 +1527,7 @@ export function createApp(store, opts = {}) {
       // končna vrednost. { wrong, finding, note } ali null, ko koda ne more soditi (tedaj sodbo pregleda model).
       // »seen«: prejšnja sporočila (števila, ki jih učenec že vidi; pregled B, 018af7ab6)
       const seenText = claimAsked ? fullHistory.slice(0, -1).map(textOf).join("\n").slice(-4000) : "";
-      const codeVerdict = claimAsked ? stepVerdict(text, { pre: firstPre, prevTutor: prevTutorText, seen: seenText }) : null;
+      const codeVerdict = claimAsked ? stepVerdict(text, { pre: firstPre, prevTutor: prevTutorText, seen: seenText, turns: fullHistory.length - 1 }) : null;
       // Vprašanje-predlog (»x = 5?«, AUDIT-059) je trditev le, ko o njem sodi koda; sicer kot na main (vprašanje): brez
       // plačanega pregleda sodbe in brez zadrževanja odgovora (pregled prevzema 2 in 5).
       const claim = claimAsked && (!/\?\s*$/.test(text) || !!codeVerdict);

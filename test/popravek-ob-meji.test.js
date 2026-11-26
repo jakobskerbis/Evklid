@@ -461,3 +461,32 @@ test("pregled A (4cf3be1fb): spremenjena naloga, beseda za formulo in hipoteza i
   const kept = await run({ answers: [R`Kaj dobiš za $x$?`, "Da, pravilno!"], n: 2, msgs: ["Reši 2x + 3 = 11", "x = 5"] });
   has(kept, R`*(Opomba: $x = 5$ ni rešitev enačbe $2x + 3 = 11$ (rešitev: $x = 4$). Preveri še sam.)*`);
 });
+
+test("pregled B (b984798b3): učenčev račun na uri ali s tisočicami: ponovni odgovor kot main, ob meji brez opombe", async () => {
+  for (const [prev, q] of [["Koliko bo ura čez 2 uri, če je zdaj 23?", "23 + 2 = 1"], ["Kaj misliš?", "8.45 + 0.30 = 9.15"], ["Kaj misliš?", "1,000 + 1 = 1,001"]]) {
+    const msgs = ["Pomagaj mi z računi.", q];
+    const cap = await run({ answers: [prev, "Da, pravilno!"], n: 2, msgs });
+    assert.equal(cap.calls.filter((c) => c === "chat").length, 2, q);
+    none(cap);
+    none(await run({ answers: [prev, "Da, pravilno!"], n: null, chatFail: 3, msgs }));
+  }
+});
+
+test("pregled A (b984798b3): golo število z vrednostjo naloge brez sodbe; spremenjena naloga v pogovoru brez opombe", async () => {
+  for (const [task, prev, q] of [[R`Izračunaj $2^{10}$.`, R`Koliko je $2^5$?`, "1024?"], [R`Izračunaj $3^4$.`, R`Koliko je $3^2$?`, "81?"]]) {
+    for (const n of [2, null]) {
+      const r = await run({ answers: [prev, "Da!", "Ne."], n, msgs: [task, q] });
+      assert.equal(r.calls.filter((c) => c === "chat").length, 2, `${q}: brez ponovnega odgovora`);
+      assert.match(r.display, /^Da!/);
+      none(r);
+    }
+  }
+  const T = R`Reši enačbo $2x + 3 = 11$.`;
+  none(await run({ answers: ["Razumem. Kaj dobiš za x?", "Aha, hvala za popravek. Kaj dobiš za x?", "Odlično!"], n: 3, msgs: [T, "V zvezku imam desno 13, ne 11.", "x = 5"] }));
+  none(await run({ answers: ["Kaj dobiš za x?", "Odlično!"], n: 2, msgs: [T, "V mojem zvezku je desno 13, torej x = 5"] }));
+  // ura in tisočice v učenčevem računu: ponovni odgovor kot main, ob meji brez opombe
+  none(await run({ answers: ["Koliko je ura po 30 minutah?", "Da!"], n: 2, msgs: ["Ura je 8.45. Koliko je ura čez 30 minut?", "je 8.45 + 0.30 = 9.15?"] }));
+  none(await run({ answers: ["Najprej seštej.", "Da!"], n: 2, msgs: ["Koliko je tisoč plus ena?", "je 1,000 + 1 = 1,001?"] }));
+  // primer ChatGPT ostane
+  has(await run({ answers: ["Kaj dobiš za x?", "Da, pravilno!"], n: 2, msgs: [T, "x = 5"] }), R`*(Opomba: $x = 5$ ni rešitev enačbe $2x + 3 = 11$ (rešitev: $x = 4$). Preveri še sam.)*`);
+});

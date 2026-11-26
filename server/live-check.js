@@ -551,7 +551,7 @@ const calcValue = (m) => {
 // Rezultat besedilne naloge (pregled A, bd0af5dac): deljenje, zaokroženo navzgor ali navzdol (»$25 : 6 = 5$«
 // avtobusov), in pretvorba enot, kjer je navedena vrednost prava, pomnožena ali deljena s potenco 10, 60, 24, 3600
 // ali 1440 (»$3 \cdot 500 = 1{,}5$« kg). Ugotovitev ostane (popravek kot main), opombe brez modela pa ni.
-function wordProblemResult(m) {
+export function wordProblemResult(m) {
   const reversed = calcValue(m) !== m.lv;
   const [side, exact, stated] = reversed ? [m.rhs, m.rv, m.lv] : [m.lhs, m.lv, m.rv];
   if (typeof exact !== "number" || typeof stated !== "number" || !Number.isFinite(exact) || !Number.isFinite(stated)) return false;
@@ -586,7 +586,15 @@ function calcNote(answer, lines, m, { hard = true } = {}) {
 const ONLY_PUNCT = /^[\s.!?:;,)\]]*(?:(?:prosim|please)[\s.!?]*)?$/iu;
 // Pred zapisom naloge le glagol naloge (pregled A, f3d3893c3: »V knjigi piše trinajst, ne enajst: $2x + 3 = 11$.«,
 // »Desni strani prištej dva. Reši …« ne).
-const TASK_LEAD = /^[\s,:;.!]*(?:(?:prosim|please)[\s,:]*)?(?:(?:reši(?:te)?|izračunaj(?:te)?|odvajaj(?:te)?|poenostavi(?:te)?|določi(?:te)?|poišči(?:te)?|koliko\s+je|solve|calculate|compute|differentiate|simplify|find|what\s+is|what's)(?:\s+(?:prosim|please|enačbo|enačba|nalogo|funkcijo|izraz|sistem|odvod|the|equation|expression|function|derivative|of|za\s+\p{L}|for\s+\p{L}))*)?[\s,:;.]*$/iu;
+// Ločila na robovih odreže zanka (regex z ločili na obeh straneh je bil kvadraten: 60 000 presledkov 2 s).
+function taskLead(s) {
+  let i = 0;
+  let j = s.length;
+  while (i < j && /[\s,:;.!]/.test(s[i])) i++;
+  while (j > i && /[\s,:;.]/.test(s[j - 1])) j--;
+  return TASK_LEAD.test(s.slice(i, j));
+}
+const TASK_LEAD = /^(?:(?:prosim|please)[\s,:]*)?(?:(?:reši(?:te)?|izračunaj(?:te)?|odvajaj(?:te)?|poenostavi(?:te)?|določi(?:te)?|poišči(?:te)?|koliko\s+je|solve|calculate|compute|differentiate|simplify|find|what\s+is|what's)(?:\s+(?:prosim|please|enačbo|enačba|nalogo|funkcijo|izraz|sistem|odvod|the|equation|expression|function|derivative|of|za\s+\p{L}|for\s+\p{L}))*)?$/iu;
 // začetek zapisa brez »$« (»Reši x + 3 = 5«: »x + « je del zapisa): odreže presledke, operatorje in posamične črke
 function withoutMathTail(s) {
   let i = s.length;
@@ -606,14 +614,14 @@ function taskModified(question, pre) {
   const segs = all.filter((m) => /[\d=]/.test(m[0]));
   if (segs.length > 1) return true;
   if (all.length) {
-    if (!TASK_LEAD.test(q.slice(0, all[0].index))) return true;
+    if (!taskLead(q.slice(0, all[0].index))) return true;
     const last = all.at(-1);
     return /\d/.test(q.replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, " ")) || !ONLY_PUNCT.test(q.slice(last.index + last[0].length));
   }
   // brez »$«: za zadnjo števko (zapis naloge) le ločila
   if (!q.trim()) return false; // klicatelj ni podal sporočila (le pre)
   const first = q.search(/\d/);
-  if (first >= 0 && !TASK_LEAD.test(withoutMathTail(q.slice(0, first)))) return true;
+  if (first >= 0 && !taskLead(withoutMathTail(q.slice(0, first)))) return true;
   const tail = q.match(/\d[^\d]*$/);
   return !tail || !ONLY_PUNCT.test(tail[0].slice(1).replace(/^(?:\s*(?:\p{L}(?!\p{L})|[-+*/^()=·×:{}\[\]]))*/u, ""));
 }

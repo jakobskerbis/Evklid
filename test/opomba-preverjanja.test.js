@@ -874,3 +874,115 @@ test("pregled A (f3d3893c3): sprememba pred zapisom naloge izklopi opombo", () =
     assert.ok(f.issue && f.fact && !f.soft, `${q} → ${a}`);
   }
 });
+
+// Pregled B (b984798b3): učenčev račun v drugem sistemu (ura, ostanki) ali z dvoumnim zapisom števila (ura s piko,
+// angleška vejica za tisočice) ali kot rezultat besedilne naloge: sodba kot main, opombe ob prezrti sodbi pa ni.
+export const B_STEP_CALC_QUIET = [
+  ["Koliko bo ura čez 2 uri, če je zdaj 23?", "23 + 2 = 1", "Da, pravilno!"],
+  ["Ob kateri uri prispe vlak, ki odpelje ob 8.45 in vozi 30 minut?", "8.45 + 0.30 = 9.15", "Da, pravilno!"],
+  ["Kaj misliš?", "8.45 + 0.30 = 9.15", "Da, pravilno!"],
+  ["Kaj misliš?", "1,000 + 1 = 1,001", "Yes, correct!"],
+  ["Ura je 23. Koliko bo ura čez 2 uri?", "je 23 + 2 = 1?", "Da, pravilno!"],
+  ["Kaj misliš?", "25 : 6 = 5", "Da, pravilno!"],
+  ["Kaj misliš?", "3 · 500 = 1,5", "Da, pravilno!"],
+];
+test("pregled B (b984798b3): učenčev račun na uri, s tisočicami ali kot rezultat besedilne naloge brez opombe", () => {
+  for (const [prev, q, a] of B_STEP_CALC_QUIET) {
+    const v = stepVerdict(q, { pre: null, prevTutor: prev });
+    assert.equal(v?.wrong, true, `${q}: sodba kot main`);
+    assert.equal(verdictIgnored(a, v), true, q);
+    assert.equal(verdictNoteSafe(a, v, { prevTutor: prev }), false, q);
+  }
+  // pravi napačen račun ostane z opombo
+  for (const [prev, q, a] of [["Kaj misliš?", "je 7 · 8 = 54?", "Da, tako je."], [R`Koliko je $7 \cdot 8$?`, "54?", "Da!"], ["Kaj misliš?", "7 · 8 = 54", "Da, pravilno!"]]) {
+    const v = stepVerdict(q, { pre: null, prevTutor: prev });
+    assert.equal(verdictNoteSafe(a, v, { prevTutor: prev }), true, q);
+  }
+});
+
+test("pregled B (b984798b3): uvod pred zapisom naloge v linearnem času", () => {
+  const pre = presolve("Odvajaj $x^3$.", { first: true });
+  for (const q of [" ".repeat(60000) + "x $x^3$.", ",".repeat(60000) + "a $x^3$", " ".repeat(60000) + "x 3", ", ".repeat(30000) + "Reši $x^3$"]) {
+    const s = performance.now();
+    codeFindings("Rezultat: $f'(x) = 2x$", pre, q);
+    assert.ok(performance.now() - s < 300, q.slice(-10));
+  }
+});
+
+// Pregled A (b984798b3): golo število z vrednostjo naloge ali vidnega izraza, račun z drugim pomenom in pravilo A.
+test("pregled A (b984798b3): golo število z vrednostjo naloge (brez presolve) ali vidnega izraza ni napačno", () => {
+  for (const [task, prev, q] of [
+    [R`Izračunaj $2^{10}$.`, R`Koliko je $2^5$?`, "1024?"],
+    [R`Izračunaj $3^4$.`, R`Koliko je $3^2$?`, "81?"],
+    [R`Izračunaj $2^3 \cdot 2^2$.`, R`Koliko je $2^3$?`, "32?"],
+    [R`Izračunaj $5 \cdot 4 \cdot 3$.`, R`Koliko je $5 \cdot 4$?`, "60?"],
+    [R`Izračunaj $100 - 7 \cdot 8$.`, R`Koliko je $7 \cdot 8$?`, "44?"],
+  ]) {
+    const v = stepVerdict(q, { pre: presolve(task, { first: true, narrow: false }), prevTutor: prev, seen: task + "\n" + prev });
+    assert.ok(!v?.wrong, `${task} ${prev} ${q}`);
+  }
+  // napačno golo število ostane napačno; sodba o inštruktorjevem računu je »explicit« le, ko je ta edini izraz poleg naloge
+  const T78 = R`Izračunaj $7 \cdot 8 + 2$.`;
+  const P = presolve(T78, { first: true, narrow: false });
+  const v = stepVerdict("54?", { pre: P, prevTutor: R`Koliko je $7 \cdot 8$?`, seen: T78 });
+  assert.equal(v?.wrong, true);
+  assert.equal(v.explicit, true);
+  const w = stepVerdict("54?", { pre: P, prevTutor: R`Koliko je $7 \cdot 8$?`, seen: `${T78}\nNajprej $3 + 4$, potem $10 - 1$.` });
+  assert.equal(w?.wrong, true);
+  assert.ok(!w.explicit);
+  assert.equal(verdictNoteSafe("Da!", w, { prevTutor: R`Koliko je $7 \cdot 8$?` }), false);
+});
+
+export const A_EXPLICIT_QUIET = [
+  ["je 8.45 + 0.30 = 9.15?", "Da!"],
+  ["je 12.30 + 0.45 = 13.15?", "Da!"],
+  ["je 1,000 + 1 = 1,001?", "Da!"],
+  ["je 22 + 5 = 3?", "Da!"],
+  ["je 10 : 3 = 3?", "Da!"],
+  ["je 25 : 6 = 5?", "Tako je!"],
+  ["je 3 · 500 = 1,5?", "Da!"],
+  ["je 1 + 1 = 10?", "Da!"],
+  ["je 7 · 8 = 54?", "Da, ob treh zjutraj."],
+  ["je 7 · 8 = 54?", "Da, v dvojiškem sistemu."],
+  ["je 7 · 8 = 54?", "Da, 54 in ostanek 2."],
+  ["je 350 + 20 = 10?", "Da, 10°."],
+];
+test("pregled A (b984798b3): učenčev račun z drugim pomenom ali po odgovoru z drugim sistemom brez opombe", () => {
+  const T1 = R`Izračunaj $7 \cdot 8 + 2$.`;
+  const pre = presolve(T1, { first: true, narrow: false });
+  for (const [q, a] of A_EXPLICIT_QUIET) {
+    const v = stepVerdict(q, { pre, prevTutor: "Kaj dobiš?", seen: T1 });
+    assert.equal(!!v && verdictNoteSafe(a, v, { prevTutor: "Kaj dobiš?" }), false, `${q} → ${a}`);
+  }
+  for (const [q, a] of [["je 7 · 8 = 54?", "Da!"], ["7 · 8 = 54, ne?", "Tako je!"], ["je 10 - 3 = 5?", "Da!"]]) {
+    const v = stepVerdict(q, { pre, prevTutor: "Kaj dobiš?", seen: T1 });
+    assert.equal(verdictNoteSafe(a, v, { prevTutor: "Kaj dobiš?" }), true, q);
+  }
+});
+
+export const A_RULE_A = [
+  ["Aha, hvala za popravek. Kaj dobiš za x?", "x = 5"],
+  ["Razumem, v zvezku imaš drugačno enačbo. Kaj dobiš za x?", "x = 5"],
+  ["Super, potem rešuj svojo različico. Koliko je x?", "x = 5"],
+  ["Kaj dobiš za x?", "V mojem zvezku je desno 13, torej x = 5"],
+  ["Kaj dobiš za x?", "Pri desni strani 13 je x = 5"],
+  ["Kaj dobiš za x?", "Pri desni strani trinajst dobim x = 5"],
+  ["Kaj dobiš za x, če je desna stran večja za par?", "x = 5"],
+  ["Kaj dobiš za x v enačbi iz prejšnje naloge?", "x = 7"],
+  ["Kaj dobiš za x pri obrnjeni enačbi?", "x = -4"],
+  ["In za x pri lažji različici?", "x = 2"],
+];
+test("pregled A (b984798b3): opomba o vrednosti le pri nalogi, enem navadnem vprašanju in sami trditvi", () => {
+  const E = R`Reši enačbo $2x + 3 = 11$.`;
+  const pre = presolve(E, { first: true, narrow: false });
+  const at = (prev, q, a, turns) => {
+    const v = stepVerdict(q, { pre, prevTutor: prev, seen: E + "\n" + prev, turns });
+    return !!v && verdictNoteSafe(a, v, { prevTutor: prev });
+  };
+  for (const [prev, q] of A_RULE_A) assert.equal(at(prev, q, "Odlično!", 2), false, `${prev} / ${q}`);
+  // pogovor daljši od naloge in enega vprašanja (učenec je vmes popravil nalogo)
+  assert.equal(at("Kaj dobiš za x?", "x = 5", "Odlično!", 4), false);
+  // primer ChatGPT
+  for (const q of ["x = 5", "x = 5?", "mislim x = 5", "Torej x = 5."]) assert.equal(at("Kaj dobiš za x?", q, "Da, pravilno!", 2), true, q);
+  assert.equal(at("Kaj narediš najprej?", "x = 5", "Da, pravilno!", 2), true);
+});
