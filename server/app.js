@@ -73,7 +73,8 @@ import { createNameStream, withName, maskHistory, nameMasker, choiceAsToken, pup
 import { openMessage } from "./db.js";
 import { verifyAnswer, codeCheck, VERIFY_MODELS, VERIFY_DAILY_USD } from "./verify.js";
 import { checkAnswerClaims, hasClaimBlock, noteClaimStats } from "./racun.js";
-import { continueCut, cutNote, uiNote } from "./odrezan-odgovor.js";
+import { continueCut, cutNote } from "./odrezan-odgovor.js";
+import { checkNoteFor } from "./opomba-preverjanja.js";
 import { replyReserveUsd, checkReserveUsd, summaryReserveUsd, callMaxUsd, imageCallReserveUsd, FALLBACK_MODES, fitLongPrompt } from "./meje-ai.js";
 import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, fixModeFor, insertFix, isClaim, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask, hasClaims, claimReviewFor, reviewCalls, reviewBlock, reviewPoolCaps, reviewKindFor, noteReviewSkip, REVIEW_KINDS, LIVE_REVIEW_POOL_RESERVE_USD } from "./live-check.js";
 import { stepVerdict, verdictIgnored } from "./sodba-koraka.js";
@@ -1613,8 +1614,11 @@ export function createApp(store, opts = {}) {
       let result = first;
       let { rest } = filter.end();
       let verdictChecked = false;
-      // Opomba brez modela (AUDIT-060, pregled prevzema 5 in 6): gol rezultat je napačen, popravek pa ni mogoč (meja
-      // porabe, napaka klica). Kratka in previdna; gumbi in kartice odgovora ostanejo.
+      // Opomba brez modela (AUDIT-060, AUDIT-066, server/opomba-preverjanja.js): koda ve, da je v odgovoru napaka ali da
+      // je inštruktor prezrl sodbo kode, popravka ali ponovnega odgovora pa ni (meja porabe, napaka klica; pri blagi
+      // ugotovitvi tudi »OK« modela). Konkretna in vedno resnična; gumbi in kartice odgovora ostanejo, besedilo odgovora ne
+      // spremeni. stepNote: sodba koraka, checkNote: preverjanje odgovora.
+      let stepNote = "";
       let checkNote = "";
       const verdictReserve = checkReserveUsd(MODEL_MID, `${prevTutorText}${text}${result.text || ""}`);
       const judgeable = claim && result.text && result.stopReason !== "refusal" && !result.toolCalls && !settingsTools.state.used;
@@ -1622,6 +1626,7 @@ export function createApp(store, opts = {}) {
       // pregled takoj ponovni odgovor z ugotovitvijo kode (Gemini 18. 11.).
       const codeIgnored = judgeable && codeVerdict && verdictIgnored(stripMeta(result.text), codeVerdict);
       const modelReview = judgeable && !codeVerdict && liveReviewOn() && needsVerdictReview({ answer: stripMeta(result.text), lite, spentToday: () => usage.kindToday("sodba") }) && hold.take(verdictReserve);
+      let firstHeld = null; // zadržani prvi odgovor, dokler ponovni odgovor ne uspe
       if (codeIgnored || modelReview) {
         verdictChecked = !!modelReview;
         phase(true); // učenec vidi »Preverjam odgovor …« (public/app.js), dokler sodba ni preverjena
@@ -1633,11 +1638,14 @@ export function createApp(store, opts = {}) {
             hold.settle(verdictReserve);
             reason = rv.reason;
           }
-          // Ponovni odgovor samo, če je zanj prostor pod mejo (sicer ostane prvi odgovor, kot na main: brez opombe, ker
-          // verdictIgnored lahko napačno bere pravilen odgovor, pregled prevzema 6).
-          if (reason && hold.take(mainReserve)) {
+          // Ponovni odgovor samo, če je zanj prostor pod mejo. Sicer ostane prvi odgovor, ob sodbi kode s konkretno
+          // opombo (»$x = 5$ ni rešitev enačbe …«), ki je resnična tudi, če je verdictIgnored odgovor prebral narobe.
+          if (reason && !hold.take(mainReserve)) {
+            if (codeIgnored) stepNote = checkNoteFor(codeVerdict.fact, jezik, { verdict: true });
+          } else if (reason) {
             // Napačna sodba: isti model odgovori še enkrat z ugotovitvijo preverjevalca v skriti opombi.
             const again2 = createStreamFilter({ language: jezik });
+            firstHeld = [...held];
             held.length = 0;
             const r2Args = {
               system,
@@ -1675,6 +1683,9 @@ export function createApp(store, opts = {}) {
           if (controller.signal.aborted) throw e; // delna poraba (e.usage) se zapiše v zunanjem catch
           if (e?.usage) extraCost += usage.log(student.id, e.model || answerModelOf(mode, deep), e.usage, "prekinjeno");
           console.warn(`[evklid] pregled sodbe ni uspel: ${e?.message || e}`);
+          // Ponovni odgovor ni uspel: učenec vidi prvi odgovor (ne delnega ponovnega), ob sodbi kode z opombo.
+          if (firstHeld) held.splice(0, held.length, ...firstHeld);
+          if (codeIgnored) stepNote = checkNoteFor(codeVerdict.fact, jezik, { verdict: true });
         }
       }
       phase(false); // preverjanje sodbe je končano: napis »Preverjam odgovor …« izgine
@@ -1684,6 +1695,10 @@ export function createApp(store, opts = {}) {
       // vidna opomba, učenec napiše »nadaljuj« (P1-2). Ne gre v predpomnilnik (stopReason ni end_turn).
       const odrezano = !cached && result.stopReason === "max_tokens" ? cutNote(jezik) : "";
       if (odrezano) send("delta", { text: odrezano });
+      if (stepNote) {
+        send("delta", { text: stepNote });
+        noteReviewSkip(store.db, jeOs(student.settings) ? "OS" : jeSs(student.settings) ? "SS" : "FAKS", "meja-sodba");
+      }
 
       // Preverjanje odgovora (server/live-check.js): koda vedno, model samo, kjer je potrebno.
       // Ob napaki en kratek »Popravek:«, ki se pripne odgovoru (prikaz in zgodovina).
@@ -1694,17 +1709,25 @@ export function createApp(store, opts = {}) {
         const plain = stripMeta(result.text);
         const found = codeFindings(plain, pre, text);
         // AUDIT-066: napačen račun v vrstici s »če«/»ali«/»bi«/»?« je le blaga ugotovitev: pregled z modelom in bloki
-        // RACUN tečejo kot na main, popravek (en klic, iste meje) jo dobi le, če ni druge napake; brez opombe.
+        // RACUN tečejo kot na main, popravek (en klic, iste meje) jo dobi le, če ni druge napake; brez popravka (»OK«,
+        // meja, napaka klica) blaga opomba »Če je naveden kot primer napake, je odgovor v redu«.
         const softIssue = found.soft ? found.issue : null;
         let issue = found.soft ? null : found.issue;
-        const sure = !!(issue && found.sure); // zanesljiv vir le gol rezultat (AUDIT-060, pregled prevzema 6)
+        // Trdna ugotovitev kode (račun, odvod, gol rezultat, vrednost neznanke; spodaj vidna rešitev in trditev iz bloka
+        // RACUN) dobi opombo, ko popravka ni. Kemija in °C (hevristiki) in ugotovitev modela za pregled ne.
+        let noteFact = issue ? found.fact || null : null;
+        let noteable = !!noteFact;
         // Skrit »račun za kodo« (server/racun.js): vsako računsko trditev preveri SymPy ali urejevalnik enačb.
         const hadBlock = hasClaimBlock(result.text);
         let claimRes = null;
         if (!issue && hadBlock && !controller.signal.aborted) {
           phase(true);
           claimRes = await checkAnswerClaims(result.text);
-          if (claimRes.issue) issue = claimRes.issue;
+          if (claimRes.issue) {
+            issue = claimRes.issue;
+            noteFact = claimRes.fact || null; // brez »fact« (trditev iz bloka) splošna opomba
+            noteable = true;
+          }
           claimFailed = claimRes.failed.length > 0;
         }
         noteClaimStats(store.db, { hadBlock, res: claimRes });
@@ -1749,7 +1772,8 @@ export function createApp(store, opts = {}) {
         }
         // Popravek (server/live-check.js correction): način popravka (pri hitrem modelu »think«, 8000 izhodnih žetonov),
         // rezerva po njegovih parametrih.
-        if (!issue && softIssue) issue = softIssue;
+        const usingSoft = !issue && !!softIssue;
+        if (usingSoft) issue = softIssue;
         const fixMode = fixModeFor(mode);
         const fixReserve = callMaxUsd(modeParams(fixMode).model, Buffer.byteLength(plain + (issue || ""), "utf8") + 3000, modeParams(fixMode).max_tokens);
         let fixTried = false; // model popravka je odgovoril (tudi z »OK«: napako je zavrnil)
@@ -1769,12 +1793,17 @@ export function createApp(store, opts = {}) {
             if (!controller.signal.aborted) console.warn(`[evklid] popravek ni uspel: ${e?.message || e}`);
           }
         }
-        // Popravka ni bilo (meja porabe ali napaka klica): pri golem rezultatu le previdna opomba brez modela. Nikoli pri
-        // računih v besedilu, odvodu, vrednostih neznanke, vidni rešitvi ali ugotovitvi modela za pregled.
-        if (issue && sure && !fix && !fixTried && liveFixOn() && !controller.signal.aborted) {
-          checkNote = uiNote("chat.checkNote", jezik);
-          send("delta", { text: checkNote });
-          noteReviewSkip(store.db, stopnja, "meja-popravek");
+        // Popravka ni bilo (meja porabe ali napaka klica): pri trdni ugotovitvi kode konkretna opomba. »OK« modela pri
+        // trdni ugotovitvi pomeni, da napake ni (kot main: brez opombe).
+        if (liveFixOn() && !controller.signal.aborted) {
+          if (noteable && !usingSoft && !fix && !fixTried) {
+            checkNote = checkNoteFor(noteFact, jezik);
+            noteReviewSkip(store.db, stopnja, "meja-popravek");
+          }
+          // Blaga ugotovitev brez popravka zanjo (»OK«, meja, napaka klica): blaga opomba, odgovor ostane.
+          if (softIssue && !(usingSoft && fix)) checkNote += checkNoteFor(found.fact, jezik, { soft: true });
+          if (checkNote && checkNote === stepNote) checkNote = "";
+          if (checkNote) send("delta", { text: checkNote });
         }
       }
       mestoAi?.sprosti(); // klici modela za ta odgovor so končani (preverjanje v ozadju ne drži mesta)
@@ -1784,12 +1813,12 @@ export function createApp(store, opts = {}) {
       // Fotografija, ki ni učno gradivo (obraz, oseba, osebni dokument …): inštruktor jo zavrne z flag=photo,
       // slika pa se takoj odstrani iz shranjenega sporočila (j, 2026-10-30).
       if (image && meta?.flag === "photo") store.setMessageContent(userMsgId, withoutImages(userContent, PHOTO_REJECTED_TEXT), 2);
-      let display = (note || "") + replyText(result.text, { language: jezik }) + odrezano + fix + checkNote;
+      let display = (note || "") + replyText(result.text, { language: jezik }) + odrezano + stepNote + fix + checkNote;
       // V zgodovino shranimo samo besedilo (brez blokov razmišljanja): manj žetonov
       // pri naslednjih klicih in nobenih težav ob krajšanju zgodovine.
       // Popravek preverjanja zamenja konec odgovora: gumbi z izbirami ne veljajo več (ne ob ponovnem odprtju).
       let content = [{ type: "text", text: (fix ? insertFix(stripChoices(result.text), fix) : result.text) || "…" }];
-      if (checkNote) content[0].text = insertFix(content[0].text, checkNote); // opomba ne odstrani gumbov in kartic
+      if (stepNote || checkNote) content[0].text = insertFix(content[0].text, stepNote + checkNote); // opomba ne odstrani gumbov in kartic
       // Tudi zgodovina za model brez »s osnovo« in oznak (sicer jih model iz nje ponavlja); strojni bloki ostanejo.
       content[0].text = polishReply(content[0].text, { language: jezik });
       if (odrezano) content[0].text += odrezano; // model ob »nadaljuj« ve, da je odgovor odrezan
@@ -1818,7 +1847,7 @@ export function createApp(store, opts = {}) {
       // v stiski (j 18. 11. 2026, pregled #846): ne ob flag=distress, ne ob zadetku lokalnega zaznavalnika ali pregleda B
       // (tudi poslanem oknu »nujno«). Na pregled B počakamo kot spodaj (največ do NUJNO_ROK_MS od začetka).
       const stiska = meta?.flag === "distress" || !!vrstaLokalno || nujnoPoslano || !!(await pocakajNujno());
-      if (key && !cached && !fix && !checkNote && !claimFailed && !result.toolCalls && !settingsTools.state.used && result.stopReason === "end_turn" && result.text && !stiska) {
+      if (key && !cached && !fix && !checkNote && !stepNote && !claimFailed && !result.toolCalls && !settingsTools.state.used && result.stopReason === "end_turn" && result.text && !stiska) {
         // Drugim učencem gre odgovor šele po trojnem preverjanju (koda + dva AI pregleda, server/verify.js).
         // null: ime učenca je ostalo v sklonjeni obliki (»Jakobu«), zato se odgovor ne shrani za druge (P3).
         // Model imena ne pozna več (oznaka {{IME}}): ime v odgovoru je beseda iz naloge (»Bor ima 3 elektrone«) ali

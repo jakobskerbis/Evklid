@@ -479,7 +479,8 @@ function checkChain(tex, pct, loose, colon = true) {
       const r = compare(prev, cur, parts[k - 1] !== "=", loose, afterData, chainUnits);
       afterData = r === "data";
       if (r !== "skip" && r !== "data") checked++;
-      if (typeof r === "number") mismatches.push({ left: fmt(prev.value), right: fmt(cur.value), rel: r });
+      // lhs, op, rhs, lv, units: za opombo brez modela v sprotnem preverjanju (AUDIT-060, »$7 \cdot 8 = 54$ ne drži«)
+      if (typeof r === "number") mismatches.push({ left: fmt(prev.value), right: fmt(cur.value), rel: r, lhs: parts[k - 2].trim(), op: parts[k - 1], rhs: parts[k].trim(), lv: prev.value, rv: cur.value, units: !!(prev.units?.length || cur.units?.length) });
     }
     prev = cur;
   }

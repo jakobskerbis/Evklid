@@ -20,7 +20,7 @@ import { verifyAi } from "../public/scan/verify.js";
 import { checkArithmetic } from "./lesson-math.js";
 import { askModel, checkerUser, SYSTEM as CHECKER_SYSTEM } from "./verify.js";
 import { MODEL_MID, addUsage } from "./claude.js";
-import { SKIP_LINE, notClaimAt, TEX_SHORT, EXERCISE_RE, hasExercise } from "./besedilo-trditev.js";
+import { SKIP_LINE, notClaimAt, TEX_SHORT, EXERCISE_RE, hasExercise, calcFact, plainToTex, numTex } from "./besedilo-trditev.js";
 export { SKIP_LINE, notClaimAt, TEX_SHORT, hasExercise };
 
 export const liveCheckOn = () => process.env.EVKLID_LIVE_CHECK !== "0";
@@ -279,12 +279,14 @@ function valueIssue(answer, p) {
     const sol = vars.map((v) => `${v} = ${byVar.get(v)}`).join("; ");
     const sols = solverValues(p.answerTex);
     const rounded = sols.length && [...stated.values()].every((s) => nearSolver(s, sols));
-    return !rounded && verifyAi(p.problem, { kind: "system", solutions: [sol] }).reason === "wrong" ? { checked: 1, issue: `the answer gives ${sol} for the system ${p.problem}, but the correct solution is ${p.answer}` } : { checked: 1 };
+    return !rounded && verifyAi(p.problem, { kind: "system", solutions: [sol] }).reason === "wrong"
+      ? { checked: 1, issue: `the answer gives ${sol} for the system ${p.problem}, but the correct solution is ${p.answer}`, fact: { kind: "value", sys: true, wrong: plainToTex(sol.replace(/; /g, ",\\; ")), eq: p.problemTex, right: p.answerTex } }
+      : { checked: 1 };
   }
   const sols = solverValues(p.answerTex);
   for (const s of stated.values()) {
     const r = verifyAi(p.problem, { kind: "equation", variable: s.v, solutions: [s.val] });
-    if (r.reason === "wrong" && !(sols.length && nearSolver(s, sols))) return { checked: 1, issue: `the answer gives ${s.v} = ${s.val} for the equation ${p.problem}, but the correct solution is ${p.answer}` };
+    if (r.reason === "wrong" && !(sols.length && nearSolver(s, sols))) return { checked: 1, issue: `the answer gives ${s.v} = ${s.val} for the equation ${p.problem}, but the correct solution is ${p.answer}`, fact: { kind: "value", wrong: plainToTex(`${s.v} = ${s.val}`), eq: p.problemTex, right: p.answerTex } };
   }
   return { checked: 1 };
 }
@@ -404,7 +406,7 @@ function derivativeIssue(answer, p) {
   if (pieces.length > 50 || pieces.some((x) => judge(x) === "match")) return { checked: 1, issue: null };
   const last = found.at(-1);
   if (last.rhs.map(judge).some((v) => v === null)) return { checked: 0, issue: null };
-  return { checked: 1, issue: `the derivative $${last.tex}$ is wrong: the derivative of $${p.problemTex}$ is $${p.answerTex}$` };
+  return { checked: 1, issue: `the derivative $${last.tex}$ is wrong: the derivative of $${p.problemTex}$ is $${p.answerTex}$`, fact: { kind: "deriv", wrong: last.tex, fn: p.problemTex, right: p.answerTex } };
 }
 // Desna stran zapisa funkcije: presledki strnjeni, dolga (> 300 znakov) brez sodbe (prep v solvecore ni linearen).
 const rhsFn = (x) => {
@@ -470,7 +472,11 @@ function bareResultIssue(answer, p) {
   const cut = (x, d) => !exact && !Number.isInteger(y) && Math.sign(x) === Math.sign(y) && Math.abs(x) <= Math.abs(y) + eps && Math.abs(y) - Math.abs(x) < 10 ** -d;
   const near = (x, d) => Math.abs(x - y) <= Math.max(exact ? 0 : 0.5 * 10 ** -d * (d || !Number.isInteger(y) ? 1 : 0), eps) * (1 + 1e-9) || cut(x, d);
   if (near(v.x, dec) || (unit === "%" && near(v.x / 100, dec + 2))) return { checked: 1, issue: null };
-  return { checked: 1, issue: `the stated result ${m[1].trim()} is wrong: $${p.problemTex} = ${p.answerTex}$` };
+  // »\frac{10}{3}« dobi še decimalni približek, da je opomba razumljiva (»= \frac{10}{3} \approx 3{,}33333«)
+  const n = numTex(y);
+  const approx = n && !/\\approx|\d(?:[.,]|\{,\})\d/.test(String(p.answerTex)) && n.tex !== String(p.answerTex).trim() ? ` ${n.rel} ${n.tex}` : "";
+  const stated = plainToTex(m[1].trim()) + (unit === "%" ? " \\%" : "");
+  return { checked: 1, issue: `the stated result ${m[1].trim()} is wrong: $${p.problemTex} = ${p.answerTex}$`, fact: { kind: "calc", wrong: `${p.problemTex} = ${stated}`, right: `${p.problemTex} = ${p.answerTex}${approx}` } };
 }
 
 /**
@@ -488,6 +494,7 @@ const SOFT_HINT =
 export function codeFindings(answer, pre = null, question = "") {
   let checked = 0;
   let soft = null; // AUDIT-066: le če koda sicer ne najde ničesar
+  let softFact = null;
   try {
     const r = checkArithmetic(String(answer || ""));
     checked += r.checked;
@@ -500,10 +507,13 @@ export function codeFindings(answer, pre = null, question = "") {
     });
     if (real.length) {
       const m = real[0];
-      return { checked, issue: `in the step $${m.tex}$ the calculation does not hold: ${m.left} ≠ ${m.right}` };
+      return { checked, issue: `in the step $${m.tex}$ the calculation does not hold: ${m.left} ≠ ${m.right}`, fact: calcFact(m) };
     }
     const s = r.mismatches.find((m) => softSkip(lines[m.line - 1] || ""));
-    if (s) soft = `in the step $${s.tex}$ the calculation does not hold: ${s.left} ≠ ${s.right}. ${SOFT_HINT}`;
+    if (s) {
+      soft = `in the step $${s.tex}$ the calculation does not hold: ${s.left} ≠ ${s.right}. ${SOFT_HINT}`;
+      softFact = calcFact(s);
+    }
   } catch {
     // račun, ki ga ni mogoče prebrati, ni napaka
   }
@@ -512,7 +522,7 @@ export function codeFindings(answer, pre = null, question = "") {
     const d = derivativeIssue(answer, der[0]);
     if (d) {
       checked += d.checked;
-      if (d.issue) return { checked, issue: d.issue };
+      if (d.issue) return { checked, issue: d.issue, fact: d.fact };
     }
   }
   const ar = (pre?.problems || []).filter((p) => p.type === "arith");
@@ -520,7 +530,7 @@ export function codeFindings(answer, pre = null, question = "") {
     const b = bareResultIssue(answer, ar[0]);
     if (b) {
       checked += b.checked;
-      if (b.issue) return { checked, issue: b.issue, sure: true }; // sure: AUDIT-060, opomba brez modela
+      if (b.issue) return { checked, issue: b.issue, fact: b.fact };
     }
   }
   const eq = (pre?.problems || []).filter((p) => p.type === "equation" || p.type === "system");
@@ -528,7 +538,7 @@ export function codeFindings(answer, pre = null, question = "") {
     const v = valueIssue(answer, eq[0]);
     if (v) {
       checked += v.checked;
-      if (v.issue) return { checked, issue: v.issue };
+      if (v.issue) return { checked, issue: v.issue, fact: v.fact };
     }
   }
   // Kemijske preverbe se združijo v eno napako (en »Popravek:«), da »Dušik je v 5. skupini in v 3. periodi.« popravi
@@ -539,7 +549,9 @@ export function codeFindings(answer, pre = null, question = "") {
   if (chemIssues.length) return { checked, issue: chemIssues.join("; ") };
   const c = celsiusIssue(answer, question);
   checked += c.checked;
-  if (!c.issue && soft) return { checked, issue: soft, soft: true }; // ni sodba kode, nikoli »sure«
+  // Blaga ugotovitev (AUDIT-066) ni sodba kode: le za popravek in blago opombo. Kemija in °C (ožje, hevristične preverbe)
+  // nimata »fact«: brez opombe brez modela.
+  if (!c.issue && soft) return { checked, issue: soft, soft: true, fact: softFact };
   return { checked, issue: c.issue || null };
 }
 
