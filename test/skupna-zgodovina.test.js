@@ -22,15 +22,18 @@ const PAGE = `<!doctype html><meta charset="utf-8"><meta name="viewport" content
 import { createScientific } from "/graph/sci.js";
 import { createCalculator } from "/graph/calc.js";
 localStorage.clear();
-// isto kot kalkulator-zaslon.js izidi / dodajIzid
+// isto kot kalkulator-zaslon.js izidi / dodajIzid / odstraniIzid / pocistiIzide
 const izidi = () => JSON.parse(localStorage.getItem("t-izidi") || "[]");
 window.dodaj = (x) => localStorage.setItem("t-izidi", JSON.stringify([x, ...izidi()].slice(0, 12)));
+const odstrani = ({ text, src }) => localStorage.setItem("t-izidi", JSON.stringify(izidi().filter((x) => !(x.text === text && x.src === src))));
+const pocisti = () => localStorage.removeItem("t-izidi");
 const base = { t: (k) => k, icon: () => "", locale: () => "sl", toast() {} };
 const sEl = document.getElementById("s");
 const gEl = document.getElementById("g");
-window.sci = createScientific(sEl, { ...base, storageKey: () => "t-sci", canSteps: () => false, recent: izidi, addRecent: window.dodaj });
+window.sci = createScientific(sEl, { ...base, storageKey: () => "t-sci", canSteps: () => false, recent: izidi, addRecent: window.dodaj, removeRecent: odstrani, clearRecent: pocisti });
 window.graph = createCalculator(gEl, { ...base, storageKey: () => "t-graph", studentId: () => null, recent: izidi });
 window.toGraph = () => { sEl.hidden = true; gEl.hidden = false; window.graph.resize(); };
+window.toSci = () => { gEl.hidden = true; sEl.hidden = false; window.sci.renderVars(); };
 window.ready = true;
 </script>`;
 const engines = [];
@@ -90,6 +93,22 @@ test("skupna zgodovina: PSE → Znanstveni (čip), Znanstveni → Grafični (drs
       await row.click();
       const texts = await page.evaluate(() => window.graph.state.items.map((x) => x.text));
       assert.ok(texts.includes("a = 42"), `${where}: ${texts}`);
+      // × na čipu »Nedavno« odstrani samo ta izid (površina dotika vsaj 40 × 40 px, opis za bralnik zaslona)
+      await page.evaluate(() => (window.dodaj({ text: "3,5", src: "tools" }), window.dodaj({ text: "63,546", src: "pse" }), window.toSci()));
+      const recentTexts = () => page.$$eval(".sc-recent", (l) => l.map((b) => b.dataset.ins));
+      assert.deepEqual(await recentTexts(), ["63,546", "3,5", "18,015"], where);
+      const x = page.locator('.sc-recent-x[data-rm="1"]');
+      assert.match(await x.getAttribute("aria-label"), /^sc\.removeRecent/, where);
+      const box = await x.boundingBox();
+      assert.ok(box.width >= 40 && box.height >= 40, `${where}: ${box.width}×${box.height}`);
+      await tap('.sc-recent-x[data-rm="1"]');
+      assert.deepEqual(await recentTexts(), ["63,546", "18,015"], where);
+      assert.ok(!(await page.evaluate(() => JSON.parse(localStorage.getItem("t-izidi")).some((r) => r.text === "3,5"))), where);
+      assert.equal(await page.inputValue(".sc-input"), "", `${where}: × ne vstavi izida`);
+      // koš počisti tudi skupno zgodovino: ni čipov »Nedavno«, ni ponudbe v Grafičnem
+      await tap(".sc-clear-h");
+      assert.equal(await chip.count(), 0, where);
+      assert.equal(await page.evaluate(() => localStorage.getItem("t-izidi")), null, where);
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), where);
       assert.deepEqual(errors, [], where);
       await ctx.close();
