@@ -322,7 +322,7 @@ test("AUDIT-064: vidna »x = 5« ob bloku »| x | 4« je napaka; brez navedene v
   const block = (b) => `\n<<RACUN\n${b}\n>>`;
   const cases = [
     [R`Torej $x = 5$.` + block("resi: 2*x+3=11 | x | 4"), true],
-    [R`$x_1 = 2$, $x_2 = 4$` + block("resi: x^2-5*x+6=0 | x | 2, 3"), true],
+    [R`$x_1 = 2$, $x_2 = 4$` + block("resi: x^2-5*x+6=0 | x | 2, 3"), false], // pregled prevzema 4: ena vrednost se ujema
     [R`Torej $x = 4$.` + block("resi: 2*x+3=11 | x | 4"), false],
     ["Kaj narediš najprej?" + block("resi: 2*x+3=11 | x | 4"), false], // način A: rezultat ni naveden
     [R`Rešitvi sta $x_1 = 2$ in $x_2 = 3$.` + block("resi: x^2-5*x+6=0 | x | 2, 3"), false],
@@ -406,5 +406,25 @@ test("pregled prevzema 3 (AUDIT-064): vaja, izločena vrednost, teme in ničle d
     [Q, "$x_1 = 2$, $x_2 = 3$\n" + R`Sredina: $x = 2{,}5$.`],
   ];
   for (const [cl, t] of none) assert.equal(visibleIssue(t, cl), null, t);
-  for (const [cl, t] of [[A, R`Rešitev je $x = 5$.`], [A, R`$x = 5$`], [Q, R`Rešitvi sta $x_1 = 2$ in $x_2 = 4$.`]]) assert.ok(visibleIssue(t, cl), t);
+  for (const [cl, t] of [[A, R`Rešitev je $x = 5$.`], [A, R`$x = 5$`], [Q, R`Rešitvi sta $x_1 = 4$ in $x_2 = 5$.`]]) assert.ok(visibleIssue(t, cl), t);
+});
+
+// Pregled prevzema 4 (26. 11.): pravilna vrednost kjerkoli v besedilu in naloga za vajo ali zgled druge naloge.
+test("pregled prevzema 4 (AUDIT-064): pravilna vrednost v preskočeni vrstici, druga naloga in »Zdaj ti« niso napaka", async () => {
+  const { visibleIssue } = await import("../server/racun.js");
+  const R = String.raw;
+  const A = [{ op: "solve", args: ["2*x+3=11", "x", "4"] }];
+  const L = [{ op: "solve", args: ["2*x-6=0", "x", "3"] }];
+  const none = [
+    [L, R`Rešitev enačbe $f'(x) = 0$: $x = 3$.` + "\n" + R`Ničla funkcije, ki ni v izhodišču, je $x = 6$.`],
+    [A, R`**Zdaj ti:** $3x + 1 = 16$` + "\n\n$x = 5$"],
+    [A, R`Podobna naloga: reši $3x + 1 = 16$.` + "\n$x = 5$"],
+    [A, R`Naloga 2: $3x = 15$` + "\n$x = 5$"],
+    [A, R`Druga naloga: rešitev je $x = 5$.`],
+  ];
+  for (const [cl, t] of none) assert.equal(visibleIssue(t, cl), null, t);
+  assert.ok(visibleIssue(R`Rešitev je $x = 5$.`, A));
+  const s = performance.now();
+  visibleIssue(R`$x = 1$, `.repeat(7000), A);
+  assert.ok(performance.now() - s < 200, "7000 vrednosti");
 });

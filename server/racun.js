@@ -184,19 +184,35 @@ const MATH_SEG = /\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g;
  * neznanki (»Za vajo: reši $3x = 15$. Rešitev: $x = 5$.«, »$2x = 8$, torej …«); od vrstice z vajo naprej se ne bere.
  * Približek (≈, ≐) in neenakost se ne bereta.
  */
+const OTHER_TASK = /naloga|podobn|zdaj ti|še ena|(?<!\p{L})(?:your turn|try this|another)(?!\p{L})/iu;
+// Vse vrednosti »$v = …$« v besedilu, tudi v preskočenih vrsticah (pregled prevzema 4).
+function anyValues(plain, v) {
+  const lhsRe = new RegExp(`^${v}(?:_?\\(?(\\d)\\)?)?$`);
+  const out = [];
+  for (const m of plain.matchAll(MATH_SEG)) {
+    for (const piece of texToText(m[1] ?? m[2]).split(/,\s+|;|\bin\b/)) {
+      const parts = piece.split("=").map((x) => x.trim());
+      if (parts.length < 2 || !lhsRe.test(parts[0])) continue;
+      const n = numOf(parts.at(-1).replace(/[.]$/, ""));
+      if (n !== null) out.push(n);
+    }
+  }
+  return out;
+}
 function visibleValues(text, v) {
   const plain = String(text || "").replace(BLOCK_RE, "").replace(/<<META[^<>]*>>/g, "");
   const lhsRe = new RegExp(`^${v}(?:_?\\(?(\\d)\\)?)?$`);
   const varRe = new RegExp(`(?<![a-zA-Z])${v}(?![a-zA-Z])`);
   const out = [];
   for (const line of plain.split("\n")) {
-    if (hasExercise(line)) break;
-    if (notClaimAt(line, 0, { value: true })) continue;
+    // Od vaje ali druge naloge naprej se ne bere (pregled prevzema 4: »**Zdaj ti:** $3x + 1 = 16$«, »Podobna naloga: …«).
+    if (hasExercise(line) || OTHER_TASK.test(line)) break;
+    if (notClaimAt(line)) continue;
     const segs = [...line.matchAll(MATH_SEG)];
     if (!segs.length) continue;
     const texts = segs.map((m) => texToText(m[1] ?? m[2]));
-    // druga enačba v tej neznanki (leva stran ni sama neznanka): vrstica je postopek ali druga naloga
-    if (texts.some((t) => t.includes("=") && varRe.test(t) && !lhsRe.test(t.split("=")[0].trim()))) continue;
+    // druga enačba v tej neznanki (leva stran ni sama neznanka): od tod naprej postopek ali druga naloga
+    if (texts.some((t) => t.includes("=") && varRe.test(t) && !lhsRe.test(t.split("=")[0].trim()))) break;
     const onlyMath = !/[\p{L}\d]/u.test(line.replace(MATH_SEG, " ").replace(/(?<!\p{L})(?:in|and|ter)(?!\p{L})/giu, " "));
     segs.forEach((m, k) => {
       const tex = m[1] ?? m[2];
@@ -238,8 +254,12 @@ export function visibleIssue(text, claims) {
     if (s.unsure) continue;
     const near = (x, y) => close(x.n, y) || Math.abs(x.n - y) <= x.tol * (1 + 1e-9);
     const seen = visibleValues(text, v);
-    const distinct = seen.filter((x, i) => !seen.slice(0, i).some((y) => close(x.n, y.n)));
+    const keys = new Set();
+    const distinct = seen.filter((x) => !keys.has(+x.n.toPrecision(9)) && keys.add(+x.n.toPrecision(9)));
     if (!distinct.length || distinct.length > new Set(s.vals).size) continue;
+    // Pravilna vrednost kjerkoli v besedilu (tudi v preskočeni vrstici): brez sodbe (pregled prevzema 4).
+    const plain = String(text || "").replace(BLOCK_RE, "").replace(/<<META[^<>]*>>/g, "");
+    if (anyValues(plain, v).some((n) => s.vals.some((y) => close(n, y)))) continue;
     const bad = distinct.filter((x) => !s.vals.some((y) => near(x, y)));
     if (bad.length) {
       return `the answer text states ${v} = ${bad.map((x) => String(+x.n.toPrecision(10)).replace(".", ",")).join(", ")}, but the exactly checked solution is ${v} = ${s.text.join("; ")}`;
