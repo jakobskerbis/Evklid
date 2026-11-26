@@ -216,23 +216,59 @@ export function istiPodatek(pod, p, { tocno = false } = {}) {
   return k.some((z) => Math.abs(p - (n + z)) <= 1e-9 * Math.abs(n + z)); // °C → K
 }
 
-// Števila v končnem odgovoru: vsak kandidat (value, solutions, answer_tex), ki ima število, da prvo število za zadnjim
-// »=« ali »≈« (stopinje ostanejo stopinje, enote odpadejo).
-export function stevilaOdgovora(sol) {
-  const cands = [sol?.value, ...(Array.isArray(sol?.solutions) ? sol.solutions : []), sol?.answer_tex].filter((x) => typeof x === "string" && x.trim());
-  const out = [];
-  for (const c of cands) {
-    const zadnji = String(c).split(/=|≈|\\approx|\\doteq/).pop();
-    const v = vrednost(zadnji.replace(/\s*°\s*$/, ""));
-    if (v) out.push(v.n);
-    else {
-      const n = stevilaPodatkov([zadnji]);
-      if (n.length) out.push(n[0]);
-    }
-  }
-  return out;
+// Prvo število v delu odgovora (»32 cm^2«, »22.62°«, »atan(5/12)*180/pi«): stopinje ostanejo stopinje, enote odpadejo.
+function steviloDela(del) {
+  const v = vrednost(del.replace(/\s*°\s*$/, ""));
+  if (v) return v.n;
+  const n = stevilaPodatkov([del]);
+  return n.length ? n[0] : null;
 }
-export const steviloOdgovora = (sol) => stevilaOdgovora(sol)[0] ?? null;
+const DELI = /=|≈|\\approx|\\doteq/;
+
+// Števila v končnem odgovoru za value in solutions: število za zadnjim »=« ali »≈« (vsako mora biti preverjena vrednost).
+export function stevilaOdgovora(sol) {
+  const cands = [sol?.value, ...(Array.isArray(sol?.solutions) ? sol.solutions : [])].filter((x) => typeof x === "string" && x.trim());
+  return cands.map((c) => steviloDela(String(c).split(DELI).pop())).filter((x) => x !== null);
+}
+export const steviloOdgovora = (sol) => stevilaOdgovora(sol)[0] ?? stevilaZapisa(sol?.answer_tex)[0] ?? null;
+
+// Deli zapisa odgovora na zaslonu (answer_tex) za vsakim »=« ali »≈«: »t = 189\,s \approx 3{,}15\,min« → 189, 3,15.
+export function stevilaZapisa(tex) {
+  if (typeof tex !== "string" || !tex.trim()) return [];
+  const deli = tex.split(DELI);
+  return (deli.length > 1 ? deli.slice(1) : deli).map(steviloDela).filter((x) => x !== null);
+}
+
+// Ali zapis odgovora pokaže preverjeno vrednost q kot končni rezultat: en del je q (enako(x)), vsak del za njim pa je
+// le ista količina v drugi enoti (189 s ≈ 3,15 min), v okviru zaokrožitve prikazanih decimalk. »P = 32 ali P = 48«,
+// »32 cm² = 0,32 m²« in »32 ≈ 30« ne (pregled: drugače bi prikazan, nepreverjen končni rezultat dobil »partial«).
+// Ločilo med dvema odgovoroma (»… ali P = 32«, »P_1 = 5, P_2 = 7«): tak zapis ne pokaže enega rezultata.
+const VEC_ODGOVOROV = /\b(?:ali|or|oziroma|in|and)\b|\\(?:lor|vee|quad|qquad)\b|\\\\|;|(?<!\\),\s*\\?[A-Za-z]/;
+
+function zapisPokaze(tex, q, enako) {
+  if (VEC_ODGOVOROV.test(tex)) return false;
+  const deli = tex.split(DELI);
+  const vsi = (deli.length > 1 ? deli.slice(1) : deli).map((d) => ({ x: steviloDela(d), p: podatkiNaloge([d])[0], racun: jeRacun(d) })).filter((d) => d.x !== null);
+  const i = vsi.findLastIndex((d) => enako(d.x));
+  if (i < 0) return false;
+  // faktor do SI le iz enote tega dela (ne golo število: »20 m/s = 20 km/h« ni pretvorba)
+  const si = (d) => (d.p && d.p.f.length > 1 ? d.p.f[1][0] : 1);
+  const qSI = q * si(vsi[i]);
+  const ista = (d) => {
+    const dec = (/\.(\d+)/.exec(String(d.x)) || [null, ""])[1].length;
+    const tol = 0.5 * 10 ** -dec * 1.0001 * si(d);
+    // zaokrožitev največ 5 % (»32 cm² ≈ 0 m²« je zaokroženo prav, a ne pokaže rezultata)
+    return Math.abs(d.x * si(d) - qSI) <= Math.min(tol, 0.05 * Math.abs(qSI)) + 1e-9 * Math.abs(qSI);
+  };
+  // pred njim smejo biti le koraki računa (\frac{(10+6)\cdot 4}{2}) ali ista količina; »P = 48 ali P = 32« ne
+  return vsi.slice(0, i).every((d) => d.racun || ista(d)) && vsi.slice(i + 1).every(ista);
+}
+
+// Del zapisa je korak računa (ulomek, operacija, oklepaj), ne prikazan rezultat. Enote (\mathrm{cm^2}, m/s) ne štejejo.
+function jeRacun(d) {
+  const t = d.replace(/\\(?:text|mathrm|textrm|mbox)\s*\{[^{}]*\}/g, " ").replace(/([A-Za-zµΩ])\s*\^\s*\{?-?\d\}?/g, "$1").replace(/[A-Za-zµΩ]+\s*\/\s*[A-Za-zµΩ(]/g, " ");
+  return /\\frac|\\cdot|\\times|\\sqrt|[+*/·×(]|\d\s*(?:\\?%)?\s*-\s*\d/.test(t);
+}
 
 // AI »check« → {values: Map(ime → vrednost), equations} ali razlog, zakaj ga ni mogoče prebrati. Vsaka formula je
 // prevedena dvakrat: koti v radianih (vrednosti s ° pretvorjene) in v stopinjah (trigonometrija v stopinjah).
@@ -439,7 +475,9 @@ export function preveriPodatke(text, given, sol) {
   // sme reči le račun, ki pripelje do prikazanega odgovora; neskladen pomožni zapis ne skrije morda pravilne rešitve.
   const odg = stevilaOdgovora(sol);
   const Q = values.get(iskana);
-  if (!odg.length || odg.some((x) => !(Math.abs(x - Q.n) <= Math.max(Q.d, 1e-9 * Math.abs(Q.n))))) return nic("answer differs");
+  const enako = (x) => Math.abs(x - Q.n) <= Math.max(Q.d, 1e-9 * Math.abs(Q.n));
+  if (!odg.length && !stevilaZapisa(sol?.answer_tex).length) return nic("answer differs");
+  if (!odg.every(enako) || (typeof sol?.answer_tex === "string" && sol.answer_tex.trim() && !zapisPokaze(sol.answer_tex, Q.n, enako))) return nic("answer differs");
 
   // 3. vsaka formula drži. Podatek naloge (in število v formuli, ki je podatek) je točen: zaokrožitve nima, sicer bi
   // napačen rezultat prešel (m = 1,2 kg z ±0,05 kg). Strogo (pol zadnjega mesta) → drži; ohlapno (tudi cela števila

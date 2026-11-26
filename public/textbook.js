@@ -807,7 +807,7 @@ async function renderLesson(topicId, name = "") {
     ${L.goals ? `<p class="tb-goals"><b>Cilji:</b> ${esc(L.goals)}</p>` : ""}
     ${lesson ? oznakeHtml(Array.isArray(L.labels) ? L.labels : [{ id: "osnutek" }], { ikona: ic }) : ""}
     ${L.pretest_due ? `<section class="card tb-pretest"><h2>${ic("target")}${esc(t("pretest.title"))}</h2><p>${esc(t("pretest.lessonIntro"))}</p><button type="button" class="primary" id="tb-pretest">${ic("play")}${esc(t("pretest.start"))}</button></section>` : ""}
-    ${stepMode ? `<div class="tb-progress" role="progressbar" aria-valuemin="1" aria-valuemax="${steps.length}"><span></span></div>${stepsHtml}${nextHtml}` : `${sectionHtml()}${fallback}${checksHtml()}${nextHtml}`}
+    ${stepMode ? `<div class="tb-progress" role="progressbar" aria-valuemin="1" aria-valuemax="${steps.length}" aria-label="${esc(t("tb.steps.count", { n: 1, m: steps.length }))}"><span></span></div>${stepsHtml}${nextHtml}` : `${sectionHtml()}${fallback}${checksHtml()}${nextHtml}`}
     </div><aside class="tb-side">${demoHtml}</aside></div>${stepper}`;
   placeDemos(box);
   window.scrollTo(0, 0);
@@ -853,7 +853,7 @@ async function renderLesson(topicId, name = "") {
   );
   box.querySelectorAll(".tb-demo-mount").forEach((m) => {
     const d = demos[Number(m.dataset.sim)];
-    mountSim(d.id, m, d.opts);
+    mountSim(d.id, m, d.opts, d.title);
   });
   // Zavihek Račun se izriše ob kliku nanj (account.js); sam showView bi pokazal prazen pogled.
   $("#tb-upgrade")?.addEventListener("click", () => document.querySelector("#account-tab")?.click());
@@ -1034,6 +1034,7 @@ function wireSteps(box, lessonId, n, ensure) {
     count.innerHTML = `<b>${cur + 1}</b><small>/${n}</small>`;
     count.setAttribute("aria-label", t("tb.steps.count", { n: cur + 1, m: n }));
     bar.setAttribute("aria-valuenow", String(cur + 1));
+    bar.setAttribute("aria-label", t("tb.steps.count", { n: cur + 1, m: n }));
     bar.firstElementChild.style.width = `${((cur + 1) / n) * 100}%`;
     // Gumb, ki postane onemogočen, ne sme vzeti fokusa s seboj (tipkovnica bi skočila na začetek strani).
     const lost = (document.activeElement === prev && cur === 0) || (document.activeElement === next && cur === n - 1);
