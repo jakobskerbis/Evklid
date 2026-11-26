@@ -8,7 +8,7 @@
 // --max-usd (ostale razlage zapiše kot »izpuščeno: meja«).
 //   node scripts/meri-k10-priprava.mjs [--max-usd 2] [--razlage 2] [--samo 01-mat-integral,06-fiz-elektrika] [--suho] [--preizkus]
 //   --suho      samo izpiše načrt in najslabši strošek, nič ne zažene
-//   --preizkus  brez ključa API (preizkusni način): vse razen razlage, za preverjanje skripte
+//   --preizkus  brez ključa API (preizkusni način): razlaga brez modela (dobeseden navedek), za preverjanje skripte
 // Zagon s ključem: GitHub Actions > Meritev, skripta scripts/meri-k10-priprava.mjs. Artefakt »meritev« nalaga samo
 // data/meri-*.json, zato je JSON tam (z vsem, iz česar nastanejo .md) in se zapiše po vsakem kompletu: prekinjen zagon
 // pusti plačane razlage.
@@ -77,7 +77,13 @@ if (PREIZKUS !== isMockMode()) {
 }
 
 const store = openDb(process.env.EVKLID_DB);
-const server = createApp(store, { scheduler: false, log: { log() {}, info() {}, warn() {}, error() {} } }).listen(0, "127.0.0.1");
+// Preizkusni način: namesto modela razlaga, ki dobesedno navede začetek prvega izseka, da gre skozi isto pot kot plačana
+// (preverjanje navedka, zapis, odgovor 201), brez klica AI in brez stroška.
+const razlagaPreizkus = async ({ izseki }) => {
+  const navedek = izseki[0].besedilo.slice(0, 60);
+  return { data: { odstavki: [{ besedilo: `Iz zapiskov: ${navedek}`, viri: [izseki[0].id], navedek }], manjka: "" }, usage: { input_tokens: 0, output_tokens: 0 }, model: RAZLAGA_MODEL() };
+};
+const server = createApp(store, { scheduler: false, log: { log() {}, info() {}, warn() {}, error() {} }, ...(PREIZKUS ? { pripravaRazlagaFn: razlagaPreizkus } : {}) }).listen(0, "127.0.0.1");
 await new Promise((r) => server.once("listening", r));
 const base = `http://127.0.0.1:${server.address().port}`;
 const porabljeno = () => store.db.prepare("SELECT COALESCE(SUM(cost_usd), 0) AS s FROM usage").get().s;
@@ -165,16 +171,13 @@ for (const k of kompleti) {
   izid.razlage = [];
   const zRazlago = (teme.teme || []).filter((t) => t.izseki?.length).sort((a, b) => b.izseki.length - a.izseki.length).slice(0, RAZLAGE);
   for (const t of zRazlago) {
-    if (PREIZKUS) {
-      izid.razlage.push({ tema: t.ime, izpusceno: "preizkus" });
-      continue;
-    }
     if (porabljeno() + klicUsd > MAX_USD) {
       izid.razlage.push({ tema: t.ime, izpusceno: "meja" });
       continue;
     }
     const r = await req("POST", `${P}/razlaga`, { tema_id: t.id });
-    if (r.status !== 200) izid.razlage.push({ tema: t.ime, napaka: r.body.code || r.status });
+    // Nova razlaga vrne 201 (shranjena), že shranjena 200; prej je skripta 201 štela za napako in zavrgla plačane razlage.
+    if (r.status !== 200 && r.status !== 201) izid.razlage.push({ tema: t.ime, napaka: r.body.code || r.status });
     else
       izid.razlage.push({
         tema: t.ime,

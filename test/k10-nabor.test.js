@@ -35,7 +35,7 @@ test("K-10 nabor: 10 kompletov, vsak z zapiski, temami in pastmi, ki so v zapisk
   assert.ok(exp.kompleti.some((k) => k.raven.startsWith("OŠ")));
 });
 
-test("K-10 skripta: preizkusni način prehodi komplet (teme, 6 nalog kviza s ključem, načrt), brez klica AI", () => {
+test("K-10 skripta: preizkusni način prehodi komplet (teme, 6 nalog kviza s ključem, razlaga, načrt), brez klica AI", () => {
   const out = fs.mkdtempSync(path.join(os.tmpdir(), "k10-"));
   const env = { ...process.env, EVKLID_MERI_IZID: path.join(out, "evklid.json"), ANTHROPIC_API_KEY: "", ANTHROPIC_AUTH_TOKEN: "", EVKLID_MOCK: "" };
   const r = spawnSync(process.execPath, ["--disable-warning=ExperimentalWarning", "scripts/meri-k10-priprava.mjs", "--preizkus", "--samo", "03-mat-os9-linearna,10-zgo-prva-svetovna"], { cwd: ROOT, env, encoding: "utf8", timeout: 120000 });
@@ -48,7 +48,9 @@ test("K-10 skripta: preizkusni način prehodi komplet (teme, 6 nalog kviza s klj
     assert.equal(lin.kviz.length, 6);
     assert.ok(lin.kviz.every((q) => q.besedilo && q.odgovor !== ""));
     assert.ok(lin.nacrt.dni >= 1);
-    assert.ok(lin.razlage.every((x) => x.izpusceno === "preizkus"));
+    // Razlaga gre skozi isto pot kot plačana (201 = nova shranjena razlaga); prej je skripta 201 štela za napako.
+    assert.ok(lin.razlage.length >= 1);
+    assert.ok(lin.razlage.every((x) => x.odstavki?.length && !x.napaka), JSON.stringify(lin.razlage));
     // Zgodovina nima učnega načrta v Evklidu: brez obsega in brez kviza (pošteno zapisano, ne izpuščeno).
     assert.equal(zgo.obseg, null);
     assert.equal(zgo.kvizNi, "kviz_brez_tem");
