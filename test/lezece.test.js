@@ -449,3 +449,21 @@ test("ležeč telefon 844 × 390: med pisanjem je »Pošlji« samo ikona, polje 
     await ctx.close();
   });
 });
+
+// Odprtje tipkovnice zoži klepet: autoGrow (rAF ob fokusu) je izmeril še dolg namig, ki se je v ožjem polju prelomil
+// (66 px, vrstica »multi«); namig se nato skrajša (ResizeObserver), višina pa je ostala 66 px pri praznem polju.
+test("ležeč telefon 844 × 390: prazno polje za pisanje po odprtju tipkovnice ni višje od ene vrstice", opts, async () => {
+  await withApp(async (base) => {
+    const { ctx, p, errors } = await phone(base, L);
+    await p.locator("#input").tap();
+    await p.waitForSelector(".tk:not([hidden])");
+    await p.waitForTimeout(400);
+    const m = await p.evaluate(() => {
+      const i = document.querySelector("#input");
+      return { vecVrstic: i.closest(".composer-row").classList.contains("multi"), visina: Math.round(i.getBoundingClientRect().height), namig: i.placeholder };
+    });
+    assert.ok(!m.vecVrstic && m.visina <= 48, `prazno polje ena vrstica: ${JSON.stringify(m)}`);
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+});

@@ -2752,7 +2752,13 @@ input.addEventListener("vnos-izris-visina", () => autoGrow());
       text = `${words.join(" ")} …`;
     }
     shown = text;
-    if (input.placeholder !== text) input.placeholder = text;
+    if (input.placeholder === text) return;
+    const krajsi = text.length < input.placeholder.length;
+    input.placeholder = text;
+    // Prazno polje je visoko kot namig: autoGrow (rAF) teče pred ResizeObserverjem, zato je izmeril še dolg, prelomljen
+    // namig (ležeče ob odprtju tipkovnice: 66 px in »multi«). Krajši namig izmerimo znova; daljšega ne, sicer bi se
+    // v zelo ozkem oknu »multi« (širše polje, daljši namig) in ozko polje menjala v neskončnost.
+    if (krajsi && !input.value) requestAnimationFrame(() => input.offsetParent && autoGrow());
   };
   if (window.ResizeObserver) new ResizeObserver(fit).observe(input);
   new MutationObserver(() => input.placeholder !== shown && fit()).observe(input, { attributes: true, attributeFilter: ["placeholder"] });
