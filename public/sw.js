@@ -322,7 +322,9 @@ async function revalidateEntry(cache) {
       ctl.abort();
       return dropStale(v);
     }
-    if (!res.ok || res.type !== "basic" || privateRes(res)) return ctl.abort();
+    // Brez oznake strežnika (server/app.js jo da vsakemu odgovoru zunaj API) ni naša vstopna stran: npr. opozorilna stran
+    // ngrok (ERR_NGROK_6024, status 200) ali stran posrednika. put bi ji dal oznako APP in odpirala bi se takoj.
+    if (!res.ok || res.type !== "basic" || privateRes(res) || v !== APP) return ctl.abort();
     await put(cache, ENTRY, res);
   } catch {
   } finally {

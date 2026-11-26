@@ -235,6 +235,25 @@ test("vstopna stran (N-08b): zavrnjen waitUntil ne pokvari odprtja (shranjena st
   assert.equal(await sw.get("/", "navigate", { waitUntil }), "shranjena stran");
 });
 
+// Odgovor brez oznake strežnika (X-Evklid-App, server/app.js jo da vsakemu odgovoru zunaj API) ni naša vstopna stran:
+// npr. opozorilna stran ngrok (ERR_NGROK_6024, status 200) ali stran posrednika. Shranjena bi se odpirala takoj namesto aplikacije.
+test("vstopna stran (N-08b): odgovor brez oznake strežnika ne zamenja shranjene kopije", async () => {
+  const sw = loadSw("abc");
+  const st = await sw.caches.open("evklid-v1-static");
+  await st.put(`${ORIGIN}/`, new Response("shranjena stran", { headers: { "X-Evklid-App": "abc" } }));
+  assert.equal(await sw.get("/", "navigate"), "shranjena stran");
+  await Promise.all(sw.waits);
+  assert.equal(await (await st.match(`${ORIGIN}/`)).text(), "shranjena stran");
+  assert.equal(await sw.get("/", "navigate"), "shranjena stran");
+  // naša javna stran iste različice pa zamenja kopijo
+  const sw2 = loadSw("abc", { served: "abc" });
+  const st2 = await sw2.caches.open("evklid-v1-static");
+  await st2.put(`${ORIGIN}/`, new Response("shranjena stran", { headers: { "X-Evklid-App": "abc" } }));
+  await sw2.get("/", "navigate");
+  await Promise.all(sw2.waits);
+  assert.equal(await (await st2.match(`${ORIGIN}/`)).text(), `net:${ORIGIN}/`);
+});
+
 test("vstopna stran (N-08b): kopija druge različice ni takojšnja (čaka omrežje do 1 s)", async () => {
   const sw = loadSw("nova", { served: "nova" });
   const st = await sw.caches.open("evklid-v1-static");
