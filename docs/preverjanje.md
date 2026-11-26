@@ -84,7 +84,7 @@ korena), vsakega z lastnim časovnim robom 1,5 s; Piecewise, ki je 0 povsod raze
 največ »Numerično preverjeno«, razen če je lokalna točna algebra odgovor dokazala. Bloka RACUN (`server/racun.js`,
 profil B) še ne preslikamo v statuse; ko ga, velja isto pravilo.
 
-## Meritev (PV-02)
+## Meritev (PV-02, N-01)
 
 Referenčni nabor `test/fixtures/preverjanje/nabor-v1.json` (384 trditev, 191 pravilnih) ustvari
 `node scripts/nabor-preverjanje.mjs` iz fiksnega semena (vedno enaka datoteka). Resnica je znana iz konstrukcije
@@ -151,6 +151,47 @@ Ugotovitve:
   so zdaj `numericno`, ker worker popolnost preveri samo na [−20, 20]. Simbolni dokaz popolnosti ostaja odprt.
   Identitete, ki jih `simplify` sam ne najde (tan + cot, koren popolnega kvadrata, odvod |x| in ln|x|, točna rešitev
   eksponentne enačbe), po pregledu ostanejo `izracunano` (trije dodatni simbolni prepisi v `is_zero`).
+
+### Nabor v2 (N-01)
+
+`test/fixtures/preverjanje/nabor-v2.json` (1.020 trditev, 508 pravilnih, 512 napačnih ali robnih) je glavni nabor
+meritve in testa; prvih 384 trditev je nespremenjen v1 (test to preveri). Nove družine: eksponentne in logaritemske
+enačbe (tudi tuja rešitev zunaj definicijskega območja), absolutna vrednost (tudi negativna desna stran), sistemi
+2 × 2 in 3 × 3 (tudi protislovni), trigonometrijske identitete, generirani odvodi (verižno pravilo, produkt, kvocient),
+nedoločeni in določeni integrali (točna vrednost z ulomki), limite, računi (delno korenjenje, negativni eksponent,
+odstotki, vrstni red operacij, deljenje ulomkov, večmestni zmnožki, logaritmi, neokrajšani ulomki), racionalne in
+absolutne neenačbe, enote, enakovredne oblike pravilnih odgovorov (pravilni, ki ne smejo dobiti alarma) ter
+zaporedja in kombinatorika. Ponovljene trditve generator izpusti.
+
+Pričakovano oceno vseh 636 novih trditev so pred prvim zagonom preverjevalnikov določili trije neodvisni pregledovalci
+na slepo (premešan seznam brez oznak, brez kode Evklida in brez SymPy, le ročno in s celimi števili). Ujemanje s
+konstrukcijo: 633 od 636. Razhajanja: `racun2-062` je pregledovalčeva napaka (5/5 + 5/5 = 2, odgovor 10/10 = 1 je
+napačen); `racun2-084` in `racun2-108` sta bili napaki nabora (zapis `-2^n` je −(2ⁿ), mišljeno je (−2)ⁿ), popravljeni
+z oklepajem.
+
+Izhodišče 26. 11. 2026 (po PV-03):
+
+| Motor | Trditev | Napačno potrjene | Ujete napake | Napačne s šibkim statusom | Lažni alarmi | Pravilne potrjene |
+| --- | --- | --- | --- | --- | --- | --- |
+| sympy z načinom | 1.020 | **0** | 504/512 | 5 | 0 | 484/508 |
+| skener | 939 | **0** | 467/471 | 0 | 16 | 406/468 |
+| skener-lokalno | 939 | **0** | 462/471 | 4 | 49 | 170/468 |
+
+0 napačno potrjenih na 512 napačnih trditvah pomeni pri 95-odstotnem zaupanju delež pod približno 0,6 % za vrste napak
+v naboru.
+
+Nove ugotovitve (odprte, popravek potrebuje odobritev):
+
+- Skener tudi s SymPy: pravilen zmnožek fakultet (`factorial(14)/factorial(4) = 3632428800`, 11 trditev) dobi
+  »Zaznana napaka«. Lokalni preverjevalnik ga oceni kot napačnega, SymPy pa ga potrdi.
+- Skener brez SymPy: `log(u, a)` z osnovo (20 trditev), `binomial(n, k)` (10) in odvod `cos(x^n)` (2) dobijo
+  »Zaznana napaka«.
+- Skener: pravilni nedoločeni in določeni integrali dobijo največ »Numerično preverjeno« (lokalno numerično, SymPy pri
+  integralu skenerja ni vključen).
+- SymPy: enota `minute` je neznana (`45*minute`, 4 trditve ostanejo nepreverjene); točni decimalni odgovori z enotami
+  (`0.025*m^2`, `0.5*kg`) so `numericno`.
+- Generator: `binomial(10,3)` brez presledka worker prebere kot `binomial(10.3)` (decimalna vejica), zato nabor piše
+  `binomial(10, 3)`.
 
 ## Pravilo za nove dele aplikacije
 

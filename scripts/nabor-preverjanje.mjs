@@ -53,7 +53,17 @@ const polyStr = (c) => {
 const polyEval = (c, x) => c.reduce((s, v, k) => s + Number(v) * x ** k, 0);
 
 const items = [];
-const add = (it) => items.push({ id: `${it.skupina}-${String(items.filter((x) => x.skupina === it.skupina).length + 1).padStart(3, "0")}`, ...it });
+// Od nabora v2 naprej se ista trditev (naloga, rešitev, ukaz) ne ponovi: ponovljena se izpusti (dvojnike = DVOJNIKI).
+const videneV2 = new Set();
+let DVOJNIKI = null;
+const add = (it) => {
+  if (DVOJNIKI !== null) {
+    const k = JSON.stringify([it.naloga, it.sol, it.racun]);
+    if (videneV2.has(k)) return DVOJNIKI++;
+    videneV2.add(k);
+  }
+  items.push({ id: `${it.skupina}-${String(items.filter((x) => x.skupina === it.skupina).length + 1).padStart(3, "0")}`, ...it });
+};
 const fail = (msg) => {
   throw new Error(`nabor: ${msg}`);
 };
@@ -345,18 +355,396 @@ drC("sin(x)=0", ["k*pi/2"], false, "tuja", "periodična rešitev s prekratko per
 drC("cos(x)=0", ["pi/2+k*pi"], true, "", "periodična enačba");
 drC("cos(x)=0", ["pi/2+2*k*pi"], false, "manjka", "periodična rešitev s predolgo periodo");
 
-const ids = new Set(items.map((x) => x.id));
-if (ids.size !== items.length) fail("podvojen id");
 // Samopreverba: napačen odgovor enačbe se mora od prave množice rešitev res razlikovati (številsko).
 const mnozica = (a) => JSON.stringify((a || []).map((x) => Number(Function(`"use strict"; const sqrt = Math.sqrt; return (${String(x).replace(/\^/g, "**")});`)()).toFixed(9)).sort());
-for (const x of items) if (x.sol?.kind === "equation" && Array.isArray(x.resnica) && !x.pravilno && !x.najvec && mnozica(x.sol.solutions) === mnozica(x.resnica)) fail(`${x.id}: napačen odgovor je enak pravemu`);
-mkdirSync(dirname(OUT), { recursive: true });
-const out = {
-  opis: "Referenčni nabor v1 za merjenje preverjanja (PV-02, docs/preverjanje.md). Resnica (pravilno) je znana iz konstrukcije, ne iz preverjevalnikov Evklida. Ustvari scripts/nabor-preverjanje.mjs; ne urejaj na roko.",
-  polja: { naloga: "besedilo naloge za skener", sol: "rešitev v obliki AI rešitve skenerja", racun: "[ukaz SymPy, argumenti] kot v bloku RACUN", pravilno: "ali trditev drži", napaka: "vrsta namerne napake", najvec: "najvišji upravičen status (zaokrožen odgovor)", resnica: "prava množica rešitev (kjer je znana)" },
-  primeri: items,
+const POLJA = { naloga: "besedilo naloge za skener", sol: "rešitev v obliki AI rešitve skenerja", racun: "[ukaz SymPy, argumenti] kot v bloku RACUN", pravilno: "ali trditev drži", napaka: "vrsta namerne napake", najvec: "najvišji upravičen status (zaokrožen odgovor)", resnica: "prava množica rešitev (kjer je znana)" };
+function zapisi(pot, opis, seznam, polja = POLJA) {
+  const ids = new Set(seznam.map((x) => x.id));
+  if (ids.size !== seznam.length) fail("podvojen id");
+  for (const x of seznam) if (x.sol?.kind === "equation" && Array.isArray(x.resnica) && !x.pravilno && !x.najvec && mnozica(x.sol.solutions) === mnozica(x.resnica)) fail(`${x.id}: napačen odgovor je enak pravemu`);
+  mkdirSync(dirname(pot), { recursive: true });
+  writeFileSync(pot, JSON.stringify({ opis, polja, primeri: seznam }, null, 1) + "\n");
+  const by = {};
+  for (const x of seznam) by[x.skupina] = (by[x.skupina] || 0) + 1;
+  console.log(`${pot.split("/").pop()}: ${seznam.length} trditev (${seznam.filter((x) => x.pravilno).length} pravilnih):`, JSON.stringify(by));
+}
+zapisi(OUT, "Referenčni nabor v1 za merjenje preverjanja (PV-02, docs/preverjanje.md). Resnica (pravilno) je znana iz konstrukcije, ne iz preverjevalnikov Evklida. Ustvari scripts/nabor-preverjanje.mjs; ne urejaj na roko.", items);
+
+// =====================================================================================================================
+// Nabor v2 (N-01): v1 + nove družine do ≥ 1000 trditev, od tega ≥ 250 napačnih ali robnih. Lastno seme, da v1 ostane
+// enak. Pričakovano oceno (pravilno, najvec) sta pred prvim zagonom preverjevalnikov na slepo določila dva neodvisna
+// pregledovalca (docs/preverjanje.md, »Nabor v2«); ob spremembi družine je treba novo oceno ponoviti.
+// =====================================================================================================================
+seed = 2027;
+const V1 = items.length;
+DVOJNIKI = 0;
+for (const x of items) videneV2.add(JSON.stringify([x.naloga, x.sol, x.racun]));
+const Fr = (p, q = 1n) => {
+  p = BigInt(p);
+  q = BigInt(q);
+  if (q < 0n) [p, q] = [-p, -q];
+  const g = (a, b) => (b ? g(b, a % b) : a < 0n ? -a : a);
+  const d = g(p, q) || 1n;
+  return { p: p / d, q: q / d };
 };
-writeFileSync(OUT, JSON.stringify(out, null, 1) + "\n");
-const by = {};
-for (const x of items) by[x.skupina] = (by[x.skupina] || 0) + 1;
-console.log(`${items.length} trditev (${items.filter((x) => x.pravilno).length} pravilnih):`, JSON.stringify(by));
+const frAdd = (a, b) => Fr(a.p * b.q + b.p * a.q, a.q * b.q);
+const frMul = (a, b) => Fr(a.p * b.p, a.q * b.q);
+const frStr = (a) => (a.q === 1n ? String(a.p) : `${a.p}/${a.q}`);
+const frPow = (x, n) => Array.from({ length: n }).reduce((s) => frMul(s, x), Fr(1));
+const sgnStr = (v) => (v < 0 ? `-${-v}` : `+${v}`);
+const eqn = (skupina, naloga, sols, pravilno, opis, extra = {}) =>
+  add({ skupina, opis, pravilno, ...extra, naloga, sol: { kind: "equation", variable: "x", solutions: sols }, racun: ["solve", [naloga, "x", sols.length ? sols.join(", ") : "none"]] });
+const par = (fn, ok, w, kind) => {
+  fn(ok, true, {});
+  fn(w, false, { napaka: kind });
+};
+
+// ---------- P. eksponentne enačbe (40) ----------
+for (let i = 0; i < 20; i++) {
+  const a = pick([2, 3, 5]);
+  if (i % 4 === 3) {
+    // a^x = m, m ni potenca a: x = ln m / ln a; napaka: obrnjen ulomek
+    const m = pick([3, 5, 6, 7, 10, 11].filter((v) => v !== a && v % a !== 0));
+    const n = `${a}^x=${m}`;
+    eqn("eksp", n, [`ln(${m})/ln(${a})`], true, "eksponentna enačba z logaritmom");
+    eqn("eksp", n, [`ln(${a})/ln(${m})`], false, "napaka: logaritma v ulomku zamenjana", { napaka: "pravilo" });
+    continue;
+  }
+  const k = pick([1, 2, 3]);
+  const b = int(-4, 4);
+  const x0 = int(-3, 4);
+  const c = k * x0 + b;
+  const rhs = c >= 0 ? String(a ** c) : `1/${a ** -c}`;
+  const n = `${a}^(${k}*x${sgnStr(b)})=${rhs}`.replace("+0)", ")").replace("1*x", "x");
+  eqn("eksp", n, [String(x0)], true, "eksponentna enačba, ista osnova");
+  // napaka: b prenesen z napačnim predznakom ali pozabljen deljenje s k
+  let w = frStr(Fr(c + b, k));
+  if (w === String(x0)) w = String(c);
+  if (w === String(x0)) w = String(x0 + 1);
+  eqn("eksp", n, [w], false, "napaka: eksponent napačno izražen", { napaka: "vrednost" });
+}
+
+// ---------- Q. logaritemske enačbe (40) ----------
+for (let i = 0; i < 20; i++) {
+  if (i % 5 === 4) {
+    // ln x + ln(x + d) = ln(r(r + d)): druga ničla −(r + d) je zunaj definicijskega območja
+    const r = int(1, 6);
+    const d = int(1, 5);
+    const n = `ln(x)+ln(x+${d})=ln(${r * (r + d)})`;
+    eqn("log", n, [String(r)], true, "logaritemska enačba, tuja rešitev izločena");
+    eqn("log", n, [String(r), String(-(r + d))], false, "napaka: rešitev zunaj definicijskega območja", { napaka: "obmocje" });
+    continue;
+  }
+  const a = pick([2, 3, 5, 10]);
+  const b = int(-5, 5);
+  const c = int(0, a === 10 ? 3 : 4);
+  const x0 = a ** c - b;
+  const n = `log(x${sgnStr(b)}, ${a})=${c}`.replace("+0,", ",");
+  eqn("log", n, [String(x0)], true, `logaritemska enačba z osnovo ${a}`);
+  let w = String(a * c - b);
+  if (w === String(x0)) w = String(c ** a - b);
+  if (w === String(x0)) w = String(x0 + a);
+  eqn("log", n, [w], false, "napaka: logaritem razrešen kot množenje", { napaka: "pravilo" });
+}
+
+// ---------- R. absolutna vrednost (40) ----------
+for (let i = 0; i < 20; i++) {
+  const k = pick([1, 1, 2, 3]);
+  const a = int(-6, 6);
+  const lhs = `abs(${k === 1 ? "" : `${k}*`}x${sgnStr(-a)})`.replace("+0)", ")");
+  if (i % 5 === 4) {
+    const b = -int(1, 5);
+    const n = `${lhs}=${b}`;
+    eqn("abs", n, [], true, "absolutna vrednost je negativna: ni rešitve");
+    eqn("abs", n, [frStr(Fr(a + b, k)), frStr(Fr(a - b, k))], false, "napaka: rešitev enačbe z negativno desno stranjo", { napaka: "obmocje" });
+    continue;
+  }
+  const b = int(1, 7);
+  const n = `${lhs}=${b}`;
+  const t = [frStr(Fr(a + b, k)), frStr(Fr(a - b, k))];
+  eqn("abs", n, shuffle(t), true, "enačba z absolutno vrednostjo");
+  const manjka = i % 2 || a === 0 || a + b === 0; // pri a = 0 je »napačen predznak« spet prava množica
+  eqn("abs", n, manjka ? [t[0]] : [frStr(Fr(a + b, k)), frStr(Fr(-a - b, k))], false, manjka ? "napaka: manjka drugi primer" : "napaka: drugi primer z napačnim predznakom", { napaka: manjka ? "manjka" : "predznak" });
+}
+
+// ---------- S. sistemi linearnih enačb (60) ----------
+const sys = (naloga, vs, sol, pravilno, opis, extra = {}) => {
+  const resitev = sol === null ? "none" : sol.map((t) => t.map((v, j) => `${vs[j]}=${v}`).join(", ")).join("; ");
+  add({ skupina: "sistem", opis, pravilno, ...extra, naloga: naloga.join("; "), sol: { kind: "system", solutions: sol === null ? [] : sol.map((t) => t.map((v, j) => `${vs[j]}=${v}`).join(", ")) }, racun: ["solve", [naloga.join(", "), vs.join(", "), resitev]] });
+};
+const lin = (co, vs, rhs) => co.map((c, j) => (c === 0 ? "" : `${c < 0 ? "-" : "+"}${Math.abs(c) === 1 ? "" : `${Math.abs(c)}*`}${vs[j]}`)).join("").replace(/^\+/, "") + `=${rhs}`;
+const det3 = (m) => m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
+for (let i = 0; i < 30; i++) {
+  if (i % 3 === 2) {
+    const vs = ["x", "y", "z"];
+    let m;
+    do m = [0, 1, 2].map(() => [0, 1, 2].map(() => int(-3, 3)));
+    while (det3(m) === 0 || m.some((r) => r.every((v) => v === 0)));
+    const s = [int(-4, 4), int(-4, 4), int(-4, 4)];
+    const eqs = m.map((r) => lin(r, vs, r.reduce((t, v, j) => t + v * s[j], 0)));
+    sys(eqs, vs, [s], true, "sistem treh linearnih enačb");
+    const w = [...s];
+    w[i % 3] += 1;
+    sys(eqs, vs, [w], false, "napaka: ena neznanka za 1 napačna", { napaka: "vrednost" });
+    continue;
+  }
+  const vs = ["x", "y"];
+  let m;
+  do m = [0, 1].map(() => [int(-5, 5), int(-5, 5)]);
+  while (m[0][0] * m[1][1] - m[0][1] * m[1][0] === 0 || m.some((r) => r.every((v) => v === 0)));
+  const s = [int(-6, 6), int(-6, 6)];
+  const rhs = m.map((r) => r[0] * s[0] + r[1] * s[1]);
+  const eqs = m.map((r, j) => lin(r, vs, rhs[j]));
+  if (i % 3 === 1 && i % 2 === 1) {
+    // protislovni sistem: druga enačba je prva, pomnožena z 2, a z drugo desno stranjo
+    const e2 = lin(m[0].map((v) => 2 * v), vs, 2 * rhs[0] + 1);
+    sys([eqs[0], e2], vs, null, true, "protisloven sistem: ni rešitve");
+    sys([eqs[0], e2], vs, [s], false, "napaka: rešitev protislovnega sistema (ustreza le prvi enačbi)", { napaka: "obmocje" });
+    continue;
+  }
+  sys(eqs, vs, [s], true, "sistem dveh linearnih enačb");
+  sys(eqs, vs, [s[0] !== s[1] ? [s[1], s[0]] : [s[0], s[1] + 1]], false, s[0] !== s[1] ? "napaka: neznanki zamenjani" : "napaka: y za 1 napačen", { napaka: "vrednost" });
+}
+
+// ---------- T. trigonometrijske identitete (40) ----------
+const TRIG = [
+  ["sin(x+pi/2)", "cos(x)", "sin(x)"], ["cos(x-pi/2)", "sin(x)", "-sin(x)"], ["sin(pi-x)", "sin(x)", "-sin(x)"], ["cos(pi-x)", "-cos(x)", "cos(x)"],
+  ["tan(x)*cos(x)", "sin(x)", "1"], ["1-cos(x)^2", "sin(x)^2", "sin(x)"], ["cos(2*x)", "cos(x)^2-sin(x)^2", "2*cos(x)^2"], ["cos(2*x)", "2*cos(x)^2-1", "2*cos(x)-1"],
+  ["sin(x)^2/(1-cos(x))", "1+cos(x)", "1-cos(x)"], ["2*sin(x)*cos(x)/sin(2*x)", "1", "2"], ["sin(3*x)", "3*sin(x)-4*sin(x)^3", "3*sin(x)"], ["cos(x)^4-sin(x)^4", "cos(2*x)", "1"],
+  ["sin(x+pi)", "-sin(x)", "sin(x)"], ["1+tan(x)^2", "1/cos(x)^2", "1/sin(x)^2"], ["sin(x)/tan(x)", "cos(x)", "1/cos(x)"], ["sin(-x)", "-sin(x)", "sin(x)"],
+  ["cos(-x)", "cos(x)", "-cos(x)"], ["sin(x)*cos(y)+cos(x)*sin(y)", "sin(x+y)", "sin(x-y)"], ["cos(x)*cos(y)+sin(x)*sin(y)", "cos(x-y)", "cos(x+y)"], ["(sin(x)+cos(x))^2", "1+sin(2*x)", "1"],
+];
+for (const [l, r, w] of TRIG) par((v, ok, ex) => add({ skupina: "trig-id", opis: ok ? "trigonometrijska identiteta" : "napačna trigonometrijska identiteta", pravilno: ok, ...ex, naloga: l, sol: { kind: "expression", variable: "x", value: v }, racun: ["equal", [l, v]] }), r, w, "pravilo");
+
+// ---------- U. odvodi, generirani (80) ----------
+const odv = (f, v, ok, opis, ex = {}) => add({ skupina: "odvod2", opis, pravilno: ok, ...ex, naloga: `f(x) = ${f}`, sol: { kind: "derivative", variable: "x", value: v }, racun: ["diff", [f, "x", v]] });
+for (let i = 0; i < 40; i++) {
+  const k = pick([2, 3, 4, 5, -2, -3]);
+  const n = int(2, 7);
+  const a = pick([2, 3, 5, 7, -4]);
+  const b = int(1, 6);
+  const kind = i % 8;
+  let f, d, w, opis;
+  if (kind === 0) [f, d, w, opis] = [`${a}*x^${n}`, `${a * n}*x^${n - 1}`, `${a}*x^${n - 1}`, "potenca"];
+  else if (kind === 1) [f, d, w, opis] = [`sin(${k}*x)`, `${k}*cos(${k}*x)`, `cos(${k}*x)`, "verižno pravilo (sin)"];
+  else if (kind === 2) [f, d, w, opis] = [`exp(${k}*x)`, `${k}*exp(${k}*x)`, `exp(${k}*x)`, "verižno pravilo (exp)"];
+  else if (kind === 3) [f, d, w, opis] = [`ln(${Math.abs(k)}*x+${b})`, `${Math.abs(k)}/(${Math.abs(k)}*x+${b})`, `1/(${Math.abs(k)}*x+${b})`, "verižno pravilo (ln)"];
+  else if (kind === 4) [f, d, w, opis] = [`x^${n}*exp(x)`, `(${n}*x^${n - 1}+x^${n})*exp(x)`, `${n}*x^${n - 1}*exp(x)`, "pravilo za produkt"];
+  else if (kind === 5) {
+    const c = b === 1 ? 2 : 1;
+    [f, d, w, opis] = [`(x+${b})/(x+${b + c})`, `${c}/(x+${b + c})^2`, `${-c}/(x+${b + c})^2`, "pravilo za kvocient"];
+  } else if (kind === 6) [f, d, w, opis] = [`cos(x^${n})`, `-${n}*x^${n - 1}*sin(x^${n})`, `-sin(x^${n})`, "verižno pravilo (cos)"];
+  else [f, d, w, opis] = [`(${Math.abs(k)}*x+${b})^${n}`, `${n * Math.abs(k)}*(${Math.abs(k)}*x+${b})^${n - 1}`, `${n}*(${Math.abs(k)}*x+${b})^${n - 1}`, "verižno pravilo (potenca)"];
+  odv(f, d, true, `odvod: ${opis}`);
+  odv(f, w, false, `napaka: ${opis}`, { napaka: "pravilo" });
+}
+
+// ---------- V. integrali, generirani (80) ----------
+const intg = (f, v, ok, opis, meje, ex = {}) =>
+  add({ skupina: "integral2", opis, pravilno: ok, ...ex, naloga: meje ? `∫_${meje[0]}^${meje[1]} ${f} dx` : `∫ ${f} dx`, sol: { kind: "integral", variable: "x", value: v }, racun: ["int", meje ? [f, "x", meje[0], meje[1], v] : [f, "x", v]] });
+for (let i = 0; i < 40; i++) {
+  const k = pick([2, 3, 4, 5]);
+  const n = int(1, 5);
+  const a = pick([2, 3, 4, 6]);
+  const kind = i % 5;
+  if (kind === 4) {
+    // določeni integral polinoma: točna vrednost z ulomki
+    const co = [int(-4, 4), int(-3, 3), int(-2, 2)];
+    if (co.every((v) => v === 0)) co[0] = 1;
+    const lo = int(-2, 1);
+    const hi = lo + int(1, 3);
+    let val = Fr(0);
+    co.forEach((c, j) => (val = frAdd(val, frMul(Fr(c, j + 1), frAdd(frPow(Fr(hi), j + 1), Fr(-(lo ** (j + 1))))))));
+    const f = co.map((c, j) => (c === 0 ? "" : `${c < 0 ? "-" : "+"}${Math.abs(c)}${j ? `*x${j > 1 ? `^${j}` : ""}` : ""}`)).join("").replace(/^\+/, "");
+    const ok = frStr(val);
+    const w = frStr(frAdd(val, Fr(i % 2 ? 1 : -1)));
+    intg(f, ok, true, "določeni integral polinoma", [String(lo), String(hi)]);
+    intg(f, w, false, "napaka: določeni integral za 1 napačen", [String(lo), String(hi)], { napaka: "vrednost" });
+    continue;
+  }
+  let f, F, W, opis;
+  if (kind === 0) [f, F, W, opis] = [`${a}*x^${n}`, `${frStr(Fr(a, n + 1))}*x^${n + 1}`, `${a}*x^${n + 1}`, "potenca"];
+  else if (kind === 1) [f, F, W, opis] = [`exp(${k}*x)`, `exp(${k}*x)/${k}`, `${k}*exp(${k}*x)`, "eksponentna funkcija"];
+  else if (kind === 2) [f, F, W, opis] = [`cos(${k}*x)`, `sin(${k}*x)/${k}`, `-sin(${k}*x)/${k}`, "kosinus"];
+  else [f, F, W, opis] = [`1/(x+${a})`, `ln(abs(x+${a}))`, `-1/(x+${a})^2`, "1/(x + a)"];
+  intg(f, F, true, `nedoločeni integral: ${opis}`);
+  intg(f, W, false, `napaka: ${opis}`, null, { napaka: "pravilo" });
+}
+
+// ---------- W. limite, generirane (60) ----------
+const lim = (f, p, v, ok, opis, ex = {}) => add({ skupina: "limita2", opis, pravilno: ok, ...ex, naloga: `lim_{x→${p}} ${f}`, racun: ["limit", [f, "x", p, v]] });
+for (let i = 0; i < 30; i++) {
+  const a = pick([1, 2, 3, 4, 5, -2, -3]);
+  const p = int(1, 6);
+  const q = pick([1, 2, 3, 4, 5].filter((v) => v !== p));
+  const kind = i % 3;
+  if (kind === 0) {
+    const f = `(x^2-${a * a})/(x${sgnStr(-a)})`;
+    lim(f, String(a), String(2 * a), true, "limita z ničlo v števcu in imenovalcu");
+    lim(f, String(a), String(a), false, "napaka: limita okrajšanega izraza napačno izračunana", { napaka: "vrednost" });
+  } else if (kind === 1) {
+    const f = `(${p}*x^2+${q}*x+1)/(${q}*x^2-${p})`;
+    lim(f, "oo", frStr(Fr(p, q)), true, "limita racionalne funkcije v neskončnosti");
+    lim(f, "oo", frStr(Fr(q, p)), false, "napaka: koeficienta zamenjana", { napaka: "vrednost" });
+  } else {
+    const k = Math.abs(a) + 1;
+    lim(`sin(${k}*x)/x`, "0", String(k), true, "limita sin(kx)/x");
+    lim(`sin(${k}*x)/x`, "0", "1", false, "napaka: faktor k pozabljen", { napaka: "vrednost" });
+  }
+}
+
+// ---------- X. računi, generirani (80) ----------
+const rac = (e, v, ok, opis, ex = {}) => add({ skupina: "racun2", opis, pravilno: ok, ...ex, naloga: e, sol: { kind: "arith", value: v }, racun: ["value", [e, v]] });
+for (let i = 0; i < 40; i++) {
+  const kind = i % 8;
+  if (kind === 0) {
+    const k = pick([2, 3, 5, 6, 7]);
+    const m = pick([2, 3, 4, 5, 6, 7, 8, 9].filter((v) => v !== k)); // k·√m = m·√k le pri m = k
+    rac(`sqrt(${m * m * k})`, `${m}*sqrt(${k})`, true, "delno korenjenje");
+    rac(`sqrt(${m * m * k})`, `${k}*sqrt(${m})`, false, "napaka: napačno delno korenjenje", { napaka: "pravilo" });
+  } else if (kind === 1) {
+    const b = pick([2, 3, 5]);
+    const n = int(2, 4);
+    rac(`${b}^(-${n})`, `1/${b ** n}`, true, "negativni eksponent");
+    rac(`${b}^(-${n})`, `-${b ** n}`, false, "napaka: negativni eksponent kot predznak", { napaka: "pravilo" });
+  } else if (kind === 2) {
+    const p = pick([5, 12, 15, 20, 25, 40]);
+    const N = pick([80, 120, 240, 360, 480]);
+    rac(`${p}/100*${N}`, String((p * N) / 100), true, "odstotek od števila");
+    rac(`${p}/100*${N}`, String(p * N), false, "napaka: odstotek brez deljenja s 100", { napaka: "pravilo" });
+  } else if (kind === 3) {
+    const [a, b, c] = [int(2, 9), int(2, 9), int(2, 9)];
+    rac(`${a}+${b}*${c}`, String(a + b * c), true, "vrstni red računskih operacij");
+    rac(`${a}+${b}*${c}`, String((a + b) * c), false, "napaka: seštevanje pred množenjem", { napaka: "zapis" });
+  } else if (kind === 4) {
+    const [a, b, c, d] = [int(1, 9), int(2, 9), int(1, 9), int(2, 9)];
+    const ok = frMul(Fr(a, b), Fr(d, c));
+    const w = frMul(Fr(a, b), Fr(c, d));
+    if (ok.p === w.p && ok.q === w.q) {
+      i--;
+      continue;
+    }
+    rac(`(${a}/${b})/(${c}/${d})`, frStr(ok), true, "deljenje ulomkov");
+    rac(`(${a}/${b})/(${c}/${d})`, frStr(w), false, "napaka: delitelj ni obrnjen", { napaka: "pravilo" });
+  } else if (kind === 5) {
+    const x = int(12, 99);
+    const y = int(12, 99);
+    const z = int(1001, 9999);
+    const ok = BigInt(x) * BigInt(y) * BigInt(z);
+    rac(`${x}*${y}*${z}`, String(ok), true, "zmnožek večmestnih števil");
+    rac(`${x}*${y}*${z}`, String(ok + (i % 2 ? 10n : -1n)), false, "napaka: zmnožek za malo napačen", { napaka: "vrednost" });
+  } else if (kind === 6) {
+    const a = pick([2, 3, 5, 10]);
+    const m = int(2, 5);
+    const n = int(2, 4);
+    rac(`log(${a ** (m + n)}, ${a})`, String(m + n), true, "logaritem potence");
+    rac(`log(${a ** (m + n)}, ${a})`, String(m * n === m + n ? m * n + 1 : m * n), false, "napaka: eksponenta zmnožena namesto seštevka", { napaka: "pravilo" });
+  } else {
+    // ekvivalentna oblika: neokrajšan ulomek, decimalni zapis točne vrednosti
+    const [a, b] = [int(1, 7), pick([2, 4, 5, 8])];
+    const m = int(2, 4);
+    const opis = "pravilno v neokrajšani obliki";
+    rac(`${a}/${b}+${a}/${b}`, `${2 * a * m}/${b * m}`, true, opis);
+    rac(`${a}/${b}+${a}/${b}`, `${2 * a}/${2 * b}`, false, "napaka: seštejemo tudi imenovalca", { napaka: "pravilo" });
+  }
+}
+
+// ---------- Y. neenačbe, generirane (60) ----------
+const neen = (naloga, v, ok, opis, ex = {}) => add({ skupina: "neenacba2", opis, pravilno: ok, ...ex, naloga, sol: { kind: "inequality", variable: "x", value: v }, racun: ["ineq", [naloga, "x", v]] });
+for (let i = 0; i < 30; i++) {
+  const a = int(-5, 5);
+  const b = int(1, 6);
+  const kind = i % 3;
+  if (kind === 0) {
+    const n = `abs(x${sgnStr(-a)})<${b}`.replace("+0)", ")");
+    neen(n, `(${a - b}, ${a + b})`, true, "neenačba |x − a| < b");
+    neen(n, `(-oo, ${a + b})`, false, "napaka: en primer pozabljen", { napaka: "manjka" });
+  } else if (kind === 1) {
+    const n = `abs(x${sgnStr(-a)})>=${b}`.replace("+0)", ")");
+    neen(n, `(-oo, ${a - b}] U [${a + b}, oo)`, true, "neenačba |x − a| ≥ b");
+    neen(n, `[${a - b}, ${a + b}]`, false, "napaka: unija in presek zamenjana", { napaka: "komplement" });
+  } else {
+    const c = a + b;
+    const n = `(x${sgnStr(-a)})/(x${sgnStr(-c)})<=0`.replace(/\+0\)/g, ")");
+    neen(n, `[${a}, ${c})`, true, "racionalna neenačba");
+    neen(n, `[${a}, ${c}]`, false, "napaka: ničla imenovalca vključena", { napaka: "obmocje" });
+  }
+}
+
+// ---------- Z. enote in pretvorbe (30) ----------
+const ENOTE = [
+  ["108*km/h", "30*m/s", "300*m/s"], ["15*m/s", "54*km/h", "15*km/h"], ["1*kW*h", "3600000*J", "1000*J"], ["250*cm^2", "0.025*m^2", "2.5*m^2"],
+  ["2*g/cm^3", "2000*kg/m^3", "2*kg/m^3"], ["45*minute", "2700*s", "4500*s"], ["3*N*4*m", "12*J", "12*N"], ["12*V*2*A", "24*W", "24*J"],
+  ["500*g*2*m/s^2", "1*N", "1000*N"], ["0.5*kg*(4*m/s)^2/2", "4*J", "8*J"], ["2*kg*9.81*m/s^2*3*m", "58.86*J", "58.86*N"], ["1*km/(4*minute)", "250/60*m/s", "250*m/s"],
+  ["20*m/(4*s)", "5*m/s", "80*m/s"], ["36*km/h*600*s", "6000*m", "21600*m"], ["1200*W*30*s", "36000*J", "40*J"],
+];
+for (const [e, ok, w] of ENOTE) par((v, good, ex) => add({ skupina: "enote2", opis: good ? "fizikalni račun z enotami" : "napaka v enoti ali pretvorbi", pravilno: good, ...ex, naloga: e, racun: ["units", [e, v]] }), ok, w, "enota");
+
+// ---------- Ž. ekvivalentne oblike pravilnih odgovorov in skoraj enaki napačni (40) ----------
+const ekv = (naloga, v, ok, opis, kind = "expression", ex = {}) =>
+  add({ skupina: "ekvivalentno", opis, pravilno: ok, ...ex, naloga, sol: kind === "expression" ? { kind, variable: "x", value: v } : { kind: "equation", variable: "x", solutions: v }, racun: kind === "expression" ? ["equal", [naloga, v]] : ["solve", [naloga, "x", v.join(", ")]] });
+const EKV = [
+  ["(1+sqrt(5))/2", "1/2+sqrt(5)/2", "(1+sqrt(5))/4"], ["2*x+2", "2*(x+1)", "2*(x+2)"], ["x^2-5*x+6", "(x-3)*(x-2)", "(x-3)*(x+2)"], ["1/sqrt(2)", "sqrt(2)/2", "sqrt(2)"],
+  ["(x+1)/(x^2-1)", "1/(x-1)", "1/(x+1)"], ["exp(ln(x)+1)", "e*x", "x+e"], ["ln(8)", "3*ln(2)", "8*ln(1)"], ["sqrt(12)/sqrt(3)", "2", "4"],
+  ["6/8", "0.75", "0.68"], ["(x^3-x)/x", "x^2-1", "x^2"],
+];
+for (const [n, ok, w] of EKV) par((v, good, ex) => ekv(n, v, good, good ? "pravilen odgovor v drugi, enakovredni obliki" : "napaka: skoraj enaka, a napačna oblika", "expression", ex), ok, w, "skoraj");
+const EKVE = [
+  ["x^2-x-1=0", ["(1-sqrt(5))/2", "(1+sqrt(5))/2"], ["(1-sqrt(5))/2", "(1+sqrt(3))/2"]], ["6*x=3", ["3/6"], ["6/3"]], ["4*x^2=1", ["0.5", "-0.5"], ["0.5"]],
+  ["x^2=8", ["2*sqrt(2)", "-sqrt(8)"], ["2*sqrt(2)", "-2*sqrt(8)"]], ["(x-1)^2=0", ["1"], ["1", "-1"]], ["x^3=x", ["0", "1", "-1"], ["1", "-1"]],
+  ["2^x=1/8", ["-3"], ["3"]], ["ln(x)=0", ["1"], ["0"]], ["sqrt(x)=0", ["0"], ["1"]], ["x/(x-1)=2", ["2"], ["1", "2"]],
+];
+for (const [n, ok, w] of EKVE) par((v, good, ex) => ekv(n, v, good, good ? "pravilne rešitve v nenavadni obliki" : "napaka: skoraj enake rešitve", "equation", ex), ok, w, "skoraj");
+
+// ---------- AA. zaporedja in kombinatorika (dodano po odstranitvi dvojnikov; svoje seme) ----------
+seed = 2028;
+const nZap = items.length;
+for (let i = 0; i < 400 && items.length - nZap < 40; i++) {
+  const n = int(5, 20);
+  const a1 = int(-5, 9);
+  const d = pick([2, 3, 4, 5, -2, -3]);
+  const e = `${n}*(2*${a1 < 0 ? `(${a1})` : a1}+(${n}-1)*${d < 0 ? `(${d})` : d})/2`;
+  const S = (n * (2 * a1 + (n - 1) * d)) / 2;
+  const W = (n * (2 * a1 + n * d)) / 2;
+  const pred = items.length;
+  rac(`${e}`, String(S), true, "vsota aritmetičnega zaporedja");
+  if (items.length === pred) continue;
+  rac(`${e}`, String(W), false, "napaka: n namesto n − 1 v vsoti", { napaka: "pravilo" });
+  const a = int(1, 5);
+  const q = pick([2, 3, -2]);
+  const m = int(3, 8);
+  const g = `${a}*(${q < 0 ? `(${q})` : q}^${m}-1)/(${q}-1)`; // (−2)^m z oklepajem: −2^m je −(2^m) (pregledovalec, N-01)
+  const G = (a * (q ** m - 1)) / (q - 1);
+  const pred2 = items.length;
+  rac(g, String(G), true, "vsota geometrijskega zaporedja");
+  if (items.length === pred2) continue;
+  rac(g, String(a * q ** m), false, "napaka: vsota zamenjana z n-tim členom", { napaka: "pravilo" });
+}
+const nKomb = items.length;
+for (let i = 0; i < 400 && items.length - nKomb < 40; i++) {
+  const n = int(5, 14);
+  const k = int(2, n - 2);
+  const C = Array.from({ length: k }).reduce((t, _, j) => (t * BigInt(n - j)) / BigInt(j + 1), 1n);
+  const P = Array.from({ length: k }).reduce((t, _, j) => t * BigInt(n - j), 1n);
+  const pred = items.length;
+  if (i % 2) {
+    rac(`binomial(${n}, ${k})`, String(C), true, "binomski koeficient");
+    if (items.length === pred) continue;
+    rac(`binomial(${n}, ${k})`, String(P), false, "napaka: variacije namesto kombinacij", { napaka: "pravilo" });
+  } else {
+    rac(`factorial(${n})/factorial(${n - k})`, String(P), true, "variacije brez ponavljanja");
+    if (items.length === pred) continue;
+    rac(`factorial(${n})/factorial(${n - k})`, String(P * BigInt(n - k)), false, "napaka: fakulteta v imenovalcu za 1 premajhna", { napaka: "vrednost" });
+  }
+}
+
+const v2 = items;
+console.log(`v2: izpuščenih dvojnikov ${DVOJNIKI}`);
+if (v2.length < 1000) fail(`v2 ima le ${v2.length} trditev`);
+if (v2.filter((x) => !x.pravilno).length < 250) fail("v2 ima premalo napačnih trditev");
+zapisi(
+  join(dirname(OUT), "nabor-v2.json"),
+  `Referenčni nabor v2 (N-01, docs/preverjanje.md): prvih ${V1} trditev je enakih kot v v1, ostale so nove družine. Resnica iz konstrukcije. Vseh ${v2.length - V1} novih trditev so pred zagonom preverjevalnikov na slepo (premešane, brez oznak) ocenili trije neodvisni pregledovalci (26. 11. 2026). Razhajanja: racun2-062 (5/5 + 5/5 = 2, ne 10/10 = 1) je pregledovalčeva napaka; racun2-084 in racun2-108 sta bili napaka nabora (−2^n namesto (−2)^n), popravljeni z oklepajem. Ustvari scripts/nabor-preverjanje.mjs; ne urejaj na roko.`,
+  v2,
+  POLJA,
+);
