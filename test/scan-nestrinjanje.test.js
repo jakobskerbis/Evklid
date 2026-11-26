@@ -53,6 +53,19 @@ test("strežnik: SymPy ne preglasi točnega protiprimera, približek ni »Prever
   assert.equal(await s("x^2=2", eq(["- 1.414", "1.414"])), "numeric");
 });
 
+test("strežnik: SymPy, ki se odloči v naključnih točkah, je največ »Numerično« (PV-03)", { skip: !HAVE && "SymPy ni na voljo" }, async () => {
+  const s = async (t, sol) => (await verifyAiFull(t, sol)).status;
+  const ex = (value) => ({ kind: "expression", variable: "x", value });
+  const dv = (value) => ({ kind: "derivative", variable: "x", value });
+  // napačni odgovori z velikimi koeficienti v izrazu, ki ni polinom (pregled popravka skenerja)
+  assert.notEqual(await s("(x+1000000)^2 + sin(x)", ex("x^2+1999999*x+1000000000000+sin(x)")), "verified");
+  assert.notEqual(await s("f(x) = (x+1000000)^3 + sqrt(2)", dv("3*x^2+5999999*x+3000000000000")), "verified");
+  assert.notEqual(await s("f(x) = exp(1)*(x+1000000)^3", dv("exp(1)*(3*x^2+5999999*x+3000000000000)")), "verified");
+  // pravilni simbolni ostanejo »Preverjeno«
+  assert.equal(await s("(x+1)^2 + sin(x)", ex("x^2+2*x+1+sin(x)")), "verified");
+  assert.equal(await s("f(x) = sin(x)^2", dv("2*sin(x)*cos(x)")), "verified");
+});
+
 test("lokalno: zapis e se prebere kot desetiška potenca", () => {
   assert.equal(verifyAi("x-1400000=0", eq(["1.4e6"])).status, "verified");
   assert.equal(verifyAi("x-1400000=0", eq(["1e6"])).status, "wrong");
