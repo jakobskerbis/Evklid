@@ -338,6 +338,12 @@ test("AUDIT-087: potenca pred \\cdot in besedilo z več besedami nista lažna na
   assert.equal(mm("$\\text{št. skupine} - 10 = 16 - 10 = 7$"), 1);
   assert.equal(mm("$3{,}97 \\cdot 10^{-19} : 1{,}602 \\cdot 10^{-19} = 2{,}478$"), 0);
   assert.equal(mm("$2^3 \\cdot 10^2 = 800$"), 0);
+  // pregled: ukazi v enoti niso besede, oznaka za številom je enota (napaka ostane najdena)
+  assert.equal(mm("$d = 2 \\cdot 3\\,\\mathrm{\\mu m} = 7\\,\\mathrm{\\mu m}$"), 1);
+  assert.equal(mm("$1\\,\\mathrm{J} = 1\\,\\mathrm{N \\cdot m} = 2\\,\\mathrm{kg \\cdot m^2/s^2}$"), 1);
+  assert.equal(mm("$\\dfrac{60\\,\\mathrm{^\\circ C}}{30\\,\\mathrm{^\\circ C}} = 3$"), 1);
+  assert.equal(mm("$12 \\cdot 3 = 37\\ \\text{kosov jabolk}$"), 1);
+  assert.equal(mm("$v = 72\\ \\text{km na uro} \\cdot 2 = 145\\ \\text{km na uro}$"), 1);
 });
 
 test("AUDIT-088: ure v minute v verigi niso lažna napaka", () => {

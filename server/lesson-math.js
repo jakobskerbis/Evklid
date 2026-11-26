@@ -240,10 +240,12 @@ export function normalizeTex(tex, pct = "div", { unitSub = null, colon = true } 
   s = s.replace(/\\EURO/g, () => (units.push("€"), sub("€")));
   // Enote: \mathrm{kW}, \text{cm}^2, \Omega, °, ^\circ
   let label = false;
-  s = s.replace(/\\(?:mathrm|text|textrm|textit|operatorname|mathit|mathbf)\s*\{([^{}]*)\}(\s*\^\s*(?:\{[^{}]*\}|\\circ|\w))?/g, (_, u, e) => {
+  s = s.replace(/\\(?:mathrm|text|textrm|textit|operatorname|mathit|mathbf)\s*\{([^{}]*)\}(\s*\^\s*(?:\{[^{}]*\}|\\circ|\w))?/g, (_, u, e, at, cel) => {
     if (!u.trim()) return " ";
-    // AUDIT-087: besedilo z več besedami (»\text{št. skupine}«) je oznaka količine, ne enota: izraz ni samo račun
-    if (/[\p{L}]{2,}\.?\s+[\p{L}]/u.test(u.trim())) {
+    // AUDIT-087: besedilo z več besedami namesto števila (»\text{št. skupine} - 10«) je oznaka količine, ne enota:
+    // izraz ni samo račun. Za številom (»37\ \text{kosov jabolk}«) ostane kot enota; ukazi (\mu m, N \cdot m, ^\circ C) niso besede.
+    const besede = u.replace(/\\[A-Za-z]+|\^/g, " ").trim();
+    if (/[\p{L}]{2,}\.?\s+[\p{L}]/u.test(besede) && !/[\d)}]\s*$/.test(cel.slice(0, at))) {
       label = true;
       return " ";
     }
