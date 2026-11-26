@@ -259,6 +259,43 @@ test("povezava: kaj je napaka povezave (ne rok, ne 4xx/5xx)", () => {
   assert.equal(jeNapakaPovezave(new BadRequestError(400, { type: "error" }, "bad", new Headers())), false);
   assert.equal(jeNapakaPovezave(Object.assign(new Error("529 overloaded"), { status: 529 })), false);
   assert.equal(jeNapakaPovezave(null), false);
+  // Prekinitev med branjem telesa (fetch/undici): »terminated« z vzrokom UND_ERR_SOCKET ali »other side closed«.
+  assert.equal(jeNapakaPovezave(new TypeError("terminated", { cause: Object.assign(new Error("other side closed"), { code: "UND_ERR_SOCKET" }) })), true);
+  assert.equal(jeNapakaPovezave(new TypeError("terminated", { cause: Object.assign(new Error("x"), { code: "UND_ERR_SOCKET" }) })), true);
+  assert.equal(jeNapakaPovezave(new TypeError("terminated", { cause: new Error("other side closed") })), true);
+  assert.equal(jeNapakaPovezave(new TypeError("terminated")), false, "brez vzroka ni znana napaka povezave");
+});
+
+test("povezava: prekinitev med branjem telesa (terminated, UND_ERR_SOCKET) → takojšen ponovni klic → uspeh prvega poskusa", async () => {
+  const usage = fakeUsage();
+  const terminated = () => new TypeError("terminated", { cause: Object.assign(new Error("other side closed"), { code: "UND_ERR_SOCKET" }) });
+  const fn = napakePotem([terminated], "NASILJE");
+  const dnevnik = await zDnevnikom(async () => {
+    const a = pregledSPonovitvijo({ text: "x", usage, studentId: 7, createFn: fn, varovalka: false, casi: CASI_POVEZAVA });
+    assert.deepEqual(await a.prvi, { vrsta: "nasilje", izid: "ok" });
+    assert.equal(await a.pozno, null);
+  });
+  assert.equal(fn.klici.length, 2);
+  assert.deepEqual(samo(danes(usage)), {});
+  assert.ok(dnevnik.some((o) => /napaka povezave \(TypeError UND_ERR_SOCKET\)/.test(o)), dnevnik.join("\n"));
+  assert.ok(dnevnik.every((o) => !/other side closed|terminated/.test(o)), "ne besedilo napake");
+});
+
+test("neznan odgovor modela: v dnevniku samo dolžina in razlog, nobenega znaka odgovora", async () => {
+  const usage = fakeUsage();
+  const CITAT = "tajna-zgodba-ucenca"; // brez besede »ne« (ta bi bila veljaven odgovor NE)
+  for (const [besedilo, razlog] of [
+    [`Učenec je napisal: ${CITAT}`, "brez znane besede"],
+    [`Ne vem, morda ZDRAVJE ${CITAT}`, "protislovje"],
+    ["", "prazen"],
+  ]) {
+    const fn = async () => odgovor(besedilo);
+    const dnevnik = await zDnevnikom(async () => {
+      assert.deepEqual(await pregledSPonovitvijo({ text: "x", usage, studentId: 1, createFn: fn, varovalka: false, casi: CASI }).prvi, { vrsta: null, izid: "neznano" });
+    });
+    assert.ok(dnevnik.some((o) => o.includes(`neznan odgovor modela (dolžina ${besedilo.length}, ${razlog})`)), dnevnik.join("\n"));
+    assert.ok(dnevnik.every((o) => !o.includes(CITAT) && !/napisal|morda/.test(o)), "nobenega znaka odgovora modela");
+  }
 });
 
 test("povezava: napaka povezave enkrat → takojšen ponovni klic v istem roku → zadetek prvega poskusa; v dnevniku razred in koda, ne besedilo", async () => {
@@ -354,6 +391,14 @@ test("stanje: nepregledanoZadnjoUro je true samo prvo uro po nepregledanem sporo
   stej(u3, "napaka");
   stej(u3, "rok");
   assert.equal(varnostStanje(u3).nepregledanoZadnjoUro, false, "napaka prvega poskusa sama ni alarm");
+  // Čez polnoč (UTC): danes so števci, a brez zadnje_nepregledano; včeraj ob 23.50 je bilo nepregledano sporočilo.
+  const dan = (i) => new Date(Date.now() - i * 864e5).toISOString().slice(0, 10);
+  const polnoc = Date.parse(`${dan(0)}T00:00:00Z`);
+  const u4 = fakeUsage();
+  u4.kvSet(STEVCI_KV, JSON.stringify({ [dan(1)]: { nepregledano: 1, zadnje_nepregledano: `${dan(1)}T23:50:00.000Z` }, [dan(0)]: { rok: 1 } }));
+  assert.equal(varnostStanje(u4, polnoc + 20 * 60e3).nepregledanoZadnjoUro, true, "ob 00.20 še alarm");
+  assert.equal(varnostStanje(u4, polnoc + 70 * 60e3).nepregledanoZadnjoUro, false, "ob 01.10 ne več");
+  assert.equal(varnostStanje(u4).zadnjeNepregledano, dan(1));
 });
 
 test("števci: šifriran zapis z vsemi ključi vsak dan, 60 dni, neznano ime se ne zapiše; poročili za stanje in skrbnika", async () => {

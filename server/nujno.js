@@ -75,6 +75,14 @@ export function razberi(raw) {
   return { vrsta: null, znano: false };
 }
 
+// Zakaj odgovora ni mogoče razbrati (samo za dnevnik; brez znakov odgovora, ki bi lahko citiral sporočilo učenca).
+export function razlogNeznano(raw) {
+  const besede = String(raw || "").toUpperCase().split(/[^A-ZČŠŽ]+/).filter(Boolean);
+  if (!besede.length) return "prazen";
+  if (besede.some((w) => BESEDA[w])) return "protislovje";
+  return "brez znane besede";
+}
+
 // Odgovor modela → vrsta ali null. Neznan odgovor: čez mejo (učenec ne dobi inštruktorja) šteje kot nujno, raje lažni
 // alarm (neznano = "zdravje"); pri pregledu vsakega sporočila pod mejo (B) ne odpre okna (neznano = null).
 export function preberiVrsto(raw, neznano = "zdravje") {
@@ -102,12 +110,13 @@ export function pregledovDanes(usage, studentId) {
 
 // Rok ponudnika (SDK: APIConnectionTimeoutError »Request timed out.«) ali druga napaka klica.
 const jeRok = (err) => /timeout|timed out/i.test(`${err?.name} ${err?.message}`);
-// Napaka povezave (SDK APIConnectionError brez statusa, ali surova ECONNRESET / »socket hang up«), ne rok in ne
-// odgovor ponudnika s statusom (4xx, 5xx). APIConnectionTimeoutError je podrazred APIConnectionError, zato najprej jeRok.
+// Napaka povezave (SDK APIConnectionError brez statusa, ali surova ECONNRESET / »socket hang up«, ali prekinitev med
+// branjem telesa: fetch »terminated« z vzrokom UND_ERR_SOCKET / »other side closed«), ne rok in ne odgovor ponudnika
+// s statusom (4xx, 5xx). APIConnectionTimeoutError je podrazred APIConnectionError, zato najprej jeRok.
 export function jeNapakaPovezave(err) {
   if (!err || jeRok(err) || err.status != null) return false;
   if (err.name === "APIConnectionError" || err.constructor?.name === "APIConnectionError") return true;
-  return /ECONNRESET|socket hang up/i.test(`${err.code} ${err.cause?.code} ${err.cause?.message}`);
+  return /ECONNRESET|UND_ERR_SOCKET|socket hang up|other side closed/i.test(`${err.code} ${err.cause?.code} ${err.cause?.message}`);
 }
 // Za dnevnik: razred napake, status in koda vzroka (npr. »APIConnectionError ECONNRESET«); nikoli besedilo napake,
 // ki bi lahko nosilo podrobnosti zahteve.
@@ -168,7 +177,8 @@ export async function pregledIzid({ text, usage, studentId, createFn = null, var
     const raw = (out?.content || []).filter((b) => b.type === "text").map((b) => b.text).join("");
     const r = razberi(raw);
     if (r.znano) return { vrsta: r.vrsta, izid: "ok" };
-    console.warn(`[evklid] varnostni pregled: neznan odgovor modela (${JSON.stringify(raw.slice(0, 40))})`);
+    // Brez znakov odgovora (model bi lahko citiral sporočilo učenca): samo dolžina in razlog.
+    console.warn(`[evklid] varnostni pregled: neznan odgovor modela (dolžina ${raw.length}, ${razlogNeznano(raw)})`);
     // Čez mejo raje lažni alarm; pri pregledu vsakega sporočila (B) neznan odgovor ne odpre okna.
     return { vrsta: varovalka ? "zdravje" : null, izid: "neznano" };
   } catch (err) {

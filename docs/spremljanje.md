@@ -81,7 +81,8 @@ Actions → Straža → zadnji zagon → korak »Preveri živo spletišče«.
   (`vklopljen: false`: preizkusni način ali `EVKLID_VARNOST_VSAKO=0`) ali je v zadnji uri vsaj eno sporočilo ostalo
   nepregledano (`nepregledanoZadnjoUro: true`; tudi ob porabljenem dobroimetju). Takrat deluje samo lokalni
   zaznavalnik (ujame večino jasnih nujnih primerov, ne vseh). Alarm sam mine eno uro po zadnjem nepregledanem
-  sporočilu. Ukrepaj: Render → Logs, išči `varnostni pregled` (koda vzroka); Anthropic Console → dobroimetje,
+  sporočilu; pri `vklopljen: false` pa ostane, dokler j ne popravi `EVKLID_VARNOST_VSAKO` ali
+  `ANTHROPIC_API_KEY`. Ukrepaj: Render → Logs, išči `varnostni pregled` (koda vzroka); Anthropic Console → dobroimetje,
   omejitve ključa in stran stanja ponudnika; pri `vklopljen: false` preveri `EVKLID_VARNOST_VSAKO` in
   `ANTHROPIC_API_KEY`.
 - **Kje to vidiš (enkrat na teden):** https://evklid.app/healthz/stanje → `varnostniPregled`. `vklopljen` mora biti
