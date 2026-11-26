@@ -7,7 +7,7 @@ import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { modeParams } from "../server/claude.js";
 import { codeHint } from "../server/hints.js";
-import { vajaOpomba, diagnoza, rezultatNaloge } from "../server/vaja-opomba.js";
+import { vajaOpomba, diagnoza, rezultatNaloge, prikazOdgovora, odgovorVSporocilu } from "../server/vaja-opomba.js";
 import { isHiddenNote } from "../server/skrite-opombe.js";
 import { generateTask } from "../server/practice/index.js";
 
@@ -174,5 +174,22 @@ test("preizkus ali tekmovanje: dokler naloga ni oddana, ni pomoči in ni opombe"
     assert.equal(r.status, 400);
     assert.equal(vajaOpomba({ payload: POTENCA, mode: "contest", solved: 0, attempts: 0 }), null);
     assert.ok(vajaOpomba({ payload: POTENCA, mode: "contest", solved: 0, attempts: 1, last_answer: "2" }), "po oddaji je pomoč na voljo");
+  });
+});
+
+test("izbira: v sporočilu pomoči in v opombi je besedilo izbrane možnosti, ne indeks", async () => {
+  const IZBIRA = { text: "Koliko je tan 210°?", answer: { type: "choice", options: ["-√3/3", "√3", "-√3", "√3/3"], index: 3 } };
+  assert.equal(prikazOdgovora(IZBIRA.answer, "3"), "√3/3");
+  assert.equal(prikazOdgovora(IZBIRA.answer, "7"), "7");
+  assert.equal(prikazOdgovora({ type: "number", value: 3 }, "3"), "3");
+  const TEX = { answer: { type: "choice", options: ["A \\wedge \\neg B", "A \\vee B"], index: 0 } };
+  assert.equal(odgovorVSporocilu(TEX, "0"), "$A \\wedge \\neg B$");
+  assert.equal(odgovorVSporocilu(IZBIRA, "3"), "√3/3");
+  await withServer(async ({ call, store }) => {
+    const s = (await call("/api/students", { method: "POST", body: { name: "Tim", settings: { subject: "MAT", educational_track: "SREDNJA_SOLA", curriculum_level: "2" } } })).body;
+    const id = store.db.prepare("INSERT INTO tasks (student_id, topic_id, level, payload, solved, last_answer) VALUES (?, ?, 1, ?, 1, '3')").run(s.id, TEMA, JSON.stringify(IZBIRA)).lastInsertRowid;
+    const h = (await call(`/api/students/${s.id}/tasks/${id}/help`, { method: "POST", body: { kind: "review" } })).body;
+    assert.match(h.text, /Moj odgovor: √3\/3 \(aplikacija/);
+    assert.doesNotMatch(h.text, /Moj odgovor: 3\b/);
   });
 });
