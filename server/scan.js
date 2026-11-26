@@ -12,6 +12,7 @@ import { prep, splitSystem } from "../public/scan/solvecore.js";
 import { cleanUnclear, unclearCount, hasUnclear, normalizeUnclear } from "../public/scan/nejasno.js";
 import { casCheck } from "./cas.js";
 import { STATUSES } from "../public/scan/status.js";
+import { preveriPodatke, cleanRacun, iskanaKolicina } from "../public/scan/podatki.js";
 
 // AI rešitev preverita dve neodvisni kodi: public/scan/verify.js (točna algebra za polinome, sicer numerika) in
 // SymPy (server/cas.js). SymPy je odločilen, kadar se odloči (true/false); kadar ne zna (null), velja verify.js.
@@ -19,7 +20,9 @@ import { STATUSES } from "../public/scan/status.js";
 // Status (public/scan/status.js): »verified« samo, ko SymPy ali točna algebra dokaže celotno množico rešitev;
 // numerična potrditev je največ »numeric«, sistem in periodične rešitve brez dokaza popolnosti »partial« (AUDIT-001).
 // verified: true samo pri statusu »verified« (stari odjemalci prikažejo značko »preverjeno« le takrat).
-// Pri nalogi s podatki (given) je besedilo le predloga s parametri: tam ne odloča nobena koda (status »unverified«).
+// Pri nalogi s podatki (given) besedilo ni naloga, ki bi jo koda razumela. Pri »S=?« AI vrne še »check« (vrednosti in
+// formule), ki ga public/scan/podatki.js sam preračuna: račun drži → »partial«, ne drži → »wrong« (in ponovitev);
+// postavitve naloge (ali so formule prave) koda ne preveri. Druge naloge s podatki ostanejo »unverified«.
 const ROUNDED = /\d\.\d|≈|~|approx|\d\s*[eE][+-]?\d|[*·×]\s*10\s*\^|·\s*10[⁰¹²³⁴⁵⁶⁷⁸⁹⁻]/;
 const periodicClaim = (sol) => (sol?.solutions || []).some((s) => /(?<![A-Za-z])k(?![A-Za-z])/.test(String(s)));
 export async function verifyAiFull(text, sol, { cas = true } = {}) {
@@ -308,9 +311,18 @@ export function solvePrompt(text, lang, feedback = null, goal = null, given = []
     '"answer_tex":"LaTeX of the final answer","solutions":["values in calculator syntax, one per solution (equations); for periodic solutions use k, e.g. pi/6+2*k*pi; for a system one string like x=2; y=-1"],' +
     '"value":"final result in calculator syntax (expression, arith, derivative, integral without +C, limit; for an inequality its solution set as intervals joined by U, e.g. (-oo, -2) U [3, oo), {} if none, R if all)",' +
     '"methods":[{"name":"short method name","steps":[{"title":"what we do, one sentence","tex":"LaTeX of the line after this step","why":"why this step is allowed or how to do it, 1–3 sentences; inline maths in $...$"}]}]}' +
+    (given.length && iskanaKolicina(text) ? `\n${checkPrompt(text)}` : "") +
     (feedbackText(feedback) ? `\n${feedbackText(feedback)}` : "")
   );
 }
+
+// Naloga s podatki »S=?«: AI doda še »check«, ki ga strežnik sam preračuna (public/scan/podatki.js).
+const checkPrompt = (text) =>
+  'Because this task has data, add to the JSON also "check": {"values":{"name":"number"},"equations":["formula"]}, the calculation in a form a program recomputes. ' +
+  `"values": every quantity you use as a plain number without units (decimal point, rounded values with the digits you used; angles in degrees with °, e.g. "22.62°"): each stated datum converted to the units you compute in (2 kW → "2000"), each intermediate result, and the asked quantity named ${JSON.stringify(String(text).replace(/=\s*\?\s*$/, "").trim())}. ` +
+  "Names are one letter or a Greek letter name, with an optional index (a, S_10, T_1, c_w, alpha), never two letters without _. " +
+  '"equations": the formulas you used, in calculator syntax with these names and no units (S=(a+c)/2*v, P*t=m*c*(T_2-T_1), tan(alpha)=a/b); write constants not stated in the task as numbers in the formula (F=m*9.81). ' +
+  "With the values put in, every equation must hold, and together they must determine the asked quantity from the data.";
 
 export function cleanSolution(s) {
   if (!s || typeof s !== "object") return null;
@@ -331,6 +343,7 @@ export function cleanSolution(s) {
     solutions: (Array.isArray(s.solutions) ? s.solutions : []).filter((x) => typeof x === "string").slice(0, 8).map((x) => x.slice(0, 120)),
     value: str(s.value, 400),
     methods,
+    ...(cleanRacun(s.check) ? { racun: cleanRacun(s.check) } : {}),
   };
 }
 
@@ -348,6 +361,8 @@ export function retryFeedback(sol, check, { cut = false } = {}) {
   const miss = (check.missing || []).filter(Number.isFinite);
   const why = check.cas
     ? `an exact check says: ${check.cas}`
+    : check.note
+      ? `recomputing your "check": ${check.note}`
     : check.reason === "missing"
       ? miss.length
         ? `x ≈ ${miss.slice(0, 6).map((m) => m.toFixed(4)).join(", ")} also satisfies the equation`
@@ -359,8 +374,9 @@ export function retryFeedback(sol, check, { cut = false } = {}) {
 /**
  * Reševanje s samodejnimi ponovitvami. ask(feedback[], { cut }) → { sol, usage, model, cut }, verify(sol) → izid preverjanja.
  * canAfford(): rezervira strošek naslednjega klica (meje porabe učenca); false → brez nadaljnjih ponovitev.
- * Ponovi, dokler je zadnji poskus napačen (wrong / missing) ali neberljiv, največ attempts klicev. Pri nalogi s podatki
- * (canRetry: false) preverjanje vidi le predlogo, zato napačnost ne sproži ponovitve (neberljiv odgovor jo).
+ * Ponovi, dokler je zadnji poskus napačen (wrong / missing) ali neberljiv, največ attempts klicev. canRetry: false
+ * izklopi ponovitev ob napačnem izidu (neberljiv odgovor jo še sproži). Naloga s podatki se ponovi, ko preračun
+ * njenega »check« ne drži (public/scan/podatki.js); nepreverljiva ostane brez ponovitve.
  * Obdrži najboljši poskus po statusu (prvi pri enakem).
  */
 export async function solveWithRetries({ ask, verify, canRetry = true, attempts = SOLVE_ATTEMPTS, canAfford = () => true }) {
@@ -407,9 +423,9 @@ export async function solveWithAi({ text, lang = "sl", goal = null, given = [], 
     });
     return { sol: cleanSolution(jsonFrom(textOf(final))), usage: final.usage, model: final.model || model, cut: final.stop_reason === "max_tokens" };
   };
-  // Naloga s podatki: besedilo je le predloga, preverjanje ne odloča (status »unverified«, ne »napačno«)
-  const verify = async (sol) => (given.length ? { verified: false, reason: "given", status: "unverified" } : await verifyAiFull(text, sol));
-  const { out, check, usage } = await solveWithRetries({ ask, verify, canRetry: !given.length, ...(canAfford ? { canAfford } : {}) });
+  // Naloga s podatki: preračun AI »check« (public/scan/podatki.js); kar ne zna preveriti, ostane »unverified« brez ponovitve
+  const verify = async (sol) => (given.length ? preveriPodatke(text, given, sol) : await verifyAiFull(text, sol));
+  const { out, check, usage } = await solveWithRetries({ ask, verify, ...(canAfford ? { canAfford } : {}) });
   return { solution: out.sol ? { ...out.sol, verified: !!check.verified, check: check.reason || null, status: check.status || "unverified", attempts: usage.length } : null, usage, model: out.model || model };
 }
 

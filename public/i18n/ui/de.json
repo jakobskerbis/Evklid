@@ -2988,6 +2988,7 @@
   "scan.st.verifiedTip": "Evklid hat das Ergebnis mit exakter Rechnung bewiesen. Bei Gleichungen und Ungleichungen heißt das: Keine Lösung fehlt und keine ist zu viel.",
   "scan.st.partial": "Teilweise überprüft",
   "scan.st.partialTip": "Evklid hat jede angegebene Lösung mit der Probe überprüft. Dass es keine weiteren gibt, hat er nicht bewiesen.",
+  "scan.st.partialGivenTip": "Evklid hat die Rechnung mit den Angaben der Aufgabe selbst nachgerechnet, und das Ergebnis stimmt. Ob die Aufgabe richtig angesetzt ist, also ob die Formeln stimmen, hat er nicht geprüft.",
   "scan.st.numeric": "Numerisch überprüft",
   "scan.st.numericTip": "Evklid hat das Ergebnis mit Zahlen (Dezimalnäherungen) überprüft, nicht mit exakter Rechnung. Das beweist nicht, dass das Ergebnis exakt ist und keine Lösung fehlt.",
   "scan.st.unverified": "Nicht überprüft",

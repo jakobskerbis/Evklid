@@ -3012,6 +3012,7 @@
   "scan.st.verifiedTip": "Evklid je rezultat dokazao točnim računom. Kod jednadžbi i nejednadžbi to znači da nijedno rješenje ne nedostaje i nijedno nije suvišno.",
   "scan.st.partial": "Djelomično provjereno",
   "scan.st.partialTip": "Evklid je svako navedeno rješenje provjerio uvrštavanjem. Nije dokazao da drugih rješenja nema.",
+  "scan.st.partialGivenTip": "Evklid je sam ponovio račun s podacima zadatka i rezultat se slaže. Nije provjerio je li zadatak ispravno postavljen, odnosno jesu li formule prave.",
   "scan.st.numeric": "Numerički provjereno",
   "scan.st.numericTip": "Evklid je rezultat provjerio brojevima (decimalnim približnim vrijednostima), ne točnim računom. To ne dokazuje da je rezultat točan i da nijedno rješenje ne nedostaje.",
   "scan.st.unverified": "Neprovjereno",

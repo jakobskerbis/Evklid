@@ -2988,6 +2988,7 @@
   "scan.st.verifiedTip": "Az Evklid pontos számolással bizonyította az eredményt. Egyenleteknél és egyenlőtlenségeknél ez azt jelenti, hogy egyetlen megoldás sem hiányzik, és egy sem fölösleges.",
   "scan.st.partial": "Részben ellenőrizve",
   "scan.st.partialTip": "Az Evklid minden megadott megoldást behelyettesítéssel ellenőrzött. Azt nem bizonyította, hogy nincs több megoldás.",
+  "scan.st.partialGivenTip": "Az Evklid a feladat adataival maga is újraszámolta a számítást, és az eredmény egyezik. Azt nem ellenőrizte, hogy a feladat helyesen van-e felírva, vagyis jók-e a képletek.",
   "scan.st.numeric": "Numerikusan ellenőrizve",
   "scan.st.numericTip": "Az Evklid számokkal (tizedes közelítésekkel) ellenőrizte az eredményt, nem pontos számolással. Ez nem bizonyítja, hogy az eredmény pontos, és hogy egyetlen megoldás sem hiányzik.",
   "scan.st.unverified": "Nincs ellenőrizve",
