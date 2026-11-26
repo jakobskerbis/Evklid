@@ -147,9 +147,13 @@ for (const q of ["/?pogled=chat", "/?koda=ABC123"]) {
       const ctx = await chromium.newContext({ serviceWorkers: "allow" });
       try {
         const p = await installOld(ctx, base);
+        const strani = await zapisujStrani(p);
         state.mode = "nova";
         await p.goto(base + q);
         await novaStran(p);
+        await p.waitForTimeout(500);
+        assert.ok(strani.length > 0 && strani.at(-1).js === "nova", JSON.stringify(strani));
+        for (const s of strani) assert.equal(s.js, s.stran, `vstopna stran in app.js iste različice: ${JSON.stringify(strani)}`);
       } finally {
         await ctx.close();
       }

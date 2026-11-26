@@ -311,7 +311,13 @@ async function revalidateEntry(cache) {
   const ctl = new AbortController();
   const rok = setTimeout(() => ctl.abort(), ENTRY_ROK);
   try {
-    const res = await fetch(new URL(ENTRY, self.location.origin).href, { credentials: "same-origin", headers: { Accept: "text/html" }, signal: ctl.signal });
+    // redirect: "manual" kot pri navigaciji: stara povezava (tunel ngrok ali Cloudflare) strežnik preusmeri na lastno
+    // domeno (server/app.js mountOldLinkRedirect). Sledenje bi preusmeritev na drug izvor končalo z napako (CORS) in
+    // kopija bi ostala za vedno: aplikacija na stari povezavi bi se vedno odprla iz predpomnilnika, klici API (tudi
+    // preusmerjeni) pa ne bi delali. Preusmeritev pomeni, da »/« tu ni več naša vstopna stran: kopijo pobrišemo, da
+    // naslednje odprtje gre na omrežje in brskalnik sledi preusmeritvi.
+    const res = await fetch(new URL(ENTRY, self.location.origin).href, { credentials: "same-origin", headers: { Accept: "text/html" }, redirect: "manual", signal: ctl.signal });
+    if (res.type === "opaqueredirect") return cache.delete(ENTRY);
     if (tunnelDown(res)) return ctl.abort();
     const v = noteVersion(res);
     if (res.status === 401) {

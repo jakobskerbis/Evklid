@@ -39,6 +39,14 @@ function loadSw(app, net = {}) {
     calls.push(url);
     // omrežje ne odgovori; kot pravi fetch se zahteva s signalom ob abort() konča z napako
     if (net.hang) return new Promise((_, no) => init?.signal?.addEventListener("abort", () => no(new Error("abort"))));
+    // stara povezava (tunel) preusmeri »/« na lastno domeno (server/app.js mountOldLinkRedirect): navigacija in
+    // redirect: "manual" dobita opaqueredirect, sledenje preusmeritvi na drug izvor brez CORS pa konča z napako
+    if (net.redirectEntry && new URL(url).pathname === "/") {
+      if (r?.mode !== "navigate" && init?.redirect !== "manual") throw new TypeError("Failed to fetch");
+      const res = new Response(null, { status: 200 });
+      for (const [k, value] of Object.entries({ type: "opaqueredirect", status: 0, ok: false })) Object.defineProperty(res, k, { value });
+      return res;
+    }
     const headers = { "content-type": "text/plain" };
     // strežnik pošlje različico datotek na vsakem odgovoru zunaj API (server/app.js)
     if (net.served && !new URL(url).pathname.startsWith("/api/")) headers["X-Evklid-App"] = net.served;
@@ -212,6 +220,21 @@ test("vstopna stran (N-08b): prijava z geslom (401) pobriše kopijo, naslednje o
   sw.calls.length = 0;
   await sw.get("/", "navigate");
   assert.deepEqual(sw.calls, [`${ORIGIN}/`], "naslednje odprtje: omrežje");
+});
+
+// Stara povezava (ngrok, trycloudflare.com) strežnik preusmeri na lastno domeno: shranjena kopija se ne sme odpirati za
+// vedno (aplikacija na stari povezavi bi bila brez delujočih klicev API); naslednje odprtje gre na omrežje (preusmeritev).
+test("vstopna stran (N-08b): preusmeritev »/« (stara povezava → lastna domena) pobriše kopijo, naslednje odprtje gre na omrežje", async () => {
+  const sw = loadSw("abc", { redirectEntry: true });
+  const st = await sw.caches.open("evklid-v1-static");
+  await st.put(`${ORIGIN}/`, new Response("shranjena stran", { headers: { "X-Evklid-App": "abc" } }));
+  assert.equal(await sw.get("/", "navigate"), "shranjena stran");
+  await Promise.all(sw.waits);
+  assert.equal(await st.match(`${ORIGIN}/`), undefined, "kopija pobrisana");
+  sw.calls.length = 0;
+  const p = await sw.get("/", "navigate").catch((e) => e);
+  assert.deepEqual(sw.calls, [`${ORIGIN}/`], "naslednje odprtje: omrežje (brskalnik sledi preusmeritvi)");
+  assert.notEqual(p, "shranjena stran");
 });
 
 // Preverjanje v ozadju drži service worker zaseden (e.waitUntil): nov service worker se aktivira šele, ko se konča. Brez
