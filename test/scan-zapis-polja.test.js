@@ -46,7 +46,9 @@ test("zaslon Skeniraj: polje kaže zaPolje, reševanje dobi nespremenjeno prebra
   assert.match(conf, /const naloga = \(\) => \(input\.value === field\.shown \? field\.text : izPolja\(input\.value\)\);/);
   assert.doesNotMatch(conf.replace(/input\.value === field\.shown|izPolja\(input\.value\)|input\.value = field\.shown|input\.value\.trim\(\)|prevField = input\.value|\{ shown: input\.value|input\.isConnected && input\.value|const v = input\.value;|input\.value\.indexOf\(VIDNA_OZNAKA/g, ""), /input\.value/, "nalogo bere le naloga()");
   const css = fs.readFileSync(new URL("../public/scan.css", import.meta.url), "utf8");
-  assert.match(css, /\.scan-input-wrap \.vnos-izrisan ~ \.scan-input-izris \{ display: none; \}/, "skupni izris vnosa ima prednost");
+  assert.match(css, /\.scan-input-wrap\.ima-izris:not\(:focus-within\) \.vnos-izris \{ visibility: hidden; \}/, "zunaj polja cela formula, med urejanjem skupni izris");
+  // AUDIT-084: skupni izris vnosa velja tudi v potrditvi skenerja (.scan-confirm je sicer brez njega)
+  assert.match(conf, /<input id="scan-input" type="text" data-izris-v-polju /);
   assert.match(css, /\.scan-input-wrap\.ima-izris input \{ -webkit-text-fill-color: transparent;/, "barva polja ostane (skupni izris jo prevzame)");
   assert.doesNotMatch(css, /\.ima-izris input \{ color: transparent/);
   assert.match(conf, /m\.initPredogledVnosa\(\);\s*if \(input\.isConnected && input\.value\) input\.dispatchEvent\(new Event\("change"/, "prebrana naloga se izriše brez vnosa");

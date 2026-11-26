@@ -190,7 +190,8 @@
 .scan-input-wrap.ima-izris input { -webkit-text-fill-color: transparent; caret-color: var(--text); }
 .scan-input-wrap.ima-izris:focus-within .scan-input-izris { display: none; }
 .scan-input-wrap.ima-izris:focus-within input { -webkit-text-fill-color: currentColor; }
-/* ko polje izriše skupni izris vnosa (public/predogled-vnosa.js, kot v klepetu), ta izris odstopi */
-.scan-input-wrap .vnos-izrisan ~ .scan-input-izris { display: none; }
+/* Skupni izris vnosa (public/predogled-vnosa.js, data-izris-v-polju; AUDIT-084) velja med urejanjem, kot v klepetu;
+   zunaj polja ostane cela formula tega izrisa (lepša: brez »·«, spremenljivke poševno). */
+.scan-input-wrap.ima-izris:not(:focus-within) .vnos-izris { visibility: hidden; }
 /* dotik na nejasno mesto v »Prebral sem« izbere okence v polju */
 .scan-preview .boxpad, .scan-preview .scan-unclear-mark { cursor: pointer; }
