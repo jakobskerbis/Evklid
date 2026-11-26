@@ -467,3 +467,21 @@ test("ležeč telefon 844 × 390: prazno polje za pisanje po odprtju tipkovnice 
     await ctx.close();
   });
 });
+
+// Izbire v glavi klepeta (predmet, način, razred) na dotik: vsaj 40 px visoke kot na telefonu pokončno. Na iPadu
+// pokončno (oznake v svoji vrstici) in na ležečem telefonu (glava v eni vrstici) so bile visoke le 25 px.
+for (const v of [{ width: 820, height: 1180 }, L, { width: 740, height: 360 }]) {
+  test(`dotik ${v.width} × ${v.height}: izbire v glavi klepeta so visoke vsaj 40 px`, opts, async () => {
+    await withApp(async (base) => {
+      const { ctx, p, errors } = await phone(base, v);
+      const m = await p.evaluate(() => ({
+        izbire: [...document.querySelectorAll("#chat-state .chip-pick .dd-btn")].filter((e) => e.checkVisibility()).map((e) => Math.round(e.getBoundingClientRect().height)),
+        glava: Math.round(document.querySelector("#view-chat .chat-head").getBoundingClientRect().height),
+      }));
+      assert.ok(m.izbire.length >= 2 && m.izbire.every((h) => h >= 40), `izbire vsaj 40 px: ${JSON.stringify(m)}`);
+      if (v.height < 500) assert.ok(m.glava <= 60, `ležeče glava ostane ena vrstica: ${JSON.stringify(m)}`);
+      assert.deepEqual(errors, []);
+      await ctx.close();
+    });
+  });
+}
