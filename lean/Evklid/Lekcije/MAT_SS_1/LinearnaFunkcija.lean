@@ -212,7 +212,7 @@ theorem paket_brez_nicle :
 
 /-! ## Primer 1 -/
 
-/-- Primer 1, korak 1: f(x) = 2x − 4 ima k = 2, n = −4 in narašča. -/
+/-- Primer 1, korak 1: f(x) = 2x − 4 ima k = 2, n = −4. -/
 theorem p1_k_n (k n : ℝ) : (∀ x : ℝ, 2 * x + (-4) = k * x + n) ↔ (k = 2 ∧ n = -4) := preberi 2 (-4) k n
 
 /-- Primer 1, korak 1: f(x) = 2x − 4 narašča. -/

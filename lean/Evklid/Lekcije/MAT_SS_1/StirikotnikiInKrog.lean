@@ -1,10 +1,12 @@
 /-
 vir: content/lessons/MAT-SS-1/stirikotniki-in-krog.md
-sha256: 8918d803dc8a172302b0edf6faf02d89ce5191900f76e48c6b4b69011c2eee96
+sha256: 0ea1b5b91f8cc4d073b1f4b91110f8fae2fd048a4743d9cc47bda310915aeb5e
 Model: lastnosti likov so dokazane v realnem prostoru s skalarnim produktom `V` (točke so vektorji):
 paralelogram ABCD je B − A = C − D (u = B − A, w = D − A, C = A + u + w), pravokotnik še ⟪u, w⟫ = 0, romb še
 ‖u‖ = ‖w‖, trapez C − D = t(B − A) s t ≥ 0 (osnovnici vzporedni in enako usmerjeni), deltoid |AB| = |AD|,
-|CB| = |CD|. Enakokraki trapez in tetivni liki so v ℂ s simetrično lego. Koti `∠` so v radianih (θ° = θ·π/180),
+|CB| = |CD|. Enakokraki trapez (lekcija: enaka kraka, ni paralelogram) je v Leanu modeliran že s simetrično lego
+v ℂ (A = −p, B = p, C = q + hi, D = −q + hi); da ima vsak trapez z enakima krakoma, ki ni paralelogram, to lego,
+ni dokazano (zahtevno, še ni dokazano). Tetivni liki so v ℂ s simetrično lego. Koti `∠` so v radianih (θ° = θ·π/180),
 stopinjski računi so s stopinjami kot števili. Ploščina kroga je Lebesgueova mera zaprtega kroga v ℂ. Obodni kot:
 dokazan je primer iz lekcije (središče S znotraj obodnega kota, D je drugo presečišče CS s krožnico), zapisan s
 predpostavkama ∠ACB = ∠ACS + ∠SCB in ∠ASB = ∠ASD + ∠DSB (S leži znotraj obeh kotov). »≈ a« na k decimalk je
@@ -21,7 +23,8 @@ za druge lege C, »vsi obodni koti nad istim lokom so enaki« zunaj dokazane leg
 in obrat, »romb (razen kvadrata) in neenakokraki trapez nista tetivna«, včrtana krožnica tangentnega štirikotnika
 (zahtevno, še ni dokazano; dokazano je: pravokotnik in enakokraki trapez imata točko, enako oddaljeno od vseh
 oglišč, tangentni odseki iz točke so enako dolgi in iz tega a + c = b + d); iskanje središča s kotnikom (Tales je
-dokazan); Postopek, Pazi na, točkovanje, razlage v kvizih.
+dokazan); Naloga 2 a) korak 3, da E, S, F ležijo na skupni simetrali osnovnic in S med njima, zato v = |SE| + |SF|
+(zahtevno, še ni dokazano; dokazan je račun 5 + 12 = 17); Postopek, Pazi na, točkovanje, razlage v kvizih.
 Lean: √ negativnega je 0, x/0 = 0 (formule z deljenjem imajo pozitivne podatke).
 -/
 module
@@ -513,7 +516,9 @@ theorem zgodba : (3 : ℝ) ^ 2 + 4 ^ 2 = 25 ∧ (25 : ℝ) = 5 ^ 2 ∧ ((180 : �
   obtain ⟨l, u⟩ := pi_meje
   refine ⟨by norm_num, by norm_num, by norm_num, by norm_num, ?_, ?_⟩ <;> rw [abs_lt] <;> constructor <;> linarith
 
-/-! ## Preveri se -/
+/-! ## Preveri se
+Preveri se 1 (romb) pokrivata `romb` in `paralelogram`, Preveri se 3 (obodna kota nad istim lokom) `obodna_enaka`,
+Preveri se 5 (središče s kotnikom) `tales`. -/
 
 /-- Preveri se 2: r = 0,6, S = π·0,6² = 0,36π ≈ 1,13 (napačni: π·1,2² ≈ 4,52, obseg 2π·0,6 ≈ 3,77). -/
 theorem kviz2 : (12 / 10 : ℝ) / 2 = 6 / 10 ∧ π * (6 / 10) ^ 2 = 36 / 100 * π ∧ |36 / 100 * π - 113 / 100| < 5 / 1000 ∧

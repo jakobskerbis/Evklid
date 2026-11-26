@@ -205,11 +205,26 @@ theorem skozi_tocko (k x₁ y₁ x y : ℝ) : (y₁ - y₁ = k * (x₁ - x₁)) 
 theorem r4_preizkus (x y : ℝ) : y - 4 = 3 * (x - 1) ↔ y = 3 * x + 1 :=
   ⟨fun h => by linarith, fun h => by linarith⟩
 
-/-- Razlaga 4: pri x₁ = x₂ obe točki ležita na navpični premici x = x₁. -/
-theorem dve_tocki_navpicna (x₁ x₂ : ℝ) (h : x₁ = x₂) : x₁ = x₁ ∧ x₂ = x₁ := ⟨rfl, h.symm⟩
+/-- Razlaga 4 (premica skozi dve točki): pri x₁ ≠ x₂ gre premica y − y₁ = k(x − x₁) s
+k = (y₂ − y₁)/(x₂ − x₁) skozi obe točki. -/
+theorem dve_tocki (x₁ y₁ x₂ y₂ : ℝ) (h : x₁ ≠ x₂) :
+    y₁ - y₁ = (y₂ - y₁) / (x₂ - x₁) * (x₁ - x₁) ∧ y₂ - y₁ = (y₂ - y₁) / (x₂ - x₁) * (x₂ - x₁) := by
+  have hd : x₂ - x₁ ≠ 0 := sub_ne_zero.mpr (Ne.symm h)
+  exact ⟨by ring, by rw [div_mul_cancel₀ _ hd]⟩
 
-/-- Predpostavka `dve_tocki_navpicna` se da izpolniti (x₁ = x₂ = 2). -/
-example : (2:ℝ) = 2 := rfl
+/-- Predpostavka `dve_tocki` se da izpolniti (x₁ = 1, x₂ = 3). -/
+example : (1:ℝ) ≠ 3 := by norm_num
+
+/-- Razlaga 4: pri x₁ = x₂ in y₁ ≠ y₂ nobena premica y = kx + n ne gre skozi obe točki (premica je
+navpična, x = x₁). -/
+theorem dve_tocki_navpicna (x₁ y₁ x₂ y₂ : ℝ) (h : x₁ = x₂) (hy : y₁ ≠ y₂) :
+    ¬ ∃ k n : ℝ, y₁ = k * x₁ + n ∧ y₂ = k * x₂ + n := by
+  rintro ⟨k, n, h1, h2⟩
+  subst h
+  exact hy (h1.trans h2.symm)
+
+/-- Predpostavki `dve_tocki_navpicna` se dasta izpolniti (x₁ = x₂ = 2, y₁ = 1, y₂ = 5). -/
+example : (2:ℝ) = 2 ∧ (1:ℝ) ≠ 5 := by norm_num
 
 /-! ## Razlaga 5: vzporednost in pravokotnost -/
 
@@ -689,11 +704,15 @@ theorem preveri_1 : ((3:ℝ) / 3 + 0 / 2 = 1 ∧ (0:ℝ) / 3 + 2 / 2 = 1) ∧ (3
 theorem preveri_2 : (1:ℝ) + 2 * (-(1 / 2)) = 0 ∧ kotMed 2 (-(1 / 2)) = π / 2 :=
   ⟨by norm_num, (kot_pravokotni _ _).mpr (by norm_num)⟩
 
-/-- Preveri se 3, RACUN: k = 0,4/5 = 0,08, α = arctan 0,08 ≈ 4,57° (napačni 0,08, 85,43, 82,87 niso). -/
-theorem preveri_3 : (0.4:ℝ) / 5 = 0.08 ∧ |arctan 0.08 * 180 / π - 4.57| < 0.005 := by
-  refine ⟨by norm_num, ?_⟩
-  obtain ⟨hL, hU⟩ := arctan_meje 0.08 (by norm_num) (by norm_num) 2
-  refine stopinje_iz_mej hL hU (by norm_num) (by norm_num) ?_ ?_ <;> norm_num [Finset.sum_range_succ]
+/-- Preveri se 3, RACUN: k = 0,4/5 = 0,08, α = arctan 0,08 ≈ 4,57°; 90 − 4,57 = 85,43; napačni odgovori
+0,08, 85,43 in 82,87 niso kot α v stopinjah. -/
+theorem preveri_3 : (0.4:ℝ) / 5 = 0.08 ∧ |arctan 0.08 * 180 / π - 4.57| < 0.005 ∧ (90:ℝ) - 4.57 = 85.43 ∧
+    arctan 0.08 * 180 / π ≠ 0.08 ∧ arctan 0.08 * 180 / π ≠ 85.43 ∧ arctan 0.08 * 180 / π ≠ 82.87 := by
+  have hb : |arctan 0.08 * 180 / π - 4.57| < 0.005 := by
+    obtain ⟨hL, hU⟩ := arctan_meje 0.08 (by norm_num) (by norm_num) 2
+    refine stopinje_iz_mej hL hU (by norm_num) (by norm_num) ?_ ?_ <;> norm_num [Finset.sum_range_succ]
+  have h2 := abs_lt.mp hb
+  refine ⟨by norm_num, hb, by norm_num, ?_, ?_, ?_⟩ <;> intro h <;> rw [h] at h2 <;> norm_num at h2
 
 /-- Preveri se 4, RACUN: ax + 2y − 6 = 0 ima k = −a/2; vzporedna y = 3x + 1 natanko pri −a/2 = 3 ⇔ a = −6;
 tedaj −6x + 2y − 6 = 0 ⇔ y = 3x + 3. -/

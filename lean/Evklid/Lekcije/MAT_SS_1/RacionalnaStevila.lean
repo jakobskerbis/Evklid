@@ -104,8 +104,9 @@ theorem razlaga2_primeri :
     (Nat.gcd 18 30 = 6 ∧ (18 : ℚ) / 30 = 3 / 5 ∧ Nat.Coprime 3 5) ∧ -((3 : ℚ) / 5) = (-3) / 5 := by
   refine ⟨by norm_num, by norm_num, ⟨by decide, by norm_num, by decide⟩, by ring⟩
 
-/-- Razlaga 3 in Povzetek: vsota, razlika, zmnožek, količnik ulomkov (b, d ≠ 0, pri količniku c ≠ 0) in obratna
-vrednost (c/d · d/c = 1). -/
+/-- Razlaga 3 in Povzetek: vsota, razlika, zmnožek, količnik ulomkov (b, d ≠ 0) in obratna
+vrednost (c/d · d/c = 1 pri c ≠ 0). Lekcija pri količniku zahteva c ≠ 0; enakost za količnik je tu brez tega pogoja
+(pri c = 0 sta obe strani 0 po Leanovem dogovoru x/0 = 0, kar ni del lekcije). -/
 theorem racunanje (a b c d : ℚ) (hb : b ≠ 0) (hd : d ≠ 0) :
     a / b + c / d = (a * d + b * c) / (b * d) ∧ a / b - c / d = (a * d - b * c) / (b * d) ∧
     a / b * (c / d) = (a * c) / (b * d) ∧ (a / b) / (c / d) = a / b * (d / c) ∧

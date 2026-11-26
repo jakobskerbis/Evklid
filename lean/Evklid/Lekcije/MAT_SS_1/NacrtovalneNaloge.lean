@@ -13,7 +13,8 @@ programov; množice točk iz razlage 4 so definicije (krožnica, krak, vzporedni
 na simetrali AB, glej `sredisce_na_simetrali`); »trikotnik na drugi strani AB je skladen« pri Primeru 2 (dokazano je
 le, da je C na vzporednici nad AB en sam); pri Nalogi 2 c) »enako velja za vzporednico na drugi strani AB«
 (simetrija, zahtevno, še ni dokazano; dokazano je za vzporednico Im z = v); izmerjene vrednosti (|AB| ≈ 4,6 cm, α = 60° »če izmeriš«) so dokazane z
-računom; Pogoste napake, Postopek, Pazi na, točkovanje, razvrščanje korakov (kviz 5).
+računom; število presečišč krožnic k(A, b), k(B, a) (dokazana sta pogoj za presečišče in razcep, `krozjici`, štetje:
+zahtevno, še ni dokazano); Pogoste napake, Postopek, Pazi na, točkovanje, razvrščanje korakov (kviz 5).
 -/
 module
 
@@ -230,7 +231,8 @@ theorem dotik_pravi_kot (c k s : ℝ) (h : k ^ 2 + s ^ 2 = 1) :
 
 /-- Razlaga 5 in Povzetek (SSS, Kot zgodba): krožnici k(A, b) in k(B, a) (A = 0, B = c > 0) se sekata v točkah z
 Re z = x = (b² + c² − a²)/(2c) in (Im z)² = b² − x²; pri tem 4c²(b² − x²) = (a² − (b − c)²)((b + c)² − a²), zato sta
-presečišči dve natanko pri |a − b| < c < a + b (pozitivni faktorji), eno pri enakosti, nobenega sicer. -/
+presečišči dve natanko pri |a − b| < c < a + b (pozitivni faktorji), eno pri enakosti, nobenega sicer. Dokazana sta
+ta ↔ in razcep (`krozjici_faktor`); samo štetje presečišč ni izrek (zahtevno, še ni dokazano). -/
 theorem krozjici (a b c : ℝ) (hc : 0 < c) (z : ℂ) :
     (dist z 0 = b ∧ dist z c = a ∧ 0 ≤ a ∧ 0 ≤ b) ↔
       (z.re = (b ^ 2 + c ^ 2 - a ^ 2) / (2 * c) ∧ z.im ^ 2 = b ^ 2 - ((b ^ 2 + c ^ 2 - a ^ 2) / (2 * c)) ^ 2 ∧
@@ -291,8 +293,9 @@ theorem ksk_pogoj (c α β : ℝ) (hc : 0 < c) (hα : 0 < α) (hα' : α < π) (
 example : (0 : ℝ) < 5 ∧ (0 : ℝ) < 40 * π / 180 ∧ 40 * π / 180 < π ∧ (0 : ℝ) < 70 * π / 180 ∧ 70 * π / 180 < π :=
   ⟨by norm_num, by positivity, by linarith [pi_pos], by positivity, by linarith [pi_pos]⟩
 
-/-- Razlaga 5 (SKS ima natanko eno rešitev): obstoj (C = 0, B = a, A = b·e^{iγ} v ℂ ima |CB| = a, |CA| = b), enoličnost
-do skladnosti (dva trikotnika z istima stranicama in kotom med njima sta skladna). -/
+/-- Razlaga 5 (SKS ima natanko eno rešitev): obstoj (C = 0, B = a, A = b·e^{iγ} v ℂ ima |CB| = a, |CA| = b; da je
+kot pri C res γ za 0 ≤ γ ≤ π, je `sks_kot`), enoličnost do skladnosti (dva trikotnika z istima stranicama in kotom
+med njima sta skladna). -/
 theorem sks (a b γ : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) {A B C A₁ B₁ C₁ : P} (h : ∠ A C B = ∠ A₁ C₁ B₁)
     (h1 : dist A C = dist A₁ C₁) (h2 : dist C B = dist C₁ B₁) :
     (dist (0 : ℂ) a = a ∧ dist (0 : ℂ) (b * Complex.exp (γ * Complex.I)) = b) ∧ (![A, C, B] ≅ ![A₁, C₁, B₁]) := by
@@ -303,6 +306,24 @@ theorem sks (a b γ : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) {A B C A₁ B₁ C₁ :
 
 /-- Predpostavke trditve `sks` se dajo izpolniti (a = 5, b = 4, Primer 1). -/
 example : (0 : ℝ) ≤ 5 ∧ (0 : ℝ) ≤ 4 := by norm_num
+
+/-- Razlaga 5 (SKS, obstoj s kotom): za a, b > 0 in 0 ≤ γ ≤ π (0° do 180°) ima trikotnik C = 0, B = a,
+A = b·e^{iγ} pri C res kot ∠BCA = γ (stranici |CB| = a, |CA| = b sta v `sks`). -/
+theorem sks_kot (a b γ : ℝ) (ha : 0 < a) (hb : 0 < b) (h0 : 0 ≤ γ) (hπ : γ ≤ π) :
+    ∠ (a : ℂ) 0 (b * Complex.exp (γ * Complex.I)) = γ := by
+  simp only [EuclideanGeometry.angle, vsub_eq_sub, sub_zero]
+  unfold InnerProductGeometry.angle
+  have n1 : ‖(a : ℂ)‖ = a := by rw [Complex.norm_real, Real.norm_of_nonneg ha.le]
+  have n2 : ‖(b : ℂ) * Complex.exp (γ * Complex.I)‖ = b := by
+    rw [norm_mul, Complex.norm_exp_ofReal_mul_I, mul_one, Complex.norm_real, Real.norm_of_nonneg hb.le]
+  have hi : inner ℝ (a : ℂ) ((b : ℂ) * Complex.exp (γ * Complex.I)) = a * (b * Real.cos γ) := by
+    rw [Complex.inner, Complex.exp_mul_I]
+    simp [← Complex.ofReal_cos, ← Complex.ofReal_sin]; ring
+  rw [n1, n2, hi, show a * (b * Real.cos γ) / (a * b) = Real.cos γ by field_simp, Real.arccos_cos h0 hπ]
+
+/-- Predpostavke trditve `sks_kot` se dajo izpolniti (a = 5, b = 4, γ = π/3, Primer 1). -/
+example : (0 : ℝ) < 5 ∧ (0 : ℝ) < 4 ∧ (0 : ℝ) ≤ π / 3 ∧ π / 3 ≤ π :=
+  ⟨by norm_num, by norm_num, by positivity, by linarith [pi_pos]⟩
 
 /-! ## Rešeni primeri -/
 
@@ -401,7 +422,7 @@ example : dist (0 : ℂ) 5 = 5 ∧ dist (5 : ℂ) ⟨13 / 2, 3 * √3 / 2⟩ = 3
 /-! ## Za maturo -/
 
 /-- Naloga 2 a), c) (diskusija v modelu A = −3, B = 3, M = 0): točke z Im z = v (vzporednica) in |z| = t (krožnica
-k(M, t)) za t, v > 0: pri t > v sta dve, z = ±√(t² − v²) + vi; pri t = v ena (z = vi, enakokraki); pri t < v nobene. -/
+k(M, t)) za t, v > 0: pri t > v sta dve, z = ±√(t² − v²) + vi; pri t = v ena (z = vi, enakokraki); pri t < v nobene. Tu je dokazan ↔; štetje je `naloga2_stevilo`. -/
 theorem naloga2_diskusija (t v : ℝ) (ht : 0 < t) (z : ℂ) :
     (z.im = v ∧ ‖z‖ = t) ↔ (z.im = v ∧ z.re ^ 2 = t ^ 2 - v ^ 2) := by
   have hn : ‖z‖ ^ 2 = z.re ^ 2 + z.im ^ 2 := by rw [Complex.sq_norm, Complex.normSq_apply]; ring
@@ -413,6 +434,47 @@ theorem naloga2_diskusija (t v : ℝ) (ht : 0 < t) (z : ℂ) :
 
 /-- Predpostavka trditve `naloga2_diskusija` se da izpolniti (t = 5). -/
 example : (0 : ℝ) < 5 := by norm_num
+
+/-- Naloga 2 c) (štetje): pri t > v sta točki dve (±√(t² − v²) + vi, različni), pri t = v je ena (vi, in trikotnik
+ABC z A = −3, B = 3, C = vi je enakokrak, |CA| = |CB|), pri t < v ni nobene (v > 0). -/
+theorem naloga2_stevilo (t v : ℝ) (ht : 0 < t) (hv : 0 < v) :
+    (v < t → {z : ℂ | z.im = v ∧ ‖z‖ = t} = {⟨√(t ^ 2 - v ^ 2), v⟩, ⟨-√(t ^ 2 - v ^ 2), v⟩} ∧
+      (⟨√(t ^ 2 - v ^ 2), v⟩ : ℂ) ≠ ⟨-√(t ^ 2 - v ^ 2), v⟩) ∧
+    (t = v → {z : ℂ | z.im = v ∧ ‖z‖ = t} = {⟨0, v⟩} ∧ dist (⟨0, v⟩ : ℂ) (-3) = dist (⟨0, v⟩ : ℂ) 3) ∧
+    (t < v → {z : ℂ | z.im = v ∧ ‖z‖ = t} = ∅) := by
+  have key := fun z => naloga2_diskusija t v ht z
+  refine ⟨fun hlt => ?_, fun heq => ?_, fun hlt => ?_⟩
+  · have hd : 0 < t ^ 2 - v ^ 2 := by nlinarith
+    have hs : √(t ^ 2 - v ^ 2) ^ 2 = t ^ 2 - v ^ 2 := Real.sq_sqrt hd.le
+    have hp : 0 < √(t ^ 2 - v ^ 2) := Real.sqrt_pos.mpr hd
+    refine ⟨?_, ?_⟩
+    · ext z
+      simp only [Set.mem_ofPred_eq, Set.mem_insert_iff, Set.mem_singleton_iff, key]
+      constructor
+      · rintro ⟨h1, h2⟩
+        rw [← hs] at h2
+        rcases sq_eq_sq_iff_eq_or_eq_neg.mp h2 with h | h
+        · left; exact Complex.ext h h1
+        · right; exact Complex.ext h h1
+      · rintro (rfl | rfl) <;> exact ⟨rfl, by simp [hs]⟩
+    · intro h
+      have := congrArg Complex.re h
+      simp at this; linarith
+  · subst heq
+    refine ⟨?_, ?_⟩
+    · ext z
+      simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff, key, sub_self]
+      constructor
+      · rintro ⟨h1, h2⟩; exact Complex.ext (pow_eq_zero_iff two_ne_zero |>.mp h2) h1
+      · rintro rfl; exact ⟨rfl, by simp⟩
+    · rw [Complex.dist_eq_re_im, Complex.dist_eq_re_im]; norm_num
+  · ext z
+    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, key, not_and]
+    intro _ h2
+    nlinarith [sq_nonneg z.re]
+
+/-- Predpostavka trditve `naloga2_stevilo` se da izpolniti (t = 5, v = 3 kot v Nalogi 2). -/
+example : (0 : ℝ) < 5 ∧ (0 : ℝ) < 3 ∧ (3 : ℝ) < 5 := by norm_num
 
 /-- Naloga 2 c), d) in `RACUN`: t = 5, v = 3: C₁,₂ = ±4 + 3i (|MN| = √(5² − 3²) = 4); trikotnika ABC₁ in ABC₂ sta
 skladna (zrcaljenje čez simetralo AB, SSS); za C = 4 + 3i (bliže B): |BN| = 4 − 3 = 1, |AN| = 3 + 4 = 7,
@@ -474,9 +536,25 @@ theorem korak_za_korakom : (9 : ℝ) - 4 = 5 ∧ ((4 : ℝ) - 3 < 5 ∧ (5 : ℝ
     (25 : ℝ) = 5 ^ 2 ∧ (3 : ℝ) * 4 / 2 = 6 ∧ (2 : ℝ) * 6 / 5 = 24 / 10 := by norm_num
 
 /-- Preveri se 1: c = 8, a = 6, 30°: d = 8/2 = 4 < 6 < 8, dve rešitvi; drugi nabori: 4 − 3 < 5 < 4 + 3,
-40 + 70 < 180. -/
+40 + 70 < 180; nabor c = 6, v_c = 2, α = 60° je `kviz1_visina`. -/
 theorem kviz1 : (8 : ℝ) * (1 / 2) = 4 ∧ (4 : ℝ) < 6 ∧ (6 : ℝ) < 8 ∧ ((4 : ℝ) - 3 < 5 ∧ (5 : ℝ) < 4 + 3) ∧
     (40 : ℝ) + 70 < 180 := by norm_num
+
+/-- Preveri se 1 (nabor c = 6, v_c = 2, α = 60°): krak {t(½ + (√3/2)i), t > 0} seka vzporednico Im z = 2 v eni sami
+točki C = 2/√3 + 2i, zato je trikotnik en sam. -/
+theorem kviz1_visina (z : ℂ) :
+    (z.im = 2 ∧ ∃ t : ℝ, 0 < t ∧ z = t * ⟨1 / 2, √3 / 2⟩) ↔ z = ⟨2 / √3, 2⟩ := by
+  have h3 : (√3 : ℝ) ^ 2 = 3 := Real.sq_sqrt (by norm_num)
+  have hp : 0 < √(3 : ℝ) := by positivity
+  constructor
+  · rintro ⟨h1, t, ht, rfl⟩
+    simp at h1
+    apply Complex.ext <;> simp
+    · field_simp; nlinarith [h1, h3]
+    · linarith
+  · rintro rfl
+    refine ⟨rfl, 4 / √3, by positivity, ?_⟩
+    apply Complex.ext <;> simp <;> field_simp <;> nlinarith [h3]
 
 /-- Preveri se 2 in `RACUN`: 9 − 4 < c < 9 + 4, največje celo število je 12 = 9 + 4 − 1 (13 ne, enakost). -/
 theorem kviz2 : (9 - 4 < 12 ∧ 12 < 9 + 4) ∧ (∀ n : ℕ, 9 - 4 < n → n < 9 + 4 → n ≤ 12) ∧ 9 + 4 - 1 = 12 ∧

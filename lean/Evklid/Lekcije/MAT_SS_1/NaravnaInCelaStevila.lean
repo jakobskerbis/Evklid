@@ -207,10 +207,10 @@ theorem prastevilo_dva_delitelja (p : ℕ) : Nat.Prime p ↔ p.divisors.card = 2
     simpa using this
 
 /-- Razlaga 6, Pogoste napake 1 in Preveri se 1: 1 ni praštevilo in ni sestavljeno (ni večje od 1); 9 ima tri
-delitelje 1, 3, 9; 9, 15, 21 in 91 = 7 · 13 so liha sestavljena števila. -/
-theorem ena_in_liha : ¬ Nat.Prime 1 ∧ ¬ (1 < 1) ∧ (Nat.divisors 9 = {1, 3, 9}) ∧ ¬ Nat.Prime 9 ∧
+delitelje 1, 3, 9; 1 ima en sam delitelj; 9, 15, 21 in 91 = 7 · 13 so liha sestavljena števila. -/
+theorem ena_in_liha : ¬ Nat.Prime 1 ∧ ¬ (1 < 1) ∧ Nat.divisors 1 = {1} ∧ (Nat.divisors 9 = {1, 3, 9}) ∧ ¬ Nat.Prime 9 ∧
     ¬ Nat.Prime 15 ∧ ¬ Nat.Prime 21 ∧ 91 = 7 * 13 ∧ ¬ Nat.Prime 91 := by
-  refine ⟨Nat.not_prime_one, by omega, by decide, by norm_num, by norm_num, by norm_num, by norm_num, by norm_num⟩
+  refine ⟨Nat.not_prime_one, by omega, by decide, by decide, by norm_num, by norm_num, by norm_num, by norm_num, by norm_num⟩
 
 /-- Razlaga 6: 2 je edino sodo praštevilo. -/
 theorem dva_edino_sodo (p : ℕ) (hp : Nat.Prime p) (h : Even p) : p = 2 :=
@@ -223,12 +223,12 @@ example : Nat.Prime 2 ∧ Even 2 := ⟨Nat.prime_two, even_two⟩
 theorem prastevila_do_50 : (Finset.range 51).filter Nat.Prime =
     {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47} := by decide
 
-/-- Razlaga 6: če je n = a · b in 1 < a ≤ b, je a² ≤ n. -/
+/-- Razlaga 6: če je n = a · b in a ≤ b, je a² ≤ n (lekcija uporabi 1 < a ≤ b; izrek velja tudi brez 1 < a). -/
 theorem delitelj_kvadrat (n a b : ℕ) (h : n = a * b) (hab : a ≤ b) : a ^ 2 ≤ n := by
   subst h; rw [sq]; exact Nat.mul_le_mul_left a hab
 
 /-- Predpostavke `delitelj_kvadrat` se dajo izpolniti (n = 6 = 2 · 3). -/
-example : (6 : ℕ) = 2 * 3 ∧ 1 < 2 ∧ 2 ≤ 3 := by decide
+example : (6 : ℕ) = 2 * 3 ∧ 2 ≤ 3 := by decide
 
 /-- Razlaga 6: sestavljeno število n > 1 ima prafaktor p s p² ≤ n (zato zadošča poskusiti praštevila s p² ≤ n). -/
 theorem prafaktor_kvadrat (n : ℕ) (hn : 1 < n) (h : ¬ Nat.Prime n) :
@@ -302,7 +302,16 @@ example : 0 < 12 ∧ 0 < 18 := by norm_num
 /-- Razlaga 7 (jezik množic) in Na sliki: skupni delitelji so delitelji D(a, b), zato je D(a, b) največji element
 preseka množic deliteljev. -/
 theorem presek_deliteljev (a b : ℕ) (ha : a ≠ 0) (hb : b ≠ 0) :
-    a.divisors ∩ b.divisors = (Nat.gcd a b).divisors := by
+    a.divisors ∩ b.divisors = (Nat.gcd a b).divisors ∧ Nat.gcd a b ∈ a.divisors ∩ b.divisors ∧
+    ∀ d ∈ a.divisors ∩ b.divisors, d ≤ Nat.gcd a b := by
+  have hg : Nat.gcd a b ≠ 0 := Nat.gcd_ne_zero_left ha
+  refine ⟨?_, ?_, ?_⟩
+  rotate_left
+  · simp only [Finset.mem_inter, Nat.mem_divisors]
+    exact ⟨⟨Nat.gcd_dvd_left a b, ha⟩, Nat.gcd_dvd_right a b, hb⟩
+  · intro d hd
+    simp only [Finset.mem_inter, Nat.mem_divisors] at hd
+    exact Nat.le_of_dvd (Nat.pos_of_ne_zero hg) (Nat.dvd_gcd hd.1.1 hd.2.1)
   ext d
   simp only [Finset.mem_inter, Nat.mem_divisors, Nat.dvd_gcd_iff]
   constructor
@@ -329,7 +338,7 @@ theorem d_v_eksponenti (a b : ℕ) (ha : a ≠ 0) (hb : b ≠ 0) :
 example : (252 : ℕ) ≠ 0 ∧ (420 : ℕ) ≠ 0 := by norm_num
 
 /-- Razlaga 7, Povzetek (višja raven) in Bolj natančno: D(a, b) · v(a, b) = a · b; razlog: min(α, β) + max(α, β)
-= α + β. -/
+= α + β za poljubna α, β (za eksponente praštevila v a in b skupaj z `d_v_eksponenti`). -/
 theorem d_krat_v (a b : ℕ) (α β : ℕ) : Nat.gcd a b * Nat.lcm a b = a * b ∧ min α β + max α β = α + β :=
   ⟨Nat.gcd_mul_lcm a b, min_add_max α β⟩
 
@@ -347,7 +356,7 @@ theorem skrzati : Nat.lcm 13 17 = 13 * 17 ∧ 13 * 17 = 221 ∧ 2024 + 221 = 224
     Nat.lcm 4 17 = 68 ∧ 68 = 4 * 17 := by decide
 
 /-- Razlaga 8, Ustno vprašanje 3 in Bolj natančno: če je a = q · b + r, imata a, b in b, r iste skupne
-delitelje, zato D(a, b) = D(b, r); ostanek a % b je manjši od b. -/
+delitelje, zato D(a, b) = D(b, r) (da je ostanek manjši od b, je v `ostanek_manjsi`). -/
 theorem evklid_korak (a b q r : ℕ) (h : a = q * b + r) :
     (∀ d, (d ∣ a ∧ d ∣ b) ↔ (d ∣ b ∧ d ∣ r)) ∧ Nat.gcd a b = Nat.gcd b r := by
   subst h

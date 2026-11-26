@@ -277,7 +277,7 @@ a) Rešite sistem za $m = 0$. (2 točki)
 b) Iz sistema izločite $y$ in pokažite, da velja $(m^2 - 9)x = m - 3$. (2 točki)
 c) Za katere vrednosti $m$ ima sistem natanko eno rešitev, za katere nobene in za katere neskončno rešitev? Za vsak primer opišite lego premic. (3 točke)
 d) Kadar je rešitev ena sama, jo izrazite s parametrom $m$. (2 točki)
-e) Za katero vrednost $m$ leži rešitev sistema na premici $y = 2x$? (1 točka)
+e) Kadar ima sistem natanko eno rešitev, za katero vrednost $m$ leži ta rešitev na premici $y = 2x$? (1 točka)
 
 **Rešitev:**
 

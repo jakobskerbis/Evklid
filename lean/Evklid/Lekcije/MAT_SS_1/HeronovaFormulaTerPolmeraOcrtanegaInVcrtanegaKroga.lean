@@ -375,7 +375,8 @@ theorem korak_za_korakom : pol 13 14 15 = 21 ∧ (21 : ℝ) - 13 = 8 ∧ (21 : �
 theorem kviz1 : (5 : ℝ) * 5 / 2 ≠ heron 5 5 6 := by
   rw [(napake).2.2.2]; norm_num
 
-/-- Preveri se 2: podvojene stranice ⇒ ploščina 2² = 4-krat večja (ne 2, ne 8, ne 16 = 2⁴ pod korenom). -/
+/-- Preveri se 2: podvojene stranice ⇒ ploščina 2² = 4-krat večja. Dokazana je ta enakost; da faktor ni 2, 8 ali 16
+(16 = 2⁴ je pod korenom), sledi iz nje za vsak trikotnik s ploščino S ≠ 0 (ni zapisano posebej). -/
 theorem kviz2 (a b c : ℝ) : heron (2 * a) (2 * b) (2 * c) = 4 * heron a b c := by
   rw [merilo a b c 2]; norm_num
 

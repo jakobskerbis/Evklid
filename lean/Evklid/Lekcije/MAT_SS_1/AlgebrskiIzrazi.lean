@@ -385,9 +385,16 @@ theorem zgodba : (30 : ℝ) ^ 2 = 900 ∧ (30 * 10 : ℝ) = 300 ∧ (10 * 10 : �
 
 /-! ## Preveri se -/
 
-/-- Preveri se 1: kos torte s stranico x + 3: deli x·x, x·3, 3·x, 3·3, skupaj x² + 6x + 9. -/
+/-- Preveri se 1: kos torte s stranico x + 3: deli x·x, x·3, 3·x, 3·3, skupaj x² + 6x + 9; napačni razrezi
+x² + 9, x² + 3x + 9 in x² + 6 + 6 + 9 niso (x + 3)² (protiprimer x = 1). -/
 theorem preveri1 (x : ℝ) : (x + 3) ^ 2 = x * x + x * 3 + 3 * x + 3 * 3 ∧ (x + 3) ^ 2 = x ^ 2 + 6 * x + 9 := by
   constructor <;> ring
+
+/-- Preveri se 1, napačni odgovori: (x + 3)² ni x² + 9, ni x² + 3x + 9 in ni x² + 6 + 6 + 9 (pri x = 1). -/
+theorem preveri1_napacni : (¬ ∀ x : ℝ, (x + 3) ^ 2 = x ^ 2 + 9) ∧ (¬ ∀ x : ℝ, (x + 3) ^ 2 = x ^ 2 + 3 * x + 9) ∧
+    (¬ ∀ x : ℝ, (x + 3) ^ 2 = x ^ 2 + 6 + 6 + 9) :=
+  ⟨fun h => by have := h 1; norm_num at this, fun h => by have := h 1; norm_num at this,
+    fun h => by have := h 1; norm_num at this⟩
 
 /-- Preveri se 2: 98² = (100 − 2)² = 10000 − 400 + 4 = 9604; napačne 9996, 10004, 9600 niso 98²;
 98² < 10000. -/

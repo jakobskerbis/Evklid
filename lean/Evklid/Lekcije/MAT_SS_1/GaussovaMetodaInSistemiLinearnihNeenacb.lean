@@ -1,12 +1,13 @@
 /-
 vir: content/lessons/MAT-SS-1/gaussova-metoda-in-sistemi-linearnih-neenacb.md
-sha256: 2114ecfae445b9d1e0d76a5e61ffb1c93350e82d6fa78d910d2a917574495ec6
+sha256: 20f2bb2cb90d34463473d5cb6a32dc2459252a0d4d50e7b7c20e7779f832b163
 Ni v Leanu: risbe in simulacija (številske premice, polravnine, »območje je trikotnik/štirikotnik«; dokazano
 je, katere točke so rešitve, oglišča kot presečišča robov in kateri robovi pripadajo območju); simulacija
 »B od« je dokazana za B = [b, ∞) (presek z [−1, 3) je prazen natanko pri b ≥ 3); geometrijska razlaga z
 ravninami v prostoru (Ustno 2, Bolj natančno: ena točka / nobena / premica ali ravnina) in »če sta taki
 vrstici dve, sta parametra dva« kot opis (dokazani so konkretni primeri: ena rešitev, nobena, enoparametrična
-družina); postopki v korakih (Gaussova metoda, Ponovitev, Ustno 1 in 3, razvrščanje korakov v Preveri se 2)
+družina, tri sovpadajoče ravnine z dvema parametroma, vrstica 0 = 0 ob vrstici 0 = c ne da rešitev); splošno
+pravilo »0 = 0 brez vrstice 0 = c ⇒ neskončno rešitev« za poljuben sistem: zahtevno, še ni dokazano; postopki v korakih (Gaussova metoda, Ponovitev, Ustno 1 in 3, razvrščanje korakov v Preveri se 2)
 in nasveti (»najraje koeficient 1«, »uporabi novo drugo enačbo«, »vedno uporabi testno točko«, polna/črtkana
 črta kot dogovor risanja) kot navodila; »polravnina« kot geometrijski pojem (dokazano: pri b > 0 je
 ax + by < c ⇔ y < (c − ax)/b, pri b < 0 se znak obrne; rob pripada rešitvam natanko pri nestrogi neenačbi);
@@ -93,6 +94,21 @@ example : (7:ℝ) ≠ 0 := by norm_num
 /-- Pogoste napake 3 in Povzetek: vrstica 0 = 0 velja za vsako trojko (ne pove, da je rešitev 0). -/
 theorem vrstica_nic (x y z : ℝ) : 0 * x + 0 * y + 0 * z = (0:ℝ) := by ring
 
+/-- Formula, Pogoste napake 3, Povzetek: vrstica 0 = 0 da neskončno rešitev le, če ni vrstice 0 = c s c ≠ 0;
+sistem z vrsticama 0 = 0 in 0 = 5 nima nobene rešitve. -/
+theorem nic_in_protislovje (x y z : ℝ) :
+    ¬ (0 * x + 0 * y + 0 * z = (0:ℝ) ∧ 0 * x + 0 * y + 0 * z = (5:ℝ)) := by
+  rintro ⟨-, h⟩; norm_num at h
+
+/-- Bolj natančno: če vse tri ravnine sovpadajo (x + y + z = 1, 2x + 2y + 2z = 2, 3x + 3y + 3z = 3),
+so rešitve vsa ravnina, z dvema parametroma: (1 − s − t, s, t), s, t ∈ ℝ. -/
+theorem sovpadajoce_ravnine (x y z : ℝ) :
+    (x + y + z = 1 ∧ 2 * x + 2 * y + 2 * z = 2 ∧ 3 * x + 3 * y + 3 * z = 3) ↔
+      ∃ s t : ℝ, x = 1 - s - t ∧ y = s ∧ z = t := by
+  constructor
+  · rintro ⟨h1, -, -⟩; exact ⟨y, z, by linarith, rfl, rfl⟩
+  · rintro ⟨s, t, rfl, rfl, rfl⟩; refine ⟨?_, ?_, ?_⟩ <;> ring
+
 /-! ## Razlaga 3: ko izgine zadnja neznanka -/
 
 /-- Razlaga 3, RACUN: druga − prva in tretja − 2·prva dasta y + 2z = 2 in y + 2z = 3; sistem nima rešitve. -/
@@ -166,8 +182,10 @@ theorem polravnina_obrne (a b c x y : ℝ) (hb : b < 0) : a * x + b * y < c ↔ 
 /-- Predpostavka `polravnina_obrne` se da izpolniti (b = −1). -/
 example : (-1:ℝ) < 0 := by norm_num
 
-/-- Razlaga 5: točke z y > 2 so nad premico y = 2, z y < 2 pod njo, točke premice niso v nobeni. -/
-theorem r5_y2 (y : ℝ) : y > 2 ∨ y < 2 ∨ y = 2 := by
+/-- Razlaga 5: točke z y > 2 so nad premico y = 2, z y < 2 pod njo, točke premice niso v nobeni
+(vsaka točka je natanko v eni od treh možnosti). -/
+theorem r5_y2 (y : ℝ) : (y > 2 ∨ y < 2 ∨ y = 2) ∧ ¬ (y > 2 ∧ y < 2) ∧ (y = 2 → ¬ (y > 2) ∧ ¬ (y < 2)) := by
+  refine ⟨?_, fun ⟨h1, h2⟩ => by linarith, fun h => ⟨by linarith, by linarith⟩⟩
   rcases lt_trichotomy y 2 with h | h | h
   · exact Or.inr (Or.inl h)
   · exact Or.inr (Or.inr h)

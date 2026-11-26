@@ -6,10 +6,12 @@ dokazan: 4 · 3 = 12 in 6 · 5 = 30 kvadratov); vse risbe grafov in simulacija (
 risbe kažejo, in to, da je graf intervalov pravokotnik ter da so točke končnega produkta posamezne točke);
 oznaka m(A) v katalogu (zapis); zapisi, ki se v Leanu zaradi tipov ne dajo zapisati: »1 ni element 𝒫(A)«,
 »5 ∈ 𝒫(B)«, »({0}, 2) ∈ A × 𝒫(B)« in 𝒫({1, 2}) = {1, 2, {1, 2}} (elementi 𝒫(A) so množice, par ima prvo komponento
-iz A; dokazano je {5} ∈ 𝒫(B), 5 ∈ B, (2, {0}) ∈ A × 𝒫(B) in pravilni 𝒫({1, 2})); utemeljitev »n zaporednih
+iz A; dokazano je {5} ∈ 𝒫(B), 5 ∈ B, (2, {0}) ∈ A × 𝒫(B) in pravilni 𝒫({1, 2})); v zgodbi »Kot zgodba« Janov
+»(4, d) ni kvadrat zemljevida« (par s številko na prvem mestu ima drug tip kot kvadrati (črka, številka)); utemeljitev »n zaporednih
 odločitev« (dokazano je |𝒫(A)| = 2ⁿ in podvojitev ob dodanem elementu); razvrščanje korakov v zadnjem vprašanju
 Preveri se (postopek; dokazani so števci 1 + 3 + 3 + 1 = 8 po velikosti); točkovanje.
-Dogovori: kraji, prevozi in stolpci so nizi (String); »ploščina« je Lebesgueova mera `volume` v ℝ × ℝ.
+Dogovori: v Nalogi 3 d) so dodani elementi naravna števila (S : Finset ℕ), lekcija dopušča poljubne;
+kraji, prevozi in stolpci so nizi (String); »ploščina« je Lebesgueova mera `volume` v ℝ × ℝ.
 -/
 module
 

@@ -1,6 +1,6 @@
 /-
 vir: content/lessons/MAT-SS-1/linearne-neenacbe.md
-sha256: e561962f1ab68c532abd8a0eb63689409e7d6763906947950b500b9b3330629c
+sha256: df727fa57d0abccbeba6f6511edc4212335d0a9db615a1986fab89ad42b3aaf4
 Ni v Leanu: definicije in poimenovanja (linearna neenačba, rešitev, znaki, interval, krajišče, okrogli in oglati
 oklepaj, prazen in poln krožec) in zapis z intervali kot dogovor (dokazane so enakosti množic rešitev z intervali
 Set.Iio, Set.Iic, Set.Ioi, Set.Ici, Set.Icc, Set.Ioc in pripadnost krajišč); »∞ ni število« (v Leanu intervala
@@ -9,7 +9,7 @@ množice rešitev, presečišči (4, 11), (5, 6), naraščanje 2x + 3 in padanje
 (dokazano: 2 < 5 in −5 < −2); »rešitev ni eno število, ampak množica« in »smiselnost rešitve« kot navodila (dokazane
 so množice celih rešitev z najmanjšim oz. največjim elementom); postopek reševanja kot navodilo; točkovanje
 maturitetnih nalog; besedila napačnih odgovorov v Preveri se (dokazano je, da napačne vrednosti oz. intervali niso
-pravilni). Približek 261,63 je dokazan kot |1350/5,16 − 261,63| < 0,005 in 11,78… kot 11,77 < 530/45 < 11,79.
+pravilni). Približek 261,63 je dokazan kot |1350/5,16 − 261,63| < 0,005 in 11,77… kot 11,77 < 530/45 < 11,78.
 Decimalna števila so točna racionalna števila v ℝ.
 -/
 module
@@ -332,10 +332,10 @@ theorem na_sliki : StrictMono (fun x : ℝ => 2 * x + 3) ∧ StrictAnti (fun x :
     (2 * 4 + 3 : ℝ) = 11 ∧ (5 - 3 * (-3) : ℝ) = 14 := by
   refine ⟨fun a b h => by simp only; linarith, fun a b h => by simp only; linarith, by norm_num, by norm_num⟩
 
-/-- Iz vsakdanjega življenja: 70 + 45x ≤ 600 ⇔ 45x ≤ 530 ⇔ x ≤ 530/45 (11,77 < 530/45 < 11,79); največ 11 škatel
+/-- Iz vsakdanjega življenja: 70 + 45x ≤ 600 ⇔ 45x ≤ 530 ⇔ x ≤ 530/45 (11,77 < 530/45 < 11,78, torej 11,77…); največ 11 škatel
 (565 ≤ 600, 610 > 600). -/
 theorem dvigalo : (∀ x : ℝ, 70 + 45 * x ≤ 600 ↔ 45 * x ≤ 530) ∧ (∀ x : ℝ, 45 * x ≤ 530 ↔ x ≤ 530 / 45) ∧
-    (11.77 : ℝ) < 530 / 45 ∧ (530 / 45 : ℝ) < 11.79 ∧ IsGreatest {n : ℕ | (70 : ℝ) + 45 * n ≤ 600} 11 ∧
+    (11.77 : ℝ) < 530 / 45 ∧ (530 / 45 : ℝ) < 11.78 ∧ IsGreatest {n : ℕ | (70 : ℝ) + 45 * n ≤ 600} 11 ∧
     (70 + 45 * 11 : ℝ) = 565 ∧ (70 + 45 * 12 : ℝ) = 610 ∧ (610 : ℝ) > 600 := by
   refine ⟨fun x => le_of_sub (by ring), fun x => by rw [le_div_iff₀ (by norm_num), mul_comm], by norm_num,
     by norm_num, ⟨by norm_num, fun n hn => ?_⟩, by norm_num, by norm_num, by norm_num⟩

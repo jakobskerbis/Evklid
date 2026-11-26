@@ -7,7 +7,7 @@ modeli (dokazana je algebra); »meja napake je pol najmanjšega razdelka« in iz
 iracionalni); pravilo zaokroževanja je formalizirano z Mathlibovim `round` (zaokrožanje navzgor pri 5:
 round y = ⌊y + ½⌋), zaokrožanje na n decimalk oz. mest kot round(x·10ⁿ)/10ⁿ; »približno« pravili
 δ(xy) ≈ δx + δy in δ(x/y) ≈ δx + δy nista dokazljivi kot enakosti (»≈« ni matematična relacija): dokazana je
-natančna meja (relativna napaka produkta ≤ δa + δb + δa·δb, količnika (δx + δy)/(1 − δy)) in izpuščeni člen;
+natančna meja (relativna napaka produkta ≤ δa + δb + δa·δb, količnika ≤ (δx + δy)/(1 − δy)) in izpuščeni člen;
 »razlika je zanemarljiva« (deljenje s približkom) je dokazana kot ocena |Δ/|x| − Δ/|x̄|| ≤ δx·Δ/|x̄|;
 Primer 3 b) in Primer 4 uporabljata približno pravilo (dokazani so računi in natančne meje v Primeru 4);
 besedni utemeljitvi (Pogoste napake, »komu bi zaupal«) in »razlika podobnih števil ima veliko relativno
@@ -231,6 +231,35 @@ theorem napaka_kolicnika (dx dy : ℝ) (hx : 0 ≤ dx) (hy0 : 0 ≤ dy) (hy : dy
 /-- Predpostavke `napaka_kolicnika` se dajo izpolniti (δx = 0,01, δy = 0,025). -/
 example : (0:ℝ) ≤ 0.01 ∧ (0:ℝ) ≤ 0.025 ∧ (0.025:ℝ) < 1 := by norm_num
 
+/-- Razlaga 6, Bolj natančno (natančna meja količnika): za a, b > 0, |x − a| ≤ δx·a, |y − b| ≤ δy·b in
+0 ≤ δy < 1 je relativna napaka količnika x/y največ (δx + δy)/(1 − δy). -/
+theorem napaka_kolicnika_meja (a b x y dx dy : ℝ) (ha : 0 < a) (hb : 0 < b) (hdx : 0 ≤ dx) (hdy : 0 ≤ dy)
+    (hdy1 : dy < 1) (hx : |x - a| ≤ dx * a) (hy : |y - b| ≤ dy * b) :
+    |x / y - a / b| / (a / b) ≤ (dx + dy) / (1 - dy) := by
+  have hd : 0 < 1 - dy := by linarith
+  have hyl : b * (1 - dy) ≤ y := by have := (abs_le.mp hy).1; nlinarith
+  have hy0 : 0 < y := lt_of_lt_of_le (mul_pos hb hd) hyl
+  have e : x / y - a / b = (b * (x - a) - a * (y - b)) / (y * b) := by field_simp; ring
+  have hn : |b * (x - a) - a * (y - b)| ≤ a * b * (dx + dy) := by
+    calc |b * (x - a) - a * (y - b)| ≤ |b * (x - a)| + |a * (y - b)| := abs_sub _ _
+      _ = b * |x - a| + a * |y - b| := by rw [abs_mul, abs_mul, abs_of_pos ha, abs_of_pos hb]
+      _ ≤ b * (dx * a) + a * (dy * b) := by gcongr
+      _ = a * b * (dx + dy) := by ring
+  rw [e, abs_div, abs_of_pos (mul_pos hy0 hb), div_div_eq_mul_div, div_le_div_iff₀ (by positivity) hd]
+  have hs : |b * (x - a) - a * (y - b)| / (y * b) * b = |b * (x - a) - a * (y - b)| / y := by
+    field_simp
+  rw [hs, div_mul_eq_mul_div, div_le_iff₀ hy0]
+  have hk : 0 ≤ a * (dx + dy) := by positivity
+  calc |b * (x - a) - a * (y - b)| * (1 - dy) ≤ a * b * (dx + dy) * (1 - dy) := by gcongr
+    _ = a * (dx + dy) * (b * (1 - dy)) := by ring
+    _ ≤ a * (dx + dy) * y := by gcongr
+    _ = (dx + dy) * a * y := by ring
+
+/-- Predpostavke `napaka_kolicnika_meja` se dajo izpolniti (Primer 3: a = 50, b = 40, x = 50,5, y = 39,
+δx = 0,01, δy = 0,025). -/
+example : (0:ℝ) < 50 ∧ (0:ℝ) < 40 ∧ (0:ℝ) ≤ 0.01 ∧ (0:ℝ) ≤ 0.025 ∧ (0.025:ℝ) < 1 ∧
+    |(50.5:ℝ) - 50| ≤ 0.01 * 50 ∧ |(39:ℝ) - 40| ≤ 0.025 * 40 := by norm_num [abs_le]
+
 /-- Bolj natančno: 1/0,98 = 1,0204… ≈ 1 + 0,02. -/
 theorem obratna : |(1:ℝ) / 0.98 - 1.0204| < 0.00005 ∧ |(1:ℝ) / 0.98 - (1 + 0.02)| < 0.001 := by
   norm_num [abs_lt]
@@ -289,11 +318,24 @@ theorem p3 : (50:ℝ) / 40 = 1.25 ∧ (0.5:ℝ) / 50 = 0.01 ∧ (1:ℝ) / 40 = 0
     (0.01:ℝ) * 40 = 0.4 := by
   norm_num [abs_lt]
 
-/-- Primer 3 (natančna meja): pri s ∈ [49,5; 50,5] in t ∈ [39; 41] je relativna napaka količnika največ
-(δs + δt)/(1 − δt) = 0,035/0,975 ≈ 3,6 % (približno pravilo da 3,5 %). -/
+/-- Primer 3 (natančna meja, račun): (1 + δs)/(1 − δt) − 1 = (δs + δt)/(1 − δt) = 0,035/0,975 ≈ 3,6 %
+(približno pravilo da 3,5 %); to mejo doseže s = 50,5, t = 39 (meja za vse s, t je `p3_meja`). -/
 theorem p3_natancno : ((1 + 0.01) / (1 - 0.025) - 1 : ℝ) = (0.01 + 0.025) / (1 - 0.025) ∧
     |((0.01:ℝ) + 0.025) / (1 - 0.025) * 100 - 3.6| < 0.05 ∧ (50.5:ℝ) / 39 / 1.25 = (1 + 0.01) / (1 - 0.025) := by
   norm_num [abs_lt]
+
+/-- Primer 3 (natančna meja za vse vrednosti): za s ∈ [49,5; 50,5] in t ∈ [39; 41] je relativna napaka
+hitrosti s/t glede na 1,25 največ (0,01 + 0,025)/(1 − 0,025). -/
+theorem p3_meja (s t : ℝ) (hs : s ∈ Set.Icc (49.5:ℝ) 50.5) (ht : t ∈ Set.Icc (39:ℝ) 41) :
+    |s / t - 1.25| / 1.25 ≤ ((0.01:ℝ) + 0.025) / (1 - 0.025) := by
+  have h := napaka_kolicnika_meja 50 40 s t 0.01 0.025 (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by rw [abs_le]; constructor <;> linarith [hs.1, hs.2])
+    (by rw [abs_le]; constructor <;> linarith [ht.1, ht.2])
+  norm_num at h ⊢
+  exact h
+
+/-- Predpostavki `p3_meja` se dasta izpolniti (s = 50, t = 40). -/
+example : (50:ℝ) ∈ Set.Icc (49.5:ℝ) 50.5 ∧ (40:ℝ) ∈ Set.Icc (39:ℝ) 41 := by norm_num
 
 /-- Primer 4, Premisli, RACUN: S = 120·80 = 9600 m²; δS ≈ 1/120 + 1/80 ≈ 0,021 = 2,1 %; ΔS ≈ 9600·(1/120 + 1/80)
 = 200 m²; natančni meji 119·79 = 9401 in 121·81 = 9801 (oddaljeni 199 in 201 od 9600). -/

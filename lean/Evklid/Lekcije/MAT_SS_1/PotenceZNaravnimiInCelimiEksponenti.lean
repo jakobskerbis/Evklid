@@ -1,10 +1,11 @@
 /-
 vir: content/lessons/MAT-SS-1/potence-z-naravnimi-in-celimi-eksponenti.md
-sha256: 70460afa36d5744ca30514e3c4f48b3dbb5d020c3aa3eaf2b893377ad90cc8aa
+sha256: 076c67d0787458a8828fb8c6ce87e3dd18b4e470137cedca38f889376556c547
 Ni v Leanu: poimenovanja (osnova, eksponent, vrednost potence, branje »a na n«), vrstni red računskih operacij in
 postopek poenostavljanja kot navodila (dokazani so računi, npr. 3 + 2·4² = 35); »0⁰ ni definiran« in »0⁻ⁿ ni
 definiran«: v Leanu je 0⁰ = 1 in 0⁻ⁿ = 0, zato vsa pravila s celimi eksponenti nosijo lekcijin pogoj a ≠ 0
-(b ≠ 0), dokazano pa je, da a⁰ = 1 sledi iz pravila za deljenje oz. množenje le pri a ≠ 0; »ničta potenca in
+(b ≠ 0), dokazano pa je, da pri a ≠ 0 iz pravila za deljenje oz. množenje sledi a⁰ = 1, pri a = 0 pa
+pravilo za množenje velja za vsako vrednost (0ⁿ·y = 0ⁿ za n ≥ 1), zato a⁰ ne določi; »ničta potenca in
 negativni eksponent sta dogovor« (dokazano: dogovor je edini, ki ohrani pravila); »aᵐ + aⁿ v splošnem ne moremo
 zapisati kot eno potenco« (dokazano za primer 10² + 10³ = 1100, ki ni potenca števila 10 s celim eksponentom);
 definicija znanstvenega zapisa (dokazani so vsi zapisi iz lekcije, npr. 3 500 000 = 3,5·10⁶ z 1 ≤ 3,5 < 10);
@@ -54,7 +55,9 @@ theorem predznak (a : ℝ) (n : ℕ) : (0 < a → 0 < a ^ n) ∧ (a < 0 → Even
   rw [← hn.neg_pow]; exact pow_pos (neg_pos.mpr h) n
 
 /-- Predpostavke `predznak` se dajo izpolniti (a = 2 in a = −2). -/
-example : (0 : ℝ) < 2 ∧ (-2 : ℝ) < 0 ∧ Even 4 ∧ Odd 3 := ⟨by norm_num, by norm_num, by decide, by decide⟩
+example : (0 : ℝ) < 2 ^ 4 ∧ (0 : ℝ) < (-2) ^ 4 ∧ (-2 : ℝ) ^ 3 < 0 :=
+  ⟨(predznak 2 4).1 (by norm_num), (predznak (-2) 4).2.1 (by norm_num) (by decide),
+    (predznak (-2) 3).2.2 (by norm_num) (by decide)⟩
 
 /-- Razlaga 2: 2³ = 8, (−2)⁴ = 16, (−2)³ = −8, −2⁴ = −(2⁴) = −16, 3 + 2·4² = 3 + 2·16 = 35. -/
 theorem razlaga2 : (2 : ℝ) ^ 3 = 8 ∧ (-2 : ℝ) ^ 4 = 16 ∧ (-2 : ℝ) ^ 3 = -8 ∧ -(2 : ℝ) ^ 4 = -(2 ^ 4) ∧
@@ -120,7 +123,8 @@ theorem vsota_ni_potenca : (10 : ℝ) ^ 2 + 10 ^ 3 = 1100 ∧ ¬ ∃ k : ℤ, (1
 /-- Razlaga 4, Ustno vprašanje 1: za a ≠ 0 je a³ : a³ = a³⁻³ = a⁰ in a³ : a³ = 1, zato a⁰ = 1. -/
 theorem nicta (a : ℝ) (ha : a ≠ 0) : a ^ (3 : ℤ) / a ^ (3 : ℤ) = a ^ ((3 : ℤ) - 3) ∧
     a ^ (3 : ℤ) / a ^ (3 : ℤ) = 1 ∧ a ^ (0 : ℤ) = 1 :=
-  ⟨(zpow_sub₀ ha 3 3).symm, div_self (zpow_ne_zero 3 ha), zpow_zero a⟩
+  ⟨(zpow_sub₀ ha 3 3).symm, div_self (zpow_ne_zero 3 ha), by
+    rw [show (0 : ℤ) = 3 - 3 by norm_num, zpow_sub₀ ha 3 3]; exact div_self (zpow_ne_zero 3 ha)⟩
 
 /-- Predpostavka `nicta` se da izpolniti (a = 7). -/
 example : (7 : ℝ) ^ (0 : ℤ) = 1 := (nicta 7 (by norm_num)).2.2
@@ -134,6 +138,13 @@ theorem dogovor (a y : ℝ) (ha : a ≠ 0) (n : ℕ) : (a ^ n * y = a ^ n ↔ y 
     · intro e; exact mul_left_cancel₀ h (by rw [e, mul_one])
     · rintro rfl; rw [mul_one]
   · rw [eq_div_iff h, mul_comm]
+
+/-- Bolj natančno: pri a = 0 pravilo aⁿ·y = aⁿ (n ≥ 1) velja za vsak y, zato vrednosti 0⁰ ne določi. -/
+theorem dogovor_nic (n : ℕ) (hn : 1 ≤ n) (y : ℝ) : (0 : ℝ) ^ n * y = 0 ^ n := by
+  rw [zero_pow (by omega), zero_mul]
+
+/-- Predpostavka `dogovor_nic` se da izpolniti (n = 3, y = 5). -/
+example : (0 : ℝ) ^ 3 * 5 = 0 ^ 3 := dogovor_nic 3 (by norm_num) 5
 
 /-- Predpostavka `dogovor` se da izpolniti (a = 2). -/
 example : ((2 : ℝ) ^ 3 * 1 = 2 ^ 3 ↔ (1 : ℝ) = 1) ∧ ((2 : ℝ) ^ 3 * (1 / 8) = 1 ↔ (1 / 8 : ℝ) = 1 / 2 ^ 3) :=
@@ -402,19 +413,22 @@ theorem preveri2 : (-2 : ℝ) ^ 3 = -8 ∧ -(2 : ℝ) ^ 2 = -4 ∧ (2 : ℝ) ^ (
     (-2 : ℝ) ^ 3 < -2 ^ 2 ∧ -(2 : ℝ) ^ 2 < 2 ^ (-3 : ℤ) ∧ (2 : ℝ) ^ (-3 : ℤ) < 2 ^ (0 : ℤ) := by norm_num
 
 /-- Preveri se 3: 2ⁿ⁺¹ = 2ⁿ·2 (število igralcev se podvoji), ni 2ⁿ + 1 (za n ≥ 1) ne 2ⁿ + 2 (za n ≥ 2);
-(2ⁿ)² = 2²ⁿ; 2⁷ = 2·2⁶ = 128 namesto 64. -/
+(2ⁿ)² = 2²ⁿ in za n ≥ 2 (pogoj lekcije) je 2ⁿ⁺¹ ≠ 2²ⁿ, torej se ne kvadrira; 2⁷ = 2·2⁶ = 128 namesto 64. -/
 theorem preveri3 (n : ℕ) : (2 : ℝ) ^ (n + 1) = 2 ^ n * 2 ∧ (1 ≤ n → (2 : ℝ) ^ (n + 1) ≠ 2 ^ n + 1) ∧
-    (2 ≤ n → (2 : ℝ) ^ (n + 1) ≠ 2 ^ n + 2) ∧ ((2 : ℝ) ^ n) ^ 2 = 2 ^ (2 * n) ∧ (2 : ℝ) ^ 6 = 64 ∧
+    (2 ≤ n → (2 : ℝ) ^ (n + 1) ≠ 2 ^ n + 2) ∧ (2 ≤ n → (2 : ℝ) ^ (n + 1) ≠ 2 ^ (2 * n)) ∧
+    ((2 : ℝ) ^ n) ^ 2 = 2 ^ (2 * n) ∧ (2 : ℝ) ^ 6 = 64 ∧
     (2 : ℝ) ^ 7 = 128 := by
-  refine ⟨pow_succ 2 n, fun h => ?_, fun h => ?_, by rw [← pow_mul, mul_comm], by norm_num, by norm_num⟩
+  refine ⟨pow_succ 2 n, fun h => ?_, fun h => ?_, fun h e => ?_, by rw [← pow_mul, mul_comm], by norm_num,
+    by norm_num⟩
   · have : (2 : ℝ) ^ 1 ≤ 2 ^ n := pow_le_pow_right₀ (by norm_num) h
     rw [pow_succ]; intro e; linarith
   · have : (2 : ℝ) ^ 2 ≤ 2 ^ n := pow_le_pow_right₀ (by norm_num) h
     rw [pow_succ]; intro e; nlinarith
+  · have := (pow_right_inj₀ (by norm_num : (0 : ℝ) < 2) (by norm_num)).mp e; omega
 
 /-- Predpostavki `preveri3` se dajo izpolniti (n = 6). -/
-example : (2 : ℝ) ^ (6 + 1) ≠ 2 ^ 6 + 1 ∧ (2 : ℝ) ^ (6 + 1) ≠ 2 ^ 6 + 2 :=
-  ⟨(preveri3 6).2.1 (by norm_num), (preveri3 6).2.2.1 (by norm_num)⟩
+example : (2 : ℝ) ^ (6 + 1) ≠ 2 ^ 6 + 1 ∧ (2 : ℝ) ^ (6 + 1) ≠ 2 ^ 6 + 2 ∧ (2 : ℝ) ^ (6 + 1) ≠ 2 ^ (2 * 6) :=
+  ⟨(preveri3 6).2.1 (by norm_num), (preveri3 6).2.2.1 (by norm_num), (preveri3 6).2.2.2.1 (by norm_num)⟩
 
 /-- Preveri se 4: (2/5)⁻² = (5/2)² = 25/4 = 6,25; ni 0,16, −0,16 ne 2,5. -/
 theorem preveri4 : ((2 : ℝ) / 5) ^ (-2 : ℤ) = (5 / 2) ^ 2 ∧ ((5 : ℝ) / 2) ^ 2 = 25 / 4 ∧ (25 / 4 : ℝ) = 6.25 ∧

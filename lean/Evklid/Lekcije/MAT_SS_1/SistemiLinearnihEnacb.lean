@@ -533,10 +533,11 @@ theorem preveri_4 (b : ℝ) : (2:ℝ) + (-1) = 1 ∧ (3 * 2 + b * (-1) = 8 ↔ b
 
 /-- Preveri se 5: x + y = 30, y − x = 8: vsota 2y = 38, y = 19, x = 30 − 19 = 11; rešitev natanko (11, 19);
 preizkus 19 − 11 = 8; 19, 22 in 15 niso prvi dan. -/
-theorem preveri_5 (x y : ℝ) : ((x + y = 30 ∧ y - x = 8) ↔ (x = 11 ∧ y = 19)) ∧ (30:ℝ) - 19 = 11 ∧
+theorem preveri_5 (x y : ℝ) : ((x + y = 30 ∧ y - x = 8) → 2 * y = 38) ∧
+    ((x + y = 30 ∧ y - x = 8) ↔ (x = 11 ∧ y = 19)) ∧ (30:ℝ) - 19 = 11 ∧
     (19:ℝ) - 11 = 8 ∧ (11:ℝ) ≠ 19 ∧ (11:ℝ) ≠ 22 ∧ (11:ℝ) ≠ 15 := by
-  refine ⟨⟨fun ⟨h1, h2⟩ => ⟨by linarith, by linarith⟩, ?_⟩, by norm_num, by norm_num, by norm_num,
-    by norm_num, by norm_num⟩
+  refine ⟨fun ⟨h1, h2⟩ => by linarith, ⟨fun ⟨h1, h2⟩ => ⟨by linarith, by linarith⟩, ?_⟩, by norm_num,
+    by norm_num, by norm_num, by norm_num, by norm_num⟩
   rintro ⟨rfl, rfl⟩; norm_num
 
 end Evklid.Lekcije.MAT_SS_1.SistemiLinearnihEnacb

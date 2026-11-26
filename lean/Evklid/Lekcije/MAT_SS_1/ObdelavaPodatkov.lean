@@ -5,7 +5,8 @@ Model: splošne trditve so za podatke x : Fin n → ℝ (`M x` je aritmetična s
 računi iz lekcije so za sezname realnih števil: `sr l` = vsota/število, `var l` = povprečje kvadratov odklonov,
 standardni odklon √(var l), `varVz l` deljenje z n − 1 (vzorčni odklon, ki ga lekcija omenja kot napačno izbiro).
 »Urejeni podatki« so seznam s, ki je permutacija podatkov (`List.Perm`) in je urejen (`List.Pairwise (· ≤ ·)`), oboje
-preverjeno z `decide` na naravnih številih. Mediana urejenega seznama `med` je srednji podatek pri lihem n in sredina
+preverjeno z `decide` na naravnih številih; mediana in kvartili so računani na seznamih realnih števil z istimi
+številkami (povezava je le v enako zapisanih številih). Mediana urejenega seznama `med` je srednji podatek pri lihem n in sredina
 obeh srednjih pri sodem; Q₁ in Q₃ sta mediani spodnje (`take (n/2)`) in zgornje (`drop ((n+1)/2)`) polovice (pri lihem
 n srednji podatek ni v nobeni, kot v lekciji). Modus: vsaka druga vrednost se pojavi redkeje (`List.count`).
 »≈ a« na k decimalk je |vrednost − a| < ½·10⁻ᵏ.

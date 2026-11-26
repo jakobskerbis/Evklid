@@ -7,7 +7,9 @@ z ravnilom in šestilom v Nalogi 2 a) in Ustnem vprašanju 2 (geometrijski posto
 s katetama 3 in 1 oziroma 1 in 1 dolga √10 oziroma √2); risbe, krožci in simulacija (dokazani so preseki
 [1, 5] ∩ [3, 8] = [3, 5] in [1, 5) ∩ [3, 8] = [3, 5)); dogovori o zapisu: oklepaji ob ∞, podpičje med decimalnimi
 krajišči, »odprt, zaprt, polodprt« (imena; dokazano je, kaj vsak zapis vsebuje); oznaka 𝕀 (v Leanu `Irrational`);
-točkovanje.
+točkovanje; trditev Razlage 1 »decimalni zapis racionalnega števila je končen ali periodičen« (zahtevno, še ni
+dokazano, tudi v `RacionalnaStevila.lean` ne; dokazana je obratna smer za iracionalna števila:
+`iracionalno_neperiodicno`).
 Dogovori: intervali so Mathlibovi `Set.Ioo`, `Set.Icc`, `Set.Ico`, `Set.Ioc`, `Set.Ioi`, `Set.Ici`, `Set.Iio`,
 `Set.Iic`, (−∞, ∞) je `Set.univ`. Periodični decimalni zapis `rep p L` (perioda p z L mesti) je enak kot v
 `RacionalnaStevila.lean`: ∑ₖ p · (10^L)^−(k+1). Dolžina intervala je mera `volume`.
@@ -77,7 +79,8 @@ theorem pi_sqrt2 : Irrational π ∧ (1.41421356 : ℝ) < √2 ∧ √2 < 1.4142
   · linarith [pi_gt_d20]
   · linarith [pi_lt_d20]
 
-/-- Razlaga 1 in Povzetek: ℝ = ℚ ∪ 𝕀 (vsako realno število je racionalno ali iracionalno); ℚ ⊂ ℝ je prava. -/
+/-- Razlaga 1 in Povzetek: ℝ = ℚ ∪ 𝕀 (vsako realno število je racionalno ali iracionalno; v Leanu to sledi iz
+definicije `Irrational`); ℚ ⊂ ℝ je prava (vsebina: √2 ni racionalno). -/
 theorem r_q_i : Set.range ((↑) : ℚ → ℝ) ∪ {x | Irrational x} = Set.univ ∧
     Set.range ((↑) : ℚ → ℝ) ≠ Set.univ := by
   constructor
@@ -89,10 +92,13 @@ theorem r_q_i : Set.range ((↑) : ℚ → ℝ) ∪ {x | Irrational x} = Set.uni
     exact irrational_sqrt_two (h ▸ Set.mem_univ (√2))
 
 /-- Razlaga 1: koren naravnega števila je iracionalen natanko tedaj, ko število ni popoln kvadrat;
-√9 = 3, √16 = 4; √2, √3, √5 so iracionalni. -/
-theorem koreni (n : ℕ) : (Irrational (√(n : ℝ)) ↔ ¬ IsSquare n) ∧ √(9 : ℝ) = 3 ∧ √(16 : ℝ) = 4 ∧
-    Irrational (√(3 : ℝ)) ∧ Irrational (√(5 : ℝ)) := by
-  refine ⟨irrational_sqrt_natCast_iff, ?_, ?_, ?_, ?_⟩
+če je n popoln kvadrat, je √n naravno število; √9 = 3, √16 = 4; √2, √3, √5 so iracionalni. -/
+theorem koreni (n : ℕ) : (Irrational (√(n : ℝ)) ↔ ¬ IsSquare n) ∧ (IsSquare n → ∃ m : ℕ, √(n : ℝ) = m) ∧
+    √(9 : ℝ) = 3 ∧ √(16 : ℝ) = 4 ∧
+    Irrational (√(2 : ℝ)) ∧ Irrational (√(3 : ℝ)) ∧ Irrational (√(5 : ℝ)) := by
+  refine ⟨irrational_sqrt_natCast_iff, ?_, ?_, ?_, irrational_sqrt_two, ?_, ?_⟩
+  · rintro ⟨m, rfl⟩
+    exact ⟨m, by push_cast; rw [Real.sqrt_mul_self (Nat.cast_nonneg m)]⟩
   · rw [show (9 : ℝ) = 3 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
   · rw [show (16 : ℝ) = 4 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
   · have := (irrational_sqrt_natCast_iff (n := 3)).mpr (by

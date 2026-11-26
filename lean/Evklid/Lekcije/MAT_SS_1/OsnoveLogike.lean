@@ -24,6 +24,9 @@ def vrstice2 : List (Bool × Bool) := [(true, true), (true, false), (false, true
 
 /-! ## Razlaga -/
 
+/-- Razlaga 1: »2 + 3 = 6« je nepravilna izjava. -/
+theorem dva_plus_tri : (2 : ℕ) + 3 ≠ 6 := by decide
+
 /-- Razlaga 1: izjava je pravilna ali nepravilna, nikoli oboje hkrati. -/
 theorem izjava_p_ali_n (A : Prop) : (A ∨ ¬A) ∧ ¬(A ∧ ¬A) :=
   ⟨Classical.em A, fun h => h.2 h.1⟩
@@ -128,7 +131,7 @@ theorem tavtologija_tabela : [true, false].map (fun a => decide (a = true ∨ ¬
 /-- Razlaga 9, Povzetek in Bolj natančno: A ⇒ B ≡ ¬A ∨ B. -/
 theorem imp_ali (A B : Prop) : (A → B) ↔ (¬A ∨ B) := imp_iff_not_or
 
-/-- Razlaga 9, Povzetek in Ustno vprašanje 3: A ⇒ B ≡ ¬B ⇒ ¬A (kontrapozicija). -/
+/-- Razlaga 9, Povzetek, Ustno vprašanje 3 in Preveri se 4: A ⇒ B ≡ ¬B ⇒ ¬A (kontrapozicija). -/
 theorem kontrapozicija (A B : Prop) : (A → B) ↔ (¬B → ¬A) := not_imp_not.symm
 
 /-- Razlaga 9: stolpci A ⇒ B, ¬B ⇒ ¬A in ¬A ∨ B se ujemajo v vseh vrsticah. -/
@@ -136,7 +139,7 @@ theorem kontrapozicija_tabela :
     vrstice2.map (fun p => decide (¬ p.2 = true → ¬ p.1 = true)) = [true, false, true, true] ∧
     vrstice2.map (fun p => decide (¬ p.1 = true ∨ p.2 = true)) = [true, false, true, true] := by decide
 
-/-- Razlaga 9, premisli, Povzetek, Pogoste napake 4 in Ustno vprašanje 3: obrat B ⇒ A ni enakovreden A ⇒ B;
+/-- Razlaga 9, premisli, Povzetek, Pogoste napake 4, Ustno vprašanje 3 in Preveri se 4: obrat B ⇒ A ni enakovreden A ⇒ B;
 odloči vrstica A = N, B = P (A ⇒ B je P, B ⇒ A je N). -/
 theorem obrat_ni_enakovreden : ((False → True) ∧ ¬(True → False)) ∧
     ¬ (∀ A B : Prop, (A → B) ↔ (B → A)) := by

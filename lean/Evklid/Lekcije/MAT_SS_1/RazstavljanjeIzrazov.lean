@@ -51,7 +51,8 @@ theorem par (p q a b r₁ r₂ : ℝ) (hs : r₁ + r₂ = p) (hp : r₁ * r₂ =
     · exact ⟨by linarith, by rw [mul_comm]; exact hp⟩
 
 /-- Predpostavki `par` se dajo izpolniti (p = 7, q = 12, r₁ = 3, r₂ = 4). -/
-example : (3 : ℝ) + 4 = 7 ∧ (3 : ℝ) * 4 = 12 := by norm_num
+example : (3 : ℝ) + 4 = 7 ∧ (3 : ℝ) * 4 = 12 ↔ ((3 : ℝ) = 3 ∧ (4 : ℝ) = 4) ∨ ((3 : ℝ) = 4 ∧ (4 : ℝ) = 3) :=
+  par 7 12 3 4 3 4 (by norm_num) (by norm_num)
 
 /-! ## Zakaj se tega učimo -/
 
@@ -205,7 +206,8 @@ theorem vieta_predznaki (a b p q : ℝ) (hp : a + b = p) (hq : a * b = q) :
     · rw [abs_of_neg ha, abs_of_pos hb] at h'; constructor <;> intro <;> linarith
 
 /-- Predpostavki `vieta_predznaki` se dajo izpolniti (a = 2, b = −7, p = −5, q = −14 iz Primera 2). -/
-example : (2 : ℝ) + -7 = -5 ∧ (2 : ℝ) * -7 = -14 := by norm_num
+example : (-14 : ℝ) < 0 → (0 < (2 : ℝ) ∧ (-7 : ℝ) < 0) ∨ ((2 : ℝ) < 0 ∧ 0 < (-7 : ℝ)) :=
+  (vieta_predznaki 2 (-7) (-5) (-14) (by norm_num) (by norm_num)).2.2.2.1
 
 /-- Razlaga 4: x² + 7x + 12: pari 1·12, 2·6, 3·4 z vsotami 13, 8, 7; edini števili z vsoto 7 in produktom 12
 sta 3 in 4; x² + 7x + 12 = (x + 3)(x + 4). -/

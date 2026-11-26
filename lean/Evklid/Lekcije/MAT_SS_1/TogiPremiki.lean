@@ -13,7 +13,7 @@ kot opis; »skladna trikotnika z enako orientacijo preslikaš s premikom ali vrt
 zrcaljenje« in »izreki SSS ... povedo, kdaj premik obstaja« (zahtevno, še ni dokazano; dokazano je, da togi premik
 ohranja razdalje in kote, da premiki in vrteži ohranijo orientacijo, zato ABC iz Naloge 2 ne preide v A''B''C''); da
 je »vsak togi premik zaporedje osnovnih« (zahtevno, še ni dokazano); kot TST' pri splošnem vrtežu (dokazan je kot 90°
-za e = i in |ST'| = |ST| za vsak vrtež); kviz 1 (risba) in kviz 6 (razvrščanje korakov konstrukcije); Postopek, Pazi
+za e = i in |ST'| = |ST| za vsak vrtež); skladnost trikotnikov 1–3 z ABC v kvizu 1 (opis risbe; orientacije in zrcaljenje čez os x so dokazani) in kviz 6 (razvrščanje korakov konstrukcije); Postopek, Pazi
 na, točkovanje. Pri Primeru 3 je »vpadni kot je enak odbojnemu« dokazan za izračunano točko R(6,5; 0)
 (∠ARO = ∠BRX, X = 10), da je R edina točka roba na premici AB', pa kot ↔.
 -/
@@ -393,6 +393,21 @@ example (p q : ℝ) (S e : ℂ) (he : ‖e‖ = 1) :
   intro A B C; rw [vrtez_orient S e he, premik_orient]
 
 /-! ## Korak za korakom in Preveri se -/
+
+/-- Razlaga 7 (risba): ABC z A(2, 1), B(5, 1), C(2, 3) ima pozitivno orientacijo, A'B'C' (čez os y) negativno,
+A''B''C'' (čez O) spet pozitivno. -/
+theorem razlaga7_orient : 0 < orient ⟨2, 1⟩ ⟨5, 1⟩ ⟨2, 3⟩ ∧ orient ⟨-2, 1⟩ ⟨-5, 1⟩ ⟨-2, 3⟩ < 0 ∧
+    0 < orient ⟨-2, -1⟩ ⟨-5, -1⟩ ⟨-2, -3⟩ := by
+  unfold orient; norm_num
+
+/-- Preveri se 1: ABC (A(1, 2), B(4, 2), C(1, 4)), trikotnik 1 in trikotnik 3 imajo pozitivno orientacijo,
+trikotnik 2 negativno (zato ga s premikom in vrtežem ne dobiš, `naloga2c`); trikotnik 2 je slika ABC čez os x.
+Skladnost vseh treh z ABC je opis risbe. -/
+theorem kviz1 : 0 < orient ⟨1, 2⟩ ⟨4, 2⟩ ⟨1, 4⟩ ∧ 0 < orient ⟨-2, 1⟩ ⟨-2, 4⟩ ⟨-4, 1⟩ ∧
+    orient ⟨1, -2⟩ ⟨4, -2⟩ ⟨1, -4⟩ < 0 ∧ 0 < orient ⟨-1, -2⟩ ⟨-4, -2⟩ ⟨-1, -4⟩ ∧
+    zrcPremica 0 1 ⟨1, 2⟩ = ⟨1, -2⟩ ∧ zrcPremica 0 1 ⟨4, 2⟩ = ⟨4, -2⟩ ∧ zrcPremica 0 1 ⟨1, 4⟩ = ⟨1, -4⟩ := by
+  refine ⟨?_, ?_, ?_, ?_, (zrcaljenja_koord 1 2 0).1, (zrcaljenja_koord 4 2 0).1, (zrcaljenja_koord 1 4 0).1⟩ <;>
+    (unfold orient; norm_num)
 
 /-- Korak za korakom: T(3, 1) ↦ premik (−4, 2): (−1, 3); os x: (3, −1); os y: (−3, 1); O: (−3, −1); vrtež 90°:
 (−1, 3); čez S(1, 2): (2 − 3, 4 − 1) = (−1, 3); U(5, 1) ↦ (1, 3), (−1, 5), (−3, 3); |TU| = 2 se ohrani. -/

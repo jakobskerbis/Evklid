@@ -7,7 +7,7 @@ povsod, kjer krajšanje zahteva pogoj, ga trditev nosi (brez njega bi bila v Lea
 (3x + 6)/(x² − 4) = 3/(x − 2) pri x = −2); definicije in poimenovanja (ulomljeni izraz, pogoji, skupni
 imenovalec kot najmanjši skupni večkratnik, »enaka na skupnem definicijskem območju«), postopki in nasveti
 (vrstni red korakov, »okrajšaj navzkriž«, »najmanjši skupni večkratnik je krajši«, »pogoje piši pred
-krajšanjem«); trditvi, da se 6 − x/((x − 3)(x + 3)) in (x − 3)/x »ne dajo več krajšati«, ker deljivost
+krajšanjem«); trditvi, da se (6 − x)/((x − 3)(x + 3)) in (x − 3)/x »ne dajo več krajšati«, ker deljivost
 ulomljenih izrazov ni formalizirana; glasbene in programske analogije (mreža, zidaki) kot opis (dokazani so
 njihovi računi 1/3 + 1/4 = 7/12, 4/12, 3/12 in 1/x + 1/y = (x + y)/(xy)); simulacija in graf z luknjo (dokazano:
 (x² − a²)/(x − a) = x + a za x ≠ a in imenovalec je 0 pri x = a); točkovanje maturitetnih nalog; besedila napačnih
@@ -493,8 +493,18 @@ theorem bolj_natancno_tabela : ((-6) / (-9) : ℝ) = 2 / 3 ∧ ((0 + 2) / (0 + 3
 
 /-! ## Preveri se -/
 
-/-- Preveri se 1: imenovalec t je 0 natanko pri t = 0, zato izločimo samo t = 0. -/
-theorem preveri1 (t : ℝ) : t ≠ 0 ↔ ¬ t = 0 := Iff.rfl
+/-- Preveri se 1: pri 60/t je imenovalec t enak 0 le pri t = 0, zato izločimo samo t = 0; za vsak t ≠ 0 je
+60/t res število s (60/t)·t = 60; napačni odgovor: rezultat 0 da 0/t, ne 60/t (60/t ≠ 0 za t ≠ 0); pri 0 < t < 60
+je 60/t > 1 (udarec traja dlje kot 1 s), izraz pa je še vedno definiran. -/
+theorem preveri1 : {t : ℝ | t = 0} = {0} ∧ (∀ t : ℝ, t ≠ 0 → 60 / t * t = 60) ∧
+    (∀ t : ℝ, t ≠ 0 → (0 : ℝ) / t = 0 ∧ 60 / t ≠ 0) ∧ (∀ t : ℝ, 0 < t → t < 60 → 1 < 60 / t) := by
+  refine ⟨rfl, fun t ht => div_mul_cancel₀ 60 ht, fun t ht => ⟨zero_div t, div_ne_zero (by norm_num) ht⟩,
+    fun t h0 h60 => ?_⟩
+  rw [lt_div_iff₀ h0]; linarith
+
+/-- Predpostavke `preveri1` se dajo izpolniti (t = 40). -/
+example : (60 : ℝ) / 40 * 40 = 60 ∧ 1 < (60 : ℝ) / 40 :=
+  ⟨preveri1.2.1 40 (by norm_num), preveri1.2.2.2 40 (by norm_num) (by norm_num)⟩
 
 /-- Preveri se 4: za x ≠ ±1 je 3/(x − 1) − 2/(x + 1) = (3(x + 1) − 2(x − 1))/((x − 1)(x + 1)) = (x + 5)/(x² − 1);
 3(x + 1) − 2(x − 1) = 3x + 3 − 2x + 2 = x + 5; napačna odgovora pri x = 2 data 1 in 7/4 namesto 7/3. -/

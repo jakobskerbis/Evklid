@@ -138,15 +138,17 @@ theorem primer2 :
   norm_num [zapis, dv, Nat.ofDigits]
 
 /-- Primer 3: največje 8-bitno število 11111111₍₂₎ = 128 + 64 + … + 1 = 2⁸ − 1 = 255 < 300; 256 ≤ 300 < 512,
-300 = 256 + 32 + 8 + 4 = 100101100₍₂₎ ima 9 mest. -/
+300 = 256 + 32 + 8 + 4 = 100101100₍₂₎ ima 9 mest; z največ 8 biti 300 ni mogoče zapisati. -/
 theorem primer3 :
     dv (List.replicate 8 1) = 128 + 64 + 32 + 16 + 8 + 4 + 2 + 1 ∧ 128 + 64 + 32 + 16 + 8 + 4 + 2 + 1 = 255 ∧
     2 ^ 8 - 1 = 255 ∧ 255 < 300 ∧ (256 ≤ 300 ∧ 300 < 512) ∧ 300 = 256 + 32 + 8 + 4 ∧
     zapis 300 = [1, 0, 0, 1, 0, 1, 1, 0, 0] ∧ (zapis 300).length = 9 ∧
-    (∀ L : List ℕ, L.length = 8 → (∀ d ∈ L, d < 2) → dv L ≠ 300) := by
+    (∀ k ≤ 8, ∀ L : List ℕ, L.length = k → (∀ d ∈ L, d < 2) → dv L ≠ 300) := by
   refine ⟨by norm_num [dv, Nat.ofDigits], by norm_num, by norm_num, by norm_num, by norm_num, by norm_num,
-    by norm_num [zapis], by norm_num [zapis], fun L hL hd h => ?_⟩
-  have := (k_bitov 8).1 L hL hd
+    by norm_num [zapis], by norm_num [zapis], fun k hk L hL hd h => ?_⟩
+  have h1 := (k_bitov k).1 L hL hd
+  have h2 : 2 ^ k ≤ 2 ^ 8 := Nat.pow_le_pow_right (by norm_num) hk
+  norm_num at h2
   omega
 
 /-- Primer 4 in premisli: 58 − 32 = 26, 26 − 16 = 10, 10 = 8 + 2; 58 = 32 + 16 + 8 + 2 = 111010₍₂₎. -/
@@ -166,26 +168,30 @@ theorem pogoste_napake :
 
 /-- Naloga 1: a) 1110011₍₂₎ = 64 + 32 + 16 + 2 + 1 = 115; b) deljenja 200, 100, 50, 25, 12, 6, 3, 1 in
 200 = 11001000₍₂₎ (128 + 64 + 8); c) 200 − 115 = 85 = 64 + 16 + 4 + 1 = 1010101₍₂₎; d) tri končne ničle:
-200 = 8 · 25. -/
+11001000₍₂₎ = 8 · 11001₍₂₎ = 8 · 25 = 200, zato je 200 deljivo z 8. -/
 theorem naloga1 :
     dv [1, 1, 1, 0, 0, 1, 1] = 64 + 32 + 16 + 2 + 1 ∧ 64 + 32 + 16 + 2 + 1 = 115 ∧
     (200 = 100 * 2 + 0 ∧ 100 = 50 * 2 + 0 ∧ 50 = 25 * 2 + 0 ∧ 25 = 12 * 2 + 1 ∧ 12 = 6 * 2 + 0 ∧ 6 = 3 * 2 + 0 ∧
       3 = 1 * 2 + 1 ∧ 1 = 0 * 2 + 1) ∧
     zapis 200 = [1, 1, 0, 0, 1, 0, 0, 0] ∧ 128 + 64 + 8 = 200 ∧ 200 - 115 = 85 ∧ 85 = 64 + 16 + 4 + 1 ∧
-    zapis 85 = [1, 0, 1, 0, 1, 0, 1] ∧ dv ([1, 1, 0, 0, 1] ++ [0, 0, 0]) = 8 * dv [1, 1, 0, 0, 1] ∧ 200 / 8 = 25 := by
+    zapis 85 = [1, 0, 1, 0, 1, 0, 1] ∧ dv ([1, 1, 0, 0, 1] ++ [0, 0, 0]) = 8 * dv [1, 1, 0, 0, 1] ∧ dv [1, 1, 0, 0, 1] = 25 ∧
+    200 = 8 * 25 ∧ 8 ∣ 200 := by
   refine ⟨by norm_num [dv, Nat.ofDigits], by norm_num, by norm_num, by norm_num [zapis], by norm_num, by norm_num,
-    by norm_num, by norm_num [zapis], (koncne_nicle _).2, by norm_num⟩
+    by norm_num, by norm_num [zapis], (koncne_nicle _).2, by norm_num [dv, Nat.ofDigits], by norm_num,
+    by norm_num⟩
 
 /-- Naloga 2 a), b): z 9 biti 2⁹ = 512 številk, največja 2⁹ − 1 = 511; 512 < 700 ≤ 1024 = 2¹⁰, zato je potrebnih
-najmanj 10 bitov (z 9 biti ni mogoče zapisati 699, z 10 biti je). -/
+najmanj 10 bitov (z 9 ali manj biti ni mogoče zapisati 699, z 10 biti je). -/
 theorem naloga2_ab :
     Fintype.card (Fin 9 → Fin 2) = 2 ^ 9 ∧ (2 : ℕ) ^ 9 = 512 ∧ dv (List.replicate 9 1) = 511 ∧ 512 < 700 ∧
     (2 : ℕ) ^ 10 = 1024 ∧ 700 ≤ 1024 ∧ 699 ≤ 1023 ∧
-    (∀ L : List ℕ, L.length = 9 → (∀ d ∈ L, d < 2) → dv L ≠ 699) ∧
+    (∀ k ≤ 9, ∀ L : List ℕ, L.length = k → (∀ d ∈ L, d < 2) → dv L ≠ 699) ∧
     (∃ L : List ℕ, L.length = 10 ∧ (∀ d ∈ L, d < 2) ∧ dv L = 699) := by
   refine ⟨by simp, by norm_num, by rw [(k_bitov 9).2.2.2]; norm_num, by norm_num, by norm_num, by norm_num,
-    by norm_num, fun L hL hd h => ?_, (k_bitov 10).2.1 699 (by norm_num)⟩
-  have := (k_bitov 9).1 L hL hd
+    by norm_num, fun k hk L hL hd h => ?_, (k_bitov 10).2.1 699 (by norm_num)⟩
+  have h1 := (k_bitov k).1 L hL hd
+  have h2 : 2 ^ k ≤ 2 ^ 9 := Nat.pow_le_pow_right (by norm_num) hk
+  norm_num at h2
   omega
 
 /-- Naloga 2 c), d): 1001011010₍₂₎ = 512 + 64 + 16 + 8 + 2 = 602; deljenja 699, 349, 174, 87, 43, 21, 10, 5, 2, 1 in

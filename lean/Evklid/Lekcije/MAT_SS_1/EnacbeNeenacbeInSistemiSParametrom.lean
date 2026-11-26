@@ -1,6 +1,6 @@
 /-
 vir: content/lessons/MAT-SS-1/enacbe-neenacbe-in-sistemi-s-parametrom.md
-sha256: 685e39514e807308be16fd56e11f1c660bc37551380db84b64e6aa6b114ff3bd
+sha256: 5a6966295f37c9f60e9c3347e1411ea26b1592236f2456b3fc4f9b325e44b365
 Ni v Leanu: zgodovina (Viète) in zdravniški zgledi kot modeli (dokazana je algebra: 20 + at ≥ 12 pri
 a = −2, 3, 0 in 30 + at ≤ 45 za t ≥ 0); risbe, drsnik in simulacija; »lega premic« (sekata, vzporedni,
 sovpadata) je dokazana kot število rešitev sistema (ena, nobena, neskončno oz. enaki enačbi); pogoj
@@ -10,7 +10,8 @@ razvrščanje korakov v Preveri se 5, točkovanje) in nasveti (»preveri s konkr
 brez pogoja«) kot navodila (dokazani so preizkusi pri konkretnih m in to, da krajšanje izgubi primer m = 2);
 analogiji (garaža je dokazana kot x < y ⇒ −y < −x, planinske poti so opis); besedilo napačnih odgovorov v
 Preveri se (kjer gre, je dokazano, da napačna vrednost ni pravilna). Odgovori »za m ≠ ±k ena rešitev …«
-so dokazani kot ↔ (natanko ta rešitev).
+so dokazani kot ↔ (natanko ta rešitev). Naloga 2 e) je dokazana v branju »kadar ima sistem natanko eno
+rešitev« (`m2_e_ena`); kot opomba je dokazano še, da pri m = 3 (neskončno rešitev) na y = 2x leži (3/8, 3/4).
 -/
 module
 
@@ -477,7 +478,7 @@ theorem m2_m_minus3 (x y : ℝ) : (4 * x - 4 * y = -3 ↔ -2 * x + 2 * y = 3 / 2
   unfold sistemN2
   rintro ⟨h1, h2⟩; linarith
 
-/-- Naloga 2 e), RACUN: rešitev leži na y = 2x natanko pri m = −2 (med m ≠ ±3, kjer je rešitev ena):
+/-- Naloga 2 e), RACUN (algebra): pri m ≠ ±3, kjer je rešitev ena, leži na y = 2x natanko pri m = −2:
 (m + 4)/(m + 3) = 2/(m + 3) ⇔ m + 4 = 2 ⇔ m = −2. -/
 theorem m2_e (m : ℝ) (h3 : m ≠ 3) (h3' : m ≠ -3) :
     ((m + 4) / (m + 3) = 2 * (1 / (m + 3)) ↔ m = -2) := by
@@ -491,6 +492,41 @@ theorem m2_e (m : ℝ) (h3 : m ≠ 3) (h3' : m ≠ -3) :
 
 /-- Predpostavki `m2_e` se dasta izpolniti (m = −2). -/
 example : (-2:ℝ) ≠ 3 ∧ (-2:ℝ) ≠ -3 := by norm_num
+
+/-- Naloga 2 e): kadar ima sistem natanko eno rešitev, ta leži na premici y = 2x natanko pri m = −2. -/
+theorem m2_e_ena (m : ℝ) (h : ∃! p : ℝ × ℝ, sistemN2 m p.1 p.2) :
+    (∃ x y : ℝ, sistemN2 m x y ∧ y = 2 * x) ↔ m = -2 := by
+  by_cases h3 : m = 3
+  · subst h3
+    exfalso
+    obtain ⟨p, -, hu⟩ := h
+    have a := hu (3 / 4, 0) (by unfold sistemN2; norm_num)
+    have b := hu (0, 3 / 2) (by unfold sistemN2; norm_num)
+    rw [← b] at a
+    simp [Prod.ext_iff] at a
+  by_cases h3' : m = -3
+  · subst h3'
+    exfalso
+    obtain ⟨p, hp, -⟩ := h
+    exact (m2_m_minus3 p.1 p.2).2.2 hp
+  constructor
+  · rintro ⟨x, y, hs, hy⟩
+    rw [m2_ena m x y h3 h3'] at hs
+    obtain ⟨rfl, rfl⟩ := hs
+    exact (m2_e m h3 h3').mp hy
+  · rintro rfl
+    exact ⟨1, 2, by unfold sistemN2; norm_num, by norm_num⟩
+
+/-- Predpostavka `m2_e_ena` se da izpolniti: pri m = −2 je rešitev natanko ena. -/
+example : ∃! p : ℝ × ℝ, sistemN2 (-2) p.1 p.2 :=
+  ⟨(1, 2), by unfold sistemN2; norm_num, fun p hp => by
+    obtain ⟨h1, h2⟩ := (m2_ena (-2) p.1 p.2 (by norm_num) (by norm_num)).mp hp
+    ext <;> simp only [h1, h2] <;> norm_num⟩
+
+/-- Naloga 2 e), opomba: pri m = 3 (neskončno rešitev, 4x + 2y = 3) na premici y = 2x leži rešitev
+(3/8, 3/4); zato pogoj »natanko ena rešitev« v nalogi ni odveč. -/
+theorem m2_e_m3 : sistemN2 3 (3 / 8) (3 / 4) ∧ (3:ℝ) / 4 = 2 * (3 / 8) := by
+  unfold sistemN2; norm_num
 
 /-- Naloga 2 e), RACUN: pri m = −2 (−x + 2y = 3, 4x − 3y = −2) je rešitev natanko (1, 2); −1 + 4 = 3,
 4 − 6 = −2. -/

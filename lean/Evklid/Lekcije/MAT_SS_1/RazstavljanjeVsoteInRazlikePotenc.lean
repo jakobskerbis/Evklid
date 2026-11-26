@@ -418,8 +418,8 @@ theorem devetsto99_vsakdan : (999 : ℤ) = 10 ^ 3 - 1 ∧ (10 : ℤ) ^ 3 - 1 = 9
 9 ni kub celega števila. -/
 theorem preveri1 : (∀ x : ℝ, x ^ 3 - 8 = (x - 2) * (x ^ 2 + 2 * x + 4)) ∧
     (∀ y : ℝ, 27 + y ^ 3 = (3 + y) * (9 - 3 * y + y ^ 2)) ∧ (∀ a : ℝ, 64 * a ^ 3 = (4 * a) ^ 3) ∧
-    (8 : ℤ) = 2 ^ 3 ∧ (27 : ℤ) = 3 ^ 3 ∧ ¬ ∃ k : ℤ, k ^ 3 = 9 := by
-  refine ⟨fun x => by ring, fun y => by ring, fun a => by ring, by norm_num, by norm_num, ?_⟩
+    (1 : ℤ) = 1 ^ 3 ∧ (8 : ℤ) = 2 ^ 3 ∧ (27 : ℤ) = 3 ^ 3 ∧ ¬ ∃ k : ℤ, k ^ 3 = 9 := by
+  refine ⟨fun x => by ring, fun y => by ring, fun a => by ring, by norm_num, by norm_num, by norm_num, ?_⟩
   rintro ⟨k, hk⟩
   have h1 : k ≤ 2 := by
     by_contra h

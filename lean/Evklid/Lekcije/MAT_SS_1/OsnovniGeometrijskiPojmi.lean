@@ -259,7 +259,9 @@ example : line[ℝ, (0 : ℂ), 1] ∥ line[ℝ, (0 : ℂ), 1] ∧ (0 : ℂ) ∈ 
 
 /-- Razlaga 4 in Povzetek (formula za projekcijo, koordinatni model): p je os x, A = (a, h₁), B = (b, h₂) na isti
 strani p (h₁, h₂ ≥ 0), A' = (a, 0), B' = (b, 0). Trikotnik ABC s C = (b, h₁) ima |AC| = |A'B'| = |b − a| in
-|BC| = |BB'| − |AA'|, zato |A'B'|² = |AB|² − (|BB'| − |AA'|)², kjer je |AB|² = (b − a)² + (h₂ − h₁)². -/
+|BC| = |BB'| − |AA'|, zato |A'B'|² = |AB|² − (|BB'| − |AA'|)², kjer je |AB|² = (b − a)² + (h₂ − h₁)². V tem
+koordinatnem modelu je to skoraj le algebrska identiteta; geometrijska vsebina (projekcija na premico) je
+`projekcija_najkrajsa`. -/
 theorem projekcija_ista_stran (a b h₁ h₂ : ℝ) (h₁0 : 0 ≤ h₁) (h₂0 : 0 ≤ h₂) :
     |b - a| ^ 2 = ((b - a) ^ 2 + (h₂ - h₁) ^ 2) - (|h₂| - |h₁|) ^ 2 := by
   rw [abs_of_nonneg h₁0, abs_of_nonneg h₂0, sq_abs]; ring
@@ -553,6 +555,11 @@ theorem racun_kviz4 (x : ℝ) : x + (x - 20) = 90 ↔ x = 55 := by
 
 /-- Preveri se 5: notranja kota na isti strani prečnice vzporednic: 180° − 72° = 108°. -/
 theorem kviz5 : (180 : ℝ) - 72 = 108 := by norm_num
+
+/-- Preveri se 5 (napačna odgovora): 72° + 72° ≠ 180° in 72° + 18° = 90° ≠ 180°; vsoto 180° da le 108°. -/
+theorem kviz5_napacni (x : ℝ) : ((72 : ℝ) + x = 180 ↔ x = 108) ∧ (72 : ℝ) + 72 ≠ 180 ∧ (72 : ℝ) + 18 = 90 ∧
+    (72 : ℝ) + 18 ≠ 180 := by
+  refine ⟨⟨fun h => by linarith, fun h => by rw [h]; norm_num⟩, by norm_num, by norm_num, by norm_num⟩
 
 /-- Preveri se 6 in `RACUN`: |A'B'|² = 10² − (9 − 1)² = 100 − 64 = 36, |A'B'| = 6 cm (napačni odgovori 8, 10, 0 so
 druge vrednosti: √(10² − 10²) = 0). -/

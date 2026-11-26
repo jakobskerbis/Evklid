@@ -20,7 +20,9 @@ kota, in za Nalogo 2, da je O zunaj); »T in I sta vedno znotraj« (zahtevno, š
 tri trikotnike z višino r pri S = r·s (dokazana je le algebra a·r/2 + b·r/2 + c·r/2 = r·s); vsota notranjih kotov
 n-kotnika (n − 2)·180° in razrez na n − 2 trikotnikov (dokazano le za trikotnik; za n-kotnik je dokazana algebra
 zunanjih kotov in formul); štetje »iz vsakega oglišča n − 3 diagonal« (dokazana je enakost C(n,2) − n = n(n − 3)/2);
-»višina in težiščnica sovpadata le v enakokrakem« (opis; dokazano za Nalogo 2); Pogoste napake, Postopek, Pazi na,
+»višina in težiščnica sovpadata le v enakokrakem« (opis; dokazano za Nalogo 2); Naloga 2 b) korak 4–5, pot s primerjavo
+stranic in SSS (|AD| > |DC| ⇒ ∠ACD > 45°, ADC ≅ BDC ⇒ γ = 2∠ACD) je opis; topost γ je dokazana drugače, s
+⟪A − C, B − C⟫ < 0 (`naloga2_top`); Pogoste napake, Postopek, Pazi na,
 Iz vsakdanjega življenja (razen SSS, dokazano), točkovanje in razlage v kvizih (opis; dokazani so pravilni odgovori).
 Lean: √ negativnega je 0, x/0 = 0 (formule z deljenjem imajo pozitivne podatke).
 -/
@@ -286,10 +288,16 @@ theorem simetrale_stranic {A B C O : P} (h1 : O ∈ AffineSubspace.perpBisector 
   rw [AffineSubspace.mem_perpBisector_iff_dist_eq] at h1 h2 ⊢
   exact ⟨h1.trans h2, h1, h2⟩
 
-/-- Predpostavki trditve `simetrale_stranic` se dajo izpolniti (O = A = B = C = 0 ali katerokoli središče iz
-`obstoj_O`). -/
+/-- Predpostavki trditve `simetrale_stranic` se dajo izpolniti (izrojeno O = A = B = C = 0; nedegeneriran primer je
+središče iz `obstoj_O`, spodaj 0 = središče za −1, 1, i). -/
 example : (0 : ℂ) ∈ AffineSubspace.perpBisector (0 : ℂ) 0 := by
   rw [AffineSubspace.mem_perpBisector_iff_dist_eq]
+
+/-- Nedegeneriran primer za `simetrale_stranic`: O = 0 leži na simetralah stranic AB in BC za A = −1, B = 1, C = i. -/
+example : (0 : ℂ) ∈ AffineSubspace.perpBisector (-1 : ℂ) 1 ∧
+    (0 : ℂ) ∈ AffineSubspace.perpBisector (1 : ℂ) Complex.I := by
+  simp only [AffineSubspace.mem_perpBisector_iff_dist_eq, Complex.dist_eq]
+  simp
 
 /-- Razlaga 6 (obstoj središča očrtane krožnice): za nekolinearne A, B, C obstaja točka O, enako oddaljena od vseh
 treh oglišč (Mathlibov `circumcenter`), in leži na vseh treh simetralah stranic. -/
@@ -606,7 +614,9 @@ example : dist ((-(1 / (2 * √24)) : ℝ) * Complex.I) (-5) = dist ((-(1 / (2 *
   field_simp
   nlinarith [h24]
 
-/-! ## Preveri se -/
+/-! ## Preveri se
+Preveri se 5 (središče očrtane krožnice kot presečišče simetral stranic) pokrivata `simetrale_stranic` in
+`obstoj_O`. -/
 
 /-- Pogoj obstoja trikotnika s stranicami a, b, c. -/
 def obstaja (a b c : ℝ) : Prop := a < b + c ∧ b < a + c ∧ c < a + b
