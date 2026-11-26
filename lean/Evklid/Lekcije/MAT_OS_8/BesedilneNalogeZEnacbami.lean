@@ -6,7 +6,7 @@ ulomki v ℝ (1,20 = 6/5). Reševanje enačbe je veriga `calc` ekvivalenc (↔) 
 dokazana celotna množica rešitev. Primer 4 (zaporedna naravna števila) je v ℕ.
 Ni v Leanu: prevod zgodbe v enačbo (izbira neznanke, »kaj pomeni x«, tabela besedilo → izraz kot dogovor zapisa;
 dokazano je le, da sta napačna zapisa iz Premisli in Pogostih napak drugačna izraza), postopek v šestih korakih,
-navodila »preizkus v besedilu«, »odgovori s stavkom«, »zapiši enoto« in kviz 1 (navodila, ne matematične trditve);
+navodila »preizkus v besedilu«, »odgovori s stavkom« (in pogosta napaka »odgovor je samo x«), »zapiši enoto« in kviz 1 (navodila, ne matematične trditve);
 Premisli z x = 24,5 učenca in »rešitev mora biti smiselna« (razlaga pomena); simulacija »Od besedila do enačbe«
 (dokazana je le njena enačba 4x + 4 = 40); risba s trakovi (dokazana je enačba 4x = 36 in 36 : 4 = 9);
 nasvet »izberi neznanko brez ulomkov« (nasvet; dokazano je, da obe izbiri neznanke dasta isti rezultat).

@@ -142,7 +142,7 @@ theorem nic_cela_dvanajst : ∑' k : ℕ, (12 : ℝ) / (10 ^ 2) ^ (k + 1) = 4 / 
   exact fun hi => hi ⟨4 / 33, by push_cast; ring⟩
 
 /-- Razlaga 2 (premisli): pri 1/7 se skupina 142857 ponavlja v nedogled (1/7 = 0,142857142857…), zaslon
-pa zapis le odreže (|1/7 − 0,1428571429| < 10⁻¹⁰); √2 je iracionalen. -/
+pa zapis le zaokroži (|1/7 − 0,1428571429| < 10⁻¹⁰); √2 je iracionalen. -/
 theorem ena_sedmina :
     ∑' k : ℕ, (142857 : ℝ) / (10 ^ 6) ^ (k + 1) = 1 / 7 ∧ |(1 / 7 : ℝ) - 0.1428571429| < 1 / 10 ^ 10 ∧
       Irrational √2 := by
@@ -204,13 +204,17 @@ theorem N_Z_Q_R :
     have b' : z < (1 : ℤ) := by exact_mod_cast b
     omega
 
-/-- Razlaga 4, tabela: 1, 7 in √9 = 3 so naravna; −3, 0, 7 cela; 2/3, −1,5 in 0,333… = 1/3 racionalna;
-√2, π in −√5 so realna, a iracionalna. -/
+/-- Razlaga 4, tabela: 1, 7 in √9 = 3 so naravna (n ≥ 1); −3, 0, 7 cela; 2/3, −1,5 in 0,333… = 1/3
+racionalna (0,333… kot vrsta je `nic_cela_tri`); √2, π in −√5 so realna, a iracionalna. -/
 theorem tabela :
-    √(9 : ℝ) = 3 ∧ (2 / 3 : ℝ) = (2 : ℤ) / (3 : ℕ) ∧ (-1.5 : ℝ) = (-3 : ℤ) / (2 : ℕ) ∧
+    ((1 : ℝ) = ((1 : ℕ) : ℝ) ∧ (7 : ℝ) = ((7 : ℕ) : ℝ) ∧ √(9 : ℝ) = ((3 : ℕ) : ℝ) ∧ 1 ≤ 1 ∧ 1 ≤ 7 ∧ 1 ≤ 3) ∧
+      ((-3 : ℝ) = ((-3 : ℤ) : ℝ) ∧ (0 : ℝ) = ((0 : ℤ) : ℝ) ∧ (7 : ℝ) = ((7 : ℤ) : ℝ)) ∧
+      √(9 : ℝ) = 3 ∧ (2 / 3 : ℝ) = (2 : ℤ) / (3 : ℕ) ∧ (-1.5 : ℝ) = (-3 : ℤ) / (2 : ℕ) ∧
+      (1 / 3 : ℝ) = (1 : ℤ) / (3 : ℕ) ∧
       Irrational √2 ∧ Irrational π ∧ Irrational (-√5) := by
-  refine ⟨koren 9 3 (by norm_num) (by norm_num), by norm_num, by norm_num, irrational_sqrt_two,
-    irrational_pi, ?_⟩
+  have h9 := koren 9 3 (by norm_num) (by norm_num)
+  refine ⟨⟨by norm_num, by norm_num, by rw [h9]; norm_num, by norm_num, by norm_num, by norm_num⟩,
+    by norm_num, h9, by norm_num, by norm_num, by norm_num, irrational_sqrt_two, irrational_pi, ?_⟩
   exact (irrational_sqrt_ofNat_iff.mpr (ni_popolni_kvadrat 5 2 (by norm_num) (by norm_num))).neg
 
 /-! ## Razlaga 5: številska premica -/
@@ -232,12 +236,13 @@ theorem minus_koren5 :
 /-! ## Razlaga 6: približki -/
 
 /-- Razlaga 6, tabela: 1,4² = 1,96 < 2, 1,5² = 2,25 > 2, 1,41² = 1,9881 < 2, 1,42² = 2,0164 > 2; torej
-1,41 < √2 < 1,42 (in √2 ≈ 1,41, ne √2 = 1,41). -/
+1,41 < √2 < 1,42 (in √2 ≈ 1,41: 1,405 < √2 < 1,415, zato se zaokroži na 1,41; ne √2 = 1,41). -/
 theorem priblizki_koren2 :
     (1.4 : ℝ) ^ 2 = 1.96 ∧ (1.5 : ℝ) ^ 2 = 2.25 ∧ (1.41 : ℝ) ^ 2 = 1.9881 ∧ (1.42 : ℝ) ^ 2 = 2.0164 ∧
-      ((1.41 : ℝ) < √2 ∧ √2 < 1.42) ∧ √2 ≠ 1.41 := by
+      (((1.41 : ℝ) < √2 ∧ √2 < 1.42) ∧ ((1.405 : ℝ) < √2 ∧ √2 < 1.415)) ∧ √2 ≠ 1.41 := by
   obtain ⟨a, b⟩ := med 2 1.41 1.42 (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-  exact ⟨by norm_num, by norm_num, by norm_num, by norm_num, ⟨a, b⟩, by linarith⟩
+  obtain ⟨c, d⟩ := med 2 1.405 1.415 (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+  exact ⟨by norm_num, by norm_num, by norm_num, by norm_num, ⟨⟨a, b⟩, ⟨c, d⟩⟩, by linarith⟩
 
 /-- Razlaga 6 in Na sliki: postopek se nikoli ne konča s kvadratom natanko 2: noben končni decimalni
 približek m/10ⁿ ni √2 (točka √2 nikoli ne pade natanko na oznako). -/
@@ -392,13 +397,13 @@ theorem napaka_priblizek : π ≠ 3.14 ∧ √2 ≠ 1.41 ∧ (22 / 7 : ℝ) ≠ 
     priblizki_koren2.2.2.2.2.2, primer3_vrstni_red.2.2.2.2.2.2⟩
 
 /-- Pogoste napake 5 in Preveri se 2: √70 ni okrog 35 (70 : 2), ampak 8² = 64 < 70 < 81 = 9², zato
-8 < √70 < 9, približno 8,37 (8,365 < √70 < 8,375); ni med 7 in 8. -/
+8 < √70 < 9, približno 8,37 (8,365 < √70 < 8,375); ni med 7 in 8 in ni med 35 in 36. -/
 theorem koren70 :
     ((8 : ℝ) < √70 ∧ √70 < 9) ∧ ((8.365 : ℝ) < √70 ∧ √70 < 8.375) ∧ (70 : ℝ) / 2 = 35 ∧ √70 ≠ 35 ∧
-      ¬ (√70 < 8) := by
+      ¬ (√70 < 8) ∧ ¬ ((35 : ℝ) < √70) := by
   obtain ⟨a, b⟩ := med 70 8 9 (by norm_num) (by norm_num) (by norm_num) (by norm_num)
   refine ⟨⟨a, b⟩, med 70 _ _ (by norm_num) (by norm_num) (by norm_num) (by norm_num), by norm_num,
-    by intro h; linarith, by intro h; linarith⟩
+    by intro h; linarith, by intro h; linarith, by intro h; linarith⟩
 
 /-! ## Drugače: Na sliki -/
 
@@ -475,14 +480,14 @@ theorem preveri3 :
     irrational_sqrt_two.div_natCast (by norm_num)⟩
 
 /-- Preveri se 4: 36 < 40 < 49, zato 6 < √40 < 7 in √40 je iracionalen; √50 je med 7 in 8 (ne med 6 in 7);
-√49 = 7 ni iracionalen; 6,5 = 13/2 leži med 6 in 7, a je racionalen. -/
+√49 = 7 ni iracionalen in ne leži med 6 in 7; 6,5 = 13/2 leži med 6 in 7, a je racionalen. -/
 theorem preveri4 :
     ((6 : ℝ) < √40 ∧ √40 < 7) ∧ Irrational √(40 : ℝ) ∧ (7 : ℝ) < √50 ∧ √(49 : ℝ) = 7 ∧
-      ¬ Irrational √(49 : ℝ) ∧ (6 : ℝ) < 6.5 ∧ (6.5 : ℝ) < 7 ∧ ¬ Irrational 6.5 := by
+      ¬ Irrational √(49 : ℝ) ∧ ¬ ((6 : ℝ) < √49 ∧ √(49 : ℝ) < 7) ∧ (6 : ℝ) < 6.5 ∧ (6.5 : ℝ) < 7 ∧ ¬ Irrational 6.5 := by
   have h49 : √(49 : ℝ) = 7 := koren _ _ (by norm_num) (by norm_num)
   refine ⟨med 40 _ _ (by norm_num) (by norm_num) (by norm_num) (by norm_num),
     irrational_sqrt_ofNat_iff.mpr (ni_popolni_kvadrat 40 6 (by norm_num) (by norm_num)),
-    primer2_koren50.2.2.1.1, h49, ?_, by norm_num, by norm_num, fun h => h ⟨13 / 2, by norm_num⟩⟩
+    primer2_koren50.2.2.1.1, h49, ?_, by rw [h49]; norm_num, by norm_num, by norm_num, fun h => h ⟨13 / 2, by norm_num⟩⟩
   rw [h49]; exact fun h => h ⟨7, by norm_num⟩
 
 /-- Preveri se 5: ikona s ploščino 8 cm² ima stranico √8 cm (edino pozitivno a z a² = 8), ki je

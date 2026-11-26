@@ -133,10 +133,8 @@ example : (-3 : ℤ) < 0 ∧ (-7 : ℤ) < 0 := by norm_num
 theorem tabela_primeri : (2 : ℤ) > -8 ∧ (7 : ℤ) > 3 ∧ (-3 : ℤ) > -7 ∧ (-3 : ℤ) > -6 := by norm_num
 
 /-- Razlaga 5 (preizkus): 0 > −100, ker je vsako negativno število manjše od 0. -/
-theorem preizkus_nic (b : ℤ) (hb : b < 0) : (0 : ℤ) > -100 ∧ 0 > b := ⟨by norm_num, hb⟩
-
-/-- Predpostavka `preizkus_nic` se da izpolniti (b = −100). -/
-example : (-100 : ℤ) < 0 := by norm_num
+theorem preizkus_nic : (0 : ℤ) > -100 ∧ ∀ b : ℤ, b < 0 → 0 > b :=
+  ⟨by norm_num, fun _ hb => hb⟩
 
 /-! ## Primer 1: razvrščanje -/
 
@@ -249,9 +247,11 @@ theorem abs_negativna (x : ℤ) : |x| ≠ -2 := by
 theorem preveri1 : (∀ a : ℤ, 0 ≤ |a|) ∧ |(-3 : ℤ)| ≠ -3 ∧ |(-3 : ℤ)| = 3 :=
   ⟨abs_nonneg, by norm_num, by norm_num⟩
 
-/-- Preveri se 2: |−11| + |4| = 11 + 4 = 15 (ne −11 + 4 = −7 in ne 11 − 4 = 7). -/
-theorem preveri2 : |(-11 : ℤ)| + |(4 : ℤ)| = 15 ∧ (-11 : ℤ) + 4 = -7 ∧ (11 : ℤ) - 4 = 7 := by
-  refine ⟨?_, by norm_num, by norm_num⟩
+/-- Preveri se 2: |−11| + |4| = 11 + 4 = 15 (ne −11 + 4 = −7, ne 11 − 4 = 7 in ne −15: vsota
+absolutnih vrednosti ni negativna). -/
+theorem preveri2 : |(-11 : ℤ)| + |(4 : ℤ)| = 15 ∧ (-11 : ℤ) + 4 = -7 ∧ (11 : ℤ) - 4 = 7 ∧
+    (-7 : ℤ) ≠ 15 ∧ (7 : ℤ) ≠ 15 ∧ |(-11 : ℤ)| + |(4 : ℤ)| ≠ -15 ∧ 0 ≤ |(-11 : ℤ)| + |(4 : ℤ)| := by
+  refine ⟨?_, by norm_num, by norm_num, by norm_num, by norm_num, by norm_num, by positivity⟩
   calc |(-11 : ℤ)| + |(4 : ℤ)| = 11 + 4 := by norm_num
     _ = 15 := by norm_num
 
@@ -261,12 +261,15 @@ theorem preveri3 :
       List.Pairwise (· < ·) [(-8 : ℤ), -2, 0, 5] := by
   decide
 
-/-- Preveri se 4: −15 < −9 in |−15| > |−9|. -/
-theorem preveri4 : (-15 : ℤ) < -9 ∧ |(-15 : ℤ)| > |(-9 : ℤ)| := by norm_num
+/-- Preveri se 4: −15 < −9 in |−15| > |−9| (ne −15 > −9 in ne |−15| < |−9|). -/
+theorem preveri4 : (-15 : ℤ) < -9 ∧ |(-15 : ℤ)| > |(-9 : ℤ)| ∧
+    ¬ ((-15 : ℤ) > -9) ∧ ¬ (|(-15 : ℤ)| < |(-9 : ℤ)|) := by norm_num
 
-/-- Preveri se 5: stopnišče od −4 do 7 premaga |7 − (−4)| = |−4| + |7| = 4 + 7 = 11 (ne 7 − 4 = 3). -/
-theorem preveri5 : |(7 : ℤ) - (-4)| = 11 ∧ (7 : ℤ) - 4 = 3 := by
-  refine ⟨?_, by norm_num⟩
+/-- Preveri se 5: stopnišče od −4 do 7 premaga |7 − (−4)| = |−4| + |7| = 4 + 7 = 11 (ne 7 − 4 = 3 in
+ne −11, ker razdalja ni negativna). -/
+theorem preveri5 : |(7 : ℤ) - (-4)| = 11 ∧ (7 : ℤ) - 4 = 3 ∧ (3 : ℤ) ≠ 11 ∧
+    |(7 : ℤ) - (-4)| ≠ -11 := by
+  refine ⟨?_, by norm_num, by norm_num, by norm_num⟩
   calc |(7 : ℤ) - (-4)| = |(-4 : ℤ)| + |(7 : ℤ)| := razdalja_cez_nic (-4) 7 (by norm_num) (by norm_num)
     _ = 4 + 7 := by norm_num
     _ = 11 := by norm_num

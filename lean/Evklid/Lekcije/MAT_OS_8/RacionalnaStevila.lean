@@ -4,14 +4,16 @@ sha256: ceb6e93346c25852f4843c87e2ac5de20dffd10d0e98e80f75c01e321ddcd3c1
 Model: računi so v ℚ (decimalna števila so točni ulomki, npr. (2.8 : ℚ) = 28/10); »x je racionalno« za realno
 število x pomeni x ∈ Set.range (Rat.cast : ℚ → ℝ). Periodično število 0,333… je vrsta ∑ 3/10ⁿ⁺¹ v ℝ (in
 0,666… vrsta ∑ 6/10ⁿ⁺¹). Pravilo a/c + b/c = (a + b)/c velja v Leanu brez pogoja (tudi pri c = 0, ker je
-x/0 = 0); lekcija tu pogoja ne navaja. Pravila z deljenjem imajo pogoje lekcije (b, c, d ≠ 0).
+x/0 = 0); lekcija tu pogoja ne navaja. Pravila z deljenjem imajo pogoje lekcije (b, c, d ≠ 0); pri `deljenje`
+jih Lean za dokaz ne potrebuje (enakost zaradi x/0 = 0 velja tudi brez njih), navedeni so le zaradi lekcije.
 Ni v Leanu: zgodba o vremenski postaji in pomen temperatur/gladin kot podatki (dokazani so računi in
 primerjave); risbe številskih premic in simulacija (dokazane so lege kot neenakosti, razdalje in razpolovišča);
 »premik po premici« in »zrcaljenje čez 0« kot geometrijska slika (dokazani so računi −1,5 + 2 = 0,5 in
 (−2)·0,5 = −1 ter |−1| = 2·|0,5|); vrstni red računskih operacij kot pravilo zapisa (Lean ga ima vgrajenega;
 dokazani sta obe branji 2 − 3·(−4) = 14 in (2 − 3)·(−4) = 4); »pravila za predznake pri seštevanju« v besedah
 (dokazani so primeri); »seštevamo le enako velike dele« (razlaga); Primer 3, korak 4 (dokazano je
-−3,5 < −1,7 < 1,2); »najnižja je bila gladina ...« kot besedilo (dokazan je vrstni red).
+−3,5 < −1,7 < 1,2); »najnižja je bila gladina ...« kot besedilo (dokazan je vrstni red); nasvet »pred
+primerjanjem števila zapišemo v isti obliki« (Razlaga 2, Povzetek 2; dokazane so pretvorbe, npr. −3/4 = −0,75).
 -/
 module
 
@@ -34,9 +36,11 @@ theorem racionalno_iff (x : ℝ) : x ∈ Set.range ((↑) : ℚ → ℝ) ↔ ∃
   · rintro ⟨a, b, -, rfl⟩
     exact ⟨a / b, by push_cast; rfl⟩
 
-/-- Razlaga 1 in Preveri se 1: vsako celo število n je racionalno, n = n/1 (npr. 5 = 5/1, −3 = −3/1, −7 = −7/1). -/
-theorem celo_je_racionalno (n : ℤ) : ∃ a b : ℤ, b ≠ 0 ∧ (n : ℚ) = a / b :=
-  ⟨n, 1, one_ne_zero, by simp⟩
+/-- Razlaga 1 in Preveri se 1: vsako celo število n je racionalno (kot realno število je v Set.range Rat.cast),
+ker je n = n/1 (npr. 5 = 5/1, −3 = −3/1, −7 = −7/1). -/
+theorem celo_je_racionalno (n : ℤ) :
+    (n : ℝ) ∈ Set.range ((↑) : ℚ → ℝ) ∧ ∃ a b : ℤ, b ≠ 0 ∧ (n : ℚ) = a / b :=
+  ⟨⟨n, by push_cast; rfl⟩, n, 1, one_ne_zero, by simp⟩
 
 /-- Razlaga 1: 5 = 5/1, −3 = −3/1, −7 = −7/1, −0,4 = −2/5, −3/4 = (−3)/4. -/
 theorem zapisi : (5 : ℚ) = 5 / 1 ∧ (-3 : ℚ) = -3 / 1 ∧ (-7 : ℚ) = -7 / 1 ∧ (-0.4 : ℚ) = -(2 / 5) ∧
@@ -52,17 +56,33 @@ theorem periodicno (c : ℝ) : ∑' n : ℕ, c / 10 ^ (n + 1) = c / 9 := by
   norm_num
   ring
 
-/-- Razlaga 1 in Preveri se 1: periodično število 0,333… = 1/3 je racionalno. -/
+/-- Razlaga 1 in Preveri se 1: periodično število 0,333… je enako 1/3. -/
 theorem tretjina : ∑' n : ℕ, (3 : ℝ) / 10 ^ (n + 1) = 1 / 3 := by
   rw [periodicno]; norm_num
 
-/-- Bolj natančno, »Periodično število kot ulomek«: za x = 0,333… je 10x = 3 + x (to je 3,333…), zato 9x = 3 in
-x = 1/3. -/
+/-- Razlaga 1 in Preveri se 1: periodično število 0,333… = 1/3 je racionalno. -/
+theorem tretjina_racionalna : (∑' n : ℕ, (3 : ℝ) / 10 ^ (n + 1)) ∈ Set.range ((↑) : ℚ → ℝ) :=
+  ⟨1 / 3, by rw [tretjina]; push_cast; rfl⟩
+
+/-- Bolj natančno, »Periodično število kot ulomek«: premik vrste — 10·0,333… = 3,333… = 3 + 0,333…
+(prvi člen 10·3/10 = 3, ostali členi so spet vrsta 0,333…). -/
+theorem tretjina_premik :
+    10 * ∑' n : ℕ, (3 : ℝ) / 10 ^ (n + 1) = 3 + ∑' n : ℕ, (3 : ℝ) / 10 ^ (n + 1) := by
+  have hg : (fun n : ℕ => 10 * ((3 : ℝ) / 10 ^ (n + 1))) = fun n => 3 * (1 / 10) ^ n := by
+    funext n; rw [pow_succ, one_div_pow]; field_simp
+  have hs : Summable (fun n : ℕ => 10 * ((3 : ℝ) / 10 ^ (n + 1))) := by
+    rw [hg]; exact (summable_geometric_of_lt_one (by norm_num) (by norm_num)).mul_left 3
+  rw [← tsum_mul_left, hs.tsum_eq_zero_add]
+  congr 1
+  · norm_num
+  · congr 1; funext n; rw [pow_succ]; field_simp
+
+/-- Bolj natančno, »Periodično število kot ulomek«: za x = 0,333… je 10x = 3 + x (premik vrste, to je 3,333…),
+zato 9x = 3 in x = 1/3 (brez uporabe že znane vrednosti vrste). -/
 theorem tretjina_korak (x : ℝ) (hx : x = ∑' n : ℕ, (3 : ℝ) / 10 ^ (n + 1)) :
     10 * x = 3 + x ∧ 9 * x = 3 ∧ x = 1 / 3 := by
-  rw [tretjina] at hx
-  subst hx
-  norm_num
+  have h : 10 * x = 3 + x := by rw [hx]; exact tretjina_premik
+  refine ⟨h, by linarith, by linarith⟩
 
 /-- Predpostavka `tretjina_korak` se da izpolniti (x = 0,333…). -/
 example : ∃ x : ℝ, x = ∑' n : ℕ, (3 : ℝ) / 10 ^ (n + 1) := ⟨_, rfl⟩
@@ -99,6 +119,9 @@ theorem preizkus_12 : (-1.25 : ℚ) < -1.2 ∧ |(-1.2 : ℚ)| < |(-1.25 : ℚ)| 
 /-- Razlaga 3: −2,4 + 5,1 = 2,7. -/
 theorem segreje : (-2.4 : ℚ) + 5.1 = 2.7 := by norm_num
 
+/-- Razlaga 3: odštevanje je prištevanje nasprotnega števila, a − b = a + (−b). -/
+theorem odstevanje (a b : ℚ) : a - b = a + (-b) := sub_eq_add_neg a b
+
 /-- Razlaga 3 (formula): a/c + b/c = (a + b)/c. -/
 theorem skupni_imenovalec (a b c : ℚ) : a / c + b / c = (a + b) / c := (add_div a b c).symm
 
@@ -123,6 +146,9 @@ theorem predznaki (a b : ℚ) :
     fun ha hb => ⟨mul_pos ha hb, div_pos ha hb⟩,
     fun ha hb => ⟨mul_neg_of_neg_of_pos ha hb, div_neg_of_neg_of_pos ha hb⟩,
     fun ha hb => ⟨mul_neg_of_pos_of_neg ha hb, div_neg_of_pos_of_neg ha hb⟩⟩
+
+/-- Razlaga 4: absolutni vrednosti zmnožimo ali delimo: |a·b| = |a|·|b| in |a : b| = |a| : |b|. -/
+theorem absolutni (a b : ℚ) : |a * b| = |a| * |b| ∧ |a / b| = |a| / |b| := ⟨abs_mul a b, abs_div a b⟩
 
 /-- Razlaga 4: ulomke množimo števec s števcem, imenovalec z imenovalcem. -/
 theorem mnozenje (a b c d : ℚ) : a / b * (c / d) = (a * c) / (b * d) := div_mul_div_comm a b c d
@@ -232,6 +258,18 @@ theorem neskoncno_zapisov (a b k : ℚ) (hk : k ≠ 0) : a / b = (k * a) / (k * 
 
 /-- Predpostavka `neskoncno_zapisov` se da izpolniti (k = 4). -/
 example : (4 : ℚ) ≠ 0 := by norm_num
+
+/-- Bolj natančno: ulomek a/b s celima a, b (b ≠ 0) ima neskončno zapisov s celimi števili: za vsak celi k ≠ 0 je
+a/b = (k·a)/(k·b), različni k pa dajo različne pare (k·a, k·b). -/
+theorem neskoncno_celih_zapisov (a b : ℤ) (hb : b ≠ 0) :
+    (∀ k : ℤ, k ≠ 0 → (a : ℚ) / b = ((k * a : ℤ) : ℚ) / ((k * b : ℤ) : ℚ)) ∧
+      Function.Injective (fun k : ℤ => (k * a, k * b)) := by
+  refine ⟨fun k hk => ?_, fun k m h => ?_⟩
+  · push_cast; rw [mul_div_mul_left _ _ (by exact_mod_cast hk)]
+  · exact mul_right_cancel₀ hb (congrArg Prod.snd h)
+
+/-- Predpostavka `neskoncno_celih_zapisov` se da izpolniti (b = 3). -/
+example : (3 : ℤ) ≠ 0 := by norm_num
 
 /-- Bolj natančno, »Gostota«: med dvema različnima racionalnima številoma je njuno povprečje; zato ni
 »naslednjega« racionalnega števila. -/

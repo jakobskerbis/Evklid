@@ -15,7 +15,10 @@ trikotnikov v kvadrat; dokazan je le algebrski del, da iz (a + b)² = c² + 4 ·
 je ravna bližnjica« kot pojasnilo (dokazano je a + b ≠ c pri 3, 4, 5 in c < a + b za vsak nerazrojen pravokotni
 trikotnik); zaokroževanje »na milimeter ali centimeter, kolikor meri meter« in nasvet »nariši skico« (navodila);
 izmerjene hipotenuze v tabeli (meritev; dokazano je, da so vsote kvadratov 5², 10², 13²); »5 + 6 > 8 pove, da trikotnik
-obstaja« (dokazano je le 5 + 6 > 8).
+obstaja« (dokazano je le 5 + 6 > 8); »kot med stranicama 3 in 4 je pravi« v uvodu kot trditev o vrvi (dokazana sta
+uganka 3, 4, 5 in obrat izreka `pitagora`); »diagonala razdeli pravokotnik na dva pravokotna trikotnika« (Primer 4;
+dokazan je le račun za pravokotni trikotnik s katetama 3 in 5); »če zidar izmeri 5,83 m, so vogali na centimeter
+natančno pravi« (praktična, približna trditev; dokazano je 5,825 < √34 < 5,835).
 -/
 module
 
@@ -108,7 +111,7 @@ example : ∃ A B C : EuclideanSpace ℝ (Fin 2), ∠ A C B = π / 2 := by
   exact ⟨A, B, C, h⟩
 
 /-- Pogoste napake in Preveri se 1 (izrek brez pravega kota): v enakostraničnem trikotniku s stranico s > 0
-a² + b² ≠ c² (s² + s² ≠ s²). -/
+a² + b² ≠ c² (s² + s² ≠ s²); to je le algebra, da noben kot ni pravi, pove `enakostranicni_60` (vsi koti π/3). -/
 theorem enakostranicni (s : ℝ) (hs : 0 < s) : s ^ 2 + s ^ 2 ≠ s ^ 2 := by
   intro h; nlinarith
 
@@ -136,9 +139,8 @@ example : 0 < 3 ∧ 3 ≤ 4 ∧ 4 ≤ 5 ∧ 3 + 4 + 5 = 12 := by norm_num
 /-- Zakaj se tega učimo: trikotnika 4, 4, 4 in 2, 5, 5 nista pravokotna (16 + 16 ≠ 16, 4 + 25 ≠ 25). -/
 theorem nista_pravokotna : (4 : ℝ) ^ 2 + 4 ^ 2 ≠ 4 ^ 2 ∧ (2 : ℝ) ^ 2 + 5 ^ 2 ≠ 5 ^ 2 := by norm_num
 
-/-- Zakaj se tega učimo: v enakostraničnem trikotniku 4, 4, 4 merijo koti 60° (π/3); dokazano za kot pri B,
-po kosinusnem izreku. -/
-theorem enakostranicni_60 (A B C : P) (h1 : dist A B = 4) (h2 : dist B C = 4) (h3 : dist A C = 4) :
+/-- Pomožno za `enakostranicni_60`: če so vse tri stranice 4, je kot pri srednjem oglišču π/3 (kosinusni izrek). -/
+theorem kot_60 (A B C : P) (h1 : dist A B = 4) (h2 : dist B C = 4) (h3 : dist A C = 4) :
     ∠ A B C = π / 3 := by
   have h := dist_sq_eq_dist_sq_add_dist_sq_sub_two_mul_dist_mul_dist_mul_cos_angle A B C
   rw [h1, h3, dist_comm C B, h2] at h
@@ -146,7 +148,14 @@ theorem enakostranicni_60 (A B C : P) (h1 : dist A B = 4) (h2 : dist B C = 4) (h
   exact Real.injOn_cos ⟨angle_nonneg _ _ _, angle_le_pi _ _ _⟩
     ⟨by positivity, by linarith [Real.pi_pos]⟩ hc
 
-/-- Predpostavke `enakostranicni_60` se dajo izpolniti: (0, 0), (4, 0), (2, 2√3) v ℝ². -/
+/-- Zakaj se tega učimo: v enakostraničnem trikotniku 4, 4, 4 merijo vsi trije koti 60° (π/3), po kosinusnem
+izreku; noben ni pravi. -/
+theorem enakostranicni_60 (A B C : P) (h1 : dist A B = 4) (h2 : dist B C = 4) (h3 : dist A C = 4) :
+    ∠ B A C = π / 3 ∧ ∠ A B C = π / 3 ∧ ∠ A C B = π / 3 := by
+  refine ⟨kot_60 B A C (by rw [dist_comm]; exact h1) h3 h2, kot_60 A B C h1 h2 h3,
+    kot_60 A C B h3 (by rw [dist_comm]; exact h2) h1⟩
+
+/-- Predpostavke `kot_60` in `enakostranicni_60` se dajo izpolniti: (0, 0), (4, 0), (2, 2√3) v ℝ². -/
 example : ∃ A B C : EuclideanSpace ℝ (Fin 2), dist A B = 4 ∧ dist B C = 4 ∧ dist A C = 4 := by
   refine ⟨!₂[0, 0], !₂[4, 0], !₂[2, 2 * √3], ?_, ?_, ?_⟩ <;> rw [EuclideanSpace.dist_eq] <;>
     simp [Fin.sum_univ_two]
@@ -242,11 +251,13 @@ theorem koren5 : Real.sqrt ((1 : ℝ) ^ 2 + 2 ^ 2) = Real.sqrt 5 ∧ (2 : ℝ) <
   ⟨by norm_num, (Real.lt_sqrt (by norm_num)).mpr (by norm_num), (Real.sqrt_lt' (by norm_num)).mpr (by norm_num)⟩
 
 /-- Razlaga 7, Preveri in Preveri se 1: trikotnik 4, 5, 6 nima pravega kota (16 + 25 = 41 ≠ 36 = 6²); za vsak
-trikotnik s temi stranicami (c = 6 nasproti C) kot pri C ni pravi. -/
+trikotnik s temi stranicami (c = 6 nasproti C) noben kot ni pravi (pri A: 5² + 6² ≠ 4², pri B: 4² + 6² ≠ 5²). -/
 theorem trikotnik456 (A B C : P) (ha : dist B C = 4) (hb : dist A C = 5) (hc : dist A B = 6) :
-    (16 : ℝ) + 25 = 41 ∧ (6 : ℝ) ^ 2 = 36 ∧ ∠ A C B ≠ π / 2 := by
-  refine ⟨by norm_num, by norm_num, ?_⟩
-  rw [ne_eq, ← pitagora, ha, hb, hc]; norm_num
+    (16 : ℝ) + 25 = 41 ∧ (6 : ℝ) ^ 2 = 36 ∧ ∠ A C B ≠ π / 2 ∧ ∠ B A C ≠ π / 2 ∧ ∠ A B C ≠ π / 2 := by
+  refine ⟨by norm_num, by norm_num, ?_, ?_, ?_⟩
+  · rw [ne_eq, ← pitagora, ha, hb, hc]; norm_num
+  · rw [ne_eq, ← pitagora B C A, dist_comm C A, dist_comm B A, ha, hb, hc]; norm_num
+  · rw [ne_eq, ← pitagora A C B, dist_comm C B, ha, hb, hc]; norm_num
 
 /-- Predpostavke `trikotnik456` se dajo izpolniti: trikotnik s stranicami 4, 5, 6 v ℝ²
 (C = (0, 0), B = (4, 0), A = (5/8, 15√7/8)). -/
@@ -413,9 +424,14 @@ theorem kviz4 :
     (6 : ℝ) ^ 2 + 8 ^ 2 = 10 ^ 2 ∧ (5 : ℝ) ^ 2 + 6 ^ 2 = 61 ∧ (8 : ℝ) ^ 2 = 64 ∧ (61 : ℝ) ≠ 64 ∧
       (5 : ℝ) + 6 > 8 := by norm_num
 
-/-- Preveri se 4: za vsak trikotnik 5, 6, 8 (8 nasproti C) kot pri C ni pravi. -/
-theorem kviz4_B (A B C : P) (ha : dist B C = 5) (hb : dist A C = 6) (hc : dist A B = 8) : ∠ A C B ≠ π / 2 := by
-  rw [ne_eq, ← pitagora, ha, hb, hc]; norm_num
+/-- Preveri se 4: za vsak trikotnik 5, 6, 8 (8 nasproti C) noben kot ni pravi (pri C: 25 + 36 ≠ 64, pri A:
+6² + 8² ≠ 5², pri B: 5² + 8² ≠ 6²). -/
+theorem kviz4_B (A B C : P) (ha : dist B C = 5) (hb : dist A C = 6) (hc : dist A B = 8) :
+    ∠ A C B ≠ π / 2 ∧ ∠ B A C ≠ π / 2 ∧ ∠ A B C ≠ π / 2 := by
+  refine ⟨?_, ?_, ?_⟩
+  · rw [ne_eq, ← pitagora, ha, hb, hc]; norm_num
+  · rw [ne_eq, ← pitagora B C A, dist_comm C A, dist_comm B A, ha, hb, hc]; norm_num
+  · rw [ne_eq, ← pitagora A C B, dist_comm C B, ha, hb, hc]; norm_num
 
 /-- Predpostavke `kviz4_B` se dajo izpolniti: trikotnik s stranicami 5, 6, 8 v ℝ²
 (C = (0, 0), B = (5, 0), A = (−3/10, √3591/10)). -/

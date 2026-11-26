@@ -8,7 +8,9 @@ Ni v Leanu: karo papir, škarje, risba in simulacija z algebrskimi ploščicami 
 x² + 3x = x(x + 3), 4x(2x + 3) = 8x² + 12x); pojma »vsota / produkt« in »izraz je razstavljen« (oblika zapisa,
 hitra preizkušnja 1); postopek v štirih korakih in nasvet »vedno preveri z množenjem« (navodila); »običajno
 izpostavimo negativen faktor« (dogovor); trditev, da se 3x² + 5y z izpostavljanjem ne da razstaviti (»razstaviti«
-ni formaliziran pojem; dokazano je le, da je NSD koeficientov 3 in 5 enak 1); »ne smemo izpustiti enice«, »skupna višina je skupni faktor« (razlaga).
+ni formaliziran pojem; dokazano je le, da je NSD koeficientov 3 in 5 enak 1); »ne smemo izpustiti enice«, »skupna višina je skupni faktor« (razlaga);
+»višje potence ne moremo izpostaviti, ker je ni v vsakem členu« (»izpostaviti« ni formaliziran pojem; dokazano je le,
+da izpostavitev x^m deluje).
 -/
 module
 

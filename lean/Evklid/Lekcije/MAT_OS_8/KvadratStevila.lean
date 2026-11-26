@@ -111,9 +111,21 @@ theorem kvadrat_ulomka (a b : ℝ) (_hb : b ≠ 0) : (a / b) ^ 2 = a ^ 2 / b ^ 2
 example : (5:ℝ) ≠ 0 := by norm_num
 
 /-- Korak 5, Primer 2, Povzetek: kvadrat decimalnega števila z k decimalkami (m/10ᵏ) ima dvakrat toliko
-decimalk: (m/10ᵏ)² = m²/10²ᵏ. -/
+decimalk: (m/10ᵏ)² = m²/10²ᵏ (imenovalec 10²ᵏ; da je decimalk natanko 2k, je `decimalke_natanko`). -/
 theorem decimalke (m : ℝ) (k : ℕ) : (m / 10 ^ k) ^ 2 = m ^ 2 / 10 ^ (2 * k) := by
   rw [div_pow, ← pow_mul, mul_comm k 2]
+
+/-- Korak 5, Primer 2, Povzetek: decimalk je natanko dvakrat toliko: če ima m/10ᵏ natanko k decimalk
+(zadnja števka m ni 0, torej 10 ∤ m), tudi zadnja števka m² ni 0, zato ima m²/10²ᵏ natanko 2k decimalk. -/
+theorem decimalke_natanko (m : ℕ) (hm : ¬ 10 ∣ m) : ¬ 10 ∣ m ^ 2 := by
+  intro h
+  apply hm
+  have h2 : 2 ∣ m := Nat.prime_two.dvd_of_dvd_pow (Nat.dvd_trans (by norm_num) h)
+  have h5 : 5 ∣ m := (by norm_num : Nat.Prime 5).dvd_of_dvd_pow (Nat.dvd_trans (by norm_num) h)
+  exact Nat.Coprime.mul_dvd_of_dvd_of_dvd (by norm_num) h2 h5
+
+/-- Predpostavka `decimalke_natanko` se da izpolniti (m = 12, kot pri 1,2). -/
+example : ¬ 10 ∣ (12:ℕ) := by norm_num
 
 /-- Korak 5, Premisli: 3² = 9 > 3, 1² = 1, (0,5)² = 0,25 < 0,5. -/
 theorem premisli_vecji : (3:ℝ) ^ 2 = 9 ∧ (3:ℝ) < 9 ∧ (1:ℝ) ^ 2 = 1 ∧ (0.5:ℝ) ^ 2 = 0.25 ∧
@@ -313,9 +325,11 @@ theorem preveri3 :
 /-- Preveri se 4: (0,9)² = 0,81 < 0,9. -/
 theorem preveri4 : (0.9:ℝ) ^ 2 = 0.81 ∧ (0.9:ℝ) ^ 2 < 0.9 := by norm_num
 
-/-- Preveri se 5: 19² = 361, malo manj kot 20² = 400; napačne ocene 2 · 20 = 40 in 4 · 20 = 80. -/
+/-- Preveri se 5: 19² = 361, malo manj kot 20² = 400; napačne ocene 2 · 20 = 40, 4 · 20 = 80 in 4000
+(20 · 20 = 400, ne 4000). -/
 theorem preveri5 :
-    (19:ℝ) ^ 2 = 361 ∧ (20:ℝ) ^ 2 = 400 ∧ (361:ℝ) < 400 ∧ (2:ℝ) * 20 = 40 ∧ (4:ℝ) * 20 = 80 := by
+    (19:ℝ) ^ 2 = 361 ∧ (20:ℝ) ^ 2 = 400 ∧ (361:ℝ) < 400 ∧ (2:ℝ) * 20 = 40 ∧ (4:ℝ) * 20 = 80 ∧
+    (20:ℝ) * 20 ≠ 4000 := by
   norm_num
 
 end Evklid.Lekcije.MAT_OS_8.KvadratStevila

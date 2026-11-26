@@ -14,7 +14,7 @@ polmerom). Pojmi (lok, središčni kot, izsek, kos torte, polni in iztegnjeni ko
 risbe; enote (»lok v cm, izsek v cm²«); podatki o ISS in Luni (polmer Zemlje, čas obhoda) kot podatki iz
 zgodbe; »lok je črta, izsek ploskev« in analogija s ploščino trikotnika (dokazana je le enakost p_i = l·r/2);
 »račun je krajši, manj možnosti za napako« (nasvet); Preveri se 3: razlogi v besedah (dokazano je
-pi α (2r) = 4·pi α r pri istem kotu in da se pri istem kotu delež ne spremeni).
+pi α (2r) = 4·pi α r pri istem kotu in da je izsek pri r in 2r isti delež α/360 kroga).
 -/
 module
 
@@ -276,14 +276,19 @@ theorem kviz1 : (90 : ℝ) / 360 = 1 / 4 ∧ l 90 6 = 1 / 4 * (12 * π) ∧ 1 / 
   unfold l pi
   refine ⟨by norm_num, by ring, by ring, by ring, by ring, by intro h; linarith⟩
 
-/-- Preveri se 2: krog s ploščino 200 cm², kot 89°: izsek 89/360·200 ≈ 49,4 cm², malo manj od četrtine 50 cm². -/
+/-- Preveri se 2: krog s ploščino 200 cm², kot 89°: izsek 89/360·200 ≈ 49,4 cm², malo manj od četrtine 50 cm².
+Napačni odgovori: polovica 100 cm² je izsek s kotom 180°, osmina 25 cm² izsek s kotom 45°, 89° pa je skoraj
+dvakrat 45° (|89 − 2·45| = 1). -/
 theorem kviz2 : (89 : ℝ) / 360 * 200 < 200 / 4 ∧ (200 : ℝ) / 4 = 50 ∧ |(89 : ℝ) / 360 * 200 - 49.4| < 0.05 ∧
-    |(89 : ℝ) / 360 * 200 - 50| < 1 := by
+    |(89 : ℝ) / 360 * 200 - 50| < 1 ∧ (180 : ℝ) / 360 * 200 = 100 ∧ (180 : ℝ) / 360 = 1 / 2 ∧
+    (45 : ℝ) / 360 * 200 = 25 ∧ (45 : ℝ) / 360 = 1 / 8 ∧ |(89 : ℝ) - 2 * 45| = 1 := by
   norm_num [abs_lt]
 
-/-- Preveri se 3: pri istem kotu je delež enak, ploščina pa 2r·2r = 4·r·r, torej štirikrat večja. -/
-theorem kviz3 (α r : ℝ) : (2 * r) * (2 * r) = 4 * (r * r) ∧ pi α (2 * r) = 4 * pi α r :=
-  ⟨by ring, (dvakrat_polmer α r).2⟩
+/-- Preveri se 3: pri istem kotu je delež enak (izsek s polmerom r in 2r je oba krat isti delež α/360 kroga),
+ploščina pa 2r·2r = 4·r·r, torej štirikrat večja. -/
+theorem kviz3 (α r : ℝ) : pi α r = α / 360 * p r ∧ pi α (2 * r) = α / 360 * p (2 * r) ∧
+    (2 * r) * (2 * r) = 4 * (r * r) ∧ pi α (2 * r) = 4 * pi α r :=
+  ⟨rfl, rfl, by ring, (dvakrat_polmer α r).2⟩
 
 /-- Preveri se 4: lok 6π v krogu s polmerom 9: obseg 2π·9 = 18π, delež 6π/18π = 1/3, kot 120° (edina rešitev). -/
 theorem kviz4 (α : ℝ) : l α 9 = 6 * π ↔ α = 120 := by
@@ -292,21 +297,26 @@ theorem kviz4 (α : ℝ) : l α 9 = 6 * π ↔ α = 120 := by
   have : 360 * (6 * π) / (2 * π * 9) = 120 := by field_simp; norm_num
   rw [this]
 
-/-- Preveri se 4, koraki odgovora: 2π·9 = 18π, 6π/18π = 1/3, 1/3·360° = 120°. -/
-theorem kviz4_koraki : o 9 = 18 * π ∧ 6 * π / (18 * π) = 1 / 3 ∧ (1 / 3 : ℝ) * 360 = 120 := by
+/-- Preveri se 4, koraki odgovora: 2π·9 = 18π, 6π/18π = 1/3, 1/3·360° = 120°. Napačni odgovori: s polnim kotom
+180° dobiš 1/3·180° = 60°; z obsegom 9π (9 kot premer) delež 6π/9π = 2/3 in 2/3·360° = 240°; 360° : 9 = 40°. -/
+theorem kviz4_koraki : o 9 = 18 * π ∧ 6 * π / (18 * π) = 1 / 3 ∧ (1 / 3 : ℝ) * 360 = 120 ∧
+    (1 / 3 : ℝ) * 180 = 60 ∧ 6 * π / (9 * π) = 2 / 3 ∧ (2 / 3 : ℝ) * 360 = 240 ∧ (360 : ℝ) / 9 = 40 := by
   have hp := Real.pi_ne_zero
   unfold o
-  refine ⟨by ring, by field_simp; norm_num, by norm_num⟩
+  refine ⟨by ring, by field_simp; norm_num, by norm_num, by norm_num, by field_simp; norm_num, by norm_num,
+    by norm_num⟩
 
 /-- Preveri se 5: v 20 minutah minutni kazalec opravi 20/60 = 1/3 kroga, 120°; pot konice
 l = 1/3·2π·12 = 8π ≈ 25,1 cm (tudi s π ≈ 3,14: 8·3,14 = 25,12). Napačni odgovori: cel obseg 24·3,14 ≈ 75,4
-in ploščina izseka 1/3·π·12² = 48π, 48·3,14 ≈ 150,7. -/
+in ploščina izseka 1/3·π·12² = 48π, 48·3,14 ≈ 150,7; z 20° namesto 120° pa lok 20/360·2π·12 = 4π/3 ≈ 4,2 cm. -/
 theorem kviz5 :
     (20 : ℝ) / 60 * 360 = 120 ∧ l 120 12 = 1 / 3 * (2 * π * 12) ∧ 1 / 3 * (2 * π * 12) = 8 * π ∧
       |8 * π - 25.1| < 0.05 ∧ (8 : ℝ) * 3.14 = 25.12 ∧ |(24 : ℝ) * 3.14 - 75.4| < 0.05 ∧
-      pi 120 12 = 48 * π ∧ |(48 : ℝ) * 3.14 - 150.7| < 0.05 := by
+      pi 120 12 = 48 * π ∧ |(48 : ℝ) * 3.14 - 150.7| < 0.05 ∧ l 20 12 = 4 / 3 * π ∧
+      |4 / 3 * π - 4.2| < 0.05 := by
   unfold l pi
   refine ⟨by norm_num, by norm_num, by ring, blizu _ _ _ (by norm_num) (by norm_num) (by norm_num), by norm_num,
-    by norm_num [abs_lt], by ring, by norm_num [abs_lt]⟩
+    by norm_num [abs_lt], by ring, by norm_num [abs_lt], by ring,
+    blizu _ _ _ (by norm_num) (by norm_num) (by norm_num)⟩
 
 end Evklid.Lekcije.MAT_OS_8.KrozniLokInKrozniIzsek

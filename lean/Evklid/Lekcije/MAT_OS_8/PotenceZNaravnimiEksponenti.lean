@@ -8,8 +8,9 @@ v resnici ne moreš prepogniti več kot nekajkrat, je fizika; »približno« (22
 imena (osnova, eksponent, vrednost potence, »na kvadrat«, »na kub«), branje, »stopnjo nižje« in navodila
 (»razpiši«, »oklepaj«) kot besedilo; simulacija in risbe kot slike (dokazano: 2ⁿ⁺¹ = 2 · 2ⁿ, ploščice in
 kockice kot število elementov Fin 5 × Fin 5 in Fin 3 × Fin 3 × Fin 3, kroglice 3 + 2 = 5 in 5 − 2 = 3);
-»2³ · 3⁴ ne moremo zapisati kot eno potenco« je trditev o pravilu (dokazano je, da napačna zapisa kot
-6ᵏ ne veljata: 2³ · 3² ≠ 6⁵); besedilo napačnih odgovorov kviza (dokazano je, da napačne vrednosti niso
+»2³ · 3⁴ ne moremo zapisati kot eno potenco z isto osnovo« je dokazano za osnovi 2 in 3 ter za 6
+(2³ · 3⁴ = 648 ni enako 2ᵏ, 3ᵏ ali 6ᵏ za noben k); napačni zapis 2³ · 3² = 6⁵ ne velja (Pogoste
+napake 4); besedilo napačnih odgovorov kviza (dokazano je, da napačne vrednosti niso
 pravilne). Potenca aⁿ je v Leanu `a ^ n` z n : ℕ (produkt n faktorjev a je `List.prod_replicate`). Pri
 deljenju je eksponent m − n odštevanje v ℕ; ker pravilo zahteva m > n, je to pravo odštevanje. `-2 ^ 4`
 se v Leanu bere kot −(2⁴), kakor v lekciji. Vse trditve so v ℝ.
@@ -153,7 +154,8 @@ example : (5 : ℝ) ≠ 0 ∧ 7 > 3 := by norm_num
 theorem primer_5_7_5_3 : (5 : ℝ) ^ 7 / 5 ^ 3 = 5 ^ 4 ∧ (5 : ℝ) ^ 4 = 625 := by
   refine ⟨deljenje_potenc 5 7 3 (by norm_num) (by norm_num), by norm_num⟩
 
-/-- Razlaga 5: pogoj a ≠ 0 je potreben, ker z 0 ne delimo: pri a = 0 in n ≥ 1 je imenovalec 0ⁿ = 0. -/
+/-- Razlaga 5: pogoj a ≠ 0 je potreben, ker z 0 ne delimo: pri a = 0 in n ≥ 1 je imenovalec 0ⁿ = 0.
+Dokazano je le, da je imenovalec 0; da deljenje z 0 ni definirano, je besedilo (v Leanu je x / 0 = 0). -/
 theorem nic_v_imenovalcu (n : ℕ) (hn : 1 ≤ n) : (0 : ℝ) ^ n = 0 := zero_pow (by omega)
 
 /-- Predpostavka `nic_v_imenovalcu` se da izpolniti (n = 2). -/
@@ -166,6 +168,22 @@ theorem ne_za_vsoto : (2 : ℝ) ^ 3 + 2 ^ 2 = 12 ∧ (2 : ℝ) ^ 5 = 32 ∧ (2 :
   refine ⟨?_, by norm_num, by norm_num⟩
   calc (2 : ℝ) ^ 3 + 2 ^ 2 = 8 + 4 := by norm_num
     _ = 12 := by norm_num
+
+/-- Razlaga 6: 2³ · 3⁴ = 8 · 81 = 648 ni ena potenca z osnovo 2, 3 ali 6 (za noben eksponent k). -/
+theorem ni_ena_potenca (k : ℕ) :
+    (2 : ℝ) ^ 3 * 3 ^ 4 = 648 ∧ (2 : ℝ) ^ 3 * 3 ^ 4 ≠ 2 ^ k ∧ (2 : ℝ) ^ 3 * 3 ^ 4 ≠ 3 ^ k ∧
+      (2 : ℝ) ^ 3 * 3 ^ 4 ≠ 6 ^ k := by
+  have h : (2 : ℕ) ^ 3 * 3 ^ 4 ≠ 2 ^ k ∧ (2 : ℕ) ^ 3 * 3 ^ 4 ≠ 3 ^ k ∧ (2 : ℕ) ^ 3 * 3 ^ 4 ≠ 6 ^ k := by
+    rcases lt_or_ge k 11 with hk | hk
+    · interval_cases k <;> norm_num
+    · have h2 : 2 ^ 11 ≤ 2 ^ k := Nat.pow_le_pow_right (by norm_num) hk
+      have h3 : 3 ^ 11 ≤ 3 ^ k := Nat.pow_le_pow_right (by norm_num) hk
+      have h6 : 6 ^ 11 ≤ 6 ^ k := Nat.pow_le_pow_right (by norm_num) hk
+      refine ⟨?_, ?_, ?_⟩ <;> omega
+  refine ⟨by norm_num, ?_, ?_, ?_⟩
+  · exact_mod_cast h.1
+  · exact_mod_cast h.2.1
+  · exact_mod_cast h.2.2
 
 /-- Pogoste napake 4: pravilo ne velja za različni osnovi: 2³ · 3² = 8 · 9 = 72 ≠ 6⁵. -/
 theorem ne_za_razlicni_osnovi : (2 : ℝ) ^ 3 * 3 ^ 2 = 72 ∧ (2 : ℝ) ^ 3 * 3 ^ 2 ≠ 6 ^ 5 := by

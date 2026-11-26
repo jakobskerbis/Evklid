@@ -9,7 +9,9 @@ Ni v Leanu: »premik decimalne vejice« kot postopek (recept v štirih korakih, 
 premikov) — dokazane so le enakosti, ki jih da (npr. 4 500 000 = 4,5 · 10⁶); fizikalni podatki (premik bobniča,
 frekvence, valovne dolžine, debelina membrane) kot meritve — dokazani so le njihovi zapisi; simulacija »Od atoma do
 galaksije« in »točka se pomakne levo od 10⁰« (dokazano je 0 < 10⁻² < 1 < 10²); »ta zapis je pregleden« in
-»znanstveni zapis« (ime); »10⁰ = 1 in 10⁻ⁿ = 1/10ⁿ« je v lekciji dogovor, v Leanu pa izrek o `zpow`.
+»znanstveni zapis« (ime); trditvi o števkah »a ima pred vejico natanko eno
+neničelno števko« in »pri 10⁻ⁿ stoji enica na n-tem mestu za vejico« (dokazano je 1 ≤ a < 10 oz. 10⁻ⁿ = 1/10ⁿ);
+»kolikokrat pomnožiti (pri negativnem n deliti) z 10« kot postopek (dokazana je enakost premika za en korak); »10⁰ = 1 in 10⁻ⁿ = 1/10ⁿ« je v lekciji dogovor, v Leanu pa izrek o `zpow`.
 -/
 module
 
@@ -112,6 +114,34 @@ theorem en_sam_zapis (x : ℝ) (hx : 0 < x) : ∃! p : ℝ × ℤ, (1 ≤ p.1 �
 
 /-- Predpostavka `en_sam_zapis` se da izpolniti (x = 4 500 000). -/
 example : (0 : ℝ) < 4500000 := by norm_num
+
+/-- Povzetek, Primer 1 in 2 (3. korak), Korak za korakom (4. korak): če je x = a · 10ⁿ z 1 ≤ a < 10, je x < 1
+natanko tedaj, ko je n < 0, in x ≥ 10 natanko tedaj, ko je n > 0. -/
+theorem predznak_eksponenta (a : ℝ) (n : ℤ) (ha : 1 ≤ a ∧ a < 10) :
+    (a * 10 ^ n < 1 ↔ n < 0) ∧ (10 ≤ a * 10 ^ n ↔ 0 < n) := by
+  have hp : 0 < (10 : ℝ) ^ n := zpow_pos (by norm_num) n
+  have h10 : (10 : ℝ) ^ (n + 1) = 10 * 10 ^ n := by rw [zpow_add_one₀ (by norm_num)]; ring
+  have hlo : (10 : ℝ) ^ n ≤ a * 10 ^ n := by nlinarith
+  have hhi : a * 10 ^ n < 10 ^ (n + 1) := by rw [h10]; nlinarith
+  constructor
+  · constructor
+    · intro h
+      by_contra hn
+      have : (10 : ℝ) ^ (0 : ℤ) ≤ 10 ^ n := zpow_le_zpow_right₀ (by norm_num) (by omega)
+      rw [zpow_zero] at this; linarith
+    · intro hn
+      have : (10 : ℝ) ^ (n + 1) ≤ 10 ^ (0 : ℤ) := zpow_le_zpow_right₀ (by norm_num) (by omega)
+      rw [zpow_zero] at this; linarith
+  · constructor
+    · intro h
+      by_contra hn
+      have : (10 : ℝ) ^ (n + 1) ≤ 10 ^ (1 : ℤ) := zpow_le_zpow_right₀ (by norm_num) (by omega)
+      rw [zpow_one] at this; linarith
+    · intro hn
+      have : (10 : ℝ) ^ (1 : ℤ) ≤ 10 ^ n := zpow_le_zpow_right₀ (by norm_num) (by omega)
+      rw [zpow_one] at this; linarith
+
+example : ∃ a : ℝ, 1 ≤ a ∧ a < 10 := ⟨1, by norm_num⟩
 
 /-- Primer 3 (formula) in Povzetek: 10ᵐ · 10ⁿ = 10ᵐ⁺ⁿ; pri množenju množiš števili a in seštevaš eksponenta. -/
 theorem mnozenje (a b : ℝ) (m n : ℤ) :

@@ -19,7 +19,7 @@ pravilnega n-kotnika res meri (n − 2) · 180°/n kot geometrijski kot, da ogli
 karakteristični trikotniki (skladni, enakokraki, središčni kot 360°/n, kota ob osnovnici α/2) in »vse bolj
 podoben krogu« (zahtevno, še ni dokazano; dokazana sta α/2 + α/2 + 360/n = 180 in α → 180); da ima romb s
 kotom 70° kote 70° in 110° (sosednja kota paralelograma: geometrija, ni dokazano; dokazano je 180 − 70 = 110
-in 70 ≠ 110) in da je kvadrat edini pravilni štirikotnik; »v vsakem petkotniku kot meri 108°« ne velja
+in 70 ≠ 110), da romb, ki ni kvadrat, ni pravilen, in da je kvadrat edini pravilni štirikotnik; »v vsakem petkotniku kot meri 108°« ne velja
 (protiprimer je nepravilen petkotnik: geometrija, ni dokazano; dokazano je 540 : 5 = 108); tlakovanje kot
 geometrijska trditev in čebele (dokazano je 4 · 90 = 6 · 60 = 3 · 120 = 360 in da 360 : 108 ni celo
 število); enote (°, cm); besedilo napačnih odgovorov v Preveri se (dokazane so napačne vrednosti).
@@ -46,13 +46,15 @@ noncomputable def alfa' (n : ℕ) : ℝ := 360 / n
 /-! ## Uvod: trikotnik -/
 
 /-- Zakaj se tega učimo: vsota notranjih kotov trikotnika je 180° (= π radianov), dokazano v evklidski
-ravnini za trikotnik z B ≠ A. -/
+ravnini za poljubne točke A, B, C z B ≠ A. To zajame vsak pravi trikotnik (tri nekolinearne točke), velja
+pa tudi za izrojene (npr. C = A, kjer Mathlib kotu z ničelnim vektorjem pripiše π/2). -/
 theorem trikotnik (A B C : EuclideanSpace ℝ (Fin 2)) (h : B ≠ A) :
     EuclideanGeometry.angle A B C + EuclideanGeometry.angle B C A + EuclideanGeometry.angle C A B =
       Real.pi :=
   EuclideanGeometry.angle_add_angle_add_angle_eq_pi C h
 
-/-- Predpostavka trditve `trikotnik` se da izpolniti (dve različni točki ravnine). -/
+/-- Predpostavka trditve `trikotnik` se da izpolniti (dve različni točki ravnine; vsak pravi trikotnik
+ima B ≠ A). -/
 example : ∃ A B : EuclideanSpace ℝ (Fin 2), B ≠ A :=
   ⟨0, EuclideanSpace.single 0 1, fun h => by
     have := congrArg (fun v : EuclideanSpace ℝ (Fin 2) => v 0) h
@@ -111,12 +113,16 @@ theorem simulacija_diagonale :
 
 /-! ## Razlaga 3: vsota notranjih kotov (obrazec) -/
 
-/-- Razlaga 3, tabela: S_3 = 180, S_4 = 360, S_5 = 540, S_6 = 720, S_8 = 1080, in število trikotnikov
-1, 2, 3, 4, 6 je za ena več kot število diagonal iz oglišča 0, 1, 2, 3, 5. -/
+/-- Razlaga 3, tabela: S_3 = 180, S_4 = 360, S_5 = 540, S_6 = 720, S_8 = 1080; število diagonal iz oglišča
+n − 3 je 0, 1, 2, 3, 5, število trikotnikov n − 2 je 1, 2, 3, 4, 6, za ena več (v ℕ). -/
 theorem tabela_vsot :
     S 3 = 1 * 180 ∧ S 4 = 2 * 180 ∧ S 5 = 3 * 180 ∧ S 6 = 4 * 180 ∧ S 8 = 6 * 180 ∧
-    S 3 = 180 ∧ S 4 = 360 ∧ S 5 = 540 ∧ S 6 = 720 ∧ S 8 = 1080 := by
-  simp only [S]; norm_num
+    S 3 = 180 ∧ S 4 = 360 ∧ S 5 = 540 ∧ S 6 = 720 ∧ S 8 = 1080 ∧
+    (3 - 3 = 0 ∧ 4 - 3 = 1 ∧ 5 - 3 = 2 ∧ 6 - 3 = 3 ∧ 8 - 3 = 5) ∧
+    (3 - 2 = 1 ∧ 4 - 2 = 2 ∧ 5 - 2 = 3 ∧ 6 - 2 = 4 ∧ 8 - 2 = 6) ∧
+    (0 + 1 = 1 ∧ 1 + 1 = 2 ∧ 2 + 1 = 3 ∧ 3 + 1 = 4 ∧ 5 + 1 = 6) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, by decide, by decide, by decide⟩ <;>
+    (simp only [S]; norm_num)
 
 /-- Razlaga 3 in 5: ko dodamo eno oglišče, vsota kotov zraste za 180°. -/
 theorem vsota_raste (n : ℕ) : S (n + 1) - S n = 180 := by
@@ -181,9 +187,10 @@ theorem alfa_pod_180 (n : ℕ) (hn : 3 ≤ n) :
   all_goals simp only [alfa, S]; norm_num
 
 /-- Razlaga 8: kota ob osnovnici karakterističnega trikotnika (vsak α/2) in središčni kot 360°/n dajo
-skupaj 180°, in središčni kot je enak zunanjemu. -/
-theorem karakteristicni (n : ℕ) (hn : 3 ≤ n) : alfa n / 2 + alfa n / 2 + 360 / n = 180 := by
-  rw [alfa_eq n hn]; ring
+skupaj 180°, in središčni kot je enak zunanjemu (oba sta 360/n). -/
+theorem karakteristicni (n : ℕ) (hn : 3 ≤ n) :
+    alfa n / 2 + alfa n / 2 + 360 / n = 180 ∧ alfa' n = 360 / n :=
+  ⟨by rw [alfa_eq n hn]; ring, rfl⟩
 
 /-! ## Rešeni primeri -/
 

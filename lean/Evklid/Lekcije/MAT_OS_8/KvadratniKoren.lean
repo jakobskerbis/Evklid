@@ -10,9 +10,11 @@ Ni v Leanu: risbi (mreža 4 × 4, dve številski premici) in simulacija »Kvadra
 le številske trditve, ki jih kažejo, npr. 7 < √50 < 7,1; ne pa »odsek se skrči na desetino«); zgodba o
 zemljevidu in štetju kvadratkov; analogija »vožnja tja in nazaj« in igra »više–niže« kot pripoved (dokazano je
 (√49)² = 49, √(7²) = 7 in poskusi 7, 8, 7,1); »poznaj na pamet«; besede »tik ob«, »le malo nad«, »malo čez« (dokazane
-so le ocene, ki jih podpirajo, npr. 7 < √50 < 7,05 in 14 < √200 < 15); »ploščina raste veliko hitreje kot
+so le ocene, ki jih podpirajo, npr. 7 < √50 < 7,1 in 14 < √200 < 15); »ploščina raste veliko hitreje kot
 stranica« (dokazan je le primer 4 → 400, 2 → 20); »približno 7,7«, »približno 9,5«, »približno 1,4« so dokazani kot
-ocene na desetinko z zaokrožitvijo (sredinski kvadrat).
+ocene na desetinko z zaokrožitvijo (sredinski kvadrat);
+splošno pravilo o štetju decimalk (»koren, ki se izide, ima pol toliko decimalk kot korenjenec«; dokazana sta
+le primera √0,25 = 0,5 in √0,49 = 0,7).
 -/
 module
 

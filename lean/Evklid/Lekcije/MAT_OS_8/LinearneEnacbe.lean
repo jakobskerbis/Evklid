@@ -250,9 +250,11 @@ theorem preveri4 (x : ℝ) : 4 * x - 9 = 11 ↔ x = 5 := by
   calc 4 * x - 9 = 11 ↔ 4 * x = 20 := ⟨fun h => by linarith, fun h => by linarith⟩
     _ ↔ x = 5 := ⟨fun h => by linarith, fun h => by linarith⟩
 
-/-- Preveri se 4: preizkus 4 · 5 − 9 = 11; napačni odgovori 1/2, 20, −5 niso rešitve. -/
+/-- Preveri se 4: preizkus 4 · 5 − 9 = 11; napačni odgovori 1/2, 20, −5 niso rešitve (−5 dobiš, če obema
+številoma daš napačen predznak: 4x = −11 − 9 = −20, x = −20 : 4 = −5). -/
 theorem preveri4_preizkus :
-    (4 : ℝ) * 5 - 9 = 11 ∧ (4 : ℝ) * (1 / 2) - 9 ≠ 11 ∧ (4 : ℝ) * 20 - 9 ≠ 11 ∧ (4 : ℝ) * (-5) - 9 ≠ 11 := by
+    (4 : ℝ) * 5 - 9 = 11 ∧ (4 : ℝ) * (1 / 2) - 9 ≠ 11 ∧ (4 : ℝ) * 20 - 9 ≠ 11 ∧ (4 : ℝ) * (-5) - 9 ≠ 11 ∧
+      (-11 : ℝ) - 9 = -20 ∧ (-20 : ℝ) / 4 = -5 := by
   norm_num
 
 /-- Preveri se 5: 2(x − 3) = x + 4 ⇔ 2x − 6 = x + 4 ⇔ (−x) x − 6 = 4 ⇔ (+6) x = 10. -/

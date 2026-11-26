@@ -4,8 +4,9 @@ sha256: 84793aa81ffc272c2c8285c90bda95f0565aa151d0e97d8aa84f38797ba3f59d
 Model: splošna pravila so dokazana geometrijsko v evklidskem prostoru (točke v `P`, razdalja `dist`, kot `∠`;
 pravi kot je ∠ = π/2), iz Mathlibovega Pitagorovega izreka
 `EuclideanGeometry.dist_sq_eq_dist_sq_add_dist_sq_iff_angle_eq_pi_div_two`; zgledi, da se predpostavke dajo
-izpolniti, so v ravnini `EuclideanSpace ℝ (Fin 2)`. Obrazci kot funkcije (d = √(a² + b²), v = √(b² − (a/2)²))
-in računi so v ℝ; decimalna števila so točni ulomki. »≈ a« na k decimalk je |x − a| < ½·10⁻ᵏ. Lean ima
+izpolniti, so v ravnini `EuclideanSpace ℝ (Fin 2)`. Obrazca d = √(a² + b²) in v = √(b² − (a/2)²) nista ločeni
+definiciji: sledita iz geometrijskih izrekov (`hipotenuza`, `kateta`, `visina`); računi s števili so v ℝ;
+decimalna števila so točni ulomki. »≈ a« na k decimalk je |x − a| < ½·10⁻ᵏ. Lean ima
 √x = 0 za x < 0; vse dokazane enakosti s korenom imajo nenegativen radikand (pri formuli za višino pogoj
 a/2 ≤ b, ki velja v vsakem enakokrakem trikotniku).
 Ni v Leanu: zgodovina (mezopotamske tablice, pisarji, naloga s tramom kot zgodba; dokazani so njeni računi);
@@ -230,6 +231,16 @@ theorem napaka_dolzine : √((2.6 : ℝ) ^ 2 - 1 ^ 2) = 2.4 ∧ (2.6 : ℝ) - 1 
   have h : √((2.6 : ℝ) ^ 2 - 1 ^ 2) = 2.4 := koren _ _ (by norm_num) (by norm_num)
   refine ⟨h, by norm_num, by rw [h]; norm_num, by norm_num⟩
 
+/-- Pogoste napake 3: če iščeš kateto (krak oz. hipotenuza c, druga kateta k > 0) in kvadrata sešteješ, je
+rezultat daljši od c; pravilno odštevanje da največ c. -/
+theorem napaka_sestel (c k : ℝ) (hc : 0 ≤ c) (hk : 0 < k) : c < √(c ^ 2 + k ^ 2) ∧ √(c ^ 2 - k ^ 2) ≤ c := by
+  constructor
+  · rw [Real.lt_sqrt hc]; nlinarith
+  · rw [Real.sqrt_le_iff]; exact ⟨hc, by nlinarith⟩
+
+/-- Predpostavke `napaka_sestel` se dajo izpolniti (krak 10, polovica osnovnice 8). -/
+example : (0 : ℝ) ≤ 10 ∧ (0 : ℝ) < 8 := by norm_num
+
 /-! ## Drugače -/
 
 /-- Kot zgodba (tram): 30 − 6 = 24; 30² − 24² = 900 − 576 = 324; √324 = 18. -/
@@ -274,10 +285,11 @@ theorem kviz4 : (16 : ℝ) / 2 = 8 ∧ (10 : ℝ) ^ 2 - 8 ^ 2 = 100 - 64 ∧ (10
   rw [Real.lt_sqrt (by norm_num)]; norm_num
 
 /-- Preveri se 5: √(3,4² − 1,6²) = √(11,56 − 2,56) = √9 = 3 m; napačni: 3,4 − 1,6 = 1,8, √(11,56 + 2,56) ≈ 3,8,
-9 = 3² je kvadrat razdalje. -/
+kar je daljše od drsne ploskve 3,4; 9 = 3² je kvadrat razdalje. -/
 theorem kviz5 : (3.4 : ℝ) ^ 2 - 1.6 ^ 2 = 11.56 - 2.56 ∧ (11.56 : ℝ) - 2.56 = 9 ∧ √9 = 3 ∧ (3.4 : ℝ) - 1.6 = 1.8 ∧
-    |√((11.56 : ℝ) + 2.56) - 3.8| < 0.05 ∧ (9 : ℝ) = 3 ^ 2 := by
+    |√((11.56 : ℝ) + 2.56) - 3.8| < 0.05 ∧ 3.4 < √((11.56 : ℝ) + 2.56) ∧ (9 : ℝ) = 3 ^ 2 := by
   refine ⟨by norm_num, by norm_num, koren _ _ (by norm_num) (by norm_num), by norm_num,
-    blizu_koren _ _ _ (by norm_num) (by norm_num) (by norm_num) (by norm_num), by norm_num⟩
+    blizu_koren _ _ _ (by norm_num) (by norm_num) (by norm_num) (by norm_num), ?_, by norm_num⟩
+  rw [Real.lt_sqrt (by norm_num)]; norm_num
 
 end Evklid.Lekcije.MAT_OS_8.UporabaPitagorovegaIzreka

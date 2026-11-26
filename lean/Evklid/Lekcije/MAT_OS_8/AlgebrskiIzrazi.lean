@@ -7,11 +7,14 @@ enakovredna« je dokazano kot enakost za vse vrednosti spremenljivk. »Izraza ne
 c · xᵏ (oziroma c · xⁱ · yʲ); »izraz A ni enak izrazu B« pa s števili iz lekcije (protiprimer).
 Ni v Leanu: pojmi spremenljivka, algebrski izraz, člen, koeficient, črkovni del in podobni členi kot pojmi
 o zapisu (Lean ne loči zapisa 2d od 2 · d; dokazane so enakosti, ki jih dogovori in pojmi utemeljujejo, npr.
-1 · p = p, (−1) · x = −x, x · x = x², a : 4 = a/4, ma + na = (m + n)a); da je pri −5xy koeficient −5 in
+1 · p = p, (−1) · x = −x, x · x = x², ma + na = (m + n)a, in a : 4 = a/4, ki je v Leanu, kjer je
+»:« zapisan kot »/«, dokazano kot a/4 = a · (1/4)); da je pri −5xy koeficient −5 in
 črkovni del xy ter da je 3x² »podoben« ali »ni podoben« drugemu členu (pojem; dokazano je, da 3x² ni
 večkratnik x); simulacija s ploščicami in analogija s škatlami kot opisa (dokazani so računi v njih);
 zgodbe (košarka, tek, žetoni, tenis) kot opisi in enote (m, €) – dokazana so števila; besedilo napačnih
-odgovorov v Preveri se (dokazane so napačne vrednosti, ki jih razlaga navaja).
+odgovorov v Preveri se (dokazane so napačne vrednosti, ki jih razlaga navaja); prevod besedila v izraz
+(tabela »Besede v izraz«) in vrstni red operacij ter pravilo »negativno število v oklepaj« kot dogovora
+(dokazane so vrednosti, ki jih dogovora dajo, in da x − 7 ni 7 − x).
 -/
 module
 
@@ -40,8 +43,9 @@ theorem ema : tocke 0 5 0 = 15 := by
   calc tocke 0 5 0 = 2 * 0 + 3 * 5 + 0 := rfl
     _ = 15 := by norm_num
 
-/-- Razlaga, dogovori o zapisu: 1 · p = p, (−1) · x = −x, x · x = x², a : 4 = a/4, in vrstni red faktorjev
-ni pomemben (2 · d = d · 2, zato pišemo 2d). -/
+/-- Razlaga, dogovori o zapisu: 1 · p = p, (−1) · x = −x, x · x = x², a : 4 = a/4 (v Leanu je »:«
+zapisan kot »/«, zato je dokazano a/4 = a · (1/4)), in vrstni red faktorjev ni pomemben (2 · d = d · 2,
+zato pišemo 2d). -/
 theorem dogovori (p x a d : ℝ) :
     1 * p = p ∧ (-1) * x = -x ∧ x * x = x ^ 2 ∧ a / 4 = a * (1 / 4) ∧ 2 * d = d * 2 := by
   refine ⟨one_mul p, by ring, by ring, by ring, mul_comm 2 d⟩
@@ -205,11 +209,13 @@ theorem x_plus_x2 :
 
 /-! ## Preveri se -/
 
-/-- Preveri se, 1. vprašanje: x, −2x in 7x so večkratniki x (koeficienti 1, −2, 7), 3x² pa ni
-(`tri_x2_ni_veckratnik_x`). -/
-theorem preveri1 (x : ℝ) :
-    x = 1 * x ∧ -2 * x = (-2) * x ∧ (¬ ∃ c : ℝ, ∀ x : ℝ, 3 * x ^ 2 = c * x) :=
-  ⟨(one_mul x).symm, rfl, tri_x2_ni_veckratnik_x⟩
+/-- Preveri se, 1. vprašanje: x, −2x in 7x so večkratniki x (oblike c · x s koeficienti 1, −2, 7),
+3x² pa ni (`tri_x2_ni_veckratnik_x`). -/
+theorem preveri1 :
+    (∃ c : ℝ, c = 1 ∧ ∀ x : ℝ, x = c * x) ∧ (∃ c : ℝ, c = -2 ∧ ∀ x : ℝ, -2 * x = c * x) ∧
+    (∃ c : ℝ, c = 7 ∧ ∀ x : ℝ, 7 * x = c * x) ∧ (¬ ∃ c : ℝ, ∀ x : ℝ, 3 * x ^ 2 = c * x) :=
+  ⟨⟨1, rfl, fun x => (one_mul x).symm⟩, ⟨-2, rfl, fun _ => rfl⟩, ⟨7, rfl, fun _ => rfl⟩,
+    tri_x2_ni_veckratnik_x⟩
 
 /-- Preveri se, 2. vprašanje: 3x² − 2x za x = −2: 3 · (−2)² − 2 · (−2) = 3 · 4 + 4 = 16. Napačni
 odgovori: −8 = 3 · (−2²) − 2 · (−2); 8 = 3 · 4 − 4; 40 = (3 · (−2))² − 2 · (−2). -/
@@ -218,10 +224,12 @@ theorem preveri2 :
     (3:ℝ) * (-(2 ^ 2)) - 2 * (-2) = -8 ∧ (3:ℝ) * 4 - 4 = 8 ∧ ((3:ℝ) * (-2)) ^ 2 - 2 * (-2) = 40 := by
   norm_num
 
-/-- Preveri se, 3. vprašanje: 4x + 3x = 7x za vsak x, za x = 2, y = 1 pa je 4x + 3y = 11, 7xy = 14. -/
+/-- Preveri se, 3. vprašanje: 4x + 3x = 7x za vsak x, za x = 2, y = 1 pa je 4x + 3y = 11, 7xy = 14,
+zato enakost 4x + 3y = 7xy ne velja (za vse x, y). -/
 theorem preveri3 :
-    (∀ x : ℝ, 4 * x + 3 * x = 7 * x) ∧ (4:ℝ) * 2 + 3 * 1 = 11 ∧ (7:ℝ) * 2 * 1 = 14 :=
-  ⟨fun x => by ring, by norm_num, by norm_num⟩
+    (∀ x : ℝ, 4 * x + 3 * x = 7 * x) ∧ (4:ℝ) * 2 + 3 * 1 = 11 ∧ (7:ℝ) * 2 * 1 = 14 ∧
+    ¬ ∀ x y : ℝ, 4 * x + 3 * y = 7 * x * y :=
+  ⟨fun x => by ring, by norm_num, by norm_num, fun h => by have := h 2 1; norm_num at this⟩
 
 /-- Preveri se, 4. vprašanje: 5a + 2b − 3a + b = 2a + 3b; 1. korak 5a − 3a = 2a je pravilen,
 2b + b = 3b, Nikov 2. korak (2b + b = 2b) pa velja le pri b = 0. -/

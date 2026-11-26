@@ -92,6 +92,11 @@ theorem predznaki (x : ℝ) : x - 3 = x + (-3) ∧ (x - 3) * (x + 2) = x ^ 2 + 2
     x ^ 2 + 2 * x - 3 * x - 6 = x ^ 2 - x - 6 := by
   refine ⟨?_, ?_, ?_⟩ <;> ring
 
+/-- Razlaga, »Predznaki«: pravilo predznakov — enaka predznaka dasta plus, različna minus:
+(−a)(−b) = ab, (−a)·b = −ab, a·(−b) = −ab. -/
+theorem pravilo_predznakov (a b : ℝ) : (-a) * (-b) = a * b ∧ (-a) * b = -(a * b) ∧ a * (-b) = -(a * b) := by
+  refine ⟨?_, ?_, ?_⟩ <;> ring
+
 /-- Razlaga, »Predznaki« in Povzetek 5: minus pred oklepajem je množenje z −1 in zamenja predznake vseh členov:
 −(4a² − 4a) = (−1)·(4a² − 4a) = −4a² + 4a. -/
 theorem minus_pred (a : ℝ) : -(4 * a ^ 2 - 4 * a) = (-1) * (4 * a ^ 2 - 4 * a) ∧
@@ -226,10 +231,22 @@ theorem kviz2 (b : ℝ) : (∀ x : ℝ, (x + 4) * (x + 6) = x ^ 2 + b * x + 24) 
   · intro h; have := h 1; linarith
   · rintro rfl x; ring
 
+/-- Preveri se 2, napačni odgovori: 24 = 4·6 je zadnji člen; b = 0 bi dobil le s prvim s prvim in zadnjim z
+zadnjim (manjkata 6x in 4x); 2 = 6 − 4, pravilno pa je x·6 + 4·x = 6x + 4x = 10x. -/
+theorem kviz2_napacni : (4 : ℝ) * 6 = 24 ∧ (∀ x : ℝ, (x + 4) * (x + 6) - (x ^ 2 + 24) = 6 * x + 4 * x) ∧
+    (6 : ℝ) - 4 = 2 ∧ ∀ x : ℝ, x * 6 + 4 * x = 10 * x := by
+  refine ⟨by norm_num, fun x => by ring, by norm_num, fun x => by ring⟩
+
 /-- Preveri se 3: igrišče s stranico x, obe stranici + 3: (x + 3)(x + 3) = x² + 3x + 3x + 9 = x² + 6x + 9,
 povečanje je 6x + 9. -/
 theorem kviz3 (x : ℝ) : (x + 3) * (x + 3) = x ^ 2 + 3 * x + 3 * x + 9 ∧ (x + 3) * (x + 3) - x ^ 2 = 6 * x + 9 := by
   constructor <;> ring
+
+/-- Preveri se 3, napačni odgovori: 9 = 3·3 je le kvadratek v kotu (manjkata dva pravokotnika 3x); 3x + 9
+upošteva le en pravokotnik (manjka še 3x); 6x pozabi kvadratek 9. -/
+theorem kviz3_napacni (x : ℝ) : (3 : ℝ) * 3 = 9 ∧ (x + 3) * (x + 3) - x ^ 2 - 9 = 3 * x + 3 * x ∧
+    (x + 3) * (x + 3) - x ^ 2 - (3 * x + 9) = 3 * x ∧ (x + 3) * (x + 3) - x ^ 2 - 6 * x = 3 * 3 := by
+  refine ⟨by norm_num, by ring, by ring, by ring⟩
 
 /-- Preveri se 4: −3·x = −3x in −3·(−2) = +6, zato 4 − 3(x − 2) = 4 − 3x + 6 = 10 − 3x. Lukov korak 1
 (4 − 3x − 6) je napačen za vsa x, korak 2 (4 − 3x − 6 = −2 − 3x) pa pravilen; pri x = 0: 10 ≠ −2. -/
@@ -240,5 +257,12 @@ theorem kviz4 (x : ℝ) : (-3) * (-2 : ℝ) = 6 ∧ 4 - 3 * (x - 2) = 4 - 3 * x 
 
 /-- Preveri se 5: (n + 2)(c + 4) = nc + 4n + 2c + 8. -/
 theorem kviz5 (n c : ℝ) : (n + 2) * (c + 4) = n * c + 4 * n + 2 * c + 8 := by ring
+
+/-- Preveri se 5, napačni odgovori: nc + 8 izpusti avtobus učencev 4n in vstopnico učiteljev 2c; pri nc + 4n + 2
+sta učitelja le prišteta, plačata pa 2(c + 4) = 2c + 8; pri n + 2c + 8 so učenci le prišteti, plačajo pa
+n(c + 4) = nc + 4n. -/
+theorem kviz5_napacni (n c : ℝ) : (n + 2) * (c + 4) - (n * c + 8) = 4 * n + 2 * c ∧
+    (n + 2) * (c + 4) = n * (c + 4) + 2 * (c + 4) ∧ 2 * (c + 4) = 2 * c + 8 ∧ n * (c + 4) = n * c + 4 * n := by
+  refine ⟨by ring, by ring, by ring, by ring⟩
 
 end Evklid.Lekcije.MAT_OS_8.MnozenjeIzrazov
