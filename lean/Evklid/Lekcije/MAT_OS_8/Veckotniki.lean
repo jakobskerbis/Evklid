@@ -1,6 +1,6 @@
 /-
 vir: content/lessons/MAT-OS-8/veckotniki.md
-sha256: 8c2260bbb23d87cf3d1e078ade8e5b851c11e2b3e00ad31c81849931c48db412
+sha256: ffb3cbe10501d22aa64f823b2c5359eb06ec78cebc232bcd427eadf1716d531b
 Model: oglišča n-kotnika so `Fin n`; stranice so povezave cikla `SimpleGraph.cycleGraph n` (sosednji
 oglišči), diagonale so povezave njegovega komplementa (pari nesosednjih različnih oglišč); pri konveksnem
 večkotniku je vsaka taka daljica diagonala. Število diagonal je dokazano kot število povezav tega grafa

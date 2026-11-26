@@ -1,6 +1,6 @@
 /-
 vir: content/lessons/MAT-OS-8/pitagorov-izrek.md
-sha256: 4ab15fbc05d9d0c8c2d4908ed53168d075ee8d2468ac7532f334f5eefbe70419
+sha256: 986de14222066ac68cf65990181fcdeba5ea0957aab8105e4a178a24aa95274c
 Model: trikotnik ABC v evklidskem afinem prostoru (ravnina je poseben primer), pravi kot je pri C (∠ A C B = π/2),
 kateti sta a = |BC| in b = |AC|, hipotenuza c = |AB|. Pitagorov izrek in njegov obrat sta ena trditev ↔ (Mathlib
 `dist_sq_eq_dist_sq_add_dist_sq_iff_angle_eq_pi_div_two`). Rešeni primeri so dokazani za vsak pravokotni trikotnik

@@ -181,7 +181,7 @@ Kot ob $A$ je razdeljen na tri dele, kota ob $C$ in $D$ pa na dva dela. Ko vse t
 
 ## Drugače: Iz vsakdanjega življenja
 
-**Sprehod okoli igrišča.** Predstavljaj si, da hodiš ob robu igrišča v obliki petkotnika. V vsakem oglišču se zasukaš za zunanji kot. Ko prideš na začetek, gledaš v isto smer kot na začetku, torej si se zasukal za cel krog, $360^\circ$. Zato je vsota zunanjih kotov vedno $360^\circ$, ne glede na število oglišč.
+**Sprehod okoli igrišča.** Predstavljaj si, da hodiš ob robu igrišča v obliki petkotnika. V vsakem oglišču se zasukaš za zunanji kot. Ko prideš na začetek, gledaš v isto smer kot na začetku, torej si se zasukal za cel krog, $360^\circ$. Zato je vsota zunanjih kotov konveksnega večkotnika vedno $360^\circ$, ne glede na število oglišč.
 
 **Tlakovanje.** Ploščice se okoli ene točke stikajo brez vrzeli, če njihovi koti skupaj dajo $360^\circ$. Kvadrat ($90^\circ$) gre štirikrat, enakostranični trikotnik ($60^\circ$) šestkrat, pravilni šestkotnik ($120^\circ$) trikrat. Pravilni petkotnik ima kot $108^\circ$, in $360 : 108$ ni celo število, zato ostanejo vrzeli. Čebele s šestkotniki zapolnijo ploskev brez lukenj in porabijo malo voska.
 
@@ -229,7 +229,7 @@ Formula za vsoto notranjih kotov velja tudi za nekonveksne večkotnike, le pahlj
 ~ Tako bi bilo, če bi lik razpadel na $n$ trikotnikov. Diagonale iz enega oglišča dajo le $n - 2$ trikotnikov.
 + $(n - 2) \cdot 180^\circ$
 - $360^\circ$
-~ To je vsota notranjih kotov le pri štirikotniku, pri vsakem večkotniku pa vsota zunanjih kotov.
+~ To je vsota notranjih kotov le pri štirikotniku, pri vsakem konveksnem večkotniku pa vsota zunanjih kotov.
 > Diagonale iz enega oglišča razdelijo $n$-kotnik na $n - 2$ trikotnikov, vsak prispeva $180^\circ$.
 
 ? Romb ima vse stranice dolge $5\,\text{cm}$ in en kot $70^\circ$. Ali je pravilen večkotnik?

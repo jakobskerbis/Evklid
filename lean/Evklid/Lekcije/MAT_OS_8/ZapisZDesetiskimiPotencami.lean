@@ -1,6 +1,6 @@
 /-
 vir: content/lessons/MAT-OS-8/zapis-z-desetiskimi-potencami.md
-sha256: a454fbe10266d721f5c046bd9d525153e54039f96e9fe8212ff5bf9e65907d92
+sha256: f44aa5633935cda1be056f8d0fc28e5e1786ed32b92c20477a486ae81e3225e6
 Model: števila so realna, decimalna števila točni ulomki (4,5 = 45/10, 0,0032 = 32/10000); desetiška potenca s
 celim eksponentom je `zpow` v ℝ ((10 : ℝ) ^ (n : ℤ)); enote (Hz, s, m, €) so le v docstringih. »Število ničel« in
 »število števk« sta šteta v desetiških števkah naravnega števila (`Nat.digits 10`). Primer 3, »približno 95 let«:

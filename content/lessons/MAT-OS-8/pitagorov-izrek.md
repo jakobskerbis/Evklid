@@ -160,7 +160,7 @@ Diagonala razdeli pravokotnik na dva pravokotna trikotnika, zato je $c = \sqrt{a
 :::premisli
 Napovej najprej: ali je $c = \sqrt{34}$ bližje $5$ ali $6$? Nato ga izračunaj in zaokroži na centimeter.
 ---
-$c \approx 5{,}83\,\text{m}$. Ker je $25 < 34 < 36$, leži koren med $5$ in $6$, bližje $6$. Preizkus: $5{,}83^2 = 33{,}9889$, kar je zelo blizu $34$. Če zidar izmeri $5{,}83\,\text{m}$, so vogali pravi.
+$c \approx 5{,}83\,\text{m}$. Ker je $25 < 34 < 36$, leži koren med $5$ in $6$, bližje $6$. Preizkus: $5{,}83^2 = 33{,}9889$, kar je zelo blizu $34$. Če zidar izmeri $5{,}83\,\text{m}$, so vogali na centimeter natančno pravi.
 :::
 
 ## Pogoste napake
