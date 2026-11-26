@@ -1,0 +1,82 @@
+// PV-04: popis pokritosti trditev po delih aplikacije (scripts/popis-pokritosti.mjs, docs/preverjanje.md).
+// Kaj je trditev, kateri status dobi, kaj je namerno napačno in da poročilo pokrije vseh 19 mest iz načrta.
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { trditveIzBesedila, statusFormule, deliLekcije, statusRacuna, popisi, porocilo, MESTA, STATUSI, sStatusom } from "../scripts/popis-pokritosti.mjs";
+
+const statusi = (md) => trditveIzBesedila(md).map((t) => t.status);
+
+test("trditev je formula z relacijo; status iz preračuna lesson-math", () => {
+  // $5$ in $x^2+y$ nimata relacije, niso trditve
+  assert.deepEqual(statusi("Velja $2+3=5$ in $5$ ter $x^2+y$."), ["numericno"]);
+  assert.deepEqual(statusi("Izračun $2+3=6$"), ["napaka"]);
+  assert.deepEqual(statusi("$$2 \\cdot 3 = 6$$"), ["numericno"]);
+  // neenačba in pripadnost: trditvi, ki ju noben preverjevalnik ne preračuna
+  assert.deepEqual(statusi("$a<b$ in $x \\in A$"), ["nepreverjeno", "nepreverjeno"]);
+  // simbolni začetek verige: preračunan je le del
+  assert.deepEqual(statusi("$x = 2 \\cdot 3 = 6$"), ["delno"]);
+  // ubežni znak \$ ni začetek formule
+  assert.deepEqual(statusi("Cena je 5 \\$ in $3 \\cdot 4 = 12$"), ["numericno"]);
+});
+
+test("besede v vrstici veljajo za formulo (»napačno« ni trditev vsebine za preračun)", () => {
+  assert.deepEqual(statusi("Napačno: $2+3=6$"), ["nepreverjeno"]);
+  assert.equal(statusFormule("2+3=6", "Napačno: $2+3=6$"), "nepreverjeno");
+  assert.equal(statusFormule("2+3=6", "Račun $2+3=6$"), "napaka");
+});
+
+test("veriga v novi vrstici se nadaljuje le, ko prejšnja formula konča vrstico", () => {
+  assert.deepEqual(statusi("$\\frac{1}{2} = \\frac{5}{10}$\n$= 0,5$"), ["numericno", "numericno"]);
+  assert.deepEqual(statusi("$\\frac{1}{2} = \\frac{5}{10}$\n$= 0,7$"), ["numericno", "napaka"]);
+  // prejšnja formula ni na koncu vrstice: »= 0,7« ne pripada njej
+  assert.deepEqual(statusi("Velja $\\frac{1}{2} = 0,5$ in še nekaj.\n$= 0,7$"), ["numericno", "nepreverjeno"]);
+});
+
+test("lekcija: razlaga, rešeni primeri in namerno napačne trditve ločeno; RACUN in glava izločena", () => {
+  const d = deliLekcije(
+    "---\nid: x\n---\n## Razlaga\n$1+1=2$\n## Rešeni primeri\n$2+2=4$\n## Pogoste napake\n$2+2=5$\n" +
+      "## Preveri se\nKoliko je $2+2$?\n- $5$\n+ $2+2=4$\n> ker $2+2=4$\n- $2+2=5$\n<<RACUN\n2+2 = 4\n>>\n",
+  );
+  assert.deepEqual(statusi(d.razlaga), ["numericno", "numericno", "numericno"]);
+  assert.deepEqual(statusi(d.primeri), ["numericno"]);
+  // »Pogoste napake« in napačni možnosti v »Preveri se«: dve trditvi z relacijo, ne štejejo kot vsebina
+  assert.equal(trditveIzBesedila(d.namerne).length, 2);
+  assert.ok(!/RACUN|id: x/.test(d.razlaga + d.primeri + d.namerne));
+});
+
+test("RACUN: status po načinu preverjanja (PV-03), izjema ni potrditev", async () => {
+  const cas = (r) => ({ casCheck: async () => r, chemBalanced: () => ({ ok: true }), molarOk: () => ({ ok: false }) });
+  const c = { line: "2+2 = 4", op: "equal", args: ["2+2", "4"] };
+  assert.equal(await statusRacuna(c, cas({ ok: true, how: "symbolic" })), "izracunano");
+  assert.equal(await statusRacuna(c, cas({ ok: true, how: "numeric" })), "numericno");
+  assert.equal(await statusRacuna(c, cas({ ok: true, how: "sampled" })), "numericno");
+  assert.equal(await statusRacuna(c, cas({ ok: false, how: "symbolic" })), "napaka");
+  assert.equal(await statusRacuna(c, cas({ ok: null })), "nepreverjeno");
+  const pade = { casCheck: async () => { throw new Error("rok"); } };
+  assert.equal(await statusRacuna(c, pade), "nepreverjeno");
+  assert.equal(await statusRacuna({ op: "chem", args: ["H2 + O2 -> H2O"] }, cas({})), "izracunano");
+  assert.equal(await statusRacuna({ op: "molar", args: ["H2O", "20"] }, cas({})), "napaka");
+});
+
+test("19 mest iz načrta: vsako ima vrstico, statična mesta so v popisu", () => {
+  assert.deepEqual([...new Set(MESTA.map((x) => x.st))].sort((a, b) => a - b), Array.from({ length: 19 }, (_, i) => i + 1));
+  for (const x of MESTA) assert.ok(x.staticno || x.poTrditvi, `mesto ${x.st} brez opisa statusa`);
+});
+
+test("popis celotne vsebine (brez SymPy): vsa statična mesta imajo trditve, poročilo jih našteje", async () => {
+  const m = await popisi({ cas: null });
+  for (const x of MESTA.filter((y) => y.staticno)) {
+    const s = m[x.staticno];
+    assert.ok(s.vse > 0 && s.enot > 0, `${x.mesto}: ni trditev`);
+    assert.equal(STATUSI.reduce((a, k) => a + s[k], 0), s.vse, `${x.mesto}: statusi se ne seštejejo`);
+  }
+  assert.ok(m.racun.neizmerjeno, "brez SymPy RACUN ni izmerjen");
+  assert.equal(m.racun.vse, m.racun.nepreverjeno);
+  const p = porocilo(m, { datum: "2026-01-01", commit: "abc" });
+  for (const x of MESTA) assert.ok(p.includes(x.mesto), `poročilo brez mesta ${x.mesto}`);
+  assert.match(p, /ni izmerjeno \(brez SymPy\)/);
+  // glavna številka izpusti neizmerjene RACUN
+  const vse = MESTA.filter((x) => x.staticno && x.staticno !== "racun").reduce((a, x) => a + m[x.staticno].vse, 0);
+  const s = MESTA.filter((x) => x.staticno && x.staticno !== "racun").reduce((a, x) => a + sStatusom(m[x.staticno]), 0);
+  assert.ok(p.includes(`${s} od ${vse} trditev`));
+});
