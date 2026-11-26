@@ -94,7 +94,7 @@ example :=
 example :=
   lokalni_maksimum (f := fun x : ℝ => -x ^ 2) (f' := fun x => -(2 * x)) (a := -1) (b := 0) (c := 1)
     (fun x => ((hasDerivAt_pow 2 x).neg).congr_deriv (by norm_num)) (by norm_num) (by norm_num)
-    (fun x hx => by simp only; linarith [hx.2]) (fun x hx => by simp only; linarith [hx.1])
+    (fun x hx => by linarith [hx.2]) (fun x hx => by linarith [hx.1])
 
 example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => -x ^ 2) ((fun x => -(2 * x)) x) x) ∧ (-1:ℝ) < 0 ∧ (0:ℝ) < 1 ∧
     (∀ x ∈ Ioo (-1:ℝ) 0, 0 ≤ (fun x => -(2 * x)) x) ∧ (∀ x ∈ Ioo (0:ℝ) 1, (fun x => -(2 * x)) x ≤ 0) :=

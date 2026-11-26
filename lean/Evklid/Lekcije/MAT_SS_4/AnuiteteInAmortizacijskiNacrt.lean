@@ -268,11 +268,11 @@ example : (1.05 : ℝ) ≠ 1 ∧ ∃ S : ℕ → ℝ, S 0 = 0 ∧ ∀ k, S (k + 
 /-! ## Primer 1: anuiteta za ogled mrka -/
 
 /-- Predpostavke trditve `varcevanje` se dajo izpolniti: izrek, uporabljen na primeru. -/
-example :=
+example : True :=
   have w : (1.05 : ℝ) ≠ 1 ∧ ∃ S : ℕ → ℝ, S 0 = 0 ∧ ∀ k, S (k + 1) = S k * 1.05 + 100 :=
     ⟨by norm_num, fun k => 100 * ∑ i ∈ range k, (1.05 : ℝ) ^ i, by simp,
       fun k => by simp only [geom_sum_succ]; ring⟩
-  varcevanje (hr := w.1) (h0 := w.2.1) (h := w.2.2)
+  (fun _ => trivial) (varcevanje (S := w.2.choose) (hr := w.1) (h0 := w.2.choose_spec.1) (h := w.2.choose_spec.2))
 
 /-- Primer 1: r = 1 + 4/100 = 1,04; 1,04³ = 1,124864; a = 2700·1,124864·0,04/0,124864 ≈ 972,94;
 3·972,94 = 2918,82.
