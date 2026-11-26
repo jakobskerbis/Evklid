@@ -1,12 +1,12 @@
-// AUDIT-060: napaka, ki jo koda dokaže, učencu ne ostane zamolčana, ko klic popravka ni mogoč (meja porabe):
-// pripne se popravek brez modela (strošek 0) in šteje dogodek.
+// AUDIT-060 (pregled prevzema 3): ko klic popravka ali ponovnega odgovora ni mogoč (meja porabe), ostane kot na main:
+// brez popravka in brez opozorila brez modela (koda se lahko zmoti, model je filter).
 import test from "node:test";
 import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { modeParams } from "../server/claude.js";
 import { Usage } from "../server/usage.js";
-import { codeFixBlock, SKIP_KV } from "../server/live-check.js";
+import { SKIP_KV } from "../server/live-check.js";
 
 const META = '\n<<META subject=MAT topic="x" error=0 mode=B flag=none done=0>>';
 // Rezervacija učenca dovoli le prvih n klicev (učenec tik pod mejo).
@@ -57,21 +57,11 @@ async function run({ answers, fixText = "Popravek: $7 \\cdot 8 = 56$.", n = 1, m
   }
 }
 
-test("popravek brez modela: besedilo pozna obe vrednosti, jeziki", () => {
-  const issue = "in the step $7 \\cdot 8 = 54$ the calculation does not hold: 56 ≠ 54";
-  assert.match(codeFixBlock(issue, "sl"), /^\n\n> \*\*Popravek:\*\* Račun \$7 \\cdot 8 = 54\$ ne drži: leva stran je 56, desna pa 54\./);
-  assert.match(codeFixBlock(issue, "en"), /\*\*Correction:\*\*/);
-  assert.match(codeFixBlock(issue, "fr"), /\*\*Correction:\*\*/, "drugi jeziki: angleško");
-  assert.match(codeFixBlock("x = 5 does not satisfy the equation", "sl"), /V tem odgovoru je napaka/);
-  assert.match(codeFixBlock("x", "sl", "verdict"), /ocena tvojega koraka/);
-});
-
-test("meja porabe: najdena napaka v računu dobi popravek brez klica modela", async () => {
+test("pregled prevzema 3 (AUDIT-060): meja porabe, napaka v računu → brez popravka brez modela (kot main)", async () => {
   const r = await run({ answers: ["Izračunajmo: $7 \\cdot 8 = 54$. Zdaj prištej še $2$."], msgs: ["Koliko je 7 krat 8 plus 2?"] });
   assert.deepEqual(r.calls, ["chat"], "brez klica popravka");
-  assert.match(r.display, /> \*\*Popravek:\*\* Račun \$7 \\cdot 8 = 54\$ ne drži: leva stran je 56/);
-  assert.match(r.sse, /Popravek/, "tudi v toku");
-  assert.match(r.skips, /meja-popravek/);
+  assert.doesNotMatch(r.display, /Popravek/);
+  assert.doesNotMatch(r.sse, /Popravek/);
 });
 
 test("s prostorom pod mejo: popravek modela kot prej; »OK« modela ostane brez popravka", async () => {
@@ -83,12 +73,11 @@ test("s prostorom pod mejo: popravek modela kot prej; »OK« modela ostane brez 
   assert.doesNotMatch(refused.display, /Popravek/);
 });
 
-test("meja porabe: ponovni odgovor po napačni sodbi ni mogoč → opozorilo o sodbi", async () => {
+test("pregled prevzema 3 (AUDIT-060): meja porabe, ponovni odgovor po napačni sodbi ni mogoč → brez opozorila (kot main)", async () => {
   // »x = 5« pri 2x + 3 = 11 je napačno, model pa reče »Da, pravilno!«; drugi klic (ponovni odgovor) ne gre pod mejo.
   const r = await run({ answers: ["Kaj narediš najprej?", "Da, pravilno!"], n: 2, msgs: ["Reši 2x + 3 = 11", "x = 5"] });
   assert.equal(r.calls.filter((c) => c === "chat").length, 2, "brez ponovnega odgovora");
-  assert.match(r.display, /Da, pravilno![\s\S]*> \*\*Popravek:\*\* Ta ocena tvojega koraka morda ni pravilna/);
-  assert.match(r.skips, /meja-sodba/);
+  assert.doesNotMatch(r.display, /Popravek|Ta ocena tvojega koraka/);
 });
 
 // Pregled prevzema (ugotovitev 7): ob meji opozorilo o sodbi le, ko je sodila koda; ugotovitev modela za pregled sama

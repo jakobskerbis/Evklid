@@ -16,7 +16,7 @@ import { parseSpecies } from "../public/graph/chemcore.js";
 import { MASSES } from "../public/graph/pse-data.js";
 import { texToText } from "../public/scan/solvecore.js";
 import { parse, compile, calcText } from "../public/graph/math.js";
-import { notClaimAt } from "./live-check.js";
+import { notClaimAt, hasExercise } from "./live-check.js";
 
 // Tudi »RAČUN« (model piše slovensko); bloka učenec v nobeni obliki ne vidi (server/meta.js).
 const BLOCK_RE = /<<\s*RA[CČ]UN\b([\s\S]*?)>>/g;
@@ -173,40 +173,57 @@ const numOf = (t) => {
   }
 };
 const close = (a, b) => Math.abs(a - b) <= 1e-6 * Math.max(1, Math.abs(a), Math.abs(b));
+// Vrednost, ki jo besedilo navede kot rešitev (pregled prevzema 3): pred njo je v istem stavku »rešitev«, »ničla«,
+// »torej« … ali pa vrstica nima drugega besedila kot zapise (»$x_1 = 2$, $x_2 = 3$«). »Teme je v $x = 2{,}5$«, »Izločimo
+// $x = 1$«, »Na intervalu od $x = 0$ …« zato niso rešitve.
+const SOLUTION_WORD = /(?<!\p{L})(?:rešit\p{L}*|ničl\p{L}*|torej|zato|sledi|dobimo|solution\p{L}*|therefore|hence|zero\p{L}*)(?!\p{L})/iu;
+const MATH_SEG = /\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g;
 /**
- * Zadnja navedena vrednost vsake oznake neznanke (x, x_1, x_2) v vidnem besedilu (brez blokov): »$x = 4$«,
- * »$x_1 = \frac{1}{2}$«, »$x = 8/2 = 4$«. Pregled prevzema (26. 11.): ista pravila kot končne vrednosti v
- * server/live-check.js (notClaimAt): pogoj (»za $x = 0$ je leva stran 3«, »pri $x = 0$«), poskus (»Vstavimo $x = 1$«,
- * »Preizkus: …«), učenčev zapis (»Ti si napisal $x = 5$«), vprašanje in namig niso rešitev. Približek (≈, ≐) se ne bere.
+ * Vrednosti neznanke, ki jih vidno besedilo (brez blokov) navede kot rešitev. Vrstica se preskoči kot pri končnih
+ * vrednostih na main (SKIP_LINE: vprašanje, »če«, »ali«, učenčev zapis, »poskus« …), tudi vrstica z drugo enačbo v tej
+ * neznanki (»Za vajo: reši $3x = 15$. Rešitev: $x = 5$.«, »$2x = 8$, torej …«); od vrstice z vajo naprej se ne bere.
+ * Približek (≈, ≐) in neenakost se ne bereta.
  */
 function visibleValues(text, v) {
-  const plain = String(text || "").replace(BLOCK_RE, "").replace(/<<META[^>]*>>/g, "");
+  const plain = String(text || "").replace(BLOCK_RE, "").replace(/<<META[^<>]*>>/g, "");
   const lhsRe = new RegExp(`^${v}(?:_?\\(?(\\d)\\)?)?$`);
-  const out = new Map();
+  const varRe = new RegExp(`(?<![a-zA-Z])${v}(?![a-zA-Z])`);
+  const out = [];
   for (const line of plain.split("\n")) {
-    for (const m of line.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) {
+    if (hasExercise(line)) break;
+    if (notClaimAt(line, 0, { value: true })) continue;
+    const segs = [...line.matchAll(MATH_SEG)];
+    if (!segs.length) continue;
+    const texts = segs.map((m) => texToText(m[1] ?? m[2]));
+    // druga enačba v tej neznanki (leva stran ni sama neznanka): vrstica je postopek ali druga naloga
+    if (texts.some((t) => t.includes("=") && varRe.test(t) && !lhsRe.test(t.split("=")[0].trim()))) continue;
+    const onlyMath = !/[\p{L}\d]/u.test(line.replace(MATH_SEG, " ").replace(/(?<!\p{L})(?:in|and|ter)(?!\p{L})/giu, " "));
+    segs.forEach((m, k) => {
       const tex = m[1] ?? m[2];
-      if (/\\pm|\\mp|[±∓]|\\approx|\\doteq|≈|≐|\\neq|≠|<|>|\\le|\\ge/.test(tex)) continue;
-      if (notClaimAt(line, m.index, { value: true })) continue;
+      if (/\\pm|\\mp|[±∓]|\\approx|\\doteq|≈|≐|\\neq|≠|<|>|\\le|\\ge/.test(tex)) return;
+      if (!onlyMath) {
+        const before = line.slice(Math.max(0, m.index - 200), m.index);
+        const cut = Math.max(before.lastIndexOf(". "), before.lastIndexOf("! "), before.lastIndexOf("? "));
+        if (!SOLUTION_WORD.test(cut >= 0 ? before.slice(cut + 2) : before)) return;
+      }
       // ločila med vrednostmi: », « (z presledkom), »;«, »in«, \quad; »2,5« je eno število
-      for (const piece of texToText(tex).split(/,\s+|;|\bin\b/)) {
+      for (const piece of texts[k].split(/,\s+|;|\bin\b/)) {
         const parts = piece.split("=").map((x) => x.trim());
-        const lhs = parts.length >= 2 ? lhsRe.exec(parts[0]) : null;
-        if (!lhs) continue;
+        if (parts.length < 2 || !lhsRe.test(parts[0])) continue;
         const last = parts.at(-1).replace(/[.]$/, "");
         const n = numOf(last);
         // zaokrožena vrednost (»x = 1,41« za √2, »0,33« za 1/3): pol zadnjega zapisanega mesta
         const dec = /^[-−+]?\d+[.,](\d+)$/.exec(last.replace(/\s/g, ""))?.[1].length ?? null;
-        if (n !== null) out.set(lhs[1] || "", { n, tol: dec === null ? 0 : 0.5 * 10 ** -dec });
+        if (n !== null) out.push({ n, tol: dec === null ? 0 : 0.5 * 10 ** -dec });
       }
-    }
+    });
   }
-  return [...out.values()];
+  return out;
 }
 /**
- * Končna vidna vrednost neznanke, ki ni enaka nobeni rešitvi iz blokov »resi« za to neznanko, je napaka. Vrednost, ki
- * se ujema s katerokoli rešitvijo, je v redu (»$t = 2$ s« ob rešitvah -2, 2; »Pozitivna rešitev je $x = 4$«). Ob dvomu
- * (rešitve iz bloka ni mogoče prebrati) nič.
+ * Navedena rešitev, ki ni enaka nobeni rešitvi iz potrjenih blokov »resi« za to neznanko, je napaka. Ob dvomu nič:
+ * rešitve iz bloka ni mogoče prebrati, ali besedilo navede več različnih vrednosti, kot ima naloga rešitev (»$x = 3$ …
+ * ničli pa sta $x = 0$ in $x = 6$«: druge vrednosti so del razlage).
  */
 export function visibleIssue(text, claims) {
   const sols = new Map();
@@ -220,7 +237,10 @@ export function visibleIssue(text, claims) {
   for (const [v, s] of sols) {
     if (s.unsure) continue;
     const near = (x, y) => close(x.n, y) || Math.abs(x.n - y) <= x.tol * (1 + 1e-9);
-    const bad = visibleValues(text, v).filter((x) => !s.vals.some((y) => near(x, y)));
+    const seen = visibleValues(text, v);
+    const distinct = seen.filter((x, i) => !seen.slice(0, i).some((y) => close(x.n, y.n)));
+    if (!distinct.length || distinct.length > new Set(s.vals).size) continue;
+    const bad = distinct.filter((x) => !s.vals.some((y) => near(x, y)));
     if (bad.length) {
       return `the answer text states ${v} = ${bad.map((x) => String(+x.n.toPrecision(10)).replace(".", ",")).join(", ")}, but the exactly checked solution is ${v} = ${s.text.join("; ")}`;
     }

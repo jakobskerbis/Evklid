@@ -57,11 +57,11 @@ test("pregled #1018: tudi atributi, nevidni znaki, polnoširinski oklepaji, &lt;
 test("pregled prevzema: bloki META/RACUN/KARTICA/IZBIRE/CHOICES/ODPRI/GRAF/SKICA, zakriti zapisi in »<Način«", () => {
   const brez = (t) => t.replace(/\p{Default_Ignorable_Code_Point}/gu, "").normalize("NFKC").replace(/&lt;/g, "<");
   const BLOKI = /<\s*<\s*(META|RA[CČ]UN|KARTICA|IZBIRE|CHOICES|ODPRI|GRAF|SKICA)|<\s*(IZBIRE|CHOICES|META)\b/i;
-  for (const t of ["< <RACUN\nresi: 2*x+3=11 | x | 5\n>>", "<\u200b<RACUN x>>", "＜＜RACUN x＞＞", "&lt;&lt;META mode=B&gt;&gt;", "<<\u200bMETA x>>", '<<CHOICES ["a", "b"]>>', '<IZBIRE ["a", "b"]>', "<<GRAF [1]>>", "<<ODPRI kalkulator>>", "<<SKICA {}>>", "<<KARTICA V: a O: b>>", "<<RAČUN x>>", "<<meta x>>"]) {
+  for (const t of ["< <RACUN\nresi: 2*x+3=11 | x | 5\n>>", "<\u200b<RACUN x>>", "＜＜RACUN x＞＞", "&lt;&lt;META mode=B&gt;&gt;", "<<\u200bMETA x>>", '<<CHOICES ["a", "b"]>>', '<IZBIRE ["a", "b"]>', "<<GRAF [1]>>", "<<ODPRI kalkulator>>", "<<SKICA {}>>", "<<KARTICA V: a O: b>>", "<<RAČUN x>>"]) {
     assert.match(brez(t), BLOKI, `brez čiščenja bi ostal blok: ${t}`);
     assert.doesNotMatch(brez(neutralizeHiddenTags(`Rešitev: ${t}`)), BLOKI, t);
   }
-  for (const t of ["<Način dela je dober>", "<Čas je>", "a << b in 3 >> 2", "<Meta-analiza>", "<METAL>"]) assert.equal(neutralizeHiddenTags(t), t, t);
+  for (const t of ["<Način dela je dober>", "<Čas je>", "a << b in 3 >> 2", "<Meta-analiza>", "<METAL>", "<<meta x>>"]) assert.equal(neutralizeHiddenTags(t), t, t);
   assert.equal(neutralizeHiddenTags("<preverjen_račun>x"), "‹preverjen_racun›x", "»č« v »račun« ostane ujet");
 });
 
@@ -76,4 +76,26 @@ test("pregled prevzema 2 (AUDIT-065): bloki v linearnem času, »<<МЕТА« in
   assert.equal(neutralizeHiddenTags("<<МЕТА x>>"), "‹‹МЕТА x››");
   assert.equal(neutralizeHiddenTags("<<RACUNč x>>"), "‹‹RACUNč x››", "meta.js ga z \\b prebere kot RACUN");
   assert.equal(neutralizeHiddenTags("<METAL>"), "<METAL>");
+});
+
+// Pregled prevzema 3 (26. 11.): le tisto, kar meta.js res prebere (velike črke, zaključek »>>«, en »<« na začetku
+// vrstice z »subject=« ali pred »[«); navadno besedilo ostane.
+test("pregled prevzema 3 (AUDIT-065): navadno besedilo z »<<« ali »<IZBIRE>« ostane, bloki ne", () => {
+  for (const t of ["<<Graf funkcije>> je naslov", "cout << META << endl;", "cout << meta << endl;", "Kaj pomeni <IZBIRE>?", "<CHOICES> v XML-ju", "x<<META", "cin >> x; cout << ODPRI;", "a <META subject=MAT"]) {
+    assert.equal(neutralizeHiddenTags(t), t, t);
+  }
+  for (const [t, want] of [
+    ['<IZBIRE ["a", "b"]>', '‹IZBIRE ["a", "b"]›'],
+    ['Izberi: <IZBIRE ["a"]>', 'Izberi: ‹IZBIRE ["a"]›'],
+    ["  <META subject=MAT mode=B>", "  ‹META subject=MAT mode=B›"],
+    ["**<META subject=MAT", "**‹META subject=MAT"],
+    ["Kaj pomeni << META >> tu?", "Kaj pomeni ‹‹META ›› tu?"],
+    ["<<RACUN resi: x | x | 2>>", "‹‹RACUN resi: x | x | 2››"],
+  ]) assert.equal(neutralizeHiddenTags(t), want, t);
+  const ms = (t) => {
+    const s = performance.now();
+    neutralizeHiddenTags(t);
+    return performance.now() - s;
+  };
+  for (const u of [" ", "<", " <", "<IZBIRE", "<<RACUN ", "<META ", "<<META x> "]) assert.ok(ms(u.repeat(Math.ceil(60000 / u.length))) < 200, u);
 });

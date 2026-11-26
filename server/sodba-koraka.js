@@ -323,7 +323,12 @@ const RIGHT_RULES =
  * Sodba kode o učenčevem sporočilu (koraki, računi, končna vrednost). Vrne null, če koda ne more soditi, sicer
  * { wrong: bool, finding: besedilo za ponovni odgovor, note: skrita opomba za ta klic }.
  */
-export function stepVerdict(text, { pre = null, prevTutor = "" } = {}) {
+export function stepVerdict(text, opts = {}) {
+  const v = judgeStep(text, opts);
+  // Vprašanje-predlog (»x = 6?«, AUDIT-059): verdictIgnored ga šteje za prezrtega le ob izrecni potrditvi (pregled prevzema 3).
+  return v && /\?\s*$/.test(String(text || "")) ? { ...v, asked: true } : v;
+}
+function judgeStep(text, { pre = null, prevTutor = "" } = {}) {
   const wrong = [];
   const right = [];
   // Končna vrednost proti nalogi (obstoječa sodba kode). Ko je inštruktor medtem zastavil drugo enačbo, ne.
@@ -382,9 +387,9 @@ function otherEquation(pre, prevTutor) {
 // Odgovor se začne s potrditvijo (prvi stavek): »Prav!«, »Dobro, zdaj …«, »Ana, odlično.«
 const POSITIVE_OPEN = /^[\s>*_"'»«„“(]*(?:\p{L}+\s*,\s*)?(?:prav|pravilno|točno|tako je|res je|drži|dobro|lepo|odlično|super|bravo|krasno|izvrstno|natanko|seveda|da|ja|okej|ok|perfektno|imaš prav|prav imaš|correct|right|yes|exactly|good|great|nice|well done)(?!\p{L})/iu;
 // Znak, da odgovor opozori na napako ali učenca usmeri k ponovnemu premisleku.
-// Zavrnitev tudi z izračunanim preizkusom (»$2 \cdot 5 + 3 = 13$, kar ni 11. Poskusi znova.«), pregled prevzema 2: sicer bi
-// ob meji porabe učenec dobil napačno opozorilo »Ta ocena tvojega koraka morda ni pravilna«.
-const ERROR_MARK = /(?<!\p{L})(?:napak\p{L}*|narobe|napačn\p{L}*|ni (?:čisto |povsem |še |ravno |res )?(?:prav|pravilno|pravilen|res|tako|točno|enako)|ne drži|ne velja|ne ujema|ne more|zmot\p{L}*|spodrsl\p{L}*|zalomil\p{L}*|pazi|preveri\p{L}*|poglej\p{L}*|še enkrat|ponovno|skoraj|ampak|vendar|toda|hmm?|wrong|mistake|not quite|almost|check|kar ni|ni \d[\d.,]*|poskusi (?:znova|ponovno|še enkrat|še)|try again)(?!\p{L})|≠|\\neq?(?![a-zA-Z])/iu;
+// Zavrnitev tudi z izračunanim preizkusom (»$2 \cdot 5 + 3 = 13$, kar ni 11. Poskusi znova.«), pregled prevzema 2; le
+// ozko (pregled prevzema 3): »kar ni presenetljivo«, »poskusi še naslednjo«, »$x \neq 0$« niso zavrnitev.
+const ERROR_MARK = /(?<!\p{L})(?:napak\p{L}*|narobe|napačn\p{L}*|ni (?:čisto |povsem |še |ravno |res )?(?:prav|pravilno|pravilen|res|tako|točno|enako)|ne drži|ne velja|ne ujema|ne more|zmot\p{L}*|spodrsl\p{L}*|zalomil\p{L}*|pazi|preveri\p{L}*|poglej\p{L}*|še enkrat|ponovno|skoraj|ampak|vendar|toda|hmm?|wrong|mistake|not quite|almost|check|kar ni \d[\d.,]*|poskusi (?:znova|ponovno|še enkrat)|try again)(?!\p{L})|≠/iu;
 const SOFT_MARK = /(?<!\p{L})(?:pazi\p{L}*|preveri\p{L}*|poglej\p{L}*|še enkrat|ponovno|check\p{L}*)(?!\p{L})/giu;
 const NEGATIVE_OPEN = /^[\s>*_"'»«„“(]*(?:\p{L}+\s*,\s*)?(?:ne(?=\s*[,.!:—–])|ni (?:čisto |povsem |še |ravno )?(?:prav|pravilno|res|tako|točno)|narobe|napačno|napaka|ne drži|skoraj|hmm?|not quite|wrong|no(?=\s*[,.!:—–]))/iu;
 const firstSentence = (s) => (/^[\s\S]{0,240}?(?:[.!?](?=\s|$)|\n|$)/.exec(String(s || "").trim())?.[0] || "");
@@ -394,6 +399,9 @@ export function verdictIgnored(answer, verdict) {
   if (!verdict) return false;
   const head = firstSentence(answer);
   // V prvem stavku za potrditvijo štejejo le besede, ki res zavrnejo (»Prav, preverimo …«, »Dobro, poglejmo …« ostaneta potrditev).
-  if (verdict.wrong) return (POSITIVE_OPEN.test(head) && !ERROR_MARK.test(head.replace(SOFT_MARK, ""))) || !ERROR_MARK.test(String(answer || ""));
+  // Odgovor, ki se začne z zavrnitvijo (»Ne, $x = 6$ ne da 22.«), napačnega koraka ne prezre (pregled prevzema 3).
+  // Pri vprašanju-predlogu (»x = 6?«) je prezrt le izrecno potrjen napačen korak: »Vstavi $x = 6$ v enačbo. Koliko dobiš?«
+  // učenca vodi k preizkusu (pregled prevzema 3).
+  if (verdict.wrong) return (POSITIVE_OPEN.test(head) && !ERROR_MARK.test(head.replace(SOFT_MARK, ""))) || (!verdict.asked && !ERROR_MARK.test(String(answer || "")) && !NEGATIVE_OPEN.test(head));
   return !verdict.partial && NEGATIVE_OPEN.test(head);
 }

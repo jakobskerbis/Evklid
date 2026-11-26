@@ -251,8 +251,8 @@ test("AUDIT-059: »x = 5?«, »je 7 · 8 = 54?«, »mogoče 12?« so trditve, pr
 
 // AUDIT-059, pregled: trditev z vprašajem je le sporočilo, ki je v celoti predlog vrednosti.
 test("AUDIT-059 (pregled): prava vprašanja z vrednostjo niso trditve", () => {
-  for (const t of ["x=5 ?", "x = -3?", "x = 1/2?", "x = 0,5?", "morda 12?", "12 cm?", "-3?", "3,5?", "7·8=56, prav?", "Ali je rezultat 56?", "torej 56?", "x = 4, ne?", "x je 4?", "Je x = 4?", "y = 7?", "a = 3 cm?", "v = 20 m/s?", "F = 6 N?", "potem 8?", "rezultat je 8?", "x1 = 2?", "x = 2 ali x = 3?", "2x = 8?"]) assert.equal(isClaim(t, ""), true, t);
-  for (const t of ["Koliko je x, če je y = 3?", "Kaj je 2 + 2 = ?", "Kako rešim x^2 = 9?", "Kaj pomeni a = 5 v nalogi?", "Kaj dobim, če je x = 5?", "Kdaj velja a = b?", "Lahko narediš še eno z x = 2?", "A mi lahko daš nalogo 5?", "Kaj je naloga 12?", "Koliko je 15 % od 80?", "Kaj, če je g = 10?", "Ali lahko vzamem g = 10 m/s²?", "Kateri je naslednji korak pri 2x = 8?", "Kaj pomeni f(x) = 2x?"]) assert.equal(isClaim(t, ""), false, t);
+  for (const t of ["x=5 ?", "x = -3?", "x = 1/2?", "x = 0,5?", "morda 12?", "12 cm?", "-3?", "3,5?", "7·8=56, prav?", "Ali je rezultat 56?", "torej 56?", "x = 4, ne?", "x je 4?", "Je x = 4?", "y = 7?", "a = 3 cm?", "v = 20 m/s?", "F = 6 N?", "potem 8?", "rezultat je 8?", "x1 = 2?", "2x = 8?"]) assert.equal(isClaim(t, ""), true, t);
+  for (const t of ["Koliko je x, če je y = 3?", "Kaj je 2 + 2 = ?", "Kako rešim x^2 = 9?", "Kaj pomeni a = 5 v nalogi?", "Kaj dobim, če je x = 5?", "Kdaj velja a = b?", "Lahko narediš še eno z x = 2?", "A mi lahko daš nalogo 5?", "Kaj je naloga 12?", "Koliko je 15 % od 80?", "Kaj, če je g = 10?", "Ali lahko vzamem g = 10 m/s²?", "Kateri je naslednji korak pri 2x = 8?", "Kaj pomeni f(x) = 2x?", "x = 2 ali x = 3?"]) assert.equal(isClaim(t, ""), false, t);
 });
 
 // Pregled prevzema 2 (AUDIT-060): inštruktor, ki napačen korak zavrne z izračunanim preizkusom, sodbe ni prezrl.
@@ -261,4 +261,29 @@ test("pregled prevzema 2 (AUDIT-060): »…, kar ni 11. Poskusi znova.« in »\\
   const R = String.raw;
   for (const a of [R`Vstavi $x = 5$: $2 \cdot 5 + 3 = 13$, kar ni 11. Poskusi znova.`, R`Preveri: $2 \cdot 5 + 3 = 13 \neq 11$.`, "Vstavi: dobiš 13, ni 11. Poskusi še enkrat."]) assert.equal(verdictIgnored(a, { wrong: true }), false, a);
   for (const a of ["Da, pravilno!", "Bravo, x = 5 je prav.", "Pravilno, to ni bilo težko."]) assert.equal(verdictIgnored(a, { wrong: true }), true, a);
+});
+
+// Pregled prevzema 3 (26. 11.): vprašanje-predlog in odgovori, ki napačen korak zavrnejo ali učenca vodijo k preizkusu.
+test("pregled prevzema 3 (AUDIT-059): »x = 4 ali x = 6?« ni trditev; »Ne, …« in vodenje k preizkusu nista prezrta sodba", () => {
+  for (const t of ["x = 4 ali x = 6?", "x = 6 ali 4?"]) assert.equal(isClaim(t, ""), false, t);
+  for (const t of ["x = 6?", "x = 4, ne?", "je 7 · 8 = 54?"]) assert.equal(isClaim(t, ""), true, t);
+  const pre = presolve("Reši enačbo $3x + 7 = 22$.");
+  const asked = stepVerdict("x = 6?", { pre });
+  assert.equal(asked.wrong, true);
+  assert.equal(asked.asked, true);
+  for (const a of ["Ne, $x = 6$ ne da 22. Vstavi in preveri.", "Ne. $3 \\cdot 6 + 7 = 25$, torej ne.", "Vstavi $x = 6$ v enačbo. Koliko dobiš na levi strani?"]) assert.equal(verdictIgnored(a, asked), false, a);
+  assert.equal(verdictIgnored("Prav! Odlično.", asked), true);
+  const said = stepVerdict("x = 6", { pre });
+  assert.equal(said.asked, undefined);
+  assert.equal(verdictIgnored("Ne, $x = 6$ ne da 22.", said), false, "»Ne, …« je zavrnitev tudi pri trditvi");
+  // potrditve napačnega koraka ostanejo prezrte (ozek ERROR_MARK)
+  const v5 = stepVerdict("x = 5", { pre: presolve("Reši enačbo $2x + 3 = 11$.") });
+  for (const a of ["Odlično, poskusi še naslednjo!", "Prav, poskusi še eno: $3x = 12$.", "Tvoj rezultat je pravilen. Poskusi še naslednjo nalogo.", "Super, $x = 5$ je pravilno, kar ni presenetljivo.", "Rešitev $x = 5$ drži, saj $x \\neq 0$."]) assert.equal(verdictIgnored(a, v5), true, a);
+  assert.equal(verdictIgnored("$2 \\cdot 5 + 3 = 13$, kar ni 11. Poskusi znova.", v5), false);
+});
+
+test("pregled prevzema 3 (AUDIT-069): naloga z eno operacijo ne sodi učenčevega koraka (ohlapno zaokroževanje)", () => {
+  for (const [t, s] of [["Izračunaj $10/3$.", "3,4"], ["Izračunaj $2/3$.", "0,6"], ["Izračunaj $3/4$.", "0,8"]]) {
+    assert.equal(stepVerdict(s, { pre: presolve(t, { narrow: false }) }), null, `${t} ${s}`);
+  }
 });

@@ -384,3 +384,27 @@ test("pregled prevzema 2 (AUDIT-064): asimptota in os simetrije, le potrjeni blo
     assert.doesNotMatch(r.issue || "", /answer text states/, t);
   }
 });
+
+// Pregled prevzema 3 (26. 11.): vaja, izločena vrednost, teme in druge vrednosti v razlagi niso navedena rešitev.
+test("pregled prevzema 3 (AUDIT-064): vaja, izločena vrednost, teme in ničle druge funkcije niso napaka", async () => {
+  const { visibleIssue } = await import("../server/racun.js");
+  const R = String.raw;
+  const c = (...args) => [{ op: "solve", args }];
+  const A = c("2*x+3=11", "x", "4");
+  const Q = c("x^2-5*x+6=0", "x", "2, 3");
+  const F = c("1/(x-1)=2", "x", "3/2");
+  const none = [
+    [c("2*x-6=0", "x", "3"), R`Rešitev je $x = 3$. Ničli parabole pa sta $x = 0$ in $x = 6$.`],
+    [A, "Rešitev je $x = 4$.\n\n" + R`Za vajo: reši $3x = 15$. Rešitev: $x = 5$.`],
+    [A, "Rešitev je $x = 4$.\n\n" + R`**Vaja:** reši $3x = 15$ → $x = 5$`],
+    [A, "Rešitev je $x = 4$.\n\n" + R`Podobna naloga: $3x + 1 = 10$ ima rešitev $x = 3$.`],
+    [A, R`Rešitev je $x = 4$. Na intervalu od $x = 0$ do $x = 10$ je to edina.`],
+    [F, R`Izločimo $x = 1$. Rešitev je $x = 3/2$.`],
+    [F, R`Vrednost $x = 1$ ni dovoljena. Torej $x = \frac{3}{2}$.`],
+    [F, R`Ne sme biti $x = 1$. Rešitev: $x = 1{,}5$.`],
+    [Q, R`Rešitvi sta $x_1 = 2$, $x_2 = 3$. Teme je v $x = 2{,}5$.`],
+    [Q, "$x_1 = 2$, $x_2 = 3$\n" + R`Sredina: $x = 2{,}5$.`],
+  ];
+  for (const [cl, t] of none) assert.equal(visibleIssue(t, cl), null, t);
+  for (const [cl, t] of [[A, R`Rešitev je $x = 5$.`], [A, R`$x = 5$`], [Q, R`Rešitvi sta $x_1 = 2$ in $x_2 = 4$.`]]) assert.ok(visibleIssue(t, cl), t);
+});
