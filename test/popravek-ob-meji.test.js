@@ -181,7 +181,7 @@ test("AUDIT-059: »je 7 · 8 = 54?« pri nalogi 7 · 8 + 2 in »Da, tako je.« �
   const T = R`Izračunaj $7 \cdot 8 + 2$.`;
   const note = R`*(Opomba: $7 \cdot 8 = 54$ ne drži, ker je $7 \cdot 8 = 56$. Preveri še sam.)*`;
   for (const q of ["je 7 · 8 = 54?", "7 · 8 = 54, ne?", "54?"]) {
-    // ob meji opomba le po navadnem vprašanju (pregled A, f3d3893c3); po »Koliko je $7 \cdot 8$?« le ponovni odgovor
+    // po navadnem vprašanju opomba ostane
     // (golo »54?« po navadnem vprašanju ni vezano na $7 \cdot 8$: brez sodbe, kot prej)
     const plain = q !== "54?";
     if (plain) {
@@ -189,9 +189,11 @@ test("AUDIT-059: »je 7 · 8 = 54?« pri nalogi 7 · 8 + 2 in »Da, tako je.« �
       assert.equal(cap.calls.filter((c) => c === "chat").length, 2, q);
       has(cap, note);
     }
+    // račun iz inštruktorjevega vprašanja ali učenčev račun: opomba tudi po »Koliko je $7 \cdot 8$?« (koordinator, b366f3a5a)
     const capQ = await run({ answers: [R`Koliko je $7 \cdot 8$?`, "Da, tako je."], n: 2, msgs: [T, q] });
     assert.equal(capQ.calls.filter((c) => c === "chat").length, 2, q);
-    none(capQ);
+    has(capQ, note);
+    has(await run({ answers: [R`Koliko je $7 \cdot 8$?`, "Da, tako je."], n: null, chatFail: 3, msgs: [T, q] }), note);
     const free = await run({ answers: [R`Koliko je $7 \cdot 8$?`, "Da, tako je.", R`Ne čisto: $7 \cdot 8 = 56$.`], n: null, msgs: [T, q] });
     assert.equal(free.calls.filter((c) => c === "chat").length, 3, `${q}: en ponovni odgovor`);
     assert.match(free.display, /^Ne čisto/);

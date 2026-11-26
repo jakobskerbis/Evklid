@@ -734,8 +734,34 @@ test("pregled A (bd0af5dac): opomba ob prezrti sodbi le brez tujega števila v p
   for (const prev of A_STEP_MOVE) assert.equal(at(prev, "x = 5", "Odlično!"), false, prev);
   const P = presolve(R`Izračunaj $7 \cdot 8$.`, { first: true, narrow: false });
   const v = stepVerdict("mogoče 54?", { pre: P, prevTutor: R`Koliko je $7 \cdot 8$?` });
-  assert.equal(verdictNoteSafe("Ja, 54 je pravilno.", v, { prevTutor: R`Koliko je $7 \cdot 8$?` }), false);
+  // sodba o inštruktorjevem računu iz vprašanja: opomba drži ne glede na vprašanje (koordinator, b366f3a5a)
+  assert.equal(v.explicit, true);
+  assert.equal(verdictNoteSafe("Ja, 54 je pravilno.", v, { prevTutor: R`Koliko je $7 \cdot 8$?` }), true);
   assert.equal(verdictNoteSafe("Ja, 54 je pravilno.", v, { prevTutor: "Kaj dobiš?" }), true);
+});
+
+test("koordinator (b366f3a5a): opomba o učenčevem ali inštruktorjevem računu ne glede na vprašanje; vrednost in korak strogo", () => {
+  const at = (task, prev, q, a) => {
+    const v = stepVerdict(q, { pre: presolve(task, { first: true, narrow: false }), prevTutor: prev, seen: task + "\n" + prev });
+    return !!v && verdictNoteSafe(a, v, { prevTutor: prev });
+  };
+  const T78 = R`Izračunaj $7 \cdot 8 + 2$.`;
+  for (const [task, prev, q, a] of [
+    [T78, R`Koliko je $7 \cdot 8$?`, "je 7 · 8 = 54?", "Da, tako je."],
+    [T78, R`Koliko je $7 \cdot 8$?`, "54?", "Da!"],
+    [T78, R`Koliko je $7 \cdot 8$?`, "7 · 8 = 54, ne?", "Da, tako je."],
+    [R`Izračunaj $9 \cdot 7$.`, R`Koliko je $9 \cdot 7$?`, "je 9 · 7 = 56?", "Ja, prav."],
+    [R`Izračunaj $7 \cdot 8$.`, R`Koliko je $7 \cdot 8$?`, "mogoče 54?", "Ja, 54 je pravilno."],
+    [T78, "Naj bo prvi faktor 7. Zamenjaj ga z 8.", "je 7 · 8 = 54?", "Da, tako je."],
+    [T78, "Zamenjaj faktorja.", "8 · 7 = 54", "Odlično!"],
+  ]) assert.equal(at(task, prev, q, a), true, `${prev} / ${q}`);
+  const E = R`Reši enačbo $2x + 3 = 11$.`;
+  for (const [task, prev, q, a] of [
+    [E, "Kaj dobiš, ko odšteješ 3?", "2x = 14", R`Tako je, $2x = 14$. Zdaj deli z 2.`],
+    [E, "Naj bo desna stran 3. Koliko je x?", "x = 0", "Odlično!"],
+    [E, R`Koliko je $2 \cdot 4$?`, "x = 5", "Odlično!"],
+    [R`Izračunaj $7 \cdot 8$.`, "Kaj pa, če bi bil drugi faktor 9?", "54?", "Da!"],
+  ]) assert.equal(at(task, prev, q, a), false, `${prev} / ${q}`);
 });
 export const A_STEP_MOVE = [
   "Naj bo desna stran 3. Koliko je x?",

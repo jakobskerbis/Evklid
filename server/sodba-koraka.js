@@ -344,7 +344,7 @@ export function stepVerdict(text, opts = {}) {
   // verdictIgnored ga šteje za prezrtega le ob izrecni potrditvi (pregled prevzema 5).
   const t = String(text || "");
   // vprašanje-predlog je kratek (isClaim: največ 120 znakov); daljše besedilo z »?« se ne razčlenjuje
-  if (!/\?\s*$/.test(t) || t.length > 300) return judgeStep(t, opts);
+  if (!/\?\s*$/.test(t) || t.length > 300) return explicitCalc(t, judgeStep(t, opts));
   let core = t
     .replace(/^\s*(?:(?:a|ali)\s+)?(?:je\s+)?(?:(?:mogoče|morda|menda|torej|potem|rezultat(?:\s+je)?|to\s+je)\s+)?/iu, "")
     .replace(/\s*\?+\s*$/, "")
@@ -356,6 +356,7 @@ export function stepVerdict(text, opts = {}) {
   // main (judgeStep: le končni rezultat naloge; FINAL_ASK ostane odstranjen).
   const asks = /^[-−+]?\d+(?:[.,]\d+)?$/.test(core.trim()) && TUTOR_ASK.test(String(opts.prevTutor || "").slice(-400).trim());
   let v = asks ? guessVerdict(core, opts) : null;
+  let fromAsk = !!v;
   // Napačno glede na inštruktorjev račun, a število je morda odgovor na kaj drugega (pregled B, 018af7ab6): končni
   // rezultat naloge (sodba kot main), število, ki je v pogovoru že vidno (naloga, prejšnji korak), ali vmesni korak
   // (»Najprej množenje. Koliko je …?«) brez rešene računske naloge. Ob dvomu brez sodbe.
@@ -371,6 +372,7 @@ export function stepVerdict(text, opts = {}) {
       unsure = true;
     }
   }
+  if (!v) fromAsk = false;
   if (!v && !unsure) {
     v = judgeStep(core, opts);
     // Pravilno po kodi, a zavrnitev je lahko prav (kot main, brez ponovnega odgovora in opombe): golo število proti
@@ -384,7 +386,18 @@ export function stepVerdict(text, opts = {}) {
   // število, ki ga je učenec predlagal (»54« v »7 · 8 = 54?« ali »54?«): inštruktorjev »Da, 54.« ga ponovi
   const said = /(?:^|=)\s*([-−]?\d+(?:[.,]\d+)?)\s*$/.exec(core)?.[1];
   if (said && !vals.length) vals.push({ v: null, x: num(said) });
+  if (v && fromAsk) v = { ...v, explicit: true };
+  else v = explicitCalc(core, v);
   return v ? { ...v, asked: true, vals } : v;
+}
+// Sodba o računu, ki ga je zapisal učenec (»je 7 · 8 = 54?«), ali o inštruktorjevem računu iz vprašanja (»Koliko je
+// $7 \cdot 8$?« → »54?«, zgoraj): opomba drži ne glede na to, kaj je inštruktor vprašal (explicit). Vrednost neznanke,
+// korak enačbe in golo število proti nalogi pa ne (verdictNoteSafe).
+function explicitCalc(text, v) {
+  if (!v || v.fact?.kind !== "calc") return v;
+  const t = String(text || "");
+  const left = t.includes("=") ? t.split("=")[0] : t.split(/(?<!\p{L})je(?!\p{L})/u)[0];
+  return /\d\s*(?:[-−+*·×:/^]|\\cdot|\\times|\\div|krat|plus|minus|deljeno)\s*[\d(]/u.test(left) ? { ...v, explicit: true } : v;
 }
 // Števila z besedo (sl, en) z običajnimi skloni, vrstilnimi in samostalniškimi oblikami (»trojka«, »desetica«).
 const NUMBER_WORD = new RegExp(
@@ -616,7 +629,8 @@ export function verdictNoteSafe(answer, verdict, { prevTutor = "" } = {}) {
   // (pregledi A, 4cf3be1fb, bd0af5dac in f3d3893c3).
   // ena sama črka v »$…$« (»Koliko je $x$?«) je navadno besedilo, ne zapis
   const prev = String(prevTutor || "").replace(/\$\s*[a-zA-Z]\s*\$/g, " x ");
-  if (prev.trim() && (/\d|\$/.test(prev) || NUMBER_WORD.test(prev) || TUTOR_MOVE.test(prev))) return false;
+  // Račun, ki ga je zapisal učenec ali inštruktor v vprašanju: opomba drži ne glede na vprašanje (koordinator, b366f3a5a).
+  if (!verdict.explicit && prev.trim() && (/\d|\$/.test(prev) || NUMBER_WORD.test(prev) || TUTOR_MOVE.test(prev))) return false;
   if (verdict.asked || !verdict.wrong) return true;
   const head = firstSentence(answer);
   return POSITIVE_OPEN.test(head) && !ERROR_MARK.test(head.replace(SOFT_MARK, "")) && !NEGATIVE_OPEN.test(head);
