@@ -37,6 +37,8 @@ test("korakiPoti: seznami in pogoji niso koraki", () => {
   assert.deepEqual(pari("Pogoja: $x - 2 > 0$ in $x + 1 > 0$, torej $x > -1$."), []);
   // »oziroma« pomeni »po vrsti«
   assert.deepEqual(pari("$2x + 1 = 5$ oziroma $3x - 1 = 8$"), []);
+  // »⇒« v formuli za pogojem z »in«
+  assert.deepEqual(pari("Pogoja: $x - 2 > 0$ in $x + 1 > 0 \\Rightarrow x > -1$."), []);
   // formuli brez veznika in rešena oblika na začetku
   assert.deepEqual(pari("Velja $2x = 4$. Potem $3y = 6$."), []);
   assert.deepEqual(pari("$x = 2$, torej $x + 1 = 3$."), []);
@@ -72,6 +74,16 @@ test("pokritost odgovora: črka ali beseda ni preverjena, rezultat preverjene tr
   assert.equal(pokritostOdgovora({ answer: "$47$ kromosomov" }, ok), null);
   assert.equal(pokritostOdgovora({ answer: "$x = 1{,}5$" }, [{ vir: "korak", tex: "2x = 3 → x = 1.5", status: "izracunano" }]), null);
   assert.equal(pokritostOdgovora({ answer: "$x = 2$" }, []).why, "del brez preverjene trditve");
+  // pregled PV-11: števila v formulah snovi, črke izbire, več rezultatov, koordinate
+  const d = [{ vir: "racun", tex: "6 \\cdot 2 = 12", status: "numericno" }];
+  assert.ok(pokritostOdgovora({ answer: "D – cikličen in tekoč (to je cikloheksan $\\mathrm{C_6H_{12}}$)." }, d));
+  assert.ok(pokritostOdgovora({ answer: "C – Klinefelter (47,XXY)" }, [{ vir: "racun", tex: "44 + 3 = 47", status: "numericno" }]));
+  assert.ok(pokritostOdgovora({ answer: "$a = 2$, $b = 17$" }, [{ vir: "racun", tex: "1 + 1 = 2", status: "numericno" }]));
+  const k = [{ vir: "korak", tex: "x^(2) - 10x + 21 = 0 → x = 3 ali x = 7", status: "izracunano" }];
+  assert.equal(pokritostOdgovora({ answer: "$x = 3$ ali $x = 7$" }, k), null);
+  assert.ok(pokritostOdgovora({ answer: "$x = 3$ ali $x = 8$" }, k));
+  assert.ok(pokritostOdgovora({ answer: "$T(2,9)$" }, [{ vir: "racun", tex: "1 + 1{,}9 = 2{,}9", status: "numericno" }]));
+  assert.equal(pokritostOdgovora({ answer: "$V = 12$ cm³" }, [{ vir: "racun", tex: "2 \\cdot 6 = 12", status: "numericno" }]), null);
 });
 
 test("popis in poročilo ene pole (brez SymPy)", async () => {

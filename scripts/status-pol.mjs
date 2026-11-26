@@ -94,6 +94,8 @@ export function korakiPoti(besedilo) {
       const a = v[i];
       const b = v[i + 1];
       if (!a || !b || a.x !== b.x || a.vrsta !== b.vrsta || /^[nk]$/.test(a.x)) continue;
+      // »$x - 2 > 0$ in $x + 1 > 0 \Rightarrow x > -1$«: zadnji pogoj ni premisa sklepa
+      if (v.pogoji && i === 0) continue;
       if (!a.ali && RESENA.test(a.zapis)) continue;
       out.push({ prej: a.zapis, potem: b.zapis, neznanka: a.x, tex: `${a.zapis} → ${b.zapis}` });
     }
@@ -167,26 +169,52 @@ export async function izmeriMutacije(pole, { cas }) {
 }
 
 const STEVILO = /-?\d+(?:\.\d+)?/g;
+/** Števila v zapisu: decimalna vejica le kot {,}; brez indeksov, eksponentov in besedila (C₆H₁₂, cm², \text{2 cm}). */
 const stevila = (tex) =>
   String(tex)
+    .replace(/\\(?:mathrm|text|textrm|operatorname)\s*\{(?:[^{}]|\{[^{}]*\})*\}/g, " ")
+    .replace(/[_^]\s*(?:\{(?:[^{}]|\{[^{}]*\})*\}|\\?[A-Za-z0-9])/g, " ")
     .replace(/(\d)\{,\}(\d)/g, "$1.$2")
-    .replace(/(\d),(\d)/g, "$1.$2")
-    .replace(/(\d)\\?[ ,;]\s?(?=\d{3}(?!\d))/g, "$1")
+    .replace(/(\d)(?:\\[ ,;]|\{\}|~)(?=\d{3}(?!\d))/g, "$1")
     .match(STEVILO)
     ?.map(Number) || [];
 
+/** Rezultati trditve: števila na desni strani zadnje relacije (pri »ali« vsake možnosti), pri koraku v drugi formuli. */
+const rezultati = (tex) =>
+  String(tex)
+    .split("→")
+    .pop()
+    .split(/\s+ali\s+/)
+    .flatMap((d) => stevila(d.split(/<=|>=|=|<|>|≈|\\approx/).pop()));
+
+// besede, ki smejo stati ob številskem odgovoru zunaj formule (enote in vezniki)
+const DOVOLJENE = /\b(?:ali|in|cm|mm|dm|km|m|kg|dag|g|mg|s|min|h|ml|mL|dl|l|L|kWh|Wh|J|kJ|N|Pa|kPa|W|V|A|K|mol|stopinj|EUR|evrov|točk|točke|let|dni|ur)\b|[€%°²³]/g;
+
 /**
- * Pokritost končnega odgovora dela: odgovor mora imeti število, ki je rezultat (zadnje število) katere od preverjenih
- * trditev dela. Odgovor s črko ali besedo (»C – Klinefelter«) ali brez povezave z računom ni preverjen, tudi če so
- * vmesni računi pravilni. Vrne trditev »odgovor« s statusom nepreverjeno ali null (odgovor je pokrit).
+ * Pokritost končnega odgovora dela: vsako število v odgovoru mora biti rezultat katere od preverjenih trditev dela.
+ * Odgovor z izbirno črko ali z besedami zunaj formul (»C – Klinefelter (47,XXY)«) ni preverjen, tudi če so vmesni
+ * računi pravilni; prav tako odgovor brez števila ali s številom, ki ga noben preverjen račun ne da (pregled PV-11).
+ * Vrne trditev »odgovor« s statusom nepreverjeno ali null (odgovor je pokrit).
  */
 export function pokritostOdgovora(part, trditve) {
+  const izbira = (part.correct || []).length > 0;
   const odgovor = [part.answer, ...(part.choices || []).filter((_, i) => (part.correct || []).includes(i))].filter(Boolean).join(" ");
   const ok = trditve.filter((x) => x.status !== "nepreverjeno" && x.status !== "napaka");
-  const zadnja = new Set(ok.map((x) => stevila(x.tex).pop()).filter((x) => x != null));
+  const nepokrit = (why) => ({ vir: "odgovor", kje: "odgovor", tex: String(odgovor).slice(0, 120), status: "nepreverjeno", why });
+  if (!ok.length) return nepokrit("del brez preverjene trditve");
+  // zunaj formul smejo biti enote in največ dve besedi za formulo na začetku (»$47$ kromosomov«), ne opis
+  const besede = String(odgovor)
+    .replace(/\$\$[\s\S]*?\$\$|\$[^$]*\$/g, " ")
+    .replace(DOVOLJENE, " ")
+    .match(/[A-Za-zčšžČŠŽćđĆĐ]+/g) || [];
+  const opis = besede.length > 2 || (besede.length > 0 && !/^\s*\$/.test(String(part.answer || "")));
+  if (izbira || /^\W*\**[A-E]\**\s*[–—:).-]/.test(String(odgovor)) || opis) return nepokrit("odgovor z izbiro ali besedami");
   const v = stevila(odgovor);
-  if (v.length && v.some((a) => [...zadnja].some((b) => Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a))))) return null;
-  return { vir: "odgovor", kje: "odgovor", tex: String(odgovor).slice(0, 120), status: "nepreverjeno", why: ok.length ? "odgovor ni rezultat preverjene trditve" : "del brez preverjene trditve" };
+  if (!v.length) return nepokrit("odgovor brez števila");
+  const r = ok.flatMap((x) => rezultati(x.tex));
+  const enako = (a, b) => Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a));
+  if (v.every((a) => r.some((b) => enako(a, b)))) return null;
+  return nepokrit("odgovor ni rezultat preverjene trditve");
 }
 
 export async function popisPol({ predpona = "", cas = null } = {}) {
