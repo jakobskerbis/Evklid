@@ -13,6 +13,14 @@ import { SYMBOLS_BLOCK_RE, parseSymbolsBlock, symbolsIn, SYMBOLS, SUBJECT_TABLES
 
 export const LESSON_STATES = ["osnutek", "preverjeno", "pregledano"];
 
+// Datum strokovnega pregleda: pravi koledarski datum LLLL-MM-DD, ne v prihodnosti (UTC).
+export function veljavenDatumPregleda(d, danes = new Date()) {
+  if (typeof d !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(d)) return false;
+  const t = Date.parse(`${d}T00:00:00Z`);
+  if (!Number.isFinite(t) || new Date(t).toISOString().slice(0, 10) !== d) return false;
+  return t <= Date.UTC(danes.getUTCFullYear(), danes.getUTCMonth(), danes.getUTCDate());
+}
+
 const REQUIRED = [
   [/^zakaj/i, "Zakaj se tega učimo"],
   [/^razlag/i, "Razlaga"],
@@ -59,7 +67,9 @@ export function checkLessonSource(src, topicId) {
   // Meje besed po Unicode (\b je samo ASCII: »Ana Čaić« bi sicer veljala za AI).
   if (/(?<![\p{L}\p{N}])(ai|opus|sonnet|haiku|fable|claude|gpt|program)(?![\p{L}\p{N}])/iu.test(meta.pregledal || "")) err("»pregledal:« je samo za človeka; pregled AI je stanje »preverjeno«");
   if (meta.pregledal != null && !meta.pregledal) warn("polje »pregledal:« je prazno");
-  if (meta.stanje === "pregledano" && !meta.pregledal) warn("lekcija s stanjem »pregledano« naj ima v glavi »pregledal: <ime učitelja>«");
+  // Strokovni pregled mora biti dokazan v glavi (N-03, server/oznake-vsebine.js): ime učitelja in datum pregleda.
+  if (meta.stanje === "pregledano" && !meta.pregledal) err("lekcija s stanjem »pregledano« mora imeti v glavi »pregledal: <ime učitelja>«");
+  if (meta.stanje === "pregledano" && !veljavenDatumPregleda(meta.pregledano)) err("lekcija s stanjem »pregledano« mora imeti v glavi »pregledano: LLLL-MM-DD« (datum pregleda, ne v prihodnosti)");
   if (meta.pregledal && meta.stanje !== "pregledano") warn("lekcija ima »pregledal:«, stanje pa ni »pregledano«");
 
   for (const [re, name] of REQUIRED) if (!sections.some((s) => re.test(s.title))) err(`manjka razdelek »## ${name}«`);

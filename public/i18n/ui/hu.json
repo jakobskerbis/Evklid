@@ -4741,5 +4741,20 @@
   "set.grpHelp": "Súgó",
   "set.grpHelpSub": "Bemutató és útmutató az alkalmazáshoz",
   "path.noCurriculum": "Az országod tanterve{country} még nem érhető el, ezért a szlovén tantervet használod, iskolai évek szerint rendezve. Az osztályok a saját iskolarendszeredet követik; a tutor mindent elmagyaráz a nyelveden.",
-  "path.noExam": "A záróvizsgára ({exam}) való felkészítés még nem érhető el."
+  "path.noExam": "A záróvizsgára ({exam}) való felkészítés még nem érhető el.",
+  "oz.kaj": "Mit jelent ez?",
+  "oz.osnutek": "Vázlat",
+  "oz.osnutekTip": "A lecke még nem ment át minden ellenőrzésen, vagy a program hibát talált egy számításában vagy a leírásában.",
+  "oz.osnutekTipPola": "A feladatlap még nem ment át minden ellenőrzésen, vagy a program hibát talált benne.",
+  "oz.pregledalAi": "MI által átnézve",
+  "oz.pregledalAiTip": "A tartalmat MI-modellek nézték át. Nincs benne olyan számítás, amelyet a program maga újra tudna számolni.",
+  "oz.strojno": "Gépileg ellenőrizve",
+  "oz.strojnoTip": "A program maga újraszámolta a számításokat és azonosságokat ({n} ellenőrzött lépés), és nem talált hibát. A tartalmat MI-modellek nézték át. A program csak azt ellenőrzi, amit újra tud számolni.",
+  "oz.strokovno": "Szakmailag lektorálva",
+  "oz.strokovnoTip": "Egy tanár lektorálta a tartalmat (dátum: {datum}).",
+  "oz.formalno": "Formálisan bizonyítva: {n}",
+  "oz.formalnoTip": "A Lean bizonyítóprogram bizonyította a lecke állításait ({n} bizonyított állítás). A többi állítás nincs formálisan bizonyítva.",
+  "oz.niStrokovno": "Ezt a leckét tanár még nem lektorálta. Ha hibát veszel észre, nyomd meg a „Hiba jelentése” gombot.",
+  "oz.niStrokovnoPola": "Ezt a feladatlapot tanár még nem lektorálta.",
+  "oz.niStrokovnoCip": "Tanár még nem lektorálta"
 }
