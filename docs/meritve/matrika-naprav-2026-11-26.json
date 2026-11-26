@@ -1,0 +1,1447 @@
+{
+ "tema": "K-12 matrika naprav",
+ "datum": "2026-11-26T12:21:43.735Z",
+ "ukaz": "node scripts/matrika-naprav.cjs --mapa <izhod> --prej <mapa dc49e907>",
+ "potem": {
+  "main": "613278d73e1fc9e94e00af64167ddfcd063ad2e8"
+ },
+ "prej": {
+  "main": "dc49e90721dec820c59fbcb15e6554bdb1c4f8ca"
+ },
+ "izid": [
+  {
+   "id": "android-360",
+   "opis": "Android telefon 360 × 740, Chrome",
+   "brskalnik": "chromium",
+   "w": 360,
+   "h": 740,
+   "dotik": true,
+   "mobilno": true,
+   "tok": "telefon",
+   "dimni": {
+    "sekund": 227,
+    "posnetkov": 64,
+    "napak": 0,
+    "poVrsti": {
+     "prekrivanje": [],
+     "mali drsnik": [],
+     "vodoravno drsenje": [],
+     "drugo": []
+    }
+   },
+   "hitrost": {
+    "brskalnik": "chromium",
+    "razlicica": "158.0.8127.36",
+    "zaslon": {
+     "width": 360,
+     "height": 740
+    },
+    "dotik": true,
+    "mobilno": true,
+    "ponovitve": 7,
+    "omrezje": {
+     "vrsta": "4g",
+     "rttMs": 150,
+     "bajtovNaSekundo": 180000
+    },
+    "prviObisk": 5090,
+    "ponovniObisk": {
+     "prvaVsebina": 129,
+     "ucnaPot": 811,
+     "surovo": {
+      "prva": [
+       133,
+       128,
+       170,
+       105,
+       121,
+       136,
+       129
+      ],
+      "pot": [
+       975,
+       810,
+       824,
+       811,
+       774,
+       955,
+       775
+      ]
+     }
+    },
+    "osvezitev": {
+     "prvaVsebina": 118,
+     "ucnaPot": 781,
+     "surovo": {
+      "prva": [
+       118,
+       96,
+       114,
+       133,
+       141,
+       107,
+       140
+      ],
+      "pot": [
+       788,
+       736,
+       748,
+       784,
+       801,
+       781,
+       761
+      ]
+     }
+    }
+   },
+   "hitrostPrej": {
+    "brskalnik": "chromium",
+    "razlicica": "158.0.8127.36",
+    "zaslon": {
+     "width": 360,
+     "height": 740
+    },
+    "dotik": true,
+    "mobilno": true,
+    "ponovitve": 7,
+    "omrezje": {
+     "vrsta": "4g",
+     "rttMs": 150,
+     "bajtovNaSekundo": 180000
+    },
+    "prviObisk": 5529,
+    "ponovniObisk": {
+     "prvaVsebina": 289,
+     "ucnaPot": 1003,
+     "surovo": {
+      "prva": [
+       368,
+       273,
+       317,
+       287,
+       289,
+       273,
+       340
+      ],
+      "pot": [
+       1875,
+       991,
+       1026,
+       915,
+       1014,
+       945,
+       1003
+      ]
+     }
+    },
+    "osvezitev": {
+     "prvaVsebina": 282,
+     "ucnaPot": 984,
+     "surovo": {
+      "prva": [
+       316,
+       277,
+       276,
+       261,
+       282,
+       286,
+       282
+      ],
+      "pot": [
+       916,
+       1039,
+       993,
+       983,
+       998,
+       952,
+       984
+      ]
+     }
+    }
+   }
+  },
+  {
+   "id": "android-412",
+   "opis": "Android telefon 412 × 915, Chrome",
+   "brskalnik": "chromium",
+   "w": 412,
+   "h": 915,
+   "dotik": true,
+   "mobilno": true,
+   "tok": "telefon",
+   "dimni": {
+    "sekund": 222,
+    "posnetkov": 64,
+    "napak": 0,
+    "poVrsti": {
+     "prekrivanje": [],
+     "mali drsnik": [],
+     "vodoravno drsenje": [],
+     "drugo": []
+    }
+   },
+   "hitrost": {
+    "brskalnik": "chromium",
+    "razlicica": "158.0.8127.36",
+    "zaslon": {
+     "width": 412,
+     "height": 915
+    },
+    "dotik": true,
+    "mobilno": true,
+    "ponovitve": 7,
+    "omrezje": {
+     "vrsta": "4g",
+     "rttMs": 150,
+     "bajtovNaSekundo": 180000
+    },
+    "prviObisk": 5078,
+    "ponovniObisk": {
+     "prvaVsebina": 144,
+     "ucnaPot": 834,
+     "surovo": {
+      "prva": [
+       221,
+       132,
+       225,
+       177,
+       117,
+       131,
+       144
+      ],
+      "pot": [
+       1446,
+       857,
+       915,
+       834,
+       767,
+       798,
+       802
+      ]
+     }
+    },
+    "osvezitev": {
+     "prvaVsebina": 130,
+     "ucnaPot": 782,
+     "surovo": {
+      "prva": [
+       130,
+       146,
+       106,
+       97,
+       104,
+       148,
+       132
+      ],
+      "pot": [
+       749,
+       802,
+       734,
+       763,
+       791,
+       782,
+       815
+      ]
+     }
+    }
+   },
+   "hitrostPrej": {
+    "brskalnik": "chromium",
+    "razlicica": "158.0.8127.36",
+    "zaslon": {
+     "width": 412,
+     "height": 915
+    },
+    "dotik": true,
+    "mobilno": true,
+    "ponovitve": 7,
+    "omrezje": {
+     "vrsta": "4g",
+     "rttMs": 150,
+     "bajtovNaSekundo": 180000
+    },
+    "prviObisk": 5449,
+    "ponovniObisk": {
+     "prvaVsebina": 288,
+     "ucnaPot": 987,
+     "surovo": {
+      "prva": [
+       288,
+       300,
+       309,
+       287,
+       262,
+       274,
+       297
+      ],
+      "pot": [
+       1878,
+       1026,
+       984,
+       1048,
+       987,
+       957,
+       930
+      ]
+     }
+    },
+    "osvezitev": {
+     "prvaVsebina": 274,
+     "ucnaPot": 966,
+     "surovo": {
+      "prva": [
+       293,
+       274,
+       271,
+       293,
+       255,
+       279,
+       255
+      ],
+      "pot": [
+       951,
+       1029,
+       966,
+       970,
+       957,
+       948,
+       1053
+      ]
+     }
+    }
+   }
+  },
+  {
+   "id": "iphone-375",
+   "opis": "iPhone SE 375 × 667, Safari",
+   "brskalnik": "webkit",
+   "w": 375,
+   "h": 667,
+   "dotik": true,
+   "mobilno": true,
+   "tok": "telefon",
+   "dimni": {
+    "sekund": 286,
+    "posnetkov": 64,
+    "napak": 10,
+    "poVrsti": {
+     "prekrivanje": [],
+     "mali drsnik": [],
+     "vodoravno drsenje": [],
+     "drugo": [
+      "pc zagon: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel zagon: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel zavihek-uci: napaka strani: ResizeObserver loop completed with undelivered notifications.",
+      "tel uci-3d-vprasaj: napaka strani: ResizeObserver loop completed with undelivered notifications.",
+      "tel tel-osvezitev: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel tel-odprtje: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel tel-zagon: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel nazaj-izhod: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel ucbenik-tel: napaka strani: ResizeObserver loop completed with undelivered notifications.",
+      "tel tel-dostopnost: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored."
+     ]
+    }
+   },
+   "hitrost": {
+    "brskalnik": "webkit",
+    "razlicica": "26.6",
+    "zaslon": {
+     "width": 375,
+     "height": 667
+    },
+    "dotik": true,
+    "mobilno": true,
+    "ponovitve": 7,
+    "omrezje": {
+     "vrsta": "4g",
+     "rttMs": 150,
+     "bajtovNaSekundo": 180000
+    },
+    "prviObisk": 5392,
+    "ponovniObisk": {
+     "prvaVsebina": 163,
+     "ucnaPot": 1143,
+     "surovo": {
+      "prva": [
+       158,
+       193,
+       172,
+       207,
+       163,
+       153,
+       156
+      ],
+      "pot": [
+       1303,
+       1143,
+       1046,
+       1342,
+       1120,
+       1046,
+       1296
+      ]
+     }
+    },
+    "osvezitev": {
+     "prvaVsebina": 181,
+     "ucnaPot": 1070,
+     "surovo": {
+      "prva": [
+       184,
+       156,
+       236,
+       181,
+       200,
+       181,
+       167
+      ],
+      "pot": [
+       980,
+       933,
+       1156,
+       1070,
+       1178,
+       1059,
+       1077
+      ]
+     }
+    }
+   },
+   "hitrostPrej": {
+    "brskalnik": "webkit",
+    "razlicica": "26.6",
+    "zaslon": {
+     "width": 375,
+     "height": 667
+    },
+    "dotik": true,
+    "mobilno": true,
+    "ponovitve": 7,
+    "omrezje": {
+     "vrsta": "4g",
+     "rttMs": 150,
+     "bajtovNaSekundo": 180000
+    },
+    "prviObisk": 5724,
+    "ponovniObisk": {
+     "prvaVsebina": 153,
+     "ucnaPot": 1231,
+     "surovo": {
+      "prva": [
+       161,
+       241,
+       195,
+       153,
+       130,
+       153,
+       139
+      ],
+      "pot": [
+       1539,
+       1297,
+       1231,
+       1313,
+       1180,
+       1170,
+       1209
+      ]
+     }
+    },
+    "osvezitev": {
+     "prvaVsebina": 419,
+     "ucnaPot": 1247,
+     "surovo": {
+      "prva": [
+       427,
+       389,
+       407,
+       422,
+       437,
+       415,
+       419
+      ],
+      "pot": [
+       1307,
+       1213,
+       1218,
+       1236,
+       1378,
+       1291,
+       1247
+      ]
+     }
+    }
+   }
+  },
+  {
+   "id": "iphone-390",
+   "opis": "iPhone 390 × 844, Safari",
+   "brskalnik": "webkit",
+   "w": 390,
+   "h": 844,
+   "dotik": true,
+   "mobilno": true,
+   "tok": "telefon",
+   "dimni": {
+    "sekund": 287,
+    "posnetkov": 64,
+    "napak": 10,
+    "poVrsti": {
+     "prekrivanje": [],
+     "mali drsnik": [],
+     "vodoravno drsenje": [],
+     "drugo": [
+      "pc zagon: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel zagon: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel zavihek-uci: napaka strani: ResizeObserver loop completed with undelivered notifications.",
+      "tel uci-3d-vprasaj: napaka strani: ResizeObserver loop completed with undelivered notifications.",
+      "tel tel-osvezitev: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel tel-odprtje: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel tel-zagon: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel nazaj-izhod: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel ucbenik-tel: napaka strani: ResizeObserver loop completed with undelivered notifications.",
+      "tel tel-dostopnost: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored."
+     ]
+    }
+   },
+   "hitrost": {
+    "brskalnik": "webkit",
+    "razlicica": "26.6",
+    "zaslon": {
+     "width": 390,
+     "height": 844
+    },
+    "dotik": true,
+    "mobilno": true,
+    "ponovitve": 7,
+    "omrezje": {
+     "vrsta": "4g",
+     "rttMs": 150,
+     "bajtovNaSekundo": 180000
+    },
+    "prviObisk": 5380,
+    "ponovniObisk": {
+     "prvaVsebina": 151,
+     "ucnaPot": 1104,
+     "surovo": {
+      "prva": [
+       176,
+       150,
+       151,
+       135,
+       137,
+       155,
+       159
+      ],
+      "pot": [
+       1342,
+       1090,
+       1023,
+       1052,
+       1104,
+       1118,
+       1134
+      ]
+     }
+    },
+    "osvezitev": {
+     "prvaVsebina": 165,
+     "ucnaPot": 1002,
+     "surovo": {
+      "prva": [
+       155,
+       175,
+       153,
+       169,
+       165,
+       157,
+       186
+      ],
+      "pot": [
+       978,
+       984,
+       964,
+       1002,
+       1091,
+       1047,
+       1050
+      ]
+     }
+    }
+   },
+   "hitrostPrej": {
+    "brskalnik": "webkit",
+    "razlicica": "26.6",
+    "zaslon": {
+     "width": 390,
+     "height": 844
+    },
+    "dotik": true,
+    "mobilno": true,
+    "ponovitve": 7,
+    "omrezje": {
+     "vrsta": "4g",
+     "rttMs": 150,
+     "bajtovNaSekundo": 180000
+    },
+    "prviObisk": 5743,
+    "ponovniObisk": {
+     "prvaVsebina": 168,
+     "ucnaPot": 1303,
+     "surovo": {
+      "prva": [
+       168,
+       179,
+       131,
+       215,
+       159,
+       134,
+       188
+      ],
+      "pot": [
+       1420,
+       1321,
+       1075,
+       1340,
+       1266,
+       1208,
+       1303
+      ]
+     }
+    },
+    "osvezitev": {
+     "prvaVsebina": 452,
+     "ucnaPot": 1312,
+     "surovo": {
+      "prva": [
+       442,
+       455,
+       453,
+       416,
+       452,
+       460,
+       399
+      ],
+      "pot": [
+       1331,
+       1299,
+       1312,
+       1269,
+       1316,
+       1420,
+       1253
+      ]
+     }
+    }
+   }
+  },
+  {
+   "id": "ipad-820",
+   "opis": "iPad 820 × 1180 pokončno, Safari",
+   "brskalnik": "webkit",
+   "w": 820,
+   "h": 1180,
+   "dotik": true,
+   "mobilno": false,
+   "tok": "telefon",
+   "dimni": {
+    "sekund": 292,
+    "posnetkov": 64,
+    "napak": 10,
+    "poVrsti": {
+     "prekrivanje": [],
+     "mali drsnik": [],
+     "vodoravno drsenje": [],
+     "drugo": [
+      "pc zagon: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel zagon: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel zavihek-uci: napaka strani: ResizeObserver loop completed with undelivered notifications.",
+      "tel uci-3d-vprasaj: napaka strani: ResizeObserver loop completed with undelivered notifications.",
+      "tel tel-osvezitev: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel tel-odprtje: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel tel-zagon: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel nazaj-izhod: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel ucbenik-tel: napaka strani: ResizeObserver loop completed with undelivered notifications.",
+      "tel tel-dostopnost: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored."
+     ]
+    }
+   },
+   "hitrost": {
+    "brskalnik": "webkit",
+    "razlicica": "26.6",
+    "zaslon": {
+     "width": 820,
+     "height": 1180
+    },
+    "dotik": true,
+    "mobilno": false,
+    "ponovitve": 7,
+    "omrezje": {
+     "vrsta": "4g",
+     "rttMs": 150,
+     "bajtovNaSekundo": 180000
+    },
+    "prviObisk": 5296,
+    "ponovniObisk": {
+     "prvaVsebina": 154,
+     "ucnaPot": 1080,
+     "surovo": {
+      "prva": [
+       169,
+       168,
+       137,
+       152,
+       154,
+       161,
+       154
+      ],
+      "pot": [
+       1303,
+       1074,
+       1078,
+       1121,
+       1080,
+       1340,
+       1071
+      ]
+     }
+    },
+    "osvezitev": {
+     "prvaVsebina": 162,
+     "ucnaPot": 1030,
+     "surovo": {
+      "prva": [
+       177,
+       153,
+       162,
+       157,
+       178,
+       151,
+       173
+      ],
+      "pot": [
+       1033,
+       954,
+       968,
+       926,
+       1030,
+       1080,
+       1033
+      ]
+     }
+    }
+   },
+   "hitrostPrej": {
+    "brskalnik": "webkit",
+    "razlicica": "26.6",
+    "zaslon": {
+     "width": 820,
+     "height": 1180
+    },
+    "dotik": true,
+    "mobilno": false,
+    "ponovitve": 7,
+    "omrezje": {
+     "vrsta": "4g",
+     "rttMs": 150,
+     "bajtovNaSekundo": 180000
+    },
+    "prviObisk": 5774,
+    "ponovniObisk": {
+     "prvaVsebina": 167,
+     "ucnaPot": 1213,
+     "surovo": {
+      "prva": [
+       181,
+       167,
+       177,
+       198,
+       154,
+       131,
+       149
+      ],
+      "pot": [
+       1497,
+       1314,
+       1213,
+       1238,
+       1198,
+       1159,
+       1196
+      ]
+     }
+    },
+    "osvezitev": {
+     "prvaVsebina": 424,
+     "ucnaPot": 1256,
+     "surovo": {
+      "prva": [
+       432,
+       424,
+       416,
+       416,
+       399,
+       437,
+       434
+      ],
+      "pot": [
+       1241,
+       1225,
+       1274,
+       1353,
+       1233,
+       1360,
+       1256
+      ]
+     }
+    }
+   }
+  },
+  {
+   "id": "ipad-1180",
+   "opis": "iPad 1180 × 820 ležeče, Safari",
+   "brskalnik": "webkit",
+   "w": 1180,
+   "h": 820,
+   "dotik": true,
+   "mobilno": false,
+   "tok": "telefon",
+   "dimni": {
+    "sekund": 287,
+    "posnetkov": 63,
+    "napak": 10,
+    "poVrsti": {
+     "prekrivanje": [],
+     "mali drsnik": [],
+     "vodoravno drsenje": [],
+     "drugo": [
+      "pc zagon: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel zagon: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel zavihek-uci: napaka strani: ResizeObserver loop completed with undelivered notifications.",
+      "tel uci-3d-vprasaj: napaka strani: ResizeObserver loop completed with undelivered notifications.",
+      "tel tel-osvezitev: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel tel-odprtje: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel tel-zagon: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel nazaj-izhod: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "tel ucbenik-tel: napaka strani: ResizeObserver loop completed with undelivered notifications.",
+      "tel tel-dostopnost: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored."
+     ]
+    }
+   },
+   "hitrost": {
+    "brskalnik": "webkit",
+    "razlicica": "26.6",
+    "zaslon": {
+     "width": 1180,
+     "height": 820
+    },
+    "dotik": true,
+    "mobilno": false,
+    "ponovitve": 7,
+    "omrezje": {
+     "vrsta": "4g",
+     "rttMs": 150,
+     "bajtovNaSekundo": 180000
+    },
+    "prviObisk": 5338,
+    "ponovniObisk": {
+     "prvaVsebina": 155,
+     "ucnaPot": 1111,
+     "surovo": {
+      "prva": [
+       143,
+       191,
+       156,
+       146,
+       139,
+       155,
+       159
+      ],
+      "pot": [
+       1299,
+       1353,
+       1136,
+       1075,
+       1111,
+       1071,
+       1098
+      ]
+     }
+    },
+    "osvezitev": {
+     "prvaVsebina": 166,
+     "ucnaPot": 1039,
+     "surovo": {
+      "prva": [
+       166,
+       166,
+       148,
+       166,
+       172,
+       167,
+       186
+      ],
+      "pot": [
+       1004,
+       1093,
+       1007,
+       957,
+       1039,
+       1082,
+       1177
+      ]
+     }
+    }
+   },
+   "hitrostPrej": {
+    "brskalnik": "webkit",
+    "razlicica": "26.6",
+    "zaslon": {
+     "width": 1180,
+     "height": 820
+    },
+    "dotik": true,
+    "mobilno": false,
+    "ponovitve": 7,
+    "omrezje": {
+     "vrsta": "4g",
+     "rttMs": 150,
+     "bajtovNaSekundo": 180000
+    },
+    "prviObisk": 5718,
+    "ponovniObisk": {
+     "prvaVsebina": 157,
+     "ucnaPot": 1192,
+     "surovo": {
+      "prva": [
+       152,
+       157,
+       171,
+       137,
+       154,
+       171,
+       164
+      ],
+      "pot": [
+       1445,
+       1172,
+       1172,
+       1299,
+       1192,
+       1296,
+       1151
+      ]
+     }
+    },
+    "osvezitev": {
+     "prvaVsebina": 443,
+     "ucnaPot": 1337,
+     "surovo": {
+      "prva": [
+       455,
+       432,
+       430,
+       443,
+       448,
+       425,
+       476
+      ],
+      "pot": [
+       1351,
+       1285,
+       1286,
+       1412,
+       1346,
+       1288,
+       1337
+      ]
+     }
+    }
+   }
+  },
+  {
+   "id": "windows-1366",
+   "opis": "računalnik 1366 × 768, Chrome/Edge",
+   "brskalnik": "chromium",
+   "w": 1366,
+   "h": 768,
+   "dotik": false,
+   "mobilno": false,
+   "tok": "racunalnik",
+   "dimni": {
+    "sekund": 465,
+    "posnetkov": 147,
+    "napak": 0,
+    "poVrsti": {
+     "prekrivanje": [],
+     "mali drsnik": [],
+     "vodoravno drsenje": [],
+     "drugo": []
+    }
+   },
+   "hitrost": {
+    "brskalnik": "chromium",
+    "razlicica": "158.0.8127.36",
+    "zaslon": {
+     "width": 1366,
+     "height": 768
+    },
+    "dotik": false,
+    "mobilno": false,
+    "ponovitve": 7,
+    "omrezje": {
+     "vrsta": "4g",
+     "rttMs": 150,
+     "bajtovNaSekundo": 180000
+    },
+    "prviObisk": 5097,
+    "ponovniObisk": {
+     "prvaVsebina": 148,
+     "ucnaPot": 786,
+     "surovo": {
+      "prva": [
+       129,
+       185,
+       148,
+       180,
+       125,
+       134,
+       148
+      ],
+      "pot": [
+       1049,
+       773,
+       867,
+       799,
+       777,
+       786,
+       778
+      ]
+     }
+    },
+    "osvezitev": {
+     "prvaVsebina": 115,
+     "ucnaPot": 752,
+     "surovo": {
+      "prva": [
+       115,
+       141,
+       104,
+       140,
+       114,
+       111,
+       166
+      ],
+      "pot": [
+       747,
+       742,
+       786,
+       752,
+       747,
+       756,
+       824
+      ]
+     }
+    }
+   },
+   "hitrostPrej": {
+    "brskalnik": "chromium",
+    "razlicica": "158.0.8127.36",
+    "zaslon": {
+     "width": 1366,
+     "height": 768
+    },
+    "dotik": false,
+    "mobilno": false,
+    "ponovitve": 7,
+    "omrezje": {
+     "vrsta": "4g",
+     "rttMs": 150,
+     "bajtovNaSekundo": 180000
+    },
+    "prviObisk": 5433,
+    "ponovniObisk": {
+     "prvaVsebina": 288,
+     "ucnaPot": 990,
+     "surovo": {
+      "prva": [
+       310,
+       328,
+       280,
+       285,
+       265,
+       288,
+       293
+      ],
+      "pot": [
+       1864,
+       973,
+       935,
+       1022,
+       990,
+       1049,
+       953
+      ]
+     }
+    },
+    "osvezitev": {
+     "prvaVsebina": 259,
+     "ucnaPot": 965,
+     "surovo": {
+      "prva": [
+       277,
+       285,
+       257,
+       259,
+       252,
+       259,
+       257
+      ],
+      "pot": [
+       920,
+       967,
+       966,
+       968,
+       965,
+       845,
+       880
+      ]
+     }
+    }
+   }
+  },
+  {
+   "id": "mac-1440",
+   "opis": "Mac 1440 × 900, Safari",
+   "brskalnik": "webkit",
+   "w": 1440,
+   "h": 900,
+   "dotik": false,
+   "mobilno": false,
+   "tok": "racunalnik",
+   "dimni": {
+    "sekund": 711,
+    "posnetkov": 144,
+    "napak": 9,
+    "poVrsti": {
+     "prekrivanje": [],
+     "mali drsnik": [],
+     "vodoravno drsenje": [],
+     "drugo": [
+      "pc zagon: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "pc laboratorij: napaka strani: ResizeObserver loop completed with undelivered notifications.",
+      "pc razdelilnik-klepet-OS: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "pc tekmovanja: korak ni uspel: locator.click: Timeout 30000ms exceeded. [view-topic]",
+      "pc poskusno-tekmovanje: korak ni uspel: locator.click: Timeout 5000ms exceeded. [view-topic]",
+      "pc npz-matura-OS-npz: napaka strani: ResizeObserver loop completed with undelivered notifications.",
+      "pc pot-Bor: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "pc izpiti: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+      "pc izpit-trening: napaka strani: ResizeObserver loop completed with undelivered notifications."
+     ]
+    }
+   },
+   "hitrost": {
+    "brskalnik": "webkit",
+    "razlicica": "26.6",
+    "zaslon": {
+     "width": 1440,
+     "height": 900
+    },
+    "dotik": false,
+    "mobilno": false,
+    "ponovitve": 7,
+    "omrezje": {
+     "vrsta": "4g",
+     "rttMs": 150,
+     "bajtovNaSekundo": 180000
+    },
+    "prviObisk": 5392,
+    "ponovniObisk": {
+     "prvaVsebina": 164,
+     "ucnaPot": 1085,
+     "surovo": {
+      "prva": [
+       164,
+       147,
+       203,
+       160,
+       165,
+       124,
+       166
+      ],
+      "pot": [
+       1328,
+       1019,
+       1102,
+       1087,
+       1085,
+       1055,
+       1082
+      ]
+     }
+    },
+    "osvezitev": {
+     "prvaVsebina": 189,
+     "ucnaPot": 1015,
+     "surovo": {
+      "prva": [
+       177,
+       193,
+       205,
+       189,
+       169,
+       172,
+       191
+      ],
+      "pot": [
+       1015,
+       1090,
+       1018,
+       962,
+       1020,
+       942,
+       1005
+      ]
+     }
+    }
+   },
+   "hitrostPrej": {
+    "brskalnik": "webkit",
+    "razlicica": "26.6",
+    "zaslon": {
+     "width": 1440,
+     "height": 900
+    },
+    "dotik": false,
+    "mobilno": false,
+    "ponovitve": 7,
+    "omrezje": {
+     "vrsta": "4g",
+     "rttMs": 150,
+     "bajtovNaSekundo": 180000
+    },
+    "prviObisk": 5749,
+    "ponovniObisk": {
+     "prvaVsebina": 213,
+     "ucnaPot": 1261,
+     "surovo": {
+      "prva": [
+       213,
+       162,
+       158,
+       226,
+       213,
+       153,
+       218
+      ],
+      "pot": [
+       1585,
+       1193,
+       1261,
+       1326,
+       1320,
+       1148,
+       1204
+      ]
+     }
+    },
+    "osvezitev": {
+     "prvaVsebina": 427,
+     "ucnaPot": 1268,
+     "surovo": {
+      "prva": [
+       446,
+       435,
+       451,
+       414,
+       415,
+       427,
+       410
+      ],
+      "pot": [
+       1285,
+       1268,
+       1241,
+       1268,
+       1231,
+       1251,
+       1279
+      ]
+     }
+    }
+   }
+  },
+  {
+   "id": "firefox-1920",
+   "opis": "računalnik 1920 × 1080, Firefox",
+   "brskalnik": "firefox",
+   "w": 1920,
+   "h": 1080,
+   "dotik": false,
+   "mobilno": false,
+   "tok": "racunalnik",
+   "dimni": {
+    "sekund": 634,
+    "posnetkov": 147,
+    "napak": 0,
+    "poVrsti": {
+     "prekrivanje": [],
+     "mali drsnik": [],
+     "vodoravno drsenje": [],
+     "drugo": []
+    }
+   },
+   "hitrost": {
+    "brskalnik": "firefox",
+    "razlicica": "155.0",
+    "zaslon": {
+     "width": 1920,
+     "height": 1080
+    },
+    "dotik": false,
+    "mobilno": false,
+    "ponovitve": 7,
+    "omrezje": {
+     "vrsta": "4g",
+     "rttMs": 150,
+     "bajtovNaSekundo": 180000
+    },
+    "prviObisk": 5235,
+    "ponovniObisk": {
+     "prvaVsebina": 222,
+     "ucnaPot": 1034,
+     "surovo": {
+      "prva": [
+       229,
+       237,
+       201,
+       221,
+       222,
+       243,
+       217
+      ],
+      "pot": [
+       894,
+       1043,
+       954,
+       1042,
+       1027,
+       1040,
+       1034
+      ]
+     }
+    },
+    "osvezitev": {
+     "prvaVsebina": 232,
+     "ucnaPot": 1005,
+     "surovo": {
+      "prva": [
+       280,
+       232,
+       223,
+       230,
+       247,
+       261,
+       220
+      ],
+      "pot": [
+       1036,
+       1114,
+       1000,
+       999,
+       980,
+       1005,
+       1006
+      ]
+     }
+    }
+   },
+   "hitrostPrej": {
+    "brskalnik": "firefox",
+    "razlicica": "155.0",
+    "zaslon": {
+     "width": 1920,
+     "height": 1080
+    },
+    "dotik": false,
+    "mobilno": false,
+    "ponovitve": 7,
+    "omrezje": {
+     "vrsta": "4g",
+     "rttMs": 150,
+     "bajtovNaSekundo": 180000
+    },
+    "prviObisk": 5816,
+    "ponovniObisk": {
+     "prvaVsebina": 384,
+     "ucnaPot": 1191,
+     "surovo": {
+      "prva": [
+       708,
+       420,
+       354,
+       456,
+       384,
+       363,
+       337
+      ],
+      "pot": [
+       1667,
+       1279,
+       1162,
+       1221,
+       1191,
+       1145,
+       1125
+      ]
+     }
+    },
+    "osvezitev": {
+     "prvaVsebina": 375,
+     "ucnaPot": 1135,
+     "surovo": {
+      "prva": [
+       367,
+       354,
+       360,
+       493,
+       375,
+       377,
+       417
+      ],
+      "pot": [
+       1133,
+       1104,
+       1108,
+       1258,
+       1135,
+       1157,
+       1168
+      ]
+     }
+    }
+   }
+  }
+ ],
+ "macPoPopravku": {
+  "opomba": "ponovni dimni test samo za mac-1440 po popravku answerTask (čestitka Nova raven)",
+  "dimni": {
+   "sekund": 709,
+   "posnetkov": 147,
+   "napak": 6,
+   "poVrsti": {
+    "prekrivanje": [],
+    "mali drsnik": [],
+    "vodoravno drsenje": [],
+    "drugo": [
+     "pc zagon: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+     "pc nacin-test: napaka strani: ResizeObserver loop completed with undelivered notifications.",
+     "pc razdelilnik-klepet-OS: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+     "pc pot-Bor: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+     "pc izpiti: konzola: Viewport argument key \"interactive-widget\" not recognized and ignored.",
+     "pc izpit-trening: napaka strani: ResizeObserver loop completed with undelivered notifications."
+    ]
+   }
+  }
+ }
+}

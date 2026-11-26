@@ -91,7 +91,13 @@ async function kombinacija(z) {
   return r;
 }
 
-(async () => {
+module.exports = { MATRIKA, tokZa, vrsta };
+if (require.main === module) main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
+
+async function main() {
   fs.mkdirSync(OUT, { recursive: true });
   const izbor = arg("--samo")?.split(",").map((s) => s.trim());
   const zagon = MATRIKA.filter((z) => !izbor || izbor.includes(z.id));
@@ -107,7 +113,4 @@ async function kombinacija(z) {
   }
   const napak = izid.reduce((s, r) => s + (r.dimni?.napak || 0), 0);
   process.exitCode = napak ? 1 : 0;
-})().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+}

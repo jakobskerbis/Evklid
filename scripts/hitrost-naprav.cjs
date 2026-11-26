@@ -74,7 +74,7 @@ async function streznik() {
 }
 
 // Posrednik s počasnim omrežjem: zakasnitev RTT pred odgovorom, telo po kosih skozi skupno linijo omejene hitrosti.
-async function posrednik(cilj) {
+async function posrednik(cilj, { rtt = RTT, hitrost = HITROST } = {}) {
   const http = require("node:http");
   const url = new URL(cilj);
   let prosta = 0; // kdaj je linija prosta (ms, Date.now)
@@ -89,7 +89,7 @@ async function posrednik(cilj) {
         if (!res.headersSent) res.writeHead(o.statusCode, o.headers);
         while (kosi.length) {
           const k = kosi.shift();
-          const t = Math.max(Date.now(), prosta, zac + RTT) + (HITROST === Infinity ? 0 : (k.length / HITROST) * 1000);
+          const t = Math.max(Date.now(), prosta, zac + rtt) + (hitrost === Infinity ? 0 : (k.length / hitrost) * 1000);
           prosta = t;
           const d = t - Date.now();
           if (d > 1) {
@@ -105,12 +105,12 @@ async function posrednik(cilj) {
         kosi.push(k);
         if (!caka) {
           caka = true;
-          setTimeout(poslji, Math.max(0, zac + RTT - Date.now()));
+          setTimeout(poslji, Math.max(0, zac + rtt - Date.now()));
         }
       });
       o.on("end", () => {
         konec = true;
-        if (!caka) setTimeout(poslji, Math.max(0, zac + RTT - Date.now()));
+        if (!caka) setTimeout(poslji, Math.max(0, zac + rtt - Date.now()));
       });
     });
     p.on("error", () => res.writeHead(502).end());
@@ -147,7 +147,13 @@ async function cakaj(p, kljuc) {
   return p.evaluate(() => ({ ...window.__hitrost }));
 }
 
-(async () => {
+module.exports = { posrednik, mediana };
+if (require.main === module) main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});
+
+async function main() {
   const streznikApp = await streznik();
   const pos = await posrednik(streznikApp.base);
   const app = { base: pos.base, stop: () => (pos.stop(), streznikApp.stop()) };
@@ -209,7 +215,4 @@ async function cakaj(p, kljuc) {
   console.log(
     `${BRSKALNIK} ${ZASLON.width}×${ZASLON.height}: prvi obisk ${izid.prviObisk} ms; ponovni obisk prva vsebina ${izid.ponovniObisk.prvaVsebina} ms, Učna pot ${izid.ponovniObisk.ucnaPot} ms; osvežitev ${izid.osvezitev.prvaVsebina} / ${izid.osvezitev.ucnaPot} ms`,
   );
-})().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+}

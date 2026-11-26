@@ -680,6 +680,9 @@ async function intro(p, name, { interests = false, tour = "preskoci", away = fal
 
 // Odgovor na nalogo prek vmesnika: izbira ali vpis.
 async function answerTask(p, db, value) {
+  // Čestitka za novo raven po prejšnjem odgovoru (xp-fx.js, z zamikom zvezdic) lahko pride šele zdaj: v Safariju
+  // (WebKit) pozneje kot v Chromu. Učenec jo zapre z »Naprej«; brez tega klik na izbiro čaka 30 s (K-12, Mac 1440).
+  await closeLevelUp(p);
   const choice = p.locator("#practice .task .choices .choice");
   if (await choice.count()) await choice.nth(Number(value)).click();
   else {
