@@ -2988,7 +2988,7 @@
   "scan.st.verifiedTip": "Evklid proved the result with exact calculation. For equations and inequalities this means no solution is missing and none is extra.",
   "scan.st.partial": "Partly verified",
   "scan.st.partialTip": "Evklid checked each solution given by substituting it back. It has not proved that there are no others.",
-  "scan.st.partialGivenTip": "Evklid redid the calculation with the task's data itself and the result matches. It has not checked whether the task is set up correctly, that is, whether the formulas are the right ones.",
+  "scan.st.partialGivenTip": "Evklid redid the calculation itself, using the task's data, and the result matches. It has not checked whether the formulas are the right ones for this task or whether each value was put in the right place in the right unit.",
   "scan.st.numeric": "Checked numerically",
   "scan.st.numericTip": "Evklid checked the result with numbers (decimal approximations), not with exact calculation. This does not prove that the result is exact or that no solution is missing.",
   "scan.st.unverified": "Not verified",

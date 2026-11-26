@@ -319,9 +319,9 @@ export function solvePrompt(text, lang, feedback = null, goal = null, given = []
 // Naloga s podatki »S=?«: AI doda še »check«, ki ga strežnik sam preračuna (public/scan/podatki.js).
 const checkPrompt = (text) =>
   'Because this task has data, add to the JSON also "check": {"values":{"name":"number"},"equations":["formula"]}, the calculation in a form a program recomputes. ' +
-  `"values": every quantity you use as a plain number without units (decimal point, rounded values with the digits you used; angles in degrees with °, e.g. "22.62°"): each stated datum converted to the units you compute in (2 kW → "2000"), each intermediate result, and the asked quantity named ${JSON.stringify(String(text).replace(/=\s*\?\s*$/, "").trim())}. ` +
+  `"values": every quantity you use as a plain number without units (decimal point, rounded values with the digits you used; angles in degrees with °, e.g. "22.62°"): each stated datum converted to the units you compute in (2 kW → "2000"), each intermediate result, and the asked quantity named ${JSON.stringify(String(text).replace(/=\s*\?\s*$/, "").trim().replace(/_\{(\w+)\}/g, "_$1"))}, in the unit of your final answer and with the same number. ` +
   "Names are one letter or a Greek letter name, with an optional index (a, S_10, T_1, c_w, alpha), never two letters without _. " +
-  '"equations": the formulas you used, in calculator syntax with these names and no units (S=(a+c)/2*v, P*t=m*c*(T_2-T_1), tan(alpha)=a/b); write constants not stated in the task as numbers in the formula (F=m*9.81). ' +
+  '"equations": the formulas you used, in calculator syntax with these names and no units (S=(a+c)/2*v, P*t=m*c*(T_2-T_1), tan(alpha)=a/b); write π as pi and constants not stated in the task as numbers in the formula (F=m*9.81). ' +
   "With the values put in, every equation must hold, and together they must determine the asked quantity from the data.";
 
 export function cleanSolution(s) {

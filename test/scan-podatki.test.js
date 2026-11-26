@@ -5,7 +5,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import SL from "../public/i18n/sl.js";
-import { preveriPodatke, stevilaPodatkov, steviloOdgovora, cleanRacun, iskanaKolicina, istiPodatek } from "../public/scan/podatki.js";
+import { preveriPodatke, stevilaPodatkov, steviloOdgovora, cleanRacun, iskanaKolicina, istiPodatek, podatkiNaloge } from "../public/scan/podatki.js";
 import { cleanSolution, solvePrompt, solveWithAi, retryFeedback } from "../server/scan.js";
 import { setClient } from "../server/claude.js";
 import { LIVE_UI_LANGUAGES } from "../public/i18n/languages.js";
@@ -27,9 +27,11 @@ test("števila v podatkih: indeksi, eksponenti enot in vejice niso podatki", () 
   assert.equal(iskanaKolicina("S_10=?"), "S_10");
   assert.equal(iskanaKolicina("f(x)=?"), null);
   assert.equal(iskanaKolicina("x^2=4"), null);
-  // pretvorbe enot: predpone, čas, km/h, stopinje, °C → K; drugo ne
-  for (const [n, p] of [[2, 2000], [1.5, 0.0015], [3, 180], [72, 20], [30, Math.PI / 6], [20, 293.15], [20, 0.2], [-5, 5]]) assert.ok(istiPodatek(n, p), `${n} ~ ${p}`);
-  for (const [n, p] of [[2, 3], [10, 11], [0, 1e-9]]) assert.ok(!istiPodatek(n, p), `${n} !~ ${p}`);
+  // pretvorbe enot le v osnovno enoto SI, ki jo pove enota ob podatku; predznak ostane
+  const ena = (g) => podatkiNaloge([g])[0];
+  for (const [g, p] of [["P = 2\\,\\mathrm{kW}", 2000], ["P = 2\\,\\mathrm{kW}", 2], ["m = 1{,}5\\,\\mathrm{g}", 0.0015], ["t = 3\\,\\text{min}", 180], ["v = 72\\,\\mathrm{km/h}", 20], ["\\alpha = 30^\\circ", Math.PI / 6], ["T = 20\\,^\\circ\\mathrm{C}", 293.15], ["p = 20\\,\\%", 0.2], ["S = 5\\,\\mathrm{cm}^2", 5e-4], ["\\rho = 1\\,\\mathrm{g/cm^3}", 1000], ["E = 2\\,\\text{kWh}", 7.2e6], ["a = 12\\,000\\,\\mathrm{m}", 12000]]) assert.ok(istiPodatek(ena(g), p), `${g} ~ ${p}`);
+  for (const [g, p] of [["v = 4\\,\\text{cm}", 40], ["v = 4\\,\\text{cm}", 0.4], ["v = 72\\,\\mathrm{km/h}", 259.2], ["t = 2\\,\\text{h}", 120], ["T = -10\\,^\\circ\\mathrm{C}", 10], ["a = 2", 3], ["a = 10\\,\\text{neznano}", 0.01]]) assert.ok(!istiPodatek(ena(g), p), `${g} !~ ${p}`);
+  assert.ok(!istiPodatek(0, 1e-9));
   assert.equal(steviloOdgovora({ value: "32 cm^2" }), 32);
   assert.equal(steviloOdgovora({ value: "", answer_tex: "t \\approx 189\\,\\mathrm{s}" }), 189);
   assert.equal(steviloOdgovora({ value: "22.62°" }), 22.62);
@@ -61,8 +63,47 @@ test("napačen račun → »wrong« z razlago za ponovitev", () => {
   assert.match(retryFeedback({ value: "40", solutions: [] }, r), /your result was 40; recomputing your "check": with your values/);
   assert.equal(status("alpha=?", TRIKOTNIK, sol({ a: "5", b: "12", alpha: "24.62°" }, ["tan(alpha)=a/b"], { value: "24.62°" })), "wrong");
   assert.equal(status("I=?", VEZJE, sol({ R_1: "4", R_2: "12", U: "6", R: "3", I: "0.5" }, ["1/R=1/R_1+1/R_2", "I=U/R"], { value: "0.5 A" })), "wrong");
-  // celo število ni zaokroženo: 6/3.3 ni 2
-  assert.equal(status("I=?", ["U = 6\\,V", "R = 3{,}3\\,\\Omega"], sol({ U: "6", R: "3.3", I: "2" }, ["I=U/R"], { value: "2" })), "wrong");
+  // celo število je morda zaokroženo (6/3,3 = 1,82 → 2): nepreverjeno, ne »drži« in ne »napačno«; 3 pa je napačno
+  assert.equal(status("I=?", ["U = 6\\,V", "R = 3{,}3\\,\\Omega"], sol({ U: "6", R: "3.3", I: "2" }, ["I=U/R"], { value: "2" })), "unverified");
+  assert.equal(status("I=?", ["U = 6\\,V", "R = 3{,}3\\,\\Omega"], sol({ U: "6", R: "3.3", I: "3" }, ["I=U/R"], { value: "3" })), "wrong");
+});
+
+test("pregled: podatki so točni, odgovor v isti enoti, zaokrožene konstante v formuli, »wrong« le za prikazani odgovor", () => {
+  const G12 = ["P = 2\\ \\mathrm{kW}", "m = 1{,}2\\ \\mathrm{kg}", "T_1 = 20\\ ^\\circ\\mathrm{C}", "T_2 = 80\\ ^\\circ\\mathrm{C}", "c = 4200\\ \\mathrm{J/(kg\\,K)}"];
+  const grel = (t) => sol({ P: "2000", m: "1.2", T_1: "20", T_2: "80", c: "4200", t }, ["P*t=m*c*(T_2-T_1)"], { value: t });
+  assert.equal(status("t=?", G12, grel("151.2")), "partial");
+  // podatek 1,2 kg nima zaokrožitve ±0,05: 4 % napačen rezultat ne preide
+  assert.equal(status("t=?", G12, grel("148")), "wrong");
+  assert.equal(status("t=?", G12, grel("145")), "wrong");
+  // odgovor v drugi enoti kot preverjena vrednost (0,32 namesto 32): ne »ujema se«
+  assert.equal(status("S=?", TRAPEZ, sol({ a: "10", c: "6", v: "4", S: "32" }, ["S=(a+c)/2*v"], { value: "0.32 m^2" })), "unverified");
+  assert.equal(status("S=?", TRAPEZ, sol({ a: "10", c: "6", v: "4", S: "32" }, ["S=(a+c)/2*v"], { value: "1920" })), "unverified");
+  // zaokrožena konstanta v formuli (3.14, 9.8) ima zaokrožitev zadnjega mesta
+  assert.equal(status("O=?", ["r = 5\\,cm"], sol({ r: "5", O: "31.42" }, ["O=2*3.14*r"], { value: "31.42" })), "partial");
+  assert.equal(status("F=?", ["m = 3\\,kg"], sol({ m: "3", F: "29.43" }, ["F=m*9.8"], { value: "29.43" })), "partial");
+  assert.equal(status("F=?", ["m = 3\\,kg"], sol({ m: "3", F: "31" }, ["F=m*9.8"], { value: "31" })), "wrong");
+  // pomožni zapis ne vodi do prikazanega odgovora: nepreverjeno, ne »napačno« (ne skrijemo morda pravilne rešitve)
+  assert.equal(status("S=?", TRAPEZ, sol({ a: "10", c: "6", v: "4", S: "40" }, ["S=(a+c)/2*v"], { value: "32" })), "unverified");
+});
+
+test("pregled 2: koti v stopinjah brez trigonometrije, vsa števila odgovora, podatek v napačni enoti ali z drugim predznakom", () => {
+  // γ = 180° − α − β in krožni izsek z α v stopinjah (AI zapiše °, kot zahteva poziv)
+  assert.equal(status("gamma=?", ["\\alpha = 50^\\circ", "\\beta = 60^\\circ"], sol({ alpha: "50°", beta: "60°", gamma: "70°" }, ["gamma=180-alpha-beta"], { value: "70°" })), "partial");
+  assert.equal(status("S=?", ["r = 6\\,cm", "\\alpha = 60^\\circ"], sol({ r: "6", alpha: "60°", S: "18.85" }, ["S=pi*r^2*alpha/360"], { value: "18.85" })), "partial");
+  assert.equal(status("gamma=?", ["\\alpha = 50^\\circ", "\\beta = 60^\\circ"], sol({ alpha: "50°", beta: "60°", gamma: "80°" }, ["gamma=180-alpha-beta"], { value: "80°" })), "wrong");
+  // kot brez ° v trigonometriji: velja branje v stopinjah
+  assert.equal(status("alpha=?", TRIKOTNIK, sol({ a: "5", b: "12", alpha: "22.62" }, ["tan(alpha)=a/b"], { value: "22.62°" })), "partial");
+  // vsako število v odgovoru mora biti preverjena vrednost (value 32, na zaslonu 23), tudi predznak
+  assert.equal(status("S=?", TRAPEZ, sol({ a: "10", c: "6", v: "4", S: "32" }, ["S=(a+c)/2*v"], { value: "32", answer_tex: "S = 23\\,\\text{cm}^2" })), "unverified");
+  assert.equal(status("S=?", TRAPEZ, sol({ a: "10", c: "6", v: "4", S: "32" }, ["S=(a+c)/2*v"], { value: "-32" })), "unverified");
+  // podatek v napačni enoti (4 cm kot 40 ali 0,04) ali z napačnim predznakom ni »uporabljen podatek«
+  assert.equal(status("S=?", TRAPEZ, sol({ a: "10", c: "6", v: "40", S: "320" }, ["S=(a+c)/2*v"], { value: "320" })), "unverified");
+  assert.equal(status("Q=?", ["m = 2\\,kg", "c = 4200\\,J/(kg\\,K)", "T_1 = -10\\,^\\circ C", "T_2 = 20\\,^\\circ C"], sol({ m: "2", c: "4200", T_1: "10", T_2: "20", Q: "84000" }, ["Q=m*c*(T_2-T_1)"], { value: "84000" })), "unverified");
+  assert.equal(status("Q=?", ["m = 2\\,kg", "c = 4200\\,J/(kg\\,K)", "T_1 = -10\\,^\\circ C", "T_2 = 20\\,^\\circ C"], sol({ m: "2", c: "4200", T_1: "-10", T_2: "20", Q: "252000" }, ["Q=m*c*(T_2-T_1)"], { value: "252000" })), "partial");
+  // decimalni podatek nima zaokrožitve: 10 % napačna pot ni »drži«
+  assert.equal(status("s=?", ["v = 0{,}5\\,m/s", "t = 4\\,s"], sol({ v: "0.5", t: "4", s: "2.2" }, ["s=v*t"], { value: "2.2" })), "wrong");
+  // ime z indeksom v zavitih oklepajih gre v poziv kot S_10
+  assert.match(solvePrompt("S_{10}=?", "slovenščina", null, null, ["a_1 = 2"]), /named "S_10"/);
 });
 
 test("česar ne znamo preveriti, ostane »unverified« (brez ponovitve)", () => {
@@ -88,8 +129,13 @@ test("česar ne znamo preveriti, ostane »unverified« (brez ponovitve)", () => 
   nic("S=?", TRAPEZ, sol({ a: "10", c: "6", v: "4", S: "32" }, ["S=(a+c)/2*h"], { value: "32" }), "equation");
   nic("S=?", TRAPEZ, sol({ a: "10", c: "6", v: "4", S: "x+1" }, ["S=(a+c)/2*v"], { value: "32" }), "value S");
   nic("x=?", ["a = -4"], sol({ a: "-4", x: "2" }, ["x=sqrt(a)"], { value: "2" }), "not defined");
-  // kot brez °, ki drži v stopinjah: zapis, ne napačen račun (ne skrijemo morda pravilne rešitve)
-  nic("alpha=?", TRIKOTNIK, sol({ a: "5", b: "12", alpha: "22.62" }, ["tan(alpha)=a/b"], { value: "22.62°" }), "angle without");
+  // pogoj v podatkih (koda ga ne preveri)
+  nic("a=?", ["a < 0", "b = 16"], sol({ b: "16", a: "4" }, ["a^2=b"], { value: "4" }), "condition");
+  // druga rešitev, ki prav tako ustreza: negativna dolžina, drugi pozitivni čas
+  nic("c=?", ["a = 4", "b = 5"], sol({ a: "4", b: "5", c: "-6.40" }, ["c^2=a^2+b^2"], { value: "-6.40" }), "another solution");
+  nic("t=?", ["v_0 = 20\\,m/s", "h = 15\\,m"], sol({ v_0: "20", h: "15", t: "3" }, ["h=v_0*t-10/2*t^2"], { value: "3" }), "another solution");
+  // odstotek v vrednosti (5 % je 0,05 ali 5?) ni berljiv
+  nic("x=?", ["G = 200", "p = 5\\,\\%"], sol({ G: "200", p: "5%", x: "10" }, ["x=p/100*G"], { value: "10" }), "value p");
   // iskana količina 0 (rezultanta sil): stolpec z vrednostjo 0 ne pokvari ranga
   assert.equal(status("F=?", ["F_1 = 5\,N", "F_2 = 5\,N"], sol({ F_1: "5", F_2: "5", F: "0" }, ["F=F_1-F_2"], { value: "0 N" })), "partial");
 });
@@ -171,7 +217,7 @@ test("zaslon: pri nalogi s podatki »Delno preverjeno« pove, da formule niso pr
   const src = fs.readFileSync(new URL("../public/scan/scan.js", import.meta.url), "utf8");
   assert.match(src, /given: sol\.check === "given"/);
   assert.match(src, /status === "partial" && r\.given \? "scan\.st\.partialGivenTip"/);
-  assert.match(SL["scan.st.partialGivenTip"], /ponovil sam.*formule/);
+  assert.match(SL["scan.st.partialGivenTip"], /ponovil sam.*formule.*pravi enoti/);
   for (const lang of LIVE_UI_LANGUAGES.filter((l) => l !== "sl")) {
     const ui = JSON.parse(fs.readFileSync(new URL(`../public/i18n/ui/${lang}.json`, import.meta.url), "utf8"));
     assert.ok(ui["scan.st.partialGivenTip"], `${lang}: scan.st.partialGivenTip`);

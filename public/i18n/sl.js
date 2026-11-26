@@ -2929,7 +2929,7 @@ export default {
   "scan.st.verifiedTip": "Evklid je rezultat dokazal s točnim računom. Pri enačbah in neenačbah to pomeni, da nobena rešitev ne manjka in nobena ni odveč.",
   "scan.st.partial": "Delno preverjeno",
   "scan.st.partialTip": "Evklid je vsako navedeno rešitev preveril s preizkusom. Ni pa dokazal, da drugih rešitev ni.",
-  "scan.st.partialGivenTip": "Evklid je račun s podatki naloge ponovil sam in rezultat se ujema. Ni pa preveril, ali je naloga prav postavljena, torej ali so formule prave.",
+  "scan.st.partialGivenTip": "Evklid je račun s podatki naloge ponovil sam in rezultat se ujema. Ni pa preveril, ali so formule prave za to nalogo in ali je vsak podatek vstavljen na pravo mesto v pravi enoti.",
   "scan.st.numeric": "Numerično preverjeno",
   "scan.st.numericTip": "Evklid je rezultat preveril s števili (decimalnimi približki), ne s točnim računom. To ni dokaz, da je rezultat točen in da nobena rešitev ne manjka.",
   "scan.st.unverified": "Nepreverjeno",
