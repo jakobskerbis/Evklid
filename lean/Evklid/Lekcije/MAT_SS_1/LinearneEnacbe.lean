@@ -24,14 +24,18 @@ namespace Evklid.Lekcije.MAT_SS_1.LinearneEnacbe
 
 /-! ## Pomožne trditve: ekvivalentne preoblike -/
 
-/-- Razlaga 3 (prištevanje, odštevanje, poenostavljanje): a = b ⇔ c = d, če je c − d = a − b. -/
+/-- Razlaga 3 (prištevanje, odštevanje, poenostavljanje): a = b ⇔ c = d, če je c − d = a − b.
+trditev: MAT-SS-1/linearne-enacbe#iff-of-sub
+besedilo: »na obeh straneh prištejemo ali odštejemo isto število ali izraz« -/
 theorem iff_of_sub {a b c d : ℝ} (h : a - b = c - d) : a = b ↔ c = d := by
   constructor <;> intro h' <;> linarith
 
 /-- Predpostavka `iff_of_sub` se da izpolniti. -/
 example : (2 : ℝ) = 2 ↔ (0 : ℝ) = 0 := iff_of_sub (by norm_num)
 
-/-- Razlaga 3 (množenje z istim številom k ≠ 0): a = b ⇔ c = d, če je c − d = k(a − b). -/
+/-- Razlaga 3 (množenje z istim številom k ≠ 0): a = b ⇔ c = d, če je c − d = k(a − b).
+trditev: MAT-SS-1/linearne-enacbe#iff-of-mul
+besedilo: »obe strani pomnožimo ali delimo z istim številom, **različnim od $0$**« -/
 theorem iff_of_mul {a b c d k : ℝ} (hk : k ≠ 0) (h : c - d = k * (a - b)) : a = b ↔ c = d := by
   rw [← sub_eq_zero, ← sub_eq_zero (a := c), h, mul_eq_zero, or_iff_right hk]
 
@@ -39,14 +43,18 @@ theorem iff_of_mul {a b c d k : ℝ} (hk : k ≠ 0) (h : c - d = k * (a - b)) : 
 example (x : ℝ) : 2 * x + 3 = 5 ↔ 4 * x + 6 = 10 := iff_of_mul (k := 2) two_ne_zero (by ring)
 
 /-- Razlaga 3 in Bolj natančno: A = B ⇔ A + c = B + c; za k ≠ 0 je A = B ⇔ kA = kB; pri k = 0 je kA = kB
-vedno res. -/
+vedno res.
+trditev: MAT-SS-1/linearne-enacbe#preoblike
+besedilo: »Obratno, če velja $kA = kB$ in je $k \neq 0$, lahko obe strani delimo s $k$ in dobimo $A = B$.« -/
 theorem preoblike (A B c k : ℝ) : (A = B ↔ A + c = B + c) ∧ (k ≠ 0 → (A = B ↔ k * A = k * B)) ∧
     0 * A = 0 * B := by
   refine ⟨(add_left_inj c).symm, fun hk => ?_, by ring⟩
   exact ⟨fun h => by rw [h], fun h => mul_left_cancel₀ hk h⟩
 
 /-- Razlaga 5, Povzetek, Ustno vprašanje 2, Bolj natančno: ax = b ima pri a ≠ 0 natanko rešitev x = b/a
-(a·(b/a) = b), pri a = 0, b ≠ 0 nobene, pri a = 0, b = 0 pa je rešitev vsak x. -/
+(a·(b/a) = b), pri a = 0, b ≠ 0 nobene, pri a = 0, b = 0 pa je rešitev vsak x.
+trditev: MAT-SS-1/linearne-enacbe#ax-b
+besedilo: »Če je $a \neq 0$, ima enačba natanko eno rešitev $x = \dfrac{b}{a}$. Preverimo: $a \cdot \dfrac{b}{a} = b$.« -/
 theorem ax_b (a b : ℝ) : (a ≠ 0 → ∀ x, (a * x = b ↔ x = b / a)) ∧ (a ≠ 0 → a * (b / a) = b) ∧
     (a = 0 → b ≠ 0 → ∀ x, a * x ≠ b) ∧ (a = 0 → b = 0 → ∀ x, a * x = b) := by
   refine ⟨fun ha x => ?_, fun ha => by field_simp, fun ha hb x => ?_, fun ha hb x => ?_⟩
@@ -61,7 +69,9 @@ example : (3 * (60 : ℝ) = 180 ↔ (60 : ℝ) = 180 / 3) ∧ (0 : ℝ) * 1 ≠ 
 /-! ## Zakaj se tega učimo in Najprej opazuj -/
 
 /-- Zakaj se tega učimo, Opazuj: 430 − 250 = 180, 180/3 = 60; x + 250 = 430 ⇔ x = 180; 3x = 180 ⇔ x = 60;
-3x + 250 = 430 ⇔ 3x = 180 ⇔ x = 60. -/
+3x + 250 = 430 ⇔ 3x = 180 ⇔ x = 60.
+trditev: MAT-SS-1/linearne-enacbe#jajca
+besedilo: »jajca skupaj tehtajo $430 - 250 = 180\,\text{g}$, eno torej $60\,\text{g}$« -/
 theorem jajca (x : ℝ) : (430 - 250 : ℝ) = 180 ∧ (180 / 3 : ℝ) = 60 ∧ (x + 250 = 430 ↔ x = 180) ∧
     (3 * x = 180 ↔ x = 60) ∧ (3 * x + 250 = 430 ↔ x = 60) := by
   have h2 : 3 * x = 180 ↔ x = 60 := by
@@ -73,17 +83,23 @@ theorem jajca (x : ℝ) : (430 - 250 : ℝ) = 180 ∧ (180 / 3 : ℝ) = 60 ∧ (
 
 /-! ## Razlaga 1: izraz in enačba -/
 
-/-- Razlaga 1, tabela: 3·50 + 250 = 400, 3·60 + 250 = 430, 3·70 + 250 = 460; enačba velja le pri x = 60. -/
+/-- Razlaga 1, tabela: 3·50 + 250 = 400, 3·60 + 250 = 430, 3·70 + 250 = 460; enačba velja le pri x = 60.
+trditev: MAT-SS-1/linearne-enacbe#tabela
+besedilo: »| $60$ | $430$ | velja |« -/
 theorem tabela : (3 * 50 + 250 : ℝ) = 400 ∧ (3 * 60 + 250 : ℝ) = 430 ∧ (3 * 70 + 250 : ℝ) = 460 ∧
     (400 : ℝ) ≠ 430 ∧ (460 : ℝ) ≠ 430 := by norm_num
 
-/-- Razlaga 1: 2(x + 3) = 2x + 6 je identiteta (velja za vsak x); enačba x + 1 = x nima rešitve. -/
+/-- Razlaga 1: 2(x + 3) = 2x + 6 je identiteta (velja za vsak x); enačba x + 1 = x nima rešitve.
+trditev: MAT-SS-1/linearne-enacbe#identiteta
+besedilo: »Enačba $x + 1 = x$ pa ni resnična pri nobenem $x$, zato nima rešitve« -/
 theorem identiteta : (∀ x : ℝ, 2 * (x + 3) = 2 * x + 6) ∧ ∀ x : ℝ, x + 1 ≠ x := by
   refine ⟨fun x => by ring, fun x h => ?_⟩
   linarith
 
 /-- Razlaga 1: 4x + 6 = 10 ⇔ 2x + 3 = 5 ⇔ x = 1 (deljenje enačbe z 2), izraza 4x + 6 in 2x + 3 pa nista enaka:
-pri x = 1 sta 10 in 5. -/
+pri x = 1 sta 10 in 5.
+trditev: MAT-SS-1/linearne-enacbe#deljenje-z-2
+besedilo: »Enačbo $4x + 6 = 10$ smemo deliti z $2$: enačba $2x + 3 = 5$ ima isto rešitev $x = 1$.« -/
 theorem deljenje_z_2 (x : ℝ) : (4 * x + 6 = 10 ↔ 2 * x + 3 = 5) ∧ (2 * x + 3 = 5 ↔ x = 1) ∧
     (4 * 1 + 6 : ℝ) = 10 ∧ (2 * 1 + 3 : ℝ) = 5 ∧ ¬ ∀ y : ℝ, 4 * y + 6 = 2 * y + 3 := by
   refine ⟨iff_of_mul (k := 1 / 2) (by norm_num) (by ring), ⟨fun h => by linarith, fun h => by rw [h]; norm_num⟩,
@@ -91,11 +107,15 @@ theorem deljenje_z_2 (x : ℝ) : (4 * x + 6 = 10 ↔ 2 * x + 3 = 5) ∧ (2 * x +
   have := h 1; norm_num at this
 
 /-- Razlaga 3, Premisli: z množenjem z 0 iz x + 250 = 430 nastane 0 = 0, ki velja za vsak x, prvotna enačba pa
-le za x = 180. -/
+le za x = 180.
+trditev: MAT-SS-1/linearne-enacbe#premisli-nic
+besedilo: »Dobili bi $0 = 0$, kar velja za vsak $x$.« -/
 theorem premisli_nic : (∀ x : ℝ, 0 * (x + 250) = 0 * 430) ∧ (0 : ℝ) + 250 ≠ 430 := by
   refine ⟨fun x => by ring, by norm_num⟩
 
-/-- Razlaga 5, Premisli: 2x + 3 = 2x + 5 nima rešitve (leva stran je za 2 manjša, oblika 0·x = 2). -/
+/-- Razlaga 5, Premisli: 2x + 3 = 2x + 5 nima rešitve (leva stran je za 2 manjša, oblika 0·x = 2).
+trditev: MAT-SS-1/linearne-enacbe#premisli-2x
+besedilo: »To je oblika $0 \cdot x = 2$: leva stran je za vsak $x$ za $2$ manjša od desne.« -/
 theorem premisli_2x (x : ℝ) : (2 * x + 3) - (2 * x + 5) = -2 ∧ 2 * x + 3 ≠ 2 * x + 5 := by
   refine ⟨by ring, fun h => ?_⟩
   linarith
@@ -103,7 +123,9 @@ theorem premisli_2x (x : ℝ) : (2 * x + 3) - (2 * x + 5) = -2 ∧ 2 * x + 3 ≠
 /-! ## Razlaga 6: parameter -/
 
 /-- Razlaga 6: mx + 1 = 3x + 5 ⇔ mx − 3x = 5 − 1 ⇔ (m − 3)x = 4; pri m ≠ 3 je rešitev x = 4/(m − 3), pri m = 3
-rešitve ni. -/
+rešitve ni.
+trditev: MAT-SS-1/linearne-enacbe#razlaga6
+besedilo: »Če je $m \neq 3$, delimo z $m - 3$: $x = \dfrac{4}{m-3}$.« -/
 theorem razlaga6 (m x : ℝ) : (m * x + 1 = 3 * x + 5 ↔ (m - 3) * x = 4) ∧
     (m ≠ 3 → (m * x + 1 = 3 * x + 5 ↔ x = 4 / (m - 3))) ∧ (m = 3 → m * x + 1 ≠ 3 * x + 5) := by
   have h1 : m * x + 1 = 3 * x + 5 ↔ (m - 3) * x = 4 := by
@@ -115,19 +137,25 @@ theorem razlaga6 (m x : ℝ) : (m * x + 1 = 3 * x + 5 ↔ (m - 3) * x = 4) ∧
 
 /-! ## Rešeni primeri -/
 
-/-- Primer 1: 3(x − 2) + 5 = 2x + 7 ⇔ 3x − 6 + 5 = 2x + 7 ⇔ 3x − 1 = 2x + 7 ⇔ 3x − 2x = 7 + 1 ⇔ x = 8. -/
+/-- Primer 1: 3(x − 2) + 5 = 2x + 7 ⇔ 3x − 6 + 5 = 2x + 7 ⇔ 3x − 1 = 2x + 7 ⇔ 3x − 2x = 7 + 1 ⇔ x = 8.
+trditev: MAT-SS-1/linearne-enacbe#primer1
+besedilo: »Odgovor: rešitev enačbe je $x = 8$.« -/
 theorem primer1 (x : ℝ) : 3 * (x - 2) + 5 = 2 * x + 7 ↔ x = 8 := by
   calc 3 * (x - 2) + 5 = 2 * x + 7 ↔ 3 * x - 6 + 5 = 2 * x + 7 := iff_of_sub (by ring)
     _ ↔ 3 * x - 1 = 2 * x + 7 := iff_of_sub (by ring)
     _ ↔ 3 * x - 2 * x = 7 + 1 := iff_of_sub (by ring)
     _ ↔ x = 8 := iff_of_sub (by ring)
 
-/-- Primer 1, preizkus: 3·(8 − 2) + 5 = 18 + 5 = 23 in 2·8 + 7 = 23. -/
+/-- Primer 1, preizkus: 3·(8 − 2) + 5 = 18 + 5 = 23 in 2·8 + 7 = 23.
+trditev: MAT-SS-1/linearne-enacbe#primer1-preizkus
+besedilo: »Leva stran: $3 \cdot (8-2) + 5 = 18 + 5 = 23$. Desna stran: $2 \cdot 8 + 7 = 23$.« -/
 theorem primer1_preizkus : (3 * (8 - 2) + 5 : ℝ) = 18 + 5 ∧ (18 + 5 : ℝ) = 23 ∧ (2 * 8 + 7 : ℝ) = 23 := by
   norm_num
 
 /-- Primer 2: (x + 1)/2 − (2x − 1)/3 = 1 ⇔ 6·(x + 1)/2 − 6·(2x − 1)/3 = 6·1 ⇔ 3(x + 1) − 2(2x − 1) = 6
-⇔ 3x + 3 − 4x + 2 = 6 ⇔ −x + 5 = 6 ⇔ −x = 1 ⇔ x = −1. -/
+⇔ 3x + 3 − 4x + 2 = 6 ⇔ −x + 5 = 6 ⇔ −x = 1 ⇔ x = −1.
+trditev: MAT-SS-1/linearne-enacbe#primer2
+besedilo: »Odgovor: rešitev enačbe je $x = -1$.« -/
 theorem primer2 (x : ℝ) : (x + 1) / 2 - (2 * x - 1) / 3 = 1 ↔ x = -1 := by
   calc (x + 1) / 2 - (2 * x - 1) / 3 = 1 ↔ 6 * ((x + 1) / 2) - 6 * ((2 * x - 1) / 3) = 6 * 1 :=
         iff_of_mul (k := 6) (by norm_num) (by ring)
@@ -137,12 +165,16 @@ theorem primer2 (x : ℝ) : (x + 1) / 2 - (2 * x - 1) / 3 = 1 ↔ x = -1 := by
     _ ↔ -x = 1 := iff_of_sub (by ring)
     _ ↔ x = -1 := iff_of_mul (k := -1) (by norm_num) (by ring)
 
-/-- Primer 2, preizkus: (−1 + 1)/2 − (2·(−1) − 1)/3 = 0/2 − (−3)/3 = 0 + 1 = 1. -/
+/-- Primer 2, preizkus: (−1 + 1)/2 − (2·(−1) − 1)/3 = 0/2 − (−3)/3 = 0 + 1 = 1.
+trditev: MAT-SS-1/linearne-enacbe#primer2-preizkus
+besedilo: »$\dfrac{-1+1}{2} - \dfrac{2\cdot(-1)-1}{3} = \dfrac{0}{2} - \dfrac{-3}{3} = 0 + 1 = 1$« -/
 theorem primer2_preizkus : ((-1 + 1) / 2 - (2 * (-1) - 1) / 3 : ℝ) = 0 / 2 - (-3) / 3 ∧
     (0 / 2 - (-3) / 3 : ℝ) = 0 + 1 ∧ (0 + 1 : ℝ) = 1 := by norm_num
 
 /-- Primer 3: ax + 3 = x + a + 2 ⇔ ax − x = a + 2 − 3 ⇔ (a − 1)x = a − 1; za a ≠ 1 je rešitev natanko x = 1
-(= (a − 1)/(a − 1)), za a = 1 je rešitev vsak x. -/
+(= (a − 1)/(a − 1)), za a = 1 je rešitev vsak x.
+trditev: MAT-SS-1/linearne-enacbe#primer3
+besedilo: »za $a \neq 1$ je $x = 1$, za $a = 1$ je rešitev vsako realno število.« -/
 theorem primer3 (a x : ℝ) : (a * x + 3 = x + a + 2 ↔ (a - 1) * x = a - 1) ∧
     (a ≠ 1 → (a - 1) / (a - 1) = 1 ∧ (a * x + 3 = x + a + 2 ↔ x = 1)) ∧ (a = 1 → a * x + 3 = x + a + 2) := by
   have h1 : a * x + 3 = x + a + 2 ↔ (a - 1) * x = a - 1 := by
@@ -153,11 +185,15 @@ theorem primer3 (a x : ℝ) : (a * x + 3 = x + a + 2 ↔ (a - 1) * x = a - 1) �
   refine ⟨div_self ha', ?_⟩
   rw [h1, (ax_b (a - 1) (a - 1)).1 ha' x, div_self ha']
 
-/-- Primer 3, preizkus: za a = 2 je 2x + 3 = x + 4 ⇔ x = 1; za a = 1 velja x + 3 = x + 3 za vsak x. -/
+/-- Primer 3, preizkus: za a = 2 je 2x + 3 = x + 4 ⇔ x = 1; za a = 1 velja x + 3 = x + 3 za vsak x.
+trditev: MAT-SS-1/linearne-enacbe#primer3-preizkus
+besedilo: »Za $a = 2$: $2x + 3 = x + 4$ da $x = 1$. ✓ Za $a = 1$: $x + 3 = x + 3$ res velja za vsak $x$.« -/
 theorem primer3_preizkus : (∀ x : ℝ, 2 * x + 3 = x + 4 ↔ x = 1) ∧ ∀ x : ℝ, x + 3 = x + 3 :=
   ⟨fun x => iff_of_sub (by ring), fun _ => rfl⟩
 
-/-- Primer 4: x − x/3 − x/2 = 150 ⇔ 6x − 2x − 3x = 900 ⇔ x = 900; preizkus 900 − 300 − 450 = 150. -/
+/-- Primer 4: x − x/3 − x/2 = 150 ⇔ 6x − 2x − 3x = 900 ⇔ x = 900; preizkus 900 − 300 − 450 = 150.
+trditev: MAT-SS-1/linearne-enacbe#primer4
+besedilo: »$6x - 2x - 3x = x$, torej $x = 900\,\text{ml}$. Preizkus: $900 - 300 - 450 = 150$.« -/
 theorem primer4 (x : ℝ) : (x - x / 3 - x / 2 = 150 ↔ x = 900) ∧ (6 * x - 2 * x - 3 * x = x) ∧
     (900 - 900 / 3 - 900 / 2 : ℝ) = 900 - 300 - 450 ∧ (900 - 300 - 450 : ℝ) = 150 := by
   refine ⟨?_, by ring, by norm_num, by norm_num⟩
@@ -166,14 +202,18 @@ theorem primer4 (x : ℝ) : (x - x / 3 - x / 2 = 150 ↔ x = 900) ∧ (6 * x - 2
 
 /-! ## Pogoste napake -/
 
-/-- Pogoste napake 1, Ponovitev: −(2x − 1) = −2x + 1, nikoli −2x − 1; 6·(−(2x − 1)/3) = −2(2x − 1). -/
+/-- Pogoste napake 1, Ponovitev: −(2x − 1) = −2x + 1, nikoli −2x − 1; 6·(−(2x − 1)/3) = −2(2x − 1).
+trditev: MAT-SS-1/linearne-enacbe#napaka-predznak
+besedilo: »Popravek: $-(2x-1) = -2x + 1$.« -/
 theorem napaka_predznak (x : ℝ) : -(2 * x - 1) = -2 * x + 1 ∧ -(2 * x - 1) ≠ -2 * x - 1 ∧
     6 * (-((2 * x - 1) / 3)) = -2 * (2 * x - 1) := by
   refine ⟨by ring, fun h => ?_, by ring⟩
   linarith
 
 /-- Pogoste napake 2 in Preveri se 3: x/2 + x/3 = 5 ⇔ 3x + 2x = 30 ⇔ 5x = 30 ⇔ x = 6; napačna 1 (iz 3x + 2x = 5)
-in 30 nista rešitvi. -/
+in 30 nista rešitvi.
+trditev: MAT-SS-1/linearne-enacbe#napaka-ulomki
+besedilo: »Pomnožimo s $6$: $3x + 2x = 30$, torej $5x = 30$ in $x = 6$.« -/
 theorem napaka_ulomki (x : ℝ) : (x / 2 + x / 3 = 5 ↔ 3 * x + 2 * x = 30) ∧ (3 * x + 2 * x = 30 ↔ 5 * x = 30) ∧
     (5 * x = 30 ↔ x = 6) ∧ (1 : ℝ) / 2 + 1 / 3 ≠ 5 ∧ (30 : ℝ) / 2 + 30 / 3 ≠ 5 := by
   refine ⟨iff_of_mul (k := 6) (by norm_num) (by ring), iff_of_sub (by ring), ?_, by norm_num, by norm_num⟩
@@ -181,7 +221,9 @@ theorem napaka_ulomki (x : ℝ) : (x / 2 + x / 3 = 5 ↔ 3 * x + 2 * x = 30) ∧
     _ ↔ x = 6 := by norm_num
 
 /-- Pogoste napake 3, Ponovitev, Preveri se 2: 5x − 7 = 3x + 9 ⇔ 5x − 3x = 9 + 7 ⇔ 2x = 16 ⇔ x = 8; napačna 1 in
-−8 nista rešitvi. -/
+−8 nista rešitvi.
+trditev: MAT-SS-1/linearne-enacbe#napaka-prenos
+besedilo: »Člene z $x$ zberemo na levi: $5x - 3x = 9 + 7$, torej $2x = 16$ in $x = 8$.« -/
 theorem napaka_prenos (x : ℝ) : (5 * x - 7 = 3 * x + 9 ↔ x = 8) ∧ (5 * 1 - 7 : ℝ) ≠ 3 * 1 + 9 ∧
     (5 * (-8) - 7 : ℝ) ≠ 3 * (-8) + 9 := by
   refine ⟨?_, by norm_num, by norm_num⟩
@@ -190,18 +232,24 @@ theorem napaka_prenos (x : ℝ) : (5 * x - 7 = 3 * x + 9 ↔ x = 8) ∧ (5 * 1 -
     _ ↔ x = 8 := by constructor <;> intro h <;> linarith
 
 /-- Pogoste napake 4, Preveri se 6, Bolj natančno: pri (a − 1)x = a − 1 in a = 1 velja vsak x, zato »vedno x = 1«
-ni pravilno (pri a = 1 je rešitev tudi x = 5). -/
+ni pravilno (pri a = 1 je rešitev tudi x = 5).
+trditev: MAT-SS-1/linearne-enacbe#napaka-parameter
+besedilo: »Popravek: primer $a = 1$ reši posebej; tam velja vsak $x$.« -/
 theorem napaka_parameter : (∀ x : ℝ, ((1 : ℝ) - 1) * x = 1 - 1) ∧ ((1 : ℝ) - 1) * 5 = 1 - 1 ∧ (5 : ℝ) ≠ 1 := by
   refine ⟨fun x => by ring, by ring, by norm_num⟩
 
-/-- Pogoste napake 5: 0·x = 6 nima rešitve, zato tudi x = 0 ni rešitev. -/
+/-- Pogoste napake 5: 0·x = 6 nima rešitve, zato tudi x = 0 ni rešitev.
+trditev: MAT-SS-1/linearne-enacbe#napaka-nic
+besedilo: »Napačno: $0 \cdot x$ je vedno $0$, nikoli $6$.« -/
 theorem napaka_nic : (∀ x : ℝ, 0 * x ≠ 6) ∧ (0 : ℝ) * 0 ≠ 6 :=
   ⟨(ax_b 0 6).2.2.1 rfl (by norm_num), by norm_num⟩
 
 /-! ## Za maturo -/
 
 /-- Naloga 1: (x − 3)/4 − (2x + 1)/6 = x/3 − 3 ⇔ 3(x − 3) − 2(2x + 1) = 4x − 36 ⇔ 3x − 9 − 4x − 2 = 4x − 36
-⇔ −x − 11 = 4x − 36 ⇔ −5x = −25 ⇔ x = 5. -/
+⇔ −x − 11 = 4x − 36 ⇔ −5x = −25 ⇔ x = 5.
+trditev: MAT-SS-1/linearne-enacbe#naloga1
+besedilo: »Uredimo: $-5x = -25$, zato je $x = 5$.« -/
 theorem naloga1 (x : ℝ) : (x - 3) / 4 - (2 * x + 1) / 6 = x / 3 - 3 ↔ x = 5 := by
   calc (x - 3) / 4 - (2 * x + 1) / 6 = x / 3 - 3 ↔ 3 * (x - 3) - 2 * (2 * x + 1) = 4 * x - 36 :=
         iff_of_mul (k := 12) (by norm_num) (by ring)
@@ -210,24 +258,32 @@ theorem naloga1 (x : ℝ) : (x - 3) / 4 - (2 * x + 1) / 6 = x / 3 - 3 ↔ x = 5 
     _ ↔ -5 * x = -25 := iff_of_sub (by ring)
     _ ↔ x = 5 := iff_of_mul (k := -1 / 5) (by norm_num) (by ring)
 
-/-- Naloga 1, preizkus: 2/4 − 11/6 = 3/6 − 11/6 = −4/3 in 5/3 − 3 = −4/3. -/
+/-- Naloga 1, preizkus: 2/4 − 11/6 = 3/6 − 11/6 = −4/3 in 5/3 − 3 = −4/3.
+trditev: MAT-SS-1/linearne-enacbe#naloga1-preizkus
+besedilo: »leva stran je $\dfrac{2}{4} - \dfrac{11}{6} = \dfrac{3}{6} - \dfrac{11}{6} = -\dfrac{4}{3}$, desna stran $\dfrac{5}{3} - 3 = -\dfrac{4}{3}$« -/
 theorem naloga1_preizkus : ((5 - 3) / 4 - (2 * 5 + 1) / 6 : ℝ) = 2 / 4 - 11 / 6 ∧
     (2 / 4 - 11 / 6 : ℝ) = 3 / 6 - 11 / 6 ∧ (3 / 6 - 11 / 6 : ℝ) = -4 / 3 ∧ (5 / 3 - 3 : ℝ) = -4 / 3 := by
   norm_num
 
 /-- Naloga 2 a): 8,40 + 0,035x = 5,20 + 0,06x ⇔ 8,40 − 5,20 = 0,06x − 0,035x ⇔ 3,20 = 0,025x ⇔ x = 128
-(3,20/0,025 = 3200/25 = 128). -/
+(3,20/0,025 = 3200/25 = 128).
+trditev: MAT-SS-1/linearne-enacbe#naloga2a
+besedilo: »računa sta enaka pri $128$ minutah klicev« -/
 theorem naloga2a (x : ℝ) : (8.40 + 0.035 * x = 5.20 + 0.06 * x ↔ 3.20 = 0.025 * x) ∧
     (3.20 = 0.025 * x ↔ x = 128) ∧ (3.20 / 0.025 : ℝ) = 3200 / 25 ∧ (3200 / 25 : ℝ) = 128 := by
   refine ⟨?_, ?_, by norm_num, by norm_num⟩
   · constructor <;> intro h <;> norm_num at h ⊢ <;> linarith
   · constructor <;> intro h <;> norm_num at h ⊢ <;> linarith
 
-/-- Naloga 2 b): 8,40 + 0,035·128 = 8,40 + 4,48 = 12,88 € in 5,20 + 0,06·128 = 5,20 + 7,68 = 12,88 €. -/
+/-- Naloga 2 b): 8,40 + 0,035·128 = 8,40 + 4,48 = 12,88 € in 5,20 + 0,06·128 = 5,20 + 7,68 = 12,88 €.
+trditev: MAT-SS-1/linearne-enacbe#naloga2b
+besedilo: »$8{,}40 + 0{,}035 \cdot 128 = 8{,}40 + 4{,}48 = 12{,}88\,\text{€}$. Preizkus pri operaterju B: $5{,}20 + 0{,}06 \cdot 128 = 5{,}20 + 7{,}68 = 12{,}88$.« -/
 theorem naloga2b : (8.40 + 0.035 * 128 : ℝ) = 8.40 + 4.48 ∧ (8.40 + 4.48 : ℝ) = 12.88 ∧
     (5.20 + 0.06 * 128 : ℝ) = 5.20 + 7.68 ∧ (5.20 + 7.68 : ℝ) = 12.88 := by norm_num
 
-/-- Naloga 2 c): 8,40 + 0,035x = 17,85 ⇔ 0,035x = 9,45 ⇔ x = 270 (9,45/0,035 = 9450/35 = 270). -/
+/-- Naloga 2 c): 8,40 + 0,035x = 17,85 ⇔ 0,035x = 9,45 ⇔ x = 270 (9,45/0,035 = 9450/35 = 270).
+trditev: MAT-SS-1/linearne-enacbe#naloga2c
+besedilo: »v tem mesecu je bilo $270$ minut klicev« -/
 theorem naloga2c (x : ℝ) : (8.40 + 0.035 * x = 17.85 ↔ 0.035 * x = 9.45) ∧ (0.035 * x = 9.45 ↔ x = 270) ∧
     (9.45 / 0.035 : ℝ) = 9450 / 35 ∧ (9450 / 35 : ℝ) = 270 := by
   refine ⟨?_, ?_, by norm_num, by norm_num⟩
@@ -237,7 +293,9 @@ theorem naloga2c (x : ℝ) : (8.40 + 0.035 * x = 17.85 ↔ 0.035 * x = 9.45) ∧
 /-- Naloga 3: enačba (mx + 2)/2 − (m + 3)/3 = (4 − x)/2 − m/3. -/
 def E (m x : ℝ) : Prop := (m * x + 2) / 2 - (m + 3) / 3 = (4 - x) / 2 - m / 3
 
-/-- Naloga 3 a): pri m = 3 je enačba (3x + 2)/2 − 2 = (4 − x)/2 − 1 ⇔ 3x + 2 − 4 = 4 − x − 2 ⇔ 4x = 4 ⇔ x = 1. -/
+/-- Naloga 3 a): pri m = 3 je enačba (3x + 2)/2 − 2 = (4 − x)/2 − 1 ⇔ 3x + 2 − 4 = 4 − x − 2 ⇔ 4x = 4 ⇔ x = 1.
+trditev: MAT-SS-1/linearne-enacbe#naloga3a
+besedilo: »Pomnožimo z $2$: $3x + 2 - 4 = 4 - x - 2$, torej $4x = 4$ in $x = 1$.« -/
 theorem naloga3a (x : ℝ) : (E 3 x ↔ (3 * x + 2) / 2 - 2 = (4 - x) / 2 - 1) ∧
     ((3 * x + 2) / 2 - 2 = (4 - x) / 2 - 1 ↔ x = 1) := by
   refine ⟨by unfold E; norm_num, ?_⟩
@@ -247,7 +305,9 @@ theorem naloga3a (x : ℝ) : (E 3 x ↔ (3 * x + 2) / 2 - 2 = (4 - x) / 2 - 1) �
     _ ↔ x = 1 := by constructor <;> intro h <;> linarith
 
 /-- Naloga 3 b): E ⇔ 3(mx + 2) − 2(m + 3) = 3(4 − x) − 2m ⇔ 3mx + 6 − 2m − 6 = 12 − 3x − 2m ⇔ 3mx + 3x = 12
-⇔ 3(m + 1)x = 12 ⇔ (m + 1)x = 4. -/
+⇔ 3(m + 1)x = 12 ⇔ (m + 1)x = 4.
+trditev: MAT-SS-1/linearne-enacbe#naloga3b-oblika
+besedilo: »$3mx + 3x = 12$, torej $3(m + 1)x = 12$ in $(m + 1)x = 4$« -/
 theorem naloga3b_oblika (m x : ℝ) : E m x ↔ (m + 1) * x = 4 := by
   unfold E
   calc (m * x + 2) / 2 - (m + 3) / 3 = (4 - x) / 2 - m / 3
@@ -257,7 +317,9 @@ theorem naloga3b_oblika (m x : ℝ) : E m x ↔ (m + 1) * x = 4 := by
     _ ↔ 3 * (m + 1) * x = 12 := iff_of_sub (by ring)
     _ ↔ (m + 1) * x = 4 := iff_of_mul (k := 1 / 3) (by norm_num) (by ring)
 
-/-- Naloga 3 b): za m ≠ −1 je rešitev natanko x = 4/(m + 1) (pri m = 3: 4/4 = 1), za m = −1 rešitve ni. -/
+/-- Naloga 3 b): za m ≠ −1 je rešitev natanko x = 4/(m + 1) (pri m = 3: 4/4 = 1), za m = −1 rešitve ni.
+trditev: MAT-SS-1/linearne-enacbe#naloga3b
+besedilo: »za $m \neq -1$ je $x = \dfrac{4}{m + 1}$, za $m = -1$ enačba nima rešitve« -/
 theorem naloga3b (m : ℝ) : (m ≠ -1 → ∀ x, (E m x ↔ x = 4 / (m + 1))) ∧ (m = -1 → ∀ x, ¬ E m x) ∧
     (4 / (3 + 1) : ℝ) = 1 := by
   refine ⟨fun hm x => ?_, fun hm x => ?_, by norm_num⟩
@@ -265,7 +327,9 @@ theorem naloga3b (m : ℝ) : (m ≠ -1 → ∀ x, (E m x ↔ x = 4 / (m + 1))) �
     rw [naloga3b_oblika]; exact (ax_b (m + 1) 4).1 h x
   · rw [naloga3b_oblika, hm]; norm_num
 
-/-- Naloga 3 c): enačba ima negativno rešitev natanko tedaj, ko je m < −1. -/
+/-- Naloga 3 c): enačba ima negativno rešitev natanko tedaj, ko je m < −1.
+trditev: MAT-SS-1/linearne-enacbe#naloga3c
+besedilo: »za $m < -1$, torej $m \in (-\infty, -1)$« -/
 theorem naloga3c (m : ℝ) : (∃ x, E m x ∧ x < 0) ↔ m < -1 := by
   constructor
   · rintro ⟨x, hx, hneg⟩
@@ -279,7 +343,9 @@ theorem naloga3c (m : ℝ) : (∃ x, E m x ∧ x < 0) ↔ m < -1 := by
     exact div_neg_of_pos_of_neg (by norm_num) (by linarith)
 
 /-- Naloga 3 d): za celi m ima enačba celo rešitev natanko pri m ∈ {−5, −3, −2, 0, 1, 3} (m + 1 deli 4); rešitve
-so po vrsti −1, −2, −4, 4, 2, 1. -/
+so po vrsti −1, −2, −4, 4, 2, 1.
+trditev: MAT-SS-1/linearne-enacbe#naloga3d
+besedilo: »Torej je $m \in \{-5, -3, -2, 0, 1, 3\}$« -/
 theorem naloga3d (m : ℤ) : (∃ k : ℤ, E m k) ↔ m ∈ ({-5, -3, -2, 0, 1, 3} : Finset ℤ) := by
   constructor
   · rintro ⟨k, hk⟩
@@ -303,12 +369,16 @@ theorem naloga3d (m : ℤ) : (∃ k : ℤ, E m k) ↔ m ∈ ({-5, -3, -2, 0, 1, 
 
 /-! ## Ustna vprašanja in Drugače -/
 
-/-- Ustno vprašanje 1: 2x + 3 = 11 ⇔ x = 4. -/
+/-- Ustno vprašanje 1: 2x + 3 = 11 ⇔ x = 4.
+trditev: MAT-SS-1/linearne-enacbe#ustno1
+besedilo: »iščemo vrednosti, pri katerih enačba velja, tu je to $x = 4$« -/
 theorem ustno1 (x : ℝ) : 2 * x + 3 = 11 ↔ x = 4 := by
   constructor <;> intro h <;> linarith
 
 /-- Ustno vprašanje 3: (m² − 1)x = m − 1, m² − 1 = (m − 1)(m + 1); za m ≠ ±1 je rešitev natanko x = 1/(m + 1), pri
-m = 1 vsak x, pri m = −1 nobena (0·x = −2). -/
+m = 1 vsak x, pri m = −1 nobena (0·x = −2).
+trditev: MAT-SS-1/linearne-enacbe#ustno3
+besedilo: »Za $m \neq 1$ in $m \neq -1$ smemo deliti in dobimo $x = \dfrac{1}{m + 1}$.« -/
 theorem ustno3 (m : ℝ) : m ^ 2 - 1 = (m - 1) * (m + 1) ∧
     (m ≠ 1 → m ≠ -1 → ∀ x, ((m ^ 2 - 1) * x = m - 1 ↔ x = 1 / (m + 1))) ∧
     (m = 1 → ∀ x, (m ^ 2 - 1) * x = m - 1) ∧ (m = -1 → ∀ x, (m ^ 2 - 1) * x ≠ m - 1) := by
@@ -321,7 +391,8 @@ theorem ustno3 (m : ℝ) : m ^ 2 - 1 = (m - 1) * (m + 1) ∧
 /-- Predpostavki `ustno3` (m ≠ ±1) se dajo izpolniti (m = 0). -/
 example : ((0 : ℝ) ^ 2 - 1) * (1 / (0 + 1)) = 0 - 1 := (((ustno3 0).2.1 (by norm_num) (by norm_num)) _).mpr rfl
 
-/-- RACUN: (m − 1)/(m² − 1) = 1/(m + 1) za m ≠ ±1. -/
+/-- RACUN: (m − 1)/(m² − 1) = 1/(m + 1) za m ≠ ±1.
+pomozno – vrstica skritega bloka RACUN (ni vidno besedilo) -/
 theorem racun_ulomek (m : ℝ) (h1 : m ≠ 1) (h2 : m ≠ -1) : (m - 1) / (m ^ 2 - 1) = 1 / (m + 1) := by
   have a1 : m - 1 ≠ 0 := sub_ne_zero.mpr h1
   have a2 : m + 1 ≠ 0 := fun h => h2 (by linarith)
@@ -330,13 +401,17 @@ theorem racun_ulomek (m : ℝ) (h1 : m ≠ 1) (h2 : m ≠ -1) : (m - 1) / (m ^ 2
 /-- Predpostavki `racun_ulomek` se dajo izpolniti (m = 0). -/
 example : ((0 : ℝ) - 1) / (0 ^ 2 - 1) = 1 / (0 + 1) := racun_ulomek 0 (by norm_num) (by norm_num)
 
-/-- Na sliki: 3x − 1 = 2x + 7 ⇔ x = 8, kjer imata premici vrednost 23; 2x − 4 = 0 ⇔ x = 2 (ničla, točka (2, 0)). -/
+/-- Na sliki: 3x − 1 = 2x + 7 ⇔ x = 8, kjer imata premici vrednost 23; 2x − 4 = 0 ⇔ x = 2 (ničla, točka (2, 0)).
+trditev: MAT-SS-1/linearne-enacbe#na-sliki
+besedilo: »Takrat imata obe premici vrednost $y = 3 \cdot 8 - 1 = 23$ in $y = 2 \cdot 8 + 7 = 23$.« -/
 theorem na_sliki (x : ℝ) : (3 * x - 1 = 2 * x + 7 ↔ x = 8) ∧ (3 * 8 - 1 : ℝ) = 23 ∧ (2 * 8 + 7 : ℝ) = 23 ∧
     (2 * x - 4 = 0 ↔ x = 2) := by
   refine ⟨by constructor <;> intro h <;> linarith, by norm_num, by norm_num, by constructor <;> intro h <;> linarith⟩
 
 /-- Na sliki: premici y = a₁x + b₁ in y = a₂x + b₂: pri a₁ ≠ a₂ se sekata v natanko eni točki, pri a₁ = a₂,
-b₁ ≠ b₂ se ne sekata, pri a₁ = a₂, b₁ = b₂ se prekrivata. -/
+b₁ ≠ b₂ se ne sekata, pri a₁ = a₂, b₁ = b₂ se prekrivata.
+trditev: MAT-SS-1/linearne-enacbe#premici
+besedilo: »Če sta premici vzporedni in različni, se ne sekata (ni rešitve). Če sta isti premici, se prekrivata povsod (neskončno rešitev). V ostalih primerih se sekata v eni točki.« -/
 theorem premici (a₁ b₁ a₂ b₂ : ℝ) :
     (a₁ ≠ a₂ → ∃! x : ℝ, a₁ * x + b₁ = a₂ * x + b₂) ∧ (a₁ = a₂ → b₁ ≠ b₂ → ∀ x, a₁ * x + b₁ ≠ a₂ * x + b₂) ∧
     (a₁ = a₂ → b₁ = b₂ → ∀ x, a₁ * x + b₁ = a₂ * x + b₂) := by
@@ -350,7 +425,9 @@ theorem premici (a₁ b₁ a₂ b₂ : ℝ) :
 example : ∃! x : ℝ, 3 * x + -1 = 2 * x + 7 := (premici 3 (-1) 2 7).1 (by norm_num)
 
 /-- Kot zgodba: 900 − 200 − 100 = 600, 600/4 = 150; 4x + 300 = 900 ⇔ 4x = 600 ⇔ x = 150;
-4x + p + 100 = 900 ⇔ x = (800 − p)/4; pri p = 800 je x = 0. -/
+4x + p + 100 = 900 ⇔ x = (800 − p)/4; pri p = 800 je x = 0.
+trditev: MAT-SS-1/linearne-enacbe#zgodba
+besedilo: »Potem je $4x + p + 100 = 900$ in $x = \dfrac{800 - p}{4}$.« -/
 theorem zgodba (x p : ℝ) : (900 - 200 - 100 : ℝ) = 600 ∧ (600 / 4 : ℝ) = 150 ∧
     (4 * x + 300 = 900 ↔ 4 * x = 600) ∧ (4 * x = 600 ↔ x = 150) ∧
     (4 * x + p + 100 = 900 ↔ x = (800 - p) / 4) ∧ ((800 : ℝ) - 800) / 4 = 0 := by
@@ -358,7 +435,9 @@ theorem zgodba (x p : ℝ) : (900 - 200 - 100 : ℝ) = 600 ∧ (600 / 4 : ℝ) =
   rw [eq_div_iff (by norm_num)]; constructor <;> intro h <;> linarith
 
 /-- Korak za korakom: (2x − 1)/4 = (x + 2)/3 ⇔ 12·(2x − 1)/4 = 12·(x + 2)/3 ⇔ 3(2x − 1) = 4(x + 2) ⇔ 6x − 3 = 4x + 8
-⇔ 6x − 4x = 8 + 3 ⇔ 2x = 11 ⇔ x = 11/2 = 5,5. -/
+⇔ 6x − 4x = 8 + 3 ⇔ 2x = 11 ⇔ x = 11/2 = 5,5.
+trditev: MAT-SS-1/linearne-enacbe#korak
+besedilo: »| 6 | Delimo z $2$. | $x = \dfrac{11}{2} = 5{,}5$ |« -/
 theorem korak (x : ℝ) : (2 * x - 1) / 4 = (x + 2) / 3 ↔ x = 5.5 := by
   calc (2 * x - 1) / 4 = (x + 2) / 3 ↔ 12 * ((2 * x - 1) / 4) = 12 * ((x + 2) / 3) :=
         iff_of_mul (k := 12) (by norm_num) (by ring)
@@ -369,14 +448,18 @@ theorem korak (x : ℝ) : (2 * x - 1) / 4 = (x + 2) / 3 ↔ x = 5.5 := by
     _ ↔ x = 11 / 2 := by constructor <;> intro h <;> linarith
     _ ↔ x = 5.5 := by norm_num
 
-/-- Korak za korakom, preizkus: (2·5,5 − 1)/4 = 10/4 = 2,5 in (5,5 + 2)/3 = 7,5/3 = 2,5. -/
+/-- Korak za korakom, preizkus: (2·5,5 − 1)/4 = 10/4 = 2,5 in (5,5 + 2)/3 = 7,5/3 = 2,5.
+trditev: MAT-SS-1/linearne-enacbe#korak-preizkus
+besedilo: »leva stran je $\dfrac{2 \cdot 5{,}5 - 1}{4} = \dfrac{10}{4} = 2{,}5$, desna stran je $\dfrac{5{,}5 + 2}{3} = \dfrac{7{,}5}{3} = 2{,}5$« -/
 theorem korak_preizkus : ((2 * 5.5 - 1) / 4 : ℝ) = 10 / 4 ∧ (10 / 4 : ℝ) = 2.5 ∧ ((5.5 + 2) / 3 : ℝ) = 7.5 / 3 ∧
     (7.5 / 3 : ℝ) = 2.5 := by norm_num
 
 /-! ## Preveri se -/
 
 /-- Preveri se 1: 5·4 − 2 = 18; 5x − 2 = 33 ⇔ x = 7; napačna 163 = 5·33 − 2 in 6,2 (iz 5x = 33 − 2, ki ima rešitev
-31/5) nista rešitvi. -/
+31/5) nista rešitvi.
+trditev: MAT-SS-1/linearne-enacbe#preveri1
+besedilo: »Prištejemo $2$: $5x = 35$, torej $x = 7$.« -/
 theorem preveri1 (x : ℝ) : (5 * 4 - 2 : ℝ) = 18 ∧ (5 * x - 2 = 33 ↔ x = 7) ∧ (5 * 33 - 2 : ℝ) = 163 ∧
     (5 * x = 33 - 2 ↔ x = 31 / 5) ∧ (31 / 5 : ℝ) = 6.2 ∧ (5 * 163 - 2 : ℝ) ≠ 33 ∧ (5 * 6.2 - 2 : ℝ) ≠ 33 := by
   refine ⟨by norm_num, by constructor <;> intro h <;> linarith, by norm_num, ?_, by norm_num, by norm_num,
@@ -384,7 +467,9 @@ theorem preveri1 (x : ℝ) : (5 * 4 - 2 : ℝ) = 18 ∧ (5 * x - 2 = 33 ↔ x = 
   rw [eq_div_iff (by norm_num)]; constructor <;> intro h <;> linarith
 
 /-- Preveri se 4: ax − 2 = 4 + 2x ⇔ (a − 2)x = 6; enačba nima rešitve natanko pri a = 2; pri a ≠ 2 je
-x = 6/(a − 2) (pri a = 0 je x = −3). -/
+x = 6/(a − 2) (pri a = 0 je x = −3).
+trditev: MAT-SS-1/linearne-enacbe#preveri4
+besedilo: »Za $a = 2$ dobimo $0 \cdot x = 6$, kar nikoli ne velja. Za vsak drug $a$ je rešitev $x = \dfrac{6}{a-2}$.« -/
 theorem preveri4 (a : ℝ) : (∀ x, (a * x - 2 = 4 + 2 * x ↔ (a - 2) * x = 6)) ∧
     ((¬ ∃ x, a * x - 2 = 4 + 2 * x) ↔ a = 2) ∧ (a ≠ 2 → ∀ x, (a * x - 2 = 4 + 2 * x ↔ x = 6 / (a - 2))) ∧
     (0 : ℝ) * (-3) - 2 = 4 + 2 * (-3) := by
@@ -398,13 +483,17 @@ theorem preveri4 (a : ℝ) : (∀ x, (a * x - 2 = 4 + 2 * x ↔ (a - 2) * x = 6)
     rw [h1, ha] at hx; norm_num at hx
 
 /-- Preveri se 5: 4x + 248 = 1052 ⇔ 4x = 804 ⇔ x = 201 ≈ 200 (|201 − 200| ≤ 1); 1052/4 = 263,
-(1052 + 248)/4 = 325, 1052 − 248 = 804. -/
+(1052 + 248)/4 = 325, 1052 − 248 = 804.
+trditev: MAT-SS-1/linearne-enacbe#preveri5
+besedilo: »Enačba $4x + 248 = 1052$ da $4x = 804$ in $x = 201$.« -/
 theorem preveri5 (x : ℝ) : (4 * x + 248 = 1052 ↔ 4 * x = 804) ∧ (4 * x = 804 ↔ x = 201) ∧
     |(201 : ℝ) - 200| ≤ 1 ∧ (1052 / 4 : ℝ) = 263 ∧ ((1052 + 248) / 4 : ℝ) = 325 ∧ (1052 - 248 : ℝ) = 804 := by
   refine ⟨iff_of_sub (by ring), by constructor <;> intro h <;> linarith, by norm_num [abs_of_pos],
     by norm_num, by norm_num, by norm_num⟩
 
-/-- Preveri se 6 (in Bolj natančno): pri a ≠ 1 je x = 1 rešitev (a − 1)x = a − 1, pri a = 1 je rešitev vsak x. -/
+/-- Preveri se 6 (in Bolj natančno): pri a ≠ 1 je x = 1 rešitev (a − 1)x = a − 1, pri a = 1 je rešitev vsak x.
+trditev: MAT-SS-1/linearne-enacbe#preveri6
+besedilo: »Za $a \ne 1$ je $x = 1$ res rešitev.« -/
 theorem preveri6 (a : ℝ) : (a - 1) * 1 = a - 1 ∧ (a = 1 → ∀ x, (a - 1) * x = a - 1) :=
   ⟨mul_one _, fun h x => by rw [h]; ring⟩
 
@@ -412,7 +501,8 @@ theorem preveri6 (a : ℝ) : (a - 1) * 1 = a - 1 ∧ (a = 1 → ∀ x, (a - 1) *
 
 /-- Blok RACUN: resi vrstice so v `naloga1`, `naloga2a`, `naloga2c`, `naloga3a`, `naloga3b`, `ustno1`, `jajca`,
 `deljenje_z_2`, `preveri1`, `napaka_ulomki`; neenacba m + 1 < 0 ⇔ m < −1; resi pri m = −1 (brez rešitve); enako in
-vrednost vrstice tu. -/
+vrednost vrstice tu.
+pomozno – zbir vrstic skritega bloka RACUN (ni vidno besedilo) -/
 theorem racun :
     (∀ x : ℝ, 3*(x-3)-2*(2*x+1) = 4*x-36 ↔ x = 5) ∧ ((2:ℝ)/4-11/6 = -4/3) ∧ ((5:ℝ)/3-3 = -4/3) ∧
     ((8.4:ℝ)+0.035*128 = 12.88) ∧ ((5.2:ℝ)+0.06*128 = 12.88) ∧
