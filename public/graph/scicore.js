@@ -30,7 +30,7 @@ export function prepare(text, { comma = true, names = null } = {}) {
   // Isto pravilo kot grafični kalkulator in preverjanje odgovorov (numberText v math.js).
   // Znanstveni zapis, ∫(f; a; b) in manjkajoči zaklepaji: skupna priprava z grafičnim kalkulatorjem (calcText).
   let s = String(text ?? "").trim().replace(/(?<![A-Za-z])Ans(?![A-Za-z])/g, ANS);
-  s = calcText(s, { comma, names, close: true });
+  s = calcText(s, { comma, names, close: true, freeInt: true }); // ∫(sin(t); 0; x) je po t (AUDIT-085)
   s = s.replace(DMS_RUN, (m) => `(${m.replace(/([°′])\s*(?=\d)/g, "$1+")})`);
   // ′ in ″ sta minuta in sekunda le za številom; f′(2) in (x³)′ ostaneta odvod (math.js ′ → ')
   // Enota se veže na število ali črko tik pred njo, močneje kot funkcija, potenca in deljenje (kot ° v grafičnem
@@ -167,11 +167,13 @@ export function integralsOf(node, ctx, scope) {
 const INT_LIVE_MS = 50; // integrali v predogledu med tipkanjem (sicer ga ne pokažemo)
 const INT_MS = 1000; // integrali ob Izračunaj
 const unwrapGrp = (n) => (n?.k === "grp" ? unwrapGrp(n.a) : n);
-const hasIntegral = (node) => {
+// AUDIT-070: tudi integral v telesu uporabniške funkcije (k(x) = ∫(sin(t); 0; x), nato k(1))
+const hasIntegral = (node, funcs = null, depth = 0) => {
   let yes = false;
   walk(node, (n) => {
     if (n.k === "int" && n.lo) yes = true;
     if (n.k === "sum" && unwrapGrp(n.hi)?.k === "const" && unwrapGrp(n.hi).name === "inf") yes = true; // neskončna vrsta: ista pot (ocena napake)
+    if (n.k === "ufn" && depth < 10 && funcs?.[n.f]?.ast && hasIntegral(funcs[n.f].ast, funcs, depth + 1)) yes = true;
   });
   return yes;
 };
@@ -272,7 +274,7 @@ export function evaluate(text, env = {}) {
     if (fv.length) return { error: { code: "missing", info: { names: fv } } };
     // določeni integrali: s časovno mejo in s podatki o vsakem (ne obstaja, ni zanesljiv, ocena napake)
     const rwe = rw(expr);
-    const withInt = hasIntegral(rwe);
+    const withInt = hasIntegral(rwe, line.ctx?.funcs);
     let value;
     let infos = [];
     if (withInt) ({ result: value, infos } = withIntegralBudget(env.live ? INT_LIVE_MS : INT_MS, () => integralTrace(() => run(expr)(scope))));
