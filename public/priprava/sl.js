@@ -155,7 +155,7 @@ export default {
   "pr.quizIntro": "Naloge iz tem testa. Vsako preveri računalnik, ne AI.",
   "pr.quizDone": "Kviz končan",
   "pr.quizScore": "{a} od {b} pravilno v prvem poskusu",
-  "pr.quizChecked": "Vsako nalogo je preveril računalnik korak za korakom, ne AI.",
+  "pr.quizChecked": "Vsak odgovor je preveril računalnik, ne AI.",
   "pr.byTopic": "Po temah",
   "pr.q.ok": "dobro",
   "pr.q.few": "ena naloga",

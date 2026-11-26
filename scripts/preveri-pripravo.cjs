@@ -81,6 +81,26 @@ async function streznik() {
   throw new Error(`strežnik se ni zagnal:\n${log.join("")}`);
 }
 
+// Odgovor naloge iz baze preizkusnega strežnika (tasks.payload.answer): pravilen ali očitno napačen.
+function odgovor(dbPath, id, prav) {
+  const db = new (require("node:sqlite").DatabaseSync)(dbPath, { readOnly: true });
+  try {
+    const a = JSON.parse(db.prepare("SELECT payload FROM tasks WHERE id = ?").get(Number(id))?.payload || "{}").answer || {};
+    if (a.type === "choice") return String(prav ? a.index : a.index === 0 ? 1 : 0);
+    if (a.type === "number") {
+      if (!prav) return "123456";
+      const d = Number.isInteger(a.decimals) ? a.decimals : null;
+      const v = d === null ? String(a.value) : (Math.sign(a.value) * Math.round(Math.abs(a.value) * 10 ** d + 1e-9) / 10 ** d).toFixed(d);
+      return v.replace(".", ",") + (a.unit ? ` ${a.unit}` : "");
+    }
+    if (a.type === "fraction") return prav ? `${a.num}/${a.den}` : "1234/7";
+    if (a.type === "coefficients") return prav ? a.values.join(", ") : a.values.map((v) => v + 1).join(", ");
+    return "0";
+  } finally {
+    db.close();
+  }
+}
+
 const danPlus = (n) => new Date(Date.now() + n * 86400000).toISOString().slice(0, 10);
 
 async function naprava(brskalnik, n) {
@@ -167,6 +187,74 @@ async function naprava(brskalnik, n) {
     izid.dejanj = dejanja.length - 1; // brez koraka 1
     if (izid.doKvizaMs > MEJA_MS) tezave.push(`od zapiskov do kviza ${izid.doKvizaMs} ms (meja ${MEJA_MS})`);
     await posnetek("4-kviz");
+    // Kviz do konca: prve štiri naloge prav, druge narobe (mešan izid po temah); konec kviza s povzetkom in načrtom.
+    const resitve = [];
+    const naloge = [];
+    let zadnja = null;
+    // Klik v kvizu: če okno nove ravni (pride z zamikom) prekrije gumb, ga učenec zapre in klikne znova.
+    const klikKviz = async (loc) => {
+      for (let k = 0; k < 3; k++) {
+        try {
+          return await loc.click({ timeout: 4000 });
+        } catch (e) {
+          if (!(await p.locator(".xp-cele button").isVisible())) throw e;
+          await p.locator(".xp-cele button").click();
+          dejanja.push("zapri okno nove ravni");
+          await p.waitForTimeout(150);
+        }
+      }
+      return loc.click({ timeout: 10000 });
+    };
+    for (let i = 0; i < 60 && !(await p.locator(".pr-konec").count()); i++) {
+      // Okno nove ravni (xp-fx.js) zapre učenec z gumbom »Nadaljuj«.
+      if (await p.locator(".xp-cele button").isVisible()) {
+        await p.locator(".xp-cele button").click();
+        dejanja.push("zapri okno nove ravni");
+        await p.waitForTimeout(150);
+        continue;
+      }
+      if (await p.locator("#fb-next").isVisible()) {
+        await klikKviz(p.locator("#fb-next"));
+        await p.waitForTimeout(150);
+        continue;
+      }
+      const ponovno = await p.locator("#fb-retry").isVisible();
+      if (ponovno) {
+        await klikKviz(p.locator("#fb-retry"));
+        await p.waitForTimeout(150);
+      }
+      const id = await p.locator("#practice .card.task[data-task-id]").first().getAttribute("data-task-id").catch(() => null);
+      // Brez naloge ali naloga je že oddana in čaka na odziv: počakaj.
+      if (!id || (id === zadnja && !ponovno)) {
+        await p.waitForTimeout(200);
+        continue;
+      }
+      if (!naloge.includes(id)) naloge.push(id);
+      const prav = naloge.indexOf(id) < 4;
+      const odg = odgovor(path.join(s.dir, "t.db"), id, prav);
+      const izbira = p.locator("#practice .task .choices .choice");
+      try {
+        if (await izbira.count()) await klikKviz(izbira.nth(Number(odg) || 0));
+        else {
+          await p.fill("#answer", odg, { timeout: 10000 });
+          await klikKviz(p.locator("#practice .answer-row button.primary"));
+        }
+      } catch (e) {
+        throw new Error(`kviz, naloga ${id} (${naloge.length}. naloga): ${e.message.split("\n")[0]}`);
+      }
+      zadnja = id;
+      await p.locator("#feedback .fb:not(.info)").first().waitFor({ timeout: 10000 }).catch(() => {});
+      resitve.push({ id, prav, odg, ok: (await p.locator("#feedback .fb.ok").count()) > 0, fb: ((await p.locator("#feedback").innerText().catch(() => "")) || "").slice(0, 80) });
+    }
+    if (process.env.RAZHROSCI) console.log(JSON.stringify(resitve));
+    await p.locator(".pr-konec [data-pr-nacrt-po] .pr-nacrt-kartica").waitFor({ timeout: 15000 });
+    await p.locator(".pr-konec").scrollIntoViewIfNeeded();
+    // Povzetek kviza mora ustrezati oddanim odgovorom: pravilno v prvem poskusu / vseh nalog.
+    const prvic = naloge.filter((id) => resitve.find((r) => r.id === id)?.ok).length;
+    const povz = (await p.locator(".pr-konec").innerText()).match(/(\d+) od (\d+) pravilno/);
+    if (!povz || +povz[1] !== prvic || +povz[2] !== naloge.length) tezave.push(`povzetek kviza ${povz?.[0] ?? "?"}, oddano ${prvic} od ${naloge.length}`);
+    else dejanja.push(`povzetek kviza ${prvic} od ${naloge.length}`);
+    await posnetek("4b-konec-kviza");
     // Danes.
     await odpri(".pr-mreza");
     await posnetek("5-danes");
@@ -201,7 +289,7 @@ async function naprava(brskalnik, n) {
     if (negIz < neg) tezave.push(`[?] izgubljen: v izvirniku ${neg}, v izsekih ${negIz}`);
     // Na zaslonu »Moji zapiski« in v izseku teme: oznaka [?] je vidna (mark.pr-neg), ko jo izsek ima.
   } catch (e) {
-    tezave.push(`tok se je ustavil: ${e.message.split("\n")[0]}`);
+    tezave.push(`tok se je ustavil: ${e.message.split("\n")[0]}${process.env.RAZHROSCI ? `\n${e.stack}` : ""}`);
     try {
       await posnetek("napaka");
     } catch {}

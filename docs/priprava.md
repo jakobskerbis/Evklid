@@ -230,6 +230,42 @@ hkrati ena razlaga na profil (409). Stiska v izsekih (lokalni zaznavalnik, brez 
 oznako AI, vire (izsek, vir, stran) in navedek. Ključ predpomnilnika zemljevida ima zdaj tudi dolžino in čas izsekov.
 Test: `test/priprava-razlaga.test.js` (model nadomeščen; tudi `napad.md` in stiska).
 
+### PR 7 (vmesnik, 26. 11. 2026)
+
+Po maketah, ki jih je j potrdil 25. 11. (telefon, iPad, računalnik). `public/priprava/priprava.js` je len modul
+(`lenModul` v `public/app.js`, `LENI_MODULI` v `server/app.js`): ni v prvem nalaganju. Stari obrazec »Priprava na test«
+(`#tp-form`) je odstranjen; `showTestPrep()` odpre modul.
+
+Tok: korak 1 test (sklopi z vajo, datum; odstrani v dveh korakih) → korak 2 zapiski (fotografija s kamero, datoteka,
+prilepljeno besedilo; stanje vira, število `[?]`, izbris v dveh korakih, ponovni poskus, meja strani, zasebnost;
+»Nadaljuj brez zapiskov«) → korak 3 teme (kljukice obsega, pokritost, predznanje, datum) → prvi kviz (6 nalog, seja
+`priprava-kviz`, preveri koda) → povzetek po temah in načrt do testa → domača stran priprave (odštevanje, pripravljenost samo
+iz rešenih nalog z razlago, »Danes« z n od N nalog, »Nadaljuj«, naslednji dnevi, teme z napredkom, »Moji zapiski«) →
+tema (razlaga iz zapiskov z navedkom in virom, ki odpre izvirni izsek dobesedno z `[?]`; »Podprto z zapiski« / »Pripravil
+AI«; zastarela razlaga; »Vadi«, »Prebral sem«, lekcija, inštruktor). Razlaga se izriše kot besedilo s KaTeX
+(`public/priprava/izris.js`, `besediloZFormulami`): brez HTML in Markdowna, formula z `[?]` se ne izriše. Nikjer ni
+napovedi ocene; odstotek ni ocena.
+
+Strežnik: `priprave.izkljucene` (seznam id-jev tem, ≤ 200, `PUT …/priprave/:pid` `{ izkljucene }`, napačen vnos 400
+`priprava_teme`, prazen seznam vrne celoten obseg). Izključena tema ni v obsegu, pokritosti, načrtu in kvizu; predznanje se
+računa iz celotnega obsega; vseh tem ni mogoče izključiti (ostane celoten obseg). `GET …/nacrt` vrne še `nalogDanes`
+(tema → današnje rešene naloge) in `potrebnoNalog` (`OPRAVLJENO_NALOG` iz `nacrt.js`) za »n od N nalog«.
+
+Postavitev: telefon en stolpec; od 820 px dva stolpca (desni: teme, zapiski); od 1200 px trije (300 px / 1fr / 380 px).
+Barve samo iz žetonov teme (izjema `#fff` na modri kartici); svetla in temna tema. Prevodi: `public/priprava/sl.js` in
+`public/priprava/i18n/{en,de,hr,it,hu}.json` (samo živi jeziki; drugi padejo na `uiChain`).
+
+Merila in kako se merijo (`node scripts/preveri-pripravo.cjs [--posnetki mapa] [--tema temna] [--naprave …]`, 8 naprav:
+telefon 360, 390, 430; iPad 820 in 1366×1024 ležeče; računalnik 1280, 1440, 1920; preizkusni strežnik z `EVKLID_MOCK`):
+- od zapiskov do prvega kviza ≤ 3 min: izmerjeno ~1 s sistemskega časa in 4 dejanja (prilepi, dodaj, naprej, začni kviz);
+- 0 uganjenih znakov: vsak izsek, ki ga vrne strežnik, je brez oznak `[?]` enak delu prilepljenega besedila, nobena
+  oznaka ne izgine (dodane oznake se štejejo, npr. `x2 [?]`);
+- kviz do konca (4 prav, 2 narobe) in povzetek kviza se ujema z oddanimi odgovori;
+- brez napak strani in konzole, brez odgovorov ≥ 400 (razen pričakovane razlage v preizkusnem načinu), brez
+  vodoravnega drsenja, brez neprevedenih ključev `pr.`; posnetek vsakega zaslona.
+Test: `test/priprava-vmesnik.test.js` (izris dobesedno z `[?]`, pomožne funkcije, prevodi živih jezikov z enakimi
+spremenljivkami, izključene teme prek API, len modul in barve).
+
 ## Testni nabor
 
 `test/fixtures/priprava/` ima besedilne vire in `pricakovano.json` (kaj mora uvoz najti, kaj označiti kot
