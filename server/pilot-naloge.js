@@ -21,6 +21,7 @@ import { ensureKnowledgeTables } from "./zbirke.js";
 import { audit } from "./dnevnik-dostopov.js";
 import { ageOn, ADULT_AGE, SELF_CONSENT_PREFIX, minAgeFromYear } from "./accounts/age.js";
 import { quizState, wtpState, impactReport, mountPilotImpact, block, shownN } from "./pilot-ucinek.js";
+import { pilotMetricsWeekly, PRAG } from "./pilot-meritve.js";
 
 export const SCAN_CONDITIONS = ["light", "dark", "tilted", "handwritten", "printed", "board", "screen", "crumpled", "many", "notation"];
 // Pet delov aplikacije za preizkus; »exams« (NPZ in matura) ima, kdor ima ta zavihek, drugi »3d«.
@@ -372,7 +373,9 @@ export function pilotTasksReport(db) {
   return {
     members,
     minGroup: MIN_GROUP,
-    impact: impactReport(db, MIN_GROUP),
+    // Preizkus znanja in meritve pilota (N-09, N-10): šele od PRAG (5) učencev naprej.
+    impact: impactReport(db, PRAG),
+    meritve: pilotMetricsWeekly(db, { isMember: (id) => !!pilotMember(db, id) }),
     scans,
     features,
     notes: showNotes ? notes : [],
@@ -397,10 +400,39 @@ export function pilotTasksMarkdown(r) {
   const q = r.impact?.quiz;
   const w = r.impact?.wtp;
   if (q) {
-    lines.push(``, `## Preizkus znanja`, ``, `- začetni preizkusi skupaj: ${q.nPre}; povprečje brez stropa ${pc(q.pre)}`, `- oba preizkusa (isti učenci) skupaj: ${q.nPaired}; brez stropa prej ${pc(q.pairedPre)}, po 14 dneh ${pc(q.pairedPost)}, razlika ${q.diff == null ? "–" : `${q.diff >= 0 ? "+" : "−"}${Math.round(Math.abs(q.diff) * 100)} odstotnih točk`}`);
-    const c = q.ceiling;
+    const pp = (d) => (d == null ? "–" : `${d >= 0 ? "+" : "−"}${Math.round(Math.abs(d) * 100)} odstotnih točk`);
+    lines.push(
+      ``,
+      `## Preizkus znanja (matura MAT, ${q.total} nalog, obliki A in B)`,
+      ``,
+      `- začetni preizkusi skupaj: ${q.nPre}; povprečje ${pc(q.pre)}`,
+      `- oba preizkusa (isti učenci) skupaj: ${q.nPaired}; prej ${pc(q.pairedPre)}, po 14 dneh ${pc(q.pairedPost)}, razlika ${pp(q.diff)}${q.ci95 ? ` (95 % interval ${pp(q.ci95[0])} do ${pp(q.ci95[1])})` : ""}`,
+    );
+    if (q.diffBalanced != null) lines.push(`- razlika kot povprečje obeh vrstnih redov (izravna razliko med oblikama): ${pp(q.diffBalanced)}`);
+    lines.push(`- to je napredek udeležencev (vaja v aplikaciji, priprava na maturo, ponovljen preizkus skupaj), brez primerjalne skupine ni učinek samega Evklida; deleži po sklopih so samo opisni`);
+    for (const f of Object.keys(q.byForm || {})) if (q.byForm[f]) lines.push(`- začetni preizkus z obliko ${f}: ${q.byForm[f].n}, povprečje ${pc(q.byForm[f].avg)}`);
+    for (const k of Object.keys(q.byOrder || {})) if (q.byOrder[k]) lines.push(`- vrstni red ${k[0]} nato ${k[1]}: ${q.byOrder[k].n}, prej ${pc(q.byOrder[k].pre)}, po ${pc(q.byOrder[k].post)}, razlika ${pp(q.byOrder[k].diff)}`);
     if (q.allSkip) lines.push(`- preizkusi samo z »Ne vem« (niso v povprečjih): ${q.allSkip}`);
-    if (c) lines.push(`- strop (prvič 6/6, dodatne težje naloge; posebej): ${c.nPre}, oba preizkusa ${c.nPaired}, prej ${pc(c.pairedPre)}, po 14 dneh ${pc(c.pairedPost)}, razlika ${c.diff == null ? "–" : `${c.diff >= 0 ? "+" : "−"}${Math.round(Math.abs(c.diff) * 100)} odstotnih točk`}`);
+    if (q.slots) {
+      lines.push(``, `| Sklop kataloga | Prej | Po |`, `|---|---|---|`);
+      for (const sl of q.slots) lines.push(`| ${sl.sklop} | ${pc(sl.pre)} | ${pc(sl.post)} |`);
+    }
+  }
+  const m = r.meritve;
+  if (m) {
+    lines.push(``, `## Meritve pilota (člani: ${m.n}; tedenski posnetek do ${m.asOf || "–"})`, ``);
+    if (m.few) lines.push(`Premalo članov za prikaz (vsaj ${m.min}).`);
+    else {
+      for (const [k, v] of Object.entries(m.retention)) lines.push(`- vrnitev ${k.slice(1)}. dan in teden po njem: ${v.pct == null ? `– (${v.eligible} upravičenih)` : `${pc(v.pct)} (${v.returned} od ${v.eligible})`}`);
+      const i = m.independence;
+      lines.push(`- samostojnost (pravilno v 1. poskusu brez namiga in inštruktorja): ${i.pct == null ? `– (učencev ${i.students})` : `${pc(i.pct)} (${i.independent} od ${i.tasks} nalog, ${i.students} učencev)`}`);
+      if (m.ai) lines.push(`- strošek AI na učenca na 30 dni: povprečje ${m.ai.eurPerStudentMonth ?? "–"} €, mediana ${m.ai.medianEurPerStudentMonth ?? "–"} € (z AI ${m.ai.users} od ${m.ai.students})`);
+      if (m.errors.length) {
+        lines.push(``, `| Tema | Učencev | Nalog | Napačno v 1. poskusu |`, `|---|---|---|---|`);
+        for (const e of m.errors) lines.push(`| ${e.topic} | ${e.students} | ${e.tasks} | ${pc(e.wrongPct)} |`);
+      }
+      if (m.hiddenTopics) lines.push(``, `Tem z manj kot ${m.min} učenci (niso prikazane): ${m.hiddenTopics}.`);
+    }
   }
   if (w) {
     const dist = (o) => (o ? Object.entries(o).filter(([, n]) => n).map(([k, n]) => `${k} ${n}`).join(", ") || "–" : "–");
@@ -420,7 +452,7 @@ function isImage(dataUrl) {
 }
 
 // ---------- API ----------
-export function mountPilotTasks(app, store, { loadStudent, progress = null, accounts = false, isLocalRequest = () => false, topicFor = () => null, nextTopicFor = () => null, owner = null }) {
+export function mountPilotTasks(app, store, { loadStudent, progress = null, accounts = false, isLocalRequest = () => false, owner = null }) {
   const db = store.db;
   migratePilotTasks(db);
   const isAdmin = (req) => (accounts ? !!req.parent?.is_admin : isLocalRequest(req));
@@ -440,9 +472,6 @@ export function mountPilotTasks(app, store, { loadStudent, progress = null, acco
     member,
     reply,
     reward: (sid, item) => reward(db, progress, sid, item, XP.quiz),
-    topicFor,
-    nextTopicFor,
-    langFor: (sid) => progress?.taskLang?.(sid) || "sl",
     accounts,
     isMember: (id) => !!pilotMember(db, id),
     confirmOwner: owner?.confirmOwner || (async () => false),
