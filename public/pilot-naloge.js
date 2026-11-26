@@ -301,16 +301,16 @@ function surveyCard(s) {
 
 // Preizkus znanja (N-10): 12 nalog iz sklopov kataloga mature MAT na začetku in čez 14 dni vzporedna oblika (druga
 // števila, ista snov). Brez ocene in brez povratne informacije pri
-// posamezni nalogi (meri, ne uči); na koncu število pravilnih. »Ne vem« je vedno na voljo. Po koncu vprašanje »Si pri
-// kateri nalogi uporabil pomoč?« (Da / Ne, enkrat na preizkus; drugi preizkus s pomočjo ni v glavnem izidu pilota).
+// posamezni nalogi (meri, ne uči); na koncu število pravilnih. »Ne vem« je vedno na voljo. Po zadnji nalogi vprašanje
+// »Si pri kateri nalogi uporabil pomoč?« (Da / Ne); preizkus se konča (rezultat, XP) šele z odgovorom.
 function quizCard(s) {
   const q = s.quiz || { pre: {}, post: {} };
   const both = q.pre.done && q.post.done;
-  const ask = ["post", "pre"].find((p) => q[p].done && q[p].askHelp);
+  const ask = ["post", "pre"].find((p) => q[p].askHelp);
   let body;
   if (ask && !quiz?.data?.task) {
     body = `<p id="pn-quiz-help-q">${esc(t("pn.quizHelpQ"))}</p>
-      <div class="pn-actions" role="group" aria-labelledby="pn-quiz-help-q"><button type="button" class="secondary" data-pn="quiz-help" data-phase="${ask}" data-help="no">${esc(t("pn.quizHelpNo"))}</button><button type="button" class="secondary" data-pn="quiz-help" data-phase="${ask}" data-help="yes">${esc(t("pn.quizHelpYes"))}</button></div>`;
+      <div class="pn-actions" role="group" aria-labelledby="pn-quiz-help-q"><button type="button" class="secondary" id="pn-quiz-help-no" data-pn="quiz-help" data-phase="${ask}" data-help="no">${esc(t("pn.quizHelpNo"))}</button><button type="button" class="secondary" data-pn="quiz-help" data-phase="${ask}" data-help="yes">${esc(t("pn.quizHelpYes"))}</button></div>`;
   } else if (quiz?.data?.task) {
     const tk = quiz.data.task;
     // Pri pilotnih nalogah enota ni obvezna (strežnik jo doda, server/pilot-ucinek.js): namig je samo rezultat.
@@ -346,7 +346,7 @@ async function quizSend(answer, skip = false) {
     const r = await D.api(`/api/students/${D.getStudent().id}/pilot/quiz/answer`, { method: "POST", body });
     quiz = r.run?.done ? null : { phase: quiz.phase, data: r.run };
     applied(r, { quiet: true });
-    setTimeout(() => ($("#pn-quiz-in") || $("#pn-quiz .choice") || $("#pn-quiz"))?.focus?.());
+    setTimeout(() => ($("#pn-quiz-in") || $("#pn-quiz .choice") || $("#pn-quiz-help-no"))?.focus?.());
   } catch (e) {
     btns.forEach((b) => (b.disabled = false));
     // Napaka v zapisu (manjka enota, ni število): popravi in oddaj znova; ne šteje kot odgovor.
@@ -361,21 +361,30 @@ async function quizSend(answer, skip = false) {
   }
 }
 
+// Odgovor na vprašanje o pomoči konča preizkus (strežnik shrani rezultat in da XP).
 async function quizHelp(phase, help) {
   const btns = [...document.querySelectorAll('#pn-quiz [data-pn="quiz-help"]')];
   btns.forEach((b) => (b.disabled = true));
   try {
-    await D.api(`/api/students/${D.getStudent().id}/pilot/quiz/help`, { method: "POST", body: { phase, help } });
+    const r = await D.api(`/api/students/${D.getStudent().id}/pilot/quiz/help`, { method: "POST", body: { phase, help } });
+    quiz = null;
+    applied(r, { quiet: true });
   } catch (e) {
-    // 409: odgovor je že shranjen (drug zavihek); stanje se osveži spodaj.
-    if (e?.status !== 409) {
-      btns.forEach((b) => (b.disabled = false));
-      return D.toast(e?.message || t("off.noConnection"));
+    btns.forEach((b) => (b.disabled = false));
+    // 409: preizkus je že končan (drug zavihek): naloži stanje znova.
+    if (e?.status === 409) {
+      quiz = null;
+      return loadPilot({ notices: false });
     }
+    return D.toast(e?.message || t("off.noConnection"));
   }
-  if (st?.quiz?.[phase]) st.quiz[phase].askHelp = false;
-  render();
-  setTimeout(() => $("#pn-quiz")?.focus?.());
+  // Fokus na rezultat (bralnik zaslona ga prebere).
+  setTimeout(() => {
+    const el = $("#pn-quiz .pn-status");
+    if (!el) return;
+    el.tabIndex = -1;
+    el.focus();
+  });
 }
 
 async function startQuiz(phase) {
@@ -387,7 +396,7 @@ async function startQuiz(phase) {
     else D.toast(e?.message || t("off.noConnection"));
   }
   render();
-  setTimeout(() => ($("#pn-quiz-in") || $("#pn-quiz .choice"))?.focus());
+  setTimeout(() => ($("#pn-quiz-in") || $("#pn-quiz .choice") || $("#pn-quiz-help-no"))?.focus());
 }
 
 // Odgovor strežnika: novo stanje, nagrada (toast z XP), osvežitev zvezdic.
@@ -611,10 +620,14 @@ function impactHtml(im, { pc, few }) {
     : "";
   const c = q.concept;
   const ci = (o) => (o.ci95 ? `${pc(o.ci95[0])}–${pc(o.ci95[1])}` : "–");
-  const conceptRow = (key, o) => `<tr><th scope="row">${esc(t(key))}</th><td>${o.n}</td><td>${o.improved}</td><td>${pc(o.share)}</td><td>${ci(o)}</td></tr>`;
+  const conceptRow = (key, o) =>
+    o.hidden
+      ? `<tr><th scope="row">${esc(t(key))}</th><td colspan="5" class="muted">${esc(t("pilot.n.quizHiddenRow", { n: o.candidates }))}</td></tr>`
+      : `<tr><th scope="row">${esc(t(key))}</th><td>${o.candidates}</td><td>${o.n}</td><td>${o.improved}</td><td>${pc(o.share)}</td><td>${ci(o)}</td></tr>`;
   const concept = c
-    ? `<p>${esc(t("pilot.n.quizMain", { n: c.candidates, helped: q.helped }))}</p>
-      <div class="pilot-scroll"><table class="table pilot-table"><thead><tr><th scope="col">${esc(t("pilot.n.quizConcept"))}</th><th scope="col">${esc(t("pilot.n.quizWrongFirst"))}</th><th scope="col">${esc(t("pilot.n.quizRightLater"))}</th><th scope="col">${esc(t("pilot.n.quizShare"))}</th><th scope="col">${esc(t("pilot.n.quizInterval"))}</th></tr></thead>
+    ? `<p>${esc(t("pilot.n.quizMain", { n: c.candidates, gap: c.gapDays ?? "–" }))}</p>
+      <p class="muted small">${esc(t("pilot.n.quizHelped", { n: q.helped, auto: q.helpedAuto, self: q.helpedSelf, pre: q.helpedPre }))}</p>
+      <div class="pilot-scroll"><table class="table pilot-table"><thead><tr><th scope="col">${esc(t("pilot.n.quizConcept"))}</th><th scope="col">${esc(t("pilot.n.quizCandidates"))}</th><th scope="col">${esc(t("pilot.n.quizWrongFirst"))}</th><th scope="col">${esc(t("pilot.n.quizRightLater"))}</th><th scope="col">${esc(t("pilot.n.quizShare"))}</th><th scope="col">${esc(t("pilot.n.quizInterval"))}</th></tr></thead>
       <tbody>${conceptRow("pilot.n.quizPracticed", c.practiced)}${conceptRow("pilot.n.quizNotPracticed", c.notPracticed)}${conceptRow("pilot.n.quizAll", c.all)}</tbody></table></div>
       <p class="muted small">${esc(t("pilot.n.quizConceptNote"))}</p>`
     : "";

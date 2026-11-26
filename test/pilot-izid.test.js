@@ -1,16 +1,18 @@
 // Meritev uspeha pilota do konca (j 26. 11. 2026, pregled pripravljenosti pilota, poseg 3; server/pilot-ucinek.js):
-// - »brez pomoči«: navodilo, vprašanje ob koncu (enkrat, Da/Ne), zapis, ali je kandidat med preizkusom uporabil
-//   inštruktorja ali skener (usage ali sporočilo inštruktorju);
+// - »brez pomoči«: navodilo; po zadnji nalogi vprašanje o pomoči, ki šele konča preizkus (rezultat, XP); zapis, ali je
+//   kandidat med reševanjem (okna do 30 min pred vsakim odgovorom) uporabil inštruktorja, skener ali vaje;
+// - ob koncu drugega preizkusa zapis vadenih mest (vadnica, inštruktor, vaja drugje) med preizkusoma;
 // - poročilo: povabljeni, začeli, končali, pari, odpadli (drugega ni končal 7 dni po odprtju), še čakajo;
-// - glavni izid po konceptu: napačno prvič → pravilno drugič brez pomoči, ločeno vadil / ni vadil, z imenovalcem in
-//   Wilsonovim intervalom; samo iz paketov po 5 (zasebnost), drugi preizkus s pomočjo izločen.
+// - glavni izid po konceptu: napačno prvič → pravilno drugič brez pomoči, ločeno vadil / ni vadil (skupina od 5
+//   kandidatov), imenovalec in Wilsonov interval; paketi po 5 samo iz parov brez pomoči; iz razlike dveh poročil se ne
+//   da razbrati posameznika (pozni odgovor ali izbrisan pogovor ne spremeni zaprtega paketa; pregled 2).
 import test from "node:test";
 import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { exportOtherTables } from "../server/zasebnost.js";
-import { pilotTasksReport, pilotTasksMarkdown } from "../server/pilot-naloge.js";
-import { QUIZ, QUIZ_GAP_DAYS, ODPAD_DAYS, impactReport, wilson, aidedSince } from "../server/pilot-ucinek.js";
+import { pilotTasksReport, pilotTasksMarkdown, XP } from "../server/pilot-naloge.js";
+import { QUIZ, ODPAD_DAYS, HELP_WINDOW_MIN, impactReport, wilson, helpWindows, aidedDuring, practicedSlots } from "../server/pilot-ucinek.js";
 import { PRAG } from "../server/pilot-meritve.js";
 import { rightInput } from "../scripts/pilot-preizkus.js";
 import SL from "../public/i18n/sl.js";
@@ -39,63 +41,107 @@ async function withServer(fn) {
 
 const quizRow = (db, sid, phase) => db.prepare("SELECT * FROM pilot_quiz WHERE student_id = ? AND phase = ?").get(sid, phase);
 
-async function finish(call, db, sid, phase, before = () => {}) {
+// Odgovori na vseh 12 nalog (before(i) pred i-tim odgovorom), ne pa na vprašanje o pomoči.
+async function answerAll(call, db, sid, phase, before = () => {}) {
   await call(`/api/students/${sid}/pilot/quiz`, { method: "POST", body: { phase } });
-  before();
   const row = quizRow(db, sid, phase);
   let out;
   for (let i = 0; i < 12; i++) {
-    const t = QUIZ.forms[row.form][i];
-    out = await call(`/api/students/${sid}/pilot/quiz/answer`, { method: "POST", body: { phase, index: i, answer: rightInput(t) } });
+    before(i);
+    out = await call(`/api/students/${sid}/pilot/quiz/answer`, { method: "POST", body: { phase, index: i, answer: rightInput(QUIZ.forms[row.form][i]) } });
     assert.equal(out.status, 200, JSON.stringify(out.body));
   }
   return out.body;
 }
 
-test("brez pomoči: ob koncu zapis uporabe inštruktorja ali skenerja, vprašanje enkrat (Da/Ne), v izvozu", async () => {
+test("konec preizkusa: vprašanje o pomoči ga konča (rezultat, XP, enkrat), zapis pomoči med reševanjem, izvoz", async () => {
   process.env.EVKLID_PILOT_VSI = "1";
   try {
     await withServer(async ({ call, db }) => {
       const mk = async (name) => (await call("/api/students", { method: "POST", body: { name, settings: { curriculum_level: "4. letnik" } } })).body.id;
-      const a = await mk("Ana");
-      const b = await mk("Bor");
-      const c = await mk("Cene");
-      // Pred koncem: vprašanje o pomoči ni mogoče.
+      const [a, b, c, d] = [await mk("Ana"), await mk("Bor"), await mk("Cene"), await mk("Dan")];
+      // Pred zadnjo nalogo odgovor o pomoči ni mogoč.
       await call(`/api/students/${a}/pilot/quiz`, { method: "POST", body: { phase: "pre" } });
       assert.equal((await call(`/api/students/${a}/pilot/quiz/help`, { method: "POST", body: { phase: "pre", help: "no" } })).status, 409);
       // Uporaba AI pred začetkom preizkusa ne šteje.
       db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd, created_at) VALUES (?, 'x', 'chat', 0, datetime('now', '-1 day'))").run(a);
-      let body = await finish(call, db, a, "pre");
-      assert.equal(body.run.done, true);
+      let body = await answerAll(call, db, a, "pre");
+      assert.equal(body.run.done, false);
       assert.equal(body.run.askHelp, true);
-      assert.equal(body.quiz.pre.askHelp, true, "stanje za zaslon pove, da vprašanje čaka");
-      assert.equal(quizRow(db, a, "pre").aided, 0);
+      assert.equal(body.gained, 0, "XP šele ob koncu");
+      assert.equal(body.quiz.pre.askHelp, true);
+      assert.equal(quizRow(db, a, "pre").finished_at, null);
+      assert.equal(JSON.parse(quizRow(db, a, "pre").times).length, 12, "čas vsakega odgovora");
+      assert.equal((await call(`/api/students/${a}/pilot/quiz/answer`, { method: "POST", body: { phase: "pre", index: 11, skip: true } })).status, 409);
       assert.equal((await call(`/api/students/${a}/pilot/quiz/help`, { method: "POST", body: { phase: "pre", help: "mogoče" } })).status, 400);
       const h = await call(`/api/students/${a}/pilot/quiz/help`, { method: "POST", body: { phase: "pre", help: "no" } });
       assert.equal(h.status, 200);
-      assert.equal(h.body.run.askHelp, false);
-      assert.equal(quizRow(db, a, "pre").help, "no");
+      assert.equal(h.body.gained, XP.quiz);
+      assert.equal(h.body.run.done, true);
+      assert.equal(h.body.run.score, 12);
+      assert.equal(h.body.run.askHelp, undefined);
+      const ra = quizRow(db, a, "pre");
+      assert.deepEqual([ra.help, ra.aided, ra.score, ra.finished_at != null, ra.practiced], ["no", 0, 12, true, null]);
       assert.equal((await call(`/api/students/${a}/pilot/quiz/help`, { method: "POST", body: { phase: "pre", help: "yes" } })).status, 409, "samo enkrat");
       assert.equal(quizRow(db, a, "pre").help, "no");
-      assert.equal((await call(`/api/students/${a}/pilot`)).body.quiz.pre.askHelp, false);
-      // Skener (vrstica v usage) med preizkusom → aided.
-      body = await finish(call, db, b, "pre", () => db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'x', 'skeniranje', 0.01)").run(b));
+      // Skener med reševanjem → aided.
+      await answerAll(call, db, b, "pre", (i) => i === 5 && db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'x', 'skeniranje', 0.01)").run(b));
+      await call(`/api/students/${b}/pilot/quiz/help`, { method: "POST", body: { phase: "pre", help: "no" } });
       assert.equal(quizRow(db, b, "pre").aided, 1);
-      // Sporočilo inštruktorju med preizkusom (tudi brez zapisa porabe) → aided.
-      body = await finish(call, db, c, "pre", () => {
+      // Sporočilo inštruktorju (tudi brez zapisa porabe) → aided.
+      await answerAll(call, db, c, "pre", (i) => {
+        if (i !== 3) return;
         const conv = Number(db.prepare("INSERT INTO conversations (student_id) VALUES (?)").run(c).lastInsertRowid);
         db.prepare("INSERT INTO messages (conversation_id, role, api_content, display_text) VALUES (?, 'user', '\"x\"', 'x')").run(conv);
       });
-      assert.equal(quizRow(db, c, "pre").aided, 1);
-      assert.equal(aidedSince(db, a, "2999-01-01 00:00:00"), false);
-      // Izvoz GDPR vsebuje oba nova podatka.
+      await call(`/api/students/${c}/pilot/quiz/help`, { method: "POST", body: { phase: "pre", help: "yes" } });
+      assert.deepEqual([quizRow(db, c, "pre").aided, quizRow(db, c, "pre").help], [1, "yes"]);
+      // Zapis, ki ni pomoč (npr. urnik, zapiski), ne šteje.
+      await answerAll(call, db, d, "pre", (i) => i === 2 && db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd) VALUES (?, 'x', 'urnik', 0.01)").run(d));
+      await call(`/api/students/${d}/pilot/quiz/help`, { method: "POST", body: { phase: "pre", help: "no" } });
+      assert.equal(quizRow(db, d, "pre").aided, 0);
+      // Izvoz GDPR vsebuje nove podatke.
       const exp = exportOtherTables(db, { studentIds: [a] }).pilot_quiz[0];
-      assert.equal(exp.aided, 0);
-      assert.equal(exp.help, "no");
+      assert.deepEqual([exp.aided, exp.help, JSON.parse(exp.times).length], [0, "no", 12]);
     });
   } finally {
     delete process.env.EVKLID_PILOT_VSI;
   }
+});
+
+test("pomoč samo v oknih pred odgovori: premor sredi preizkusa (teden vaje) ne šteje", () => {
+  const db = openDb(":memory:").db;
+  const sid = Number(db.prepare("INSERT INTO students (name, settings) VALUES ('X', '{}')").run().lastInsertRowid);
+  const times = ["2026-11-10 10:00:00", "2026-11-10 10:02:00", "2026-11-17 18:00:00", "2026-11-17 18:01:00"];
+  const w = helpWindows("2026-11-10 09:59:00", times);
+  assert.deepEqual(w, [
+    ["2026-11-10 09:59:00", "2026-11-10 10:00:00"],
+    ["2026-11-10 10:00:00", "2026-11-10 10:02:00"],
+    ["2026-11-17 17:30:00", "2026-11-17 18:00:00"],
+    ["2026-11-17 18:00:00", "2026-11-17 18:01:00"],
+  ]);
+  assert.equal(HELP_WINDOW_MIN, 30);
+  const use = (at, kind = "chat") => db.prepare("INSERT INTO usage (student_id, model, kind, cost_usd, created_at) VALUES (?, 'x', ?, 0, ?)").run(sid, kind, at);
+  use("2026-11-12 12:00:00"); // med premorom
+  db.prepare("INSERT INTO tasks (student_id, topic_id, level, payload, answered_at) VALUES (?, 'MAT-SS-4/odvod', 1, '{}', '2026-11-14 12:00:00')").run(sid);
+  assert.equal(aidedDuring(db, sid, w), false);
+  db.prepare("INSERT INTO skill_results (student_id, day, source, key, topic_id, n, last_at) VALUES (?, '2026-11-17', 'paper', 'k', 'MAT-SS-4/odvod', 1, '2026-11-17 17:45:00')").run(sid);
+  assert.equal(aidedDuring(db, sid, w), true, "vaja na poli 15 min pred odgovorom");
+});
+
+test("vadena mesta: vadnica (ne uvrstitev), inštruktor in vaja drugje med preizkusoma, samo tema mesta", () => {
+  const db = openDb(":memory:").db;
+  const sid = Number(db.prepare("INSERT INTO students (name, settings) VALUES ('X', '{}')").run().lastInsertRowid);
+  const task = (topic, at, mode = "practice") => db.prepare("INSERT INTO tasks (student_id, topic_id, mode, level, payload, answered_at) VALUES (?, ?, ?, 1, '{}', ?)").run(sid, topic, mode, at);
+  task(QUIZ.slots[0].topic, "2026-11-05 10:00:00");
+  task(QUIZ.slots[1].topic, "2026-11-05 10:00:00", "placement"); // uvrstitev ni vaja
+  task(QUIZ.slots[2].topic, "2026-10-30 10:00:00"); // pred prvim preizkusom
+  task(QUIZ.slots[3].topic, null); // brez odgovora
+  task("MAT-SS-4/uporaba-odvoda", "2026-11-05 10:00:00"); // sosednja tema ne šteje
+  db.prepare("INSERT INTO events (student_id, topic_id, created_at) VALUES (?, ?, '2026-11-06 12:00:00')").run(sid, QUIZ.slots[4].topic);
+  db.prepare("INSERT INTO skill_results (student_id, day, source, key, topic_id, n) VALUES (?, '2026-11-08', 'paper', 'k', ?, 3)").run(sid, QUIZ.slots[10].topic);
+  db.prepare("INSERT INTO skill_results (student_id, day, source, key, topic_id, n) VALUES (?, '2026-11-20', 'paper', 'k2', ?, 3)").run(sid, QUIZ.slots[11].topic); // po začetku drugega
+  assert.deepEqual(practicedSlots(db, sid, "2026-11-01 10:00:00", "2026-11-16 10:00:00"), [0, 4, 10]);
 });
 
 test("Wilsonov interval", () => {
@@ -106,97 +152,122 @@ test("Wilsonov interval", () => {
   assert.deepEqual(wilson(3, 3), [0.438, 1]);
 });
 
-// Poročilo na lokalnih preizkusnih podatkih: povabljeni, začeli, končali, pari, odpadli, čakajo, izid po konceptu.
-test("poročilo: potek pilota in glavni izid po konceptu (vadil / ni vadil), samo iz paketov po 5 in brez pomoči", () => {
+// Lokalni preizkusni podatki: pari s časi, pomočjo in vadenimi mesti, kot jih zapiše konec preizkusa.
+function fixture() {
   const db = openDb(":memory:").db;
   impactReport(db, PRAG); // ustvari tabele
-  const ids = Array.from({ length: 16 }, (_, i) => Number(db.prepare("INSERT INTO students (name, settings) VALUES (?, '{}')").run(`U${i}`).lastInsertRowid));
+  const ids = Array.from({ length: 30 }, (_, i) => Number(db.prepare("INSERT INTO students (name, settings) VALUES (?, '{}')").run(`U${i}`).lastInsertRowid));
   const ans = (right) => JSON.stringify(Array.from({ length: 12 }, (_, i) => (right.includes(i) ? 1 : 0)));
   const row = (sid, phase, form, right, created, finished, extra = {}) =>
     db
-      .prepare("INSERT INTO pilot_quiz (student_id, phase, topic_id, items, answers, score, created_at, finished_at, form, aided, help) VALUES (?, ?, ?, '[]', ?, ?, ?, ?, ?, ?, ?)")
-      .run(sid, phase, QUIZ.version, ans(right), finished ? right.length : null, created, finished, form, extra.aided ?? 0, extra.help ?? null);
+      .prepare("INSERT INTO pilot_quiz (student_id, phase, topic_id, items, answers, score, created_at, finished_at, form, aided, help, practiced) VALUES (?, ?, ?, '[]', ?, ?, ?, ?, ?, ?, ?, ?)")
+      .run(sid, phase, QUIZ.version, ans(right), finished ? right.length : null, created, finished, form, extra.aided ?? 0, extra.help ?? (finished ? "no" : null), extra.practiced ? JSON.stringify(extra.practiced) : null);
+  return { db, ids, row };
+}
+
+test("poročilo: potek pilota, izločeni s pomočjo, glavni izid po konceptu iz paketov po 5 parov brez pomoči", () => {
+  const { db, ids, row } = fixture();
   const now = new Date("2026-11-26T12:00:00Z");
-  // 0–4: A nato B, prej pravilno mesta 0–2, po 14 dneh mesta 0–5. 3 je med drugim uporabil skener, 4 je rekel »Da«.
-  for (let i = 0; i < 5; i++) {
-    row(ids[i], "pre", "A", [0, 1, 2], "2026-11-01 09:00:00", `2026-11-01 10:00:0${i}`);
-    row(ids[i], "post", "B", [0, 1, 2, 3, 4, 5], "2026-11-16 10:00:00", `2026-11-16 10:30:0${i}`, i === 3 ? { aided: 1 } : i === 4 ? { help: "yes" } : { help: "no" });
+  // 0–6: A nato B. Prej pravilno mesta 0–2, po 14 dneh mesta 0–5. 5 je med drugim uporabil skener, 6 je rekel »Da«.
+  // Vadena mesta: 0–4 vsi mesto 3 in 4 (skupina »vadil« ima 5 kandidatov).
+  for (let i = 0; i < 7; i++) {
+    row(ids[i], "pre", "A", [0, 1, 2], "2026-11-01 09:00:00", `2026-11-01 10:00:0${i}`, i === 6 ? { aided: 1 } : {});
+    row(ids[i], "post", "B", [0, 1, 2, 3, 4, 5], "2026-11-16 10:00:00", `2026-11-16 10:30:0${i}`, { practiced: i < 5 ? [3, 4] : [], ...(i === 5 ? { aided: 1 } : i === 6 ? { help: "yes" } : {}) });
   }
-  // Vaja med preizkusoma: 0 naloga vadnice teme mesta 3, 1 korak pri inštruktorju s temo mesta 4; 2 tema mesta 6 še
-  // pred prvim preizkusom (ne šteje), naloga brez odgovora ne šteje.
-  const task = (sid, topic, at) => db.prepare("INSERT INTO tasks (student_id, topic_id, level, payload, answered_at) VALUES (?, ?, 1, '{}', ?)").run(sid, topic, at);
-  task(ids[0], QUIZ.slots[3].topic, "2026-11-05 12:00:00");
-  db.prepare("INSERT INTO events (student_id, topic_id, created_at) VALUES (?, ?, '2026-11-06 12:00:00')").run(ids[1], QUIZ.slots[4].topic);
-  task(ids[2], QUIZ.slots[6].topic, "2026-10-30 12:00:00");
-  task(ids[2], QUIZ.slots[7].topic, null);
-  // 5 je začel in ni končal; 6–10 so končali prvega 1. 11. in drugega niso (odpadli: 25 dni > 14 + 7);
-  // 11–15 so končali prvega 20. 11. (drugi se odpre 4. 12., še čakajo).
-  row(ids[5], "pre", "B", [], "2026-11-02 09:00:00", null);
-  for (let i = 6; i < 11; i++) row(ids[i], "pre", "B", [0], "2026-11-01 09:00:00", `2026-11-01 11:00:0${i - 6}`);
-  for (let i = 11; i < 16; i++) row(ids[i], "pre", "B", [0], "2026-11-20 09:00:00", `2026-11-20 11:00:0${i - 11}`);
+  // 7 začel in ni končal; 8–12 končali prvega 1. 11. brez drugega (odpadli); 13–17 končali prvega 20. 11. (čakajo).
+  row(ids[7], "pre", "B", [], "2026-11-02 09:00:00", null);
+  for (let i = 8; i < 13; i++) row(ids[i], "pre", "B", [0], "2026-11-01 09:00:00", `2026-11-01 11:00:0${i - 8}`);
+  for (let i = 13; i < 18; i++) row(ids[i], "pre", "B", [0], "2026-11-20 09:00:00", `2026-11-20 11:00:0${i - 13}`);
 
   const q = impactReport(db, PRAG, { invited: 20, now }).quiz;
-  assert.equal(q.invited, 20);
-  assert.equal(q.started, 16);
-  assert.equal(q.nPre, 15);
-  assert.equal(q.nPaired, 5);
-  assert.equal(q.dropped, 5);
-  assert.equal(q.waiting, 5);
-  assert.equal(q.dropDays, ODPAD_DAYS);
-  assert.equal(q.helped, 2, "drugi preizkus s pomočjo (skener ali »Da«) ni v glavnem izidu");
-  assert.equal(q.concept.candidates, 3);
-  // 0: mesto 3 vadil (napačno → pravilno), 8 nevadenih napačnih, od tega 2 pravilno (4, 5); 1 enako z mestom 4;
-  // 2: nič vadil (vaja pred prvim preizkusom ne šteje), 9 napačnih, 3 pravilno.
-  assert.deepEqual(q.concept.practiced, { n: 2, improved: 2, share: 1, ci95: wilson(2, 2) });
-  assert.deepEqual(q.concept.notPracticed, { n: 25, improved: 7, share: 0.28, ci95: wilson(7, 25) });
-  assert.deepEqual(q.concept.all, { n: 27, improved: 9, share: 0.333, ci95: [0.186, 0.522] });
-  // Pod pragom: števila kot »< 5«, izid po konceptu šele s paketom parov.
-  const few = impactReport(db, PRAG, { invited: 3, now: new Date("2026-11-21T00:00:00Z") }).quiz;
-  assert.equal(few.invited, "< 5");
-  assert.equal(few.dropped, 0, "pred iztekom roka nihče ni odpadel");
-  assert.equal(few.waiting, 10);
-  db.prepare("DELETE FROM pilot_quiz WHERE student_id = ? AND phase = 'post'").run(ids[0]);
-  const four = impactReport(db, PRAG, { now }).quiz;
-  assert.equal(four.nPaired, "< 5");
-  assert.equal(four.concept, null);
-  assert.equal(four.helped, 0);
-  assert.equal(four.invited, null, "brez podatka o povabljenih");
+  assert.deepEqual([q.invited, q.started, q.nPre, q.nPaired, q.dropped, q.waiting, q.dropDays], [20, 18, 17, 7, 5, 5, ODPAD_DAYS]);
+  assert.equal(q.helped, "< 5", "izločenih 2, pod pragom");
+  assert.equal(q.helpedAuto, "< 5");
+  assert.equal(q.helpedPre, "< 5");
+  // 5 parov brez pomoči tvori en paket: 9 napačnih na kandidata (mesta 3–11), pravilno drugič mesta 3–5.
+  const c = q.concept;
+  assert.equal(c.candidates, 5);
+  assert.equal(c.gapDays, 15);
+  assert.deepEqual(c.practiced, { candidates: 5, n: 10, improved: 10, share: 1, ci95: wilson(10, 10) });
+  assert.deepEqual(c.notPracticed, { candidates: 5, n: 35, improved: 5, share: 0.143, ci95: wilson(5, 35) });
+  assert.deepEqual(c.all, { candidates: 5, n: 45, improved: 15, share: 0.333, ci95: wilson(15, 45) });
+
+  // Pod pragom: števila kot »< 5«, pred iztekom roka nihče ni odpadel.
+  const early = impactReport(db, PRAG, { invited: 3, now: new Date("2026-11-21T00:00:00Z") }).quiz;
+  assert.equal(early.invited, "< 5");
+  assert.equal(early.dropped, 0);
+  assert.equal(early.waiting, 10);
+  assert.equal(impactReport(db, PRAG, { now }).quiz.invited, null, "brez podatka o povabljenih");
+});
+
+test("zasebnost: skupina »vadil« z manj kot 5 kandidati je skrita; delež šele od 10 nalog; zaprt paket se ne spremeni", () => {
+  const { db, ids, row } = fixture();
+  const now = new Date("2026-11-26T12:00:00Z");
+  // 5 parov brez pomoči; vadil samo kandidat 0 (mesto 3).
+  for (let i = 0; i < 5; i++) {
+    row(ids[i], "pre", "A", [0, 1, 2], "2026-11-01 09:00:00", `2026-11-01 10:00:0${i}`);
+    row(ids[i], "post", "B", [0, 1, 2, 3, 4, 5], "2026-11-16 10:00:00", `2026-11-16 10:30:0${i}`, { practiced: i === 0 ? [3] : [] });
+  }
+  let q = impactReport(db, PRAG, { now }).quiz;
+  assert.deepEqual(q.concept.practiced, { hidden: true, candidates: "< 5" }, "en kandidat: skupina skrita");
+  assert.deepEqual(q.concept.notPracticed.candidates, 5);
+  const before = JSON.stringify(q.concept);
+  // Kandidat izbriše pogovor (dogodki) ali kasneje vadi: zapis ob koncu se ne spremeni, poročilo ostane enako.
+  db.prepare("INSERT INTO events (student_id, topic_id, created_at) VALUES (?, ?, '2026-11-10 12:00:00')").run(ids[1], QUIZ.slots[6].topic);
+  db.prepare("DELETE FROM events").run();
+  assert.equal(JSON.stringify(impactReport(db, PRAG, { now }).quiz.concept), before);
+  // Šesti par s pomočjo ne spremeni paketa (paket je samo iz parov brez pomoči); šesti brez pomoči tudi ne (ni cel paket).
+  row(ids[5], "pre", "A", [0], "2026-11-01 09:00:00", "2026-11-01 10:00:09");
+  row(ids[5], "post", "B", [0, 1, 2, 3, 4, 5, 6, 7], "2026-11-16 10:00:00", "2026-11-16 10:31:00", { help: "yes" });
+  row(ids[6], "pre", "A", [0], "2026-11-01 09:00:00", "2026-11-01 10:00:10");
+  row(ids[6], "post", "B", [0, 1, 2, 3, 4, 5, 6, 7], "2026-11-16 10:00:00", "2026-11-16 10:32:00");
+  q = impactReport(db, PRAG, { now }).quiz;
+  assert.equal(JSON.stringify(q.concept), before);
+  // Majhna skupina: delež in interval šele od 10 nalog.
+  const { db: db2, ids: ids2, row: row2 } = fixture();
+  for (let i = 0; i < 5; i++) {
+    row2(ids2[i], "pre", "A", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "2026-11-01 09:00:00", `2026-11-01 10:00:0${i}`);
+    row2(ids2[i], "post", "B", Array.from({ length: 12 }, (_, k) => k), "2026-11-16 10:00:00", `2026-11-16 10:30:0${i}`);
+  }
+  const small = impactReport(db2, PRAG, { now }).quiz.concept.all;
+  assert.deepEqual(small, { candidates: 5, n: 5, improved: 5, share: null, ci95: null });
 });
 
 test("poročilo skrbnika in jutranji povzetek pokažeta potek in izid po konceptu", () => {
   process.env.EVKLID_PILOT_VSI = "1";
   try {
-    const db = openDb(":memory:").db;
-    impactReport(db, PRAG);
-    const ids = Array.from({ length: 5 }, (_, i) => Number(db.prepare("INSERT INTO students (name, settings) VALUES (?, '{}')").run(`U${i}`).lastInsertRowid));
-    const ans = (right) => JSON.stringify(Array.from({ length: 12 }, (_, i) => (right.includes(i) ? 1 : 0)));
-    for (const [i, sid] of ids.entries()) {
-      db.prepare("INSERT INTO pilot_quiz (student_id, phase, topic_id, items, answers, score, created_at, finished_at, form, aided) VALUES (?, 'pre', ?, '[]', ?, 3, datetime('now', '-20 days'), datetime('now', '-20 days', ?), 'A', 0)").run(sid, QUIZ.version, ans([0, 1, 2]), `+${i} seconds`);
-      db.prepare("INSERT INTO pilot_quiz (student_id, phase, topic_id, items, answers, score, created_at, finished_at, form, aided) VALUES (?, 'post', ?, '[]', ?, 4, datetime('now', '-5 days'), datetime('now', '-5 days', ?), 'B', 0)").run(sid, QUIZ.version, ans([0, 1, 2, 3]), `+${i} seconds`);
+    const { db, ids, row } = fixture();
+    for (let i = 0; i < 5; i++) {
+      row(ids[i], "pre", "A", [0, 1, 2], "2026-11-01 09:00:00", `2026-11-01 10:00:0${i}`);
+      row(ids[i], "post", "B", [0, 1, 2, 3], "2026-11-16 10:00:00", `2026-11-16 10:30:0${i}`);
     }
     const r = pilotTasksReport(db);
-    assert.equal(r.impact.quiz.invited, 5, "povabljeni = člani pilota");
+    assert.equal(r.impact.quiz.invited, 30, "povabljeni = člani pilota");
     const md = pilotTasksMarkdown(r);
-    assert.match(md, /potek: povabljeni 5, začeli prvi preizkus 5, končali prvega 5, končali oba 5, odpadli 0 \(drugega niso končali v 7 dneh po odprtju\), še lahko končajo 0/);
-    assert.match(md, /Glavni izid: .*kandidatov: 5, drugi preizkus s pomočjo \(izločeni\): 0\./);
-    assert.match(md, /\| vmes ni vadil \| 45 \| 5 \| 11 % \| 5 %–24 % \|/);
-    assert.match(md, /\| skupaj \| 45 \| 5 \|/);
-    assert.ok(QUIZ_GAP_DAYS === 14);
+    assert.match(md, /potek: povabljeni 30, začeli prvi preizkus 5, končali prvega 5, končali oba 5, odpadli 0 \(drugega niso končali v 7 dneh po odprtju\), še lahko končajo 0/);
+    assert.match(md, /Glavni izid: .*kandidatov: 5, mediana časa med preizkusoma: 15 dni\./);
+    assert.match(md, /Izločeni, ker so imeli pri drugem preizkusu pomoč: 0/);
+    assert.match(md, /\| vmes vadil v Evklidu \| 0 \| premalo kandidatov \|/);
+    assert.match(md, /\| vmes ni vadil \| 5 \| 45 \| 5 \| 11 % \| 5 %–24 % \|/);
   } finally {
     delete process.env.EVKLID_PILOT_VSI;
   }
 });
 
 test("besedila: navodilo »brez pomoči« v živih jezikih, zamrznjeni prevodi brez starega navodila (nadomestni jezik)", () => {
-  assert.match(SL["pn.quizText"], /brez inštruktorja, skenerja in pomoči drugih ljudi/);
-  for (const k of ["pn.quizHelpQ", "pn.quizHelpNo", "pn.quizHelpYes", "pilot.n.quizFunnel", "pilot.n.quizMain", "pilot.n.quizConceptNote"]) assert.ok(SL[k], k);
+  assert.match(SL["pn.quizText"], /brez inštruktorja in skenerja, brez drugih aplikacij in umetne inteligence/);
+  assert.match(SL["pilot.n.quizWrongFirst"], new RegExp(SL["pretest.dontKnow"]), "ime gumba kot v preizkusu");
+  for (const k of ["pn.quizHelpQ", "pn.quizHelpNo", "pn.quizHelpYes", "pilot.n.quizFunnel", "pilot.n.quizMain", "pilot.n.quizHelped", "pilot.n.quizConceptNote"]) assert.ok(SL[k], k);
   const dir = new URL("../public/i18n/ui/", import.meta.url);
   for (const f of fs.readdirSync(dir)) {
     const code = f.replace(/\.json$/, "");
     const d = JSON.parse(fs.readFileSync(new URL(f, dir), "utf8"));
-    if (["en", "de", "hr", "it", "hu"].includes(code)) assert.ok(d["pn.quizHelpQ"] && d["pn.quizText"].split(". ").length > SL["pn.quizText"].split(". ").length - 2, code);
-    else assert.equal(d["pn.quizText"], undefined, `${code}: staro navodilo brez »brez pomoči« ne ostane`);
+    if (["en", "de", "hr", "it", "hu"].includes(code)) {
+      assert.match(d["pn.quizText"], /Photomath, ChatGPT/, code);
+      assert.ok(d["pilot.n.quizWrongFirst"].includes(d["pretest.dontKnow"]), code);
+    } else assert.equal(d["pn.quizText"], undefined, `${code}: staro navodilo brez »brez pomoči« ne ostane`);
   }
   const html = fs.readFileSync(new URL("../public/zasebnost.html", import.meta.url), "utf8");
-  assert.match(html, /ali je med reševanjem uporabil inštruktorja ali skener/);
+  assert.match(html, /čas vsakega odgovora/);
+  assert.match(html, /katere teme nalog je med preizkusoma vadil/);
 });

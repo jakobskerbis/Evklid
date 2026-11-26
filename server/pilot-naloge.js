@@ -415,18 +415,21 @@ export function pilotTasksMarkdown(r) {
     for (const k of Object.keys(q.byOrder || {})) if (q.byOrder[k]) lines.push(`- vrstni red ${k[0]} nato ${k[1]}: ${q.byOrder[k].n}, prej ${pc(q.byOrder[k].pre)}, po ${pc(q.byOrder[k].post)}, razlika ${pp(q.byOrder[k].diff)}`);
     if (q.allSkip) lines.push(`- preizkusi samo z »Ne vem« (niso v povprečjih): ${q.allSkip}`);
     if (q.concept) {
-      const row = (name, o) => `| ${name} | ${o.n} | ${o.improved} | ${pc(o.share)} | ${o.ci95 ? `${pc(o.ci95[0])}–${pc(o.ci95[1])}` : "–"} |`;
+      const c = q.concept;
+      const row = (name, o) =>
+        o.hidden ? `| ${name} | ${o.candidates} | premalo kandidatov | | | |` : `| ${name} | ${o.candidates} | ${o.n} | ${o.improved} | ${pc(o.share)} | ${o.ci95 ? `${pc(o.ci95[0])}–${pc(o.ci95[1])}` : "–"} |`;
       lines.push(
         ``,
-        `Glavni izid: naloge, ki jih je kandidat v prvem preizkusu rešil napačno, in koliko jih je čez 14 dni brez pomoči rešil pravilno (vzporedna naloga istega koncepta); kandidatov: ${q.concept.candidates}, drugi preizkus s pomočjo (izločeni): ${q.helped}.`,
+        `Glavni izid: naloge, ki jih je kandidat v prvem preizkusu rešil napačno ali s »Tega še ne znam«, in koliko jih je drugič brez pomoči rešil pravilno (vzporedna naloga istega koncepta); kandidatov: ${c.candidates}, mediana časa med preizkusoma: ${c.gapDays ?? "–"} dni.`,
+        `Izločeni, ker so imeli pri drugem preizkusu pomoč: ${q.helped} (zaznana pomoč v Evklidu ${q.helpedAuto}, sami povedali ${q.helpedSelf}); s pomočjo pri prvem preizkusu (ostanejo v izidu): ${q.helpedPre}.`,
         ``,
-        `| Koncept | Napačno prvič | Pravilno drugič | Delež | 95 % interval |`,
-        `|---|---|---|---|---|`,
-        row("vmes vadil v Evklidu", q.concept.practiced),
-        row("vmes ni vadil", q.concept.notPracticed),
-        row("skupaj", q.concept.all),
+        `| Skupina konceptov | Kandidatov | Napačno prvič | Pravilno drugič | Delež | 95 % interval |`,
+        `|---|---|---|---|---|---|`,
+        row("vmes vadil v Evklidu", c.practiced),
+        row("vmes ni vadil", c.notPracticed),
+        row("skupaj", c.all),
         ``,
-        `Interval je približen (Wilson): naloge istega kandidata niso neodvisne.`,
+        `Interval je preozek (podcenjuje negotovost), ker naloge istega kandidata niso neodvisne; razlika vadil / ni vadil ni dokaz učinka (kandidat sam izbere, kaj vadi). Skupina se pokaže od ${PRAG} kandidatov, delež in interval od 10 nalog naprej.`,
       );
     }
     if (q.slots) {
