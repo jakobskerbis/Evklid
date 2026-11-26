@@ -131,7 +131,7 @@ export function texPlain(tex) {
  * Znanstveni kalkulator v elementu root.
  * opts: { t, icon, locale(), storageKey(), toast?(msg), openGraph?(exprs), showOnGraph?({ text, env, message, simple }),
  *   stage?() (»OS«, »SS«, »FAKS«), steps?(text, goal), canSteps?(),
- *   recent?() / addRecent?({ text, src }) (skupna zgodovina zavihkov),
+ *   recent?() / addRecent?({ text, src }) / removeRecent?({ text, src }) / clearRecent?() (skupna zgodovina zavihkov),
  *   convert?(value) (»Pretvori enote«: Orodja → pretvornik z vrednostjo; v fiziki in kemiji),
  *   sharedGraph?() ({ vars, funcs } grafičnega kalkulatorja: »Iz grafa: a = 2«) }
  */
@@ -986,18 +986,31 @@ export function createScientific(root, opts) {
     });
   }
 
+  let shownRecent = []; // izidi, ki so trenutno čipi »Nedavno« (× odstrani izbranega)
   function renderVars() {
     const vs = Object.entries(st.vars);
     const fs = Object.entries(st.funcs);
     const rec = (opts.recent?.() || []).filter((r) => r.src !== "sci").slice(0, 4);
     varsBar.hidden = !vs.length && !fs.length && !rec.length;
+    shownRecent = [];
     if (varsBar.hidden) return (varsBar.innerHTML = "");
     const c = comma();
     varsBar.innerHTML =
       (vs.length || fs.length ? `<span class="sc-vars-l">${esc(t("sc.memory"))}</span>` : "") +
       vs.map(([n, v]) => `<button type="button" class="chip sc-var" data-ins="${esc(n)}" title="${esc(t("sc.insert"))}">${texHtml(`${n} = ${formatNumber(v, { mode: "auto", comma: c }).tex}`)}</button>`).join("") +
       fs.map(([n, f]) => `<button type="button" class="chip sc-var" data-ins="${esc(n)}(" title="${esc(t("sc.insert"))}">${esc(`${n}(${f.param}) = ${f.body}`)}</button>`).join("") +
-      (rec.length ? `<span class="sc-vars-l">${esc(t("sc.recent"))}</span>` + rec.map((r) => `<button type="button" class="chip sc-var sc-recent" data-ins="${esc(r.text)}" title="${esc(t("sc.insert"))}" aria-label="${esc(`${t("sc.insert")}: ${r.text} (${srcName(r.src)})`)}"><span class="sc-recent-src">${esc(srcName(r.src))}</span> ${texHtml(r.text.replace(/E(-?\d+)$/, "\\cdot 10^{$1}").replace(/(\d),(\d)/, "$1{,}$2"))}</button>`).join("") : "");
+      (rec.length
+        ? `<span class="sc-vars-l">${esc(t("sc.recent"))}</span>` +
+          rec
+            .map(
+              (r, i) =>
+                `<span class="sc-recent-w"><button type="button" class="chip sc-var sc-recent" data-ins="${esc(r.text)}" title="${esc(t("sc.insert"))}" aria-label="${esc(`${t("sc.insert")}: ${r.text} (${srcName(r.src)})`)}"><span class="sc-recent-src">${esc(srcName(r.src))}</span> ${texHtml(r.text.replace(/E(-?\d+)$/, "\\cdot 10^{$1}").replace(/(\d),(\d)/, "$1{,}$2"))}</button>` +
+                (opts.removeRecent ? `<button type="button" class="ghost sc-recent-x" data-rm="${i}" title="${esc(t("sc.removeRecent", { v: `${r.text} (${srcName(r.src)})` }))}" aria-label="${esc(t("sc.removeRecent", { v: `${r.text} (${srcName(r.src)})` }))}">${icon("x")}</button>` : "") +
+                `</span>`,
+            )
+            .join("")
+        : "");
+    shownRecent = rec;
   }
   // skupna zgodovina zavihkov (opts.recent): izidi iz Orodij, PSE, grafa … kot čipi »Nedavno«
   const srcName = (src) => t({ sci: "sc.modeSci", graph: "sc.modeGraph", tools: "sc.toolsMode", pse: "sc.pseMode", formulas: "sc.formMode" }[src] || "sc.modeSci");
@@ -1119,6 +1132,21 @@ export function createScientific(root, opts) {
     if (!touch) input.focus({ preventScroll: true });
   });
   varsBar.addEventListener("click", (e) => {
+    const x = e.target.closest("[data-rm]");
+    if (x) {
+      // × na čipu »Nedavno«: odstrani samo ta izid; fokus ostane v vrstici (naslednji ×, sicer vnos)
+      const i = +x.dataset.rm;
+      const r = shownRecent[i];
+      if (!r) return;
+      const kb = document.activeElement === x;
+      opts.removeRecent?.({ text: r.text, src: r.src });
+      renderVars();
+      if (!kb) return;
+      const next = varsBar.querySelector(`[data-rm="${i}"]`) || varsBar.querySelector(`[data-rm="${i - 1}"]`);
+      if (next) next.focus(); // vrstica se po potrebi pomakne do njega
+      else if (!touch) input.focus({ preventScroll: true });
+      return;
+    }
     const b = e.target.closest("[data-ins]");
     if (!b) return;
     insert(b.dataset.ins);
@@ -1285,6 +1313,7 @@ export function createScientific(root, opts) {
     st.funcs = {};
     st.ans = 0;
     save();
+    opts.clearRecent?.(); // tudi skupna zgodovina zavihkov (čipi »Nedavno«)
     renderVars();
     renderHistory(false);
   });

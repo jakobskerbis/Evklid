@@ -1057,7 +1057,7 @@ async function openOurs(entry, subjectName, focus = null) {
       focus,
       // Vrnitev iz klepeta (← ali Nazaj) odpre isto polo pri isti nalogi (UX maturanta 5; app.js chatReturnBack).
       onTutor: (task, part) => oursTutor(entry, title, task, part, { view: currentView, open: () => poPaperBusy(() => openOurs(entry, subjectName, paper.tasks.indexOf(task))) }),
-      // Šibke točke: deli z odprto rešitvijo ali oznako »Imam prav« (strežnik vsak del šteje enkrat).
+      // Šibke točke: deli, preverjeni ob koncu pole (»Imam prav«, izbirni odgovor); strežnik vsak del šteje enkrat.
       onChecked: (parts) => api(`/api/students/${state.student.id}/paper-check`, { method: "POST", body: { paper: entry.id, parts } }).catch(() => {}),
     });
   } catch (err) {
