@@ -392,8 +392,11 @@ function derivativeIssue(answer, p) {
   if (prev && (SKIP_LINE.test(prev) || DERIV_SKIP_LINE.test(prev))) return null;
   const rest = String(answer).replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, "").replace(/[\s*_.!:,;]/g, "");
   const bold = /\*\*\s*\$[^$\n]+\$\s*\*\*/.test(lines[fl]);
-  const FINAL = /(?<!\p{L})(?:torej|zato|rezultat\p{L}*|odgovor\p{L}*|končn\p{L}*|skupaj|odvod (?:je|funkcije|naloge)|thus|therefore|hence|result|answer|final|so)(?!\p{L})/iu;
+  const FINAL = /(?<!\p{L})(?:torej|rezultat\p{L}*|odgovor\p{L}*|končn\p{L}*|odvod (?:je|funkcije|naloge)|thus|therefore|hence|result|answer|final)(?!\p{L})/iu;
   if (rest && !bold && !FINAL.test(lines[fl]) && !FINAL.test(prev)) return null;
+  // Za zapisom ne sme biti nič več (»Zdaj še odvod oklepaja.«, »Nato …«); »vmesni/delni rezultat« ni končni (pregled prevzema 8).
+  if (!/^[\s.!*_]*$/.test(tail)) return null;
+  if (/vmesn|deln|partial|so far|(?<!\p{L})ni še(?!\p{L})|not yet/iu.test(`${lines[fl]}\n${prev}`)) return null;
   const judge = (rhs) => sameFn(want, derivFn(rhs));
   if (found.some((f) => f.rhs.map(judge).includes("match"))) return { checked: 1, issue: null };
   // Pravilen odvod kjerkoli v odgovoru (tudi brez »f'(x) =«, v vrstici, ki se preskoči): »f'(x) = 3x^2« je bil delni

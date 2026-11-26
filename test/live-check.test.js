@@ -1314,6 +1314,10 @@ test("pregled prevzema (6): delni korak vodenega odgovora (vprašanje ali namig 
     "Najprej uporabimo potenčno pravilo.\n" + R`$y' = 5(3x+1)^4$`,
     "Potenčno pravilo:\n" + R`$y' = 5(3x+1)^4$` + "\n\nZdaj še odvod oklepaja.",
     "Potenčno pravilo:\n" + R`$y' = 5(3x+1)^4$` + "\n\nTo ni vse.",
+    "Vmesni rezultat: " + R`$y' = 5(3x+1)^4$`,
+    "Torej po potenčnem pravilu:\n" + R`$y' = 5(3x+1)^4$` + "\n\nNato odvod oklepaja.",
+    R`**$y' = 5(3x+1)^4$**` + "\n\nZdaj še odvod oklepaja.",
+    "Poglejva skupaj:\n" + R`$y' = 5(3x+1)^4$`,
   ]) assert.equal(codeFindings(a, presolve(q), q).issue, null, a);
   // končni napačen zapis (cel odgovor, »Torej«, »Odvod je«, krepko) ostane ulovljen
   for (const a of [
@@ -1387,7 +1391,7 @@ test("pregled prevzema 2 (AUDIT-063): opomnik pravila, druga funkcija, pogosta n
     ["Odvajaj $f(x) = x^3 + 1$.", R`$f'(x) = 3x^2 \Rightarrow f'(1) = 3$`],
   ];
   for (const [q, a] of none) assert.equal(codeFindings(a, presolve(q), q).issue, null, a);
-  for (const [q, a] of [["Odvajaj $f(x) = x^2 e^x$.", R`Po produktnem pravilu je torej $f'(x) = 2x e^x$.`], ["Odvajaj $x^3$.", R`$y = x^3$, zato $y' = 2x$.`]]) {
+  for (const [q, a] of [["Odvajaj $f(x) = x^2 e^x$.", R`Po produktnem pravilu je torej $f'(x) = 2x e^x$.`], ["Odvajaj $x^3$.", R`$y = x^3$, torej $y' = 2x$.`]]) {
     assert.ok(codeFindings(a, presolve(q), q).issue, a);
   }
 });
