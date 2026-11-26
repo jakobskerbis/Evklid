@@ -4,6 +4,7 @@
 // funkcije« je f(x)=?, ne splošna oblika (slika s08, ugibanje 1/22).
 import test, { after } from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import { kindOfText, parseIntegral, parseLimit, verifyAi } from "../public/scan/verify.js";
 import { verifyAiFull, READ_PROMPT } from "../server/scan.js";
 import { casAvailable, casStop } from "../server/cas.js";
@@ -39,7 +40,11 @@ test("integral: napačen odgovor je »napačno« (sproži ponovitev), ne glede n
 });
 
 test("branje: predpis funkcije je f(x)=?, ne splošna oblika", () => {
-  assert.match(READ_PROMPT, /"text" is f\(x\)=\? with the function's own name, never a general form such as a\*\(x-p\)\^2\+q/);
+  assert.match(READ_PROMPT, /"text" is its name and variable with =\? \(f\(x\)=\?, g\(x\)=\?, p\(t\)=\?\), never a general form such as a\*\(x-p\)\^2\+q, and "sought" names the form asked for/);
+  assert.match(READ_PROMPT, /A task with a written formula \(izračunaj f\(3\), odvajaj f\(x\)=x\^2/, "zapisana funkcija ostane naloga");
+  // samo iskana neznanka brez podatkov ne gre v lastni reševalnik (bi dal »fx«)
+  const src = fs.readFileSync(new URL("../public/scan/scan.js", import.meta.url), "utf8");
+  assert.match(src, /const samoNeznanka = \/=\\s\*\\\?\\s\*\$\/\.test\(S\.text\);\s*let r = S\.given\.length \|\| samoNeznanka \?/);
 });
 
 cas("SymPy: določeni in nedoločeni integral, limita (tudi v ∞), napačen odgovor z razlogom", async () => {
