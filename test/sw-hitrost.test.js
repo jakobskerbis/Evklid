@@ -225,6 +225,16 @@ test("vstopna stran (N-08b): preverjanje v ozadju ima rok, zataknjeno omrežje g
   assert.equal(konec, "konec", "waitUntil se konča po roku");
 });
 
+// waitUntil se kliče po await (v respondWith): če ga brskalnik tedaj zavrne (InvalidStateError), mora stran vseeno priti.
+test("vstopna stran (N-08b): zavrnjen waitUntil ne pokvari odprtja (shranjena stran pride)", async () => {
+  const sw = loadSw("abc", { served: "abc" });
+  await (await sw.caches.open("evklid-v1-static")).put(`${ORIGIN}/`, new Response("shranjena stran", { headers: { "X-Evklid-App": "abc" } }));
+  const waitUntil = () => {
+    throw new Error("InvalidStateError");
+  };
+  assert.equal(await sw.get("/", "navigate", { waitUntil }), "shranjena stran");
+});
+
 test("vstopna stran (N-08b): kopija druge različice ni takojšnja (čaka omrežje do 1 s)", async () => {
   const sw = loadSw("nova", { served: "nova" });
   const st = await sw.caches.open("evklid-v1-static");

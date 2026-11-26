@@ -298,7 +298,12 @@ async function entryPage(req, onPage, waitUntil) {
   const hit = APP && !outdated ? await cache.match(ENTRY) : null;
   if (!hit || hit.headers.get(STAMP) !== APP) return networkFirst(req, STATIC, TIMEOUT.entry, { entry: true, onPage });
   onPage(APP);
-  waitUntil(revalidateEntry(cache));
+  // waitUntil po await: dovoljen, dokler je obljuba respondWith odprta (spec, Chromium, WebKit); če ga brskalnik vseeno
+  // zavrne (InvalidStateError), preverjanje teče brez podaljšanja življenja, stran pa pride (sicer napaka navigacije).
+  const later = revalidateEntry(cache);
+  try {
+    waitUntil(later);
+  } catch {}
   return hit;
 }
 async function revalidateEntry(cache) {
