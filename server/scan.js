@@ -32,7 +32,10 @@ export async function verifyAiFull(text, sol, { cas = true } = {}) {
     // »Preverjeno« ostane le, če ga točna algebra potrdi kot točno vrednost (2.5).
     // Približek je tudi »≈ 1414«, znanstveni zapis (2e6, 2*10^6, 2·10⁶) in »approx«: SymPy jih sprejme s toleranco.
     const rounded = ROUNDED.test(JSON.stringify([sol?.solutions, sol?.value])) && num.status !== "verified";
-    const status = sol?.kind === "equation" && periodicClaim(sol) ? "partial" : rounded ? "numeric" : "verified";
+    // SymPy, ki je odločil le s števili ali v naključnih točkah (worker how ≠ symbolic, PV-03), ni dokaz: »numerično«,
+    // razen če je lokalna točna algebra odgovor dokazala.
+    const sampled = c.how !== "symbolic" && num.status !== "verified"; // brez how ni dokaza: največ numerično
+    const status = sol?.kind === "equation" && periodicClaim(sol) ? "partial" : rounded || sampled ? "numeric" : "verified";
     return { verified: status === "verified", reason: status === "verified" ? null : "unknown", status };
   }
   // Zaokrožena krajišča neenačbe SymPy primerja točno in zavrne. Kadar je lokalni dokaz (Sturm) vse drugo dokazal in
