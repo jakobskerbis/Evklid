@@ -144,6 +144,11 @@ test("meritev 26. 11.: odgovori AI, kot jih je dal pravi zagon (zapis z dvema en
   assert.equal(TRP("P = 32\\ \\mathrm{cm^2} = 0{,}32\\ \\mathrm{m^2}"), "unverified");
   assert.equal(TRP("P = 32 \\approx 30\\ \\mathrm{cm^2}"), "unverified");
   assert.equal(TRP("P = 32\\ \\mathrm{cm^2} = 0{,}0032\\ \\mathrm{m^2}"), "partial");
+  assert.equal(TRP("P = 48\\ \\mathrm{cm^2} \\text{ ali } P = 32"), "unverified");
+  assert.equal(TRP("P = 32\\ \\mathrm{cm^2} \\approx 0\\ \\mathrm{m^2}"), "unverified");
+  const HIT = (tex) => status("v=?", ["s = 36\\,\\mathrm{km}", "t = 30\\,\\mathrm{min}"], sol({ s: "36000", t: "1800", v: "20" }, ["v=s/t"], { value: "20", answer_tex: tex }));
+  assert.equal(HIT("v = 20\\ \\mathrm{m/s} = 72\\ \\mathrm{km/h}"), "partial");
+  assert.equal(HIT("v = 20\\ \\mathrm{m/s} = 20\\ \\mathrm{km/h}"), "unverified");
   // s15: odstotki v besedilu podatka
   assert.equal(status("x=?", ["\\text{cena se je zvišala za } 20\\ \\%", "\\text{cena se je znižala za } 15\\ \\%", "\\text{končna cena } 408\\ €"], sol({ p: "20", q: "15", y: "408", x: "400" }, ["x*(1+p/100)*(1-q/100)=y"], { value: "400", solutions: ["400"], answer_tex: "x=400\\ €" })), "partial");
 });

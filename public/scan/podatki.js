@@ -244,16 +244,26 @@ export function stevilaZapisa(tex) {
 // »32 cm² = 0,32 m²« in »32 ≈ 30« ne (pregled: drugače bi prikazan, nepreverjen končni rezultat dobil »partial«).
 function zapisPokaze(tex, q, enako) {
   const deli = tex.split(DELI);
-  const vsi = (deli.length > 1 ? deli.slice(1) : deli).map((d) => ({ x: steviloDela(d), p: podatkiNaloge([d])[0] })).filter((d) => d.x !== null);
-  const i = vsi.findIndex((d) => enako(d.x));
+  const vsi = (deli.length > 1 ? deli.slice(1) : deli).map((d) => ({ x: steviloDela(d), p: podatkiNaloge([d])[0], racun: jeRacun(d) })).filter((d) => d.x !== null);
+  const i = vsi.findLastIndex((d) => enako(d.x));
   if (i < 0) return false;
+  // faktor do SI le iz enote tega dela (ne golo število: »20 m/s = 20 km/h« ni pretvorba)
   const si = (d) => (d.p && d.p.f.length > 1 ? d.p.f[1][0] : 1);
   const qSI = q * si(vsi[i]);
-  return vsi.slice(i + 1).every((d) => {
+  const ista = (d) => {
     const dec = (/\.(\d+)/.exec(String(d.x)) || [null, ""])[1].length;
-    const tol = 0.5 * 10 ** -dec * 1.0001;
-    return (d.p?.f || [[1, 0]]).some(([f]) => Math.abs(d.x * f - qSI) <= tol * f + 1e-9 * Math.abs(qSI));
-  });
+    const tol = 0.5 * 10 ** -dec * 1.0001 * si(d);
+    // zaokrožitev največ 5 % (»32 cm² ≈ 0 m²« je zaokroženo prav, a ne pokaže rezultata)
+    return Math.abs(d.x * si(d) - qSI) <= Math.min(tol, 0.05 * Math.abs(qSI)) + 1e-9 * Math.abs(qSI);
+  };
+  // pred njim smejo biti le koraki računa (\frac{(10+6)\cdot 4}{2}) ali ista količina; »P = 48 ali P = 32« ne
+  return vsi.slice(0, i).every((d) => d.racun || ista(d)) && vsi.slice(i + 1).every(ista);
+}
+
+// Del zapisa je korak računa (ulomek, operacija, oklepaj), ne prikazan rezultat. Enote (\mathrm{cm^2}, m/s) ne štejejo.
+function jeRacun(d) {
+  const t = d.replace(/\\(?:text|mathrm|textrm|mbox)\s*\{[^{}]*\}/g, " ").replace(/([A-Za-zµΩ])\s*\^\s*\{?-?\d\}?/g, "$1").replace(/[A-Za-zµΩ]+\s*\/\s*[A-Za-zµΩ(]/g, " ");
+  return /\\frac|\\cdot|\\times|\\sqrt|[+*/·×(]|\d\s*-\s*\d/.test(t);
 }
 
 // AI »check« → {values: Map(ime → vrednost), equations} ali razlog, zakaj ga ni mogoče prebrati. Vsaka formula je
