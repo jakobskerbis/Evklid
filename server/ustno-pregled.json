@@ -1490,6 +1490,10 @@
    "h": "9e26d47dede0",
    "o": "D"
   },
+  "KEM-SS-1/topnost-in-sestava-raztopin#p1": {
+   "h": "3dda3e0c3464",
+   "o": "D"
+  },
   "KEM-SS-1/urejanje-enacb#p0": {
    "h": "837fe086f6da",
    "o": "I",
@@ -1513,6 +1517,18 @@
   },
   "KEM-SS-2/alkalijske-kovine-in-halogeni#p1": {
    "h": "52fd4ac7edb1",
+   "o": "D"
+  },
+  "KEM-SS-2/elektroliti-in-ionske-reakcije#p0": {
+   "h": "4c80c847ba18",
+   "o": "D"
+  },
+  "KEM-SS-2/elektroliti-in-ionske-reakcije#p1": {
+   "h": "ef270b29e279",
+   "o": "D"
+  },
+  "KEM-SS-2/elektroliti-in-ionske-reakcije#p2": {
+   "h": "8d58d08c2a22",
    "o": "D"
   },
   "KEM-SS-2/elementi-v-bioloskih-sistemih#n2": {
@@ -1660,6 +1676,11 @@
    "h": "1267c0867260",
    "o": "D"
   },
+  "KEM-SS-4/anorganske-snovi-v-industriji-in-okolju#p0": {
+   "h": "7d94f022f6bf",
+   "o": "I",
+   "r": "sklic na celico iz lekcije (kloralkalna elektroliza ni imenovana)"
+  },
   "KEM-SS-4/kemijsko-racunanje#p1": {
    "h": "841f9b8b4ac3",
    "o": "I",
@@ -1668,6 +1689,15 @@
   "KEM-SS-4/organska-kemija#p1": {
    "h": "4ef77d62cc2f",
    "o": "D"
+  },
+  "KEM-SS-4/prehodni-elementi-in-koordinacijske-spojine#p0": {
+   "h": "25ab1fc6377a",
+   "o": "D"
+  },
+  "KEM-SS-4/prehodni-elementi-in-koordinacijske-spojine#p2": {
+   "h": "3dde0ca28e69",
+   "o": "I",
+   "r": "ne pove imena spojine (sklic na prejšnji korak lekcije)"
   },
   "KEM-SS-4/splosna-in-anorganska-kemija#p2": {
    "h": "19a5865e33af",
