@@ -1,4 +1,4 @@
-// Nabor sprejemnega preizkusa poti Vadnica → inštruktor (test/fixtures/pot-vadnice/poti.json, scripts/meri-pot-vadnice.mjs):
+// AUDIT-094. Nabor sprejemnega preizkusa poti Vadnica → inštruktor (test/fixtures/pot-vadnice/poti.json, scripts/meri-pot-vadnice.mjs):
 // naloge so še iste (odtis besedila), napačni odgovori ustrezajo tipični napaki naloge, pravilni so pravilni. Brez klicev API.
 import test from "node:test";
 import assert from "node:assert/strict";

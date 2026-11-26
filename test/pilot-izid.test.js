@@ -1,4 +1,4 @@
-// Meritev uspeha pilota do konca (j 26. 11. 2026, pregled pripravljenosti pilota, poseg 3; server/pilot-ucinek.js):
+// AUDIT-095: meritev uspeha pilota do konca (j 26. 11. 2026, pregled pripravljenosti pilota, poseg 3; server/pilot-ucinek.js):
 // - »brez pomoči«: navodilo; po zadnji nalogi vprašanje o pomoči, ki šele konča preizkus (rezultat, XP); zapis, ali je
 //   kandidat med reševanjem (okna do 30 min pred vsakim odgovorom) uporabil inštruktorja, skener ali vaje;
 // - ob koncu drugega preizkusa zapis vadenih mest (vadnica, inštruktor, vaja drugje) med preizkusoma;
@@ -170,7 +170,7 @@ function fixture() {
   return { db, ids, row };
 }
 
-test("poročilo: potek pilota, izločeni s pomočjo, glavni izid po konceptu iz paketov po 5 parov brez pomoči", () => {
+test("AUDIT-095: poročilo: potek pilota (povabljeni, odpadli), izločeni s pomočjo, glavni izid po konceptu iz paketov po 5 parov brez pomoči", () => {
   const { db, ids, row } = fixture();
   const now = new Date("2026-11-26T12:00:00Z");
   // 0–6: A nato B. Prej pravilno mesta 0–2, po 14 dneh mesta 0–5. 5 je med drugim uporabil skener, 6 je rekel »Da«.
