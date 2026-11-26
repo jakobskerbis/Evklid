@@ -1005,7 +1005,7 @@ export function claimNote(text, pre) {
   const none = p.type === "equation" ? noSolution(p) : null;
   // Pri nalogi brez rešitve je vrednost v razlagi (»x = 2 ni rešitev«, »če bi bil x = 2«) preizkus, ne odgovor: le golo sporočilo.
   if (none && !vars.length) {
-    if (!/^[\s$]*[a-zA-Z](?:_?\{?\d\}?)?\s*=\s*(?:±|\\pm|\+-|\+\/-)?\s*[-+]?\d+(?:[.,]\d+)?(?:\/\d+)?[\s$]*[.!]?\s*$/.test(String(text))) return null;
+    if (!/^[\s$]*[a-zA-Z](?:_?\{?\d\}?)?\s*=\s*(?:±|\\pm|\+-|\+\/-)?\s*[-+]?\d+(?:[.,]\d+)?(?:\/\d+)?[\s$]*(?:[.!][\s$]*)?$/.test(String(text))) return null;
     vars = none;
   }
   if (!vars.length) return null;

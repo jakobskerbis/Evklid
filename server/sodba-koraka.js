@@ -393,9 +393,15 @@ function otherEquation(pre, prevTutor) {
   const none = noSolution(p);
   const v = solverValues(p.answerTex)[0]?.v || none?.[0];
   if (!v) return false;
-  // Naloga brez rešitve: vsaka enačba v inštruktorjevem zadnjem sporočilu (»Kaj pa $x^6 = 64$?«) je drug primer, tudi
-  // ko je solutionsOf ne zna rešiti (pregled AUDIT-092).
-  if (none && /=/.test(String(prevTutor || ""))) return true;
+  // Naloga brez rešitve: vsaka matematika v inštruktorjevem zadnjem sporočilu razen same naloge (»Kaj pa $x^6 = 64$?«,
+  // »Pri katerem x je $(x+1)^2$ enako 0?«, »npr. 2«) je lahko drugo vprašanje z odgovorom »x = …«, zato brez sodbe
+  // (pregled AUDIT-092).
+  if (none) {
+    const norm = (t) => String(t || "").replace(/\\left|\\right|\\[,;! ]|[\s{}]/g, "");
+    const task = [norm(p.problem), norm(p.problemTex)];
+    const rest = String(prevTutor || "").replace(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$|\\\(([\s\S]+?)\\\)/g, (m, a, b, c) => (task.includes(norm(a ?? b ?? c)) ? " " : m));
+    if (/[=$\d]|\\\(/.test(rest)) return true;
+  }
   const t = tutorReference(prevTutor, v);
   if (t === null) return true;
   if (!t) return false;
