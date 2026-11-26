@@ -5,6 +5,7 @@
 //   node scripts/meri-preverjanje.mjs              vsi motorji, preglednica na zaslon
 //   node scripts/meri-preverjanje.mjs --json p.json  še poročilo v JSON
 //   node scripts/meri-preverjanje.mjs --brez-sympy   samo motorji brez Pythona (za hiter CI)
+//   node scripts/meri-preverjanje.mjs --nabor pot    drug nabor (privzeto nabor-v2.json, N-01; v1 je njegov začetek)
 //
 // Motorji (kako vsak izid preslikamo v skupni status, statusi.js):
 //   sympy          ukaz iz polja »racun« naravnost v server/cas worker: ok true → izracunano samo, ko je worker
@@ -18,7 +19,7 @@ import { dirname, join } from "node:path";
 import { izSkenerja, jePotrjeno, jeStatus } from "../public/preverjanje/statusi.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const NABOR = join(ROOT, "test/fixtures/preverjanje/nabor-v1.json");
+const NABOR = join(ROOT, "test/fixtures/preverjanje/nabor-v2.json");
 const MOC = { dokazano: 4, izracunano: 3, numericno: 2, delno: 1, v_teku: 0, nepreverjeno: 0, napaka: 0 };
 
 export function naloziNabor(pot = NABOR) {
@@ -117,7 +118,8 @@ function natisni(izid) {
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const a = process.argv.slice(2);
   const motorji = a.includes("--brez-sympy") ? Object.keys(MOTORJI).filter((k) => !MOTORJI[k].python) : undefined;
-  const izid = await izmeri(naloziNabor(), { motorji });
+  const n = a.indexOf("--nabor");
+  const izid = await izmeri(naloziNabor(n >= 0 && a[n + 1] ? a[n + 1] : undefined), { motorji });
   natisni(izid);
   const j = a.indexOf("--json");
   if (j >= 0 && a[j + 1]) writeFileSync(a[j + 1], JSON.stringify(izid, null, 1));

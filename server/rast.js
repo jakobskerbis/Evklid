@@ -77,6 +77,32 @@ export function sourceVisitCounter(db) {
   };
 }
 
+// Okna vrnitve (dnevi od začetka): 7.–13., 14.–20. in 30.–36. dan (N-09; growthReport in server/pilot-meritve.js).
+export const RETENTION_WINDOWS = { d7: [7, 13], d14: [14, 20], d30: [30, 36] };
+
+// Aktivni dnevi izbranih učencev od dneva `since` do `until` (izključno; kot growthReport: naloga, vprašanje
+// inštruktorju ali točke, brez točk pilota): Map učenec → Set dni "YYYY-MM-DD". Bere samo izbrane učence (po 500).
+export function activeDaysOf(db, ids, since, until = "9999") {
+  const out = new Map();
+  for (let i = 0; i < ids.length; i += 500) {
+    const part = ids.slice(i, i + 500);
+    const inList = part.map(() => "?").join(",");
+    const rows = db
+      .prepare(
+        `SELECT student_id AS s, substr(created_at, 1, 10) AS d FROM events WHERE student_id IN (${inList}) AND created_at >= ? AND created_at < ?
+         UNION SELECT c.student_id, substr(m.created_at, 1, 10) FROM conversations c CROSS JOIN messages m ON m.conversation_id = c.id
+           WHERE c.student_id IN (${inList}) AND c.updated_at >= ? AND m.role = 'user' AND m.created_at >= ? AND m.created_at < ?
+         UNION SELECT student_id, substr(created_at, 1, 10) FROM xp_events WHERE student_id IN (${inList}) AND created_at >= ? AND created_at < ? AND COALESCE(reason, '') NOT LIKE 'pilot:%'`,
+      )
+      .all(...part, since, until, ...part, since, since, until, ...part, since, until);
+    for (const { s, d } of rows) {
+      if (!out.has(s)) out.set(s, new Set());
+      out.get(s).add(d);
+    }
+  }
+  return out;
+}
+
 const hasTable = (db, name) => !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?").get(name);
 
 // Profili skrbnika (EVKLID_ADMIN_EMAILS ali zastavica is_admin) se ne štejejo: to so preizkusi, ne učenci.
@@ -157,6 +183,9 @@ export function growthReport(db, { days = 30, schoolId = null, now = Date.now(),
   const activation = share(cohort, (s) => firstTask.has(s.id));
   const d1 = share(cohort.filter(d1Eligible), (s) => backOn(s, 1, 1));
   const d7 = share(cohort.filter(d7Eligible), (s) => backOn(s, 7, 13));
+  // N-09 (j 2026-11-25): vrnitev tudi po 14 in 30 dneh (okno 7 dni, kot pri 7; profil šteje, ko je okno celo minilo).
+  // Pri krajšem obdobju (privzeto 30 dni) okno ne more mineti pri nobenem profilu: takrat ni prikazano (null).
+  const [d14, d30] = [RETENTION_WINDOWS.d14, RETENTION_WINDOWS.d30].map(([lo, hi]) => (n > hi ? share(cohort.filter((s) => dayDiff(today, s.d0) >= hi), (s) => backOn(s, lo, hi)) : null));
 
   // Tedni od najstarejšega do tega (zadnji se konča danes): novi profili in aktivni učenci.
   const weekRows = [];
@@ -260,6 +289,8 @@ export function growthReport(db, { days = 30, schoolId = null, now = Date.now(),
     activation,
     d1,
     d7,
+    d14,
+    d30,
     goal: { target: D7_TARGET, status: d7.eligible < MIN_D7 ? "wait" : d7.pct >= D7_TARGET ? "met" : "notYet" },
     weeklyActive: weekRows.at(-1)?.active || 0,
     activeProfiles,

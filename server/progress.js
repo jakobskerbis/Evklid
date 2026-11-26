@@ -1005,9 +1005,11 @@ export class Progress {
     const firstTry = row.attempts === 0;
     this.db
       .prepare(
-        `UPDATE tasks SET attempts = ?, solved = ?, last_answer = ?, first_try_correct = COALESCE(first_try_correct, ?) WHERE id = ?`,
+        `UPDATE tasks SET attempts = ?, solved = ?, last_answer = ?, first_try_correct = COALESCE(first_try_correct, ?),
+         answered_at = CASE WHEN ? THEN COALESCE(answered_at, datetime('now')) ELSE answered_at END WHERE id = ?`,
       )
-      .run(attempts, correct ? 1 : 0, String(input).slice(0, 200), firstTry ? (correct ? 1 : 0) : null, taskId);
+      // Čas prvega odgovora (N-09) samo ob prvem odgovoru: naloga, začeta pred to različico, ga ne dobi ob drugem.
+      .run(attempts, correct ? 1 : 0, String(input).slice(0, 200), firstTry ? (correct ? 1 : 0) : null, firstTry ? 1 : 0, taskId);
 
     const topic = getTopic(row.topic_id);
     // Analitika za šibke točke (enako kot META iz klepeta); test predznanja ne šteje,

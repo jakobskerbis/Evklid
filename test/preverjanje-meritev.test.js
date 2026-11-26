@@ -1,9 +1,10 @@
-// PV-02 (docs/preverjanje.md, »Meritev«): referenčni nabor in meritev preverjanja. Glavna metrika je 0 napačno
-// potrjenih trditev v vsem, kar vidi učenec. Znane izjeme spodaj so izmerjeno izhodišče (25. 11. 2026, po popravku skenerja) in
+// PV-02 in N-01 (docs/preverjanje.md, »Meritev«): referenčni nabor v2 (1020 trditev) in meritev preverjanja. Glavna metrika je 0 napačno
+// potrjenih trditev v vsem, kar vidi učenec. Znane izjeme spodaj so izmerjeno izhodišče (26. 11. 2026, nabor v2 po PV-03) in
 // čakajo na popravek; test pade ob vsaki NOVI napačni potrditvi, novem lažnem alarmu ali izjemi, in kadar motor ujame ali
 // potrdi manj kot ob izhodišču (pokvarjen preverjevalnik se ne sme skriti med »nepreverjeno«).
 import { test, after } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { naloziNabor, izmeri, razvrsti } from "../scripts/meri-preverjanje.mjs";
 import { casAvailable, casStop } from "../server/cas.js";
 
@@ -11,15 +12,25 @@ const nabor = naloziNabor();
 const HAVE = await casAvailable();
 after(() => casStop());
 
-const LOKALNO_ALARMI = ["luknja-009", "luknja-017", "integral-019", "integral-021", "skoraj-016", "skoraj-018", "skoraj-022"];
+const ids = (pred, od, do_, korak = 1) => Array.from({ length: Math.floor((do_ - od) / korak) + 1 }, (_, i) => `${pred}-${String(od + i * korak).padStart(3, "0")}`);
+// N-01, skener tudi s SymPy: pravilen količnik fakultet (factorial(14)/factorial(4)) dobi »Zaznana napaka«, ker prep() v
+// public/scan/solvecore.js odreže »factor« iz »factorial«. Pragovi (ujete, potrjena) so točno izmerjeni: ob počasnem
+// SymPy (rok 9 s, zdaj ~100 ms na trditev) bi test padel, kar je namerno.
+const FAKULTETE = [118, 122, 126, 130, 134, 138, 142, 146, 150, 152, 156].map((n) => `racun2-${n}`);
+// Brez SymPy: log(u, a) z osnovo, binomial(n, k) in odvod cos(x^n) lokalni preverjevalnik oceni narobe (N-01).
+const LOG_OSNOVA = [1, 3, 5, 7, 11, 13, 15, 17, 21, 23, 25, 27, 31, 33, 35, 37].map((n) => `log-${String(n).padStart(3, "0")}`);
+const LOKALNO_ALARMI = [
+  "luknja-009", "luknja-017", "integral-019", "integral-021", "skoraj-016", "skoraj-018", "skoraj-022", ...LOG_OSNOVA,
+  "odvod2-027", "odvod2-043", "racun2-013", "racun2-027", "racun2-043", "racun2-059", ...ids("racun2", 118, 156, 2),
+];
 const IZHODISCE = {
   "skener-lokalno": {
     potrjene: [],
     previsoki: [],
     sibke: ["periodicna-004", "periodicna-006", "periodicna-010", "druge-017"],
     alarmi: LOKALNO_ALARMI,
-    ujete: 173,
-    potrjena: 106,
+    ujete: 462,
+    potrjena: 170,
   },
   // Surov SymPy z načinom (PV-03): simbolni dokaz → izracunano, številski ali vzorčeni »drži« → numericno.
   sympy: {
@@ -27,22 +38,23 @@ const IZHODISCE = {
     previsoki: [],
     sibke: ["skoraj-002", "skoraj-006", "skoraj-008", "skoraj-010", "skoraj-026"],
     alarmi: [],
-    ujete: 187,
-    potrjena: 173,
+    ujete: 504,
+    potrjena: 484,
   },
   // Ob počasnem SymPy (rok 9 s) skener uporabi lokalno preverjanje, zato so dovoljeni tudi njegovi znani alarmi.
   skener: {
     potrjene: [],
     previsoki: [],
     sibke: [],
-    alarmi: ["integral-019", "integral-021", "skoraj-016", "skoraj-018", "skoraj-022", ...LOKALNO_ALARMI],
-    ujete: 178,
-    potrjena: 154,
+    alarmi: ["integral-019", "integral-021", "skoraj-016", "skoraj-018", "skoraj-022", ...FAKULTETE, ...LOKALNO_ALARMI],
+    ujete: 467,
+    potrjena: 406,
   },
 };
 
 test("nabor: dovolj trditev, vsaka skupina ima pravilne in napačne", () => {
-  assert.ok(nabor.length >= 380, `premalo trditev: ${nabor.length}`);
+  assert.ok(nabor.length >= 1000, `premalo trditev: ${nabor.length}`);
+  assert.ok(nabor.filter((p) => !p.pravilno).length >= 250, "premalo napačnih trditev");
   assert.equal(new Set(nabor.map((p) => p.id)).size, nabor.length, "id ni enoličen");
   const skupine = new Map();
   for (const p of nabor) {
@@ -55,6 +67,11 @@ test("nabor: dovolj trditev, vsaka skupina ima pravilne in napačne", () => {
   for (const [k, s] of skupine) assert.ok(s.da && s.ne, `skupina ${k}: ${JSON.stringify(s)}`);
   const naloge = nabor.map((p) => JSON.stringify([p.naloga, p.sol, p.racun]));
   assert.equal(new Set(naloge).size, naloge.length, "podvojena trditev");
+});
+
+test("nabor v1 je nespremenjen začetek nabora v2", () => {
+  const v1 = JSON.parse(readFileSync(new URL("./fixtures/preverjanje/nabor-v1.json", import.meta.url), "utf8")).primeri;
+  assert.deepEqual(nabor.slice(0, v1.length), v1);
 });
 
 test("razvrsti: vsak izid ima svoj razred", () => {
