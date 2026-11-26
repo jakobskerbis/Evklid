@@ -1,6 +1,6 @@
 {
  "datum": "2026-11-26",
- "commit": "67fd514b17caccf3a1568c6a31e280249d15fdad",
+ "commit": "d0f555ee1c5401b4851dbcb4c8aeb65287a134e5",
  "ukaz": "node scripts/popis-pokritosti.mjs --strogo --dodatek docs/meritve/pokritost-2026-11-26-pregled.md --json docs/meritve/pokritost-2026-11-26.json --porocilo docs/meritve/pokritost-2026-11-26.md",
  "okolje": "Node v22.23.5, SymPy 1.14.0",
  "mesta": {
@@ -13,7 +13,7 @@
    "napaka": 0,
    "nepreverjeno": 15284,
    "vse": 19468,
-   "namerne": 3900,
+   "namerne": 1776,
    "vprasanja": 0,
    "enot": 521,
    "primeri": []
@@ -27,7 +27,7 @@
    "napaka": 3,
    "nepreverjeno": 1927,
    "vse": 3715,
-   "namerne": 0,
+   "namerne": 2124,
    "vprasanja": 1069,
    "enot": 515,
    "primeri": [

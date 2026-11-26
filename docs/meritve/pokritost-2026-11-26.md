@@ -12,7 +12,7 @@
 
 ## Metoda
 - Ukaz: `node scripts/popis-pokritosti.mjs --strogo --dodatek docs/meritve/pokritost-2026-11-26-pregled.md --json docs/meritve/pokritost-2026-11-26.json --porocilo docs/meritve/pokritost-2026-11-26.md`
-- Commit: `67fd514b17caccf3a1568c6a31e280249d15fdad` (veja PR; vsebina je enaka kot na `main` po združitvi); skripta ne kliče modela AI; Node v22.23.5, SymPy 1.14.0
+- Commit: `d0f555ee1c5401b4851dbcb4c8aeb65287a134e5` (veja PR; vsebina je enaka kot na `main` po združitvi); skripta ne kliče modela AI; Node v22.23.5, SymPy 1.14.0
 - Trditev = formula $…$ ali $$…$$ z relacijo (=, ≈, <, >, ≤, ≥, ≠, ∈, ⇒ …); vrstica RACUN = ena trditev. Status: preračun server/lesson-math.js (numerično, delno, napaka); simbolna enakost, ki jo potrdi preizkus z naključnimi števili server/lesson-identity.js, je numerično (neujemanje brez okolice lekcije ne šteje kot napaka, ker je lahko enačba); RACUN: SymPy z načinom (izračunano ali numerično), uravnotežena enačba izračunano, molska masa z dopustom numerično.
 - Izločeno in našteto posebej: namerno napačne (»Pogoste napake« v celoti, napačne možnosti v »Preveri se« in njihova pojasnila ~, »mistake« in napačne izbire na polah) in vprašanja (? v »Preveri se«: podatek naloge, ne trditev).
 
@@ -25,8 +25,8 @@
 | 3 | Shranjeni odgovori in kartice | kartica | ob uporabi | – | – | – | – | – | – | pravilno ali napačno, brez sedmih statusov | lastnik B |
 | 4 | Znanstveni kalkulator | rezultat | ob uporabi | – | – | – | – | – | – | rezultat, ki ne prestane številske preizkušnje, se ne pokaže; statusa ni | lastnik B |
 | 5 | Grafični kalkulator, CAS | rezultat | ob uporabi | – | – | – | – | – | – | CAS rezultat preizkusi s števili in neprestanega ne pokaže (casUnverified); statusa ni | lastnik B |
-| 6 | Učbenik: razlaga | formula z relacijo | 19.468 | 3.259 (16,7 %) | 925 | 0 | 15.284 (78,5 %) | 0 / 3.259 | 3.900 / 0 | da: check-lesson.js preračuna račune in identitete | 521 lekcij |
-| 6 | Učbenik: »Preveri se« (pravilni odgovor, pojasnilo) | formula z relacijo | 3.715 | 949 (25,5 %) | 836 | 3 | 1.927 (51,9 %) | 0 / 949 | 0 / 1.069 | delno: check-lesson.js preizkusi identitete v vrsticah + in >, računov ne preračuna | 515 lekcij s »Preveri se« |
+| 6 | Učbenik: razlaga | formula z relacijo | 19.468 | 3.259 (16,7 %) | 925 | 0 | 15.284 (78,5 %) | 0 / 3.259 | 1.776 / 0 | da: check-lesson.js preračuna račune in identitete | 521 lekcij |
+| 6 | Učbenik: »Preveri se« (pravilni odgovor, pojasnilo) | formula z relacijo | 3.715 | 949 (25,5 %) | 836 | 3 | 1.927 (51,9 %) | 0 / 949 | 2.124 / 1.069 | delno: check-lesson.js preizkusi identitete v vrsticah + in >, računov ne preračuna | 515 lekcij s »Preveri se« |
 | 6 | Učbenik: bloki RACUN (strojni zapis, učenec jih ne vidi) | vrstica RACUN | 5.626 | 5.623 (99,9 %) | 0 | 0 | 3 (0,1 %) | 4.324 / 1.299 | 0 / 0 | da: check-lesson.js (SymPy) | 313 lekcij z RACUN |
 | 7 | Rešeni primeri v lekcijah | formula z relacijo | 17.325 | 2.613 (15,1 %) | 2.572 | 0 | 12.140 (70,1 %) | 0 / 2.613 | 0 / 0 | da: check-lesson.js (računi; od identitet le rešitve) | 518 lekcij s primeri |
 | 8 | Vadnica: generatorji (rešitve) | formula z relacijo v rešitvi | 3.138 | 288 (9,2 %) | 994 | 3 | 1.853 (59,1 %) | 0 / 288 | 0 / 0 | ne: preveri-generatorje.js preveri odgovor naloge, korakov rešitve ne | 618 generatorjev |
