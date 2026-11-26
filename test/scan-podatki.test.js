@@ -128,6 +128,35 @@ test("pregled 3: način kotov in enoten sistem enot", () => {
   assert.equal(status("s=?", HOJA, sol({ v: "2", t: "180", s: "360" }, ["s=v*t"], { value: "360" })), "partial");
 });
 
+test("meritev 26. 11.: odgovori AI, kot jih je dal pravi zagon (zapis z dvema enotama, izraz v value, branje s podatki)", () => {
+  // f02: answer_tex pokaže tudi minute (»≈ 3,15 min«); zadošča, da je ena vrednost zapisa preverjena
+  const GREL = ["P = 2\\ \\mathrm{kW}", "m = 1{,}5\\ \\mathrm{kg}", "T_1 = 20\\ ^\\circ\\mathrm{C}", "T_2 = 80\\ ^\\circ\\mathrm{C}", "c = 4200\\ \\mathrm{J/(kg\\,K)}"];
+  assert.equal(status("t=?", GREL, sol({ P: "2000", m: "1.5", T_1: "20", T_2: "80", c: "4200", t: "189" }, ["P*t=m*c*(T_2-T_1)"], { value: "189", solutions: ["189"], answer_tex: "t = 189\\ \\mathrm{s} \\approx 3{,}15\\ \\mathrm{min}" })), "partial");
+  // s07: value kot izraz, besedilo z grško črko, podatek brez števila
+  const TRI = ["\\text{pravokotni trikotnik } ABC \\text{ s pravim kotom pri } B", "AB = 12\\ \\mathrm{cm}", "BC = 5\\ \\mathrm{cm}"];
+  assert.equal(status("α=?", TRI, sol({ a: "5", b: "12", alpha: "22.62°" }, ["tan(alpha)=a/b"], { value: "atan(5/12)*180/pi", solutions: ["atan(5/12)*180/pi"], answer_tex: "\\alpha\\approx 22{,}62^\\circ" })), "partial");
+  // o03: zapis z izračunom pred rezultatom
+  assert.equal(status("P=?", TRAPEZ, sol({ a: "10", c: "6", v: "4", P: "32" }, ["P=(a+c)/2*v"], { value: "32", answer_tex: "P = \\frac{(10+6)\\cdot 4}{2} = 32\\ \\mathrm{cm^2}" })), "partial");
+  // pregled: drug, nepreverjen končni rezultat v zapisu ni »partial«
+  const TRP = (tex, extra = {}) => status("P=?", TRAPEZ, sol({ a: "10", c: "6", v: "4", P: "32" }, ["P=(a+c)/2*v"], { value: "32", answer_tex: tex, ...extra }));
+  assert.equal(TRP("P = 32\\ \\mathrm{cm^2} \\text{ ali } P = 48\\ \\mathrm{cm^2}"), "unverified");
+  assert.equal(TRP("P_1 = 32,\\ P_2 = 48", { value: "", solutions: ["32"] }), "unverified");
+  assert.equal(TRP("P = 32\\ \\mathrm{cm^2} = 0{,}32\\ \\mathrm{m^2}"), "unverified");
+  assert.equal(TRP("P = 32 \\approx 30\\ \\mathrm{cm^2}"), "unverified");
+  assert.equal(TRP("P = 32\\ \\mathrm{cm^2} = 0{,}0032\\ \\mathrm{m^2}"), "partial");
+  assert.equal(TRP("P = 48\\ \\mathrm{cm^2} \\text{ ali } P = 32"), "unverified");
+  assert.equal(TRP("P = 32\\ \\mathrm{cm^2} \\approx 0\\ \\mathrm{m^2}"), "unverified");
+  // pregled 3: drug prikazan odgovor za »ali« ni račun; t = 189\,s ostane berljiv (\, ni ločilo)
+  assert.equal(TRP("P = \\frac{96}{2}\\ \\mathrm{cm^2} \\text{ ali } P = 32\\ \\mathrm{cm^2}"), "unverified");
+  assert.equal(TRP("P = (10+6) \\text{ ali } P = 32"), "unverified");
+  assert.equal(TRP("P = \\frac{10+6}{2}\\cdot 4 = 32\\,\\mathrm{cm^2}"), "partial");
+  const HIT = (tex) => status("v=?", ["s = 36\\,\\mathrm{km}", "t = 30\\,\\mathrm{min}"], sol({ s: "36000", t: "1800", v: "20" }, ["v=s/t"], { value: "20", answer_tex: tex }));
+  assert.equal(HIT("v = 20\\ \\mathrm{m/s} = 72\\ \\mathrm{km/h}"), "partial");
+  assert.equal(HIT("v = 20\\ \\mathrm{m/s} = 20\\ \\mathrm{km/h}"), "unverified");
+  // s15: odstotki v besedilu podatka
+  assert.equal(status("x=?", ["\\text{cena se je zvišala za } 20\\ \\%", "\\text{cena se je znižala za } 15\\ \\%", "\\text{končna cena } 408\\ €"], sol({ p: "20", q: "15", y: "408", x: "400" }, ["x*(1+p/100)*(1-q/100)=y"], { value: "400", solutions: ["400"], answer_tex: "x=400\\ €" })), "partial");
+});
+
 test("česar ne znamo preveriti, ostane »unverified« (brez ponovitve)", () => {
   const nic = (text, given, s, why) => {
     const r = preveriPodatke(text, given, s);
