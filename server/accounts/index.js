@@ -210,13 +210,22 @@ export function mountAccounts(app, store, opts = {}) {
   const baseUrl = (req) => (env.EVKLID_BASE_URL || (req ? `${req.protocol}://${req.get("host")}` : `http://localhost:${env.PORT || 3000}`)).replace(/\/$/, "");
 
   // --- podatki ---
-  const getParent = (id) => db.prepare("SELECT * FROM parents WHERE id = ?").get(id);
+  // Vroče poizvedbe (pravice in meje se na eno sporočilo inštruktorju izračunajo večkrat: ~340 branj staršev) imajo
+  // stavek pripravljen enkrat (K-14, meritev 26. 11. 2026); prevajanje SQL na vsak klic je bilo ~15 % procesorja.
+  const stavek = (sql) => {
+    let st = null;
+    return () => (st ??= db.prepare(sql));
+  };
+  const qParent = stavek("SELECT * FROM parents WHERE id = ?");
+  const qChildIds = stavek("SELECT id FROM students WHERE parent_id = ? ORDER BY id");
+  const qOwner = stavek("SELECT parent_id FROM students WHERE id = ?");
+  const getParent = (id) => qParent().get(id);
   const parentByEmail = (email) => db.prepare("SELECT * FROM parents WHERE email = ?").get(String(email).trim());
   const parentByCustomer = (cid) => cid && db.prepare("SELECT * FROM parents WHERE stripe_customer_id = ?").get(cid);
-  const childIds = (parentId) => db.prepare("SELECT id FROM students WHERE parent_id = ? ORDER BY id").all(parentId).map((r) => r.id);
+  const childIds = (parentId) => qChildIds().all(parentId).map((r) => r.id);
   const birthYear = (id) => db.prepare("SELECT birth_year FROM students WHERE id = ?").get(id)?.birth_year ?? null;
   const children = (parentId) => childIds(parentId).map((id) => ({ ...store.getStudent(id), birth_year: birthYear(id) }));
-  const ownerOf = (studentId) => db.prepare("SELECT parent_id FROM students WHERE id = ?").get(studentId)?.parent_id;
+  const ownerOf = (studentId) => qOwner().get(studentId)?.parent_id;
   const update = (id, fields) => {
     const keys = Object.keys(fields);
     db.prepare(`UPDATE parents SET ${keys.map((k) => `${k} = ?`).join(", ")} WHERE id = ?`).run(...keys.map((k) => fields[k]), id);
