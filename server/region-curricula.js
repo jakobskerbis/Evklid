@@ -353,7 +353,9 @@ export const EN = {
   "FIZ-SS-3/magnetna-sila": "Magnetic force | force on a wire and on a moving charge",
   "FIZ-SS-3/indukcija": "Electromagnetic induction | induced emf, Lenz's law, transformers",
   "FIZ-SS-3/nihanje": "Oscillations | mass on a spring, simple pendulum, energy",
+  "FIZ-SS-3/duseno-in-vsiljeno-nihanje": "Damped and forced oscillations | damping and decaying amplitude, energy, forced oscillation, natural frequency, resonance curve",
   "FIZ-SS-3/valovanje": "Waves | wavelength, frequency, speed, interference",
+  "FIZ-SS-3/stojece-valovanje": "Standing waves | reflection at free and fixed ends, snapshots of waves, standing waves on a string, normal modes, wave speed and string tension",
   "FIZ-SS-3/zvok": "Sound | loudness, Doppler effect",
   "FIZ-SS-3/geometrijska-optika": "Ray optics | reflection, refraction, total internal reflection, lenses",
   "FIZ-SS-3/valovna-optika": "Wave optics | diffraction, interference, polarisation",
@@ -361,6 +363,8 @@ export const EN = {
   "FIZ-SS-4/fotoefekt-in-foton": "Photoelectric effect and photons | photon energy, work function",
   "FIZ-SS-4/atom": "The atom | energy levels, spectra",
   "FIZ-SS-4/jedro-in-radioaktivnost": "Nuclei and radioactivity | decay, half-life, nuclear energy",
+  "FIZ-SS-4/jedrske-reakcije-in-reaktor": "Nuclear reactions and reactors | bombardment reactions, conservation laws, reaction energy from mass difference, chain reaction, nuclear reactor",
+  "FIZ-SS-4/meritve-grafi-in-porocilo": "Measurements, graphs and lab report | error propagation, graphs of measurements, line of best fit, linearisation, lab report for the exam",
   "FIZ-SS-4/mesane-maturitetne-naloge": "Mixed exam practice | all years",
   // KEM-SS-1
   "KEM-SS-1/zgradba-atoma": "Atomic structure | isotopes, electron configuration",
