@@ -177,7 +177,144 @@ function fit(el) {
     // Polovico popravka pustimo v okvirju (nagnjen vrh črke), polovico zunaj; širina vrstice ostane ista.
     last.style.marginRight = "0";
     el.style.paddingRight = `${PAD + mr / 2}em`;
-    el.style.marginRight = `${mr / 2 - PAD}em`;
+    // Prozorni rob za dotik (--fx-r, glej fitTargets) se odšteje, da širina vrstice ostane ista.
+    el.style.marginRight = `calc(${mr / 2 - PAD}em - var(--fx-r, 0px))`;
+  }
+}
+
+// Površina za dotik (WCAG 2.5.8, K-11): klikljiv znak je pogosto ožji ali nižji od 24 px. Okvir dotika
+// razširimo s prozornim robom (border) in enako velikim negativnim odmikom (margin), zato se postavitev ne
+// spremeni; ozadje ob dotiku in obroč fokusa ostaneta na znaku (ui.css, padding-box). Rob seže največ do
+// polovice razmika do sosednje klikljive oznake in največ do ovire (ponovljena ali izklopljena črka, povezava,
+// gumb, polje): dotik zadene pravo črko ali kontrolnik. Ne seže čez okvir, ki vsebino odreže ali drsi (pri
+// formuli ne sme nastati drsnik). Vrednosti v px: --fx-t, --fx-r, --fx-b, --fx-l.
+const CILJ = 24; // px (axe target-size); brskalnik rob zaokroži navzdol na cel piksel, zato želeni rob zaokrožimo navzgor
+const SIDES = ["--fx-t", "--fx-r", "--fx-b", "--fx-l"];
+const OVIRA = "[data-fx]:not([role=button]), a[href], input, button, select, textarea, summary, label, [role=link], [role=tab], [contenteditable]";
+const BLOK = "p, li, td, th, dd, dt, h1, h2, h3, h4, h5, h6, figcaption, .katex-display";
+const PRAZNO = /(^|\s)(mspace|katex-strut|strut)(\s|$)/; // presledek v formuli ni ovira
+// Sosednji znak v isti formuli (števka, operator, črka brez kartice): rob oznake ga ne sme prekriti.
+function atom(el, dir) {
+  let a = el[dir];
+  while (a && PRAZNO.test(a.className)) a = a[dir];
+  return a && !a.matches("[data-fx][role=button]") ? a : null;
+}
+let fitDirty = true; // okvirje preračunamo le, ko se je kaj spremenilo (ne ob vsakem umiru drsenja)
+const fitted = new WeakSet();
+const reach = new WeakMap(); // oznaka → [t, r, b, l], trenutni rob v px
+function clearReach(el) {
+  if (!reach.has(el)) return;
+  reach.delete(el);
+  for (const s of SIDES) el.style.removeProperty(s);
+}
+function clipOf(el, memo) {
+  const chain = [];
+  let box = null;
+  for (let a = el.parentElement; a && a !== document.body && a !== document.documentElement; a = a.parentElement) {
+    if (memo.has(a)) { box = memo.get(a); break; }
+    chain.push(a);
+    const cs = getComputedStyle(a);
+    if (cs.overflowX !== "visible" || cs.overflowY !== "visible") { box = a; break; }
+  }
+  for (const a of chain) memo.set(a, box);
+  return box;
+}
+function boundsOf(c, cache) {
+  if (cache.has(c)) return cache.get(c);
+  let b;
+  if (!c) {
+    // Brez okvirja: samo širina strani (vodoravno drsenje cele strani ne sme nastati).
+    b = { left: 0, right: document.documentElement.clientWidth, top: -Infinity, bottom: Infinity };
+  } else {
+    // Le vidni del okvirja: rob, ki bi segel v drsno območje, bi to območje sam podaljšal.
+    const r = c.getBoundingClientRect();
+    const x = r.left + c.clientLeft, y = r.top + c.clientTop;
+    b = { left: x, top: y, right: x + c.clientWidth, bottom: y + c.clientHeight };
+    if (!sized.has(c)) { sized.add(c); fresh.add(c); resizeObs?.observe(c); }
+  }
+  cache.set(c, b);
+  return b;
+}
+const sized = new WeakSet();
+const fresh = new WeakSet(); // prvo obvestilo ResizeObserverja pride ob opazovanju in ni sprememba
+const resizeObs = typeof ResizeObserver === "function" ? new ResizeObserver((list) => {
+  let changed = false;
+  for (const { target } of list) if (fresh.has(target)) fresh.delete(target); else changed = true;
+  if (changed) { fitDirty = true; queueMarks(); }
+}) : null;
+const down = (x) => Math.max(0, Math.floor(x + 1e-6));
+const boxOf = (el, e) => {
+  const r = el.getBoundingClientRect();
+  const [t, rr, b, l] = e || [0, 0, 0, 0];
+  return { el, top: r.top + t, right: r.right - rr, bottom: r.bottom - b, left: r.left + l, w: r.width, h: r.height };
+};
+function fitTargets(els) {
+  const memo = new Map(), cache = new Map(), items = [], seen = new Set(els), blocks = new Set(), near = new Set();
+  for (const el of els) {
+    fitted.add(el);
+    const g = boxOf(el, reach.get(el));
+    if (!g.w || !g.h) continue;
+    const y = Math.max(0, Math.ceil((CILJ - (g.bottom - g.top)) / 2 - 1e-6)), x = Math.max(0, Math.ceil((CILJ - (g.right - g.left)) / 2 - 1e-6));
+    const k = boundsOf(clipOf(el, memo), cache);
+    g.e = [Math.min(y, g.top - k.top), Math.min(x, k.right - g.right), Math.min(y, k.bottom - g.bottom), Math.min(x, g.left - k.left)];
+    items.push(g);
+    const kx = el.closest(".katex");
+    const blk = kx?.parentElement?.closest(BLOK) || kx?.parentElement;
+    if (blk) blocks.add(blk);
+    for (const a of [atom(el, "previousElementSibling"), atom(el, "nextElementSibling")]) if (a) near.add(a);
+  }
+  // Ovire: sosednji znaki iste formule ter ponovljene črke in kontrolniki v istem odstavku ali bloku (ne pa
+  // kontrolnik, ki oznako vsebuje, npr. povezava okoli formule).
+  for (const o of [...near, ...[...blocks].flatMap((blk) => [...blk.querySelectorAll(OVIRA)])]) {
+    if (seen.has(o)) continue;
+    seen.add(o);
+    if (o.querySelector("[data-fx][role=button]")) continue;
+    const g = boxOf(o);
+    if (!g.w || !g.h) continue;
+    g.fixed = true;
+    g.e = [0, 0, 0, 0];
+    items.push(g);
+  }
+  // Sosednji oznaki si razmik razdelita na pol, po osi z večjim razmikom; do ovire sme oznaka ves razmik.
+  // Razširjeni okvirji se tako ne prekrivajo med sabo ne z ovirami.
+  items.sort((a, b) => a.top - b.top);
+  for (let i = 0; i < items.length; i++) {
+    const a = items[i];
+    for (let j = i + 1; j < items.length && items[j].top < a.bottom + CILJ; j++) {
+      const o = items[j];
+      if (a.fixed && o.fixed) continue;
+      const gx = Math.max(o.left - a.right, a.left - o.right), gy = Math.max(o.top - a.bottom, a.top - o.bottom);
+      if (gx >= CILJ || gy >= CILJ) continue;
+      if (gx < 0 && gy < 0) {
+        // Okvirja se že prekrivata (KaTeX-ov odmik 0,08 em). Dve oznaki: brez razširitve. Oznaka ob oviri
+        // (npr. 3 v »3t«): brez razširitve proti oviri; navzgor in navzdol le, če ovira tam ne sega.
+        if (!a.fixed && !o.fixed) { a.e.fill(0); o.e.fill(0); continue; }
+        const [m, f] = a.fixed ? [o, a] : [a, o];
+        if (f.left + f.right < m.left + m.right) m.e[3] = 0;
+        else m.e[1] = 0;
+        if (f.top < m.top) m.e[0] = 0;
+        if (f.bottom > m.bottom) m.e[2] = 0;
+        continue;
+      }
+      const gap = Math.max(gx, gy), h = a.fixed || o.fixed ? gap : gap / 2;
+      if (gx >= gy) {
+        const [l, r] = o.left >= a.right ? [a, o] : [o, a];
+        l.e[1] = Math.min(l.e[1], h);
+        r.e[3] = Math.min(r.e[3], h);
+      } else {
+        const [u, d] = o.top >= a.bottom ? [a, o] : [o, a];
+        u.e[2] = Math.min(u.e[2], h);
+        d.e[0] = Math.min(d.e[0], h);
+      }
+    }
+  }
+  for (const g of items) {
+    if (g.fixed) continue;
+    const e = g.e.map(down);
+    const old = reach.get(g.el);
+    if (old && old.every((v, i) => v === e[i])) continue;
+    reach.set(g.el, e);
+    e.forEach((v, i) => g.el.style.setProperty(SIDES[i], `${v}px`));
   }
 }
 
@@ -263,7 +400,7 @@ function refreshMarks() {
     page.owners.clear();
     const plan = claimMarks(page, root, shown.map((el) => decode(el.dataset.fx)));
     pruneTones(page);
-    plans.push([els, new Map(shown.map((el, i) => [el, plan[i]]))]);
+    plans.push([els, new Map(shown.map((el, i) => [el, plan[i]])), skipped]);
   }
   for (const [els, plan] of plans) {
     for (const el of els) {
@@ -271,6 +408,7 @@ function refreshMarks() {
       const dup = p.dup && el !== openEl;
       if (el.classList.contains("fx-dup") !== dup) {
         el.classList.toggle("fx-dup", dup);
+        fitDirty = true;
         // Ponovljena črka je navadno besedilo: brez vloge tudi brez aria-label in aria-expanded (WCAG 4.1.2, axe
         // aria-allowed-attr; bralnik prebere samo črko). Oznako hranimo v data-fx-label za vrnitev v gumb.
         if (dup) {
@@ -293,6 +431,22 @@ function refreshMarks() {
       }
     }
   }
+  // Okvir dotika za vse vidne klikljive oznake (ne le na zaslonu: drsenje ga ne sme spremeniti).
+  const live = [];
+  // Preskočena kartica (content-visibility) ostane brez merjenja: branje okvirja bi prisililo njeno postavitev.
+  for (const [els, plan, skipped] of plans)
+    for (const el of els) {
+      if (!skipped && plan.has(el) && el.getAttribute("role") === "button") live.push(el);
+      // Ponovljena ali skrita črka nima vloge gumba: njen rob (in odštevek v margin-right iz fit) mora izginiti.
+      else if (el.getAttribute("role") !== "button") clearReach(el);
+    }
+  // Okvirje preračunamo, ko se je postavitev ali vloga spremenila ali je prišla nova oznaka; samo drsenje
+  // jih ne spremeni (vsi okvirji se premaknejo skupaj), zato ga preskočimo (Formule: tisoč oznak).
+  if (fitDirty || live.some((el) => !fitted.has(el))) {
+    fitDirty = false;
+    fitTargets(live);
+  }
+  for (const root of groups.keys()) if (root !== document.body && !sized.has(root)) { sized.add(root); fresh.add(root); resizeObs?.observe(root); }
 }
 
 // Klikljiva črka, okno pomena in zapiranje okna so svoj dotik: kartica (Ponavljanje), vrstica, povezava ali
@@ -326,7 +480,8 @@ export function initFormulaInfo(h = {}) {
       open(el, { again, focus });
       return;
     }
-    queueMarks(); // zavihek ali razdelek se je morda odprl
+    fitDirty = true; // zavihek ali razdelek se je morda odprl: postavitev je lahko nova
+    queueMarks();
     // Okno je odprto: dotik v prazno ga zapre in se tu konča (kartica se ne obrne).
     if (openEl && !e.target.closest(CONTROL)) {
       e.preventDefault();
@@ -340,7 +495,16 @@ export function initFormulaInfo(h = {}) {
     if (el && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); stop(e); byKey = true; el.click(); byKey = false; }
   }, true);
   // Telefon: vrstica brskalnika se ob drsenju skrije in spremeni le višino okna; okno pomena zapre le nova širina (obrat).
-  window.addEventListener("resize", () => { if (window.innerWidth !== openW) close(); });
+  window.addEventListener("resize", () => {
+    if (window.innerWidth !== openW) close();
+    clearTimeout(scrollTimer);
+    fitDirty = true; // nova širina: okvirji dotika se preračunajo
+    scrollTimer = setTimeout(queueMarks, 120);
+  });
+  // Pisave KaTeX se naložijo šele ob prvi uporabi in spremenijo velikost znakov: okvirji dotika se preračunajo.
+  const nanovo = () => { fitDirty = true; queueMarks(); };
+  document.fonts?.ready.then(nanovo);
+  document.fonts?.addEventListener?.("loadingdone", nanovo);
   document.addEventListener("scroll", (e) => {
     if (pop?.contains(e.target)) return;
     const key = e.target === document.documentElement || e.target === document.body ? document : e.target;
@@ -352,14 +516,14 @@ export function initFormulaInfo(h = {}) {
   }, true);
   enhance(document);
   queueMarks();
-  document.addEventListener("toggle", queueMarks, true);
+  document.addEventListener("toggle", nanovo, true);
   new MutationObserver((list) => {
     for (const m of list) {
-      if (m.type === "attributes") { queueMarks(); continue; }
-      for (const node of m.removedNodes) if (node.nodeType === 1 && (node.matches?.("[data-fx]") || node.querySelector?.("[data-fx]"))) queueMarks();
+      if (m.type === "attributes") { nanovo(); continue; }
+      for (const node of m.removedNodes) if (node.nodeType === 1 && (node.matches?.("[data-fx]") || node.querySelector?.("[data-fx]"))) nanovo();
       for (const node of m.addedNodes) if (node.nodeType === 1) {
-        if (node.matches?.("[data-fx]")) { enhance(node.parentElement || document); queueMarks(); }
-        else if (node.querySelector?.("[data-fx]")) { enhance(node); queueMarks(); }
+        if (node.matches?.("[data-fx]")) { enhance(node.parentElement || document); nanovo(); }
+        else if (node.querySelector?.("[data-fx]")) { enhance(node); nanovo(); }
       }
     }
   }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden", "open"] });
