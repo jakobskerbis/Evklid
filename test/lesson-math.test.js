@@ -329,3 +329,17 @@ test("AUDIT-058 (pregled prevzema): račun brez enot v običajni enoti iste koli
   for (const t of [R`$s = 340 \cdot 3 = 10{,}2\ \mathrm{km}$`, R`$s = 90 \cdot 2 = 1{,}8\ \mathrm{km}$`, R`$m = 2 \cdot 30 = 1\ \mathrm{kg}$`, R`$F = 2 \cdot 30 = 1\ \mathrm{N}$`, R`$F = 50 \cdot 2 = 1000\ \mathrm{N}$`, R`$F = 1000 \cdot 9{,}81 \cdot 0{,}25 \cdot 1{,}05 \approx 25{,}8\ \mathrm{kN}$`, R`$V = 0{,}25 \cdot 2 = 50\ \mathrm{mL}$`, R`$9{,}81 \cdot 2 = 19{,}63$`, R`$m = 0{,}002 \cdot 180 = 36\ \mathrm{mg}$`, R`$72\ \mathrm{km/h} = \frac{72}{3{,}6} = 200\ \mathrm{m/s}$`, R`$2{,}5 \cdot 4 = 10{,}05$`])
     assert.equal(checkArithmetic(t).mismatches.length, 1, t);
 });
+
+test("AUDIT-087: potenca pred \\cdot in besedilo z več besedami nista lažna napaka", () => {
+  const mm = (s) => checkArithmetic(s).mismatches.length;
+  assert.equal(mm("$10^4 \\cdot 10^1 = 10^5$"), 0);
+  assert.equal(mm("$10^4 \\cdot 10^1 = 10^6$"), 1);
+  assert.equal(mm("$\\text{št. skupine} - 10 = 16 - 10 = 6$"), 0);
+  assert.equal(mm("$\\text{št. skupine} - 10 = 16 - 10 = 7$"), 1);
+  assert.equal(mm("$3{,}97 \\cdot 10^{-19} : 1{,}602 \\cdot 10^{-19} = 2{,}478$"), 0);
+  assert.equal(mm("$2^3 \\cdot 10^2 = 800$"), 0);
+});
+
+test("AUDIT-088: ure v minute v verigi niso lažna napaka", () => {
+  assert.equal(checkArithmetic("$t = \\dfrac{8}{10}\\ \\text{h} = \\dfrac{8 \\times 60}{10}\\ \\text{min} = 48\\ \\text{min}$").mismatches.length, 0);
+});

@@ -239,8 +239,14 @@ export function normalizeTex(tex, pct = "div", { unitSub = null, colon = true } 
   // € (tudi \euro) je enota: 80 € · 0,75 = 60 €; pri pretvorbah (unitSub) je neznana, zato velja staro pravilo
   s = s.replace(/\\EURO/g, () => (units.push("€"), sub("€")));
   // Enote: \mathrm{kW}, \text{cm}^2, \Omega, °, ^\circ
+  let label = false;
   s = s.replace(/\\(?:mathrm|text|textrm|textit|operatorname|mathit|mathbf)\s*\{([^{}]*)\}(\s*\^\s*(?:\{[^{}]*\}|\\circ|\w))?/g, (_, u, e) => {
     if (!u.trim()) return " ";
+    // AUDIT-087: besedilo z več besedami (»\text{št. skupine}«) je oznaka količine, ne enota: izraz ni samo račun
+    if (/[\p{L}]{2,}\.?\s+[\p{L}]/u.test(u.trim())) {
+      label = true;
+      return " ";
+    }
     const unit = u.trim() + (e || "").replace(/\s/g, "");
     units.push(unit);
     return sub(unit);
@@ -268,9 +274,10 @@ export function normalizeTex(tex, pct = "div", { unitSub = null, colon = true } 
   s = s.replace(/\|([^|]*)\|/g, "abs($1)");
   s = s.replace(/[{]/g, "(").replace(/[}]/g, ")").replace(/\^/g, "**");
   // Zapis a · 10ⁿ je eno število: 3,97 · 10⁻¹⁹ / 1,602 · 10⁻¹⁹ pomeni (3,97 · 10⁻¹⁹) / (1,602 · 10⁻¹⁹).
-  s = s.replace(/(\d+\.?\d*)\s*\*\s*10\s*\*\*\s*(\(\s*[-+]?\d+\s*\)|[-+]?\d+)/g, "($1*10**$2)");
+  // AUDIT-087: ne, ko je mantisa sama eksponent (10**4 * 10**1 je 10⁵, ne 10**(4·10))
+  s = s.replace(/(?<!\*\*\s*\(?\s*|[\d.])(\d+\.?\d*)\s*\*\s*10\s*\*\*\s*(\(\s*[-+]?\d+\s*\)|[-+]?\d+)/g, "($1*10**$2)");
   s = s.replace(/[*/]\s*$/, "").replace(/\(\s*\)/g, "").trim(); // ostanek po odstranjeni enoti
-  if (!/\d/.test(s)) return null;
+  if (label || !/\d/.test(s)) return null;
   if (/[^\d\s.+\-*/(),]/.test(s.replace(WORDS, ""))) return null;
   // Golo število: 6,5 | -36 | (1.602*10**(-19))
   const lit = s.match(/^-?\(?(-?\d+(?:\.\d+)?)(?:\*10\*\*\(?([-+]?\d+)\)?)?\)?$/);
