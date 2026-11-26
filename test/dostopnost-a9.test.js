@@ -57,7 +57,7 @@ test("glavni meni: navigacija z aria-current, ne tablist brez zavihkov", () => {
   assert.match(read("app.js"), /\.topbar \.tabs \.tab, #tabbar \.tab"\)\.forEach\(\(t\) => \(t\.classList\.contains\("active"\) \? t\.setAttribute\("aria-current", "page"\)/);
 });
 
-test("spodnja vrstica: napisi in značke vsaj 12 px; žetoni, »Spremeni«, izbira letnika in stikalo vsaj 40 px", () => {
+test("spodnja vrstica: napisi in značke vsaj 12 px; žetoni, »Spremeni«, izbira letnika in stikalo, glava kartice Učne poti vsaj 40 px", () => {
   const css = read("style.css");
   const ui = read("ui.css");
   const rule = (src, sel) => src.match(new RegExp(`(^|\\n)\\s*${sel.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")} \\{([^}]*)\\}`))?.[2] || "";
@@ -74,4 +74,6 @@ test("spodnja vrstica: napisi in značke vsaj 12 px; žetoni, »Spremeni«, izbi
   assert.match(rule(ui, ".chip-row > a, .chip-row > button"), /min-height: 40px/);
   assert.match(rule(ui, ".goal-line .gl-edit"), /min-height: 40px/);
   assert.match(rule(ui, ".switch"), /height: 40px/);
+  // Glava kartice na Učni poti (»Danes imaš«, »Izpiti«): ves gumb vsaj 40 px, ne samo v okvirju izpitov.
+  assert.match(rule(read("schedule.css"), "button.sch-card-head"), /min-height: 40px/);
 });
