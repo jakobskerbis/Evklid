@@ -53,7 +53,7 @@ theorem odstotek : (1 : ℝ) / 100 = 0.01 ∧ (15 : ℝ) / 100 = 0.15 := by norm
 
 /-- Razlaga 1: iz d = C·p/100 sledi p = 100·d/C (C ≠ 0).
 trditev: MAT-SS-4/obrestni-racun#odstotek-iz-deleza
-besedilo: »Od tod $p = \frac{100 \cdot d}{C}$ in $C = \frac{100 \cdot d}{p}$.« -/
+besedilo: »Od tod $p = \frac{100 \cdot d}{C}$« -/
 theorem odstotek_iz_deleza (C d p : ℝ) (hC : C ≠ 0) : d = C * p / 100 ↔ p = 100 * d / C := by
   constructor
   · intro h; rw [h]; field_simp
@@ -85,18 +85,18 @@ example :=
 
 /-- Razlaga 1: 18 od 240 gostov: relativni delež 18/240 = 0,075 = 7,5 % (tudi 100·18/240 = 7,5).
 trditev: MAT-SS-4/obrestni-racun#vegetarijanci
-besedilo: »Od tod $p = \frac{100 \cdot d}{C}$ in $C = \frac{100 \cdot d}{p}$. Primer: $18$ od $240$ gostov je vegetarijancev. **Relativni delež** je $\frac{d}{C} = \frac{18}{240} = 0{,}075 = 7{,}5\,\%$.« -/
+besedilo: »Primer: $18$ od $240$ gostov je vegetarijancev. **Relativni delež** je $\frac{d}{C} = \frac{18}{240} = 0{,}075 = 7{,}5\,\%$.« -/
 theorem vegetarijanci : (18 : ℝ) / 240 = 0.075 ∧ (0.075 : ℝ) = 7.5 / 100 ∧ 100 * (18 : ℝ) / 240 = 7.5 := by
   norm_num
 
 /-- Razlaga 1: povečanje za p %: C + C·p/100 = C(1 + p/100).
 trditev: MAT-SS-4/obrestni-racun#povecanje
-besedilo: »Če se cena $C$ **poveča za** $p\,\%$, je nova cena $C + \frac{C \cdot p}{100} = C\left(1 + \frac{p}{100}\right)$, pri **zmanjšanju** pa $C\left(1 - \frac{p}{100}\right)$.« -/
+besedilo: »je nova cena $C + \frac{C \cdot p}{100} = C\left(1 + \frac{p}{100}\right)$« -/
 theorem povecanje (C p : ℝ) : C + C * p / 100 = C * (1 + p / 100) := by ring
 
 /-- Razlaga 1: zmanjšanje za p %: C − C·p/100 = C(1 − p/100).
 trditev: MAT-SS-4/obrestni-racun#zmanjsanje
-besedilo: »Če se cena $C$ **poveča za** $p\,\%$, je nova cena $C + \frac{C \cdot p}{100} = C\left(1 + \frac{p}{100}\right)$, pri **zmanjšanju** pa $C\left(1 - \frac{p}{100}\right)$.« -/
+besedilo: »pri **zmanjšanju** pa $C\left(1 - \frac{p}{100}\right)$« -/
 theorem zmanjsanje (C p : ℝ) : C - C * p / 100 = C * (1 - p / 100) := by ring
 
 /-- Razlaga 1: podražitev za 15 % je množenje z 1,15, popust 15 % z 0,85.
@@ -121,7 +121,7 @@ theorem odstotne_tocke : (4 : ℝ) - 3 = 1 ∧ ((4 : ℝ) - 3) / 3 = 1 / 3 := by
 
 /-- Razlaga 1, hitri preizkus: jakna 60 € znižana za 30 %: 60·0,7 = 42 €.
 trditev: MAT-SS-4/obrestni-racun#jakna
-besedilo: »Hitri preizkus:* jakna za $60\,\text{€}$ je znižana za $30\,\%$. Koliko stane? *(Odgovor: $60 \cdot 0{,}7 = 42\,\text{€}$.)« -/
+besedilo: »$60 \cdot 0{,}7 = 42\,\text{€}$« -/
 theorem jakna : (60 : ℝ) * (1 - 30 / 100) = 60 * 0.7 ∧ (60 : ℝ) * 0.7 = 42 := by norm_num
 
 /-! ## Razlaga 2–3: obresti in navadno obrestovanje -/
@@ -133,12 +133,12 @@ theorem obresti_400 : (400 : ℝ) * 5 / 100 = 20 := by norm_num
 
 /-- Razlaga 3: G₀ + n·(G₀·p/100) = G₀(1 + n·p/100) (izpostavimo G₀).
 trditev: MAT-SS-4/obrestni-racun#navadno-formula
-besedilo: »$$G_n = G_0 \left(1 + \frac{n \cdot p}{100}\right)$$« -/
+besedilo: »$G_n = G_0 + n \cdot \frac{G_0 \cdot p}{100} = G_0 \left(1 + \frac{n \cdot p}{100}\right)$« -/
 theorem navadno_formula (G₀ p n : ℝ) : G₀ + n * (G₀ * p / 100) = G₀ * (1 + n * p / 100) := by ring
 
 /-- Razlaga 3: če se stanje vsako leto poveča za iste obresti o = G₀·p/100, je Gₙ = G₀(1 + n·p/100).
 trditev: MAT-SS-4/obrestni-racun#navadno-stanje
-besedilo: »zato se stanje vsako leto poveča za enake obresti $o = \frac{G_0 \cdot p}{100}$.« -/
+besedilo: »zato se stanje vsako leto poveča za enake obresti $o = \frac{G_0 \cdot p}{100}$. Po $n$ letih je $G_n = G_0 + n \cdot \frac{G_0 \cdot p}{100} = G_0 \left(1 + \frac{n \cdot p}{100}\right)$« -/
 theorem navadno_stanje (G : ℕ → ℝ) (p : ℝ) (h : ∀ k, G (k + 1) = G k + G 0 * p / 100) (n : ℕ) :
     G n = G 0 * (1 + n * p / 100) := by
   induction n with
@@ -157,7 +157,7 @@ example : True :=
 
 /-- Razlaga 3: stanja navadnega obrestovanja tvorijo aritmetično zaporedje z diferenco o = G₀·p/100.
 trditev: MAT-SS-4/obrestni-racun#navadno-aritmeticno
-besedilo: »Po $n$ letih je $G_n = G_0 + n \cdot \frac{G_0 \cdot p}{100} = G_0 \left(1 + \frac{n \cdot p}{100}\right)$, stanja pa tvorijo aritmetično zaporedje z diferenco $o$.« -/
+besedilo: »Stanja $G_0, G_1, G_2, \dots$ tvorijo **aritmetično zaporedje** z diferenco $o$.« -/
 theorem navadno_aritmeticno (G₀ p : ℝ) (n : ℕ) :
     G₀ * (1 + ((n + 1 : ℕ) : ℝ) * p / 100) - G₀ * (1 + (n : ℝ) * p / 100) = G₀ * p / 100 := by
   push_cast; ring
@@ -177,7 +177,7 @@ theorem faktor_3 : 1 + (3 : ℝ) / 100 = 1.03 := by norm_num
 
 /-- Razlaga 4: če vsako leto množimo z r, je Gₙ = G₀·rⁿ.
 trditev: MAT-SS-4/obrestni-racun#obrestno-stanje
-besedilo: »$$G_n = G_0 \cdot r^n$$« -/
+besedilo: »Vsako leto znova množimo z $r$: $$G_n = G_0 \cdot r^n$$« -/
 theorem obrestno_stanje (G : ℕ → ℝ) (r : ℝ) (h : ∀ k, G (k + 1) = G k * r) (n : ℕ) :
     G n = G 0 * r ^ n := by
   induction n with
@@ -206,19 +206,19 @@ theorem obrestno_geometrijsko (G₀ r : ℝ) (n : ℕ) : G₀ * r ^ (n + 1) = (G
 
 /-- Razlaga 4, hitri preizkus: 800 € 2 leti pri 3 % obrestno: 800·1,03² = 848,72 €.
 trditev: MAT-SS-4/obrestni-racun#obrestno-800
-besedilo: »Hitri preizkus:* $800\,\text{€}$ za $2$ leti pri $3\,\%$ obrestno? *(Odgovor: $800 \cdot 1{,}03^2 = 848{,}72\,\text{€}$.)« -/
+besedilo: »$800 \cdot 1{,}03^2 = 848{,}72\,\text{€}$« -/
 theorem obrestno_800 : (800 : ℝ) * 1.03 ^ 2 = 848.72 := by norm_num
 
 /-- Razlaga 4, premisli: pri isti glavnici in meri sta po 1. letu stanji enaki.
 trditev: MAT-SS-4/obrestni-racun#prvo-leto-enako
-besedilo: »Napovej, preden pogledaš tabelo spodaj: ali imata navadno in obrestno obrestovanje pri isti glavnici in isti obrestni meri po prvem letu enako stanje? Kaj pa po drugem? Utemelji.« -/
+besedilo: »Pri isti meri sta obe po 1. letu enaki« -/
 theorem prvo_leto_enako (G₀ p : ℝ) : G₀ * (1 + 1 * p / 100) = G₀ * (1 + p / 100) ^ 1 := by ring
 
 /-! ## Razlaga 5: primerjava (1000 € pri 5 %) -/
 
 /-- Razlaga 5, tabela, stolpec »navadno«: 1000(1 + n·5/100) za n = 0, 1, 2, 3, 5, 10, 20.
 trditev: MAT-SS-4/obrestni-racun#tabela-navadno
-besedilo: »Vrni se k uganki. Kje ima Ana več po $5$ letih in kje po $10$ letih? Napovej, nato izračunaj z $G_n = 2000\,(1 + 0{,}06\,n)$ za A in $G_n = 2000 \cdot 1{,}05^n$ za B.« -/
+besedilo: »| 0 | 1000 | 1000 | | 1 | 1050 | 1050 | | 2 | 1100 | 1102,50 | | 3 | 1150 | 1157,63 | | 5 | 1250 | 1276,28 | | 10 | 1500 | 1628,89 | | 20 | 2000 | 2653,30 |« -/
 theorem tabela_navadno :
     (1000 : ℝ) * (1 + 0 * 5 / 100) = 1000 ∧ (1000 : ℝ) * (1 + 1 * 5 / 100) = 1050 ∧
     (1000 : ℝ) * (1 + 2 * 5 / 100) = 1100 ∧ (1000 : ℝ) * (1 + 3 * 5 / 100) = 1150 ∧
@@ -228,7 +228,7 @@ theorem tabela_navadno :
 /-- Razlaga 5, tabela, stolpec »obrestno«: 1000·1,05ⁿ, zaokroženo na cente
 (1000; 1050; 1102,50; 1157,63; 1276,28; 1628,89; 2653,30).
 trditev: MAT-SS-4/obrestni-racun#tabela-obrestno
-besedilo: »| 2 | 1100 | 1102,50 |« -/
+besedilo: »| 0 | 1000 | 1000 | | 1 | 1050 | 1050 | | 2 | 1100 | 1102,50 | | 3 | 1150 | 1157,63 | | 5 | 1250 | 1276,28 | | 10 | 1500 | 1628,89 | | 20 | 2000 | 2653,30 |« -/
 theorem tabela_obrestno :
     (1000 : ℝ) * 1.05 ^ 0 = 1000 ∧ (1000 : ℝ) * 1.05 ^ 1 = 1050 ∧ (1000 : ℝ) * 1.05 ^ 2 = 1102.5 ∧
     |(1000 : ℝ) * 1.05 ^ 3 - 1157.63| ≤ 0.005 ∧ |(1000 : ℝ) * 1.05 ^ 5 - 1276.28| < 0.005 ∧
@@ -267,7 +267,7 @@ theorem uganka_8_9 : (2000 : ℝ) * (1 + 0.06 * 8) = 2960 ∧ |(2000 : ℝ) * 1.
 
 /-- Uganka: »B prehiti A med 8. in 9. letom« – za 1 ≤ n ≤ 8 je A boljša, za vsak n ≥ 9 B.
 trditev: MAT-SS-4/obrestni-racun#uganka-prehit
-besedilo: »Banka B prehiti A med 8. letom (A $2960\,\text{€}$,« -/
+besedilo: »Banka B prehiti A med 8. letom (A $2960\,\text{€}$, B $2954{,}91\,\text{€}$) in 9. letom (A $3080\,\text{€}$, B $3102{,}66\,\text{€}$).« -/
 theorem uganka_prehit (n : ℕ) :
     ((1 ≤ n ∧ n ≤ 8) → 2000 * (1.05 : ℝ) ^ n < 2000 * (1 + 0.06 * n)) ∧
     (9 ≤ n → 2000 * (1 + 0.06 * (n : ℝ)) < 2000 * (1.05 : ℝ) ^ n) := by
@@ -286,7 +286,7 @@ theorem uganka_prehit (n : ℕ) :
 
 /-- Razlaga 6: iz Gₙ = G₀·rⁿ sledi G₀ = Gₙ/rⁿ (r ≠ 0).
 trditev: MAT-SS-4/obrestni-racun#nazaj
-besedilo: »Iz $G_n = G_0 \cdot r^n$ sledi« -/
+besedilo: »Iz $G_n = G_0 \cdot r^n$ sledi $$G_0 = \frac{G_n}{r^n}$$« -/
 theorem nazaj (G₀ Gn r : ℝ) (n : ℕ) (hr : r ≠ 0) : Gn = G₀ * r ^ n ↔ G₀ = Gn / r ^ n := by
   have : r ^ n ≠ 0 := pow_ne_zero n hr
   constructor
@@ -303,7 +303,7 @@ example :=
 
 /-- Razlaga 6, hitri preizkus: 1081,60 : 1,04² = 1000 €.
 trditev: MAT-SS-4/obrestni-racun#nazaj-1081
-besedilo: »Hitri preizkus:* koliko vložiti danes, da bo čez $2$ leti pri $4\,\%$ obrestno na računu $1081{,}60\,\text{€}$? *(Odgovor: $1081{,}60 : 1{,}04^2 = 1000\,\text{€}$.)« -/
+besedilo: »$1081{,}60 : 1{,}04^2 = 1000\,\text{€}$« -/
 theorem nazaj_1081 : (1081.60 : ℝ) / 1.04 ^ 2 = 1000 := by norm_num
 
 /-! ## Razlaga 7: relativna in konformna obrestna mera -/
@@ -311,7 +311,7 @@ theorem nazaj_1081 : (1081.60 : ℝ) / 1.04 ^ 2 = 1000 := by norm_num
 /-- Razlaga 7: pri 6 % in mesečnem pripisu je p_r = 6/12 = 0,5 %, faktor 1,005; 1000·1,005¹² ≈ 1061,68 €,
 kar je več kot 1060 € pri letnem pripisu.
 trditev: MAT-SS-4/obrestni-racun#relativna-6
-besedilo: »V enem letu $1000\,\text{€}$ zraste na $1000 \cdot 1{,}005^{12} \approx 1061{,}68\,\text{€}$, kar je **več** kot $1060\,\text{€}$ pri letnem pripisu, ker se januarske obresti obrestujejo že februarja.« -/
+besedilo: »Pri $p = 6\,\%$ in mesečnem pripisu je $p_r = 0{,}5\,\%$, faktor $1{,}005$. V enem letu $1000\,\text{€}$ zraste na $1000 \cdot 1{,}005^{12} \approx 1061{,}68\,\text{€}$, kar je **več** kot $1060\,\text{€}$ pri letnem pripisu« -/
 theorem relativna_6 : (6 : ℝ) / 12 = 0.5 ∧ 1 + (0.5 : ℝ) / 100 = 1.005 ∧
     |(1000 : ℝ) * 1.005 ^ 12 - 1061.68| < 0.005 ∧ (1060 : ℝ) < 1000 * 1.005 ^ 12 ∧
     (1000 : ℝ) * (1 + 6 / 100) = 1060 := by norm_num [abs_lt]
@@ -344,7 +344,7 @@ theorem konformna_6 : |(1.06 : ℝ) ^ ((1 : ℝ) / 12) - 1.004868| < 0.0000005 �
 
 /-- Razlaga 7: konformna mera p_k ≈ 0,487 % je manjša od relativne 0,5 %.
 trditev: MAT-SS-4/obrestni-racun#konformna-manjsa-6
-besedilo: »Pri $6\,\%$ in mesečnem pripisu je $r_{12} = \sqrt[12]{1{,}06} \approx 1{,}004868$, torej $p_k \approx 0{,}487\,\%$, malo manj od relativne mere.« -/
+besedilo: »torej $p_k \approx 0{,}487\,\%$, malo manj od relativne mere.« -/
 theorem konformna_manjsa_6 : 100 * ((1.06 : ℝ) ^ ((1 : ℝ) / 12) - 1) < 0.5 := by
   have := (konformna_6).2
   rw [abs_lt] at this; linarith [this.2]
@@ -362,7 +362,7 @@ theorem konformna_leto : (1000 : ℝ) * ((1.06 : ℝ) ^ ((1 : ℝ) / 12)) ^ 12 =
 
 /-- Razlaga 7: konformna mera v n letih (m·n pripisov) da G₀(ᵐ√r)^(m·n) = G₀·rⁿ (r ≥ 0, m ≠ 0).
 trditev: MAT-SS-4/obrestni-racun#konformna-n-let
-besedilo: »V $n$ letih je $m \cdot n$ pripisov. Relativna mera da $G = G_0 \left(1 + \frac{p}{100\,m}\right)^{m n}$, več kot letni pripis. Konformna da $G = G_0 \left(\sqrt[m]{r}\right)^{m n} = G_0 \cdot r^n$, enako kot letni pripis.« -/
+besedilo: »Konformna da $G = G_0 \left(\sqrt[m]{r}\right)^{m n} = G_0 \cdot r^n$, enako kot letni pripis.« -/
 theorem konformna_n_let (G₀ r : ℝ) (m n : ℕ) (hr : 0 ≤ r) (hm : m ≠ 0) :
     G₀ * (r ^ ((1 : ℝ) / m)) ^ (m * n) = G₀ * r ^ n := by
   rw [pow_mul, koren_pot hm hr]
@@ -377,7 +377,7 @@ example :=
 
 /-- Razlaga 7, z računalom: brez oklepaja računalo izračuna 1,06¹ : 12 ≈ 0,088.
 trditev: MAT-SS-4/obrestni-racun#brez-oklepaja
-besedilo: »Z računalom:* $\sqrt[12]{1{,}06}$ vtipkaš s tipko $\sqrt[x]{y}$ ali kot $1{,}06$ ^ $(1 : 12)$, z oklepajem. Brez njega računalo izračuna $1{,}06^1 : 12 \approx 0{,}088$.« -/
+besedilo: »Brez njega računalo izračuna $1{,}06^1 : 12 \approx 0{,}088$.« -/
 theorem brez_oklepaja : |(1.06 : ℝ) ^ 1 / 12 - 0.088| < 0.0005 := by norm_num [abs_lt]
 
 /-! ## Drugače: Bolj natančno – Bernoullijeva neenakost -/
@@ -403,7 +403,7 @@ example :=
 
 /-- Bolj natančno: za x > 0 in n ≥ 2 je neenakost stroga: (1 + x)ⁿ > 1 + nx.
 trditev: MAT-SS-4/obrestni-racun#bernoulli-strogo
-besedilo: »Bernoullijeva neenakost z $\frac{x}{m}$ namesto $x$ da $\left(1 + \frac{x}{m}\right)^m \ge 1 + x$, za $m \ge 2$ strogo.« -/
+besedilo: »Ker je pozitiven, je neenakost za $n \ge 2$ stroga.« -/
 theorem bernoulli_strogo (x : ℝ) (hx : 0 < x) (n : ℕ) (hn : 2 ≤ n) : 1 + n * x < (1 + x) ^ n := by
   induction n, hn using Nat.le_induction with
   | base => push_cast; nlinarith
@@ -442,7 +442,7 @@ example :=
 
 /-- Bolj natančno: relativna mera da v letu več: (1 + x/m)ᵐ > 1 + x za x > 0, m ≥ 2.
 trditev: MAT-SS-4/obrestni-racun#relativna-vec
-besedilo: »Zakaj relativna mera da več.** Pri relativni meri je letni faktor $\left(1 + \frac{x}{m}\right)^m$.« -/
+besedilo: »Bernoullijeva neenakost z $\frac{x}{m}$ namesto $x$ da $\left(1 + \frac{x}{m}\right)^m \ge 1 + x$, za $m \ge 2$ strogo.« -/
 theorem relativna_vec (x : ℝ) (hx : 0 < x) (m : ℕ) (hm : 2 ≤ m) : 1 + x < (1 + x / m) ^ m := by
   have h2m : (2 : ℝ) ≤ m := by exact_mod_cast hm
   have hm0 : (m : ℝ) ≠ 0 := by linarith
@@ -499,7 +499,7 @@ theorem primer1_faktor : (1.15 : ℝ) * 0.85 = 0.9775 ∧ (0.9775 : ℝ) = 1 - 0
 
 /-- Primer 1 kot veriga: 240·1,15·0,85 = 276·0,85 = 234,6.
 trditev: MAT-SS-4/obrestni-racun#primer1-calc
-besedilo: »$276 \cdot 0{,}85 = 234{,}6$« -/
+besedilo: »$240 \cdot 1{,}15 = 276$, torej $276\,\text{€}$. 2. Po razprodaji je osnova $276\,\text{€}$: $276 \cdot 0{,}85 = 234{,}6$« -/
 theorem primer1_calc : (240 : ℝ) * 1.15 * 0.85 = 234.6 := by
   calc (240 : ℝ) * 1.15 * 0.85 = 276 * 0.85 := by norm_num
     _ = 234.6 := by norm_num
@@ -547,7 +547,7 @@ theorem primer4_potenca : |(1.03 : ℝ) ^ 5 - 1.159274| < 0.0000005 := by norm_n
 
 /-- Primer 4, korak 2: 6000/1,159274 ≈ 5175,65 (in tudi točno 6000/1,03⁵ ≈ 5175,65).
 trditev: MAT-SS-4/obrestni-racun#primer4-obrestno
-besedilo: »$5175{,}65 \cdot 1{,}03^5 \approx 6000$.« -/
+besedilo: »Obrestno: $G_0 = \dfrac{6000}{1{,}159274} \approx 5175{,}65$, torej približno $5175{,}65\,\text{€}$.« -/
 theorem primer4_obrestno : |(6000 : ℝ) / 1.159274 - 5175.65| < 0.005 ∧
     |(6000 : ℝ) / 1.03 ^ 5 - 5175.65| < 0.005 := by
   constructor <;> rw [abs_lt] <;> constructor <;> norm_num
@@ -576,7 +576,7 @@ theorem napaka_odstevanje : 5 * (3 : ℝ) = 15 ∧ (6000 : ℝ) * 15 / 100 = 900
 
 /-- Primer 5, koraka 1–2: p_r = 4,8/12 = 0,4 (faktor 1,004); 12·3 = 36 pripisov; 5000·1,004³⁶ ≈ 5772,76.
 trditev: MAT-SS-4/obrestni-racun#primer5-relativna
-besedilo: »Relativna mera: $p_r = \dfrac{4{,}8}{12} = 0{,}4$, torej $0{,}4\,\%$ na mesec; faktor $1{,}004$.« -/
+besedilo: »Relativna mera: $p_r = \dfrac{4{,}8}{12} = 0{,}4$, torej $0{,}4\,\%$ na mesec; faktor $1{,}004$. 2. Pripisov je $12 \cdot 3 = 36$, zato $5000 \cdot 1{,}004^{36} \approx 5772{,}76$, torej $5772{,}76\,\text{€}$.« -/
 theorem primer5_relativna : (4.8 : ℝ) / 12 = 0.4 ∧ 1 + (0.4 : ℝ) / 100 = 1.004 ∧ 12 * 3 = 36 ∧
     |(5000 : ℝ) * 1.004 ^ 36 - 5772.76| < 0.005 := by norm_num [abs_lt]
 
@@ -616,7 +616,7 @@ theorem primer6_r2 : (2163.2 : ℝ) / 2000 = 1.0816 := by norm_num
 
 /-- Primer 6, premisli: r² = 1,0816 in r > 0 natanko tedaj, ko r = 1,04.
 trditev: MAT-SS-4/obrestni-racun#primer6-r
-besedilo: »$r = \sqrt{1{,}0816} = 1{,}04$, zato $\frac{p}{100} = 0{,}04$ in $p = 4\,\%$.« -/
+besedilo: »$r = \sqrt{1{,}0816} = 1{,}04$« -/
 theorem primer6_r (r : ℝ) : (r ^ 2 = 1.0816 ∧ 0 < r) ↔ r = 1.04 := by
   constructor
   · rintro ⟨h, hr⟩
@@ -644,7 +644,7 @@ theorem matura1 : (2616 : ℝ) - 2400 = 216 ∧ (216 : ℝ) / 3 = 72 ∧ 100 * (
 
 /-- Matura 1 (točkovanje): enačba 2400(1 + 3p/100) = 2616 ima natanko rešitev p = 3.
 trditev: MAT-SS-4/obrestni-racun#matura1-enacba
-besedilo: »1 točka za letne obresti ($72\,\text{€}$) ali za pravilno nastavljeno enačbo $2400\left(1 + \frac{3p}{100}\right) = 2616$,« -/
+besedilo: »Preizkus: $2400 \cdot \left(1 + \dfrac{3 \cdot 3}{100}\right) = 2400 \cdot 1{,}09 = 2616$. 5. Odgovor: letna obrestna mera je $3\,\%$.« -/
 theorem matura1_enacba (p : ℝ) : 2400 * (1 + 3 * p / 100) = 2616 ↔ p = 3 := by
   constructor
   · intro h; linarith
@@ -661,21 +661,21 @@ theorem matura2a : |(1.036 : ℝ) ^ 5 - 1.1934350| < 0.00000005 ∧
 
 /-- Matura 2 b): 7160,61 − 6000 = 1160,61; 1160,61/6000·100 ≈ 19,34 ≈ 19,3 %; 5·3,6 = 18; 19,3 − 18 = 1,3.
 trditev: MAT-SS-4/obrestni-racun#matura2b
-besedilo: »b) Vse obresti: $7160{,}61 - 6000 = 1160{,}61$, torej $1160{,}61\,\text{€}$. Delež vloge: $\dfrac{1160{,}61}{6000} \cdot 100 \approx 19{,}34$, torej približno $19{,}3\,\%$.« -/
+besedilo: »b) Vse obresti: $7160{,}61 - 6000 = 1160{,}61$, torej $1160{,}61\,\text{€}$. Delež vloge: $\dfrac{1160{,}61}{6000} \cdot 100 \approx 19{,}34$, torej približno $19{,}3\,\%$. 3. b) Pri navadnem obrestovanju je vsako leto $3{,}6\,\%$ vloge, v petih letih $5 \cdot 3{,}6 = 18$, torej $18\,\%$. Razlika je $19{,}3 - 18 = 1{,}3$ odstotne točke.« -/
 theorem matura2b : (7160.61 : ℝ) - 6000 = 1160.61 ∧ |(1160.61 : ℝ) / 6000 * 100 - 19.34| < 0.005 ∧
     |(1160.61 : ℝ) / 6000 * 100 - 19.3| < 0.05 ∧ 5 * (3.6 : ℝ) = 18 ∧ (19.3 : ℝ) - 18 = 1.3 := by
   norm_num [abs_lt]
 
 /-- Matura 2 c): 3,6/12 = 0,3; faktor 1,003; 12·5 = 60; 6000·1,003⁶⁰ ≈ 7181,3688; 7181,37 − 7160,61 = 20,76.
 trditev: MAT-SS-4/obrestni-racun#matura2c
-besedilo: »c) $G = 6000 \cdot 1{,}003^{60} \approx 7181{,}3688$, torej $7181{,}37\,\text{€}$. Razlika: $7181{,}37 - 7160{,}61 = 20{,}76$, torej $20{,}76\,\text{€}$.« -/
+besedilo: »c) Relativna mesečna obrestna mera je $\dfrac{3{,}6}{12} = 0{,}3$, torej $0{,}3\,\%$; mesečni faktor je $1{,}003$, pripisov je $12 \cdot 5 = 60$. 5. c) $G = 6000 \cdot 1{,}003^{60} \approx 7181{,}3688$, torej $7181{,}37\,\text{€}$. Razlika: $7181{,}37 - 7160{,}61 = 20{,}76$, torej $20{,}76\,\text{€}$.« -/
 theorem matura2c : (3.6 : ℝ) / 12 = 0.3 ∧ 1 + (0.3 : ℝ) / 100 = 1.003 ∧ 12 * 5 = 60 ∧
     |(6000 : ℝ) * 1.003 ^ 60 - 7181.3688| < 0.00005 ∧ (7181.37 : ℝ) - 7160.61 = 20.76 := by
   norm_num [abs_lt]
 
 /-- Matura 2 d): r₁₂⁶⁰ = 1,036⁵ za r₁₂ = ¹²√1,036 ≈ 1,0029516; mesečna mera 100(r₁₂ − 1) ≈ 0,29516 ≈ 0,295 %.
 trditev: MAT-SS-4/obrestni-racun#matura2d
-besedilo: »Torej $r_{12} = \sqrt[12]{1{,}036} \approx 1{,}0029516$ in mesečna mera je $100 \cdot (r_{12} - 1) \approx 0{,}29516$, torej približno $0{,}295\,\%$.« -/
+besedilo: »d) Mesečni faktor $r_{12}$ mora izpolniti $r_{12}^{\,12} = 1{,}036$: takrat $60$ mesečnih pripisov da $r_{12}^{\,60} = 1{,}036^5$, enako kot v a). Torej $r_{12} = \sqrt[12]{1{,}036} \approx 1{,}0029516$ in mesečna mera je $100 \cdot (r_{12} - 1) \approx 0{,}29516$, torej približno $0{,}295\,\%$.« -/
 theorem matura2d : ((1.036 : ℝ) ^ ((1 : ℝ) / 12)) ^ 60 = 1.036 ^ 5 ∧
     |(1.036 : ℝ) ^ ((1 : ℝ) / 12) - 1.0029516| < 0.00000005 ∧
     |100 * ((1.036 : ℝ) ^ ((1 : ℝ) / 12) - 1) - 0.29516| < 0.000005 ∧
@@ -722,7 +722,7 @@ theorem kviz2 : (3000 : ℝ) * 1.02 ^ 3 = 3183.624 ∧ |(3183.624 : ℝ) - 3183.
 
 /-- Preveri se 3: pravilna vloga je 6000/1,03⁵ ≈ 5175,65 € (ne 5100 €).
 trditev: MAT-SS-4/obrestni-racun#kviz3
-besedilo: »$G_0 = \frac{6000}{1{,}03^5} \approx 5175{,}65\,\text{€}$. Odstotke računamo od vloge, zato končni znesek delimo z $r^n$.« -/
+besedilo: »Obrestno: $G_0 = \dfrac{6000}{1{,}159274} \approx 5175{,}65$, torej približno $5175{,}65\,\text{€}$.« -/
 theorem kviz3 : |(6000 : ℝ) / 1.03 ^ 5 - 5175.65| < 0.005 ∧ (6000 : ℝ) / 1.03 ^ 5 ≠ 5100 := by
   refine ⟨primer4_obrestno.2, ?_⟩
   norm_num

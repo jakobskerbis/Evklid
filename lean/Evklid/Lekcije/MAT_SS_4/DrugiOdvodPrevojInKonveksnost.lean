@@ -22,7 +22,7 @@ open Real Filter Topology Set
 
 /-- Razlaga 1: drugi odvod je odvod odvoda, f''(x) = (f'(x))'.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#drugi-odvod
-besedilo: »Za $f(x) = x^3$ je $f'(x) = 3x^2$ in $f''(x) = 6x$. Drugi odvod pove, kako hitro se spreminja naklon tangente. Pri raketi je $h'$ hitrost, $h''$ pa pospešek.« -/
+besedilo: »Odvod $f'$ je spet funkcija, zato ga lahko še enkrat odvajamo. Dobimo **drugi odvod** $f''$: $$f''(x) = \bigl(f'(x)\bigr)'$$« -/
 theorem drugi_odvod {f f₁ f₂ : ℝ → ℝ} (h₁ : ∀ x, HasDerivAt f (f₁ x) x)
     (h₂ : ∀ x, HasDerivAt f₁ (f₂ x) x) (x : ℝ) : deriv^[2] f x = f₂ x := by
   have e : deriv f = f₁ := funext fun x => (h₁ x).deriv
@@ -67,6 +67,8 @@ example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => x ^ 2) (2 * x) x) ∧
   ⟨fun x => (hasDerivAt_pow 2 x).congr_deriv (by norm_num),
     fun x => ((hasDerivAt_id' x).const_mul 2).congr_deriv (by ring), fun _ _ => two_pos⟩
 
+/-- Pomožno: −x² na ℝ ima f' = −2x in f'' = −2 < 0 (predpostavke `konkavna` in `test_maksimum`).
+pomozno -/
 theorem konkavna_izpolnljivo : (∀ x : ℝ, HasDerivAt (fun x : ℝ => -x ^ 2) (-2 * x) x) ∧
     (∀ x : ℝ, HasDerivAt (fun x : ℝ => -2 * x) ((fun _ => (-2:ℝ)) x) x) ∧
     ∀ x ∈ interior (univ : Set ℝ), (fun _ => (-2:ℝ)) x < 0 :=
@@ -76,7 +78,7 @@ theorem konkavna_izpolnljivo : (∀ x : ℝ, HasDerivAt (fun x : ℝ => -x ^ 2) 
 /-- Razlaga 3 (pomen): graf konveksne funkcije leži nad vsako svojo tangento,
 f(x) + f'(x)(y − x) ≤ f(y).
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#nad-tangento
-besedilo: »Imena.** Funkcija je na intervalu **konveksna**, če njen graf tam leži nad vsako svojo tangento (oblika »skodelice«, $\cup$).« -/
+besedilo: »Funkcija je na intervalu **konveksna**, če njen graf tam leži nad vsako svojo tangento (oblika »skodelice«, $\cup$).« -/
 theorem nad_tangento {f : ℝ → ℝ} {D : Set ℝ} {x y f' : ℝ} (hf : ConvexOn ℝ D f) (hx : x ∈ D)
     (hy : y ∈ D) (hd : HasDerivAt f f' x) : f x + f' * (y - x) ≤ f y := by
   rcases lt_trichotomy x y with h | rfl | h
@@ -94,7 +96,7 @@ example : ConvexOn ℝ univ (fun x : ℝ => x ^ 2) ∧ HasDerivAt (fun x : ℝ =
 
 /-- Razlaga 3 (pomen): graf konkavne funkcije leži pod vsako svojo tangento.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#pod-tangento
-besedilo: »Graf je konkaven: leži pod svojimi tangentami.« -/
+besedilo: »Je **konkavna**, če graf leži pod tangentami (oblika »kupole«, $\cap$).« -/
 theorem pod_tangento {f : ℝ → ℝ} {D : Set ℝ} {x y f' : ℝ} (hf : ConcaveOn ℝ D f) (hx : x ∈ D)
     (hy : y ∈ D) (hd : HasDerivAt f f' x) : f y ≤ f x + f' * (y - x) := by
   have := nad_tangento hf.neg hx hy hd.neg
@@ -109,7 +111,7 @@ example : ConcaveOn ℝ univ (fun x : ℝ => -x ^ 2) ∧ HasDerivAt (fun x : ℝ
 /-- Razlaga 4: če f'' v x₀ obstaja (f' je odvedljiva blizu x₀) in v x₀ zamenja predznak, je
 f''(x₀) = 0 (v prevoju ima f' ekstrem).
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#prevoj-potrebni-pogoj
-besedilo: »Pravilo: v prevoju $f''$ **zamenja predznak**. Če $f''(x_0)$ obstaja, je zato $f''(x_0) = 0$. Prevoje torej iščeš med ničlami drugega odvoda, nato pa preveriš menjavo predznaka.« -/
+besedilo: »Pravilo: v prevoju $f''$ **zamenja predznak**. Če $f''(x_0)$ obstaja, je zato $f''(x_0) = 0$.« -/
 theorem prevoj_potrebni_pogoj {f : ℝ → ℝ} {x₀ δ : ℝ} (hδ : 0 < δ)
     (hd : ∀ x ∈ Ioo (x₀ - δ) (x₀ + δ), DifferentiableAt ℝ (deriv f) x)
     (hs : ((∀ x ∈ Ioo (x₀ - δ) x₀, deriv (deriv f) x < 0) ∧ ∀ x ∈ Ioo x₀ (x₀ + δ), 0 < deriv (deriv f) x) ∨
@@ -171,19 +173,19 @@ example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => -x ^ 2) ((fun x => -2 * x) x)
 
 /-- Razlaga 1: prvi odvod (odvod funkcije), kot je zapisan v lekciji.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#kub-d1
-besedilo: »Za $f(x) = x^3$ je $f'(x) = 3x^2$ in $f''(x) = 6x$.« -/
+besedilo: »Za $f(x) = x^3$ je $f'(x) = 3x^2$« -/
 theorem kub_d1 (x : ℝ) : HasDerivAt (fun x : ℝ => x ^ 3) (3 * x ^ 2) x :=
   (hasDerivAt_pow 3 x).congr_deriv (by norm_num)
 
 /-- Razlaga 1: drugi odvod (odvod prvega odvoda), kot je zapisan v lekciji.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#kub-d2
-besedilo: »Za $f(x) = x^3$ je $f'(x) = 3x^2$ in $f''(x) = 6x$. Drugi odvod pove, kako hitro se spreminja naklon tangente. Pri raketi je $h'$ hitrost, $h''$ pa pospešek.« -/
+besedilo: »Za $f(x) = x^3$ je $f'(x) = 3x^2$ in $f''(x) = 6x$.« -/
 theorem kub_d2 (x : ℝ) : HasDerivAt (fun x : ℝ => 3 * x ^ 2) (6 * x) x :=
   ((hasDerivAt_pow 2 x).const_mul 3).congr_deriv (by push_cast; ring)
 
 /-- Razlaga 1 in 2 (tabela): (x³)' = 3x², (x³)'' = 6x; (x²)'' = 2 > 0, (−x²)'' = −2 < 0.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#tabela
-besedilo: »Za $f(x) = x^3$ je $f'(x) = 3x^2$ in $f''(x) = 6x$.« -/
+besedilo: »| $x^2$ | $2 > 0$ | nad | | $-x^2$ | $-2 < 0$ | pod | | $x^3$ | $6x$ | pod, nato nad |« -/
 theorem tabela (x : ℝ) :
     deriv^[2] (fun x : ℝ => x ^ 3) x = 6 * x ∧ deriv^[2] (fun x : ℝ => x ^ 2) x = 2 ∧
     deriv^[2] (fun x : ℝ => -x ^ 2) x = -2 := by
@@ -215,8 +217,7 @@ example :=
   ln_konkavna (hx := w)
 
 /-- Razlaga 4: prvi odvod (odvod funkcije), kot je zapisan v lekciji.
-trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#f-d1
-besedilo: »$f(x) = x^3 - 3x$« -/
+pomozno -/
 theorem f_d1 (x : ℝ) : HasDerivAt (fun x : ℝ => x ^ 3 - 3 * x) (3 * x ^ 2 - 3) x :=
   ((hasDerivAt_pow 3 x).sub ((hasDerivAt_id' x).const_mul 3)).congr_deriv (by push_cast; ring)
 
@@ -249,7 +250,7 @@ theorem tri_tangente :
 /-- Predpostavke trditve `prevoj_potrebni_pogoj` so izpolnljive: x³ v 0 (f'' = 6x zamenja predznak),
 in f''(0) = 0.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#prevoj-x3
-besedilo: »Predznak preverimo na vsaki strani: $f''(0) = -6 < 0$, $f''(2) = 6 > 0$. Predznak se zamenja.« -/
+besedilo: »Pri $x^3$ se predznak zamenja iz $-$ v $+$: v $(0, 0)$ je prevoj.« -/
 theorem prevoj_x3 :
     (∀ x ∈ Ioo ((0:ℝ) - 1) (0 + 1), DifferentiableAt ℝ (deriv (fun x : ℝ => x ^ 3)) x) ∧
     (∀ x ∈ Ioo ((0:ℝ) - 1) 0, deriv (deriv (fun x : ℝ => x ^ 3)) x < 0) ∧
@@ -300,7 +301,7 @@ theorem test_ne_odloci :
 
 /-- Razlaga 7 (simulacija): f'(x) = 3x² − 3 ima pri x = 0 najmanjšo vrednost −3.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#odvod-najmanjsi
-besedilo: »pri $x_0 = 0$ doseže najmanjšo vrednost $-3$,« -/
+besedilo: »Vrednost $f'$ najprej pada, pri $x_0 = 0$ doseže najmanjšo vrednost $-3$, nato spet raste.« -/
 theorem odvod_najmanjsi (x : ℝ) : (3:ℝ) * 0 ^ 2 - 3 = -3 ∧ -3 ≤ 3 * x ^ 2 - 3 := by
   constructor
   · norm_num
@@ -325,7 +326,7 @@ theorem p1_d2 (x : ℝ) : HasDerivAt (fun x : ℝ => 3 * x ^ 2 - 6 * x) (6 * x -
 /-- Primer 1: f' = 3x² − 6x, f'' = 6x − 6 = 6(x − 1); 6x − 6 = 0 ⇔ x = 1; f''(0) = −6 < 0, f''(2) = 6 > 0;
 f(1) = 1 − 3 + 2 = 0; f je konkavna na (−∞, 1), konveksna na (1, ∞), prevoj T(1, 0).
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#primer1
-besedilo: »Predznak preverimo na vsaki strani: $f''(0) = -6 < 0$, $f''(2) = 6 > 0$.« -/
+besedilo: »Odgovor: $f$ je konkavna na $(-\infty, 1)$, konveksna na $(1, \infty)$, prevoj je $T(1, 0)$.« -/
 theorem primer1 (x : ℝ) :
     6 * x - 6 = 6 * (x - 1) ∧ (6 * x - 6 = 0 ↔ x = 1) ∧ (6:ℝ) * 0 - 6 = -6 ∧ (6:ℝ) * 2 - 6 = 6 ∧
     (1:ℝ) ^ 3 - 3 * 1 ^ 2 + 2 = 1 - 3 + 2 ∧ (1:ℝ) - 3 + 2 = 0 ∧
@@ -345,7 +346,7 @@ theorem p2_d1 (x : ℝ) : HasDerivAt (fun x : ℝ => x ^ 4 - 6 * x ^ 2) (4 * x ^
 
 /-- Primer 2: drugi odvod (odvod prvega odvoda), kot je zapisan v lekciji.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#p2-d2
-besedilo: »$f'(x) = 4x^3 - 12x = 4x(x^2 - 3)$.« -/
+besedilo: »$f''(x) = 12x^2 - 12 = 12(x - 1)(x + 1)$« -/
 theorem p2_d2 (x : ℝ) : HasDerivAt (fun x : ℝ => 4 * x ^ 3 - 12 * x) (12 * x ^ 2 - 12) x :=
   (((hasDerivAt_pow 3 x).const_mul 4).sub ((hasDerivAt_id' x).const_mul 12)).congr_deriv
     (by push_cast; ring)
@@ -353,7 +354,7 @@ theorem p2_d2 (x : ℝ) : HasDerivAt (fun x : ℝ => 4 * x ^ 3 - 12 * x) (12 * x
 /-- Primer 2, koraki 1–4: f' = 4x³ − 12x = 4x(x² − 3), f'' = 12x² − 12 = 12(x − 1)(x + 1), ničli ±1,
 f'' < 0 natanko na (−1, 1); f''(−2) = 36, f''(0) = −12, f''(2) = 36; f(±1) = 1 − 6 = −5.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#primer2-prevoja
-besedilo: »$f''(x) = 12x^2 - 12 = 12(x - 1)(x + 1)$, ničli sta $x = -1$ in $x = 1$.« -/
+besedilo: »$f'(x) = 4x^3 - 12x = 4x(x^2 - 3)$. 2. $f''(x) = 12x^2 - 12 = 12(x - 1)(x + 1)$, ničli sta $x = -1$ in $x = 1$. 3. Predznak $f''$ po intervalih: $f''(-2) = 36 > 0$, $f''(0) = -12 < 0$, $f''(2) = 36 > 0$. Na vsaki ničli se zamenja. 4. Ordinati: $f(1) = 1 - 6 = -5$ in enako $f(-1) = -5$, ker je funkcija soda.« -/
 theorem primer2_prevoja (x : ℝ) :
     4 * x ^ 3 - 12 * x = 4 * x * (x ^ 2 - 3) ∧ 12 * x ^ 2 - 12 = 12 * (x - 1) * (x + 1) ∧
     (12 * x ^ 2 - 12 = 0 ↔ x = -1 ∨ x = 1) ∧ (12 * x ^ 2 - 12 < 0 ↔ -1 < x ∧ x < 1) ∧
@@ -370,7 +371,7 @@ theorem primer2_prevoja (x : ℝ) :
 
 /-- Primer 2, korak 7: f je konveksna na (−∞, −1) in (1, ∞), konkavna na (−1, 1).
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#primer2-konveksnost
-besedilo: »Odgovor: $f$ je konveksna na $(-\infty, -1)$ in na $(1, \infty)$, konkavna na $(-1, 1)$; prevoja sta $T_1(-1, -5)$ in $T_2(1, -5)$.« -/
+besedilo: »Odgovor: $f$ je konveksna na $(-\infty, -1)$ in na $(1, \infty)$, konkavna na $(-1, 1)$« -/
 theorem primer2_konveksnost :
     StrictConvexOn ℝ (Iio (-1)) (fun x : ℝ => x ^ 4 - 6 * x ^ 2) ∧
     StrictConcaveOn ℝ (Ioo (-1) 1) (fun x : ℝ => x ^ 4 - 6 * x ^ 2) ∧
@@ -420,7 +421,7 @@ theorem p3_d1 (t : ℝ) : HasDerivAt (fun t : ℝ => 6 * t ^ 2 - t ^ 3) (12 * t 
 
 /-- Primer 3: drugi odvod (odvod prvega odvoda), kot je zapisan v lekciji.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#p3-d2
-besedilo: »$v(t) = h'(t) = 12t - 3t^2$.« -/
+besedilo: »Pospešek: $h''(t) = 12 - 6t$.« -/
 theorem p3_d2 (t : ℝ) : HasDerivAt (fun t : ℝ => 12 * t - 3 * t ^ 2) (12 - 6 * t) t :=
   (((hasDerivAt_id' t).const_mul 12).sub ((hasDerivAt_pow 2 t).const_mul 3)).congr_deriv
     (by push_cast; ring)
@@ -527,7 +528,7 @@ theorem eksp_pada_konveksna :
 
 /-- Pogoste napake 4: za f(x) = 1/x je f'(x) = −1/x² in f''(x) = 2/x³ (x ≠ 0), ki pri 0 zamenja predznak.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#ena-skozi-x
-besedilo: »Prevoj, kjer funkcija ni definirana.** Za $f(x) = \frac{1}{x}$ je $f''(x) = \frac{2}{x^3}$, ki pri $0$ zamenja predznak.« -/
+besedilo: »Za $f(x) = \frac{1}{x}$ je $f''(x) = \frac{2}{x^3}$, ki pri $0$ zamenja predznak.« -/
 theorem ena_skozi_x (x : ℝ) (hx : x ≠ 0) :
     HasDerivAt (fun x : ℝ => 1 / x) (-1 / x ^ 2) x ∧ HasDerivAt (fun x : ℝ => -1 / x ^ 2) (2 / x ^ 3) x ∧
     (x < 0 → 2 / x ^ 3 < 0) ∧ (0 < x → 0 < 2 / x ^ 3) := by
@@ -548,14 +549,14 @@ example :=
 
 /-- Naloga 1: prvi odvod (odvod funkcije), kot je zapisan v lekciji.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#m1-d1
-besedilo: »Dana je funkcija $f(x) = x^4 - 4x^3 + 10$.« -/
+besedilo: »a) $f'(x) = 4x^3 - 12x^2 = 4x^2(x - 3)$.« -/
 theorem m1_d1 (x : ℝ) : HasDerivAt (fun x : ℝ => x ^ 4 - 4 * x ^ 3 + 10) (4 * x ^ 3 - 12 * x ^ 2) x :=
   (((hasDerivAt_pow 4 x).sub ((hasDerivAt_pow 3 x).const_mul 4)).add_const 10).congr_deriv
     (by push_cast; ring)
 
 /-- Naloga 1: drugi odvod (odvod prvega odvoda), kot je zapisan v lekciji.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#m1-d2
-besedilo: »b) Ničli drugega odvoda sta $x = 0$ in $x = 2$. Predznak: $f''(-1) = 36 > 0$, $f''(1) = -12 < 0$, $f''(3) = 36 > 0$.« -/
+besedilo: »a) $f''(x) = 12x^2 - 24x = 12x(x - 2)$.« -/
 theorem m1_d2 (x : ℝ) : HasDerivAt (fun x : ℝ => 4 * x ^ 3 - 12 * x ^ 2) (12 * x ^ 2 - 24 * x) x :=
   (((hasDerivAt_pow 3 x).const_mul 4).sub ((hasDerivAt_pow 2 x).const_mul 12)).congr_deriv
     (by push_cast; ring)
@@ -564,7 +565,7 @@ theorem m1_d2 (x : ℝ) : HasDerivAt (fun x : ℝ => 4 * x ^ 3 - 12 * x ^ 2) (12
 f'' < 0 natanko na (0, 2); f''(−1) = 36, f''(1) = −12, f''(3) = 36; f konveksna na (−∞, 0) in (2, ∞),
 konkavna na (0, 2); f(0) = 10, f(2) = 16 − 32 + 10 = −6.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#matura1-ab
-besedilo: »b) $f(0) = 10$ in $f(2) = 16 - 32 + 10 = -6$, zato sta prevoja $P_1(0, 10)$ in $P_2(2, -6)$.« -/
+besedilo: »b) $f$ je konveksna na $(-\infty, 0)$ in na $(2, \infty)$, konkavna na $(0, 2)$. V obeh ničlah $f''$ zamenja predznak. 5. b) $f(0) = 10$ in $f(2) = 16 - 32 + 10 = -6$, zato sta prevoja $P_1(0, 10)$ in $P_2(2, -6)$.« -/
 theorem matura1_ab (x : ℝ) :
     4 * x ^ 3 - 12 * x ^ 2 = 4 * x ^ 2 * (x - 3) ∧ 12 * x ^ 2 - 24 * x = 12 * x * (x - 2) ∧
     (12 * x ^ 2 - 24 * x = 0 ↔ x = 0 ∨ x = 2) ∧ (12 * x ^ 2 - 24 * x < 0 ↔ 0 < x ∧ x < 2) ∧
@@ -591,7 +592,7 @@ theorem matura1_ab (x : ℝ) :
 f(3) = 81 − 108 + 10 = −17; f''(0) = 0 ne odloči, 4x²(x − 3) je levo in desno od 0 negativen, v 0 ni
 ekstrema.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#matura1-c
-besedilo: »c) $f''(3) = 108 - 72 = 36 > 0$, zato je v $x = 3$ lokalni minimum $f(3) = 81 - 108 + 10 = -17$, točka $(3, -17)$.« -/
+besedilo: »c) $f''(3) = 108 - 72 = 36 > 0$, zato je v $x = 3$ lokalni minimum $f(3) = 81 - 108 + 10 = -17$, točka $(3, -17)$. 8. c) $f''(0) = 0$, zato drugi odvod o vrsti ne odloči. Izraz $4x^2(x - 3)$ je levo in desno od $0$ negativen, $f'$ predznaka ne zamenja, zato v $x = 0$ ni ekstrema: točka $(0, 10)$ je prevoj z vodoravno tangento.« -/
 theorem matura1_c (x : ℝ) :
     (4 * x ^ 2 * (x - 3) = 0 ↔ x = 0 ∨ x = 3) ∧ (12:ℝ) * 3 ^ 2 - 24 * 3 = 108 - 72 ∧
     (108:ℝ) - 72 = 36 ∧ IsLocalMin (fun x : ℝ => x ^ 4 - 4 * x ^ 3 + 10) 3 ∧
@@ -623,7 +624,7 @@ theorem matura1_c (x : ℝ) :
 
 /-- Naloga 2: prvi odvod (odvod funkcije), kot je zapisan v lekciji.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#m2-d1
-besedilo: »Dana je funkcija $f(x) = (x^2 - 3)\,e^x$.« -/
+besedilo: »$f'(x) = 2x\,e^x + (x^2 - 3)\,e^x = (x^2 + 2x - 3)\,e^x$« -/
 theorem m2_d1 (x : ℝ) :
     HasDerivAt (fun x : ℝ => (x ^ 2 - 3) * exp x) (2 * x * exp x + (x ^ 2 - 3) * exp x) x :=
   (((hasDerivAt_pow 2 x).sub_const 3).mul (hasDerivAt_exp x)).congr_deriv (by push_cast; ring)
@@ -636,7 +637,7 @@ theorem m2_d1' (x : ℝ) : HasDerivAt (fun x : ℝ => (x ^ 2 - 3) * exp x) ((x ^
 
 /-- Naloga 2: drugi odvod (odvod prvega odvoda), kot je zapisan v lekciji.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#m2-d2
-besedilo: »b) Poiščite stacionarni točki funkcije $f$ in z drugim odvodom določite njuno vrsto. (3 točke)« -/
+besedilo: »$f''(x) = (2x + 2)\,e^x + (x^2 + 2x - 3)\,e^x = (x^2 + 4x - 1)\,e^x$« -/
 theorem m2_d2 (x : ℝ) :
     HasDerivAt (fun x : ℝ => (x ^ 2 + 2 * x - 3) * exp x)
       ((2 * x + 2) * exp x + (x ^ 2 + 2 * x - 3) * exp x) x :=
@@ -654,7 +655,7 @@ theorem m2_d2' (x : ℝ) :
 = (x² + 4x − 1)eˣ; f' = 0 ⇔ (x + 3)(x − 1) = 0 ⇔ x = −3 ali 1; f''(−3) = (9 − 12 − 1)e^{−3} = −4e^{−3} < 0,
 maksimum f(−3) = 6e^{−3} ≐ 0,2987; f''(1) = 4e > 0, minimum f(1) = −2e ≐ −5,4366.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#matura2-ab
-besedilo: »b) $f''(-3) = (9 - 12 - 1)\,e^{-3} = -4e^{-3} < 0$: lokalni maksimum $f(-3) = 6e^{-3} \doteq 0{,}2987$, točka $(-3; 0{,}30)$.« -/
+besedilo: »b) Ker je $e^x > 0$, je $f'(x) = 0$ natanko pri $x^2 + 2x - 3 = (x + 3)(x - 1) = 0$, torej pri $x = -3$ in $x = 1$. 4. b) $f''(-3) = (9 - 12 - 1)\,e^{-3} = -4e^{-3} < 0$: lokalni maksimum $f(-3) = 6e^{-3} \doteq 0{,}2987$, točka $(-3; 0{,}30)$. 5. b) $f''(1) = 4e > 0$: lokalni minimum $f(1) = -2e \doteq -5{,}4366$, točka $(1; -5{,}44)$.« -/
 theorem matura2_ab (x : ℝ) :
     2 * x * exp x + (x ^ 2 - 3) * exp x = (x ^ 2 + 2 * x - 3) * exp x ∧
     (2 * x + 2) * exp x + (x ^ 2 + 2 * x - 3) * exp x = (x ^ 2 + 4 * x - 1) * exp x ∧
@@ -691,7 +692,7 @@ theorem matura2_ab (x : ℝ) :
 polinom je med njima negativen, zunaj pozitiven: f je konkavna na (−2 − √5, −2 + √5), konveksna zunaj;
 ordinati sta (6 + 4√5)e^{−2−√5} in (6 − 4√5)e^{−2+√5}.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#matura2-cd
-besedilo: »c) $f''(x) = 0$ pri $x^2 + 4x - 1 = 0$: $x_{1,2} = -2 \pm \sqrt{5}$, torej $x_1 \doteq -4{,}2361$ in $x_2 \doteq 0{,}2361$.« -/
+besedilo: »d) Polinom $x^2 + 4x - 1$ je negativen med ničlama in pozitiven zunaj njiju. Zato je $f$ konveksna na $(-\infty, -2 - \sqrt{5})$ in na $(-2 + \sqrt{5}, \infty)$, konkavna pa na $(-2 - \sqrt{5}, -2 + \sqrt{5})$, približno na $(-4{,}24; 0{,}24)$.« -/
 theorem matura2_cd (x : ℝ) :
     (x ^ 2 + 4 * x - 1 = 0 ↔ x = -2 - √5 ∨ x = -2 + √5) ∧
     (x ^ 2 + 4 * x - 1 < 0 ↔ -2 - √5 < x ∧ x < -2 + √5) ∧
@@ -747,7 +748,7 @@ theorem matura2_cd (x : ℝ) :
 /-- Drugače (tabela): (x³)'' = 6x da −0,6, 0, 0,6; (x⁴)'' = 12x² da 0,12, 0, 0,12; (−0,1)³ = −0,001 je pod
 tangento y = 0, 0,1³ = 0,001 nad njo; (±0,1)⁴ = 0,0001.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#drugace
-besedilo: »Preizkus s tangento: tangenta na $x^3$ v $0$ je os $x$. Vrednost $(-0{,}1)^3 = -0{,}001$ je pod njo, $0{,}1^3 = 0{,}001$ nad njo: tangenta graf res preseka.« -/
+besedilo: »| $-0{,}1$ | $-0{,}6$ | $0{,}12$ | | $0$ | $0$ | $0$ | | $0{,}1$ | $0{,}6$ | $0{,}12$ | 1. Pri $x^3$ se predznak zamenja iz $-$ v $+$: v $(0, 0)$ je prevoj. 2. Pri $x^4$ je predznak na obeh straneh $+$: prevoja ni, funkcija je povsod konveksna. 3. Preizkus s tangento: tangenta na $x^3$ v $0$ je os $x$. Vrednost $(-0{,}1)^3 = -0{,}001$ je pod njo, $0{,}1^3 = 0{,}001$ nad njo: tangenta graf res preseka. 4. Pri $x^4$ sta obe vrednosti $0{,}0001$ nad osjo $x$: graf leži nad tangento, ne preseka je.« -/
 theorem drugace :
     (6:ℝ) * (-0.1) = -0.6 ∧ (6:ℝ) * 0 = 0 ∧ (6:ℝ) * 0.1 = 0.6 ∧ (12:ℝ) * (-0.1) ^ 2 = 0.12 ∧
     (12:ℝ) * 0 ^ 2 = 0 ∧ (12:ℝ) * 0.1 ^ 2 = 0.12 ∧ (-0.1:ℝ) ^ 3 = -0.001 ∧ (0.1:ℝ) ^ 3 = 0.001 ∧
@@ -756,7 +757,7 @@ theorem drugace :
 /-- Preveri se 2: za f' = x² − 3x + 1 je f'' = 2x − 3 = 0 ⇔ x = 1,5; f' ima tam najmanjšo vrednost −1,25;
 ničli f' sta (3 ± √5)/2 ≈ 0,4 in 2,6.
 trditev: MAT-SS-4/drugi-odvod-prevoj-in-konveksnost#kviz2
-besedilo: »0,4 | To je ničla $f'$, torej stacionarna točka funkcije $f$ (tam je ekstrem), ne prevoj.« -/
+besedilo: »V prevoju ima $f'$ ekstrem. Najnižja točka parabole je na sredini med ničlama, pri $x = 1{,}5$.« -/
 theorem kviz2 (x : ℝ) :
     HasDerivAt (fun x : ℝ => x ^ 2 - 3 * x + 1) (2 * x - 3) x ∧ (2 * x - 3 = 0 ↔ x = 1.5) ∧
     -1.25 ≤ x ^ 2 - 3 * x + 1 ∧ (1.5:ℝ) ^ 2 - 3 * 1.5 + 1 = -1.25 ∧

@@ -62,8 +62,7 @@ example : Real.sqrt ((5 : ℝ) ^ 2) = 5 := koren_kvadrata (by norm_num)
 
 /-- Razlaga 1 (izpeljava z dvakratnim kvadriranjem): na elipsi x²/a² + y²/b² = 1 (0 < b ≤ a, e = √(a² − b²)) sta
 razdalji do gorišč r₁ = a + ex/a in r₂ = a − ex/a.
-trditev: MAT-SS-3/elipsa-hiperbola-parabola#elipsa-gorisci
-besedilo: »$$\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1$$« -/
+pomozno -/
 theorem elipsa_gorisci {a b x y : ℝ} (ha : 0 < a) (hb : 0 < b) (hab : b ≤ a)
     (h : x ^ 2 / a ^ 2 + y ^ 2 / b ^ 2 = 1) :
     raz x y (-Real.sqrt (a ^ 2 - b ^ 2)) 0 = a + Real.sqrt (a ^ 2 - b ^ 2) * x / a ∧
@@ -102,7 +101,7 @@ theorem elipsa_gorisci {a b x y : ℝ} (ha : 0 < a) (hb : 0 < b) (hab : b ≤ a)
 /-- Razlaga 1 in Povzetek: elipsa je množica točk z r₁ + r₂ = 2a: x²/a² + y²/b² = 1 natanko tedaj, ko je vsota
 razdalj do gorišč (±e, 0), e = √(a² − b²), enaka 2a (0 < b ≤ a).
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#elipsa-definicija
-besedilo: »Elipsa je množica točk z $r_1 + r_2 = 2a$.« -/
+besedilo: »elipsa, $r_1 + r_2 = 2a$: $\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1$« -/
 theorem elipsa_definicija {a b : ℝ} (ha : 0 < a) (hb : 0 < b) (hab : b ≤ a) (x y : ℝ) :
     x ^ 2 / a ^ 2 + y ^ 2 / b ^ 2 = 1 ↔
       raz x y (-Real.sqrt (a ^ 2 - b ^ 2)) 0 + raz x y (Real.sqrt (a ^ 2 - b ^ 2)) 0 = 2 * a := by
@@ -164,7 +163,7 @@ example : 0 ≤ Real.sqrt (5 ^ 2 - 3 ^ 2) / 5 ∧ Real.sqrt ((5 : ℝ) ^ 2 - 3 ^
 
 /-- Razlaga 1, premisli, Povzetek: pri b = a je e = 0 in elipsa je krožnica x² + y² = a².
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#elipsa-kroznica
-besedilo: »$$\frac{x^2}{a^2} + \frac{y^2}{b^2} = 1$$« -/
+besedilo: »Pri $a = b$ je elipsa krožnica.« -/
 theorem elipsa_kroznica {a : ℝ} (ha : 0 < a) (x y : ℝ) :
     Real.sqrt (a ^ 2 - a ^ 2) = 0 ∧ (x ^ 2 / a ^ 2 + y ^ 2 / a ^ 2 = 1 ↔ x ^ 2 + y ^ 2 = a ^ 2) := by
   refine ⟨by simp, ?_⟩
@@ -178,7 +177,7 @@ example : Real.sqrt ((1 : ℝ) ^ 2 - 1 ^ 2) = 0 ∧ ((0 : ℝ) ^ 2 / 1 ^ 2 + 1 ^
 /-- Preveri se, vprašanje 3 (in premisli 1): pri stalnem a se z večanjem b ∈ (0, a] ekscentričnost
 ε = √(a² − b²)/a manjša, v b = a je 0 in gre proti 0, ko gre b proti a.
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#eps-pada
-besedilo: »$e = \sqrt{a^2 - b^2}$ se z večjim $b$ manjša,« -/
+besedilo: »Obris postaja vse bolj okrogel, $e$ in $\varepsilon$ se manjšata. Ko se žebljička združita, je $e = 0$ in $b = a$: nariše krožnico s polmerom $a$.« -/
 theorem eps_pada {a : ℝ} (ha : 0 < a) :
     (∀ b₁ b₂, 0 < b₁ → b₁ < b₂ → b₂ ≤ a →
       Real.sqrt (a ^ 2 - b₂ ^ 2) / a < Real.sqrt (a ^ 2 - b₁ ^ 2) / a) ∧
@@ -198,7 +197,7 @@ example : Real.sqrt ((1 : ℝ) ^ 2 - 1 ^ 2) / 1 = 0 := (eps_pada one_pos).2.1
 /-- Razlaga 1, tabela: za gorišči (±4, 0) so razdalje točk (5, 0), (0, 3), (4; 1,8), (−5, 0) 9 + 1, 5 + 5,
 8,2 + 1,8, 1 + 9, vsota vedno 10; teme (5, 0) preverimo: 25/25 + 0 = 1.
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#elipsa-tabela
-besedilo: »| $(4;\; 1{,}8)$ | $8{,}2$ | $1{,}8$ | $10$ |« -/
+besedilo: »| $(5, 0)$ | $9$ | $1$ | $10$ | | $(0, 3)$ | $5$ | $5$ | $10$ | | $(4;\; 1{,}8)$ | $8{,}2$ | $1{,}8$ | $10$ | | $(-5, 0)$ | $1$ | $9$ | $10$ |« -/
 theorem elipsa_tabela :
     (raz 5 0 (-4) 0 = 9 ∧ raz 5 0 4 0 = 1) ∧ (raz 0 3 (-4) 0 = 5 ∧ raz 0 3 4 0 = 5) ∧
     (raz 4 (18 / 10) (-4) 0 = 82 / 10 ∧ raz 4 (18 / 10) 4 0 = 18 / 10) ∧
@@ -216,7 +215,7 @@ theorem elipsa_tabela :
 /-- Razlaga 2: na hiperboli x²/a² − y²/b² = 1 (a, b > 0, e = √(a² + b²)) je x² ≥ a², r₁ = |a + ex/a|,
 r₂ = |a − ex/a|; na desni veji (x ≥ a) je r₁ − r₂ = 2a, na levi (x ≤ −a) r₁ − r₂ = −2a.
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#hiperbola-gorisci
-besedilo: »hiperbola, $\lvert r_1 - r_2\rvert = 2a$: $\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1$« -/
+besedilo: »Točke, ki so bližje $F_2$, tvorijo desno vejo. Na levi je zrcalna veja točk, bližjih $F_1$.« -/
 theorem hiperbola_gorisci {a b x y : ℝ} (ha : 0 < a) (hb : 0 < b)
     (h : x ^ 2 / a ^ 2 - y ^ 2 / b ^ 2 = 1) :
     a ^ 2 ≤ x ^ 2 ∧
@@ -256,7 +255,7 @@ theorem hiperbola_gorisci {a b x y : ℝ} (ha : 0 < a) (hb : 0 < b)
 /-- Razlaga 2, Povzetek, ustno vprašanje 1: hiperbola je množica točk z |r₁ − r₂| = 2a:
 x²/a² − y²/b² = 1 natanko tedaj, ko je absolutna razlika razdalj do gorišč (±e, 0), e = √(a² + b²), enaka 2a.
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#hiperbola-definicija
-besedilo: »Če gorišči ležita na osi $x$ simetrično glede na izhodišče, je enačba hiperbole $\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1$, kjer je $e$ razdalja gorišča od središča in velja $e^2 = a^2 + b^2$.« -/
+besedilo: »hiperbola, $\lvert r_1 - r_2\rvert = 2a$: $\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1$« -/
 theorem hiperbola_definicija {a b : ℝ} (ha : 0 < a) (hb : 0 < b) (x y : ℝ) :
     x ^ 2 / a ^ 2 - y ^ 2 / b ^ 2 = 1 ↔
       |raz x y (-Real.sqrt (a ^ 2 + b ^ 2)) 0 - raz x y (Real.sqrt (a ^ 2 + b ^ 2)) 0| = 2 * a := by
@@ -300,7 +299,7 @@ example : |raz 4 0 (-Real.sqrt (4 ^ 2 + 3 ^ 2)) 0 - raz 4 0 (Real.sqrt (4 ^ 2 + 
 /-- Razlaga 2, premisli: za vsako točko T sta trikotniški neenakosti |F₁F₂| ≤ r₁ + r₂ in |r₁ − r₂| ≤ |F₁F₂|
 (gorišči (±e, 0), |F₁F₂| = 2e); pri elipsi z b > 0 je e < a, pri hiperboli z b > 0 je e > a.
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#premisli-trikotnik
-besedilo: »V trikotniku $F_1 T F_2$ je vsaka stranica krajša od vsote drugih dveh in daljša od njune razlike. Pri elipsi je zato $2a = r_1 + r_2 > 2e$. Pri hiperboli je $2a = |r_1 - r_2| < 2e$.« -/
+besedilo: »V trikotniku $F_1 T F_2$ je vsaka stranica krajša od vsote drugih dveh in daljša od njune razlike.« -/
 theorem premisli_trikotnik (x y e : ℝ) (he : 0 ≤ e) :
     2 * e ≤ raz x y (-e) 0 + raz x y e 0 ∧ |raz x y (-e) 0 - raz x y e 0| ≤ 2 * e := by
   have d : dist (!₂[-e, (0 : ℝ)]) (!₂[e, 0]) = 2 * e := by
@@ -319,7 +318,7 @@ example : 2 * 4 ≤ raz 0 3 (-4) 0 + raz 0 3 4 0 := (premisli_trikotnik 0 3 4 (b
 /-- Razlaga 2, premisli (strogo): pri elipsi (0 < b ≤ a) je e = √(a² − b²) < a, pri hiperboli (a, b > 0) je
 e = √(a² + b²) > a. Prvi del velja že za vse a, b > 0 brez pogoja b ≤ a (v Leanu je √ negativnega števila 0).
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#premisli-e
-besedilo: »$e = \sqrt{a^2 + b^2}$« -/
+besedilo: »Pri elipsi je zato $2a = r_1 + r_2 > 2e$. Pri hiperboli je $2a = |r_1 - r_2| < 2e$.« -/
 theorem premisli_e (a b : ℝ) (ha : 0 < a) (hb : 0 < b) :
     Real.sqrt (a ^ 2 - b ^ 2) < a ∧ a < Real.sqrt (a ^ 2 + b ^ 2) := by
   constructor
@@ -333,7 +332,7 @@ example : Real.sqrt ((5 : ℝ) ^ 2 - 3 ^ 2) < 5 ∧ (5 : ℝ) < Real.sqrt (5 ^ 2
 /-- Razlaga 2, tabela: za gorišči (±5, 0) imajo (4, 0), (5; 2,25), (8, √27) razdalje 9 in 1, 10,25 in 2,25,
 14 in 6 (razlika 8); a = 4, b = √(25 − 16) = 3.
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#hiperbola-tabela
-besedilo: »| $(5; 2{,}25)$ | $10{,}25$ | $2{,}25$ | $8$ |« -/
+besedilo: »| $(4, 0)$ | $9$ | $1$ | $8$ | | $(5; 2{,}25)$ | $10{,}25$ | $2{,}25$ | $8$ | | $(8, \sqrt{27})$ | $14$ | $6$ | $8$ |« -/
 theorem hiperbola_tabela :
     (raz 4 0 (-5) 0 = 9 ∧ raz 4 0 5 0 = 1) ∧
     (raz 5 (225 / 100) (-5) 0 = 1025 / 100 ∧ raz 5 (225 / 100) 5 0 = 225 / 100) ∧
@@ -349,7 +348,7 @@ theorem hiperbola_tabela :
 /-- Razlaga 2: veja y = (b/a)√(x² − a²) (x ≥ a) leži na hiperboli in se bliža asimptoti y = (b/a)x:
 razlika (b/a)x − (b/a)√(x² − a²) gre proti 0 (a, b > 0); oglišče (a, b) pravokotnika leži na asimptoti.
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#asimptota
-besedilo: »Veji se oddaljujeta in se vse bolj približujeta dvema premicama skozi središče, **asimptotama** $y = \pm \frac{b}{a} x$. Narišeš ju kot diagonali pravokotnika s stranicama $2a$ in $2b$ okoli središča. Enačba hiperbole je« -/
+besedilo: »Veji se oddaljujeta in se vse bolj približujeta dvema premicama skozi središče, **asimptotama** $y = \pm \frac{b}{a} x$. Narišeš ju kot diagonali pravokotnika s stranicama $2a$ in $2b$ okoli središča.« -/
 theorem asimptota {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
     (∀ x, a ≤ x → x ^ 2 / a ^ 2 - (b / a * Real.sqrt (x ^ 2 - a ^ 2)) ^ 2 / b ^ 2 = 1) ∧
     Tendsto (fun x => b / a * x - b / a * Real.sqrt (x ^ 2 - a ^ 2)) atTop (𝓝 0) ∧ b = b / a * a := by
@@ -385,7 +384,7 @@ example : Tendsto (fun x => 3 / 4 * x - 3 / 4 * Real.sqrt (x ^ 2 - 4 ^ 2)) atTop
 y = −(b/a)x za x → ∞, leva zgornja y = (b/a)√(x² − a²) asimptoti y = −(b/a)x in leva spodnja
 y = −(b/a)√(x² − a²) asimptoti y = (b/a)x za x → −∞ (a, b > 0).
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#asimptota-veje
-besedilo: »$\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1$, $e = \sqrt{a^2 + b^2}$, asimptoti $y = \pm \frac{b}{a} x$« -/
+besedilo: »Asimptoti sta premici $y = \pm\frac{b}{a}x$, ki se jima veji hiperbole vse bolj približujeta.« -/
 theorem asimptota_veje {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
     Tendsto (fun x => b / a * x - b / a * Real.sqrt (x ^ 2 - a ^ 2)) atTop (𝓝 0) ∧
     Tendsto (fun x => -(b / a) * x - (-(b / a) * Real.sqrt (x ^ 2 - a ^ 2))) atTop (𝓝 0) ∧
@@ -433,14 +432,14 @@ theorem enako_oddaljena (x y u v d : ℝ) : raz x y u v = |d| ↔ (x - u) ^ 2 + 
 /-- Razlaga 3 in Povzetek: y² = 2px natanko tedaj, ko je točka enako oddaljena od gorišča (p/2, 0) in od vodnice
 x = −p/2 (razdalja do vodnice je |x + p/2|).
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#parabola-definicija
-besedilo: »$y^2 = 2px$: gorišče $\left(\frac{p}{2}, 0\right)$, vodnica $x = -\frac{p}{2}$ (priloga)« -/
+besedilo: »Gorišče je v točki $\left(\frac{p}{2}, 0\right)$, vodnica je premica $x = -\frac{p}{2}$. Enačba parabole z osjo na osi $x$ je $$y^2 = 2px$$« -/
 theorem parabola_definicija (p x y : ℝ) : y ^ 2 = 2 * p * x ↔ raz x y (p / 2) 0 = |x + p / 2| := by
   rw [enako_oddaljena]; constructor <;> intro h <;> linear_combination h
 
 /-- Razlaga 3, tabela smeri: y² = −2px ima gorišče (−p/2, 0) in vodnico x = p/2; x² = 2py gorišče (0, p/2) in
 vodnico y = −p/2; x² = −2py gorišče (0, −p/2) in vodnico y = p/2.
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#parabola-smeri
-besedilo: »Graf $y = -\frac{x^2}{8}$ zapišemo kot $x^2 = -8y$: parabola je odprta navzdol, $2p = 8$, torej $p = 4$. Gorišče je $(0, -2)$, vodnica $y = 2$. Preizkus s točko $(4, -2)$: do gorišča je $4$, do vodnice $2 - (-2) = 4$.« -/
+besedilo: »| $y^2 = -2px$ | $\left(-\frac{p}{2}, 0\right)$ | $x = \frac{p}{2}$ | | $x^2 = 2py$ | $\left(0, \frac{p}{2}\right)$ | $y = -\frac{p}{2}$ | | $x^2 = -2py$ | $\left(0, -\frac{p}{2}\right)$ | $y = \frac{p}{2}$ |« -/
 theorem parabola_smeri (p x y : ℝ) :
     (y ^ 2 = -2 * p * x ↔ raz x y (-p / 2) 0 = |x - p / 2|) ∧
     (x ^ 2 = 2 * p * y ↔ raz x y 0 (p / 2) = |y + p / 2|) ∧
@@ -450,7 +449,7 @@ theorem parabola_smeri (p x y : ℝ) :
 /-- Razlaga 3: teme (0, 0) je na sredi med goriščem (p/2, 0) in vodnico x = −p/2; razdalja gorišča od vodnice
 je p (p > 0).
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#parabola-teme
-besedilo: »Točka $(0, 0)$ je **teme**, točno na sredi med goriščem in vodnico. Razdaljo med goriščem in vodnico označimo s $p$. Gorišče je v točki $\left(\frac{p}{2}, 0\right)$, vodnica je premica $x = -\frac{p}{2}$. Enačba parabole z osjo na osi $x$ je« -/
+besedilo: »Točka $(0, 0)$ je **teme**, točno na sredi med goriščem in vodnico. Razdaljo med goriščem in vodnico označimo s $p$.« -/
 theorem parabola_teme (p : ℝ) (hp : 0 < p) : (p / 2 + -p / 2) / 2 = 0 ∧ |p / 2 - -p / 2| = p := by
   refine ⟨by ring, ?_⟩
   rw [show p / 2 - -p / 2 = p by ring, abs_of_pos hp]
@@ -461,7 +460,7 @@ example : ((2 : ℝ) / 2 + -2 / 2) / 2 = 0 ∧ |(2 : ℝ) / 2 - -2 / 2| = 2 := p
 /-- Razlaga 3, tabela (p = 2, y² = 4x): (0, 0), (1, 2), (4, 4), (9, 6) so od F(1, 0) in od vodnice x = −1
 oddaljene 1, 2, 5, 10 in ležijo na y² = 4x.
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#parabola-tabela
-besedilo: »V tabeli je $p = 2$, zato velja $y^2 = 4x$.« -/
+besedilo: »| $(0, 0)$ | $1$ | $1$ | | $(1, 2)$ | $2$ | $2$ | | $(4, 4)$ | $5$ | $5$ | | $(9, 6)$ | $10$ | $10$ |« -/
 theorem parabola_tabela :
     (raz 0 0 1 0 = 1 ∧ |(0 : ℝ) - -1| = 1) ∧ (raz 1 2 1 0 = 2 ∧ |(1 : ℝ) - -1| = 2) ∧
     (raz 4 4 1 0 = 5 ∧ |(4 : ℝ) - -1| = 5) ∧ (raz 9 6 1 0 = 10 ∧ |(9 : ℝ) - -1| = 10) ∧
@@ -497,7 +496,7 @@ theorem parabola_navzdol (x y : ℝ) : (y = -x ^ 2 / 8 ↔ x ^ 2 = -8 * y) ∧ (
 x²/16 − y²/9 = 1), y² − 4x = 0 (parabola y² = 2·2·x), x² + y² + 4 = 0 (nobena točka), x² + y² = 0 (le (0, 0)),
 x² − y² = 0 (premici y = ±x).
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#drugi-red
-besedilo: »elipsa (na primer $4x^2 + 9y^2 - 36 = 0$),« -/
+besedilo: »elipsa (na primer $4x^2 + 9y^2 - 36 = 0$), pri $A = C$ krožnica; - $x^2$ in $y^2$ z nasprotnima predznakoma: hiperbola (na primer $9x^2 - 16y^2 - 144 = 0$); - en kvadrat in linearni člen druge spremenljivke: parabola (na primer $y^2 - 4x = 0$). Krivulje ne da vsaka taka enačba: $x^2 + y^2 + 4 = 0$ nima nobene točke, $x^2 + y^2 = 0$ je le točka $(0, 0)$, $x^2 - y^2 = 0$ sta premici $y = \pm x$.« -/
 theorem drugi_red (x y : ℝ) :
     (4 * x ^ 2 + 9 * y ^ 2 - 36 = 0 ↔ x ^ 2 / 9 + y ^ 2 / 4 = 1) ∧
     (9 * x ^ 2 - 16 * y ^ 2 - 144 = 0 ↔ x ^ 2 / 16 - y ^ 2 / 9 = 1) ∧
@@ -551,7 +550,7 @@ example := by
 /-- Razlaga 6 (hiperbola): za r > e − a (a, b > 0, e = √(a² + b²)) loka okoli F₂ s polmerom r in okoli F₁ s
 polmerom r + 2a dasta dve različni točki desne veje.
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#konstrukcija-hiperbola
-besedilo: »Hiperbola (razlika $2a$): izberi $r > e - a$. Loka okoli $F_2$ s polmerom $r$ in okoli $F_1$ s polmerom $r + 2a$ dasta dve točki desne veje. Z zamenjanima goriščema dobiš levo vejo.« -/
+besedilo: »Hiperbola (razlika $2a$): izberi $r > e - a$. Loka okoli $F_2$ s polmerom $r$ in okoli $F_1$ s polmerom $r + 2a$ dasta dve točki desne veje.« -/
 theorem konstrukcija_hiperbola {a b r : ℝ} (ha : 0 < a) (hb : 0 < b) (hr : Real.sqrt (a ^ 2 + b ^ 2) - a < r) :
     ∃ x y₁ y₂, y₁ ≠ y₂ ∧ a < x ∧ ∀ y ∈ ({y₁, y₂} : Set ℝ), x ^ 2 / a ^ 2 - y ^ 2 / b ^ 2 = 1 ∧
       raz x y (Real.sqrt (a ^ 2 + b ^ 2)) 0 = r ∧ raz x y (-Real.sqrt (a ^ 2 + b ^ 2)) 0 = r + 2 * a := by
@@ -629,7 +628,7 @@ theorem primer1 : Real.sqrt 25 = 5 ∧ Real.sqrt 9 = 3 ∧
 /-- Primer 2: a = 4, b = 3 (temeni (±4, 0)), e = √(16 + 9) = 5 (gorišči (±5, 0)), naklon asimptot ±3/4;
 hiperbola je množica točk z |r₁ − r₂| = 8.
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#primer2
-besedilo: »Za hiperbolo $\frac{x^2}{9} - \frac{y^2}{16} = 1$ je Tina zapisala: (1) $a = 3$, $b = 4$; (2) $e = \sqrt{9 + 16} = 5$; (3) gorišči $(\pm 5, 0)$; (4) asimptoti $y = \pm \frac{3}{4} x$.« -/
+besedilo: »Odgovor: temeni $(\pm 4, 0)$, gorišči $(\pm 5, 0)$, asimptoti $y = \frac{3}{4} x$ in $y = -\frac{3}{4} x$.« -/
 theorem primer2 : Real.sqrt 16 = 4 ∧ Real.sqrt 9 = 3 ∧
     ((4 : ℝ) ^ 2 / 16 - 0 ^ 2 / 9 = 1 ∧ (-4 : ℝ) ^ 2 / 16 - 0 ^ 2 / 9 = 1) ∧ Real.sqrt (16 + 9) = 5 ∧
     Real.sqrt 9 / Real.sqrt 16 = 3 / 4 ∧
@@ -649,7 +648,7 @@ theorem primer2 : Real.sqrt 16 = 4 ∧ Real.sqrt 9 = 3 ∧
 /-- Primer 3: a = 120/2 = 60, b = 80/2 = 40, 60² = 3600, 40² = 1600, e = √(3600 − 1600) = √2000 ≈ 44,7,
 2e ≈ 89,4; vsota razdalj od svinčnika do žebljičkov je 2a = 120.
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#primer3
-besedilo: »$e = \sqrt{3600 - 1600} = \sqrt{2000} \approx 44{,}7$« -/
+besedilo: »Odgovor: žebljička zabije $89{,}4\,\mathrm{cm}$ narazen, simetrično glede na sredino; vrvica od žebljička prek svinčnika do drugega žebljička je dolga $120\,\mathrm{cm}$, enako kot širina ogledala.« -/
 theorem primer3 : (120 : ℝ) / 2 = 60 ∧ (80 : ℝ) / 2 = 40 ∧ (60 : ℝ) ^ 2 = 3600 ∧ (40 : ℝ) ^ 2 = 1600 ∧
     Real.sqrt (3600 - 1600) = Real.sqrt 2000 ∧ |Real.sqrt 2000 - 447 / 10| < 5 / 100 ∧
     |2 * Real.sqrt 2000 - 894 / 10| < 5 / 100 ∧
@@ -677,7 +676,7 @@ theorem primer4 (p : ℝ) : ((40 : ℝ) ^ 2 = 2 * p * 10 ↔ 1600 = 20 * p) ∧ 
 (x + 5)² + y² = 196 se sekata natanko v (8, ±√27) ((x + 5)² − (x − 5)² = 20x, 20x = 160, y² = 36 − 9 = 27);
 točki ležita na hiperboli: 64/16 − 27/9 = 4 − 3 = 1; √27 ≈ 5,20.
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#primer5
-besedilo: »Račun: enačbi krožnic $(x - 5)^2 + y^2 = 36$ in $(x + 5)^2 + y^2 = 196$ odštejemo in dobimo $20x = 160$, torej $x = 8$.« -/
+besedilo: »Odgovor: loka s polmeroma $6$ (okoli $F_2$) in $14$ (okoli $F_1$) dasta točki $T_1(8;\; 5{,}20)$ in $T_2(8;\; -5{,}20)$.« -/
 theorem primer5 (x y : ℝ) : (5 : ℝ) - 4 = 1 ∧ (1 : ℝ) < 6 ∧ (6 : ℝ) + 8 = 14 ∧ (14 : ℝ) - 6 = 8 ∧
     (x + 5) ^ 2 - (x - 5) ^ 2 = 20 * x ∧
     (((x - 5) ^ 2 + y ^ 2 = 36 ∧ (x + 5) ^ 2 + y ^ 2 = 196) ↔ (x = 8 ∧ (y = Real.sqrt 27 ∨ y = -Real.sqrt 27))) ∧
@@ -703,7 +702,7 @@ theorem primer5 (x y : ℝ) : (5 : ℝ) - 4 = 1 ∧ (1 : ℝ) < 6 ∧ (6 : ℝ) 
 /-- Pogoste napake: a = √25 = 5 (ne 25); z zamenjano zvezo e = √(25 + 9) bi bilo gorišče (√34, 0) zunaj elipse
 x²/25 + y²/9 = 1; z naklonom a/b = 4/3 premica ne gre skozi oglišče (4, 3); pri y² = 6x je p = 3, gorišče 1,5.
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#napake
-besedilo: »Gorišče parabole pri $p$.** Pri $y^2 = 2px$ je gorišče v $\left(\frac{p}{2}, 0\right)$, ne v $(p, 0)$. Pri $y^2 = 6x$ je $2p = 6$, $p = 3$, gorišče pri $1{,}5$.« -/
+besedilo: »Pri $\frac{x^2}{25} + \frac{y^2}{9} = 1$ nekdo vzame $a = 25$. Pod $x^2$ je $a^2$, zato je $a = \sqrt{25} = 5$. - **Zamenjana zveza za $e$.** Pri elipsi odštevaš ($e^2 = a^2 - b^2$, gorišči sta znotraj), pri hiperboli seštevaš ($e^2 = a^2 + b^2$, gorišči sta zunaj temen). Kdor zamenja, dobi gorišči elipse zunaj krivulje, kar ne more biti. - **Obrnjen naklon asimptot.** Pri $\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1$ sta asimptoti $y = \pm \frac{b}{a} x$. Kdor napiše $\frac{a}{b}$, dobi premici, ki se ne ujemata z diagonalama pravokotnika $2a \times 2b$. - **Gorišče parabole pri $p$.** Pri $y^2 = 2px$ je gorišče v $\left(\frac{p}{2}, 0\right)$, ne v $(p, 0)$. Pri $y^2 = 6x$ je $2p = 6$, $p = 3$, gorišče pri $1{,}5$.« -/
 theorem napake : Real.sqrt 25 = 5 ∧ 1 < Real.sqrt (25 + 9) ^ 2 / 25 + 0 ^ 2 / 9 ∧ (4 / 3 : ℝ) * 4 ≠ 3 ∧
     (3 / 4 : ℝ) * 4 = 3 ∧ (∀ p : ℝ, 2 * p = 6 ↔ p = 3) ∧ (3 : ℝ) / 2 = 15 / 10 := by
   refine ⟨by rw [show (25 : ℝ) = 5 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)], ?_, by norm_num, by norm_num,
@@ -714,7 +713,7 @@ theorem napake : Real.sqrt 25 = 5 ∧ 1 < Real.sqrt (25 + 9) ^ 2 / 25 + 0 ^ 2 / 
 (0 < b ≤ a), je x²/b² + y²/a² = 1 natanko množica točk z vsoto razdalj 2a do gorišč (0, ±e) na osi y,
 e = √(a² − b²) (primer z večjim imenovalcem pod x² je `elipsa_definicija`).
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#elipsa-os-y
-besedilo: »Polosi** preberi kot korena imenovalcev; večji imenovalec pove, na kateri osi sta gorišči elipse.« -/
+besedilo: »Večji imenovalec elipse pove, na kateri osi sta gorišči.« -/
 theorem elipsa_os_y {a b : ℝ} (ha : 0 < a) (hb : 0 < b) (hab : b ≤ a) (x y : ℝ) :
     x ^ 2 / b ^ 2 + y ^ 2 / a ^ 2 = 1 ↔
       raz x y 0 (-Real.sqrt (a ^ 2 - b ^ 2)) + raz x y 0 (Real.sqrt (a ^ 2 - b ^ 2)) = 2 * a := by
@@ -728,7 +727,7 @@ example := elipsa_os_y (a := 5) (b := 3) (by norm_num) (by norm_num) (by norm_nu
 /-- Pogoste napake: pri x²/9 + y²/25 = 1 je večji imenovalec pod y²: elipsa je množica točk z vsoto razdalj
 do gorišč (0, ±4) enako 10 (gorišči na osi y).
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#napaka-os-y
-besedilo: »Glavna os vedno na osi $x$.** Pri $\frac{x^2}{9} + \frac{y^2}{25} = 1$ je večji imenovalec pod $y^2$, zato sta gorišči na osi $y$.« -/
+besedilo: »Pri $\frac{x^2}{9} + \frac{y^2}{25} = 1$ je večji imenovalec pod $y^2$, zato sta gorišči na osi $y$.« -/
 theorem napaka_os_y (x y : ℝ) : x ^ 2 / 9 + y ^ 2 / 25 = 1 ↔ raz x y 0 (-4) + raz x y 0 4 = 10 := by
   have s4 : Real.sqrt ((5 : ℝ) ^ 2 - 3 ^ 2) = 4 := by
     rw [show (5 : ℝ) ^ 2 - 3 ^ 2 = 4 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
@@ -791,7 +790,7 @@ example := najblizje_najdlje (a := 10) (b := Real.sqrt 91) (x := 10) (y := 0) (b
 b = √(100 − 9) = √91 ≈ 9,54; tir x²/100 + y²/91 = 1; pri x = 3 je y² = 91·0,91 = 82,81 in |y| = 9,1 (9100 km);
 preizkus √(6² + 82,81) = 10,9 in 10,9 + 9,1 = 20 = 2a.
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#matura2
-besedilo: »c) Preizkus z definicijo elipse: razdalja do $F_1(-3, 0)$ je $\sqrt{6^2 + 82{,}81} = \sqrt{118{,}81} = 10{,}9$, vsota razdalj je $10{,}9 + 9{,}1 = 20 = 2a$.« -/
+besedilo: »Odgovor: a) $a = 10\,000\,\mathrm{km}$, $e = 3000\,\mathrm{km}$, $\varepsilon = 0{,}3$; b) $b \approx 9{,}54$ (približno $9540\,\mathrm{km}$), enačba $\frac{x^2}{100} + \frac{y^2}{91} = 1$; c) satelit je od središča Zemlje oddaljen $9100\,\mathrm{km}$.« -/
 theorem matura2 (a e y : ℝ) : ((a - e = 7 ∧ a + e = 13) ↔ (a = 10 ∧ e = 3)) ∧ (7 + 13 : ℝ) / 2 = 10 ∧
     (13 - 10 : ℝ) = 3 ∧ (3 : ℝ) / 10 = 0.3 ∧ |Real.sqrt (100 - 9) - 954 / 100| < 5 / 1000 ∧
     ((3 : ℝ) ^ 2 / 100 + y ^ 2 / 91 = 1 ↔ y ^ 2 = 91 * (1 - 9 / 100)) ∧ (91 : ℝ) * (1 - 9 / 100) = 8281 / 100 ∧
@@ -810,7 +809,7 @@ theorem matura2 (a e y : ℝ) : ((a - e = 7 ∧ a + e = 13) ↔ (a = 10 ∧ e = 
 /-- Naloga 3 a) (RACUN vrednost): 2a = 4, a = 2, e = 4, b² = 16 − 4 = 12; hiperbola x²/4 − y²/12 = 1 je množica
 točk z |r₁ − r₂| = 4 (gorišči A(−4, 0), B(4, 0)); ladja z r₁ − r₂ = 4 leži na desni veji (x ≥ 2).
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#matura3a
-besedilo: »a) Iz $2a = 4$ sledi $a = 2$. Gorišči sta $4$ od središča, zato $e = 4$ in $b^2 = e^2 - a^2 = 16 - 4 = 12$. Enačba je $\frac{x^2}{4} - \frac{y^2}{12} = 1$.« -/
+besedilo: »a) Iz $2a = 4$ sledi $a = 2$. Gorišči sta $4$ od središča, zato $e = 4$ in $b^2 = e^2 - a^2 = 16 - 4 = 12$. Enačba je $\frac{x^2}{4} - \frac{y^2}{12} = 1$. 3. a) Ladja je bližje svetilniku $B$, zato leži na desni veji ($x \ge 2$).« -/
 theorem matura3a (x y : ℝ) : (4 : ℝ) ^ 2 - 2 ^ 2 = 12 ∧
     (x ^ 2 / 4 - y ^ 2 / 12 = 1 ↔ |raz x y (-4) 0 - raz x y 4 0| = 4) ∧
     (raz x y (-4) 0 - raz x y 4 0 = 4 → x ^ 2 / 4 - y ^ 2 / 12 = 1 ∧ 2 ≤ x) := by
@@ -835,7 +834,7 @@ theorem matura3a (x y : ℝ) : (4 : ℝ) ^ 2 - 2 ^ 2 = 12 ∧
 (3x² − (x + 2)² − 12 = 2(x² − 2x − 8), (x − 4)(x + 2) = 0); (−2, 0) je bližje A (r₁ = 2, r₂ = 6), zato ladja je
 v (4, 6) (r₁ = 10, r₂ = 6, razlika 4; 16/4 − 36/12 = 1).
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#matura3b
-besedilo: »b) Enačbo hiperbole pomnožimo z $12$ in vstavimo $y = x + 2$: $3x^2 - (x + 2)^2 = 12$, torej $2x^2 - 4x - 16 = 0$ oziroma $x^2 - 2x - 8 = 0$.« -/
+besedilo: »b) Za točko $(4, 6)$: $r_1 = \sqrt{8^2 + 6^2} = 10$ in $r_2 = \sqrt{0^2 + 6^2} = 6$, razlika je $4$. Ladja je v točki $(4, 6)$.« -/
 theorem matura3b (x y : ℝ) : 3 * x ^ 2 - (x + 2) ^ 2 - 12 = 2 * (x ^ 2 - 2 * x - 8) ∧
     ((x ^ 2 / 4 - y ^ 2 / 12 = 1 ∧ y = x + 2) ↔ ((x = 4 ∧ y = 6) ∨ (x = -2 ∧ y = 0))) ∧
     (raz (-2) 0 (-4) 0 = 2 ∧ raz (-2) 0 4 0 = 6) ∧ (raz 4 6 (-4) 0 = 10 ∧ raz 4 6 4 0 = 6) ∧
@@ -900,7 +899,7 @@ theorem preveri2 : Real.sqrt (169 - 25) = Real.sqrt 144 ∧ Real.sqrt 144 = 12 �
 /-- Preveri se, vprašanje 4: pri x²/9 − y²/16 = 1 so koraki 1–3 pravilni (a = 3, b = 4, e = √(9 + 16) = 5), naklon
 asimptot pa je b/a = 4/3, ne 3/4.
 trditev: MAT-SS-3/elipsa-hiperbola-parabola#preveri4
-besedilo: »Za hiperbolo $\frac{x^2}{9} - \frac{y^2}{16} = 1$ je Tina zapisala: (1) $a = 3$, $b = 4$; (2) $e = \sqrt{9 + 16} = 5$; (3) gorišči $(\pm 5, 0)$; (4) asimptoti $y = \pm \frac{3}{4} x$.« -/
+besedilo: »Naklon asimptot je $\frac{b}{a} = \frac{4}{3}$, ne $\frac{3}{4}$.« -/
 theorem preveri4 : Real.sqrt 9 = 3 ∧ Real.sqrt 16 = 4 ∧ Real.sqrt (9 + 16) = 5 ∧ (4 : ℝ) / 3 ≠ 3 / 4 := by
   refine ⟨?_, ?_, ?_, by norm_num⟩
   · rw [show (9 : ℝ) = 3 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]

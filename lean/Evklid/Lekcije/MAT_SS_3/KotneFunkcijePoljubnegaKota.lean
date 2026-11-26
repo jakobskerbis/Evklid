@@ -47,13 +47,13 @@ theorem kot270 : sin (3 * π / 2) = -1 ∧ cos (3 * π / 2) = 0 := by
 (x² + y² = 1) in tan α = sin α/cos α (da je vsaka točka enotske krožnice oblike (cos α, sin α), je
 izrek `tocka_je_kot`).
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#enotska-kroznica
-besedilo: »$$\tan\alpha = \frac{y}{x} = \frac{\sin\alpha}{\cos\alpha},« -/
+besedilo: »Gibljivi krak seka krožnico v točki $T(\cos\alpha, \sin\alpha)$. $$\tan\alpha = \frac{\sin\alpha}{\cos\alpha},\quad \cos\alpha \neq 0$$« -/
 theorem enotska_kroznica (α : ℝ) : cos α ^ 2 + sin α ^ 2 = 1 ∧ tan α = sin α / cos α :=
   ⟨by rw [add_comm]; exact sin_sq_add_cos_sq α, tan_eq_sin_div_cos α⟩
 
 /-- Razlaga 2: vsaka točka (x, y) z x² + y² = 1 je T(cos α, sin α) za neki kot α.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#tocka-je-kot
-besedilo: »$$\cos\alpha = x, \qquad \sin\alpha = y$$« -/
+besedilo: »Gibljivi krak kota $\alpha$ jo seka v točki $T(x, y)$. Definiramo: $$\cos\alpha = x, \qquad \sin\alpha = y$$« -/
 theorem tocka_je_kot (x y : ℝ) (h : x ^ 2 + y ^ 2 = 1) : ∃ α : ℝ, cos α = x ∧ sin α = y := by
   have hx1 : -1 ≤ x := by nlinarith [sq_nonneg y, sq_nonneg (x + 1)]
   have hx2 : x ≤ 1 := by nlinarith [sq_nonneg y, sq_nonneg (x - 1)]
@@ -73,7 +73,7 @@ example :=
 /-- Razlaga 2 in Ustno vprašanje 1: za ostri kot pravokotnega trikotnika (pravi kot pri p₂) je
 cos = priležna/hipotenuza in sin = nasprotna/hipotenuza, torej se nova definicija ujema s staro.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#trikotnik
-besedilo: »Kosinus je torej vodoravna koordinata točke $T$, sinus pa navpična. Za ostre kote se to ujema s staro definicijo: iz točke $T$ spustimo pravokotnico na os $x$ in dobimo pravokotni trikotnik s hipotenuzo $1$. Priležna kateta je $x$, nasprotna kateta je $y$.« -/
+besedilo: »Za ostre kote se to ujema s staro definicijo: iz točke $T$ spustimo pravokotnico na os $x$ in dobimo pravokotni trikotnik s hipotenuzo $1$. Priležna kateta je $x$, nasprotna kateta je $y$.« -/
 theorem trikotnik {V P : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [MetricSpace P]
     [NormedAddTorsor V P] {p₁ p₂ p₃ : P} (h : EuclideanGeometry.angle p₁ p₂ p₃ = π / 2) (hn : p₁ ≠ p₂)
     (_hn' : p₃ ≠ p₂) :
@@ -99,7 +99,7 @@ example :=
 /-- Razlaga 3 (posebni koti): cos 0° = 1, sin 0° = 0; cos 90° = 0, sin 90° = 1; cos 180° = −1, sin 180° = 0;
 cos 270° = 0, sin 270° = −1 (pri 90° in 270° je x = 0, zato tangens tam ni definiran).
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#posebni-koti
-besedilo: »Pri $90^\circ$ in $270^\circ$ je $x = 0$, zato $\tan\alpha$ tam **ni definiran**.« -/
+besedilo: »| $0^\circ$ | $(1, 0)$ | $1$ | $0$ | | $90^\circ$ | $(0, 1)$ | $0$ | $1$ | | $180^\circ$ | $(-1, 0)$ | $-1$ | $0$ | | $270^\circ$ | $(0, -1)$ | $0$ | $-1$ |« -/
 theorem posebni_koti : cos 0 = 1 ∧ sin 0 = 0 ∧ cos (π / 2) = 0 ∧ sin (π / 2) = 1 ∧ cos π = -1 ∧ sin π = 0 ∧
     cos (3 * π / 2) = 0 ∧ sin (3 * π / 2) = -1 :=
   ⟨cos_zero, sin_zero, cos_pi_div_two, sin_pi_div_two, cos_pi, sin_pi, kot270.2, kot270.1⟩
@@ -177,7 +177,7 @@ example : (0 < π / 6 ∧ π / 6 < π / 2) ∧ (π / 2 < 2 * π / 3 ∧ 2 * π /
 cos(180° − α) = −cos α; III. kvadrant sin(180° + α) = −sin α, cos(180° + α) = −cos α; IV. kvadrant
 sin(360° − α) = −sin α, cos(360° − α) = cos α.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#pripadajoci
-besedilo: »Pripadajoči ostri kot je ostri kot med gibljivim krakom in osjo $x$: v II. kvadrantu je $180^\circ - \alpha$, v III. kvadrantu $\alpha - 180^\circ$ in v IV. kvadrantu $360^\circ - \alpha$.« -/
+besedilo: »Pripadajoči ostri kot je ostri kot med gibljivim krakom in osjo $x$: v II. kvadrantu je $180^\circ - \alpha$, v III. kvadrantu $\alpha - 180^\circ$ in v IV. kvadrantu $360^\circ - \alpha$. Absolutno vrednost kotne funkcije dobimo iz pripadajočega ostrega kota, predznak pa iz kvadranta.« -/
 theorem pripadajoci (α : ℝ) : sin (π - α) = sin α ∧ cos (π - α) = -cos α ∧
     sin (π + α) = -sin α ∧ cos (π + α) = -cos α ∧ sin (2 * π - α) = -sin α ∧ cos (2 * π - α) = cos α := by
   refine ⟨sin_pi_sub α, cos_pi_sub α, ?_, ?_, sin_two_pi_sub α, cos_two_pi_sub α⟩
@@ -187,7 +187,7 @@ theorem pripadajoci (α : ℝ) : sin (π - α) = sin α ∧ cos (π - α) = -cos
 /-- Razlaga 5, uganka in Zakaj se tega učimo: sin 30° = 1/2 (pikica 0,5 cm nad središčem),
 sin 150° = sin 30° = 1/2, cos 150° = −cos 30° = −√3/2, sin 210° = −sin 30° = −1/2 (0,5 cm pod središčem).
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#kot150-210
-besedilo: »Tako rešiš tudi uganko s pikico: pri $150^\circ$ je $0{,}5\,\text{cm}$ nad središčem, pri $210^\circ$ pa $0{,}5\,\text{cm}$ pod njim, ker je $\sin 210^\circ = -\sin 30^\circ = -\frac12$.« -/
+besedilo: »Zato je $\sin 150^\circ = \sin 30^\circ = \frac12$ in $\cos 150^\circ = -\cos 30^\circ = -\frac{\sqrt3}{2}$. Velja splošno: **absolutno vrednost** dobiš iz pripadajočega ostrega kota, **predznak** pa iz kvadranta. Tako rešiš tudi uganko s pikico: pri $150^\circ$ je $0{,}5\,\text{cm}$ nad središčem, pri $210^\circ$ pa $0{,}5\,\text{cm}$ pod njim, ker je $\sin 210^\circ = -\sin 30^\circ = -\frac12$.« -/
 theorem kot150_210 : sin (π / 6) = 1 / 2 ∧ sin (5 * π / 6) = 1 / 2 ∧ cos (5 * π / 6) = -(√3 / 2) ∧
     sin (7 * π / 6) = -(1 / 2) := by
   refine ⟨sin_pi_div_six, ?_, ?_, ?_⟩
@@ -197,7 +197,7 @@ theorem kot150_210 : sin (π / 6) = 1 / 2 ∧ sin (5 * π / 6) = 1 / 2 ∧ cos (
 
 /-- Razlaga 6, Povzetek in Ustno vprašanje 2: sin²α + cos²α = 1, zato −1 ≤ sin α ≤ 1 in −1 ≤ cos α ≤ 1.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#osnovna-zveza
-besedilo: »$$\sin^2\alpha + \cos^2\alpha = 1$$« -/
+besedilo: »$$\sin^2\alpha + \cos^2\alpha = 1$$ Od tod sledi tudi, da sta sinus in kosinus vedno med $-1$ in $1$.« -/
 theorem osnovna_zveza (α : ℝ) : sin α ^ 2 + cos α ^ 2 = 1 ∧ -1 ≤ sin α ∧ sin α ≤ 1 ∧ -1 ≤ cos α ∧
     cos α ≤ 1 :=
   ⟨sin_sq_add_cos_sq α, neg_one_le_sin α, sin_le_one α, neg_one_le_cos α, cos_le_one α⟩
@@ -211,7 +211,7 @@ theorem periodicnost (α : ℝ) (k : ℤ) : sin (α + 2 * k * π) = sin α ∧ c
 
 /-- Bolj natančno (simetrija čez os x): sin(−α) = −sin α in cos(−α) = cos α.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#simetrija-x
-besedilo: »Iz simetrije krožnice čez os $x$ sledi $\sin(-\alpha) = -\sin\alpha$ in $\cos(-\alpha) = \cos\alpha$. Iz simetrije čez os $y$ sledi $\sin(\pi - \alpha) = \sin\alpha$ in $\cos(\pi - \alpha) = -\cos\alpha$.« -/
+besedilo: »Iz simetrije krožnice čez os $x$ sledi $\sin(-\alpha) = -\sin\alpha$ in $\cos(-\alpha) = \cos\alpha$.« -/
 theorem simetrija_x (α : ℝ) : sin (-α) = -sin α ∧ cos (-α) = cos α := ⟨sin_neg α, cos_neg α⟩
 
 /-- Razlaga 7: sin 390° = sin 30° in cos(−60°) = cos 300°, ker je −60° + 360° = 300°; Iz vsakdanjega
@@ -233,7 +233,7 @@ theorem koti_nad_360 : sin (13 * π / 6) = sin (π / 6) ∧ cos (-(π / 3)) = co
 /-- Razlaga 8 in Povzetek: 360° = 2π rad, 180° = π rad, 1 rad = 180°/π ≈ 57,3°; tabela 30° = π/6, 45° = π/4,
 60° = π/3, 90° = π/2 (pretvorba α·π/180); sin(π/2) = 1.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#radian
-besedilo: »$$\pi\,\text{rad} = 180^\circ,\quad 1\,\text{rad} \approx 57{,}3^\circ$$« -/
+besedilo: »$$360^\circ = 2\pi\,\text{rad}, \qquad 180^\circ = \pi\,\text{rad}$$ En radian je $\frac{180^\circ}{\pi} \approx 57{,}3^\circ$. Pogoste kote si zapomni: | stopinje | radiani | |---|---| | $30^\circ$ | $\frac{\pi}{6}$ | | $45^\circ$ | $\frac{\pi}{4}$ | | $60^\circ$ | $\frac{\pi}{3}$ | | $90^\circ$ | $\frac{\pi}{2}$ | Ko je kot podan v radianih, enoto rad navadno izpustimo: $\sin\frac{\pi}{2} = 1$.« -/
 theorem radian : 360 * (π / 180) = 2 * π ∧ 180 * (π / 180) = π ∧ (57.25 : ℝ) < 180 / π ∧ 180 / π < 57.35 ∧
     30 * (π / 180) = π / 6 ∧ 45 * (π / 180) = π / 4 ∧ 60 * (π / 180) = π / 3 ∧ 90 * (π / 180) = π / 2 ∧
     sin (π / 2) = 1 := by
@@ -258,7 +258,7 @@ theorem kot3 : π / 2 < 3 ∧ 3 < π ∧ (1.565 : ℝ) < π / 2 ∧ π / 2 < 1.5
 
 /-- Primer 1: 150° · π/180° = 5π/6 (150/180 = 5/6) in 5π/4 · 180°/π = 5·45° = 225°.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#primer1
-besedilo: »$\frac{5\pi}{4} \cdot \frac{180^\circ}{\pi} = 5 \cdot 45^\circ = 225^\circ$« -/
+besedilo: »Stopinje v radiane: $150^\circ \cdot \frac{\pi}{180^\circ} = \frac{5\pi}{6}$, ker se $\frac{150}{180}$ okrajša v $\frac56$. 2. Radiane v stopinje: $\frac{5\pi}{4} \cdot \frac{180^\circ}{\pi} = 5 \cdot 45^\circ = 225^\circ$, ker se $\pi$ pokrajša.« -/
 theorem primer1 : 150 * (π / 180) = 5 * π / 6 ∧ (150 : ℝ) / 180 = 5 / 6 ∧
     5 * π / 4 * (180 / π) = 5 * 45 ∧ (5 : ℝ) * 45 = 225 := by
   have hp := pi_pos.ne'
@@ -267,7 +267,7 @@ theorem primer1 : 150 * (π / 180) = 5 * π / 6 ∧ (150 : ℝ) / 180 = 5 / 6 �
 /-- Primer 2: 4π/3 = 240° (III. kvadrant, pripadajoči ostri kot 240° − 180° = 60°);
 sin 240° = −sin 60° = −√3/2, cos 240° = −cos 60° = −1/2, tan 240° = (−√3/2)/(−1/2) = √3 > 0.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#primer2
-besedilo: »$\sin 240^\circ = -\sin 60^\circ = -\frac{\sqrt3}{2}$ in $\cos 240^\circ = -\cos 60^\circ = -\frac12$.« -/
+besedilo: »Pretvorimo v stopinje, da kot laže narišemo: $\frac{4\pi}{3} = 240^\circ$. 2. Kot je med $180^\circ$ in $270^\circ$, torej v III. kvadrantu, kjer sta sinus in kosinus negativna. 3. Pripadajoči ostri kot je $240^\circ - 180^\circ = 60^\circ$, ker merimo odmik od negativnega poltraka osi $x$. 4. $\sin 240^\circ = -\sin 60^\circ = -\frac{\sqrt3}{2}$ in $\cos 240^\circ = -\cos 60^\circ = -\frac12$. 5. $\tan 240^\circ = \dfrac{-\sqrt3/2}{-1/2} = \sqrt3$, kar je pozitivno, kot mora biti v III. kvadrantu.« -/
 theorem primer2 : 4 * π / 3 * (180 / π) = 240 ∧ π < 4 * π / 3 ∧ 4 * π / 3 < 3 * π / 2 ∧
     (240 : ℝ) - 180 = 60 ∧
     sin (4 * π / 3) = -sin (π / 3) ∧ -sin (π / 3) = -(√3 / 2) ∧
@@ -284,7 +284,7 @@ theorem primer2 : 4 * π / 3 * (180 / π) = 240 ∧ π < 4 * π / 3 ∧ 4 * π /
 /-- Primer 3: 7π/6 = 210° (III. kvadrant, ostri kot 30°), sin 210° = −1/2, cos 210° = −√3/2;
 y = 12·(−1/2) = −6 mm, h = 40 − 6 = 34 mm, x = 12·(−√3/2) = −6√3 ≈ −10,4 mm.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#primer3
-besedilo: »$x = 12\,\text{mm} \cdot \left(-\frac{\sqrt3}{2}\right) = -6\sqrt3\,\text{mm} \approx -10{,}4\,\text{mm}$« -/
+besedilo: »Kot pretvorimo: $\frac{7\pi}{6} = 210^\circ$, kar je III. kvadrant s pripadajočim ostrim kotom $30^\circ$. 3. $\sin 210^\circ = -\frac12$ in $\cos 210^\circ = -\frac{\sqrt3}{2}$, ker sta v III. kvadrantu obe negativni. 4. $y = 12\,\text{mm} \cdot \left(-\frac12\right) = -6\,\text{mm}$: pikica je $6\,\text{mm}$ pod središčem. 5. $h = 40\,\text{mm} - 6\,\text{mm} = 34\,\text{mm}$, ker višino merimo od spodnjega roba. 6. $x = 12\,\text{mm} \cdot \left(-\frac{\sqrt3}{2}\right) = -6\sqrt3\,\text{mm} \approx -10{,}4\,\text{mm}$, kar pomeni levo od središča.« -/
 theorem primer3 : 7 * π / 6 * (180 / π) = 210 ∧ (210 : ℝ) - 180 = 30 ∧
     sin (7 * π / 6) = -(1 / 2) ∧ cos (7 * π / 6) = -(√3 / 2) ∧
     12 * sin (7 * π / 6) = -6 ∧ 40 + 12 * sin (7 * π / 6) = 34 ∧
@@ -334,7 +334,7 @@ example :=
 
 /-- Pogoste napake in Preveri se 2: cos 120° = −1/2 = −0,5, ne cos 60° = 1/2.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#cos120
-besedilo: »0,5 | To je $\cos 60^\circ$ brez predznaka. Kot $120^\circ$ je v II. kvadrantu, kjer je kosinus negativen.« -/
+besedilo: »Predznak je iz kvadranta: $\cos 120^\circ = -\frac12$, ne $\frac12$.« -/
 theorem cos120 : cos (2 * π / 3) = -(1 / 2) ∧ cos (2 * π / 3) ≠ cos (π / 3) ∧ -(1 / 2 : ℝ) = -0.5 := by
   have e : cos (2 * π / 3) = -(1 / 2) := by
     rw [show 2 * π / 3 = π - π / 3 by ring, cos_pi_sub, cos_pi_div_three]
@@ -343,7 +343,7 @@ theorem cos120 : cos (2 * π / 3) = -(1 / 2) ∧ cos (2 * π / 3) ≠ cos (π / 
 /-- Pogoste napake in Preveri se 4: kot 2 rad je v II. kvadrantu (π/2 < 2 < π) in meri ≈ 114,6°, kar je več
 od 100° = 5π/9 rad.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#kot2
-besedilo: »$2\,\text{rad} = 2 \cdot \frac{180^\circ}{\pi} \approx 114{,}6^\circ$, kar je več kot $100^\circ$.« -/
+besedilo: »Kot $2$ je približno $114{,}6^\circ$, torej v II. kvadrantu. Primerjaj s $\frac{\pi}{2} \approx 1{,}57$ in $\pi \approx 3{,}14$.« -/
 theorem kot2 : π / 2 < 2 ∧ 2 < π ∧ (114.55 : ℝ) < 2 * (180 / π) ∧ 2 * (180 / π) < 114.65 ∧
     100 * (π / 180) < 2 := by
   have p1 := pi_gt_d6; have p2 := pi_lt_d6
@@ -378,7 +378,7 @@ theorem sin30rad : (-0.9885 : ℝ) < sin 30 ∧ sin 30 < -0.9875 ∧ sin (30 * (
 /-- Naloga 1: sin(7π/4) = −√2/2 (315°, IV. kvadrant), cos(3π/4) = −√2/2 (135°, II. kvadrant), produkt 2/4 = 1/2;
 8π/3 = 2π + 2π/3, tan(8π/3) = tan(2π/3) = −√3; izraz 1/2 − (−√3) = 1/2 + √3.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#matura1
-besedilo: »Brez uporabe računala izračunajte natančno vrednost izraza $\sin\frac{7\pi}{4} \cdot \cos\frac{3\pi}{4} - \tan\frac{8\pi}{3}$.« -/
+besedilo: »Kot $\frac{7\pi}{4} = 315^\circ$ leži v IV. kvadrantu s pripadajočim ostrim kotom $45^\circ$, zato je $\sin\frac{7\pi}{4} = -\frac{\sqrt2}{2}$. Kot $\frac{3\pi}{4} = 135^\circ$ leži v II. kvadrantu s pripadajočim ostrim kotom $45^\circ$, zato je $\cos\frac{3\pi}{4} = -\frac{\sqrt2}{2}$. 2. Produkt: $\left(-\frac{\sqrt2}{2}\right) \cdot \left(-\frac{\sqrt2}{2}\right) = \frac{2}{4} = \frac12$. 3. Velja $\frac{8\pi}{3} = 2\pi + \frac{2\pi}{3}$, zato je $\tan\frac{8\pi}{3} = \tan\frac{2\pi}{3} = \tan 120^\circ$. Kot $120^\circ$ leži v II. kvadrantu s pripadajočim ostrim kotom $60^\circ$, kjer je tangens negativen: $\tan\frac{8\pi}{3} = -\sqrt3$. 4. Izraz: $\frac12 - \left(-\sqrt3\right) = \frac12 + \sqrt3$.« -/
 theorem matura1 : sin (7 * π / 4) = -(√2 / 2) ∧ cos (3 * π / 4) = -(√2 / 2) ∧
     (-(√2 / 2)) * (-(√2 / 2)) = 2 / 4 ∧ (2 : ℝ) / 4 = 1 / 2 ∧ 8 * π / 3 = 2 * π + 2 * π / 3 ∧
     tan (8 * π / 3) = tan (2 * π / 3) ∧ tan (2 * π / 3) = -√3 ∧
@@ -399,7 +399,7 @@ theorem matura1 : sin (7 * π / 4) = -(√2 / 2) ∧ cos (3 * π / 4) = -(√2 /
 /-- Naloga 2 a), RACUN `resi`: točka (−5/13, y) leži na enotski krožnici natanko za y = −12/13 ali y = 12/13
 (y² = 1 − 25/169 = 144/169); pod osjo x je y = −12/13.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#matura2a
-besedilo: »a) Točka $T$ leži na enotski krožnici, zato je $\left(-\frac{5}{13}\right)^2 + y^2 = 1$ in $y^2 = 1 - \frac{25}{169} = \frac{144}{169}$.« -/
+besedilo: »a) Točka $T$ leži na enotski krožnici, zato je $\left(-\frac{5}{13}\right)^2 + y^2 = 1$ in $y^2 = 1 - \frac{25}{169} = \frac{144}{169}$. 2. a) Točka $T$ leži pod osjo $x$, zato je $y < 0$ in $y = -\frac{12}{13}$.« -/
 theorem matura2a (y : ℝ) : ((-5 / 13 : ℝ) ^ 2 + y ^ 2 = 1 ↔ y = -12 / 13 ∨ y = 12 / 13) ∧
     ((-5 / 13 : ℝ) ^ 2 + y ^ 2 = 1 → y ^ 2 = 1 - 25 / 169 ∧ (1 : ℝ) - 25 / 169 = 144 / 169) ∧
     ((-5 / 13 : ℝ) ^ 2 + y ^ 2 = 1 → y < 0 → y = -12 / 13) := by
@@ -420,7 +420,7 @@ theorem matura2a (y : ℝ) : ((-5 / 13 : ℝ) ^ 2 + y ^ 2 = 1 ↔ y = -12 / 13 �
 (π < α < 3π/2), tan α = (−12/13)/(−5/13) = 12/5; točka S(−5/13, 12/13) je zrcalna slika T čez os x,
 β = 2π − α leži v (π/2, π) ⊂ [0, 2π), sin β = 12/13, cos β = −5/13, in β je edini tak kot v [0, 2π).
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#matura2
-besedilo: »b) $\tan\alpha = \dfrac{\sin\alpha}{\cos\alpha} = \dfrac{-12/13}{-5/13} = \dfrac{12}{5}$, kar je pozitivno, kot mora biti v III. kvadrantu.« -/
+besedilo: »b) Obe koordinati točke $T$ sta negativni, zato kot $\alpha$ leži v III. kvadrantu. 4. b) $\tan\alpha = \dfrac{\sin\alpha}{\cos\alpha} = \dfrac{-12/13}{-5/13} = \dfrac{12}{5}$, kar je pozitivno, kot mora biti v III. kvadrantu. 5. c) Zrcaljenje čez os $x$ ohrani koordinato $x$ in spremeni predznak koordinate $y$: $S\left(-\frac{5}{13}, \frac{12}{13}\right)$. 6. c) Krak kota $\beta$ je zrcalna slika kraka kota $\alpha$ čez os $x$, zato je $\beta = -\alpha + 2\pi = 2\pi - \alpha$. Ker je $\pi < \alpha < \frac{3\pi}{2}$, je $\frac{\pi}{2} < \beta < \pi$, torej $\beta$ res leži v $[0, 2\pi)$. 7. c) Iz koordinat točke $S$: $\sin\beta = \frac{12}{13}$ in $\cos\beta = -\frac{5}{13}$.« -/
 theorem matura2 (α : ℝ) (h0 : 0 ≤ α) (h1 : α < 2 * π) (hc : cos α = -5 / 13) (hs : sin α = -12 / 13) :
     π < α ∧ α < 3 * π / 2 ∧ tan α = (-12 / 13) / (-5 / 13) ∧ (-12 / 13 : ℝ) / (-5 / 13) = 12 / 5 ∧
     π / 2 < 2 * π - α ∧ 2 * π - α < π ∧ sin (2 * π - α) = 12 / 13 ∧ cos (2 * π - α) = -5 / 13 ∧
@@ -456,8 +456,7 @@ theorem matura2 (α : ℝ) (h0 : 0 ≤ α) (h1 : α < 2 * π) (hc : cos α = -5 
 
 /-- Pogoji izreka `matura2` se dajo izpolniti: α = 2π − arccos(−5/13) (kot iz bloka RACUN), za katerega je
 cos α = −5/13 in sin α = −12/13; RACUN: sin(2π − (2π − arccos(−5/13))) = 12/13.
-trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#matura2-kot
-besedilo: »$\tan\alpha = \dfrac{\sin\alpha}{\cos\alpha} = \dfrac{-12/13}{-5/13} = \dfrac{12}{5}$« -/
+pomozno -/
 theorem matura2_kot : 0 ≤ 2 * π - arccos (-5 / 13) ∧ 2 * π - arccos (-5 / 13) < 2 * π ∧
     cos (2 * π - arccos (-5 / 13)) = -5 / 13 ∧ sin (2 * π - arccos (-5 / 13)) = -12 / 13 ∧
     sin (2 * π - (2 * π - arccos (-5 / 13))) = 12 / 13 := by
@@ -484,7 +483,7 @@ theorem cos225 : cos (5 * π / 4) = -cos (π / 4) ∧ -cos (π / 4) = -(√2 / 2
 /-- Drugače, korak za korakom (tabela): (cos, sin) za 30°, 150°, 210°, 330° je (√3/2, 1/2), (−√3/2, 1/2),
 (−√3/2, −1/2), (√3/2, −1/2); preverba za 150°: (−√3/2)² + (1/2)² = 3/4 + 1/4 = 1.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#tabela-30
-besedilo: »| $150^\circ$ | II. | $30^\circ$ | $(-\frac{\sqrt3}{2}, \frac12)$ |« -/
+besedilo: »| $30^\circ$ | I. | $30^\circ$ | $(\frac{\sqrt3}{2}, \frac12)$ | | $150^\circ$ | II. | $30^\circ$ | $(-\frac{\sqrt3}{2}, \frac12)$ | | $210^\circ$ | III. | $30^\circ$ | $(-\frac{\sqrt3}{2}, -\frac12)$ | | $330^\circ$ | IV. | $30^\circ$ | $(\frac{\sqrt3}{2}, -\frac12)$ |« -/
 theorem tabela_30 :
     (cos (π / 6) = √3 / 2 ∧ sin (π / 6) = 1 / 2) ∧
     (cos (5 * π / 6) = -(√3 / 2) ∧ sin (5 * π / 6) = 1 / 2) ∧
@@ -500,7 +499,7 @@ theorem tabela_30 :
 /-- Drugače, korak za korakom: štiri točke A(√3/2, 1/2), B(−√3/2, 1/2), C(−√3/2, −1/2), D(√3/2, −1/2)
 so oglišča pravokotnika: AB in DC sta enaka vektorja (paralelogram), AB ⟂ BC (pravi kot pri B).
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#tabela-pravokotnik
-besedilo: »Vidiš vzorec: vse štiri točke so oglišča pravokotnika, ki je vrisan v krožnico. Številke so iste, spreminjajo se le predznaki. Preveri še osnovno zvezo za $150^\circ$: $\left(-\frac{\sqrt3}{2}\right)^2 + \left(\frac12\right)^2 = \frac34 + \frac14 = 1$.« -/
+besedilo: »Vidiš vzorec: vse štiri točke so oglišča pravokotnika, ki je vrisan v krožnico.« -/
 theorem tabela_pravokotnik :
     let A : ℝ × ℝ := (√3 / 2, 1 / 2)
     let B : ℝ × ℝ := (-(√3 / 2), 1 / 2)
@@ -519,7 +518,7 @@ theorem tabela_pravokotnik :
 
 /-- Drugače, iz vsakdanjega življenja: po obodu zložiš malo več kot šest vrvic, 2π ≈ 6,28.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#sest-vrvic
-besedilo: »Po obodu zložiš malo več kot šest takih vrvic ($2\pi \approx 6{,}28$),« -/
+besedilo: »Po obodu zložiš malo več kot šest takih vrvic ($2\pi \approx 6{,}28$), da prideš okoli.« -/
 theorem sest_vrvic : (6 : ℝ) < 2 * π ∧ (6.275 : ℝ) < 2 * π ∧ 2 * π < 6.285 := by
   have p1 := pi_gt_d6; have p2 := pi_lt_d6
   refine ⟨by linarith, by linarith, by linarith⟩
@@ -536,7 +535,7 @@ theorem preveri1 : sin (3 * π / 2) < 0 ∧ cos (π / 2) = 0 ∧ 180 / π ≠ 1 
 
 /-- Preveri se 2: napačni odgovor −0,87 je −sin 60° = −√3/2 ≈ −0,87.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#preveri2
-besedilo: »-0,87 | Predznak je pravilen, absolutna vrednost pa je $\sin 60^\circ = \frac{\sqrt3}{2} \approx 0{,}87$, ne $\cos 60^\circ$.« -/
+besedilo: »Predznak je pravilen, absolutna vrednost pa je $\sin 60^\circ = \frac{\sqrt3}{2} \approx 0{,}87$, ne $\cos 60^\circ$.« -/
 theorem preveri2 : -sin (π / 3) = -(√3 / 2) ∧ (-0.875 : ℝ) < -(√3 / 2) ∧ -(√3 / 2) < -0.865 := by
   have h3 := koren3
   refine ⟨by rw [sin_pi_div_three], by linarith, by linarith⟩
@@ -544,7 +543,7 @@ theorem preveri2 : -sin (π / 3) = -(√3 / 2) ∧ (-0.875 : ℝ) < -(√3 / 2) 
 /-- Preveri se 3 (Luka): 300° je v IV. kvadrantu (270° < 300° < 360°), ostri kot 360° − 300° = 60°, napaka je
 v koraku 3: sin 300° = −sin 60° = −√3/2 < 0.
 trditev: MAT-SS-3/kotne-funkcije-poljubnega-kota#preveri3
-besedilo: »V koraku (3): v IV. kvadrantu je sinus negativen, zato $\sin 300^\circ = -\frac{\sqrt3}{2}$.« -/
+besedilo: »V IV. kvadrantu je $y < 0$, zato $\sin 300^\circ = -\sin 60^\circ = -\frac{\sqrt3}{2}$.« -/
 theorem preveri3 : 3 * π / 2 < 5 * π / 3 ∧ 5 * π / 3 < 2 * π ∧ 2 * π - 5 * π / 3 = π / 3 ∧
     sin (5 * π / 3) = -sin (π / 3) ∧ -sin (π / 3) = -(√3 / 2) ∧ sin (5 * π / 3) ≠ √3 / 2 := by
   have hp := pi_pos

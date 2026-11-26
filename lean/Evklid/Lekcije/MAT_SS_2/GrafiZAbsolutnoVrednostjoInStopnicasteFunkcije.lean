@@ -24,14 +24,14 @@ open Real Set
 /-- Razlaga 1 in 3: število štručk po 300 g je n = ⌊m/300⌋ in velja ⌊m/300⌋ = k natanko za 300k ≤ m < 300(k + 1)
 (vsak k ∈ ℤ).
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#strucke
-besedilo: »Celi del** števila $x$, zapišemo $\lfloor x \rfloor$, je največje celo število, ki ni večje od $x$.« -/
+besedilo: »Za štručke torej velja $$n = \left\lfloor \frac{m}{300} \right\rfloor$$« -/
 theorem strucke (m : ℝ) (k : ℤ) : ⌊m / 300⌋ = k ↔ 300 * (k : ℝ) ≤ m ∧ m < 300 * ((k : ℝ) + 1) := by
   rw [Int.floor_eq_iff, le_div_iff₀ (by norm_num), div_lt_iff₀ (by norm_num)]
   constructor <;> rintro ⟨h1, h2⟩ <;> constructor <;> linarith
 
 /-- Razlaga 1, tabela: 0 ≤ m < 300 da 0 štručk, 300 ≤ m < 600 eno, 600 ≤ m < 900 dve, 900 ≤ m < 1200 tri.
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#tabela
-besedilo: »| $300 \le m < 600$ | $1$ |« -/
+besedilo: »| $0 \le m < 300$ | $0$ | | $300 \le m < 600$ | $1$ | | $600 \le m < 900$ | $2$ | | $900 \le m < 1200$ | $3$ |« -/
 theorem tabela (m : ℝ) :
     (0 ≤ m ∧ m < 300 → ⌊m / 300⌋ = 0) ∧ (300 ≤ m ∧ m < 600 → ⌊m / 300⌋ = 1) ∧
     (600 ≤ m ∧ m < 900 → ⌊m / 300⌋ = 2) ∧ (900 ≤ m ∧ m < 1200 → ⌊m / 300⌋ = 3) := by
@@ -111,7 +111,7 @@ theorem parkirnina_odgovor : C 2.5 = 4 ∧ C 3 = 4 ∧ ∀ t, 0 < t → (C t ≤
 
 /-- Razlaga 5 (definicija): |a| = a za a ≥ 0 in |a| = −a za a < 0.
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#definicija
-besedilo: »$$|a| = -a, \quad \text{če je } a < 0$$« -/
+besedilo: »$$|a| = a, \quad \text{če je } a \ge 0$$ $$|a| = -a, \quad \text{če je } a < 0$$« -/
 theorem definicija (a : ℝ) : (0 ≤ a → |a| = a) ∧ (a < 0 → |a| = -a) :=
   ⟨abs_of_nonneg, abs_of_neg⟩
 
@@ -119,7 +119,7 @@ theorem definicija (a : ℝ) : (0 ≤ a → |a| = a) ∧ (a < 0 → |a| = -a) :=
 |x + 2| = −x − 2 in f(x) = −2x − 1; za −2 ≤ x < 1 je |x − 1| = 1 − x, |x + 2| = x + 2 in f(x) = 3; za x ≥ 1
 je |x − 1| = x − 1, |x + 2| = x + 2 in f(x) = 2x + 1.
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#korito-po-primerih
-besedilo: »$-2 \le x < 1$: $\lvert x - 1 \rvert = 1 - x$ in $\lvert x + 2 \rvert = x + 2$, zato je $f(x) = 3$;« -/
+besedilo: »$x < -2$: $\lvert x - 1 \rvert = 1 - x$ in $\lvert x + 2 \rvert = -x - 2$, zato je $f(x) = -2x - 1$; - $-2 \le x < 1$: $\lvert x - 1 \rvert = 1 - x$ in $\lvert x + 2 \rvert = x + 2$, zato je $f(x) = 3$; - $x \ge 1$: $\lvert x - 1 \rvert = x - 1$ in $\lvert x + 2 \rvert = x + 2$, zato je $f(x) = 2x + 1$.« -/
 theorem korito_po_primerih (x : ℝ) :
     (x < -2 → |x - 1| = 1 - x ∧ |x + 2| = -x - 2 ∧ (1 - x) + (-x - 2) = -2 * x - 1) ∧
     (-2 ≤ x ∧ x < 1 → |x - 1| = 1 - x ∧ |x + 2| = x + 2 ∧ (1 - x) + (x + 2) = 3) ∧
@@ -181,7 +181,7 @@ theorem napake_abs :
 /-- Primer 3 (in blok RACUN): |x − 1| + |x + 2| ≤ 5 ⟺ x ∈ [−3, 2]; meji −2x − 1 = 5 ⟺ x = −3 in 2x + 1 = 5 ⟺
 x = 2; preizkus f(−3) = 4 + 1 = 5, f(2) = 1 + 4 = 5.
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#primer3
-besedilo: »Preizkus: $f(-3) = |-3 - 1| + |-3 + 2| = 4 + 1 = 5$ in $f(2) = 1 + 4 = 5$.« -/
+besedilo: »Odgovor: $x \in [-3, 2]$.« -/
 theorem primer3 :
     (∀ x : ℝ, |x - 1| + |x + 2| ≤ 5 ↔ -3 ≤ x ∧ x ≤ 2) ∧ (∀ x : ℝ, -2 * x - 1 = 5 ↔ x = -3) ∧
     (∀ x : ℝ, 2 * x + 1 = 5 ↔ x = 2) ∧ |(-3:ℝ) - 1| + |(-3:ℝ) + 2| = 4 + 1 ∧ (4:ℝ) + 1 = 5 ∧
@@ -209,7 +209,7 @@ theorem primer3 :
 /-- Razlaga 6, Povzetek in Ustno vprašanje 3: |f(x)| = f(x), kjer je f(x) ≥ 0, in −f(x), kjer je f(x) < 0 (graf
 ni pod osjo x); f(|x|) = f(x) za x ≥ 0, f(|x|) = f(−x) za x < 0, zato je f(|x|) soda funkcija.
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#abs-f-in-f-abs
-besedilo: »Za $x < 0$ je $f(|x|) = f(-x)$,« -/
+besedilo: »Del grafa nad osjo $x$ ostane, del pod osjo $x$ pa prezrcalimo čez os $x$ navzgor, zato graf ne leži pod osjo $x$. Pri $y = f(|x|)$ vzamemo absolutno vrednost spremenljivke, zato za $x \ge 0$ velja $f(|x|) = f(x)$ in desna polovica grafa ostane. Levo polovico dobimo kot zrcalno sliko desne čez os $y$, zato je $f(|x|)$ soda funkcija.« -/
 theorem abs_f_in_f_abs (f : ℝ → ℝ) (x : ℝ) :
     (0 ≤ f x → |f x| = f x) ∧ (f x < 0 → |f x| = -f x) ∧ 0 ≤ |f x| ∧ (0 ≤ x → f |x| = f x) ∧
     (x < 0 → f |x| = f (-x)) ∧ f |(-x)| = f |x| := by
@@ -219,7 +219,7 @@ theorem abs_f_in_f_abs (f : ℝ → ℝ) (x : ℝ) :
 /-- Razlaga 6 (sliki) in Pogoste napake: za f(x) = x − 2 ima |x − 2| teme (2, 0) (najmanjša vrednost 0 natanko
 pri x = 2), |x| − 2 pa teme (0, −2) (najmanjša vrednost −2 natanko pri x = 0, graf je lahko pod osjo x).
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#dve-temeni
-besedilo: »(višja raven) **Zamenjava $|f(x)|$ in $f(|x|)$.** Učenec pri $y = |x| - 2$ prezrcali del pod osjo $x$ navzgor, kot pri $|x - 2|$. Pri $f(|x|)$ pa se desna polovica prezrcali čez os $y$; graf je lahko tudi pod osjo $x$.« -/
+besedilo: »Za $f(x) = x - 2$ dobimo $|x - 2|$ s temenom v $(2, 0)$ in $|x| - 2$ s temenom v $(0, -2)$« -/
 theorem dve_temeni :
     (∀ x : ℝ, 0 ≤ |x - 2| ∧ (|x - 2| = 0 ↔ x = 2)) ∧ (∀ x : ℝ, -2 ≤ |x| - 2 ∧ (|x| - 2 = -2 ↔ x = 0)) ∧
     |(1:ℝ)| - 2 < 0 := by
@@ -229,13 +229,13 @@ theorem dve_temeni :
 
 /-- Razlaga 6, Premisli 2: za f(x) = x² − 4 je f(|x|) = f(x) (soda funkcija, graf se ne spremeni).
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#premisli2
-besedilo: »Nič se ne spremeni. Funkcija $x^2 - 4$ je soda, ker je $(-x)^2 = x^2$. Njena leva polovica je že zrcalna slika desne, zato zrcaljenje desne polovice da isti graf. Funkcija $|x^2 - 4|$ pa je drugačna, glej Primer 2.« -/
+besedilo: »Nič se ne spremeni. Funkcija $x^2 - 4$ je soda, ker je $(-x)^2 = x^2$.« -/
 theorem premisli2 (x : ℝ) : |x| ^ 2 - 4 = x ^ 2 - 4 := by rw [sq_abs]
 
 /-- Razlaga 7: rešitve f(x) = c so abscise presečišč grafa s premico y = c, rešitve f(x) ≤ c pa x, kjer graf leži
 pod premico ali na njej.
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#enacba-z-grafa
-besedilo: »Neenačbo $f(x) \le c$ rešijo tisti $x$, pri katerih graf leži pod premico ali na njej.« -/
+besedilo: »Abscise presečišč z grafom so rešitve, število presečišč je število rešitev. Neenačbo $f(x) \le c$ rešijo tisti $x$, pri katerih graf leži pod premico ali na njej.« -/
 theorem enacba_z_grafa (f : ℝ → ℝ) (c : ℝ) :
     {x | f x = c} = Prod.fst '' ({P : ℝ × ℝ | P.2 = f P.1} ∩ {P | P.2 = c}) ∧
     {x | f x ≤ c} = {x | ∃ y, y = f x ∧ y ≤ c} := by
@@ -255,7 +255,7 @@ theorem enacba_z_grafa (f : ℝ → ℝ) (c : ℝ) :
 /-- Primer 2, koraki 1–3: x² − 4 = 0 ⟺ x = −2 ali x = 2; x² − 4 ≥ 0 natanko za x ≤ −2 ali x ≥ 2 (to je |x| ≥ 2),
 tam |x² − 4| = x² − 4; za −2 < x < 2 je x² − 4 < 0 in |x² − 4| = −(x² − 4) = 4 − x².
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#primer2-po-primerih
-besedilo: »Za $-2 < x < 2$ je $x^2 - 4 < 0$, zato $f(x) = -(x^2 - 4) = 4 - x^2$.« -/
+besedilo: »Odgovor: $f(x) = x^2 - 4$ za $|x| \ge 2$ (to je $x \le -2$ ali $x \ge 2$), $f(x) = 4 - x^2$ za $|x| < 2$.« -/
 theorem primer2_po_primerih (x : ℝ) :
     (x ^ 2 - 4 = 0 ↔ x = -2 ∨ x = 2) ∧ (0 ≤ x ^ 2 - 4 ↔ x ≤ -2 ∨ 2 ≤ x) ∧ (x ≤ -2 ∨ 2 ≤ x ↔ 2 ≤ |x|) ∧
     (x ≤ -2 ∨ 2 ≤ x → |x ^ 2 - 4| = x ^ 2 - 4) ∧
@@ -285,7 +285,7 @@ theorem primer2_po_primerih (x : ℝ) :
 /-- Primer 2, korak 5 (in blok RACUN): f(0) = 4 − 0 = 4, f(1) = 4 − 1 = 3, f(3) = 9 − 4 = 5; ničli −2 in 2; vrh
 prepognjenega dela je (0, 4) (na (−2, 2) je f ≤ 4).
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#primer2-vrednosti
-besedilo: »Odgovor: $f(x) = x^2 - 4$ za $|x| \ge 2$ (to je $x \le -2$ ali $x \ge 2$), $f(x) = 4 - x^2$ za $|x| < 2$. Ničli: $-2$ in $2$; $f(0) = 4$, $f(1) = 3$, $f(3) = 5$.« -/
+besedilo: »Ničli: $-2$ in $2$; $f(0) = 4$, $f(1) = 3$, $f(3) = 5$.« -/
 theorem primer2_vrednosti :
     |(0:ℝ) ^ 2 - 4| = 4 - 0 ∧ (4:ℝ) - 0 = 4 ∧ |(1:ℝ) ^ 2 - 4| = 4 - 1 ∧ (4:ℝ) - 1 = 3 ∧
     |(3:ℝ) ^ 2 - 4| = 9 - 4 ∧ (9:ℝ) - 4 = 5 ∧ |(-2:ℝ) ^ 2 - 4| = 0 ∧ |(2:ℝ) ^ 2 - 4| = 0 ∧
@@ -297,7 +297,7 @@ theorem primer2_vrednosti :
 
 /-- Primer 4 (in blok RACUN): |x² − 4| = 3 ⟺ x² − 4 = 3 ali x² − 4 = −3 ⟺ x ∈ {−√7, −1, 1, √7}; √7 ≈ 2,65.
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#primer4
-besedilo: »Iz $x^2 - 4 = 3$ sledi $x^2 = 7$, torej $x = -\sqrt{7}$ ali $x = \sqrt{7}$ ($\sqrt{7} \approx 2{,}65$).« -/
+besedilo: »Vse štiri rešitve: $-\sqrt{7}$, $-1$, $1$, $\sqrt{7}$.« -/
 theorem primer4 (x : ℝ) :
     (|x ^ 2 - 4| = 3 ↔ x ^ 2 - 4 = 3 ∨ 4 - x ^ 2 = 3) ∧ (x ^ 2 - 4 = 3 ↔ x = -√7 ∨ x = √7) ∧
     (4 - x ^ 2 = 3 ↔ x = -1 ∨ x = 1) ∧
@@ -328,7 +328,7 @@ theorem primer4 (x : ℝ) :
 /-- Naloga 1 (in blok RACUN): ⌊(x + 1)/2⌋ = −1 ⟺ −1 ≤ (x + 1)/2 < 0 ⟺ −2 ≤ x + 1 < 0 ⟺ −3 ≤ x < −1, torej
 x ∈ [−3, −1); posebej (x + 1)/2 ≥ −1 ⟺ x ≥ −3 in (x + 1)/2 < 0 ⟺ x < −1.
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#naloga1
-besedilo: »Pomnožimo z $2$: $-2 \le x + 1 < 0$, nato odštejemo $1$: $-3 \le x < -1$.« -/
+besedilo: »Odgovor: $x \in [-3, -1)$.« -/
 theorem naloga1 (x : ℝ) :
     (⌊(x + 1) / 2⌋ = -1 ↔ -1 ≤ (x + 1) / 2 ∧ (x + 1) / 2 < 0) ∧
     (-1 ≤ (x + 1) / 2 ∧ (x + 1) / 2 < 0 ↔ -2 ≤ x + 1 ∧ x + 1 < 0) ∧
@@ -358,7 +358,7 @@ noncomputable def S (s : ℝ) : ℝ := 1 + 0.5 * ((⌊s / 10⌋ : ℝ) + 1)
 
 /-- Naloga 2 a) (in blok RACUN): K(10) = 1 + 0,5 = 1,50 € in K(25) = 1 + 3·0,5 = 2,50 € (začeti trije intervali).
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#naloga2-a
-besedilo: »a) Pri $25$ minutah so začeti trije intervali (od $0$ do $10$, od $10$ do $20$ in od $20$ do $25$ minut): $K(25) = 1 + 3 \cdot 0{,}5 = 2{,}50\,\text{€}$.« -/
+besedilo: »Odgovor: $K(10) = 1{,}50\,\text{€}$, $K(25) = 2{,}50\,\text{€}$« -/
 theorem naloga2_a : K 10 = 1 + 0.5 ∧ (1:ℝ) + 0.5 = 1.5 ∧ K 25 = 1 + 3 * 0.5 ∧ (1:ℝ) + 3 * 0.5 = 2.5 ∧
     ⌈(25:ℝ) / 10⌉ = 3 := by
   have h10 : ⌈(10:ℝ) / 10⌉ = 1 := Int.ceil_eq_iff.mpr (by norm_num)
@@ -381,7 +381,7 @@ theorem naloga2_b (s : ℝ) :
 /-- Naloga 2 c), koraka 5 in 6 (in blok RACUN): sošolčev predpis da pri s = 25 ⌊2,5⌋ = 2 in 1 + 0,5·3 = 2,50 €
 (prav), pri s = 10 ⌊1⌋ = 1 in 1 + 0,5·2 = 2 € (narobe, prava cena je 1,50 €).
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#naloga2-c-primera
-besedilo: »c) Pri $s = 25$: $\left\lfloor 2{,}5 \right\rfloor = 2$ in $1 + 0{,}5 \cdot 3 = 2{,}50\,\text{€}$, kar je prava cena.« -/
+besedilo: »c) Pri $s = 25$: $\left\lfloor 2{,}5 \right\rfloor = 2$ in $1 + 0{,}5 \cdot 3 = 2{,}50\,\text{€}$, kar je prava cena. 6. c) Pri $s = 10$: $\left\lfloor 1 \right\rfloor = 1$ in $1 + 0{,}5 \cdot 2 = 2\,\text{€}$, prava cena pa je $1{,}50\,\text{€}$.« -/
 theorem naloga2_c_primera :
     ⌊(25:ℝ) / 10⌋ = 2 ∧ S 25 = 1 + 0.5 * 3 ∧ (1:ℝ) + 0.5 * 3 = 2.5 ∧ S 25 = K 25 ∧
     ⌊(10:ℝ) / 10⌋ = 1 ∧ S 10 = 1 + 0.5 * 2 ∧ (1:ℝ) + 0.5 * 2 = 2 ∧ K 10 = 1.5 := by
@@ -437,7 +437,7 @@ example :=
 /-- Naloga 3 a) (in blok RACUN): f(x) = |x + 1| − |x − 3| po primerih: za x < −1 je (−x − 1) − (−x + 3) = −4, za
 −1 ≤ x < 3 je (x + 1) − (−x + 3) = 2x − 2, za x ≥ 3 je (x + 1) − (x − 3) = 4.
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#naloga3-a
-besedilo: »a) Za $-1 \le x < 3$ je $|x + 1| = x + 1$ in $|x - 3| = -x + 3$, zato $f(x) = (x + 1) - (-x + 3) = 2x - 2$.« -/
+besedilo: »Odgovor: $f(x) = -4$ za $x < -1$, $f(x) = 2x - 2$ za $-1 \le x < 3$, $f(x) = 4$ za $x \ge 3$« -/
 theorem naloga3_a (x : ℝ) :
     (x < -1 → |x + 1| = -x - 1 ∧ |x - 3| = -x + 3 ∧ (-x - 1) - (-x + 3) = -4) ∧
     (-1 ≤ x ∧ x < 3 → |x + 1| = x + 1 ∧ |x - 3| = -x + 3 ∧ (x + 1) - (-x + 3) = 2 * x - 2) ∧
@@ -464,7 +464,7 @@ theorem f3 (x : ℝ) :
 /-- Naloga 3 b), c) (in blok RACUN): ničla f je le x = 1 (2x − 2 = 0), Z_f = [−4, 4]; f(x) > 2 ⟺ x > 2 (na srednjem
 intervalu 2x − 2 > 2 ⟺ x > 2, desno je f = 4 > 2, levo f = −4).
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#naloga3-bc
-besedilo: »Odgovor: $f(x) = -4$ za $x < -1$, $f(x) = 2x - 2$ za $-1 \le x < 3$, $f(x) = 4$ za $x \ge 3$; ničla $1$, $Z_f = [-4, 4]$; $f(x) > 2$ za $x \in (2, \infty)$; $|f(x)| = 2$ za $x = 0$ in $x = 2$; $|f(x)| = 4$ ima neskončno rešitev ($x \le -1$ ali $x \ge 3$).« -/
+besedilo: »ničla $1$, $Z_f = [-4, 4]$; $f(x) > 2$ za $x \in (2, \infty)$« -/
 theorem naloga3_bc :
     (∀ x : ℝ, |x + 1| - |x - 3| = 0 ↔ x = 1) ∧ range (fun x : ℝ => |x + 1| - |x - 3|) = Icc (-4) 4 ∧
     (∀ x : ℝ, 2 * x - 2 > 2 ↔ x > 2) ∧ (∀ x : ℝ, |x + 1| - |x - 3| > 2 ↔ x ∈ Ioi 2) := by
@@ -502,7 +502,7 @@ theorem naloga3_bc :
 /-- Naloga 3 d): |f(x)| = 4 za x < −1, 2 − 2x za −1 ≤ x < 1, 2x − 2 za 1 ≤ x < 3 in 4 za x ≥ 3; |f(x)| = 2 ⟺
 x = 0 ali x = 2; za −1 < x < 3 je |2x − 2| < 4, |f(x)| = 4 ⟺ x ≤ −1 ali x ≥ 3, rešitev je neskončno mnogo.
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#naloga3-d
-besedilo: »d) Za $-1 < x < 3$ je $|2x - 2| < 4$, za vse $x \le -1$ in vse $x \ge 3$ pa je $|f(x)| = 4$. Enačba $|f(x)| = 4$ ima neskončno mnogo rešitev.« -/
+besedilo: »$|f(x)| = 2$ za $x = 0$ in $x = 2$; $|f(x)| = 4$ ima neskončno rešitev ($x \le -1$ ali $x \ge 3$).« -/
 theorem naloga3_d :
     (∀ x : ℝ, (x < -1 → |(|x + 1| - |x - 3|)| = 4) ∧ (-1 ≤ x → x < 1 → |(|x + 1| - |x - 3|)| = 2 - 2 * x) ∧
       (1 ≤ x → x < 3 → |(|x + 1| - |x - 3|)| = 2 * x - 2) ∧ (3 ≤ x → |(|x + 1| - |x - 3|)| = 4)) ∧
@@ -593,7 +593,7 @@ theorem kviz3 :
 /-- Preveri se 4: za f(x) = 2x − 4 je g(x) = |2x − 4| in h(x) = f(|x|) = 2|x| − 4; g(0) = 4, h(0) = −4; ujemata se
 natanko za x ≥ 2; g ima najmanjšo vrednost 0 natanko pri x = 2, h najmanjšo vrednost −4 natanko pri x = 0.
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#kviz4
-besedilo: »$g$ ima najmanjšo vrednost $0$ pri $x = 2$, $h$ pa najmanjšo vrednost $-4$ pri $x = 0$.« -/
+besedilo: »Ujemata se le za $x \ge 2$. Pri $x = 0$ je $g(0) = 4$, $h(0) = -4$.« -/
 theorem kviz4 :
     |2 * (0:ℝ) - 4| = 4 ∧ 2 * |(0:ℝ)| - 4 = -4 ∧ (∀ x : ℝ, |2 * x - 4| = 2 * |x| - 4 ↔ 2 ≤ x) ∧
     (∀ x : ℝ, 0 ≤ |2 * x - 4| ∧ (|2 * x - 4| = 0 ↔ x = 2)) ∧
@@ -614,7 +614,7 @@ theorem kviz4 :
 /-- Preveri se 5 (in blok RACUN): ⌊−3,7⌋ + ⌊3,7⌋ = −4 + 3 = −1 (odrezane decimalke ali zaokroževanje bi dalo
 −3 + 3 = 0 oz. −4 + 4 = 0, zaokroževanje navzgor −3 + 4 = 1).
 trditev: MAT-SS-2/grafi-z-absolutno-vrednostjo-in-stopnicaste-funkcije#kviz5
-besedilo: »0 | Odrezal si decimalke ($-3 + 3$) ali zaokrožil na najbližje celo število ($-4 + 4$). Celi del vedno zaokroži navzdol: $\lfloor -3{,}7 \rfloor = -4$, ker je $-3$ večje od $-3{,}7$.« -/
+besedilo: »$\lfloor -3{,}7 \rfloor = -4$ in $\lfloor 3{,}7 \rfloor = 3$, vsota je $-1$.« -/
 theorem kviz5 : ⌊(-3.7:ℝ)⌋ = -4 ∧ ⌊(3.7:ℝ)⌋ = 3 ∧ ⌊(-3.7:ℝ)⌋ + ⌊(3.7:ℝ)⌋ = -1 ∧
     (-3:ℤ) + 3 = 0 ∧ (-4:ℤ) + 4 = 0 ∧ (-3:ℤ) + 4 = 1 := by
   have a : ⌊(-3.7:ℝ)⌋ = -4 := by rw [Int.floor_eq_iff]; norm_num

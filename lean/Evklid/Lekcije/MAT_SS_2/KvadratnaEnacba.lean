@@ -37,7 +37,7 @@ example : (3 : ℝ) = 1 ↔ (2 : ℝ) = 0 := enacba_iff (by norm_num)
 
 /-- Razlaga 3 (pravilo produkta): A·B = 0 natanko tedaj, ko je A = 0 ali B = 0.
 trditev: MAT-SS-2/kvadratna-enacba#produkt-nic
-besedilo: »produkt je enak $0$ natanko tedaj,« -/
+besedilo: »produkt je enak $0$ natanko tedaj, ko je enak $0$ vsaj en faktor.« -/
 theorem produkt_nic (A B : ℝ) : A * B = 0 ↔ A = 0 ∨ B = 0 := mul_eq_zero
 
 /-- Pomožno: (x − r)(x − s) = 0 ↔ x = r ∨ x = s (v ℝ in v ℂ).
@@ -61,13 +61,13 @@ theorem konjugirani_produkt (m n : ℂ) : (m + n * I) * (m - n * I) = m ^ 2 + n 
 
 /-- Razlaga 1, Preveri: 3x = 5 − 2x² ima splošno obliko 2x² + 3x − 5 = 0 (a = 2, b = 3, c = −5).
 trditev: MAT-SS-2/kvadratna-enacba#preveri-splosna
-besedilo: »Preveri:* kateri so $a$, $b$, $c$ pri $3x = 5 - 2x^2$? (Enačba se glasi $2x^2 + 3x - 5 = 0$, torej $a = 2$, $b = 3$, $c = -5$.)« -/
+besedilo: »(Enačba se glasi $2x^2 + 3x - 5 = 0$, torej $a = 2$, $b = 3$, $c = -5$.)« -/
 theorem preveri_splosna (x : ℝ) : 3 * x = 5 - 2 * x ^ 2 ↔ 2 * x ^ 2 + 3 * x + (-5) = 0 := by
   constructor <;> intro h <;> linarith
 
 /-- Razlaga 2 (c = 0): ax² + bx = 0 ⇔ x(ax + b) = 0 ⇔ x = 0 ali x = −b/a (a ≠ 0).
 trditev: MAT-SS-2/kvadratna-enacba#nepopolna-c0
-besedilo: »$c = 0$: izpostavi $x$. Iz $ax^2 + bx = 0$ sledi $x(ax + b) = 0$, torej $x_1 = 0$ in $x_2 = -\dfrac{b}{a}$.« -/
+besedilo: »Iz $ax^2 + bx = 0$ sledi $x(ax + b) = 0$, torej $x_1 = 0$ in $x_2 = -\dfrac{b}{a}$.« -/
 theorem nepopolna_c0 (a b x : ℝ) (ha : a ≠ 0) : a * x ^ 2 + b * x = 0 ↔ x = 0 ∨ x = -b / a := by
   rw [enacba_iff (P := x * (a * x + b)) (by ring), mul_eq_zero]
   apply or_congr Iff.rfl
@@ -81,7 +81,7 @@ example : (1 : ℝ) * 0 ^ 2 + 2 * 0 = 0 ↔ (0 : ℝ) = 0 ∨ (0 : ℝ) = -2 / 1
 
 /-- Razlaga 2 (b = 0): ax² + c = 0 ⇔ x² = −c/a (a ≠ 0).
 trditev: MAT-SS-2/kvadratna-enacba#nepopolna-b0
-besedilo: »$b = 0$: iz $ax^2 + c = 0$ sledi $x^2 = -\dfrac{c}{a}$.« -/
+besedilo: »iz $ax^2 + c = 0$ sledi $x^2 = -\dfrac{c}{a}$.« -/
 theorem nepopolna_b0 (a c x : ℝ) (ha : a ≠ 0) : a * x ^ 2 + c = 0 ↔ x ^ 2 = -c / a := by
   rw [eq_div_iff ha]
   constructor <;> intro h <;> linarith
@@ -92,7 +92,7 @@ example : (1 : ℝ) * 3 ^ 2 + (-9) = 0 ↔ (3 : ℝ) ^ 2 = -(-9) / 1 := nepopoln
 /-- Razlaga 2 (b = 0): če je −c/a < 0, enačba ax² + c = 0 nima realne rešitve, v ℂ pa sta rešitvi
 x = ±i√(c/a).
 trditev: MAT-SS-2/kvadratna-enacba#nepopolna-b0-kompleksno
-besedilo: »$b = 0$: iz $ax^2 + c = 0$ sledi $x^2 = -\dfrac{c}{a}$. Če je desna stran negativna, sta rešitvi kompleksni: enačba $x^2 = -9$ da $x_{1,2} = \pm 3i$. Če je pozitivna, ima enačba obliko $x^2 = k$ s $k > 0$.« -/
+besedilo: »Če je desna stran negativna, sta rešitvi kompleksni« -/
 theorem nepopolna_b0_kompleksno (a c : ℝ) (ha : a ≠ 0) (h : -c / a < 0) :
     (∀ x : ℝ, a * x ^ 2 + c ≠ 0) ∧ ∀ z : ℂ, (a : ℂ) * z ^ 2 + c = 0 ↔
       z = I * Real.sqrt (c / a) ∨ z = -(I * Real.sqrt (c / a)) := by
@@ -125,7 +125,7 @@ theorem x2_minus9 : (∀ x : ℝ, x ^ 2 ≠ -9) ∧ ∀ z : ℂ, z ^ 2 = -9 ↔ 
 
 /-- Razlaga 2 (korenjenje): za k > 0 je x² = k ⇔ x = √k ali x = −√k.
 trditev: MAT-SS-2/kvadratna-enacba#korenjenje
-besedilo: »ima enačba obliko $x^2 = k$ s $k > 0$.« -/
+besedilo: »Enačbo $x^2 = k$, kjer je $k > 0$, rešiš na dva načina: - **s korenjenjem**: $x_{1,2} = \pm\sqrt{k}$« -/
 theorem korenjenje (k x : ℝ) (hk : 0 < k) : x ^ 2 = k ↔ x = Real.sqrt k ∨ x = -Real.sqrt k := by
   have hs : Real.sqrt k ^ 2 = k := Real.sq_sqrt hk.le
   rw [enacba_iff (P := (x - Real.sqrt k) * (x - -Real.sqrt k)) (by linear_combination hs),
@@ -137,7 +137,7 @@ example : (3 : ℝ) ^ 2 = 9 ↔ (3 : ℝ) = Real.sqrt 9 ∨ (3 : ℝ) = -Real.sq
 
 /-- Razlaga 2 (razstavljanje): za k ≥ 0 je x² − k = (x − √k)(x + √k).
 trditev: MAT-SS-2/kvadratna-enacba#razlika-kvadratov
-besedilo: »z razstavljanjem**: $k$ prenesi na levo in uporabi razliko kvadratov, $x^2 - k = (x - \sqrt{k})(x + \sqrt{k})$. Enačba $x^2 - 9 = 0$ postane $(x - 3)(x + 3) = 0$, torej $x_1 = 3$ ali $x_2 = -3$.« -/
+besedilo: »uporabi razliko kvadratov, $x^2 - k = (x - \sqrt{k})(x + \sqrt{k})$« -/
 theorem razlika_kvadratov (k x : ℝ) (hk : 0 ≤ k) :
     x ^ 2 - k = (x - Real.sqrt k) * (x + Real.sqrt k) := by
   have hs : Real.sqrt k ^ 2 = k := Real.sq_sqrt hk
@@ -163,13 +163,13 @@ theorem x2_5 (x : ℝ) : (x ^ 2 = 5 ↔ x = Real.sqrt 5 ∨ x = -Real.sqrt 5) �
 
 /-- Razlaga 2, Preveri: x² = 5x ⇔ x(x − 5) = 0 ⇔ x = 0 ali x = 5.
 trditev: MAT-SS-2/kvadratna-enacba#preveri-x2-5x
-besedilo: »Preveri:* reši $x^2 = 5x$. (Iz $x(x - 5) = 0$ sledi $x_1 = 0$ in $x_2 = 5$; z $x$ ne deli.)« -/
+besedilo: »(Iz $x(x - 5) = 0$ sledi $x_1 = 0$ in $x_2 = 5$; z $x$ ne deli.)« -/
 theorem preveri_x2_5x (x : ℝ) : x ^ 2 = 5 * x ↔ x = 0 ∨ x = 5 := by
   rw [enacba_iff (P := (x - 0) * (x - 5)) (by ring), dva_faktorja]
 
 /-- Razlaga 3: x³ − 4x = x(x² − 4) = x(x − 2)(x + 2), zato x³ = 4x ⇔ x ∈ {0, 2, −2}.
 trditev: MAT-SS-2/kvadratna-enacba#x3-4x
-besedilo: »Izpostavimo $x$ in dobimo $x(x^2 - 4) = 0$, z razliko kvadratov pa $x(x - 2)(x + 2) = 0$.« -/
+besedilo: »Rešitve so $x_1 = 0$, $x_2 = 2$ in $x_3 = -2$.« -/
 theorem x3_4x (x : ℝ) : x ^ 3 = 4 * x ↔ x = 0 ∨ x = 2 ∨ x = -2 := by
   have e : x ^ 3 - 4 * x = (x - 0) * (x - 2) * (x - -2) := by
     calc x ^ 3 - 4 * x = x * (x ^ 2 - 4) := by ring
@@ -188,7 +188,7 @@ theorem preveri_razcepna (x : ℝ) : (x + 1) * (x ^ 2 - 9) = 0 ↔ x = -1 ∨ x 
 /-- Razlaga 4, Povzetek: obrazec za rešitvi, za a ≠ 0 in D = b² − 4ac ≥ 0:
 ax² + bx + c = 0 ⇔ x = (−b ± √D)/(2a).
 trditev: MAT-SS-2/kvadratna-enacba#obrazec
-besedilo: »$h(t) = v_0 t - \dfrac{g}{2}t^2$; enačba $h(t) = h_1$ v splošni obliki: $\dfrac{g}{2}t^2 - v_0 t + h_1 = 0$; $\; D = b^2 - 4ac$, $\; t_{1,2} = \dfrac{-b \pm \sqrt{D}}{2a}$« -/
+besedilo: »in rešitve po obrazcu $$x_{1,2} = \frac{-b \pm \sqrt{D}}{2a}.$$« -/
 theorem obrazec (a b c x : ℝ) (ha : a ≠ 0) (hD : 0 ≤ b ^ 2 - 4 * a * c) :
     a * x ^ 2 + b * x + c = 0 ↔
       x = (-b + Real.sqrt (b ^ 2 - 4 * a * c)) / (2 * a) ∨
@@ -261,7 +261,7 @@ example : (1 : ℝ) * 1 ^ 2 + (-2) * 1 + 1 = 0 ↔ (1 : ℝ) = -(-2) / (2 * 1) :
 /-- Preveri se, vprašanje 1: graf se osi x dotakne v eni sami točki (enačba ima natanko eno realno
 rešitev) natanko tedaj, ko je D = 0.
 trditev: MAT-SS-2/kvadratna-enacba#ena-resitev-iff
-besedilo: »Graf funkcije $f(x) = ax^2 + bx + c$ se osi $x$ le dotakne, v eni sami točki.« -/
+besedilo: »dokler se ne zlijeta v eno točko: teme se osi ravno dotakne, $D = 0$« -/
 theorem ena_resitev_iff (a b c : ℝ) (ha : a ≠ 0) :
     (∃! x : ℝ, a * x ^ 2 + b * x + c = 0) ↔ b ^ 2 - 4 * a * c = 0 := by
   have e : ∀ x : ℝ, a * x ^ 2 + b * x + c = a * (x * x) + b * x + c := fun x => by ring
@@ -285,7 +285,7 @@ example : (1 : ℝ) * 0 ^ 2 + 0 * 0 + 1 ≠ 0 := D_neg 1 0 1 (by norm_num) 0
 
 /-- Razlaga 6: za D < 0 je (i√(−D))² = i²·(−D) = D.
 trditev: MAT-SS-2/kvadratna-enacba#koren-negativnega
-besedilo: »6. Negativna diskriminanta.** Pri $D < 0$ realnih rešitev ni, v kompleksnih pa sta dve. Negativno število $D$ ima kvadratna korena $\pm i\sqrt{-D}$, saj je $\left(i\sqrt{-D}\right)^2 = i^2 \cdot (-D) = D$. Zato« -/
+besedilo: »Negativno število $D$ ima kvadratna korena $\pm i\sqrt{-D}$, saj je $\left(i\sqrt{-D}\right)^2 = i^2 \cdot (-D) = D$.« -/
 theorem koren_negativnega (D : ℝ) (hD : D < 0) :
     (I * (Real.sqrt (-D) : ℂ)) ^ 2 = I ^ 2 * ((-D : ℝ) : ℂ) ∧ I ^ 2 * ((-D : ℝ) : ℂ) = D := by
   have hs : ((Real.sqrt (-D) : ℝ) : ℂ) ^ 2 = ((-D : ℝ) : ℂ) := by
@@ -302,7 +302,7 @@ example : (I * (Real.sqrt (-(-16)) : ℂ)) ^ 2 = I ^ 2 * ((-(-16) : ℝ) : ℂ) 
 /-- Razlaga 6, Ustno vprašanje 1, Bolj natančno: za realne a ≠ 0, b, c z D < 0 ima enačba v ℂ rešitvi
 x = (−b ± i√(−D))/(2a).
 trditev: MAT-SS-2/kvadratna-enacba#obrazec-kompleksno
-besedilo: »Pri $D < 0$ korenimo v $\mathbb{C}$: negativno število $\dfrac{D}{4a^2}$ ima kvadratna korena $\pm \dfrac{i\sqrt{-D}}{2a}$.« -/
+besedilo: »Pri $D < 0$ korenimo v kompleksnih številih in dobimo $x_{1,2} = \frac{-b \pm i\sqrt{-D}}{2a}$.« -/
 theorem obrazec_kompleksno (a b c : ℝ) (ha : a ≠ 0) (hD : b ^ 2 - 4 * a * c < 0) (z : ℂ) :
     (a : ℂ) * z ^ 2 + b * z + c = 0 ↔
       z = (-b + I * Real.sqrt (-(b ^ 2 - 4 * a * c))) / (2 * a) ∨
@@ -360,7 +360,7 @@ example : (-((2 : ℝ) : ℂ) + I * ((4 : ℝ) : ℂ)) / (2 * ((1 : ℝ) : ℂ))
 
 /-- Drugače: Na sliki: ko pri a > 0 povečamo c, se D zmanjša.
 trditev: MAT-SS-2/kvadratna-enacba#d-pada-s-c
-besedilo: »$$x^2 + \frac{b}{a}x + \frac{c}{a} = 0 \;\Longrightarrow\; \left(x + \frac{b}{2a}\right)^2 = \frac{b^2 - 4ac}{4a^2} = \frac{D}{4a^2}.$$« -/
+besedilo: »Predstavljaj si parabolo, odprto navzgor, ki jo počasi dvigaš (povečuješ $c$). Dokler je njeno teme pod osjo $x$, kraka sekata os $x$ v dveh točkah, $D > 0$. Ko dvigaš naprej, se presečišči bližata simetrijski osi, dokler se ne zlijeta v eno točko: teme se osi ravno dotakne, $D = 0$. Če parabolo dvigneš še više, lebdi nad osjo in presečišč ni več, $D < 0$.« -/
 theorem D_pada_s_c (a b c c' : ℝ) (ha : 0 < a) (h : c < c') :
     b ^ 2 - 4 * a * c' < b ^ 2 - 4 * a * c := by nlinarith
 
@@ -369,12 +369,12 @@ example : (0 : ℝ) ^ 2 - 4 * 1 * 1 < 0 ^ 2 - 4 * 1 * 0 := D_pada_s_c 1 0 0 1 on
 
 /-- Razlaga 4, Preveri: pri x² + 2x − 3 = 0 je D = 4 + 12 = 16.
 trditev: MAT-SS-2/kvadratna-enacba#preveri-d16
-besedilo: »Preveri:* koliko je $D$ pri $x^2 + 2x - 3 = 0$? ($D = 4 + 12 = 16$.)« -/
+besedilo: »($D = 4 + 12 = 16$.)« -/
 theorem preveri_D16 : (2 : ℝ) ^ 2 - 4 * 1 * (-3) = 4 + 12 ∧ (4 : ℝ) + 12 = 16 := by norm_num
 
 /-- Razlaga 5, Preveri: x² − 6x + 9 = 0 ima D = 36 − 36 = 0 in eno dvojno rešitev x = 3.
 trditev: MAT-SS-2/kvadratna-enacba#preveri-dvojna
-besedilo: »Preveri:* koliko realnih rešitev ima $x^2 - 6x + 9 = 0$? ($D = 36 - 36 = 0$: ena dvojna, $x = 3$.)« -/
+besedilo: »($D = 36 - 36 = 0$: ena dvojna, $x = 3$.)« -/
 theorem preveri_dvojna (x : ℝ) : ((-6 : ℝ) ^ 2 - 4 * 1 * 9 = 36 - 36 ∧ (36 : ℝ) - 36 = 0) ∧
     (x ^ 2 - 6 * x + 9 = 0 ↔ x = 3) := by
   refine ⟨by norm_num, ?_⟩
@@ -382,7 +382,7 @@ theorem preveri_dvojna (x : ℝ) : ((-6 : ℝ) ^ 2 - 4 * 1 * 9 = 36 - 36 ∧ (36
 
 /-- Razlaga 6, Preveri: x² + 2x + 5 = 0 ima D = −16, rešitvi (−2 ± 4i)/2 = −1 ± 2i.
 trditev: MAT-SS-2/kvadratna-enacba#preveri-kompleksna
-besedilo: »Preveri:* reši $x^2 + 2x + 5 = 0$. ($D = -16$, $x_{1,2} = \dfrac{-2 \pm 4i}{2} = -1 \pm 2i$.)« -/
+besedilo: »($D = -16$, $x_{1,2} = \dfrac{-2 \pm 4i}{2} = -1 \pm 2i$.)« -/
 theorem preveri_kompleksna (z : ℂ) : ((2 : ℝ) ^ 2 - 4 * 1 * 5 = -16) ∧
     ((-2 + 4 * I) / 2 = -1 + 2 * I ∧ (-2 - 4 * I) / 2 = -1 - 2 * I) ∧
     (z ^ 2 + 2 * z + 5 = 0 ↔ z = -1 + 2 * I ∨ z = -1 - 2 * I) := by
@@ -396,7 +396,7 @@ theorem preveri_kompleksna (z : ℂ) : ((2 : ℝ) ^ 2 - 4 * 1 * 5 = -16) ∧
 ali s = i√(−D) v ℂ; pri s = 0 dvojna rešitev), za x₁,₂ = (−b ± s)/(2a) velja x₁ + x₂ = −b/a in
 x₁x₂ = ((−b)² − s²)/(4a²) = c/a.
 trditev: MAT-SS-2/kvadratna-enacba#vieta
-besedilo: »$D = b^2 - 4ac$, $\; x_{1,2} = \dfrac{-b \pm \sqrt{D}}{2a}$, $\; x_1 + x_2 = -\dfrac{b}{a}$, $\; x_1 x_2 = \dfrac{c}{a}$« -/
+besedilo: »Seštejemo rešitvi iz obrazca: korena se odštejeta, $x_1 + x_2 = \dfrac{-2b}{2a} = -\dfrac{b}{a}$. Za produkt uporabimo razliko kvadratov: $$x_1 x_2 = \frac{(-b)^2 - D}{4a^2} = \frac{b^2 - b^2 + 4ac}{4a^2} = \frac{c}{a}.$$« -/
 theorem vieta {K : Type*} [Field K] [NeZero (2 : K)] (a b c s : K) (ha : a ≠ 0)
     (hs : s * s = b ^ 2 - 4 * a * c) :
     (-b + s) / (2 * a) + (-b - s) / (2 * a) = -b / a ∧
@@ -419,7 +419,7 @@ example : ((-0 + 2) / (2 * 1) + (-0 - 2) / (2 * 1) = (-0 : ℝ) / 1) ∧
 /-- Razlaga 7, Povzetek, Bolj natančno: iz Vietovih formul sledi razcep
 ax² + bx + c = a(x² − (x₁ + x₂)x + x₁x₂) = a(x − x₁)(x − x₂).
 trditev: MAT-SS-2/kvadratna-enacba#razcep
-besedilo: »Razcep.** Iz Vietovih formul sledi $a(x - x_1)(x - x_2) = a\left(x^2 - (x_1 + x_2)x + x_1 x_2\right) = ax^2 + bx + c$.« -/
+besedilo: »Iz Vietovih formul sledi $a(x - x_1)(x - x_2) = a\left(x^2 - (x_1 + x_2)x + x_1 x_2\right) = ax^2 + bx + c$.« -/
 theorem razcep {K : Type*} [Field K] (a b c x₁ x₂ : K) (ha : a ≠ 0)
     (h1 : x₁ + x₂ = -b / a) (h2 : x₁ * x₂ = c / a) (x : K) :
     a * x ^ 2 + b * x + c = a * (x ^ 2 - (x₁ + x₂) * x + x₁ * x₂) ∧
@@ -436,7 +436,7 @@ example (x : ℝ) : 1 * x ^ 2 + 0 * x + (-1) = 1 * (x ^ 2 - (1 + -1) * x + 1 * -
 /-- Razlaga 7, Povzetek (sestavljanje enačbe): x₁ in x₂ sta rešitvi enačbe x² − (x₁ + x₂)x + x₁x₂ = 0,
 saj je to (x − x₁)(x − x₂).
 trditev: MAT-SS-2/kvadratna-enacba#sestavljanje
-besedilo: »sestavljanje enačbe** z danima rešitvama: $x^2 - (x_1 + x_2)x + x_1 x_2 = 0$,« -/
+besedilo: »z danima rešitvama: $x^2 - (x_1 + x_2)x + x_1 x_2 = 0$« -/
 theorem sestavljanje (x₁ x₂ x : ℝ) :
     x ^ 2 - (x₁ + x₂) * x + x₁ * x₂ = (x - x₁) * (x - x₂) ∧
       (x ^ 2 - (x₁ + x₂) * x + x₁ * x₂ = 0 ↔ x = x₁ ∨ x = x₂) := by
@@ -463,7 +463,7 @@ example : ∃ x₁ x₂ : ℂ, ∀ x, 1 * x ^ 2 + 0 * x + 1 = 1 * (x - x₁) * (
 /-- Bolj natančno: pri D ≥ 0 (a ≠ 0) se ax² + bx + c v ℝ razstavi na linearna faktorja
 a(x − x₁)(x − x₂) z x₁,₂ = (−b ± √D)/(2a) (Vieta s s = √D).
 trditev: MAT-SS-2/kvadratna-enacba#razcep-v-r
-besedilo: »$D = b^2 - 4ac$, $\; x_{1,2} = \dfrac{-b \pm \sqrt{D}}{2a}$, $\; x_1 + x_2 = -\dfrac{b}{a}$, $\; x_1 x_2 = \dfrac{c}{a}$« -/
+besedilo: »Kvadratni tričlenik z $D \ge 0$ se torej razcepi na linearna faktorja z realnimi koeficienti« -/
 theorem razcep_v_R (a b c : ℝ) (ha : a ≠ 0) (hD : 0 ≤ b ^ 2 - 4 * a * c) :
     ∀ x, a * x ^ 2 + b * x + c = a * (x - (-b + Real.sqrt (b ^ 2 - 4 * a * c)) / (2 * a)) *
       (x - (-b - Real.sqrt (b ^ 2 - 4 * a * c)) / (2 * a)) := by
@@ -480,7 +480,7 @@ example : ∀ x : ℝ, 1 * x ^ 2 + 0 * x + (-1) = 1 * (x - (-0 + Real.sqrt (0 ^ 
 /-- Bolj natančno: pri D < 0 se ax² + bx + c v ℝ ne da razstaviti na linearna faktorja
 a(x − x₁)(x − x₂) (sicer bi bil x₁ realna rešitev).
 trditev: MAT-SS-2/kvadratna-enacba#ni-razcepa-v-r
-besedilo: »$a(x - x_1)(x - x_2) = a\left(x^2 - (x_1 + x_2)x + x_1 x_2\right) = ax^2 + bx + c$« -/
+besedilo: »se torej razcepi na linearna faktorja z realnimi koeficienti, pri $D < 0$ pa samo v $\mathbb{C}$« -/
 theorem ni_razcepa_v_R (a b c : ℝ) (hD : b ^ 2 - 4 * a * c < 0) :
     ¬∃ x₁ x₂ : ℝ, ∀ x, a * x ^ 2 + b * x + c = a * (x - x₁) * (x - x₂) := by
   rintro ⟨x₁, x₂, h⟩
@@ -510,7 +510,7 @@ example : 0 < 4 * (1 : ℝ) ^ 2 := (dopolnjevanje 1 0 0 0 one_ne_zero).2.2
 
 /-- Bolj natančno: pri D ≥ 0 iz (x + b/(2a))² = D/(4a²) sledi x + b/(2a) = ±√D/(2a).
 trditev: MAT-SS-2/kvadratna-enacba#korenjenje-kvadrata
-besedilo: »\left(x + \frac{b}{2a}\right)^2 = \frac{b^2 - 4ac}{4a^2} = \frac{D}{4a^2}.$« -/
+besedilo: »Pri $D \ge 0$ korenimo: $x + \dfrac{b}{2a} = \pm \dfrac{\sqrt{D}}{2a}$« -/
 theorem korenjenje_kvadrata (a b c x : ℝ) (_ha : a ≠ 0) (hD : 0 ≤ b ^ 2 - 4 * a * c) :
     (x + b / (2 * a)) ^ 2 = (b ^ 2 - 4 * a * c) / (4 * a ^ 2) ↔
       x + b / (2 * a) = Real.sqrt (b ^ 2 - 4 * a * c) / (2 * a) ∨
@@ -528,7 +528,7 @@ example : ((1 : ℝ) + 0 / (2 * 1)) ^ 2 = (0 ^ 2 - 4 * 1 * (-1)) / (4 * 1 ^ 2) �
 
 /-- Drugače: Na sliki: ničli sta simetrični glede na os x = −b/(2a): x₁ + x₂ = −b/a = 2·(−b/(2a)).
 trditev: MAT-SS-2/kvadratna-enacba#vsota-simetrija
-besedilo: »ničli sta simetrični glede na os $x = -\dfrac{b}{2a}$,« -/
+besedilo: »ničli sta simetrični glede na os $x = -\dfrac{b}{2a}$, zato je njuna vsota dvakratnik te vrednosti, $-\dfrac{b}{a}$.« -/
 theorem vsota_simetrija (a b : ℝ) (ha : a ≠ 0) : -b / a = 2 * (-b / (2 * a)) := by
   field_simp
 
@@ -538,7 +538,7 @@ example : -(2 : ℝ) / 1 = 2 * (-2 / (2 * 1)) := vsota_simetrija 1 2 one_ne_zero
 /-- Razlaga 7, premisli: x² − 10x + 21 = 0 ⇔ x ∈ {3, 7}; edina para celih števil z vsoto 10 in
 produktom 21 sta (3, 7) in (7, 3).
 trditev: MAT-SS-2/kvadratna-enacba#premisli-vieta
-besedilo: »Po Vietu iščeš dve števili z vsoto $10$ in produktom $21$; med celimi delitelji števila $21$ ustreza le par $3$ in $7$.« -/
+besedilo: »Rešitvi sta $3$ in $7$. Po Vietu iščeš dve števili z vsoto $10$ in produktom $21$; med celimi delitelji števila $21$ ustreza le par $3$ in $7$.« -/
 theorem premisli_vieta (x : ℝ) : (x ^ 2 - 10 * x + 21 = 0 ↔ x = 3 ∨ x = 7) ∧
     ∀ p q : ℤ, (p + q = 10 ∧ p * q = 21) ↔ (p = 3 ∧ q = 7) ∨ (p = 7 ∧ q = 3) := by
   refine ⟨by rw [enacba_iff (P := (x - 3) * (x - 7)) (by ring), dva_faktorja], fun p q => ?_⟩
@@ -554,7 +554,7 @@ theorem premisli_vieta (x : ℝ) : (x ^ 2 - 10 * x + 21 = 0 ↔ x = 3 ∨ x = 7)
 
 /-- Razlaga 7, Preveri: enačba z rešitvama 1 in 4 je x² − 5x + 4 = 0.
 trditev: MAT-SS-2/kvadratna-enacba#preveri-1-4
-besedilo: »Preveri:* katera enačba z vodilnim koeficientom $1$ ima rešitvi $1$ in $4$? ($x^2 - 5x + 4 = 0$.)« -/
+besedilo: »($x^2 - 5x + 4 = 0$.)« -/
 theorem preveri_1_4 (x : ℝ) : x ^ 2 - 5 * x + 4 = 0 ↔ x = 1 ∨ x = 4 := by
   rw [enacba_iff (P := (x - 1) * (x - 4)) (by ring), dva_faktorja]
 
@@ -568,7 +568,7 @@ theorem uvod_enacba (t : ℝ) : 4.9 * t - 4.9 * t ^ 2 = 1 ↔ 4.9 * t ^ 2 - 4.9 
 
 /-- Razlaga 4 (žoga): D = 4,9² − 4·4,9·1 = 24,01 − 19,6 = 4,41, √4,41 = 2,1.
 trditev: MAT-SS-2/kvadratna-enacba#zoga-d
-besedilo: »$$D = 4{,}9^2 - 4 \cdot 4{,}9 \cdot 1 = 24{,}01 - 19{,}6 = 4{,}41$$« -/
+besedilo: »$$D = 4{,}9^2 - 4 \cdot 4{,}9 \cdot 1 = 24{,}01 - 19{,}6 = 4{,}41$$ Ker je $\sqrt{4{,}41} = 2{,}1$« -/
 theorem zoga_D : (4.9 : ℝ) ^ 2 - 4 * 4.9 * 1 = 24.01 - 19.6 ∧ (24.01 : ℝ) - 19.6 = 4.41 ∧
     Real.sqrt 4.41 = 2.1 := by
   refine ⟨by norm_num, by norm_num, ?_⟩
@@ -599,7 +599,7 @@ theorem zoga_15 : ((4.9 : ℝ) ^ 2 - 4 * 4.9 * 1.5 = 24.01 - 29.4 ∧ (24.01 : �
 /-- Uvod (Luna): največja višina pri metu z v₀ je v₀²/(2g) (pri t = v₀/g); pri šestkrat manjšem g je
 šestkrat večja.
 trditev: MAT-SS-2/kvadratna-enacba#sestkrat-vise
-besedilo: »na Luni je težni pospešek približno šestkrat manjši kot na Zemlji,« -/
+besedilo: »na Luni je težni pospešek približno šestkrat manjši kot na Zemlji, zato bi isti met žogo dvignil približno šestkrat više.« -/
 theorem sestkrat_vise (v₀ g : ℝ) (hg : 0 < g) :
     (∀ t, v₀ * t - g / 2 * t ^ 2 ≤ v₀ ^ 2 / (2 * g)) ∧
       v₀ * (v₀ / g) - g / 2 * (v₀ / g) ^ 2 = v₀ ^ 2 / (2 * g) ∧
@@ -620,7 +620,7 @@ example : (9.8 : ℝ) > 0 ∧ (5 : ℝ) ^ 2 / (2 * (9.8 / 6)) = 6 * (5 ^ 2 / (2 
 /-- Primer 1, koraki 1–3: D = (−2)² − 4·1·(−15) = 4 + 60 = 64 > 0, √D = 8,
 x₁ = (2 + 8)/2 = 5, x₂ = (2 − 8)/2 = −3.
 trditev: MAT-SS-2/kvadratna-enacba#primer1-racun
-besedilo: »Diskriminanta: $D = (-2)^2 - 4 \cdot 1 \cdot (-15) = 4 + 60 = 64$. Ker je $D > 0$, sta rešitvi dve realni.« -/
+besedilo: »Diskriminanta: $D = (-2)^2 - 4 \cdot 1 \cdot (-15) = 4 + 60 = 64$. Ker je $D > 0$, sta rešitvi dve realni. 2. $\sqrt{D} = 8$, zato $x_{1,2} = \dfrac{2 \pm 8}{2}$. 3. $x_1 = \dfrac{2 + 8}{2} = 5$ in $x_2 = \dfrac{2 - 8}{2} = -3$.« -/
 theorem primer1_racun : ((-2 : ℝ) ^ 2 - 4 * 1 * (-15) = 4 + 60 ∧ (4 : ℝ) + 60 = 64 ∧ (0 : ℝ) < 64) ∧
     Real.sqrt 64 = 8 ∧ (2 + 8) / 2 = (5 : ℝ) ∧ (2 - 8) / 2 = (-3 : ℝ) := by
   refine ⟨by norm_num, ?_, by norm_num, by norm_num⟩
@@ -640,7 +640,7 @@ theorem primer1_vieta : ((5 : ℝ) + -3 = 2 ∧ (2 : ℝ) = -(-2) / 1) ∧ ((5 :
 
 /-- Primer 2, koraka 1–2: D = 4² − 4·2·5 = 16 − 40 = −24 < 0; √(−D) = √24 = √(4·6) = 2√6.
 trditev: MAT-SS-2/kvadratna-enacba#primer2-d
-besedilo: »$D = 4^2 - 4 \cdot 2 \cdot 5 = 16 - 40 = -24 < 0$« -/
+besedilo: »$D = 4^2 - 4 \cdot 2 \cdot 5 = 16 - 40 = -24 < 0$. Realnih rešitev ni, v $\mathbb{C}$ sta dve konjugirano kompleksni. 2. $\sqrt{-D} = \sqrt{24} = \sqrt{4 \cdot 6} = 2\sqrt{6}$.« -/
 theorem primer2_D : ((4 : ℝ) ^ 2 - 4 * 2 * 5 = 16 - 40 ∧ (16 : ℝ) - 40 = -24 ∧ (-24 : ℝ) < 0) ∧
     Real.sqrt 24 = 2 * Real.sqrt 6 := by
   refine ⟨by norm_num, ?_⟩
@@ -694,7 +694,7 @@ theorem primer3_enacba (t : ℝ) : (3.24 * t - 0.81 * t ^ 2 = 2.43 ↔ 0.81 * t 
 /-- Primer 3, koraki 2–3: D = 3,24² − 4·0,81·2,43 = 10,4976 − 7,8732 = 2,6244 > 0, √D = 1,62, 2a = 1,62,
 t = (3,24 ± 1,62)/1,62, tj. 3 s in 1 s.
 trditev: MAT-SS-2/kvadratna-enacba#primer3-racun
-besedilo: »Diskriminanta: $D = 3{,}24^2 - 4 \cdot 0{,}81 \cdot 2{,}43 = 10{,}4976 - 7{,}8732 = 2{,}6244$. Ker je $D > 0$, je kamen na tej višini dvakrat.« -/
+besedilo: »Diskriminanta: $D = 3{,}24^2 - 4 \cdot 0{,}81 \cdot 2{,}43 = 10{,}4976 - 7{,}8732 = 2{,}6244$. Ker je $D > 0$, je kamen na tej višini dvakrat. 3. $\sqrt{D} = 1{,}62$ in $2a = 1{,}62$, zato $t_{1,2} = \dfrac{3{,}24 \pm 1{,}62}{1{,}62}$: $t_1 = 1\,\text{s}$ in $t_2 = 3\,\text{s}$.« -/
 theorem primer3_racun : ((3.24 : ℝ) ^ 2 - 4 * 0.81 * 2.43 = 10.4976 - 7.8732 ∧
     (10.4976 : ℝ) - 7.8732 = 2.6244 ∧ (0 : ℝ) < 2.6244) ∧ Real.sqrt 2.6244 = 1.62 ∧
     2 * (0.81 : ℝ) = 1.62 ∧ (3.24 + 1.62) / 1.62 = (3 : ℝ) ∧ (3.24 - 1.62) / 1.62 = (1 : ℝ) := by
@@ -703,7 +703,7 @@ theorem primer3_racun : ((3.24 : ℝ) ^ 2 - 4 * 0.81 * 2.43 = 10.4976 - 7.8732 �
 
 /-- Primer 3, odgovor: 0,81t² − 3,24t + 2,43 = 0 ⇔ t = 1 ali t = 3.
 trditev: MAT-SS-2/kvadratna-enacba#primer3
-besedilo: »$\sqrt{D} = 1{,}62$ in $2a = 1{,}62$, zato $t_{1,2} = \dfrac{3{,}24 \pm 1{,}62}{1{,}62}$: $t_1 = 1\,\text{s}$ in $t_2 = 3\,\text{s}$.« -/
+besedilo: »Odgovor: kamen je $2{,}43\,\text{m}$ nad roko po $1\,\text{s}$ (grede gor) in po $3\,\text{s}$ (grede dol)« -/
 theorem primer3 (t : ℝ) : 0.81 * t ^ 2 - 3.24 * t + 2.43 = 0 ↔ t = 1 ∨ t = 3 := by
   rw [enacba_iff (P := 0.81 * ((t - 1) * (t - 3))) (by ring), mul_eq_zero, dva_faktorja,
     or_iff_right (by norm_num)]
@@ -718,7 +718,7 @@ theorem primer3_vieta : ((1 : ℝ) + 3 = 4 ∧ (4 : ℝ) = 3.24 / 0.81) ∧ ((1 
 časa ni; najvišja točka: iz 10,4976 = 4·0,81·h sledi h = 3,24 m, in res 3,24t − 0,81t² ≤ 3,24 z
 enakostjo pri t = 2.
 trditev: MAT-SS-2/kvadratna-enacba#primer3-4m
-besedilo: »Višina $4\,\text{m}$ da enačbo $0{,}81t^2 - 3{,}24t + 4 = 0$ z diskriminanto $D = 10{,}4976 - 4 \cdot 0{,}81 \cdot 4 = 10{,}4976 - 12{,}96 = -2{,}4624$.« -/
+besedilo: »Višina $4\,\text{m}$ da enačbo $0{,}81t^2 - 3{,}24t + 4 = 0$ z diskriminanto $D = 10{,}4976 - 4 \cdot 0{,}81 \cdot 4 = 10{,}4976 - 12{,}96 = -2{,}4624$. Ker je $D < 0$, realnega časa ni. (Najvišjo točko dobimo pri $D = 0$: iz $10{,}4976 = 4 \cdot 0{,}81 \cdot h$ sledi $h = 3{,}24\,\text{m}$.)« -/
 theorem primer3_4m : ((3.24 : ℝ) ^ 2 - 4 * 0.81 * 4 = 10.4976 - 12.96 ∧ (10.4976 : ℝ) - 12.96 = -2.4624 ∧
     (-2.4624 : ℝ) < 0) ∧ (∀ t : ℝ, 0.81 * t ^ 2 - 3.24 * t + 4 ≠ 0) ∧
     (∀ h : ℝ, (10.4976 : ℝ) = 4 * 0.81 * h ↔ h = 3.24) ∧
@@ -731,7 +731,7 @@ theorem primer3_4m : ((3.24 : ℝ) ^ 2 - 4 * 0.81 * 4 = 10.4976 - 12.96 ∧ (10.
 x₁x₂ = 3, x₁² + x₂² = (x₁ + x₂)² − 2x₁x₂ = 7² − 2·3 = 49 − 6 = 43, x₁²x₂² = (x₁x₂)² = 3² = 9, in
 x₁², x₂² sta rešitvi y² − 43y + 9 = 0.
 trditev: MAT-SS-2/kvadratna-enacba#primer4
-besedilo: »Iz $(x_1 + x_2)^2 = x_1^2 + 2x_1 x_2 + x_2^2$ sledi $x_1^2 + x_2^2 = 7^2 - 2 \cdot 3 = 49 - 6 = 43$.« -/
+besedilo: »$x_1^2 x_2^2 = (x_1 x_2)^2 = 3^2 = 9$, zato je enačba $y^2 - 43y + 9 = 0$.« -/
 theorem primer4 (x₁ x₂ : ℝ) (h : ∀ x : ℝ, x ^ 2 - 7 * x + 3 = (x - x₁) * (x - x₂)) :
     x₁ + x₂ = 7 ∧ x₁ * x₂ = 3 ∧ x₁ ^ 2 + x₂ ^ 2 = 43 ∧ x₁ ^ 2 * x₂ ^ 2 = 9 ∧
       ∀ y : ℝ, y ^ 2 - 43 * y + 9 = (y - x₁ ^ 2) * (y - x₂ ^ 2) := by
@@ -770,7 +770,7 @@ example :=
 /-- Primer 4, D = 49 − 12 = 37 > 0 in premisli (približki): x₁ = (7 + √37)/2 ≈ 6,54, x₂ ≈ 0,46,
 x₁² ≈ 42,79, x₂² ≈ 0,21.
 trditev: MAT-SS-2/kvadratna-enacba#primer4-priblizki
-besedilo: »$x_1^2 x_2^2 = (x_1 x_2)^2 = 3^2 = 9$, zato je enačba $y^2 - 43y + 9 = 0$. Preverjanje s približki: $x_1 \approx 6{,}54$ in $x_2 \approx 0{,}46$, torej $x_1^2 \approx 42{,}79$ in $x_2^2 \approx 0{,}21$; vsota je $43$, produkt približno $9$.« -/
+besedilo: »Preverjanje s približki: $x_1 \approx 6{,}54$ in $x_2 \approx 0{,}46$, torej $x_1^2 \approx 42{,}79$ in $x_2^2 \approx 0{,}21$« -/
 theorem primer4_priblizki : ((-7 : ℝ) ^ 2 - 4 * 1 * 3 = 49 - 12 ∧ (49 : ℝ) - 12 = 37 ∧ (0 : ℝ) < 37) ∧
     |(7 + Real.sqrt 37) / 2 - 6.54| < 0.005 ∧ |(7 - Real.sqrt 37) / 2 - 0.46| < 0.005 ∧
     |((7 + Real.sqrt 37) / 2) ^ 2 - 42.79| < 0.005 ∧ |((7 - Real.sqrt 37) / 2) ^ 2 - 0.21| < 0.005 := by
@@ -781,7 +781,7 @@ theorem primer4_priblizki : ((-7 : ℝ) ^ 2 - 4 * 1 * 3 = 49 - 12 ∧ (49 : ℝ)
 /-- Primer 5: x³ − 2x² = 9x − 18 ⇔ x³ − 2x² − 9x + 18 = 0 ⇔ x²(x − 2) − 9(x − 2) = 0
 ⇔ (x − 2)(x² − 9) = 0 ⇔ (x − 2)(x − 3)(x + 3) = 0 ⇔ x ∈ {2, 3, −3}.
 trditev: MAT-SS-2/kvadratna-enacba#primer5
-besedilo: »Vsak faktor izenačimo z $0$: $x_1 = 2$, $x_2 = 3$ in $x_3 = -3$.« -/
+besedilo: »Odgovor: rešitve enačbe so $x_1 = 2$, $x_2 = 3$ in $x_3 = -3$.« -/
 theorem primer5 (x : ℝ) : x ^ 3 - 2 * x ^ 2 = 9 * x - 18 ↔ x = 2 ∨ x = 3 ∨ x = -3 := by
   have e : x ^ 3 - 2 * x ^ 2 - (9 * x - 18) = (x - 2) * (x - 3) * (x - -3) := by
     calc x ^ 3 - 2 * x ^ 2 - (9 * x - 18) = x ^ 3 - 2 * x ^ 2 - 9 * x + 18 := by ring
@@ -806,25 +806,25 @@ theorem primer5_preverjanje :
 
 /-- Pogoste napake 1: x² = 3x + 4 ⇔ x² − 3x − 4 = 0 (a = 1, b = −3, c = −4, ne c = 4).
 trditev: MAT-SS-2/kvadratna-enacba#napaka-splosna
-besedilo: »Koeficienti iz enačbe, ki ni v splošni obliki.** Pri $x^2 = 3x + 4$ ni $c = 4$. Razlog: obrazec velja le za obliko $ax^2 + bx + c = 0$. Pravilno: najprej prenesi vse na levo, $x^2 - 3x - 4 = 0$, šele nato preberi $a = 1$, $b = -3$, $c = -4$.« -/
+besedilo: »Pravilno: najprej prenesi vse na levo, $x^2 - 3x - 4 = 0$, šele nato preberi $a = 1$, $b = -3$, $c = -4$.« -/
 theorem napaka_splosna (x : ℝ) : x ^ 2 = 3 * x + 4 ↔ 1 * x ^ 2 + (-3) * x + (-4) = 0 := by
   constructor <;> intro h <;> linarith
 
 /-- Pogoste napake 2: pri b = −3 je b² = (−3)² = 9 (ne −9) in −b = 3.
 trditev: MAT-SS-2/kvadratna-enacba#napaka-predznak
-besedilo: »Napaka s predznakom pri $b^2$ in $-b$.** Pri $b = -3$ je $b^2 = (-3)^2 = 9$, ne $-9$, in $-b = 3$.« -/
+besedilo: »Pri $b = -3$ je $b^2 = (-3)^2 = 9$, ne $-9$, in $-b = 3$.« -/
 theorem napaka_predznak : (-3 : ℝ) ^ 2 = 9 ∧ (-3 : ℝ) ^ 2 ≠ -9 ∧ -(-3 : ℝ) = 3 := by norm_num
 
 /-- Pogoste napake 3: napačni zapis −b + √D/(2a) pri x² − 2x − 15 = 0 da 2 + 8/2 = 6, kar ni rešitev;
 pravilni (−b + √D)/(2a) = 5 je.
 trditev: MAT-SS-2/kvadratna-enacba#napaka-ulomkova-crta
-besedilo: »$x_1 = \dfrac{2 + 8}{2} = 5$ in $x_2 = \dfrac{2 - 8}{2} = -3$.« -/
+besedilo: »Zapis $-b \pm \dfrac{\sqrt{D}}{2a}$ je napačen. Razlog: z $2a$ delimo celoten števec. Pravilno: $x_{1,2} = \dfrac{-b \pm \sqrt{D}}{2a}$.« -/
 theorem napaka_ulomkova_crta : (2 : ℝ) + 8 / 2 = 6 ∧ (6 : ℝ) ^ 2 - 2 * 6 - 15 ≠ 0 ∧
     ((2 : ℝ) + 8) / 2 = 5 ∧ (5 : ℝ) ^ 2 - 2 * 5 - 15 = 0 := by norm_num
 
 /-- Pogoste napake 4: x² = 3x ⇔ x(x − 3) = 0 ⇔ x = 0 ali x = 3 (deljenje z x izgubi x = 0).
 trditev: MAT-SS-2/kvadratna-enacba#napaka-deljenje
-besedilo: »Deljenje z neznanko.** Iz $x^2 = 3x$ nekateri delijo z $x$ in dobijo samo $x = 3$. Razlog: z $x$ smemo deliti le, če $x \ne 0$, zato rešitev $x = 0$ izgubiš. Pravilno: $x^2 - 3x = 0$, $x(x - 3) = 0$, $x_1 = 0$, $x_2 = 3$.« -/
+besedilo: »Pravilno: $x^2 - 3x = 0$, $x(x - 3) = 0$, $x_1 = 0$, $x_2 = 3$.« -/
 theorem napaka_deljenje (x : ℝ) : x ^ 2 = 3 * x ↔ x = 0 ∨ x = 3 := by
   rw [enacba_iff (P := (x - 0) * (x - 3)) (by ring), dva_faktorja]
 
@@ -843,7 +843,7 @@ theorem napaka_razcep_ni_nic (x : ℝ) :
 /-- Za maturo, naloga 1: (x − 3)² = 2x − 6 ⇔ (x − 3)² − 2(x − 3) = 0 ⇔ (x − 3)(x − 3 − 2) = 0
 ⇔ (x − 3)(x − 5) = 0 ⇔ x ∈ {3, 5}; splošna oblika x² − 8x + 15 = 0.
 trditev: MAT-SS-2/kvadratna-enacba#matura1
-besedilo: »Izpostavimo skupni faktor $x - 3$: $(x - 3)(x - 3 - 2) = 0$, torej $(x - 3)(x - 5) = 0$.« -/
+besedilo: »Odgovor: rešitvi sta $x_1 = 3$ in $x_2 = 5$.« -/
 theorem matura1 (x : ℝ) : ((x - 3) ^ 2 = 2 * x - 6 ↔ x = 3 ∨ x = 5) ∧
     ((x - 3) ^ 2 = 2 * x - 6 ↔ x ^ 2 - 8 * x + 15 = 0) := by
   have e : (x - 3) ^ 2 - (2 * x - 6) = (x - 3) * (x - 5) := by
@@ -874,7 +874,7 @@ theorem matura2a (c : ℝ) : (-6 : ℝ) ^ 2 - 4 * 1 * c = 36 - 4 * c ∧
 /-- Za maturo, naloga 2 b): iz x₁ = 2 in Vieta x₂ = 6 − 2 = 4, c = 2·4 = 8; 2² − 6·2 + c = 0 ⇔ c = 8,
 in x² − 6x + 8 = 0 ⇔ x ∈ {2, 4}.
 trditev: MAT-SS-2/kvadratna-enacba#matura2b
-besedilo: »b) Prav tako je $x_1 x_2 = c$, zato $c = 2 \cdot 4 = 8$. Preverjanje: $2^2 - 6 \cdot 2 + 8 = 0$.« -/
+besedilo: »Po Vietu je $x_1 + x_2 = 6$, zato $x_2 = 6 - 2 = 4$. 4. b) Prav tako je $x_1 x_2 = c$, zato $c = 2 \cdot 4 = 8$. Preverjanje: $2^2 - 6 \cdot 2 + 8 = 0$.« -/
 theorem matura2b (c x : ℝ) : ((6 : ℝ) - 2 = 4 ∧ (2 : ℝ) * 4 = 8) ∧ ((2 : ℝ) ^ 2 - 6 * 2 + c = 0 ↔ c = 8) ∧
     (x ^ 2 - 6 * x + 8 = 0 ↔ x = 2 ∨ x = 4) := by
   refine ⟨by norm_num, by constructor <;> intro h <;> linarith, ?_⟩
@@ -900,7 +900,7 @@ example :=
 /-- Za maturo, naloga 2 c): pri c = 13 je D = 36 − 52 = −16 < 0, √(−D) = 4, rešitvi (6 ± 4i)/2 = 3 ± 2i;
 z² − 6z + 13 = 0 ⇔ z = 3 ± 2i.
 trditev: MAT-SS-2/kvadratna-enacba#matura2c
-besedilo: »c) $D = 36 - 52 = -16 < 0$, zato realnih rešitev ni; $\sqrt{-D} = 4$.« -/
+besedilo: »c) $D = 36 - 52 = -16 < 0$, zato realnih rešitev ni; $\sqrt{-D} = 4$. 6. c) $x_{1,2} = \dfrac{6 \pm 4i}{2} = 3 \pm 2i$.« -/
 theorem matura2c (z : ℂ) : ((36 : ℝ) - 52 = -16 ∧ (-16 : ℝ) < 0 ∧ Real.sqrt (-(-16)) = 4) ∧
     ((6 + 4 * I) / 2 = 3 + 2 * I ∧ (6 - 4 * I) / 2 = 3 - 2 * I) ∧
     (z ^ 2 - 6 * z + 13 = 0 ↔ z = 3 + 2 * I ∨ z = 3 - 2 * I) := by
@@ -922,14 +922,14 @@ theorem matura2c_vieta : ((3 + 2 * I) + (3 - 2 * I) = 6 ∧ (6 : ℂ) = -(-6) / 
 /-- Za maturo, naloga 3 a): (40 + 2x)(30 + 2x) = 4x² + 140x + 1200, ploščina paspartuja
 P(x) = 4x² + 140x.
 trditev: MAT-SS-2/kvadratna-enacba#matura3a
-besedilo: »zato je ploščina celotnega pravokotnika $(40 + 2x)(30 + 2x) = 4x^2 + 140x + 1200$.« -/
+besedilo: »zato je ploščina celotnega pravokotnika $(40 + 2x)(30 + 2x) = 4x^2 + 140x + 1200$. 2. a) Odštejemo ploščino slike $1200\,\text{cm}^2$: $P(x) = 4x^2 + 140x$.« -/
 theorem matura3a (x : ℝ) : (40 + 2 * x) * (30 + 2 * x) = 4 * x ^ 2 + 140 * x + 1200 ∧
     (40 + 2 * x) * (30 + 2 * x) - 1200 = 4 * x ^ 2 + 140 * x := ⟨by ring, by ring⟩
 
 /-- Za maturo, naloga 3 b): 4x² + 140x = 1200 ⇔ x² + 35x − 300 = 0; D = 35² + 4·300 = 2425,
 x = (−35 ± √2425)/2 = −35/2 ± 5√97/2.
 trditev: MAT-SS-2/kvadratna-enacba#matura3b
-besedilo: »b) Enačba $4x^2 + 140x = 1200$ po deljenju s $4$: $x^2 + 35x - 300 = 0$.« -/
+besedilo: »b) Enačba $4x^2 + 140x = 1200$ po deljenju s $4$: $x^2 + 35x - 300 = 0$. 4. b) $D = 35^2 + 4 \cdot 300 = 2425$, $x_{1,2} = \dfrac{-35 \pm \sqrt{2425}}{2}$« -/
 theorem matura3b (x : ℝ) : (4 * x ^ 2 + 140 * x = 1200 ↔ x ^ 2 + 35 * x - 300 = 0) ∧
     ((35 : ℝ) ^ 2 + 4 * 300 = 2425) ∧
     (x ^ 2 + 35 * x - 300 = 0 ↔ x = (-35 + Real.sqrt 2425) / 2 ∨ x = (-35 - Real.sqrt 2425) / 2) ∧
@@ -944,7 +944,7 @@ theorem matura3b (x : ℝ) : (4 * x ^ 2 + 140 * x = 1200 ↔ x ^ 2 + 35 * x - 30
 /-- Za maturo, naloga 3 b): x₁ = (−35 + √2425)/2 ≈ 7,1221, x₂ ≈ −42,1221; ustreza le pozitivna,
 x₁ ≈ 7,1 cm.
 trditev: MAT-SS-2/kvadratna-enacba#matura3b-priblizki
-besedilo: »b) $D = 35^2 + 4 \cdot 300 = 2425$, $x_{1,2} = \dfrac{-35 \pm \sqrt{2425}}{2}$, torej $x_1 \approx 7{,}1221$ in $x_2 \approx -42{,}1221$.« -/
+besedilo: »torej $x_1 \approx 7{,}1221$ in $x_2 \approx -42{,}1221$. 5. b) Širina ne more biti negativna, zato ustreza le $x_1 \approx 7{,}1\,\text{cm}$.« -/
 theorem matura3b_priblizki : |(-35 + Real.sqrt 2425) / 2 - 7.1221| < 0.00005 ∧
     |(-35 - Real.sqrt 2425) / 2 - (-42.1221)| < 0.00005 ∧ (-35 - Real.sqrt 2425) / 2 < 0 ∧
     0 < (-35 + Real.sqrt 2425) / 2 ∧ |(-35 + Real.sqrt 2425) / 2 - 7.1| < 0.05 := by
@@ -955,7 +955,7 @@ theorem matura3b_priblizki : |(-35 + Real.sqrt 2425) / 2 - 7.1221| < 0.00005 ∧
 /-- Za maturo, naloga 3 c): teme pri x = −140/(2·4) = −17,5; P(x) = 4x² + 140x na [0, ∞) strogo
 narašča in za vsak S > 0 je natanko en x > 0 s P(x) = S.
 trditev: MAT-SS-2/kvadratna-enacba#matura3c
-besedilo: »c) Graf funkcije $P$ je parabola, odprta navzgor ($4 > 0$), s temenom pri $x = -\dfrac{140}{2 \cdot 4} = -17{,}5$. Desno od temena funkcija narašča, zato narašča na vsem intervalu $[0, \infty)$.« -/
+besedilo: »Ker je $P(0) = 0$ in $P$ na $[0, \infty)$ narašča čez vse meje, zavzame vsako pozitivno vrednost $S$ pri natanko enem $x > 0$.« -/
 theorem matura3c : -(140 : ℝ) / (2 * 4) = -17.5 ∧
     StrictMonoOn (fun x : ℝ => 4 * x ^ 2 + 140 * x) (Set.Ici 0) ∧
     ∀ S : ℝ, 0 < S → ∃! x : ℝ, 0 < x ∧ 4 * x ^ 2 + 140 * x = S := by
@@ -1007,7 +1007,7 @@ example : (5 : ℝ) * -40 = -800 / 4 ∧ (5 : ℝ) * -40 < 0 :=
 D = 1600 + 1200 = 2800; pozitivna rešitev (−40 + √2800)/2 = −20 + 10√7 ≈ 6,4575 ≈ 6,5 cm, negativna
 (−40 − √2800)/2 = −20 − 10√7.
 trditev: MAT-SS-2/kvadratna-enacba#matura3d
-besedilo: »d) $D = 1600 + 1200 = 2800$, pozitivna rešitev je $x = \dfrac{-40 + \sqrt{2800}}{2} \approx 6{,}4575$, torej $x \approx 6{,}5\,\text{cm}$.« -/
+besedilo: »d) Ploščina paspartuja je zdaj $(60 + 2x)(20 + 2x) - 1200 = 4x^2 + 160x$. Enačba $4x^2 + 160x = 1200$ da $x^2 + 40x - 300 = 0$. 9. d) $D = 1600 + 1200 = 2800$, pozitivna rešitev je $x = \dfrac{-40 + \sqrt{2800}}{2} \approx 6{,}4575$, torej $x \approx 6{,}5\,\text{cm}$.« -/
 theorem matura3d (x : ℝ) : (60 + 2 * x) * (20 + 2 * x) - 1200 = 4 * x ^ 2 + 160 * x ∧
     (4 * x ^ 2 + 160 * x = 1200 ↔ x ^ 2 + 40 * x - 300 = 0) ∧ ((40 : ℝ) ^ 2 + 4 * 300 = 1600 + 1200 ∧
     (1600 : ℝ) + 1200 = 2800) ∧
@@ -1031,7 +1031,7 @@ theorem matura3d (x : ℝ) : (60 + 2 * x) * (20 + 2 * x) - 1200 = 4 * x ^ 2 + 16
 krat x (2(40 + 30) = 140, 2(60 + 20) = 160); pri vsakem x > 0 je ploščina drugega paspartuja večja, zato
 je njegova pozitivna rešitev manjša: (−40 + √2800)/2 < (−35 + √2425)/2.
 trditev: MAT-SS-2/kvadratna-enacba#matura3d-ozji
-besedilo: »d) Ploščina paspartuja je zdaj $(60 + 2x)(20 + 2x) - 1200 = 4x^2 + 160x$. Enačba $4x^2 + 160x = 1200$ da $x^2 + 40x - 300 = 0$.« -/
+besedilo: »Linearni člen ploščine paspartuja je obseg slike krat $x$: $140x$ pri prvi in $160x$ pri drugi sliki. Podolgovata slika ima pri enaki ploščini večji obseg, zato da vsak centimeter širine več kartona in zadošča ožji paspartu.« -/
 theorem matura3d_ozji : (40 : ℝ) * 30 = 1200 ∧ (60 : ℝ) * 20 = 1200 ∧ 2 * ((40 : ℝ) + 30) = 140 ∧
     2 * ((60 : ℝ) + 20) = 160 ∧ (∀ x : ℝ, 0 < x → 4 * x ^ 2 + 140 * x < 4 * x ^ 2 + 160 * x) ∧
     (-40 + Real.sqrt 2800) / 2 < (-35 + Real.sqrt 2425) / 2 := by
@@ -1044,7 +1044,7 @@ theorem matura3d_ozji : (40 : ℝ) * 30 = 1200 ∧ (60 : ℝ) * 20 = 1200 ∧ 2 
 /-- Ustno vprašanje 3: x² + 4 = 0 ima D = 0² − 4·1·4 = −16 < 0, realne rešitve ni (kvadrat ni
 negativen), v ℂ sta rešitvi ±2i, saj je (2i)² = −4 (`RACUN`: (±2i)² + 4 = 0).
 trditev: MAT-SS-2/kvadratna-enacba#ustno3
-besedilo: »Primer je enačba $x^2 + 4 = 0$ z diskriminanto $D = -16 < 0$.« -/
+besedilo: »Primer je enačba $x^2 + 4 = 0$ z diskriminanto $D = -16 < 0$. Kvadrat realnega števila ni negativen, zato realne rešitve ni. V kompleksnih številih sta rešitvi $x_{1,2} = \pm 2i$, saj je $(2i)^2 = -4$.« -/
 theorem ustno3 (z : ℂ) : ((0 : ℝ) ^ 2 - 4 * 1 * 4 = -16 ∧ (-16 : ℝ) < 0) ∧ (∀ x : ℝ, x ^ 2 + 4 ≠ 0) ∧
     (2 * I) ^ 2 = -4 ∧ (2 * I) ^ 2 + 4 = 0 ∧ (-2 * I) ^ 2 + 4 = 0 ∧
     (z ^ 2 + 4 = 0 ↔ z = 2 * I ∨ z = -(2 * I)) := by
@@ -1130,7 +1130,7 @@ theorem preveri_x3_16x : {x : ℝ | x ^ 3 = 16 * x} = {0, 4, -4} ∧ ({0, 4, -4}
 /-- Drugače: korak za korakom: x(3x + 4) = 2 − x ⇔ 3x² + 4x = 2 − x ⇔ 3x² + 5x − 2 = 0;
 D = 5² − 4·3·(−2) = 25 + 24 = 49 = 7²; x = (−5 ± 7)/6: 2/6 = 1/3 in −12/6 = −2.
 trditev: MAT-SS-2/kvadratna-enacba#korak-za-korakom
-besedilo: »Diskriminanta:** $D = 5^2 - 4 \cdot 3 \cdot (-2) = 25 + 24 = 49$. Ker je $D > 0$, pričakujemo dve realni rešitvi. Ker je $49 = 7^2$, bosta racionalni.« -/
+besedilo: »$x_{1,2} = \dfrac{-5 \pm 7}{6}$, torej $x_1 = \dfrac{2}{6} = \dfrac{1}{3}$ in $x_2 = \dfrac{-12}{6} = -2$.« -/
 theorem korak_za_korakom (x : ℝ) : (x * (3 * x + 4) = 2 - x ↔ 3 * x ^ 2 + 4 * x = 2 - x) ∧
     (3 * x ^ 2 + 4 * x = 2 - x ↔ 3 * x ^ 2 + 5 * x - 2 = 0) ∧
     ((5 : ℝ) ^ 2 - 4 * 3 * (-2) = 25 + 24 ∧ (25 : ℝ) + 24 = 49 ∧ (49 : ℝ) = 7 ^ 2) ∧
@@ -1146,7 +1146,7 @@ theorem korak_za_korakom (x : ℝ) : (x * (3 * x + 4) = 2 - x ↔ 3 * x ^ 2 + 4 
 v prvotni enačbi (x = −2: 3·(−2) + 4 = −2, leva −2·(−2) = 4, desna 2 − (−2) = 4; x = 1/3: leva
 (1/3)·5 = 5/3, desna 2 − 1/3 = 5/3); razcep 3x² + 5x − 2 = 3(x − 1/3)(x + 2) = (3x − 1)(x + 2).
 trditev: MAT-SS-2/kvadratna-enacba#korak-preverjanje
-besedilo: »Preverjanje v prvotni enačbi** za $x = -2$: v oklepaju je $3 \cdot (-2) + 4 = -2$, leva stran je $-2 \cdot (-2) = 4$, desna $2 - (-2) = 4$.« -/
+besedilo: »$3x^2 + 5x - 2 = 3\left(x - \dfrac{1}{3}\right)(x + 2) = (3x - 1)(x + 2)$.« -/
 theorem korak_preverjanje (x : ℝ) : ((1 : ℝ) / 3 - 2 = -5 / 3 ∧ (1 : ℝ) / 3 * -2 = -2 / 3) ∧
     (3 * (-2 : ℝ) + 4 = -2 ∧ (-2 : ℝ) * (-2) = 4 ∧ 2 - (-2 : ℝ) = 4) ∧
     ((1 : ℝ) / 3 * (3 * (1 / 3) + 4) = 1 / 3 * 5 ∧ (1 : ℝ) / 3 * 5 = 5 / 3 ∧ 2 - (1 : ℝ) / 3 = 5 / 3) ∧

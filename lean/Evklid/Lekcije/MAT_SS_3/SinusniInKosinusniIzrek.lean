@@ -195,7 +195,7 @@ variable {V P : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [MetricS
 /-- Razlaga in Povzetek, kosinusni izrek: za `a = |BC|`, `b = |CA|`, `c = |AB|` in kot `γ = ∠ACB` velja
 `c² = a² + b² − 2ab cos γ`.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#kosinusni-izrek
-besedilo: »Izrek velja za vsako stranico; črke le zamenjaš: $a^2 = b^2 + c^2 - 2bc\cos\alpha$. Če poznaš vse tri stranice, ga preoblikuješ za kot: $\cos\gamma = \dfrac{a^2 + b^2 - c^2}{2ab}$.« -/
+besedilo: »Tu pomaga **kosinusni izrek**: $$c^2 = a^2 + b^2 - 2ab\cos\gamma$$« -/
 theorem kosinusni_izrek (A B C : P) :
     dist A B ^ 2 = dist B C ^ 2 + dist C A ^ 2 - 2 * dist B C * dist C A * Real.cos (∠ A C B) := by
   have h := EuclideanGeometry.law_cos A C B
@@ -205,7 +205,7 @@ theorem kosinusni_izrek (A B C : P) :
 /-- Razlaga, sinusni izrek (enakost razmerij): `a sin β = b sin α`, torej `a / sin α = b / sin β`, kadar sinusa
 nista 0 (`a = |BC|` nasproti `α = ∠CAB`, `b = |CA|` nasproti `β = ∠ABC`).
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#sinusni-izrek
-besedilo: »$$\frac{a}{\sin\alpha} = \frac{b}{\sin\beta} = \frac{c}{\sin\gamma} = 2R$$« -/
+besedilo: »Razmerje med stranico in sinusom nasprotnega kota je v vsem trikotniku isto število.« -/
 theorem sinusni_izrek (A B C : P) (hα : Real.sin (∠ C A B) ≠ 0) (hβ : Real.sin (∠ A B C) ≠ 0) :
     dist B C / Real.sin (∠ C A B) = dist C A / Real.sin (∠ A B C) := by
   have h := EuclideanGeometry.law_sin A B C
@@ -215,7 +215,8 @@ theorem sinusni_izrek (A B C : P) (hα : Real.sin (∠ C A B) ≠ 0) (hβ : Real
 /-- Razlaga in Povzetek, sinusni izrek z očrtano krožnico: v trikotniku je stranica, deljena s sinusom
 nasprotnega kota, enaka `2R` (`R` je polmer očrtane krožnice).
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#sinusni-izrek-2r
-besedilo: »Sinusni izrek pravi, da v vsakem trikotniku velja $\frac{a}{\sin\alpha} = \frac{b}{\sin\beta} = \frac{c}{\sin\gamma} = 2R$, kjer je $R$ polmer očrtane krožnice.« -/
+besedilo: »Sinusni izrek pravi, da v vsakem trikotniku velja $\frac{a}{\sin\alpha} = \frac{b}{\sin\beta} = \frac{c}{\sin\gamma} = 2R$, kjer je $R$ polmer očrtane krožnice.«
+izpolnljivo: ročno – trikotnik je binder (nekolinearnost je v strukturi Affine.Triangle); konkreten trikotnik z dokazano nekolinearnostjo je priča za naloga1 v MesaneNaloge3Letnika.lean, spodnji primer izrek uporabi na indeksih 0, 1, 2 -/
 theorem sinusni_izrek_2R (t : Affine.Triangle ℝ P) {i₁ i₂ i₃ : Fin 3} (h₁₂ : i₁ ≠ i₂) (h₁₃ : i₁ ≠ i₃)
     (h₂₃ : i₂ ≠ i₃) :
     dist (t.points i₁) (t.points i₃) / Real.sin (∠ (t.points i₁) (t.points i₂) (t.points i₃)) =
@@ -261,7 +262,7 @@ theorem kot_nasproti_krajse_oster (A B C : P) (h : ¬Collinear ℝ ({A, B, C} : 
 /-- Razlaga (višina): v pravokotnem trikotniku s pravim kotom pri `H` je kateta `|CH|` nasproti kota pri `A`
 enaka `|AC| sin ∠CAH` (`v_c = b sin α`).
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#visina
-besedilo: »Višina $v_c$ iz oglišča $C$ razdeli trikotnik na dva pravokotna trikotnika, zato je $v_c = b\sin\alpha$ in $v_c = a\sin\beta$.« -/
+besedilo: »V levem je hipotenuza $b$, zato je $v_c = b\sin\alpha$.« -/
 theorem visina (A H C : P) (h : ∠ C H A = π / 2) : Real.sin (∠ H A C) * dist C A = dist C H :=
   EuclideanGeometry.sin_angle_mul_dist_of_angle_eq_pi_div_two h
 
@@ -343,7 +344,7 @@ theorem sin_suplement (x : ℝ) : Real.sin (π - x) = Real.sin x := Real.sin_pi_
 /-- Razlaga (past pri sinusu), Pogoste napake in Ustno vprašanje 3: za `x₀ ∈ [0°, 90°]` ima `sin x = sin x₀` na
 `[0°, 180°]` natanko rešitvi `x₀` in `180° − x₀`.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#dve-resitvi-sinus
-besedilo: »Med $0^\circ$ in $180^\circ$ imata enak sinus kota $x$ in $180^\circ - x$,« -/
+besedilo: »Kot iz sinusa ima lahko dve vrednosti, $x$ in $180^\circ - x$.« -/
 theorem dve_resitvi_sinus (x₀ x : ℝ) (h0 : 0 ≤ x₀) (h1 : x₀ ≤ π / 2) (hx0 : 0 ≤ x) (hx1 : x ≤ π) :
     Real.sin x = Real.sin x₀ ↔ x = x₀ ∨ x = π - x₀ := by
   have hm : x₀ ∈ Set.Icc (-(π / 2)) (π / 2) := ⟨by linarith [Real.pi_pos], h1⟩
@@ -380,7 +381,7 @@ example : (0:ℝ) ∈ Set.Icc 0 π := ⟨le_rfl, Real.pi_pos.le⟩
 `c² < a² + b²` natanko pri `cos γ > 0`, `c² = a² + b²` (Pitagora) natanko pri `cos γ = 0`, `c² > a² + b²`
 natanko pri `cos γ < 0`.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#primerjava
-besedilo: »$$c^2 = a^2 + b^2 - 2ab\cos\gamma$$« -/
+besedilo: »Kot $\gamma$ je pravi natanko tedaj, ko je $\cos\gamma = 0$ oziroma $c^2 = a^2 + b^2$, takrat izrek preide v Pitagorov izrek. Če je $c^2 < a^2 + b^2$, je $\cos\gamma > 0$ in je kot $\gamma$ oster. Če je $c^2 > a^2 + b^2$, je $\cos\gamma < 0$ in je kot $\gamma$ top.« -/
 theorem primerjava (a b c cγ : ℝ) (ha : 0 < a) (hb : 0 < b) (h : c ^ 2 = a ^ 2 + b ^ 2 - 2 * a * b * cγ) :
     (c ^ 2 < a ^ 2 + b ^ 2 ↔ 0 < cγ) ∧ (c ^ 2 = a ^ 2 + b ^ 2 ↔ cγ = 0) ∧
     (a ^ 2 + b ^ 2 < c ^ 2 ↔ cγ < 0) := by
@@ -407,7 +408,7 @@ example :=
 /-- Razlaga, tabela: za kot `γ ∈ [0°, 180°]` je `cos γ > 0` natanko pri ostrem, `= 0` pri pravem, `< 0` pri
 topem kotu.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#kosinus-vrsta-kota
-besedilo: »Med $0^\circ$ in $180^\circ$ ima vsak kot drugačen kosinus. Topi koti imajo negativen kosinus, ostri pozitiven. Iz $\cos\gamma$ zato dobiš natanko en kot.« -/
+besedilo: »| oster | pozitiven | $c^2 < a^2 + b^2$ | | pravi | $0$ | $c^2 = a^2 + b^2$ | | top | negativen | $c^2 > a^2 + b^2$ |« -/
 theorem kosinus_vrsta_kota (γ : ℝ) (h0 : 0 ≤ γ) (h1 : γ ≤ π) :
     (0 < Real.cos γ ↔ γ < π / 2) ∧ (Real.cos γ = 0 ↔ γ = π / 2) ∧ (Real.cos γ < 0 ↔ π / 2 < γ) := by
   have key : ∀ t, 0 ≤ t → t ≤ π → (0 < Real.cos t ↔ t < π / 2) := fun t ht0 ht1 => by
@@ -439,7 +440,7 @@ example :=
 /-- Razlaga in Ponovitev: iz `c² = a² + b² − 2ab cos γ` (`a, b ≠ 0`) sledi `cos γ = (a² + b² − c²)/(2ab)`;
 z zamenjavo črk velja tudi `a² = b² + c² − 2bc cos α`.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#kosinus-iz-stranic
-besedilo: »Izrek velja za vsako stranico; črke le zamenjaš: $a^2 = b^2 + c^2 - 2bc\cos\alpha$. Če poznaš vse tri stranice, ga preoblikuješ za kot: $\cos\gamma = \dfrac{a^2 + b^2 - c^2}{2ab}$.« -/
+besedilo: »Če poznaš vse tri stranice, ga preoblikuješ za kot: $\cos\gamma = \dfrac{a^2 + b^2 - c^2}{2ab}$.« -/
 theorem kosinus_iz_stranic (a b c cγ : ℝ) (ha : a ≠ 0) (hb : b ≠ 0)
     (h : c ^ 2 = a ^ 2 + b ^ 2 - 2 * a * b * cγ) : cγ = (a ^ 2 + b ^ 2 - c ^ 2) / (2 * a * b) := by
   rw [eq_div_iff (by positivity)]; linarith
@@ -481,7 +482,7 @@ example :=
 /-- Razlaga (šestilo) in Z analogijo: pri stalnih `a, b > 0` je `c² = a² + b² − 2ab cos γ` strogo naraščajoč v
 `γ ∈ [0°, 180°]`: bolj odprto šestilo, bolj oddaljeni konici.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#sestilo
-besedilo: »Predstavljaj si šestilo s krakoma dolžin $a$ in $b$. Kot $\gamma$ je odprtost šestila, $c$ je razdalja med konicama. Pri pravem kotu je $c^2 = a^2 + b^2$, kar je Pitagorov izrek. Člen $-2ab\cos\gamma$ je popravek, ko kot ni pravi.« -/
+besedilo: »Ko šestilo zapiraš, se konici bližata; ko ga odpiraš, se oddaljujeta.« -/
 theorem sestilo (a b γ₁ γ₂ : ℝ) (ha : 0 < a) (hb : 0 < b) (h0 : 0 ≤ γ₁) (h12 : γ₁ < γ₂) (h2 : γ₂ ≤ π) :
     a ^ 2 + b ^ 2 - 2 * a * b * Real.cos γ₁ < a ^ 2 + b ^ 2 - 2 * a * b * Real.cos γ₂ := by
   have := Real.cos_lt_cos_of_nonneg_of_le_pi h0 h2 h12
@@ -494,7 +495,7 @@ example : (0:ℝ) < 1 ∧ (0:ℝ) < π := ⟨one_pos, Real.pi_pos⟩
 
 /-- `cos 120° = −0,5` in `cos 60° = 0,5` (Razlaga, premisli; Preveri se 2).
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#cos-120-60
-besedilo: »$\cos 60^\circ = 0{,}5$, $\cos 120^\circ = -0{,}5$.« -/
+besedilo: »Ker je $\cos 120^\circ = -0{,}5$« -/
 theorem cos_120_60 : Real.cos (120 * π / 180) = -0.5 ∧ Real.cos (60 * π / 180) = 0.5 := by
   constructor
   · rw [show 120 * π / 180 = π - π / 3 by ring, Real.cos_pi_sub, Real.cos_pi_div_three]; norm_num
@@ -612,7 +613,7 @@ example : (0:ℝ) * π / 180 < π / 180 ∧ π / 180 < 2 * π / 180 := by
 `2ab cos γ ≈ 33829`; `c² ≈ 14400 + 22500 − 33829 = 3071`; `c ≈ 55,4 m`; brez odstopanja bi ostalo
 `150 − 120 = 30 m`.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#primer1
-besedilo: »Ker je $\cos 20^\circ \approx 0{,}9397$, je popravek $2ab\cos\gamma \approx 33829\,\mathrm{m^2}$.« -/
+besedilo: »Kvadrata: $a^2 = 14400\,\mathrm{m^2}$, $b^2 = 22500\,\mathrm{m^2}$. Še $2ab = 36000\,\mathrm{m^2}$. 3. Ker je $\cos 20^\circ \approx 0{,}9397$, je popravek $2ab\cos\gamma \approx 33829\,\mathrm{m^2}$. 4. $c^2 \approx 14400 + 22500 - 33829 = 3071$, torej $c^2 \approx 3071\,\mathrm{m^2}$. 5. Korenimo: $c \approx 55{,}4\,\mathrm{m}$. 6. Odgovor: žoga je približno $55\,\mathrm{m}$ od zastavice. Brez odstopanja bi ji ostalo le $30\,\mathrm{m}$.« -/
 theorem primer1 :
     (120:ℝ) ^ 2 = 14400 ∧ (150:ℝ) ^ 2 = 22500 ∧ (2:ℝ) * 120 * 150 = 36000 ∧
     |Real.cos (20 * π / 180) - 0.9397| < 0.00005 ∧
@@ -628,7 +629,7 @@ theorem primer1 :
 /-- Primer 2, koraki 1–4: `γ = 180° − 52° − 71° = 57°`; `c / sin γ = 400 / sin 57° ≈ 476,9 m`;
 `b ≈ 476,9·sin 71° ≈ 451,0 m`; `a ≈ 476,9·sin 52° ≈ 375,8 m`; kontrola: `b` je najdaljša stranica.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#primer2
-besedilo: »Stranica $b$ leži nasproti $\beta$, zato $b = \dfrac{c}{\sin\gamma} \cdot \sin\beta \approx 476{,}9\,\mathrm{m} \cdot \sin 71^\circ \approx 451{,}0\,\mathrm{m}$.« -/
+besedilo: »Tretji kot: $\gamma = 180^\circ - 52^\circ - 71^\circ = 57^\circ$. Zdaj imamo cel par $c$ in $\gamma$. 2. Skupno razmerje: $\dfrac{c}{\sin\gamma} = \dfrac{400\,\mathrm{m}}{\sin 57^\circ} \approx 476{,}9\,\mathrm{m}$. 3. Stranica $b$ leži nasproti $\beta$, zato $b = \dfrac{c}{\sin\gamma} \cdot \sin\beta \approx 476{,}9\,\mathrm{m} \cdot \sin 71^\circ \approx 451{,}0\,\mathrm{m}$. 4. Stranica $a$ leži nasproti $\alpha$: $a \approx 476{,}9\,\mathrm{m} \cdot \sin 52^\circ \approx 375{,}8\,\mathrm{m}$. 5. Kontrola: največji kot $\beta$ ima nasproti najdaljšo stranico $b$. Ujema se.« -/
 theorem primer2 :
     (180:ℝ) - 52 - 71 = 57 ∧
     |400 / Real.sin (57 * π / 180) - 476.9| < 0.05 ∧
@@ -659,7 +660,7 @@ theorem primer2 :
 /-- Primer 3, koraki 2 in 3: `p² = 7,32² ≈ 53,58`, `2ld = 720`, `cos φ = (400 + 324 − 53,5824)/720 ≈ 0,9311`,
 `φ = arccos(…) ≈ 21,4°`.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#primer3-phi
-besedilo: »$\cos\varphi \approx \dfrac{400 + 324 - 53{,}58}{720} \approx 0{,}9311$, zato je $\varphi \approx 21{,}4^\circ$.« -/
+besedilo: »$l^2 = 400\,\mathrm{m^2}$; $d^2 = 324\,\mathrm{m^2}$; $p^2 \approx 53{,}58\,\mathrm{m^2}$; $2ld = 720\,\mathrm{m^2}$. 3. $\cos\varphi \approx \dfrac{400 + 324 - 53{,}58}{720} \approx 0{,}9311$, zato je $\varphi \approx 21{,}4^\circ$.« -/
 theorem primer3_phi :
     (20:ℝ) ^ 2 = 400 ∧ (18:ℝ) ^ 2 = 324 ∧ (7.32:ℝ) ^ 2 = 53.5824 ∧ |(53.5824:ℝ) - 53.58| < 0.005 ∧
     (2:ℝ) * 20 * 18 = 720 ∧ |((400:ℝ) + 324 - 7.32 ^ 2) / 720 - 0.9311| < 0.00005 ∧
@@ -679,7 +680,7 @@ theorem primer3_phi :
 `sin δ = 18 sin φ / 7,32 ≈ 0,8967`, `δ ≈ 63,7°`; `λ = 180° − φ − δ ≈ 94,9°` (iz zaokroženih
 `180 − 21,4 − 63,7 = 94,9`), top in nasproti najdaljše stranice `l = 20`.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#primer3-delta-lambda
-besedilo: »Tretji kot: $\lambda \approx 180^\circ - 21{,}4^\circ - 63{,}7^\circ = 94{,}9^\circ$. Je top in leži nasproti najdaljše stranice $l$, kot mora.« -/
+besedilo: »Kot $\delta$ leži nasproti $d = 18\,\mathrm{m}$, ki ni najdaljša stranica, zato je $\delta$ zagotovo oster. 5. Iz sinusnega izreka (z nezaokroženim $\varphi$): $\sin\delta = \dfrac{18\,\mathrm{m} \cdot \sin\varphi}{7{,}32\,\mathrm{m}} \approx 0{,}8967$, zato je $\delta \approx 63{,}7^\circ$. 6. Tretji kot: $\lambda \approx 180^\circ - 21{,}4^\circ - 63{,}7^\circ = 94{,}9^\circ$. Je top in leži nasproti najdaljše stranice $l$, kot mora.« -/
 theorem primer3_delta_lambda :
     let φ := Real.arccos ((400 + 324 - 7.32 ^ 2) / 720)
     let w := 18 * Real.sin φ / 7.32
@@ -748,7 +749,7 @@ theorem primer3_kalkulator_lambda :
 /-- Primer 4: kvadrati `2,4² = 5,76`, `3,1² = 9,61`, `3,5² = 12,25`, imenovalec `2·2,4·3,1 = 14,88`;
 `cos κ = 3,12/14,88 ≈ 0,2097`, `κ ≈ 77,9°`, oster (`cos κ > 0`).
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#primer4
-besedilo: »Kvadrati: $2{,}4^2 = 5{,}76$; $3{,}1^2 = 9{,}61$; $3{,}5^2 = 12{,}25$. Imenovalec: $2 \cdot 2{,}4 \cdot 3{,}1 = 14{,}88$.« -/
+besedilo: »$\cos\kappa = \dfrac{5{,}76 + 9{,}61 - 12{,}25}{14{,}88} = \dfrac{3{,}12}{14{,}88} \approx 0{,}2097$, zato je $\kappa \approx 77{,}9^\circ$. Kosinus je pozitiven, zato je tudi največji kot oster.« -/
 theorem primer4 :
     (2.4:ℝ) ^ 2 = 5.76 ∧ (3.1:ℝ) ^ 2 = 9.61 ∧ (3.5:ℝ) ^ 2 = 12.25 ∧ (2:ℝ) * 2.4 * 3.1 = 14.88 ∧
     ((5.76:ℝ) + 9.61 - 12.25) / 14.88 = 3.12 / 14.88 ∧ |(3.12:ℝ) / 14.88 - 0.2097| < 0.00005 ∧
@@ -779,12 +780,12 @@ theorem zaokrozeni_odgovori :
 
 /-- Pogoste napake (kot zavoja): pri zavoju za 50° je notranji kot `180° − 50° = 130°`.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#napaka-zavoj
-besedilo: »Kot zavoja namesto notranjega kota.** Tekač se obrne za $50^\circ$, a notranji kot trikotnika je $180^\circ - 50^\circ = 130^\circ$.« -/
+besedilo: »Tekač se obrne za $50^\circ$, a notranji kot trikotnika je $180^\circ - 50^\circ = 130^\circ$.« -/
 theorem napaka_zavoj : (180:ℝ) - 50 = 130 := by norm_num
 
 /-- Pogoste napake (pozabljen koren): `c² = 39` pomeni `c = √39 ≈ 6,24`.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#napaka-koren
-besedilo: »Pozabljen koren.** Kosinusni izrek da $c^2$, ne $c$. Rezultat $c^2 = 39$ pomeni $c \approx 6{,}24$.« -/
+besedilo: »Rezultat $c^2 = 39$ pomeni $c \approx 6{,}24$.« -/
 theorem napaka_koren (c : ℝ) (hc : 0 ≤ c) (h : c ^ 2 = 39) : c = Real.sqrt 39 ∧ |c - 6.24| < 0.005 := by
   have hs : c = Real.sqrt 39 := by rw [← h, Real.sqrt_sq hc]
   obtain ⟨l, u⟩ := sqrt_med 39 6.2449 6.245 (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -802,7 +803,7 @@ example :=
 /-- Pogoste napake (vrstni red računanja): `(a² + b² − 2ab)·cos γ` v splošnem ni `a² + b² − 2ab cos γ` (npr.
 `a = 3`, `b = 4`, `γ = 60°`: `1·0,5 = 0,5`, pravilno pa `25 − 12 = 13`).
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#napaka-vrstni-red
-besedilo: »Napačen vrstni red računanja.** Računaš $(a^2 + b^2 - 2ab) \cdot \cos\gamma$.« -/
+besedilo: »Računaš $(a^2 + b^2 - 2ab) \cdot \cos\gamma$. Kosinus pripada le popravku: najprej izračunaj $2ab\cos\gamma$, nato ga odštej od $a^2 + b^2$.« -/
 theorem napaka_vrstni_red :
     ((3:ℝ) ^ 2 + 4 ^ 2 - 2 * 3 * 4) * Real.cos (60 * π / 180) = 0.5 ∧
     (3:ℝ) ^ 2 + 4 ^ 2 - 2 * 3 * 4 * Real.cos (60 * π / 180) = 13 := by
@@ -813,7 +814,7 @@ theorem napaka_vrstni_red :
 /-- Naloga 1: stranice 3, 5, 7; `cos γ = (9 + 25 − 49)/30 = −15/30 = −1/2`; med 0° in 180° ima kosinus `−1/2`
 le kot 120°.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#matura1
-besedilo: »Po kosinusnem izreku: $\cos\gamma = \dfrac{a^2 + b^2 - c^2}{2ab} = \dfrac{9 + 25 - 49}{30} = \dfrac{-15}{30} = -\dfrac{1}{2}$.« -/
+besedilo: »Po kosinusnem izreku: $\cos\gamma = \dfrac{a^2 + b^2 - c^2}{2ab} = \dfrac{9 + 25 - 49}{30} = \dfrac{-15}{30} = -\dfrac{1}{2}$. 3. Med $0^\circ$ in $180^\circ$ ima kosinus $-\frac{1}{2}$ le kot $120^\circ$.« -/
 theorem matura1 (γ : ℝ) (h0 : 0 ≤ γ) (h1 : γ ≤ π)
     (h : (7:ℝ) ^ 2 = 3 ^ 2 + 5 ^ 2 - 2 * 3 * 5 * Real.cos γ) :
     ((3:ℝ) ^ 2 + 5 ^ 2 - 7 ^ 2) / (2 * 3 * 5) = (9 + 25 - 49) / 30 ∧ ((9:ℝ) + 25 - 49) / 30 = -15 / 30 ∧
@@ -865,7 +866,7 @@ theorem matura2a :
 `sin β = b sin α / a ≈ 62·0,96126/90,354 ≈ 0,65961`, `β ≈ 41,270° ≈ 41,27°`; z zaokroženim `a = 90,4` pa
 `β ≈ 41,24°`.
 trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#matura2b
-besedilo: »b) $\sin\beta = \dfrac{b\sin\alpha}{a} \approx \dfrac{62 \cdot 0{,}96126}{90{,}354} \approx 0{,}65961$, zato $\beta \approx 41{,}270^\circ \approx 41{,}27^\circ$.« -/
+besedilo: »b) Iščemo $\beta$, ki leži nasproti $b = 62\,\mathrm{m}$. Ta stranica ni najdaljša, zato je $\beta$ oster in sinusni izrek da en sam kot. 4. b) $\sin\beta = \dfrac{b\sin\alpha}{a} \approx \dfrac{62 \cdot 0{,}96126}{90{,}354} \approx 0{,}65961$, zato $\beta \approx 41{,}270^\circ \approx 41{,}27^\circ$.« -/
 theorem matura2b :
     let a := Real.sqrt (3844 + 7225 - 10540 * Real.cos (74 * π / 180))
     |Real.sin (74 * π / 180) - 0.96126| < 0.000005 ∧
@@ -928,8 +929,7 @@ theorem matura2c :
 
 /-- Preveri se 2: `cos 60° = 0,5`, `cos 120° = −0,5`; pri istih `a, b > 0` je stranica pri 120° daljša:
 `a² + b² − 2ab·cos 120° > a² + b² − 2ab·cos 60°`.
-trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#kviz2
-besedilo: »Pri $\gamma = 120^\circ$ je $\cos\gamma < 0$, zato je $c^2 = a^2 + b^2 + 2ab \cdot 0{,}5$, kar je več kot pri $60^\circ$.« -/
+pomozno -/
 theorem kviz2 (a b : ℝ) (ha : 0 < a) (hb : 0 < b) :
     a ^ 2 + b ^ 2 - 2 * a * b * Real.cos (60 * π / 180) <
       a ^ 2 + b ^ 2 - 2 * a * b * Real.cos (120 * π / 180) := by
@@ -945,8 +945,7 @@ example :=
 
 /-- Preveri se 3 (in `<<RACUN`): `a = 5`, `b = 7`, `γ = 60°`: `c² = 25 + 49 − 2·5·7·0,5 = 39`,
 `c = √39 ≈ 6,24 cm`; napačni `√74 ≈ 8,60` (Pitagora), `√109 ≈ 10,44` (popravek prištet).
-trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#kviz3
-besedilo: »$c^2 = 25 + 49 - 2 \cdot 5 \cdot 7 \cdot 0{,}5 = 39$, torej $c = \sqrt{39}\,\mathrm{cm} \approx 6{,}24\,\mathrm{cm}$.« -/
+pomozno -/
 theorem kviz3 :
     (5:ℝ) ^ 2 + 7 ^ 2 - 2 * 5 * 7 * Real.cos (60 * π / 180) = 39 ∧
     |Real.sqrt 39 - 6.24| < 0.005 ∧ |Real.sqrt (25 + 49) - 8.60| < 0.005 ∧
@@ -959,8 +958,7 @@ theorem kviz3 :
 
 /-- Preveri se 4: `a = 9`, `b = 5`, `β = 30°`: `sin α = 9·0,5/5 = 0,9`; poleg `α ≈ 64,2°` je rešitev tudi
 `α ≈ 115,8°` z `γ ≈ 34,2°`, obe vsoti z β sta pod 180°, trikotnika sta dva.
-trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#kviz4
-besedilo: »Tudi $\alpha \approx 115{,}8^\circ$ ima sinus $0{,}9$, z $\beta = 30^\circ$ pa je vsota še pod $180^\circ$ ($\gamma \approx 34{,}2^\circ$). Trikotnika sta dva.« -/
+pomozno -/
 theorem kviz4 :
     (9:ℝ) * 0.5 / 5 = 0.9 ∧
     Real.arcsin 0.9 * 180 / π + 30 < 180 ∧ (π - Real.arcsin 0.9) * 180 / π + 30 < 180 ∧
@@ -972,8 +970,7 @@ theorem kviz4 :
 
 /-- Preveri se 5 (in `<<RACUN`): notranji kot 130°, `c² = 9 + 4 − 12 cos 130° ≈ 20,71`, `c ≈ 4,55 km`; napačni:
 s kotom 50° `≈ 2,30`, naravnost 5, Pitagora `√13 ≈ 3,61`.
-trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#kviz5
-besedilo: »Notranji kot je $180^\circ - 50^\circ = 130^\circ$. Torej $c^2 = 9 + 4 - 12\cos 130^\circ \approx 20{,}71$ in $c \approx 4{,}55\,\mathrm{km}$.« -/
+pomozno -/
 theorem kviz5 :
     |9 + 4 - 12 * Real.cos (130 * π / 180) - 20.71| < 0.005 ∧
     |Real.sqrt (9 + 4 - 12 * Real.cos (130 * π / 180)) - 4.55| < 0.005 ∧
@@ -994,8 +991,7 @@ theorem kviz5 :
 
 /-- Preveri se 5, razlaga napačnega odgovora 5: zaradi zavoja je razdalja `≈ 4,55` strogo krajša od vsote
 odsekov `3 + 2`.
-trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#kviz5-krajse
-besedilo: »Torej $c^2 = 9 + 4 - 12\cos 130^\circ \approx 20{,}71$ in $c \approx 4{,}55\,\mathrm{km}$.« -/
+pomozno -/
 theorem kviz5_krajse : Real.sqrt (9 + 4 - 12 * Real.cos (130 * π / 180)) < 3 + 2 := by
   obtain ⟨-, h, -⟩ := kviz5
   rw [abs_lt] at h
@@ -1003,8 +999,7 @@ theorem kviz5_krajse : Real.sqrt (9 + 4 - 12 * Real.cos (130 * π / 180)) < 3 + 
 
 /-- Preveri se 6 (in `<<RACUN`): `a = 7`, `b = 8`, `γ = 120°`: `c² = 49 + 64 − 2·7·8·(−1/2) = 113 + 56 = 169`,
 `c = 13 cm`; napačni `√57 ≈ 7,55`, `√113 ≈ 10,63`, 169 (`c²`).
-trditev: MAT-SS-3/sinusni-in-kosinusni-izrek#kviz6
-besedilo: »$c^2 = 49 + 64 - 2 \cdot 7 \cdot 8 \cdot \left(-\frac{1}{2}\right) = 113 + 56 = 169$, torej $c = 13\,\mathrm{cm}$.« -/
+pomozno -/
 theorem kviz6 :
     (7:ℝ) ^ 2 + 8 ^ 2 - 2 * 7 * 8 * Real.cos (120 * π / 180) = 113 + 56 ∧ (113:ℝ) + 56 = 169 ∧
     Real.sqrt 169 = 13 ∧ |Real.sqrt 57 - 7.55| < 0.005 ∧ |Real.sqrt 113 - 10.63| < 0.005 := by

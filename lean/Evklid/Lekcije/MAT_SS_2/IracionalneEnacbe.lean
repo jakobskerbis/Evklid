@@ -40,8 +40,7 @@ theorem koren_pot {n : ℕ} (hn : n ≠ 0) {a : ℝ} (ha : 0 ≤ a) : koren n a 
 example : (2:ℕ) ≠ 0 ∧ (0:ℝ) ≤ 4 := by norm_num
 
 /-- Če je b ≥ 0 in bⁿ = a, je ⁿ√a = b.
-trditev: MAT-SS-2/iracionalne-enacbe#koren-eq
-besedilo: »$\sqrt{A} = B$: pogoja $A \ge 0$ in $B \ge 0$ (na pamet)« -/
+pomozno -/
 theorem koren_eq {n : ℕ} (hn : n ≠ 0) {a b : ℝ} (hb : 0 ≤ b) (h : b ^ n = a) : koren n a = b := by
   subst h; simp only [koren, pow_nonneg hb n, ↓reduceIte]; exact Real.pow_rpow_inv_natCast hb hn
 
@@ -66,7 +65,7 @@ example : Odd 3 := ⟨1, rfl⟩
 
 /-- Razlaga 7 (lihi n): ⁿ√a je edino realno število b z bⁿ = a, tudi za negativen a.
 trditev: MAT-SS-2/iracionalne-enacbe#koren-lih
-besedilo: »pri lihem n pa za vsa realna števila.« -/
+besedilo: »Pri lihem $n$ ima enačba eno rešitev, $x = \sqrt[n]{a}$, tudi za negativen $a$« -/
 theorem koren_lih {n : ℕ} (hn : Odd n) (a b : ℝ) : b ^ n = a ↔ b = koren n a := by
   constructor
   · intro h; exact hn.pow_inj.mp (by rw [h, koren_lih_pot hn])
@@ -82,7 +81,7 @@ example :=
 
 /-- Razlaga 7, Povzetek (tabela) in Ustno vprašanje 3: pri sodem n in a > 0 ima xⁿ = a natanko rešitvi ±ⁿ√a.
 trditev: MAT-SS-2/iracionalne-enacbe#enacba-sod-poz
-besedilo: »Pri sodem $n$ in $a > 0$ sta rešitvi dve,« -/
+besedilo: »Pri sodem $n$ in $a > 0$ sta rešitvi dve, $x = \pm\sqrt[n]{a}$« -/
 theorem enacba_sod_poz {n : ℕ} (hn : Even n) (hn0 : n ≠ 0) {a : ℝ} (ha : 0 < a) (x : ℝ) :
     x ^ n = a ↔ x = koren n a ∨ x = -koren n a := by
   constructor
@@ -133,7 +132,7 @@ example :=
 
 /-- Razlaga 1 in 5, Bolj natančno: za A ≥ 0 je √A = B natanko tedaj, ko A = B² in B ≥ 0.
 trditev: MAT-SS-2/iracionalne-enacbe#kor-eq
-besedilo: »Enačba $\sqrt{A} = B$ je **ekvivalentna** sistemu »$A = B^2$ in $B \ge 0$«. Pogoj $A \ge 0$ je tedaj že izpolnjen, ker je $A = B^2 \ge 0$. Zato pri preverjanju odloča predvsem predznak druge strani.« -/
+besedilo: »Enačba $\sqrt{A} = B$ je **ekvivalentna** sistemu »$A = B^2$ in $B \ge 0$«.« -/
 theorem kor_eq {A B : ℝ} (hA : 0 ≤ A) : √A = B ↔ A = B ^ 2 ∧ 0 ≤ B := by
   constructor
   · rintro rfl; exact ⟨(Real.sq_sqrt hA).symm, Real.sqrt_nonneg _⟩
@@ -150,7 +149,7 @@ example :=
 /-- Bolj natančno: enačba √A = B (s pogojem, da koren obstaja) je ekvivalentna sistemu »A = B² in B ≥ 0«;
 pogoj A ≥ 0 je tedaj že izpolnjen.
 trditev: MAT-SS-2/iracionalne-enacbe#bolj-natancno
-besedilo: »Enačba $\sqrt{A} = B$ je **ekvivalentna** sistemu »$A = B^2$ in $B \ge 0$«. Pogoj $A \ge 0$ je tedaj že izpolnjen, ker je $A = B^2 \ge 0$. Zato pri preverjanju odloča predvsem predznak druge strani.« -/
+besedilo: »Enačba $\sqrt{A} = B$ je **ekvivalentna** sistemu »$A = B^2$ in $B \ge 0$«. Pogoj $A \ge 0$ je tedaj že izpolnjen, ker je $A = B^2 \ge 0$.« -/
 theorem bolj_natancno (A B : ℝ) : (0 ≤ A ∧ √A = B) ↔ (A = B ^ 2 ∧ 0 ≤ B) := by
   constructor
   · rintro ⟨hA, h⟩; exact (kor_eq hA).mp h
@@ -184,13 +183,13 @@ theorem sqrt1 : √(1:ℝ) = 1 := Real.sqrt_one
 
 /-- Zakaj se tega učimo in razlaga 4: −3 = 3 ni res, po kvadriranju pa (−3)² = 3², torej 9 = 9.
 trditev: MAT-SS-2/iracionalne-enacbe#uvod
-besedilo: »Vzemi napačno trditev $-3 = 3$ in kvadriraj obe strani. Dobiš $(-3)^2 = 3^2$, torej $9 = 9$, kar je res. Kvadriranje je laž spremenilo v resnico. Sliši se kot trik, a prav ta pojav čaka pri vsaki enačbi s korenom.« -/
+besedilo: »Vzemi napačno trditev $-3 = 3$ in kvadriraj obe strani. Dobiš $(-3)^2 = 3^2$, torej $9 = 9$, kar je res.« -/
 theorem uvod : (-3:ℝ) ≠ 3 ∧ (-3:ℝ) ^ 2 = 3 ^ 2 ∧ (3:ℝ) ^ 2 = 9 := by norm_num
 
 /-- Razlaga 1: x + 6 = x² uredimo v x² − x − 6 = 0, ki je (x − 3)(x + 2) = 0 (Vieta: (−3) · 2 = −6,
 −3 + 2 = −1), rešitvi x = 3 ali x = −2.
 trditev: MAT-SS-2/iracionalne-enacbe#razlaga1-kvadratna
-besedilo: »Dobimo enačbo brez korena: $x + 6 = x^2$, urejeno $x^2 - x - 6 = 0$.« -/
+besedilo: »Dobimo enačbo brez korena: $x + 6 = x^2$, urejeno $x^2 - x - 6 = 0$. Tričlen razstavimo po Vietovem pravilu: števili z zmnožkom $-6$ in vsoto $-1$ sta $-3$ in $2$. Enačba se glasi $(x - 3)(x + 2) = 0$. Produkt je nič, ko je nič kateri od faktorjev: $x = 3$ ali $x = -2$.« -/
 theorem razlaga1_kvadratna (x : ℝ) : (x + 6 = x ^ 2 ↔ x ^ 2 - x - 6 = 0) ∧ x ^ 2 - x - 6 = (x - 3) * (x + 2) ∧
     (x ^ 2 - x - 6 = 0 ↔ x = 3 ∨ x = -2) ∧ (-3:ℝ) * 2 = -6 ∧ (-3:ℝ) + 2 = -1 := by
   refine ⟨⟨fun h => by linarith, fun h => by linarith⟩, by ring, ?_, by norm_num, by norm_num⟩
@@ -198,7 +197,7 @@ theorem razlaga1_kvadratna (x : ℝ) : (x + 6 = x ^ 2 ↔ x ^ 2 - x - 6 = 0) ∧
 
 /-- Razlaga 1–2: √(x + 6) = x ima eno samo rešitev x = 3 (−2 je navidezna).
 trditev: MAT-SS-2/iracionalne-enacbe#razlaga1
-besedilo: »Število, ki ga dobimo med računanjem, a prvotne enačbe ne reši, je **navidezna rešitev**. Enačba $\sqrt{x + 6} = x$ ima eno samo rešitev, $x = 3$.« -/
+besedilo: »Enačba $\sqrt{x + 6} = x$ ima eno samo rešitev, $x = 3$.« -/
 theorem razlaga1 (x : ℝ) : (0 ≤ x + 6 ∧ √(x + 6) = x) ↔ x = 3 := by
   constructor
   · rintro ⟨hA, h⟩
@@ -212,7 +211,7 @@ theorem razlaga1 (x : ℝ) : (0 ≤ x + 6 ∧ √(x + 6) = x) ↔ x = 3 := by
 /-- Razlaga 2, preizkus: x = 3: √9 = 3 (velja); x = −2: √4 = 2 ≠ −2 (ne velja), čeprav je −2 + 6 ≥ 0
 (Premisli: izloči ga pogoj x ≥ 0).
 trditev: MAT-SS-2/iracionalne-enacbe#razlaga2-preizkus
-besedilo: »Ostane $x = 1$. Preizkus: $\sqrt{4} = 2$ in $1 + 1 = 2$. Kandidat $x = -4$ ne izpolni pogoja $x \ge -1$: leva stran bi bila $\sqrt{9} = 3$, desna $-3$. To je navidezna rešitev.« -/
+besedilo: »| $3$ | $\sqrt{9} = 3$ | $3$ | da | | $-2$ | $\sqrt{4} = 2$ | $-2$ | ne |« -/
 theorem razlaga2_preizkus : √((3:ℝ) + 6) = √9 ∧ √(9:ℝ) = 3 ∧ √((-2:ℝ) + 6) = √4 ∧ √(4:ℝ) = 2 ∧
     √((-2:ℝ) + 6) ≠ -2 ∧ (0:ℝ) ≤ -2 + 6 ∧ ¬ (0:ℝ) ≤ -2 := by
   refine ⟨by norm_num, sqrt9, by norm_num, sqrt4, ?_, by norm_num, by norm_num⟩
@@ -220,7 +219,7 @@ theorem razlaga2_preizkus : √((3:ℝ) + 6) = √9 ∧ √(9:ℝ) = 3 ∧ √((
 
 /-- Razlaga 3: x + 6 = x² ne loči √(x + 6) in −√(x + 6): za A ≥ 0 je A = B² ⇔ √A = B ali −√A = B.
 trditev: MAT-SS-2/iracionalne-enacbe#kvadriranje-obe-krivulji
-besedilo: »Enačba $x + 6 = x^2$ ne loči med $\sqrt{x + 6}$ in $-\sqrt{x + 6}$,« -/
+besedilo: »Enačba $x + 6 = x^2$ ne loči med $\sqrt{x + 6}$ in $-\sqrt{x + 6}$, saj imata isti kvadrat.« -/
 theorem kvadriranje_obe_krivulji {A B : ℝ} (hA : 0 ≤ A) : A = B ^ 2 ↔ √A = B ∨ -√A = B := by
   constructor
   · intro h
@@ -240,7 +239,7 @@ example :=
 
 /-- Razlaga 3: črtkana krivulja y = −√(x + 6) seka premico y = x v (−2, −2): −√(x + 6) = x ⇔ x = −2.
 trditev: MAT-SS-2/iracionalne-enacbe#navidezna-krivulja
-besedilo: »Kaj vidimo na grafu.** Levo stran enačbe preberemo kot funkcijo $y = \sqrt{x + 6}$, desno kot premico $y = x$.« -/
+besedilo: »Črtkana jo seka v $(-2, -2)$: to je navidezna rešitev.« -/
 theorem navidezna_krivulja (x : ℝ) : (0 ≤ x + 6 ∧ -√(x + 6) = x) ↔ x = -2 := by
   constructor
   · rintro ⟨hA, h⟩
@@ -257,13 +256,13 @@ theorem navidezna_krivulja (x : ℝ) : (0 ≤ x + 6 ∧ -√(x + 6) = x) ↔ x =
 
 /-- Razlaga 4: iz a = b sledi a² = b²; iz a² = b² le a = b ali a = −b.
 trditev: MAT-SS-2/iracionalne-enacbe#kvadriranje
-besedilo: »Obratno ne velja: iz $a^2 = b^2$ sledi le, da je $a = b$ *ali* $a = -b$.« -/
+besedilo: »Iz $a = b$ vedno sledi $a^2 = b^2$. Obratno ne velja: iz $a^2 = b^2$ sledi le, da je $a = b$ *ali* $a = -b$.« -/
 theorem kvadriranje (a b : ℝ) : (a = b → a ^ 2 = b ^ 2) ∧ (a ^ 2 = b ^ 2 ↔ a = b ∨ a = -b) :=
   ⟨fun h => by rw [h], sq_eq_sq_iff_eq_or_eq_neg⟩
 
 /-- Razlaga 4: kvadriranje ni ekvivalentno preoblikovanje (obstajata a ≠ b z a² = b²).
 trditev: MAT-SS-2/iracionalne-enacbe#kvadriranje-ni-ekvivalentno
-besedilo: »Kvadriranje** ni ekvivalentno preoblikovanje: iz $a^2 = b^2$ sledi $a = b$ ali $a = -b$.« -/
+besedilo: »Pravimo, da kvadriranje ni **ekvivalentno preoblikovanje**: ne ohrani množice rešitev.« -/
 theorem kvadriranje_ni_ekvivalentno : ∃ a b : ℝ, a ^ 2 = b ^ 2 ∧ a ≠ b := ⟨-3, 3, by norm_num, by norm_num⟩
 
 /-- Razlaga 6 in formula Primera 2: (p + q)² = p² + 2pq + q².
@@ -292,7 +291,7 @@ example :=
 
 /-- Razlaga 7: x³ = 8 da x = ∛8 = 2; x³ = −27 da x = −3.
 trditev: MAT-SS-2/iracionalne-enacbe#razlaga7-lih
-besedilo: »S korenjenjem.** Pri lihem $n$ ima enačba eno rešitev, $x = \sqrt[n]{a}$, tudi za negativen $a$: enačba $x^3 = 8$ da $x = \sqrt[3]{8} = 2$, enačba $x^3 = -27$ da $x = -3$.« -/
+besedilo: »enačba $x^3 = 8$ da $x = \sqrt[3]{8} = 2$, enačba $x^3 = -27$ da $x = -3$« -/
 theorem razlaga7_lih (x : ℝ) : (x ^ 3 = 8 ↔ x = 2) ∧ (x ^ 3 = -27 ↔ x = -3) := by
   have h3 : Odd 3 := ⟨1, rfl⟩
   have k8 : koren 3 8 = 2 := koren_eq (by norm_num) (by norm_num) (by norm_num)
@@ -318,7 +317,7 @@ theorem razlika_kubov (a b : ℝ) : a ^ 3 - b ^ 3 = (a - b) * (a ^ 2 + a * b + b
 
 /-- Razlaga 7: x³ − 8 = (x − 2)(x² + 2x + 4), x² + 2x + 4 = (x + 1)² + 3 ≥ 3, zato je x = 2 edina rešitev.
 trditev: MAT-SS-2/iracionalne-enacbe#razstavljanje-kub
-besedilo: »Drugi faktor dopolnimo do popolnega kvadrata: $x^2 + 2x + 4 = (x + 1)^2 + 3 \ge 3$, torej ni nikoli nič in je $x = 2$ edina rešitev.« -/
+besedilo: »Enačba $x^3 - 8 = 0$ postane $(x - 2)(x^2 + 2x + 4) = 0$. Drugi faktor dopolnimo do popolnega kvadrata: $x^2 + 2x + 4 = (x + 1)^2 + 3 \ge 3$, torej ni nikoli nič in je $x = 2$ edina rešitev.« -/
 theorem razstavljanje_kub (x : ℝ) : x ^ 3 - 8 = (x - 2) * (x ^ 2 + 2 * x + 4) ∧ x ^ 2 + 2 * x + 4 = (x + 1) ^ 2 + 3 ∧
     3 ≤ x ^ 2 + 2 * x + 4 ∧ (x ^ 3 - 8 = 0 ↔ x = 2) := by
   have h3 : 3 ≤ x ^ 2 + 2 * x + 4 := by nlinarith [sq_nonneg (x + 1)]
@@ -364,7 +363,7 @@ theorem primer1_pogoja (x : ℝ) : (0 ≤ x + 1 ∧ 0 ≤ x - 5) ↔ 5 ≤ x :=
 3x + 1 = 1 + 2√(x + 4) + x + 4; 2x − 4 = 2√(x + 4), x − 2 = √(x + 4), x ≥ 2; x² − 4x + 4 = x + 4, x² − 5x = 0,
 x(x − 5) = 0; 0 odpade (√1 − √4 = −1), preizkus za 5: √16 − √9 = 1. Rešitev x = 5.
 trditev: MAT-SS-2/iracionalne-enacbe#primer2
-besedilo: »Število $0$ ne izpolni pogoja $x \ge 2$. Preizkus za $0$ to potrdi: $\sqrt{1} - \sqrt{4} = -1$, ne $1$. Preizkus za $5$: $\sqrt{16} - \sqrt{9} = 1$, ustreza.« -/
+besedilo: »Odgovor: rešitev je $x = 5$.« -/
 theorem primer2 (x : ℝ) : (0 ≤ 3 * x + 1 ∧ 0 ≤ x + 4 ∧ √(3 * x + 1) - √(x + 4) = 1) ↔ x = 5 := by
   constructor
   · rintro ⟨hA, hB, h⟩
@@ -387,7 +386,7 @@ theorem primer2 (x : ℝ) : (0 ≤ 3 * x + 1 ∧ 0 ≤ x + 4 ∧ √(3 * x + 1) 
 /-- Primer 2, korak 1: pogoja 3x + 1 ≥ 0 in x + 4 ≥ 0 dasta x ≥ −1/3; korak 6: kandidat 0 ne ustreza:
 √1 − √4 = −1 ≠ 1.
 trditev: MAT-SS-2/iracionalne-enacbe#primer2-pogoj-in-preizkus
-besedilo: »Oba korena morata obstajati: $3x + 1 \ge 0$ in $x + 4 \ge 0$, torej $x \ge -\dfrac{1}{3}$.« -/
+besedilo: »Oba korena morata obstajati: $3x + 1 \ge 0$ in $x + 4 \ge 0$, torej $x \ge -\dfrac{1}{3}$. 2. Osamimo prvi koren, da bo na levi sam: enačba $\sqrt{3x + 1} = 1 + \sqrt{x + 4}$. Desna stran je pozitivna, nov pogoj ne nastane. 3. Kvadriramo; desno je vsota, zato dobimo dvojni zmnožek: enačba $3x + 1 = 1 + 2\sqrt{x + 4} + x + 4$. 4. Uredimo v $2x - 4 = 2\sqrt{x + 4}$ in delimo z $2$, da drugi koren ostane sam: enačba $x - 2 = \sqrt{x + 4}$. Nov pogoj: $x - 2 \ge 0$, torej $x \ge 2$. 5. Kvadriramo še enkrat: enačba $x^2 - 4x + 4 = x + 4$, urejeno $x^2 - 5x = 0$, razstavljeno $x(x - 5) = 0$. Kandidata sta $x = 0$ in $x = 5$. 6. Število $0$ ne izpolni pogoja $x \ge 2$. Preizkus za $0$ to potrdi: $\sqrt{1} - \sqrt{4} = -1$, ne $1$.« -/
 theorem primer2_pogoj_in_preizkus (x : ℝ) : ((0 ≤ 3 * x + 1 ∧ 0 ≤ x + 4) ↔ -1 / 3 ≤ x) ∧
     √(3 * 0 + 1 : ℝ) - √(0 + 4) = -1 := by
   refine ⟨⟨fun h => by linarith [h.1], fun h => ⟨by linarith, by linarith⟩⟩, ?_⟩
@@ -395,7 +394,7 @@ theorem primer2_pogoj_in_preizkus (x : ℝ) : ((0 ≤ 3 * x + 1 ∧ 0 ≤ x + 4)
 
 /-- Primer 3 (splošno): pri h > 0, S > 0 je √(h · m/3600) = S ⇔ m = 3600 S²/h.
 trditev: MAT-SS-2/iracionalne-enacbe#mosteller
-besedilo: »$S = \sqrt{\dfrac{h \cdot m}{3600}}$, po kvadriranju $m = \dfrac{3600\,S^2}{h}$« -/
+besedilo: »$S = \sqrt{\dfrac{h \cdot m}{3600}}$, po kvadriranju $m = \dfrac{3600 S^2}{h}$« -/
 theorem mosteller {h S : ℝ} (hh : 0 < h) (hS : 0 < S) (m : ℝ) :
     √(h * m / 3600) = S ↔ m = 3600 * S ^ 2 / h := by
   constructor
@@ -419,7 +418,7 @@ example :=
 /-- Primer 3 a): √(180 m/3600) = 1,8 ⇔ m = 64,8; koraki 180 m/3600 = 1,8², m/20 = 3,24, m = 20 · 3,24 = 64,8;
 preizkus 180 · 64,8/3600 = 3,24 in √3,24 = 1,8.
 trditev: MAT-SS-2/iracionalne-enacbe#primer3a
-besedilo: »Zato je $m_1 = 20 \cdot 3{,}24 = 64{,}8\,\mathrm{kg}$. Preizkus: $\dfrac{180 \cdot 64{,}8}{3600} = 3{,}24$ in $\sqrt{3{,}24} = 1{,}8$, ustreza.« -/
+besedilo: »Kvadriramo, da se znebimo korena: $\dfrac{180 \cdot m_1}{3600} = 1{,}8^2$, torej $\dfrac{m_1}{20} = 3{,}24$. 3. Zato je $m_1 = 20 \cdot 3{,}24 = 64{,}8\,\mathrm{kg}$. Preizkus: $\dfrac{180 \cdot 64{,}8}{3600} = 3{,}24$ in $\sqrt{3{,}24} = 1{,}8$, ustreza.« -/
 theorem primer3a (m : ℝ) : (√(180 * m / 3600) = 1.8 ↔ m = 64.8) ∧ (180 * m / 3600 = 1.8 ^ 2 ↔ m / 20 = 3.24) ∧
     (20:ℝ) * 3.24 = 64.8 ∧ (180:ℝ) * 64.8 / 3600 = 3.24 ∧ √(3.24:ℝ) = 1.8 := by
   refine ⟨?_, ⟨fun h => by linarith, fun h => by linarith⟩, by norm_num, by norm_num, ?_⟩
@@ -429,7 +428,7 @@ theorem primer3a (m : ℝ) : (√(180 * m / 3600) = 1.8 ↔ m = 64.8) ∧ (180 *
 /-- Primer 3 b): S₂ = 1,1 · 1,8 = 1,98; m₂ = 20 · 1,98² = 78,408 ≈ 78,4; m₂/m₁ = (S₂/S₁)² = 1,1² = 1,21, torej
 masa je večja za 21 %; kvadrat −1,8 da isto maso, √(…) pa ni −1,8.
 trditev: MAT-SS-2/iracionalne-enacbe#primer3b
-besedilo: »Druga površina: $S_2 = 1{,}1 \cdot 1{,}8 = 1{,}98\,\mathrm{m^2}$. Enako kot prej je $m_2 = 20 \cdot 1{,}98^2 = 78{,}408\,\mathrm{kg}$, kar je približno $78{,}4\,\mathrm{kg}$.« -/
+besedilo: »Druga površina: $S_2 = 1{,}1 \cdot 1{,}8 = 1{,}98\,\mathrm{m^2}$. Enako kot prej je $m_2 = 20 \cdot 1{,}98^2 = 78{,}408\,\mathrm{kg}$, kar je približno $78{,}4\,\mathrm{kg}$. 5. Razmerje mas: ker je $m = 20\,S^2$, je $\dfrac{m_2}{m_1} = \left(\dfrac{S_2}{S_1}\right)^2 = 1{,}1^2 = 1{,}21$. Masa je večja za $21\,\%$, površina le za $10\,\%$. 6. Razlaga rezultata: masa je pod korenom, zato se ob povečanju površine poveča s kvadratom faktorja. Kvadrat negativne površine $-1{,}8$ bi dal isto maso, a negativne površine ni.« -/
 theorem primer3b (m : ℝ) : (1.1:ℝ) * 1.8 = 1.98 ∧ (√(180 * m / 3600) = 1.98 ↔ m = 78.408) ∧
     (20:ℝ) * 1.98 ^ 2 = 78.408 ∧ (78.408:ℝ) / 64.8 = (1.98 / 1.8) ^ 2 ∧ ((1.98:ℝ) / 1.8) ^ 2 = 1.1 ^ 2 ∧
     (1.1:ℝ) ^ 2 = 1.21 ∧ (20:ℝ) * (-1.8) ^ 2 = 64.8 ∧ √(180 * 64.8 / 3600 : ℝ) ≠ -1.8 := by
@@ -453,7 +452,7 @@ theorem primer4 (x : ℝ) : (0 ≤ 5 - x ∧ √(5 - x) = x + 1) ↔ x = 1 := by
 
 /-- Primer 4, koraki 1–3: pogoja dasta −1 ≤ x ≤ 5, razcep (x + 4)(x − 1) = 0, √9 = 3 ≠ −3.
 trditev: MAT-SS-2/iracionalne-enacbe#primer4-koraki
-besedilo: »Pogoja: $5 - x \ge 0$ in $x + 1 \ge 0$, torej $-1 \le x \le 5$.« -/
+besedilo: »Koren je že osamljen. Pogoja: $5 - x \ge 0$ in $x + 1 \ge 0$, torej $-1 \le x \le 5$. 2. Kvadriramo: enačba $5 - x = x^2 + 2x + 1$, urejeno $x^2 + 3x - 4 = 0$. 3. Razstavimo: $(x + 4)(x - 1) = 0$. Kandidata sta $x = -4$ in $x = 1$.« -/
 theorem primer4_koraki (x : ℝ) : ((0 ≤ 5 - x ∧ 0 ≤ x + 1) ↔ (-1 ≤ x ∧ x ≤ 5)) ∧
     x ^ 2 + 3 * x - 4 = (x + 4) * (x - 1) ∧ √(5 - (-4) : ℝ) = 3 ∧ √(5 - (-4) : ℝ) ≠ -4 + 1 := by
   have h9 : √(5 - (-4) : ℝ) = 3 := by norm_num
@@ -465,7 +464,7 @@ theorem primer4_koraki (x : ℝ) : ((0 ≤ 5 - x ∧ 0 ≤ x + 1) ↔ (-1 ≤ x 
 /-- Pogoste napake: (√(x + 1) + 2)² = x + 1 + 4√(x + 1) + 4 (ne x + 1 + 4) in
 (1 + √(x + 4))² = 1 + 2√(x + 4) + x + 4.
 trditev: MAT-SS-2/iracionalne-enacbe#dvojni-zmnozek
-besedilo: »Kvadriranje po členih.** Iz $\sqrt{x + 1} + 2 = x$ učenec napiše $x + 1 + 4 = x^2$ (napačno).« -/
+besedilo: »Vsote ne kvadriraš člen za členom, ker manjka dvojni zmnožek. Najprej osami koren, $\sqrt{x + 1} = x - 2$, šele nato kvadriraj. Enako pri drugem kvadriranju: $\left(1 + \sqrt{x + 4}\right)^2$ ima člen $2\sqrt{x + 4}$.« -/
 theorem dvojni_zmnozek (x : ℝ) (h1 : 0 ≤ x + 1) (h4 : 0 ≤ x + 4) :
     (√(x + 1) + 2) ^ 2 = x + 1 + 4 * √(x + 1) + 4 ∧ (1 + √(x + 4)) ^ 2 = 1 + 2 * √(x + 4) + (x + 4) :=
   ⟨by linear_combination Real.sq_sqrt h1, by linear_combination Real.sq_sqrt h4⟩
@@ -487,7 +486,7 @@ theorem osamitev (x : ℝ) : √(x + 1) + 2 = x ↔ √(x + 1) = x - 2 := ⟨fun
 
 /-- Naloga 1: (x − 1)⁴ = 625 ⇔ x − 1 = ±∜625 = ±5 ⇔ x = 6 ali x = −4.
 trditev: MAT-SS-2/iracionalne-enacbe#matura1
-besedilo: »zato je $x - 1 = \sqrt[4]{625} = 5$ ali $x - 1 = -\sqrt[4]{625} = -5$.« -/
+besedilo: »zato je $x - 1 = \sqrt[4]{625} = 5$ ali $x - 1 = -\sqrt[4]{625} = -5$. 2. Od tod je $x = 6$ ali $x = -4$.« -/
 theorem matura1 (x : ℝ) : koren 4 625 = 5 ∧ ((x - 1) ^ 4 = 625 ↔ x - 1 = 5 ∨ x - 1 = -5) ∧
     ((x - 1) ^ 4 = 625 ↔ x = 6 ∨ x = -4) := by
   have k : koren 4 625 = 5 := koren_eq (by norm_num) (by norm_num) (by norm_num)
@@ -503,7 +502,7 @@ theorem matura1 (x : ℝ) : koren 4 625 = 5 ∧ ((x - 1) ^ 4 = 625 ↔ x - 1 = 5
 /-- Naloga 1, razstavljanje: u² − 625 = (u − 25)(u + 25), (x − 1)² − 25 = (x − 6)(x + 4),
 (x − 1)⁴ − 625 = (x − 6)(x + 4)((x − 1)² + 25), (x − 1)² + 25 ≥ 25 ni nikoli nič.
 trditev: MAT-SS-2/iracionalne-enacbe#matura1-razstavljanje
-besedilo: »Z oznako $u = (x - 1)^2$ je $u^2 - 625 = (u - 25)(u + 25)$, prvi faktor pa je spet razlika kvadratov: $(x - 1)^2 - 25 = (x - 6)(x + 4)$.« -/
+besedilo: »Z oznako $u = (x - 1)^2$ je $u^2 - 625 = (u - 25)(u + 25)$, prvi faktor pa je spet razlika kvadratov: $(x - 1)^2 - 25 = (x - 6)(x + 4)$. Zato je $(x - 1)^4 - 625 = (x - 6)(x + 4)\left((x - 1)^2 + 25\right)$. Faktor $(x - 1)^2 + 25 \ge 25$ ni nikoli nič« -/
 theorem matura1_razstavljanje (x u : ℝ) : u ^ 2 - 625 = (u - 25) * (u + 25) ∧ (x - 1) ^ 2 - 25 = (x - 6) * (x + 4) ∧
     (x - 1) ^ 4 - 625 = (x - 6) * (x + 4) * ((x - 1) ^ 2 + 25) ∧ 25 ≤ (x - 1) ^ 2 + 25 ∧
     ((x - 1) ^ 2 - 25) * ((x - 1) ^ 2 + 25) = (x - 1) ^ 4 - 625 :=
@@ -512,7 +511,7 @@ theorem matura1_razstavljanje (x u : ℝ) : u ^ 2 - 625 = (u - 25) * (u + 25) �
 /-- Naloga 2 a): kubiranje je ekvivalentno (a³ = b³ ⇔ a = b); ∛(x² − 9) = −2 ⇔ x² − 9 = (−2)³ = −8 ⇔ x² = 1 ⇔
 x = ±1; preizkus ∛(−8) = −2.
 trditev: MAT-SS-2/iracionalne-enacbe#matura2a
-besedilo: »a) Kubični koren obstaja za vsako realno število, kubiranje pa je ekvivalentno preoblikovanje, ker iz $a^3 = b^3$ sledi $a = b$. Kubiramo: $x^2 - 9 = (-2)^3 = -8$.« -/
+besedilo: »Kubični koren obstaja za vsako realno število, kubiranje pa je ekvivalentno preoblikovanje, ker iz $a^3 = b^3$ sledi $a = b$. Kubiramo: $x^2 - 9 = (-2)^3 = -8$. 2. a) Od tod je $x^2 = 1$, torej $x = 1$ ali $x = -1$. 3. a) Preizkus: pri obeh je $x^2 - 9 = -8$ in $\sqrt[3]{-8} = -2$. Obe števili sta rešitvi.« -/
 theorem matura2a (x : ℝ) : (∀ a b : ℝ, a ^ 3 = b ^ 3 ↔ a = b) ∧
     (koren 3 (x ^ 2 - 9) = -2 ↔ x ^ 2 - 9 = (-2) ^ 3) ∧ ((-2:ℝ) ^ 3 = -8) ∧
     (koren 3 (x ^ 2 - 9) = -2 ↔ x = 1 ∨ x = -1) ∧ koren 3 (-8) = -2 := by
@@ -541,7 +540,7 @@ theorem matura2b (x : ℝ) : ¬ (√(x ^ 2 - 9) = -2) ∧ (x ^ 2 - 9 = 4 ↔ x =
 /-- Naloga 2 c): pogoja x² − 9 ≥ 0 in x − 1 ≥ 0 dasta x ≥ 3; √(x² − 9) = x − 1 ⇔ x = 5
 (x² − 9 = x² − 2x + 1, 2x = 10; preizkus √16 = 4 = 5 − 1).
 trditev: MAT-SS-2/iracionalne-enacbe#matura2c
-besedilo: »c) Kvadriramo: $x^2 - 9 = x^2 - 2x + 1$, torej $2x = 10$ in $x = 5$. Število $5$ izpolni pogoj; preizkus: $\sqrt{25 - 9} = \sqrt{16} = 4 = 5 - 1$.« -/
+besedilo: »Pogoja: $x^2 - 9 \ge 0$ in $x - 1 \ge 0$; skupaj velja $x \ge 3$. 6. c) Kvadriramo: $x^2 - 9 = x^2 - 2x + 1$, torej $2x = 10$ in $x = 5$. Število $5$ izpolni pogoj; preizkus: $\sqrt{25 - 9} = \sqrt{16} = 4 = 5 - 1$.« -/
 theorem matura2c (x : ℝ) : ((0 ≤ x ^ 2 - 9 ∧ 0 ≤ x - 1) ↔ 3 ≤ x) ∧
     ((0 ≤ x ^ 2 - 9 ∧ √(x ^ 2 - 9) = x - 1) ↔ x = 5) := by
   refine ⟨⟨fun ⟨h1, h2⟩ => by nlinarith, fun h => ⟨by nlinarith, by linarith⟩⟩, ⟨?_, ?_⟩⟩
@@ -553,7 +552,7 @@ theorem matura2c (x : ℝ) : ((0 ≤ x ^ 2 - 9 ∧ 0 ≤ x - 1) ↔ 3 ≤ x) ∧
 
 /-- Naloga 3 a): D_f = [−5, ∞), D_g = [2, ∞), presek [2, ∞).
 trditev: MAT-SS-2/iracionalne-enacbe#matura3a
-besedilo: »a) Korenjenca morata biti nenegativna: $x + 5 \ge 0$ da $D_f = [-5, \infty)$, $x - 2 \ge 0$ da $D_g = [2, \infty)$.« -/
+besedilo: »Korenjenca morata biti nenegativna: $x + 5 \ge 0$ da $D_f = [-5, \infty)$, $x - 2 \ge 0$ da $D_g = [2, \infty)$. 2. a) Obe funkciji sta definirani na preseku $[2, \infty)$.« -/
 theorem matura3a : {x : ℝ | 0 ≤ x + 5} = Set.Ici (-5) ∧ {x : ℝ | 0 ≤ x - 2} = Set.Ici 2 ∧
     Set.Ici (-5 : ℝ) ∩ Set.Ici 2 = Set.Ici 2 := by
   refine ⟨?_, ?_, ?_⟩
@@ -581,7 +580,7 @@ theorem matura3b (x : ℝ) : ((2 ≤ x ∧ √(x + 5) = 1 + √(x - 2)) ↔ x = 
 /-- Naloga 3 c): pogoj x ≥ 1; x + 5 = x² − 2x + 1, x² − 3x − 4 = (x − 4)(x + 1) = 0; √(x + 5) = x − 1 ⇔ x = 4
 (√9 = 3 = 4 − 1, presečišče (4, 3)); kandidat −1 je presečišče premice s krivuljo y = −√(x + 5) (−√4 = −2).
 trditev: MAT-SS-2/iracionalne-enacbe#matura3c
-besedilo: »c) Kandidat $-1$ ne izpolni pogoja $x \ge 1$: pri njem je $\sqrt{4} = 2$, desna stran pa $-2$. To je presečišče premice s krivuljo $y = -\sqrt{x + 5}$, zato je navidezna rešitev. Za $x = 4$ je $\sqrt{9} = 3 = 4 - 1$.« -/
+besedilo: »Kvadriramo: $x + 5 = x^2 - 2x + 1$, urejeno $x^2 - 3x - 4 = 0$, razstavljeno $(x - 4)(x + 1) = 0$. Kandidata sta $x = 4$ in $x = -1$. 9. c) Kandidat $-1$ ne izpolni pogoja $x \ge 1$: pri njem je $\sqrt{4} = 2$, desna stran pa $-2$. To je presečišče premice s krivuljo $y = -\sqrt{x + 5}$, zato je navidezna rešitev. Za $x = 4$ je $\sqrt{9} = 3 = 4 - 1$.« -/
 theorem matura3c (x : ℝ) : ((0 ≤ x + 5 ∧ √(x + 5) = x - 1) ↔ x = 4) ∧ x ^ 2 - 3 * x - 4 = (x - 4) * (x + 1) ∧
     -√((-1:ℝ) + 5) = -1 - 1 ∧ √((4:ℝ) + 5) = 4 - 1 := by
   refine ⟨⟨?_, ?_⟩, by ring, by norm_num, by norm_num⟩
@@ -596,7 +595,7 @@ theorem matura3c (x : ℝ) : ((0 ≤ x + 5 ∧ √(x + 5) = x - 1) ↔ x = 4) �
 /-- Ustno vprašanje 1: enačba A = B², dobljena iz √A = B, reši tudi −√A = B (glej `kvadriranje_obe_krivulji`);
 navidezne rešitve izloči pogoj B ≥ 0 (glej `kor_eq`).
 trditev: MAT-SS-2/iracionalne-enacbe#ustno1
-besedilo: »Navidezne rešitve izločimo s pogojem $B \ge 0$ ali s preizkusom v prvotni enačbi.« -/
+besedilo: »Enačba $A = B^2$, ki jo dobimo iz $\sqrt{A} = B$, reši tudi enačbo $-\sqrt{A} = B$, zato so njene rešitve le kandidati. Navidezne rešitve izločimo s pogojem $B \ge 0$ ali s preizkusom v prvotni enačbi.« -/
 theorem ustno1 {A B : ℝ} (hA : 0 ≤ A) : (√A = B → A = B ^ 2) ∧ (-√A = B → A = B ^ 2) ∧ (√A = B ↔ A = B ^ 2 ∧ 0 ≤ B) := by
   refine ⟨fun h => ((kor_eq hA).mp h).1, fun h => ?_, kor_eq hA⟩
   rw [← h, neg_sq, Real.sq_sqrt hA]
@@ -613,7 +612,7 @@ example :=
 ki ga preizkus izloči (√1 = 1 ≠ −1); pogoj korena 2x + 1 ≥ 0 je x ≥ −1/2, pogoj desne strani −x − 1 ≥ 0 je
 x ≤ −1, in pogoja se izključujeta.
 trditev: MAT-SS-2/iracionalne-enacbe#ustno2
-besedilo: »Že pogoja $2x + 1 \ge 0$ in $-x - 1 \ge 0$ zahtevata $x \ge -\frac{1}{2}$ in $x \le -1$, kar se izključuje, zato enačba nima rešitve.« -/
+besedilo: »Primer je enačba $\sqrt{2x + 1} = -x - 1$. Po kvadriranju dobimo $2x + 1 = x^2 + 2x + 1$, torej $x^2 = 0$ in kandidata $x = 0$. Preizkus da na levi strani $\sqrt{1} = 1$, na desni pa $-1$, zato $0$ ni rešitev. Že pogoja $2x + 1 \ge 0$ in $-x - 1 \ge 0$ zahtevata $x \ge -\frac{1}{2}$ in $x \le -1$, kar se izključuje, zato enačba nima rešitve.« -/
 theorem ustno2 : (¬ ∃ x : ℝ, 0 ≤ 2 * x + 1 ∧ √(2 * x + 1) = -x - 1) ∧
     (∀ x : ℝ, 2 * x + 1 = (-x - 1) ^ 2 ↔ x = 0) ∧ √(2 * 0 + 1 : ℝ) ≠ -0 - 1 ∧
     (∀ x : ℝ, 0 ≤ 2 * x + 1 ↔ -1 / 2 ≤ x) ∧ (∀ x : ℝ, 0 ≤ -x - 1 ↔ x ≤ -1) ∧
@@ -629,7 +628,7 @@ theorem ustno2 : (¬ ∃ x : ℝ, 0 ≤ 2 * x + 1 ∧ √(2 * x + 1) = -x - 1) �
 /-- Ustno vprašanje 3: x⁴ − 81 = (x² − 9)(x² + 9) = (x − 3)(x + 3)(x² + 9), x² + 9 ni nikoli nič; x⁴ = 81 ⇔
 x = ±∜81 = ±3.
 trditev: MAT-SS-2/iracionalne-enacbe#ustno3
-besedilo: »$x^4 - 81 = (x^2 - 9)(x^2 + 9) = (x - 3)(x + 3)(x^2 + 9)$« -/
+besedilo: »$x^4 - 81 = (x^2 - 9)(x^2 + 9) = (x - 3)(x + 3)(x^2 + 9)$. Faktor $x^2 + 9$ ni nikoli nič, zato sta rešitvi $3$ in $-3$, enako kot s korenjenjem $x = \pm\sqrt[4]{81}$.« -/
 theorem ustno3 (x : ℝ) : x ^ 4 - 81 = (x ^ 2 - 9) * (x ^ 2 + 9) ∧ (x ^ 2 - 9) * (x ^ 2 + 9) = (x - 3) * (x + 3) * (x ^ 2 + 9) ∧
     x ^ 2 + 9 ≠ 0 ∧ koren 4 81 = 3 ∧ (x ^ 4 = 81 ↔ x = 3 ∨ x = -3) := by
   have k : koren 4 81 = 3 := koren_eq (by norm_num) (by norm_num) (by norm_num)
@@ -641,7 +640,7 @@ theorem ustno3 (x : ℝ) : x ^ 4 - 81 = (x ^ 2 - 9) * (x ^ 2 + 9) ∧ (x ^ 2 - 9
 /-- Bolj natančno: x³ je naraščajoča, zato iz a³ = b³ sledi a = b; ∛(x − 1) = −2 ⇔ x − 1 = −8 ⇔ x = −7;
 preizkus ∛(−8) = −2.
 trditev: MAT-SS-2/iracionalne-enacbe#bolj-natancno-kub
-besedilo: »Primer: enačba $\sqrt[3]{x - 1} = -2$ po kubiranju da $x - 1 = -8$, torej $x = -7$.« -/
+besedilo: »Funkcija $x \mapsto x^3$ je naraščajoča, zato iz $a^3 = b^3$ sledi $a = b$. Kubiranje *je* ekvivalentno preoblikovanje in navideznih rešitev ne prinese. Primer: enačba $\sqrt[3]{x - 1} = -2$ po kubiranju da $x - 1 = -8$, torej $x = -7$. Preizkus: $\sqrt[3]{-8} = -2$.« -/
 theorem bolj_natancno_kub (x : ℝ) : StrictMono (fun a : ℝ => a ^ 3) ∧ (koren 3 (x - 1) = -2 ↔ x = -7) ∧
     koren 3 (-8) = -2 := by
   have h3 : Odd 3 := ⟨1, rfl⟩
@@ -705,8 +704,7 @@ theorem preveri5 (m : ℝ) : (√(160 * m / 3600) = 1.6 ↔ m = 57.6) ∧ (1.6:�
 x − 1 = (−2)³ ⇔ x = −7; x² − 9 = (−2)³ ⇔ x = ±1; x² − 3x − 4 = 0 ⇔ x ∈ {−1, 4};
 (x − 3)(x + 3)(x² + 9) = x⁴ − 81. Ostale vrstice RACUN: x⁴ = 81 ⇔ x = ±3 je v `ustno3`,
 ((x − 1)² − 25)((x − 1)² + 25) = (x − 1)⁴ − 625 in (x − 6)(x + 4) = (x − 1)² − 25 sta v `matura1_razstavljanje`.
-trditev: MAT-SS-2/iracionalne-enacbe#racun
-besedilo: »c) Kvadriramo: $x + 5 = x^2 - 2x + 1$, urejeno $x^2 - 3x - 4 = 0$, razstavljeno $(x - 4)(x + 1) = 0$. Kandidata sta $x = 4$ in $x = -1$.« -/
+pomozno -/
 theorem racun (x : ℝ) : (x ^ 2 - x - 6 = 0 ↔ x = -2 ∨ x = 3) ∧ ((0 ≤ x + 4 ∧ x - 2 = √(x + 4)) ↔ x = 5) ∧
     (1.1:ℝ) ^ 2 = 1.21 ∧ (x - 2) * (x ^ 2 + 2 * x + 4) = x ^ 3 - 8 ∧ (x - 1 = (-2) ^ 3 ↔ x = -7) ∧
     (x ^ 2 - 9 = (-2) ^ 3 ↔ x = -1 ∨ x = 1) ∧ (x ^ 2 - 3 * x - 4 = 0 ↔ x = -1 ∨ x = 4) ∧

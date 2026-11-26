@@ -178,7 +178,7 @@ theorem iz_arccos {y c : ℝ} (h : arccos y = c) (h0 : 0 < c) (h1 : c < π) : y 
 /-- Razlaga 1 in Pogoste napake: arcsin 0,5 = π/6 ≈ 0,5236 (kot, katerega sinus je 0,5), ulomek pa dá
 1/sin(π/6) = 2 ≠ π/6.
 trditev: MAT-SS-3/krozne-funkcije#razlaga1
-besedilo: »Tipka $\sin^{-1}$ pri vrednosti $0{,}5$ vrne $0{,}5236$, kar je $\frac{\pi}{6}$: kot, katerega sinus je $0{,}5$.« -/
+besedilo: »Tipka $\sin^{-1}$ pri vrednosti $0{,}5$ vrne $0{,}5236$, kar je $\frac{\pi}{6}$: kot, katerega sinus je $0{,}5$. Ulomek bi pri tem kotu dal nekaj povsem drugega, $\frac{1}{\sin\frac{\pi}{6}} = 2$.« -/
 theorem razlaga1 : arcsin 0.5 = π / 6 ∧ (0.52355 : ℝ) < π / 6 ∧ π / 6 < 0.52365 ∧ 1 / sin (π / 6) = 2 ∧
     1 / sin (π / 6) ≠ π / 6 := by
   have p1 := pi_gt_d6; have p2 := pi_lt_d6
@@ -191,7 +191,7 @@ theorem razlaga1 : arcsin 0.5 = π / 6 ∧ (0.52355 : ℝ) < π / 6 ∧ π / 6 <
 /-- Razlaga 2: premica y = 1/2 seka sinus v neskončno mnogo točkah: sin(π/6 + 2kπ) = 1/2 za vsak celi k
 (med njimi π/6, 13π/6) in sin(5π/6) = 1/2.
 trditev: MAT-SS-3/krozne-funkcije#razlaga2
-besedilo: »Druga napaka: en sinus, en kot.** Premica $y = \frac12$ seka graf sinusa v neskončno mnogo točkah: pri $\frac{\pi}{6}$, $\frac{5\pi}{6}$, $\frac{13\pi}{6}$ in tako naprej.« -/
+besedilo: »Premica $y = \frac12$ seka graf sinusa v neskončno mnogo točkah: pri $\frac{\pi}{6}$, $\frac{5\pi}{6}$, $\frac{13\pi}{6}$ in tako naprej.« -/
 theorem razlaga2 : (∀ k : ℤ, sin (π / 6 + 2 * k * π) = 1 / 2) ∧ sin (5 * π / 6) = 1 / 2 ∧
     sin (13 * π / 6) = 1 / 2 := by
   have a : ∀ k : ℤ, sin (π / 6 + 2 * k * π) = 1 / 2 := fun k => by
@@ -214,7 +214,7 @@ theorem sinus_zozen : StrictMonoOn sin (Icc (-(π / 2)) (π / 2)) ∧
 prvo); sin x = −1/2 ima na [0, 2π) rešitvi 7π/6 in 11π/6, nobena ni v [−π/2, π/2]; arcsin(−1/2) = −π/6 =
 11π/6 − 2π.
 trditev: MAT-SS-3/krozne-funkcije#simulacija
-besedilo: »Na $[0, 2\pi)$ dobiš dve rešitvi, $\frac{\pi}{6}$ in $\frac{5\pi}{6}$; v zoženem intervalu leži le prva.« -/
+besedilo: »Na $[0, 2\pi)$ dobiš dve rešitvi, $\frac{\pi}{6}$ in $\frac{5\pi}{6}$; v zoženem intervalu leži le prva. Nato nastavi $a = -0{,}5$. Opazi, da nobena prikazana rešitev ni med $-\frac{\pi}{2}$ in $\frac{\pi}{2}$: arkus sinus vrne $-\frac{\pi}{6}$, kar je kot $\frac{11\pi}{6}$, zmanjšan za $2\pi$.« -/
 theorem simulacija (x : ℝ) (h0 : 0 ≤ x) (h1 : x < 2 * π) :
     (sin x = 1 / 2 ↔ x = π / 6 ∨ x = 5 * π / 6) ∧ (sin x = -(1 / 2) ↔ x = 7 * π / 6 ∨ x = 11 * π / 6) ∧
     π / 2 < 7 * π / 6 ∧ π / 2 < 11 * π / 6 ∧ arcsin (-(1 / 2)) = -(π / 6) ∧ -(π / 6) = 11 * π / 6 - 2 * π := by
@@ -274,7 +274,7 @@ example :=
 
 /-- Razlaga 3: arcsin(1/2) = π/6, ker je sin(π/6) = 1/2 in π/6 ∈ [−π/2, π/2].
 trditev: MAT-SS-3/krozne-funkcije#arcsin-pol
-besedilo: »3. Arkus sinus.** $\arcsin x$ je tisti kot $y$ z intervala $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$, za katerega je $\sin y = x$. Primer: $\arcsin\frac12 = \frac{\pi}{6}$, ker je $\sin\frac{\pi}{6} = \frac12$ in $\frac{\pi}{6}$ leži v intervalu.« -/
+besedilo: »Primer: $\arcsin\frac12 = \frac{\pi}{6}$, ker je $\sin\frac{\pi}{6} = \frac12$ in $\frac{\pi}{6}$ leži v intervalu.« -/
 theorem arcsin_pol : arcsin (1 / 2) = π / 6 := by
   have hp := pi_pos
   rw [← sin_pi_div_six, arcsin_sin (by linarith) (by linarith)]
@@ -282,7 +282,7 @@ theorem arcsin_pol : arcsin (1 / 2) = π / 6 := by
 /-- Razlaga 3, 6 in Povzetek (lastnosti arkus sinusa): D = [−1, 1] (za |x| > 1 sin y = x nima rešitve),
 Z = [−π/2, π/2] (vsak kot z Z je arcsin svojega sinusa), arcsin narašča in je lih, arcsin(−1/2) = −π/6.
 trditev: MAT-SS-3/krozne-funkcije#lastnosti-arcsin
-besedilo: »3. Arkus sinus.** $\arcsin x$ je tisti kot $y$ z intervala $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$, za katerega je $\sin y = x$. Primer: $\arcsin\frac12 = \frac{\pi}{6}$, ker je $\sin\frac{\pi}{6} = \frac12$ in $\frac{\pi}{6}$ leži v intervalu.« -/
+besedilo: »**Definicijsko območje** je $[-1, 1]$, ker sinus drugih vrednosti nima. **Zaloga vrednosti** je $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$. Funkcija narašča in je liha: $\arcsin(-x) = -\arcsin x$ za $-1 \le x \le 1$. Zato je $\arcsin\left(-\frac12\right) = -\frac{\pi}{6}$.« -/
 theorem lastnosti_arcsin :
     (∀ x y : ℝ, 1 < |x| → sin y ≠ x) ∧ (∀ x ∈ Icc (-1 : ℝ) 1, arcsin x ∈ Icc (-(π / 2)) (π / 2)) ∧
     (∀ y ∈ Icc (-(π / 2)) (π / 2), ∃ x ∈ Icc (-1 : ℝ) 1, arcsin x = y) ∧
@@ -294,7 +294,7 @@ theorem lastnosti_arcsin :
 
 /-- Razlaga 3, Premisli: na [0, π] sinus ni injektiven (sin(π/6) = sin(5π/6)) in nima negativnih vrednosti.
 trditev: MAT-SS-3/krozne-funkcije#premisli-0-pi
-besedilo: »Na $[0, \pi]$ sinus vsako vrednost med $0$ in $1$ doseže dvakrat, na primer $\sin\frac{\pi}{6} = \sin\frac{5\pi}{6}$. Negativnih vrednosti tam sploh nima. Obratna funkcija ne bi bila enolična in ne bi bila definirana za negativna števila.« -/
+besedilo: »Na $[0, \pi]$ sinus vsako vrednost med $0$ in $1$ doseže dvakrat, na primer $\sin\frac{\pi}{6} = \sin\frac{5\pi}{6}$. Negativnih vrednosti tam sploh nima.« -/
 theorem premisli_0_pi : sin (π / 6) = sin (5 * π / 6) ∧ π / 6 ≠ 5 * π / 6 ∧
     ∀ x ∈ Icc 0 π, 0 ≤ sin x := by
   have hp := pi_pos
@@ -304,7 +304,7 @@ theorem premisli_0_pi : sin (π / 6) = sin (5 * π / 6) ∧ π / 6 ≠ 5 * π / 
 /-- Razlaga 4: cos(−π/3) = cos(π/3), zato [−π/2, π/2] za kosinus ne deluje; na [0, π] kosinus pada, arccos x je
 edini kot z [0, π] s kosinusom x.
 trditev: MAT-SS-3/krozne-funkcije#kosinus-zozen
-besedilo: »Arkus kosinus.** Pri kosinusu interval $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$ ne deluje, ker je $\cos\left(-\frac{\pi}{3}\right) = \cos\frac{\pi}{3}$.« -/
+besedilo: »Pri kosinusu interval $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$ ne deluje, ker je $\cos\left(-\frac{\pi}{3}\right) = \cos\frac{\pi}{3}$. Vzamemo $[0, \pi]$, kjer kosinus pada od $1$ do $-1$. $\arccos x$ je kot z intervala $[0, \pi]$, katerega kosinus je $x$.« -/
 theorem kosinus_zozen : cos (-(π / 3)) = cos (π / 3) ∧ StrictAntiOn cos (Icc 0 π) ∧
     ∀ x ∈ Icc (-1 : ℝ) 1, arccos x ∈ Icc 0 π ∧ cos (arccos x) = x ∧
       ∀ y ∈ Icc 0 π, cos y = x → y = arccos x := by
@@ -315,7 +315,7 @@ theorem kosinus_zozen : cos (-(π / 3)) = cos (π / 3) ∧ StrictAntiOn cos (Icc
 /-- Razlaga 4, 6, Povzetek in Ustno vprašanje 2 (lastnosti arkus kosinusa): Z = [0, π], arccos pada, ni ne
 sod ne lih (arccos(−1/2) = 2π/3 ni ne arccos(1/2) = π/3 ne −π/3), arccos(−x) = π − arccos x.
 trditev: MAT-SS-3/krozne-funkcije#lastnosti-arccos
-besedilo: »Velja zveza $\arccos(-x) = \pi - \arccos x$ za $-1 \le x \le 1$.« -/
+besedilo: »Definicijsko območje je $[-1, 1]$, zaloga vrednosti $[0, \pi]$. Funkcija pada in ni ne soda ne liha. Rezultat ni nikoli negativen: $\arccos\left(-\frac12\right) = \frac{2\pi}{3}$, ne $-\frac{\pi}{3}$. Velja zveza $\arccos(-x) = \pi - \arccos x$ za $-1 \le x \le 1$.« -/
 theorem lastnosti_arccos :
     (∀ x ∈ Icc (-1 : ℝ) 1, arccos x ∈ Icc 0 π) ∧ (∀ y ∈ Icc 0 π, ∃ x ∈ Icc (-1 : ℝ) 1, arccos x = y) ∧
     StrictAntiOn arccos (Icc (-1) 1) ∧ arccos (-(1 / 2)) = 2 * π / 3 ∧ arccos (1 / 2) = π / 3 ∧
@@ -350,7 +350,7 @@ example :=
 /-- Razlaga 5, 6 in Povzetek (arkus tangens): D = ℝ, Z = (−π/2, π/2), tan(arctan x) = x, arctan y je edini kot
 z (−π/2, π/2) s tangensom tan y, narašča, je lih; arctan 1 = π/4, arctan(−√3) = −π/3.
 trditev: MAT-SS-3/krozne-funkcije#lastnosti-arctan
-besedilo: »Na primer $\arctan 1 = \frac{\pi}{4}$ in $\arctan(-\sqrt3) = -\frac{\pi}{3}$.« -/
+besedilo: »Tangens na odprtem intervalu $\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)$ narašča in zavzame vsa realna števila. $\arctan x$ je kot s tega intervala, katerega tangens je $x$. Definicijsko območje je $\mathbb{R}$, zaloga vrednosti $\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)$. Funkcija narašča in je liha. Na primer $\arctan 1 = \frac{\pi}{4}$ in $\arctan(-\sqrt3) = -\frac{\pi}{3}$.« -/
 theorem lastnosti_arctan :
     (∀ x, arctan x ∈ Ioo (-(π / 2)) (π / 2)) ∧ (∀ x, tan (arctan x) = x) ∧
     (∀ y ∈ Ioo (-(π / 2)) (π / 2), arctan (tan y) = y) ∧ StrictMono arctan ∧
@@ -363,7 +363,7 @@ theorem lastnosti_arctan :
 /-- Razlaga 5, Premisli in Povzetek: arkus tangens ima vodoravni asimptoti y = π/2 (x → ∞) in y = −π/2
 (x → −∞), ki ju ne doseže.
 trditev: MAT-SS-3/krozne-funkcije#asimptoti
-besedilo: »Tangens ima navpični asimptoti $x = -\frac{\pi}{2}$ in $x = \frac{\pi}{2}$.« -/
+besedilo: »Vodoravni, $y = -\frac{\pi}{2}$ in $y = \frac{\pi}{2}$. Zrcaljenje čez $y = x$ navpično premico spremeni v vodoravno. Graf se jima približuje, doseže pa ju ne, ker $\tan\frac{\pi}{2}$ ne obstaja.« -/
 theorem asimptoti : Tendsto arctan atTop (𝓝 (π / 2)) ∧ Tendsto arctan atBot (𝓝 (-(π / 2))) ∧
     ∀ x, -(π / 2) < arctan x ∧ arctan x < π / 2 :=
   ⟨tendsto_nhds_of_tendsto_nhdsWithin tendsto_arctan_atTop,
@@ -371,7 +371,7 @@ theorem asimptoti : Tendsto arctan atTop (𝓝 (π / 2)) ∧ Tendsto arctan atBo
 
 /-- Razlaga 7 in Povzetek: sin(arcsin x) = x za −1 ≤ x ≤ 1; arcsin(sin x) = x natanko za x ∈ [−π/2, π/2].
 trditev: MAT-SS-3/krozne-funkcije#sestavljanje
-besedilo: »$$\sin(\arcsin x) = x \quad \text{za } -1 \le x \le 1$$« -/
+besedilo: »$\sin(\arcsin x) = x$ za vse $x \in [-1, 1]$. - $\arcsin(\sin x) = x$ samo za $x \in \left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$.« -/
 theorem sestavljanje : (∀ x ∈ Icc (-1 : ℝ) 1, sin (arcsin x) = x) ∧
     ∀ x : ℝ, arcsin (sin x) = x ↔ x ∈ Icc (-(π / 2)) (π / 2) :=
   ⟨fun _ hx => sin_arcsin hx.1 hx.2, fun _ => ⟨fun h => h ▸ arcsin_mem_Icc _, fun h => arcsin_sin h.1 h.2⟩⟩
@@ -379,7 +379,7 @@ theorem sestavljanje : (∀ x ∈ Icc (-1 : ℝ) 1, sin (arcsin x) = x) ∧
 /-- Razlaga 7: arcsin(sin(5π/6)) = arcsin(1/2) = π/6, arctan(tan(3π/4)) = arctan(−1) = −π/4,
 arccos(cos(−π/3)) = π/3.
 trditev: MAT-SS-3/krozne-funkcije#past
-besedilo: »Podobno velja $\arctan\left(\tan\frac{3\pi}{4}\right) = \arctan(-1) = -\frac{\pi}{4}$ in $\arccos\left(\cos\left(-\frac{\pi}{3}\right)\right) = \frac{\pi}{3}$.« -/
+besedilo: »Iz $\sin\frac{5\pi}{6} = \frac12$ sledi $\arcsin\left(\sin\frac{5\pi}{6}\right) = \arcsin\frac12 = \frac{\pi}{6}$. Podobno velja $\arctan\left(\tan\frac{3\pi}{4}\right) = \arctan(-1) = -\frac{\pi}{4}$ in $\arccos\left(\cos\left(-\frac{\pi}{3}\right)\right) = \frac{\pi}{3}$.« -/
 theorem past : arcsin (sin (5 * π / 6)) = arcsin (1 / 2) ∧ arcsin (1 / 2) = π / 6 ∧
     tan (3 * π / 4) = -1 ∧ arctan (tan (3 * π / 4)) = -(π / 4) ∧ arccos (cos (-(π / 3))) = π / 3 := by
   have hp := pi_pos
@@ -407,7 +407,7 @@ theorem resitve_sin (a x : ℝ) (h0 : -1 ≤ a) (h1 : a ≤ 1) :
 
 /-- Razlaga 8: za −1 ≤ a ≤ 1 so rešitve cos x = a natanko x = ±arccos a + 2kπ.
 trditev: MAT-SS-3/krozne-funkcije#resitve-cos
-besedilo: »Pri kosinusu je $x = \pm\arccos a + 2k\pi$, pri tangensu $x = \arctan a + k\pi$.« -/
+besedilo: »Pri kosinusu je $x = \pm\arccos a + 2k\pi$« -/
 theorem resitve_cos (a x : ℝ) (h0 : -1 ≤ a) (h1 : a ≤ 1) :
     cos x = a ↔ ∃ k : ℤ, x = arccos a + 2 * k * π ∨ x = -arccos a + 2 * k * π := by
   conv_lhs => rw [← cos_arccos h0 h1, eq_comm]
@@ -470,7 +470,7 @@ theorem resitve_tan (a x : ℝ) : (cos x ≠ 0 ∧ tan x = a) ↔ ∃ k : ℤ, x
 /-- Primer 1: arcsin(√3/2) = π/3 (sin(π/3) = √3/2, π/3 ∈ [−π/2, π/2]); cos(3π/4) = −√2/2 in 3π/4 ∈ [0, π],
 zato arccos(−√2/2) = 3π/4; arctan(−1) = −arctan 1 = −π/4.
 trditev: MAT-SS-3/krozne-funkcije#primer1
-besedilo: »Velja $\cos\frac{\pi}{4} = \frac{\sqrt2}{2}$. Negativen kosinus ima kot v drugem kvadrantu: $\cos\frac{3\pi}{4} = -\frac{\sqrt2}{2}$. Ker $\frac{3\pi}{4}$ leži v $[0, \pi]$, je $\arccos\left(-\frac{\sqrt2}{2}\right) = \frac{3\pi}{4}$.« -/
+besedilo: »Velja $\sin\frac{\pi}{3} = \frac{\sqrt3}{2}$ in $\frac{\pi}{3}$ leži v $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$, zato je $\arcsin\frac{\sqrt3}{2} = \frac{\pi}{3}$. 2. Velja $\cos\frac{\pi}{4} = \frac{\sqrt2}{2}$. Negativen kosinus ima kot v drugem kvadrantu: $\cos\frac{3\pi}{4} = -\frac{\sqrt2}{2}$. Ker $\frac{3\pi}{4}$ leži v $[0, \pi]$, je $\arccos\left(-\frac{\sqrt2}{2}\right) = \frac{3\pi}{4}$. 3. Arkus tangens je lih, zato je $\arctan(-1) = -\arctan 1 = -\frac{\pi}{4}$.« -/
 theorem primer1 : sin (π / 3) = √3 / 2 ∧ arcsin (√3 / 2) = π / 3 ∧ cos (3 * π / 4) = -(√2 / 2) ∧
     arccos (-(√2 / 2)) = 3 * π / 4 ∧ arctan (-1) = -arctan 1 ∧ -arctan 1 = -(π / 4) := by
   have hp := pi_pos
@@ -483,7 +483,7 @@ theorem primer1 : sin (π / 3) = √3 / 2 ∧ arcsin (√3 / 2) = π / 3 ∧ cos
 f(x) ∈ [−π, π] in vsako vrednost z [−π, π] f doseže (Z_f = [−π, π]); f(x) = 0 ⇔ x = 1 (RACUN, za vsak x);
 f(3/2) = 2·π/6 = π/3; f narašča na [0, 2], f(0) = −π, f(2) = π.
 trditev: MAT-SS-3/krozne-funkcije#primer2
-besedilo: »Odgovor: $D_f = [0, 2]$, $Z_f = [-\pi, \pi]$, ničla je $x = 1$ in $f\left(\frac32\right) = \frac{\pi}{3}$.« -/
+besedilo: »Argument mora biti med $-1$ in $1$: iz $-1 \le x - 1 \le 1$ sledi $0 \le x \le 2$. Torej $D_f = [0, 2]$; graf arkus sinusa se premakne za $1$ v desno. 2. Faktor $2$ podvoji vse vrednosti: $Z_f = [-\pi, \pi]$. 3. Ničla: $\arcsin(x - 1) = 0$ velja pri $x - 1 = 0$, torej pri $x = 1$. 4. $f\left(\frac32\right) = 2\arcsin\frac12 = 2 \cdot \frac{\pi}{6} = \frac{\pi}{3}$. 5. Funkcija narašča, ker raztezek s pozitivnim faktorjem potek ohrani. Krajišči grafa sta $(0, -\pi)$ in $(2, \pi)$.« -/
 theorem primer2 :
     (∀ x : ℝ, (-1 ≤ x - 1 ∧ x - 1 ≤ 1) ↔ (0 ≤ x ∧ x ≤ 2)) ∧
     (∀ x ∈ Icc (0 : ℝ) 2, 2 * arcsin (x - 1) ∈ Icc (-π) π) ∧
@@ -510,7 +510,7 @@ theorem primer2 :
 /-- Primer 3 (enačba): za A ≠ 0 je A/2 = A sin(2π·250·t) ⇔ sin(500πt) = 1/2; RACUN: 500πt = π/6 ⇔
 t = 1/3000 in 500πt = 5π/6 ⇔ t = 1/600 (π − π/6 = 5π/6).
 trditev: MAT-SS-3/krozne-funkcije#primer3-enacba
-besedilo: »Dobimo jo iz $\pi - \frac{\pi}{6} = \frac{5\pi}{6}$: $500\pi t_2 = \frac{5\pi}{6}$, torej $t_2 = \frac{1}{600}\,\mathrm{s} \approx 1{,}67\,\mathrm{ms}$.« -/
+besedilo: »Enačbo $\frac{A}{2} = A\sin(2\pi f t)$ delimo z $A$: $\sin(500\pi t) = \frac12$, ker je $2\pi \cdot 250 = 500\pi$. 2. Arkus sinus da prvo rešitev: $500\pi t_1 = \frac{\pi}{6}$, torej $t_1 = \frac{1}{3000}\,\mathrm{s} \approx 0{,}333\,\mathrm{ms}$. 3. Arkus sinus druge rešitve ne pokaže. Dobimo jo iz $\pi - \frac{\pi}{6} = \frac{5\pi}{6}$: $500\pi t_2 = \frac{5\pi}{6}$, torej $t_2 = \frac{1}{600}\,\mathrm{s} \approx 1{,}67\,\mathrm{ms}$.« -/
 theorem primer3_enacba (A t : ℝ) (hA : A ≠ 0) :
     (A / 2 = A * sin (2 * π * 250 * t) ↔ sin (500 * π * t) = 1 / 2) ∧
     (500 * π * t = π / 6 ↔ t = 1 / 3000) ∧ π - π / 6 = 5 * π / 6 ∧ (500 * π * t = 5 * π / 6 ↔ t = 1 / 600) := by
@@ -540,7 +540,7 @@ example :=
 /-- Primer 3: v prvem nihaju (0 < t ≤ 1/250 s = 4 ms) membrana doseže odmik A/2 natanko ob t₁ = 1/3000 s
 ≈ 0,333 ms (prva četrtina nihaja) in t₂ = 1/600 s ≈ 1,67 ms (druga četrtina).
 trditev: MAT-SS-3/krozne-funkcije#primer3
-besedilo: »Odgovor: odmik $\frac{A}{2}$ membrana doseže prvič po približno $0{,}333\,\mathrm{ms}$, drugič po približno $1{,}67\,\mathrm{ms}$.« -/
+besedilo: »Odgovor: odmik $\frac{A}{2}$ membrana doseže prvič po približno $0{,}333 \mathrm{ms}$, drugič po približno $1{,}67 \mathrm{ms}$.« -/
 theorem primer3 (t : ℝ) (h0 : 0 < t) (h1 : t ≤ 1 / 250) :
     sin (500 * π * t) = 1 / 2 ↔ t = 1 / 3000 ∨ t = 1 / 600 := by
   have hp := pi_pos
@@ -578,7 +578,7 @@ example :=
 /-- Primer 3, korak 4 (smer gibanja): sin(500πt) na [0, 1/1000] narašča (signal gre navzgor skozi A/2 pri
 t₁ = 1/3000), na [1/1000, 1/500] pa pada (signal gre navzdol skozi A/2 pri t₂ = 1/600).
 trditev: MAT-SS-3/krozne-funkcije#primer3-smer
-besedilo: »Arkus sinus da prvo rešitev: $500\pi t_1 = \frac{\pi}{6}$, torej $t_1 = \frac{1}{3000}\,\mathrm{s} \approx 0{,}333\,\mathrm{ms}$.« -/
+besedilo: »Prvi čas je v prvi četrtini nihaja, ko gre membrana navzgor. Drugi je v drugi četrtini, ko se že vrača.« -/
 theorem primer3_smer :
     StrictMonoOn (fun t : ℝ => sin (500 * π * t)) (Icc 0 (1 / 1000)) ∧
     StrictAntiOn (fun t : ℝ => sin (500 * π * t)) (Icc (1 / 1000) (1 / 500)) := by
@@ -601,7 +601,7 @@ theorem primer3_smer :
 /-- Primer 3, smiselnost in zaokrožitve: nihajni čas 1/250 s = 4 ms, t₁ = 1/3000 s ≈ 0,333 ms leži v prvi
 četrtini (pred 1 ms), t₂ = 1/600 s ≈ 1,67 ms v drugi (med 1 ms in 2 ms).
 trditev: MAT-SS-3/krozne-funkcije#primer3-casi
-besedilo: »Smiselnost: nihajni čas je $\frac{1}{250}\,\mathrm{s} = 4\,\mathrm{ms}$. Prvi čas je v prvi četrtini nihaja, ko gre membrana navzgor. Drugi je v drugi četrtini, ko se že vrača.« -/
+besedilo: »Smiselnost: nihajni čas je $\frac{1}{250} \mathrm{s} = 4 \mathrm{ms}$. Prvi čas je v prvi četrtini nihaja, ko gre membrana navzgor. Drugi je v drugi četrtini, ko se že vrača.« -/
 theorem primer3_casi : (1 / 250 : ℝ) * 1000 = 4 ∧ (0.3325 : ℝ) < 1 / 3000 * 1000 ∧ (1 / 3000 : ℝ) * 1000 < 0.3335 ∧
     (1.665 : ℝ) < 1 / 600 * 1000 ∧ (1 / 600 : ℝ) * 1000 < 1.675 ∧ (1 / 3000 : ℝ) < 1 / 1000 ∧
     (1 / 1000 : ℝ) < 1 / 600 ∧ (1 / 600 : ℝ) < 2 / 1000 := by norm_num
@@ -623,7 +623,7 @@ theorem primer4 : π < 4 * π / 3 ∧ cos (4 * π / 3) = -(1 / 2) ∧ arccos (co
 /-- Pogoste napake: arcsin(sin(5π/4)) = −π/4 (sin(5π/4) = −√2/2), ne 5π/4; arccos(−1/2) = π − π/3 = 2π/3,
 ne −π/3; napaka pri stopinjah je faktor 180/π, med 57 in 58 (»približno 57«).
 trditev: MAT-SS-3/krozne-funkcije#pogoste
-besedilo: »zato je na primer $\arcsin\left(\sin\frac{5\pi}{4}\right) = -\frac{\pi}{4}$.« -/
+besedilo: »zato je na primer $\arcsin\left(\sin\frac{5\pi}{4}\right) = -\frac{\pi}{4}$. Najprej izračunaj notranjo funkcijo, nato poišči kot v zalogi vrednosti. - **»Arkus kosinus je lih.«** Kdor misli tako, dobi $\arccos\left(-\frac12\right) = -\frac{\pi}{3}$. Negativni koti niso v $[0, \pi]$. Prav je $\pi - \frac{\pi}{3} = \frac{2\pi}{3}$. - **»Arkus sinus da vse rešitve enačbe.«** $\arcsin a$ je samo ena rešitev enačbe $\sin x = a$. Drugo družino dobiš iz $\pi - x_1$, nato prišteješ $2k\pi$. - **Kalkulator v stopinjah.** Če $\arcsin$ izračunaš v stopinjah in rezultat vstaviš v izraz z $2\pi$, je čas napačen za faktor približno $57$.« -/
 theorem pogoste : sin (5 * π / 4) = -(√2 / 2) ∧ arcsin (sin (5 * π / 4)) = -(π / 4) ∧
     arcsin (sin (5 * π / 4)) ≠ 5 * π / 4 ∧ arccos (-(1 / 2)) = π - π / 3 ∧ arccos (-(1 / 2)) ≠ -(π / 3) ∧
     (57 : ℝ) < 180 / π ∧ 180 / π < 58 := by
@@ -713,7 +713,7 @@ theorem arccos04 : arccos (-0.4) = π / 2 + arcsin 0.4 ∧ (1.982305 : ℝ) < ar
 h(100) = 30 − 25·cos(π/3) = 30 − 12,5 = 17,5 mm, h(t + 600) = h(t) in 2π/(π/300) = 600 ms; najvišja lega
 h(300) = 55 mm.
 trditev: MAT-SS-3/krozne-funkcije#matura2a
-besedilo: »a) $h(100) = 30 - 25\cos\frac{\pi}{3} = 30 - 12{,}5 = 17{,}5$, utež je $17{,}5\,\text{mm}$ nad mizo.« -/
+besedilo: »a) $h(100) = 30 - 25\cos\frac{\pi}{3} = 30 - 12{,}5 = 17{,}5$, utež je $17{,}5\,\text{mm}$ nad mizo. 2. a) Perioda funkcije je $\dfrac{2\pi}{\pi/300} = 600$, en nihaj traja $600\,\text{ms}$ ($0{,}6\,\text{s}$).« -/
 theorem matura2a :
     (30 - 25 * cos (π * 0 / 300) = 5) ∧ (∀ t : ℝ, 5 ≤ 30 - 25 * cos (π * t / 300)) ∧
     30 - 25 * cos (π * 100 / 300) = 30 - 25 * (1 / 2) ∧ (30 : ℝ) - 25 * (1 / 2) = 30 - 12.5 ∧
@@ -733,7 +733,7 @@ theorem matura2a :
 t₂ = 600 − t₁ ≈ 410,703 ms sta rešitvi, v nihaju (t ∈ [0, 600]) je utež vsaj 40 mm visoko natanko za
 t₁ ≤ t ≤ t₂, in to traja t₂ − t₁ = 600 − 2t₁ ≈ 221,406 ms ≈ 221 ms.
 trditev: MAT-SS-3/krozne-funkcije#matura2b
-besedilo: »b) Kosinus ima enako vrednost tudi pri kotu $2\pi - \arccos(-0{,}4)$, zato je v istem nihaju druga rešitev $t_2 = 600 - t_1 \approx 410{,}703\,\text{ms}$.« -/
+besedilo: »b) Iz $30 - 25\cos\frac{\pi t}{300} = 40$ sledi $\cos\frac{\pi t}{300} = -\frac{10}{25} = -0{,}4$. 4. b) Arkus kosinus da prvo rešitev: $\frac{\pi t_1}{300} = \arccos(-0{,}4) \approx 1{,}98231$, torej $t_1 = \frac{300 \cdot 1{,}98231}{\pi} \approx 189{,}297\,\text{ms}$. 5. b) Kosinus ima enako vrednost tudi pri kotu $2\pi - \arccos(-0{,}4)$, zato je v istem nihaju druga rešitev $t_2 = 600 - t_1 \approx 410{,}703\,\text{ms}$. Med $t_1$ in $t_2$ gre utež skozi najvišjo lego ($55\,\text{mm}$ pri $t = 300$), zato je ves ta čas višje od $40\,\text{mm}$. 6. b) Senzor zaznava utež $t_2 - t_1 = 600 - 2t_1 \approx 221{,}406\,\text{ms} \approx 221\,\text{ms}$.« -/
 theorem matura2b :
     (∀ t : ℝ, 30 - 25 * cos (π * t / 300) = 40 ↔ cos (π * t / 300) = -10 / 25) ∧ (-10 / 25 : ℝ) = -0.4 ∧
     30 - 25 * cos (π * (300 * arccos (-0.4) / π) / 300) = 40 ∧
@@ -785,7 +785,7 @@ theorem matura2b :
 πt/300 ∈ [0, π]); −1 ≤ (30 − h)/25 ≤ 1 ⇔ 5 ≤ h ≤ 55 (D = [5, 55]); za h ∈ [5, 55] je čas v [0, 300] in višina
 ob tem času je h (Z = [0, 300]); RACUN: čas pri h = 5 je 0, pri h = 55 je 300.
 trditev: MAT-SS-3/krozne-funkcije#matura2c
-besedilo: »Odgovor: a) $17{,}5\,\text{mm}$, en nihaj traja $600\,\text{ms}$; b) senzor zaznava utež približno $221\,\text{ms}$; c) $t = \frac{300}{\pi}\arccos\frac{30 - h}{25}$, $D = [5, 55]$, $Z = [0, 300]$.« -/
+besedilo: »c) Iz $h = 30 - 25\cos\frac{\pi t}{300}$ izrazimo $\cos\frac{\pi t}{300} = \frac{30 - h}{25}$. 8. c) Za $0 \le t \le 300$ je $0 \le \frac{\pi t}{300} \le \pi$, kar je ravno zaloga vrednosti arkus kosinusa. Zato je $\frac{\pi t}{300} = \arccos\frac{30 - h}{25}$ in $t = \frac{300}{\pi}\arccos\frac{30 - h}{25}$. 9. c) Argument arkus kosinusa mora biti med $-1$ in $1$: iz $-1 \le \frac{30 - h}{25} \le 1$ sledi $5 \le h \le 55$. Definicijsko območje je $[5, 55]$, zaloga vrednosti pa $[0, 300]$.« -/
 theorem matura2c :
     (∀ t ∈ Icc (0 : ℝ) 300, cos (π * t / 300) = (30 - (30 - 25 * cos (π * t / 300))) / 25 ∧
       t = 300 / π * arccos ((30 - (30 - 25 * cos (π * t / 300))) / 25)) ∧
@@ -825,7 +825,7 @@ theorem ustno3 : sin (2 * π / 3) = √3 / 2 ∧ arcsin (sin (2 * π / 3)) = π 
 /-- Drugače, kot zgodba: sin 30° = sin 150° = sin 390° = 1/2, osciloskop pokaže arcsin(1/2) = 30°
 (= π/6), in 180° − 30° = 150°.
 trditev: MAT-SS-3/krozne-funkcije#zgodba
-besedilo: »$180° - 30° = 150°$« -/
+besedilo: »Nina reče $30°$. Tim reče $150°$. Eva doda $390°$. Vsi imajo prav, saj ima sinus pri vseh teh kotih vrednost $\frac12$. Proizvajalec osciloskopa pa je moral izbrati. Zaslon lahko pokaže le eno število, zato je sklenil: »Pokazal bom kot med $-90°$ in $90°$.« Na zaslonu se izpiše $30°$. Ko profesorica sliko ustavi pri valu, ki pada, se izpiše spet $30°$, čeprav je pravi kot $150°$. Naprava ne laže, samo drži se dogovora. Tak dogovor je arkus sinus. Kdor ve za dogovor, iz $30°$ sam izračuna $180° - 30° = 150°$« -/
 theorem zgodba : sin (π / 6) = 1 / 2 ∧ sin (5 * π / 6) = 1 / 2 ∧ sin (13 * π / 6) = 1 / 2 ∧
     arcsin (1 / 2) = π / 6 ∧ π - π / 6 = 5 * π / 6 :=
   ⟨sin_pi_div_six, razlaga2.2.1, razlaga2.2.2, arcsin_pol, by ring⟩
@@ -834,7 +834,7 @@ theorem zgodba : sin (π / 6) = 1 / 2 ∧ sin (5 * π / 6) = 1 / 2 ∧ sin (13 *
 √3/2, 1; arcsin(−√2/2) = −π/4, arctan(−√3) = −π/3, arccos(−√3/2) = π − π/6 = 5π/6; v vsaki vrstici je
 arcsin x + arccos x = π/2.
 trditev: MAT-SS-3/krozne-funkcije#tabela
-besedilo: »$\arccos\left(-\frac{\sqrt3}{2}\right) = \pi - \frac{\pi}{6} = \frac{5\pi}{6}$« -/
+besedilo: »$\arcsin\left(-\frac{\sqrt2}{2}\right) = -\frac{\pi}{4}$, $\arctan(-\sqrt3) = -\frac{\pi}{3}$. - $\arccos$ negativnega števila: odštej od $\pi$. $\arccos\left(-\frac{\sqrt3}{2}\right) = \pi - \frac{\pi}{6} = \frac{5\pi}{6}$. Tabela znanih vrednosti v radianih: | $x$ | $\arcsin x$ | $\arccos x$ | |---|---|---| | $-1$ | $-\frac{\pi}{2}$ | $\pi$ | | $-\frac12$ | $-\frac{\pi}{6}$ | $\frac{2\pi}{3}$ | | $0$ | $0$ | $\frac{\pi}{2}$ | | $\frac12$ | $\frac{\pi}{6}$ | $\frac{\pi}{3}$ | | $\frac{\sqrt2}{2}$ | $\frac{\pi}{4}$ | $\frac{\pi}{4}$ | | $\frac{\sqrt3}{2}$ | $\frac{\pi}{3}$ | $\frac{\pi}{6}$ | | $1$ | $\frac{\pi}{2}$ | $0$ | Preizkus: v vsaki vrstici je vsota $\frac{\pi}{2}$. Velja $\arcsin x + \arccos x = \frac{\pi}{2}$ za $-1 \le x \le 1$.« -/
 theorem tabela :
     (arcsin (-1) = -(π / 2) ∧ arccos (-1) = π) ∧
     (arcsin (-(1 / 2)) = -(π / 6) ∧ arccos (-(1 / 2)) = 2 * π / 3) ∧
@@ -878,7 +878,7 @@ theorem preveri1 : arcsin (1 / 2) = π / 6 ∧ arccos (√3 / 2) = π / 6 ∧ ar
 /-- Preveri se 2 in RACUN `limita`: y = 2 arctan x ima vodoravni asimptoti y = π (x → ∞) in y = −π (x → −∞),
 zaloga vrednosti je (−π, π).
 trditev: MAT-SS-3/krozne-funkcije#preveri2
-besedilo: »Zakaj ima vodoravni asimptoti $y = \pi$ in $y = -\pi$?« -/
+besedilo: »Arkus tangens ima vodoravni asimptoti $y = \pm\frac{\pi}{2}$. Faktor $2$ graf raztegne v smeri osi $y$, zato se asimptoti premakneta na $y = \pm\pi$.« -/
 theorem preveri2 : Tendsto (fun x => 2 * arctan x) atTop (𝓝 π) ∧
     Tendsto (fun x => 2 * arctan x) atBot (𝓝 (-π)) ∧ ∀ x, -π < 2 * arctan x ∧ 2 * arctan x < π := by
   have a := asimptoti
@@ -888,7 +888,7 @@ theorem preveri2 : Tendsto (fun x => 2 * arctan x) atTop (𝓝 π) ∧
 
 /-- Preveri se 3 (Maja): korak A je pravilen (sin(5π/4) = −√2/2), korak B ne: arcsin(−√2/2) = −π/4 ≠ 5π/4.
 trditev: MAT-SS-3/krozne-funkcije#preveri3
-besedilo: »Korak A: $\sin\frac{5\pi}{4} = -\frac{\sqrt2}{2}$.« -/
+besedilo: »V koraku B mora Maja izbrati kot z $\left[-\frac{\pi}{2}, \frac{\pi}{2}\right]$: $\arcsin\left(-\frac{\sqrt2}{2}\right) = -\frac{\pi}{4}$. Rezultat je $-\frac{\pi}{4}$.« -/
 theorem preveri3 : sin (5 * π / 4) = -(√2 / 2) ∧ arcsin (-(√2 / 2)) = -(π / 4) ∧
     arcsin (-(√2 / 2)) ≠ 5 * π / 4 := by
   have hp := pi_pos
@@ -898,7 +898,7 @@ theorem preveri3 : sin (5 * π / 4) = -(√2 / 2) ∧ arcsin (-(√2 / 2)) = -(�
 t₁ ≈ 0,738 ms (RACUN); napačni odgovori: arcsin 0,8 ≈ 53,13° in 53,13/(400π)·1000 ≈ 42,28, arcsin 0,8/200·1000
 ≈ 4,636 ter drugi čas (π − arcsin 0,8)/(400π)·1000 ≈ 1,762 ms.
 trditev: MAT-SS-3/krozne-funkcije#preveri4
-besedilo: »42,28 | Kalkulator je računal v stopinjah ($\arcsin 0{,}8 \approx 53{,}13°$). Izraz $2\pi \cdot 200\, t$ je v radianih.« -/
+besedilo: »$\sin(400\pi t) = 0{,}8$; $400\pi t_1 = \arcsin 0{,}8 \approx 0{,}9273$; $t_1 \approx 0{,}000738\,\mathrm{s} = 0{,}738\,\mathrm{ms}$.« -/
 theorem preveri4 : sin (400 * π * (arcsin 0.8 / (400 * π))) = 0.8 ∧
     (∀ t : ℝ, 0 < t → sin (400 * π * t) = 0.8 → arcsin 0.8 / (400 * π) ≤ t) ∧
     (0.7375 : ℝ) < arcsin 0.8 / (400 * π) * 1000 ∧ arcsin 0.8 / (400 * π) * 1000 < 0.7385 ∧

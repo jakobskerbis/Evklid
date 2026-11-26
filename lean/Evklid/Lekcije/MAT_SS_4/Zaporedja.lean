@@ -20,13 +20,14 @@ namespace Evklid.Lekcije.MAT_SS_4.Zaporedja
 open Filter Topology Finset
 
 /-- Pomožno: lim 1/n = 0 (razlaga 9, »znane limite«).
-pomozno -/
+trditev: MAT-SS-4/zaporedja#lim-1-n
+besedilo: »$$\lim\limits_{n \to \infty} \frac{1}{n} = 0$$« -/
 theorem lim_1_n : Tendsto (fun n : ℕ => 1 / (n : ℝ)) atTop (𝓝 0) :=
   tendsto_one_div_atTop_nhds_zero_nat
 
 /-- Razlaga 9: limita konstantnega zaporedja je ta konstanta (lim c = c).
 trditev: MAT-SS-4/zaporedja#lim-konst
-besedilo: »Računanje limit.** Uporabljamo znane limite, na primer $\lim\limits_{n \to \infty} \dfrac{1}{n} = 0$ in $\lim\limits_{n \to \infty} c = c$ za konstanto $c$.« -/
+besedilo: »$\lim\limits_{n \to \infty} c = c$ za konstanto $c$« -/
 theorem lim_konst (c : ℝ) : Tendsto (fun _ : ℕ => c) atTop (𝓝 c) := tendsto_const_nhds
 
 /-- Razlaga 9: za konvergentni zaporedji je limita vsote vsota limit, limita produkta produkt limit
@@ -91,7 +92,7 @@ example : True :=
 /-- Uvod, primer 2: povprečna hitrost vₙ = 200n/(2n + 1): v₁ ≈ 67, v₂ = 80, v₃ ≈ 86, v₄ ≈ 89
 (vse zaokrožene na celo), vₙ < 100 za vsak n in vₙ narašča.
 trditev: MAT-SS-4/zaporedja#hitrosti
-besedilo: »zato je povprečna hitrost $v_n = \dfrac{100n}{n + \frac{1}{2}} = \dfrac{200n}{2n+1}$ (v km/h).« -/
+besedilo: »Navigacija po vsaki uri vožnje izpiše povprečno hitrost celotne poti: približno $67$, $80$, $86$, $89$ … $\text{km/h}$.« -/
 theorem hitrosti :
     (66.5 ≤ (200 * 1 / (2 * 1 + 1) : ℝ) ∧ (200 * 1 / (2 * 1 + 1) : ℝ) < 67.5) ∧
     (200 * 2 / (2 * 2 + 1) : ℝ) = 80 ∧
@@ -154,7 +155,7 @@ example :=
 
 /-- Razlaga 5 in »Premisli«: 1 ≤ 2 − 1/n < 2 za vsak n ≥ 1; noben člen ni enak 2.
 trditev: MAT-SS-4/zaporedja#omejeno
-besedilo: »Ne. Ulomek $\dfrac{1}{n}$ je vedno pozitiven, zato je $a_n < 2$. Število $2$ je zgornja meja, a ga noben člen ne doseže.« -/
+besedilo: »Pri našem zaporedju velja $1 \le a_n < 2$.« -/
 theorem omejeno (n : ℕ) (hn : 1 ≤ n) :
     1 ≤ 2 - 1 / (n : ℝ) ∧ 2 - 1 / (n : ℝ) < 2 ∧ 2 - 1 / (n : ℝ) ≠ 2 := by
   have h : (1 : ℝ) ≤ n := by exact_mod_cast hn
@@ -169,7 +170,7 @@ example :=
 
 /-- Razlaga 6: okolica s polmerom ε: |x − L| < ε ⇔ x ∈ (L − ε, L + ε).
 trditev: MAT-SS-4/zaporedja#okolica
-besedilo: »Temu intervalu rečemo **okolica** števila $L$ s polmerom $\varepsilon > 0$.« -/
+besedilo: »Na navpični osi pas zajame odprti interval $(L - \varepsilon, L + \varepsilon)$: vsa števila, ki so od $L$ oddaljena manj kot $\varepsilon$.« -/
 theorem okolica (x L ε : ℝ) : |x - L| < ε ↔ x ∈ Set.Ioo (L - ε) (L + ε) := by
   rw [abs_sub_lt_iff, Set.mem_Ioo]; constructor <;> intro h <;> constructor <;> linarith [h.1, h.2]
 
@@ -219,7 +220,7 @@ theorem pas_001 :
 
 /-- Razlaga 7: lim (2 − 1/n) = 2.
 trditev: MAT-SS-4/zaporedja#lim-2
-besedilo: »$a_n = 2 - \dfrac{1}{n}$« -/
+besedilo: »se stiskajo k vodoravni premici $y = 2$, ki je nikoli ne dosežejo« -/
 theorem lim_2 : Tendsto (fun n : ℕ => 2 - 1 / (n : ℝ)) atTop (𝓝 2) := by
   simpa using (tendsto_const_nhds (x := (2 : ℝ))).sub lim_1_n
 
@@ -249,7 +250,7 @@ theorem def_limite_koncno (a : ℕ → ℝ) (L : ℝ) :
 
 /-- Razlaga 7 in pogoste napake: (−1)ⁿ je omejeno (−1 ≤ (−1)ⁿ ≤ 1), a divergentno.
 trditev: MAT-SS-4/zaporedja#minus1-divergira
-besedilo: »Zaporedje $a_n = (-1)^n$ skače med $-1$ in $1$, zato je divergentno: nobenega ozkega pasu ne moreš postaviti tako, da bi bile v njem vse pike od nekod naprej.« -/
+besedilo: »Obratno ne velja: $(-1)^n$ je omejeno, pa ni konvergentno.« -/
 theorem minus1_divergira :
     (∀ n : ℕ, -1 ≤ ((-1 : ℝ) ^ n) ∧ (-1 : ℝ) ^ n ≤ 1) ∧
     ¬ ∃ L, Tendsto (fun n : ℕ => (-1 : ℝ) ^ n) atTop (𝓝 L) := by
@@ -279,7 +280,7 @@ theorem konvergentno_omejeno (a : ℕ → ℝ) (L : ℝ) (h : Tendsto a atTop (�
 /-- Razlaga 8: vsako monotono in omejeno zaporedje je konvergentno (naraščajoče in navzgor omejeno
 ali padajoče in navzdol omejeno).
 trditev: MAT-SS-4/zaporedja#monotono-omejeno
-besedilo: »Vsako **monotono in omejeno** zaporedje je konvergentno. Oddaljenosti s pohoda padajo in so navzdol omejene z $0$, zato imajo limito. Enako velja za naraščajoče povprečne hitrosti, omejene s $100$.« -/
+besedilo: »Vsako **monotono in omejeno** zaporedje je konvergentno.« -/
 theorem monotono_omejeno (a : ℕ → ℝ) :
     (Monotone a → BddAbove (Set.range a) → ∃ L, Tendsto a atTop (𝓝 L)) ∧
     (Antitone a → BddBelow (Set.range a) → ∃ L, Tendsto a atTop (𝓝 L)) :=
@@ -302,7 +303,7 @@ example :=
 /-- Primer 1: aₙ = (n + 2)/(2n): a₁ = 3/2, a₂ = 1, a₃ = 5/6, a₄ = 3/4; aₙ = n/(2n) + 2/(2n) = 1/2 + 1/n;
 aₙ₊₁ − aₙ = 1/(n + 1) − 1/n = −1/(n(n + 1)) < 0, zato strogo pada (n ≥ 1).
 trditev: MAT-SS-4/zaporedja#primer1
-besedilo: »Vstavimo indekse: $a_1 = \dfrac{3}{2}$, $a_2 = 1$, $a_3 = \dfrac{5}{6}$, $a_4 = \dfrac{3}{4}$.« -/
+besedilo: »Odgovor: prvi štirje členi so $\dfrac{3}{2}$, $1$, $\dfrac{5}{6}$ in $\dfrac{3}{4}$; zaporedje je strogo padajoče.« -/
 theorem primer1 (n : ℕ) (hn : 1 ≤ n) :
     ((1 + 2) / (2 * 1) : ℝ) = 3 / 2 ∧ ((2 + 2) / (2 * 2) : ℝ) = 1 ∧ ((3 + 2) / (2 * 3) : ℝ) = 5 / 6 ∧
     ((4 + 2) / (2 * 4) : ℝ) = 3 / 4 ∧
@@ -324,7 +325,7 @@ example :=
 
 /-- Primer 2: vₙ = 100n/(n + 1/2) = 200n/(2n + 1) = 200/(2 + 1/n) (n ≥ 1); lim vₙ = 200/(2 + 0) = 100.
 trditev: MAT-SS-4/zaporedja#primer2-limita
-besedilo: »$v_n = \dfrac{100n}{n + \frac{1}{2}} = \dfrac{200n}{2n+1}$« -/
+besedilo: »Ker gre $\dfrac{1}{n}$ proti $0$, je $L = \dfrac{200}{2 + 0} = 100$.« -/
 theorem primer2_limita :
     (∀ n : ℕ, 1 ≤ n → 100 * (n : ℝ) / (n + 1 / 2) = 200 * n / (2 * n + 1) ∧
       200 * (n : ℝ) / (2 * n + 1) = 200 / (2 + 1 / n)) ∧
@@ -345,7 +346,7 @@ theorem primer2_limita :
 100/(2n + 1) < 1 ⇔ 2n + 1 > 100 ⇔ n > 49,5, za naravni n torej n ≥ 50; v₄₉ = 9800/99 ≈ 98,99
 (do 100 manjka ≈ 1,01), v₅₀ = 10000/101 ≈ 99,01.
 trditev: MAT-SS-4/zaporedja#primer2-okolica
-besedilo: »Preverimo mejo: $v_{49} = \dfrac{9800}{99} \approx 98{,}99$ je še zunaj (do $100$ manjka približno $1{,}01$), $v_{50} = \dfrac{10000}{101} \approx 99{,}01$ pa je že znotraj.« -/
+besedilo: »od $50$. ure vožnje naprej se povprečna hitrost od nje razlikuje za manj kot $1\,\text{km/h}$« -/
 theorem primer2_okolica (n : ℕ) :
     100 - 200 * (n : ℝ) / (2 * n + 1) = (100 * (2 * n + 1) - 200 * n) / (2 * n + 1) ∧
     (100 * (2 * (n : ℝ) + 1) - 200 * n) / (2 * n + 1) = 100 / (2 * n + 1) ∧
@@ -371,7 +372,7 @@ theorem primer2_okolica (n : ℕ) :
 aₙ < 200 (indukcija); aₙ₊₁ − aₙ = 100 − aₙ/2 > 0, zato strogo narašča; L = L/2 + 100 ⇔ L = 200;
 zaporedje konvergira in lim aₙ = 200.
 trditev: MAT-SS-4/zaporedja#primer3
-besedilo: »Prvi členi: $100$; $150$; $175$; $187{,}5$; $193{,}75$ (v mg).« -/
+besedilo: »Odgovor: količina zdravila po odmerku narašča in se ustali pri $200\,\text{mg}$, ki jih nikoli ne preseže.« -/
 theorem primer3 (a : ℕ → ℝ) (h1 : a 1 = 100) (h : ∀ n, 1 ≤ n → a (n + 1) = a n / 2 + 100) :
     (a 2 = 150 ∧ a 3 = 175 ∧ a 4 = 187.5 ∧ a 5 = 193.75) ∧
     (∀ n, 1 ≤ n → a n < 200) ∧
@@ -408,7 +409,7 @@ example : ∃ a : ℕ → ℝ, a 1 = 100 ∧ ∀ n, 1 ≤ n → a (n + 1) = a n 
 /-- Primer 3, korak 5: če zaporedje s tem pravilom konvergira k L, mora biti L = L/2 + 100, torej
 L = 200 (sklep iz pravila, ne iz formule).
 trditev: MAT-SS-4/zaporedja#primer3-sklep
-besedilo: »Zaporedje je naraščajoče in navzgor omejeno, zato je konvergentno. Ker gresta $a_n$ in $a_{n+1}$ proti isti limiti $L$, iz pravila dobimo $L = \dfrac{L}{2} + 100$.« -/
+besedilo: »Ker gresta $a_n$ in $a_{n+1}$ proti isti limiti $L$, iz pravila dobimo $L = \dfrac{L}{2} + 100$. 6. Rešimo: $\dfrac{L}{2} = 100$, torej $L = 200$.« -/
 theorem primer3_sklep (a : ℕ → ℝ) (L : ℝ) (h : ∀ n, 1 ≤ n → a (n + 1) = a n / 2 + 100)
     (hL : Tendsto a atTop (𝓝 L)) : L = L / 2 + 100 ∧ L = 200 := by
   have t1 : Tendsto (fun n => a (n + 1)) atTop (𝓝 L) := (tendsto_add_atTop_iff_nat 1).2 hL
@@ -434,7 +435,7 @@ example : True :=
 
 /-- Primer 4: (2n² − n)/(n² + 3) = (2 − 1/n)/(1 + 3/n²) (n ≥ 1) in limita je (2 − 0)/(1 + 0) = 2.
 trditev: MAT-SS-4/zaporedja#primer4
-besedilo: »$a_n = \dfrac{2 - \frac{1}{n}}{1 + \frac{3}{n^2}}$« -/
+besedilo: »Oba ulomka gresta proti $0$, zato je $\lim\limits_{n \to \infty} a_n = \dfrac{2 - 0}{1 + 0} = 2$.« -/
 theorem primer4 :
     (∀ n : ℕ, 1 ≤ n → (2 * (n : ℝ) ^ 2 - n) / (n ^ 2 + 3) = (2 - 1 / n) / (1 + 3 / n ^ 2)) ∧
     Tendsto (fun n : ℕ => (2 * (n : ℝ) ^ 2 - n) / (n ^ 2 + 3)) atTop (𝓝 2) := by
@@ -456,7 +457,7 @@ theorem primer4 :
 
 /-- Pogoste napake 1: členi 1/n se z vsakim korakom približajo tudi −1, pa −1 ni limita.
 trditev: MAT-SS-4/zaporedja#napaka-blizje
-besedilo: »»Limita je število, ki se mu členi približujejo.«** Členi $\dfrac{1}{n}$ so z vsakim korakom bližje tudi številu $-1$, pa $-1$ ni limita.« -/
+besedilo: »Členi $\dfrac{1}{n}$ so z vsakim korakom bližje tudi številu $-1$, pa $-1$ ni limita.« -/
 theorem napaka_blizje (n : ℕ) (hn : 1 ≤ n) :
     |1 / ((n : ℝ) + 1) - (-1)| < |1 / (n : ℝ) - (-1)| ∧
     ¬ Tendsto (fun n : ℕ => 1 / (n : ℝ)) atTop (𝓝 (-1)) := by
@@ -484,7 +485,7 @@ theorem napaka_dosezena : (∀ n : ℕ, 1 ≤ n → 1 / (n : ℝ) ≠ 0) ∧
 /-- Pogoste napake 4: (n − 3)² da 4, 1, 0, 1, 4, 9 (n = 1, …, 6), zato ni monotono: a₂ < a₁ (ni naraščajoče)
 in a₃ < a₄ (ni padajoče).
 trditev: MAT-SS-4/zaporedja#napaka-n3
-besedilo: »Monotonost iz prvih nekaj členov.** Pri $a_n = (n-3)^2$ so prvi členi $4, 1, 0$, kar je videti padajoče, nato pa $1, 4, 9$ rastejo.« -/
+besedilo: »Pri $a_n = (n-3)^2$ so prvi členi $4, 1, 0$, kar je videti padajoče, nato pa $1, 4, 9$ rastejo.« -/
 theorem napaka_n3 :
     (List.range 6).map (fun k : ℕ => ((k : ℤ) + 1 - 3) ^ 2) = [4, 1, 0, 1, 4, 9] ∧
     ¬ Monotone (fun n : ℕ => ((n : ℤ) - 3) ^ 2) ∧ ¬ Antitone (fun n : ℕ => ((n : ℤ) - 3) ^ 2) := by
@@ -498,7 +499,7 @@ theorem napaka_n3 :
 
 /-- Pogoste napake 5: lim (2n + 1)/(n + 3) = 2, ne 1.
 trditev: MAT-SS-4/zaporedja#napaka-2
-besedilo: »»Neskončno deljeno z neskončno je $1$.«** Pri $\dfrac{2n+1}{n+3}$ rasteta števec in imenovalec, a limita je $2$, ne $1$.« -/
+besedilo: »Pri $\dfrac{2n+1}{n+3}$ rasteta števec in imenovalec, a limita je $2$, ne $1$.« -/
 theorem napaka_2 : Tendsto (fun n : ℕ => (2 * (n : ℝ) + 1) / (n + 3)) atTop (𝓝 2) := by
   have e : ∀ n : ℕ, 1 ≤ n → (2 * (n : ℝ) + 1) / (n + 3) = (2 + 1 / n) / (1 + 3 * (1 / n)) := by
     intro n hn
@@ -514,7 +515,7 @@ theorem napaka_2 : Tendsto (fun n : ℕ => (2 * (n : ℝ) + 1) / (n + 3)) atTop 
 /-- Naloga 1: a₁ = 3, aₙ₊₁ = 2aₙ − 1 ⇒ a₂ = 5, a₃ = 9, a₄ = 17, a₅ = 33, a₆ = 65, a₇ = 2·65 − 1 = 129;
 aₙ = 2ⁿ + 1; 129 = 2⁷ + 1 je člen natanko pri n = 7.
 trditev: MAT-SS-4/zaporedja#matura1
-besedilo: »Nadaljujemo po istem pravilu: $a_5 = 33$, $a_6 = 65$, $a_7 = 2 \cdot 65 - 1 = 129$. (Vsak člen je za $1$ večji od potence števila $2$: $a_n = 2^n + 1$, in $129 = 2^7 + 1$.)« -/
+besedilo: »Odgovor: $a_2 = 5$, $a_3 = 9$, $a_4 = 17$; število $129$ je sedmi člen zaporedja, $a_7 = 129$.« -/
 theorem matura1 (a : ℕ → ℤ) (h1 : a 1 = 3) (h : ∀ n, 1 ≤ n → a (n + 1) = 2 * a n - 1) :
     (a 2 = 5 ∧ a 3 = 9 ∧ a 4 = 17 ∧ a 5 = 33 ∧ a 6 = 65 ∧ a 7 = 129) ∧
     (∀ n, 1 ≤ n → a n = 2 ^ n + 1) ∧ (∀ n, 1 ≤ n → (a n = 129 ↔ n = 7)) := by
@@ -553,7 +554,7 @@ example : True :=
 aₙ = (2(n + 1) + 3)/(n + 1) = 2 + 3/(n + 1); aₙ₊₁ − aₙ = 3/(n + 2) − 3/(n + 1)
 = (3(n + 1) − 3(n + 2))/((n + 1)(n + 2)) = −3/((n + 1)(n + 2)) < 0.
 trditev: MAT-SS-4/zaporedja#matura2ab
-besedilo: »a) $a_1 = \dfrac{7}{2}$, $a_2 = \dfrac{9}{3} = 3$, $a_3 = \dfrac{11}{4}$.« -/
+besedilo: »b) $a_{n+1} - a_n = \dfrac{3}{n + 2} - \dfrac{3}{n + 1} = \dfrac{3(n + 1) - 3(n + 2)}{(n + 1)(n + 2)} = -\dfrac{3}{(n + 1)(n + 2)}$. Imenovalec je pozitiven, zato je razlika za vsak $n$ negativna in zaporedje strogo pada.« -/
 theorem matura2ab (n : ℕ) :
     ((2 * 1 + 5) / (1 + 1) : ℝ) = 7 / 2 ∧ ((2 * 2 + 5) / (2 + 1) : ℝ) = 9 / 3 ∧ (9 / 3 : ℝ) = 3 ∧
     ((2 * 3 + 5) / (3 + 1) : ℝ) = 11 / 4 ∧
@@ -569,7 +570,7 @@ theorem matura2ab (n : ℕ) :
 
 /-- Naloga 2 c): 2 < aₙ ≤ a₁ = 7/2 za vsak n ≥ 1 in lim aₙ = 2 (RAČUN: limita (2n+5)/(n+1) = 2).
 trditev: MAT-SS-4/zaporedja#matura2c
-besedilo: »c) Ker je $\dfrac{3}{n + 1} > 0$, je $a_n > 2$. Ker zaporedje pada, je $a_n \le a_1 = \dfrac{7}{2}$. Torej je $2 < a_n \le \dfrac{7}{2}$ in zaporedje je omejeno.« -/
+besedilo: »c) $2 < a_n \le \dfrac{7}{2}$, limita je $2$« -/
 theorem matura2c :
     (∀ n : ℕ, 1 ≤ n → 2 < (2 * (n : ℝ) + 5) / (n + 1) ∧ (2 * (n : ℝ) + 5) / (n + 1) ≤ 7 / 2) ∧
     Tendsto (fun n : ℕ => (2 * (n : ℝ) + 5) / (n + 1)) atTop (𝓝 2) := by
@@ -587,7 +588,7 @@ theorem matura2c :
 /-- Naloga 2 d): |aₙ − 2| = 3/(n + 1); 3/(n + 1) < 0,05 ⇔ n > 59; a₅₉ = 2 + 3/60 = 2,05 (rob);
 zunaj okolice je natanko 59 členov, a₁, …, a₅₉ (RAČUN: 3/(n+1) = 0,05 ⇔ n = 59).
 trditev: MAT-SS-4/zaporedja#matura2d
-besedilo: »d) Razdalja člena do limite je $|a_n - 2| = \dfrac{3}{n + 1}$. Pogoj $\dfrac{3}{n + 1} < 0{,}05$ da $n + 1 > 60$, torej $n > 59$.« -/
+besedilo: »d) zunaj okolice je $59$ členov, od $a_1$ do $a_{59}$.« -/
 theorem matura2d :
     (∀ n : ℕ, |(2 * (n : ℝ) + 5) / (n + 1) - 2| = 3 / (n + 1)) ∧
     (∀ n : ℕ, 3 / ((n : ℝ) + 1) < 0.05 ↔ 59 < n) ∧
@@ -650,7 +651,7 @@ theorem sodnik_1n :
 
 /-- Z analogijo: pri (−1)ⁿ in ε = 1/2 izgubiš za vsak L: ni n₀, da bi bili vsi členi za n > n₀ v pasu.
 trditev: MAT-SS-4/zaporedja#sodnik-minus1
-besedilo: »Pri $(-1)^n$ izgubiš že pri $\varepsilon = \dfrac{1}{2}$,« -/
+besedilo: »Pri $(-1)^n$ izgubiš že pri $\varepsilon = \dfrac{1}{2}$, ne glede na to, kateri $L$ izbereš« -/
 theorem sodnik_minus1 (L : ℝ) : ¬ ∃ n₀ : ℕ, ∀ n > n₀, |(-1 : ℝ) ^ n - L| < 1 / 2 := by
   rintro ⟨n₀, h⟩
   have h1 := h (2 * n₀ + 2) (by omega)
@@ -674,7 +675,7 @@ theorem koren2_priblizki :
 /-- Iz vsakdanjega življenja: zaporedje decimalnih približkov xₙ = ⌊10ⁿ√2⌋/10ⁿ je naraščajoče,
 navzgor omejeno z 1,5 in ima limito √2.
 trditev: MAT-SS-4/zaporedja#koren2-zaporedje
-besedilo: »Je navzgor omejeno, saj noben približek ne preseže $1{,}5$.« -/
+besedilo: »Je naraščajoče, saj vsakič dodaš števko. Je navzgor omejeno, saj noben približek ne preseže $1{,}5$. Zato ima limito, in ta limita je natanko $\sqrt{2}$« -/
 theorem koren2_zaporedje :
     let x : ℕ → ℝ := fun n => ⌊Real.sqrt 2 * 10 ^ n⌋ / 10 ^ n
     Monotone x ∧ (∀ n, x n < 1.5) ∧ Tendsto x atTop (𝓝 (Real.sqrt 2)) := by
@@ -738,7 +739,7 @@ theorem kviz2 : Tendsto (fun n : ℕ => if n ≤ 1000 then (7 : ℝ) else 1 / (n
 /-- Preveri se 3: aₙ = (3n − 1)/(n + 4) → 3, bₙ = (n + 1)/(2n) → 1/2, cₙ = (2n² + 6)/(n² + 1) → 2;
 prvi členi a₁ = 0,4, b₁ = 1, c₁ = 4; vrstni red limit b, c, a.
 trditev: MAT-SS-4/zaporedja#kviz3
-besedilo: »Tak vrstni red imajo prvi členi ($a_1 = 0{,}4$, $b_1 = 1$, $c_1 = 4$). Limita pa opisuje zelo velike $n$.« -/
+besedilo: »Po deljenju z najvišjo potenco dobiš $\lim b_n = \dfrac{1}{2}$, $\lim c_n = 2$ in $\lim a_n = 3$.« -/
 theorem kviz3 :
     Tendsto (fun n : ℕ => (3 * (n : ℝ) - 1) / (n + 4)) atTop (𝓝 3) ∧
     Tendsto (fun n : ℕ => ((n : ℝ) + 1) / (2 * n)) atTop (𝓝 (1 / 2)) ∧

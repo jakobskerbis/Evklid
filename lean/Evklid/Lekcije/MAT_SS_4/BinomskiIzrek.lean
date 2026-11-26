@@ -23,7 +23,7 @@ open Finset
 /-- Zakaj se tega učimo: do muzeja 4 odseke vzhodno in 4 severno vodi 70 najkrajših poti (izberemo, katere 4
 od 8 korakov so severne), kar je `C(8,4) = 8!/(4!·4!) = 70`.
 trditev: MAT-SS-4/binomski-izrek#poti-manhattan
-besedilo: »Na turističnem zemljevidu mesta s pravokotno mrežo ulic (tak je na primer Manhattan v New Yorku) leži muzej $4$ odseke ulice vzhodno in $4$ odseke severno od hotela.« -/
+besedilo: »Pravih je $70$.« -/
 theorem poti_manhattan : #((range 8).powersetCard 4) = 70 ∧
     Nat.factorial 8 / (Nat.factorial 4 * Nat.factorial 4) = 70 := by
   refine ⟨?_, by decide⟩
@@ -46,7 +46,7 @@ theorem poti_muzej : #((range 5).powersetCard 2) = 10 ∧
 /-- Razlaga 1: do križišča i odsekov vzhodno in j severno vodi `C(i+j, j)` poti; na robu je ena pot,
 notranje število je vsota števila levo (od zahoda) in spodaj (od juga).
 trditev: MAT-SS-4/binomski-izrek#pravilo-krizisca
-besedilo: »Do križišča na robu (samo vzhodno ali samo severno) vodi ena pot. Do vsakega drugega križišča prideš ali od zahoda ali od juga. Zato je število ob križišču **vsota števil levo in spodaj**: $3 + 3 = 6$, nato $6 + 4 = 10$. Do muzeja vodi $10$ poti.« -/
+besedilo: »Do križišča na robu (samo vzhodno ali samo severno) vodi ena pot. Do vsakega drugega križišča prideš ali od zahoda ali od juga. Zato je število ob križišču **vsota števil levo in spodaj**« -/
 theorem pravilo_krizisca (i j : ℕ) :
     Nat.choose (i + 0) 0 = 1 ∧ Nat.choose (0 + j) j = 1 ∧
     Nat.choose ((i + 1) + (j + 1)) (j + 1) =
@@ -67,7 +67,7 @@ theorem krizisca_risba : Nat.choose 4 2 = 3 + 3 ∧ Nat.choose 5 2 = 6 + 4 := by
 /-- Razlaga 2, risba: vrstica 4 je 1, 4, 6, 4, 1, vrstica 5 je 1, 5, 10, 10, 5, 1, vrstica 6 je
 1, 6, 15, 20, 15, 6, 1; 4 + 6 = 10.
 trditev: MAT-SS-4/binomski-izrek#vrstice-4-5-6
-besedilo: »$1, 7, 21, 35, 35, 21, 7, 1$ (na primer $6 + 15 = 21$ in $15 + 20 = 35$). Vsota je $2^7 = 128$, kar je dvakratnik vsote vrstice $6$: vsako število vrstice $6$ prispeva k dvema sosedoma spodaj.« -/
+besedilo: »**Pravilo sosedov:** vsako notranje število je vsota obeh sosedov, ki stojita nad njim ($4 + 6 = 10$).« -/
 theorem vrstice_4_5_6 :
     (List.range 5).map (Nat.choose 4) = [1, 4, 6, 4, 1] ∧
     (List.range 6).map (Nat.choose 5) = [1, 5, 10, 10, 5, 1] ∧
@@ -101,7 +101,7 @@ example :=
 
 /-- Razlaga 2, vsota vrstice: `C(n,0) + … + C(n,n) = 2ⁿ`.
 trditev: MAT-SS-4/binomski-izrek#vsota-vrstice
-besedilo: »Vsota vrstice** $n$ je $2^n$, saj ima vsak od $n$ korakov dve možnosti: $1 + 6 + 15 + 20 + 15 + 6 + 1 = 64 = 2^6$.« -/
+besedilo: »Vrstica $n$ (štejemo od $0$) ima vsoto $2^n$.« -/
 theorem vsota_vrstice (n : ℕ) : ∑ k ∈ range (n + 1), Nat.choose n k = 2 ^ n := Nat.sum_range_choose n
 
 /-- Razlaga 2: 1 + 6 + 15 + 20 + 15 + 6 + 1 = 64 = 2⁶ (vrstica 6).
@@ -121,7 +121,7 @@ theorem vrstica_7 :
 
 /-- Razlaga 3: (V+S)² = VV + VS + SV + SS, tudi ko vrstni red šteje (nekomutativni kolobar).
 trditev: MAT-SS-4/binomski-izrek#kvadrat-poti
-besedilo: »$(V+S)^2 = (V+S)(V+S)$« -/
+besedilo: »(V+S)^2 = VV + VS + SV + SS« -/
 theorem kvadrat_poti {R : Type*} [Ring R] (V S : R) : (V + S) ^ 2 = V * V + V * S + S * V + S * S := by
   rw [sq]; noncomm_ring
 
@@ -143,7 +143,7 @@ theorem cetrta_potenca {R : Type*} [CommRing R] (a b : R) :
 /-- Razlaga 5 (in Povzetek, Ustno vprašanje 1): binomski izrek
 `(a+b)ⁿ = Σ_{k=0}^{n} C(n,k)·a^(n-k)·b^k`.
 trditev: MAT-SS-4/binomski-izrek#binomski-izrek
-besedilo: »$$T_{k+1} = \binom{n}{k}a^{n-k}b^k$$« -/
+besedilo: »$$(a+b)^n = \binom{n}{0}a^n + \binom{n}{1}a^{n-1}b + \binom{n}{2}a^{n-2}b^2 + \dots + \binom{n}{n}b^n$$« -/
 theorem binomski_izrek {R : Type*} [CommRing R] (a b : R) (n : ℕ) :
     (a + b) ^ n = ∑ k ∈ range (n + 1), (Nat.choose n k : R) * a ^ (n - k) * b ^ k := by
   rw [add_comm a b, add_pow]
@@ -188,20 +188,20 @@ example :=
 
 /-- Razlaga 5: binomski simbol `C(n,k)` je število izborov k elementov izmed n (kombinacij).
 trditev: MAT-SS-4/binomski-izrek#binomski-simbol-steje
-besedilo: »Binomski simbol** $\binom{n}{k}$ (beri »$n$ nad $k$«) je število kombinacij $C_n^k = \frac{n!}{k!\,(n-k)!}$ iz kombinatorike in hkrati $k$-to število v vrstici $n$ (štejemo od $0$):« -/
+besedilo: »$\binom{n}{k}$ (beri »$n$ nad $k$«) je število kombinacij $C_n^k« -/
 theorem binomski_simbol_steje (n k : ℕ) : #((range n).powersetCard k) = Nat.choose n k := by
   rw [card_powersetCard, card_range]
 
 /-- Razlaga 5 (simulacija): `C(5,2) = 10 = C(5,3)`.
 trditev: MAT-SS-4/binomski-izrek#simulacija-5-2
-besedilo: »simulacija našteje vseh $\binom{5}{2} = 10$ izborov.« -/
+besedilo: »simulacija našteje vseh $\binom{5}{2} = 10$ izborov. Nato nastavi k = 3 in opazuj, da jih je spet $10$.« -/
 theorem simulacija_5_2 : Nat.choose 5 2 = 10 ∧ Nat.choose 5 3 = 10 := by decide
 
 /-! ## Razlaga 6: dvočlenik z minusom -/
 
 /-- Razlaga 6: `(a−b)ⁿ = (a+(−b))ⁿ = Σ (−1)^k·C(n,k)·a^(n−k)·b^k` (predznaki se izmenjujejo).
 trditev: MAT-SS-4/binomski-izrek#binomski-izrek-minus
-besedilo: »Dvočlenik z minusom.** $(a-b)^n$ zapišemo kot $(a+(-b))^n$.« -/
+besedilo: »$(a-b)^n$ zapišemo kot $(a+(-b))^n$. Liha potenca števila $-b$ je negativna, soda pozitivna, zato se predznaki izmenjujejo« -/
 theorem binomski_izrek_minus {R : Type*} [CommRing R] (a b : R) (n : ℕ) :
     (a - b) ^ n = ∑ k ∈ range (n + 1), (-1) ^ k * (Nat.choose n k : R) * a ^ (n - k) * b ^ k := by
   rw [sub_eq_add_neg, binomski_izrek]
@@ -253,7 +253,7 @@ theorem primer2 {R : Type*} [CommRing R] (x : R) :
 
 /-- Primer 2: potence b = −2 in zmnožki s koeficienti.
 trditev: MAT-SS-4/binomski-izrek#primer2-potence
-besedilo: »Zmnožimo po vrsti: $5 \cdot (-2) = -10$, $10 \cdot 4 = 40$, $10 \cdot (-8) = -80$, $5 \cdot 16 = 80$.« -/
+besedilo: »Potence $b = -2$: $1$; $-2$; $4$; $-8$; $16$; $-32$ (liha potenca negativna). 3. Zmnožimo po vrsti: $5 \cdot (-2) = -10$, $10 \cdot 4 = 40$, $10 \cdot (-8) = -80$, $5 \cdot 16 = 80$.« -/
 theorem primer2_potence :
     ((-2 : ℤ) ^ 0, (-2 : ℤ) ^ 1, (-2 : ℤ) ^ 2, (-2 : ℤ) ^ 3, (-2 : ℤ) ^ 4, (-2 : ℤ) ^ 5) =
       (1, -2, 4, -8, 16, -32) ∧
@@ -285,13 +285,13 @@ example :=
 
 /-- Primer 3, korak 2 in 4: eksponent 12 − 3k je 0 natanko pri k = 4 in 3 natanko pri k = 3.
 trditev: MAT-SS-4/binomski-izrek#primer3-eksponent
-besedilo: »Člen brez $x$ ima eksponent $0$: $12 - 3k = 0$, torej $k = 4$.« -/
+besedilo: »Člen brez $x$ ima eksponent $0$: $12 - 3k = 0$, torej $k = 4$. 3. $T_5 = \binom{6}{4}(-2)^4 = 15 \cdot 16 = 240$. Predznak je pozitiven, ker je potenca soda. 4. Za $x^3$: $12 - 3k = 3$, torej $k = 3$« -/
 theorem primer3_eksponent (k : ℕ) : ((12 : ℤ) - 3 * k = 0 ↔ k = 4) ∧ ((12 : ℤ) - 3 * k = 3 ↔ k = 3) := by
   constructor <;> constructor <;> intro h <;> omega
 
 /-- Primer 3, korak 3 in 4: `T₅ = C(6,4)·(−2)⁴ = 15·16 = 240`, koeficient pri x³ je `C(6,3)·(−2)³ = 20·(−8) = −160`.
 trditev: MAT-SS-4/binomski-izrek#primer3
-besedilo: »$T_5 = \binom{6}{4}(-2)^4 = 15 \cdot 16 = 240$« -/
+besedilo: »$T_5 = \binom{6}{4}(-2)^4 = 15 \cdot 16 = 240$. Predznak je pozitiven, ker je potenca soda. 4. Za $x^3$: $12 - 3k = 3$, torej $k = 3$ in koeficient $\binom{6}{3}(-2)^3 = 20 \cdot (-8) = -160$.« -/
 theorem primer3 :
     (Nat.choose 6 4 : ℤ) * (-2) ^ 4 = 15 * 16 ∧ (15 : ℤ) * 16 = 240 ∧
     (Nat.choose 6 3 : ℤ) * (-2) ^ 3 = 20 * (-8) ∧ (20 : ℤ) * (-8) = -160 := by decide
@@ -299,7 +299,7 @@ theorem primer3 :
 /-- Primer 3 (RAČUN): celoten razvoj
 (x² − 2/x)⁶ = x¹² − 12x⁹ + 60x⁶ − 160x³ + 240 − 192/x³ + 64/x⁶ (x ≠ 0); člen brez x je 240.
 trditev: MAT-SS-4/binomski-izrek#primer3-razvoj
-besedilo: »V razvoju $\left(x^2 - \frac{2}{x}\right)^6$ poišči člen, ki ne vsebuje $x$, in koeficient pri $x^3$.« -/
+besedilo: »Odgovor: člen brez $x$ je peti člen, $240$; koeficient pri $x^3$ je $-160$.« -/
 theorem primer3_razvoj (x : ℝ) (hx : x ≠ 0) :
     (x ^ 2 - 2 / x) ^ 6 =
       x ^ 12 - 12 * x ^ 9 + 60 * x ^ 6 - 160 * x ^ 3 + 240 - 192 / x ^ 3 + 64 / x ^ 6 := by
@@ -324,7 +324,7 @@ theorem primer4 :
 
 /-- Primer 4: (2x)³ = 8x³ in celoten razvoj (2x−1)⁵ = 32x⁵ − 80x⁴ + 80x³ − 40x² + 10x − 1 (koeficient pri x³ je 80).
 trditev: MAT-SS-4/binomski-izrek#primer4-razvoj
-besedilo: »$(x-2)^5 = x^5 - 10x^4 + 40x^3 - 80x^2 + 80x - 32$« -/
+besedilo: »V koeficient gre cela potenca $(2x)^3 = 8x^3$, ne le $x^3$.« -/
 theorem primer4_razvoj {R : Type*} [CommRing R] (x : R) :
     (2 * x) ^ 3 = 8 * x ^ 3 ∧
     (2 * x - 1) ^ 5 = 32 * x ^ 5 - 80 * x ^ 4 + 80 * x ^ 3 - 40 * x ^ 2 + 10 * x - 1 := by
@@ -334,19 +334,19 @@ theorem primer4_razvoj {R : Type*} [CommRing R] (x : R) :
 
 /-- Pogoste napake: (a+b)³ = a³ + b³ ne velja (pri a = b = 1 je 8 ≠ 2).
 trditev: MAT-SS-4/binomski-izrek#potenca-se-ne-razdeli
-besedilo: »»Potenca se razdeli.«** Zapis $(a+b)^3 = a^3 + b^3$ je napačen: izpusti vse mešane člene, torej vse poti, ki zavijejo. Pravilno: razvoj ima $n + 1$ členov.« -/
+besedilo: »Zapis $(a+b)^3 = a^3 + b^3$ je napačen« -/
 theorem potenca_se_ne_razdeli : ¬ ∀ a b : ℤ, (a + b) ^ 3 = a ^ 3 + b ^ 3 := by
   intro h; have := h 1 1; norm_num at this
 
 /-- Pogoste napake: pri (2x−1)⁵ napačni »2x³« da 10·2 = 20 namesto 80.
 trditev: MAT-SS-4/binomski-izrek#napaka-2x3
-besedilo: »Število pred spremenljivko ostane brez potence.** Pri $(2x-1)^5$ nekdo vzame $(2x)^3$ kot $2x^3$ in dobi $20$ namesto $80$.« -/
+besedilo: »Pri $(2x-1)^5$ nekdo vzame $(2x)^3$ kot $2x^3$ in dobi $20$ namesto $80$.« -/
 theorem napaka_2x3 : (Nat.choose 5 2 : ℤ) * 2 = 20 ∧ (20 : ℤ) ≠ 80 := by decide
 
 /-- Pogoste napake in »Preveri se«: pri (x+3)⁵ je koeficient pri x³ `C(5,2)·3² = 10·9 = 90`, ne 10;
 celoten razvoj (x+3)⁵ = x⁵ + 15x⁴ + 90x³ + 270x² + 405x + 243.
 trditev: MAT-SS-4/binomski-izrek#koeficient-x-plus-3
-besedilo: »Koeficient je le binomski simbol.** Pri $(x+3)^5$ koeficient pri $x^3$ ni $\binom{5}{2} = 10$, ampak $10 \cdot 3^2 = 90$: zraven gre potenca drugega člena.« -/
+besedilo: »Pri $(x+3)^5$ koeficient pri $x^3$ ni $\binom{5}{2} = 10$, ampak $10 \cdot 3^2 = 90$: zraven gre potenca drugega člena.« -/
 theorem koeficient_x_plus_3 {R : Type*} [CommRing R] (x : R) :
     (Nat.choose 5 2 : ℤ) * 3 ^ 2 = 10 * 9 ∧ (10 : ℤ) * 9 = 90 ∧
     (x + 3) ^ 5 = x ^ 5 + 15 * x ^ 4 + 90 * x ^ 3 + 270 * x ^ 2 + 405 * x + 243 := by
@@ -356,7 +356,7 @@ theorem koeficient_x_plus_3 {R : Type*} [CommRing R] (x : R) :
 
 /-- Naloga 1: (1+√2)⁴ = 1 + 4√2 + 6(√2)² + 4(√2)³ + (√2)⁴ = 1 + 4√2 + 12 + 8√2 + 4 = 17 + 12√2.
 trditev: MAT-SS-4/binomski-izrek#naloga1
-besedilo: »Potence: $(\sqrt{2})^2 = 2$, $(\sqrt{2})^3 = 2\sqrt{2}$, $(\sqrt{2})^4 = 4$, zato dobimo $1 + 4\sqrt{2} + 12 + 8\sqrt{2} + 4$.« -/
+besedilo: »Odgovor: $(1+\sqrt{2})^4 = 17 + 12\sqrt{2}$.« -/
 theorem naloga1 : (1 + Real.sqrt 2) ^ 4 = 17 + 12 * Real.sqrt 2 := by
   have s2 : Real.sqrt 2 ^ 2 = 2 := Real.sq_sqrt (by norm_num)
   calc (1 + Real.sqrt 2) ^ 4
@@ -375,7 +375,7 @@ theorem naloga2_splosni {R : Type*} [CommRing R] (x : R) (n k : ℕ) :
 /-- Naloga 2 a), korak 2 in 3 (RAČUN `resi`): 4·n(n−1)/2 = 112 ⇔ n(n−1) = 56 ⇔ n² − n − 56 = 0
 ⇔ (n−8)(n+7) = 0 ⇔ n = −7 ali n = 8 (realna rešitev).
 trditev: MAT-SS-4/binomski-izrek#naloga2-enacba
-besedilo: »a) Iz $4 \cdot \frac{n(n-1)}{2} = 112$ dobimo $n(n-1) = 56$ oziroma $n^2 - n - 56 = 0$, torej $(n-8)(n+7) = 0$.« -/
+besedilo: »a) Iz $4 \cdot \frac{n(n-1)}{2} = 112$ dobimo $n(n-1) = 56$ oziroma $n^2 - n - 56 = 0$, torej $(n-8)(n+7) = 0$. 3. a) Rešitev $n = -7$ ni naravno število, zato je $n = 8$.« -/
 theorem naloga2_enacba (n : ℝ) : 4 * n * (n - 1) / 2 = 112 ↔ n = -7 ∨ n = 8 := by
   calc 4 * n * (n - 1) / 2 = 112 ↔ n * (n - 1) = 56 := by
         constructor <;> intro h
@@ -388,7 +388,7 @@ theorem naloga2_enacba (n : ℝ) : 4 * n * (n - 1) / 2 = 112 ↔ n = -7 ∨ n = 
 
 /-- Naloga 2 a), korak 3: med naravnimi števili je koeficient `C(n,2)·2² = 112` natanko pri n = 8.
 trditev: MAT-SS-4/binomski-izrek#naloga2-a
-besedilo: »V razvoju potence $(1 + 2x)^n$, kjer je $n$ naravno število, je koeficient pri $x^2$ enak $112$.« -/
+besedilo: »a) Rešitev $n = -7$ ni naravno število, zato je $n = 8$.« -/
 theorem naloga2_a (n : ℕ) : Nat.choose n 2 * 2 ^ 2 = 112 ↔ n = 8 := by
   constructor
   · intro h
@@ -403,7 +403,7 @@ theorem naloga2_a (n : ℕ) : Nat.choose n 2 * 2 ^ 2 = 112 ↔ n = 8 := by
 /-- Naloga 2 b): razvoj (1+2x)⁸ ima 9 členov, srednji je peti (k = 4):
 `T₅ = C(8,4)·(2x)⁴ = 70·16x⁴ = 1120x⁴`.
 trditev: MAT-SS-4/binomski-izrek#naloga2-b
-besedilo: »$T_5 = \binom{8}{4}(2x)^4 = 70 \cdot 16x^4 = 1120x^4$« -/
+besedilo: »b) Razvoj ima $n + 1 = 9$ členov; srednji je peti člen, torej $k = 4$. 5. b) $T_5 = \binom{8}{4}(2x)^4 = 70 \cdot 16x^4 = 1120x^4$« -/
 theorem naloga2_b {R : Type*} [CommRing R] (x : R) :
     8 + 1 = 9 ∧ (Nat.choose 8 4 : R) * 1 ^ 4 * (2 * x) ^ 4 = 70 * (16 * x ^ 4) ∧
     (70 : R) * (16 * x ^ 4) = 1120 * x ^ 4 := by
@@ -434,13 +434,13 @@ theorem ustno3 (n : ℕ) : ∑ k ∈ range (n + 1), (Nat.choose n k : ℤ) = (1 
 
 /-- Vlaki: 2⁵ = 32 = 1 + 5 + 10 + 10 + 5 + 1, natanko 2 ekspresna vlaka: `C(5,2) = 10`.
 trditev: MAT-SS-4/binomski-izrek#vlaki
-besedilo: »Na potovanju z vlakom imaš $5$ prestopnih postaj in na vsaki izbereš ekspresni ali regionalni vlak. Vseh kombinacij je $2^5 = 32$, kar je vsota vrstice $5$: $1 + 5 + 10 + 10 + 5 + 1$. Natanko $2$ ekspresna vlaka izbereš na $\binom{5}{2} = 10$ načinov.« -/
+besedilo: »Vseh kombinacij je $2^5 = 32$, kar je vsota vrstice $5$: $1 + 5 + 10 + 10 + 5 + 1$. Natanko $2$ ekspresna vlaka izbereš na $\binom{5}{2} = 10$ načinov.« -/
 theorem vlaki : (2 : ℕ) ^ 5 = 32 ∧ 1 + 5 + 10 + 10 + 5 + 1 = 32 ∧ Nat.choose 5 2 = 10 := by decide
 
 /-- 11² = 121, 11³ = 1331, 11⁴ = 14641 = (10+1)⁴ = 1·10⁴ + 4·10³ + 6·10² + 4·10 + 1; pri 11⁵ je
 1·10⁵ + 5·10⁴ + 10·10³ + 10·10² + 5·10 + 1 = 161051.
 trditev: MAT-SS-4/binomski-izrek#enajst
-besedilo: »ker je $11 = 10 + 1$ in je $(10+1)^4 = 1 \cdot 10^4 + 4 \cdot 10^3 + 6 \cdot 10^2 + 4 \cdot 10 + 1$.« -/
+besedilo: »$11^2 = 121$, $11^3 = 1331$ in $11^4 = 14641$. To so vrstice Pascalovega trikotnika, ker je $11 = 10 + 1$ in je $(10+1)^4 = 1 \cdot 10^4 + 4 \cdot 10^3 + 6 \cdot 10^2 + 4 \cdot 10 + 1$. Pri $11^5$ se zatakne, ker je v vrstici $5$ dvomestno število $10$ in se njegova enica prenese na sosednje mesto.« -/
 theorem enajst :
     (11 : ℕ) ^ 2 = 121 ∧ (11 : ℕ) ^ 3 = 1331 ∧ (11 : ℕ) ^ 4 = 14641 ∧
     (10 + 1 : ℕ) ^ 4 = 1 * 10 ^ 4 + 4 * 10 ^ 3 + 6 * 10 ^ 2 + 4 * 10 + 1 ∧
@@ -450,14 +450,12 @@ theorem enajst :
 /-! ## Preveri se -/
 
 /-- Preveri se 1: do C (2 vzhodno, 2 severno) vodi `C(4,2) = 6` najkrajših poti.
-trditev: MAT-SS-4/binomski-izrek#kviz1
-besedilo: »Pot do $C$ ima $4$ korake, od tega $2$ severna: $\binom{4}{2} = 6$.« -/
+pomozno -/
 theorem kviz1 : #((range 4).powersetCard 2) = 6 := by rw [card_powersetCard, card_range]; rfl
 
 /-- Preveri se 2: splošni člen (x + 1/x²)⁹ je `C(9,k)·x^(9−k)·(1/x²)^k = C(9,k)·x^(9−3k)`; eksponent 0 da
 k = 3 in člen `C(9,3) = 9!/(3!·6!) = 84`.
-trditev: MAT-SS-4/binomski-izrek#kviz2
-besedilo: »Najprej splošni člen, nato skupni eksponent $x$, iz pogoja »eksponent $0$« dobiš $k$ in šele na koncu število $\binom{9}{3} = 84$.« -/
+pomozno -/
 theorem kviz2 (x : ℝ) (hx : x ≠ 0) (k : ℕ) (hk : k ≤ 9) :
     (Nat.choose 9 k : ℝ) * x ^ (9 - k) * (1 / x ^ 2) ^ k = (Nat.choose 9 k : ℝ) * x ^ ((9 : ℤ) - 3 * k) ∧
     ((9 : ℤ) - 3 * k = 0 ↔ k = 3) ∧ Nat.choose 9 3 = 84 ∧
@@ -476,23 +474,20 @@ example :=
   kviz2 (hx := w.1) (hk := w.2)
 
 /-- Preveri se 3: (a−b)⁶ = a⁶ − 6a⁵b + 15a⁴b² − 20a³b³ + 15a²b⁴ − 6ab⁵ + b⁶ (predznaki se izmenjujejo).
-trditev: MAT-SS-4/binomski-izrek#kviz3
-besedilo: »$(a-b)^6 = a^6 - 6a^5b + 15a^4b^2 - 20a^3b^3 + 15a^2b^4 - 6ab^5 + b^6$: predznaki se izmenjujejo.« -/
+pomozno -/
 theorem kviz3 {R : Type*} [CommRing R] (a b : R) :
     (a - b) ^ 6 = a ^ 6 - 6 * a ^ 5 * b + 15 * a ^ 4 * b ^ 2 - 20 * a ^ 3 * b ^ 3 + 15 * a ^ 2 * b ^ 4 -
       6 * a * b ^ 5 + b ^ 6 := by ring
 
 /-- Preveri se 4: koeficient pri x³ v (x+3)⁵: 5 − k = 3 da k = 2, `C(5,2)·3² = 90`; napačni odgovori:
 10 = C(5,2), 30 = C(5,2)·3, 270 = C(5,3)·3³.
-trditev: MAT-SS-4/binomski-izrek#kviz4
-besedilo: »$x^3$ pomeni $5 - k = 3$, torej $k = 2$: $\binom{5}{2} \cdot 3^2 = 10 \cdot 9 = 90$.« -/
+pomozno -/
 theorem kviz4 : (Nat.choose 5 2 : ℤ) * 3 ^ 2 = 90 ∧ (Nat.choose 5 2 : ℤ) * 3 = 30 ∧
     (Nat.choose 5 3 : ℤ) * 3 ^ 3 = 270 := by decide
 
 /-- Preveri se 5: splošni člen (2x − 1/x)⁶ je `C(6,k)·(2x)^(6−k)·(−1/x)^k = C(6,k)·2^(6−k)·(−1)^k·x^(6−2k)`;
 6 − 2k = 0 da k = 3, člen `20·8·(−1) = −160`.
-trditev: MAT-SS-4/binomski-izrek#kviz5
-besedilo: »Splošni člen $\binom{6}{k}2^{6-k}(-1)^k x^{6-2k}$; $6 - 2k = 0$ da $k = 3$, člen pa je $20 \cdot 8 \cdot (-1) = -160$.« -/
+pomozno -/
 theorem kviz5 (x : ℝ) (hx : x ≠ 0) (k : ℕ) (hk : k ≤ 6) :
     (Nat.choose 6 k : ℝ) * (2 * x) ^ (6 - k) * (-1 / x) ^ k =
       (Nat.choose 6 k : ℝ) * 2 ^ (6 - k) * (-1) ^ k * x ^ ((6 : ℤ) - 2 * k) ∧
@@ -512,8 +507,7 @@ example :=
   kviz5 (hx := w.1) (hk := w.2)
 
 /-- Preveri se 5: celoten razvoj (2x − 1/x)⁶ = 64x⁶ − 192x⁴ + 240x² − 160 + 60/x² − 12/x⁴ + 1/x⁶ (x ≠ 0).
-trditev: MAT-SS-4/binomski-izrek#kviz5-razvoj
-besedilo: »$\left(2x - \frac{1}{x}\right)^6$« -/
+pomozno -/
 theorem kviz5_razvoj (x : ℝ) (hx : x ≠ 0) :
     (2 * x - 1 / x) ^ 6 = 64 * x ^ 6 - 192 * x ^ 4 + 240 * x ^ 2 - 160 + 60 / x ^ 2 - 12 / x ^ 4 + 1 / x ^ 6 := by
   field_simp
@@ -529,7 +523,7 @@ example :=
 
 /-- RAČUN: `10·2³·(−1)² = 80`, `10·3² = 90`, `20·2³·(−1)³ = −160`, `6·5/2 = 15`.
 trditev: MAT-SS-4/binomski-izrek#racun
-besedilo: »$\binom{5}{2} \cdot 3^2 = 10 \cdot 9 = 90$« -/
+besedilo: »$\binom{5}{2} \cdot 8 \cdot 1 = 10 \cdot 8 = 80$« -/
 theorem racun : (10 : ℤ) * 2 ^ 3 * (-1) ^ 2 = 80 ∧ (10 : ℤ) * 3 ^ 2 = 90 ∧
     (20 : ℤ) * 2 ^ 3 * (-1) ^ 3 = -160 ∧ (6 : ℚ) * 5 / 2 = 15 := by norm_num
 

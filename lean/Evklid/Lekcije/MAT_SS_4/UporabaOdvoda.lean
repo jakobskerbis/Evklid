@@ -59,7 +59,7 @@ example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => -x) ((fun _ => (-1:ℝ)) x) x
 
 /-- Razlaga »Ekstremi«: če odvod v b zamenja predznak iz + v −, ima f v b lokalni maksimum.
 trditev: MAT-SS-4/uporaba-odvoda#lokalni-maksimum
-besedilo: »Če odvod v njej spremeni predznak iz $+$ v $-$, ima funkcija tam **lokalni maksimum**; če iz $-$ v $+$, **lokalni minimum**.« -/
+besedilo: »Če odvod v njej spremeni predznak iz $+$ v $-$, ima funkcija tam **lokalni maksimum**« -/
 theorem lokalni_maksimum {f f' : ℝ → ℝ} {a b c : ℝ} (hd : ∀ x, HasDerivAt f (f' x) x) (hab : a < b)
     (hbc : b < c) (h₀ : ∀ x ∈ Ioo a b, 0 ≤ f' x) (h₁ : ∀ x ∈ Ioo b c, f' x ≤ 0) : IsLocalMax f b :=
   isLocalMax_of_deriv_Ioo hab hbc (hd b).continuousAt
@@ -69,7 +69,7 @@ theorem lokalni_maksimum {f f' : ℝ → ℝ} {a b c : ℝ} (hd : ∀ x, HasDeri
 
 /-- Razlaga »Ekstremi«: če odvod v b zamenja predznak iz − v +, ima f v b lokalni minimum.
 trditev: MAT-SS-4/uporaba-odvoda#lokalni-minimum
-besedilo: »Če odvod v njej spremeni predznak iz $+$ v $-$, ima funkcija tam **lokalni maksimum**; če iz $-$ v $+$, **lokalni minimum**.« -/
+besedilo: »če iz $-$ v $+$, **lokalni minimum**.« -/
 theorem lokalni_minimum {f f' : ℝ → ℝ} {a b c : ℝ} (hd : ∀ x, HasDerivAt f (f' x) x) (hab : a < b)
     (hbc : b < c) (h₀ : ∀ x ∈ Ioo a b, f' x ≤ 0) (h₁ : ∀ x ∈ Ioo b c, 0 ≤ f' x) : IsLocalMin f b :=
   isLocalMin_of_deriv_Ioo hab hbc (hd b).continuousAt
@@ -105,7 +105,7 @@ example : (∀ x : ℝ, HasDerivAt (fun x : ℝ => -x ^ 2) ((fun x => -(2 * x)) 
 
 /-- Uvod: pri 1 € in 300 kosih ter pri 1,50 € in 200 kosih je prihodek enak, 300 €.
 trditev: MAT-SS-4/uporaba-odvoda#uvod
-besedilo: »Pek prodaja rogljičke po $1\,€$ in jih vsak dan proda $300$. Ugotovil je, da ga vsakih $10$ centov podražitve stane $20$ kupcev. Po $1{,}50\,€$ bi jih torej prodal le še $200$.« -/
+besedilo: »Presenečenje: pri obeh cenah zasluži natanko enako, $300\,€$ na dan.« -/
 theorem uvod : (1:ℝ) * 300 = 300 ∧ (1.5:ℝ) * 200 = 300 := by norm_num
 
 /-- Tabela namesto formule: prodanih je 300 − 200(x − 1) = 500 − 200x kosov, prihodek
@@ -119,7 +119,7 @@ theorem kosi_in_prihodek (x : ℝ) :
 /-- Tabela: R(1) = 300, R(1,1) = 308, R(1,2) = 312, R(1,25) = 312,5, R(1,3) = 312, R(1,4) = 308,
 R(1,5) = 300 (s kosi 300, 280, 260, 250, 240, 220, 200).
 trditev: MAT-SS-4/uporaba-odvoda#tabela
-besedilo: »| $1{,}25$ | $250$ | $312{,}50$ |« -/
+besedilo: »| $1{,}00$ | $300$ | $300{,}00$ | | $1{,}10$ | $280$ | $308{,}00$ | | $1{,}20$ | $260$ | $312{,}00$ | | $1{,}25$ | $250$ | $312{,}50$ | | $1{,}30$ | $240$ | $312{,}00$ | | $1{,}40$ | $220$ | $308{,}00$ | | $1{,}50$ | $200$ | $300{,}00$ |« -/
 theorem tabela :
     (500:ℝ) - 200 * 1 = 300 ∧ (1:ℝ) * 300 = 300 ∧ (500:ℝ) - 200 * 1.1 = 280 ∧ (1.1:ℝ) * 280 = 308 ∧
     (500:ℝ) - 200 * 1.2 = 260 ∧ (1.2:ℝ) * 260 = 312 ∧ (500:ℝ) - 200 * 1.25 = 250 ∧
@@ -129,7 +129,7 @@ theorem tabela :
 
 /-- Tabela: vrh je pri 1,25 €: R(x) ≤ R(1,25) = 312,5 za vsak x.
 trditev: MAT-SS-4/uporaba-odvoda#vrh
-besedilo: »Za $x > 1{,}25$ je $R'(x) < 0$.« -/
+besedilo: »Vrh je pri $1{,}25\,€$.« -/
 theorem vrh (x : ℝ) : 500 * x - 200 * x ^ 2 ≤ 500 * 1.25 - 200 * 1.25 ^ 2 := by
   nlinarith [sq_nonneg (x - 1.25)]
 
@@ -145,7 +145,7 @@ theorem rogljicki_tangenta (x : ℝ) :
 
 /-- Številska premica: R narašča na [1; 1,25] (R' > 0) in pada na [1,25; 1,5] (R' < 0).
 trditev: MAT-SS-4/uporaba-odvoda#rogljicki-monotonost
-besedilo: »Odvod $0$ velja le v točki vrha, ne na intervalu. Za $x > 1{,}25$ je $R'(x) < 0$.« -/
+besedilo: »Prihodek najprej raste, potem pada. Vrh je pri $1{,}25\,€$.« -/
 theorem rogljicki_monotonost :
     StrictMonoOn (fun x : ℝ => 500 * x - 200 * x ^ 2) (Icc 1 1.25) ∧
     StrictAntiOn (fun x : ℝ => 500 * x - 200 * x ^ 2) (Icc 1.25 1.5) := by
@@ -156,7 +156,7 @@ theorem rogljicki_monotonost :
 
 /-- Normala: pri k_t ≠ 0 je produkt k_t · (−1/k_t) = −1, normala je pravokotna na tangento.
 trditev: MAT-SS-4/uporaba-odvoda#normala
-besedilo: »Normala.** Normala je premica skozi dotikališče, pravokotna na tangento. Produkt smernih koeficientov pravokotnih premic je $-1$, zato ima normala pri $k_t = f'(a) \ne 0$ smerni koeficient $k_n = -\frac{1}{k_t}$ in enačbo« -/
+besedilo: »Produkt smernih koeficientov pravokotnih premic je $-1$, zato ima normala pri $k_t = f'(a) \ne 0$ smerni koeficient $k_n = -\frac{1}{k_t}$« -/
 theorem normala (k : ℝ) (hk : k ≠ 0) : k * (-1 / k) = -1 := by field_simp
 
 /-- Predpostavke trditve `normala` se dajo izpolniti. -/
@@ -195,7 +195,7 @@ theorem normala_navpicna (fa a x : ℝ) :
 /-- Presečni kot: če sta α₁, α₂ smerna kota tangent (tan αᵢ = kᵢ, cos αᵢ ≠ 0), je
 tan(α₂ − α₁) = (k₂ − k₁)/(1 + k₁k₂); pri k₁k₂ = −1 je cos(α₂ − α₁) = 0 (pravi kot).
 trditev: MAT-SS-4/uporaba-odvoda#presecni-kot
-besedilo: »$$\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$$« -/
+besedilo: »Če je $1 + k_1 k_2 \ne 0$, zanj velja $\tan\varphi = \left|\frac{k_2 - k_1}{1 + k_1 k_2}\right|$, kjer je $0^\circ \le \varphi < 90^\circ$. Grafa se sekata pravokotno, ko je $k_1 k_2 = -1$, saj sta tedaj tangenti pravokotni.« -/
 theorem presecni_kot (α₁ α₂ k₁ k₂ : ℝ) (h₁ : cos α₁ ≠ 0) (h₂ : cos α₂ ≠ 0) (t₁ : tan α₁ = k₁)
     (t₂ : tan α₂ = k₂) :
     tan (α₂ - α₁) = (k₂ - k₁) / (1 + k₁ * k₂) ∧ (k₁ * k₂ = -1 → cos (α₂ - α₁) = 0) := by
@@ -214,7 +214,7 @@ example : cos (0:ℝ) ≠ 0 ∧ tan (0:ℝ) = 0 := by simp
 
 /-- Premisli (x³): f'(0) = 0, a f'(x) = 3x² ≥ 0, f ves čas narašča in v 0 nima ekstrema.
 trditev: MAT-SS-4/uporaba-odvoda#kub-terasa
-besedilo: »Primer je $f(x) = x^3$ v točki $0$: $f'(0) = 0$, a $f'(x) = 3x^2$ je na obeh straneh pozitiven, zato funkcija ves čas narašča.« -/
+besedilo: »Pri $f(x) = x^3$ je $f'(0) = 0$, ekstrema pa ni, ker odvod ne zamenja predznaka.« -/
 theorem kub_terasa :
     deriv (fun x : ℝ => x ^ 3) 0 = 0 ∧ StrictMono (fun x : ℝ => x ^ 3) ∧
     ¬ IsLocalMax (fun x : ℝ => x ^ 3) 0 ∧ ¬ IsLocalMin (fun x : ℝ => x ^ 3) 0 := by
@@ -231,7 +231,7 @@ theorem kub_terasa :
 
 /-- Primer 1: f(2) = 8 − 6 = 2, f'(x) = 3x² − 3, f'(2) = 12 − 3 = 9, tangenta y = 2 + 9(x − 2) = 9x − 16.
 trditev: MAT-SS-4/uporaba-odvoda#primer1
-besedilo: »$y = 2 + 9(x - 2) = 9x - 16$« -/
+besedilo: »Odgovor: tangenta ima enačbo $y = 9x - 16$.« -/
 theorem primer1 (x : ℝ) :
     (2:ℝ) ^ 3 - 3 * 2 = 8 - 6 ∧ (8:ℝ) - 6 = 2 ∧
     HasDerivAt (fun x : ℝ => x ^ 3 - 3 * x) (3 * x ^ 2 - 3) x ∧
@@ -251,7 +251,7 @@ theorem primer2_odvod (x : ℝ) :
 
 /-- Primer 2, korak 2: stacionarni točki sta natanko −1 in 3.
 trditev: MAT-SS-4/uporaba-odvoda#primer2-stacionarni
-besedilo: »Stacionarni točki sta $x_1 = -1$ in $x_2 = 3$,« -/
+besedilo: »Stacionarni točki sta $x_1 = -1$ in $x_2 = 3$, ker je tam eden od faktorjev enak $0$.« -/
 theorem primer2_stacionarni (x : ℝ) : 3 * (x + 1) * (x - 3) = 0 ↔ x = -1 ∨ x = 3 := by
   constructor
   · intro h
@@ -265,7 +265,7 @@ theorem primer2_stacionarni (x : ℝ) : 3 * (x + 1) * (x - 3) = 0 ↔ x = -1 ∨
 /-- Primer 2, korak 3: testne točke f'(−2) = 15, f'(0) = −9, f'(4) = 15; f narašča na (−∞, −1) in
 (3, ∞), pada na (−1, 3).
 trditev: MAT-SS-4/uporaba-odvoda#primer2-monotonost
-besedilo: »Odgovor: $f$ narašča na $(-\infty, -1)$ in $(3, \infty)$, pada na $(-1, 3)$; lokalni maksimum je $T_1(-1, 7)$, lokalni minimum $T_2(3, -25)$.« -/
+besedilo: »Odgovor: $f$ narašča na $(-\infty, -1)$ in $(3, \infty)$, pada na $(-1, 3)$« -/
 theorem primer2_monotonost :
     (3:ℝ) * (-2) ^ 2 - 6 * (-2) - 9 = 15 ∧ (3:ℝ) * 0 ^ 2 - 6 * 0 - 9 = -9 ∧
     (3:ℝ) * 4 ^ 2 - 6 * 4 - 9 = 15 ∧
@@ -282,7 +282,7 @@ theorem primer2_monotonost :
 /-- Primer 2, koraka 4–5: v −1 se predznak f' zamenja iz + v −, lokalni maksimum
 f(−1) = −1 − 3 + 9 + 2 = 7; v 3 iz − v +, lokalni minimum f(3) = 27 − 27 − 27 + 2 = −25.
 trditev: MAT-SS-4/uporaba-odvoda#primer2-ekstrema
-besedilo: »Pri $-1$ se predznak zamenja iz $+$ v $-$: lokalni maksimum $f(-1) = -1 - 3 + 9 + 2 = 7$.« -/
+besedilo: »lokalni maksimum je $T_1(-1, 7)$, lokalni minimum $T_2(3, -25)$.« -/
 theorem primer2_ekstrema :
     IsLocalMax (fun x : ℝ => x ^ 3 - 3 * x ^ 2 - 9 * x + 2) (-1) ∧
     (-1:ℝ) ^ 3 - 3 * (-1) ^ 2 - 9 * (-1) + 2 = -1 - 3 + 9 + 2 ∧ (-1:ℝ) - 3 + 9 + 2 = 7 ∧
@@ -320,7 +320,7 @@ theorem primer3_odvod (c : ℝ) :
 /-- Primer 3, koraki 5–7: D(20) = 0, D(60) = 0; pri c = 40 proda 600 − 400 = 200 kosov in
 D(40) = 20 · 200 = 4000; to je največji dobiček na [20, 60].
 trditev: MAT-SS-4/uporaba-odvoda#primer3-maksimum
-besedilo: »Pri $c = 40$ proda $600 - 400 = 200$ kosov, $D(40) = 20 \cdot 200 = 4000$.« -/
+besedilo: »Odgovor: največji dobiček, $4000\,€$ na teden, doseže pri ceni $40\,€$.« -/
 theorem primer3_maksimum :
     ((20:ℝ) - 20) * (600 - 10 * 20) = 0 ∧ ((60:ℝ) - 20) * (600 - 10 * 60) = 0 ∧
     (600:ℝ) - 10 * 40 = 600 - 400 ∧ (600:ℝ) - 400 = 200 ∧ ((40:ℝ) - 20) * 200 = 20 * 200 ∧
@@ -392,7 +392,7 @@ theorem primer5 (x : ℝ) :
 
 /-- Pogoste napake 3: prihodek je pri 1,40 € pozitiven (308 €), pa vseeno pada: R'(1,4) = −60 < 0.
 trditev: MAT-SS-4/uporaba-odvoda#napaka-pozitivna
-besedilo: »Pozitivna funkcija = naraščajoča funkcija.** Prihodek je pri $1{,}40\,€$ pozitiven, pa vseeno pada.« -/
+besedilo: »Prihodek je pri $1{,}40\,€$ pozitiven, pa vseeno pada.« -/
 theorem napaka_pozitivna : (0:ℝ) < 500 * 1.4 - 200 * 1.4 ^ 2 ∧ (500:ℝ) - 400 * 1.4 = -60 := by
   norm_num
 
@@ -400,7 +400,7 @@ theorem napaka_pozitivna : (0:ℝ) < 500 * 1.4 - 200 * 1.4 ^ 2 ∧ (500:ℝ) - 4
 
 /-- Naloga 1: f'(x) = 2x − 4, 2x − 4 = 2 ⇔ x = 3, f(3) = 9 − 12 + 5 = 2, tangenta y = 2 + 2(x − 3) = 2x − 4.
 trditev: MAT-SS-4/uporaba-odvoda#matura1
-besedilo: »$f'(x) = 2x - 4$, iz $2x - 4 = 2$ sledi $x = 3$. Ordinata: $f(3) = 9 - 12 + 5 = 2$, dotikališče je $T(3, 2)$.« -/
+besedilo: »Odgovor: tangenta v točki $T(3, 2)$ je vzporedna z dano premico, njena enačba je $y = 2x - 4$.« -/
 theorem matura1 (x : ℝ) :
     HasDerivAt (fun x : ℝ => x ^ 2 - 4 * x + 5) (2 * x - 4) x ∧ (2 * x - 4 = 2 ↔ x = 3) ∧
     (3:ℝ) ^ 2 - 4 * 3 + 5 = 9 - 12 + 5 ∧ (9:ℝ) - 12 + 5 = 2 ∧ 2 + 2 * (x - 3) = 2 * x - 4 := by
@@ -410,7 +410,7 @@ theorem matura1 (x : ℝ) :
 
 /-- Naloga 2 a): f(x) = x(x² − 6x + 9) = x(x − 3)², ničli sta 0 in 3.
 trditev: MAT-SS-4/uporaba-odvoda#matura2a
-besedilo: »a) $f(x) = x(x^2 - 6x + 9) = x(x - 3)^2$.« -/
+besedilo: »a) Ničli sta $x_1 = 0$ (enostavna) in $x_2 = 3$« -/
 theorem matura2a (x : ℝ) :
     x ^ 3 - 6 * x ^ 2 + 9 * x = x * (x ^ 2 - 6 * x + 9) ∧ x * (x ^ 2 - 6 * x + 9) = x * (x - 3) ^ 2 ∧
     (x * (x - 3) ^ 2 = 0 ↔ x = 0 ∨ x = 3) := by
@@ -446,7 +446,7 @@ theorem matura2b_odvod (x : ℝ) :
 /-- Naloga 2 b): f narašča na (−∞, 1) in (3, ∞), pada na (1, 3); lokalni maksimum f(1) = 1 − 6 + 9 = 4,
 lokalni minimum f(3) = 0.
 trditev: MAT-SS-4/uporaba-odvoda#matura2b-ekstremi
-besedilo: »b) V $x = 1$ se predznak $f'$ zamenja iz $+$ v $-$: lokalni maksimum $f(1) = 1 - 6 + 9 = 4$. V $x = 3$ se zamenja iz $-$ v $+$: lokalni minimum $f(3) = 0$.« -/
+besedilo: »$f$ narašča na $(-\infty, 1)$ in $(3, \infty)$, pada na $(1, 3)$; lokalni maksimum je $T_1(1, 4)$, lokalni minimum $T_2(3, 0)$.« -/
 theorem matura2b_ekstremi :
     StrictMonoOn (fun x : ℝ => x ^ 3 - 6 * x ^ 2 + 9 * x) (Iio 1) ∧
     StrictAntiOn (fun x : ℝ => x ^ 3 - 6 * x ^ 2 + 9 * x) (Ioo 1 3) ∧
@@ -467,7 +467,7 @@ theorem matura2b_ekstremi :
 
 /-- Naloga 2 c), oporne točke (RACUN): f(−1) = −16 in f(4) = 4.
 trditev: MAT-SS-4/uporaba-odvoda#matura2c
-besedilo: »c) Graf pride od spodaj, seka os $x$ v izhodišču, se dvigne do $T_1(1, 4)$, spusti do $T_2(3, 0)$, kjer se osi $x$ dotakne, nato narašča čez vse meje. Za oporo: $f(-1) = -16$ in $f(4) = 4$.« -/
+besedilo: »Za oporo: $f(-1) = -16$ in $f(4) = 4$.« -/
 theorem matura2c :
     (-1:ℝ) ^ 3 - 6 * (-1) ^ 2 + 9 * (-1) = -16 ∧ (4:ℝ) ^ 3 - 6 * 4 ^ 2 + 9 * 4 = 4 := by norm_num
 
@@ -510,7 +510,7 @@ example :=
 
 /-- Naloga 3 b): C'(r) = 0 ⇔ 1,2πr³ = 1,2 ⇔ r³ = 1/π (r > 0).
 trditev: MAT-SS-4/uporaba-odvoda#matura3b-stacionarna
-besedilo: »b) $C'(r) = 0$ da $1{,}2\pi r^3 = 1{,}2$, torej $r^3 = \dfrac{1}{\pi}$ in $r = \sqrt[3]{\dfrac{1}{\pi}} \doteq 0{,}68278\,\mathrm{dm}$.« -/
+besedilo: »b) $C'(r) = 0$ da $1{,}2\pi r^3 = 1{,}2$, torej $r^3 = \dfrac{1}{\pi}$« -/
 theorem matura3b_stacionarna (r : ℝ) (hr : 0 < r) :
     (1.2 * π * r - 1.2 / r ^ 2 = 0 ↔ 1.2 * π * r ^ 3 = 1.2) ∧ (1.2 * π * r ^ 3 = 1.2 ↔ r ^ 3 = 1 / π) := by
   have hp := pi_pos
@@ -581,7 +581,7 @@ example : True :=
 /-- Naloga 3 b), c): r₀ ≐ 0,68278 dm (na milimeter 0,683 dm ≐ 6,8 cm); višina h = 2/(πr₀²) = 2r₀ ≐ 1,3656 dm
 (13,7 cm); stroški 0,6πr₀² ≐ 0,8788, 1,2/r₀ ≐ 1,7575, C(r₀) ≐ 2,6363 ≐ 2,64 €.
 trditev: MAT-SS-4/uporaba-odvoda#matura3-stevila
-besedilo: »c) $C(0{,}68278) \doteq 0{,}8788 + 1{,}7575 = 2{,}6363$, torej približno $2{,}64\,€$.« -/
+besedilo: »Odgovor: stroški so najmanjši pri polmeru dna $6{,}8\,\mathrm{cm}$ in višini $13{,}7\,\mathrm{cm}$ in znašajo približno $2{,}64\,€$ na posodo« -/
 theorem matura3_stevila (r₀ : ℝ) (h0 : 0 < r₀) (hπ : π * r₀ ^ 3 = 1) :
     (0.682775 < r₀ ∧ r₀ < 0.682785) ∧ 2 / (π * r₀ ^ 2) = 2 * r₀ ∧
     (1.36555 < 2 * r₀ ∧ 2 * r₀ < 1.36565) ∧
@@ -639,7 +639,7 @@ example : True :=
 /-- Preveri se 2: pri f(x) = x² so smerni koeficienti tangent v −1, 0, 2 enaki −2, 0, 4 (vrstni red
 −1, 0, 2).
 trditev: MAT-SS-4/uporaba-odvoda#kviz2
-besedilo: »Na graf $f(x) = x^2$ položimo tangente v točkah z abscisami $-1$, $0$ in $2$. Razvrsti jih po smernem koeficientu od najmanjšega do največjega.« -/
+besedilo: »$f'(x) = 2x$ da koeficiente $-2$, $0$ in $4$.« -/
 theorem kviz2 : (2:ℝ) * (-1) = -2 ∧ (2:ℝ) * 0 = 0 ∧ (2:ℝ) * 2 = 4 ∧ (-2:ℝ) < 0 ∧ (0:ℝ) < 4 := by norm_num
 
 /-- Preveri se 3: desno od 1,25 je R' < 0, R(1,40) = 1,40 · 220 = 308 < 312,50.

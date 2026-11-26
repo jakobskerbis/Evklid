@@ -47,7 +47,7 @@ def babica (x : ℕ) : ℕ := 50 * x + 100
 /-- Zakaj se tega učimo: f(10) = 600; 600 − 100 = 500, 500 : 50 = 10; 120 ml ne more porabiti (120 − 100 = 20,
 20/50 = 0,4 ni naravno število), tj. 600 je v Z_f, 120 ni.
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#uvod
-besedilo: »Ne: $120 - 100 = 20$, to je le $0{,}4$ palačinke.« -/
+besedilo: »Pri babici je $600$ v $Z_f$, $120$ pa ne, kot si videl v uganki.« -/
 theorem uvod : babica 10 = 600 ∧ 600 - 100 = 500 ∧ 500 / 50 = 10 ∧ (∀ x : ℕ, babica x = 600 ↔ x = 10) ∧
     ((120:ℝ) - 100) / 50 = 0.4 ∧ (600 ∈ Set.range babica) ∧ (120 ∉ Set.range babica) := by
   refine ⟨rfl, rfl, rfl, fun x => ⟨fun h => by unfold babica at h; omega, fun h => by rw [h]; rfl⟩, by norm_num,
@@ -61,7 +61,7 @@ theorem D_ulomek (x : ℝ) : x - 2 ≠ 0 ↔ x ≠ 2 := by rw [Ne, sub_eq_zero]
 
 /-- Zaloga vrednosti: x² ima D_f = R, Z_f = [0, ∞).
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#z-kvadrat
-besedilo: »Zaloga vrednosti** $Z_f$ je množica vseh vrednosti $f(x)$, ki jih funkcija res zavzame. Funkcija $f(x) = x^2$ ima $D_f = \mathbb{R}$, a $Z_f = [0, \infty)$, ker kvadrat ni nikoli negativen. Pri babici je $600$ v $Z_f$, $120$ pa ne, kot si videl v uganki.« -/
+besedilo: »Funkcija $f(x) = x^2$ ima $D_f = \mathbb{R}$, a $Z_f = [0, \infty)$, ker kvadrat ni nikoli negativen.« -/
 theorem Z_kvadrat : Set.range (fun x : ℝ => x ^ 2) = Set.Ici 0 := by
   ext y; constructor
   · rintro ⟨x, rfl⟩; exact sq_nonneg x
@@ -74,14 +74,14 @@ theorem babica_narasca : StrictMono babica := fun _ _ h => by unfold babica; ome
 
 /-- Simetrija (tabela): (±1)² = 1, (±2)² = 4, (±3)² = 9 (enaki), (±1)³ = ±1, (±2)³ = ±8, (±3)³ = ±27 (nasprotni).
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#tabela
-besedilo: »$f(1) = 9$ in pravilna $f^{-1}(9) = 3 - 2 = 1$.« -/
+besedilo: »| $1$ in $-1$ | $1$ in $1$ | $1$ in $-1$ | | $2$ in $-2$ | $4$ in $4$ | $8$ in $-8$ | | $3$ in $-3$ | $9$ in $9$ | $27$ in $-27$ |« -/
 theorem tabela : ((1:ℝ) ^ 2 = 1 ∧ (-1:ℝ) ^ 2 = 1 ∧ (2:ℝ) ^ 2 = 4 ∧ (-2:ℝ) ^ 2 = 4 ∧ (3:ℝ) ^ 2 = 9 ∧ (-3:ℝ) ^ 2 = 9) ∧
     ((1:ℝ) ^ 3 = 1 ∧ (-1:ℝ) ^ 3 = -1 ∧ (2:ℝ) ^ 3 = 8 ∧ (-2:ℝ) ^ 3 = -8 ∧ (3:ℝ) ^ 3 = 27 ∧ (-3:ℝ) ^ 3 = -27) := by
   norm_num
 
 /-- Simetrija: x + 1 ni ne soda ne liha (f(−1) = 0, f(1) = 2).
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#x-plus-1
-besedilo: »Večina funkcij ni ne soda ne liha, na primer $x + 1$: $f(-1) = 0$, $f(1) = 2$.« -/
+besedilo: »Večina funkcij ni ne soda ne liha, na primer $f(x) = x + 1$.« -/
 theorem x_plus_1 : ¬ (∀ x : ℝ, (-x) + 1 = x + 1) ∧ ¬ (∀ x : ℝ, (-x) + 1 = -(x + 1)) ∧
     ((-1:ℝ) + 1 = 0 ∧ (1:ℝ) + 1 = 2) := by
   refine ⟨fun h => by have := h 1; norm_num at this, fun h => by have := h 1; norm_num at this, by norm_num⟩
@@ -116,7 +116,7 @@ theorem babica_surj : Injective babica ∧ ¬ Surjective babica :=
 /-- Surjektivnost: x² kot R → R ni injektivna ne surjektivna (−1 ni vrednost); kot R → [0, ∞) ni injektivna,
 je surjektivna; kot [0, ∞) → [0, ∞) je injektivna, surjektivna in bijektivna.
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#kvadrat-abc
-besedilo: »$\mathbb{R} \to \mathbb{R}$: ni injektivna, ni surjektivna ($-1$ ni vrednost), ni bijektivna;« -/
+besedilo: »$\mathbb{R} \to \mathbb{R}$: ni injektivna, ni surjektivna ($-1$ ni vrednost), ni bijektivna; - $\mathbb{R} \to [0, \infty)$: ni injektivna, je surjektivna, ni bijektivna; - $[0, \infty) \to [0, \infty)$: je injektivna, surjektivna in bijektivna.« -/
 theorem kvadrat_ABC :
     (¬ InjOn (fun x : ℝ => x ^ 2) univ ∧ ¬ SurjOn (fun x : ℝ => x ^ 2) univ univ) ∧
     (¬ InjOn (fun x : ℝ => x ^ 2) univ ∧ SurjOn (fun x : ℝ => x ^ 2) univ (Ici 0)) ∧
@@ -138,7 +138,7 @@ theorem kub_bijektivna : Bijective (fun x : ℝ => x ^ 3) :=
 
 /-- Surjektivnost: kot f : A → Z_f je vsaka funkcija surjektivna, injektivna pa bijektivna.
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#na-zalogo
-besedilo: »Če za $B$ vzamemo zalogo vrednosti $Z_f$, je vsaka funkcija surjektivna.« -/
+besedilo: »Če za $B$ vzamemo zalogo vrednosti $Z_f$, je vsaka funkcija surjektivna. Zato je vsaka injektivna funkcija kot $f\colon D_f \to Z_f$ bijektivna.« -/
 theorem na_zalogo {α β : Type*} (f : α → β) : Surjective (rangeFactorization f) ∧
     (Injective f → Bijective (rangeFactorization f)) :=
   ⟨rangeFactorization_surjective, fun h => ⟨fun _ _ hab => h (congrArg Subtype.val hab), rangeFactorization_surjective⟩⟩
@@ -151,7 +151,7 @@ theorem sestavljena {α β γ : Type*} (f : α → β) (g : β → γ) (x : α) 
 /-- Inverzna funkcija: levo obratna funkcija obstaja natanko za injektivno f; za injektivno f : A → Z_f obstaja
 f⁻¹ : Z_f → A z f⁻¹(f(x)) = x za vsak x ∈ A in f(f⁻¹(y)) = y za vsak y ∈ Z_f.
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#inverz-obstaja
-besedilo: »Taki obrnjeni funkciji rečemo **inverzna funkcija** $f^{-1}$: če je $f(x) = y$, je $f^{-1}(y) = x$.« -/
+besedilo: »Funkcija $f$ ima inverzno funkcijo $f^{-1}$ natanko takrat, ko je injektivna.« -/
 theorem inverz_obstaja {α β : Type*} [Nonempty α] (f : α → β) : (Injective f ↔ HasLeftInverse f) ∧
     (Injective f → ∃ g : Set.range f → α, LeftInverse g (rangeFactorization f) ∧
       Function.RightInverse g (rangeFactorization f)) :=
@@ -161,7 +161,7 @@ theorem inverz_obstaja {α β : Type*} [Nonempty α] (f : α → β) : (Injectiv
 f⁻¹(f(x)) = x in f(f⁻¹(x)) = x za vsak x; iz y = 50x + 100 sledi x = (y − 100)/50; graf: (a, b) na grafu f ⇔
 (b, a) na grafu f⁻¹.
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#babica-inverz
-besedilo: »$f^{-1}$ kot ulomek.** Oznaka $f^{-1}(x)$ ni $\dfrac{1}{f(x)}$. Pri babici je $\dfrac{1}{50x + 100}$ nesmiselna količina, prava inverzna pa je $\dfrac{x - 100}{50}$. Inverzna funkcija »odpravi« $f$, ne obrne ulomka.« -/
+besedilo: »Za babico: $y = 50x + 100$, torej $x = \dfrac{y - 100}{50}$, in $$f^{-1}(x) = \frac{x - 100}{50}$$« -/
 theorem babica_inverz (x y a b : ℝ) :
     LeftInverse (fun x : ℝ => (x - 100) / 50) (fun x : ℝ => 50 * x + 100) ∧
     Function.RightInverse (fun x : ℝ => (x - 100) / 50) (fun x : ℝ => 50 * x + 100) ∧
@@ -197,7 +197,7 @@ theorem premisli_kvadrat : (2:ℝ) ^ 2 = 4 ∧ (-2:ℝ) ^ 2 = 4 ∧ InvOn (fun x
 
 /-- Izražanje: v = s/t ⇔ t = s/v (t, v ≠ 0); n = m/M ⇔ m = n · M (M ≠ 0); c = n/V ⇔ V = n/c (V, c ≠ 0).
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#izrazanje
-besedilo: »Koncentracija $c = \dfrac{n}{V}$: pomnožimo z $V$ in delimo s $c$, zato $V = \dfrac{n}{c}$.« -/
+besedilo: »Hitrost $v = \dfrac{s}{t}$: pomnožimo s $t$ in delimo z $v$, zato $t = \dfrac{s}{v}$. - Množina snovi $n = \dfrac{m}{M}$: pomnožimo z molsko maso $M$, zato $m = n \cdot M$. - Koncentracija $c = \dfrac{n}{V}$: pomnožimo z $V$ in delimo s $c$, zato $V = \dfrac{n}{c}$.« -/
 theorem izrazanje (s t v m M n c V : ℝ) (ht : t ≠ 0) (hv : v ≠ 0) (hM : M ≠ 0) (hV : V ≠ 0) (hc : c ≠ 0) :
     (v = s / t ↔ t = s / v) ∧ (n = m / M ↔ m = n * M) ∧ (c = n / V ↔ V = n / c) := by
   refine ⟨⟨fun h => ?_, fun h => ?_⟩, ⟨fun h => ?_, fun h => ?_⟩, ⟨fun h => ?_, fun h => ?_⟩⟩
@@ -238,7 +238,7 @@ example :=
 
 /-- Izražanje: l = l₀ + αl₀ΔT = l₀(1 + αΔT), zato l₀ = l/(1 + αΔT) (1 + αΔT ≠ 0).
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#izrazanje-l0
-besedilo: »$l_0 + \alpha l_0 \Delta T = l_0(1 + \alpha \Delta T)$« -/
+besedilo: »Izpostavimo $l_0$: $l = l_0(1 + \alpha \Delta T)$, zato je $l_0 = \dfrac{l}{1 + \alpha \Delta T}$.« -/
 theorem izrazanje_l0 (l l0 α ΔT : ℝ) (h : 1 + α * ΔT ≠ 0) :
     l0 + α * l0 * ΔT = l0 * (1 + α * ΔT) ∧ (l = l0 + α * l0 * ΔT ↔ l0 = l / (1 + α * ΔT)) := by
   refine ⟨by ring, ⟨fun e => ?_, fun e => ?_⟩⟩
@@ -281,7 +281,7 @@ theorem primer1 :
 /-- Primer 2: f(x) = x³ − 4x je liha: f(−x) = (−x)³ − 4(−x) = −x³ + 4x = −(x³ − 4x); g(x) = x² + 2x ni ne soda
 ne liha (g(−x) = x² − 2x; g(1) = 3, g(−1) = −1); f(0) = 0 = f(2) = 8 − 8, zato f ni injektivna.
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#primer2
-besedilo: »$f(-x) = (-x)^3 - 4(-x) = -x^3 + 4x$« -/
+besedilo: »Odgovor: $f$ je liha, a ni injektivna; $g$ ni ne soda ne liha.« -/
 theorem primer2 :
     (∀ x : ℝ, (-x) ^ 3 - 4 * (-x) = -x ^ 3 + 4 * x ∧ -x ^ 3 + 4 * x = -(x ^ 3 - 4 * x)) ∧
     (∀ x : ℝ, (-x) ^ 2 + 2 * (-x) = x ^ 2 - 2 * x) ∧ ((1:ℝ) ^ 2 + 2 * 1 = 3 ∧ (-1:ℝ) ^ 2 + 2 * (-1) = -1) ∧
@@ -315,7 +315,7 @@ theorem primer4 (x : ℝ) : (50:ℝ) * 10 + 100 = 600 ∧ (0.0012:ℝ) * 600 = 0
 /-- Primer 5: iz 1/R = 1/R₁ + 1/R₂ sledi 1/R₂ = 1/R − 1/R₁ = (R₁ − R)/(R R₁) in R₂ = R R₁/(R₁ − R)
 (R, R₁, R₂ > 0); R₂ = 4 · 12/(12 − 4) = 48/8 = 6 Ω, preizkus 1/12 + 1/6 = 3/12 = 1/4.
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#primer5
-besedilo: »Vstavimo podatke: $R_2 = \dfrac{4 \cdot 12}{12 - 4} = \dfrac{48}{8} = 6$, torej $6\,\Omega$.« -/
+besedilo: »Odgovor: $R_2 = \dfrac{R R_1}{R_1 - R}$; vzporedno mora vezati upornik z uporom $6\,\Omega$.« -/
 theorem primer5 (R R1 R2 : ℝ) (hR : 0 < R) (hR1 : 0 < R1) (hR2 : 0 < R2) :
     (1 / R = 1 / R1 + 1 / R2 ↔ 1 / R2 = 1 / R - 1 / R1) ∧ 1 / R - 1 / R1 = (R1 - R) / (R * R1) ∧
     (1 / R = 1 / R1 + 1 / R2 ↔ R2 = R * R1 / (R1 - R)) ∧
@@ -345,7 +345,7 @@ example :=
 /-- Pogoste napake: f⁻¹(x) ni 1/f(x) (npr. pri x = 200: (200 − 100)/50 = 2, 1/(50 · 200 + 100) ≠ 2); iz
 1/R₂ = 1/R − 1/R₁ ne sledi R₂ = R − R₁ (pri R = 4, R₁ = 12 bi bilo −8 < 0, pravilno 6).
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#pogoste-napake
-besedilo: »Obrnjen vsak člen posebej.** Iz $\dfrac{1}{R_2} = \dfrac{1}{R} - \dfrac{1}{R_1}$ ne sledi $R_2 = R - R_1$ (napačno).« -/
+besedilo: »Iz $\dfrac{1}{R_2} = \dfrac{1}{R} - \dfrac{1}{R_1}$ ne sledi $R_2 = R - R_1$ (napačno). Obratna vrednost razlike ni razlika obratnih vrednosti: pri $R = 4$ in $R_1 = 12$ bi dobil celo negativen upor.« -/
 theorem pogoste_napake : ((200:ℝ) - 100) / 50 = 2 ∧ (1:ℝ) / (50 * 200 + 100) ≠ 2 ∧ (4:ℝ) - 12 = -8 ∧
     (1:ℝ) / 4 - 1 / 12 ≠ 1 / (4 - 12) ∧ (4:ℝ) * 12 / (12 - 4) = 6 := by norm_num
 
@@ -354,7 +354,7 @@ theorem pogoste_napake : ((200:ℝ) - 100) / 50 = 2 ∧ (1:ℝ) / (50 * 200 + 10
 /-- Naloga 1: f(x) = x⁴ − 2x² + 3; f(−x) = (−x)⁴ − 2(−x)² + 3 = f(x), soda; ni liha (f(−1) = 2, −f(1) = −2);
 f(1) = 1 − 2 + 3 = 2 = f(−1), ni injektivna.
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#matura1
-besedilo: »$f(-x) = (-x)^4 - 2(-x)^2 + 3 = x^4 - 2x^2 + 3 = f(x)$« -/
+besedilo: »Odgovor: $f$ je soda in na $\mathbb{R}$ ni injektivna.« -/
 theorem matura1 :
     (∀ x : ℝ, (-x) ^ 4 - 2 * (-x) ^ 2 + 3 = x ^ 4 - 2 * x ^ 2 + 3) ∧ ¬ (∀ x : ℝ, (-x) ^ 4 - 2 * (-x) ^ 2 + 3 = -(x ^ 4 - 2 * x ^ 2 + 3)) ∧
     ((-1:ℝ) ^ 4 - 2 * (-1) ^ 2 + 3 = 2 ∧ -((1:ℝ) ^ 4 - 2 * 1 ^ 2 + 3) = -2 ∧ (1:ℝ) ^ 4 - 2 * 1 ^ 2 + 3 = 1 - 2 + 3) ∧
@@ -396,7 +396,7 @@ theorem matura2 :
 /-- Ustno vprašanje 3: za f(x) = x + 1 in g(x) = x² je (g ∘ f)(x) = (x + 1)², (f ∘ g)(x) = x² + 1; pri x = 1 sta
 vrednosti 4 in 2, zato g ∘ f ≠ f ∘ g.
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#ustno3
-besedilo: »Za $f(x) = x + 1$ in $g(x) = x^2$ je $(g \circ f)(x) = (x + 1)^2$, $(f \circ g)(x) = x^2 + 1$.« -/
+besedilo: »Za $f(x) = x + 1$ in $g(x) = x^2$ je $(g \circ f)(x) = (x + 1)^2$, $(f \circ g)(x) = x^2 + 1$. Pri $x = 1$ je prva vrednost $4$, druga pa $2$. Zato funkciji $g \circ f$ in $f \circ g$ v splošnem nista enaki.« -/
 theorem ustno3 : ((fun x : ℝ => x ^ 2) ∘ (fun x : ℝ => x + 1)) 1 = (1 + 1) ^ 2 ∧ ((1:ℝ) + 1) ^ 2 = 4 ∧
     ((fun x : ℝ => x + 1) ∘ (fun x : ℝ => x ^ 2)) 1 = 1 ^ 2 + 1 ∧ (1:ℝ) ^ 2 + 1 = 2 ∧
     (fun x : ℝ => x ^ 2) ∘ (fun x : ℝ => x + 1) ≠ (fun x : ℝ => x + 1) ∘ (fun x : ℝ => x ^ 2) := by
@@ -409,7 +409,7 @@ theorem ustno3 : ((fun x : ℝ => x ^ 2) ∘ (fun x : ℝ => x + 1)) 1 = (1 + 1)
 f(−1) = −8 (ni ne soda ne liha); f⁻¹(x) = (x + 6)/2, f⁻¹(4) = 10/2 = 5; (5, 4) → (4, 5), (3, 0) → (0, 3);
 grafa se sekata v (6, 6).
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#korak
-besedilo: »Preizkus inverzne.** $f(5) = 4$ in $f^{-1}(4) = \dfrac{10}{2} = 5$.« -/
+besedilo: »Iz $y = 2x - 6$ dobiš $x = \dfrac{y + 6}{2}$, torej $f^{-1}(x) = \dfrac{x + 6}{2}$.« -/
 theorem korak :
     (∀ x : ℝ, 2 * x - 6 = 0 ↔ x = 3) ∧ (2:ℝ) * 3 - 6 = 0 ∧ (2:ℝ) * 1 - 6 = -4 ∧ (2:ℝ) * 2 - 6 = -2 ∧
     (2:ℝ) * 5 - 6 = 4 ∧ (2:ℝ) * (-1) - 6 = -8 ∧ StrictMono (fun x : ℝ => 2 * x - 6) ∧
@@ -448,7 +448,7 @@ theorem preveri2 : ((fun x : ℝ => x ^ 2) ∘ (fun x : ℝ => 2 * x - 1)) 3 = 2
 
 /-- Preveri se, 3: inverz 3x + 6 je (x − 6)/3 = x/3 − 2 (ne x/3 − 6); f(1) = 9, f⁻¹(9) = 3 − 2 = 1.
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#preveri3
-besedilo: »Pisal je: (1) $y = 3x + 6$; (2) $x = \dfrac{y - 6}{3}$; (3) $f^{-1}(x) = \dfrac{x}{3} - 6$.« -/
+besedilo: »Deliti s $3$ moraš oba člena. Preizkus: $f(1) = 9$ in pravilna $f^{-1}(9) = 3 - 2 = 1$.« -/
 theorem preveri3 (x : ℝ) : (∀ y : ℝ, y = 3 * x + 6 ↔ x = (y - 6) / 3) ∧ (x - 6) / 3 = x / 3 - 2 ∧
     (3:ℝ) * 1 + 6 = 9 ∧ (9:ℝ) / 3 - 2 = 1 ∧ (9:ℝ) / 3 - 6 ≠ 1 :=
   ⟨fun y => ⟨fun h => by rw [h]; ring, fun h => by rw [h]; ring⟩, by ring, by norm_num, by norm_num, by norm_num⟩
@@ -461,7 +461,7 @@ theorem preveri4 : ¬ Injective (fun x : ℝ => x ^ 2) ∧ Bijective (fun x : �
 
 /-- Preveri se, 5: funkcija, ki ves čas pada, je injektivna (vsako vrednost doseže le enkrat).
 trditev: MAT-SS-2/funkcije-in-njihove-lastnosti#preveri5
-besedilo: »Funkcija, ki ves čas pada, vsako vrednost doseže le enkrat.« -/
+besedilo: »Funkcija, ki na vsem definicijskem območju narašča ali na vsem pada, je vedno injektivna.« -/
 theorem preveri5 (T : ℝ → ℝ) (h : StrictAnti T) : Injective T := h.injective
 
 /-- Predpostavke trditve `preveri5` se dajo izpolniti. -/

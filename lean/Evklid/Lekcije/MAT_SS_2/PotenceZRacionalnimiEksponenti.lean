@@ -78,7 +78,7 @@ theorem k16_4 : (16 : ℝ) ^ (1 / 4 : ℝ) = 2 := by
 /-- Razlaga 1, tabela: 16⁰ = 1, 16^(1/4) = 2, 16^(1/2) = 4, 16^(3/4) = 8, 16¹ = 16; na sredini je
 4 = √16.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#lestev
-besedilo: »Na sredini lestve je $4 = \sqrt{16}$, na prvem klinu $2 = \sqrt[4]{16}$, na tretjem $8 = \left(\sqrt[4]{16}\right)^3$.« -/
+besedilo: »| $0$ | $16^0$ | $1$ | | $\frac{1}{4}$ | $16^{\frac{1}{4}}$ | $2$ | | $\frac{1}{2}$ | $16^{\frac{1}{2}}$ | $4$ | | $\frac{3}{4}$ | $16^{\frac{3}{4}}$ | $8$ | | $1$ | $16^1$ | $16$ |« -/
 theorem lestev :
     (16 : ℝ) ^ (0 : ℝ) = 1 ∧ (16 : ℝ) ^ (1 / 4 : ℝ) = 2 ∧ (16 : ℝ) ^ (1 / 2 : ℝ) = 4 ∧
     (16 : ℝ) ^ (3 / 4 : ℝ) = 8 ∧ (16 : ℝ) ^ (1 : ℝ) = 16 ∧ Real.sqrt 16 = 4 := by
@@ -109,7 +109,7 @@ theorem lestev_naprej : (16 : ℝ) ^ (5 / 4 : ℝ) = 16 * 2 ∧ (16 : ℝ) * 2 =
 /-- Razlaga 2: za a ≠ 0 in cela m, n velja aᵐ·aⁿ = aᵐ⁺ⁿ, aᵐ : aⁿ = aᵐ⁻ⁿ, (aᵐ)ⁿ = aᵐⁿ,
 (a·b)ⁿ = aⁿ·bⁿ, a⁰ = 1 in a⁻ⁿ = 1/aⁿ (pravila brez a ≠ 0 veljajo za vsak a, b).
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#pravila-cela
-besedilo: »$$(a \cdot b)^n = a^n \cdot b^n, \qquad a^0 = 1, \qquad a^{-n} = \frac{1}{a^n}.$$« -/
+besedilo: »$$a^m \cdot a^n = a^{m+n}, \qquad a^m : a^n = a^{m-n}, \qquad \left(a^m\right)^n = a^{m \cdot n},$$ $$(a \cdot b)^n = a^n \cdot b^n, \qquad a^0 = 1, \qquad a^{-n} = \frac{1}{a^n}.$$« -/
 theorem pravila_cela (a b : ℝ) (ha : a ≠ 0) (m n : ℤ) :
     a ^ m * a ^ n = a ^ (m + n) ∧ a ^ m / a ^ n = a ^ (m - n) ∧ (a ^ m) ^ n = a ^ (m * n) ∧
     (a * b) ^ n = a ^ n * b ^ n ∧ a ^ (0 : ℤ) = 1 ∧ a ^ (-n) = 1 / a ^ n :=
@@ -162,7 +162,7 @@ example :=
 /-- Razlaga 4 (definicija): za a > 0, celo m in naravno n je a^(m/n) = ⁿ√(aᵐ) = (ⁿ√a)ᵐ
 (ⁿ√ zapisan kot ^(1/n)); velja za vsak n ≥ 1, ne le n ≥ 2.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#definicija
-besedilo: »4. Definicija.** Lestev zapišemo s simboli. Naj bo $a > 0$, $m$ celo število in $n$ naravno število ($n \ge 2$). Potem je« -/
+besedilo: »Naj bo $a > 0$, $m$ celo število in $n$ naravno število ($n \ge 2$). Potem je $$a^{\frac{m}{n}} = \sqrt[n]{a^m} = \left(\sqrt[n]{a}\right)^m.$$« -/
 theorem definicija (a : ℝ) (ha : 0 < a) (m : ℤ) (n : ℕ) (hn : n ≠ 0) :
     a ^ ((m : ℝ) / n) = (a ^ m) ^ ((1 : ℝ) / n) ∧ a ^ ((m : ℝ) / n) = (a ^ ((1 : ℝ) / n)) ^ m := by
   have _hn := hn
@@ -259,7 +259,7 @@ theorem negativna_osnova : (1 / 3 : ℝ) = 2 / 6 ∧ (∀ x : ℝ, x ^ 3 = -8 �
 /-- Pogoste napake (negativna osnova) in Ponovitev: ∛(−27) = −3, tj. −3 je edino realno število,
 katerega kub je −27.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#kubicni-koren-m27
-besedilo: »Negativna osnova.** Zapis $(-27)^{\frac{1}{3}}$ ni definiran, ker bi zapis z drugim ulomkom, na primer $(-27)^{\frac{2}{6}}$, dal drug rezultat. Kadar potrebuješ kubični koren negativnega števila, ga piši s korenom: $\sqrt[3]{-27} = -3$.« -/
+besedilo: »Kadar potrebuješ kubični koren negativnega števila, ga piši s korenom: $\sqrt[3]{-27} = -3$.« -/
 theorem kubicni_koren_m27 (x : ℝ) : x ^ 3 = -27 ↔ x = -3 := by
   constructor
   · intro h
@@ -275,7 +275,7 @@ theorem kubicni_koren_m27 (x : ℝ) : x ^ 3 = -27 ↔ x = -3 := by
 /-- Razlaga 7 (in Povzetek): za a, b > 0 velja a^r·a^s = a^(r+s), a^r : a^s = a^(r−s),
 (a^r)^s = a^(r·s), (a·b)^r = a^r·b^r in (a/b)^r = a^r/b^r (dokazano za vse realne r, s).
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#pravila
-besedilo: »$a^r : a^s = a^{r-s}$, $\;(a^r)^s = a^{r \cdot s}$, $\;(a \cdot b)^r = a^r \cdot b^r$« -/
+besedilo: »| $a^r \cdot a^s = a^{r+s}$ | $a^{\frac{1}{2}} \cdot a^{\frac{1}{3}} = a^{\frac{5}{6}}$ | | $a^r : a^s = a^{r-s}$ | $a^{\frac{3}{4}} : a^{\frac{1}{4}} = a^{\frac{1}{2}}$ | | $\left(a^r\right)^s = a^{r \cdot s}$ | $\left(a^{\frac{2}{3}}\right)^{\frac{3}{4}} = a^{\frac{1}{2}}$ | | $(a \cdot b)^r = a^r \cdot b^r$ | $(4x)^{\frac{1}{2}} = 2x^{\frac{1}{2}}$ | | $\left(\dfrac{a}{b}\right)^r = \dfrac{a^r}{b^r}$ | $\left(\dfrac{8}{27}\right)^{\frac{1}{3}} = \dfrac{2}{3}$ |« -/
 theorem pravila (a b r s : ℝ) (ha : 0 < a) (hb : 0 < b) :
     a ^ r * a ^ s = a ^ (r + s) ∧ a ^ r / a ^ s = a ^ (r - s) ∧ (a ^ r) ^ s = a ^ (r * s) ∧
     (a * b) ^ r = a ^ r * b ^ r ∧ (a / b) ^ r = a ^ r / b ^ r :=
@@ -303,7 +303,7 @@ theorem k4_2 : (4 : ℝ) ^ (1 / 2 : ℝ) = 2 := by
 /-- Razlaga 7, primeri v tabeli (a > 0, x ≥ 0): a^(1/2)·a^(1/3) = a^(5/6), a^(3/4) : a^(1/4) = a^(1/2),
 (a^(2/3))^(3/4) = a^(1/2), (4x)^(1/2) = 2x^(1/2), (8/27)^(1/3) = 2/3.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#pravila-primeri
-besedilo: »$a^{\frac{1}{2}} \cdot a^{\frac{1}{3}} = a^{\frac{5}{6}}$« -/
+besedilo: »| $a^r \cdot a^s = a^{r+s}$ | $a^{\frac{1}{2}} \cdot a^{\frac{1}{3}} = a^{\frac{5}{6}}$ | | $a^r : a^s = a^{r-s}$ | $a^{\frac{3}{4}} : a^{\frac{1}{4}} = a^{\frac{1}{2}}$ | | $\left(a^r\right)^s = a^{r \cdot s}$ | $\left(a^{\frac{2}{3}}\right)^{\frac{3}{4}} = a^{\frac{1}{2}}$ | | $(a \cdot b)^r = a^r \cdot b^r$ | $(4x)^{\frac{1}{2}} = 2x^{\frac{1}{2}}$ | | $\left(\dfrac{a}{b}\right)^r = \dfrac{a^r}{b^r}$ | $\left(\dfrac{8}{27}\right)^{\frac{1}{3}} = \dfrac{2}{3}$ |« -/
 theorem pravila_primeri (a x : ℝ) (ha : 0 < a) (hx : 0 ≤ x) :
     a ^ (1 / 2 : ℝ) * a ^ (1 / 3 : ℝ) = a ^ (5 / 6 : ℝ) ∧
     a ^ (3 / 4 : ℝ) / a ^ (1 / 4 : ℝ) = a ^ (1 / 2 : ℝ) ∧
@@ -407,7 +407,7 @@ theorem primer1c : ((4 : ℝ) / 9) ^ (3 / 2 : ℝ) = 8 / 27 := by
 /-- Primer 2: za a > 0 je √a·∛(a²)/∜(a³) = a^(1/2)·a^(2/3)/a^(3/4) = a^(1/2 + 2/3 − 3/4)
 = a^(6/12 + 8/12 − 9/12) = a^(5/12) = ¹²√(a⁵).
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#primer2
-besedilo: »Eksponent rezultata: $\dfrac{1}{2} + \dfrac{2}{3} - \dfrac{3}{4}$. Skupni imenovalec je $12$: $\dfrac{6}{12} + \dfrac{8}{12} - \dfrac{9}{12} = \dfrac{5}{12}$.« -/
+besedilo: »Izraz je enak $a^{\frac{5}{12}} = \sqrt[12]{a^5}$.« -/
 theorem primer2 (a : ℝ) (ha : 0 < a) :
     Real.sqrt a * (a ^ 2) ^ (1 / 3 : ℝ) / (a ^ 3) ^ (1 / 4 : ℝ) = (a ^ 5) ^ (1 / 12 : ℝ) := by
   calc Real.sqrt a * (a ^ 2) ^ (1 / 3 : ℝ) / (a ^ 3) ^ (1 / 4 : ℝ)
@@ -460,7 +460,7 @@ theorem k81_4 : (81 : ℝ) ^ (1 / 4 : ℝ) = 3 := by
 /-- Primer 3: ∜16 = 2, 16^(3/4) = 2³ = 8, P₁ = 70·8 = 560; ∜81 = 3, 81^(3/4) = 3³ = 27,
 P₂ = 70·27 = 1890; 1890/560 = 3,375 ≈ 3,4 in 81/16 = 5,0625 ≈ 5.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#primer3
-besedilo: »Razmerje energij: $\dfrac{1890}{560} = 3{,}375$; razmerje mas: $\dfrac{81}{16} = 5{,}0625$.« -/
+besedilo: »Odgovor: pes potrebuje približno $560\,\mathrm{kcal}$ na dan, težja žival $1890\,\mathrm{kcal}$. Težja žival je približno $5$-krat težja, energije pa potrebuje le približno $3{,}4$-krat več.« -/
 theorem primer3 :
     (70 : ℝ) * (16 : ℝ) ^ (3 / 4 : ℝ) = 560 ∧ (70 : ℝ) * (81 : ℝ) ^ (3 / 4 : ℝ) = 1890 ∧
     (1890 : ℝ) / 560 = 3.375 ∧ (81 : ℝ) / 16 = 5.0625 ∧
@@ -485,7 +485,7 @@ theorem primer3 :
 = (x^(3/4 − (−1/4))·y^(−1/2 − 1/6))^(3/2) = (x^(4/4)·y^(−3/6 − 1/6))^(3/2) = (x¹·y^(−2/3))^(3/2)
 = x^(1·3/2)·y^(−2/3·3/2) = x^(3/2)·y⁻¹ = x^(3/2)/y = x√x/y.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#primer4
-besedilo: »Najprej uredimo ulomek v oklepaju; pri deljenju eksponente odštejemo. Pri $x$: $\dfrac{3}{4} - \left(-\dfrac{1}{4}\right) = \dfrac{4}{4} = 1$. Pri $y$: $-\dfrac{1}{2} - \dfrac{1}{6} = -\dfrac{3}{6} - \dfrac{1}{6} = -\dfrac{2}{3}$.« -/
+besedilo: »S korenom: $x^{\frac{3}{2}} = x^{1 + \frac{1}{2}} = x\sqrt{x}$, zato je izraz enak $\dfrac{x\sqrt{x}}{y}$.« -/
 theorem primer4 (x y : ℝ) (hx : 0 < x) (hy : 0 < y) :
     ((x ^ (3 / 4 : ℝ) * y ^ (-1 / 2 : ℝ)) / (x ^ (-1 / 4 : ℝ) * y ^ (1 / 6 : ℝ))) ^ (3 / 2 : ℝ)
       = x * Real.sqrt x / y := by
@@ -513,7 +513,7 @@ example :=
 
 /-- Primer 4, premisli: pri x = 4, y = 8 je 4·√4/8 = 4·2/8 = 1, zato ima prvotni izraz vrednost 1.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#primer4-vrednost
-besedilo: »Poenostavi izraz $\left(\dfrac{x^{\frac{3}{4}} \cdot y^{-\frac{1}{2}}}{x^{-\frac{1}{4}} \cdot y^{\frac{1}{6}}}\right)^{\frac{3}{2}}$ za $x, y > 0$. Nato izračunaj njegovo vrednost za $x = 4$ in $y = 8$.« -/
+besedilo: »$\dfrac{4 \cdot \sqrt{4}}{8} = \dfrac{4 \cdot 2}{8} = 1$.« -/
 theorem primer4_vrednost :
     (4 : ℝ) * Real.sqrt 4 / 8 = 4 * 2 / 8 ∧ (4 : ℝ) * 2 / 8 = 1 ∧
     (((4 : ℝ) ^ (3 / 4 : ℝ) * (8 : ℝ) ^ (-1 / 2 : ℝ)) / ((4 : ℝ) ^ (-1 / 4 : ℝ) * (8 : ℝ) ^ (1 / 6 : ℝ)))
@@ -526,7 +526,7 @@ theorem primer4_vrednost :
 /-- Primer 4, premisli (preverjanje): 4^(3/4) ≈ 2,8284, 8^(−1/2) ≈ 0,3536, 4^(−1/4) ≈ 0,7071,
 8^(1/6) ≈ 1,4142 ter 2,8284·0,3536 ≈ 1,000 in 0,7071·1,4142 ≈ 1,000.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#primer4-preizkus
-besedilo: »števec $4^{\frac{3}{4}} \cdot 8^{-\frac{1}{2}} \approx 2{,}8284 \cdot 0{,}3536 \approx 1{,}000$,« -/
+besedilo: »števec $4^{\frac{3}{4}} \cdot 8^{-\frac{1}{2}} \approx 2{,}8284 \cdot 0{,}3536 \approx 1{,}000$, imenovalec $4^{-\frac{1}{4}} \cdot 8^{\frac{1}{6}} \approx 0{,}7071 \cdot 1{,}4142 \approx 1{,}000$« -/
 theorem primer4_preizkus :
     (2.82835 < (4 : ℝ) ^ (3 / 4 : ℝ) ∧ (4 : ℝ) ^ (3 / 4 : ℝ) < 2.82845) ∧
     (0.35355 < (8 : ℝ) ^ (-1 / 2 : ℝ) ∧ (8 : ℝ) ^ (-1 / 2 : ℝ) < 0.35365) ∧
@@ -548,13 +548,13 @@ theorem primer4_preizkus :
 
 /-- Pogoste napake 1: 8^(1/3) = ∛8 = 2, ne 8/3.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#napaka-deljenje
-besedilo: »Ulomek v eksponentu kot deljenje.** $8^{\frac{1}{3}} = \dfrac{8}{3}$ je napačno. Eksponent $\dfrac{1}{3}$ pomeni kubični koren, zato je $8^{\frac{1}{3}} = \sqrt[3]{8} = 2$.« -/
+besedilo: »$8^{\frac{1}{3}} = \dfrac{8}{3}$ je napačno. Eksponent $\dfrac{1}{3}$ pomeni kubični koren, zato je $8^{\frac{1}{3}} = \sqrt[3]{8} = 2$.« -/
 theorem napaka_deljenje : (8 : ℝ) ^ (1 / 3 : ℝ) = 2 ∧ (2 : ℝ) ≠ 8 / 3 := ⟨k8_3, by norm_num⟩
 
 /-- Pogoste napake 2: 25^(−1/2) = 1/25^(1/2) = 1/5 ≠ −5; potenca s pozitivno osnovo je vedno
 pozitivna.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#napaka-negativni
-besedilo: »Negativni eksponent kot negativno število.** $25^{-\frac{1}{2}} = -5$ ni res. Minus v eksponentu pomeni obratno vrednost: $25^{-\frac{1}{2}} = \dfrac{1}{25^{\frac{1}{2}}} = \dfrac{1}{5}$. Potenca s pozitivno osnovo je vedno pozitivna.« -/
+besedilo: »$25^{-\frac{1}{2}} = -5$ ni res. Minus v eksponentu pomeni obratno vrednost: $25^{-\frac{1}{2}} = \dfrac{1}{25^{\frac{1}{2}}} = \dfrac{1}{5}$. Potenca s pozitivno osnovo je vedno pozitivna.« -/
 theorem napaka_negativni : (25 : ℝ) ^ (-1 / 2 : ℝ) = 1 / (25 : ℝ) ^ (1 / 2 : ℝ) ∧
     (25 : ℝ) ^ (-1 / 2 : ℝ) = 1 / 5 ∧ (1 / 5 : ℝ) ≠ -5 ∧
     ∀ a r : ℝ, 0 < a → 0 < a ^ r := by
@@ -563,7 +563,7 @@ theorem napaka_negativni : (25 : ℝ) ^ (-1 / 2 : ℝ) = 1 / (25 : ℝ) ^ (1 / 2
 
 /-- Pogoste napake 3: a^(2/3) = ∛(a²) (a ≥ 0); za a = 8 je ∛64 = 4, √512 ≈ 22,6 pa ni 4.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#napaka-zamenjava
-besedilo: »Zamenjava števca in imenovalca.** $a^{\frac{2}{3}} = \sqrt{a^3}$ je napačno. Imenovalec je stopnja korena, števec eksponent: $a^{\frac{2}{3}} = \sqrt[3]{a^2}$. Preizkus z $a = 8$: $\sqrt[3]{64} = 4$, toda $\sqrt{512} \approx 22{,}6$.« -/
+besedilo: »$a^{\frac{2}{3}} = \sqrt{a^3}$ je napačno. Imenovalec je stopnja korena, števec eksponent: $a^{\frac{2}{3}} = \sqrt[3]{a^2}$. Preizkus z $a = 8$: $\sqrt[3]{64} = 4$, toda $\sqrt{512} \approx 22{,}6$.« -/
 theorem napaka_zamenjava (a : ℝ) (ha : 0 ≤ a) :
     a ^ (2 / 3 : ℝ) = (a ^ 2) ^ (1 / 3 : ℝ) ∧ ((8 : ℝ) ^ 2) ^ (1 / 3 : ℝ) = 4 ∧
     (22.55 < Real.sqrt (8 ^ 3) ∧ Real.sqrt (8 ^ 3) < 22.65) := by
@@ -584,7 +584,7 @@ example :=
 
 /-- Pogoste napake 4: a^(1/2) + a^(1/3) = a^(5/6) ne velja: za a = 64 je 8 + 4 = 12, 64^(5/6) pa 32.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#napaka-vsota
-besedilo: »$a^{\frac{1}{2}} + a^{\frac{1}{3}} = a^{\frac{5}{6}}$« -/
+besedilo: »$a^{\frac{1}{2}} + a^{\frac{1}{3}} = a^{\frac{5}{6}}$ ni res.« -/
 theorem napaka_vsota : (64 : ℝ) ^ (1 / 2 : ℝ) = 8 ∧ (64 : ℝ) ^ (1 / 3 : ℝ) = 4 ∧
     (64 : ℝ) ^ (5 / 6 : ℝ) = 32 ∧
     (64 : ℝ) ^ (1 / 2 : ℝ) + (64 : ℝ) ^ (1 / 3 : ℝ) ≠ (64 : ℝ) ^ (5 / 6 : ℝ) := by
@@ -599,7 +599,7 @@ theorem napaka_vsota : (64 : ℝ) ^ (1 / 2 : ℝ) = 8 ∧ (64 : ℝ) ^ (1 / 3 : 
 /-- Pogoste napake 4 (»za vsoto √a + ∛a ni pravila, ki bi jo zapisalo kot eno potenco z osnovo a«):
 noben eksponent c ne da a^(1/2) + a^(1/3) = a^c za vse a > 0 (že pri a = 1 je levo 2, desno 1).
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#vsota-ni-potenca
-besedilo: »Seštevanje potenc kot množenje.** $a^{\frac{1}{2}} + a^{\frac{1}{3}} = a^{\frac{5}{6}}$ ni res. Eksponente seštevamo le pri **množenju** potenc z isto osnovo. Za vsoto $\sqrt{a} + \sqrt[3]{a}$ ni pravila, ki bi jo zapisalo kot eno potenco z osnovo $a$.« -/
+besedilo: »Za vsoto $\sqrt{a} + \sqrt[3]{a}$ ni pravila, ki bi jo zapisalo kot eno potenco z osnovo $a$.« -/
 theorem vsota_ni_potenca : ¬ ∃ c : ℝ, ∀ a : ℝ, 0 < a → a ^ (1 / 2 : ℝ) + a ^ (1 / 3 : ℝ) = a ^ c := by
   rintro ⟨c, h⟩
   have := h 1 one_pos
@@ -611,7 +611,7 @@ theorem vsota_ni_potenca : ¬ ∃ c : ℝ, ∀ a : ℝ, 0 < a → a ^ (1 / 2 : �
 /-- Za maturo, naloga 1: ∛2·∜8 = 2^(1/3)·(2³)^(1/4) = 2^(1/3)·2^(3/4) = 2^(1/3 + 3/4)
 = 2^(4/12 + 9/12) = 2^(13/12) = 2^(1 + 1/12) = 2¹·2^(1/12) = 2·¹²√2.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#matura1
-besedilo: »Pri množenju potenc z isto osnovo eksponente seštejemo: $\dfrac{1}{3} + \dfrac{3}{4} = \dfrac{4}{12} + \dfrac{9}{12} = \dfrac{13}{12}$, torej je izraz enak $2^{\frac{13}{12}}$.« -/
+besedilo: »Odgovor: $\sqrt[3]{2} \cdot \sqrt[4]{8} = 2^{\frac{13}{12}} = 2\sqrt[12]{2}$.« -/
 theorem matura1 : (2 : ℝ) ^ (1 / 3 : ℝ) * (8 : ℝ) ^ (1 / 4 : ℝ) = 2 * (2 : ℝ) ^ (1 / 12 : ℝ) := by
   calc (2 : ℝ) ^ (1 / 3 : ℝ) * (8 : ℝ) ^ (1 / 4 : ℝ)
       = (2 : ℝ) ^ (1 / 3 : ℝ) * ((2 : ℝ) ^ 3) ^ (1 / 4 : ℝ) := by norm_num
@@ -673,7 +673,7 @@ example : (0 : ℝ) ≤ 16 ∧ (0 : ℝ) ≤ 2 := by norm_num
 /-- Za maturo, naloga 2 b): za M > 0 je 240·M^(−1/4) = 50 ⟺ M^(−1/4) = 50/240 ⟺ M^(1/4) = 240/50
 ⟺ M = 4,8⁴ = 530,8416 (edina rešitev, ≈ 531 kg).
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#matura2b
-besedilo: »b) Potenciramo s $4$: $M = 4{,}8^4 = 530{,}8416$, torej približno $531\,\mathrm{kg}$.« -/
+besedilo: »Iz $240 \cdot M^{-\frac{1}{4}} = 50$ dobimo $M^{-\frac{1}{4}} = \dfrac{50}{240}$, torej $M^{\frac{1}{4}} = \dfrac{240}{50} = 4{,}8$. 3. b) Potenciramo s $4$: $M = 4{,}8^4 = 530{,}8416$« -/
 theorem matura2b (M : ℝ) (hM : 0 < M) : 240 * M ^ (-1 / 4 : ℝ) = 50 ↔ M = 530.8416 := by
   calc 240 * M ^ (-1 / 4 : ℝ) = 50 ↔ M ^ (-1 / 4 : ℝ) = 50 / 240 := by
         constructor
@@ -696,14 +696,14 @@ example :=
 
 /-- Za maturo, naloga 2 b) in RAČUN: (240/50)⁴ = 530,8416, kar je zaokroženo 531.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#racun-masa
-besedilo: »$M = 4{,}8^4 = 530{,}8416$« -/
+besedilo: »$M = 4{,}8^4 = 530{,}8416$, torej približno $531\,\mathrm{kg}$.« -/
 theorem racun_masa : ((240 : ℝ) / 50) ^ 4 = 530.8416 ∧ (530.5 : ℝ) < 530.8416 ∧
     (530.8416 : ℝ) < 531.5 := by norm_num
 
 /-- Za maturo, naloga 2 c): za M > 0 je 240·(10M)^(−1/4) / (240·M^(−1/4)) = 10^(−1/4) ≈ 0,56234,
 zmanjšanje 1 − 10^(−1/4) ≈ 0,43766, to je približno 43,8 %.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#matura2c
-besedilo: »c) Utrip se zmanjša za $1 - 0{,}56234 = 0{,}43766$ dela, to je za približno $43{,}8\,\%$.« -/
+besedilo: »Razmerje utripov pri masah $10M$ in $M$: $\dfrac{240 \cdot (10M)^{-\frac{1}{4}}}{240 \cdot M^{-\frac{1}{4}}} = 10^{-\frac{1}{4}}« -/
 theorem matura2c (M : ℝ) (hM : 0 < M) :
     240 * (10 * M) ^ (-1 / 4 : ℝ) / (240 * M ^ (-1 / 4 : ℝ)) = (10 : ℝ) ^ (-1 / 4 : ℝ) := by
   have h0 : M ^ (-1 / 4 : ℝ) ≠ 0 := (Real.rpow_pos_of_pos hM _).ne'
@@ -735,7 +735,7 @@ theorem racun_razmerje :
 /-- Drugače, z analogijo: q³ = 8 ⟺ q = 2 = 8^(1/3); dve tretjini: 2·2 = 4 = 8^(2/3);
 8^(−1/3) = 1/2.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#analogija
-besedilo: »Dve tretjini klika povečata za $2 \cdot 2 = 4 = 8^{\frac{2}{3}}$.« -/
+besedilo: »mora veljati $q \cdot q \cdot q = 8$, torej $q = 2 = 8^{\frac{1}{3}}$. Dve tretjini klika povečata za $2 \cdot 2 = 4 = 8^{\frac{2}{3}}$. Minus v eksponentu je klik nazaj: $8^{-\frac{1}{3}}$ sliko pomanjša na polovico« -/
 theorem analogija : (∀ q : ℝ, q ^ 3 = 8 ↔ q = 2) ∧ (8 : ℝ) ^ (1 / 3 : ℝ) = 2 ∧
     (2 : ℝ) * 2 = (8 : ℝ) ^ (2 / 3 : ℝ) ∧ (8 : ℝ) ^ (-1 / 3 : ℝ) = 1 / 2 := by
   refine ⟨fun q => ⟨fun h => ?_, fun h => by rw [h]; norm_num⟩, k8_3, ?_, ?_⟩
@@ -751,7 +751,7 @@ theorem analogija : (∀ q : ℝ, q ^ 3 = 8 ↔ q = 2) ∧ (8 : ℝ) ^ (1 / 3 : 
 /-- Drugače, na sliki (tabela): √0 = 0, √1 = 1, √4 = 2, √9 = 3 ter 0·√0 = 0, 1·√1 = 1, 4·√4 = 8,
 9·√9 = 27; vsi grafi gredo skozi (1, 1) (1^r = 1) in pri r > 0 skozi (0, 0).
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#slika-tabela
-besedilo: »Vsi trije grafi gredo skozi točki $(0, 0)$ in $(1, 1)$, ker je $1^r = 1$ za vsak eksponent.« -/
+besedilo: »| $0$ | $0$ | $0$ | $0$ | | $1$ | $1$ | $1$ | $1$ | | $4$ | $2$ | $4$ | $8$ | | $9$ | $3$ | $9$ | $27$ | Vsi trije grafi gredo skozi točki $(0, 0)$ in $(1, 1)$, ker je $1^r = 1$ za vsak eksponent.« -/
 theorem slika_tabela :
     Real.sqrt 0 = 0 ∧ Real.sqrt 1 = 1 ∧ Real.sqrt 4 = 2 ∧ Real.sqrt 9 = 3 ∧
     (0 : ℝ) * Real.sqrt 0 = 0 ∧ (1 : ℝ) * Real.sqrt 1 = 1 ∧ (4 : ℝ) * Real.sqrt 4 = 8 ∧
@@ -766,7 +766,7 @@ theorem slika_tabela :
 /-- Drugače, na sliki: za x > 1 je graf višje, čim večji je eksponent (r < s ⟹ x^r < x^s); med 0 in 1
 je obratno (r < s ⟹ x^s < x^r); posebej je za 0 < x < 1 √x nad premico y = x, x√x pa pod njo.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#slika-primerjava
-besedilo: »Med $0$ in $1$ je ravno obratno: tam je $\sqrt{x}$ nad premico $y = x$, $x\sqrt{x}$ pa pod njo.« -/
+besedilo: »Za $x > 1$ je graf višje, čim večji je eksponent. Med $0$ in $1$ je ravno obratno: tam je $\sqrt{x}$ nad premico $y = x$, $x\sqrt{x}$ pa pod njo.« -/
 theorem slika_primerjava (x r s : ℝ) (hrs : r < s) :
     (1 < x → x ^ r < x ^ s) ∧ (0 < x → x < 1 → x ^ s < x ^ r) ∧
     (0 < x → x < 1 → x < Real.sqrt x ∧ x * Real.sqrt x < x) := by
@@ -805,7 +805,7 @@ example : (0 : ℝ) < 1 / 2 ∧ (1 / 2 : ℝ) < 1 ∧ (1 : ℝ) < 3 / 2 := by no
 /-- Drugače, glasba: za q > 0 je q¹² = 2 ⟺ q = 2^(1/12); 2^(1/12) ≈ 1,0595; 440·1,0595 ≈ 466,2;
 kvinta 2^(7/12) ≈ 1,498, kar je za manj kot 0,002 oddaljeno od 3/2.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#glasba
-besedilo: »Kvinta je $7$ poltonov, zato je razmerje frekvenc $2^{\frac{7}{12}} \approx 1{,}498$, kar je zelo blizu razmerja $\dfrac{3}{2}$, ki ga uho zazna kot ubrano.« -/
+besedilo: »za katerega velja $q^{12} = 2$. Torej je $q = 2^{\frac{1}{12}} = \sqrt[12]{2} \approx 1{,}0595$. Če ima ton A frekvenco $440\,\text{Hz}$, ima ton pol tona višje frekvenco približno $440\,\text{Hz} \cdot 1{,}0595 \approx 466{,}2\,\text{Hz}$. Kvinta je $7$ poltonov, zato je razmerje frekvenc $2^{\frac{7}{12}} \approx 1{,}498$, kar je zelo blizu razmerja $\dfrac{3}{2}$« -/
 theorem glasba :
     (∀ q : ℝ, 0 < q → (q ^ 12 = 2 ↔ q = (2 : ℝ) ^ (1 / 12 : ℝ))) ∧
     (1.05945 < (2 : ℝ) ^ (1 / 12 : ℝ) ∧ (2 : ℝ) ^ (1 / 12 : ℝ) < 1.05955) ∧
@@ -827,7 +827,7 @@ theorem glasba :
 
 /-- Drugače, planeti: za T, a > 0 je T² = a³ ⟺ a = T^(2/3); za Mars 1,88^(2/3) ≈ 1,52.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#kepler
-besedilo: »Mars obkroži Sonce v $1{,}88$ leta, zato je od Sonca oddaljen približno $1{,}88^{\frac{2}{3}} \approx 1{,}52$ astronomske enote.« -/
+besedilo: »$T^2 = a^3$. Od tod je $a = T^{\frac{2}{3}}$. Mars obkroži Sonce v $1{,}88$ leta, zato je od Sonca oddaljen približno $1{,}88^{\frac{2}{3}} \approx 1{,}52$ astronomske enote.« -/
 theorem kepler :
     (∀ T a : ℝ, 0 < T → 0 < a → (T ^ 2 = a ^ 3 ↔ a = T ^ (2 / 3 : ℝ))) ∧
     (1.515 < (1.88 : ℝ) ^ (2 / 3 : ℝ) ∧ (1.88 : ℝ) ^ (2 / 3 : ℝ) < 1.525) := by
@@ -857,7 +857,7 @@ theorem korak32 : (32 : ℝ) ^ (-3 / 5 : ℝ) = 0.125 := by
 /-- Drugače, korak za korakom: ∛x·⁶√x = x^(1/3)·x^(1/6) = x^(2/6 + 1/6) = x^(3/6) = x^(1/2) = √x
 (x > 0); preverjanje za x = 64: 4·2 = 8 = √64.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#korak-koreni
-besedilo: »Preverjanje za $x = 64$: $\sqrt[3]{64} \cdot \sqrt[6]{64} = 4 \cdot 2 = 8$ in $\sqrt{64} = 8$.« -/
+besedilo: »Prevedemo v potence: $x^{\frac{1}{3}} \cdot x^{\frac{1}{6}}$. 2. Pri množenju seštejemo eksponente: $\dfrac{1}{3} + \dfrac{1}{6} = \dfrac{2}{6} + \dfrac{1}{6} = \dfrac{3}{6} = \dfrac{1}{2}$. 3. Rezultat je $x^{\frac{1}{2}} = \sqrt{x}$.« -/
 theorem korak_koreni (x : ℝ) (hx : 0 < x) :
     x ^ (1 / 3 : ℝ) * x ^ (1 / 6 : ℝ) = Real.sqrt x := by
   calc x ^ (1 / 3 : ℝ) * x ^ (1 / 6 : ℝ) = x ^ ((2 / 6 : ℝ) + 1 / 6) := by
@@ -913,7 +913,7 @@ example :=
 /-- Drugače, bolj natančno (iracionalni eksponenti): 2^1,4 < 2^1,41 < 2^1,414 < 2^1,5 (potence
 naraščajo in so manjše od 2^1,5).
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#iracionalni
-besedilo: »Kaj pa iracionalni eksponenti?** Potenco $2^{\sqrt{2}}$ lahko razumemo kot število, ki ga vedno bolj natančno približujejo potence $2^{1{,}4}$, $2^{1{,}41}$, $2^{1{,}414}$, … z racionalnimi eksponenti.« -/
+besedilo: »Potenco $2^{\sqrt{2}}$ lahko razumemo kot število, ki ga vedno bolj natančno približujejo potence $2^{1{,}4}$, $2^{1{,}41}$, $2^{1{,}414}$, … z racionalnimi eksponenti.« -/
 theorem iracionalni : (2 : ℝ) ^ (1.4 : ℝ) < (2 : ℝ) ^ (1.41 : ℝ) ∧
     (2 : ℝ) ^ (1.41 : ℝ) < (2 : ℝ) ^ (1.414 : ℝ) ∧ (2 : ℝ) ^ (1.414 : ℝ) < (2 : ℝ) ^ (1.5 : ℝ) := by
   refine ⟨?_, ?_, ?_⟩ <;> exact (Real.rpow_lt_rpow_left_iff (by norm_num)).mpr (by norm_num)
@@ -921,7 +921,7 @@ theorem iracionalni : (2 : ℝ) ^ (1.4 : ℝ) < (2 : ℝ) ^ (1.41 : ℝ) ∧
 /-- Drugače, bolj natančno: 2^√2 leži med 2^1,414 in 2^1,415 (1,414 < √2 < 1,415, potenca z osnovo
 2 narašča).
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#iracionalni-meje
-besedilo: »Kaj pa iracionalni eksponenti?** Potenco $2^{\sqrt{2}}$ lahko razumemo kot število, ki ga vedno bolj natančno približujejo potence $2^{1{,}4}$, $2^{1{,}41}$, $2^{1{,}414}$, … z racionalnimi eksponenti. Natančno to obravnavamo pri eksponentni funkciji.« -/
+besedilo: »Potenco $2^{\sqrt{2}}$ lahko razumemo kot število, ki ga vedno bolj natančno približujejo potence $2^{1{,}4}$, $2^{1{,}41}$, $2^{1{,}414}$, … z racionalnimi eksponenti.« -/
 theorem iracionalni_meje : (2 : ℝ) ^ (1.414 : ℝ) < (2 : ℝ) ^ Real.sqrt 2 ∧
     (2 : ℝ) ^ Real.sqrt 2 < (2 : ℝ) ^ (1.415 : ℝ) := by
   have h1 : (1.414 : ℝ) < Real.sqrt 2 := by
@@ -936,7 +936,7 @@ theorem iracionalni_meje : (2 : ℝ) ^ (1.414 : ℝ) < (2 : ℝ) ^ Real.sqrt 2 �
 /-- Preveri se 1: ∜(a³) = a^(3/4) = (∜a)³ = a^(6/8) (a > 0), a^(4/3) = ∛(a⁴) pa ni enako
 (npr. za a = 2 je 2^(3/4) < 2^(4/3)).
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#kviz1
-besedilo: »To je enako, ker je $\frac{6}{8} = \frac{3}{4}$; okrajšan ali razširjen ulomek da isto potenco.« -/
+besedilo: »V $a^{\frac{4}{3}}$ sta števec in imenovalec zamenjana: to je $\sqrt[3]{a^4}$. Imenovalec eksponenta je stopnja korena.« -/
 theorem kviz1 (a : ℝ) (ha : 0 < a) :
     (a ^ 3) ^ (1 / 4 : ℝ) = a ^ (3 / 4 : ℝ) ∧ a ^ (3 / 4 : ℝ) = (a ^ (1 / 4 : ℝ)) ^ 3 ∧
     a ^ (3 / 4 : ℝ) = a ^ (6 / 8 : ℝ) ∧ a ^ (4 / 3 : ℝ) = (a ^ 4) ^ (1 / 3 : ℝ) ∧
@@ -957,7 +957,7 @@ example :=
 /-- Preveri se 2: 64^(2/3) = (∛64)² = 4² = 16; napačni odgovori: 64·2/3 ≈ 42,7, √64 = 8,
 64^(3/2) = 512.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#kviz2
-besedilo: »42,7 | To je $64 \cdot \frac{2}{3}$.« -/
+besedilo: »$64^{\frac{2}{3}} = \left(\sqrt[3]{64}\right)^2 = 4^2 = 16$.« -/
 theorem kviz2 : (64 : ℝ) ^ (2 / 3 : ℝ) = 16 ∧ (42.65 : ℝ) < 64 * (2 / 3) ∧ (64 : ℝ) * (2 / 3) < 42.75 ∧
     Real.sqrt 64 = 8 ∧ (64 : ℝ) ^ (3 / 2 : ℝ) = 512 := by
   refine ⟨?_, by norm_num, by norm_num, ?_, ?_⟩
@@ -984,7 +984,7 @@ theorem kviz3 : (∀ a r : ℝ, 0 < a → a ^ (-r) = 1 / a ^ r) ∧
 
 /-- Preveri se 3: za a > 0 je a^(−r) = a^r natanko tedaj, ko je a = 1 ali r = 0.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#kviz3-enako
-besedilo: »Spremeni se, razen pri $a = 1$ ali $r = 0$: na primer $4^{\frac{1}{2}} = 2$, $4^{-\frac{1}{2}} = \frac{1}{2}$.« -/
+besedilo: »Spremeni se, razen pri $a = 1$ ali $r = 0$« -/
 theorem kviz3_enako (a r : ℝ) (ha : 0 < a) : a ^ (-r) = a ^ r ↔ a = 1 ∨ r = 0 := by
   rw [Real.rpow_def_of_pos ha, Real.rpow_def_of_pos ha, Real.exp_eq_exp]
   constructor
@@ -1009,7 +1009,7 @@ example :=
 /-- Preveri se 4: √a·∜a = a^(1/2 + 1/4) = a^(3/4) (a > 0), ne a^(1/8); za a = 16 je √16·∜16 = 4·2 = 8,
 16^(1/8) = √2 pa ni 8.
 trditev: MAT-SS-2/potence-z-racionalnimi-eksponenti#kviz4
-besedilo: »Preizkus z $a = 16$: $\sqrt{16} \cdot \sqrt[4]{16} = 4 \cdot 2 = 8$, $\sqrt[8]{16} = \sqrt{2}$ pa ni $8$.« -/
+besedilo: »Pri množenju potenc z isto osnovo eksponente **seštejemo**: $a^{\frac{1}{2} + \frac{1}{4}} = a^{\frac{3}{4}} = \sqrt[4]{a^3}$.« -/
 theorem kviz4 (a : ℝ) (ha : 0 < a) :
     Real.sqrt a * a ^ (1 / 4 : ℝ) = a ^ (3 / 4 : ℝ) ∧ (16 : ℝ) ^ (1 / 8 : ℝ) = Real.sqrt 2 ∧
     Real.sqrt 16 * (16 : ℝ) ^ (1 / 4 : ℝ) = 8 ∧ Real.sqrt 2 ≠ 8 := by

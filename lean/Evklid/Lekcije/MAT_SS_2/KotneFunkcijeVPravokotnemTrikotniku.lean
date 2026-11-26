@@ -249,7 +249,7 @@ theorem kot70 : sin (70 * π / 180) = cos (20 * π / 180) ∧ cos (70 * π / 180
 α = ∠CAB in β = ∠CBA (a = |BC|, b = |AC|, c = |AB|): sin α = a/c, cos α = b/c, tan α = a/b, cot α = b/a,
 sin β = b/c, cos β = a/c, tan β = b/a in α + β = 90°.
 trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#definicije
-besedilo: »Za kot $\beta$ velja $\sin \beta = \dfrac{b}{c}$, $\cos \beta = \dfrac{a}{c}$, $\tan \beta = \dfrac{b}{a}$. Tangens ponekod pišejo tudi $\operatorname{tg} \alpha$. Obratna vrednost tangensa je **kotangens**, $\cot \alpha = \dfrac{b}{a}$.« -/
+besedilo: »$$\sin \alpha = \frac{\text{nasprotna kateta}}{\text{hipotenuza}} = \frac{a}{c}$$ $$\cos \alpha = \frac{\text{priležna kateta}}{\text{hipotenuza}} = \frac{b}{c}$$ $$\tan \alpha = \frac{\text{nasprotna kateta}}{\text{priležna kateta}} = \frac{a}{b}$$ Za kot $\beta$ velja $\sin \beta = \dfrac{b}{c}$, $\cos \beta = \dfrac{a}{c}$, $\tan \beta = \dfrac{b}{a}$. Tangens ponekod pišejo tudi $\operatorname{tg} \alpha$. Obratna vrednost tangensa je **kotangens**, $\cot \alpha = \dfrac{b}{a}$.« -/
 theorem definicije {A B C : P} (h : ∠ B C A = π / 2) (hA : A ≠ C) (hB : B ≠ C) :
     sin (∠ C A B) = dist B C / dist A B ∧ cos (∠ C A B) = dist A C / dist A B ∧
     tan (∠ C A B) = dist B C / dist A C ∧ cot (∠ C A B) = dist A C / dist B C ∧
@@ -285,7 +285,7 @@ example :=
 
 /-- Povzetek »Iz stranice in kota« in Ponovitev: a = c·sin α, b = c·cos α, a = b·tan α.
 trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#iz-stranice-in-kota
-besedilo: »$$a = c \sin \alpha, \quad b = c \cos \alpha$$« -/
+besedilo: »$$a = c \sin \alpha, \quad b = c \cos \alpha$$ $$a = b \tan \alpha$$« -/
 theorem iz_stranice_in_kota {A B C : P} (h : ∠ B C A = π / 2) (hA : A ≠ C) :
     dist B C = dist A B * sin (∠ C A B) ∧ dist A C = dist A B * cos (∠ C A B) ∧
     dist B C = dist A C * tan (∠ C A B) := by
@@ -313,7 +313,7 @@ example :=
 trikotnika z enakim ostrim kotom imata enako razmerje nasprotne katete in hipotenuze; pri podobnih trikotnikih
 (a' = ka, c' = kc, k > 0) je a'/c' = a/c.
 trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#le-od-kota
-besedilo: »Sinus ostrega kota je razmerje med nasprotno kateto in hipotenuzo,« -/
+besedilo: »Sledi $\dfrac{a'}{c'} = \dfrac{k a}{k c} = \dfrac{a}{c}$. Razmerje torej ni odvisno od velikosti trikotnika, ampak le od kota, in vsakemu ostremu kotu priredi natanko eno število.« -/
 theorem le_od_kota {A B C A' B' C' : P} (h : ∠ B C A = π / 2) (h' : ∠ B' C' A' = π / 2) (hB : B ≠ C)
     (hB' : B' ≠ C') (hα : ∠ C A B = ∠ C' A' B') :
     dist B C / dist B A = dist B' C' / dist B' A' ∧ ∀ a c k : ℝ, 0 < k → (k * a) / (k * c) = a / c := by
@@ -368,7 +368,7 @@ example : (1:ℂ) - 0 = ((1:ℝ):ℂ) + ((0:ℝ):ℂ) * Complex.I ∧ Complex.I 
 dolgi, je ∠AMB = 90° (diagonali romba sta pravokotni): |AB|² = |MA→ − MB→|² in |AD|² = |MA→ + MB→|² se razlikujeta
 za 4·⟨MA→, MB→⟩.
 trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#romb-pravi-kot
-besedilo: »a) Diagonali romba se razpolavljata in sta pravokotni, zato je trikotnik $AMB$ pravokoten s pravim kotom pri $M$ in s katetama $|AM| = 5\,\text{cm}$ in $|BM| = 3\,\text{cm}$.« -/
+besedilo: »Diagonali romba se razpolavljata in sta pravokotni« -/
 theorem romb_pravi_kot {A B D M : P} (hM : D -ᵥ M = -(B -ᵥ M)) (h : dist A B = dist A D) :
     ∠ A M B = π / 2 := by
   rw [EuclideanGeometry.angle, ← InnerProductGeometry.inner_eq_zero_iff_angle_eq_pi_div_two]
@@ -396,7 +396,7 @@ example :=
 c = |AB| = 5 (3² + 4² = 5²), zato je po `definicije` cos α = cos ∠CAB = b/c = 4/5. Drugače: Na sliki: pri c = 1 je
 sin α = a/1 = a in cos α = b/1 = b.
 trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#preizkus2
-besedilo: »Preizkus:* trikotnik ima $a = 3$, $b = 4$, $c = 5$. Koliko je $\cos \alpha$? ($\dfrac{4}{5}$.)« -/
+besedilo: »trikotnik ima $a = 3$, $b = 4$, $c = 5$. Koliko je $\cos \alpha$? ($\dfrac{4}{5}$.)« -/
 theorem preizkus2 :
     ∠ (3 * Complex.I) (0:ℂ) 4 = π / 2 ∧ dist (3 * Complex.I) (0:ℂ) = 3 ∧ dist (4:ℂ) 0 = 4 ∧
     dist (4:ℂ) (3 * Complex.I) = 5 ∧ (3:ℝ) ^ 2 + 4 ^ 2 = 5 ^ 2 ∧ cos (∠ (0:ℂ) 4 (3 * Complex.I)) = 4 / 5 ∧
@@ -430,7 +430,7 @@ theorem ostri_kot :
 
 /-- Razlaga 3, Premisli 1: sin α = 1,2 ni mogoč (sin ≤ 1); tan α = 1,2 pa da α = arctan 1,2 ≈ 50,19° > 45°.
 trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#premisli1
-besedilo: »To se zgodi pri kotih nad $45^\circ$, za $\tan \alpha = 1{,}2$ je $\alpha \approx 50{,}19^\circ$.« -/
+besedilo: »Sinus ne, ker bi bila kateta daljša od hipotenuze. Tangens pa lahko: nasprotna kateta je lahko daljša od priležne. To se zgodi pri kotih nad $45^\circ$, za $\tan \alpha = 1{,}2$ je $\alpha \approx 50{,}19^\circ$.« -/
 theorem premisli1 :
     (∀ α : ℝ, sin α ≠ 1.2) ∧ tan (arctan 1.2) = 1.2 ∧ π / 4 < arctan 1.2 ∧
     |arctan 1.2 * 180 / π - 50.19| < 0.005 := by
@@ -452,7 +452,7 @@ theorem premisli1 :
 trikotnika: iz a² + b² = c² (c ≠ 0) je (a/c)² + (b/c)² = 1 in (a/c)/(b/c) = a/b; preizkus: 0,5² + 0,5² = 0,5 ≠ 1,
 zato sin α in cos α nista hkrati 0,5.
 trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#zveze
-besedilo: »Pitagorov izrek $a^2 + b^2 = c^2$ delimo s $c^2$ in dobimo $\left(\frac{a}{c}\right)^2 + \left(\frac{b}{c}\right)^2 = 1$, torej $\sin^2 \alpha + \cos^2 \alpha = 1$.« -/
+besedilo: »$$\sin^2 \alpha + \cos^2 \alpha = 1, \qquad \tan \alpha = \frac{\sin \alpha}{\cos \alpha}$$« -/
 theorem zveze :
     (∀ α : ℝ, sin α ^ 2 + cos α ^ 2 = 1 ∧ tan α = sin α / cos α) ∧
     (∀ a b c : ℝ, c ≠ 0 → a ^ 2 + b ^ 2 = c ^ 2 → (a / c) ^ 2 + (b / c) ^ 2 = 1) ∧
@@ -479,7 +479,7 @@ theorem komplementarna :
 tan 30° = √3/3; sin 45° = cos 45° = √2/2, tan 45° = 1; sin 60° = √3/2, cos 60° = 1/2, tan 60° = √3; preizkus
 tan 30°·tan 60° = 1.
 trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#posebne-vrednosti
-besedilo: »$\sin 30^\circ = \dfrac{1}{2}$, $\sin 45^\circ = \dfrac{\sqrt{2}}{2}$, $\tan 60^\circ = \sqrt{3}$ (na pamet)« -/
+besedilo: »| $\sin \alpha$ | $\frac{1}{2}$ | $\frac{\sqrt{2}}{2}$ | $\frac{\sqrt{3}}{2}$ | | $\cos \alpha$ | $\frac{\sqrt{3}}{2}$ | $\frac{\sqrt{2}}{2}$ | $\frac{1}{2}$ | | $\tan \alpha$ | $\frac{\sqrt{3}}{3}$ | $1$ | $\sqrt{3}$ |« -/
 theorem posebne_vrednosti :
     sin (π / 6) = 1 / 2 ∧ cos (π / 6) = √3 / 2 ∧ tan (π / 6) = √3 / 3 ∧ sin (π / 4) = √2 / 2 ∧
     cos (π / 4) = √2 / 2 ∧ tan (π / 4) = 1 ∧ sin (π / 3) = √3 / 2 ∧ cos (π / 3) = 1 / 2 ∧ tan (π / 3) = √3 ∧
@@ -496,7 +496,7 @@ theorem posebne_vrednosti :
 /-- Razlaga 7, Pogoste napake: iz sin α = 0,5 dobimo α = sin⁻¹ 0,5 = 30° (π/6), medtem ko je 1/sin 30° = 2;
 22,62° ≈ 22°37' (0,62·60' = 37,2'), 40,5° = 40°30' (0,5·60' = 30').
 trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#racunalo
-besedilo: »$\sin^{-1}$ ni obratna vrednost.** Tipka $\sin^{-1}$ iz vrednosti vrne **kot**, ne pa $\dfrac{1}{\sin \alpha}$. Iz $\sin \alpha = 0{,}5$ dobiš $\alpha = 30^\circ$, medtem ko je $\dfrac{1}{\sin 30^\circ} = 2$.« -/
+besedilo: »Iz $\sin \alpha = 0{,}5$ dobiš $\alpha = 30^\circ$, medtem ko je $\dfrac{1}{\sin 30^\circ} = 2$.« -/
 theorem racunalo :
     arcsin 0.5 = π / 6 ∧ 1 / sin (π / 6) = 2 ∧ (0.62:ℝ) * 60 = 37.2 ∧ |(37.2:ℝ) - 37| < 0.5 ∧
     (0.5:ℝ) * 60 = 30 := by
@@ -509,7 +509,7 @@ theorem racunalo :
 /-- Primer 1, koraka 1 in 2: c = √(5² + 12²) = √169 = 13; sin α = 5/13 ≈ 0,3846, cos α = 12/13 ≈ 0,9231,
 tan α = 5/12 ≈ 0,4167.
 trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#primer1-vrednosti
-besedilo: »$\sin \alpha = \dfrac{5}{13} \approx 0{,}3846$, $\;\cos \alpha = \dfrac{12}{13} \approx 0{,}9231$, $\;\tan \alpha = \dfrac{5}{12} \approx 0{,}4167$.« -/
+besedilo: »Hipotenuza: $c = \sqrt{5^2 + 12^2}\,\text{cm} = \sqrt{169}\,\text{cm} = 13\,\text{cm}$. 2. $\sin \alpha = \dfrac{5}{13} \approx 0{,}3846$, $\;\cos \alpha = \dfrac{12}{13} \approx 0{,}9231$, $\;\tan \alpha = \dfrac{5}{12} \approx 0{,}4167$.« -/
 theorem primer1_vrednosti :
     √((5:ℝ) ^ 2 + 12 ^ 2) = √169 ∧ √(169:ℝ) = 13 ∧ |(5:ℝ) / 13 - 0.3846| < 0.00005 ∧
     |(12:ℝ) / 13 - 0.9231| < 0.00005 ∧ |(5:ℝ) / 12 - 0.4167| < 0.00005 := by
@@ -543,7 +543,7 @@ theorem primer1_kot :
 (6,5532), β = 90° − 35° = 55°, S = ab/2 ≈ 15,04 cm² (tudi 4,5886·6,5532/2 ≈ 15,04); preizkus a² + b² = 64 = 8²
 (4,5886² ≈ 21,06, 6,5532² ≈ 42,94, 21,06 + 42,94 = 64); Pogoste napake: 8/sin 35° ≈ 13,95 > 8 (napačna formula).
 trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#primer2
-besedilo: »$4{,}5886^2 + 6{,}5532^2 \approx 21{,}06 + 42{,}94 = 64 = 8^2$« -/
+besedilo: »Odgovor: kateti merita približno $4{,}59\,\text{cm}$ in $6{,}55\,\text{cm}$, drugi ostri kot je $55^\circ$, ploščina pa je približno $15{,}04\,\text{cm}^2$.« -/
 theorem primer2 :
     |sin (35 * π / 180) - 0.5736| < 0.00005 ∧ |8 * sin (35 * π / 180) - 4.5886| < 0.00005 ∧
     |8 * sin (35 * π / 180) - 4.59| < 0.005 ∧ |cos (35 * π / 180) - 0.8192| < 0.00005 ∧
@@ -646,7 +646,7 @@ theorem primer4 :
 
 /-- Pogoste napake (računalo v radianih): sin 30 (radianov) ≈ −0,988, v stopinjah pa sin 30° = 0,5.
 trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#radiani
-besedilo: »Računalo v radianih.** Če dobiš $\sin 30^\circ \approx -0{,}988$, je računalo nastavljeno na radiane (RAD). Nastavi ga na stopinje (DEG) in preveri: $\sin 30^\circ = 0{,}5$.« -/
+besedilo: »Če dobiš $\sin 30^\circ \approx -0{,}988$, je računalo nastavljeno na radiane (RAD). Nastavi ga na stopinje (DEG) in preveri: $\sin 30^\circ = 0{,}5$.« -/
 theorem radiani : |sin 30 - (-0.988)| < 0.0005 ∧ sin (30 * π / 180) = 0.5 := by
   have p1 := pi_gt_d6
   have p2 := pi_lt_d6
@@ -740,7 +740,7 @@ theorem kviz5 :
 
 /-- Preveri se 6: kateta 7 cm nasproti 30°: sin 30° = a/c = 1/2, zato c = 2a = 14 cm (napaka 7·sin 30° = 3,5).
 trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#kviz6
-besedilo: »3,5 | To je $7\,\text{cm} \cdot \sin 30^\circ$. Iz $\sin 30^\circ = \dfrac{a}{c}$ sledi $c = \dfrac{a}{\sin 30^\circ}$, deliti moraš. Hipotenuza je najdaljša stranica, ne more biti krajša od katete.« -/
+besedilo: »$\sin 30^\circ = \dfrac{a}{c} = \dfrac{1}{2}$, zato je $c = 2a = 2 \cdot 7\,\text{cm} = 14\,\text{cm}$.« -/
 theorem kviz6 (c : ℝ) (hc : 0 < c) : (sin (π / 6) = 7 / c ↔ c = 14) ∧ 7 * sin (π / 6) = 3.5 := by
   rw [sin_pi_div_six]
   refine ⟨⟨fun h => ?_, fun h => by rw [h]; norm_num⟩, by norm_num⟩
@@ -775,7 +775,7 @@ theorem korak_za_korakom :
 /-- Drugače: Bolj natančno: za ostri kot s sin α = 3/5 je cos α = √(1 − 9/25) = 4/5 in tan α = (3/5)/(4/5) = 3/4;
 1 + tan²α = 1/cos²α (cos α ≠ 0).
 trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#iz-ene-vrednosti
-besedilo: »Iz $\sin \alpha = \dfrac{3}{5}$ sledi $\cos \alpha = \sqrt{1 - \dfrac{9}{25}} = \dfrac{4}{5}$ (pozitivni koren, ker je kot oster) in $\tan \alpha = \dfrac{3/5}{4/5} = \dfrac{3}{4}$.« -/
+besedilo: »Iz $\sin \alpha = \dfrac{3}{5}$ sledi $\cos \alpha = \sqrt{1 - \dfrac{9}{25}} = \dfrac{4}{5}$ (pozitivni koren, ker je kot oster) in $\tan \alpha = \dfrac{3/5}{4/5} = \dfrac{3}{4}$. Iz zvez sledi še $1 + \tan^2 \alpha = \dfrac{1}{\cos^2 \alpha}$« -/
 theorem iz_ene_vrednosti :
     (∀ α : ℝ, 0 < α → α < π / 2 → sin α = 3 / 5 → cos α = 4 / 5 ∧ tan α = 3 / 4) ∧
     √(1 - 9 / 25 : ℝ) = 4 / 5 ∧ (∀ α : ℝ, cos α ≠ 0 → 1 + tan α ^ 2 = 1 / cos α ^ 2) := by
@@ -797,7 +797,7 @@ example : 0 < arcsin (3 / 5 : ℝ) ∧ arcsin (3 / 5 : ℝ) < π / 2 ∧ sin (ar
 /-- Razlaga 3 in Drugače: Bolj natančno (monotonost): na (0°, 90°) sinus in tangens strogo naraščata, kosinus
 strogo pada, zato vrednost kotne funkcije določa ostri kot enolično.
 trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#monotonost
-besedilo: »Monotonost.** Pri stalni hipotenuzi se z večanjem kota $\alpha$ nasprotna kateta veča, priležna manjša. Zato na intervalu $(0^\circ, 90^\circ)$ sinus in tangens naraščata, kosinus pa pada. Zaradi tega iz vrednosti kotne funkcije ostri kot določimo enolično.« -/
+besedilo: »Zato na intervalu $(0^\circ, 90^\circ)$ sinus in tangens naraščata, kosinus pa pada. Zaradi tega iz vrednosti kotne funkcije ostri kot določimo enolično.« -/
 theorem monotonost :
     StrictMonoOn sin (Ioo 0 (π / 2)) ∧ StrictAntiOn cos (Ioo 0 (π / 2)) ∧ StrictMonoOn tan (Ioo 0 (π / 2)) ∧
     InjOn sin (Ioo 0 (π / 2)) ∧ InjOn cos (Ioo 0 (π / 2)) ∧ InjOn tan (Ioo 0 (π / 2)) := by
@@ -856,7 +856,7 @@ theorem naloga2_a :
 /-- Naloga 2 b) (in blok RACUN): ∠MAB = tan⁻¹(3/5) (dokazano v `naloga2_romb`) ≈ 30,9638°, ∠DAB = 2∠MAB ≈ 61,9275° ≈ 61,93°,
 ∠ABC = 180° − ∠DAB ≈ 118,0725° ≈ 118,07°.
 trditev: MAT-SS-2/kotne-funkcije-v-pravokotnem-trikotniku#naloga2-b
-besedilo: »b) Sosednja kota romba sta suplementarna: $\angle ABC = 180^\circ - \angle DAB \approx 118{,}0725^\circ \approx 118{,}07^\circ$.« -/
+besedilo: »b) kot pri $A$ meri približno $61{,}93^\circ$, kot pri $B$ približno $118{,}07^\circ$« -/
 theorem naloga2_b :
     |arctan (3 / 5) * 180 / π - 30.9638| < 0.00005 ∧
     |2 * arctan (3 / 5) * 180 / π - 61.9275| < 0.00005 ∧ |2 * arctan (3 / 5) * 180 / π - 61.93| < 0.005 ∧

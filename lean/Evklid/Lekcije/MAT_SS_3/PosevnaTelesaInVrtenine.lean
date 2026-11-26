@@ -207,13 +207,13 @@ example :=
 /-- Razlaga 2, Povzetek: prerezi poševne (in pokončne) prizme ali valja so skladni z osnovno ploskvijo
 (A(h) = O), zato V = ∫₀ᵛ O dh = O·v.
 trditev: MAT-SS-3/posevna-telesa-in-vrtenine#prizma-v
-besedilo: »Poševno prizmo primerjamo s pokončno prizmo z enako osnovno ploskvijo in enako višino; njuni prerezi so skladni z osnovno ploskvijo.« -/
+besedilo: »Zato za poševno prizmo in poševni valj velja ista formula kot za pokončna: $$V = O\,v$$« -/
 theorem prizma_V (O v : ℝ) : ∫ _ in (0:ℝ)..v, O = O * v := by simp; ring
 
 /-- Razlaga 2, Povzetek: pri poševni piramidi ali stožcu je prerez na višini h osnovna ploskev, pomanjšana
 v razmerju (v − h)/v, zato V = ∫₀ᵛ O((v − h)/v)² dh = O·v/3 (enako kot pri pokončni).
 trditev: MAT-SS-3/posevna-telesa-in-vrtenine#piramida-v
-besedilo: »Tudi poševno piramido primerjamo s pokončno z enako osnovno ploskvijo in višino: na isti višini sta prereza osnovna ploskev, pomanjšana v istem razmerju, torej imata enako ploščino.« -/
+besedilo: »Zato za poševno piramido in poševni stožec, pri katerih vrh ne leži nad središčem osnovne ploskve, velja $V = \frac{O\,v}{3}$.« -/
 theorem piramida_V (O v : ℝ) (hv : 0 < v) : ∫ h in (0:ℝ)..v, O * ((v - h) / v) ^ 2 = O * v / 3 := by
   have hF : ∀ x ∈ Set.uIcc (0:ℝ) v, HasDerivAt (fun h : ℝ => -(O * (v - h) ^ 3 / (3 * v ^ 2)))
       (O * ((v - x) / v) ^ 2) x := by
@@ -241,7 +241,7 @@ example :=
 prerezi pokončnega, nagnjenega in cik-cak kupa imajo isto ploščino 100π na vsaki višini, zato vsi
 ∫₀⁸ 100π = 800π, ne glede na dolžino stranskega roba.
 trditev: MAT-SS-3/posevna-telesa-in-vrtenine#palacinke
-besedilo: »Kup $16$ palačink s premerom $20\,\mathrm{cm}$ in debelino $0{,}5\,\mathrm{cm}$ je nagnjen tako, da je njegov stranski rob dolg $10\,\mathrm{cm}$.« -/
+besedilo: »$V = 100\pi \cdot 8 = 800\pi \approx 2513\,\mathrm{cm^3}$, enako kot pri pokončnem kupu (Cavalierijevo načelo).« -/
 theorem palacinke (A : ℝ → ℝ) (hA : ∀ x ∈ Set.Icc (0:ℝ) 8, A x = 100 * π) :
     (16 : ℝ) * 0.5 = 8 ∧ π * 10 ^ 2 = 100 * π ∧ ∫ x in (0:ℝ)..8, A x = 800 * π := by
   refine ⟨by norm_num, by ring, ?_⟩
@@ -290,7 +290,7 @@ example :=
 
 /-- Preveri se (2): pri enaki višini v in kotu 0 < α < 90° je stranski rob s = v/sin α daljši od v.
 trditev: MAT-SS-3/posevna-telesa-in-vrtenine#rob-daljsi
-besedilo: »Stranska roba nista enaka: pri enaki višini je rob poševne prizme daljši, $s = \frac{v}{\sin\alpha}$.« -/
+besedilo: »Pri poševni je stranski rob $s$ daljši od $v$.« -/
 theorem rob_daljsi (v α : ℝ) (hv : 0 < v) (h0 : 0 < α) (h1 : α < π / 2) : v < v / sin α := by
   have hs : 0 < sin α := sin_pos_of_pos_of_lt_pi h0 (by linarith [pi_pos])
   have hs1 : sin α < 1 := by
@@ -309,7 +309,7 @@ example :=
 /-- Ustno vprašanje 3 (ena stranska ploskev): če je stranska ploskev nagnjena proti osnovni za kot β, je
 višina prizme v = h·sin β ≤ h (h višina paralelograma na rob e), zato e·v ≤ e·h; enakost pri sin β = 1.
 trditev: MAT-SS-3/posevna-telesa-in-vrtenine#stranska-ploskev
-besedilo: »Pri pokončni prizmi je stranska ploskev nad osnovnim robom $e$ pravokotnik s ploščino $e\,v$, pri poševni pa paralelogram s ploščino $e\,h$, kjer je $h$ njegova višina na rob $e$.« -/
+besedilo: »zato je $h \ge v$; enakost velja le, če je stranska ploskev pravokotna na osnovno ploskev.« -/
 theorem stranska_ploskev (e h β : ℝ) (he : 0 < e) (hh : 0 < h) :
     e * (h * sin β) ≤ e * h ∧ (e * (h * sin β) = e * h ↔ sin β = 1) := by
   refine ⟨mul_le_mul_of_nonneg_left (mul_le_of_le_one_right hh.le (sin_le_one β)) he.le, ?_⟩
@@ -340,7 +340,7 @@ theorem premisli_stozca : π * 16 * 3 / 3 = 16 * π ∧ π * 9 * 4 / 3 = 12 * π
 /-- Razlaga 4 (simulacija): valj r = 2, v = 4 ima π·4·4 = 16π ≈ 50,3, stožec 16π/3 ≈ 16,8, natanko
 tretjino: (π·2²·4/3)/(π·2²·4) = 1/3.
 trditev: MAT-SS-3/posevna-telesa-in-vrtenine#simulacija
-besedilo: »V simulaciji spodaj (»Valj, stožec in krogla«) izberi valj z r = 2 in v = 4, nato stožec z enakima r in v. Primerjaj prostornini (približno $50{,}3$ in $16{,}8$): stožec ima natanko tretjino prostornine valja z isto osnovno ploskvijo in višino.« -/
+besedilo: »Primerjaj prostornini (približno $50{,}3$ in $16{,}8$): stožec ima natanko tretjino prostornine valja z isto osnovno ploskvijo in višino.« -/
 theorem simulacija : π * 2 ^ 2 * 4 = 16 * π ∧ |16 * π - 50.3| < 0.05 ∧ |16 * π / 3 - 16.8| < 0.05 ∧
     (π * 2 ^ 2 * 4 / 3) / (π * 2 ^ 2 * 4) = 1 / 3 := by
   have p1 := pi_gt_d6; have p2 := pi_lt_d6
@@ -350,7 +350,7 @@ theorem simulacija : π * 2 ^ 2 * 4 = 16 * π ∧ |16 * π - 50.3| < 0.05 ∧ |1
 /-- Povzetek, Ponovitev, Pogoste napake (3), Ustno vprašanje 2: ploščina trikotnika na dva načina
 ab/2 = cr/2 da polmer dvojnega stožca r = ab/c.
 trditev: MAT-SS-3/posevna-telesa-in-vrtenine#polmer-dvojnega
-besedilo: »Pravokotni trikotnik okoli hipotenuze: dvojni stožec z $r = \frac{a\,b}{c}$.« -/
+besedilo: »Iz dveh zapisov ploščine trikotnika, $\frac{a\,b}{2} = \frac{c\,r}{2}$, dobimo $r = \frac{a\,b}{c}$.« -/
 theorem polmer_dvojnega (a b c r : ℝ) (hc : 0 < c) : a * b / 2 = c * r / 2 ↔ r = a * b / c := by
   rw [eq_div_iff hc.ne']; constructor <;> intro h <;> linarith
 
@@ -365,7 +365,7 @@ example :=
 /-- Primer 3 (korak 4), naloga 2 c): dvojni stožec – prostornini stožcev z višinama c₁ in c₂ (c₁ + c₂ = c)
 seštejemo in izpostavimo πr²/3: πr²c₁/3 + πr²c₂/3 = πr²c/3.
 trditev: MAT-SS-3/posevna-telesa-in-vrtenine#dvojni-stozec
-besedilo: »Prostornini stožcev seštejemo in izpostavimo $\frac{\pi r^2}{3}$; višini obeh stožcev skupaj dasta $c$, zato $V = \dfrac{\pi \cdot 4{,}8^2 \cdot 10}{3} = 76{,}8\pi \approx 241{,}3\,\mathrm{cm^3}$.« -/
+besedilo: »Prostornini stožcev seštejemo in izpostavimo $\frac{\pi r^2}{3}$; višini obeh stožcev skupaj dasta $c$« -/
 theorem dvojni_stozec (r c₁ c₂ : ℝ) : π * r ^ 2 * c₁ / 3 + π * r ^ 2 * c₂ / 3 = π * r ^ 2 * (c₁ + c₂) / 3 := by
   ring
 
@@ -374,7 +374,7 @@ theorem dvojni_stozec (r c₁ c₂ : ℝ) : π * r ^ 2 * c₁ / 3 + π * r ^ 2 *
 /-- Primer 1: v = 16·0,5 = 8, r = 10, O = 100π, V = 100π·8 = 800π ≈ 2513 cm³; sin α = 8/10 = 0,8,
 α ≈ 53,13° ≈ 53,1°.
 trditev: MAT-SS-3/posevna-telesa-in-vrtenine#primer1
-besedilo: »$\sin\alpha = \dfrac{8}{10} = 0{,}8$, torej $\alpha \approx 53{,}13^\circ$.« -/
+besedilo: »Odgovor: v kupu je približno $2513\,\mathrm{cm^3}$ testa; rob je proti krožniku nagnjen za približno $53{,}1^\circ$.« -/
 theorem primer1 :
     (16 : ℝ) * 0.5 = 8 ∧ (20 : ℝ) / 2 = 10 ∧ π * 10 ^ 2 = 100 * π ∧ 100 * π * 8 = 800 * π ∧
     |800 * π - 2513| < 0.5 ∧ (8 : ℝ) / 10 = 0.8 ∧ |arcsin 0.8 * 180 / π - 53.13| < 0.005 ∧
@@ -391,7 +391,7 @@ theorem primer1 :
 /-- Primer 2 (kornet, kateti 3 in 12, os 12): V = π·9·12/3 = 36π ≈ 113,1 (≈ 113), s = √(9 + 144) = √153
 ≈ 12,37, P_pl = π·3·12,37 ≈ 116,6 (tudi z nezaokroženim √153).
 trditev: MAT-SS-3/posevna-telesa-in-vrtenine#primer2
-besedilo: »$P_{pl} = \pi \cdot 3 \cdot 12{,}37 \approx 116{,}6\,\mathrm{cm^2}$« -/
+besedilo: »Odgovor: v kornet gre približno $113\,\mathrm{cm^3}$ sladoleda, plašč iz vaflja meri približno $116{,}6\,\mathrm{cm^2}$.« -/
 theorem primer2 :
     π * 9 * 12 / 3 = 36 * π ∧ |36 * π - 113.1| < 0.05 ∧ |36 * π - 113| < 0.5 ∧
     √((3 : ℝ) ^ 2 + 12 ^ 2) = √153 ∧ |√153 - 12.37| < 0.005 ∧ |π * 3 * 12.37 - 116.6| < 0.05 ∧
@@ -406,7 +406,7 @@ theorem primer2 :
 pravim kotom (0,0) od hipotenuze 8x + 6y = 48: |0 + 0 − 48|/√(8² + 6²) = 4,8 = 6·8/10;
 V = π·4,8²·10/3 = 76,8π ≈ 241,3 (≈ 241), P = π·4,8·14 = 67,2π ≈ 211,1 (≈ 211).
 trditev: MAT-SS-3/posevna-telesa-in-vrtenine#primer3
-besedilo: »$V = \dfrac{\pi \cdot 4{,}8^2 \cdot 10}{3} = 76{,}8\pi \approx 241{,}3\,\mathrm{cm^3}$« -/
+besedilo: »Odgovor: v kalup gre približno $241\,\mathrm{cm^3}$ čokolade, površina izdelka je približno $211\,\mathrm{cm^2}$.« -/
 theorem primer3 :
     √((36 : ℝ) + 64) = 10 ∧ |8 * 0 + 6 * 0 - 48| / √((8 : ℝ) ^ 2 + 6 ^ 2) = 4.8 ∧ (6 : ℝ) * 8 / 10 = 4.8 ∧
     π * 4.8 ^ 2 * 10 / 3 = 76.8 * π ∧ |76.8 * π - 241.3| < 0.05 ∧ |76.8 * π - 241| < 0.5 ∧
@@ -511,7 +511,7 @@ theorem razvrsti :
 /-- Naloga 1: v = 6 sin 60° = 3√3, O = √3/4·4² = 4√3, V = 4√3·3√3 = 36, V' = 4√3·6 = 24√3,
 V/V' = 36/(24√3) = 3/(2√3) = √3/2 = sin 60°.
 trditev: MAT-SS-3/posevna-telesa-in-vrtenine#naloga1
-besedilo: »c) $\dfrac{V}{V'} = \dfrac{36}{24\sqrt{3}} = \dfrac{3}{2\sqrt{3}} = \dfrac{\sqrt{3}}{2}$. Razmerje je enako $\sin 60^\circ$, ker se prizmi razlikujeta le v višini.« -/
+besedilo: »Odgovor: a) $v = 3\sqrt{3}\,\mathrm{cm}$; b) $V = 36\,\mathrm{cm^3}$; c) $V : V' = \sqrt{3} : 2$.« -/
 theorem naloga1 :
     6 * sin (60 * π / 180) = 6 * (√3 / 2) ∧ 6 * (√3 / 2) = 3 * √3 ∧ √3 / 4 * 4 ^ 2 = 4 * √3 ∧
     4 * √3 * (3 * √3) = 36 ∧ 4 * √3 * 6 = 24 * √3 ∧ 36 / (24 * √3) = 3 / (2 * √3) ∧
@@ -555,7 +555,7 @@ theorem naloga2b :
 /-- Naloga 2 c): V = πr²·AD/3 + πr²·DB/3 = πr²·AB/3 ≈ 212,01 ≈ 212,0 (z zaokroženim r = 4,50 pa ≈ 212,1);
 P = πr(AC + BC) ≈ π·4,4995·13,4617 ≈ 190,29 ≈ 190,3.
 trditev: MAT-SS-3/posevna-telesa-in-vrtenine#naloga2c
-besedilo: »$P = \pi r\,(AC + BC) \approx \pi \cdot 4{,}4995 \cdot 13{,}4617 \approx 190{,}29\,\mathrm{cm^2} \approx 190{,}3\,\mathrm{cm^2}$« -/
+besedilo: »c) $V \approx 212{,}0\,\mathrm{cm^3}$ in $P \approx 190{,}3\,\mathrm{cm^2}$« -/
 theorem naloga2c :
     |π * (7 * sin (40 * π / 180)) ^ 2 * 10 / 3 - 212.01| < 0.005 ∧
     |π * (7 * sin (40 * π / 180)) ^ 2 * 10 / 3 - 212.0| < 0.05 ∧ |π * 4.50 ^ 2 * 10 / 3 - 212.1| < 0.05 ∧
@@ -610,8 +610,7 @@ theorem naloga2d (r AD DB : ℝ) :
 
 /-- RAČUN: π·3²·4/3 = 12π, π·4²·3/3 = 16π, √(6² + 8²) = 10, 36/(24√3) = √3/2. (6·8/10 = 4,8 je v
 `primer3`; 6 sin 60° = 3√3, √3/4·4² = 4√3 in 4√3·3√3 = 36 so v `naloga1`.)
-trditev: MAT-SS-3/posevna-telesa-in-vrtenine#racun
-besedilo: »Ploščino trikotnika zapišemo na dva načina, $\frac{a\,b}{2} = \frac{c\,r}{2}$, zato $r = \dfrac{6 \cdot 8}{10} = 4{,}8\,\mathrm{cm}$.« -/
+pomozno -/
 theorem racun :
     π * 3 ^ 2 * 4 / 3 = 12 * π ∧ π * 4 ^ 2 * 3 / 3 = 16 * π ∧ √((6 : ℝ) ^ 2 + 8 ^ 2) = 10 ∧
     36 / (24 * √3) = √3 / 2 := by

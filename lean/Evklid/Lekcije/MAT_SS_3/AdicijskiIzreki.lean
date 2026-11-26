@@ -77,7 +77,7 @@ theorem uganka : sin (π / 4) + sin (π / 6) = √2 / 2 + 1 / 2 ∧
 /-- Razlaga 1, tabela, stolpec »križni«: sin α cos β + cos α sin β za pare 30° + 60°, 30° + 30°, 60° + 90°,
 45° + 30° je 1, √3/2 ≈ 0,866, 1/2 in (√6 + √2)/4 ≈ 0,966.
 trditev: MAT-SS-3/adicijski-izreki#tabela-krizni
-besedilo: »| $45^\circ + 30^\circ$ | $0{,}966$ | $0{,}966$ |« -/
+besedilo: »| $30^\circ + 60^\circ$ | $1$ | $1$ | | $30^\circ + 30^\circ$ | $0{,}866$ | $0{,}866$ | | $60^\circ + 90^\circ$ | $0{,}5$ | $0{,}5$ | | $45^\circ + 30^\circ$ | $0{,}966$ | $0{,}966$ |« -/
 theorem tabela_krizni :
     sin (π / 6) * cos (π / 3) + cos (π / 6) * sin (π / 3) = 1 ∧
     sin (π / 6) * cos (π / 6) + cos (π / 6) * sin (π / 6) = √3 / 2 ∧
@@ -95,7 +95,7 @@ theorem tabela_krizni :
 /-- Razlaga 1, tabela, stolpec sin(α + β): sin 90° = 1, sin 60° = √3/2, sin 150° = 1/2,
 sin 75° = (√6 + √2)/4; križni izraz se ujema v vsaki vrstici.
 trditev: MAT-SS-3/adicijski-izreki#tabela-vsota
-besedilo: »Odgovor: $\cos 15^\circ = \dfrac{\sqrt{6} + \sqrt{2}}{4} \approx 0{,}966$. Je enak $\sin 75^\circ$ iz uganke, saj se kota dopolnjujeta do $90^\circ$ in velja $\cos x = \sin(90^\circ - x)$.« -/
+besedilo: »| $30^\circ + 60^\circ$ | $1$ | $1$ | | $30^\circ + 30^\circ$ | $0{,}866$ | $0{,}866$ | | $60^\circ + 90^\circ$ | $0{,}5$ | $0{,}5$ | | $45^\circ + 30^\circ$ | $0{,}966$ | $0{,}966$ |« -/
 theorem tabela_vsota :
     sin (π / 6 + π / 3) = 1 ∧ sin (π / 6 + π / 6) = √3 / 2 ∧ sin (π / 3 + π / 2) = 1 / 2 ∧
     sin (π / 4 + π / 6) = (√6 + √2) / 4 := by
@@ -144,7 +144,7 @@ theorem kosinus_vsote (α β : ℝ) : cos (α + β) = cos α * cos β - sin α *
 /-- Razlaga 3, preizkus: cos 30° cos 60° − sin 30° sin 60° = √3/4 − √3/4 = 0 = cos 90°; s plusom bi dobili
 √3/2 ≈ 0,866 ≠ 0.
 trditev: MAT-SS-3/adicijski-izreki#kosinus-preizkus
-besedilo: »Preizkus z $\alpha = 30^\circ$, $\beta = 60^\circ$: $\cos 30^\circ \cos 60^\circ - \sin 30^\circ \sin 60^\circ = \dfrac{\sqrt{3}}{4} - \dfrac{\sqrt{3}}{4} = 0$, in res je $\cos 90^\circ = 0$.« -/
+besedilo: »Preizkus z $\alpha = 30^\circ$, $\beta = 60^\circ$: $\cos 30^\circ \cos 60^\circ - \sin 30^\circ \sin 60^\circ = \dfrac{\sqrt{3}}{4} - \dfrac{\sqrt{3}}{4} = 0$, in res je $\cos 90^\circ = 0$. S plusom bi dobili $\dfrac{\sqrt{3}}{2} \approx 0{,}866$, kar je napačno.« -/
 theorem kosinus_preizkus :
     cos (π / 6) * cos (π / 3) - sin (π / 6) * sin (π / 3) = √3 / 4 - √3 / 4 ∧
     √3 / 4 - √3 / 4 = cos (π / 2) ∧
@@ -161,7 +161,7 @@ theorem nasprotni_kot (β : ℝ) : cos (-β) = cos β ∧ sin (-β) = -sin β :=
 /-- Razlaga 4 in Ustno vprašanje 1: izreka za razliko dobimo z vstavitvijo −β:
 sin(α − β) = sin α cos β − cos α sin β.
 trditev: MAT-SS-3/adicijski-izreki#sinus-razlike
-besedilo: »Ko to vstavimo v izreka za vsoto, dobimo $\sin(\alpha - \beta) = \sin\alpha\cos\beta - \cos\alpha\sin\beta$ in $\cos(\alpha - \beta) = \cos\alpha\cos\beta + \sin\alpha\sin\beta$.« -/
+besedilo: »$$\sin(\alpha - \beta) = \sin\alpha\cos\beta - \cos\alpha\sin\beta$$« -/
 theorem sinus_razlike (α β : ℝ) : sin (α - β) = sin α * cos β - cos α * sin β := by
   calc sin (α - β) = sin (α + -β) := by rw [sub_eq_add_neg]
     _ = sin α * cos (-β) + cos α * sin (-β) := sin_add _ _
@@ -219,7 +219,7 @@ theorem sinus_dvojnega (α : ℝ) : sin (2 * α) = 2 * sin α * cos α := by
 
 /-- Razlaga 5 in Ustno vprašanje 2: cos 2α = cos²α − sin²α = 1 − 2 sin²α = 2 cos²α − 1.
 trditev: MAT-SS-3/adicijski-izreki#kosinus-dvojnega
-besedilo: »$$\cos 2\alpha = 1 - 2\sin^2\alpha = 2\cos^2\alpha - 1$$« -/
+besedilo: »$$\cos 2\alpha = \cos^2\alpha - \sin^2\alpha$$ Z zvezo $\sin^2\alpha + \cos^2\alpha = 1$ ima kosinus dvojnega kota še dve obliki. Izbereš tisto, ki vsebuje funkcijo, ki jo poznaš: $$\cos 2\alpha = 1 - 2\sin^2\alpha = 2\cos^2\alpha - 1$$« -/
 theorem kosinus_dvojnega (α : ℝ) : cos (2 * α) = cos α ^ 2 - sin α ^ 2 ∧
     cos α ^ 2 - sin α ^ 2 = 1 - 2 * sin α ^ 2 ∧ 1 - 2 * sin α ^ 2 = 2 * cos α ^ 2 - 1 := by
   have h := sin_sq_add_cos_sq α
@@ -247,7 +247,7 @@ example :=
 /-- Razlaga 5, Premisli, Pogoste napake in Preveri se 4: za ostri kot (0 < α < 90°) je sin 2α < 2 sin α,
 ker je 0 < cos α < 1.
 trditev: MAT-SS-3/adicijski-izreki#dvojni-manjsi
-besedilo: »Ker je $\sin 2\alpha = 2\sin\alpha \cdot \cos\alpha$ in je za ostri kot $0 < \cos\alpha < 1$.« -/
+besedilo: »Pravilno je $2\sin\alpha\cos\alpha$, kar je za ostre kote vedno manj kot $2\sin\alpha$.« -/
 theorem dvojni_manjsi (α : ℝ) (h0 : 0 < α) (h1 : α < π / 2) : sin (2 * α) < 2 * sin α := by
   have hs : 0 < sin α := sin_pos_of_pos_of_lt_pi h0 (by linarith [pi_pos])
   have hc : cos α < 1 := by
@@ -266,7 +266,7 @@ example :=
 /-- Razlaga 5, Premisli: sin 2α = 2 sin α velja natanko tedaj, ko je sin α = 0 ali cos α = 1
 (iz 2 sin α cos α = 2 sin α sledi sin α (cos α − 1) = 0).
 trditev: MAT-SS-3/adicijski-izreki#dvojni-enak
-besedilo: »Ker je $\sin 2\alpha = 2\sin\alpha \cdot \cos\alpha$ in je za ostri kot $0 < \cos\alpha < 1$. Množenje s številom, manjšim od $1$, zmanjša pozitivno vrednost. Enakost bi veljala le pri $\cos\alpha = 1$ ali $\sin\alpha = 0$.« -/
+besedilo: »Enakost bi veljala le pri $\cos\alpha = 1$ ali $\sin\alpha = 0$.« -/
 theorem dvojni_enak (α : ℝ) : sin (2 * α) = 2 * sin α ↔ (sin α = 0 ∨ cos α = 1) := by
   rw [sinus_dvojnega]
   constructor
@@ -295,7 +295,7 @@ theorem preoblikovanje (x : ℝ) : 2 * sin x * cos x = sin (2 * x) ∧ cos x ^ 2
 /-- Razlaga 7 in Povzetek (polovični kot): sin²(α/2) = (1 − cos α)/2 in cos²(α/2) = (1 + cos α)/2; izpeljava iz
 cos α = 1 − 2 sin²(α/2) = 2 cos²(α/2) − 1.
 trditev: MAT-SS-3/adicijski-izreki#polovicni
-besedilo: »$\cos\alpha = 1 - 2\sin^2\frac{\alpha}{2} = 2\cos^2\frac{\alpha}{2} - 1$« -/
+besedilo: »$\cos\alpha = 1 - 2\sin^2\frac{\alpha}{2} = 2\cos^2\frac{\alpha}{2} - 1$. Izrazimo kvadrata: $$\sin^2\frac{\alpha}{2} = \frac{1 - \cos\alpha}{2}$$ $$\cos^2\frac{\alpha}{2} = \frac{1 + \cos\alpha}{2}$$« -/
 theorem polovicni (α : ℝ) : cos α = 1 - 2 * sin (α / 2) ^ 2 ∧ cos α = 2 * cos (α / 2) ^ 2 - 1 ∧
     sin (α / 2) ^ 2 = (1 - cos α) / 2 ∧ cos (α / 2) ^ 2 = (1 + cos α) / 2 := by
   obtain ⟨h1, h2, h3⟩ := kosinus_dvojnega (α / 2)
@@ -375,7 +375,7 @@ theorem primer1 : cos (π / 12) = (√6 + √2) / 4 ∧ (0.9655 : ℝ) < (√6 +
 sin 2α = 2·3/5·(−4/5) = −24/25, cos 2α = 1 − 2·9/25 = 7/25, preverba 576/625 + 49/625 = 1 in
 270° < 2α < 360° (četrti kvadrant).
 trditev: MAT-SS-3/adicijski-izreki#primer2
-besedilo: »Najprej kosinus: $\cos^2\alpha = 1 - \dfrac{9}{25} = \dfrac{16}{25}$, torej $|\cos\alpha| = \dfrac{4}{5}$.« -/
+besedilo: »Odgovor: $\sin 2\alpha = -0{,}96$ in $\cos 2\alpha = 0{,}28$. Kot $2\alpha$ leži v četrtem kvadrantu.« -/
 theorem primer2 (α : ℝ) (hs : sin α = 3 / 5) (h1 : π / 2 < α) (h2 : α < π) :
     cos α ^ 2 = 1 - 9 / 25 ∧ (1 : ℝ) - 9 / 25 = 16 / 25 ∧ |cos α| = 4 / 5 ∧ cos α = -4 / 5 ∧
     sin (2 * α) = -24 / 25 ∧ cos (2 * α) = 7 / 25 ∧
@@ -425,7 +425,7 @@ sin α = 7,2/12 = 0,6; cos(α + 30°) = 0,8·√3/2 − 0,6·1/2 (0,8·√3/2 �
 (0,6·√3/2 ≈ 0,5196; cos(α + 30°) ≈ 0,3928, sin(α + 30°) ≈ 0,9196); x = 12 cos(α + 30°) ≈ 4,71 cm, y = 12 sin(α + 30°) ≈ 11,04 cm; razdalja točne lege od
 središča je natanko 12 cm, √(4,71² + 11,04²) ≈ 12,0.
 trditev: MAT-SS-3/adicijski-izreki#primer3
-besedilo: »$\sin(\alpha + 30^\circ) = 0{,}6 \cdot \dfrac{\sqrt{3}}{2} + 0{,}8 \cdot \dfrac{1}{2} \approx 0{,}5196 + 0{,}4 = 0{,}9196$« -/
+besedilo: »Odgovor: skodelica je po zasuku v točki približno $(4{,}71\,\text{cm};\ 11{,}04\,\text{cm})$.« -/
 theorem primer3 (α : ℝ) (hc : 12 * cos α = 9.6) (hs : 12 * sin α = 7.2) :
     cos α = 9.6 / 12 ∧ (9.6 : ℝ) / 12 = 0.8 ∧ sin α = 7.2 / 12 ∧ (7.2 : ℝ) / 12 = 0.6 ∧
     12 * cos (α + π / 6) = 12 * (cos α * cos (π / 6) - sin α * sin (π / 6)) ∧
@@ -471,7 +471,7 @@ example :=
 /-- Primer 4: za 1 + cos 2α ≠ 0 je sin 2α/(1 + cos 2α) = 2 sin α cos α/(2 cos²α) = sin α/cos α = tan α
 (v imenovalcu 1 + cos 2α = 1 + 2cos²α − 1 = 2cos²α).
 trditev: MAT-SS-3/adicijski-izreki#primer4
-besedilo: »V imenovalcu izberemo obliko $2\cos^2\alpha - 1$, da se enici izničita: $1 + \cos 2\alpha = 1 + 2\cos^2\alpha - 1 = 2\cos^2\alpha$.« -/
+besedilo: »Krajšamo $2\cos\alpha$ in ostane $\dfrac{\sin\alpha}{\cos\alpha} = \tan\alpha$.« -/
 theorem primer4 (α : ℝ) (h : 1 + cos (2 * α) ≠ 0) : sin (2 * α) / (1 + cos (2 * α)) = tan α := by
   have hi : 1 + cos (2 * α) = 2 * cos α ^ 2 := by
     calc 1 + cos (2 * α) = 1 + (2 * cos α ^ 2 - 1) := by
@@ -494,7 +494,7 @@ example :=
 /-- Primer 4, preizkus z α = 30°: sin 60°/(1 + cos 60°) = (√3/2)/(3/2) = √3/3 = tan 30° ≈ 0,577; tudi
 0,866/1,5 ≈ 0,577.
 trditev: MAT-SS-3/adicijski-izreki#primer4-preizkus
-besedilo: »Krajšamo $2\cos\alpha$ in ostane $\dfrac{\sin\alpha}{\cos\alpha} = \tan\alpha$. Preizkus z $\alpha = 30^\circ$: $\dfrac{\sin 60^\circ}{1 + \cos 60^\circ} = \dfrac{0{,}866}{1{,}5} \approx 0{,}577 = \tan 30^\circ$.« -/
+besedilo: »Preizkus z $\alpha = 30^\circ$: $\dfrac{\sin 60^\circ}{1 + \cos 60^\circ} = \dfrac{0{,}866}{1{,}5} \approx 0{,}577 = \tan 30^\circ$.« -/
 theorem primer4_preizkus : sin (π / 3) / (1 + cos (π / 3)) = √3 / 3 ∧ tan (π / 6) = √3 / 3 ∧
     (0.5765 : ℝ) < √3 / 3 ∧ √3 / 3 < 0.5775 ∧ (0.5765 : ℝ) < 0.866 / 1.5 ∧ (0.866 : ℝ) / 1.5 < 0.5775 := by
   have h3 := koren3
@@ -506,7 +506,7 @@ theorem primer4_preizkus : sin (π / 3) / (1 + cos (π / 3)) = √3 / 3 ∧ tan 
 /-- Primer 5: iz cos α = −7/25 in 180° < α < 270° sledi 90° < α/2 < 135°, sin²(α/2) = (1 + 7/25)/2 = 16/25,
 sin(α/2) = 4/5, cos²(α/2) = (1 − 7/25)/2 = 9/25, cos(α/2) = −3/5; preverba 9/25 − 16/25 = −7/25.
 trditev: MAT-SS-3/adicijski-izreki#primer5
-besedilo: »$\sin^2\dfrac{\alpha}{2} = \dfrac{1 + \frac{7}{25}}{2} = \dfrac{16}{25}$, zato $\sin\dfrac{\alpha}{2} = \dfrac{4}{5}$.« -/
+besedilo: »Odgovor: $\sin\dfrac{\alpha}{2} = 0{,}8$ in $\cos\dfrac{\alpha}{2} = -0{,}6$.« -/
 theorem primer5 (α : ℝ) (hc : cos α = -7 / 25) (h1 : π < α) (h2 : α < 3 * π / 2) :
     π / 2 < α / 2 ∧ α / 2 < 3 * π / 4 ∧
     sin (α / 2) ^ 2 = (1 + 7 / 25) / 2 ∧ ((1 : ℝ) + 7 / 25) / 2 = 16 / 25 ∧ sin (α / 2) = 4 / 5 ∧
@@ -559,7 +559,7 @@ theorem racun_primer5 : sin (π - arctan (4 / 3)) = 0.8 ∧ cos (π - arctan (4 
 sin 2α = 2 sin α ne velja za vse kote (α = 90°: sin 180° = 0 ≠ 2), cos²α + sin²α je vedno 1, zato ne more biti
 cos 2α (pri α = 90° je cos 180° = −1).
 trditev: MAT-SS-3/adicijski-izreki#pogoste-napake
-besedilo: »Že $\sin 45^\circ + \sin 30^\circ > 1$ pokaže, da je to nemogoče.« -/
+besedilo: »**»Sinus vsote je vsota sinusov.«** Zapis $\sin(\alpha + \beta) = \sin\alpha + \sin\beta$ je videti kot razčlenjevanje oklepaja. Sinus pa ni množenje s številom, zato oklepaja ne smeš »razčleniti«. Že $\sin 45^\circ + \sin 30^\circ > 1$ pokaže, da je to nemogoče. Uporabi križni izraz. - **Napačen predznak pri kosinusu.** Kdor si zapomni, da je pri sinusu vsote plus, rad napiše plus tudi pri kosinusu. Pri kosinusu je predznak ravno obrnjen: pri vsoti minus, pri razliki plus. Preveri s $\cos(30^\circ + 60^\circ) = 0$. - **$\sin 2\alpha = 2\sin\alpha$.** Dvojka pred kotom ni dvojka pred funkcijo. Pravilno je $2\sin\alpha\cos\alpha$, kar je za ostre kote vedno manj kot $2\sin\alpha$. - **$\cos 2\alpha = \cos^2\alpha + \sin^2\alpha$.** Ta izraz je vedno $1$, zato ne more biti $\cos 2\alpha$. Med kvadratoma je minus.« -/
 theorem pogoste_napake :
     sin (π / 4 + π / 6) ≠ sin (π / 4) + sin (π / 6) ∧ sin (2 * (π / 2)) ≠ 2 * sin (π / 2) ∧
     (∀ α : ℝ, cos α ^ 2 + sin α ^ 2 = 1) ∧ cos (2 * (π / 2)) ≠ cos (π / 2) ^ 2 + sin (π / 2) ^ 2 := by
@@ -614,7 +614,7 @@ sin β = 4/3·cos β, 25/9·cos²β = 1, cos²β = 9/25, cos β = 3/5, sin β = 
 cos(α + β) = (21 − 96)/125 = −3/5. c) α + β je top (90° < α + β < 180°). d) sin 2β = 24/25,
 cos 2β = 9/25 − 16/25 = −7/25, cos(α + 2β) = −(49 + 576)/625 = −1 in α + 2β = 180°.
 trditev: MAT-SS-3/adicijski-izreki#matura2
-besedilo: »$\cos(\alpha + 2\beta) = \cos\alpha\cos 2\beta - \sin\alpha\sin 2\beta = \frac{7}{25} \cdot \left(-\frac{7}{25}\right) - \frac{24}{25} \cdot \frac{24}{25} = -\frac{49 + 576}{625} = -1$« -/
+besedilo: »Odgovor: a) $\sin\alpha = \frac{24}{25}$, $\sin\beta = \frac45$, $\cos\beta = \frac35$; b) $\sin(\alpha + \beta) = \frac45$, $\cos(\alpha + \beta) = -\frac35$; c) kot $\alpha + \beta$ je top; d) $\sin 2\beta = \frac{24}{25}$, $\cos 2\beta = -\frac{7}{25}$ in $\alpha + 2\beta = 180^\circ$.« -/
 theorem matura2 (α β : ℝ) (ha0 : 0 < α) (ha1 : α < π / 2) (hb0 : 0 < β) (hb1 : β < π / 2)
     (hc : cos α = 7 / 25) (ht : tan β = 4 / 3) :
     sin α ^ 2 = 1 - 49 / 625 ∧ (1 : ℝ) - 49 / 625 = 576 / 625 ∧ sin α = 24 / 25 ∧
@@ -687,7 +687,7 @@ example :=
 sin(arccos(7/25) + arctan(4/3)) = 4/5, cos(…) = −3/5, sin(2 arctan(4/3)) = 24/25, cos(2 arctan(4/3)) = −7/25
 in (arccos(7/25) + 2 arctan(4/3))·180/π = 180.
 trditev: MAT-SS-3/adicijski-izreki#racun-matura2
-besedilo: »d) $\sin 2\beta = 2 \cdot \frac45 \cdot \frac35 = \frac{24}{25}$ in $\cos 2\beta = \cos^2\beta - \sin^2\beta = \frac{9}{25} - \frac{16}{25} = -\frac{7}{25}$.« -/
+besedilo: »Odgovor: a) $\sin\alpha = \frac{24}{25}$, $\sin\beta = \frac45$, $\cos\beta = \frac35$; b) $\sin(\alpha + \beta) = \frac45$, $\cos(\alpha + \beta) = -\frac35$; c) kot $\alpha + \beta$ je top; d) $\sin 2\beta = \frac{24}{25}$, $\cos 2\beta = -\frac{7}{25}$ in $\alpha + 2\beta = 180^\circ$.« -/
 theorem racun_matura2 :
     sin (arccos (7 / 25 : ℝ)) = 24 / 25 ∧ cos (arctan (4 / 3 : ℝ)) = 3 / 5 ∧
     sin (arctan (4 / 3 : ℝ)) = 4 / 5 ∧ sin (arccos (7 / 25) + arctan (4 / 3 : ℝ)) = 4 / 5 ∧
@@ -702,7 +702,7 @@ theorem racun_matura2 :
 
 /-- Naloga 3 a): E(α) = sin 3α − sin α = 2 cos((3α + α)/2) sin((3α − α)/2) = 2 cos 2α sin α.
 trditev: MAT-SS-3/adicijski-izreki#matura3a
-besedilo: »$\sin 3\alpha - \sin\alpha = 2\cos\frac{3\alpha + \alpha}{2}\sin\frac{3\alpha - \alpha}{2}$« -/
+besedilo: »$\sin 3\alpha - \sin\alpha = 2\cos\frac{3\alpha + \alpha}{2}\sin\frac{3\alpha - \alpha}{2}$. 2. a) Torej je $E(\alpha) = 2\cos 2\alpha\sin\alpha$.« -/
 theorem matura3a (α : ℝ) : sin (3 * α) - sin α = 2 * cos (2 * α) * sin α := by
   calc sin (3 * α) - sin α = 2 * cos ((3 * α + α) / 2) * sin ((3 * α - α) / 2) := sin_minus_sin _ _
     _ = 2 * cos (2 * α) * sin α := by
@@ -711,7 +711,7 @@ theorem matura3a (α : ℝ) : sin (3 * α) - sin α = 2 * cos (2 * α) * sin α 
 /-- Naloga 3 b): za α ∈ [0°, 180°] je E(α) = 0 natanko pri α ∈ {0°, 45°, 135°, 180°} (sin α = 0 ali
 cos 2α = 0); to pokrije tudi vrstici RACUN sin(3·45°) − sin 45° = 0 in sin(3·135°) − sin 135° = 0.
 trditev: MAT-SS-3/adicijski-izreki#matura3b
-besedilo: »Odgovor: a) $E(\alpha) = 2\cos 2\alpha\sin\alpha$; b) $\alpha \in \{0^\circ, 45^\circ, 135^\circ, 180^\circ\}$; c) $\sin 22{,}5^\circ = \frac{\sqrt{2 - \sqrt2}}{2}$, $E(22{,}5^\circ) = \frac{\sqrt{4 - 2\sqrt2}}{2}$; d) enakost velja.« -/
+besedilo: »Produkt je enak $0$, kadar je $\sin\alpha = 0$ ali $\cos 2\alpha = 0$. 4. b) Na intervalu $[0^\circ, 180^\circ]$ je $\sin\alpha = 0$ pri $\alpha = 0^\circ$ in $\alpha = 180^\circ$. 5. b) Za $\alpha \in [0^\circ, 180^\circ]$ je $2\alpha \in [0^\circ, 360^\circ]$. Kosinus je tam enak $0$ pri $2\alpha = 90^\circ$ in $2\alpha = 270^\circ$, torej pri $\alpha = 45^\circ$ in $\alpha = 135^\circ$.« -/
 theorem matura3b (α : ℝ) (h0 : 0 ≤ α) (h1 : α ≤ π) :
     sin (3 * α) - sin α = 0 ↔ α = 0 ∨ α = π / 4 ∨ α = 3 * π / 4 ∨ α = π := by
   have hp := pi_pos
@@ -770,7 +770,7 @@ example :=
 /-- Naloga 3 c): sin²22,5° = (1 − cos 45°)/2 = (1 − √2/2)/2 = (2 − √2)/4, sin 22,5° = √(2 − √2)/2 (prvi
 kvadrant), E(22,5°) = 2 cos 45° sin 22,5° = 2·√2/2·√(2 − √2)/2 = √(2(2 − √2))/2 = √(4 − 2√2)/2.
 trditev: MAT-SS-3/adicijski-izreki#matura3c
-besedilo: »$E(22{,}5^\circ) = 2\cos 45^\circ \sin 22{,}5^\circ = 2 \cdot \dfrac{\sqrt2}{2} \cdot \dfrac{\sqrt{2 - \sqrt2}}{2} = \dfrac{\sqrt{2(2 - \sqrt2)}}{2} = \dfrac{\sqrt{4 - 2\sqrt2}}{2}$« -/
+besedilo: »Ker je $22{,}5^\circ = \frac{45^\circ}{2}$, velja $\sin^2 22{,}5^\circ = \dfrac{1 - \cos 45^\circ}{2} = \dfrac{1 - \frac{\sqrt2}{2}}{2} = \dfrac{2 - \sqrt2}{4}$. 7. c) Kot $22{,}5^\circ$ leži v I. kvadrantu, zato je sinus pozitiven: $\sin 22{,}5^\circ = \dfrac{\sqrt{2 - \sqrt2}}{2}$. 8. c) Iz zapisa v a): $E(22{,}5^\circ) = 2\cos 45^\circ \sin 22{,}5^\circ = 2 \cdot \dfrac{\sqrt2}{2} \cdot \dfrac{\sqrt{2 - \sqrt2}}{2} = \dfrac{\sqrt{2(2 - \sqrt2)}}{2} = \dfrac{\sqrt{4 - 2\sqrt2}}{2}$.« -/
 theorem matura3c : sin (π / 8) ^ 2 = (1 - cos (π / 4)) / 2 ∧ (1 - cos (π / 4)) / 2 = (1 - √2 / 2) / 2 ∧
     (1 - √2 / 2) / 2 = (2 - √2) / 4 ∧ sin (π / 8) = √(2 - √2) / 2 ∧
     sin (3 * (π / 8)) - sin (π / 8) = 2 * cos (π / 4) * sin (π / 8) ∧
@@ -806,7 +806,7 @@ theorem matura3d (α : ℝ) : sin (3 * α) - sin α = 2 * sin α * (1 - 2 * sin 
 /-- Drugače, korak za korakom: sin 105° = sin(60° + 45°) = √3/2·√2/2 + 1/2·√2/2 = (√6 + √2)/4 ≈ 0,966, kar je
 enako sin 75° (sin(180° − x) = sin x).
 trditev: MAT-SS-3/adicijski-izreki#drugace-105
-besedilo: »Preveri smiselnost: $\frac{\sqrt{6} + \sqrt{2}}{4} \approx 0{,}966$. To je enako kot $\sin 75^\circ$, kar se ujema, saj je $\sin(180^\circ - x) = \sin x$.« -/
+besedilo: »Vstavi: $\frac{\sqrt{3}}{2} \cdot \frac{\sqrt{2}}{2} + \frac{1}{2} \cdot \frac{\sqrt{2}}{2} = \frac{\sqrt{6} + \sqrt{2}}{4}$. 5. Preveri smiselnost: $\frac{\sqrt{6} + \sqrt{2}}{4} \approx 0{,}966$. To je enako kot $\sin 75^\circ$, kar se ujema, saj je $\sin(180^\circ - x) = \sin x$.« -/
 theorem drugace_105 : sin (7 * π / 12) = (√6 + √2) / 4 ∧ sin (7 * π / 12) = sin (π - 7 * π / 12) ∧
     π - 7 * π / 12 = 5 * π / 12 := by
   refine ⟨?_, (sin_pi_sub _).symm, by ring⟩
@@ -819,7 +819,7 @@ theorem drugace_105 : sin (7 * π / 12) = (√6 + √2) / 4 ∧ sin (7 * π / 12
 /-- Drugače, korak za korakom: tri oblike cos 2α pri α = 30°: 0,75 − 0,25 = 0,5; 1 − 0,5 = 0,5;
 1,5 − 1 = 0,5; res je cos 60° = 0,5.
 trditev: MAT-SS-3/adicijski-izreki#drugace-trije
-besedilo: »$\cos^2 30^\circ - \sin^2 30^\circ = 0{,}75 - 0{,}25 = 0{,}5$« -/
+besedilo: »$\cos^2 30^\circ - \sin^2 30^\circ = 0{,}75 - 0{,}25 = 0{,}5$ - $1 - 2\sin^2 30^\circ = 1 - 0{,}5 = 0{,}5$ - $2\cos^2 30^\circ - 1 = 1{,}5 - 1 = 0{,}5$« -/
 theorem drugace_trije :
     cos (π / 6) ^ 2 - sin (π / 6) ^ 2 = 0.75 - 0.25 ∧ (0.75 : ℝ) - 0.25 = 0.5 ∧
     1 - 2 * sin (π / 6) ^ 2 = 1 - 0.5 ∧ (1 : ℝ) - 0.5 = 0.5 ∧

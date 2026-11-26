@@ -24,7 +24,7 @@ open Finset
 /-- Razlaga 1: šesti člen v tabeli: 2 + 5·3 = 17 (prištevamo 3) in 2·3⁵ = 486 (množimo s 3);
 tudi vsi prikazani členi 2, 5, 8, 11, 14 in 2, 6, 18, 54, 162.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#tabela
-besedilo: »$1 \cdot 3 = 3$, $2 \cdot 4 = 8$, $3 \cdot 5 = 15$, $4 \cdot 6 = 24$. Vsak člen je za $1$ manjši od kvadrata: $a_n = (n + 1)^2 - 1 = n(n + 2)$.« -/
+besedilo: »| 1 | $2$ | $2$ | | 2 | $5$ | $6$ | | 3 | $8$ | $18$ | | 4 | $11$ | $54$ | | 5 | $14$ | $162$ |« -/
 theorem tabela :
     (List.range 6).map (fun k : ℕ => (2 + 3 * k : ℤ)) = [2, 5, 8, 11, 14, 17] ∧
     (List.range 6).map (fun k : ℕ => (2 * 3 ^ k : ℤ)) = [2, 6, 18, 54, 162, 486] := by
@@ -32,14 +32,14 @@ theorem tabela :
 
 /-- Razlaga 2, »Preveri«: zaporedje 10, 7, 4, 1 ima vse razlike enake −3.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#diferenca-negativna
-besedilo: »Preveri:* kolikšna je diferenca zaporedja $10, 7, 4, 1, \ldots$? *(Odgovor: $d = -3$; diferenca je lahko negativna.)« -/
+besedilo: »Odgovor: $d = -3$; diferenca je lahko negativna.« -/
 theorem diferenca_negativna : (7 : ℤ) - 10 = -3 ∧ (4 : ℤ) - 7 = -3 ∧ (1 : ℤ) - 4 = -3 := by
   norm_num
 
 /-- Razlaga 3: splošni člen aritmetičnega zaporedja. Če je aₙ₊₁ − aₙ = d za vsak n ≥ 1, je
 aₙ = a₁ + (n − 1)d za vsak n ≥ 1.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#aritm-splosni
-besedilo: »Splošni člen aritmetičnega zaporedja.** Od $a_1$ do $a_n$ naredimo $n - 1$ korakov, vsak prinese $d$.« -/
+besedilo: »Od $a_1$ do $a_n$ naredimo $n - 1$ korakov, vsak prinese $d$. Zato je splošni člen $$a_n = a_1 + (n-1)\,d.$$« -/
 theorem aritm_splosni (a : ℕ → ℝ) (d : ℝ) (h : ∀ n, 1 ≤ n → a (n + 1) - a n = d) :
     ∀ n, 1 ≤ n → a n = a 1 + ((n : ℝ) - 1) * d := by
   intro n hn
@@ -64,7 +64,7 @@ example (a₁ d : ℝ) : True :=
 
 /-- Razlaga 3: pri d > 0 je aritmetično zaporedje strogo naraščajoče (aₘ < aₙ za 1 ≤ m < n).
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#aritm-narasca
-besedilo: »Če je $d > 0$, je zaporedje strogo naraščajoče, če je $d < 0$, strogo padajoče, pri $d = 0$ pa konstantno.« -/
+besedilo: »Če je $d > 0$, je zaporedje strogo naraščajoče« -/
 theorem aritm_narasca (a : ℕ → ℝ) (d : ℝ) (h : ∀ n, 1 ≤ n → a (n + 1) - a n = d) (hd : 0 < d) :
     ∀ m n, 1 ≤ m → m < n → a m < a n := by
   intro m n hm hmn
@@ -74,7 +74,7 @@ theorem aritm_narasca (a : ℕ → ℝ) (d : ℝ) (h : ∀ n, 1 ≤ n → a (n +
 
 /-- Razlaga 3: pri d < 0 je aritmetično zaporedje strogo padajoče.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#aritm-pada
-besedilo: »Če je $d > 0$, je zaporedje strogo naraščajoče, če je $d < 0$, strogo padajoče, pri $d = 0$ pa konstantno.« -/
+besedilo: »če je $d < 0$, strogo padajoče« -/
 theorem aritm_pada (a : ℕ → ℝ) (d : ℝ) (h : ∀ n, 1 ≤ n → a (n + 1) - a n = d) (hd : d < 0) :
     ∀ m n, 1 ≤ m → m < n → a n < a m := by
   intro m n hm hmn
@@ -92,7 +92,7 @@ theorem aritm_konst (a : ℕ → ℝ) (h : ∀ n, 1 ≤ n → a (n + 1) - a n = 
 
 /-- Razlaga 3, »Premisli«: zaporedje 3, 7, 11 ima d = 4 in a₁₀ = 3 + 9·4 = 39, ne 3 + 10·4 = 43.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#premisli-a10
-besedilo: »Zaporedje je $3, 7, 11, \ldots$ Sošolec izračuna $a_{10} = 3 + 10 \cdot 4 = 43$.« -/
+besedilo: »$d = 4$, $a_{10} = 3 + 9 \cdot 4 = 39$.« -/
 theorem premisli_a10 (a : ℕ → ℝ) (h1 : a 1 = 3) (h : ∀ n, 1 ≤ n → a (n + 1) - a n = 4) :
     a 2 = 7 ∧ a 3 = 11 ∧ a 10 = 39 ∧ a 10 ≠ 3 + 10 * 4 := by
   have e := aritm_splosni a 4 h
@@ -115,7 +115,7 @@ example : True :=
 
 /-- Razlaga 4: Gauss, 1 + 2 + … + 100 = 100·101/2 = 5050; vsak par k + (101 − k) (k = 1, …, 100) da 101.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#gauss
-besedilo: »$\dfrac{100 \cdot 101}{2} = 5050$« -/
+besedilo: »Vsak par da $101$, parov je $100$. Ker je vsako število v računu dvakrat, je to dvojna vsota. Torej je vsota $\dfrac{100 \cdot 101}{2} = 5050$.« -/
 theorem gauss :
     (∀ k : ℕ, 1 ≤ k → k ≤ 100 → k + (101 - k) = 101) ∧
     ∑ k ∈ Icc 1 100, (k : ℕ) = 100 * 101 / 2 ∧ 100 * 101 / 2 = 5050 := by
@@ -124,7 +124,7 @@ theorem gauss :
 /-- Razlaga 4: vsota prvih n členov aritmetičnega zaporedja (Sₙ = a₁ + … + aₙ):
 Sₙ = n/2·(2a₁ + (n − 1)d) za vsak n.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#aritm-vsota-crtica
-besedilo: »Vsota aritmetičnega zaporedja.** Z $S_n$ označimo **vsoto prvih $n$ členov**: $S_n = a_1 + a_2 + \ldots + a_n$.« -/
+besedilo: »$$S_n = \frac{n}{2}\bigl(2a_1 + (n-1)d\bigr)$$« -/
 theorem aritm_vsota' (a : ℕ → ℝ) (d : ℝ) (h : ∀ n, 1 ≤ n → a (n + 1) - a n = d) (n : ℕ) :
     ∑ k ∈ range n, a (k + 1) = n / 2 * (2 * a 1 + ((n : ℝ) - 1) * d) := by
   induction n with
@@ -149,7 +149,7 @@ theorem aritm_vsota (a : ℕ → ℝ) (d : ℝ) (h : ∀ n, 1 ≤ n → a (n + 1
 /-- Razlaga 4, »Preveri« in uvod: Tilen za 10 stopnic porabi 1 + … + 10 = 55 kock, za 20 stopnic
 20/2·(1 + 20) = 210 kock, ne 110; to je več kot trikratnik in manj kot štirikratnik od 55.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#tilen
-besedilo: »Preveri:* koliko kock potrebuje Tilen za $20$ stopnic? *(Odgovor: $\frac{20}{2}(1 + 20) = 210$, skoraj štirikrat toliko kot za $10$ stopnic. Tilen se moti: vsaka od novih stopnic ima več kock kot katera koli od prvih desetih.)« -/
+besedilo: »Odgovor: $\frac{20}{2}(1 + 20) = 210$, skoraj štirikrat toliko kot za $10$ stopnic.« -/
 theorem tilen (a : ℕ → ℝ) (h1 : a 1 = 1) (h : ∀ n, 1 ≤ n → a (n + 1) - a n = 1) :
     ∑ k ∈ range 10, a (k + 1) = 55 ∧ ∑ k ∈ range 20, a (k + 1) = 210 ∧ (210 : ℝ) ≠ 110 ∧
     3 * 55 < (210 : ℝ) ∧ (210 : ℝ) < 4 * 55 := by
@@ -175,7 +175,7 @@ example : True :=
 /-- Razlaga 5: splošni člen geometrijskega zaporedja. Če so členi neničelni in aₙ₊₁/aₙ = q za vsak
 n ≥ 1, je aₙ = a₁·qⁿ⁻¹ za vsak n ≥ 1.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#geom-splosni
-besedilo: »Splošni člen geometrijskega zaporedja je $a_n = a_1 \cdot q^{\,n-1}$.« -/
+besedilo: »Od $a_1$ do $a_n$ spet naredimo $n - 1$ korakov, le da vsak korak pomeni množenje s $q$: $$a_n = a_1 \cdot q^{\,n-1}.$$« -/
 theorem geom_splosni (a : ℕ → ℝ) (q : ℝ) (h0 : ∀ n, 1 ≤ n → a n ≠ 0)
     (h : ∀ n, 1 ≤ n → a (n + 1) / a n = q) : ∀ n, 1 ≤ n → a n = a 1 * q ^ (n - 1) := by
   intro n hn
@@ -202,7 +202,7 @@ example (a₁ q : ℝ) (ha : a₁ ≠ 0) (hq : q ≠ 0) : ∃ a : ℕ → ℝ, a
 
 /-- Razlaga 5, »Preveri«: ostanki deske 96, 48, 24 imajo količnik q = 1/2.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#deska
-besedilo: »Preveri:* ostanki deske, ki jo vsakič prežagaš na pol, merijo $96$, $48$, $24$ … centimetrov. Kolikšen je $q$? *(Odgovor: $q = \frac{1}{2}$.)« -/
+besedilo: »Odgovor: $q = \frac{1}{2}$.« -/
 theorem deska : (48 : ℝ) / 96 = 1 / 2 ∧ (24 : ℝ) / 48 = 1 / 2 := by norm_num
 
 /-- Razlaga 5: pri a₁ > 0 in q > 1 je geometrijsko zaporedje strogo naraščajoče.
@@ -235,7 +235,7 @@ theorem geom_konst (a : ℕ → ℝ) (h0 : ∀ n, 1 ≤ n → a n ≠ 0)
 /-- Razlaga 5: pri a₁ > 0 in q < 0 zaporedna člena vedno nasprotnega predznaka (aₙ·aₙ₊₁ < 0),
 zato zaporedje ni monotono: ni naraščajoče in ni padajoče.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#geom-alternira
-besedilo: »Pri $a_1 > 0$ je zaporedje za $q > 1$ strogo naraščajoče, za $0 < q < 1$ strogo padajoče, za $q = 1$ pa konstantno. Za $q < 0$ členi izmenično menjajo predznak, zato zaporedje ni monotono. Takemu zaporedju rečemo **alternirajoče**.« -/
+besedilo: »Za $q < 0$ členi izmenično menjajo predznak, zato zaporedje ni monotono.« -/
 theorem geom_alternira (a : ℕ → ℝ) (q : ℝ) (h0 : ∀ n, 1 ≤ n → a n ≠ 0)
     (h : ∀ n, 1 ≤ n → a (n + 1) / a n = q) (ha : 0 < a 1) (hq : q < 0) :
     (∀ n, 1 ≤ n → a n * a (n + 1) < 0) ∧
@@ -255,7 +255,7 @@ theorem geom_alternira (a : ℕ → ℝ) (q : ℝ) (h0 : ∀ n, 1 ≤ n → a n 
 /-- Razlaga 5, »Premisli«: 2, 4, 6, … (d = 2) ima a₁₀ = 2 + 9·2 = 20; 2, 4, 8, … (q = 2) ima
 a₁₀ = 2·2⁹ = 1024.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#premisli-deseti
-besedilo: »Prvo je aritmetično z $d = 2$: $a_{10} = 2 + 9 \cdot 2 = 20$. Drugo je geometrijsko s $q = 2$: $a_{10} = 2 \cdot 2^9 = 1024$. Pri $a_1 > 0$ in $q > 1$ geometrijsko zaporedje prej ali slej prehiti vsako aritmetično.« -/
+besedilo: »Prvo je aritmetično z $d = 2$: $a_{10} = 2 + 9 \cdot 2 = 20$. Drugo je geometrijsko s $q = 2$: $a_{10} = 2 \cdot 2^9 = 1024$.« -/
 theorem premisli_deseti : (2 : ℝ) + 9 * 2 = 20 ∧ (2 : ℝ) * 2 ^ 9 = 1024 := by norm_num
 
 /-- Razlaga 5, »Premisli«: pri a₁ > 0 in q > 1 geometrijsko zaporedje prej ali slej prehiti vsako
@@ -301,7 +301,7 @@ example :=
 
 /-- Razlaga 6 (izpeljava): za Sₙ = a₁ + a₁q + … + a₁qⁿ⁻¹ je Sₙ − q·Sₙ = a₁ − a₁qⁿ.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#geom-odstej
-besedilo: »$S_n = a_1 + a_1 q + \ldots + a_1 q^{n-1}$« -/
+besedilo: »Obe vsoti imata skupne vse člene razen $a_1$ in $a_1 q^n$, zato pri odštevanju ostane $S_n - q S_n = a_1 - a_1 q^n$.« -/
 theorem geom_odstej (a₁ q : ℝ) (n : ℕ) :
     ∑ k ∈ range n, a₁ * q ^ k - q * ∑ k ∈ range n, a₁ * q ^ k = a₁ - a₁ * q ^ n := by
   induction n with
@@ -310,7 +310,7 @@ theorem geom_odstej (a₁ q : ℝ) (n : ℕ) :
 
 /-- Razlaga 6: vsota prvih n členov geometrijskega zaporedja pri q ≠ 1: Sₙ = a₁·(qⁿ − 1)/(q − 1).
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#geom-vsota
-besedilo: »Vsota geometrijskega zaporedja.** Vsoto $S_n = a_1 + a_1 q + \ldots + a_1 q^{n-1}$ pomnožimo s $q$: $q S_n = a_1 q + a_1 q^2 + \ldots + a_1 q^n$.« -/
+besedilo: »Za $q \ne 1$ izpostavimo $S_n$, delimo z $1 - q$ ter števec in imenovalec pomnožimo z $-1$: $$S_n = a_1 \cdot \frac{q^n - 1}{q - 1}.$$« -/
 theorem geom_vsota (a : ℕ → ℝ) (q : ℝ) (h0 : ∀ n, 1 ≤ n → a n ≠ 0)
     (h : ∀ n, 1 ≤ n → a (n + 1) / a n = q) (hq : q ≠ 1) (n : ℕ) :
     ∑ k ∈ range n, a (k + 1) = a 1 * ((q ^ n - 1) / (q - 1)) := by
@@ -328,7 +328,7 @@ theorem geom_vsota_q1 (a : ℕ → ℝ) (h0 : ∀ n, 1 ≤ n → a n ≠ 0)
 
 /-- Razlaga 6, »Preveri«: 1 + 2 + 4 + 8 + 16 = (2⁵ − 1)/(2 − 1) = 31.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#preveri-31
-besedilo: »Preveri:* koliko je $1 + 2 + 4 + 8 + 16$ po formuli? *(Odgovor: $\frac{2^5 - 1}{2 - 1} = 31$.)« -/
+besedilo: »Odgovor: $\frac{2^5 - 1}{2 - 1} = 31$.« -/
 theorem preveri_31 : ∑ k ∈ range 5, (2 : ℝ) ^ k = (2 ^ 5 - 1) / (2 - 1) ∧
     ((2 : ℝ) ^ 5 - 1) / (2 - 1) = 31 := by
   constructor
@@ -362,7 +362,7 @@ theorem vzorec_ne_enolicno :
 
 /-- Razlaga 7, »Preveri«: 1, 3, 7, 15, 31 nadaljujemo z 63; splošni člen aₙ = 2ⁿ − 1.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#vzorec-2n
-besedilo: »Preveri:* nadaljuj zaporedje $1, 3, 7, 15, 31, \ldots$ in zapiši splošni člen. *(Odgovor: $63$; vsak člen je za $1$ manjši od potence števila $2$, $a_n = 2^n - 1$.)« -/
+besedilo: »Odgovor: $63$; vsak člen je za $1$ manjši od potence števila $2$, $a_n = 2^n - 1$.« -/
 theorem vzorec_2n :
     (List.range 6).map (fun k => 2 ^ (k + 1) - 1) = [1, 3, 7, 15, 31, 63] := by decide
 
@@ -370,7 +370,7 @@ theorem vzorec_2n :
 
 /-- Primer 1: a₁ = 5, d = 3 ⇒ a₂₀ = 5 + 19·3 = 62 in S₂₀ = 20/2·(5 + 62) = 10·67 = 670.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#primer1
-besedilo: »$S_{20} = \dfrac{20}{2} \cdot (5 + 62) = 10 \cdot 67 = 670$« -/
+besedilo: »Odgovor: dvajseti člen je $62$, vsota prvih dvajsetih členov je $670$.« -/
 theorem primer1 (a : ℕ → ℝ) (h1 : a 1 = 5) (h : ∀ n, 1 ≤ n → a (n + 1) - a n = 3) :
     a 20 = 62 ∧ ∑ k ∈ range 20, a (k + 1) = 670 := by
   have a20 : a 20 = 62 := by
@@ -395,7 +395,7 @@ example : True :=
 /-- Primer 2: a₁ = 3, q = 2 ⇒ a₈ = 3·2⁷ = 3·128 = 384 in S₈ = 3·(2⁸ − 1)/(2 − 1) = 3·255 = 765;
 preizkus: vsota je manjša od dvakratnika zadnjega člena (765 < 768).
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#primer2
-besedilo: »Ker je $q \ne 1$, uporabimo formulo za geometrijsko vsoto: $S_8 = 3 \cdot \dfrac{2^8 - 1}{2 - 1} = 3 \cdot 255 = 765$.« -/
+besedilo: »Odgovor: osmi člen je $384$, vsota prvih osmih členov je $765$.« -/
 theorem primer2 (a : ℕ → ℝ) (h0 : ∀ n, 1 ≤ n → a n ≠ 0) (h1 : a 1 = 3)
     (h : ∀ n, 1 ≤ n → a (n + 1) / a n = 2) :
     a 8 = 384 ∧ ∑ k ∈ range 8, a (k + 1) = 765 ∧ (765 : ℝ) < 2 * 384 := by
@@ -465,7 +465,7 @@ theorem primer3_D : (17 : ℝ) ^ 2 + 4 * 740 = 289 + 2960 ∧ (289 + 2960 : ℝ)
 /-- Primer 3: a₁ = 18, d = 2; Sₙ = 740 velja natanko pri n = 20 (n naravno), in
 a₂₀ = 18 + 19·2 = 56; preizkus 20/2·(18 + 56) = 740.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#primer3
-besedilo: »Najnižja vrsta: $a_{20} = 18 + 19 \cdot 2 = 56$. Preizkus: $\dfrac{20}{2} \cdot (18 + 56) = 740$.« -/
+besedilo: »Odgovor: streha ima $20$ vrst, v najnižji vrsti je $56$ strešnikov.« -/
 theorem primer3 (a : ℕ → ℝ) (h1 : a 1 = 18) (h : ∀ n, 1 ≤ n → a (n + 1) - a n = 2) (n : ℕ) :
     (∑ k ∈ range n, a (k + 1) = 740 ↔ n = 20) ∧ a 20 = 56 ∧ (20 : ℝ) / 2 * (18 + 56) = 740 := by
   have a20 : a 20 = 56 := by
@@ -599,14 +599,14 @@ theorem napaka_n1 (a₁ d q : ℝ) : a₁ + ((1 : ℕ) - 1 : ℝ) * d = a₁ ∧
 
 /-- Pogoste napake 2: padec za 20 % pusti 80 % (q = 0,8), rast za 5 % da q = 1,05.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#napaka-odstotek
-besedilo: »Odstotek namesto količnika.** Če vrednost vsako leto pade za $20\,\%$, ostane $80\,\%$, zato je $q = 0{,}8$, ne $0{,}2$. Pri rasti za $5\,\%$ je $q = 1{,}05$. Količnik pove, kolikšen del prejšnjega člena je naslednji člen.« -/
+besedilo: »Če vrednost vsako leto pade za $20\,\%$, ostane $80\,\%$, zato je $q = 0{,}8$, ne $0{,}2$. Pri rasti za $5\,\%$ je $q = 1{,}05$.« -/
 theorem napaka_odstotek (x : ℝ) : x - 20 / 100 * x = 8 / 10 * x ∧ x + 5 / 100 * x = 105 / 100 * x := by
   constructor <;> ring
 
 /-- Pogoste napake 3: iz 2, 4 vrste ne vemo (aritmetično da 6, geometrijsko 8); 1, 2, 4, 8 ni
 aritmetično, ker 4 − 2 ≠ 2 − 1.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#napaka-dva-clena
-besedilo: »Vrsta zaporedja iz prvih dveh členov.** Iz $2, 4$ ne moreš vedeti, ali je naslednji člen $6$ (aritmetično) ali $8$ (geometrijsko). Prav tako zaporedje $1, 2, 4, 8$ ni aritmetično, čeprav je $2 - 1 = 1$. Razliko oziroma količnik preveri pri vseh danih parih.« -/
+besedilo: »Iz $2, 4$ ne moreš vedeti, ali je naslednji člen $6$ (aritmetično) ali $8$ (geometrijsko). Prav tako zaporedje $1, 2, 4, 8$ ni aritmetično, čeprav je $2 - 1 = 1$.« -/
 theorem napaka_dva_clena : (4 : ℝ) + (4 - 2) = 6 ∧ (4 : ℝ) * (4 / 2) = 8 ∧ (4 : ℝ) - 2 ≠ 2 - 1 := by
   norm_num
 
@@ -624,7 +624,7 @@ theorem napaka_gauss :
 /-- Pogoste napake 5 in »Preveri se« 1: pri a₁ = 5, q = −2 so členi 5, −10, 20, −40 in zaporedje ni
 monotono (5 > −10 < 20).
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#napaka-alternira
-besedilo: »Absolutne vrednosti res rastejo, sami členi pa ne: $5, -10, 20, -40$. Zaporedje je alternirajoče.« -/
+besedilo: »Pri $q = -2$ členi $5, -10, 20, -40$ menjajo predznak, zato zaporedje ni monotono.« -/
 theorem napaka_alternira :
     (List.range 4).map (fun k => (5 : ℤ) * (-2) ^ k) = [5, -10, 20, -40] ∧
     (-10 : ℤ) < 5 ∧ (-10 : ℤ) < 20 := by decide
@@ -718,7 +718,7 @@ theorem ustno3_enacba (a d : ℝ) :
 /-- Ustno vprašanje 3: zaporedje, ki je hkrati aritmetično (diferenca d) in geometrijsko (neničelni
 členi, količnik q), je konstantno: d = 0 in q = 1. Primer 5, 5, 5, … to izpolni.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#ustno3
-besedilo: »Primer je konstantno zaporedje $5, 5, 5, \ldots$ z diferenco $d = 0$ in količnikom $q = 1$.« -/
+besedilo: »Vsako zaporedje, ki je hkrati aritmetično in geometrijsko, je torej konstantno z neničelnimi členi.« -/
 theorem ustno3 (a : ℕ → ℝ) (d q : ℝ) (ha : ∀ n, 1 ≤ n → a (n + 1) - a n = d)
     (h0 : ∀ n, 1 ≤ n → a n ≠ 0) (hg : ∀ n, 1 ≤ n → a (n + 1) / a n = q) :
     d = 0 ∧ q = 1 ∧ ∀ n, 1 ≤ n → a n = a 1 := by
@@ -752,7 +752,7 @@ example : True :=
 /-- Naloga 1: a₁ = 7, a₁₀ = 43 ⇒ 9d = 36, d = 4; vstavljena števila 11, 15, …, 39;
 S₁₀ = 10/2·(7 + 43) = 5·50 = 250.
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#matura1
-besedilo: »$S_{10} = \dfrac{10}{2}\,(7 + 43) = 5 \cdot 50 = 250$« -/
+besedilo: »Odgovor: vstavimo števila $11, 15, 19, 23, 27, 31, 35, 39$; vsota vseh desetih števil je $250$.« -/
 theorem matura1 (a : ℕ → ℝ) (d : ℝ) (h : ∀ n, 1 ≤ n → a (n + 1) - a n = d) (h1 : a 1 = 7)
     (h10 : a 10 = 43) :
     d = 4 ∧ (a 2 = 11 ∧ a 3 = 15 ∧ a 4 = 19 ∧ a 5 = 23 ∧ a 6 = 27 ∧ a 7 = 31 ∧ a 8 = 35 ∧ a 9 = 39) ∧
@@ -850,7 +850,7 @@ theorem matura2c_log :
 /-- Naloga 2 d): 10/2·(2·120 + 9·12) = 5·348 = 1740; razlika 1740 − 1738,387… ≈ 1,6 (sotekmovalec
 prevozi več).
 trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#matura2d
-besedilo: »V desetih tednih prevozi $\dfrac{10}{2}\,(2 \cdot 120 + 9 \cdot 12) = 5 \cdot 348 = 1740$ (km).« -/
+besedilo: »V desetih tednih prevozi $\dfrac{10}{2}\,(2 \cdot 120 + 9 \cdot 12) = 5 \cdot 348 = 1740$ (km). 7. d) Razlika: $1740 - 1738{,}387\ldots \approx 1{,}6$ (km).« -/
 theorem matura2d :
     (10 : ℝ) / 2 * (2 * 120 + 9 * 12) = 5 * 348 ∧ (5 * 348 : ℝ) = 1740 ∧
     1612 / 1000 ≤ 1740 - (120 : ℝ) * ((108 / 100) ^ 10 - 1) / (108 / 100 - 1) ∧
@@ -915,8 +915,7 @@ theorem kviz7 :
 
 /-- RAČUN: (43 − 7)/9 = 4, 10/2·(7 + 43) = 250, 7 + 8·4 = 39, 10/2·(2·120 + 9·12) = 1740,
 3⁵ + 1 = 244, 2⁶ − 1 = 63, 6·7 = 42, 7·8 = 56.
-trditev: MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje#racun
-besedilo: »$\dfrac{10}{2}\,(2 \cdot 120 + 9 \cdot 12) = 5 \cdot 348 = 1740$« -/
+pomozno -/
 theorem racun : ((43 : ℝ) - 7) / 9 = 4 ∧ (10 : ℝ) / 2 * (7 + 43) = 250 ∧ (7 : ℝ) + 8 * 4 = 39 ∧
     (10 : ℝ) / 2 * (2 * 120 + 9 * 12) = 1740 ∧ (3 : ℝ) ^ 5 + 1 = 244 ∧ (2 : ℝ) ^ 6 - 1 = 63 ∧
     (6 : ℝ) * 7 = 42 ∧ (7 : ℝ) * 8 = 56 := by norm_num

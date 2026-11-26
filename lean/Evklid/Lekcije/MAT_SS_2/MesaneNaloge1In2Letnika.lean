@@ -241,7 +241,7 @@ example : (12:ℝ) / 6 = ((2:ℕ):ℝ) := by norm_num
 
 /-- Razlaga, tabela: c(t) = 80·(1/2)^(t/6) da c(0) = 80, c(6) = 40, c(12) = 20, c(18) = 10, c(24) = 5.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#tabela
-besedilo: »$80 \cdot \left(\frac{1}{2}\right)^{t/6} = 10$« -/
+besedilo: »| $0$ | $80$ | | $6$ | $40$ | | $12$ | $20$ | | $18$ | $10$ | | $24$ | $5$ |« -/
 theorem tabela :
     80 * (1 / 2 : ℝ) ^ ((0:ℝ) / 6) = 80 ∧ 80 * (1 / 2 : ℝ) ^ ((6:ℝ) / 6) = 40 ∧
     80 * (1 / 2 : ℝ) ^ ((12:ℝ) / 6) = 20 ∧ 80 * (1 / 2 : ℝ) ^ ((18:ℝ) / 6) = 10 ∧
@@ -256,7 +256,7 @@ theorem tabela :
 /-- Razlaga: koncentracija je vedno pozitivna (graf nikoli ne pade na nič) in strogo pada; zato enačba q^t = b
 z b ≤ 0 nima rešitve (simulacija).
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#pozitivna-pada
-besedilo: »V simulaciji spodaj (Zbirka simulacij za maturo) odpri Eksponentna funkcija in nastavi osnovo med $0$ in $1$. Opazi, da graf pada, a ostane nad osjo $x$; zato enačba $q^t = b$ z negativnim $b$ nima rešitve.« -/
+besedilo: »Opazi, da graf pada, a ostane nad osjo $x$; zato enačba $q^t = b$ z negativnim $b$ nima rešitve.« -/
 theorem pozitivna_pada :
     (∀ t : ℝ, 0 < 80 * (1 / 2 : ℝ) ^ (t / 6)) ∧
     (∀ t₁ t₂ : ℝ, t₁ < t₂ → 80 * (1 / 2 : ℝ) ^ (t₂ / 6) < 80 * (1 / 2 : ℝ) ^ (t₁ / 6)) ∧
@@ -269,7 +269,7 @@ theorem pozitivna_pada :
 /-- Razlaga »na grafu pada vse počasneje«: v enako dolgem časovnem intervalu h > 0 koncentracija c(t) =
 80·(1/2)^(t/6) pade za c(t) − c(t + h) = c(t)·(1 − (1/2)^(h/6)) > 0, pozneje (t₂ > t₁) pa za manj kot prej.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#pada-vse-pocasneje
-besedilo: »$$c(t) = 80 \cdot \left(\frac{1}{2}\right)^{t/6}$$« -/
+besedilo: »Na grafu pada vse počasneje« -/
 theorem pada_vse_pocasneje (t₁ t₂ h : ℝ) (ht : t₁ < t₂) (hh : 0 < h) :
     80 * (1 / 2 : ℝ) ^ ((t₂ + h) / 6) < 80 * (1 / 2 : ℝ) ^ (t₂ / 6) ∧
     80 * (1 / 2 : ℝ) ^ (t₂ / 6) - 80 * (1 / 2 : ℝ) ^ ((t₂ + h) / 6) <
@@ -296,7 +296,7 @@ example :=
 /-- Razlaga: 80·(1/2)^(t/6) = 10 ⟺ (1/2)^(t/6) = 1/8 = (1/2)³ ⟺ t/6 = 3 ⟺ t = 18; za t > 18 je koncentracija
 pod mejo 10 (naslednji odmerek po 18 urah).
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#razpolovitev
-besedilo: »Delimo z $80$ in dobimo $\left(\frac{1}{2}\right)^{t/6} = \frac{1}{8} = \left(\frac{1}{2}\right)^{3}$.« -/
+besedilo: »Delimo z $80$ in dobimo $\left(\frac{1}{2}\right)^{t/6} = \frac{1}{8} = \left(\frac{1}{2}\right)^{3}$. Osnovi sta enaki, zato sta enaka tudi eksponenta: $\frac{t}{6} = 3$ in $t = 18\,\mathrm{h}$. Ker funkcija pada, je koncentracija za $t > 18$ pod mejo.« -/
 theorem razpolovitev (t : ℝ) :
     (80 * (1 / 2 : ℝ) ^ (t / 6) = 10 ↔ (1 / 2 : ℝ) ^ (t / 6) = 1 / 8) ∧ (1 / 8 : ℝ) = (1 / 2) ^ (3:ℝ) ∧
     ((1 / 2 : ℝ) ^ (t / 6) = (1 / 2) ^ (3:ℝ) ↔ t / 6 = 3) ∧ (t / 6 = 3 ↔ t = 18) ∧
@@ -394,7 +394,7 @@ theorem primer1 :
 /-- Primer 2: 4^x = (2^x)², 2^(x+1) = 2·2^x, zato je enačba (2^x)² − 6·2^x + 8 = 0; s² − 6s + 8 = (s − 2)(s − 4); iz
 2^x = 2 je x = 1, iz 2^x = 4 je x = 2; preizkus 4 − 12 + 8 = 0 in 16 − 24 + 8 = 0.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#primer2-koraki
-besedilo: »Preizkus: $4 - 12 + 8 = 0$ in $16 - 24 + 8 = 0$.« -/
+besedilo: »Vse potence izrazimo z $2^x$: $\left(2^x\right)^2 - 6 \cdot 2^x + 8 = 0$. 2. Uvedemo $s = 2^x$ in dobimo kvadratno enačbo $s^2 - 6s + 8 = 0$, ki se razstavi v $(s - 2)(s - 4) = 0$. 3. Rešitvi sta $s_1 = 2$ in $s_2 = 4$; obe sta pozitivni, zato obe ustrezata pogoju $2^x > 0$. 4. Vrnemo se k $x$: iz $2^x = 2$ sledi $x = 1$, iz $2^x = 4$ sledi $x = 2$. 5. Preizkus: $4 - 12 + 8 = 0$ in $16 - 24 + 8 = 0$.« -/
 theorem primer2_koraki (x : ℝ) :
     (4:ℝ) ^ x = ((2:ℝ) ^ x) ^ 2 ∧ (2:ℝ) ^ (x + 1) = 2 * 2 ^ x ∧
     ((4:ℝ) ^ x - 3 * 2 ^ (x + 1) + 8 = ((2:ℝ) ^ x) ^ 2 - 6 * 2 ^ x + 8) ∧
@@ -413,7 +413,7 @@ theorem primer2_koraki (x : ℝ) :
 
 /-- Primer 2 in Primer 4 (blok RACUN): s² − 6s + 8 = 0 ⟺ s = 2 ali s = 4; x² − 2x − 8 = 0 ⟺ x = −2 ali x = 4.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#kvadratni
-besedilo: »Uvedemo $s = 2^x$ in dobimo kvadratno enačbo $s^2 - 6s + 8 = 0$, ki se razstavi v $(s - 2)(s - 4) = 0$.« -/
+besedilo: »Rešitvi sta $s_1 = 2$ in $s_2 = 4$« -/
 theorem kvadratni :
     (∀ s : ℝ, s ^ 2 - 6 * s + 8 = 0 ↔ s = 2 ∨ s = 4) ∧ (∀ x : ℝ, x ^ 2 - 2 * x - 8 = 0 ↔ x = -2 ∨ x = 4) := by
   refine ⟨fun s => ?_, fun x => ?_⟩
@@ -422,7 +422,7 @@ theorem kvadratni :
 
 /-- Primer 2: 4^x − 3·2^(x+1) + 8 = 0 ⟺ x = 1 ali x = 2 (obe rešitvi za s = 2^x > 0 sta pozitivni).
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#primer2
-besedilo: »$4^x - 3 \cdot 2^{x+1} + 8 = 0$« -/
+besedilo: »Odgovor: rešitvi enačbe sta $x = 1$ in $x = 2$.« -/
 theorem primer2 (x : ℝ) : (4:ℝ) ^ x - 3 * 2 ^ (x + 1) + 8 = 0 ↔ x = 1 ∨ x = 2 := by
   obtain ⟨_, _, e, f, g1, g2, _, _⟩ := primer2_koraki x
   rw [e, f, mul_eq_zero, sub_eq_zero, sub_eq_zero, g1, g2]
@@ -430,7 +430,7 @@ theorem primer2 (x : ℝ) : (4:ℝ) ^ x - 3 * 2 ^ (x + 1) + 8 = 0 ↔ x = 1 ∨ 
 /-- Primer 3, koraka 1–3 (in blok RACUN): za q > 0 je q⁸ = 1/4 natanko pri q = ⁸√(1/4) = 2^(−1/4); q ≈ 0,8409,
 ostane 84,09 %, izloči se 100 % − 84,09 % = 15,91 % ≈ 15,9 %.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#primer3-q
-besedilo: »Ker je $q > 0$, je $q = \sqrt[8]{\frac{1}{4}} = \sqrt[8]{2^{-2}} = 2^{-1/4} \approx 0{,}8409$. Vsako uro torej ostane $84{,}09\,\%$ zdravila.« -/
+besedilo: »Ker je $q > 0$, je $q = \sqrt[8]{\frac{1}{4}} = \sqrt[8]{2^{-2}} = 2^{-1/4} \approx 0{,}8409$. Vsako uro torej ostane $84{,}09\,\%$ zdravila. 3. Izločeni del: $100\,\% - 84{,}09\,\% = 15{,}91\,\% \approx 15{,}9\,\%$.« -/
 theorem primer3_q :
     (∀ q : ℝ, 0 < q → (q ^ 8 = 1 / 4 ↔ q = (1 / 4 : ℝ) ^ (1 / 8 : ℝ))) ∧
     (1 / 4 : ℝ) ^ (1 / 8 : ℝ) = 2 ^ (-1 / 4 : ℝ) ∧ |(1 / 4 : ℝ) ^ (1 / 8 : ℝ) - 0.8409| < 0.00005 ∧
@@ -456,7 +456,7 @@ theorem primer3_q :
 /-- Primer 3, koraki 4–5 (in blok RACUN): q^t = 0,1 ⟺ t·log q = log 0,1 ⟺ t = log 0,1 / log q; z nezaokroženim
 q = ⁸√(1/4) je t ≈ 13,3 h (daljše od 8 ur).
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#primer3-t
-besedilo: »Z nezaokroženim $q$ dobimo $t \approx 13{,}3\,\mathrm{h}$. Smisel: $10\,\%$ je manj kot četrtina, zato mora biti čas daljši od $8$ ur.« -/
+besedilo: »Neznanka je v eksponentu, zato obe strani logaritmiramo. Iz $t \cdot \log q = \log 0{,}1$ sledi $t = \dfrac{\log 0{,}1}{\log q}$. 5. Z nezaokroženim $q$ dobimo $t \approx 13{,}3\,\mathrm{h}$. Smisel: $10\,\%$ je manj kot četrtina, zato mora biti čas daljši od $8$ ur.« -/
 theorem primer3_t :
     (∀ q t : ℝ, 0 < q → q ≠ 1 → (q ^ t = 0.1 ↔ t * Real.log q = Real.log 0.1) ∧
       (t * Real.log q = Real.log 0.1 ↔ t = Real.log 0.1 / Real.log q)) ∧
@@ -493,7 +493,7 @@ theorem primer3_t :
 /-- Pogoste napake (prezgodnje zaokroževanje, blok RACUN): z zaokroženim q ≈ 0,84 iz 0,84^t = 0,1 dobimo
 t ≈ 13,2 h namesto 13,3 h.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#primer3-zaokrozeno
-besedilo: »Prezgodnje zaokroževanje.** Če v Primeru 3 vzameš $q \approx 0{,}84$, dobiš $t \approx 13{,}2\,\mathrm{h}$ namesto $13{,}3\,\mathrm{h}$.« -/
+besedilo: »Če v Primeru 3 vzameš $q \approx 0{,}84$, dobiš $t \approx 13{,}2\,\mathrm{h}$« -/
 theorem primer3_zaokrozeno : ∀ t : ℝ, (0.84 : ℝ) ^ t = 0.1 → |t - 13.2| < 0.05 := by
   intro t ht
   have a : (0.1 : ℝ) < 0.84 ^ ((66 : ℝ) / 5) :=
@@ -509,7 +509,7 @@ theorem primer3_zaokrozeno : ∀ t : ℝ, (0.84 : ℝ) ^ t = 0.1 → |t - 13.2| 
 /-- Primer 3, korak 5 (in blok RACUN): t = log 0,1 / log q z nezaokroženim q = ⁸√(1/4) je ≈ 13,3, z zaokroženim
 q = 0,84 pa ≈ 13,2.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#primer3-vrednosti
-besedilo: »Prezgodnje zaokroževanje.** Če v Primeru 3 vzameš $q \approx 0{,}84$, dobiš $t \approx 13{,}2\,\mathrm{h}$ namesto $13{,}3\,\mathrm{h}$. Vmesne rezultate hrani v računalu, zaokroži šele odgovor.« -/
+besedilo: »Če v Primeru 3 vzameš $q \approx 0{,}84$, dobiš $t \approx 13{,}2\,\mathrm{h}$ namesto $13{,}3\,\mathrm{h}$.« -/
 theorem primer3_vrednosti :
     |Real.log 0.1 / Real.log ((1 / 4 : ℝ) ^ (1 / 8 : ℝ)) - 13.3| < 0.05 ∧
     |Real.log 0.1 / Real.log 0.84 - 13.2| < 0.05 := by
@@ -570,7 +570,7 @@ theorem primer4 :
 /-- Pogoste napake in Preveri se 1: log₂(4 + 4) = log₂ 8 = 3, log₂ 4 + log₂ 4 = 2 + 2 = 4 (vsote pod logaritmom ne
 razbiješ); ∛27 = 3 in 9^(1/2) = 3.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#vsota-pod-log
-besedilo: »$\log_2 (4 + 4) = \log_2 8 = 3$, tako kot ostala dva. Vsote pod logaritmom ne razbiješ na vsoto logaritmov.« -/
+besedilo: »$\log_2 4 + \log_2 4 = 2 + 2 = 4$, ostali trije izrazi so enaki $3$.« -/
 theorem vsota_pod_log :
     Real.logb 2 (4 + 4) = 3 ∧ Real.logb 2 4 + Real.logb 2 4 = 4 ∧ (27:ℝ) ^ (1 / 3 : ℝ) = 3 ∧
     (9:ℝ) ^ (1 / 2 : ℝ) = 3 := by
@@ -588,7 +588,7 @@ theorem vsota_pod_log :
 /-- Pogoste napake, Povzetek in Ponovitev: upadanje za p % da faktor q = 1 − p/100 (za 20 % je q = 0,8, ne 0,2;
 s q = 0,2 bi ostala petina); √(a² + b²) ni a + b (npr. √(3² + 4²) = 5 ≠ 7, za a, b > 0 je vedno manjši).
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#odstotek-in-koren
-besedilo: »Napačen faktor pri odstotkih.** »Vsako uro izloči $20\,\%$« ne pomeni $q = 0{,}2$, ampak $q = 0{,}8$: ostane $80\,\%$. S $q = 0{,}2$ bi po eni uri ostala petina.« -/
+besedilo: »»Vsako uro izloči $20\,\%$« ne pomeni $q = 0{,}2$, ampak $q = 0{,}8$: ostane $80\,\%$. S $q = 0{,}2$ bi po eni uri ostala petina. - **Koren vsote.** $\sqrt{a^2 + b^2}$ ni $a + b$.« -/
 theorem odstotek_in_koren :
     (1:ℝ) - 20 / 100 = 0.8 ∧ (0.2 : ℝ) = 1 / 5 ∧ √((3:ℝ) ^ 2 + 4 ^ 2) = 5 ∧ (5:ℝ) ≠ 3 + 4 ∧
     ∀ a b : ℝ, 0 < a → 0 < b → √(a ^ 2 + b ^ 2) < a + b := by
@@ -600,7 +600,7 @@ theorem odstotek_in_koren :
 log_a A + log_a B (A, B > 0; zveza velja za vsako osnovo b, ker je v Leanu log_b x = log x / log b, lekcija pa
 jo uporablja za b > 0, b ≠ 1); s = a^x > 0.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#povzetek
-besedilo: »$q^t = b \Rightarrow t \cdot \log q = \log b$« -/
+besedilo: »$q^t = b \Rightarrow t \cdot \log q = \log b$ (na pamet) - $\sqrt[n]{a^m} = a^{m/n}$ (na pamet) - $\log_a (AB) = \log_a A + \log_a B$ (na pamet) - $a^{2x}$ in $a^x$: nova neznanka $s = a^x > 0$« -/
 theorem povzetek (a : ℝ) (ha : 0 ≤ a) (m n : ℕ) (_hn : n ≠ 0) :
     ((a ^ m) ^ (1 / (n : ℝ)) = a ^ ((m : ℝ) / n)) ∧
     (∀ q t : ℝ, 0 < q → Real.log (q ^ t) = t * Real.log q) ∧
@@ -623,7 +623,7 @@ example :=
 /-- Naloga 1: f(x) = log₃(x + 1) − 2 je log₃ x, premaknjen za 1 v levo in 2 navzdol; definiran je za x + 1 > 0,
 torej x > −1 (asimptota x = −1); ničla: log₃(x + 1) = 2 ⟺ x + 1 = 3² = 9 ⟺ x = 8; f(0) = log₃ 1 − 2 = −2.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#naloga1
-besedilo: »Ničla: $\log_3 (x + 1) = 2$ da $x + 1 = 3^2 = 9$, torej $x = 8$; pogoj $x > -1$ velja.« -/
+besedilo: »Graf funkcije $\log_3 x$ je premaknjen za $1$ v levo in za $2$ navzdol, zato je asimptota $x = -1$. 2. Ničla: $\log_3 (x + 1) = 2$ da $x + 1 = 3^2 = 9$, torej $x = 8$; pogoj $x > -1$ velja. 3. Presečišče z osjo $y$: $f(0) = \log_3 1 - 2 = -2$, točka $(0, -2)$.« -/
 theorem naloga1 :
     (∀ x : ℝ, Real.logb 3 (x + 1) - 2 = Real.logb 3 (x - (-1)) + (-2)) ∧ (∀ x : ℝ, 0 < x + 1 ↔ -1 < x) ∧
     (∀ x : ℝ, -1 < x → (Real.logb 3 (x + 1) - 2 = 0 ↔ x = 8)) ∧
@@ -639,7 +639,7 @@ theorem naloga1 :
 open Filter Topology in
 /-- Naloga 1 (asimptota x = −1): ko gre x z desne proti −1, gre log₃(x + 1) − 2 proti −∞.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#naloga1-asimptota
-besedilo: »$f(x) = \log_3 (x + 1) - 2$« -/
+besedilo: »zato je asimptota $x = -1$« -/
 theorem naloga1_asimptota : Tendsto (fun x : ℝ => Real.logb 3 (x + 1) - 2) (𝓝[>] (-1)) atBot := by
   have h1 : Tendsto (fun x : ℝ => x + 1) (𝓝[>] (-1)) (𝓝[>] 0) := by
     have c : Tendsto (fun x : ℝ => x + 1) (𝓝 (-1)) (𝓝 0) :=
@@ -688,7 +688,7 @@ theorem naloga2_a :
 /-- Naloga 2 b), c) (in blok RACUN): d = √(6² + 0,45²) = √36,2025 ≈ 6,02 m; steber: podobni trikotnik s
 koeficientom 2/6 = 1/3, višina h/2 = 0,45/6 ⟺ h = 0,45/3 = 0,45·2/6 = 0,15 m.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#naloga2-bc
-besedilo: »$d = \sqrt{6^2 + 0{,}45^2} = \sqrt{36{,}2025} \approx 6{,}02\,\mathrm{m}$« -/
+besedilo: »$d = \sqrt{6^2 + 0{,}45^2} = \sqrt{36{,}2025} \approx 6{,}02\,\mathrm{m}$. 3. c) Steber, klančina in tla tvorijo trikotnik, podoben celemu (skupen kot $\alpha$, oba pravokotna). Koeficient podobnosti je $\frac{2}{6} = \frac{1}{3}$, zato je steber visok $\frac{0{,}45}{3} = 0{,}15\,\mathrm{m}$.« -/
 theorem naloga2_bc :
     (6:ℝ) ^ 2 + 0.45 ^ 2 = 36.2025 ∧ |√(36.2025 : ℝ) - 6.02| < 0.005 ∧ (2:ℝ) / 6 = 1 / 3 ∧
     (∀ h : ℝ, h / 2 = 0.45 / 6 ↔ h = 0.15) ∧ (0.45 : ℝ) / 3 = 0.15 ∧ (0.45 : ℝ) * 2 / 6 = 0.15 := by
@@ -702,7 +702,7 @@ po definiciji tan α = tan ∠BAT = |TB|/|AB| = 0,45/6; klančina je hipotenuza 
 Q = 2 + 0,15i = ⅓·T leži na klančini, steber PQ (P = 2) je navpičen (pravi kot pri P), trikotnik APQ ima isti kot α
 pri A (podobnost s koeficientom 1/3) in steber meri |PQ| = 0,15 m.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#naloga2-geometrija
-besedilo: »c) Steber, klančina in tla tvorijo trikotnik, podoben celemu (skupen kot $\alpha$, oba pravokotna). Koeficient podobnosti je $\frac{2}{6} = \frac{1}{3}$, zato je steber visok $\frac{0{,}45}{3} = 0{,}15\,\mathrm{m}$.« -/
+besedilo: »Višina in vodoravna razdalja sta kateti, zato $\tan \alpha = \frac{0{,}45}{6} = 0{,}075$ in $\alpha \approx 4{,}29^\circ$. 2. b) Klančina je hipotenuza: $d = \sqrt{6^2 + 0{,}45^2} = \sqrt{36{,}2025} \approx 6{,}02\,\mathrm{m}$. 3. c) Steber, klančina in tla tvorijo trikotnik, podoben celemu (skupen kot $\alpha$, oba pravokotna). Koeficient podobnosti je $\frac{2}{6} = \frac{1}{3}$, zato je steber visok $\frac{0{,}45}{3} = 0{,}15\,\mathrm{m}$.« -/
 theorem naloga2_geometrija :
     EuclideanGeometry.angle (6 + 0.45 * Complex.I) (6:ℂ) 0 = π / 2 ∧
     Real.tan (EuclideanGeometry.angle (6:ℂ) 0 (6 + 0.45 * Complex.I)) = 0.45 / 6 ∧
@@ -730,7 +730,7 @@ theorem naloga2_geometrija :
 /-- Naloga 3 a), b): −x² + 2x + 8 = −(x − 4)(x + 2), ničli −2 in 4; abscisa temena p = −2/(2·(−1)) = 1,
 q = f(1) = 9 je največja vrednost; f(x) ≥ 0 ⟺ x ∈ [−2, 4].
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#naloga3-ab
-besedilo: »a) $-x^2 + 2x + 8 = -(x - 4)(x + 2)$, ničli sta $x_1 = -2$ in $x_2 = 4$. Abscisa temena je $p = -\frac{2}{2 \cdot (-1)} = 1$, $q = f(1) = 9$, teme $T(1, 9)$.« -/
+besedilo: »$-x^2 + 2x + 8 = -(x - 4)(x + 2)$, ničli sta $x_1 = -2$ in $x_2 = 4$. Abscisa temena je $p = -\frac{2}{2 \cdot (-1)} = 1$, $q = f(1) = 9$, teme $T(1, 9)$. 2. b) Parabola je obrnjena navzdol, nad osjo $x$ je med ničlama: $x \in [-2, 4]$.« -/
 theorem naloga3_ab :
     (∀ x : ℝ, -x ^ 2 + 2 * x + 8 = -(x - 4) * (x + 2)) ∧
     (∀ x : ℝ, -x ^ 2 + 2 * x + 8 = 0 ↔ x = -2 ∨ x = 4) ∧ -(2:ℝ) / (2 * (-1)) = 1 ∧
@@ -758,7 +758,7 @@ theorem naloga3_ab :
 /-- Naloga 3 c), d) (in blok RACUN): D_h = (−2, 4) (pod logaritmom strogo pozitivno); na D_h je h(x) = 3 ⟺ f(x) = 8
 ⟺ x(2 − x) = 0 ⟺ x = 0 ali x = 2, obe sta v D_h.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#naloga3-cd
-besedilo: »d) $\log_2 f(x) = 3$ da $f(x) = 8$, torej $-x^2 + 2x = 0$ oziroma $x(2 - x) = 0$.« -/
+besedilo: »Pod logaritmom mora biti strogo pozitivno število, zato $D_h = (-2, 4)$. 4. d) $\log_2 f(x) = 3$ da $f(x) = 8$, torej $-x^2 + 2x = 0$ oziroma $x(2 - x) = 0$. 5. d) Rešitvi $x = 0$ in $x = 2$ ležita v $D_h$, zato obe veljata.« -/
 theorem naloga3_cd :
     (∀ x : ℝ, 0 < -x ^ 2 + 2 * x + 8 ↔ x ∈ Ioo (-2) 4) ∧
     (∀ x : ℝ, x ∈ Ioo (-2) 4 → (Real.logb 2 (-x ^ 2 + 2 * x + 8) = 3 ↔ -x ^ 2 + 2 * x + 8 = 8)) ∧
@@ -785,7 +785,7 @@ theorem naloga3_cd :
 /-- Naloga 3 e): log₂ strogo narašča, zato je h največja pri x = 1, kjer je f največja: na D_h je
 h(x) ≤ h(1) = log₂ 9 = 2·log₂ 3.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#naloga3-e
-besedilo: »Odgovor: ničli $-2$ in $4$, teme $T(1, 9)$; $f(x) \ge 0$ za $x \in [-2, 4]$; $D_h = (-2, 4)$; rešitvi $0$ in $2$; največja vrednost $h$ je $2\log_2 3$ pri $x = 1$.« -/
+besedilo: »Funkcija $\log_2$ strogo narašča, zato je $h$ največja tam, kjer je $f$ največja, v temenu pri $x = 1$. 7. e) $h(1) = \log_2 9 = 2 \log_2 3$.« -/
 theorem naloga3_e :
     (∀ x : ℝ, x ∈ Ioo (-2) 4 → Real.logb 2 (-x ^ 2 + 2 * x + 8) ≤ Real.logb 2 9) ∧
     Real.logb 2 (-(1:ℝ) ^ 2 + 2 * 1 + 8) = Real.logb 2 9 ∧ Real.logb 2 9 = 2 * Real.logb 2 3 := by
@@ -801,7 +801,7 @@ theorem naloga3_e :
 /-- Ustno vprašanje 1: log_a x = y ⟺ a^y = x (a > 0, a ≠ 1, x > 0); log_a(xy) = log_a x + log_a y,
 log_a(x/y) = log_a x − log_a y, log_a x^r = r·log_a x (x, y > 0); x(x − 2) > 0 velja tudi za x < 0, x > 2 pa ne.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#ustno1
-besedilo: »Pravila: $\log_a (xy) = \log_a x + \log_a y$, $\log_a \frac{x}{y} = \log_a x - \log_a y$, $\log_a x^r = r \log_a x$.« -/
+besedilo: »$\log_a x = y$ natanko tedaj, ko je $a^y = x$, pri čemer je $a > 0$, $a \ne 1$ in $x > 0$. Pravila: $\log_a (xy) = \log_a x + \log_a y$, $\log_a \frac{x}{y} = \log_a x - \log_a y$, $\log_a x^r = r \log_a x$. Ko enačbo preoblikujemo s temi pravili, se lahko definicijsko območje razširi, na primer $\log_2 x + \log_2 (x - 2)$ zahteva $x > 2$, $\log_2 \big(x(x - 2)\big)$ pa le $x(x - 2) > 0$.« -/
 theorem ustno1 (a x y r : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hx : 0 < x) (hy : 0 < y) :
     (Real.logb a x = r ↔ a ^ r = x) ∧ Real.logb a (x * y) = Real.logb a x + Real.logb a y ∧
     Real.logb a (x / y) = Real.logb a x - Real.logb a y ∧ Real.logb a (x ^ r) = r * Real.logb a x ∧
@@ -821,7 +821,7 @@ example :=
 strogo pada, gre skozi (0, 1); inverzna funkcija je log_a (log_a(a^x) = x, a^(log_a y) = y za y > 0), zato
 (x, y) leži na grafu a^x natanko tedaj, ko (y, x) leži na grafu log_a (simetrija glede na y = x).
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#ustno2
-besedilo: »Kot preslikava iz $\mathbb{R}$ na $(0, \infty)$ je bijektivna, njena inverzna funkcija je $\log_a x$; grafa sta simetrična glede na premico $y = x$.« -/
+besedilo: »Za $a > 0$, $a \ne 1$ je $D_f = \mathbb{R}$ in $Z_f = (0, \infty)$. Za $a > 1$ strogo narašča, za $0 < a < 1$ strogo pada. Graf gre skozi $(0, 1)$, os $x$ je vodoravna asimptota. Kot preslikava iz $\mathbb{R}$ na $(0, \infty)$ je bijektivna, njena inverzna funkcija je $\log_a x$; grafa sta simetrična glede na premico $y = x$.« -/
 theorem ustno2 (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) :
     range (fun x : ℝ => a ^ x) = Ioi 0 ∧ (1 < a → StrictMono (fun x : ℝ => a ^ x)) ∧
     (a < 1 → StrictAnti (fun x : ℝ => a ^ x)) ∧ a ^ (0:ℝ) = 1 ∧
@@ -851,7 +851,7 @@ open Filter Topology in
 /-- Ustno vprašanje 2 (vodoravna asimptota os x): za a > 1 gre a^x proti 0, ko gre x proti −∞, za 0 < a < 1
 pa, ko gre x proti +∞.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#ustno2-asimptota
-besedilo: »Za $a > 1$ strogo narašča, za $0 < a < 1$ strogo pada.« -/
+besedilo: »os $x$ je vodoravna asimptota« -/
 theorem ustno2_asimptota (a : ℝ) (h0 : 0 < a) :
     (1 < a → Tendsto (fun x : ℝ => a ^ x) atBot (𝓝 0)) ∧ (a < 1 → Tendsto (fun x : ℝ => a ^ x) atTop (𝓝 0)) :=
   ⟨fun h => tendsto_rpow_atBot_of_base_gt_one a h, fun h => tendsto_rpow_atTop_of_base_lt_one a (by linarith) h⟩
@@ -885,7 +885,7 @@ example : EuclideanGeometry.angle Complex.I (0:ℂ) 1 = π / 2 ∧ Complex.I ≠
 /-- Drugače: Bolj natančno (in blok RACUN): √(x + 2) = x ⟺ x = 2; s kvadriranjem x + 2 = x² ⟺ x = 2 ali x = −1, a
 √(−1 + 2) = 1 ≠ −1 (tuja rešitev); nova neznanka s = 2^x je vedno pozitivna, zato negativen s zavržemo.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#bolj-natancno
-besedilo: »Nova neznanka.** Pri $s = 2^x$ je $s > 0$. Če bi kvadratna enačba dala negativen $s$, ga zavržeš, ker $2^x$ ni nikoli negativen.« -/
+besedilo: »Iz $\sqrt{x + 2} = x$ s kvadriranjem dobiš $x + 2 = x^2$, ki ima rešitvi $2$ in $-1$. Toda $\sqrt{1} = 1 \ne -1$, zato $-1$ ni rešitev. - **Nova neznanka.** Pri $s = 2^x$ je $s > 0$.« -/
 theorem bolj_natancno :
     (∀ x : ℝ, √(x + 2) = x ↔ x = 2) ∧ (∀ x : ℝ, x + 2 = x ^ 2 ↔ x = 2 ∨ x = -1) ∧ √((-1:ℝ) + 2) = 1 ∧
     (1:ℝ) ≠ -1 ∧ ∀ x : ℝ, 0 < (2:ℝ) ^ x := by
@@ -928,7 +928,7 @@ theorem kviz2 (x : ℝ) : √32 = (2:ℝ) ^ (5 / 2 : ℝ) ∧ ((2:ℝ) ^ (x + 1)
 /-- Preveri se 3 (in blok RACUN): pri dvojnem odmerku 160·(1/2)^(t/6) = 10 ⟺ t = 24, čas se podaljša za
 24 − 18 = 6 h.
 trditev: MAT-SS-2/mesane-naloge-1-in-2-letnika#kviz3
-besedilo: »Z grafa: koncentracija se razpolovi v $6$ urah. Dvojni odmerek $160\,\mathrm{mg/L}$ pade na $80\,\mathrm{mg/L}$ v $6$ urah, nato poteka enako kot prej. Iz $160 \cdot \left(\frac{1}{2}\right)^{t/6} = 10$ dobiš $t = 24\,\mathrm{h}$ namesto $18\,\mathrm{h}$.« -/
+besedilo: »Iz $160 \cdot \left(\frac{1}{2}\right)^{t/6} = 10$ dobiš $t = 24\,\mathrm{h}$ namesto $18\,\mathrm{h}$.« -/
 theorem kviz3 (t : ℝ) : (160 * (1 / 2 : ℝ) ^ (t / 6) = 10 ↔ t = 24) ∧ (24:ℝ) - 18 = 6 := by
   have e : (1 / 16 : ℝ) = (1 / 2) ^ (4:ℝ) := by rw [rpow_nar _ _ 4 (by norm_num)]; norm_num
   refine ⟨?_, by norm_num⟩

@@ -129,7 +129,7 @@ theorem uganka :
 višja `40 + 20 = 60` (`2` nalogi po `9` do `11`); minut na točko `30 : 20 = 60 : 40 = 90 : 60 = 1,5`;
 `1,5·3 = 4,5`, `1,5·7 = 10,5`; `90 − 15 = 75`, `75 : 60 = 1,25`; stolpci `5 + 25 + 50 + 10 = 90`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#cas-za-tocko
-besedilo: »Pravilo ima luknjo: ne pusti časa za pregled pole in za preverjanje. Pametneje je prvih $5$ minut nameniti pregledu, zadnjih $10$ pa preverjanju. Za reševanje ostane $90 - 15 = 75$ minut, to je $75 : 60 = 1{,}25$ minute na točko.« -/
+besedilo: »V vsaki vrstici pride na točko enako minut, $1{,}5$: $30 : 20 = 60 : 40 = 90 : 60 = 1{,}5$. To je **pravilo minute in pol**. Naloga s $k$ točkami naj ti vzame približno $$m = 1{,}5 \cdot k$$ minut. Kratka naloga s $3$ točkami ima torej $4{,}5$ minute, strukturirana s $7$ točkami $10{,}5$ minute. Pravilo ima luknjo: ne pusti časa za pregled pole in za preverjanje. Pametneje je prvih $5$ minut nameniti pregledu, zadnjih $10$ pa preverjanju. Za reševanje ostane $90 - 15 = 75$ minut, to je $75 : 60 = 1{,}25$ minute na točko.« -/
 theorem cas_za_tocko :
     20 + 40 = 60 ∧ 20 ≤ 8 * 3 ∧ 6 * 5 ≤ 40 ∧ 40 ≤ 6 * 8 ∧ 2 * 9 ≤ 20 ∧ 20 ≤ 2 * 11 ∧
       (30:ℝ) / 20 = 1.5 ∧ (60:ℝ) / 40 = 1.5 ∧ (90:ℝ) / 60 = 1.5 ∧ (1.5:ℝ) * 3 = 4.5 ∧
@@ -138,7 +138,7 @@ theorem cas_za_tocko :
 
 /-- Razlaga 4: `log₃(x − 1) = 2` (pogoj `x > 1`) ⇔ `x − 1 = 3² = 9` ⇔ `x = 10`; Cenetov `x = 11` ni rešitev.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#razlaga-log
-besedilo: »4. Kako točkuje ocenjevalec.** Poglej, kako so točkovane tri rešitve iste kratke naloge »Reši enačbo $\log_3 (x - 1) = 2$« (2 točki). Točkovnik da $1$ točko za zapis $x - 1 = 3^2$ in $1$ točko za $x = 10$.« -/
+besedilo: »**Ana** zapiše $x - 1 = 9$, zato $x = 10$« -/
 theorem razlaga_log (x : ℝ) (hx : 1 < x) :
     (Real.logb 3 (x - 1) = 2 ↔ x - 1 = 3 ^ 2) ∧ (Real.logb 3 (x - 1) = 2 ↔ x = 10) ∧
       Real.logb 3 (11 - 1) ≠ 2 := by
@@ -162,7 +162,7 @@ example :=
 /-- Razlaga 5 (ključna beseda »deljiv«, izrek o ostanku): polinom `p` je deljiv z `x − a` natanko tedaj,
 ko je `p(a) = 0`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#izrek-o-ostanku
-besedilo: »Krajše oznake: »krožnica« je enotska krožnica, »produkt« skalarni produkt, »ostanek« izrek o ostanku (polinom $p$ je deljiv z $x - a$ natanko tedaj, ko je $p(a) = 0$), $q$ pa imenovalec racionalne funkcije.« -/
+besedilo: »polinom $p$ je deljiv z $x - a$ natanko tedaj, ko je $p(a) = 0$« -/
 theorem izrek_o_ostanku (p : Polynomial ℝ) (a : ℝ) :
     Polynomial.X - Polynomial.C a ∣ p ↔ p.eval a = 0 :=
   Polynomial.dvd_iff_isRoot
@@ -175,7 +175,7 @@ theorem sin60 : Real.sin (60 * (π / 180)) = Real.sqrt 3 / 2 := by
 
 /-- Razlaga 6 (simulacija): kvadratna funkcija `(x − 2)² − 1` ima ničli `1` in `3` ter teme `(2, −1)`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#simulacija
-besedilo: »V simulaciji spodaj (»Zbirka simulacij za maturo«) v izbirniku »simulacija« izberi »Kvadratna funkcija« in nastavi a = 1, p = 2 in q = −1. Preberi ničli $1$ in $3$ ter teme $(2, -1)$: tako na vaji preveriš rezultat, ki ga izračunaš na roke.« -/
+besedilo: »Preberi ničli $1$ in $3$ ter teme $(2, -1)$« -/
 theorem simulacija :
     (∀ x : ℝ, (x - 2) ^ 2 - 1 = 0 ↔ x = 1 ∨ x = 3) ∧ (∀ x : ℝ, -1 ≤ (x - 2) ^ 2 - 1) ∧
       ((2:ℝ) - 2) ^ 2 - 1 = -1 := by
@@ -191,7 +191,7 @@ theorem simulacija :
 /-- Primer 1: `3·3ⁿ = 243` ⇔ `3ⁿ = 81 = 3⁴` ⇔ `n = 4` (za realni `n`); preverba `3·3⁴ = 3·81 = 243`;
 zaporedje `3, 9, 27, 81, 243`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#primer1
-besedilo: »Preverba: $3 \cdot 3^4 = 3 \cdot 81 = 243$.« -/
+besedilo: »Delimo s $3$: $3^n = 81 = 3^4$. Potenci z enako osnovo sta enaki, ko sta enaka eksponenta, zato $n = 4$.« -/
 theorem primer1 :
     (∀ n : ℝ, 3 * (3:ℝ) ^ n = 243 ↔ (3:ℝ) ^ n = 81) ∧ (81:ℝ) = 3 ^ 4 ∧
       (∀ n : ℝ, 3 * (3:ℝ) ^ n = 243 ↔ n = 4) ∧ 3 * (3:ℝ) ^ 4 = 3 * 81 ∧ (3:ℝ) * 81 = 243 ∧
@@ -220,7 +220,7 @@ theorem primer2_a : T₂ 0 = 2 ∧ T₂ 12 = -36 + 36 + 2 ∧ (-36:ℝ) + 36 + 2
 /-- Primer 2 b): `T'(t) = −t/2 + 3`, ničla `t = 6`; pred njo je odvod pozitiven, za njo negativen;
 `T(6) = −9 + 18 + 2 = 11` je največja temperatura; `6 + 6 = 12` (ob 12. uri).
 trditev: MAT-SS-4/vadbena-maturitetna-pola#primer2-b
-besedilo: »b) Pred $t = 6$ je odvod pozitiven, za njim negativen, zato je tam maksimum: $T(6) = -9 + 18 + 2 = 11$.« -/
+besedilo: »b) Odvod je $T'(t) = -\frac{1}{2}t + 3$. Enačba $-\frac{1}{2}t + 3 = 0$ da $t = 6$. 3. b) Pred $t = 6$ je odvod pozitiven, za njim negativen, zato je tam maksimum: $T(6) = -9 + 18 + 2 = 11$. 4. b) Čas $t = 6$ pomeni šest ur po 6. uri. Najtopleje je ob 12. uri, ko je $11\,°\mathrm{C}$.« -/
 theorem primer2_b :
     (∀ t, HasDerivAt T₂ (-(1 / 2) * t + 3) t) ∧ (∀ t : ℝ, -(1 / 2) * t + 3 = 0 ↔ t = 6) ∧
       (∀ t : ℝ, t < 6 → 0 < -(1 / 2) * t + 3) ∧ (∀ t : ℝ, 6 < t → -(1 / 2) * t + 3 < 0) ∧
@@ -235,7 +235,7 @@ theorem primer2_b :
 /-- Primer 2 c): `T(t) > 10` ⇔ `t² − 12t + 32 < 0` ⇔ `(t − 4)(t − 8) < 0` ⇔ `4 < t < 8`, torej med
 `6 + 4 = 10.` in `6 + 8 = 14.` uro; Rok dobi `1 + 2 + 2 = 5` točk.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#primer2-c
-besedilo: »Parabola je odprta navzgor, zato je negativna med ničlama: $4 < t < 8$.« -/
+besedilo: »c) Neenačba $-\frac{1}{4}t^2 + 3t + 2 > 10$; pomnožimo z $-4$ in obrnemo neenačaj: $t^2 - 12t + 32 < 0$. 6. c) Razcep $(t - 4)(t - 8)$ da ničli $4$ in $8$. Parabola je odprta navzgor, zato je negativna med ničlama: $4 < t < 8$. 7. c) Odgovor: topleje kot $10\,°\mathrm{C}$ je med 10. in 14. uro.« -/
 theorem primer2_c (t : ℝ) :
     (T₂ t > 10 ↔ t ^ 2 - 12 * t + 32 < 0) ∧ t ^ 2 - 12 * t + 32 = (t - 4) * (t - 8) ∧
       (T₂ t > 10 ↔ 4 < t ∧ t < 8) ∧ 6 + 4 = 10 ∧ 6 + 8 = 14 ∧ 1 + 2 + 2 = 5 := by
@@ -253,7 +253,7 @@ theorem primer2_c (t : ℝ) :
 
 /-- Primer 3, korak 1: `v(t) = 6t − t² = t(6 − t)` je pozitivna natanko za `0 < t < 6`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#primer3-narasca
-besedilo: »Razcep $v(t) = t(6 - t)$ ima ničli $0$ in $6$.« -/
+besedilo: »Razcep $v(t) = t(6 - t)$ ima ničli $0$ in $6$. Parabola je odprta navzdol, zato je $v(t) > 0$ med ničlama.« -/
 theorem primer3_narasca (t : ℝ) : 6 * t - t ^ 2 = t * (6 - t) ∧ (0 < 6 * t - t ^ 2 ↔ 0 < t ∧ t < 6) := by
   refine ⟨by ring, ⟨fun h => ?_, fun ⟨h0, h6⟩ => by nlinarith⟩⟩
   by_contra hn
@@ -283,7 +283,7 @@ theorem primer3_dvig :
 /-- Naloga 1: `4ˣ⁺¹ = (2²)ˣ⁺¹ = 2²ˣ⁺²`; `2³ˣ⁻¹ = 2²ˣ⁺²` ⇔ `3x − 1 = 2x + 2` ⇔ `x = 3`; preverba
 `2⁸ = 256 = 4⁴`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga1
-besedilo: »$4^{x + 1} = (2^2)^{x + 1} = 2^{2x + 2}$, zato dobimo enačbo $2^{3x - 1} = 2^{2x + 2}$.« -/
+besedilo: »$4^{x + 1} = (2^2)^{x + 1} = 2^{2x + 2}$, zato dobimo enačbo $2^{3x - 1} = 2^{2x + 2}$. 2. Osnovi sta enaki, zato sta enaka eksponenta: enačba $3x - 1 = 2x + 2$ da $x = 3$.« -/
 theorem naloga1 :
     (∀ x : ℝ, (4:ℝ) ^ (x + 1) = (2:ℝ) ^ (2 * x + 2)) ∧
       (∀ x : ℝ, (2:ℝ) ^ (3 * x - 1) = (4:ℝ) ^ (x + 1) ↔ x = 3) ∧ (2:ℝ) ^ 8 = 256 ∧ (4:ℝ) ^ 4 = 256 := by
@@ -303,7 +303,7 @@ theorem naloga1 :
 /-- Naloga 2: `x² − 2x − 3 = x + 1` ⇔ `x² − 3x − 4 = (x − 4)(x + 1) = 0` ⇔ `x = 4` ali `x = −1`;
 `g(4) = 5`, `g(−1) = 0`: presečišči `A(4, 5)` in `B(−1, 0)`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga2
-besedilo: »V presečišču velja enačba $x^2 - 2x - 3 = x + 1$, torej $x^2 - 3x - 4 = 0$.« -/
+besedilo: »Odgovor: presečišči sta $A(4, 5)$ in $B(-1, 0)$.« -/
 theorem naloga2 (x : ℝ) :
     (x ^ 2 - 2 * x - 3 = x + 1 ↔ x ^ 2 - 3 * x - 4 = 0) ∧ x ^ 2 - 3 * x - 4 = (x - 4) * (x + 1) ∧
       (x ^ 2 - 2 * x - 3 = x + 1 ↔ x = 4 ∨ x = -1) ∧ (4:ℝ) + 1 = 5 ∧ (-1:ℝ) + 1 = 0 := by
@@ -317,7 +317,7 @@ theorem naloga2 (x : ℝ) :
 /-- Naloga 3: `sin 120° = sin 60° = √3/2`, `cos 150° = −cos 30° = −√3/2`; izraz je
 `(√3/2)/(1 + √3/2) = √3/(2 + √3) = √3(2 − √3)/(4 − 3) = 2√3 − 3`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga3
-besedilo: »$\sin 120° = \sin 60° = \frac{\sqrt{3}}{2}$ in $\cos 150° = -\cos 30° = -\frac{\sqrt{3}}{2}$.« -/
+besedilo: »Odgovor: vrednost izraza je $2\sqrt{3} - 3$.« -/
 theorem naloga3 :
     Real.sin (120 * (π / 180)) = Real.sin (60 * (π / 180)) ∧
       Real.sin (60 * (π / 180)) = Real.sqrt 3 / 2 ∧
@@ -345,7 +345,7 @@ theorem naloga3 :
 /-- Naloga 4: `p(2) = 8 + 4a − 8 − 4 = 0` ⇔ `a = 1`; tedaj
 `p(x) = x²(x + 1) − 4(x + 1) = (x + 1)(x² − 4) = (x + 1)(x − 2)(x + 2)`, ničle `−2`, `−1`, `2`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga4
-besedilo: »Polinom je deljiv z $x - 2$, zato velja enačba $p(2) = 0$: $8 + 4a - 8 - 4 = 0$, torej $a = 1$.« -/
+besedilo: »Odgovor: $a = 1$, ničle so $-2$, $-1$ in $2$.« -/
 theorem naloga4 :
     (∀ a : ℝ, (2:ℝ) ^ 3 + a * 2 ^ 2 - 4 * 2 - 4 = 8 + 4 * a - 8 - 4) ∧
       (∀ a : ℝ, 8 + 4 * a - 8 - 4 = 0 ↔ a = 1) ∧
@@ -375,7 +375,7 @@ theorem naloga5 (a₁ d : ℝ) :
 /-- Naloga 6: `a⃗·b⃗ = m·m + 2·m + (−1)·8 = m² + 2m − 8 = (m + 4)(m − 2)`; vektorja sta pravokotna
 natanko za `m = −4` ali `m = 2`; preverba `4 + 4 − 8 = 0`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga6
-besedilo: »Preverba za $m = 2$: $4 + 4 - 8 = 0$.« -/
+besedilo: »Odgovor: vektorja sta pravokotna za $m = -4$ in za $m = 2$.« -/
 theorem naloga6 (m : ℝ) :
     m * m + 2 * m + (-1) * 8 = m ^ 2 + 2 * m - 8 ∧ m ^ 2 + 2 * m - 8 = (m + 4) * (m - 2) ∧
       (m * m + 2 * m + (-1) * 8 = 0 ↔ m = -4 ∨ m = 2) ∧ (4:ℝ) + 4 - 8 = 0 := by
@@ -389,7 +389,7 @@ theorem naloga6 (m : ℝ) :
 /-- Naloga 7: za `x ≠ 3`, `x ≠ 0` je `(x² − 9)/(x² − 3x) = (x + 3)/x`, zato je
 `lim_{x→3} (x² − 9)/(x² − 3x) = 6/3 = 2`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga7
-besedilo: »$\lim\limits_{x \to 3} \dfrac{x + 3}{x} = \dfrac{6}{3} = 2$« -/
+besedilo: »Odgovor: limita je $2$.« -/
 theorem naloga7 :
     (∀ x : ℝ, x ≠ 3 → x ≠ 0 → (x ^ 2 - 9) / (x ^ 2 - 3 * x) = (x + 3) / x) ∧ (3 + 3 : ℝ) / 3 = 2 ∧
       Tendsto (fun x : ℝ => (x ^ 2 - 9) / (x ^ 2 - 3 * x)) (𝓝[≠] 3) (𝓝 2) := by
@@ -424,7 +424,7 @@ set_option maxRecDepth 100000 in
 /-- Naloga 8: vseh števil je `5·4·3·2 = 120`; število je deljivo s `4` natanko tedaj, ko je deljivo
 zadnje dvomestno; končnice so `12`, `24`, `32`, `52`; deljivih je `4·(3·2) = 24`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga8
-besedilo: »b) Število je deljivo s $4$, če je s $4$ deljivo dvomestno število iz njegovih zadnjih dveh števk. Iz danih števk brez ponavljanja so to $12$, $24$, $32$ in $52$: štiri končnice.« -/
+besedilo: »Odgovor: vseh števil je $120$, deljivih s $4$ jih je $24$.« -/
 theorem naloga8 :
     stevila.card = 5 * 4 * 3 * 2 ∧ 5 * 4 * 3 * 2 = 120 ∧ (∀ n : ℕ, 4 ∣ n ↔ 4 ∣ n % 100) ∧
       ((Finset.univ.filter fun p : Fin 5 × Fin 5 =>
@@ -438,7 +438,7 @@ theorem naloga8 :
 /-- Naloga 9 a): definicijsko območje `x + 2 > 0`, tj. `x > −2`; ničla `log₂(x + 2) = 0` ⇔ `x + 2 = 1` ⇔
 `x = −1`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga9-a
-besedilo: »a) Ničla: $\log_2 (x + 2) = 0$ pomeni $x + 2 = 1$, torej $x = -1$.« -/
+besedilo: »a) Argument mora biti pozitiven: $x + 2 > 0$, zato $D_f = (-2, \infty)$. 2. a) Ničla: $\log_2 (x + 2) = 0$ pomeni $x + 2 = 1$, torej $x = -1$.« -/
 theorem naloga9_a :
     (∀ x : ℝ, 0 < x + 2 ↔ -2 < x) ∧ {x : ℝ | 0 < x + 2} = Set.Ioi (-2) ∧
       ∀ x : ℝ, -2 < x →
@@ -458,7 +458,7 @@ example : (-2:ℝ) < -1 := by norm_num
 `x² − 4 = 32`, `x² = 36`; rešitev je le `x = 6` (`−6` ne izpolni pogoja); preverba
 `log₂ 8 + log₂ 4 = 3 + 2 = 5`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga9-b
-besedilo: »b) Pogoj za oba logaritma je $x > 2$. Vsota logaritmov je logaritem produkta: $\log_2 \big((x + 2)(x - 2)\big) = 5$, zato enačba $x^2 - 4 = 32$.« -/
+besedilo: »b) Pogoj za oba logaritma je $x > 2$. Vsota logaritmov je logaritem produkta: $\log_2 \big((x + 2)(x - 2)\big) = 5$, zato enačba $x^2 - 4 = 32$. 4. b) $x^2 = 36$, $x = 6$ ali $x = -6$. Rešitev $x = -6$ ne izpolni pogoja $x > 2$.« -/
 theorem naloga9_b :
     (∀ x : ℝ, 2 < x → Real.logb 2 (x + 2) + Real.logb 2 (x - 2) = Real.logb 2 ((x + 2) * (x - 2))) ∧
       (∀ x : ℝ, 2 < x → (Real.logb 2 ((x + 2) * (x - 2)) = 5 ↔ x ^ 2 - 4 = 32)) ∧
@@ -520,7 +520,7 @@ noncomputable def f₁₀ (x : ℝ) : ℝ := (2 * x ^ 2 - 2) / (x ^ 2 - 4)
 /-- Naloga 10 a): `f(x) = 2(x − 1)(x + 1)/((x − 2)(x + 2))`; ničli `±1`, pola `±2` (imenovalec 0, števec
 `6 ≠ 0`), `f(0) = −2/−4 = 1/2`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga10-a
-besedilo: »a) Razstavimo: $f(x) = \dfrac{2(x - 1)(x + 1)}{(x - 2)(x + 2)}$. Ničli sta $-1$ in $1$, pola sta $-2$ in $2$.« -/
+besedilo: »a) Razstavimo: $f(x) = \dfrac{2(x - 1)(x + 1)}{(x - 2)(x + 2)}$. Ničli sta $-1$ in $1$, pola sta $-2$ in $2$. 2. a) Začetna vrednost: $f(0) = \dfrac{-2}{-4} = \dfrac{1}{2}$.« -/
 theorem naloga10_a :
     (∀ x : ℝ, f₁₀ x = 2 * (x - 1) * (x + 1) / ((x - 2) * (x + 2))) ∧
       (∀ x : ℝ, x ^ 2 ≠ 4 → (f₁₀ x = 0 ↔ x = 1 ∨ x = -1)) ∧
@@ -547,7 +547,7 @@ theorem naloga10_a :
 /-- Naloga 10 b): vodoravna asimptota je `y = 2` (`f(x) → 2` za `x → ±∞`); enačba
 `2x² − 2 = 2(x² − 4)` vodi v `−2 = −8`, zato graf asimptote ne seka.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga10-b
-besedilo: »b) Presečišče z asimptoto bi rešilo enačbo $2x^2 - 2 = 2(x^2 - 4)$, torej $-2 = -8$, kar ne drži. Graf asimptote ne seka.« -/
+besedilo: »b) Števec in imenovalec imata enako stopnjo, zato je vodoravna asimptota $y = \frac{2}{1} = 2$. 4. b) Presečišče z asimptoto bi rešilo enačbo $2x^2 - 2 = 2(x^2 - 4)$, torej $-2 = -8$, kar ne drži. Graf asimptote ne seka.« -/
 theorem naloga10_b :
     Tendsto f₁₀ atTop (𝓝 2) ∧ Tendsto f₁₀ atBot (𝓝 2) ∧
       ∀ x : ℝ, x ^ 2 ≠ 4 → f₁₀ x ≠ 2 := by
@@ -582,7 +582,7 @@ theorem naloga10_b :
 /-- Naloga 10 c): pri `x ≠ ±2` je `f(x) = 5/2` ⇔ `4x² − 4 = 5x² − 20` ⇔ `x² = 16` ⇔ `x = ±4`;
 preverba `f(4) = 30/12 = 5/2`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga10-c
-besedilo: »c) Pogoj je $x \neq \pm 2$. Enačbo $\frac{2x^2 - 2}{x^2 - 4} = \frac{5}{2}$ pomnožimo z $2(x^2 - 4)$: $4x^2 - 4 = 5x^2 - 20$, torej $x^2 = 16$.« -/
+besedilo: »c) Pogoj je $x \neq \pm 2$. Enačbo $\frac{2x^2 - 2}{x^2 - 4} = \frac{5}{2}$ pomnožimo z $2(x^2 - 4)$: $4x^2 - 4 = 5x^2 - 20$, torej $x^2 = 16$. 6. c) Rešitvi $x = -4$ in $x = 4$ izpolnjujeta pogoj. Preverba: $f(4) = \frac{30}{12} = \frac{5}{2}$.« -/
 theorem naloga10_c :
     (∀ x : ℝ, x ^ 2 ≠ 4 → (f₁₀ x = 5 / 2 ↔ 4 * x ^ 2 - 4 = 5 * x ^ 2 - 20)) ∧
       (∀ x : ℝ, 4 * x ^ 2 - 4 = 5 * x ^ 2 - 20 ↔ x = 4 ∨ x = -4) ∧
@@ -604,7 +604,7 @@ noncomputable def f₁₁ (x : ℝ) : ℝ := x ^ 3 - 3 * x ^ 2 - 9 * x + 5
 /-- Naloga 11 a): `f'(x) = 3x² − 6x − 9 = 3(x² − 2x − 3) = 3(x − 3)(x + 1)`, ničli `−1` in `3`;
 `f(−1) = −1 − 3 + 9 + 5 = 10`, `f(3) = 27 − 27 − 27 + 5 = −22`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga11-odvod
-besedilo: »a) $f(-1) = -1 - 3 + 9 + 5 = 10$ in $f(3) = 27 - 27 - 27 + 5 = -22$.« -/
+besedilo: »a) $f'(x) = 3x^2 - 6x - 9 = 3(x^2 - 2x - 3) = 3(x - 3)(x + 1)$; enačba $f'(x) = 0$ ima rešitvi $-1$ in $3$. 2. a) $f(-1) = -1 - 3 + 9 + 5 = 10$ in $f(3) = 27 - 27 - 27 + 5 = -22$.« -/
 theorem naloga11_odvod :
     (∀ x, HasDerivAt f₁₁ (3 * x ^ 2 - 6 * x - 9) x) ∧
       (∀ x : ℝ, 3 * x ^ 2 - 6 * x - 9 = 3 * (x ^ 2 - 2 * x - 3) ∧ 3 * (x ^ 2 - 2 * x - 3) = 3 * (x - 3) * (x + 1)) ∧
@@ -625,7 +625,7 @@ theorem naloga11_odvod :
 /-- Naloga 11 a), b): odvod je pozitiven za `x < −1` in `x > 3`, negativen med `−1` in `3`; `(−1, 10)` je
 lokalni maksimum, `(3, −22)` lokalni minimum; `f` narašča na `(−∞, −1)` in na `(3, ∞)`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga11-vrsta
-besedilo: »a) Odvod je pozitiven za $x < -1$, negativen med $-1$ in $3$ ter pozitiven za $x > 3$. Točka $(-1, 10)$ je lokalni maksimum, $(3, -22)$ lokalni minimum.« -/
+besedilo: »a) Odvod je pozitiven za $x < -1$, negativen med $-1$ in $3$ ter pozitiven za $x > 3$. Točka $(-1, 10)$ je lokalni maksimum, $(3, -22)$ lokalni minimum. 4. b) Funkcija narašča na $(-\infty, -1)$ in na $(3, \infty)$.« -/
 theorem naloga11_vrsta :
     (∀ x : ℝ, x < -1 → 0 < 3 * x ^ 2 - 6 * x - 9) ∧ (∀ x : ℝ, -1 < x → x < 3 → 3 * x ^ 2 - 6 * x - 9 < 0) ∧
       (∀ x : ℝ, 3 < x → 0 < 3 * x ^ 2 - 6 * x - 9) ∧ IsLocalMax f₁₁ (-1) ∧ IsLocalMin f₁₁ 3 ∧
@@ -662,7 +662,7 @@ theorem naloga11_tangenta : f₁₁ 0 = 5 ∧ 3 * (0:ℝ) ^ 2 - 6 * 0 - 9 = -9 �
 /-- Naloga 12 a), b): `a₁₀ = 2 + 9·3 = 29`; vsota prvih `n` vrst je
 `Sₙ = n/2·(2a₁ + (n − 1)d) = n/2·(4 + 3n − 3) = n(3n + 1)/2`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga12-ab
-besedilo: »b) $S_n = \frac{n}{2}\big(2a_1 + (n - 1)d\big) = \frac{n}{2}(4 + 3n - 3) = \frac{n(3n + 1)}{2}$.« -/
+besedilo: »a) Števila smrek v vrstah so aritmetično zaporedje z $a_1 = 2$ in $d = 3$: $a_{10} = 2 + 9 \cdot 3 = 29$. 2. b) $S_n = \frac{n}{2}\big(2a_1 + (n - 1)d\big) = \frac{n}{2}(4 + 3n - 3) = \frac{n(3n + 1)}{2}$.« -/
 theorem naloga12_ab (n : ℕ) :
     (2:ℝ) + 9 * 3 = 29 ∧ ∑ i ∈ Finset.range n, ((2:ℝ) + i * 3) = n / 2 * (2 * 2 + (n - 1) * 3) ∧
       (n:ℝ) / 2 * (2 * 2 + (n - 1) * 3) = n / 2 * (4 + 3 * n - 3) ∧
@@ -675,7 +675,7 @@ theorem naloga12_ab (n : ℕ) :
 /-- Naloga 12 c): `n(3n + 1)/2 = 155` ⇔ `3n² + n − 310 = 0`; `D = 1 + 12·310 = 3721 = 61²`;
 `n = (−1 ± 61)/6`, torej `n = 10` ali `n = −31/3`; med naravnimi števili le `n = 10` (`10·31/2 = 155`).
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga12-c
-besedilo: »c) Diskriminanta je $1 + 12 \cdot 310 = 3721 = 61^2$, zato $n = \frac{-1 \pm 61}{6}$: $n = 10$ ali $n = -\frac{31}{3}$.« -/
+besedilo: »c) Enačba $\frac{n(3n + 1)}{2} = 155$ da $3n^2 + n - 310 = 0$. 4. c) Diskriminanta je $1 + 12 \cdot 310 = 3721 = 61^2$, zato $n = \frac{-1 \pm 61}{6}$: $n = 10$ ali $n = -\frac{31}{3}$. 5. c) Število vrst je naravno število, zato je $n = 10$. Preverba: $\frac{10 \cdot 31}{2} = 155$.« -/
 theorem naloga12_c :
     (∀ n : ℝ, n * (3 * n + 1) / 2 = 155 ↔ 3 * n ^ 2 + n - 310 = 0) ∧ (1:ℝ) + 12 * 310 = 3721 ∧
       (3721:ℝ) = 61 ^ 2 ∧ (∀ n : ℝ, 3 * n ^ 2 + n - 310 = 0 ↔ n = 10 ∨ n = -31 / 3) ∧
@@ -704,7 +704,7 @@ theorem naloga12_c :
 /-- Naloga 13 a)–c): `AB⃗ = (1, 1, 0)`, `AC⃗ = (0, 1, 1)`, `BC⃗ = (−1, 0, 1)`, vse dolžine `√2`;
 `cos α = 1/(√2·√2) = 1/2`, `α = 60°`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga13-abc
-besedilo: »Odgovor: $\vec{AB} = (1, 1, 0)$, $\vec{AC} = (0, 1, 1)$, obe dolžini $\sqrt{2}$; $\alpha = 60°$; trikotnik je enakostraničen; $D(2, 4, 1)$.« -/
+besedilo: »a) $\vec{AB} = (1, 1, 0)$ in $\vec{AC} = (0, 1, 1)$; $|\vec{AB}| = |\vec{AC}| = \sqrt{2}$. 2. b) $\cos \alpha = \dfrac{\vec{AB} \cdot \vec{AC}}{|\vec{AB}|\,|\vec{AC}|} = \dfrac{1}{\sqrt{2} \cdot \sqrt{2}} = \dfrac{1}{2}$, zato je $\alpha = 60°$. 3. c) $\vec{BC} = (-1, 0, 1)$ in $|\vec{BC}| = \sqrt{2}$: vse tri stranice so dolge $\sqrt{2}$.« -/
 theorem naloga13_abc :
     ((2:ℝ) - 1, (3:ℝ) - 2, (0:ℝ) - 0) = (1, 1, 0) ∧ ((1:ℝ) - 1, (3:ℝ) - 2, (1:ℝ) - 0) = (0, 1, 1) ∧
       ((1:ℝ) - 2, (3:ℝ) - 3, (1:ℝ) - 0) = (-1, 0, 1) ∧
@@ -798,7 +798,7 @@ example :=
 /-- Naloga 14 b)–d): `12 − 3k = 0` ⇔ `k = 4`, člen `C(6, 4)·16 = 15·16 = 240`; `12 − 3k = 3` ⇔ `k = 3`,
 koeficient `C(6, 3)·(−8) = 20·(−8) = −160`; vsota koeficientov `(1 − 2)⁶ = 1`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga14-bcd
-besedilo: »b) Brez $x$: enačba $12 - 3k = 0$ da $k = 4$; člen je $\binom{6}{4} \cdot 16 = 15 \cdot 16 = 240$.« -/
+besedilo: »b) Brez $x$: enačba $12 - 3k = 0$ da $k = 4$; člen je $\binom{6}{4} \cdot 16 = 15 \cdot 16 = 240$. 3. c) Pri $x^3$: enačba $12 - 3k = 3$ da $k = 3$; koeficient je $\binom{6}{3} \cdot (-8) = 20 \cdot (-8) = -160$. 4. d) Vsoto koeficientov dobimo pri $x = 1$: $(1 - 2)^6 = 1$.« -/
 theorem naloga14_bcd :
     (∀ k : ℕ, (12:ℤ) - 3 * k = 0 ↔ k = 4) ∧ (Nat.choose 6 4 : ℤ) * (-2) ^ 4 = 15 * 16 ∧
       (15:ℤ) * 16 = 240 ∧ (∀ k : ℕ, (12:ℤ) - 3 * k = 3 ↔ k = 3) ∧
@@ -810,7 +810,7 @@ theorem naloga14_bcd :
 
 /-- Naloga 15 a): `sin 2x = sin x` ⇔ `sin x(2 cos x − 1) = 0`; na `[0, π]` so rešitve `0`, `π/3`, `π`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga15-a
-besedilo: »a) Enačba $\sin x = 0$ da na $[0, \pi]$ rešitvi $x = 0$ in $x = \pi$, enačba $\cos x = \frac{1}{2}$ pa $x = \frac{\pi}{3}$.« -/
+besedilo: »a) Z dvojnim kotom dobimo enačbo $2 \sin x \cos x = \sin x$, torej $\sin x\,(2 \cos x - 1) = 0$. Enačbe ne delimo s $\sin x$, ker bi izgubili rešitve. 2. a) Enačba $\sin x = 0$ da na $[0, \pi]$ rešitvi $x = 0$ in $x = \pi$, enačba $\cos x = \frac{1}{2}$ pa $x = \frac{\pi}{3}$.« -/
 theorem naloga15_a :
     (∀ x : ℝ, Real.sin (2 * x) - Real.sin x = Real.sin x * (2 * Real.cos x - 1)) ∧
       ∀ x ∈ Icc 0 π, Real.sin (2 * x) = Real.sin x ↔ x = 0 ∨ x = π / 3 ∨ x = π := by
@@ -835,7 +835,7 @@ theorem naloga15_a :
 /-- Naloga 15 b): na `[0, π]` leži graf `g(x) = sin 2x` nad grafom `f(x) = sin x` natanko na `(0, π/3)`
 (na `(0, π)` je `sin x > 0`, zato ima razlika predznak `2 cos x − 1`).
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga15-b
-besedilo: »b) Razlika je $g(x) - f(x) = \sin x\,(2 \cos x - 1)$. Na $(0, \pi)$ je $\sin x > 0$, zato ima razlika predznak izraza $2 \cos x - 1$: pozitiven za $0 < x < \frac{\pi}{3}$ in negativen za $\frac{\pi}{3} < x < \pi$.« -/
+besedilo: »b) Graf funkcije $g$ leži nad grafom funkcije $f$ na intervalu $\left(0, \frac{\pi}{3}\right)$.« -/
 theorem naloga15_b : {x ∈ Icc 0 π | Real.sin x < Real.sin (2 * x)} = Ioo 0 (π / 3) := by
   have raz := naloga15_a.1
   have hpi := Real.pi_pos
@@ -873,7 +873,7 @@ theorem naloga15_b : {x ∈ Icc 0 π | Real.sin x < Real.sin (2 * x)} = Ioo 0 (�
 `F(π/3) = 1/4 + 1/2 = 3/4`, `F(0) = −1/2 + 1 = 1/2`, `F(π) = −1/2 − 1 = −3/2`;
 `S₁ = 3/4 − 1/2 = 1/4`, `S₂ = 3/4 + 3/2 = 9/4`, `S = 1/4 + 9/4 = 5/2`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga15-c
-besedilo: »c) $F\left(\frac{\pi}{3}\right) = \frac{1}{4} + \frac{1}{2} = \frac{3}{4}$, $F(0) = -\frac{1}{2} + 1 = \frac{1}{2}$ in $F(\pi) = -\frac{1}{2} - 1 = -\frac{3}{2}$.« -/
+besedilo: »c) Primitivna funkcija za $\sin 2x - \sin x$ je $F(x) = -\frac{1}{2} \cos 2x + \cos x$, za $\sin x - \sin 2x$ pa $-F(x)$. 7. c) $F\left(\frac{\pi}{3}\right) = \frac{1}{4} + \frac{1}{2} = \frac{3}{4}$, $F(0) = -\frac{1}{2} + 1 = \frac{1}{2}$ in $F(\pi) = -\frac{1}{2} - 1 = -\frac{3}{2}$. 8. c) $S_1 = \frac{3}{4} - \frac{1}{2} = \frac{1}{4}$ in $S_2 = \frac{3}{4} + \frac{3}{2} = \frac{9}{4}$. 9. c) $S = \frac{1}{4} + \frac{9}{4} = \frac{5}{2}$.« -/
 theorem naloga15_c :
     let F : ℝ → ℝ := fun x => -(1 / 2) * Real.cos (2 * x) + Real.cos x
     (∀ x, HasDerivAt F (Real.sin (2 * x) - Real.sin x) x) ∧
@@ -952,7 +952,7 @@ theorem naloga16_narasca (n : ℕ) :
 
 /-- Naloga 16 c): zaporedje narašča, zato je natančna spodnja meja `a₁ = 3/4`: `3/4 ≤ aₙ < 2` za `n ≥ 1`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga16-meje
-besedilo: »c) Zaporedje narašča, zato je natančna (največja) spodnja meja prvi člen $a_1 = \frac{3}{4}$.« -/
+besedilo: »c) Zaporedje narašča, zato je natančna (največja) spodnja meja prvi člen $a_1 = \frac{3}{4}$. 5. c) Zapis $a_n = 2 - \dfrac{5}{n + 3}$ pokaže, da je $a_n < 2$ za vsak $n$: $2$ je zgornja meja.« -/
 theorem naloga16_meje :
     a₁₆ 1 = 3 / 4 ∧ IsLeast {y | ∃ n : ℕ, 1 ≤ n ∧ a₁₆ n = y} (3 / 4) ∧ ∀ n : ℕ, 1 ≤ n → 3 / 4 ≤ a₁₆ n ∧ a₁₆ n < 2 := by
   have mono : Monotone a₁₆ := monotone_nat_of_le_succ fun n => (naloga16_narasca n).2.2.2.2.le
@@ -965,7 +965,7 @@ theorem naloga16_meje :
 /-- Naloga 16 d): `|aₙ − 2| = 5/(n + 3)`; `5/(n + 3) < 1/100` ⇔ `n + 3 > 500` ⇔ `n > 497`; pri `n = 497`
 je razlika natanko `5/500 = 0,01`; od `498.` člena naprej je razlika manjša od `0,01`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga16-d
-besedilo: »d) $|a_n - 2| = \dfrac{5}{n + 3}$, zahtevamo $\dfrac{5}{n + 3} < \dfrac{1}{100}$, torej $n + 3 > 500$ in $n > 497$.« -/
+besedilo: »d) $|a_n - 2| = \dfrac{5}{n + 3}$, zahtevamo $\dfrac{5}{n + 3} < \dfrac{1}{100}$, torej $n + 3 > 500$ in $n > 497$. 7. d) Za $n = 497$ je razlika natanko $\frac{5}{500} = 0{,}01$, kar ni manj kot $0{,}01$.« -/
 theorem naloga16_d :
     (∀ n : ℕ, |a₁₆ n - 2| = 5 / (n + 3)) ∧ (∀ n : ℕ, (5:ℝ) / (n + 3) < 1 / 100 ↔ 497 < n) ∧
       |a₁₆ 497 - 2| = 5 / 500 ∧ (5:ℝ) / 500 = 0.01 ∧ ∀ n : ℕ, |a₁₆ n - 2| < 0.01 ↔ 498 ≤ n := by
@@ -1001,7 +1001,7 @@ theorem naloga17 :
 /-- Naloga 18: `12 400·a⁵ = 13 900` ⇔ `a⁵ = 13 900/12 400 = 1,12096…`; `a = ⁵√1,12096… = 1,023101… ≈ 1,02310`;
 `N(15) = 12 400·a¹⁵ = 17 466,3… ≈ 17 466`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga18
-besedilo: »Iz $N(5) = 13\,900$ dobimo $12\,400 \cdot a^5 = 13\,900$, torej $a^5 = \dfrac{13\,900}{12\,400} = 1{,}12096\ldots$ (eksponentna funkcija + koreni).« -/
+besedilo: »Odgovor: $a \approx 1{,}02310$, leta $2035$ bo imelo mesto približno $17\,466$ prebivalcev.« -/
 theorem naloga18 :
     let a : ℝ := (13900 / 12400 : ℝ) ^ (1 / 5 : ℝ)
     (∀ b : ℝ, 0 < b → (12400 * b ^ 5 = 13900 ↔ b = a)) ∧ (1.12096:ℝ) ≤ 13900 / 12400 ∧
@@ -1054,7 +1054,7 @@ theorem naloga19_a :
 /-- Naloga 19 b): iz `pH₂ = pH₁ + 1,5` (`c₁, c₂ > 0`) sledi `log(c₁/c₂) = 1,5` in `c₁/c₂ = 10^1,5`;
 `10^1,5 = 10√10 = 31,62… ≈ 31,6`; `c₂ = 3,2·10⁻⁵/10^1,5 = 1,0119…·10⁻⁶ ≈ 1,01·10⁻⁶`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga19-b
-besedilo: »$c_2 = \dfrac{3{,}2 \cdot 10^{-5}}{10^{1{,}5}} = 1{,}0119\ldots \cdot 10^{-6} \approx 1{,}01 \cdot 10^{-6}\,\text{mol/l}$« -/
+besedilo: »b) Če je $\text{pH}_2 = \text{pH}_1 + 1{,}5$, je $-\log c_2 = -\log c_1 + 1{,}5$, torej $\log \dfrac{c_1}{c_2} = 1{,}5$ in $\dfrac{c_1}{c_2} = 10^{1{,}5} = 31{,}62\ldots \approx 31{,}6$ (logaritem + potence z racionalnimi eksponenti). 3. b) $c_2 = \dfrac{3{,}2 \cdot 10^{-5}}{10^{1{,}5}} = 1{,}0119\ldots \cdot 10^{-6} \approx 1{,}01 \cdot 10^{-6}\,\text{mol/l}$« -/
 theorem naloga19_b :
     (∀ c₁ c₂ : ℝ, 0 < c₁ → 0 < c₂ → (-Real.logb 10 c₂ = -Real.logb 10 c₁ + 1.5 ↔
       Real.logb 10 (c₁ / c₂) = 1.5) ∧ (Real.logb 10 (c₁ / c₂) = 1.5 ↔ c₁ / c₂ = 10 ^ (1.5:ℝ))) ∧
@@ -1089,7 +1089,7 @@ def sklece : List ℝ := [12, 15, 11, 18, 14, 16, 13, 19]
 s `7` je odklon `≈ 2,82`; na `(x̄ − σ, x̄ + σ)` (zaokroženo `(12,12; 17,38)`) ležijo `13`, `14`, `15`, `16`,
 ne pa `11`, `12`, `18`, `19`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga20
-besedilo: »Vsota kvadratov odklonov: $7{,}5625 + 0{,}0625 + 14{,}0625 + 10{,}5625 + 0{,}5625 + 1{,}5625 + 3{,}0625 + 18{,}0625 = 55{,}5$.« -/
+besedilo: »Odgovor: $\bar x = 14{,}75$, $\sigma \approx 2{,}63$, na intervalu so $4$ podatki.« -/
 theorem naloga20 :
     sklece.sum = 118 ∧ (118:ℝ) / 8 = 14.75 ∧
       (sklece.map fun v => (v - 14.75) ^ 2) =
@@ -1115,8 +1115,7 @@ theorem naloga20 :
 /-- Naloga 20, točkovanje: z `s = √(55,5/7) ≈ 2,82` je interval `(x̄ − s, x̄ + s)` zaokroženo
 `(11,93; 17,57)`; v njem leži natanko `5` podatkov (`12`, `13`, `14`, `15`, `16`), ne pa `11`, `18`, `19`
 (podatki so prav teh osem števil).
-trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga20-s
-besedilo: »Interval je $(12{,}12; 17{,}38)$ (realna števila in intervali). V njem ležijo podatki $13$, $14$, $15$ in $16$, torej $4$ podatki.« -/
+pomozno -/
 theorem naloga20_s :
     |14.75 - Real.sqrt (55.5 / 7) - 11.93| ≤ 0.005 ∧ |14.75 + Real.sqrt (55.5 / 7) - 17.57| ≤ 0.005 ∧
       (∀ v ∈ ({12, 13, 14, 15, 16} : Set ℝ),
@@ -1141,7 +1140,7 @@ theorem naloga20_s :
 /-- Naloga 21: kot ob središču `360°/9 = 40°`; iz `a/2 = r sin 20°` sledi `a = 10 sin 20°`;
 `S = 9·r² sin 40°/2 = 225 sin 40°/2`; delež je `S/(πr²)`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga21
-besedilo: »$S = 9 \cdot \dfrac{r^2 \sin 40^\circ}{2} = \dfrac{225 \sin 40^\circ}{2} = 72{,}3136\ldots \approx 72{,}31\,\text{cm}^2$« -/
+besedilo: »Devetkotnik razdelimo na $9$ enakokrakih trikotnikov s krakoma $r = 5\,\text{cm}$ in kotom ob središču $\dfrac{360^\circ}{9} = 40^\circ$ (mnogokotniki in krog + kotne funkcije). 2. Stranica: višina na osnovnico razpolovi trikotnik, zato $\dfrac{a}{2} = r \sin 20^\circ$ in $a = 10 \sin 20^\circ = 3{,}4202\ldots \approx 3{,}42\,\text{cm}$. 3. Ploščina: $S = 9 \cdot \dfrac{r^2 \sin 40^\circ}{2} = \dfrac{225 \sin 40^\circ}{2} = 72{,}3136\ldots \approx 72{,}31\,\text{cm}^2$. 4. Delež: $\dfrac{S}{\pi r^2} = \dfrac{72{,}3136\ldots}{78{,}5398\ldots} = 0{,}920725\ldots \approx 92{,}07\,\%$.« -/
 theorem naloga21 (a S : ℝ) :
     (360:ℝ) / 9 = 40 ∧ (a / 2 = 5 * Real.sin (20 * (π / 180)) → a = 10 * Real.sin (20 * (π / 180))) ∧
       9 * (5 ^ 2 * Real.sin (40 * (π / 180)) / 2) = 225 * Real.sin (40 * (π / 180)) / 2 ∧
@@ -1155,7 +1154,7 @@ delež `S/(πr²) = 9 sin 40°/(2π) = 0,920725… ≈ 92,07 %`. Meje za `s = si
 `3s − 4s³ = sin 60° = √3/2` (funkcija `3s − 4s³` narašča na `[0, 1/2]`, `0 < s < sin 30° = 1/2`),
 nato `sin² 40° = 4s²(1 − s²)`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga21-stevila
-besedilo: »$S = 9 \cdot \dfrac{r^2 \sin 40^\circ}{2} = \dfrac{225 \sin 40^\circ}{2} = 72{,}3136\ldots \approx 72{,}31\,\text{cm}^2$.« -/
+besedilo: »Odgovor: stranica meri približno $3{,}42\,\text{cm}$, ploščina je približno $72{,}31\,\text{cm}^2$, devetkotnik pokriva približno $92{,}07\,\%$ kroga.« -/
 theorem naloga21_stevila :
     (3.4202:ℝ) ≤ 10 * Real.sin (20 * (π / 180)) ∧ 10 * Real.sin (20 * (π / 180)) < 3.4203 ∧
       |10 * Real.sin (20 * (π / 180)) - 3.42| ≤ 0.005 ∧
@@ -1213,7 +1212,7 @@ theorem naloga21_stevila :
 Ni v Leanu: model geometrijske verjetnosti (enakomerna porazdelitev na pravokotniku, ugodna množica kot
 unija četrtin kroga in njena mera); dokazan je le račun ploščin in količnika.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga22
-besedilo: »Četrtini se ne prekrivata, ker je diagonala $|AC| = \sqrt{89} \approx 9{,}43\,\text{cm}$ daljša od $3 + 3 = 6\,\text{cm}$. Ugodna ploščina je $2 \cdot \dfrac{\pi \cdot 3^2}{4} = \dfrac{9\pi}{2} = 14{,}137\ldots\,\text{cm}^2$.« -/
+besedilo: »Četrtini se ne prekrivata, ker je diagonala $|AC| = \sqrt{89} \approx 9{,}43\,\text{cm}$ daljša od $3 + 3 = 6\,\text{cm}$. Ugodna ploščina je $2 \cdot \dfrac{\pi \cdot 3^2}{4} = \dfrac{9\pi}{2} = 14{,}137\ldots\,\text{cm}^2$. 3. $P = \dfrac{9\pi/2}{8 \cdot 5} = \dfrac{9\pi}{80} = 0{,}353429\ldots \approx 0{,}3534$.« -/
 theorem naloga22 :
     (8:ℝ) ^ 2 + 5 ^ 2 = 89 ∧ |Real.sqrt 89 - 9.43| ≤ 0.005 ∧ (3 + 3 : ℝ) < Real.sqrt 89 ∧
       2 * (π * 3 ^ 2 / 4) = 9 * π / 2 ∧ (14.137:ℝ) ≤ 9 * π / 2 ∧ 9 * π / 2 < 14.138 ∧
@@ -1230,7 +1229,7 @@ kvadrantu `y = 3√3/2 ≈ 2,598`; `|F₁T| = √((2 + √7)² + 27/4) = 4 + √
 `|F₂T| = 4 − √7/2 = 2,6771… ≈ 2,68`, vsota `8 = 2a`; `|F₁T|² + |F₂T|² = 35,5`, `|F₁T|·|F₂T| = 14,25`,
 `cos φ = (35,5 − 28)/28,5 = 5/19`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga23
-besedilo: »Razdalja med točkama: $|F_1T| = \sqrt{(2 + \sqrt{7})^2 + \tfrac{27}{4}} = 5{,}3228\ldots \approx 5{,}32$ in $|F_2T| = \sqrt{(2 - \sqrt{7})^2 + \tfrac{27}{4}} = 2{,}6771\ldots \approx 2{,}68$ (koordinatni sistem). Preverba: vsota je $8 = 2a$.« -/
+besedilo: »Kosinusni izrek v trikotniku $F_1TF_2$ z $|F_1F_2| = 2\sqrt{7}$: $\cos \varphi = \dfrac{|F_1T|^2 + |F_2T|^2 - 28}{2\,|F_1T|\,|F_2T|} = \dfrac{35{,}5 - 28}{28{,}5} = \dfrac{5}{19}$.« -/
 theorem naloga23 :
     Real.sqrt (4 ^ 2 - 3 ^ 2) = Real.sqrt 7 ∧
       (∀ y : ℝ, (2:ℝ) ^ 2 / 16 + y ^ 2 / 9 = 1 ↔ y ^ 2 = 27 / 4) ∧
@@ -1261,7 +1260,7 @@ theorem naloga23 :
 /-- Naloga 24: `0,5 l = 500 cm³`; iz `500 = π r²·11` je `r = √(500/(11π)) = 3,8037… ≈ 3,8 cm`;
 `P = 2πr² + 2πr·11 = 1000/11 + √(22 000 π) = 90,90… + 262,89… = 353,80… ≈ 354 cm²`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga24
-besedilo: »$P = 2\pi r^2 + 2\pi r v = 90{,}90\ldots + 262{,}89\ldots = 353{,}80\ldots\,\text{cm}^2 \approx 354\,\text{cm}^2$« -/
+besedilo: »Odgovor: polmer meri približno $3{,}8\,\text{cm}$, površina je približno $354\,\text{cm}^2$.« -/
 theorem naloga24 :
     let r : ℝ := Real.sqrt (500 / (11 * π))
     (0.5:ℝ) * 1000 = 500 ∧ π * r ^ 2 * 11 = 500 ∧ (3.8037:ℝ) ≤ r ∧ r < 3.8038 ∧ |r - 3.8| ≤ 0.05 ∧
@@ -1366,7 +1365,7 @@ noncomputable def k₂₆ : ℝ := Real.log (68 / 38) / 10
 /-- Naloga 26 a), b): `T(0) = 22 + 68e⁰ = 90`; `22 + 68e^(−10k) = 60` ⇔ `e^(−10k) = 38/68` ⇔
 `k = ln(68/38)/10 = 0,058192… ≈ 0,0582`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga26-ab
-besedilo: »b) $k = \dfrac{1}{10} \ln \dfrac{68}{38} = 0{,}058192\ldots \approx 0{,}0582$.« -/
+besedilo: »a) $T(0) = 22 + 68 \cdot e^0 = 90\,^\circ\text{C}$ (eksponentna funkcija). 2. b) $22 + 68 e^{-10k} = 60$ da $e^{-10k} = \dfrac{38}{68}$, logaritmiramo: $-10k = \ln \dfrac{38}{68}$ (logaritemska enačba). 3. b) $k = \dfrac{1}{10} \ln \dfrac{68}{38} = 0{,}058192\ldots \approx 0{,}0582$.« -/
 theorem naloga26_ab :
     (22:ℝ) + 68 * Real.exp 0 = 90 ∧
       (∀ k : ℝ, 22 + 68 * Real.exp (-k * 10) = 60 ↔ Real.exp (-k * 10) = 38 / 68) ∧
@@ -1393,7 +1392,7 @@ theorem naloga26_ab :
 /-- Naloga 26 c), d): `22 + 68e^(−kt) = 40` ⇔ `e^(−kt) = 18/68` ⇔ `t = ln(68/18)/k`;
 `ln(68/18) = 1,32913…`, `t = 22,84… ≈ 22,8` minute; `T'(t) = −68k e^(−kt)`, `T'(0) = −68k = −3,957… ≈ −3,96`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga26-cd
-besedilo: »c) $22 + 68 e^{-kt} = 40$ da $e^{-kt} = \dfrac{18}{68}$, torej $t = \dfrac{\ln \frac{68}{18}}{k} = \dfrac{1{,}32913\ldots}{0{,}058192\ldots} = 22{,}84\ldots \approx 22{,}8$ minute.« -/
+besedilo: »c) $22 + 68 e^{-kt} = 40$ da $e^{-kt} = \dfrac{18}{68}$, torej $t = \dfrac{\ln \frac{68}{18}}{k} = \dfrac{1{,}32913\ldots}{0{,}058192\ldots} = 22{,}84\ldots \approx 22{,}8$ minute. 5. d) $T'(t) = -68k\, e^{-kt}$, zato $T'(0) = -68k = -3{,}957\ldots \approx -3{,}96\,^\circ\text{C/min}$ (odvod).« -/
 theorem naloga26_cd :
     (∀ t : ℝ, 22 + 68 * Real.exp (-k₂₆ * t) = 40 ↔ t = Real.log (68 / 18) / k₂₆) ∧
       (1.32913:ℝ) ≤ Real.log (68 / 18) ∧ Real.log (68 / 18) < 1.32914 ∧
@@ -1435,7 +1434,7 @@ theorem naloga26_cd :
 je parabola pod osjo; `S = ∫₋₅⁵ (2 − 0,08x²) dx = [2x − 0,08x³/3]₋₅⁵ = 2(10 − 10/3) = 40/3 = 13,333… ≈ 13,33`;
 `V = 250·S = 3333,3… ≈ 3333 m³`; `y' = 0,16x`, `y'(5) = 0,8` (`tan φ = 0,8`), `y'(−5) = −0,8`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga27
-besedilo: »$S = \left[2x - \dfrac{0{,}08x^3}{3}\right]_{-5}^{5} = 2\left(10 - \dfrac{10}{3}\right) = \dfrac{40}{3} = 13{,}333\ldots\,\text{m}^2 \approx 13{,}33\,\text{m}^2$« -/
+besedilo: »Odgovor: širina $10\,\text{m}$, globina $2\,\text{m}$; prerez meri približno $13{,}33\,\text{m}^2$; v kanalu je približno $3333\,\text{m}^3$ vode; brežina oklepa z vodoravnico kot približno $38{,}7^\circ$.« -/
 theorem naloga27 :
     (∀ x : ℝ, 0.08 * x ^ 2 - 2 = 0 ↔ x = 5 ∨ x = -5) ∧ (5:ℝ) - (-5) = 10 ∧ |0.08 * (0:ℝ) ^ 2 - 2| = 2 ∧
       (∀ x : ℝ, -2 ≤ 0.08 * x ^ 2 - 2) ∧ (∀ x ∈ Ioo (-5:ℝ) 5, 0.08 * x ^ 2 - 2 < 0) ∧
@@ -1463,7 +1462,7 @@ theorem naloga27 :
 `P(C) = 1 − (1001 + 2184)/4845 = 1660/4845 = 0,34262… ≈ 0,3426` (kar je tudi
 `C(6,2)C(14,2) + C(6,3)C(14,1) + C(6,4)` ugodnih izbir).
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga28
-besedilo: »b) Rumeno seme izberemo na $6$ načinov, tri rdeča na $\binom{14}{3} = 364$ načinov: $P(B) = \dfrac{6 \cdot 364}{4845} = \dfrac{2184}{4845} = 0{,}45077\ldots \approx 0{,}4508$.« -/
+besedilo: »Odgovor: a) $0{,}2066$; b) $0{,}4508$; c) $0{,}3426$.« -/
 theorem naloga28 :
     Nat.choose 20 4 = 4845 ∧ Nat.choose 14 4 = 1001 ∧ Nat.choose 14 3 = 364 ∧ 6 * 364 = 2184 ∧
       (0.20660:ℝ) ≤ 1001 / 4845 ∧ (1001:ℝ) / 4845 < 0.20661 ∧ |(1001:ℝ) / 4845 - 0.2066| ≤ 0.00005 ∧
@@ -1482,7 +1481,7 @@ noncomputable def V₂₉ (h : ℝ) : ℝ := π / 3 * (400 * h - h ^ 3)
 `V'(h) = π/3·(400 − 3h²)`, za `h > 0` je `V' = 0` natanko pri `h = 20/√3 = 11,547… ≈ 11,55`; pred tem
 `V' > 0`, za tem `V' < 0`; pri `h₀ = 20/√3` je prostornina največja (`V(h) ≤ V(h₀)` za vsak `h ≥ 0`).
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga29-ab
-besedilo: »b) $V'(h) = \dfrac{\pi}{3}\left(400 - 3h^2\right) = 0$ da $h^2 = \dfrac{400}{3}$ in $h = \dfrac{20}{\sqrt{3}} = 11{,}547\ldots \approx 11{,}55\,\text{cm}$ (odvod,« -/
+besedilo: »a) V osnem preseku višina $h$, polmer $r$ in stranica $s$ tvorijo pravokotni trikotnik s hipotenuzo $s$. Pitagorov izrek: $r^2 = 400 - h^2$ (Pitagorov izrek + stožec). 2. a) $V(h) = \dfrac{\pi r^2 h}{3} = \dfrac{\pi}{3}\left(400h - h^3\right)$ za $0 < h < 20$. 3. b) $V'(h) = \dfrac{\pi}{3}\left(400 - 3h^2\right) = 0$ da $h^2 = \dfrac{400}{3}$ in $h = \dfrac{20}{\sqrt{3}} = 11{,}547\ldots \approx 11{,}55\,\text{cm}$ (odvod, ekstremalni problem). 4. b) Za $h < \frac{20}{\sqrt{3}}$ je $V'(h) > 0$, za $h > \frac{20}{\sqrt{3}}$ je $V'(h) < 0$, funkcija torej najprej narašča, nato pada, zato je to maksimum.« -/
 theorem naloga29_ab :
     (∀ h : ℝ, (0 < h ∧ 0 < 400 - h ^ 2) ↔ (0 < h ∧ h < 20)) ∧
     (∀ h r : ℝ, h ^ 2 + r ^ 2 = 400 → r ^ 2 = 400 - h ^ 2 ∧ π * r ^ 2 * h / 3 = V₂₉ h) ∧
@@ -1581,7 +1580,7 @@ theorem r₃₀_meje : (1.00262833695:ℝ) < r₃₀ ∧ r₃₀ < 1.00262833697
 /-- Naloga 30 a), b): `K₆ = 8000·1,032⁶ = 9664,2503… ≈ 9664,25 €`; `r₁₂¹² = 1,032`,
 `r₁₂ = 1,0026283…`, `p_k = (r₁₂ − 1)·100 % ≈ 0,2628 %`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga30-ab
-besedilo: »$K_6 = 8000 \cdot 1{,}032^6 = 9664{,}2503\ldots \approx 9664{,}25\,\text{€}$« -/
+besedilo: »a) $K_6 = 8000 \cdot 1{,}032^6 = 9664{,}2503\ldots \approx 9664{,}25\,\text{€}$ (obrestni račun). 2. b) Mesečni obrestovalni faktor $r_{12}$ mora izpolniti $r_{12}^{12} = 1{,}032$, zato $r_{12} = \sqrt[12]{1{,}032} = 1{,}0026283\ldots$ (koreni). 3. b) $p_k = (r_{12} - 1) \cdot 100\,\% \approx 0{,}2628\,\%$.« -/
 theorem naloga30_ab :
     (9664.2503:ℝ) ≤ 8000 * 1.032 ^ 6 ∧ 8000 * (1.032:ℝ) ^ 6 < 9664.2504 ∧
       |8000 * (1.032:ℝ) ^ 6 - 9664.25| ≤ 0.005 ∧ r₃₀ ^ 12 = 1.032 ∧ (1.0026283:ℝ) ≤ r₃₀ ∧
@@ -1624,7 +1623,7 @@ theorem naloga30_c :
 /-- Naloga 30 d): stanje po `72.` vlogi je vsota geometrijskega zaporedja
 `S₇₂ = Σ 100·r₁₂ⁱ = 100·(r₁₂⁷² − 1)/(r₁₂ − 1)`; `r₁₂⁷² = 1,032⁶ = 1,20803…`; `S₇₂ = 7914,939… ≈ 7914,94 €`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga30-d
-besedilo: »d) $r_{12}^{72} = 1{,}032^6 = 1{,}20803\ldots$, zato $S_{72} = 100 \cdot \dfrac{0{,}20803\ldots}{0{,}0026283\ldots} = 7914{,}939\ldots \approx 7914{,}94\,\text{€}$.« -/
+besedilo: »d) Prva vloga se obrestuje $71$ mesecev, zadnja $0$, zato je stanje vsota geometrijskega zaporedja s prvim členom $100$ in količnikom $r_{12}$: $S_{72} = 100 \cdot \dfrac{r_{12}^{72} - 1}{r_{12} - 1}$ (geometrijsko zaporedje). 6. d) $r_{12}^{72} = 1{,}032^6 = 1{,}20803\ldots$, zato $S_{72} = 100 \cdot \dfrac{0{,}20803\ldots}{0{,}0026283\ldots} = 7914{,}939\ldots \approx 7914{,}94\,\text{€}$.« -/
 theorem naloga30_d :
     ∑ i ∈ Finset.range 72, 100 * r₃₀ ^ i = 100 * (r₃₀ ^ 72 - 1) / (r₃₀ - 1) ∧ r₃₀ ^ 72 = 1.032 ^ 6 ∧
       (1.20803:ℝ) ≤ 1.032 ^ 6 ∧ (1.032:ℝ) ^ 6 < 1.20804 ∧
@@ -1646,7 +1645,7 @@ theorem naloga30_d :
 z `x = 3y − 8`: `(3y − 11)² + (y − 2)² = 25` ⇔ `10y² − 70y + 100 = 0` ⇔ `y² − 7y + 10 = 0`; presečišči
 `A(7, 5)` in `B(−2, 2)`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga31-ab
-besedilo: »b) Iz $p$: $x = 3y - 8$. Vstavimo: $(3y - 11)^2 + (y - 2)^2 = 25$ da $10y^2 - 70y + 100 = 0$ oziroma $y^2 - 7y + 10 = 0$ (sistem + kvadratna enačba).« -/
+besedilo: »a) Dopolnimo do popolnih kvadratov: $(x - 3)^2 - 9 + (y - 2)^2 - 4 - 12 = 0$, torej $(x - 3)^2 + (y - 2)^2 = 25$ (krožnica). 2. a) $S(3, 2)$, $r = 5$. 3. b) Iz $p$: $x = 3y - 8$. Vstavimo: $(3y - 11)^2 + (y - 2)^2 = 25$ da $10y^2 - 70y + 100 = 0$ oziroma $y^2 - 7y + 10 = 0$ (sistem + kvadratna enačba). 4. b) $y_1 = 5$, $y_2 = 2$, zato $A(7, 5)$ in $B(-2, 2)$.« -/
 theorem naloga31_ab :
     (∀ x y : ℝ, x ^ 2 + y ^ 2 - 6 * x - 4 * y - 12 = 0 ↔ (x - 3) ^ 2 + (y - 2) ^ 2 = 25) ∧
       (∀ y : ℝ, (3 * y - 8 - 3) ^ 2 + (y - 2) ^ 2 = 25 ↔ 10 * y ^ 2 - 70 * y + 100 = 0) ∧
@@ -1668,7 +1667,7 @@ theorem naloga31_ab :
 `k_t = −4/3`, `k_p = 1/3`, `tan δ = |(5/3)/(5/9)| = 3`; kot med tangento in tetivo je polovica središčnega
 kota: `2·arctan 3 = arccos(−0,8)`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga31-cd
-besedilo: »d) Tangenta v $A$ je pravokotna na $\vec{SA} = (4, 3)$: $4(x - 7) + 3(y - 5) = 0$, torej $t\colon 4x + 3y - 43 = 0$.« -/
+besedilo: »d) Tangenta v $A$ je pravokotna na $\vec{SA} = (4, 3)$: $4(x - 7) + 3(y - 5) = 0$, torej $t\colon 4x + 3y - 43 = 0$. 9. d) Smerna koeficienta: $k_t = -\dfrac{4}{3}$, $k_p = \dfrac{1}{3}$. $\tan \delta = \left|\dfrac{k_p - k_t}{1 + k_p k_t}\right| = \left|\dfrac{\frac{5}{3}}{\frac{5}{9}}\right| = 3$, zato $\delta = 71{,}565\ldots^\circ \approx 71{,}57^\circ$ (kot med premicama). 10. d) $\dfrac{143{,}130\ldots^\circ}{2} = 71{,}565\ldots^\circ$: kot med tangento in tetivo je polovica središčnega kota nad isto tetivo.« -/
 theorem naloga31_cd :
     ((7:ℝ) - 3, (5:ℝ) - 2) = (4, 3) ∧ ((-2:ℝ) - 3, (2:ℝ) - 2) = (-5, 0) ∧
       (4:ℝ) * (-5) + 3 * 0 = -20 ∧ Real.sqrt (4 ^ 2 + 3 ^ 2) = 5 ∧ Real.sqrt ((-5) ^ 2 + 0 ^ 2) = 5 ∧
@@ -1707,7 +1706,7 @@ theorem c₃₂_odvod (t : ℝ) : HasDerivAt c₃₂ (10 * Real.exp (-0.5 * t) *
 pri `t = 2`, pred tem `c' > 0`, za tem `c' < 0`; maksimum `c(2) = 20e^(−1) = 7,3575… ≈ 7,36 mg/l`
 (`c(t) ≤ c(2)` za vsak `t`).
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga32-a
-besedilo: »$c(2) = 20e^{-1} = 7{,}3575\ldots \approx 7{,}36\,\text{mg/l}$« -/
+besedilo: »a) Odvod produkta: $c'(t) = 10e^{-0{,}5t} + 10t \cdot (-0{,}5)e^{-0{,}5t} = 10e^{-0{,}5t}(1 - 0{,}5t)$ (eksponentna funkcija + odvod). 2. a) Ker je $e^{-0{,}5t} > 0$, je $c'(t) = 0$ natanko pri $t = 2$. Za $t < 2$ je $c'(t) > 0$, za $t > 2$ je $c'(t) < 0$, zato je pri $t = 2$ maksimum. 3. a) $c(2) = 20e^{-1} = 7{,}3575\ldots \approx 7{,}36\,\text{mg/l}$.« -/
 theorem naloga32_a :
     (∀ t : ℝ, 10 * Real.exp (-0.5 * t) + 10 * t * (-0.5) * Real.exp (-0.5 * t) =
       10 * Real.exp (-0.5 * t) * (1 - 0.5 * t)) ∧
@@ -1743,7 +1742,7 @@ theorem naloga32_a :
 `c(7,5) ≈ 1,764 < 2`, `c(7,25) ≈ 1,932 < 2`; koncentracija pade pod `2 mg/l` natanko enkrat za `t ≥ 2`,
 in sicer med `7` in `7,25` ure.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga32-b
-besedilo: »b) Za $t > 2$ funkcija pada. $c(7) = 70e^{-3{,}5} \approx 2{,}114 > 2$ in $c(8) = 80e^{-4} \approx 1{,}465 < 2$. Funkcija $c(t) - 2$ je zvezna in na krajiščih $[7, 8]$ zamenja predznak, zato ima vmes ničlo (zvezne funkcije in bisekcija).« -/
+besedilo: »b) Za $t > 2$ funkcija pada. $c(7) = 70e^{-3{,}5} \approx 2{,}114 > 2$ in $c(8) = 80e^{-4} \approx 1{,}465 < 2$. Funkcija $c(t) - 2$ je zvezna in na krajiščih $[7, 8]$ zamenja predznak, zato ima vmes ničlo (zvezne funkcije in bisekcija). 5. b) $c(7{,}5) \approx 1{,}764 < 2$, zato ničla leži na $[7; 7{,}5]$. $c(7{,}25) \approx 1{,}932 < 2$, zato ničla leži na $[7; 7{,}25]$.« -/
 theorem naloga32_b :
     |c₃₂ 7 - 2.114| ≤ 0.0005 ∧ |c₃₂ 8 - 1.465| ≤ 0.0005 ∧ |c₃₂ 7.5 - 1.764| ≤ 0.0005 ∧
       |c₃₂ 7.25 - 1.932| ≤ 0.0005 ∧ 2 < c₃₂ 7 ∧ c₃₂ 8 < 2 ∧ c₃₂ 7.5 < 2 ∧ c₃₂ 7.25 < 2 ∧
@@ -1792,7 +1791,7 @@ theorem naloga32_b :
 /-- Naloga 32 c): per partes `∫ t e^(−0,5t) dt = −2t e^(−0,5t) − 4e^(−0,5t) + C`;
 `∫₀⁶ t e^(−0,5t) dt = −16e^(−3) + 4 = 3,2034…`; `c̄ = (1/6)·10·3,2034… = 5,3390… ≈ 5,34 mg/l`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#naloga32-c
-besedilo: »$\int_0^6 t e^{-0{,}5t}\,dt = \left[-2te^{-0{,}5t} - 4e^{-0{,}5t}\right]_0^6 = -16e^{-3} + 4 = 3{,}2034\ldots$« -/
+besedilo: »c) Per partes z $u = t$, $dv = e^{-0{,}5t}\,dt$, $v = -2e^{-0{,}5t}$: $\int t e^{-0{,}5t}\,dt = -2te^{-0{,}5t} + 2\int e^{-0{,}5t}\,dt = -2te^{-0{,}5t} - 4e^{-0{,}5t} + C$ (integracija per partes). 7. c) $\int_0^6 t e^{-0{,}5t}\,dt = \left[-2te^{-0{,}5t} - 4e^{-0{,}5t}\right]_0^6 = -16e^{-3} + 4 = 3{,}2034\ldots$ (določeni integral). 8. c) $\bar c = \dfrac{1}{6} \cdot 10 \cdot 3{,}2034\ldots = 5{,}3390\ldots \approx 5{,}34\,\text{mg/l}$.« -/
 theorem naloga32_c :
     (∀ t, HasDerivAt (fun t => -2 * t * Real.exp (-0.5 * t) - 4 * Real.exp (-0.5 * t))
       (t * Real.exp (-0.5 * t)) t) ∧
@@ -1834,7 +1833,7 @@ theorem naloga32_c :
 /-- Ustno vprašanje 1: za `a > 0`, `a ≠ 1`, `x > 0` je `log_a x = y` ⇔ `aʸ = x`; potenca s pozitivno osnovo
 je pozitivna, zato nobena potenca ni enaka `x ≤ 0`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#ustno1
-besedilo: »Za $a > 0$, $a \neq 1$ in $x > 0$ je $\log_a x$ tisti eksponent $y$, za katerega velja $a^y = x$.« -/
+besedilo: »Za $a > 0$, $a \neq 1$ in $x > 0$ je $\log_a x$ tisti eksponent $y$, za katerega velja $a^y = x$. Potenca $a^y$ s pozitivno osnovo je pozitivna za vsak realni $y$, zato nobena potenca ni enaka negativnemu številu ali $0$.« -/
 theorem ustno1 (a : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) :
     (∀ x y : ℝ, 0 < x → (Real.logb a x = y ↔ a ^ y = x)) ∧ (∀ y : ℝ, 0 < a ^ y) ∧
       ∀ x : ℝ, x ≤ 0 → ¬ ∃ y : ℝ, a ^ y = x :=
@@ -1853,7 +1852,7 @@ example :=
 `P(x)/Q(x) → 0` (asimptota `y = 0`), pri enakih stopnjah `P(x)/Q(x) → a/b` (vodilna koeficienta), pri večji
 stopnji števca pa `|P(x)/Q(x)| → ∞` (vodoravne asimptote ni); vse za `x → ∞` in `x → −∞`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#ustno2
-besedilo: »Če je stopnja števca manjša od stopnje imenovalca, je vodoravna asimptota $y = 0$.« -/
+besedilo: »Če je stopnja števca manjša od stopnje imenovalca, je vodoravna asimptota $y = 0$. Če sta stopnji enaki, je asimptota $y = \frac{a}{b}$, kjer sta $a$ in $b$ vodilna koeficienta števca in imenovalca. Če je stopnja števca večja, vodoravne asimptote ni« -/
 theorem ustno2 (P Q : Polynomial ℝ) :
     (P.degree < Q.degree → Tendsto (fun x => P.eval x / Q.eval x) atTop (𝓝 0) ∧
       Tendsto (fun x => P.eval x / Q.eval x) atBot (𝓝 0)) ∧
@@ -1879,7 +1878,7 @@ example : (1 : Polynomial ℝ).degree < (Polynomial.X : Polynomial ℝ).degree �
 /-- Ustno vprašanje 3: istoležna člena `aᵢ + aₙ₋₁₋ᵢ = a₁ + aₙ`, zato `2Sₙ = n(a₁ + aₙ)`,
 `Sₙ = n/2·(a₁ + aₙ) = n/2·(2a₁ + (n − 1)d)`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#ustno3
-besedilo: »Z $a_n = a_1 + (n - 1)d$ dobimo še $S_n = \frac{n}{2}\big(2a_1 + (n - 1)d\big)$.« -/
+besedilo: »Seštejemo istoležne člene: vsak par ima vsoto $a_1 + a_n$, ker se en člen poveča za $d$, ko se drugi zmanjša za $d$. Parov je $n$, zato $2S_n = n(a_1 + a_n)$ in $S_n = \frac{n}{2}(a_1 + a_n)$. Z $a_n = a_1 + (n - 1)d$ dobimo še $S_n = \frac{n}{2}\big(2a_1 + (n - 1)d\big)$.« -/
 theorem ustno3 (a₁ d : ℝ) (n : ℕ) :
     (∀ i : ℕ, i < n → (a₁ + i * d) + (a₁ + ((n - 1 - i : ℕ) : ℝ) * d) = a₁ + (a₁ + ((n:ℝ) - 1) * d)) ∧
       2 * ∑ i ∈ Finset.range n, (a₁ + i * d) = n * (a₁ + (a₁ + ((n:ℝ) - 1) * d)) ∧
@@ -1897,7 +1896,7 @@ theorem ustno3 (a₁ d : ℝ) (n : ℕ) :
 /-- Drugače, korak za korakom: `40 + 20 = 60`; `90 − 5 − 10 = 75`; `75 : 60 = 1,25`; `40·1,25 = 50`,
 `20·1,25 = 25`, `10·1,25 = 12,5`, dvojni čas `2·12,5 = 25`; Preveri se 2: `60 : 75 = 0,8` (točke na minuto).
 trditev: MAT-SS-4/vadbena-maturitetna-pola#nacrt
-besedilo: »Ena dolga naloga z $10$ točkami ima $10 \cdot 1{,}25 = 12{,}5$ minute.« -/
+besedilo: »Točke: šest krajših strukturiranih nalog prinese $40$ točk, dve dolgi $20$, skupaj $60$. 2. Čas za reševanje: od $90$ minut odšteješ $5$ za pregled in $10$ za preverjanje, ostane $75$ minut. 3. Minut na točko: $75 : 60 = 1{,}25$. 4. Krajše strukturirane naloge: $40 \cdot 1{,}25 = 50$ minut, dve dolgi nalogi $20 \cdot 1{,}25 = 25$ minut. 5. Ena dolga naloga z $10$ točkami ima $10 \cdot 1{,}25 = 12{,}5$ minute. 6. Pravilo preskoka: ko ta naloga preseže dvojni čas, torej $25$ minut, jo označiš in greš naprej.« -/
 theorem nacrt :
     40 + 20 = 60 ∧ 90 - 5 - 10 = 75 ∧ (75:ℝ) / 60 = 1.25 ∧ (40:ℝ) * 1.25 = 50 ∧ (20:ℝ) * 1.25 = 25 ∧
       (10:ℝ) * 1.25 = 12.5 ∧ (2:ℝ) * 12.5 = 25 ∧ (60:ℝ) / 75 = 0.8 := by norm_num
@@ -1905,7 +1904,7 @@ theorem nacrt :
 /-- Preveri se 3: pri `x ≠ 1` velja `(x² + 2x)/(x − 1) = 3/(x − 1)` natanko za `x = −3`
 (`x² + 2x − 3 = (x − 1)(x + 3)`); pri `x = −3` sta obe strani `−3/4`.
 trditev: MAT-SS-4/vadbena-maturitetna-pola#kviz3
-besedilo: »Dijak je rešil enačbo $\frac{x^2 + 2x}{x - 1} = \frac{3}{x - 1}$ takole: (1) pomnožil je obe strani z $x - 1$: $x^2 + 2x = 3$; (2) uredil: $x^2 + 2x - 3 = 0$; (3) rešil: $x = 1$ ali $x = -3$; (4) odgovor: rešitvi sta $1$ in $-3$.« -/
+besedilo: »Pogoj $x \neq 1$ izloči $x = 1$; preverba za $x = -3$: obe strani sta enaki $-\frac{3}{4}$. Edina rešitev je $x = -3$.« -/
 theorem kviz3 :
     (∀ x : ℝ, x ^ 2 + 2 * x - 3 = (x - 1) * (x + 3)) ∧
       (∀ x : ℝ, (x ≠ 1 ∧ (x ^ 2 + 2 * x) / (x - 1) = 3 / (x - 1)) ↔ x = -3) ∧

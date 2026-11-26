@@ -31,7 +31,7 @@ theorem S_succ (a₁ q : ℝ) (n : ℕ) : S a₁ q (n + 1) = S a₁ q n + a₁ *
 /-- Razlaga, Ahil: a₁ = 100, q = 1/10: odseki 100, 10, 1, 0,1, 0,01 in delne vsote 100, 110, 111,
 111,1, 111,11.
 trditev: MAT-SS-4/geometrijska-vrsta#ahil-tabela
-besedilo: »Pri Ahilu je $q^n = 0{,}1;\ 0{,}01;\ 0{,}001; \dots$ Potence gredo proti $0$. Zato gre $1 - q^n$ proti $1$, delne vsote pa proti $\frac{100}{1 - 0{,}1} = \frac{1000}{9}$. Prav toliko kot pri računu z gibanjem.« -/
+besedilo: »| 1 | 100 | 100 | | 2 | 10 | 110 | | 3 | 1 | 111 | | 4 | 0,1 | 111,1 | | 5 | 0,01 | 111,11 |« -/
 theorem ahil_tabela :
     (List.range 5).map (fun k => (100 : ℝ) * (1 / 10) ^ k) = [100, 10, 1, 0.1, 0.01] ∧
     S 100 (1 / 10) 1 = 100 ∧ S 100 (1 / 10) 2 = 110 ∧ S 100 (1 / 10) 3 = 111 ∧
@@ -53,7 +53,7 @@ theorem ahil_112 (n : ℕ) : S 100 (1 / 10) n < 1000 / 9 ∧ (1000 / 9 : ℝ) < 
 
 /-- Razlaga, gibanje: 10t = 100 + t ⇔ t = 100/9 (≈ 11,1 s); takrat Ahil preteče 10·100/9 = 1000/9 m.
 trditev: MAT-SS-4/geometrijska-vrsta#ahil-gibanje
-besedilo: »Ahil jo ujame, ko je $10t = 100 + t$, torej pri $t = \frac{100}{9}\,\mathrm{s} \approx 11{,}1\,\mathrm{s}$.« -/
+besedilo: »Ahil jo ujame, ko je $10t = 100 + t$, torej pri $t = \frac{100}{9}\,\mathrm{s} \approx 11{,}1\,\mathrm{s}$. Takrat je pretekel $\frac{1000}{9}\,\mathrm{m} = 111{,}\overline{1}\,\mathrm{m}$.« -/
 theorem ahil_gibanje (t : ℝ) :
     (10 * t = 100 + t ↔ t = 100 / 9) ∧ (10 : ℝ) * (100 / 9) = 1000 / 9 ∧
     (11.05 ≤ (100 / 9 : ℝ) ∧ (100 / 9 : ℝ) < 11.15) := by
@@ -61,7 +61,7 @@ theorem ahil_gibanje (t : ℝ) :
 
 /-- Od primera k formuli: za q ≠ 1 je Sₙ = a₁(qⁿ − 1)/(q − 1) = a₁(1 − qⁿ)/(1 − q).
 trditev: MAT-SS-4/geometrijska-vrsta#s-formula
-besedilo: »Od primera k formuli.** Za delno vsoto geometrijskega zaporedja že imaš formulo $S_n = a_1 \cdot \frac{q^n - 1}{q - 1}$.« -/
+besedilo: »Za $q \ne 1$ je $n$-ta delna vsota geometrijske vrste $S_n = a_1 \cdot \dfrac{1 - q^n}{1 - q}$.« -/
 theorem S_formula (a₁ q : ℝ) (hq : q ≠ 1) (n : ℕ) :
     S a₁ q n = a₁ * ((q ^ n - 1) / (q - 1)) ∧
     a₁ * ((q ^ n - 1) / (q - 1)) = a₁ * ((1 - q ^ n) / (1 - q)) := by
@@ -99,7 +99,7 @@ theorem pot_nic (q : ℝ) (hq : |q| < 1) : Tendsto (fun n : ℕ => q ^ n) atTop 
 
 /-- Vsota geometrijske vrste: pri |q| < 1 delne vsote konvergirajo k S = a₁/(1 − q).
 trditev: MAT-SS-4/geometrijska-vrsta#vsota
-besedilo: »Zato delne vsote konvergirajo k vsoti $S = \dfrac{a_1}{1 - q}$.« -/
+besedilo: »Tako dobimo vsoto geometrijske vrste: $$S = \frac{a_1}{1 - q}, \qquad |q| < 1$$« -/
 theorem vsota (a₁ q : ℝ) (hq : |q| < 1) : Tendsto (S a₁ q) atTop (𝓝 (a₁ / (1 - q))) := by
   have := ((hasSum_geometric_of_abs_lt_one hq).mul_left a₁).tendsto_sum_nat
   rw [div_eq_mul_inv]
@@ -115,7 +115,7 @@ theorem ahil_vsota : Tendsto (S 100 (1 / 10)) atTop (𝓝 (1000 / 9)) := by
 /-- Kdaj vrsta divergira, »Premisli« in »Bolj natančno«: zaporedni delni vsoti se razlikujeta za člen
 (Sₙ₊₁ − Sₙ = a₁qⁿ); pri |q| ≥ 1 je vsak člen po absolutni vrednosti vsaj |a₁|.
 trditev: MAT-SS-4/geometrijska-vrsta#razlika-clen
-besedilo: »Zaporedni delni vsoti se razlikujeta za cel člen: $S_n - S_{n-1} = a_n$. Pri $|q| \ge 1$ je vsak člen po absolutni vrednosti vsaj $|a_1|$. Zaporedje, ki ves čas skače za vsaj tolikšen korak, se ne more ustaliti pri nobeni limiti.« -/
+besedilo: »Zaporedni delni vsoti se razlikujeta za cel člen: $S_n - S_{n-1} = a_n$. Pri $|q| \ge 1$ je vsak člen po absolutni vrednosti vsaj $|a_1|$.« -/
 theorem razlika_clen (a₁ q : ℝ) (hq : 1 ≤ |q|) (n : ℕ) :
     S a₁ q (n + 1) - S a₁ q n = a₁ * q ^ n ∧ |a₁| ≤ |a₁ * q ^ n| := by
   refine ⟨by rw [S_succ]; ring, ?_⟩
@@ -133,7 +133,7 @@ example :=
 /-- Vrsta konvergira natanko tedaj, ko je |q| < 1 (pri a₁ ≠ 0). Smer ⇒ je dokaz iz »Bolj natančno«:
 če Sₙ → S, gredo členi a₁qⁿ = Sₙ₊₁ − Sₙ proti 0, pri |q| ≥ 1 pa je |a₁qⁿ| ≥ |a₁| > 0.
 trditev: MAT-SS-4/geometrijska-vrsta#konvergira-iff
-besedilo: »Divergenca pri $|q| \ge 1$.** Če bi $S_n \to S$, bi tudi $S_{n-1} \to S$, zato bi šli členi $a_n = S_n - S_{n-1}$ proti $0$. Pri $|q| \ge 1$ in $a_1 \ne 0$ pa je $|a_n| = |a_1|\,|q|^{n-1} \ge |a_1| > 0$. Protislovje.« -/
+besedilo: »Vrsta torej konvergira natanko tedaj, ko je $|q| < 1$.« -/
 theorem konvergira_iff (a₁ q : ℝ) (ha : a₁ ≠ 0) :
     (∃ L, Tendsto (S a₁ q) atTop (𝓝 L)) ↔ |q| < 1 := by
   constructor
@@ -175,7 +175,7 @@ example : True :=
 /-- Kdaj vrsta divergira: q = 1: 5 + 5 + … ima Sₙ = 5n; q > 1: 1 + 2 + 4 + … ima Sₙ = 2ⁿ − 1 ≥ n;
 q = −1: 1 − 1 + 1 − … ima delne vsote 1, 0, 1, 0.
 trditev: MAT-SS-4/geometrijska-vrsta#divergenca-primeri
-besedilo: »Pri $1 - 1 + 1 - \dots$ je $q = -1$, torej $|q| = 1$. Delne vsote $1, 0, 1, 0, \dots$ se ne ustalijo, zato vrsta divergira.« -/
+besedilo: »$q = 1$: $5 + 5 + 5 + \dots$ ima $S_n = 5n$, kar raste čez vse meje. - $q > 1$: pri $1 + 2 + 4 + 8 + \dots$ delne vsote rastejo še hitreje. - $q = -1$: pri $1 - 1 + 1 - 1 + \dots$ delne vsote skačejo $1, 0, 1, 0, \dots$ in se ne ustalijo.« -/
 theorem divergenca_primeri (n : ℕ) :
     S 5 1 n = 5 * n ∧ S 1 2 n = 2 ^ n - 1 ∧ (n : ℝ) ≤ S 1 2 n ∧
     (S 1 (-1) 1 = 1 ∧ S 1 (-1) 2 = 0 ∧ S 1 (-1) 3 = 1 ∧ S 1 (-1) 4 = 0) := by
@@ -188,7 +188,7 @@ theorem divergenca_primeri (n : ℕ) :
 
 /-- Simulacija: a₁ = 1, q = 0,5 ⇒ vsota 2; q = −0,5 ⇒ vsota 2/3; q = 1,1 ⇒ ne konvergira.
 trditev: MAT-SS-4/geometrijska-vrsta#simulacija
-besedilo: »V simulaciji spodaj »Geometrijska vrsta« nastavi $a_1 = 1$ in najprej $q = 0{,}5$, nato $q = -0{,}5$ in na koncu $q = 1{,}1$.« -/
+besedilo: »Pri $q = 0{,}5$ se od spodaj bližajo vsoti $2$. Pri $q = -0{,}5$ skačejo nad in pod vsoto $\frac{2}{3}$, a vedno bliže. Pri $q = 1{,}1$ rastejo brez meje.« -/
 theorem simulacija :
     Tendsto (S 1 0.5) atTop (𝓝 2) ∧ Tendsto (S 1 (-0.5)) atTop (𝓝 (2 / 3)) ∧
     ¬ ∃ L, Tendsto (S 1 1.1) atTop (𝓝 L) := by
@@ -202,7 +202,7 @@ theorem simulacija :
 /-- Primer 1: 6 + 2 + 2/3 + 2/9 + …: q = 2/6 = 1/3 (enako a₃/a₂ in a₄/a₃), |q| < 1,
 S = 6/(1 − 1/3) = 6/(2/3) = 9.
 trditev: MAT-SS-4/geometrijska-vrsta#primer1
-besedilo: »Količnik: $q = \dfrac{2}{6} = \dfrac{1}{3}$. Enak količnik dobimo tudi iz $a_3 : a_2$ in $a_4 : a_3$, zato je vrsta res geometrijska.« -/
+besedilo: »Odgovor: vrsta konvergira, njena vsota je $9$.« -/
 theorem primer1 :
     ((2 : ℝ) / 6 = 1 / 3 ∧ (2 / 3 : ℝ) / 2 = 1 / 3 ∧ (2 / 9 : ℝ) / (2 / 3) = 1 / 3) ∧
     |(1 / 3 : ℝ)| < 1 ∧
@@ -216,7 +216,7 @@ theorem primer1 :
 12, 6, 9, 7,5. Vrsta 12 − 18 + 27 − …: q = −18/12 = −3/2, |q| > 1, divergira; formula bi dala
 12/(5/2) = 4,8; delne vsote 12, −6, 21.
 trditev: MAT-SS-4/geometrijska-vrsta#primer2
-besedilo: »Druga vrsta: $q = \dfrac{-18}{12} = -\dfrac{3}{2}$. Ker je $|q| = \frac{3}{2} > 1$, vrsta divergira. Formula bi dala $\frac{12}{5/2} = 4{,}8$, a te številke ne smemo zapisati kot vsote: delne vsote $12, -6, 21, \dots$ skačejo vse dlje.« -/
+besedilo: »Odgovor: prva vrsta konvergira in ima vsoto $8$; druga divergira in vsote nima.« -/
 theorem primer2 :
     (-6 : ℝ) / 12 = -1 / 2 ∧ (1 : ℝ) - (-1 / 2) = 3 / 2 ∧ (12 : ℝ) / (1 - (-1 / 2)) = 12 / (3 / 2) ∧
     (12 : ℝ) / (3 / 2) = 8 ∧ Tendsto (S 12 (-1 / 2)) atTop (𝓝 8) ∧
@@ -234,7 +234,7 @@ theorem primer2 :
 /-- Primer 3: žoga, h₀ = 2, q = 0,6: h₁ = 0,6·2 = 1,2, h₂ = 0,6·1,2 = 0,72; h₁ + h₂ + … =
 1,2/(1 − 0,6) = 1,2/0,4 = 3; s = 2 + 2·3 = 8 (pot po n dvigih gre proti 8).
 trditev: MAT-SS-4/geometrijska-vrsta#primer3
-besedilo: »$h_1 + h_2 + \dots = \dfrac{1{,}2\,\mathrm{m}}{1 - 0{,}6} = \dfrac{1{,}2\,\mathrm{m}}{0{,}4} = 3\,\mathrm{m}$« -/
+besedilo: »Celotna pot: $s = 2\,\mathrm{m} + 2 \cdot 3\,\mathrm{m} = 8\,\mathrm{m}$.« -/
 theorem primer3 :
     (0.6 : ℝ) * 2 = 1.2 ∧ (0.6 : ℝ) * 1.2 = 0.72 ∧
     (1.2 : ℝ) / (1 - 0.6) = 1.2 / 0.4 ∧ (1.2 : ℝ) / 0.4 = 3 ∧ (2 : ℝ) + 2 * 3 = 8 ∧
@@ -270,7 +270,7 @@ theorem napaka_formula :
 /-- Pogoste napake 2 in »Z analogijo«: 1/2 + 1/4 + 1/8 + … ima vsoto (1/2)/(1 − 1/2) = 1; delne vsote
 1/2, 3/4, 7/8, splošno Sₙ = 1 − (1/2)ⁿ.
 trditev: MAT-SS-4/geometrijska-vrsta#napaka-polovice
-besedilo: »»Neskončno členov, neskončna vsota.«** To je Zenonova napaka. Če je $|q| < 1$, se členi manjšajo tako hitro, da so delne vsote omejene. Vrsta $\frac{1}{2} + \frac{1}{4} + \frac{1}{8} + \dots$ ima vsoto $1$.« -/
+besedilo: »Vrsta $\frac{1}{2} + \frac{1}{4} + \frac{1}{8} + \dots$ ima vsoto $1$.« -/
 theorem napaka_polovice :
     Tendsto (S (1 / 2) (1 / 2)) atTop (𝓝 1) ∧ ((1 / 2 : ℝ) / (1 - 1 / 2) = 1) ∧
     (S (1 / 2) (1 / 2) 1 = 1 / 2 ∧ S (1 / 2) (1 / 2) 2 = 3 / 4 ∧ S (1 / 2) (1 / 2) 3 = 7 / 8) ∧
@@ -285,7 +285,7 @@ theorem napaka_polovice :
 /-- Pogoste napake 3–5: 12/(1/2) = 24 (napačen 1 − q); obrnjen količnik 6/2 = 3; žoga brez dvojnega
 odseka 2/(1 − 0,6) = 5.
 trditev: MAT-SS-4/geometrijska-vrsta#napaka-racuni
-besedilo: »Pozabljen dvojni odsek.** Pri žogi nekateri seštejejo $2 + 1{,}2 + 0{,}72 + \dots = \frac{2}{1 - 0{,}6} = 5\,\mathrm{m}$.« -/
+besedilo: »Kdor to zamenja, dobi v primeru 2 vsoto $24$ namesto $8$. Negativen $q$ vstavi v oklepaju. - **Obrnjen količnik.** $q = \frac{a_1}{a_2}$ namesto $\frac{a_2}{a_1}$. Pri vrsti $6 + 2 + \dots$ bi dobil $q = 3$ in zmotno sklepal, da vrsta divergira. Količnik je vedno »naslednji deljeno s prejšnjim«. - **Pozabljen dvojni odsek.** Pri žogi nekateri seštejejo $2 + 1{,}2 + 0{,}72 + \dots = \frac{2}{1 - 0{,}6} = 5\,\mathrm{m}$.« -/
 theorem napaka_racuni : (12 : ℝ) / (1 / 2) = 24 ∧ (6 : ℝ) / 2 = 3 ∧ (2 : ℝ) / (1 - 0.6) = 5 := by
   norm_num
 
@@ -302,7 +302,7 @@ theorem odstej (a₁ q : ℝ) (n : ℕ) : S a₁ q n - q * S a₁ q n = a₁ - a
 /-- Bolj natančno: xₙ = |q|ⁿ je padajoče in navzdol omejeno z 0; če je limita L, velja L = |q|L, in
 ker |q| ≠ 1, je L = 0.
 trditev: MAT-SS-4/geometrijska-vrsta#qn-dokaz
-besedilo: »Zakaj $q^n \to 0$ pri $|q| < 1$.** Zaporedje $x_n = |q|^n$ je padajoče ($x_{n+1} = |q|\,x_n \le x_n$) in navzdol omejeno z $0$.« -/
+besedilo: »Zaporedje $x_n = |q|^n$ je padajoče ($x_{n+1} = |q|\,x_n \le x_n$) in navzdol omejeno z $0$. Monotono in omejeno zaporedje je konvergentno, recimo z limito $L$. Iz $x_{n+1} = |q|\,x_n$ v limiti dobimo $L = |q|\,L$. Ker je $|q| \ne 1$, je $L = 0$.« -/
 theorem qn_dokaz (q : ℝ) (hq : |q| < 1) :
     Antitone (fun n : ℕ => |q| ^ n) ∧ (∀ n : ℕ, 0 ≤ |q| ^ n) ∧
     ∀ L, Tendsto (fun n : ℕ => |q| ^ n) atTop (𝓝 L) → L = |q| * L ∧ L = 0 := by
@@ -326,7 +326,7 @@ example : True :=
 /-- Bolj natančno: napaka delne vsote S − Sₙ = a₁qⁿ/(1 − q) (q ≠ 1); pri Ahilu po petih odsekih
 100·0,1⁵/0,9 ≈ 0,0011 m.
 trditev: MAT-SS-4/geometrijska-vrsta#napaka-delne
-besedilo: »Koliko členov je dovolj.** Napaka delne vsote je $S - S_n = \frac{a_1 q^n}{1 - q}$. Pri Ahilu po petih odsekih: $\frac{100 \cdot 0{,}1^5}{0{,}9} \approx 0{,}0011\,\mathrm{m}$, kar je približno milimeter.« -/
+besedilo: »Napaka delne vsote je $S - S_n = \frac{a_1 q^n}{1 - q}$. Pri Ahilu po petih odsekih: $\frac{100 \cdot 0{,}1^5}{0{,}9} \approx 0{,}0011\,\mathrm{m}$, kar je približno milimeter.« -/
 theorem napaka_delne (a₁ q : ℝ) (hq : q ≠ 1) (n : ℕ) :
     a₁ / (1 - q) - S a₁ q n = a₁ * q ^ n / (1 - q) ∧
     (0.00105 ≤ (100 : ℝ) * 0.1 ^ 5 / 0.9 ∧ (100 : ℝ) * 0.1 ^ 5 / 0.9 < 0.00115) := by
@@ -343,7 +343,7 @@ example :=
 /-- Bolj natančno (iz `napaka_delne`): pri −1 < q < 0 in a₁ ≠ 0 delne vsote skačejo okoli vsote: napaki
 S − Sₙ = a₁qⁿ/(1 − q) in S − Sₙ₊₁ imata vedno nasprotna predznaka.
 trditev: MAT-SS-4/geometrijska-vrsta#skace-okoli
-besedilo: »Koliko členov je dovolj.** Napaka delne vsote je $S - S_n = \frac{a_1 q^n}{1 - q}$.« -/
+besedilo: »Pri negativnem $q$ delne vsote skačejo okoli vsote.« -/
 theorem skace_okoli (a₁ q : ℝ) (ha : a₁ ≠ 0) (hq1 : -1 < q) (hq : q < 0) (n : ℕ) :
     (a₁ / (1 - q) - S a₁ q n) * (a₁ / (1 - q) - S a₁ q (n + 1)) < 0 := by
   have h1 : q ≠ 1 := by intro h; linarith
@@ -365,7 +365,7 @@ example :=
 
 /-- Bolj natančno, trivialni primer: pri a₁ = 0 je vsota 0 za vsak q.
 trditev: MAT-SS-4/geometrijska-vrsta#trivialni
-besedilo: »Trivialni primer.** Če je $a_1 = 0$, so vsi členi $0$ in vsota je $0$ za vsak $q$.« -/
+besedilo: »Če je $a_1 = 0$, so vsi členi $0$ in vsota je $0$ za vsak $q$.« -/
 theorem trivialni (q : ℝ) : Tendsto (S 0 q) atTop (𝓝 0) := by
   have : S 0 q = fun _ => 0 := by funext n; simp [S]
   rw [this]; exact tendsto_const_nhds
@@ -375,7 +375,7 @@ theorem trivialni (q : ℝ) : Tendsto (S 0 q) atTop (𝓝 0) := by
 /-- Naloga 1: 1,27̄ = 1,2 + 0,07 + 0,007 + …; 0,07/(1 − 0,1) = 0,07/0,9 = 7/90;
 1,2 + 7/90 = 108/90 + 7/90 = 115/90 = 23/18.
 trditev: MAT-SS-4/geometrijska-vrsta#matura1
-besedilo: »$\dfrac{0{,}07}{1 - 0{,}1} = \dfrac{0{,}07}{0{,}9} = \dfrac{7}{90}$« -/
+besedilo: »Odgovor: $1{,}2\overline{7} = \dfrac{23}{18}$.« -/
 theorem matura1 :
     (0.07 : ℝ) / (1 - 0.1) = 0.07 / 0.9 ∧ (0.07 : ℝ) / 0.9 = 7 / 90 ∧
     (1.2 : ℝ) + 7 / 90 = 108 / 90 + 7 / 90 ∧ (108 / 90 + 7 / 90 : ℝ) = 115 / 90 ∧
@@ -473,7 +473,7 @@ theorem matura2d :
 (trditvi `S_formula`, `vsota`). Ustno vprašanje 3: 1 − 2 + 4 − 8 + … ima delne vsote 1, −1, 3, −5,
 divergira; formula bi dala 1/(1 − (−2)) = 1/3.
 trditev: MAT-SS-4/geometrijska-vrsta#ustno3
-besedilo: »Formula brez preverjanja količnika.** »$1 + 2 + 4 + \dots = \frac{1}{1-2} = -1$.« Vsota pozitivnih števil ne more biti negativna. Formula $S = \frac{a_1}{1-q}$ velja le pri $|q| < 1$. Zato najprej preveri $|q|$, šele nato računaj.« -/
+besedilo: »Primer je vrsta $1 - 2 + 4 - 8 + \ldots$ s količnikom $q = -2$. Njene delne vsote so $1, -1, 3, -5, \ldots$ in skačejo vse dlje gor in dol. Zaporedje delnih vsot zato nima limite in vrsta divergira. Formula $\dfrac{a_1}{1 - q}$ bi dala $\dfrac{1}{3}$« -/
 theorem ustno3 :
     (S 1 (-2) 1 = 1 ∧ S 1 (-2) 2 = -1 ∧ S 1 (-2) 3 = 3 ∧ S 1 (-2) 4 = -5) ∧
     (1 - 2 + 4 - 8 : ℝ) = -5 ∧
@@ -528,8 +528,7 @@ theorem kviz5 :
 
 /-- RAČUN: 0,07/(1 − 0,1) = 7/90, 6/5 + 7/90 = 23/18, 115/90 = 23/18, 3/(1 − (−1/2)) = 2, 3/(3 − 2) = 3,
 3/(1 − 1/4) = 4, 1 − 2 + 4 − 8 = −5, 1/(1 − (−2)) = 1/3; 3/(1 − (x − 2)) = 3/(3 − x).
-trditev: MAT-SS-4/geometrijska-vrsta#racun
-besedilo: »njena vsota je $\dfrac{0{,}07}{1 - 0{,}1} = \dfrac{0{,}07}{0{,}9} = \dfrac{7}{90}$.« -/
+pomozno -/
 theorem racun :
     (0.07 : ℝ) / (1 - 0.1) = 7 / 90 ∧ (6 / 5 + 7 / 90 : ℝ) = 23 / 18 ∧ (115 / 90 : ℝ) = 23 / 18 ∧
     (3 : ℝ) / (1 - (-1 / 2)) = 2 ∧ (3 : ℝ) / (3 - 2) = 3 ∧ (3 : ℝ) / (1 - 1 / 4) = 4 ∧

@@ -86,13 +86,13 @@ example : (0:ℝ) < 1 ∧ (∀ t : ℝ, 0 - 1 < t → t ≤ 0 → |t| = -t) ∧ 
 
 /-- Razlaga 1: za f(x) = x² je f'(1) = 2.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#kvadrat-v-1
-besedilo: »1. Pogled skozi povečevalno steklo.** Na graf funkcije $f(x) = x^2$ postavi povečevalno steklo pri točki $(1, 1)$ in ga povečuj. Krivulja je v steklu vse bolj ravna in na koncu je videti kot premica, tangenta s smernim koeficientom $f'(1) = 2$.« -/
+besedilo: »tangenta s smernim koeficientom $f'(1) = 2$« -/
 theorem kvadrat_v_1 : HasDerivAt (fun x : ℝ => x ^ 2) 2 1 :=
   (hasDerivAt_pow 2 (1:ℝ)).congr_deriv (by norm_num)
 
 /-- Razlaga 1: diferenčni količnik |h|/h je −1 za h < 0 in 1 za h > 0; tabela pri ±0,1 in ±0,01.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#abs-kvocient
-besedilo: »| $0{,}1$ | $1$ |« -/
+besedilo: »| $-0{,}1$ | $-1$ | | $-0{,}01$ | $-1$ | | $0{,}01$ | $1$ | | $0{,}1$ | $1$ |« -/
 theorem abs_kvocient :
     (∀ h : ℝ, h < 0 → |h| / h = -1) ∧ (∀ h : ℝ, 0 < h → |h| / h = 1) ∧
     |(-0.1:ℝ)| / (-0.1) = -1 ∧ |(-0.01:ℝ)| / (-0.01) = -1 ∧ |(0.01:ℝ)| / 0.01 = 1 ∧
@@ -122,14 +122,14 @@ theorem abs_v_nic :
 /-- Razlaga 2, Premisli: ∛0,001 = 0,1 (ker je 0,1³ = 0,001) in 0,1/0,001 = 100; pri h = 0,000001 je
 ∛h = 0,01 in količnik 10 000.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#kubicni-koren-stevila
-besedilo: »Pri $h = 0{,}001$ je $\sqrt[3]{0{,}001} = 0{,}1$ in količnik $\frac{0{,}1}{0{,}001} = 100$, pri $h = 0{,}000001$ že $10\,000$.« -/
+besedilo: »Pri $h = 0{,}001$ je $\sqrt[3]{0{,}001} = 0{,}1$ in količnik $\frac{0{,}1}{0{,}001} = 100$, pri $h = 0{,}000001$ že $10 000$.« -/
 theorem kubicni_koren_stevila :
     (0.1:ℝ) ^ 3 = 0.001 ∧ (0.1:ℝ) / 0.001 = 100 ∧ (0.01:ℝ) ^ 3 = 0.000001 ∧
     (0.01:ℝ) / 0.000001 = 10000 := by norm_num
 
 /-- Razlaga 2, Premisli: za h > 0 količnik ∛h/h = h^(1/3)/h pri h → 0⁺ raste čez vse meje.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#kubicni-koren-kvocient
-besedilo: »Raste čez vse meje. Pri $h = 0{,}001$ je $\sqrt[3]{0{,}001} = 0{,}1$ in količnik $\frac{0{,}1}{0{,}001} = 100$, pri $h = 0{,}000001$ že $10\,000$. Sekante so vse bolj navpične, končnega odvoda ni.« -/
+besedilo: »Raste čez vse meje. Pri $h = 0{,}001$ je $\sqrt[3]{0{,}001} = 0{,}1$ in količnik $\frac{0{,}1}{0{,}001} = 100$, pri $h = 0{,}000001$ že $10 000$. Sekante so vse bolj navpične, končnega odvoda ni.« -/
 theorem kubicni_koren_kvocient :
     Tendsto (fun h : ℝ => h ^ ((1:ℝ) / 3) / h) (𝓝[>] 0) atTop := by
   have := tendsto_rpow_neg_nhdsGT_zero (y := (1:ℝ) / 3 - 1) (by norm_num)
@@ -142,7 +142,7 @@ theorem kubicni_koren_kvocient :
 /-- Razlaga 3 in Ustno vprašanje 2: f(a + h) − f(a) = (f(a + h) − f(a))/h · h za h ≠ 0, in odvedljiva
 funkcija je zvezna.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#odvedljiva-je-zvezna
-besedilo: »Za $h \ne 0$ zapišemo $f(a + h) - f(a) = \frac{f(a + h) - f(a)}{h} \cdot h$.« -/
+besedilo: »Če je $f$ v točki $a$ odvedljiva, je tam tudi zvezna. Razliko vrednosti zapišemo kot produkt: $$f(a + h) - f(a) = \frac{f(a + h) - f(a)}{h} \cdot h$$« -/
 theorem odvedljiva_je_zvezna {f : ℝ → ℝ} {a f' : ℝ} (hf : HasDerivAt f f' a) :
     (∀ h : ℝ, h ≠ 0 → f (a + h) - f a = (f (a + h) - f a) / h * h) ∧ ContinuousAt f a :=
   ⟨fun h hh => by field_simp, hf.continuousAt⟩
@@ -164,7 +164,7 @@ theorem obrat_ne_velja :
 
 /-- Razlaga 3 in Preveri se 3: kjer funkcija ni zvezna (skok, luknja, pol), ni odvedljiva.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#nezvezna-ni-odvedljiva
-besedilo: »(višja raven) Obrat ne velja: $|x|$ je v $0$ zvezna, odvedljiva pa ne. Velja pa enakovreden zapis izreka: kjer je funkcija nezvezna, ni odvedljiva. Zato je vsak skok, luknja ali pol hkrati točka neodvedljivosti.« -/
+besedilo: »Velja pa enakovreden zapis izreka: kjer je funkcija nezvezna, ni odvedljiva.« -/
 theorem nezvezna_ni_odvedljiva {f : ℝ → ℝ} {a : ℝ} (h : ¬ ContinuousAt f a) :
     ¬ DifferentiableAt ℝ f a := fun hd => h hd.continuousAt
 
@@ -233,7 +233,7 @@ theorem abs_na_intervalu :
 /-- Razlaga 4 in Ustno vprašanje 3: če je y odvedljiva v x₀ in blizu x₀ velja x² + y(x)² = C
 (krožnica, C = r²), je 2x₀ + 2y y' = 0, za y ≠ 0 pa y' = −x/y.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#krog-implicitno
-besedilo: »Pri krožnici dobimo $2x + 2y\,y' = 0$, torej $y' = -\frac{x}{y}$ za $y \ne 0$.« -/
+besedilo: »Pri krožnici dobimo $2x + 2y y' = 0$, torej $y' = -\frac{x}{y}$ za $y \ne 0$.« -/
 theorem krog_implicitno {y : ℝ → ℝ} {x₀ y' C : ℝ} (hy : HasDerivAt y y' x₀)
     (he : ∀ᶠ x in 𝓝 x₀, x ^ 2 + y x ^ 2 = C) :
     2 * x₀ + 2 * y x₀ * y' = 0 ∧ (y x₀ ≠ 0 → y' = -x₀ / y x₀) := by
@@ -246,8 +246,7 @@ theorem krog_implicitno {y : ℝ → ℝ} {x₀ y' C : ℝ} (hy : HasDerivAt y y
   field_simp; linarith
 
 /-- RACUN: zgornji lok y = √(25 − x²) ima za x² < 25 odvod −x/√(25 − x²); v 3 je to −3/4.
-trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#zgornji-lok
-besedilo: »$y = -\frac{3}{4}x + \frac{25}{4}$« -/
+pomozno -/
 theorem zgornji_lok (x : ℝ) (hx : x ^ 2 < 25) :
     HasDerivAt (fun x => √(25 - x ^ 2)) (-x / √(25 - x ^ 2)) x := by
   have hp : 0 < 25 - x ^ 2 := by linarith
@@ -268,7 +267,7 @@ example :=
 /-- Razlaga 4: predpostavke trditve `krog_implicitno` so izpolnljive: zgornji lok y = √(25 − x²) blizu
 x = 3, y(3) = 4, y'(3) = −3/4.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#krog-lok-v-3
-besedilo: »Tangenta je $y - 4 = -\frac{3}{4}(x - 3)$ oziroma $y = -\frac{3}{4}x + \frac{25}{4}$.« -/
+besedilo: »V točki $T$: $y' = -\frac{3}{4}$.« -/
 theorem krog_lok_v_3 :
     HasDerivAt (fun x => √(25 - x ^ 2)) (-3 / 4) 3 ∧
     (∀ᶠ x in 𝓝 (3:ℝ), x ^ 2 + √(25 - x ^ 2) ^ 2 = 25) ∧ √(25 - (3:ℝ) ^ 2) = 4 := by
@@ -288,8 +287,7 @@ theorem krog_tangenta (x y : ℝ) :
   refine ⟨by norm_num, ⟨fun h => by linarith, fun h => by linarith⟩, by norm_num, by norm_num⟩
 
 /-- RACUN: tangenta y = −3/4 x + 25/4 ima s krožnico x² + y² = 25 skupno le točko x = 3.
-trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#krog-tangenta-dotik
-besedilo: »Odvod implicitno podane funkcije (višja raven).** Narišimo krožnico $x^2 + y^2 = 25$ in na njej točko $T(3, 4)$.« -/
+pomozno -/
 theorem krog_tangenta_dotik (x : ℝ) : x ^ 2 + (-3 / 4 * x + 25 / 4) ^ 2 = 25 ↔ x = 3 := by
   constructor
   · intro h
@@ -315,7 +313,7 @@ theorem krog_v_5 :
 smerni koeficient 4, z desne c'(t) = 8e^{−0,5(t − 2)} · (−0,5) = −4e^{−0,5(t − 2)}, v 2 je to −4; ker
 4 ≠ −4, c v t = 2 ni odvedljiva.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#primer1
-besedilo: »Z desne: $c'(t) = 8e^{-0{,}5(t - 2)} \cdot (-0{,}5) = -4e^{-0{,}5(t - 2)}$, verižno pravilo. Pri $t = 2$ je to $-4$.« -/
+besedilo: »Vrednost: $c(2) = 4 \cdot 2 = 8$. Desni del se pri $t \to 2$ približuje $8e^0 = 8$. Funkcija je zvezna, graf se ne pretrga. 2. Z leve je $c(t) = 4t$ premica, njen smerni koeficient je $4$. 3. Z desne: $c'(t) = 8e^{-0{,}5(t - 2)} \cdot (-0{,}5) = -4e^{-0{,}5(t - 2)}$, verižno pravilo. Pri $t = 2$ je to $-4$. 4. Smerna koeficienta $4$ in $-4$ se razlikujeta. Na grafu je vogal.« -/
 theorem primer1 :
     (4:ℝ) * 2 = 8 ∧ (8:ℝ) * exp (-0.5 * (2 - 2)) = 8 ∧
     ContinuousAt (fun t : ℝ => if t ≤ 2 then 4 * t else 8 * exp (-0.5 * (t - 2))) 2 ∧
@@ -344,7 +342,7 @@ theorem primer1 :
 /-- Primer 2 (višja raven): če je y odvedljiva v x₀ in blizu x₀ velja x²/25 + y²/9 = 1, je
 2x/25 + 2y y'/9 = 0 in za y ≠ 0 y' = −9x/(25y).
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#elipsa-implicitno
-besedilo: »Odvajamo: $\frac{2x}{25} + \frac{2y\,y'}{9} = 0$, zato $y' = -\frac{9x}{25y}$.« -/
+besedilo: »Odvajamo: $\frac{2x}{25} + \frac{2y y'}{9} = 0$, zato $y' = -\frac{9x}{25y}$.« -/
 theorem elipsa_implicitno {y : ℝ → ℝ} {x₀ y' : ℝ} (hy : HasDerivAt y y' x₀)
     (he : ∀ᶠ x in 𝓝 x₀, x ^ 2 / 25 + y x ^ 2 / 9 = 1) :
     2 * x₀ / 25 + 2 * y x₀ * y' / 9 = 0 ∧ (y x₀ ≠ 0 → y' = -(9 * x₀) / (25 * y x₀)) := by
@@ -371,7 +369,7 @@ example : ∃ (y : ℝ → ℝ) (y' : ℝ), HasDerivAt y y' 4 ∧ y 4 = 1.8 ∧
 /-- Primer 2, koraki 1, 3, 4: T(4; 1,8) leži na elipsi (16/25 + 3,24/9 = 0,64 + 0,36 = 1),
 k = −(9 · 4)/(25 · 1,8) = −36/45 = −0,8, tangenta y − 1,8 = −0,8(x − 4) je y = −0,8x + 5.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#primer2
-besedilo: »Točka leži na elipsi: $\frac{16}{25} + \frac{3{,}24}{9} = 0{,}64 + 0{,}36 = 1$.« -/
+besedilo: »Točka leži na elipsi: $\frac{16}{25} + \frac{3{,}24}{9} = 0{,}64 + 0{,}36 = 1$. 2. Odvajamo: $\frac{2x}{25} + \frac{2y\,y'}{9} = 0$, zato $y' = -\frac{9x}{25y}$. 3. Vstavimo $T$: $k = -\frac{9 \cdot 4}{25 \cdot 1{,}8} = -\frac{36}{45} = -0{,}8$. 4. Tangenta: $y - 1{,}8 = -0{,}8(x - 4)$, torej $y = -0{,}8x + 5$.« -/
 theorem primer2 (x y : ℝ) :
     (1.8:ℝ) ^ 2 = 3.24 ∧ (16:ℝ) / 25 + 3.24 / 9 = 0.64 + 0.36 ∧ (0.64:ℝ) + 0.36 = 1 ∧
     -(9 * 4 : ℝ) / (25 * 1.8) = -36 / 45 ∧ (-36:ℝ) / 45 = -0.8 ∧
@@ -380,8 +378,7 @@ theorem primer2 (x y : ℝ) :
     ⟨fun h => by linarith, fun h => by linarith⟩⟩
 
 /-- RACUN: tangenta y = −4/5 x + 5 ima z elipso skupno le točko x = 4.
-trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#primer2-dotik
-besedilo: »$k = -\frac{2 + 2}{1 + 4} = -\frac{4}{5} = -0{,}8$. Tangenta: $y - 2 = -0{,}8(x - 1)$, torej $y = -0{,}8x + 2{,}8$.« -/
+pomozno -/
 theorem primer2_dotik (x : ℝ) : x ^ 2 / 25 + (-4 / 5 * x + 5) ^ 2 / 9 = 1 ↔ x = 4 := by
   constructor
   · intro h
@@ -393,7 +390,7 @@ theorem primer2_dotik (x : ℝ) : x ^ 2 / 25 + (-4 / 5 * x + 5) ^ 2 / 9 = 1 ↔ 
 /-- Primer 3, koraki 2–4: točke krožnice x² + y² = 625 (y ≠ 0) s smernim koeficientom −x/y = 3/4 so
 natanko (15, −20) in (−15, 20).
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#primer3-tocki
-besedilo: »Ko voznik v točki $(15, -20)$ izpusti volan, gre avto naravnost po tangenti s smernim koeficientom $y' = -\frac{x}{y} = \frac{3}{4}$.« -/
+besedilo: »Pogoj: $-\frac{x}{y} = \frac{3}{4}$, zato $y = -\frac{4}{3}x$. 3. Vstavimo v krožnico: $x^2 + \frac{16}{9}x^2 = 625$, torej $\frac{25}{9}x^2 = 625$ in $x^2 = 225$. 4. Dobimo $x = 15$, $y = -20$ ali $x = -15$, $y = 20$.« -/
 theorem primer3_tocki (x y : ℝ) :
     (x ^ 2 + y ^ 2 = 625 ∧ y ≠ 0 ∧ -x / y = 3 / 4) ↔ (x = 15 ∧ y = -20) ∨ (x = -15 ∧ y = 20) := by
   constructor
@@ -410,7 +407,7 @@ theorem primer3_tocki (x y : ℝ) :
 
 /-- Primer 3, korak 3 (RACUN): x² + (−4/3 x)² = x² + 16/9 x² = 25/9 x², enako 625 natanko pri x = ±15.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#primer3-enacba
-besedilo: »Vstavimo v krožnico: $x^2 + \frac{16}{9}x^2 = 625$, torej $\frac{25}{9}x^2 = 625$ in $x^2 = 225$.« -/
+besedilo: »Vstavimo v krožnico: $x^2 + \frac{16}{9}x^2 = 625$, torej $\frac{25}{9}x^2 = 625$ in $x^2 = 225$. 4. Dobimo $x = 15$, $y = -20$ ali $x = -15$, $y = 20$.« -/
 theorem primer3_enacba (x : ℝ) :
     x ^ 2 + (-4 * x / 3) ^ 2 = x ^ 2 + 16 / 9 * x ^ 2 ∧ x ^ 2 + 16 / 9 * x ^ 2 = 25 / 9 * x ^ 2 ∧
     (x ^ 2 + (-4 * x / 3) ^ 2 = 625 ↔ x = -15 ∨ x = 15) := by
@@ -425,15 +422,14 @@ theorem primer3_enacba (x : ℝ) :
 (−15, 20); preizkus 3/4 · 15 − 125/4 = (45 − 125)/4 = −20. Drugače (avto v krožišču):
 y' = −15/(−20) = 3/4.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#primer3-tangenti
-besedilo: »Tangenti: skozi $(15, -20)$ je $y = \frac{3}{4}x - \frac{125}{4}$, skozi $(-15, 20)$ je $y = \frac{3}{4}x + \frac{125}{4}$.« -/
+besedilo: »Tangenti: skozi $(15, -20)$ je $y = \frac{3}{4}x - \frac{125}{4}$, skozi $(-15, 20)$ je $y = \frac{3}{4}x + \frac{125}{4}$. 6. Preizkus: $\frac{3}{4} \cdot 15 - \frac{125}{4} = \frac{45 - 125}{4} = -20$.« -/
 theorem primer3_tangenti :
     (3:ℝ) / 4 * 15 - 125 / 4 = (45 - 125) / 4 ∧ ((45:ℝ) - 125) / 4 = -20 ∧
     (3:ℝ) / 4 * (-15) + 125 / 4 = 20 ∧ -(15:ℝ) / (-20) = 3 / 4 ∧ -(-15:ℝ) / 20 = 3 / 4 := by
   norm_num
 
 /-- RACUN: tangenta y = 3/4 x − 125/4 ima s krožnico x² + y² = 625 skupno le točko x = 15.
-trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#primer3-dotik
-besedilo: »skozi $(15, -20)$ je $y = \frac{3}{4}x - \frac{125}{4}$,« -/
+pomozno -/
 theorem primer3_dotik (x : ℝ) : x ^ 2 + (3 / 4 * x - 125 / 4) ^ 2 = 625 ↔ x = 15 := by
   constructor
   · intro h
@@ -445,7 +441,7 @@ theorem primer3_dotik (x : ℝ) : x ^ 2 + (3 / 4 * x - 125 / 4) ^ 2 = 625 ↔ x 
 /-- Primer 4 (višja raven): če je y odvedljiva v x₀ in blizu x₀ velja x² + xy + y² = 7, je
 2x + y + x y' + 2y y' = 0, torej y'(x + 2y) = −(2x + y) in za x + 2y ≠ 0 y' = −(2x + y)/(x + 2y).
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#primer4-implicitno
-besedilo: »$2x + y + x\,y' + 2y\,y' = 0$« -/
+besedilo: »Odvajamo: $2x + y + x\,y' + 2y\,y' = 0$. 3. Izrazimo: $y'(x + 2y) = -(2x + y)$, torej $y' = -\frac{2x + y}{x + 2y}$.« -/
 theorem primer4_implicitno {y : ℝ → ℝ} {x₀ y' : ℝ} (hy : HasDerivAt y y' x₀)
     (he : ∀ᶠ x in 𝓝 x₀, x ^ 2 + x * y x + y x ^ 2 = 7) :
     2 * x₀ + y x₀ + x₀ * y' + 2 * y x₀ * y' = 0 ∧ y' * (x₀ + 2 * y x₀) = -(2 * x₀ + y x₀) ∧
@@ -486,8 +482,7 @@ theorem primer4 (x y : ℝ) :
     ⟨fun h => by linarith, fun h => by linarith⟩⟩
 
 /-- RACUN: tangenta y = −4/5 x + 14/5 ima s krivuljo x² + xy + y² = 7 skupno le točko x = 1.
-trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#primer4-dotik
-besedilo: »Tangenta: $y - 1{,}8 = -0{,}8(x - 4)$, torej $y = -0{,}8x + 5$.« -/
+pomozno -/
 theorem primer4_dotik (x : ℝ) :
     x ^ 2 + x * (-4 / 5 * x + 14 / 5) + (-4 / 5 * x + 14 / 5) ^ 2 = 7 ↔ x = 1 := by
   constructor
@@ -514,7 +509,7 @@ theorem matura1_predpis (x : ℝ) :
 
 /-- Naloga 1, korak 2 (RACUN): f(−2) = 5, f(−1) = 3, f(3) = 5.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#matura1-vrednosti
-besedilo: »za $-1 \le x \le 2$ je $f(x) = (x + 1) - (x - 2) = 3$,« -/
+besedilo: »Graf je lomljena črta: premica s smernim koeficientom $-2$ (na primer skozi $(-2, 5)$) se v točki $(-1, 3)$ nadaljuje v vodoravno daljico do točke $(2, 3)$, ta pa v premico s smernim koeficientom $2$ (na primer skozi $(3, 5)$).« -/
 theorem matura1_vrednosti :
     |(-2:ℝ) + 1| + |(-2:ℝ) - 2| = 5 ∧ |(-1:ℝ) + 1| + |(-1:ℝ) - 2| = 3 ∧
     |(3:ℝ) + 1| + |(3:ℝ) - 2| = 5 := by
@@ -523,7 +518,7 @@ theorem matura1_vrednosti :
 /-- Naloga 1, koraka 3–4: f(x) = |x + 1| + |x − 2| je odvedljiva natanko v x ≠ −1, 2 (v x = −1 se smerni
 koeficient spremeni z −2 na 0, v x = 2 z 0 na 2).
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#matura1
-besedilo: »V točkah $(-1, 3)$ in $(2, 3)$ ima graf vogal: v $x = -1$ se smerni koeficient spremeni z $-2$ na $0$, v $x = 2$ pa z $0$ na $2$.« -/
+besedilo: »V točkah $(-1, 3)$ in $(2, 3)$ ima graf vogal: v $x = -1$ se smerni koeficient spremeni z $-2$ na $0$, v $x = 2$ pa z $0$ na $2$. Tam tangente ni in odvod ne obstaja; drugod je graf del premice in odvod obstaja. 4. Odgovor: $f$ ni odvedljiva v točkah $x = -1$ in $x = 2$, kjer ima graf vogal.« -/
 theorem matura1 (x : ℝ) :
     DifferentiableAt ℝ (fun x : ℝ => |x + 1| + |x - 2|) x ↔ x ≠ -1 ∧ x ≠ 2 := by
   constructor
@@ -574,7 +569,7 @@ theorem matura2a (x : ℝ) :
 /-- Naloga 2 b): f(1) = 0 in f je v 1 zvezna; z leve (1 − x²)' = −2x, v 1 je −2 · 1 = −2, z desne
 (x² − 1)' = 2x, v 1 je 2; smerna koeficienta se razlikujeta, zato f'(1) ne obstaja.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#matura2b
-besedilo: »b) Z leve: $(1 - x^2)' = -2x$, pri $x = 1$ je smerni koeficient $-2$. Z desne: $(x^2 - 1)' = 2x$, pri $x = 1$ je $2$. Smerna koeficienta se razlikujeta, zato $f'(1)$ ne obstaja.« -/
+besedilo: »b) Oba kosa imata pri $x = 1$ vrednost $0$, graf se ne pretrga: $f$ je v $x = 1$ zvezna in $f(1) = 0$. 4. b) Z leve: $(1 - x^2)' = -2x$, pri $x = 1$ je smerni koeficient $-2$. Z desne: $(x^2 - 1)' = 2x$, pri $x = 1$ je $2$. Smerna koeficienta se razlikujeta, zato $f'(1)$ ne obstaja.« -/
 theorem matura2b :
     (1 + 1) * |(1:ℝ) - 1| = 0 ∧ ContinuousAt (fun x : ℝ => (x + 1) * |x - 1|) 1 ∧
     (∀ x : ℝ, HasDerivAt (fun x : ℝ => 1 - x ^ 2) (-2 * x) x) ∧ (-2:ℝ) * 1 = -2 ∧
@@ -595,7 +590,7 @@ theorem matura2b :
 /-- Naloga 2 c): g(x) = (x − 1)|x − 1|, g(1) = 0, diferenčni količnik (1 + h − 1)|1 + h − 1|/h = |h|
 (h ≠ 0) gre proti 0, zato g'(1) = 0.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#matura2c
-besedilo: »c) $g(1) = 0$, zato je diferenčni količnik $\dfrac{g(1 + h) - g(1)}{h} = \dfrac{h\,\lvert h \rvert}{h} = \lvert h \rvert$.« -/
+besedilo: »c) $g(1) = 0$, zato je diferenčni količnik $\dfrac{g(1 + h) - g(1)}{h} = \dfrac{h\,\lvert h \rvert}{h} = \lvert h \rvert$. 6. c) Ko gre $h \to 0$ z leve ali z desne, gre $\lvert h \rvert \to 0$. Limita obstaja, zato je $g$ v $x = 1$ odvedljiva in $g'(1) = 0$.« -/
 theorem matura2c :
     ((1:ℝ) - 1) * |(1:ℝ) - 1| = 0 ∧
     (∀ h : ℝ, h ≠ 0 → (1 + h - 1) * |1 + h - 1| / h = |h|) ∧
@@ -616,7 +611,7 @@ theorem matura2c :
 /-- Naloga 3 a): če je y odvedljiva v x₀ in blizu x₀ velja x² − xy + y² = 12, je
 2x − y − x y' + 2y y' = 0, y'(2y − x) = y − 2x in za 2y − x ≠ 0 y' = (y − 2x)/(2y − x).
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#matura3a
-besedilo: »a) Obe strani odvajamo po $x$, pri tem je $(xy)' = y + x\,y'$ in $(y^2)' = 2y\,y'$: $2x - y - x\,y' + 2y\,y' = 0$.« -/
+besedilo: »a) Obe strani odvajamo po $x$, pri tem je $(xy)' = y + x\,y'$ in $(y^2)' = 2y\,y'$: $2x - y - x\,y' + 2y\,y' = 0$. 2. a) $y'(2y - x) = y - 2x$, torej $y' = \dfrac{y - 2x}{2y - x}$.« -/
 theorem matura3a {y : ℝ → ℝ} {x₀ y' : ℝ} (hy : HasDerivAt y y' x₀)
     (he : ∀ᶠ x in 𝓝 x₀, x ^ 2 - x * y x + y x ^ 2 = 12) :
     2 * x₀ - y x₀ - x₀ * y' + 2 * y x₀ * y' = 0 ∧ y' * (2 * y x₀ - x₀) = y x₀ - 2 * x₀ ∧
@@ -647,14 +642,13 @@ example : ∃ (y : ℝ → ℝ) (y' : ℝ), HasDerivAt y y' (-2) ∧ y (-2) = 2 
     nlinarith [hs]
 
 /-- Naloga 3 (RACUN): −(2x − y)/(2y − x) = (y − 2x)/(2y − x).
-trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#matura3a-racun
-besedilo: »a) $y'(2y - x) = y - 2x$, torej $y' = \dfrac{y - 2x}{2y - x}$.« -/
+pomozno -/
 theorem matura3a_racun (x y : ℝ) : -(2 * x - y) / (2 * y - x) = (y - 2 * x) / (2 * y - x) := by ring
 
 /-- Naloga 3 b): A(−2, 2) leži na K (4 + 4 + 4 = 12), k = (2 + 4)/(4 + 2) = 1, tangenta y − 2 = x + 2 je
 y = x + 4, normala y − 2 = −(x + 2) je y = −x.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#matura3b
-besedilo: »b) $k = \dfrac{2 + 4}{4 + 2} = 1$. Tangenta: $y - 2 = x + 2$, torej $y = x + 4$.« -/
+besedilo: »b) Preizkus: $(-2)^2 - (-2) \cdot 2 + 2^2 = 4 + 4 + 4 = 12$, točka $A$ leži na $K$. 4. b) $k = \dfrac{2 + 4}{4 + 2} = 1$. Tangenta: $y - 2 = x + 2$, torej $y = x + 4$. 5. b) Normala ima smerni koeficient $-1$: $y - 2 = -(x + 2)$, torej $y = -x$.« -/
 theorem matura3b (x y : ℝ) :
     (-2:ℝ) ^ 2 - (-2) * 2 + 2 ^ 2 = 4 + 4 + 4 ∧ (4:ℝ) + 4 + 4 = 12 ∧
     ((2:ℝ) - 2 * (-2)) / (2 * 2 - (-2)) = (2 + 4) / (4 + 2) ∧ ((2:ℝ) + 4) / (4 + 2) = 1 ∧
@@ -663,8 +657,7 @@ theorem matura3b (x y : ℝ) :
     ⟨fun h => by linarith, fun h => by linarith⟩, by norm_num⟩
 
 /-- RACUN: tangenta y = x + 4 ima s K skupno le točko x = −2.
-trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#matura3b-dotik
-besedilo: »Odgovor: $y' = \frac{y - 2x}{2y - x}$; v $A$ je tangenta $y = x + 4$ in normala $y = -x$; vodoravna tangenta je v točkah $(2, 4)$ in $(-2, -4)$; tangenta v $B$ je navpična premica $x = 4$.« -/
+pomozno -/
 theorem matura3b_dotik (x : ℝ) : x ^ 2 - x * (x + 4) + (x + 4) ^ 2 = 12 ↔ x = -2 := by
   constructor
   · intro h
@@ -676,7 +669,7 @@ theorem matura3b_dotik (x : ℝ) : x ^ 2 - x * (x + 4) + (x + 4) ^ 2 = 12 ↔ x 
 /-- Naloga 3 c): točke K z vodoravno tangento (števec y − 2x = 0, imenovalec 2y − x ≠ 0) so natanko
 (2, 4) in (−2, −4): y = 2x, 3x² = 12; imenovalca sta 6 in −6.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#matura3c
-besedilo: »c) Točki sta $(2, 4)$ in $(-2, -4)$; v njiju je imenovalec $2y - x$ enak $6$ oziroma $-6$, torej različen od $0$.« -/
+besedilo: »c) Tangenta je vodoravna, kjer je $y' = 0$: števec $y - 2x = 0$ (imenovalec pa ni $0$), torej $y = 2x$. 7. c) Vstavimo v enačbo $K$: $x^2 - 2x^2 + 4x^2 = 3x^2 = 12$, zato $x = 2$ ali $x = -2$. 8. c) Točki sta $(2, 4)$ in $(-2, -4)$; v njiju je imenovalec $2y - x$ enak $6$ oziroma $-6$, torej različen od $0$.« -/
 theorem matura3c (x y : ℝ) :
     (x ^ 2 - x * y + y ^ 2 = 12 ∧ y - 2 * x = 0 ∧ 2 * y - x ≠ 0) ↔
       (x = 2 ∧ y = 4) ∨ (x = -2 ∧ y = -4) := by
@@ -694,7 +687,7 @@ theorem matura3c (x y : ℝ) :
 /-- Naloga 3 c), korak 7 (RACUN): x² − x · 2x + (2x)² = 3x², enako 12 natanko pri x = ±2; imenovalca
 2 · 4 − 2 = 6 in 2 · (−4) − (−2) = −6.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#matura3c-racun
-besedilo: »c) Vstavimo v enačbo $K$: $x^2 - 2x^2 + 4x^2 = 3x^2 = 12$, zato $x = 2$ ali $x = -2$.« -/
+besedilo: »c) Vstavimo v enačbo $K$: $x^2 - 2x^2 + 4x^2 = 3x^2 = 12$, zato $x = 2$ ali $x = -2$. 8. c) Točki sta $(2, 4)$ in $(-2, -4)$; v njiju je imenovalec $2y - x$ enak $6$ oziroma $-6$« -/
 theorem matura3c_racun (x : ℝ) :
     x ^ 2 - x * (2 * x) + (2 * x) ^ 2 = 3 * x ^ 2 ∧
     (x ^ 2 - x * (2 * x) + (2 * x) ^ 2 = 12 ↔ x = -2 ∨ x = 2) ∧
@@ -709,7 +702,7 @@ theorem matura3c_racun (x : ℝ) :
 /-- Naloga 3 d): B(4, 2) leži na K (16 − 8 + 4 = 12); imenovalec 2y − x = 4 − 4 = 0, števec y − 2x = −6 ≠ 0;
 v B ni odvedljive implicitne funkcije (odvod y' ne obstaja); premica x = 4 seka K le v B.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#matura3d
-besedilo: »d) V točki $B$ je imenovalec $2y - x = 4 - 4 = 0$, števec pa $y - 2x = -6 \ne 0$. Odvod $y'$ tam ne obstaja: tangenta je navpična.« -/
+besedilo: »d) V točki $B$ je imenovalec $2y - x = 4 - 4 = 0$, števec pa $y - 2x = -6 \ne 0$. Odvod $y'$ tam ne obstaja: tangenta je navpična. 10. d) Navpična premica skozi $B(4, 2)$ je $x = 4$.« -/
 theorem matura3d :
     (4:ℝ) ^ 2 - 4 * 2 + 2 ^ 2 = 12 ∧ (2:ℝ) * 2 - 4 = 0 ∧ (2:ℝ) - 2 * 4 = -6 ∧
     (¬ ∃ (y : ℝ → ℝ) (y' : ℝ), HasDerivAt y y' 4 ∧ y 4 = 2 ∧
@@ -746,7 +739,7 @@ theorem kviz1 :
 /-- Preveri se 2: |x² − 4| je zvezna povsod in odvedljiva natanko v x ≠ ±2; pri 0 je f'(0) = 0
 (vrh 4 − 0² = 4, 3² − 4 = 5), pri 2 sta naklona −2 · 2 = −4 in 2 · 2 = 4.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#kviz2
-besedilo: »3 | Pri $x = 0$ je vrh zaobljen: tam je $f(x) = 4 - x^2$, $f'(0) = 0$, tangenta je vodoravna.« -/
+besedilo: »Med $-2$ in $2$ absolutna vrednost prezrcali parabolo čez os $x$. Pri $x = 2$ je naklon z leve $(4 - x^2)' = -2x = -4$, z desne $(x^2 - 4)' = 2x = 4$: vogal. Enako pri $x = -2$. Funkcija je povsod zvezna, odvoda ni le v teh dveh točkah.« -/
 theorem kviz2 :
     Continuous (fun x : ℝ => |x ^ 2 - 4|) ∧
     (∀ x : ℝ, DifferentiableAt ℝ (fun x : ℝ => |x ^ 2 - 4|) x ↔ x ≠ 2 ∧ x ≠ -2) ∧
@@ -808,7 +801,7 @@ theorem kviz4 :
 
 /-- Preveri se 5: smerni koeficient tangente na x² + y² = 25 v (−3, 4) je −(−3)/4 = 3/4 = 0,75.
 trditev: MAT-SS-4/odvedljivost-in-implicitni-odvod#kviz5
-besedilo: »-0,75 | To je smerni koeficient v točki $(3, 4)$. Pozor na minus pri $x = -3$.« -/
+besedilo: »$y' = -\frac{x}{y} = -\frac{-3}{4} = \frac{3}{4} = 0{,}75$.« -/
 theorem kviz5 : -(-3:ℝ) / 4 = 3 / 4 ∧ (3:ℝ) / 4 = 0.75 := by norm_num
 
 /-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/

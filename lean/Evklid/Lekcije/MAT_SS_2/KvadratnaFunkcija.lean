@@ -59,13 +59,13 @@ theorem a_nic (b c x : ℝ) : 0 * x ^ 2 + b * x + c = b * x + c := by ring
 
 /-- Razlaga 1, Preveri: (x − 1)² − x² = −2x + 1, torej ni kvadratna funkcija.
 trditev: MAT-SS-2/kvadratna-funkcija#preveri-ni-kvadratna
-besedilo: »Preveri:* ali je $f(x) = (x - 1)^2 - x^2$ kvadratna funkcija? (Ne: člen $x^2$ se odšteje, ostane $f(x) = -2x + 1$.)« -/
+besedilo: »člen $x^2$ se odšteje, ostane $f(x) = -2x + 1$.« -/
 theorem preveri_ni_kvadratna (x : ℝ) : (x - 1) ^ 2 - x ^ 2 = -2 * x + 1 := by ring
 
 /-- Razlaga 2 (tabela in sodost): (±3)² = 9, (±2)² = 4, (±1)² = 1, 0² = 0; (−x)² = x²; teme (0, 0) je
 najnižja točka: x² ≥ 0 = 0².
 trditev: MAT-SS-2/kvadratna-funkcija#osnovna-parabola
-besedilo: »$x^2 - 6x + 5 = (x^2 - 6x + 9) - 9 + 5 = (x - 3)^2 - 4$.« -/
+besedilo: »Vrednosti pri $x$ in $-x$ so enake, zato je graf simetričen glede na os $y$ (taki funkciji pravimo soda). Teme je izhodišče $(0, 0)$, najnižja točka grafa.« -/
 theorem osnovna_parabola : ((-3 : ℝ) ^ 2 = 9 ∧ (-2 : ℝ) ^ 2 = 4 ∧ (-1 : ℝ) ^ 2 = 1 ∧ (0 : ℝ) ^ 2 = 0 ∧
     (1 : ℝ) ^ 2 = 1 ∧ (2 : ℝ) ^ 2 = 4 ∧ (3 : ℝ) ^ 2 = 9) ∧ (∀ x : ℝ, (-x) ^ 2 = x ^ 2) ∧
     ∀ x : ℝ, (0 : ℝ) ^ 2 ≤ x ^ 2 := by
@@ -91,7 +91,7 @@ example : (1 < |(2 : ℝ)| → (1 : ℝ) ^ 2 < |2 * 1 ^ 2|) ∧ (|(2 : ℝ)| < 1
 
 /-- Razlaga 3, Preveri: y = −0,5x² je širša (|−0,5| < 1) in odprta navzdol (a < 0).
 trditev: MAT-SS-2/kvadratna-funkcija#preveri-sirsa
-besedilo: »Preveri:* je $y = -0{,}5x^2$ ožja ali širša od $y = x^2$? (Širša, ker je $|a| = 0{,}5 < 1$; odprta je navzdol.)« -/
+besedilo: »Širša, ker je $|a| = 0{,}5 < 1$; odprta je navzdol.« -/
 theorem preveri_sirsa : |(-0.5 : ℝ)| < 1 ∧ (-0.5 : ℝ) < 0 := by
   rw [abs_lt]; norm_num
 
@@ -110,14 +110,14 @@ theorem ekstrem (a p q : ℝ) :
 /-- Razlaga 4 (splošna oblika): presečišče z osjo y je (0, c); (temenska) vrednost v p je q;
 (ničelna) a(x₁ − x₁)(x₁ − x₂) = 0 in a(x₂ − x₁)(x₂ − x₂) = 0.
 trditev: MAT-SS-2/kvadratna-funkcija#tri-oblike
-besedilo: »Ista funkcija ima lahko vse tri zapise, na primer $x^2 - 2x - 3 = (x - 1)^2 - 4 = (x + 1)(x - 3)$. Na sliki vsaka oblika pokaže svoje točke: splošna presečišče $(0, -3)$, temenska teme $T(1, -4)$, ničelna ničli $-1$ in $3$.« -/
+besedilo: »**splošna** $f(x) = ax^2 + bx + c$: takoj preberemo presečišče z osjo $y$, točko $(0, c)$; - **temenska** $f(x) = a(x - p)^2 + q$: takoj preberemo teme $T(p, q)$; - **ničelna** $f(x) = a(x - x_1)(x - x_2)$: takoj preberemo ničli $x_1$ in $x_2$.« -/
 theorem tri_oblike (a b c p q x₁ x₂ : ℝ) : a * 0 ^ 2 + b * 0 + c = c ∧ a * (p - p) ^ 2 + q = q ∧
     a * (x₁ - x₁) * (x₁ - x₂) = 0 ∧ a * (x₂ - x₁) * (x₂ - x₂) = 0 := by
   refine ⟨by ring, by ring, by ring, by ring⟩
 
 /-- Razlaga 4: x² − 2x − 3 = (x − 1)² − 4 = (x + 1)(x − 3); f(0) = −3, f(1) = −4, ničli −1 in 3.
 trditev: MAT-SS-2/kvadratna-funkcija#tri-zapisi
-besedilo: »na primer $x^2 - 2x - 3 = (x - 1)^2 - 4 = (x + 1)(x - 3)$.« -/
+besedilo: »Ista funkcija ima lahko vse tri zapise, na primer $x^2 - 2x - 3 = (x - 1)^2 - 4 = (x + 1)(x - 3)$. Na sliki vsaka oblika pokaže svoje točke: splošna presečišče $(0, -3)$, temenska teme $T(1, -4)$, ničelna ničli $-1$ in $3$.« -/
 theorem tri_zapisi (x : ℝ) : (x ^ 2 - 2 * x - 3 = (x - 1) ^ 2 - 4 ∧ (x - 1) ^ 2 - 4 = (x + 1) * (x - 3)) ∧
     ((0 : ℝ) ^ 2 - 2 * 0 - 3 = -3 ∧ (1 : ℝ) ^ 2 - 2 * 1 - 3 = -4) ∧
     (x ^ 2 - 2 * x - 3 = 0 ↔ x = -1 ∨ x = 3) := by
@@ -126,7 +126,7 @@ theorem tri_zapisi (x : ℝ) : (x ^ 2 - 2 * x - 3 = (x - 1) ^ 2 - 4 ∧ (x - 1) 
 
 /-- Razlaga 4, Preveri: ničli f(x) = 3(x + 1)(x − 4) sta −1 in 4.
 trditev: MAT-SS-2/kvadratna-funkcija#preveri-nicelna
-besedilo: »Preveri:* kaj takoj prebereš iz $f(x) = 3(x + 1)(x - 4)$? (Ničli $-1$ in $4$.)« -/
+besedilo: »$f(x) = 3(x + 1)(x - 4)$? (Ničli $-1$ in $4$.)« -/
 theorem preveri_nicelna (x : ℝ) : 3 * (x + 1) * (x - 4) = 0 ↔ x = -1 ∨ x = 4 := by
   rw [enacba_iff (P := 3 * ((x - -1) * (x - 4))) (by ring), mul_eq_zero, dva_faktorja,
     or_iff_right (by norm_num)]
@@ -148,7 +148,7 @@ theorem premik (a p q : ℝ) : {P : ℝ × ℝ | P.2 = a * (P.1 - p) ^ 2 + q} =
 /-- Razlaga 4: vodilni koeficient a je v vseh treh oblikah isti: če je ax² + bx + c = a'(x − p)² + q
 za vse x, je a' = a, in če je ax² + bx + c = a''(x − x₁)(x − x₂) za vse x, je a'' = a.
 trditev: MAT-SS-2/kvadratna-funkcija#isti-vodilni
-besedilo: »$f(x) = a(x - p)^2 + q$« -/
+besedilo: »V vseh treh oblikah je $a$ isto število.« -/
 theorem isti_vodilni (a b c a' p q a'' x₁ x₂ : ℝ) :
     ((∀ x, a * x ^ 2 + b * x + c = a' * (x - p) ^ 2 + q) → a' = a) ∧
       ((∀ x, a * x ^ 2 + b * x + c = a'' * (x - x₁) * (x - x₂)) → a'' = a) := by
@@ -164,7 +164,7 @@ example : (1 : ℝ) = 1 ∧ (1 : ℝ) = 1 :=
 /-- Razlaga 4: ničelna oblika a(x − x₁)(x − x₂) z realnima x₁, x₂ obstaja natanko tedaj, ko ima funkcija
 realne ničle, tj. ko je D = b² − 4ac ≥ 0 (a ≠ 0).
 trditev: MAT-SS-2/kvadratna-funkcija#nicelna-obstaja
-besedilo: »Ista funkcija ima lahko vse tri zapise, na primer $x^2 - 2x - 3 = (x - 1)^2 - 4 = (x + 1)(x - 3)$. Na sliki vsaka oblika pokaže svoje točke: splošna presečišče $(0, -3)$, temenska teme $T(1, -4)$, ničelna ničli $-1$ in $3$.« -/
+besedilo: »Ničelna oblika obstaja v realnih številih samo, če ima funkcija realne ničle.« -/
 theorem nicelna_obstaja (a b c : ℝ) (ha : a ≠ 0) :
     (∃ x₁ x₂ : ℝ, ∀ x, a * x ^ 2 + b * x + c = a * (x - x₁) * (x - x₂)) ↔ 0 ≤ b ^ 2 - 4 * a * c := by
   constructor
@@ -228,7 +228,7 @@ example : (0 : ℝ) = (1 + -1) / 2 :=
 /-- Razlaga 5: x² − 6x + 5: f(0) = 5 = f(6) (x² − 6x = x(x − 6)), sredina (0 + 6)/2 = 3, f(3) = −4;
 x² − 6x + 5 = (x² − 6x + 9) − 9 + 5 = (x − 3)² − 4.
 trditev: MAT-SS-2/kvadratna-funkcija#teme-x2-6x-5
-besedilo: »$x^2 - 6x + 5 = (x^2 - 6x + 9) - 9 + 5 = (x - 3)^2 - 4$« -/
+besedilo: »Pri $x = 0$ je $f(0) = 5$. Enako vrednost dobimo še tam, kjer je $x^2 - 6x = x(x - 6)$ spet enako $0$, torej pri $x = 6$. Točki $(0, 5)$ in $(6, 5)$ sta enako visoko, zato leži simetrijska os na sredini med njima, pri $x = 3$. Teme je $T(3, f(3)) = T(3, -4)$. Sklep drži, ker je graf res premaknjena parabola $y = x^2$: $x^2 - 6x + 5 = (x^2 - 6x + 9) - 9 + 5 = (x - 3)^2 - 4$.« -/
 theorem teme_x2_6x_5 (x : ℝ) : ((0 : ℝ) ^ 2 - 6 * 0 + 5 = 5 ∧ (6 : ℝ) ^ 2 - 6 * 6 + 5 = 5) ∧
     x ^ 2 - 6 * x = x * (x - 6) ∧ ((0 : ℝ) + 6) / 2 = 3 ∧ (3 : ℝ) ^ 2 - 6 * 3 + 5 = -4 ∧
     (x ^ 2 - 6 * x + 5 = (x ^ 2 - 6 * x + 9) - 9 + 5 ∧ (x ^ 2 - 6 * x + 9) - 9 + 5 = (x - 3) ^ 2 - 4) := by
@@ -237,7 +237,7 @@ theorem teme_x2_6x_5 (x : ℝ) : ((0 : ℝ) ^ 2 - 6 * 0 + 5 = 5 ∧ (6 : ℝ) ^ 
 /-- Razlaga 5 (splošno): ax² + bx = x(ax + b) je 0 pri x = 0 in x = −b/a (a ≠ 0), tam je vrednost
 funkcije c; sredina (0 + (−b/a))/2 = −b/(2a) = p.
 trditev: MAT-SS-2/kvadratna-funkcija#teme-splosno
-besedilo: »Izraz $ax^2 + bx = x(ax + b)$ je enak $0$ pri $x = 0$ in pri $x = -\dfrac{b}{a}$; tam je vrednost funkcije obakrat $c$.« -/
+besedilo: »Izraz $ax^2 + bx = x(ax + b)$ je enak $0$ pri $x = 0$ in pri $x = -\dfrac{b}{a}$; tam je vrednost funkcije obakrat $c$. - Os je na sredini med tema številoma (pri $b = 0$ sovpadeta v $x = 0$, kjer je teme).« -/
 theorem teme_splosno (a b c : ℝ) (ha : a ≠ 0) :
     (∀ x, a * x ^ 2 + b * x = x * (a * x + b)) ∧ a * 0 ^ 2 + b * 0 + c = c ∧
       a * (-b / a) ^ 2 + b * (-b / a) + c = c ∧ (0 + -b / a) / 2 = -b / (2 * a) := by
@@ -250,7 +250,7 @@ example : (0 + -(2 : ℝ) / 1) / 2 = -2 / (2 * 1) := (teme_splosno 1 2 0 one_ne_
 ax² + bx + c = a[(x + b/(2a))² − b²/(4a²)] + c = a(x + b/(2a))² − b²/(4a) + c; teme p = −b/(2a),
 q = c − b²/(4a) = f(p).
 trditev: MAT-SS-2/kvadratna-funkcija#dopolnjevanje
-besedilo: »$$ax^2 + bx + c = a\left(x + \frac{b}{2a}\right)^2 - \frac{b^2}{4a} + c$$« -/
+besedilo: »$$ax^2 + bx + c = a\left[\left(x + \frac{b}{2a}\right)^2 - \frac{b^2}{4a^2}\right] + c$$ $$ax^2 + bx + c = a\left(x + \frac{b}{2a}\right)^2 - \frac{b^2}{4a} + c$$ Od tod je $p = -\dfrac{b}{2a}$ in $q = c - \dfrac{b^2}{4a}$, kar se ujema s $q = f(p)$.« -/
 theorem dopolnjevanje (a b c x : ℝ) (ha : a ≠ 0) :
     a * x ^ 2 + b * x + c = a * ((x + b / (2 * a)) ^ 2 - b ^ 2 / (4 * a ^ 2)) + c ∧
       a * ((x + b / (2 * a)) ^ 2 - b ^ 2 / (4 * a ^ 2)) + c = a * (x + b / (2 * a)) ^ 2 - b ^ 2 / (4 * a) + c ∧
@@ -265,13 +265,13 @@ example : (1 : ℝ) * 3 ^ 2 + -6 * 3 + 5 = 1 * ((3 + -6 / (2 * 1)) ^ 2 - (-6) ^ 
 /-- Razlaga 5, premisli: parabola y = 2x² s temenom T(−1, 4), tj. 2(x + 1)² + 4, ne seka osi x
 (vse vrednosti so ≥ 4 > 0).
 trditev: MAT-SS-2/kvadratna-funkcija#premisli-2x2
-besedilo: »Parabolo $y = 2x^2$ premaknemo tako, da ima teme $T(-1, 4)$.« -/
+besedilo: »Ne seka. Ker je $a = 2 > 0$, je parabola odprta navzgor in teme je njena najnižja točka. Ta leži pri $y = 4$, nad osjo $x$, zato je ves graf nad osjo.« -/
 theorem premisli_2x2 (x : ℝ) : 4 ≤ 2 * (x - -1) ^ 2 + 4 ∧ 2 * (x - -1) ^ 2 + 4 ≠ 0 := by
   constructor <;> nlinarith [sq_nonneg (x + 1)]
 
 /-- Razlaga 5, Preveri: teme x² − 4x + 1 je T(2, −3): p = −(−4)/(2·1) = 2, q = 4 − 8 + 1 = −3.
 trditev: MAT-SS-2/kvadratna-funkcija#preveri-teme
-besedilo: »Preveri:* kje je teme $f(x) = x^2 - 4x + 1$? ($p = 2$, $q = f(2) = 4 - 8 + 1 = -3$, torej $T(2, -3)$.)« -/
+besedilo: »$f(x) = x^2 - 4x + 1$? ($p = 2$, $q = f(2) = 4 - 8 + 1 = -3$, torej $T(2, -3)$.)« -/
 theorem preveri_teme (x : ℝ) : -(-4 : ℝ) / (2 * 1) = 2 ∧ ((2 : ℝ) ^ 2 - 4 * 2 + 1 = 4 - 8 + 1 ∧
     (4 : ℝ) - 8 + 1 = -3) ∧ x ^ 2 - 4 * x + 1 = (x - 2) ^ 2 + -3 := by
   refine ⟨by norm_num, by norm_num, by ring⟩
@@ -300,7 +300,7 @@ theorem razstavljanje (x : ℝ) : x ^ 2 - 5 * x + 6 = (x - 2) * (x - 3) ∧
 
 /-- Bolj natančno: za a ≠ 0 je −q/a > 0 natanko tedaj, ko sta a in q različno predznačena (a·q < 0).
 trditev: MAT-SS-2/kvadratna-funkcija#desna-pozitivna
-besedilo: »Število ničel.** Iz $(x - p)^2 = -\dfrac{q}{a}$ sledi: desna stran je pozitivna natanko tedaj, ko sta $a$ in $q$ različno predznačena; takrat sta ničli $x_{1,2} = p \pm \sqrt{-\dfrac{q}{a}}$, simetrični glede na $p$.« -/
+besedilo: »Iz $(x - p)^2 = -\dfrac{q}{a}$ sledi: desna stran je pozitivna natanko tedaj, ko sta $a$ in $q$ različno predznačena« -/
 theorem desna_pozitivna (a q : ℝ) (ha : a ≠ 0) : 0 < -q / a ↔ a * q < 0 := by
   have e : -q / a = -(a * q) / a ^ 2 := by field_simp
   rw [e, div_pos_iff_of_pos_right (by positivity)]
@@ -313,7 +313,7 @@ example : 0 < -(-4 : ℝ) / 1 ↔ (1 : ℝ) * (-4) < 0 := desna_pozitivna 1 (-4)
 ničli p ± √(−q/a) (simetrični glede na p, razdalja 2√(−q/a) ni odvisna od p); q = 0 ⇒ ena (dvojna) ničla
 p in f(x) = a(x − p)²; a, q enakih predznakov ⇒ realnih ničel ni.
 trditev: MAT-SS-2/kvadratna-funkcija#stevilo-nicel
-besedilo: »Število ničel.** Iz $(x - p)^2 = -\dfrac{q}{a}$ sledi: desna stran je pozitivna natanko tedaj, ko sta $a$ in $q$ različno predznačena; takrat sta ničli $x_{1,2} = p \pm \sqrt{-\dfrac{q}{a}}$, simetrični glede na $p$.« -/
+besedilo: »Če sta $a$ in $q$ različno predznačena, je desna stran pozitivna in funkcija ima dve realni ničli $p \pm \sqrt{-\frac{q}{a}}$. Pri $q = 0$ ima eno dvojno ničlo $p$, saj teme leži na osi $x$. Če sta $a$ in $q$ enako predznačena, realnih ničel ni.« -/
 theorem stevilo_nicel (a p q : ℝ) (ha : a ≠ 0) :
     (a * q < 0 → (∀ x, a * (x - p) ^ 2 + q = 0 ↔ x = p - Real.sqrt (-q / a) ∨ x = p + Real.sqrt (-q / a)) ∧
         (p - Real.sqrt (-q / a) + (p + Real.sqrt (-q / a))) / 2 = p ∧
@@ -346,7 +346,7 @@ theorem slika_nicle (x : ℝ) : (x - 1) ^ 2 + -4 = 0 ↔ x = -1 ∨ x = 3 := by
 /-- Razlaga 6, premisli: f(x) = −2(x − 1)² + 8 seka os x pri x = −1 in x = 3; g(x) = 2(x − 1)² + 8 je
 povsod ≥ 8 > 0 in osi ne seka.
 trditev: MAT-SS-2/kvadratna-funkcija#premisli-f-g
-besedilo: »Funkciji $f(x) = -2(x - 1)^2 + 8$ in $g(x) = 2(x - 1)^2 + 8$ imata isto teme. Napovej, kje graf $f$ seka os $x$, in pojasni, zakaj graf $g$ osi ne seka.« -/
+besedilo: »Obe imata teme $T(1, 8)$ nad osjo $x$. Parabola $f$ je odprta navzdol, njena kraka se spuščata in os $x$ presečeta dvakrat, pri $x = -1$ in $x = 3$. Parabola $g$ je odprta navzgor, teme je njena najnižja točka, zato je ves graf nad osjo.« -/
 theorem premisli_f_g (x : ℝ) : (-2 * (x - 1) ^ 2 + 8 = 0 ↔ x = -1 ∨ x = 3) ∧
     8 ≤ 2 * (x - 1) ^ 2 + 8 ∧ 2 * (x - 1) ^ 2 + 8 ≠ 0 := by
   refine ⟨?_, by nlinarith [sq_nonneg (x - 1)], by nlinarith [sq_nonneg (x - 1)]⟩
@@ -355,7 +355,7 @@ theorem premisli_f_g (x : ℝ) : (-2 * (x - 1) ^ 2 + 8 = 0 ↔ x = -1 ∨ x = 3)
 
 /-- Razlaga 6, Preveri: ničli (x − 1)² − 3 sta 1 − √3 in 1 + √3.
 trditev: MAT-SS-2/kvadratna-funkcija#preveri-koren3
-besedilo: »Preveri:* kateri sta ničli $f(x) = (x - 1)^2 - 3$? (Iz $x - 1 = \pm\sqrt{3}$ sledi $x_1 = 1 - \sqrt{3}$ in $x_2 = 1 + \sqrt{3}$; ničli nista vedno celi števili.)« -/
+besedilo: »Iz $x - 1 = \pm\sqrt{3}$ sledi $x_1 = 1 - \sqrt{3}$ in $x_2 = 1 + \sqrt{3}$« -/
 theorem preveri_koren3 (x : ℝ) : (x - 1) ^ 2 - 3 = 0 ↔ x = 1 - Real.sqrt 3 ∨ x = 1 + Real.sqrt 3 := by
   have hs : Real.sqrt 3 ^ 2 = 3 := Real.sq_sqrt (by norm_num)
   rw [enacba_iff (P := (x - (1 - Real.sqrt 3)) * (x - (1 + Real.sqrt 3))) (by linear_combination hs),
@@ -382,7 +382,7 @@ example : StrictMonoOn (fun x : ℝ => 1 * (x - 0) ^ 2 + 0) (Ici 0) := (monotono
 
 /-- Razlaga 7, Povzetek: za a < 0 funkcija a(x − p)² + q narašča na (−∞, p], pada na [p, ∞).
 trditev: MAT-SS-2/kvadratna-funkcija#monotonost-neg
-besedilo: »Za $a < 0$ je obratno: narašča na $(-\infty, p]$, pada na $[p, \infty)$, zaloga vrednosti je $(-\infty, q]$.« -/
+besedilo: »Za $a < 0$ je obratno: narašča na $(-\infty, p]$, pada na $[p, \infty)$« -/
 theorem monotonost_neg (a p q : ℝ) (ha : a < 0) :
     StrictMonoOn (fun x => a * (x - p) ^ 2 + q) (Iic p) ∧
       StrictAntiOn (fun x => a * (x - p) ^ 2 + q) (Ici p) := by
@@ -400,7 +400,7 @@ example : StrictMonoOn (fun x : ℝ => -1 * (x - 0) ^ 2 + 0) (Iic 0) :=
 
 /-- Razlaga 7, Povzetek: zaloga vrednosti a(x − p)² + q je [q, ∞) za a > 0 in (−∞, q] za a < 0.
 trditev: MAT-SS-2/kvadratna-funkcija#zaloga
-besedilo: »Preveri:* kakšna je zaloga vrednosti $f(x) = -(x - 2)^2 + 9$? ($(-\infty, 9]$, ker je $a < 0$.)« -/
+besedilo: »$a > 0$: $Z_f = [q, \infty)$; $a < 0$: $Z_f = (-\infty, q]$« -/
 theorem zaloga (a p q : ℝ) :
     (0 < a → range (fun x => a * (x - p) ^ 2 + q) = Ici q) ∧
       (a < 0 → range (fun x => a * (x - p) ^ 2 + q) = Iic q) := by
@@ -427,7 +427,7 @@ theorem zaloga (a p q : ℝ) :
 
 /-- Razlaga 7, Preveri: zaloga vrednosti −(x − 2)² + 9 je (−∞, 9].
 trditev: MAT-SS-2/kvadratna-funkcija#preveri-zaloga
-besedilo: »Preveri:* kakšna je zaloga vrednosti $f(x) = -(x - 2)^2 + 9$? ($(-\infty, 9]$, ker je $a < 0$.)« -/
+besedilo: »$f(x) = -(x - 2)^2 + 9$? ($(-\infty, 9]$, ker je $a < 0$.)« -/
 theorem preveri_zaloga : range (fun x : ℝ => -(x - 2) ^ 2 + 9) = Iic 9 := by
   have e : (fun x : ℝ => -(x - 2) ^ 2 + 9) = fun x => -1 * (x - 2) ^ 2 + 9 := by funext x; ring
   rw [e]; exact (zaloga (-1) 2 9).2 (by norm_num)
@@ -435,7 +435,7 @@ theorem preveri_zaloga : range (fun x : ℝ => -(x - 2) ^ 2 + 9) = Iic 9 := by
 /-- Razlaga 8: parabola skozi (0, 3), (1, 2), (2, 5): c = 3, a + b = −1, 2a + b = 1, a = 2, b = −3
 (enolično), f(x) = 2x² − 3x + 3.
 trditev: MAT-SS-2/kvadratna-funkcija#predpis-iz-tock
-besedilo: »Odštejemo: $a = 2$, torej $b = -3$ in $f(x) = 2x^2 - 3x + 3$.« -/
+besedilo: »Pri $(0, 3)$, $(1, 2)$ in $(2, 5)$ je $c = f(0) = 3$. Iz $f(1) = a + b + 3 = 2$ sledi $a + b = -1$, iz $f(2) = 4a + 2b + 3 = 5$ pa $2a + b = 1$. Odštejemo: $a = 2$, torej $b = -3$ in $f(x) = 2x^2 - 3x + 3$.« -/
 theorem predpis_iz_tock (a b c : ℝ) :
     (a * 0 ^ 2 + b * 0 + c = 3 ∧ a * 1 ^ 2 + b * 1 + c = 2 ∧ a * 2 ^ 2 + b * 2 + c = 5) ↔
       (a = 2 ∧ b = -3 ∧ c = 3) := by
@@ -453,7 +453,7 @@ theorem predpis_iz_tock (a b c : ℝ) :
 /-- Primer 1: f(x) = 2(x − 1)² − 8: teme T(1, −8) je minimum (a = 2 > 0, |2| > 1), f(0) = 2(0 − 1)² − 8 =
 2 − 8 = −6, zrcalna točka f(2) = −6.
 trditev: MAT-SS-2/kvadratna-funkcija#primer1-teme
-besedilo: »$f(0) = 2(0 - 1)^2 - 8 = 2 - 8 = -6$« -/
+besedilo: »Teme: $T(1, -8)$. Ker je $a = 2 > 0$, je parabola odprta navzgor in ožja od $y = x^2$. 2. Presečišče z osjo $y$: $f(0) = 2(0 - 1)^2 - 8 = 2 - 8 = -6$, torej točka $(0, -6)$.« -/
 theorem primer1_teme : (∀ x : ℝ, -8 ≤ 2 * (x - 1) ^ 2 - 8) ∧ 2 * ((1 : ℝ) - 1) ^ 2 - 8 = -8 ∧
     (0 : ℝ) < 2 ∧ 1 < |(2 : ℝ)| ∧ (2 * ((0 : ℝ) - 1) ^ 2 - 8 = 2 - 8 ∧ (2 : ℝ) - 8 = -6) ∧
     2 * ((2 : ℝ) - 1) ^ 2 - 8 = -6 := by
@@ -489,7 +489,7 @@ theorem primer1_zaloga : range (fun x : ℝ => 2 * (x - 1) ^ 2 - 8) = Ici (-8) �
 /-- Primer 2, koraka 1–2: p = −1,2/(2·(−0,25)) = 2,4; q = h(2,4) = −0,25·2,4² + 1,2·2,4 + 2,25 = 3,69;
 ker je a < 0, je to največja vrednost, dosežena le pri x = 2,4.
 trditev: MAT-SS-2/kvadratna-funkcija#primer2-teme
-besedilo: »Druga koordinata: $q = h(2{,}4) = -0{,}25 \cdot 2{,}4^2 + 1{,}2 \cdot 2{,}4 + 2{,}25 = 3{,}69$. Ker je $a < 0$, je teme najvišja točka.« -/
+besedilo: »Prva koordinata temena: $p = -\dfrac{1{,}2}{2 \cdot (-0{,}25)} = 2{,}4$. 2. Druga koordinata: $q = h(2{,}4) = -0{,}25 \cdot 2{,}4^2 + 1{,}2 \cdot 2{,}4 + 2{,}25 = 3{,}69$. Ker je $a < 0$, je teme najvišja točka.« -/
 theorem primer2_teme : -(1.2 : ℝ) / (2 * (-0.25)) = 2.4 ∧
     -0.25 * (2.4 : ℝ) ^ 2 + 1.2 * 2.4 + 2.25 = 3.69 ∧
     (∀ x : ℝ, -0.25 * x ^ 2 + 1.2 * x + 2.25 ≤ 3.69) ∧
@@ -564,7 +564,7 @@ example :=
 /-- Primer 3, koraki 2–4: 4a + q = 19 in 36a + q = 11 ⇒ −32a = 8, a = −0,25, q = 19 − 4·(−0,25) = 20;
 f(20) = −0,25·36 + 20 = 11.
 trditev: MAT-SS-2/kvadratna-funkcija#primer3-racun
-besedilo: »Drugo enačbo odštejemo od prve: $-32a = 8$, zato $a = -0{,}25$. Nato $q = 19 - 4 \cdot (-0{,}25) = 20$.« -/
+besedilo: »Točka $(12, 19)$ da enačbo $4a + q = 19$, točka $(8, 11)$ pa enačbo $36a + q = 11$. 3. Drugo enačbo odštejemo od prve: $-32a = 8$, zato $a = -0{,}25$. Nato $q = 19 - 4 \cdot (-0{,}25) = 20$. 4. Model je $f(t) = -0{,}25(t - 14)^2 + 20$. Kontrola s četrto meritvijo: $f(20) = -0{,}25 \cdot 36 + 20 = 11$.« -/
 theorem primer3_racun : (-0.25 : ℝ) * (12 - 14) ^ 2 = 4 * -0.25 ∧ (-0.25 : ℝ) * (8 - 14) ^ 2 = 36 * -0.25 ∧
     (4 : ℝ) * -0.25 - 36 * -0.25 = 8 ∧ -(32 : ℝ) * -0.25 = 8 ∧ (19 : ℝ) - 4 * (-0.25) = 20 ∧
     (-0.25 * ((20 : ℝ) - 14) ^ 2 + 20 = -0.25 * 36 + 20 ∧ -0.25 * (36 : ℝ) + 20 = 11) := by norm_num
@@ -582,7 +582,7 @@ theorem primer3_16 (t : ℝ) : -0.25 * (t - 14) ^ 2 + 20 = 16 ↔ t = 10 ∨ t =
 prav); 20 °C je dosežena le ob 14.00; f(0) = −0,25·196 + 20 = −29. Razlaga 5: os je ob 14.00,
 (12 + 16)/2 = 14.
 trditev: MAT-SS-2/kvadratna-funkcija#primer3-vrh
-besedilo: »Meja modela: velja le med 8.00 in 20.00. Za polnoč bi dal $f(0) = -0{,}25 \cdot 196 + 20 = -29$, torej nesmiselnih $-29\,^\circ\text{C}$. Tudi resnična temperatura je v jasnem dnevu najvišja navadno med 14. in 16. uro, a njen potek ni natančno parabola.« -/
+besedilo: »Odgovor: po modelu je bilo najtopleje ob 14.00, $20\,^\circ\text{C}$, zato Jaka nima prav; $16\,^\circ\text{C}$ je bilo ob 10.00 in ob 18.00. 7. Meja modela: velja le med 8.00 in 20.00. Za polnoč bi dal $f(0) = -0{,}25 \cdot 196 + 20 = -29$, torej nesmiselnih $-29\,^\circ\text{C}$.« -/
 theorem primer3_vrh : (∀ t : ℝ, -0.25 * (t - 14) ^ 2 + 20 ≤ 20) ∧ -0.25 * ((14 : ℝ) - 14) ^ 2 + 20 = 20 ∧
     (∀ t : ℝ, -0.25 * (t - 14) ^ 2 + 20 = 20 ↔ t = 14) ∧
     (19 : ℝ) < 20 ∧ (-0.25 * ((0 : ℝ) - 14) ^ 2 + 20 = -0.25 * 196 + 20 ∧ -0.25 * (196 : ℝ) + 20 = -29) ∧
@@ -592,7 +592,7 @@ theorem primer3_vrh : (∀ t : ℝ, -0.25 * (t - 14) ^ 2 + 20 ≤ 20) ∧ -0.25 
 
 /-- Primer 4, koraka 1–2: f(x) = a(x − 3)² − 2 in f(1) = 6: 6 = a(1 − 3)² − 2 = 4a − 2 ⇔ a = 2 (enolično).
 trditev: MAT-SS-2/kvadratna-funkcija#primer4-a
-besedilo: »Iz $2(x - 3)^2 = 2$ sledi $(x - 3)^2 = 1$ in $x - 3 = \pm 1$, torej $x_1 = 2$ in $x_2 = 4$. Ničelna oblika je $f(x) = 2(x - 2)(x - 4)$. Kontrola: $f(1) = 2 \cdot (-1) \cdot (-3) = 6$.« -/
+besedilo: »Vstavimo točko $A$: $6 = a(1 - 3)^2 - 2 = 4a - 2$, zato $4a = 8$ in $a = 2$.« -/
 theorem primer4_a (a : ℝ) : (a * (1 - 3) ^ 2 - 2 = 4 * a - 2) ∧ (6 = a * (1 - 3) ^ 2 - 2 ↔ a = 2) := by
   refine ⟨by ring, by constructor <;> intro h <;> linarith⟩
 
@@ -626,7 +626,7 @@ theorem napaka_teme : (∀ x : ℝ, (x + 3) ^ 2 - 1 = (x - -3) ^ 2 + -1) ∧ (�
 
 /-- Pogoste napake 2: pri metu c = h(0) = 2,25, q = 3,69; pri b = 0 je c = q (teme pri p = 0).
 trditev: MAT-SS-2/kvadratna-funkcija#napaka-c-q
-besedilo: »$q = h(2{,}4) = -0{,}25 \cdot 2{,}4^2 + 1{,}2 \cdot 2{,}4 + 2{,}25 = 3{,}69$« -/
+besedilo: »Pri metu na koš iz Primera 2 je $c = 2{,}25$ višina, s katere žoga odleti, najvišja točka pa je $q = 3{,}69$. Razlog za zmedo: pri $b = 0$ sta enaka.« -/
 theorem napaka_c_q (a c : ℝ) : -0.25 * (0 : ℝ) ^ 2 + 1.2 * 0 + 2.25 = 2.25 ∧ (2.25 : ℝ) ≠ 3.69 ∧
     -(0 : ℝ) / (2 * a) = 0 ∧ a * 0 ^ 2 + 0 * 0 + c = c := by
   refine ⟨by norm_num, by norm_num, by simp, by ring⟩
@@ -655,7 +655,7 @@ theorem napaka_minus : -(-1 : ℝ) ^ 2 + 4 * (-1) + 5 = -1 - 4 + 5 ∧ (-1 : ℝ
 /-- Za maturo, naloga 1: ničli −1 in 5 ⇒ f(x) = a(x + 1)(x − 5); a·1·(−5) = 10 ⇔ a = −2;
 −2(x + 1)(x − 5) = −2(x² − 4x − 5) = −2x² + 8x + 10.
 trditev: MAT-SS-2/kvadratna-funkcija#matura1
-besedilo: »Odgovor: $f(x) = -2x^2 + 8x + 10$.« -/
+besedilo: »Iz $f(0) = 10$ sledi $a \cdot 1 \cdot (-5) = 10$, torej $-5a = 10$ in $a = -2$. 3. $f(x) = -2(x + 1)(x - 5) = -2(x^2 - 4x - 5) = -2x^2 + 8x + 10$.« -/
 theorem matura1 (a x : ℝ) : (a * (0 + 1) * (0 - 5) = 10 ↔ a = -2) ∧
     -2 * (x + 1) * (x - 5) = -2 * (x ^ 2 - 4 * x - 5) ∧ -2 * (x ^ 2 - 4 * x - 5) = -2 * x ^ 2 + 8 * x + 10 := by
   refine ⟨by constructor <;> intro h <;> linarith, by ring, by ring⟩
@@ -675,7 +675,7 @@ theorem matura1_enolicnost (a b c : ℝ) :
 /-- Za maturo, naloga 2 a): f(x) = −x² − 2x + 3: p = −(−2)/(2·(−1)) = −1, q = f(−1) = −1 + 2 + 3 = 4,
 f(x) = −(x + 1)² + 4.
 trditev: MAT-SS-2/kvadratna-funkcija#matura2a
-besedilo: »zato $p = -\dfrac{-2}{2 \cdot (-1)} = -1$ in $q = f(-1) = -1 + 2 + 3 = 4$.« -/
+besedilo: »zato $p = -\dfrac{-2}{2 \cdot (-1)} = -1$ in $q = f(-1) = -1 + 2 + 3 = 4$. Teme je $T(-1, 4)$. 2. a) Temenska oblika: $f(x) = -(x + 1)^2 + 4$.« -/
 theorem matura2a (x : ℝ) : -(-2 : ℝ) / (2 * (-1)) = -1 ∧ (-(-1 : ℝ) ^ 2 - 2 * (-1) + 3 = -1 + 2 + 3 ∧
     (-1 : ℝ) + 2 + 3 = 4) ∧ -x ^ 2 - 2 * x + 3 = -(x + 1) ^ 2 + 4 := by
   refine ⟨by norm_num, by norm_num, by ring⟩
@@ -683,7 +683,7 @@ theorem matura2a (x : ℝ) : -(-2 : ℝ) / (2 * (-1)) = -1 ∧ (-(-1 : ℝ) ^ 2 
 /-- Za maturo, naloga 2 b): −(x + 1)² + 4 = 0 ⇔ (x + 1)² = 4 ⇔ x + 1 = ±2 ⇔ x = −3 ali x = 1; f(0) = 3,
 zrcalna točka f(−2) = 3.
 trditev: MAT-SS-2/kvadratna-funkcija#matura2b
-besedilo: »b) Iz $-(x + 1)^2 + 4 = 0$ sledi $(x + 1)^2 = 4$ in $x + 1 = \pm 2$, torej $x_1 = -3$ in $x_2 = 1$.« -/
+besedilo: »Iz $-(x + 1)^2 + 4 = 0$ sledi $(x + 1)^2 = 4$ in $x + 1 = \pm 2$, torej $x_1 = -3$ in $x_2 = 1$. 4. b) $f(0) = 3$, presečišče z osjo $y$ je $(0, 3)$; zrcalna točka glede na os $x = -1$ je $(-2, 3)$.« -/
 theorem matura2b (x : ℝ) : (-(x + 1) ^ 2 + 4 = 0 ↔ x = -3 ∨ x = 1) ∧
     -(0 : ℝ) ^ 2 - 2 * 0 + 3 = 3 ∧ -(-2 : ℝ) ^ 2 - 2 * (-2) + 3 = 3 ∧ ((-2 : ℝ) + 0) / 2 = -1 := by
   refine ⟨?_, by norm_num, by norm_num, by norm_num⟩
@@ -694,7 +694,7 @@ theorem matura2b (x : ℝ) : (-(x + 1) ^ 2 + 4 = 0 ↔ x = -3 ∨ x = 1) ∧
 
 /-- Za maturo, naloga 2 c): Z_f = (−∞, 4], f narašča na (−∞, −1].
 trditev: MAT-SS-2/kvadratna-funkcija#matura2c
-besedilo: »Odgovor: $T(-1, 4)$, $f(x) = -(x + 1)^2 + 4$; ničli $-3$ in $1$, presečišče $(0, 3)$; $Z_f = (-\infty, 4]$, narašča na $(-\infty, -1]$.« -/
+besedilo: »Ker je $a < 0$, je $q = 4$ največja vrednost: $Z_f = (-\infty, 4]$. 7. c) Funkcija narašča levo od temena, na intervalu $(-\infty, -1]$.« -/
 theorem matura2c : range (fun x : ℝ => -x ^ 2 - 2 * x + 3) = Iic 4 ∧
     StrictMonoOn (fun x : ℝ => -x ^ 2 - 2 * x + 3) (Iic (-1)) := by
   have e : (fun x : ℝ => -x ^ 2 - 2 * x + 3) = fun x => -1 * (x - -1) ^ 2 + 4 := by funext x; ring
@@ -704,7 +704,7 @@ theorem matura2c : range (fun x : ℝ => -x ^ 2 - 2 * x + 3) = Iic 4 ∧
 /-- Za maturo, naloga 3 a): ograja 3x, stranica ob zidu 120 − 3x, P(x) = x(120 − 3x) = −3x² + 120x; model
 je smiseln za x > 0 in 120 − 3x > 0, tj. 0 < x < 40.
 trditev: MAT-SS-2/kvadratna-funkcija#matura3a
-besedilo: »a) Dolžini morata biti pozitivni: $x > 0$ in $120 - 3x > 0$, torej $0 < x < 40$.« -/
+besedilo: »Ploščina: $P(x) = x(120 - 3x) = -3x^2 + 120x$. 3. a) Dolžini morata biti pozitivni: $x > 0$ in $120 - 3x > 0$, torej $0 < x < 40$.« -/
 theorem matura3a (x : ℝ) : x * (120 - 3 * x) = -3 * x ^ 2 + 120 * x ∧
     ((0 < x ∧ 0 < 120 - 3 * x) ↔ (0 < x ∧ x < 40)) := by
   refine ⟨by ring, by constructor <;> rintro ⟨h1, h2⟩ <;> exact ⟨h1, by linarith⟩⟩
@@ -712,7 +712,7 @@ theorem matura3a (x : ℝ) : x * (120 - 3 * x) = -3 * x ^ 2 + 120 * x ∧
 /-- Za maturo, naloga 3 b): P(x) = −3x(x − 40), ničli 0 in 40, p = (0 + 40)/2 = 20 = −120/(2·(−3));
 največja ploščina P(20) = 20·60 = 1200 m² (dosežena le pri x = 20), 120 − 60 = 60 m.
 trditev: MAT-SS-2/kvadratna-funkcija#matura3b
-besedilo: »b) Ničelna oblika $P(x) = -3x(x - 40)$ ima ničli $0$ in $40$, zato je teme pri $p = \dfrac{0 + 40}{2} = 20$. Ker je $a = -3 < 0$, je tam največja vrednost.« -/
+besedilo: »Ničelna oblika $P(x) = -3x(x - 40)$ ima ničli $0$ in $40$, zato je teme pri $p = \dfrac{0 + 40}{2} = 20$. Ker je $a = -3 < 0$, je tam največja vrednost. 5. b) Mere: $x = 20\,\text{m}$ in $120 - 60 = 60\,\text{m}$; ploščina $P(20) = 20 \cdot 60 = 1200\,\text{m}^2$.« -/
 theorem matura3b (x : ℝ) : -3 * x ^ 2 + 120 * x = -3 * x * (x - 40) ∧ ((0 : ℝ) + 40) / 2 = 20 ∧
     -(120 : ℝ) / (2 * (-3)) = 20 ∧ (120 : ℝ) - 3 * 20 = 60 ∧
     (-3 * (20 : ℝ) ^ 2 + 120 * 20 = 20 * 60 ∧ (20 : ℝ) * 60 = 1200) ∧
@@ -725,7 +725,7 @@ theorem matura3b (x : ℝ) : -3 * x ^ 2 + 120 * x = -3 * x * (x - 40) ∧ ((0 : 
 /-- Za maturo, naloga 3 c): −3x² + 120x = 900 ⇔ x² − 40x + 300 = 0 ⇔ (x − 10)(x − 30) = 0 ⇔ x = 10 ali
 x = 30; mere 10 m × 90 m in 30 m × 30 m.
 trditev: MAT-SS-2/kvadratna-funkcija#matura3c
-besedilo: »c) Iz $-3x^2 + 120x = 900$ sledi $x^2 - 40x + 300 = 0$, torej $(x - 10)(x - 30) = 0$ in $x = 10$ ali $x = 30$.« -/
+besedilo: »Iz $-3x^2 + 120x = 900$ sledi $x^2 - 40x + 300 = 0$, torej $(x - 10)(x - 30) = 0$ in $x = 10$ ali $x = 30$. 7. c) Pri $x = 10$ je pašnik $10\,\text{m} \times 90\,\text{m}$, pri $x = 30$ pa $30\,\text{m} \times 30\,\text{m}$.« -/
 theorem matura3c (x : ℝ) : (-3 * x ^ 2 + 120 * x = 900 ↔ x ^ 2 - 40 * x + 300 = 0) ∧
     x ^ 2 - 40 * x + 300 = (x - 10) * (x - 30) ∧ (-3 * x ^ 2 + 120 * x = 900 ↔ x = 10 ∨ x = 30) ∧
     (120 : ℝ) - 3 * 10 = 90 ∧ (120 : ℝ) - 3 * 30 = 30 := by
@@ -813,7 +813,7 @@ theorem preveri6 : ((-1 : ℝ) + 5) / 2 = 2 ∧ (2 * ((2 : ℝ) + 1) * (2 - 5) =
 
 /-- Preveri se 7: g(x) = −(x − 1)² − 4 ima teme (1, −4), g(x) ≤ −4 < 0, zato nima realnih ničel.
 trditev: MAT-SS-2/kvadratna-funkcija#preveri7
-besedilo: »Funkcija $f(x) = (x - 1)^2 - 4$ ima teme $T(1, -4)$ in ničli $-1$ in $3$.« -/
+besedilo: »Zdaj sta $a$ in $q$ oba negativna: teme je najvišja točka in leži pod osjo $x$, zato realnih ničel ni.« -/
 theorem preveri7 : (∀ x : ℝ, -(x - 1) ^ 2 - 4 ≤ -4) ∧ -((1 : ℝ) - 1) ^ 2 - 4 = -4 ∧
     ∀ x : ℝ, -(x - 1) ^ 2 - 4 ≠ 0 := by
   refine ⟨fun x => by nlinarith [sq_nonneg (x - 1)], by norm_num,

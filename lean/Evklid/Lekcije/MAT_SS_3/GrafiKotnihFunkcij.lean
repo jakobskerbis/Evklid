@@ -151,7 +151,7 @@ theorem osnovna_enolicna {f : ℝ → ℝ} {T T' : ℝ} (h : OsnovnaPerioda f T)
 
 /-- Ustno vprašanje 2 in Bolj natančno: sin(u + s) = sin u za vsak u natanko takrat, ko je s večkratnik 2π.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#sin-premik
-besedilo: »Ker je $\sin(bx + bT) = \sin(bx)$ za vsak $x$ natanko takrat, ko je $bT$ večkratnik $2\pi$, je najmanjši tak $|b|T = 2\pi$, torej $T = \frac{2\pi}{|b|}$.« -/
+besedilo: »Sinus ima pri vsakem argumentu in pri argumentu, povečanem za $bT$, enako vrednost natanko takrat, ko je $bT$ večkratnik osnovne periode $2\pi$.« -/
 theorem sin_premik (s : ℝ) : (∀ u, sin (u + s) = sin u) ↔ ∃ k : ℤ, s = k * (2 * π) := by
   constructor
   · intro h
@@ -205,7 +205,7 @@ theorem resitve_tan (a x : ℝ) : (cos x ≠ 0 ∧ tan x = a) ↔ ∃ k : ℤ, x
 
 /-- Ustno vprašanje 1: tan(u + s) = tan u za vsak u natanko takrat, ko je s večkratnik π.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#tan-premik
-besedilo: »Tangens ima osnovno periodo $\pi$,« -/
+besedilo: »osnovna perioda pa je $\pi$: po pol obrata zamenjata predznak sinus in kosinus, njun količnik pa ostane enak. Manjša perioda ni mogoča, ker tangens med dvema asimptotama samo narašča.« -/
 theorem tan_premik (s : ℝ) : (∀ u, tan (u + s) = tan u) ↔ ∃ k : ℤ, s = k * π := by
   constructor
   · intro h
@@ -341,7 +341,7 @@ example :=
 /-- Razlaga 2 in Ustno vprašanje 1: sin in cos imata osnovno periodo 2π, tan pa π; 4π je tudi perioda
 sinusa, a ni osnovna (2π < 4π).
 trditev: MAT-SS-3/grafi-kotnih-funkcij#osnovne-periode
-besedilo: »Preveri:* ali je $4\pi$ tudi perioda sinusa? *Odgovor:* je, ker sta to dva obrata, a ni osnovna perioda.« -/
+besedilo: »Sinus in kosinus imata osnovno periodo $2\pi$, ker se točka na enotski krožnici po polnem obratu vrne na isto mesto. Tangens ima osnovno periodo $\pi$, ker po pol obrata sinus in kosinus oba zamenjata predznak, njun količnik pa ostane enak.« -/
 theorem osnovne_periode : OsnovnaPerioda sin (2 * π) ∧ OsnovnaPerioda cos (2 * π) ∧ OsnovnaPerioda tan π ∧
     (∀ x, sin (x + 4 * π) = sin x) ∧ 2 * π < 4 * π := by
   have hp := pi_pos
@@ -353,7 +353,7 @@ theorem osnovne_periode : OsnovnaPerioda sin (2 * π) ∧ OsnovnaPerioda cos (2 
 
 /-- Razlaga 1 (tabela): sin in cos pri 0, π/2, π, 3π/2, 2π; sin(3π/4) = sin(π/4) = √2/2 ≈ 0,71.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#tabela
-besedilo: »Njena višina $\sin\frac{3\pi}{4} \approx 0{,}71$ je hkrati višina grafa nad $\frac{3\pi}{4}$.« -/
+besedilo: »| $0$ | $0$ | $1$ | | $\frac{\pi}{2}$ | $1$ | $0$ | | $\pi$ | $0$ | $-1$ | | $\frac{3\pi}{2}$ | $-1$ | $0$ | | $2\pi$ | $0$ | $1$ |« -/
 theorem tabela : (sin 0 = 0 ∧ cos 0 = 1) ∧ (sin (π / 2) = 1 ∧ cos (π / 2) = 0) ∧ (sin π = 0 ∧ cos π = -1) ∧
     (sin (3 * π / 2) = -1 ∧ cos (3 * π / 2) = 0) ∧ (sin (2 * π) = 0 ∧ cos (2 * π) = 1) ∧
     sin (3 * π / 4) = √2 / 2 ∧ sin (π / 4) = sin (3 * π / 4) ∧ (0.705 : ℝ) < √2 / 2 ∧ √2 / 2 < 0.715 := by
@@ -367,7 +367,7 @@ theorem tabela : (sin 0 = 0 ∧ cos 0 = 1) ∧ (sin (π / 2) = 1 ∧ cos (π / 2
 
 /-- Razlaga 1, Preveri: na [0, 2π] je sin x najmanjši (−1) natanko pri x = 3π/2.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#min-sin
-besedilo: »Preveri:* pri katerem $x$ med $0$ in $2\pi$ je $\sin x$ najmanjši? *Odgovor:* pri $\frac{3\pi}{2}$, kjer je $\sin x = -1$.« -/
+besedilo: »pri $\frac{3\pi}{2}$, kjer je $\sin x = -1$.« -/
 theorem min_sin (x : ℝ) (h0 : 0 ≤ x) (h1 : x ≤ 2 * π) : sin x = -1 ↔ x = 3 * π / 2 := by
   have hp := pi_pos
   constructor
@@ -397,7 +397,7 @@ example :=
 /-- Razlaga 3 (tabela ničel in skrajnih vrednosti, Povzetek): sin x = 0 ⇔ x = kπ, cos x = 0 ⇔ x = π/2 + kπ,
 sin x = 1 ⇔ x = π/2 + 2kπ, cos x = 1 ⇔ x = 2kπ, sin x = −1 ⇔ x = 3π/2 + 2kπ, cos x = −1 ⇔ x = π + 2kπ.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#nicle-vrhovi
-besedilo: »Ničle:** $\sin x = 0$ pri $x = k\pi$, $\cos x = 0$ pri $x = \frac{\pi}{2} + k\pi$.« -/
+besedilo: »| $y = 0$ | $k\pi$ | $\frac{\pi}{2} + k\pi$ | | $y = 1$ | $\frac{\pi}{2} + 2k\pi$ | $2k\pi$ | | $y = -1$ | $\frac{3\pi}{2} + 2k\pi$ | $\pi + 2k\pi$ |« -/
 theorem nicle_vrhovi (x : ℝ) :
     (sin x = 0 ↔ ∃ k : ℤ, x = k * π) ∧ (cos x = 0 ↔ ∃ k : ℤ, x = π / 2 + k * π) ∧
     (sin x = 1 ↔ ∃ k : ℤ, x = π / 2 + 2 * k * π) ∧ (cos x = 1 ↔ ∃ k : ℤ, x = 2 * k * π) ∧
@@ -419,7 +419,7 @@ theorem nicle_vrhovi (x : ℝ) :
 /-- Razlaga 3 in Preveri se 1: graf kosinusa je graf sinusa, premaknjen za π/2 v levo (cos x = sin(x + π/2));
 sinus je lih, kosinus sod.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#sin-cos-zveza
-besedilo: »Graf kosinusa ima enako obliko kot graf sinusa, le premaknjen je za $\frac{\pi}{2}$ v levo: vrh ima pri $0$, sinus pa šele pri $\frac{\pi}{2}$.« -/
+besedilo: »Graf kosinusa ima enako obliko kot graf sinusa, le premaknjen je za $\frac{\pi}{2}$ v levo: vrh ima pri $0$, sinus pa šele pri $\frac{\pi}{2}$. Slika pokaže še simetriji. Graf sinusa je simetričen glede na izhodišče, $\sin(-x) = -\sin x$ (**liha** funkcija). Graf kosinusa je simetričen glede na os $y$, $\cos(-x) = \cos x$ (**soda** funkcija).« -/
 theorem sin_cos_zveza (x : ℝ) : cos x = sin (x + π / 2) ∧ sin (-x) = -sin x ∧ cos (-x) = cos x :=
   ⟨(sin_add_pi_div_two x).symm, sin_neg x, cos_neg x⟩
 
@@ -427,7 +427,7 @@ theorem sin_cos_zveza (x : ℝ) : cos x = sin (x + π / 2) ∧ sin (-x) = -sin x
 ima natanko pri kπ; zaloga vrednosti so vsa realna števila; na (−π/2, π/2) narašča; ob x → π/2 z leve gre proti
 +∞, ob x → −π/2 z desne proti −∞ (navpični asimptoti); tan(π/4) = 1.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#tangens
-besedilo: »Tangens ni definiran tam, kjer je $\cos x = 0$, torej pri $x = \frac{\pi}{2} + k\pi$.« -/
+besedilo: »Tangens ni definiran tam, kjer je $\cos x = 0$, torej pri $x = \frac{\pi}{2} + k\pi$. V teh točkah, **polih**, je imenovalec ulomka $\frac{\sin x}{\cos x}$ enak $0$. Tam ima graf **navpične asimptote**: premice, ki se jim graf vse bolj približuje, a jih ne doseže. Ničle ima pri $k\pi$, kjer je $\sin x = 0$. Zaloga vrednosti tangensa so vsa realna števila« -/
 theorem tangens :
     (∀ x, cos x = 0 ↔ ∃ k : ℤ, x = π / 2 + k * π) ∧
     (∀ x, (cos x ≠ 0 ∧ tan x = 0) ↔ ∃ k : ℤ, x = k * π) ∧ (∀ y, ∃ x, tan x = y) ∧
@@ -454,8 +454,7 @@ theorem kotangens : (∀ x, cot x = cos x / sin x) ∧ (∀ x, sin x = 0 ↔ ∃
     linarith
 
 /-- Razlaga 3 (kotangens): v Leanu je cot x = tan(π/2 − x) za vsak x (tudi v polih, kjer sta obe 0).
-trditev: MAT-SS-3/grafi-kotnih-funkcij#cot-tan
-besedilo: »Kotangens $\cot x = \frac{\cos x}{\sin x}$ ima pole pri $k\pi$,« -/
+pomozno -/
 theorem cot_tan (x : ℝ) : cot x = tan (π / 2 - x) := by
   rw [cot_eq_cos_div_sin, tan_eq_sin_div_cos, sin_pi_div_two_sub, cos_pi_div_two_sub]
 
@@ -474,7 +473,7 @@ theorem kotangens_perioda : OsnovnaPerioda cot π := by
 
 /-- Razlaga 3, Premisli: sin 4 < 0, ker je π ≈ 3,14 < 4 < 3π/2 ≈ 4,71.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#sin4
-besedilo: »$\pi \approx 3{,}14 < 4 < \frac{3\pi}{2} \approx 4{,}71$« -/
+besedilo: »Negativen. Velja $\pi \approx 3{,}14 < 4 < \frac{3\pi}{2} \approx 4{,}71$, na tem delu pa je graf sinusa pod osjo $x$ (padajoč proti $-1$).« -/
 theorem sin4 : π < 4 ∧ 4 < 3 * π / 2 ∧ sin 4 < 0 := by
   have p1 := pi_gt_d6; have p2 := pi_lt_d6
   refine ⟨by linarith, by linarith, ?_⟩
@@ -484,7 +483,7 @@ theorem sin4 : π < 4 ∧ 4 < 3 * π / 2 ∧ sin 4 < 0 := by
 /-- Razlaga 3–5 in Preveri se 1, 5: osnovne periode tan 2x = π/2 (ne π), sin 2x = π (ne 4π, ki je le perioda),
 sin(x/3) = 6π, sin(x/2) = 4π, 3 sin x = 2π; vrstni red π/2 < π < 2π < 4π.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#periode
-besedilo: »Zaporedna vrhova sta pri $x = 1$ in $x = 5$, zato je $T = 5 - 1 = 4$. Od vrha do dna pri $x = 3$ je pol periode. Narisana je $f(x) = 3\sin\left(\frac{\pi}{2}x\right) + 1$.« -/
+besedilo: »Pravilno: $T = \frac{2\pi}{|b|}$, pri $\sin 2x$ je $T = \pi$.« -/
 theorem periode :
     OsnovnaPerioda (fun x => tan (2 * x)) (π / 2) ∧ OsnovnaPerioda (fun x => sin (2 * x)) π ∧
     OsnovnaPerioda (fun x => sin (x / 3)) (6 * π) ∧ OsnovnaPerioda (fun x => sin (x / 2)) (4 * π) ∧
@@ -511,7 +510,7 @@ theorem periode :
 zalogo [−1, 1] (ni dvakrat višji val) in periodo π; y = −3 sin x ima amplitudo 3 (zaloga [−3, 3]); sin(−2x) =
 −sin 2x (zrcaljenje, perioda ostane).
 trditev: MAT-SS-3/grafi-kotnih-funkcij#amplitude
-besedilo: »Napoved.** Graf $y = \sin x$ je tak val. Eden od zapisov $y = 2\sin x$ in $y = \sin 2x$ opiše glasnejši žvižg, drugi višji ton. Kateri je kateri? Zapiši si odgovor; v 5. razdelku ga preveriš.« -/
+besedilo: »Graf $y = 2\sin x$ dobiš tako, da vsako vrednost sinusa podvojiš. Val sega od $-2$ do $2$, ničle ostanejo na mestu.« -/
 theorem amplitude :
     (∀ x, 2 * sin x ∈ Icc (-2 : ℝ) 2) ∧ 2 * sin (π / 2) = 2 ∧ OsnovnaPerioda (fun x => 2 * sin x) (2 * π) ∧
     (∀ x, sin (2 * x) ∈ Icc (-1 : ℝ) 1) ∧
@@ -552,7 +551,7 @@ theorem premiki (c x : ℝ) : sin (c - c) = sin 0 ∧ sin (x + 1) = sin (x - (-1
 izpostavimo b: sin(bx − p) = sin(b(x − p/b)) za b ≠ 0; 2x − π/2 = 2(x − π/4), 2x − π/3 = 2(x − π/6); val
 sin(2x − π/2) se začne pri x = π/4 (argument 0); sin(x − π/3) ima vrednost sin 0 pri x = π/3 (premik v desno).
 trditev: MAT-SS-3/grafi-kotnih-funkcij#izpostavi
-besedilo: »Pazi na obliko.** Če je funkcija zapisana kot $\sin(2x - \frac{\pi}{2})$, najprej izpostavi $b$: $2x - \frac{\pi}{2} = 2\left(x - \frac{\pi}{4}\right)$.« -/
+besedilo: »Pred branjem premika izpostavi $b$: $$\sin(bx - p) = \sin\big(b(x - \tfrac{p}{b})\big)$$« -/
 theorem izpostavi (b p x : ℝ) (hb : b ≠ 0) : sin (b * x - p) = sin (b * (x - p / b)) ∧
     2 * x - π / 2 = 2 * (x - π / 4) ∧ 2 * x - π / 3 = 2 * (x - π / 6) ∧ 2 * (π / 4) - π / 2 = 0 ∧
     π / 3 - π / 3 = 0 := by
@@ -568,7 +567,7 @@ example :=
 
 /-- Razlaga 8 (simulacija): pri b = 2, c = π/4 je perioda π in val se začne pri x = π/4 (vrednost d).
 trditev: MAT-SS-3/grafi-kotnih-funkcij#simulacija-8
-besedilo: »V simulaciji spodaj (»Graf A sin(b(x − c)) + d«) spreminjaj vse štiri hkrati. Nastavi $b = 2$ in $c = \frac{\pi}{4}$: kolikšna je perioda in kje se začne val? *Odgovor:* perioda je $\pi$, val se začne pri $x = \frac{\pi}{4}$.« -/
+besedilo: »perioda je $\pi$, val se začne pri $x = \frac{\pi}{4}$.« -/
 theorem simulacija_8 (A d : ℝ) (hA : A ≠ 0) :
     OsnovnaPerioda (fun x => A * sin (2 * (x - π / 4)) + d) π ∧ A * sin (2 * (π / 4 - π / 4)) + d = d := by
   have := (splosna_sinus A 2 (π / 4) d hA two_ne_zero).1
@@ -662,7 +661,7 @@ sin(2π·42/365) ≈ 0,662, D(121) ≈ 14,6 h; D(t) = 15,8 natanko pri t = 79 + 
 ≈ 170), najkrajši dan pri 79 − 365/4 + 365 = 352,75 ≈ 353 (D = 8,6); dnevi: 20. 3. = 31 + 28 + 20 = 79,
 1. 5. = 121, 19. 6. = 170, 19. 12. = 353.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#primer3
-besedilo: »Za 1. maj je $t - c = 121 - 79 = 42$. Argument sinusa je $\frac{2\pi \cdot 42}{365} \approx 0{,}723$ (v radianih) in $\sin 0{,}723 \approx 0{,}662$.« -/
+besedilo: »Odgovor: $D(t) = 3{,}6\sin\left(\frac{2\pi}{365}(t - 79)\right) + 12{,}2$ (v urah). Po modelu traja dan 1. maja približno $14{,}6\,\text{h}$, najdaljši pa je 19. junija.« -/
 theorem primer3 :
     ((15.8 : ℝ) + 8.6) / 2 = 12.2 ∧ ((15.8 : ℝ) - 8.6) / 2 = 3.6 ∧
     OsnovnaPerioda (fun t => 3.6 * sin (2 * π / 365 * (t - 79)) + 12.2) 365 ∧
@@ -723,7 +722,7 @@ theorem primer3 :
 f(x) = 3 sin(π/2·(x − 1)) + 2 gre skozi (1; 2), (2; 5), (4; −1), (5; 2), ima osnovno periodo 4, in isti
 predpis dajo c = 5, c = −3 ter 3 cos(π/2·(x − 2)) + 2 (RACUN `enako`).
 trditev: MAT-SS-3/grafi-kotnih-funkcij#primer4
-besedilo: »Zaporedna vrhova sta pri $x = 1$ in $x = 5$, zato je $T = 5 - 1 = 4$. Od vrha do dna pri $x = 3$ je pol periode. Narisana je $f(x) = 3\sin\left(\frac{\pi}{2}x\right) + 1$.« -/
+besedilo: »$b = \frac{2\pi}{4} = \frac{\pi}{2}$. Val se začne na srednji črti pri $x = 1$, zato je $c = 1$. Torej $f(x) = 3\sin\big(\frac{\pi}{2}(x - 1)\big) + 2$. Preizkus: $f(2) = 3\sin\frac{\pi}{2} + 2 = 5$, kar je vrh na sliki. Ustrezal bi tudi $c = 5$ ali $c = -3$, ker je perioda $4$. Isti graf opiše tudi $3\cos\big(\frac{\pi}{2}(x - 2)\big) + 2$, ker se kosinusni val začne v vrhu $(2; 5)$.« -/
 theorem primer4 :
     ((5 : ℝ) - (-1)) / 2 = 3 ∧ ((5 : ℝ) + (-1)) / 2 = 2 ∧ (5 : ℝ) - 1 = 4 ∧ 2 * π / 4 = π / 2 ∧
     3 * sin (π / 2 * (1 - 1)) + 2 = 2 ∧ 3 * sin (π / 2 * (2 - 1)) + 2 = 5 ∧
@@ -749,7 +748,7 @@ theorem primer4 :
 /-- Primer 4: premik c da isto funkcijo 3 sin(π/2·(x − c)) + 2 natanko tedaj, ko je c = 1 + 4k (k ∈ ℤ);
 zato je c = 1 najmanjši pozitivni premik.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#primer4-premiki
-besedilo: »$f(x) = 3\sin\big(\frac{\pi}{2}(x - 1)\big) + 2$« -/
+besedilo: »Val se začne na srednji črti pri $x = 1$, zato je $c = 1$. Torej $f(x) = 3\sin\big(\frac{\pi}{2}(x - 1)\big) + 2$. Preizkus: $f(2) = 3\sin\frac{\pi}{2} + 2 = 5$, kar je vrh na sliki. Ustrezal bi tudi $c = 5$ ali $c = -3$, ker je perioda $4$.« -/
 theorem primer4_premiki :
     (∀ c : ℝ, (∀ x, 3 * sin (π / 2 * (x - c)) + 2 = 3 * sin (π / 2 * (x - 1)) + 2) ↔
       ∃ k : ℤ, c = 1 + 4 * k) ∧
@@ -788,7 +787,7 @@ example : (0 : ℝ) < 1 ∧ (1 : ℝ) = 1 + 4 * ((0 : ℤ) : ℝ) := by norm_num
 
 /-- Naloga 2 d): na [0, π] ima f(x) = 2 cos(2x − π/3) − 1 ničle natanko pri x = 0, π/3 in π.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#matura2-nicle
-besedilo: »$f(x) = 2\cos\left(2x - \frac{\pi}{3}\right) - 1$« -/
+besedilo: »Robni točki sta $(0, 0)$ in $(\pi, 0)$, ker je $f(\pi) = 2\cos\frac{5\pi}{3} - 1 = 0$; graf seka os $x$ še pri $\frac{\pi}{3}$.« -/
 theorem matura2_nicle (x : ℝ) (hx : x ∈ Icc 0 π) :
     2 * cos (2 * x - π / 3) - 1 = 0 ↔ x = 0 ∨ x = π / 3 ∨ x = π := by
   have hp := pi_pos
@@ -831,7 +830,7 @@ example :=
 /-- Pogoste napake: pri 3 sin x − 1 je amplituda 3 (največja vrednost 2 ni amplituda; zaloga [−4, 2]); zaloga
 4 cos x + 1 je [−3, 5], ne [−4, 4]; amplituda −2 sin x je |−2| = 2.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#pogoste
-besedilo: »ker je največja vrednost $2$.« ali »$Z_f$ funkcije $4\cos x + 1$ je $[-4, 4]$.« Amplitudo merimo od srednje črte $y = d$,« -/
+besedilo: »**Srednja črta prezrta.** »Pri $3\sin x - 1$ je amplituda $2$, ker je največja vrednost $2$.« ali »$Z_f$ funkcije $4\cos x + 1$ je $[-4, 4]$.« Amplitudo merimo od srednje črte $y = d$, ne od osi $x$: pri $3\sin x - 1$ je $3$, pri $4\cos x + 1$ pa je $Z_f = [-3, 5]$. Amplituda je razdalja, zato pri $-2\sin x$ ni $-2$, ampak $2$.« -/
 theorem pogoste :
     range (fun x => 3 * sin (1 * (x - 0)) + -1) = Icc (-4) 2 ∧
     range (fun x => 4 * cos (1 * (x - 0)) + 1) = Icc (-3) 5 ∧ Icc (-3 : ℝ) 5 ≠ Icc (-4) 4 ∧
@@ -851,7 +850,7 @@ theorem pogoste :
 natanko tedaj, ko je d = (5 + (−1))/2 = 2, A = (5 − (−1))/2 = 3 in b = 3 (iz 2π/b = 2π/3, RACUN), torej
 f(x) = 3 cos 3x + 2.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#matura1
-besedilo: »Srednja črta je na sredini zaloge vrednosti: $d = \frac{5 + (-1)}{2} = 2$.« -/
+besedilo: »Srednja črta je na sredini zaloge vrednosti: $d = \frac{5 + (-1)}{2} = 2$. 2. Amplituda je polovica razlike med največjo in najmanjšo vrednostjo: $A = \frac{5 - (-1)}{2} = 3$. 3. Iz $T = \frac{2\pi}{b} = \frac{2\pi}{3}$ sledi $b = 3$. 4. Odgovor: $f(x) = 3\cos 3x + 2$.« -/
 theorem matura1 (A b d : ℝ) (hA : 0 < A) (hb : 0 < b) :
     (range (fun x => A * cos (b * x) + d) = Icc (-1) 5 ∧ OsnovnaPerioda (fun x => A * cos (b * x) + d) (2 * π / 3))
       ↔ (d = 2 ∧ A = 3 ∧ b = 3) := by
@@ -956,7 +955,7 @@ T = 12,4 h, b = 2π/12,4 = π/6,2 ≈ 0,5067, c = (3 + 9,2)/2 = 6,1; h(t) = 2,2 
 osnovno periodo 12,4, h(3) = 1,8 (oseka) in h(9,2) = 6,2 (plima); c = 6,1 je najmanjši pozitivni premik, pri
 katerem je plima ob 9,2.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#matura3a
-besedilo: »a) Ura 9.12 je $t = 9{,}2$, ker je $12\,\text{min} = 0{,}2\,\text{h}$. Od oseke do plime mine pol periode, $9{,}2 - 3 = 6{,}2$, zato je $T = 12{,}4\,\text{h}$ in $b = \frac{2\pi}{12{,}4} = \frac{\pi}{6{,}2} \approx 0{,}5067$.« -/
+besedilo: »Odgovor: a) $A = 2{,}2$, $b = \frac{\pi}{6{,}2} \approx 0{,}507$, $c = 6{,}1$, $d = 4$« -/
 theorem matura3a :
     ((6.2 : ℝ) + 1.8) / 2 = 4 ∧ ((6.2 : ℝ) - 1.8) / 2 = 2.2 ∧ (12 : ℝ) / 60 = 0.2 ∧ (9.2 : ℝ) - 3 = 6.2 ∧
     2 * (6.2 : ℝ) = 12.4 ∧ 2 * π / 12.4 = π / 6.2 ∧ (0.50665 : ℝ) < π / 6.2 ∧ π / 6.2 < 0.50675 ∧
@@ -988,7 +987,7 @@ theorem matura3a :
 /-- Naloga 3 b): ob 14.00 je argument π/6,2·(14 − 6,1) ≈ 4,00300, sin ≈ −0,758758 in globina h(14) ≈ 2,33073
 ≈ 2,33 m.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#matura3b
-besedilo: »b) $h(14) = 2{,}2\sin\left(\frac{\pi}{6{,}2} \cdot 7{,}9\right) + 4$. Računalo mora biti v načinu RAD: argument je približno $4{,}00300$ in $\sin 4{,}00300 \approx -0{,}758758$.« -/
+besedilo: »$h(14) = 2{,}2\sin\left(\frac{\pi}{6{,}2} \cdot 7{,}9\right) + 4$. Računalo mora biti v načinu RAD: argument je približno $4{,}00300$ in $\sin 4{,}00300 \approx -0{,}758758$. 6. b) $h(14) \approx 2{,}2 \cdot (-0{,}758758) + 4 \approx 2{,}33073$, globina je približno $2{,}33\,\text{m}$.« -/
 theorem matura3b :
     (4.002995 : ℝ) < π / 6.2 * (14 - 6.1) ∧ π / 6.2 * (14 - 6.1) < 4.003005 ∧
     (-0.7587585 : ℝ) < sin (π / 6.2 * (14 - 6.1)) ∧ sin (π / 6.2 * (14 - 6.1)) < -0.7587575 ∧
@@ -1075,7 +1074,7 @@ theorem matura3d :
 /-- Ustno vprašanje 2 in Bolj natančno: sin(b(x + T)) = sin(bx) za vsak x (b ≠ 0) natanko takrat, ko je bT
 večkratnik 2π; zato je osnovna perioda sin(bx) enaka 2π/|b|.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#ustno2
-besedilo: »Sinus ima pri vsakem argumentu in pri argumentu, povečanem za $bT$, enako vrednost natanko takrat, ko je $bT$ večkratnik osnovne periode $2\pi$.« -/
+besedilo: »Ker je $\sin(bx + bT) = \sin(bx)$ za vsak $x$ natanko takrat, ko je $bT$ večkratnik $2\pi$, je najmanjši tak $|b|T = 2\pi$, torej $T = \frac{2\pi}{|b|}$.« -/
 theorem ustno2 (b T : ℝ) (hb : b ≠ 0) :
     ((∀ x, sin (b * (x + T)) = sin (b * x)) ↔ ∃ k : ℤ, b * T = k * (2 * π)) ∧
     OsnovnaPerioda (fun x => sin (b * x)) (2 * π / |b|) := by
@@ -1103,7 +1102,7 @@ example :=
 (razmik četrtine periode π/4); kosinus začne v vrhu: cos 0 = 1, cos(π/2) = 0, cos π = −1, cos(3π/2) = 0,
 cos 2π = 1.
 trditev: MAT-SS-3/grafi-kotnih-funkcij#na-sliki
-besedilo: »$f(x) = 2\sin\big(2(x - \frac{\pi}{4})\big) + 1$« -/
+besedilo: »Val se začne pri $x = c = \frac{\pi}{4}$ na srednji črti $y = 1$. Perioda je $\pi$, zato so točke narazen za $\frac{\pi}{4}$: pri $\frac{\pi}{4}$, $\frac{\pi}{2}$, $\frac{3\pi}{4}$, $\pi$ in $\frac{5\pi}{4}$. Njihove višine so $1$, $3$, $1$, $-1$, $1$.« -/
 theorem na_sliki :
     2 * sin (2 * (π / 4 - π / 4)) + 1 = 1 ∧ 2 * sin (2 * (π / 2 - π / 4)) + 1 = 3 ∧
     2 * sin (2 * (3 * π / 4 - π / 4)) + 1 = 1 ∧ 2 * sin (2 * (π - π / 4)) + 1 = -1 ∧

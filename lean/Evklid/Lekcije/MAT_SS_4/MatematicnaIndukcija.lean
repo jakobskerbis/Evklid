@@ -36,7 +36,7 @@ theorem liha_primeri : 1 = 1 ^ 2 ∧ 1 + 3 + 5 + 7 = 16 ∧ 16 = 4 ^ 2 := by nor
 /-- Razlaga, korak: naslednje liho število je 2(n + 1) − 1 = 2n + 1 in n² + 2n + 1 = (n + 1)²;
 stožci: kvadrat n × n dopolni pas n + n + 1 = 2n + 1 stožcev.
 trditev: MAT-SS-4/matematicna-indukcija#liha-korak
-besedilo: »Naslednje liho število je $2(n + 1) - 1 = 2n + 1$.« -/
+besedilo: »Naslednje liho število je $2(n + 1) - 1 = 2n + 1$. Če ga prištejemo: $$1 + 3 + \dots + (2n - 1) + (2n + 1) = n^2 + 2n + 1$$ Desna stran je $(n + 1)^2$. Torej trditev velja tudi za $n + 1$. S stožci: kvadrat $n \times n$ dopolniš s pasom $2n + 1$ stožcev (vrstica in stolpec po $n$ ter vogal)« -/
 theorem liha_korak (n : ℤ) :
     2 * (n + 1) - 1 = 2 * n + 1 ∧ n ^ 2 + (2 * n + 1) = n ^ 2 + 2 * n + 1 ∧
     n ^ 2 + 2 * n + 1 = (n + 1) ^ 2 ∧ n + n + 1 = 2 * n + 1 := by
@@ -45,7 +45,7 @@ theorem liha_korak (n : ℤ) :
 /-- Bolj natančno: načelo matematične indukcije, dokazano kot v lekciji z najmanjšim protiprimerom
 m: P(1) velja, zato je m > 1, P(m − 1) velja, po koraku tudi P(m), protislovje.
 trditev: MAT-SS-4/matematicna-indukcija#nacelo
-besedilo: »Ker $P(1)$ velja, je $m > 1$, zato je $m - 1$ naravno število in $P(m - 1)$ velja, ker je $m$ najmanjši protiprimer.« -/
+besedilo: »Če je $P(1)$ resnična in za vsak $n \in \mathbb{N}$ velja $P(n) \Rightarrow P(n + 1)$, je $P(n)$ resnična za vsa $n \in \mathbb{N}$.« -/
 theorem nacelo (P : ℕ → Prop) (h1 : P 1) (hk : ∀ n, 1 ≤ n → P n → P (n + 1)) :
     ∀ n, 1 ≤ n → P n := by
   by_contra hc
@@ -64,7 +64,7 @@ theorem nacelo (P : ℕ → Prop) (h1 : P 1) (hk : ∀ n, 1 ≤ n → P n → P 
 
 /-- Bolj natančno, različice: indukcija z bazo pri n₀ (P(n₀) in korak za n ≥ n₀ ⇒ P(n) za vse n ≥ n₀).
 trditev: MAT-SS-4/matematicna-indukcija#nacelo-n0
-besedilo: »Različice.** Baza je lahko pri $n_0$ namesto pri $1$; dokaz velja za $n \ge n_0$. Pri **krepki indukciji** v koraku predpostavimo, da $P(k)$ velja za vse $k$ od $n_0$ do $n$, ne le za $n$; to je priročno, ko je izraz za $n + 1$ odvisen od več prejšnjih.« -/
+besedilo: »Baza je lahko pri $n_0$ namesto pri $1$; dokaz velja za $n \ge n_0$.« -/
 theorem nacelo_n0 (P : ℕ → Prop) (n₀ : ℕ) (h0 : P n₀) (hk : ∀ n, n₀ ≤ n → P n → P (n + 1)) :
     ∀ n, n₀ ≤ n → P n := fun n hn => Nat.le_induction h0 hk n hn
 
@@ -115,7 +115,7 @@ example :=
 /-- Razlaga, »Premisli« in pogoste napake: za »2n + 1 je deljivo z 2« korak velja (2n + 1 deljivo z 2 ⇒
 2(n + 1) + 1 = (2n + 1) + 2 deljivo z 2), baza ne (3 ni sodo), trditev ne velja za noben n.
 trditev: MAT-SS-4/matematicna-indukcija#brez-baze
-besedilo: »Ne vemo, ali katera domina sploh pade. Korak pove le, da padec ene povzroči padec naslednje. Trditev »$2n + 1$ je deljivo z $2$« ima pravilen korak ($2(n + 1) + 1$ je za $2$ večje od $2n + 1$), baza pa ne drži: $3$ ni sodo. Trditev ne velja za noben $n$.« -/
+besedilo: »Trditev »$2n + 1$ je deljivo z $2$« ima pravilen korak ($2(n + 1) + 1$ je za $2$ večje od $2n + 1$), baza pa ne drži: $3$ ni sodo. Trditev ne velja za noben $n$.« -/
 theorem brez_baze :
     (∀ n : ℕ, 2 ∣ 2 * n + 1 → 2 ∣ 2 * (n + 1) + 1) ∧ ¬ 2 ∣ 2 * 1 + 1 ∧ ∀ n : ℕ, ¬ 2 ∣ 2 * n + 1 := by
   refine ⟨fun n h => ?_, by decide, fun n => by omega⟩
@@ -133,7 +133,7 @@ theorem iz_napacne : (1 : ℤ) ≠ -1 ∧ ((1 : ℤ) = -1 → (1 : ℤ) ^ 2 = (-
 /-- Primer 1: 1 + 2 + … + n = n(n + 1)/2 za vsak n (v ℝ), z bazo 1 = 1·2/2 in korakom
 n(n + 1)/2 + (n + 1) = (n + 1)(n/2 + 1) = (n + 1)(n + 2)/2.
 trditev: MAT-SS-4/matematicna-indukcija#primer1
-besedilo: »$\frac{n(n + 1)}{2} + (n + 1) = (n + 1)\left(\frac{n}{2} + 1\right) = \frac{(n + 1)(n + 2)}{2}$« -/
+besedilo: »Odgovor: vsota je vedno $\frac{n(n + 1)}{2}$« -/
 theorem primer1 (n : ℕ) : ∑ k ∈ range n, ((k : ℝ) + 1) = n * (n + 1) / 2 := by
   induction n with
   | zero => simp
@@ -162,7 +162,7 @@ theorem primer1_tekme (n : ℕ) :
 = (n³ + 2n) + 3(n² + n + 1), in iz n³ + 2n = 3k sledi 3(k + n² + n + 1); baza 1 + 2 = 3; preizkus
 n = 4: 72 = 3·24.
 trditev: MAT-SS-4/matematicna-indukcija#primer2
-besedilo: »Odgovor: $n^3 + 2n$ je deljivo s $3$ za vsako naravno število (preizkus: $n = 4$ da $72 = 3 \cdot 24$).« -/
+besedilo: »Odgovor: $n^3 + 2n$ je deljivo s $3$ za vsako naravno število« -/
 theorem primer2 (n : ℕ) : 3 ∣ n ^ 3 + 2 * n := by
   induction n with
   | zero => simp
@@ -176,7 +176,7 @@ theorem primer2 (n : ℕ) : 3 ∣ n ^ 3 + 2 * n := by
 
 /-- Primer 2: baza 1³ + 2·1 = 3 in preizkus n = 4: 4³ + 2·4 = 72 = 3·24.
 trditev: MAT-SS-4/matematicna-indukcija#primer2-racuni
-besedilo: »Odgovor: $n^3 + 2n$ je deljivo s $3$ za vsako naravno število (preizkus: $n = 4$ da $72 = 3 \cdot 24$).« -/
+besedilo: »preizkus: $n = 4$ da $72 = 3 \cdot 24$« -/
 theorem primer2_racuni : 1 ^ 3 + 2 * 1 = 3 ∧ 4 ^ 3 + 2 * 4 = 72 ∧ 72 = 3 * 24 := by norm_num
 
 /-- Primer 3, tabela: 2ⁿ = 2, 4, 8, 16, 32 in n² = 1, 4, 9, 16, 25 za n = 1, …, 5.
@@ -189,7 +189,7 @@ theorem primer3_tabela :
 /-- Primer 3, koraka 5–6: 2n² − (n + 1)² = (n − 1)² − 2; za n ≥ 5 je (n − 1)² ≥ 16, razlika je pozitivna
 že za n ≥ 3 ((n − 1)² ≥ 2² > 2).
 trditev: MAT-SS-4/matematicna-indukcija#primer3-pomozna
-besedilo: »Za $n \ge 5$ je $(n - 1)^2 \ge 16$, zato je razlika pozitivna in $2^{n + 1} > (n + 1)^2$. (Razlika je pozitivna že od $n = 3$ naprej, saj je $2^2 - 2 > 0$; korak torej velja za $n \ge 3$.)« -/
+besedilo: »Razlika je $2n^2 - (n + 1)^2 = (n - 1)^2 - 2$. 6. Za $n \ge 5$ je $(n - 1)^2 \ge 16$, zato je razlika pozitivna in $2^{n + 1} > (n + 1)^2$. (Razlika je pozitivna že od $n = 3$ naprej, saj je $2^2 - 2 > 0$; korak torej velja za $n \ge 3$.)« -/
 theorem primer3_pomozna (n : ℤ) :
     2 * n ^ 2 - (n + 1) ^ 2 = (n - 1) ^ 2 - 2 ∧ (5 ≤ n → 16 ≤ (n - 1) ^ 2) ∧
     (3 ≤ n → 0 < (n - 1) ^ 2 - 2) := by
@@ -197,7 +197,7 @@ theorem primer3_pomozna (n : ℤ) :
 
 /-- Primer 3: 2ⁿ > n² za vsak n ≥ 5 (baza 32 > 25; korak 2ⁿ⁺¹ = 2·2ⁿ > 2n² ≥ (n + 1)²).
 trditev: MAT-SS-4/matematicna-indukcija#primer3
-besedilo: »Tabela: $n = 1, 2, 3, 4, 5$ da $2^n = 2, 4, 8, 16, 32$ in $n^2 = 1, 4, 9, 16, 25$.« -/
+besedilo: »Odgovor: od $5.$ kroga naprej podvajanje vedno prinese več točk.« -/
 theorem primer3 : ∀ n : ℕ, 5 ≤ n → n ^ 2 < 2 ^ n := by
   intro n hn
   induction n, hn using Nat.le_induction with
@@ -211,7 +211,7 @@ theorem primer3 : ∀ n : ℕ, 5 ≤ n → n ^ 2 < 2 ^ n := by
 /-- Primer 3, odgovor: najmanjši n₀, od katerega naprej je vedno 2ⁿ > n², je 5: pri n = 4 trditev ne
 velja (16 = 16), pri n = 3 tudi ne (8 < 9), pri 2 sta enaka (2² = 4 = 2²).
 trditev: MAT-SS-4/matematicna-indukcija#primer3-n0
-besedilo: »Tabela: $n = 1, 2, 3, 4, 5$ da $2^n = 2, 4, 8, 16, 32$ in $n^2 = 1, 4, 9, 16, 25$. Pri $n = 3$ je kvadrat večji, pri $2$ in $4$ sta enaka, od $5$ naprej vodi podvajanje. Domneva: $n_0 = 5$.« -/
+besedilo: »Pri $n = 3$ je kvadrat večji, pri $2$ in $4$ sta enaka, od $5$ naprej vodi podvajanje. Domneva: $n_0 = 5$.« -/
 theorem primer3_n0 :
     (∀ n : ℕ, 5 ≤ n → n ^ 2 < 2 ^ n) ∧ ¬ (4 ^ 2 < 2 ^ 4) ∧ 2 ^ 3 < 3 ^ 2 ∧
     ((fun n : ℕ => 2 ^ n) 2 = 4 ∧ (fun n : ℕ => n ^ 2) 2 = 4) ∧
@@ -254,7 +254,7 @@ example : True :=
 
 /-- Pogoste napake 1: n² + n + 41 je praštevilo za vse n od 1 do 39, pri n = 40 pa 1681 = 41².
 trditev: MAT-SS-4/matematicna-indukcija#euler
-besedilo: »»Preveril sem dovolj primerov.«** Izraz $n^2 + n + 41$ da praštevilo za vse $n$ od $1$ do $39$, pri $n = 40$ pa $1681 = 41^2$.« -/
+besedilo: »Izraz $n^2 + n + 41$ da praštevilo za vse $n$ od $1$ do $39$, pri $n = 40$ pa $1681 = 41^2$.« -/
 theorem euler :
     (∀ n ∈ Finset.Icc 1 39, Nat.Prime (n ^ 2 + n + 41)) ∧ 40 ^ 2 + 40 + 41 = 1681 ∧ 1681 = 41 ^ 2 ∧
     ¬ Nat.Prime (40 ^ 2 + 40 + 41) := by
@@ -267,7 +267,7 @@ theorem euler :
 /-- Pogoste napake 3: pri 2ⁿ > n² je baza n = 1 resnična (2 > 1), korak iz 1 v 2 odpove (4 > 4 ne
 drži), n = 3 ni baza (8 < 9).
 trditev: MAT-SS-4/matematicna-indukcija#baza-napacna
-besedilo: »Baza na napačnem mestu.** Pri $2^n > n^2$ je baza $n = 1$ resnična ($2 > 1$), vendar korak iz $1$ v $2$ odpove ($4 > 4$ ne drži), dokazali pa smo ga le za $n \ge 3$.« -/
+besedilo: »Pri $2^n > n^2$ je baza $n = 1$ resnična ($2 > 1$), vendar korak iz $1$ v $2$ odpove ($4 > 4$ ne drži), dokazali pa smo ga le za $n \ge 3$. Tudi $n = 3$ ni baza, ker je $8 < 9$.« -/
 theorem baza_napacna : 1 ^ 2 < 2 ^ 1 ∧ ¬ (2 ^ 2 < 2 ^ 2) ∧ 2 ^ 3 < 3 ^ 2 := by norm_num
 
 /-! ## Za maturo -/
@@ -330,7 +330,7 @@ theorem matura2a : S 1 = 1 / 2 ∧ S 2 = 1 / 2 + 1 / 6 ∧ (1 / 2 + 1 / 6 : ℝ)
 /-- Naloga 2 b): Sₙ = n/(n + 1); korak n/(n + 1) + 1/((n + 1)(n + 2)) = (n² + 2n + 1)/((n + 1)(n + 2))
 = (n + 1)²/((n + 1)(n + 2)) = (n + 1)/(n + 2); baza S₁ = 1/2 = 1/(1 + 1).
 trditev: MAT-SS-4/matematicna-indukcija#matura2b
-besedilo: »$S_{n+1} = S_n + \dfrac{1}{(n + 1)(n + 2)} = \dfrac{n}{n + 1} + \dfrac{1}{(n + 1)(n + 2)} = \dfrac{n^2 + 2n + 1}{(n + 1)(n + 2)} = \dfrac{(n + 1)^2}{(n + 1)(n + 2)} = \dfrac{n + 1}{n + 2}$« -/
+besedilo: »Odgovor: a) $S_n = \dfrac{n}{n + 1}$; b) domneva je dokazana« -/
 theorem matura2b (n : ℕ) : S n = n / (n + 1) := by
   induction n with
   | zero => simp [S]
@@ -348,7 +348,7 @@ theorem matura2b (n : ℕ) : S n = n / (n + 1) := by
 /-- Naloga 2 c): vsota vrste je lim n/(n + 1) = lim 1/(1 + 1/n) = 1; 1 − Sₙ = 1/(n + 1);
 1/(n + 1) < 0,01 ⇔ n > 99; najmanjši n je 100, pri n = 99 je razlika natanko 0,01.
 trditev: MAT-SS-4/matematicna-indukcija#matura2c
-besedilo: »c) Razlika do vsote je $1 - S_n = 1 - \dfrac{n}{n + 1} = \dfrac{1}{n + 1}$. Pogoj $\dfrac{1}{n + 1} < 0{,}01$ da $n + 1 > 100$, torej $n > 99$.« -/
+besedilo: »c) vsota vrste je $1$, najmanjši $n$ je $100$« -/
 theorem matura2c :
     Tendsto S atTop (𝓝 1) ∧ (∀ n : ℕ, 1 - (n : ℝ) / (n + 1) = 1 / (n + 1)) ∧
     (∀ n : ℕ, 1 - S n < 0.01 ↔ 99 < n) ∧ 1 - S 99 = 0.01 := by
@@ -384,7 +384,7 @@ example :=
 /-- Naloga 2 d): T₁ = 1/3 = 1/(1 + 2), T₂ = 1/3 + 1/8 = 11/24, domneva Tₙ = n/(n + 2) pa da
 T₂ = 2/(2 + 2) = 1/2 = 12/24 ≠ 11/24, torej je n = 2 protiprimer.
 trditev: MAT-SS-4/matematicna-indukcija#matura2d
-besedilo: »d) $T_2 = \dfrac{1}{3} + \dfrac{1}{8} = \dfrac{11}{24}$, domneva pa napove $T_2 = \dfrac{2}{2 + 2} = \dfrac{1}{2} = \dfrac{12}{24}$.« -/
+besedilo: »d) $T_2 = \dfrac{1}{3} + \dfrac{1}{8} = \dfrac{11}{24}$, domneva pa napove $T_2 = \dfrac{2}{2 + 2} = \dfrac{1}{2} = \dfrac{12}{24}$. 9. d) Ker je $\dfrac{11}{24} \ne \dfrac{1}{2}$, je $n = 2$ protiprimer in domneva ne drži.« -/
 theorem matura2d :
     (1 / (1 * 3) : ℝ) = 1 / 3 ∧ (1 / 3 : ℝ) = 1 / (1 + 2) ∧
     (1 / (1 * 3) + 1 / (2 * 4) : ℝ) = 1 / 3 + 1 / 8 ∧ (1 / 3 + 1 / 8 : ℝ) = 11 / 24 ∧
@@ -394,7 +394,7 @@ theorem matura2d :
 
 /-- Ustno vprašanje 2: 1 + 2 + 2² + … + 2ⁿ⁻¹ = 2ⁿ − 1; korak 2ⁿ − 1 + 2ⁿ = 2·2ⁿ − 1 = 2ⁿ⁺¹ − 1.
 trditev: MAT-SS-4/matematicna-indukcija#ustno2
-besedilo: »$2^n - 1 + 2^n = 2 \cdot 2^n - 1 = 2^{n+1} - 1$« -/
+besedilo: »$2^n - 1 + 2^n = 2 \cdot 2^n - 1 = 2^{n+1} - 1$. To je trditev za $n + 1$, zato po načelu matematične indukcije velja za vsa naravna števila.« -/
 theorem ustno2 (n : ℕ) : ∑ k ∈ range n, (2 : ℤ) ^ k = 2 ^ n - 1 := by
   induction n with
   | zero => simp
@@ -406,7 +406,7 @@ theorem ustno2 (n : ℕ) : ∑ k ∈ range n, (2 : ℤ) ^ k = 2 ^ n - 1 := by
 /-- Ustno vprašanje 3: n! > 2ⁿ za vse n ≥ 4 (baza 4! = 24 > 16 = 2⁴; korak (n + 1)! = (n + 1)·n!
 > (n + 1)·2ⁿ > 2·2ⁿ = 2ⁿ⁺¹); za n = 3 ne velja (3! = 6 < 8).
 trditev: MAT-SS-4/matematicna-indukcija#ustno3
-besedilo: »Primer je neenakost $n! > 2^n$, ki velja za vse $n \ge 4$, za $n = 3$ pa ne, saj je $3! = 6 < 8$.« -/
+besedilo: »Primer je neenakost $n! > 2^n$, ki velja za vse $n \ge 4$, za $n = 3$ pa ne, saj je $3! = 6 < 8$. Bazo preverimo pri $n = 4$, kjer je $4! = 24 > 16 = 2^4$.« -/
 theorem ustno3 : (∀ n : ℕ, 4 ≤ n → 2 ^ n < n.factorial) ∧ (3).factorial = 6 ∧ 6 < 2 ^ 3 ∧
     (4).factorial = 24 ∧ 2 ^ 4 = 16 := by
   refine ⟨fun n hn => ?_, by decide, by norm_num, by decide, by norm_num⟩
@@ -421,8 +421,7 @@ theorem ustno3 : (∀ n : ℕ, 4 ≤ n → 2 ^ n < n.factorial) ∧ (3).factoria
 /-! ## Preveri se -/
 
 /-- Preveri se 3: baza pri 5 in korak za n ≥ 3 dasta veljavnost za vse n ≥ 5.
-trditev: MAT-SS-4/matematicna-indukcija#kviz3
-besedilo: »baza pri $5$ in korak za $n \ge 3$ (torej tudi za $n \ge 5$) dasta veljavnost za vse $n \ge 5$.« -/
+pomozno -/
 theorem kviz3 (P : ℕ → Prop) (h5 : P 5) (hk : ∀ n, 3 ≤ n → P n → P (n + 1)) : ∀ n, 5 ≤ n → P n :=
   nacelo_n0 P 5 h5 (fun n hn => hk n (by omega))
 
@@ -448,8 +447,7 @@ example : True :=
 
 /-- Preveri se 4: za napačno trditev 1 + … + n = (n² + n + 2)/2 je korak pravilen (obe strani sta
 (n² + 3n + 4)/2), baza pa ne (pri n = 1 je leva stran 1, desna 2).
-trditev: MAT-SS-4/matematicna-indukcija#kviz4
-besedilo: »Korak je pravilen: obe strani sta $\frac{n^2 + 3n + 4}{2}$.« -/
+pomozno -/
 theorem kviz4 (n : ℝ) :
     (n ^ 2 + n + 2) / 2 + (n + 1) = ((n + 1) ^ 2 + (n + 1) + 2) / 2 ∧
     (n ^ 2 + n + 2) / 2 + (n + 1) = (n ^ 2 + 3 * n + 4) / 2 ∧
@@ -458,8 +456,7 @@ theorem kviz4 (n : ℝ) :
 
 /-- Preveri se 5: domine 1, …, 500; prva pade, korak velja pri vseh prehodih razen 120 → 121; padejo
 vse domine od 1. do 120.
-trditev: MAT-SS-4/matematicna-indukcija#kviz5
-besedilo: »0 | Prva pade, korak pa velja pri vseh prehodih do $120.$ domine, zato padejo vse do te vrzeli.« -/
+pomozno -/
 theorem kviz5 (P : ℕ → Prop) (h1 : P 1) (hk : ∀ n, 1 ≤ n → n < 500 → n ≠ 120 → P n → P (n + 1)) :
     ∀ n, 1 ≤ n → n ≤ 120 → P n := by
   intro n hn

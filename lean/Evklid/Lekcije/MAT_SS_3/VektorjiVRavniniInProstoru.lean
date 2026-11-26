@@ -46,13 +46,13 @@ theorem vsota3 (a₁ a₂ a₃ b₁ b₂ b₃ : ℝ) :
 
 /-- Razlaga in Povzetek: razlika po komponentah v ravnini.
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#razlika2
-besedilo: »Seštevanje s številkami.** Vektor v ravnini zapišemo s **komponentama**: $\vec a = (a_x, a_y)$.« -/
+besedilo: »Seštej, odštej ali pomnoži s številom po komponentah.« -/
 theorem razlika2 (a₁ a₂ b₁ b₂ : ℝ) : (!₂[a₁, a₂] : R2) - !₂[b₁, b₂] = !₂[a₁ - b₁, a₂ - b₂] := by
   ext i; fin_cases i <;> simp
 
 /-- Razlaga in Povzetek: razlika po komponentah v prostoru.
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#razlika3
-besedilo: »Dva vlačilca vlečeta ladjo v smereh $(3, 1)$ in $(1, 2)$,« -/
+besedilo: »Seštej, odštej ali pomnoži s številom po komponentah.« -/
 theorem razlika3 (a₁ a₂ a₃ b₁ b₂ b₃ : ℝ) :
     (!₂[a₁, a₂, a₃] : R3) - !₂[b₁, b₂, b₃] = !₂[a₁ - b₁, a₂ - b₂, a₃ - b₃] := by
   ext i; fin_cases i <;> simp
@@ -65,13 +65,13 @@ theorem produkt2 (k a₁ a₂ : ℝ) : k • (!₂[a₁, a₂] : R2) = !₂[k * 
 
 /-- Razlaga in Povzetek: k·a⃗ = (k a_x, k a_y, k a_z) v prostoru.
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#produkt3
-besedilo: »V prostoru dodamo še višino: $\vec a = (a_x, a_y, a_z)$.« -/
+besedilo: »$$k\vec a = (k a_x,\ k a_y,\ k a_z)$$« -/
 theorem produkt3 (k a₁ a₂ a₃ : ℝ) : k • (!₂[a₁, a₂, a₃] : R3) = !₂[k * a₁, k * a₂, k * a₃] := by
   ext i; fin_cases i <;> simp
 
 /-- Razlaga in Povzetek: |a⃗| = √(a_x² + a_y²) v ravnini (Pitagorov izrek).
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#dolzina2
-besedilo: »$$|\vec a| = \sqrt{a_x^2 + a_y^2 + a_z^2}$$« -/
+besedilo: »(v ravnini brez $a_z$): $$|\vec a| = \sqrt{a_x^2 + a_y^2 + a_z^2}$$« -/
 theorem dolzina2 (a₁ a₂ : ℝ) : ‖(!₂[a₁, a₂] : R2)‖ = √(a₁ ^ 2 + a₂ ^ 2) := by
   rw [EuclideanSpace.norm_eq]; simp [Fin.sum_univ_two]
 
@@ -86,7 +86,7 @@ theorem dolzina3 (a₁ a₂ a₃ : ℝ) : ‖(!₂[a₁, a₂, a₃] : R3)‖ = 
 /-- Razlaga (isti vektor, vzporedni premik): puščica od P do P + v⃗ predstavlja vektor v⃗ ne glede na
 začetek P; vektor, ki premakne A v B, je natanko r⃗_B − r⃗_A (AB⃗ = r⃗_B − r⃗_A).
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#vektor-med-tockama
-besedilo: »$$\overrightarrow{AB} = \vec r_B - \vec r_A$$« -/
+besedilo: »Vektor med dvema točkama je razlika krajevnih vektorjev: $$\overrightarrow{AB} = \vec r_B - \vec r_A$$« -/
 theorem vektor_med_tockama (A B P Q v : R3) :
     (P + v) - P = (Q + v) - Q ∧ (A + v = B ↔ v = B - A) := by
   refine ⟨by simp, ⟨fun h => by rw [← h]; simp, fun h => by rw [h]; simp⟩⟩
@@ -94,7 +94,7 @@ theorem vektor_med_tockama (A B P Q v : R3) :
 /-- Razlaga (pravilo trikotnika in paralelograma, Ustno vprašanje 2): AB⃗ + BC⃗ = AC⃗; v paralelogramu z
 B = A + a⃗, D = A + b⃗ je C = B + b⃗ = D + a⃗, diagonala AC⃗ = a⃗ + b⃗ = b⃗ + a⃗.
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#trikotnik-paralelogram
-besedilo: »Lahko pa obe puščici narišeš iz iste točke in ju dopolniš v paralelogram. Vsota je diagonala iz skupnega začetka. To je **pravilo paralelograma**. Obe pravili dasta isti vektor, in iz paralelograma vidiš, da je $\vec a + \vec b = \vec b + \vec a$.« -/
+besedilo: »Vsota $\vec a + \vec b$ je puščica od začetka prve do konca druge. To je **pravilo trikotnika**. Lahko pa obe puščici narišeš iz iste točke in ju dopolniš v paralelogram. Vsota je diagonala iz skupnega začetka. To je **pravilo paralelograma**. Obe pravili dasta isti vektor, in iz paralelograma vidiš, da je $\vec a + \vec b = \vec b + \vec a$.« -/
 theorem trikotnik_paralelogram (A B C : R3) (a b : R3) :
     (B - A) + (C - B) = C - A ∧ (A + a) + b = (A + b) + a ∧ ((A + a) + b) - A = a + b ∧ a + b = b + a := by
   refine ⟨by abel, by abel, by abel, add_comm a b⟩
@@ -102,7 +102,7 @@ theorem trikotnik_paralelogram (A B C : R3) (a b : R3) :
 /-- Bolj natančno, pravila računanja: komutativnost, asociativnost, ničelni in nasprotni vektor,
 distributivnosti, k(m a⃗) = (km)a⃗ in 1·a⃗ = a⃗.
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#pravila-racunanja
-besedilo: »$k(m\vec a) = (km)\vec a$ in $1 \cdot \vec a = \vec a$.« -/
+besedilo: »$\vec a + \vec b = \vec b + \vec a$ in $(\vec a + \vec b) + \vec c = \vec a + (\vec b + \vec c)$, - $\vec a + \vec 0 = \vec a$ in $\vec a + (-\vec a) = \vec 0$, - $k(\vec a + \vec b) = k\vec a + k\vec b$ in $(k + m)\vec a = k\vec a + m\vec a$, - $k(m\vec a) = (km)\vec a$ in $1 \cdot \vec a = \vec a$.« -/
 theorem pravila_racunanja (a b c : R3) (k m : ℝ) :
     a + b = b + a ∧ (a + b) + c = a + (b + c) ∧ a + 0 = a ∧ a + (-a) = 0 ∧
     k • (a + b) = k • a + k • b ∧ (k + m) • a = k • a + m • a ∧ k • (m • a) = (k * m) • a ∧
@@ -112,7 +112,7 @@ theorem pravila_racunanja (a b c : R3) (k m : ℝ) :
 
 /-- Razlaga: a⃗ + a⃗ = 2a⃗; (−1)a⃗ = −a⃗ je enako dolg kot a⃗; a⃗ − b⃗ = a⃗ + (−b⃗); 0·a⃗ = 0⃗.
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#nasprotni-vektor
-besedilo: »Vektor $(-1)\vec a = -\vec a$ je **nasprotni vektor**: enako dolg, kaže v obratno stran. Z njim odštevamo: $\vec a - \vec b = \vec a + (-\vec b)$.« -/
+besedilo: »Pri $k = 0$ dobimo ničelni vektor $\vec 0$. Vektor $(-1)\vec a = -\vec a$ je **nasprotni vektor**: enako dolg, kaže v obratno stran. Z njim odštevamo: $\vec a - \vec b = \vec a + (-\vec b)$.« -/
 theorem nasprotni_vektor (a b : R3) :
     a + a = (2:ℝ) • a ∧ (-1:ℝ) • a = -a ∧ ‖-a‖ = ‖a‖ ∧ a - b = a + (-b) ∧ (0:ℝ) • a = 0 :=
   ⟨by rw [two_smul], by simp, norm_neg a, sub_eq_add_neg a b, zero_smul ℝ a⟩
@@ -120,7 +120,7 @@ theorem nasprotni_vektor (a b : R3) :
 /-- Razlaga, tabela in Povzetek: |k a⃗| = |k|·|a⃗|; pri k > 0 ostane usmerjenost (k a⃗ kaže kot a⃗), pri k < 0
 se obrne (k a⃗ kaže kot −a⃗).
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#mnozenje-s-skalarjem
-besedilo: »$k < 0$ obrne usmerjenost; $|k\vec a| = |k| \cdot |\vec a|$.« -/
+besedilo: »| $k > 0$ | $k$-krat | ostane | | $k = 0$ | $0$ | – | | $k < 0$ | $\lvert k\rvert$-krat | se obrne |« -/
 theorem mnozenje_s_skalarjem (k : ℝ) (a : R3) :
     ‖k • a‖ = |k| * ‖a‖ ∧ (0 < k → SameRay ℝ a (k • a)) ∧ (k < 0 → SameRay ℝ (-a) (k • a)) := by
   refine ⟨by rw [norm_smul, Real.norm_eq_abs], fun hk => SameRay.sameRay_pos_smul_right a hk,
@@ -152,7 +152,7 @@ example :=
 /-- Premisli 2, Pogoste napake, Preveri se 3: |−2a⃗| = 2|a⃗| (ne −2|a⃗|, ki je za a⃗ ≠ 0⃗ negativno);
 −2a⃗ je obrnjen (kaže kot −a⃗).
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#minus-dva
-besedilo: »$|-2\vec a| = 2|\vec a|$, predznak minus pa obrne usmerjenost.« -/
+besedilo: »Dolžina ne more biti negativna. Pri $k = -2$ je puščica dvakrat daljša, le obrnjena, zato je njena dolžina $2|\vec a|$.« -/
 theorem minus_dva (a : R3) (ha : a ≠ 0) :
     ‖(-2:ℝ) • a‖ = 2 * ‖a‖ ∧ ‖(-2:ℝ) • a‖ ≠ -2 * ‖a‖ ∧ SameRay ℝ (-a) ((-2:ℝ) • a) := by
   have hn : 0 < ‖a‖ := norm_pos_iff.2 ha
@@ -172,7 +172,7 @@ example :=
 /-- Povzetek in Bolj natančno (trikotniška neenakost, Premisli 1): |a⃗ + b⃗| ≤ |a⃗| + |b⃗|, enakost natanko
 tedaj, ko sta vektorja enako usmerjena (SameRay).
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#trikotniska-neenakost
-besedilo: »Trikotniška neenakost.** Vektorji $\vec a$, $\vec b$ in $\vec a + \vec b$ tvorijo trikotnik.« -/
+besedilo: »zato je $|\vec a + \vec b| \le |\vec a| + |\vec b|$. Enakost velja le, ko se trikotnik »splošči« v daljico, torej pri enako usmerjenih vektorjih.« -/
 theorem trikotniska_neenakost (a b : R3) :
     ‖a + b‖ ≤ ‖a‖ + ‖b‖ ∧ (‖a + b‖ = ‖a‖ + ‖b‖ ↔ SameRay ℝ a b) :=
   ⟨norm_add_le a b, sameRay_iff_norm_add.symm⟩
@@ -259,7 +259,7 @@ example :=
 /-- Razlaga (baza): n linearno neodvisnih vektorjev v ℝⁿ (za n = 2 nekolinearna v ravnini, za n = 3
 nekoplanarni v prostoru) tvori bazo: vsak vektor je na en sam način linearna kombinacija ∑ gᵢ·wᵢ.
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#razvoj-po-bazi
-besedilo: »Vsak vektor ravnine lahko zapišemo kot linearno kombinacijo $k\vec a + m\vec b$, in to na en sam način.« -/
+besedilo: »Vektorja $\vec a$ in $\vec b$ v ravnini, ki nista kolinearna, tvorita **bazo ravnine**. Vsak vektor ravnine lahko zapišemo kot linearno kombinacijo $k\vec a + m\vec b$, in to na en sam način. Števili $k$ in $m$ sta koeficienta vektorja v tej bazi. V prostoru bazo tvorijo trije vektorji, ki niso koplanarni: narisani iz iste točke ne ležijo v isti ravnini. Vsak vektor prostora je potem na en sam način enak $k\vec a + m\vec b + n\vec c$.« -/
 theorem razvoj_po_bazi (n : ℕ) [NeZero n] (w : Fin n → EuclideanSpace ℝ (Fin n))
     (h : LinearIndependent ℝ w) (v : EuclideanSpace ℝ (Fin n)) :
     ∃! g : Fin n → ℝ, v = ∑ i, g i • w i := by
@@ -295,7 +295,7 @@ example :=
 
 /-- Bolj natančno (standardna baza): a⃗ = a_x i⃗ + a_y j⃗ + a_z k⃗ z i⃗ = (1, 0, 0), j⃗ = (0, 1, 0), k⃗ = (0, 0, 1).
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#standardna-baza
-besedilo: »Baza.** Z $\vec i = (1, 0, 0)$, $\vec j = (0, 1, 0)$ in $\vec k = (0, 0, 1)$ označimo enotske vektorje v smereh osi. Vsak vektor je njihova linearna kombinacija: $\vec a = a_x\vec i + a_y\vec j + a_z\vec k$. Komponente so torej koeficienti v tem zapisu.« -/
+besedilo: »Z $\vec i = (1, 0, 0)$, $\vec j = (0, 1, 0)$ in $\vec k = (0, 0, 1)$ označimo enotske vektorje v smereh osi. Vsak vektor je njihova linearna kombinacija: $\vec a = a_x\vec i + a_y\vec j + a_z\vec k$.« -/
 theorem standardna_baza (a₁ a₂ a₃ : ℝ) :
     (!₂[a₁, a₂, a₃] : R3) = a₁ • !₂[1, 0, 0] + a₂ • !₂[0, 1, 0] + a₃ • !₂[0, 0, 1] := by
   ext i; fin_cases i <;> simp
@@ -337,7 +337,7 @@ theorem cos_120 : Real.cos (2 * π / 3) = -1 / 2 ∧ π - 2 * π / 3 = π / 3 :=
 
 /-- Uganka s sanmi: dve sili po 300 N pod kotom 120° dasta skupno silo 300 N.
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#sani
-besedilo: »Vsak vleče s silo $300\,\mathrm{N}$.« -/
+besedilo: »Diagonala je zato dolga kot stranica: $300\,\mathrm{N}$.« -/
 theorem sani (F₁ F₂ : R2) (h₁ : ‖F₁‖ = 300) (h₂ : ‖F₂‖ = 300) (hk : angle F₁ F₂ = 2 * π / 3) :
     ‖F₁ + F₂‖ = 300 := by
   rw [vsota_pod_kotom, h₁, h₂, hk, cos_120.1, show (300:ℝ) ^ 2 + 300 ^ 2 + 2 * 300 * 300 * (-1 / 2) = 300 ^ 2 by
@@ -353,7 +353,8 @@ example : ‖(!₂[300, 0] : R2)‖ = 300 ∧ ‖(!₂[-150, 150 * √3] : R2)�
   · rw [show (-150:ℝ) ^ 2 + (150 * √3) ^ 2 = 300 ^ 2 by rw [mul_pow, h3]; norm_num, Real.sqrt_sq (by norm_num)]
   · rw [show (150:ℝ) ^ 2 + (150 * √3) ^ 2 = 300 ^ 2 by rw [mul_pow, h3]; norm_num, Real.sqrt_sq (by norm_num)]
 
-/-- Predpostavke `sani` so izpolnjene tudi s kotom: med (300, 0) in (−150, 150√3) je kot 2π/3. -/
+/-- Predpostavke `sani` so izpolnjene tudi s kotom: med (300, 0) in (−150, 150√3) je kot 2π/3.
+pomozno -/
 theorem sani_kot_izpolnljivo : angle (!₂[300, 0] : R2) !₂[-150, 150 * √3] = 2 * π / 3 := by
   have h3 : √3 ^ 2 = 3 := Real.sq_sqrt (by norm_num)
   have n1 : ‖(!₂[300, 0] : R2)‖ = 300 := by
@@ -370,7 +371,7 @@ theorem sani_kot_izpolnljivo : angle (!₂[300, 0] : R2) !₂[-150, 150 * √3] 
 
 /-- Uganka s sanmi (kosinusni izrek): |F⃗|² = 300² + 300² − 2·300·300·cos 60° = 300².
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#sani-kosinusni
-besedilo: »$|\vec F|^2 = 300^2 + 300^2 - 2 \cdot 300 \cdot 300 \cdot \cos 60^\circ$« -/
+besedilo: »Zato je $|\vec F|^2 = 300^2 + 300^2 - 2 \cdot 300 \cdot 300 \cdot \cos 60^\circ$, torej $|\vec F|^2 = 300^2$.« -/
 theorem sani_kosinusni : (300:ℝ) ^ 2 + 300 ^ 2 - 2 * 300 * 300 * Real.cos (π / 3) = 300 ^ 2 := by
   rw [Real.cos_pi_div_three]; norm_num
 
@@ -407,7 +408,7 @@ example :=
 /-- Razlaga, prvi primer (podaji): (12, 5) + (3, 4) = (15, 9); dolžini √(12² + 5²) = 13 in √(3² + 4²) = 5,
 skupaj 18; razdalja od izhodišča √(15² + 9²) = √306 ≈ 17,5 < 18 (dolžini se ne seštejeta).
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#podaji
-besedilo: »Od izhodišča pa je oddaljena le $\sqrt{15^2 + 9^2} = \sqrt{306} \approx 17{,}5\,\mathrm{m}$.« -/
+besedilo: »Premike seštejemo po smereh: naprej $12 + 3 = 15$, v levo $5 + 4 = 9$. Žoga konča v točki $(15, 9)$. Isti cilj bi dosegla z eno samo podajo $15\,\mathrm{m}$ naprej in $9\,\mathrm{m}$ v levo. Koliko pa so podaje dolge? Po Pitagorovem izreku je prva dolga $\sqrt{12^2 + 5^2} = 13\,\mathrm{m}$, druga $\sqrt{3^2 + 4^2} = 5\,\mathrm{m}$. Skupaj je žoga prepotovala $18\,\mathrm{m}$. Od izhodišča pa je oddaljena le $\sqrt{15^2 + 9^2} = \sqrt{306} \approx 17{,}5\,\mathrm{m}$.« -/
 theorem podaji :
     (!₂[12, 5] : R2) + !₂[3, 4] = !₂[15, 9] ∧ ‖(!₂[12, 5] : R2)‖ = 13 ∧ ‖(!₂[3, 4] : R2)‖ = 5 ∧
     (13:ℝ) + 5 = 18 ∧ ‖(!₂[15, 9] : R2)‖ = √306 ∧ |√306 - 17.5| < 0.05 ∧ √306 < 18 := by
@@ -421,7 +422,7 @@ theorem podaji :
 /-- Razlaga (krajevni vektor, dron): AB⃗ = r⃗_B − r⃗_A = (4 − 1, 6 − 2, 12 − 0) = (3, 4, 12), dolžina
 √(9 + 16 + 144) = 13; krajevni vektor žoge na koncu je (15, 9).
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#dron
-besedilo: »Dron vzleti s tal v točki $A(1, 2, 0)$ in prileti v točko $B(4, 6, 12)$, koordinate so v metrih. Njegov premik je $\overrightarrow{AB} = (4 - 1,\ 6 - 2,\ 12 - 0) = (3, 4, 12)$, dolg $\sqrt{9 + 16 + 144} = 13\,\mathrm{m}$.« -/
+besedilo: »Njegov premik je $\overrightarrow{AB} = (4 - 1,\ 6 - 2,\ 12 - 0) = (3, 4, 12)$, dolg $\sqrt{9 + 16 + 144} = 13\,\mathrm{m}$.« -/
 theorem dron :
     (!₂[4, 6, 12] : R3) - !₂[1, 2, 0] = !₂[4 - 1, 6 - 2, 12 - 0] ∧
     (!₂[4 - 1, 6 - 2, 12 - 0] : R3) = !₂[3, 4, 12] ∧ ‖(!₂[3, 4, 12] : R3)‖ = √(9 + 16 + 144) ∧
@@ -445,7 +446,7 @@ theorem vlacilca_slika :
 /-- Primer 1: 2a⃗ = (2·4, 2·(−1)) = (8, −2), s⃗ = (8 + (−2), −2 + 3) = (6, 1), |s⃗| = √(6² + 1²) = √37 ≈ 6,08
 (≈ 6,1).
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#primer1
-besedilo: »$|\vec s| = \sqrt{6^2 + 1^2} = \sqrt{37} \approx 6{,}08$« -/
+besedilo: »Najprej množenje s skalarjem: $2\vec a = (2 \cdot 4,\ 2 \cdot (-1)) = (8, -2)$. 2. Nato seštevanje po komponentah: $\vec s = (8 + (-2),\ -2 + 3) = (6, 1)$. 3. Dolžina: $|\vec s| = \sqrt{6^2 + 1^2} = \sqrt{37} \approx 6{,}08$. 4. Odgovor: skupni premik je $\vec s = (6, 1)\,\mathrm{m}$; igralec je približno $6{,}1\,\mathrm{m}$ od začetne točke.« -/
 theorem primer1 :
     (2:ℝ) • (!₂[4, -1] : R2) = !₂[2 * 4, 2 * (-1)] ∧ (!₂[2 * 4, 2 * (-1)] : R2) = !₂[8, -2] ∧
     (!₂[8, -2] : R2) + !₂[-2, 3] = !₂[8 + (-2), -2 + 3] ∧ (!₂[8 + (-2), -2 + 3] : R2) = !₂[6, 1] ∧
@@ -459,7 +460,7 @@ theorem primer1 :
 /-- Primer 2: 2b⃗ = (−4, 8, −2), s⃗ = (6 − 4, 2 + 8, 3 − 2) = (2, 10, 1), |s⃗| = √(2² + 10² + 1²) = √105 ≈ 10,25
 (≈ 10,2); dron je 1 m višje.
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#primer2
-besedilo: »$\vec s = (6 - 4,\ 2 + 8,\ 3 - 2) = (2, 10, 1)$« -/
+besedilo: »$2\vec b = (-4, 8, -2)$, vsako komponento pomnožimo z $2$. 2. $\vec s = (6 - 4,\ 2 + 8,\ 3 - 2) = (2, 10, 1)$. 3. Dolžina: $|\vec s| = \sqrt{2^2 + 10^2 + 1^2} = \sqrt{105} \approx 10{,}25$. 4. Odgovor: dron se je premaknil za $(2, 10, 1)\,\mathrm{m}$; od začetne lege je približno $10{,}2\,\mathrm{m}$.« -/
 theorem primer2 :
     (2:ℝ) • (!₂[-2, 4, -1] : R3) = !₂[-4, 8, -2] ∧ (!₂[6, 2, 3] : R3) + !₂[-4, 8, -2] = !₂[6 - 4, 2 + 8, 3 - 2] ∧
     (!₂[6 - 4, 2 + 8, 3 - 2] : R3) = !₂[2, 10, 1] ∧ ‖(!₂[2, 10, 1] : R3)‖ = √(2 ^ 2 + 10 ^ 2 + 1 ^ 2) ∧
@@ -472,7 +473,7 @@ theorem primer2 :
 /-- Primer 3: v⃗ = (0 + 1,2; 3 + 0) = (1,2; 3), |v⃗| = √(1,2² + 3²) = √10,44 ≈ 3,23; t = 60/3 = 20 s;
 s⃗ = 20·(1,2; 3) = (24; 60) (odnese ga 24 m).
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#primer3
-besedilo: »$|\vec v| = \sqrt{1{,}2^2 + 3^2} = \sqrt{10{,}44} \approx 3{,}23\,\mathrm{m/s}$« -/
+besedilo: »Hitrosti seštejemo: $\vec v = (0 + 1{,}2;\ 3 + 0) = (1{,}2;\ 3)\,\mathrm{m/s}$. 2. Velikost: $|\vec v| = \sqrt{1{,}2^2 + 3^2} = \sqrt{10{,}44} \approx 3{,}23\,\mathrm{m/s}$. 3. Čas prečkanja določa le komponenta čez reko: $t = \dfrac{60\,\mathrm{m}}{3\,\mathrm{m/s}} = 20\,\mathrm{s}$. Tok kajaka ne upočasni, ker teče pravokotno na to smer. 4. Premik je vektor $\vec v$, pomnožen s skalarjem $t$: $\vec s = 20 \cdot (1{,}2;\ 3) = (24;\ 60)\,\mathrm{m}$.« -/
 theorem primer3 :
     (!₂[0, 3] : R2) + !₂[1.2, 0] = !₂[0 + 1.2, 3 + 0] ∧ (!₂[0 + 1.2, 3 + 0] : R2) = !₂[1.2, 3] ∧
     ‖(!₂[1.2, 3] : R2)‖ = √(1.2 ^ 2 + 3 ^ 2) ∧ √((1.2:ℝ) ^ 2 + 3 ^ 2) = √10.44 ∧ |√10.44 - 3.23| < 0.005 ∧
@@ -514,7 +515,7 @@ theorem primer4 (k m : ℝ) :
 /-- Primer 5: k(3, 1) + m(1, 2) = (50, 50) ↔ (3k + m = 50 ∧ k + 2m = 50) ↔ (m = 50 − 3k ∧ k + 100 − 6k = 50) ↔
 k = 10 ∧ m = 20 (5k = 50, m = 50 − 30); F⃗₁ = (30, 10), F⃗₂ = (20, 40), vsota (50, 50).
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#primer5
-besedilo: »Komponenta $y$: $k + 2m = 50$. Vstavimo: $k + 100 - 6k = 50$, torej $5k = 50$ in $k = 10$. Potem je $m = 50 - 30 = 20$.« -/
+besedilo: »Komponenta $x$: $3k + m = 50$, od tod $m = 50 - 3k$. 2. Komponenta $y$: $k + 2m = 50$. Vstavimo: $k + 100 - 6k = 50$, torej $5k = 50$ in $k = 10$. Potem je $m = 50 - 30 = 20$. 3. Komponenti: $\vec F_1 = 10 \cdot (3, 1) = (30, 10)\,\mathrm{kN}$ in $\vec F_2 = 20 \cdot (1, 2) = (20, 40)\,\mathrm{kN}$. Preizkus: $(30 + 20,\ 10 + 40) = (50, 50)$.« -/
 theorem primer5 (k m : ℝ) :
     (k • (!₂[3, 1] : R2) + m • !₂[1, 2] = !₂[50, 50] ↔ k = 10 ∧ m = 20) ∧
     (∀ k m : ℝ, (3 * k + m = 50 ∧ k + 2 * m = 50) ↔ (m = 50 - 3 * k ∧ k + 100 - 6 * k = 50)) ∧
@@ -534,7 +535,7 @@ theorem primer5 (k m : ℝ) :
 /-- Primer 5, velikosti: |F⃗₁| = √(30² + 10²) = √1000 ≈ 31,6, |F⃗₂| = √(20² + 40²) = √2000 ≈ 44,7, skupaj ≈ 76,3;
 |F⃗| = √(50² + 50²) = √5000 ≈ 70,7 < 76,3.
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#primer5-velikosti
-besedilo: »Velikosti: $|\vec F_1| = \sqrt{30^2 + 10^2} = \sqrt{1000} \approx 31{,}6\,\mathrm{kN}$ in $|\vec F_2| = \sqrt{20^2 + 40^2} = \sqrt{2000} \approx 44{,}7\,\mathrm{kN}$.« -/
+besedilo: »Velikosti: $|\vec F_1| = \sqrt{30^2 + 10^2} = \sqrt{1000} \approx 31{,}6\,\mathrm{kN}$ in $|\vec F_2| = \sqrt{20^2 + 40^2} = \sqrt{2000} \approx 44{,}7\,\mathrm{kN}$. 5. Odgovor: prvi vlačilec vleče s silo približno $31{,}6\,\mathrm{kN}$, drugi s silo približno $44{,}7\,\mathrm{kN}$. Skupaj je to $76{,}3\,\mathrm{kN}$, ladja pa dobi le $|\vec F| = \sqrt{5000} \approx 70{,}7\,\mathrm{kN}$.« -/
 theorem primer5_velikosti :
     ‖(!₂[30, 10] : R2)‖ = √1000 ∧ ‖(!₂[20, 40] : R2)‖ = √2000 ∧ ‖(!₂[50, 50] : R2)‖ = √5000 ∧
     |√1000 - 31.6| < 0.05 ∧ |√2000 - 44.7| < 0.05 ∧ |√1000 + √2000 - 76.3| < 0.05 ∧
@@ -553,7 +554,7 @@ theorem primer5_velikosti :
 /-- Pogoste napake: 3·(2, −3, 1) = (6, −9, 3) ≠ (6, −3, 1); 6 − (−1) = 7 ≠ 5 = 6 − 1; dve sili po 300 N ne
 dasta nujno 600 N (glej `sani`: 300 ≠ 300 + 300).
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#pogoste-napake
-besedilo: »Skalar le pri prvi komponenti.** Pri $3 \cdot (2, -3, 1)$ nekdo zapiše $(6, -3, 1)$. Število $k$ raztegne celo puščico, zato pomnoži *vsako* komponento: $(6, -9, 3)$.« -/
+besedilo: »zato bi dve sili po $300\,\mathrm{N}$ dali $600\,\mathrm{N}$. To velja le za enako usmerjena vektorja. Seštej komponente in šele nato izračunaj dolžino. - **Skalar le pri prvi komponenti.** Pri $3 \cdot (2, -3, 1)$ nekdo zapiše $(6, -3, 1)$. Število $k$ raztegne celo puščico, zato pomnoži *vsako* komponento: $(6, -9, 3)$. - **Minus pred negativno komponento.** Pri $\vec a - \vec b$ z $a_x = 6$ in $b_x = -1$ izračunaš $6 - 1$ namesto $6 - (-1) = 7$.« -/
 theorem pogoste_napake :
     (3:ℝ) • (!₂[2, -3, 1] : R3) = !₂[6, -9, 3] ∧ (!₂[6, -9, 3] : R3) ≠ !₂[6, -3, 1] ∧
     (6:ℝ) - (-1) = 7 ∧ (6:ℝ) - 1 ≠ 7 ∧ (300:ℝ) ≠ 300 + 300 := by
@@ -565,7 +566,7 @@ theorem pogoste_napake :
 /-- Naloga 1: a⃗ = (2, p, −3) in b⃗ = (q, 6, 9) sta kolinearna (b⃗ = k a⃗) natanko pri p = −2, q = −6; koraki:
 q = 2k, 6 = kp, 9 = −3k, k = 9/(−3) = −3, q = 2·(−3) = −6, 6 = −3p ⇒ p = −2; b⃗ = (−6, 6, 9) = −3a⃗.
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#naloga1
-besedilo: »Vektor $\vec a$ ni ničelen in vektorja sta kolinearna, zato je $\vec b = k\vec a$ za neko število $k$. Po komponentah: $q = 2k$, $6 = kp$ in $9 = -3k$.« -/
+besedilo: »Vektor $\vec a$ ni ničelen in vektorja sta kolinearna, zato je $\vec b = k\vec a$ za neko število $k$. Po komponentah: $q = 2k$, $6 = kp$ in $9 = -3k$. 2. Iz tretje komponente: $k = \frac{9}{-3} = -3$. 3. Potem je $q = 2 \cdot (-3) = -6$, iz $6 = -3p$ pa sledi $p = -2$. 4. Preizkus: $\vec a = (2, -2, -3)$ in $\vec b = (-6, 6, 9) = -3\vec a$.« -/
 theorem naloga1 (p q : ℝ) :
     ((∃ k : ℝ, (!₂[q, 6, 9] : R3) = k • !₂[2, p, -3]) ↔ p = -2 ∧ q = -6) ∧
     (∀ k : ℝ, (9 = -3 * k ↔ k = -3)) ∧ (9:ℝ) / (-3) = -3 ∧ 2 * (-3:ℝ) = -6 ∧ (6 = -3 * p ↔ p = -2) ∧
@@ -587,7 +588,7 @@ theorem naloga1 (p q : ℝ) :
 /-- Naloga 2 a), b): AB⃗ = (3 − 1, 2 − 0, 3 − 2) = (2, 2, 1), BC⃗ = (1 − 3, 3 − 2, 5 − 3) = (−2, 1, 2); ABCD je
 paralelogram (AD⃗ = BC⃗) natanko za D = A + BC⃗ = (1 − 2, 0 + 1, 2 + 2) = (−1, 1, 4); preizkus DC⃗ = (2, 2, 1) = AB⃗.
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#naloga2ab
-besedilo: »a) $\overrightarrow{AB} = (3 - 1,\ 2 - 0,\ 3 - 2) = (2, 2, 1)$ in $\overrightarrow{BC} = (1 - 3,\ 3 - 2,\ 5 - 3) = (-2, 1, 2)$.« -/
+besedilo: »$\overrightarrow{AB} = (3 - 1,\ 2 - 0,\ 3 - 2) = (2, 2, 1)$ in $\overrightarrow{BC} = (1 - 3,\ 3 - 2,\ 5 - 3) = (-2, 1, 2)$. 2. b) V paralelogramu $ABCD$ je $\overrightarrow{AD} = \overrightarrow{BC}$. Krajevni vektor točke $D$ (vektor od izhodišča $O$ do $D$) je zato $\overrightarrow{OD} = \overrightarrow{OA} + \overrightarrow{BC} = (1 - 2,\ 0 + 1,\ 2 + 2) = (-1, 1, 4)$. 3. b) Preizkus: $\overrightarrow{DC} = (1 + 1,\ 3 - 1,\ 5 - 4) = (2, 2, 1)$, kar je enako $\overrightarrow{AB}$.« -/
 theorem naloga2ab (D : R3) :
     (!₂[3, 2, 3] : R3) - !₂[1, 0, 2] = !₂[2, 2, 1] ∧ (!₂[1, 3, 5] : R3) - !₂[3, 2, 3] = !₂[-2, 1, 2] ∧
     (D - !₂[1, 0, 2] = (!₂[1, 3, 5] : R3) - !₂[3, 2, 3] ↔ D = !₂[1 - 2, 0 + 1, 2 + 2]) ∧
@@ -599,7 +600,7 @@ theorem naloga2ab (D : R3) :
 |AC⃗| = √18 = 3√2; 9 + 9 = 18 = |AC⃗|²; vse štiri stranice merijo 3 (|CD⃗| = |DA⃗| = 3) in
 AB⃗·BC⃗ = −4 + 2 + 2 = 0 (pravi kot pri B), zato je ABCD kvadrat.
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#naloga2c
-besedilo: »c) $\overrightarrow{AC} = (1 - 1,\ 3 - 0,\ 5 - 2) = (0, 3, 3)$, zato je $|\overrightarrow{AC}| = \sqrt{0 + 9 + 9} = \sqrt{18} = 3\sqrt{2}$.« -/
+besedilo: »$|\overrightarrow{AB}| = \sqrt{2^2 + 2^2 + 1^2} = \sqrt{9} = 3$ in $|\overrightarrow{BC}| = \sqrt{(-2)^2 + 1^2 + 2^2} = \sqrt{9} = 3$. 5. c) $\overrightarrow{AC} = (1 - 1,\ 3 - 0,\ 5 - 2) = (0, 3, 3)$, zato je $|\overrightarrow{AC}| = \sqrt{0 + 9 + 9} = \sqrt{18} = 3\sqrt{2}$. 6. c) Nasprotni stranici paralelograma sta enako dolgi, sosednji stranici $AB$ in $BC$ pa sta tudi enako dolgi, zato vse štiri stranice merijo $3$ in je $ABCD$ romb. Ker je $|\overrightarrow{AB}|^2 + |\overrightarrow{BC}|^2 = 9 + 9 = 18 = |\overrightarrow{AC}|^2$, je po obratu Pitagorovega izreka kot pri oglišču $B$ pravi. Romb s pravim kotom je kvadrat. (Pravi kot pri $B$ pokaže tudi skalarni produkt $\overrightarrow{AB} \cdot \overrightarrow{BC} = -4 + 2 + 2 = 0$.)« -/
 theorem naloga2c :
     ‖(!₂[2, 2, 1] : R3)‖ = 3 ∧ ‖(!₂[-2, 1, 2] : R3)‖ = 3 ∧
     (!₂[1, 3, 5] : R3) - !₂[1, 0, 2] = !₂[0, 3, 3] ∧ ‖(!₂[0, 3, 3] : R3)‖ = 3 * √2 ∧
@@ -631,7 +632,7 @@ theorem naloga2c_pravi_kot :
 k + 2m = 4) ↔ k = 2 ∧ m = 1 (3m = 3; tretja enačba 2 + 2·1 = 4 drži); E = A + 2AB⃗ + 1·AD⃗ leži v ravnini
 paralelograma.
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#naloga2d
-besedilo: »d) $\overrightarrow{AE} = (3 - 1,\ 5 - 0,\ 6 - 2) = (2, 5, 4)$. Iščemo števili $k$ in $m$, da je $k\overrightarrow{AB} + m\overrightarrow{BC} = \overrightarrow{AE}$. Po komponentah: $2k - 2m = 2$, $2k + m = 5$ in $k + 2m = 4$.« -/
+besedilo: »$\overrightarrow{AE} = (3 - 1,\ 5 - 0,\ 6 - 2) = (2, 5, 4)$. Iščemo števili $k$ in $m$, da je $k\overrightarrow{AB} + m\overrightarrow{BC} = \overrightarrow{AE}$. Po komponentah: $2k - 2m = 2$, $2k + m = 5$ in $k + 2m = 4$. 8. d) Prvo enačbo odštejemo od druge: $3m = 3$, torej $m = 1$ in $k = 2$. Tudi tretja enačba drži: $2 + 2 \cdot 1 = 4$. Zato je $\overrightarrow{AE} = 2\overrightarrow{AB} + \overrightarrow{BC}$. 9. d) Vektor $\overrightarrow{AE}$ je linearna kombinacija vektorjev $\overrightarrow{AB}$ in $\overrightarrow{AD} = \overrightarrow{BC}$, zato so ti trije vektorji koplanarni. Točka $E$ torej leži v ravnini skozi $A$, ki jo določata stranici $AB$ in $AD$, to je v ravnini paralelograma.« -/
 theorem naloga2d (k m : ℝ) :
     (!₂[3, 5, 6] : R3) - !₂[1, 0, 2] = !₂[2, 5, 4] ∧
     (k • (!₂[2, 2, 1] : R3) + m • !₂[-2, 1, 2] = !₂[2, 5, 4] ↔
@@ -655,7 +656,7 @@ theorem naloga2d (k m : ℝ) :
 /-- Ustno vprašanje 3: (1, 1) in (1, −1) nista kolinearna (tvorita bazo); k(1, 1) + m(1, −1) = (5, 1) ↔
 (k + m = 5 ∧ k − m = 1) ↔ k = 3 ∧ m = 2; preizkus 3·(1, 1) + 2·(1, −1) = (5, 1).
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#ustno3
-besedilo: »Od tod je $k = 3$ in $m = 2$, torej $\vec c = 3\vec a + 2\vec b$, kar potrdi preizkus $3 \cdot (1, 1) + 2 \cdot (1, -1) = (5, 1)$.« -/
+besedilo: »Bazo ravnine tvorita poljubna nekolinearna vektorja, na primer $\vec a = (1, 1)$ in $\vec b = (1, -1)$, saj noben ni večkratnik drugega. Vsak vektor ravnine lahko na en sam način zapišemo kot linearno kombinacijo $k\vec a + m\vec b$ baznih vektorjev. Za vektor $\vec c = (5, 1)$ iz $k\vec a + m\vec b = \vec c$ po komponentah dobimo sistem $k + m = 5$ in $k - m = 1$. Od tod je $k = 3$ in $m = 2$, torej $\vec c = 3\vec a + 2\vec b$, kar potrdi preizkus $3 \cdot (1, 1) + 2 \cdot (1, -1) = (5, 1)$.« -/
 theorem ustno3 (k m : ℝ) :
     LinearIndependent ℝ ![(!₂[1, 1] : R2), !₂[1, -1]] ∧
     (k • (!₂[1, 1] : R2) + m • !₂[1, -1] = !₂[5, 1] ↔ (k + m = 5 ∧ k - m = 1)) ∧
@@ -735,7 +736,7 @@ theorem kviz7 (k m : ℝ) :
 √(0² + 3² + 3²) = 3√2, 3·1 + 2·(−1) = 1, √(3² + 4² + 12²) = 13, √(50² + 50²) ≈ 70,7,
 √(3² + 4² + 0²) = 5; sistema 2k − 2m = 2, 2k + m = 5 in k + m = 5, k − m = 1 sta v `naloga2d` in `ustno3`).
 trditev: MAT-SS-3/vektorji-v-ravnini-in-prostoru#racun
-besedilo: »Po Pitagorovem izreku je prva dolga $\sqrt{12^2 + 5^2} = 13\,\mathrm{m}$, druga $\sqrt{3^2 + 4^2} = 5\,\mathrm{m}$.« -/
+besedilo: »$|\overrightarrow{AB}| = \sqrt{2^2 + 2^2 + 1^2} = \sqrt{9} = 3$ in $|\overrightarrow{BC}| = \sqrt{(-2)^2 + 1^2 + 2^2} = \sqrt{9} = 3$« -/
 theorem racun :
     √((2:ℝ) ^ 2 + 2 ^ 2 + 1 ^ 2) = 3 ∧ √((-2:ℝ) ^ 2 + 1 ^ 2 + 2 ^ 2) = 3 ∧
     √((0:ℝ) ^ 2 + 3 ^ 2 + 3 ^ 2) = 3 * √2 ∧ 3 * (1:ℝ) + 2 * (-1) = 1 ∧ √((3:ℝ) ^ 2 + 4 ^ 2 + 12 ^ 2) = 13 ∧

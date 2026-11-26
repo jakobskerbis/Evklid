@@ -45,7 +45,7 @@ theorem skoraj {q g : ℝ → ℝ} (he : ∀ h : ℝ, h ≠ 0 → q h = g h) : �
 
 /-- Razlaga 1: model olja T(t) = 20 + 20t − t² da T(4) = 84 in T(10) = 120 (°C).
 trditev: MAT-SS-4/odvod#olje-vrednosti
-besedilo: »$T(4) = 84\,^\circ\mathrm{C}$« -/
+besedilo: »$T(4) = 84 ^\circ\mathrm{C}$« -/
 theorem olje_vrednosti : (20:ℝ) + 20 * 4 - 4 ^ 2 = 84 ∧ (20:ℝ) + 20 * 10 - 10 ^ 2 = 120 := by
   norm_num
 
@@ -57,7 +57,7 @@ theorem olje_povprecje : ((120:ℝ) - 20) / 10 = 10 := by norm_num
 /-- Razlaga 1, tabela: h = 1 da T(5) = 95 in količnik 11; h = 0,1 da T(4,1) = 85,19 in 11,9;
 h = 0,01 da T(4,01) = 84,1199 in 11,99.
 trditev: MAT-SS-4/odvod#olje-tabela
-besedilo: »| $0{,}1$ | $85{,}19$ | $11{,}9$ |« -/
+besedilo: »| $1$ | $95$ | $11$ | | $0{,}1$ | $85{,}19$ | $11{,}9$ | | $0{,}01$ | $84{,}1199$ | $11{,}99$ |« -/
 theorem olje_tabela :
     ((20:ℝ) + 20 * 5 - 5 ^ 2 = 95 ∧ ((95:ℝ) - 84) / 1 = 11) ∧
     ((20:ℝ) + 20 * 4.1 - 4.1 ^ 2 = 85.19 ∧ ((85.19:ℝ) - 84) / 0.1 = 11.9) ∧
@@ -88,7 +88,7 @@ example :=
 /-- Razlaga 1: limita diferenčnih količnikov je 12, torej se olje ob t = 4 segreva s 12 °C/min
 (več od povprečja 10).
 trditev: MAT-SS-4/odvod#olje-odvod-4
-besedilo: »Limita obstaja: v trenutku $t = 4$ se olje segreva s hitrostjo $12\,^\circ\mathrm{C/min}$, kar je več od povprečja $10$.« -/
+besedilo: »Limita obstaja: v trenutku $t = 4$ se olje segreva s hitrostjo $12 ^\circ\mathrm{C/min}$, kar je več od povprečja $10$.« -/
 theorem olje_odvod_4 : HasDerivAt (fun t : ℝ => 20 + 20 * t - t ^ 2) 12 4 ∧ (12:ℝ) > 10 := by
   refine ⟨(odvod_definicija _ _ _).mpr (lim_kvocient (g := fun h => 12 - h)
     (skoraj fun h hh => olje_kvocient h hh) (by fun_prop) (by norm_num)), by norm_num⟩
@@ -97,7 +97,7 @@ theorem olje_odvod_4 : HasDerivAt (fun t : ℝ => 20 + 20 * t - t ^ 2) 12 4 ∧ 
 
 /-- Razlaga 3: (a + h)² − a² = 2ah + h², diferenčni količnik je 2a + h (h ≠ 0), limita 2a.
 trditev: MAT-SS-4/odvod#kvadrat-iz-definicije
-besedilo: »Za $f(x) = x^3$ podobno: $(a + h)^3 - a^3 = 3a^2 h + 3a h^2 + h^3$, po deljenju s $h$ je diferenčni količnik $3a^2 + 3ah + h^2$, njegova limita pa $3a^2$.« -/
+besedilo: »Za $f(x) = x^2$ je $(a + h)^2 - a^2 = 2ah + h^2$. Diferenčni količnik je $2a + h$, njegova limita pa $2a$.« -/
 theorem kvadrat_iz_definicije (a : ℝ) :
     (∀ h : ℝ, (a + h) ^ 2 - a ^ 2 = 2 * a * h + h ^ 2) ∧
     (∀ h : ℝ, h ≠ 0 → ((a + h) ^ 2 - a ^ 2) / h = 2 * a + h) ∧
@@ -122,7 +122,7 @@ theorem kub_iz_definicije (a : ℝ) :
 
 /-- Razlaga 3, tabela: odvodi x² v 1, 2, 3 so 2, 4, 6; odvodi x³ so 3, 12, 27.
 trditev: MAT-SS-4/odvod#vzorec-tabela
-besedilo: »Po vzorcu je $(x^4)' = 4x^3$, zato je $f'(2) = 4 \cdot 2^3 = 32$.« -/
+besedilo: »| $1$ | $2$ | $3$ | | $2$ | $4$ | $12$ | | $3$ | $6$ | $27$ |« -/
 theorem vzorec_tabela :
     deriv (fun x : ℝ => x ^ 2) 1 = 2 ∧ deriv (fun x : ℝ => x ^ 2) 2 = 4 ∧
     deriv (fun x : ℝ => x ^ 2) 3 = 6 ∧ deriv (fun x : ℝ => x ^ 3) 1 = 3 ∧
@@ -140,13 +140,13 @@ theorem cetrta_potenca_v_2 :
 
 /-- Razlaga 3, pravilo za potenco (naravni eksponent): (xⁿ)' = n xⁿ⁻¹.
 trditev: MAT-SS-4/odvod#potenca-naravna
-besedilo: »$$(x^n)' = n\,x^{n-1}$$« -/
+besedilo: »$$(x^n)' = n x^{n-1}$$« -/
 theorem potenca_naravna (n : ℕ) (x : ℝ) : HasDerivAt (fun x : ℝ => x ^ n) (n * x ^ (n - 1)) x :=
   hasDerivAt_pow n x
 
 /-- Razlaga 3, pravilo za potenco (negativni, celi eksponent) za x ≠ 0: (xⁿ)' = n xⁿ⁻¹.
 trditev: MAT-SS-4/odvod#potenca-cela
-besedilo: »$$(x^n)' = n\,x^{n-1}$$« -/
+besedilo: »Velja tudi za negativne in racionalne eksponente« -/
 theorem potenca_cela (n : ℤ) (x : ℝ) (hx : x ≠ 0) :
     HasDerivAt (fun x : ℝ => x ^ n) (n * x ^ (n - 1)) x :=
   hasDerivAt_zpow n x (Or.inl hx)
@@ -161,7 +161,7 @@ example :=
 
 /-- Razlaga 3, pravilo za potenco (realni, tudi racionalni eksponent) za x > 0.
 trditev: MAT-SS-4/odvod#potenca-realna
-besedilo: »Velja tudi za negativne in racionalne eksponente, na primer $\left(\frac{1}{x}\right)' = (x^{-1})' = -\frac{1}{x^2}$.« -/
+besedilo: »Velja tudi za negativne in racionalne eksponente« -/
 theorem potenca_realna (p x : ℝ) (hx : 0 < x) :
     HasDerivAt (fun x : ℝ => x ^ p) (p * x ^ (p - 1)) x :=
   hasDerivAt_rpow_const (Or.inl hx.ne')
@@ -202,7 +202,7 @@ theorem odvod_x_in_konstante (c x : ℝ) :
 
 /-- Razlaga 5: (c · f)' = c · f'.
 trditev: MAT-SS-4/odvod#odvod-konstanta-krat
-besedilo: »$$(c \cdot f)' = c \cdot f' \qquad (f + g)' = f' + g'$$« -/
+besedilo: »(c \cdot f)' = c \cdot f'« -/
 theorem odvod_konstanta_krat {f : ℝ → ℝ} {f' x : ℝ} (c : ℝ) (hf : HasDerivAt f f' x) :
     HasDerivAt (fun x => c * f x) (c * f') x := hf.const_mul c
 
@@ -216,7 +216,8 @@ example :=
 
 /-- Razlaga 5: (f + g)' = f' + g'.
 trditev: MAT-SS-4/odvod#odvod-vsote
-besedilo: »$(c f)' = c f', \quad (f + g)' = f' + g'$« -/
+besedilo: »(f + g)' = f' + g'«
+besedilo-kratko: formula pravila za vsoto; daljši odsek zajame še konstantni faktor -/
 theorem odvod_vsote {f g : ℝ → ℝ} {f' g' x : ℝ} (hf : HasDerivAt f f' x) (hg : HasDerivAt g g' x) :
     HasDerivAt (fun x => f x + g x) (f' + g') x := hf.add hg
 
@@ -239,7 +240,7 @@ theorem olje_odvod (t : ℝ) : HasDerivAt (fun t : ℝ => 20 + 20 * t - t ^ 2) (
 
 /-- Razlaga 5: T'(4) = 20 − 8 = 12 (ujema se s tabelo), T'(0) = 20 in T'(10) = 0.
 trditev: MAT-SS-4/odvod#olje-odvod-vrednosti
-besedilo: »Konstantni faktor ostane, vsoto odvajamo člen za členom. Olje: $T'(t) = 0 + 20 - 2t = 20 - 2t$. Pri $t = 4$ dobimo $20 - 8 = 12$, kar se ujema s tabelo.« -/
+besedilo: »Pri $t = 4$ dobimo $20 - 8 = 12$, kar se ujema s tabelo. Zdaj lahko Maticu odgovorimo. Na začetku se olje segreva s hitrostjo $T'(0) = 20\,^\circ\mathrm{C/min}$, ob $t = 10$ pa je $T'(10) = 0$« -/
 theorem olje_odvod_vrednosti :
     (20:ℝ) - 2 * 4 = 20 - 8 ∧ (20:ℝ) - 8 = 12 ∧ (20:ℝ) - 2 * 0 = 20 ∧ (20:ℝ) - 2 * 10 = 0 := by
   norm_num
@@ -308,7 +309,7 @@ example :=
 
 /-- Razlaga 7, tabela: (sin x)' = cos x, (cos x)' = −sin x, (eˣ)' = eˣ.
 trditev: MAT-SS-4/odvod#elementarni-odvodi
-besedilo: »$(x^n)' = n x^{n-1}$, $(\sin x)' = \cos x$, $(\cos x)' = -\sin x$ (na pamet)« -/
+besedilo: »| $\sin x$ | $\cos x$ | | $\cos x$ | $-\sin x$ | | $e^x$ | $e^x$ |« -/
 theorem elementarni_odvodi (x : ℝ) :
     HasDerivAt sin (cos x) x ∧ HasDerivAt cos (-sin x) x ∧ HasDerivAt exp (exp x) x :=
   ⟨hasDerivAt_sin x, hasDerivAt_cos x, hasDerivAt_exp x⟩
@@ -338,7 +339,7 @@ theorem vsota_kvocient (f g : ℝ → ℝ) (a h : ℝ) :
 
 /-- Razlaga 8: v števcu prištejemo in odštejemo f(a) g(a + h).
 trditev: MAT-SS-4/odvod#produkt-kvocient
-besedilo: »Produkt.* V števcu prištejemo in odštejemo $f(a)\,g(a + h)$,« -/
+besedilo: »$$\frac{f(a + h)\,g(a + h) - f(a)\,g(a)}{h} = \frac{f(a + h) - f(a)}{h} \cdot g(a + h) + f(a) \cdot \frac{g(a + h) - g(a)}{h}$$« -/
 theorem produkt_kvocient (f g : ℝ → ℝ) (a h : ℝ) :
     (f (a + h) * g (a + h) - f a * g a) / h =
       (f (a + h) - f a) / h * g (a + h) + f a * ((g (a + h) - g a) / h) := by
@@ -347,7 +348,7 @@ theorem produkt_kvocient (f g : ℝ → ℝ) (a h : ℝ) :
 /-- Razlaga 8: g(a + h) − g(a) = (g(a + h) − g(a))/h · h za h ≠ 0, in ker je g odvedljiva, gre to proti
 g'(a) · 0 = 0, torej g(a + h) → g(a) (odvedljiva funkcija je zvezna).
 trditev: MAT-SS-4/odvod#odvedljiva-zvezna
-besedilo: »Ko gre $h \to 0$, gresta ulomka proti $f'(a)$ in $g'(a)$, $g(a + h)$ pa proti $g(a)$, ker je odvedljiva funkcija zvezna: $g(a + h) - g(a) = \frac{g(a + h) - g(a)}{h} \cdot h \to g'(a) \cdot 0 = 0$.« -/
+besedilo: »$g(a + h)$ pa proti $g(a)$, ker je odvedljiva funkcija zvezna: $g(a + h) - g(a) = \frac{g(a + h) - g(a)}{h} \cdot h \to g'(a) \cdot 0 = 0$« -/
 theorem odvedljiva_zvezna {g : ℝ → ℝ} {a g' : ℝ} (hg : HasDerivAt g g' a) :
     (∀ h : ℝ, h ≠ 0 → g (a + h) - g a = (g (a + h) - g a) / h * h) ∧
     Tendsto (fun h => g (a + h)) (𝓝[≠] 0) (𝓝 (g a)) := by
@@ -372,7 +373,7 @@ example :=
 /-- Razlaga 8 in Ustno vprašanje 3: pravilo za vsoto, izpeljano iz definicije (limita vsote je vsota
 limit).
 trditev: MAT-SS-4/odvod#vsota-iz-definicije
-besedilo: »Limita vsote je vsota limit, zato je $(f + g)'(a) = f'(a) + g'(a)$.« -/
+besedilo: »Ko gre $h \to 0$, gre prvi ulomek proti $f'(a)$, drugi proti $g'(a)$, zato je $(f + g)'(a) = f'(a) + g'(a)$.« -/
 theorem vsota_iz_definicije {f g : ℝ → ℝ} {a f' g' : ℝ} (hf : HasDerivAt f f' a)
     (hg : HasDerivAt g g' a) : HasDerivAt (fun x => f x + g x) (f' + g') a := by
   rw [odvod_definicija] at hf hg ⊢
@@ -390,7 +391,7 @@ example :=
 
 /-- Razlaga 8: pravilo za produkt, izpeljano iz definicije: (fg)'(a) = f'(a) g(a) + f(a) g'(a).
 trditev: MAT-SS-4/odvod#produkt-iz-definicije
-besedilo: »$(f g)'(a) = f'(a)\,g(a) + f(a)\,g'(a)$« -/
+besedilo: »$(f g)'(a) = f'(a) g(a) + f(a) g'(a)$« -/
 theorem produkt_iz_definicije {f g : ℝ → ℝ} {a f' g' : ℝ} (hf : HasDerivAt f f' a)
     (hg : HasDerivAt g g' a) : HasDerivAt (fun x => f x * g x) (f' * g a + f a * g') a := by
   have hz := (odvedljiva_zvezna hg).2
@@ -493,7 +494,8 @@ theorem odvod_dva_na_x (x : ℝ) : HasDerivAt (fun x : ℝ => (2:ℝ) ^ x) ((2:�
 
 /-- Primer 1, korak 1: f(1) = 1 + 3 = 4.
 trditev: MAT-SS-4/odvod#primer1-f1
-besedilo: »$f(1) = 1 + 3 = 4$« -/
+besedilo: »$f(1) = 1 + 3 = 4$«
+besedilo-kratko: cel korak 1 -/
 theorem primer1_f1 : (1:ℝ) ^ 2 + 3 * 1 = 1 + 3 ∧ (1:ℝ) + 3 = 4 := by norm_num
 
 /-- Primer 1, korak 2: f(1 + h) = (1 + h)² + 3(1 + h) = 4 + 5h + h².
@@ -536,7 +538,7 @@ theorem primer1_pravila (x : ℝ) :
 /-- Primer 2, koraki 1–3: za x ≠ 3 je f'(x) = (2(x − 3) − (2x + 1) · 1)/(x − 3)² in števec je
 2x − 6 − 2x − 1 = −7, torej f'(x) = −7/(x − 3)².
 trditev: MAT-SS-4/odvod#primer2-odvod
-besedilo: »Števec: $2(x - 3) - (2x + 1) \cdot 1 = 2x - 6 - 2x - 1 = -7$.« -/
+besedilo: »Torej $f'(x) = \dfrac{-7}{(x - 3)^2}$.« -/
 theorem primer2_odvod (x : ℝ) (hx : x ≠ 3) :
     HasDerivAt (fun x : ℝ => (2 * x + 1) / (x - 3)) ((2 * (x - 3) - (2 * x + 1) * 1) / (x - 3) ^ 2) x ∧
     2 * (x - 3) - (2 * x + 1) * 1 = 2 * x - 6 - 2 * x - 1 ∧ 2 * x - 6 - 2 * x - 1 = -7 ∧
@@ -557,12 +559,12 @@ example :=
 
 /-- Primer 2, korak 4: f'(4) = −7/1² = −7.
 trditev: MAT-SS-4/odvod#primer2-v-4
-besedilo: »Odgovor: $f'(x) = -\dfrac{7}{(x - 3)^2}$ in $f'(4) = -7$.« -/
+besedilo: »Pri $x = 4$: $f'(4) = \dfrac{-7}{1^2} = -7$.« -/
 theorem primer2_v_4 : (-7:ℝ) / (4 - 3) ^ 2 = -7 / 1 ^ 2 ∧ (-7:ℝ) / 1 ^ 2 = -7 := by norm_num
 
 /-- Primer 2, korak 5: odvod je povsod negativen, zato f pada na (−∞, 3) in na (3, ∞).
 trditev: MAT-SS-4/odvod#primer2-pada
-besedilo: »Odgovor: $f'(x) = -\dfrac{7}{(x - 3)^2}$ in $f'(4) = -7$. Ker je odvod povsod negativen, funkcija na vsakem delu definicijskega območja pada.« -/
+besedilo: »Ker je odvod povsod negativen, funkcija na vsakem delu definicijskega območja pada.« -/
 theorem primer2_pada :
     StrictAntiOn (fun x : ℝ => (2 * x + 1) / (x - 3)) (Iio 3) ∧
     StrictAntiOn (fun x : ℝ => (2 * x + 1) / (x - 3)) (Ioi 3) := by
@@ -583,7 +585,7 @@ theorem primer2_pada :
 
 /-- Povzetek in Postopek, korak 5: f' > 0 na (notranjosti) intervala ⇒ f tam strogo narašča.
 trditev: MAT-SS-4/odvod#narasca
-besedilo: »Predznak $f'$ pove, kje funkcija narašča ($f' > 0$) in kje pada.« -/
+besedilo: »$f' > 0$: funkcija narašča« -/
 theorem narasca {f f' : ℝ → ℝ} {D : Set ℝ} (hd : ∀ x, HasDerivAt f (f' x) x) (hD : Convex ℝ D)
     (hp : ∀ x ∈ interior D, 0 < f' x) : StrictMonoOn f D :=
   strictMonoOn_of_deriv_pos hD (fun x _ => (hd x).continuousAt.continuousWithinAt)
@@ -591,7 +593,8 @@ theorem narasca {f f' : ℝ → ℝ} {D : Set ℝ} (hd : ∀ x, HasDerivAt f (f'
 
 /-- Povzetek in Postopek, korak 5: f' < 0 na (notranjosti) intervala ⇒ f tam strogo pada.
 trditev: MAT-SS-4/odvod#pada
-besedilo: »$f' > 0$: funkcija narašča; $f' < 0$: pada.« -/
+besedilo: »$f' < 0$: pada«
+besedilo-kratko: del vrstice v Povzetku; celotna vrstica zajame še naraščanje -/
 theorem pada {f f' : ℝ → ℝ} {D : Set ℝ} (hd : ∀ x, HasDerivAt f (f' x) x) (hD : Convex ℝ D)
     (hn : ∀ x ∈ interior D, f' x < 0) : StrictAntiOn f D :=
   strictAntiOn_of_deriv_neg hD (fun x _ => (hd x).continuousAt.continuousWithinAt)
@@ -611,7 +614,7 @@ example : StrictAntiOn (fun x : ℝ => x ^ 2) (Iio 0) :=
 
 /-- Primer 3, koraka 1–2: T(t) = 180 − 30t + 1,5t², T'(t) = −30 + 3t, T'(0) = −30.
 trditev: MAT-SS-4/odvod#primer3-odvod
-besedilo: »$T(t) = 180 - 30t + 1{,}5t^2$« -/
+besedilo: »Odvajamo člen za členom: $T'(t) = -30 + 3t$. 2. Na začetku: $T'(0) = -30$.« -/
 theorem primer3_odvod (t : ℝ) :
     HasDerivAt (fun t : ℝ => 180 - 30 * t + 1.5 * t ^ 2) (-30 + 3 * t) t ∧ (-30:ℝ) + 3 * 0 = -30 := by
   refine ⟨?_, by norm_num⟩
@@ -621,7 +624,7 @@ theorem primer3_odvod (t : ℝ) :
 
 /-- Primer 3, korak 3: −30 + 3t = −12 ⇔ 3t = 18 ⇔ t = 6.
 trditev: MAT-SS-4/odvod#primer3-enacba
-besedilo: »Ohlajanje s hitrostjo $12\,^\circ\mathrm{C/min}$ pomeni $T'(t) = -12$: $-30 + 3t = -12$, torej $3t = 18$ in $t = 6$.« -/
+besedilo: »Ohlajanje s hitrostjo $12 ^\circ\mathrm{C/min}$ pomeni $T'(t) = -12$: $-30 + 3t = -12$, torej $3t = 18$ in $t = 6$.« -/
 theorem primer3_enacba (t : ℝ) : -30 + 3 * t = -12 ↔ t = 6 := by
   calc -30 + 3 * t = -12 ↔ 3 * t = 18 := by constructor <;> intro h <;> linarith
     _ ↔ t = 6 := by constructor <;> intro h <;> linarith
@@ -635,7 +638,7 @@ theorem primer3_T6 : (180:ℝ) - 30 * 6 + 1.5 * 6 ^ 2 = 180 - 180 + 54 ∧ (180:
 /-- Primer 4, koraka 1–3: za sin x ≠ 0 je (cot x)' = (−sin x · sin x − cos x · cos x)/sin² x
 = −(sin² x + cos² x)/sin² x = −1/sin² x.
 trditev: MAT-SS-4/odvod#primer4-odvod
-besedilo: »$(\cot x)' = \dfrac{-\sin x \cdot \sin x - \cos x \cdot \cos x}{\sin^2 x} = -\dfrac{\sin^2 x + \cos^2 x}{\sin^2 x}$« -/
+besedilo: »Števec je $-1$, zato je $(\cot x)' = -\dfrac{1}{\sin^2 x}$ (za $\sin x \ne 0$).« -/
 theorem primer4_odvod (x : ℝ) (hx : sin x ≠ 0) :
     HasDerivAt (fun x => cos x / sin x) ((-sin x * sin x - cos x * cos x) / sin x ^ 2) x ∧
     (-sin x * sin x - cos x * cos x) / sin x ^ 2 = -(sin x ^ 2 + cos x ^ 2) / sin x ^ 2 ∧
@@ -682,7 +685,7 @@ theorem primer5 (x : ℝ) :
 /-- Pogoste napake 1 in Preveri se 3: (x² sin x)' = 2x sin x + x² cos x; to ni 2x cos x (npr. pri x = π/2,
 kjer je prvo π, drugo 0).
 trditev: MAT-SS-4/odvod#napaka-produkt
-besedilo: »Odvod produkta kot produkt odvodov.** Kdor piše $(x^2 \sin x)' = 2x \cos x$, je odvajal vsak faktor posebej. Že pri $x \cdot x$ to odpove ($1 \ne 2x$). Prav je $2x \sin x + x^2 \cos x$.« -/
+besedilo: »Produkt: $(x^2 \sin x)' = 2x \sin x + x^2 \cos x$, ne $2x \cos x$.« -/
 theorem napaka_produkt (x : ℝ) :
     HasDerivAt (fun x => x ^ 2 * sin x) (2 * x * sin x + x ^ 2 * cos x) x ∧
     2 * (π / 2) * sin (π / 2) + (π / 2) ^ 2 * cos (π / 2) ≠ 2 * (π / 2) * cos (π / 2) := by
@@ -691,12 +694,12 @@ theorem napaka_produkt (x : ℝ) :
 
 /-- Pogoste napake 3: brez notranjega odvoda bi pri x = 1 dobili 3(1² + 1)² = 12, pravi odvod pa je 24.
 trditev: MAT-SS-4/odvod#napaka-notranji
-besedilo: »Pozabljen notranji odvod.** $\bigl((x^2 + 1)^3\bigr)' = 3(x^2 + 1)^2$ je nepopolno: manjka faktor $2x$.« -/
+besedilo: »$\bigl((x^2 + 1)^3\bigr)' = 3(x^2 + 1)^2$ je nepopolno: manjka faktor $2x$.« -/
 theorem napaka_notranji : (3:ℝ) * (1 ^ 2 + 1) ^ 2 = 12 ∧ (12:ℝ) ≠ 24 := by norm_num
 
 /-- Pogoste napake 4: pri f(x) = x² je f(2) = 4, (4)' = 0, a f'(2) = 4; (x² + 7)' = 2x.
 trditev: MAT-SS-4/odvod#napaka-vstavljanje
-besedilo: »Najprej vstaviš, nato odvajaš.** Pri $f(x) = x^2$ je $f(2) = 4$ in $(4)' = 0$, a $f'(2) = 4$. Najprej odvajaj funkcijo, šele nato vstavi točko. Iz istega razloga je $(x^2 + 7)' = 2x$, ne $2x + 7$: konstanta ima odvod $0$.« -/
+besedilo: »Pri $f(x) = x^2$ je $f(2) = 4$ in $(4)' = 0$, a $f'(2) = 4$. Najprej odvajaj funkcijo, šele nato vstavi točko. Iz istega razloga je $(x^2 + 7)' = 2x$« -/
 theorem napaka_vstavljanje (x : ℝ) :
     (2:ℝ) ^ 2 = 4 ∧ deriv (fun _ : ℝ => (4:ℝ)) 2 = 0 ∧ deriv (fun x : ℝ => x ^ 2) 2 = 4 ∧
     HasDerivAt (fun x : ℝ => x ^ 2 + 7) (2 * x) x := by
@@ -708,7 +711,7 @@ theorem napaka_vstavljanje (x : ℝ) :
 /-- Naloga 1, koraka 1–2: f'(x) = (x²)' e^{2x} + x² (e^{2x})' = 2x e^{2x} + x² · e^{2x} · 2
 = 2x e^{2x} + 2x² e^{2x} = 2x(x + 1) e^{2x}.
 trditev: MAT-SS-4/odvod#matura1-odvod
-besedilo: »Po pravilu za sestavljeno funkcijo je $(e^{2x})' = e^{2x} \cdot 2$, zato $f'(x) = 2x\,e^{2x} + 2x^2 e^{2x} = 2x(x + 1)\,e^{2x}$.« -/
+besedilo: »Po pravilu za sestavljeno funkcijo je $(e^{2x})' = e^{2x} \cdot 2$, zato $f'(x) = 2x e^{2x} + 2x^2 e^{2x} = 2x(x + 1) e^{2x}$.« -/
 theorem matura1_odvod (x : ℝ) :
     HasDerivAt (fun x => x ^ 2 * exp (2 * x)) (2 * x * exp (2 * x) + x ^ 2 * (exp (2 * x) * 2)) x ∧
     2 * x * exp (2 * x) + x ^ 2 * (exp (2 * x) * 2) = 2 * x * exp (2 * x) + 2 * x ^ 2 * exp (2 * x) ∧
@@ -720,7 +723,7 @@ theorem matura1_odvod (x : ℝ) :
 
 /-- Naloga 1, koraka 3–4: ker je e^{2x} > 0, je 2x(x + 1)e^{2x} = 0 natanko za x = 0 ali x = −1.
 trditev: MAT-SS-4/odvod#matura1-nicle
-besedilo: »Ker je $e^{2x} > 0$ za vsak $x$, je $f'(x) = 0$ natanko tedaj, ko je $2x(x + 1) = 0$.« -/
+besedilo: »Ker je $e^{2x} > 0$ za vsak $x$, je $f'(x) = 0$ natanko tedaj, ko je $2x(x + 1) = 0$. 4. Odgovor: $f'(x) = 2x(x + 1)\,e^{2x}$; odvod je enak $0$ pri $x = 0$ in pri $x = -1$.« -/
 theorem matura1_nicle (x : ℝ) : 2 * x * (x + 1) * exp (2 * x) = 0 ↔ x = 0 ∨ x = -1 := by
   have he : exp (2 * x) ≠ 0 := (exp_pos _).ne'
   constructor
@@ -772,8 +775,7 @@ theorem matura2b_odvod : HasDerivAt (fun x : ℝ => 4 / x) (-1) 2 := by
   · exact continuousAt_const.div (by fun_prop) (by norm_num)
 
 /-- Naloga 2 (RACUN): (4/x)' = −4/x² za x ≠ 0.
-trditev: MAT-SS-4/odvod#matura2-odvod-splosno
-besedilo: »$f(x) = \dfrac{4}{x}$« -/
+pomozno -/
 theorem matura2_odvod_splosno (x : ℝ) (hx : x ≠ 0) : HasDerivAt (fun x : ℝ => 4 / x) (-4 / x ^ 2) x :=
   ((hasDerivAt_const x (4:ℝ)).div (hasDerivAt_id' x) hx).congr_deriv (by ring)
 
@@ -788,7 +790,7 @@ example :=
 /-- Naloga 2 c): f(2) = 2, tangenta y = 2 − 1 · (x − 2) = −x + 4, sekanta y = 4 − (x − 1) = −x + 5;
 smerna koeficienta sta enaka (−1), premici pa različni, torej vzporedni.
 trditev: MAT-SS-4/odvod#matura2c
-besedilo: »c) Sekanta iz a) je $y = 4 - (x - 1) = -x + 5$. Premici imata enak smerni koeficient $-1$, zato sta vzporedni.« -/
+besedilo: »c) $f(2) = 2$, zato je tangenta $y = 2 - 1 \cdot (x - 2) = -x + 4$. 6. c) Sekanta iz a) je $y = 4 - (x - 1) = -x + 5$. Premici imata enak smerni koeficient $-1$, zato sta vzporedni.« -/
 theorem matura2c (x : ℝ) :
     (4:ℝ) / 2 = 2 ∧ 2 - 1 * (x - 2) = -x + 4 ∧ 4 - (x - 1) = -x + 5 ∧ -x + 4 ≠ -x + 5 := by
   refine ⟨by norm_num, by ring, by ring, by intro h; linarith⟩
@@ -796,7 +798,7 @@ theorem matura2c (x : ℝ) :
 /-- Naloga 3 a), korak 1: za h ≠ 0 in x + h ≥ 0 je (√(x + h) − √x)/h = ((x + h) − x)/(h(√(x + h) + √x))
 = 1/(√(x + h) + √x) (x > 0).
 trditev: MAT-SS-4/odvod#matura3a-kvocient
-besedilo: »Razširimo ga s $\sqrt{x + h} + \sqrt{x}$: $\dfrac{(x + h) - x}{h\,(\sqrt{x + h} + \sqrt{x})} = \dfrac{1}{\sqrt{x + h} + \sqrt{x}}$.« -/
+besedilo: »Razširimo ga s $\sqrt{x + h} + \sqrt{x}$: $\dfrac{(x + h) - x}{h (\sqrt{x + h} + \sqrt{x})} = \dfrac{1}{\sqrt{x + h} + \sqrt{x}}$.« -/
 theorem matura3a_kvocient (x h : ℝ) (hx : 0 < x) (hh : h ≠ 0) (hxh : 0 ≤ x + h) :
     (√(x + h) - √x) / h = ((x + h) - x) / (h * (√(x + h) + √x)) ∧
     ((x + h) - x) / (h * (√(x + h) + √x)) = 1 / (√(x + h) + √x) := by
@@ -817,7 +819,7 @@ example :=
 
 /-- Naloga 3 a), korak 2: limita je 1/(2√x), torej (√x)' = 1/(2√x) za x > 0.
 trditev: MAT-SS-4/odvod#matura3a-odvod
-besedilo: »da za $x > 0$ velja $(\sqrt{x})' = \dfrac{1}{2\sqrt{x}}$.« -/
+besedilo: »Ko gre $h \to 0$, gre $\sqrt{x + h} \to \sqrt{x}$, zato je limita enaka $\dfrac{1}{2\sqrt{x}}$. Torej $(\sqrt{x})' = \dfrac{1}{2\sqrt{x}}$.« -/
 theorem matura3a_odvod (x : ℝ) (hx : 0 < x) : HasDerivAt (fun x => √x) (1 / (2 * √x)) x := by
   refine (odvod_definicija _ _ _).mpr
     (lim_kvocient (g := fun h => 1 / (√(x + h) + √x)) ?_ ?_ ?_)
@@ -841,8 +843,7 @@ example :=
 
 /-- Naloga 3 a) (RACUN): pri x = 4 je ((4 + h) − 4)/(h(√(4 + h) + 2)) = 1/(√(4 + h) + 2) za h ≠ 0, h ≥ −4,
 in limita (√(4 + h) − √4)/h je 1/4.
-trditev: MAT-SS-4/odvod#matura3a-pri-4
-besedilo: »$\dfrac{(x + h) - x}{h\,(\sqrt{x + h} + \sqrt{x})} = \dfrac{1}{\sqrt{x + h} + \sqrt{x}}$« -/
+pomozno -/
 theorem matura3a_pri_4 :
     (∀ h : ℝ, h ≠ 0 → 0 ≤ 4 + h → ((4 + h) - 4) / (h * (√(4 + h) + 2)) = 1 / (√(4 + h) + 2)) ∧
     Tendsto (fun h : ℝ => (√(4 + h) - √4) / h) (𝓝[≠] 0) (𝓝 (1 / 4)) := by
@@ -880,7 +881,7 @@ example :=
 
 /-- Naloga 3 c): (√(x² + 9))' = 1/(2√(x² + 9)) · 2x = x/√(x² + 9) in f'(4) = 4/√(16 + 9) = 4/5.
 trditev: MAT-SS-4/odvod#matura3c
-besedilo: »$f'(4) = \dfrac{4}{\sqrt{16 + 9}} = \dfrac{4}{5}$« -/
+besedilo: »c) Sestavljena funkcija z notranjo funkcijo $x^2 + 9$: $f'(x) = \dfrac{1}{2\sqrt{x^2 + 9}} \cdot 2x = \dfrac{x}{\sqrt{x^2 + 9}}$. 6. c) $f'(4) = \dfrac{4}{\sqrt{16 + 9}} = \dfrac{4}{5}$.« -/
 theorem matura3c (x : ℝ) :
     HasDerivAt (fun x => √(x ^ 2 + 9)) (1 / (2 * √(x ^ 2 + 9)) * (2 * x)) x ∧
     1 / (2 * √(x ^ 2 + 9)) * (2 * x) = x / √(x ^ 2 + 9) ∧
@@ -928,7 +929,7 @@ example :=
 /-- Naloga 3 d): v x = ±π/3 ima tangenta na tan smerni koeficient 4, točki sta (π/3, √3) in
 (−π/3, −√3).
 trditev: MAT-SS-4/odvod#matura3d-tocki
-besedilo: »Odgovor: $(\sqrt{x})' = \frac{1}{2\sqrt{x}}$, $\left(\frac{\sin x}{1 + \cos x}\right)' = \frac{1}{1 + \cos x}$, $f'(4) = \frac{4}{5}$; iskani točki sta $\left(\frac{\pi}{3}, \sqrt{3}\right)$ in $\left(-\frac{\pi}{3}, -\sqrt{3}\right)$.« -/
+besedilo: »iskani točki sta $\left(\frac{\pi}{3}, \sqrt{3}\right)$ in $\left(-\frac{\pi}{3}, -\sqrt{3}\right)$« -/
 theorem matura3d_tocki :
     HasDerivAt tan 4 (π / 3) ∧ HasDerivAt tan 4 (-(π / 3)) ∧
     tan (π / 3) = √3 ∧ tan (-(π / 3)) = -√3 := by
@@ -940,8 +941,7 @@ theorem matura3d_tocki :
   · rw [cos_neg, cos_pi_div_three]; norm_num
 
 /-- Naloga 3 d) (RACUN): 1/cos²(π/3) = 4.
-trditev: MAT-SS-4/odvod#matura3d-racun
-besedilo: »d) Ker je $(\tan x)' = \dfrac{1}{\cos^2 x}$, pogoj $\dfrac{1}{\cos^2 x} = 4$ da $\cos^2 x = \dfrac{1}{4}$. Na intervalu $\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)$ je $\cos x > 0$, zato $\cos x = \dfrac{1}{2}$ in $x = \pm\dfrac{\pi}{3}$.« -/
+pomozno -/
 theorem matura3d_racun : 1 / cos (π / 3) ^ 2 = 4 := by rw [cos_pi_div_three]; norm_num
 
 /-- Ustno vprašanje 2: (sin(x²))' = cos(x²) · 2x.
@@ -956,7 +956,7 @@ theorem ustno2 (x : ℝ) : HasDerivAt (fun x => sin (x ^ 2)) (cos (x ^ 2) * (2 *
 /-- Drugače: f(x) = x³, f(2) = 8, f(2,1) = 9,261 in količnik 12,61; f(2,01) = 8,120601 in 12,0601;
 pri h = 0,001 je količnik 12,006001; pravilo da f'(2) = 3 · 2² = 12.
 trditev: MAT-SS-4/odvod#drugace-stevila
-besedilo: »Izberi $h = 0{,}1$: $f(2{,}1) = 9{,}261$, diferenčni količnik je $\dfrac{9{,}261 - 8}{0{,}1} = 12{,}61$.« -/
+besedilo: »Sklep: $f'(2) = 12$. Pravilo da isto: $3 \cdot 2^2 = 12$.« -/
 theorem drugace_stevila :
     (2:ℝ) ^ 3 = 8 ∧ (2.1:ℝ) ^ 3 = 9.261 ∧ ((9.261:ℝ) - 8) / 0.1 = 12.61 ∧
     (2.01:ℝ) ^ 3 = 8.120601 ∧ ((8.120601:ℝ) - 8) / 0.01 = 12.0601 ∧
@@ -989,7 +989,7 @@ theorem kviz4 :
 /-- Preveri se 5: T(t) = 10 + 12t − 0,5t² ima T'(t) = 12 − t, T'(4) = 8; T(4) = 50 in povprečje
 (50 − 10)/4 = 10.
 trditev: MAT-SS-4/odvod#kviz5
-besedilo: »$T(t) = 10 + 12t - 0{,}5t^2$« -/
+besedilo: »$T'(t) = 12 - t$, zato je $T'(4) = 8\,^\circ\mathrm{C/min}$.« -/
 theorem kviz5 (t : ℝ) :
     HasDerivAt (fun t : ℝ => 10 + 12 * t - 0.5 * t ^ 2) (12 - t) t ∧ (12:ℝ) - 4 = 8 ∧
     (10:ℝ) + 12 * 4 - 0.5 * 4 ^ 2 = 50 ∧ ((50:ℝ) - 10) / 4 = 10 := by

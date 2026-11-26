@@ -207,7 +207,7 @@ theorem P2_sub (a b c d : ℝ) : P2 a b - P2 c d = P2 (a - c) (b - d) := by
 
 /-- Razlaga, tabela: a = 30 − 2x in V(1) = 784, V(2) = 1352, V(5) = 2000, V(10) = 1000, V(14) = 56.
 trditev: MAT-SS-3/mesane-naloge-3-letnika#tabela
-besedilo: »dno pa je kvadrat s stranico $a = 30 - 2x$ (z vsake strani odrežeš $x$).« -/
+besedilo: »| $1$ | $28$ | $784$ | | $2$ | $26$ | $1352$ | | $5$ | $20$ | $2000$ | | $10$ | $10$ | $1000$ | | $14$ | $2$ | $56$ |« -/
 theorem tabela :
     (30 : ℝ) - 2 * 1 = 28 ∧ V 1 = 784 ∧ (30 : ℝ) - 2 * 2 = 26 ∧ V 2 = 1352 ∧ (30 : ℝ) - 2 * 5 = 20 ∧
     V 5 = 2000 ∧ (30 : ℝ) - 2 * 10 = 10 ∧ V 10 = 1000 ∧ (30 : ℝ) - 2 * 14 = 2 ∧ V 14 = 56 := by
@@ -216,7 +216,7 @@ theorem tabela :
 /-- Razlaga (premisli), Preveri se (3): pri x = 15 je stranica dna 0, pri x > 15 negativna; dno je dolžina
 (30 − 2x > 0) in x > 0 natanko pri 0 < x < 15.
 trditev: MAT-SS-3/mesane-naloge-3-letnika#omejitev
-besedilo: »Ne. Pri $x = 15$ je stranica dna $30 - 30 = 0$, pri večjem $x$ bi bila negativna. Zato pride v poštev le $0 < x < 15$. Enačba lahko ima tudi rešitev zunaj tega intervala, a te pekač ne more imeti.« -/
+besedilo: »Pri $x = 15$ je stranica dna $30 - 30 = 0$, pri večjem $x$ bi bila negativna. Zato pride v poštev le $0 < x < 15$.« -/
 theorem omejitev (x : ℝ) : (30 : ℝ) - 2 * 15 = 0 ∧ (15 < x → 30 - 2 * x < 0) ∧
     (0 < x ∧ 0 < 30 - 2 * x ↔ 0 < x ∧ x < 15) := by
   refine ⟨by norm_num, fun h => by linarith, ⟨fun ⟨h1, h2⟩ => ⟨h1, by linarith⟩, fun ⟨h1, h2⟩ => ⟨h1, by linarith⟩⟩⟩
@@ -246,7 +246,7 @@ theorem raste_pada : StrictMonoOn V (Set.Ioc 0 5) ∧ StrictAntiOn V (Set.Ico 5 
 
 /-- Razlaga: V(x) = 1000 ⇔ 4x³ − 120x² + 900x − 1000 = 0 ⇔ x³ − 30x² + 225x − 250 = 0.
 trditev: MAT-SS-3/mesane-naloge-3-letnika#enacba-pekaca
-besedilo: »Iz tabele v enačbo.** Splošno je prostornina $V(x) = x(30 - 2x)^2$ za $0 < x < 15$. Pogoj $V(x) = 1000$ je enačba tretje stopnje. Ko izraz zmnožimo in vse prenesemo na levo, dobimo $4x^3 - 120x^2 + 900x - 1000 = 0$. Delimo s $4$ in dobimo« -/
+besedilo: »Pogoj $V(x) = 1000$ je enačba tretje stopnje. Ko izraz zmnožimo in vse prenesemo na levo, dobimo $4x^3 - 120x^2 + 900x - 1000 = 0$. Delimo s $4$ in dobimo $$x^3 - 30x^2 + 225x - 250 = 0$$« -/
 theorem enacba_pekaca (x : ℝ) :
     (V x = 1000 ↔ 4 * x ^ 3 - 120 * x ^ 2 + 900 * x - 1000 = 0) ∧
     (4 * x ^ 3 - 120 * x ^ 2 + 900 * x - 1000 = 0 ↔ x ^ 3 - 30 * x ^ 2 + 225 * x - 250 = 0) := by
@@ -256,7 +256,7 @@ theorem enacba_pekaca (x : ℝ) :
 /-- Primer 4: Horner s koeficienti 1, −30, 225, −250 pri x = 10 da 1, −20, 25 in ostanek 0, torej
 x³ − 30x² + 225x − 250 = (x − 10)(x² − 20x + 25).
 trditev: MAT-SS-3/mesane-naloge-3-letnika#horner
-besedilo: »$x^3 - 30x^2 + 225x - 250 = (x - 10)(x^2 - 20x + 25)$« -/
+besedilo: »Hornerjev algoritem s koeficienti $1$, $-30$, $225$, $-250$ pri $x = 10$ da $1$, $-20$, $25$ in ostanek $0$. 2. Zato je $x^3 - 30x^2 + 225x - 250 = (x - 10)(x^2 - 20x + 25)$.« -/
 theorem horner (x : ℝ) :
     (1 : ℝ) * 10 - 30 = -20 ∧ (-20 : ℝ) * 10 + 225 = 25 ∧ (25 : ℝ) * 10 - 250 = 0 ∧
     x ^ 3 - 30 * x ^ 2 + 225 * x - 250 = (x - 10) * (x ^ 2 - 20 * x + 25) := by
@@ -283,7 +283,7 @@ theorem kvadratni_faktor (x : ℝ) :
 10 + 5√3; 10 − 5√3 ≈ 1,34 ≈ 1,3, 10 + 5√3 ≈ 18,66 > 15 (odpade, 30 − 2x ≈ −7,3 < 0). Pri pogoju
 0 < x < 15 sta rešitvi natanko 10 in 10 − 5√3, slednja med 1 in 2 (tabela: V(1) < 1000 < V(2)).
 trditev: MAT-SS-3/mesane-naloge-3-letnika#pekac
-besedilo: »reši enačbo $x^3 - 30x^2 + 225x - 250 = 0$ pri pogoju $0 < x < 15$.« -/
+besedilo: »torej $x \approx 1{,}34\,\mathrm{cm}$ ali $x \approx 18{,}66\,\mathrm{cm}$. Druga je večja od $15$, zato odpade. Odgovor: izrežeš kvadratke s stranico $10\,\mathrm{cm}$ (globok pekač) ali približno $1{,}3\,\mathrm{cm}$ (plitev pekač).« -/
 theorem pekac (x : ℝ) :
     (x ^ 3 - 30 * x ^ 2 + 225 * x - 250 = 0 ↔ x = 10 ∨ x = 10 - 5 * √3 ∨ x = 10 + 5 * √3) ∧
     (V x = 1000 ↔ x = 10 ∨ x = 10 - 5 * √3 ∨ x = 10 + 5 * √3) ∧
@@ -311,7 +311,7 @@ theorem pekac (x : ℝ) :
 
 /-- Razlaga (drugi poskus): x² + (x + n)² = 8 ⇔ 2x² + 2nx + n² − 8 = 0; D = 4n² − 8(n² − 8) = 64 − 4n².
 trditev: MAT-SS-3/mesane-naloge-3-letnika#premica-kroznica
-besedilo: »Diskriminanta je $D = 4n^2 - 8(n^2 - 8) = 64 - 4n^2$.« -/
+besedilo: »Vstavimo $y$ v enačbo krožnice, $x^2 + (x + n)^2 = 8$, in uredimo: $$2x^2 + 2nx + n^2 - 8 = 0$$ Diskriminanta je $D = 4n^2 - 8(n^2 - 8) = 64 - 4n^2$.« -/
 theorem premica_kroznica (x n : ℝ) :
     (x ^ 2 + (x + n) ^ 2 = 8 ↔ 2 * x ^ 2 + 2 * n * x + n ^ 2 - 8 = 0) ∧
     discrim 2 (2 * n) (n ^ 2 - 8) = 4 * n ^ 2 - 8 * (n ^ 2 - 8) ∧ 4 * n ^ 2 - 8 * (n ^ 2 - 8) = 64 - 4 * n ^ 2 := by
@@ -350,7 +350,7 @@ example :=
 (dotika se, točka (−2, 2)); n = 6: D = −80, nobene (mimo). RAČUN: 4·4² − 8(4² − 8) = 0, 64 − 4·2² = 48,
 64 − 4·6² = −80, 2x² + 8x + 8 = 0 ⇔ x = −2.
 trditev: MAT-SS-3/mesane-naloge-3-letnika#tabela-n
-besedilo: »$D = 4n^2 - 8(n^2 - 8) = 64 - 4n^2$« -/
+besedilo: »| $2$ | $48$ | dve | seka | | $4$ | $0$ | ena | dotika se | | $6$ | $-80$ | nobene | mimo |« -/
 theorem tabela_n (x : ℝ) :
     (64 : ℝ) - 4 * 2 ^ 2 = 48 ∧ (x ^ 2 + (x + 2) ^ 2 = 8 ↔ x = -1 + √3 ∨ x = -1 - √3) ∧
     (4 : ℝ) * 4 ^ 2 - 8 * (4 ^ 2 - 8) = 0 ∧ (x ^ 2 + (x + 4) ^ 2 = 8 ↔ x = -2) ∧
@@ -387,7 +387,7 @@ theorem dotikalisce (x : ℝ) :
 neničelna vektorja sta pravokotna ⇔ ⟪a, b⟫ = 0 (φ = 90°); negativen skalarni produkt ⇔ top kot;
 kosinus je vedno med −1 in 1 (Pogoste napake).
 trditev: MAT-SS-3/mesane-naloge-3-letnika#kot-vektorjev
-besedilo: »Kot dobiš iz $\cos\varphi = \frac{\vec a \cdot \vec b}{|\vec a|\,|\vec b|}$; negativen skalarni produkt pomeni top kot.« -/
+besedilo: »Neničelna vektorja sta pravokotna natanko tedaj, ko je skalarni produkt $0$. Kot dobiš iz $\cos\varphi = \frac{\vec a \cdot \vec b}{|\vec a|\,|\vec b|}$; negativen skalarni produkt pomeni top kot.« -/
 theorem kot_vektorjev {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] (a b : E)
     (_ha : a ≠ 0) (_hb : b ≠ 0) :
     cos (InnerProductGeometry.angle a b) = inner ℝ a b / (‖a‖ * ‖b‖) ∧ inner ℝ a b = ‖a‖ * ‖b‖ * cos (InnerProductGeometry.angle a b) ∧
@@ -444,7 +444,7 @@ example :=
 (1 + k²)x² + 2knx + n² − r² = 0 ima diskriminanto 4(r²(1 + k²) − n²), zato je D = 0 (tangenta) natanko
 tedaj, ko je razdalja |n|/√(1 + k²) središča od premice enaka polmeru r.
 trditev: MAT-SS-3/mesane-naloge-3-letnika#tangenta
-besedilo: »(višja raven) Premica $y = x + n$ se dotika krožnice $x^2 + y^2 = 2$.« -/
+besedilo: »Prvi način: enačbo premice vstaviš v enačbo krožnice in dobiš kvadratno enačbo; premica je tangenta, ko je diskriminanta $0$. Drugi način: razdalja od središča krožnice do premice je enaka polmeru.« -/
 theorem tangenta (k n r : ℝ) (hr : 0 ≤ r) :
     discrim (1 + k ^ 2) (2 * k * n) (n ^ 2 - r ^ 2) = 4 * (r ^ 2 * (1 + k ^ 2) - n ^ 2) ∧
     (discrim (1 + k ^ 2) (2 * k * n) (n ^ 2 - r ^ 2) = 0 ↔ |n| / √(1 + k ^ 2) = r) := by
@@ -482,7 +482,7 @@ theorem izrek_o_nicli (p : Polynomial ℝ) (a : ℝ) :
 /-- Primer 1: AB = (4, 0), AC = (2, 2), ⟪AB, AC⟫ = 4·2 + 0·2 = 8, |AB| = 4, |AC| = √8 = 2√2,
 cos α = 8/(4·2√2) = √2/2, α = 45°; S = ½·4·2√2·√2/2 = 4 = 4·2/2. RAČUN: arccos(8/(4·2√2))·180/π = 45.
 trditev: MAT-SS-3/mesane-naloge-3-letnika#primer1
-besedilo: »$\cos\alpha = \frac{8}{4 \cdot 2\sqrt{2}} = \frac{\sqrt{2}}{2}$, zato $\alpha = 45^\circ$ (poseben kot, računalo ni potrebno).« -/
+besedilo: »Odgovor: kot pri $A$ meri $45^\circ$, ploščina trikotnika je $4$ kvadratne enote.« -/
 theorem primer1 :
     P2 4 0 - P2 0 0 = P2 4 0 ∧ P2 2 2 - P2 0 0 = P2 2 2 ∧ inner ℝ (P2 4 0) (P2 2 2) = 4 * 2 + 0 * 2 ∧
     (4 : ℝ) * 2 + 0 * 2 = 8 ∧ ‖P2 4 0‖ = 4 ∧ ‖P2 2 2‖ = √8 ∧ √8 = 2 * √2 ∧
@@ -512,7 +512,7 @@ theorem primer1 :
 /-- Primer 2 (višja raven), RAČUN: (x + 6)/x > x ⇔ x ∈ (−∞, −2) ∪ (0, 3) (pri x = 0 Lean da (x+6)/x = 0,
 zato 0 ni rešitev, kot v lekciji). Koraki: (x + 6)/x − x = (x + 6 − x²)/x, −x² + x + 6 = −(x − 3)(x + 2).
 trditev: MAT-SS-3/mesane-naloge-3-letnika#primer2
-besedilo: »Števec razstavimo: $-x^2 + x + 6 = -(x - 3)(x + 2)$. Ničli sta $-2$ in $3$, pol je $0$.« -/
+besedilo: »Odgovor: graf je nad premico za $x \in (-\infty, -2) \cup (0, 3)$.« -/
 theorem primer2 (x : ℝ) :
     ((x + 6) / x > x ↔ x < -2 ∨ (0 < x ∧ x < 3)) ∧
     (x ≠ 0 → (x + 6) / x - x = (x + 6 - x ^ 2) / x) ∧ -x ^ 2 + x + 6 = -((x - 3) * (x + 2)) := by
@@ -544,7 +544,7 @@ theorem primer2_tocke :
 /-- Pogoste napake (4): z množenjem z x dobiš x + 6 > x² ⇔ −2 < x < 3, kar ni prava množica rešitev:
 izgubiš (−∞, −2) (npr. −3) in dodaš (−2, 0) (npr. −1).
 trditev: MAT-SS-3/mesane-naloge-3-letnika#mnozenje-z-imenovalcem
-besedilo: »(višja raven) **Množenje neenačbe z imenovalcem.** Iz $\frac{x + 6}{x} > x$ z množenjem z $x$ dobiš $x + 6 > x^2$, kar velja le za $x > 0$.« -/
+besedilo: »Dobiš $(-2, 3)$: izgubiš interval $(-\infty, -2)$ in po pomoti dodaš $(-2, 0)$.« -/
 theorem mnozenje_z_imenovalcem (x : ℝ) :
     (x + 6 > x ^ 2 ↔ -2 < x ∧ x < 3) ∧ ((-3 + 6) / (-3 : ℝ) > -3) ∧ ¬ ((-1 + 6) / (-1 : ℝ) > -1) := by
   refine ⟨⟨fun h => ⟨by nlinarith, by nlinarith⟩, fun ⟨h1, h2⟩ => by nlinarith⟩, by norm_num, by norm_num⟩
@@ -554,7 +554,7 @@ theorem mnozenje_z_imenovalcem (x : ℝ) :
 /-- Primer 3: V = π·16·12/3 = 64π ≈ 201,1, polovica 32π; ρ = 4h/12 = h/3, V_s = π/3·h²/9·h = πh³/27;
 πh³/27 = 32π ⇔ h³ = 864 ⇔ h = ∛864 ≈ 9,52 ≈ 9,5 (za realni h), kar je več kot 6.
 trditev: MAT-SS-3/mesane-naloge-3-letnika#primer3
-besedilo: »Prostornina kozarca: $V = \frac{\pi \cdot 16 \cdot 12}{3} = 64\pi \approx 201{,}1\,\mathrm{cm^3}$. Polovica je $32\pi\,\mathrm{cm^3}$.« -/
+besedilo: »Odgovor: sok natočiš do višine približno $9{,}5\,\mathrm{cm}$ nad konico.« -/
 theorem primer3 (h : ℝ) :
     π * 16 * 12 / 3 = 64 * π ∧ |64 * π - 201.1| < 0.05 ∧ 64 * π / 2 = 32 * π ∧ 4 / 12 * h = h / 3 ∧
     π / 3 * (h ^ 2 / 9) * h = π * h ^ 3 / 27 ∧ (π * h ^ 3 / 27 = 32 * π ↔ h ^ 3 = 864) ∧
@@ -586,7 +586,7 @@ theorem primer3 (h : ℝ) :
 /-- Primer 3 (korak 6), Pogoste napake, Pazi na: polovica višine da (1/2)³ = 1/8 prostornine; pri podobnih
 telesih s koeficientom k se ploščine pomnožijo s k², prostornine s k³.
 trditev: MAT-SS-3/mesane-naloge-3-letnika#podobna-telesa
-besedilo: »Smisel: polovica višine bi dala le $\left(\frac{1}{2}\right)^3 = \frac{1}{8}$ prostornine, ker se pri podobnih telesih prostornina spremeni s kubom koeficienta. Zato mora biti gladina precej više od $6\,\mathrm{cm}$.« -/
+besedilo: »Pri podobnih telesih se dolžine pomnožijo s $k$, ploščine s $k^2$, prostornine s $k^3$. Stožec, napolnjen do polovice višine, je poln le do osmine.« -/
 theorem podobna_telesa (k r v : ℝ) :
     ((1 : ℝ) / 2) ^ 3 = 1 / 8 ∧ π * (k * r) ^ 2 * (k * v) / 3 = k ^ 3 * (π * r ^ 2 * v / 3) ∧
     π * (k * r) ^ 2 = k ^ 2 * (π * r ^ 2) := ⟨by norm_num, by ring, by ring⟩
@@ -594,7 +594,7 @@ theorem podobna_telesa (k r v : ℝ) :
 /-- Drugače (korak za korakom): h = 6: polmer 2, π·4·6/3 = 8π ≈ 25,1 = 64π/8; h = 9: polmer 3, π·9·9/3 = 27π
 ≈ 84,8 < 32π ≈ 100,5; h = 10: polmer 10/3, 1000π/27 ≈ 116,4 > 32π; gladina je med 9 in 10.
 trditev: MAT-SS-3/mesane-naloge-3-letnika#kozarec-stevila
-besedilo: »Do višine $9$: polmer $3$, prostornina $\frac{\pi \cdot 9 \cdot 9}{3} = 27\pi \approx 84{,}8\,\mathrm{cm^3}$. Še vedno manj kot $32\pi \approx 100{,}5\,\mathrm{cm^3}$.« -/
+besedilo: »Gladina je torej med $9$ in $10\,\mathrm{cm}$; natančen račun da $9{,}52\,\mathrm{cm}$.« -/
 theorem kozarec_stevila :
     π * 4 * 6 / 3 = 8 * π ∧ 8 * π = 64 * π / 8 ∧ |8 * π - 25.1| < 0.05 ∧ π * 9 * 9 / 3 = 27 * π ∧
     |27 * π - 84.8| < 0.05 ∧ |32 * π - 100.5| < 0.05 ∧ 27 * π < 32 * π ∧
@@ -612,7 +612,7 @@ theorem kozarec_stevila :
 /-- Naloga 1 (sinusni izrek z očrtanim krogom, Mathlib): v trikotniku s stranico a = 6 nasproti kota 30°
 je 2R = a/sin α = 6/(1/2) = 12, R = 6, ploščina kroga πR² = 36π.
 trditev: MAT-SS-3/mesane-naloge-3-letnika#naloga1
-besedilo: »V trikotniku je stranica $a = 6\,\mathrm{cm}$, kot nasproti nje pa $\alpha = 30^\circ$. Izračunajte polmer trikotniku očrtanega kroga in ploščino tega kroga. (sinusni izrek + ploščina kroga)« -/
+besedilo: »Odgovor: polmer očrtanega kroga je $6\,\mathrm{cm}$, ploščina kroga je $36\pi\,\mathrm{cm^2}$.« -/
 theorem naloga1 (t : Affine.Triangle ℝ R2) (ha : dist (t.points 0) (t.points 2) = 6)
     (hα : ∠ (t.points 0) (t.points 1) (t.points 2) = 30 * π / 180) :
     (6 : ℝ) / (1 / 2) = 12 ∧ t.circumradius = 6 ∧ π * t.circumradius ^ 2 = 36 * π := by
@@ -685,7 +685,7 @@ example : True :=
 /-- Naloga 2 a), RAČUN: p(x) = 2x³ − x² − 2x + 1 = x²(2x − 1) − (2x − 1) = (2x − 1)(x² − 1)
 = (2x − 1)(x − 1)(x + 1); ničle so natanko −1, 1/2, 1.
 trditev: MAT-SS-3/mesane-naloge-3-letnika#naloga2a
-besedilo: »$x^2(2x - 1) - (2x - 1) = (2x - 1)(x^2 - 1) = (2x - 1)(x - 1)(x + 1)$« -/
+besedilo: »$x^2(2x - 1) - (2x - 1) = (2x - 1)(x^2 - 1) = (2x - 1)(x - 1)(x + 1)$. 2. a) Ničle so $-1$, $\frac{1}{2}$ in $1$, vse enostavne.« -/
 theorem naloga2a (x : ℝ) :
     2 * x ^ 3 - x ^ 2 - 2 * x + 1 = x ^ 2 * (2 * x - 1) - (2 * x - 1) ∧
     x ^ 2 * (2 * x - 1) - (2 * x - 1) = (2 * x - 1) * (x ^ 2 - 1) ∧
@@ -705,7 +705,7 @@ theorem naloga2a (x : ℝ) :
 /-- Naloga 2 b), RAČUN: p(x) < 0 ⇔ x ∈ (−∞, −1) ∪ (1/2, 1); predznaki: pozitiven nad 1, negativen na
 (1/2, 1), pozitiven na (−1, 1/2), negativen pod −1.
 trditev: MAT-SS-3/mesane-naloge-3-letnika#naloga2b
-besedilo: »b) Vodilni koeficient je pozitiven, zato je $p$ za velike $x$ pozitiven in pri vsaki enostavni ničli spremeni predznak. Od desne: pozitiven nad $1$, negativen na $\left(\frac{1}{2}, 1\right)$, pozitiven na $\left(-1, \frac{1}{2}\right)$, negativen pod $-1$.« -/
+besedilo: »b) $p(x) < 0$ za $x \in (-\infty, -1) \cup \left(\frac{1}{2}, 1\right)$.« -/
 theorem naloga2b (x : ℝ) : 2 * x ^ 3 - x ^ 2 - 2 * x + 1 < 0 ↔ x < -1 ∨ (1 / 2 < x ∧ x < 1) := by
   rw [show 2 * x ^ 3 - x ^ 2 - 2 * x + 1 = (2 * x - 1) * (x - 1) * (x + 1) by ring]
   constructor
@@ -836,7 +836,7 @@ theorem naloga3b : |arccos (3 * √2 / 8) * 180 / π - 57.97| < 0.005 := by
 /-- Naloga 4 a), b): x² + y² − 6x − 4y + 8 = 0 ⇔ (x − 3)² + (y − 2)² = 9 + 4 − 8 = 5 (S(3, 2), r = √5);
 z y = x: 2x² − 10x + 8 = 0 ⇔ x² − 5x + 4 = 0 ⇔ x = 1 ∨ x = 4, presečišči A(1, 1), B(4, 4).
 trditev: MAT-SS-3/mesane-naloge-3-letnika#naloga4ab
-besedilo: »b) Vstavimo $y = x$: $2x^2 - 10x + 8 = 0$ oziroma $x^2 - 5x + 4 = 0$, torej $x = 1$ ali $x = 4$. Presečišči sta $A(1, 1)$ in $B(4, 4)$.« -/
+besedilo: »Dopolnimo do popolnih kvadratov: $(x - 3)^2 + (y - 2)^2 = 9 + 4 - 8 = 5$. Središče je $S(3, 2)$, polmer $r = \sqrt{5}$. 2. b) Vstavimo $y = x$: $2x^2 - 10x + 8 = 0$ oziroma $x^2 - 5x + 4 = 0$, torej $x = 1$ ali $x = 4$. Presečišči sta $A(1, 1)$ in $B(4, 4)$.« -/
 theorem naloga4ab (x y : ℝ) :
     (x ^ 2 + y ^ 2 - 6 * x - 4 * y + 8 = 0 ↔ (x - 3) ^ 2 + (y - 2) ^ 2 = 5) ∧ (9 : ℝ) + 4 - 8 = 5 ∧
     (x ^ 2 + x ^ 2 - 6 * x - 4 * x + 8 = 0 ↔ 2 * x ^ 2 - 10 * x + 8 = 0) ∧
@@ -888,7 +888,7 @@ theorem naloga4d (x y : ℝ) :
 /-- Naloga 4 e), RAČUN: sin ∠ASB = √(1 − 16/25) = 3/5 (kot je med 0° in 180°, sinus je pozitiven),
 S = ½·√5·√5·3/5 = ½·5·3/5 = 3/2 (preizkus z determinanto: |(−2)·2 − (−1)·1|/2 = 3/2).
 trditev: MAT-SS-3/mesane-naloge-3-letnika#naloga4e
-besedilo: »e) Kot trikotnika leži med $0^\circ$ in $180^\circ$, zato je njegov sinus pozitiven: $\sin\angle ASB = \sqrt{1 - \frac{16}{25}} = \frac{3}{5}$.« -/
+besedilo: »$\sin\angle ASB = \sqrt{1 - \frac{16}{25}} = \frac{3}{5}$. 7. e) $S_{ASB} = \frac{1}{2} \cdot \sqrt{5} \cdot \sqrt{5} \cdot \frac{3}{5} = \frac{3}{2}$.« -/
 theorem naloga4e :
     sin (InnerProductGeometry.angle (P2 (-2) (-1)) (P2 1 2)) = √(1 - 16 / 25) ∧ √(1 - 16 / 25 : ℝ) = 3 / 5 ∧
     1 / 2 * √5 * √5 * (3 / 5) = (3 : ℝ) / 2 ∧ 1 / 2 * 5 * (3 / 5) = (3 : ℝ) / 2 ∧
@@ -948,7 +948,7 @@ theorem tangenta_n (n x : ℝ) :
 ≈ 54,74° ≈ 0,96 rad; φ in 35,26° (arcsin(1/√3)) se dopolnjujeta do 90°; 45° je kot ploskovne diagonale
 (arccos(1/√2) = 45°). Kot med (1,1,1) in (1,0,0) v ℝ³ je res arccos(1/√3).
 trditev: MAT-SS-3/mesane-naloge-3-letnika#kot-diagonale
-besedilo: »$\cos\varphi = \frac{(1, 1, 1) \cdot (1, 0, 0)}{\sqrt{3} \cdot 1} = \frac{1}{\sqrt{3}}$, zato $\varphi \approx 54{,}74^\circ$. Kota $54{,}74^\circ$ in $35{,}26^\circ$ se dopolnjujeta do $90^\circ$.« -/
+besedilo: »V radianih da $\cos^{-1}\frac{1}{\sqrt{3}}$ vrednost $0{,}96$, v stopinjah $54{,}74^\circ$.« -/
 theorem kot_diagonale :
     InnerProductGeometry.angle (!₂[1, 1, 1] : EuclideanSpace ℝ (Fin 3)) !₂[1, 0, 0] = arccos (1 / √3) ∧
     (1 * 1 + 1 * 0 + 1 * 0 : ℝ) / (√3 * 1) = 1 / √3 ∧ |arccos (1 / √3) * 180 / π - 54.74| < 0.005 ∧

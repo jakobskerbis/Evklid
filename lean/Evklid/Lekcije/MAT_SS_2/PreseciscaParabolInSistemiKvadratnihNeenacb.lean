@@ -36,7 +36,7 @@ theorem dva_faktorja (x r s : ℝ) : (x - r) * (x - s) = 0 ↔ x = r ∨ x = s :
 /-- Primer 4 (formula): za a > 0 in ničli x₁ < x₂ je a(x − x₁)(x − x₂) < 0 ⇔ x₁ < x < x₂,
 ≤ 0 ⇔ x₁ ≤ x ≤ x₂, > 0 ⇔ x < x₁ ali x > x₂, ≥ 0 ⇔ x ≤ x₁ ali x ≥ x₂.
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#predznak
-besedilo: »Za $a > 0$ in ničli $x_1 < x_2$ je $ax^2 + bx + c < 0$ za $x \in (x_1, x_2)$,« -/
+besedilo: »Za $a > 0$ in ničli $x_1 < x_2$ je $ax^2 + bx + c < 0$ za $x \in (x_1, x_2)$, pozitiven pa je levo od $x_1$ in desno od $x_2$.« -/
 theorem predznak (a x₁ x₂ x : ℝ) (ha : 0 < a) (h12 : x₁ < x₂) :
     (a * (x - x₁) * (x - x₂) < 0 ↔ x₁ < x ∧ x < x₂) ∧
       (a * (x - x₁) * (x - x₂) ≤ 0 ↔ x₁ ≤ x ∧ x ≤ x₂) ∧
@@ -75,7 +75,7 @@ y = kx + n: ax² + bx + c = kx + n ⇔ ax² + (b − k)x + (c − n) = 0; za D =
 D > 0 ⇒ natanko dve različni presečišči (sekanta: vsaka rešitev je x₁ ali x₂), D = 0 ⇒ natanko eno
 (tangenta), D < 0 ⇒ nobenega (mimobežnica).
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#parabola-premica
-besedilo: »za enačbo $ax^2 + (b - k)x + (c - n) = 0$ je $D = (b - k)^2 - 4a(c - n)$.« -/
+besedilo: »Parabolo $y = ax^2 + bx + c$ in premico $y = kx + n$ presekamo enako. Izenačimo desni strani in vse prenesemo na levo: $$ax^2 + (b - k)x + (c - n) = 0$$ To je kvadratna enačba. Število njenih rešitev pove njena diskriminanta $$D = (b - k)^2 - 4a(c - n)$$ - $D > 0$: dve presečišči, premica je sekanta; - $D = 0$: eno presečišče (dotikališče), premica je tangenta; - $D < 0$: nobenega presečišča, premica je mimobežnica.« -/
 theorem parabola_premica (a b c k n : ℝ) (ha : a ≠ 0) :
     (∀ x, a * x ^ 2 + b * x + c = k * x + n ↔ a * x ^ 2 + (b - k) * x + (c - n) = 0) ∧
       (0 < (b - k) ^ 2 - 4 * a * (c - n) → ∃ x₁ x₂ : ℝ, x₁ ≠ x₂ ∧
@@ -110,7 +110,7 @@ linearna koeficienta razlikujeta, se sekata v natanko eni točki; če sta enaka 
 se ne sekata; če sta enaka tudi prosta člena, sta paraboli enaki (vse točke so skupne, neskončno
 mnogo presečišč) — ta primer je pri »največ eno presečišče« izvzet.
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#enak-vodilni
-besedilo: »Paraboli z enakim $a$ »sta vzporedni«.** Če se člen $x^2$ odšteje, ostane linearna enačba. Paraboli se tedaj sekata v natanko eni točki, razen če se odšteje tudi člen z $x$.« -/
+besedilo: »Pri izenačevanju se člen $x^2$ odšteje in ostane linearna enačba $2x = 4$. Paraboli se sekata v natanko eni točki, $(2, 5)$. Brez presečišča bi bili le, če bi se odštel tudi člen z $x$, prosta člena pa bi ostala različna. Če bi bila enaka tudi prosta člena, bi bili paraboli enaki.« -/
 theorem enak_vodilni (a b₁ c₁ b₂ c₂ : ℝ) :
     (b₁ ≠ b₂ → ∃! x : ℝ, a * x ^ 2 + b₁ * x + c₁ = a * x ^ 2 + b₂ * x + c₂) ∧
       (b₁ = b₂ → c₁ ≠ c₂ → ∀ x : ℝ, a * x ^ 2 + b₁ * x + c₁ ≠ a * x ^ 2 + b₂ * x + c₂) ∧
@@ -158,7 +158,7 @@ example : ∃ x₁ x₂ : ℝ, x₁ ≠ x₂ ∧
 /-- Razlaga 1: −0,1x² + 2x = 0 ⇔ x(−0,1x + 2) = 0 ⇔ x = 0 ali x = 20; pri x = 20 je pobočje visoko
 0,5·20 = 10, zato (20, 0) ni na pobočju (leži pod njim).
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#razlaga1
-besedilo: »pri $x = 20$ je pobočje visoko že $0{,}5 \cdot 20 = 10\,\mathrm{m}$.« -/
+besedilo: »Reši enačbo $-0{,}1x^2 + 2x = 0$, razstavi jo v $x(-0{,}1x + 2) = 0$ in dobi $x = 0$ ali $x = 20$. Sklep: žogica pristane $20\,\mathrm{m}$ daleč. Sklep je napačen. Ničle parabole povedo, kje graf seka os $x$. To bi bila tla le na ravnem igrišču. Tu so tla pobočje: pri $x = 20$ je pobočje visoko že $0{,}5 \cdot 20 = 10\,\mathrm{m}$. Točka $(20, 0)$ leži globoko v hribu.« -/
 theorem razlaga1 (x : ℝ) : (-0.1 * x ^ 2 + 2 * x = 0 ↔ x * (-0.1 * x + 2) = 0) ∧
     (-0.1 * x ^ 2 + 2 * x = 0 ↔ x = 0 ∨ x = 20) ∧ (0.5 : ℝ) * 20 = 10 ∧ (0 : ℝ) < 0.5 * 20 := by
   refine ⟨by constructor <;> intro h <;> linarith, ?_, by norm_num, by norm_num⟩
@@ -168,7 +168,7 @@ theorem razlaga1 (x : ℝ) : (-0.1 * x ^ 2 + 2 * x = 0 ↔ x * (-0.1 * x + 2) = 
 /-- Razlaga 2: −0,1x² + 2x = 0,5x ⇔ −0,1x² + 1,5x = 0 ⇔ x(−0,1x + 1,5) = 0 ⇔ x = 0 ali x = 15;
 ordinata 0,5·15 = 7,5, presečišče (15; 7,5).
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#razlaga2
-besedilo: »Žogica pristane v točki $(15; 7{,}5)$, torej $15\,\mathrm{m}$ vodoravno in $7{,}5\,\mathrm{m}$ višje od mesta udarca.« -/
+besedilo: »izenačimo desni strani: enačba $-0{,}1x^2 + 2x = 0{,}5x$. Vse prenesemo na levo, dobimo $-0{,}1x^2 + 1{,}5x = 0$ oziroma $x(-0{,}1x + 1{,}5) = 0$. Rešitvi sta $x = 0$ (mesto udarca) in $x = 15$. Ordinato izračunamo iz enačbe premice, ker je preprostejša: $0{,}5 \cdot 15 = 7{,}5$. Žogica pristane v točki $(15; 7{,}5)$« -/
 theorem razlaga2 (x : ℝ) : (-0.1 * x ^ 2 + 2 * x = 0.5 * x ↔ -0.1 * x ^ 2 + 1.5 * x = 0) ∧
     (-0.1 * x ^ 2 + 1.5 * x = 0 ↔ x * (-0.1 * x + 1.5) = 0) ∧
     (-0.1 * x ^ 2 + 2 * x = 0.5 * x ↔ x = 0 ∨ x = 15) ∧ (0.5 : ℝ) * 15 = 7.5 ∧
@@ -188,15 +188,14 @@ theorem razlaga3_lara : (2 : ℝ) - 0.5 = 1.5 ∧ (1.5 : ℝ) ^ 2 - 4 * (-0.1) *
 /-- Razlaga 3, premisli: za premico y = 0,5x + n je D = 1,5² − 4·(−0,1)·(0 − n) = 2,25 − 0,4n; D pada,
 ko n raste, D = 0 ⇔ n = 5,625.
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#premisli-n
-besedilo: »Pri Lari je $a = -0{,}1$, $b - k = 1{,}5$ in $c - n = 0$, zato je $D = 1{,}5^2 - 0 = 2{,}25 > 0$ in pobočje je sekanta parabole. Za vsako absciso izračunamo še ordinato, ker je presečišče točka, ne število.« -/
+besedilo: »Diskriminanta se manjša: pri Lari je $a = -0{,}1$ in $c = 0$, zato je $D = 2{,}25 - 0{,}4n$. Pri $D = 0$ se presečišči zlijeta v dotikališče (tangenta).« -/
 theorem premisli_n (n n' : ℝ) : (1.5 : ℝ) ^ 2 - 4 * (-0.1) * (0 - n) = 2.25 - 0.4 * n ∧
     (n < n' → 2.25 - 0.4 * n' < 2.25 - 0.4 * n) ∧ (2.25 - 0.4 * n = 0 ↔ n = 5.625) := by
   refine ⟨by ring, fun h => by linarith, by constructor <;> intro h <;> linarith⟩
 
 /-- Razlaga 3, premisli (presečišči se bližata): za a ≠ 0 in D ≥ 0 sta rešitvi (−B ± √D)/(2a) za
 √D/|a| narazen.
-trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#razdalja-presecisc
-besedilo: »Presečišči se bližata drugo drugemu.« -/
+pomozno -/
 theorem razdalja_presecisc (a B D : ℝ) (ha : a ≠ 0) (_hD : 0 ≤ D) :
     |(-B + Real.sqrt D) / (2 * a) - (-B - Real.sqrt D) / (2 * a)| = Real.sqrt D / |a| := by
   rw [show (-B + Real.sqrt D) / (2 * a) - (-B - Real.sqrt D) / (2 * a) = Real.sqrt D / a by
@@ -210,7 +209,7 @@ example : |(-0 + Real.sqrt 4) / (2 * 1) - (-0 - Real.sqrt 4) / (2 * 1)| = Real.s
 abscisama presečišč √D/|a| = √(2,25 − 0,4n)/0,1 se z večanjem n (do n = 5,625, ko je D = 0) manjša:
 presečišči se bližata.
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#premisli-blizata
-besedilo: »Diskriminanta se manjša: pri Lari je $a = -0{,}1$ in $c = 0$, zato je $D = 2{,}25 - 0{,}4n$.« -/
+besedilo: »Presečišči se bližata drugo drugemu.« -/
 theorem premisli_blizata (n n' : ℝ) (h : n < n') (h' : n' ≤ 5.625) :
     |(-0.1 : ℝ)| = 0.1 ∧
       Real.sqrt (2.25 - 0.4 * n') / |(-0.1 : ℝ)| < Real.sqrt (2.25 - 0.4 * n) / |(-0.1 : ℝ)| := by
@@ -227,7 +226,7 @@ example : Real.sqrt (2.25 - 0.4 * 5) / |(-0.1 : ℝ)| < Real.sqrt (2.25 - 0.4 * 
 /-- Razlaga 4: f(x) = x² − 2x − 3, g(x) = −x² + 4x + 5: f = g ⇔ 2x² − 6x − 8 = 0 ⇔ x² − 3x − 4 = 0
 ⇔ (x − 4)(x + 1) = 0 ⇔ x = 4 ali x = −1; f(4) = 5, f(−1) = 0 (in g(4) = 5, g(−1) = 0).
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#razlaga4
-besedilo: »Za paraboli $f(x) = x^2 - 2x - 3$ in $g(x) = -x^2 + 4x + 5$ izenačimo $f(x) = g(x)$ in vse prenesemo na levo: enačba $2x^2 - 6x - 8 = 0$, deljeno z $2$ enačba $x^2 - 3x - 4 = 0$.« -/
+besedilo: »Za paraboli $f(x) = x^2 - 2x - 3$ in $g(x) = -x^2 + 4x + 5$ izenačimo $f(x) = g(x)$ in vse prenesemo na levo: enačba $2x^2 - 6x - 8 = 0$, deljeno z $2$ enačba $x^2 - 3x - 4 = 0$. Razcep $(x - 4)(x + 1) = 0$ da $x = 4$ ali $x = -1$. Ordinati: $f(4) = 5$ in $f(-1) = 0$. Paraboli se sekata v točkah $(-1, 0)$ in $(4, 5)$.« -/
 theorem razlaga4 (x : ℝ) : (x ^ 2 - 2 * x - 3 = -x ^ 2 + 4 * x + 5 ↔ 2 * x ^ 2 - 6 * x - 8 = 0) ∧
     (2 * x ^ 2 - 6 * x - 8 = 0 ↔ x ^ 2 - 3 * x - 4 = 0) ∧ x ^ 2 - 3 * x - 4 = (x - 4) * (x + 1) ∧
     (x ^ 2 - 2 * x - 3 = -x ^ 2 + 4 * x + 5 ↔ x = 4 ∨ x = -1) ∧
@@ -240,7 +239,7 @@ theorem razlaga4 (x : ℝ) : (x ^ 2 - 2 * x - 3 = -x ^ 2 + 4 * x + 5 ↔ 2 * x ^
 
 /-- Razlaga 4, premisli: x² + 1 = x² − 2x + 5 ⇔ 2x = 4 ⇔ x = 2; edina skupna točka je (2, 5).
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#premisli-enak-a
-besedilo: »Paraboli se sekata v natanko eni točki, $(2, 5)$.« -/
+besedilo: »Pri izenačevanju se člen $x^2$ odšteje in ostane linearna enačba $2x = 4$. Paraboli se sekata v natanko eni točki, $(2, 5)$.« -/
 theorem premisli_enak_a (x : ℝ) : (x ^ 2 + 1 = x ^ 2 - 2 * x + 5 ↔ 2 * x = 4) ∧ (2 * x = 4 ↔ x = 2) ∧
     (2 : ℝ) ^ 2 + 1 = 5 := by
   refine ⟨by constructor <;> intro h <;> linarith, by constructor <;> intro h <;> linarith, by norm_num⟩
@@ -248,7 +247,7 @@ theorem premisli_enak_a (x : ℝ) : (x ^ 2 + 1 = x ^ 2 - 2 * x + 5 ↔ 2 * x = 4
 /-- Razlaga 5: f(x) ≤ 0 ⇔ x ∈ [−1, 3], g(x) > 0 ⇔ x ∈ (−1, 5); sistem f ≤ 0 in g > 0 ⇔ x ∈ (−1, 3]
 (presek); −1 izpade, ker je g(−1) = 0.
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#razlaga5
-besedilo: »Rešitev sistema je presek $(-1, 3]$. Število $-1$ izpade, ker je $g(-1) = 0$, druga neenačba pa je stroga.« -/
+besedilo: »graf $f$ (modri) je pod osjo $x$ ali na njej med ničlama: $x \in [-1, 3]$; - graf $g$ (oranžni) je nad osjo $x$ med ničlama, ki ju ne vključimo: $x \in (-1, 5)$. | $x$ | $f \le 0$ | $g > 0$ | oba | |---|---|---|---| | $< -1$ | ne | ne | ne | | $-1$ | da | ne | ne | | $(-1, 3]$ | da | da | da | | $(3, 5)$ | ne | da | ne | | $\ge 5$ | ne | ne | ne | Rešitev sistema je presek $(-1, 3]$. Število $-1$ izpade, ker je $g(-1) = 0$, druga neenačba pa je stroga.« -/
 theorem razlaga5 (x : ℝ) : (x ^ 2 - 2 * x - 3 ≤ 0 ↔ -1 ≤ x ∧ x ≤ 3) ∧ (-x ^ 2 + 4 * x + 5 > 0 ↔ -1 < x ∧ x < 5) ∧
     ((x ^ 2 - 2 * x - 3 ≤ 0 ∧ -x ^ 2 + 4 * x + 5 > 0) ↔ -1 < x ∧ x ≤ 3) ∧
     -(-1 : ℝ) ^ 2 + 4 * (-1) + 5 = 0 := by
@@ -269,7 +268,7 @@ theorem razlaga5 (x : ℝ) : (x ^ 2 - 2 * x - 3 ≤ 0 ↔ -1 ≤ x ∧ x ≤ 3) 
 /-- Primer 1: x² − 4x + 5 = x + 1 ⇔ x² − 5x + 4 = 0; D = 25 − 16 = 9 > 0; (x − 1)(x − 4) = 0 ⇔ x ∈ {1, 4};
 ordinati 1 + 1 = 2 in 4 + 1 = 5, preverba 1 − 4 + 5 = 2 in 16 − 16 + 5 = 5.
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#primer1
-besedilo: »Ordinati iz premice: $1 + 1 = 2$ in $4 + 1 = 5$. Preverba na paraboli: $1 - 4 + 5 = 2$ in $16 - 16 + 5 = 5$.« -/
+besedilo: »Izenačimo desni strani, ker imata grafa v presečišču enak $y$: enačba $x^2 - 4x + 5 = x + 1$. 2. Prenesemo na levo: enačba $x^2 - 5x + 4 = 0$. 3. Diskriminanta: $D = 25 - 16 = 9 > 0$, zato sta presečišči dve. 4. Razcep $(x - 1)(x - 4) = 0$ da $x = 1$ in $x = 4$. 5. Ordinati iz premice: $1 + 1 = 2$ in $4 + 1 = 5$. Preverba na paraboli: $1 - 4 + 5 = 2$ in $16 - 16 + 5 = 5$.« -/
 theorem primer1 (x : ℝ) : (x ^ 2 - 4 * x + 5 = x + 1 ↔ x ^ 2 - 5 * x + 4 = 0) ∧
     ((-5 : ℝ) ^ 2 - 4 * 1 * 4 = 25 - 16 ∧ (25 : ℝ) - 16 = 9) ∧ x ^ 2 - 5 * x + 4 = (x - 1) * (x - 4) ∧
     (x ^ 2 - 4 * x + 5 = x + 1 ↔ x = 1 ∨ x = 4) ∧ ((1 : ℝ) + 1 = 2 ∧ (4 : ℝ) + 1 = 5) ∧
@@ -280,7 +279,7 @@ theorem primer1 (x : ℝ) : (x ^ 2 - 4 * x + 5 = x + 1 ↔ x ^ 2 - 5 * x + 4 = 0
 /-- Primer 2: x² + 2x − 1 = −x² + 3 ⇔ 2x² + 2x − 4 = 0 ⇔ x² + x − 2 = 0 ⇔ (x + 2)(x − 1) = 0 ⇔ x ∈ {−2, 1};
 g(−2) = −4 + 3 = −1, g(1) = −1 + 3 = 2, f(−2) = 4 − 4 − 1 = −1, f(1) = 1 + 2 − 1 = 2.
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#primer2
-besedilo: »Ordinati iz preprostejše funkcije $g$: $g(-2) = -4 + 3 = -1$ in $g(1) = -1 + 3 = 2$. Preverba: $f(-2) = 4 - 4 - 1 = -1$ in $f(1) = 1 + 2 - 1 = 2$.« -/
+besedilo: »Izenačimo: enačba $x^2 + 2x - 1 = -x^2 + 3$. 2. Prenesemo na levo: enačba $2x^2 + 2x - 4 = 0$. Delimo z $2$, da so koeficienti manjši: enačba $x^2 + x - 2 = 0$. 3. Razcep $(x + 2)(x - 1) = 0$ da $x = -2$ in $x = 1$. 4. Ordinati iz preprostejše funkcije $g$: $g(-2) = -4 + 3 = -1$ in $g(1) = -1 + 3 = 2$. Preverba: $f(-2) = 4 - 4 - 1 = -1$ in $f(1) = 1 + 2 - 1 = 2$.« -/
 theorem primer2 (x : ℝ) : (x ^ 2 + 2 * x - 1 = -x ^ 2 + 3 ↔ 2 * x ^ 2 + 2 * x - 4 = 0) ∧
     (2 * x ^ 2 + 2 * x - 4 = 0 ↔ x ^ 2 + x - 2 = 0) ∧ x ^ 2 + x - 2 = (x + 2) * (x - 1) ∧
     (x ^ 2 + 2 * x - 1 = -x ^ 2 + 3 ↔ x = -2 ∨ x = 1) ∧
@@ -295,7 +294,7 @@ theorem primer2 (x : ℝ) : (x ^ 2 + 2 * x - 1 = -x ^ 2 + 3 ↔ 2 * x ^ 2 + 2 * 
 /-- Primer 3 a): −0,1x² + 2x = 0,5x + 6 ⇔ x² − 15x + 60 = 0 (·(−10)); D = 225 − 240 = −15 < 0, žogica
 jeklenice ne zadene.
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#primer3a
-besedilo: »Izenačimo: enačba $-0{,}1x^2 + 2x = 0{,}5x + 6$. Prenesemo na levo in pomnožimo z $-10$, da se znebimo decimalk: enačba $x^2 - 15x + 60 = 0$.« -/
+besedilo: »Izenačimo: enačba $-0{,}1x^2 + 2x = 0{,}5x + 6$. Prenesemo na levo in pomnožimo z $-10$, da se znebimo decimalk: enačba $x^2 - 15x + 60 = 0$. 2. Diskriminanta: $D = 225 - 240 = -15 < 0$. Jeklenica je mimobežnica, žogica je ne zadene.« -/
 theorem primer3a : (∀ x : ℝ, -0.1 * x ^ 2 + 2 * x = 0.5 * x + 6 ↔ x ^ 2 - 15 * x + 60 = 0) ∧
     ((-15 : ℝ) ^ 2 - 4 * 1 * 60 = 225 - 240 ∧ (225 : ℝ) - 240 = -15 ∧ (-15 : ℝ) < 0) ∧
     ∀ x : ℝ, -0.1 * x ^ 2 + 2 * x ≠ 0.5 * x + 6 := by
@@ -305,7 +304,7 @@ theorem primer3a : (∀ x : ℝ, -0.1 * x ^ 2 + 2 * x = 0.5 * x + 6 ↔ x ^ 2 - 
 /-- Primer 3 b): −0,1x² + 2x = 0,5x + n ⇔ x² − 15x + 10n = 0; D = 225 − 40n; D = 0 ⇔ n = 5,625
 (preverba 225 − 40·5,625 = 0).
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#primer3b-n
-besedilo: »Za premico $y = 0{,}5x + n$ enako dobimo enačbo $x^2 - 15x + 10n = 0$ z diskriminanto $D = 225 - 40n$.« -/
+besedilo: »Za premico $y = 0{,}5x + n$ enako dobimo enačbo $x^2 - 15x + 10n = 0$ z diskriminanto $D = 225 - 40n$. 4. Dotik pomeni $D = 0$: iz $225 - 40n = 0$ sledi $n = 5{,}625$. Preverba: $225 - 40 \cdot 5{,}625 = 0$.« -/
 theorem primer3b_n (n : ℝ) : (∀ x : ℝ, -0.1 * x ^ 2 + 2 * x = 0.5 * x + n ↔ x ^ 2 - 15 * x + 10 * n = 0) ∧
     (-15 : ℝ) ^ 2 - 4 * 1 * (10 * n) = 225 - 40 * n ∧ (225 - 40 * n = 0 ↔ n = 5.625) ∧
     (225 : ℝ) - 40 * 5.625 = 0 := by
@@ -316,7 +315,7 @@ theorem primer3b_n (n : ℝ) : (∀ x : ℝ, -0.1 * x ^ 2 + 2 * x = 0.5 * x + n 
 0,5·7,5 + 5,625 = 9,375, na paraboli −0,1·7,5² + 2·7,5 = 9,375; korak 6–7: 6 − 5,625 = 0,375, jeklenica
 y = 0,5x + 6 je povsod vsaj 0,375 m (37,5 cm) nad žogico.
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#primer3b
-besedilo: »Pri $D = 0$ je dvojna rešitev $x = -\dfrac{b}{2a} = \dfrac{15}{2} = 7{,}5$. Ordinata: $0{,}5 \cdot 7{,}5 + 5{,}625 = 9{,}375$. Na paraboli: $-0{,}1 \cdot 7{,}5^2 + 2 \cdot 7{,}5 = 9{,}375$, ustreza.« -/
+besedilo: »Pri $D = 0$ je dvojna rešitev $x = -\dfrac{b}{2a} = \dfrac{15}{2} = 7{,}5$. Ordinata: $0{,}5 \cdot 7{,}5 + 5{,}625 = 9{,}375$. Na paraboli: $-0{,}1 \cdot 7{,}5^2 + 2 \cdot 7{,}5 = 9{,}375$, ustreza. 6. Razlaga: prava jeklenica je višje za $6 - 5{,}625 = 0{,}375\,\mathrm{m}$. 7. Odgovor: žogica jeklenice ne zadene. Ravno bi se je dotaknila, če bi bila jeklenica $y = 0{,}5x + 5{,}625$, v točki $(7{,}5; 9{,}375)$. Žogica gre torej pod jeklenico z rezervo $37{,}5\,\mathrm{cm}$.« -/
 theorem primer3b (x : ℝ) : (-0.1 * x ^ 2 + 2 * x = 0.5 * x + 5.625 ↔ x = 7.5) ∧ (15 : ℝ) / 2 = 7.5 ∧
     (0.5 : ℝ) * 7.5 + 5.625 = 9.375 ∧ -0.1 * (7.5 : ℝ) ^ 2 + 2 * 7.5 = 9.375 ∧ (6 : ℝ) - 5.625 = 0.375 ∧
     0.375 ≤ (0.5 * x + 6) - (-0.1 * x ^ 2 + 2 * x) ∧ (0.375 : ℝ) * 100 = 37.5 := by
@@ -330,7 +329,7 @@ theorem primer3b (x : ℝ) : (-0.1 * x ^ 2 + 2 * x = 0.5 * x + 5.625 ↔ x = 7.5
 x ≥ 4; sistem ⇔ −2 < x ≤ 0. Preizkus: pri 0 velja 0 − 0 − 6 < 0 in 0 ≥ 0, pri −2 je prva stran 0, pri
 −1: 1 + 1 − 6 = −4 < 0 in 1 + 4 = 5 ≥ 0.
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#primer4
-besedilo: »Preizkus pri $x = -1$: $1 + 1 - 6 = -4 < 0$ in $1 + 4 = 5 \ge 0$.« -/
+besedilo: »$x \in (-2, 0]$. Del $[4, \infty)$ ne seka intervala $(-2, 3)$. Število $0$ je vključeno, ker velja $0 - 0 - 6 < 0$ in $0 \ge 0$. Število $-2$ ni, ker je tam prva stran enaka $0$, prva neenačba pa je stroga. Preizkus pri $x = -1$: $1 + 1 - 6 = -4 < 0$ in $1 + 4 = 5 \ge 0$.« -/
 theorem primer4 (x : ℝ) : (x ^ 2 - x - 6 < 0 ↔ -2 < x ∧ x < 3) ∧ (x ^ 2 - 4 * x ≥ 0 ↔ x ≤ 0 ∨ 4 ≤ x) ∧
     ((x ^ 2 - x - 6 < 0 ∧ x ^ 2 - 4 * x ≥ 0) ↔ -2 < x ∧ x ≤ 0) ∧
     ((0 : ℝ) ^ 2 - 0 - 6 < 0 ∧ (0 : ℝ) ^ 2 - 4 * 0 ≥ 0) ∧ (-2 : ℝ) ^ 2 - (-2) - 6 = 0 ∧
@@ -353,7 +352,7 @@ theorem primer4 (x : ℝ) : (x ^ 2 - x - 6 < 0 ↔ -2 < x ∧ x < 3) ∧ (x ^ 2 
 
 /-- Pogoste napake 5: rešitev x(x − 4) ≥ 0 je (−∞, 0] ∪ [4, ∞), ne [0, 4] (npr. 2·(2 − 4) = −4 < 0).
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#napaka-unija
-besedilo: »(višja raven) **Unija namesto preseka ali napačna stran ničel.** Rešitev sistema je presek, ne unija. Pri $a > 0$ velja $ax^2 + bx + c \ge 0$ *zunaj* ničel: neenačba $x(x - 4) \ge 0$ ima rešitev $(-\infty, 0] \cup [4, \infty)$, ne $[0, 4]$.« -/
+besedilo: »neenačba $x(x - 4) \ge 0$ ima rešitev $(-\infty, 0] \cup [4, \infty)$, ne $[0, 4]$« -/
 theorem napaka_unija : (∀ x : ℝ, x * (x - 4) ≥ 0 ↔ x ≤ 0 ∨ 4 ≤ x) ∧ (2 : ℝ) * (2 - 4) < 0 := by
   refine ⟨fun x => ?_, by norm_num⟩
   rw [ge_iff_le, show x * (x - 4) = 1 * (x - 0) * (x - 4) by ring]
@@ -364,7 +363,7 @@ theorem napaka_unija : (∀ x : ℝ, x * (x - 4) ≥ 0 ↔ x ≤ 0 ∨ 4 ≤ x) 
 /-- Za maturo, naloga 1: 2x² + x − 3 = 3x + 1 ⇔ 2x² − 2x − 4 = 0 ⇔ x² − x − 2 = 0 ⇔ (x − 2)(x + 1) = 0
 ⇔ x ∈ {−1, 2}; ordinati 3·(−1) + 1 = −2, 3·2 + 1 = 7; preverba 2 − 1 − 3 = −2, 8 + 2 − 3 = 7.
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#matura1
-besedilo: »Ordinati iz enačbe premice: $3 \cdot (-1) + 1 = -2$ in $3 \cdot 2 + 1 = 7$. Preverba na paraboli: $2 - 1 - 3 = -2$ in $8 + 2 - 3 = 7$.« -/
+besedilo: »Izenačimo desni strani: $2x^2 + x - 3 = 3x + 1$, torej $2x^2 - 2x - 4 = 0$ in po deljenju z $2$ enačba $x^2 - x - 2 = 0$. 2. Razcep $(x - 2)(x + 1) = 0$ da $x_1 = -1$ in $x_2 = 2$. 3. Ordinati iz enačbe premice: $3 \cdot (-1) + 1 = -2$ in $3 \cdot 2 + 1 = 7$. Preverba na paraboli: $2 - 1 - 3 = -2$ in $8 + 2 - 3 = 7$.« -/
 theorem matura1 (x : ℝ) : (2 * x ^ 2 + x - 3 = 3 * x + 1 ↔ 2 * x ^ 2 - 2 * x - 4 = 0) ∧
     (2 * x ^ 2 - 2 * x - 4 = 0 ↔ x ^ 2 - x - 2 = 0) ∧ x ^ 2 - x - 2 = (x - 2) * (x + 1) ∧
     (2 * x ^ 2 + x - 3 = 3 * x + 1 ↔ x = -1 ∨ x = 2) ∧ (3 * (-1 : ℝ) + 1 = -2 ∧ 3 * (2 : ℝ) + 1 = 7) ∧
@@ -378,7 +377,7 @@ theorem matura1 (x : ℝ) : (2 * x ^ 2 + x - 3 = 3 * x + 1 ↔ 2 * x ^ 2 - 2 * x
 /-- Za maturo, naloga 2 a): f(x) = x² − 4x + 3, g(x) = −x² + 2x + 3: f = g ⇔ 2x² − 6x = 0 ⇔ 2x(x − 3) = 0
 ⇔ x ∈ {0, 3}; f(0) = 3, f(3) = 9 − 12 + 3 = 0.
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#matura2a
-besedilo: »a) $x^2 - 4x + 3 = -x^2 + 2x + 3$ da $2x^2 - 6x = 0$, torej $2x(x - 3) = 0$ in $x = 0$ ali $x = 3$.« -/
+besedilo: »$x^2 - 4x + 3 = -x^2 + 2x + 3$ da $2x^2 - 6x = 0$, torej $2x(x - 3) = 0$ in $x = 0$ ali $x = 3$. 2. a) $f(0) = 3$ in $f(3) = 9 - 12 + 3 = 0$« -/
 theorem matura2a (x : ℝ) : (x ^ 2 - 4 * x + 3 = -x ^ 2 + 2 * x + 3 ↔ 2 * x ^ 2 - 6 * x = 0) ∧
     2 * x ^ 2 - 6 * x = 2 * x * (x - 3) ∧ (x ^ 2 - 4 * x + 3 = -x ^ 2 + 2 * x + 3 ↔ x = 0 ∨ x = 3) ∧
     (0 : ℝ) ^ 2 - 4 * 0 + 3 = 3 ∧ ((3 : ℝ) ^ 2 - 4 * 3 + 3 = 9 - 12 + 3 ∧ (9 : ℝ) - 12 + 3 = 0) := by
@@ -390,7 +389,7 @@ theorem matura2a (x : ℝ) : (x ^ 2 - 4 * x + 3 = -x ^ 2 + 2 * x + 3 ↔ 2 * x ^
 odprta navzgor); g ima ničli −1 in 3 (x² − 2x − 3 = 0) ter teme (1, 4) (g(1) = −1 + 2 + 3 = 4, največja
 vrednost, odprta navzdol).
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#matura2b
-besedilo: »b) Graf $g$: iz $x^2 - 2x - 3 = 0$ ničli $-1$ in $3$, teme $(1, 4)$, ker je $g(1) = -1 + 2 + 3 = 4$; parabola je odprta navzdol.« -/
+besedilo: »Graf $f$: ničli $1$ in $3$, teme $(2, -1)$, ker je $f(2) = 4 - 8 + 3 = -1$; parabola je odprta navzgor. 4. b) Graf $g$: iz $x^2 - 2x - 3 = 0$ ničli $-1$ in $3$, teme $(1, 4)$, ker je $g(1) = -1 + 2 + 3 = 4$; parabola je odprta navzdol.« -/
 theorem matura2b (x : ℝ) : (x ^ 2 - 4 * x + 3 = 0 ↔ x = 1 ∨ x = 3) ∧
     ((2 : ℝ) ^ 2 - 4 * 2 + 3 = 4 - 8 + 3 ∧ (4 : ℝ) - 8 + 3 = -1) ∧ -1 ≤ x ^ 2 - 4 * x + 3 ∧
     (-x ^ 2 + 2 * x + 3 = 0 ↔ x ^ 2 - 2 * x - 3 = 0) ∧ (x ^ 2 - 2 * x - 3 = 0 ↔ x = -1 ∨ x = 3) ∧
@@ -411,7 +410,7 @@ theorem matura2c (x : ℝ) : x ^ 2 - 4 * x + 3 < -x ^ 2 + 2 * x + 3 ↔ 0 < x �
 /-- Za maturo, naloga 2 d): x² − 4x + 3 = 4x + n ⇔ x² − 8x + 3 − n = 0; D = 64 − 4(3 − n) = 52 + 4n;
 D = 0 ⇔ n = −13; tedaj je edina skupna točka x = 8/2 = 4, ordinata 4·4 − 13 = 3 = f(4) = 16 − 16 + 3.
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#matura2d
-besedilo: »d) Tangenta pomeni $D = 0$, torej $n = -13$. Dvojna rešitev je $x = \dfrac{8}{2} = 4$, ordinata $4 \cdot 4 - 13 = 3$; preverba: $f(4) = 16 - 16 + 3 = 3$.« -/
+besedilo: »$x^2 - 4x + 3 = 4x + n$ da $x^2 - 8x + 3 - n = 0$ z diskriminanto $D = 64 - 4(3 - n) = 52 + 4n$. 7. d) Tangenta pomeni $D = 0$, torej $n = -13$. Dvojna rešitev je $x = \dfrac{8}{2} = 4$, ordinata $4 \cdot 4 - 13 = 3$; preverba: $f(4) = 16 - 16 + 3 = 3$.« -/
 theorem matura2d (n x : ℝ) : (x ^ 2 - 4 * x + 3 = 4 * x + n ↔ x ^ 2 - 8 * x + 3 - n = 0) ∧
     ((-8 : ℝ) ^ 2 - 4 * 1 * (3 - n) = 64 - 4 * (3 - n) ∧ 64 - 4 * (3 - n) = 52 + 4 * n) ∧
     (52 + 4 * n = 0 ↔ n = -13) ∧ (x ^ 2 - 4 * x + 3 = 4 * x + -13 ↔ x = 4) ∧ (8 : ℝ) / 2 = 4 ∧
@@ -423,7 +422,7 @@ theorem matura2d (n x : ℝ) : (x ^ 2 - 4 * x + 3 = 4 * x + n ↔ x ^ 2 - 8 * x 
 /-- Za maturo, naloga 3 a): f(x) = x² − 4, g(x) = −x² + 2x + 8: f = g ⇔ 2x² − 2x − 12 = 0 ⇔ x² − x − 6 = 0
 ⇔ (x − 3)(x + 2) = 0 ⇔ x ∈ {−2, 3}; f(−2) = 0, f(3) = 5.
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#matura3a
-besedilo: »a) $x^2 - 4 = -x^2 + 2x + 8$ da $2x^2 - 2x - 12 = 0$, torej $x^2 - x - 6 = 0$ in $(x - 3)(x + 2) = 0$: $x = -2$ ali $x = 3$.« -/
+besedilo: »$x^2 - 4 = -x^2 + 2x + 8$ da $2x^2 - 2x - 12 = 0$, torej $x^2 - x - 6 = 0$ in $(x - 3)(x + 2) = 0$: $x = -2$ ali $x = 3$. 2. a) $f(-2) = 0$ in $f(3) = 5$« -/
 theorem matura3a (x : ℝ) : (x ^ 2 - 4 = -x ^ 2 + 2 * x + 8 ↔ 2 * x ^ 2 - 2 * x - 12 = 0) ∧
     (2 * x ^ 2 - 2 * x - 12 = 0 ↔ x ^ 2 - x - 6 = 0) ∧ x ^ 2 - x - 6 = (x - 3) * (x + 2) ∧
     (x ^ 2 - 4 = -x ^ 2 + 2 * x + 8 ↔ x = -2 ∨ x = 3) ∧ (-2 : ℝ) ^ 2 - 4 = 0 ∧ (3 : ℝ) ^ 2 - 4 = 5 := by
@@ -447,7 +446,7 @@ theorem matura3b (x : ℝ) : (x ^ 2 - 4 = 0 ↔ x = 2 ∨ x = -2) ∧ -4 ≤ x ^
 /-- Za maturo, naloga 3 c): f(x) < 0 ⇔ −2 < x < 2; g(x) ≥ 5 ⇔ −x² + 2x + 3 ≥ 0 ⇔ x² − 2x − 3 ≤ 0
 ⇔ (x + 1)(x − 3) ≤ 0 ⇔ −1 ≤ x ≤ 3; sistem ⇔ −1 ≤ x < 2; f(−1) = −3 < 0, g(−1) = 5, f(2) = 0.
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#matura3c
-besedilo: »c) $g(x) \ge 5$: $-x^2 + 2x + 3 \ge 0$, torej $x^2 - 2x - 3 \le 0$ in $(x + 1)(x - 3) \le 0$, $x \in [-1, 3]$.« -/
+besedilo: »$f(x) < 0$: parabola $f$ je pod osjo med ničlama, $x \in (-2, 2)$. 5. c) $g(x) \ge 5$: $-x^2 + 2x + 3 \ge 0$, torej $x^2 - 2x - 3 \le 0$ in $(x + 1)(x - 3) \le 0$, $x \in [-1, 3]$. 6. c) Presek: $x \in [-1, 2)$. Število $-1$ je vključeno, ker velja $f(-1) = -3 < 0$ in $g(-1) = 5$; število $2$ ni, ker je $f(2) = 0$.« -/
 theorem matura3c (x : ℝ) : (x ^ 2 - 4 < 0 ↔ -2 < x ∧ x < 2) ∧
     (-x ^ 2 + 2 * x + 8 ≥ 5 ↔ -x ^ 2 + 2 * x + 3 ≥ 0) ∧ (-x ^ 2 + 2 * x + 3 ≥ 0 ↔ x ^ 2 - 2 * x - 3 ≤ 0) ∧
     x ^ 2 - 2 * x - 3 = (x + 1) * (x - 3) ∧ (x ^ 2 - 2 * x - 3 ≤ 0 ↔ -1 ≤ x ∧ x ≤ 3) ∧
@@ -471,7 +470,7 @@ theorem matura3c (x : ℝ) : (x ^ 2 - 4 < 0 ↔ -2 < x ∧ x < 2) ∧
 /-- Za maturo, naloga 3 d): f(x) ≥ 0 ⇔ x ≤ −2 ali x ≥ 2; f(x) ≤ g(x) ⇔ x² − x − 6 ≤ 0 ⇔ −2 ≤ x ≤ 3;
 0 ≤ f(x) ≤ g(x) ⇔ x ∈ {−2} ∪ [2, 3].
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#matura3d
-besedilo: »d) $f(x) \le g(x)$: $x^2 - x - 6 \le 0$, $x \in [-2, 3]$ (med presečiščema grafov).« -/
+besedilo: »$f(x) \ge 0$: zunaj ničel z njima, $x \in (-\infty, -2] \cup [2, \infty)$. 8. d) $f(x) \le g(x)$: $x^2 - x - 6 \le 0$, $x \in [-2, 3]$ (med presečiščema grafov). 9. d) Presek je $\{-2\} \cup [2, 3]$.« -/
 theorem matura3d (x : ℝ) : (x ^ 2 - 4 ≥ 0 ↔ x ≤ -2 ∨ 2 ≤ x) ∧
     (x ^ 2 - 4 ≤ -x ^ 2 + 2 * x + 8 ↔ x ^ 2 - x - 6 ≤ 0) ∧ (x ^ 2 - x - 6 ≤ 0 ↔ -2 ≤ x ∧ x ≤ 3) ∧
     ((0 ≤ x ^ 2 - 4 ∧ x ^ 2 - 4 ≤ -x ^ 2 + 2 * x + 8) ↔ x = -2 ∨ (2 ≤ x ∧ x ≤ 3)) := by
@@ -500,7 +499,7 @@ theorem matura3d (x : ℝ) : (x ^ 2 - 4 ≥ 0 ↔ x ≤ -2 ∨ 2 ≤ x) ∧
 različnima vodilnima koeficientoma imata natanko eno skupno točko natanko tedaj, ko je diskriminanta
 razlike predpisov 0 (glej `dve_paraboli_ena`).
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#ustno2
-besedilo: »Paraboli z različnima vodilnima koeficientoma imata natanko eno skupno točko takrat, ko ima kvadratna enačba, ki jo dobimo z izenačenjem predpisov, diskriminanto $0$.« -/
+besedilo: »Ko izenačimo desni strani, se člen $x^2$ odšteje in ostane linearna enačba $2x - 4 = 0$ z edino rešitvijo $x = 2$. Skupna točka je $(2, 4)$.« -/
 theorem ustno2 (x : ℝ) : (x ^ 2 = x ^ 2 + 2 * x - 4 ↔ 2 * x - 4 = 0) ∧ (2 * x - 4 = 0 ↔ x = 2) ∧
     (2 : ℝ) ^ 2 = 4 := by
   refine ⟨by constructor <;> intro h <;> linarith, by constructor <;> intro h <;> linarith, by norm_num⟩
@@ -508,7 +507,7 @@ theorem ustno2 (x : ℝ) : (x ^ 2 = x ^ 2 + 2 * x - 4 ↔ 2 * x - 4 = 0) ∧ (2 
 /-- Ustno vprašanje 2 (splošno): paraboli a₁x² + b₁x + c₁ in a₂x² + b₂x + c₂ z a₁ ≠ a₂ imata natanko eno
 skupno točko natanko tedaj, ko je (b₁ − b₂)² − 4(a₁ − a₂)(c₁ − c₂) = 0.
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#dve-paraboli-ena
-besedilo: »Paraboli $y = x^2$ in $y = x^2 + 2x - 4$ imata natanko eno skupno točko.« -/
+besedilo: »Paraboli z različnima vodilnima koeficientoma imata natanko eno skupno točko takrat, ko ima kvadratna enačba, ki jo dobimo z izenačenjem predpisov, diskriminanto $0$.« -/
 theorem dve_paraboli_ena (a₁ b₁ c₁ a₂ b₂ c₂ : ℝ) (ha : a₁ ≠ a₂) :
     (∃! x : ℝ, a₁ * x ^ 2 + b₁ * x + c₁ = a₂ * x ^ 2 + b₂ * x + c₂) ↔
       (b₁ - b₂) ^ 2 - 4 * (a₁ - a₂) * (c₁ - c₂) = 0 := by
@@ -531,7 +530,7 @@ example : (∃! x : ℝ, 1 * x ^ 2 + 0 * x + 0 = (-1) * x ^ 2 + 4 * x + (-2)) :=
 /-- Drugače: kot zgodba: pri n = 6 je D = −15 (ni skupnih točk); pri n = 5: −0,1x² + 2x = 0,5x + 5 ⇔
 x² − 15x + 50 = 0, D = 25, x ∈ {5, 10}, točki (5; 7,5) in (10, 10).
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#zgodba
-besedilo: »Pri $n = 5$ pa jo žogica sreča dvakrat: enačba $x^2 - 15x + 50 = 0$ ima $D = 25$ in rešitvi $x = 5$ ter $x = 10$.« -/
+besedilo: »Pri $n = 6$ žogica leti pod jeklenico in je ne zadene: enačba $x^2 - 15x + 60 = 0$ nima realne rešitve, $D = -15$. Ko spustita jeklenico na $n = 5{,}625$, se je žogica ravno dotakne v točki $(7{,}5; 9{,}375)$: $D = 0$. Pri $n = 5$ pa jo žogica sreča dvakrat: enačba $x^2 - 15x + 50 = 0$ ima $D = 25$ in rešitvi $x = 5$ ter $x = 10$. Žogica jo prvič doseže v točki $(5; 7{,}5)$ in drugič v točki $(10, 10)$.« -/
 theorem zgodba (x : ℝ) : (225 : ℝ) - 40 * 6 = -15 ∧ (-0.1 * x ^ 2 + 2 * x = 0.5 * x + 5 ↔ x ^ 2 - 15 * x + 50 = 0) ∧
     ((-15 : ℝ) ^ 2 - 4 * 1 * 50 = 25) ∧ (x ^ 2 - 15 * x + 50 = 0 ↔ x = 5 ∨ x = 10) ∧
     (0.5 : ℝ) * 5 + 5 = 7.5 ∧ (0.5 : ℝ) * 10 + 5 = 10 := by
@@ -541,7 +540,7 @@ theorem zgodba (x : ℝ) : (225 : ℝ) - 40 * 6 = -15 ∧ (-0.1 * x ^ 2 + 2 * x 
 /-- Drugače: korak za korakom: x² − 2x + 3 = 2x ⇔ x² − 4x + 3 = 0; D = 16 − 12 = 4 > 0; (x − 1)(x − 3) = 0
 ⇔ x ∈ {1, 3}; ordinati 2·1 = 2 in 2·3 = 6.
 trditev: MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#korak-presecisca
-besedilo: »Enačba $x^2 - 5x + 4 = 0$ ima rešitvi $1$ in $4$. Pri $x = 4$ je $y = 2 \cdot 4 - 3 = 5$; preverba na paraboli: $16 - 12 + 1 = 5$.« -/
+besedilo: »Izenačimo: enačba $x^2 - 2x + 3 = 2x$. 2. Vse na levo: enačba $x^2 - 4x + 3 = 0$. 3. Diskriminanta: $D = 16 - 12 = 4 > 0$, dve presečišči. 4. Razcep $(x - 1)(x - 3) = 0$: $x = 1$ ali $x = 3$. 5. Ordinati iz premice: $2 \cdot 1 = 2$ in $2 \cdot 3 = 6$.« -/
 theorem korak_presecisca (x : ℝ) : (x ^ 2 - 2 * x + 3 = 2 * x ↔ x ^ 2 - 4 * x + 3 = 0) ∧
     ((-4 : ℝ) ^ 2 - 4 * 1 * 3 = 16 - 12 ∧ (16 : ℝ) - 12 = 4) ∧ (x ^ 2 - 2 * x + 3 = 2 * x ↔ x = 1 ∨ x = 3) ∧
     (2 * (1 : ℝ) = 2 ∧ 2 * (3 : ℝ) = 6) := by

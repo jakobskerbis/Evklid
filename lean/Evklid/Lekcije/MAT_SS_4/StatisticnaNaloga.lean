@@ -22,7 +22,7 @@ namespace Evklid.Lekcije.MAT_SS_4.StatisticnaNaloga
 
 /-- Uvod: tabela je urejena hkrati po temperaturi in po cvrkih (oboje narašča, pozitivna povezanost).
 trditev: MAT-SS-4/statisticna-naloga#murn-narasca
-besedilo: »$30$ cvrkov leži med $28$ (pri $19$ °C) in $31$ (pri $21$ °C),« -/
+besedilo: »Več ko je cvrkov, topleje je.« -/
 theorem murn_narasca : [14, 16, 17, 19, 21, 22, 24, 26].Pairwise (· < ·) ∧
     [18, 22, 23, 28, 31, 34, 37, 41].Pairwise (· < ·) := by decide
 
@@ -54,7 +54,7 @@ theorem korelacija_med (N : ℕ) (x y : Fin N → ℝ) (mx my : ℝ) :
 /-- Primer 1, korak 1–2: temperature z višino padajo (negativna povezanost); padci 1,7; 1,7; 1,7; 2,2; 1,3 so
 vsi med 1,3 in 2,2 °C.
 trditev: MAT-SS-4/statisticna-naloga#primer1-pada
-besedilo: »Povezanost je negativna. Padci so vsakič podobni (od $1{,}3$ do $2{,}2$ °C), točke bi ležale skoraj na premici, zato je povezanost močna.« -/
+besedilo: »Povezanost je negativna. Padci so vsakič podobni (od $1{,}3$ do $2{,}2$ °C)« -/
 theorem primer1_pada : (21.5 : ℝ) > 19.8 ∧ (19.8 : ℝ) > 18.1 ∧ (18.1 : ℝ) > 16.4 ∧ (16.4 : ℝ) > 14.2 ∧
     (14.2 : ℝ) > 12.9 ∧
     (21.5 : ℝ) - 19.8 = 1.7 ∧ (19.8 : ℝ) - 18.1 = 1.7 ∧ (18.1 : ℝ) - 16.4 = 1.7 ∧ (16.4 : ℝ) - 14.2 = 2.2 ∧
@@ -75,7 +75,7 @@ theorem primer1_ocena : ((1200 : ℝ) + 1500) / 2 = 1350 ∧ ((16.4 : ℝ) + 14.
 
 /-- Primer 2, korak 1: podatki razdeljeni v skupini; suhi dnevi urejeno 25…30, deževni 19, 21, 22, 23.
 trditev: MAT-SS-4/statisticna-naloga#primer2-skupini
-besedilo: »Uredimo v dve skupini, ker so padavine tu opisna spremenljivka in razsevnega diagrama zanjo ne moremo narisati. Suhi dnevi: $25$, $26$, $27$, $28$, $29$, $30$. Deževni: $19$, $21$, $22$, $23$.« -/
+besedilo: »Suhi dnevi: $25$, $26$, $27$, $28$, $29$, $30$. Deževni: $19$, $21$, $22$, $23$.« -/
 theorem primer2_skupini : List.Perm [27, 29, 25, 30, 28, 26] [25, 26, 27, 28, 29, 30] ∧
     List.Perm [21, 23, 19, 22] [19, 21, 22, 23] ∧
     [25, 26, 27, 28, 29, 30].Pairwise (· ≤ ·) ∧ [19, 21, 22, 23].Pairwise (· ≤ ·) := by decide
@@ -83,7 +83,7 @@ theorem primer2_skupini : List.Perm [27, 29, 25, 30, 28, 26] [25, 26, 27, 28, 29
 /-- Primer 2: zapis dijaka kot pari (temperatura, dež?); suhi (filter »ne dež«) so 27, 29, 25, 30, 28, 26,
 deževni (filter »dež«) 21, 23, 19, 22; skupini skupaj štejeta vseh 10 dni (razdelitev podatkov).
 trditev: MAT-SS-4/statisticna-naloga#primer2-razdelitev
-besedilo: »Zapisal je: $27$ suho, $21$ dež, $29$ suho, $23$ dež, $25$ suho, $30$ suho, $19$ dež, $28$ suho, $22$ dež, $26$ suho.« -/
+besedilo: »Suhi dnevi: $25$, $26$, $27$, $28$, $29$, $30$. Deževni: $19$, $21$, $22$, $23$.« -/
 theorem primer2_razdelitev :
     let d : List (ℕ × Bool) := [(27, false), (21, true), (29, false), (23, true), (25, false), (30, false),
       (19, true), (28, false), (22, true), (26, false)]
@@ -104,7 +104,7 @@ theorem primer2 : ((27 : ℝ) + 29 + 25 + 30 + 28 + 26) / 6 = 27.5 ∧ ((27 : �
 /-- Primer 3, korak 3: urejeno po hitrosti vetra so pari (3; 62), (5; 55), (8; 48), (10; 50), (12; 38),
 (15; 33), (18; 30), (22; 24) (permutacija danih parov).
 trditev: MAT-SS-4/statisticna-naloga#primer3-urejeno
-besedilo: »Pari so (izmišljeni podatki): $(12; 38)$, $(3; 62)$, $(18; 30)$, $(8; 48)$, $(22; 24)$, $(5; 55)$, $(15; 33)$, $(10; 50)$.« -/
+besedilo: »Urejanje po hitrosti vetra: $3$, $5$, $8$, $10$, $12$, $15$, $18$, $22$; pripadajoči PM10: $62$, $55$, $48$, $50$, $38$, $33$, $30$, $24$.« -/
 theorem primer3_urejeno :
     List.Perm [(12, 38), (3, 62), (18, 30), (8, 48), (22, 24), (5, 55), (15, 33), (10, 50)]
       [(3, 62), (5, 55), (8, 48), (10, 50), (12, 38), (15, 33), (18, 30), (22, 24)] ∧
@@ -112,14 +112,14 @@ theorem primer3_urejeno :
 
 /-- Primer 3, korak 4: PM10 pada povsod razen pri (10; 50), ki malo odstopa (48 < 50).
 trditev: MAT-SS-4/statisticna-naloga#primer3-pada
-besedilo: »Analiza: razsevni diagram ima točke, ki se spuščajo, ena ($10$; $50$) malo odstopa. Štirje mirnejši dnevi imajo sredino $\dfrac{62 + 55 + 48 + 50}{4} = 53{,}75$, štirje vetrovnejši $\dfrac{38 + 33 + 30 + 24}{4} = 31{,}25$.« -/
+besedilo: »razsevni diagram ima točke, ki se spuščajo, ena ($10$; $50$) malo odstopa.« -/
 theorem primer3_pada : [62, 55, 48].Pairwise (· > ·) ∧ [50, 38, 33, 30, 24].Pairwise (· > ·) ∧ 48 < 50 := by
   decide
 
 /-- Primer 3, korak 4 in premisli: sredini (62 + 55 + 48 + 50)/4 = 53,75 in (38 + 33 + 30 + 24)/4 = 31,25;
 razlika 53,75 − 31,25 = 22,5 µg/m³.
 trditev: MAT-SS-4/statisticna-naloga#primer3
-besedilo: »Štirje mirnejši dnevi imajo sredino $\dfrac{62 + 55 + 48 + 50}{4} = 53{,}75$, štirje vetrovnejši $\dfrac{38 + 33 + 30 + 24}{4} = 31{,}25$.« -/
+besedilo: »ob vetrovnejših dneh je bilo v povprečju za $53{,}75 - 31{,}25 = 22{,}5\,\mu\mathrm{g/m^3}$ manj prašnih delcev« -/
 theorem primer3 : ((62 : ℝ) + 55 + 48 + 50) / 4 = 53.75 ∧ ((38 : ℝ) + 33 + 30 + 24) / 4 = 31.25 ∧
     (53.75 : ℝ) - 31.25 = 22.5 := by norm_num
 
@@ -128,7 +128,7 @@ theorem primer3 : ((62 : ℝ) + 55 + 48 + 50) / 4 = 53.75 ∧ ((38 : ℝ) + 33 +
 /-- Matura 2 a): urejeno po x so pari (x, 10y): (0; 65), (1; 72), (2; 70), (3; 68), (4; 71), (5; 75), (6; 74),
 (8; 80), (10; 79), (12; 83) – permutacija tabele (y v desetinkah ure).
 trditev: MAT-SS-4/statisticna-naloga#matura2-urejeno
-besedilo: »$x = 0, 1, 2, 3, 4, 5, 6, 8, 10, 12$« -/
+besedilo: »Urejeno po $x$: $x = 0, 1, 2, 3, 4, 5, 6, 8, 10, 12$, pripadajoči $y$ so $6{,}5$; $7{,}2$; $7{,}0$; $6{,}8$; $7{,}1$; $7{,}5$; $7{,}4$; $8{,}0$; $7{,}9$; $8{,}3$.« -/
 theorem matura2_urejeno :
     List.Perm [(2, 70), (0, 65), (5, 75), (8, 80), (3, 68), (10, 79), (1, 72), (6, 74), (4, 71), (12, 83)]
       [(0, 65), (1, 72), (2, 70), (3, 68), (4, 71), (5, 75), (6, 74), (8, 80), (10, 79), (12, 83)] ∧
@@ -137,7 +137,7 @@ theorem matura2_urejeno :
 /-- Matura 2 b): skupini sta pravilna razdelitev tabele: x ≤ 4 da 10y = 70, 65, 68, 72, 71 (to so
 6,5; 7,2; 7,0; 6,8; 7,1), x > 4 pa 75, 80, 79, 74, 83 (to so 7,5; 7,4; 8,0; 7,9; 8,3); skupaj 10 dijakov.
 trditev: MAT-SS-4/statisticna-naloga#matura2b-skupini
-besedilo: »a) Urejeno po $x$: $x = 0, 1, 2, 3, 4, 5, 6, 8, 10, 12$, pripadajoči $y$ so $6{,}5$; $7{,}2$; $7{,}0$; $6{,}8$; $7{,}1$; $7{,}5$; $7{,}4$; $8{,}0$; $7{,}9$; $8{,}3$.« -/
+besedilo: »b) Skupina z največ $4$ urami treninga: $\bar y_1 = \dfrac{6{,}5 + 7{,}2 + 7{,}0 + 6{,}8 + 7{,}1}{5} = \dfrac{34{,}6}{5} = 6{,}92$ ure. 4. b) Skupina z več kot $4$ urami: $\bar y_2 = \dfrac{7{,}5 + 7{,}4 + 8{,}0 + 7{,}9 + 8{,}3}{5} = \dfrac{39{,}1}{5} = 7{,}82$ ure.« -/
 theorem matura2b_skupini :
     let d : List (ℕ × ℕ) :=
       [(2, 70), (0, 65), (5, 75), (8, 80), (3, 68), (10, 79), (1, 72), (6, 74), (4, 71), (12, 83)]
@@ -148,7 +148,7 @@ theorem matura2b_skupini :
 /-- Matura 2 b): ȳ₁ = (6,5 + 7,2 + 7,0 + 6,8 + 7,1)/5 = 34,6/5 = 6,92; ȳ₂ = (7,5 + 7,4 + 8,0 + 7,9 + 8,3)/5 =
 39,1/5 = 7,82; razlika 7,82 − 6,92 = 0,9 ure = 0,9·60 = 54 minut.
 trditev: MAT-SS-4/statisticna-naloga#matura2b
-besedilo: »$\bar y_2 = \dfrac{7{,}5 + 7{,}4 + 8{,}0 + 7{,}9 + 8{,}3}{5} = \dfrac{39{,}1}{5} = 7{,}82$ ure.« -/
+besedilo: »Razlika: $7{,}82 - 6{,}92 = 0{,}9$ ure, to je $0{,}9 \cdot 60 = 54$ minut.« -/
 theorem matura2b : (6.5 : ℝ) + 7.2 + 7.0 + 6.8 + 7.1 = 34.6 ∧ (34.6 : ℝ) / 5 = 6.92 ∧
     (7.5 : ℝ) + 7.4 + 8.0 + 7.9 + 8.3 = 39.1 ∧ (39.1 : ℝ) / 5 = 7.82 ∧ (7.82 : ℝ) - 6.92 = 0.9 ∧
     (0.9 : ℝ) * 60 = 54 := by norm_num

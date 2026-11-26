@@ -122,7 +122,7 @@ example : (0 : ℝ) < 2 ∧ (2 : ℝ) ≠ 1 ∧ (0 : ℝ) < 8 := by norm_num
 /-- Razlaga 1, tabela: log₂(ν/440) pri ν = 110, 220, 440, 880, 1760 je −2, −1, 0, 1, 2; premisli:
 3520 : 440 = 8 = 2³, torej 3 oktave; frekvence 0 ne da nobeno število oktav (440·2ˣ > 0).
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#oktave
-besedilo: »Ker je $3520 : 440 = 8 = 2^3$, je ton $3$ oktave nad A. Pri $0\,\mathrm{Hz}$ ni nobenega odgovora: potenca $2^x$ je vedno pozitivna, zato nobeno število oktav ne da frekvence $0$. Logaritem števila $0$ (in negativnega števila) ne obstaja.« -/
+besedilo: »Ker je $3520 : 440 = 8 = 2^3$, je ton $3$ oktave nad A. Pri $0 \mathrm{Hz}$ ni nobenega odgovora: potenca $2^x$ je vedno pozitivna, zato nobeno število oktav ne da frekvence $0$. Logaritem števila $0$ (in negativnega števila) ne obstaja.« -/
 theorem oktave :
     Real.logb 2 (110 / 440) = -2 ∧ Real.logb 2 (220 / 440) = -1 ∧ Real.logb 2 (440 / 440) = 0 ∧
     Real.logb 2 (880 / 440) = 1 ∧ Real.logb 2 (1760 / 440) = 2 ∧ (3520 : ℝ) / 440 = 8 ∧
@@ -177,7 +177,7 @@ example :=
 /-- Razlaga 4: logₐ za a > 1 na (0, ∞) strogo narašča; edina ničla je x = 1, graf gre skozi (a, 1);
 logₐ x < 0 ⟺ x ∈ (0, 1), logₐ x > 0 ⟺ x ∈ (1, ∞).
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#lastnosti-vecja
-besedilo: »Njena edina ničla je $x = 1$, graf pa gre tudi skozi točko $(a, 1)$.« -/
+besedilo: »| graf | narašča | pada | | ničla | $x = 1$ | $x = 1$ | | točka | $(a, 1)$ | $(a, 1)$ | | asimptota | $x = 0$ | $x = 0$ | | $f(x) < 0$ | $(0, 1)$ | $(1, \infty)$ | | $f(x) > 0$ | $(1, \infty)$ | $(0, 1)$ |« -/
 theorem lastnosti_vecja (a : ℝ) (ha : 1 < a) :
     StrictMonoOn (Real.logb a) (Set.Ioi 0) ∧ Real.logb a 1 = 0 ∧ Real.logb a a = 1 ∧
     (∀ x : ℝ, 0 < x → (Real.logb a x = 0 ↔ x = 1)) ∧
@@ -219,7 +219,7 @@ example :=
 /-- Razlaga 4 in ustno vprašanje 2: za 0 < a < 1 logₐ na (0, ∞) strogo pada, edina ničla je x = 1,
 graf gre skozi (a, 1); logₐ x > 0 ⟺ x ∈ (0, 1), logₐ x < 0 ⟺ x ∈ (1, ∞).
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#lastnosti-manjsa
-besedilo: »Njena edina ničla je $x = 1$, graf pa gre tudi skozi točko $(a, 1)$.« -/
+besedilo: »Funkcija je strogo padajoča. Njena edina ničla je $x = 1$, graf pa gre tudi skozi točko $(a, 1)$. Os $y$ je navpična asimptota grafa. Funkcija je pozitivna na intervalu $(0, 1)$ in negativna na intervalu $(1, \infty)$.« -/
 theorem lastnosti_manjsa (a : ℝ) (h0 : 0 < a) (h1 : a < 1) :
     StrictAntiOn (Real.logb a) (Set.Ioi 0) ∧ Real.logb a 1 = 0 ∧ Real.logb a a = 1 ∧
     (∀ x : ℝ, 0 < x → (Real.logb a x = 0 ↔ x = 1)) ∧
@@ -249,7 +249,7 @@ example :=
 /-- Razlaga 4 (navpična asimptota in neomejenost): pri a > 1 je za vsak M logₐ x < M na (0, a^M), graf pa
 ni navzgor omejen; log₂ x = 10 natanko pri x = 1024.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#asimptota
-besedilo: »Za $x > 1$ graf pri $a > 1$ narašča vse počasneje, a ni navzgor omejen: $\log_2 x = 10$ doseže šele pri $x = 1024$.« -/
+besedilo: »Os $y$ je **navpična asimptota**: pri $a > 1$ se graf, ko gre $x$ proti $0$, spušča neomejeno navzdol in se osi $y$ približuje, a je nikoli ne doseže. Osi $y$ graf ne seka, ker $0$ ni v definicijskem območju. Za $x > 1$ graf pri $a > 1$ narašča vse počasneje, a ni navzgor omejen: $\log_2 x = 10$ doseže šele pri $x = 1024$.« -/
 theorem asimptota (a : ℝ) (ha : 1 < a) :
     (∀ M : ℝ, ∃ δ > 0, ∀ x, 0 < x → x < δ → Real.logb a x < M) ∧
     (∀ M : ℝ, ∃ x > 0, M < Real.logb a x) ∧
@@ -273,7 +273,7 @@ example :=
 /-- Razlaga 4 (tabela, 0 < a < 1): tudi tu je os y navpična asimptota: za vsak M je logₐ x > M na
 (0, a^M); graf ni navzdol omejen.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#asimptota-manjsa
-besedilo: »Os $y$ je **navpična asimptota**: pri $a > 1$ se graf, ko gre $x$ proti $0$, spušča neomejeno navzdol in se osi $y$ približuje, a je nikoli ne doseže.« -/
+besedilo: »Os $y$ je navpična asimptota grafa.« -/
 theorem asimptota_manjsa (a : ℝ) (h0 : 0 < a) (h1 : a < 1) :
     (∀ M : ℝ, ∃ δ > 0, ∀ x, 0 < x → x < δ → M < Real.logb a x) ∧
     (∀ M : ℝ, ∃ x > 0, Real.logb a x < M) := by
@@ -323,7 +323,7 @@ example :=
 /-- Razlaga 5: g(x) = logₐ(x − p) + q: pogoj x − p > 0 ⟺ x > p (asimptota x = p, D = (p, ∞)); točka (1, 0)
 preide v (1 + p, q) (a > 0, a ≠ 1).
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#premik
-besedilo: »Asimptota je $x = -3$, točka $(1, 0)$ pa preide v $(-2, 0)$. Tu je $p = -3$, ker je $x + 3 = x - (-3)$, zato se graf premakne za $3$ v levo. Preizkus: $\log_2 (-2 + 3) = \log_2 1 = 0$.« -/
+besedilo: »definicijsko območje je $(p, \infty)$, ker mora veljati $x - p > 0$, - točka $(1, 0)$ preide v $(1 + p, q)$.« -/
 theorem premik (a p q x : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) :
     (0 < x - p ↔ p < x) ∧ Real.logb a ((1 + p) - p) + q = q := by
   have _h := And.intro ha ha1
@@ -348,7 +348,7 @@ theorem premik_levo (x : ℝ) : x + 3 = x - (-3) ∧ Real.logb 2 (-2 + 3) = 0 �
 /-- Razlaga 5 (raztegi): c·logₐ x preslika (x, y) v (x, cy): ničla x = 1 ostane, (a, 1) preide v (a, c);
 log₄ x = (1/2)·log₂ x (4ʸ = x ⟹ 2^(2y) = x).
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#raztegi
-besedilo: »Ničla $x = 1$, asimptota $x = 0$ in $D_g = (0, \infty)$ ostanejo, točka $(a, 1)$ pa preide v $(a, c)$.« -/
+besedilo: »Ničla $x = 1$, asimptota $x = 0$ in $D_g = (0, \infty)$ ostanejo, točka $(a, 1)$ pa preide v $(a, c)$. Na primer $y = \log_4 x$ je graf $y = \log_2 x$, v smeri osi $y$ skrčen s faktorjem $\frac{1}{2}$, ker iz $4^y = x$ sledi $2^{2y} = x$.« -/
 theorem raztegi (a c x : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) :
     c * Real.logb a 1 = 0 ∧ c * Real.logb a a = c ∧ Real.logb 4 x = 1 / 2 * Real.logb 2 x ∧
     ∀ y : ℝ, (4 : ℝ) ^ y = (2 : ℝ) ^ (2 * y) := by
@@ -370,7 +370,7 @@ example :=
 /-- Razlaga 5 in Povzetek: logₐ(kx) = logₐ k + logₐ x (k, x > 0); log₂(4x) = 2 + log₂ x; ničla
 logₐ(kx) je x = 1/k (a > 0, a ≠ 1): edina pozitivna rešitev logₐ(kx) = 0.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#skrcitev
-besedilo: »Pri logaritmu pa je $\log_a (kx) = \log_a k + \log_a x$, zato je to hkrati premik za $\log_a k$ v smeri osi $y$: graf $y = \log_2 (4x)$ je graf $y = \log_2 x$, premaknjen za $2$ navzgor.« -/
+besedilo: »Pri logaritmu pa je $\log_a (kx) = \log_a k + \log_a x$, zato je to hkrati premik za $\log_a k$ v smeri osi $y$: graf $y = \log_2 (4x)$ je graf $y = \log_2 x$, premaknjen za $2$ navzgor. Asimptota $x = 0$ ostane, ničla pa je $x = \frac{1}{k}$.« -/
 theorem skrcitev (a k x : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hk : 0 < k) (hx : 0 < x) :
     Real.logb a (k * x) = Real.logb a k + Real.logb a x ∧
     Real.logb 2 (4 * x) = 2 + Real.logb 2 x ∧ Real.logb a (k * (1 / k)) = 0 ∧
@@ -392,7 +392,7 @@ example :=
 
 /-- Razlaga 6: 6 − 2x > 0 ⟺ x < 3; x² − x − 6 = (x − 3)(x + 2) > 0 ⟺ x < −2 ali x > 3.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#definicijsko
-besedilo: »Pri $\log (x^2 - x - 6)$ ima izraz $(x - 3)(x + 2)$ ničli $-2$ in $3$;« -/
+besedilo: »Za $f(x) = \log_3 (6 - 2x)$ rešimo neenačbo $6 - 2x > 0$ in dobimo $x < 3$, torej $D_f = (-\infty, 3)$. Če je pod logaritmom kvadratni izraz, rešimo kvadratno neenačbo. Pri $\log (x^2 - x - 6)$ ima izraz $(x - 3)(x + 2)$ ničli $-2$ in $3$; parabola je odprta navzgor, zato je izraz pozitiven zunaj ničel in $D = (-\infty, -2) \cup (3, \infty)$.« -/
 theorem definicijsko (x : ℝ) : (0 < 6 - 2 * x ↔ x < 3) ∧ x ^ 2 - x - 6 = (x - 3) * (x + 2) ∧
     (0 < x ^ 2 - x - 6 ↔ x < -2 ∨ 3 < x) := by
   refine ⟨by constructor <;> intro h <;> linarith, by ring, ?_⟩
@@ -406,7 +406,7 @@ theorem definicijsko (x : ℝ) : (0 < 6 - 2 * x ↔ x < 3) ∧ x ^ 2 - x - 6 = (
 /-- Razlaga 7 (Povzetek, Ponovitev): za a > 0, a ≠ 1 in A, B > 0: logₐ A = c ⟺ A = a^c,
 logₐ A = logₐ B ⟺ A = B, logₐ A + logₐ B = logₐ(A·B).
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#tipi
-besedilo: »$\log_a A + \log_a B = \log_a (A \cdot B)$; $\;\log_a C = c \iff C = a^c$« -/
+besedilo: »$\log_a A = c$: po definiciji zapišemo $A = a^c$. - $\log_a A = \log_a B$: sklepamo $A = B$. - Več logaritmov z isto osnovo: s pravili jih **združimo** v en logaritem, na primer $\log_a A + \log_a B = \log_a (A \cdot B)$« -/
 theorem tipi (a A B c : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hA : 0 < A) (hB : 0 < B) :
     (Real.logb a A = c ↔ A = a ^ c) ∧ (Real.logb a A = Real.logb a B ↔ A = B) ∧
     Real.logb a A + Real.logb a B = Real.logb a (A * B) := by
@@ -424,7 +424,7 @@ example :=
 
 /-- Razlaga 8: pri x = −7 sta x + 3 = −4 in x − 1 = −8 negativna, produkt (−4)(−8) = 32 pa pozitiven.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#razsiritev
-besedilo: »Preizkus je obvezen.** Pri združevanju logaritmov se definicijsko območje lahko razširi (v Primeru 2 je produkt $(x + 3)(x - 1)$ pri $x = -7$ pozitiven,« -/
+besedilo: »v Primeru 2 je produkt $(x + 3)(x - 1)$ pri $x = -7$ pozitiven, čeprav sta oba faktorja negativna« -/
 theorem razsiritev : (-7 : ℝ) + 3 < 0 ∧ (-7 : ℝ) - 1 < 0 ∧ ((-7 : ℝ) + 3) * ((-7 : ℝ) - 1) = 32 := by
   norm_num
 
@@ -464,7 +464,7 @@ example :=
 /-- Razlaga 9, tabela: log₂ 1, 2, 4, 8, 16 = 0, 1, 2, 3, 4 in 2¹, 2², 2⁴, 2⁸, 2¹⁶ = 2, 4, 16, 256, 65536;
 2^(x+1) = 2·2ˣ, log₂(2x) = 1 + log₂ x (x > 0).
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#rast-tabela
-besedilo: »Iz $\log x = 1$ sledi $x = 10^1 = 10$, iz $\log x = 2$ pa $x = 10^2 = 100$. Obe sta pozitivni. Preizkus za $x = 10$: $1^2 - \log 1000 + 2 = 1 - 3 + 2 = 0$. Za $x = 100$: $2^2 - \log 10^6 + 2 = 4 - 6 + 2 = 0$. Rešitvi enačbe sta $x = 10$ in $x = 100$.« -/
+besedilo: »| $1$ | $0$ | $2$ | | $2$ | $1$ | $4$ | | $4$ | $2$ | $16$ | | $8$ | $3$ | $256$ | | $16$ | $4$ | $65\,536$ | Ko se $x$ poveča za $1$, se $2^x$ **podvoji**. Da se $\log_2 x$ poveča za $1$, pa se mora $x$ **podvojiti**.« -/
 theorem rast_tabela (x : ℝ) (hx : 0 < x) :
     (2 : ℝ) ^ (1 : ℝ) = 2 ∧ (2 : ℝ) ^ (2 : ℝ) = 4 ∧ (2 : ℝ) ^ (4 : ℝ) = 16 ∧ (2 : ℝ) ^ (8 : ℝ) = 256 ∧
     (2 : ℝ) ^ (16 : ℝ) = 65536 ∧ Real.logb 2 16 = 4 ∧
@@ -544,7 +544,7 @@ example :=
 ⟺ x − 2 = 3⁻¹ = 1/3 ⟺ x = 7/3; x = 0 ni v D (0 − 2 < 0); f(3) = log₃ 1 + 1 = 1, f(5) = log₃ 3 + 1 = 2,
 f(11) = log₃ 9 + 1 = 3; f na (2, ∞) strogo narašča.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#primer1
-besedilo: »Vrednosti: $f(3) = \log_3 1 + 1 = 1$, $f(5) = \log_3 3 + 1 = 2$, $f(11) = \log_3 9 + 1 = 3$.« -/
+besedilo: »Logaritmand mora biti pozitiven: $x - 2 > 0$, torej $x > 2$ in $D_f = (2, \infty)$. 2. Asimptota je navpična premica $x = 2$. 3. Ničla: $\log_3 (x - 2) + 1 = 0$, torej $\log_3 (x - 2) = -1$. Po definiciji je $x - 2 = 3^{-1} = \dfrac{1}{3}$ in $x = \dfrac{7}{3}$. 4. Presečišča z osjo $y$ ni, ker $x = 0$ ni v definicijskem območju. 5. Vrednosti: $f(3) = \log_3 1 + 1 = 1$, $f(5) = \log_3 3 + 1 = 2$, $f(11) = \log_3 9 + 1 = 3$. 6. Ker je $a = 3 > 1$, funkcija strogo narašča.« -/
 theorem primer1 :
     (∀ x : ℝ, 0 < x - 2 ↔ 2 < x) ∧
     (∀ x : ℝ, 2 < x → (Real.logb 3 (x - 2) + 1 = 0 ↔ x = 7 / 3)) ∧ (0 : ℝ) - 2 < 0 ∧
@@ -596,7 +596,7 @@ theorem primer2 (x : ℝ) :
 /-- Primer 2, račun: (x + 3)(x − 1) = x² + 2x − 3; x² + 2x − 35 = (x + 7)(x − 5); preizkus
 log₂ 8 + log₂ 4 = 3 + 2 = 5.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#primer2-racun
-besedilo: »Preizkus: $\log_2 8 + \log_2 4 = 3 + 2 = 5$. ✓« -/
+besedilo: »Odpravimo oklepaje: $x^2 + 2x - 3 = 32$, torej $x^2 + 2x - 35 = 0$. 5. Razcepimo: $(x + 7)(x - 5) = 0$, zato je $x_1 = 5$ in $x_2 = -7$. 6. Pogoj $x > 1$ izpolnjuje le $x = 5$. Pri $x = -7$ bi bil $\log_2 (-4)$, ki ni definiran. 7. Preizkus: $\log_2 8 + \log_2 4 = 3 + 2 = 5$.« -/
 theorem primer2_racun (x : ℝ) : (x + 3) * (x - 1) = x ^ 2 + 2 * x - 3 ∧
     x ^ 2 + 2 * x - 35 = (x + 7) * (x - 5) ∧ Real.logb 2 8 + Real.logb 2 4 = 3 + 2 := by
   refine ⟨by ring, by ring, by rw [(vrednosti).2.2.2.2.2.1, (vrednosti).2.2.2.2.1]⟩
@@ -605,7 +605,7 @@ theorem primer2_racun (x : ℝ) : (x + 3) * (x - 1) = x ^ 2 + 2 * x - 3 ∧
 
 /-- Primer 3 a): 110/440 = 1/4 = 2⁻², log₂(1/4) = −2, k = 12·(−2) = −24.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#primer3a
-besedilo: »a) Razmerje je $\dfrac{110}{440} = \dfrac{1}{4} = 2^{-2}$, zato je $\log_2 \dfrac{1}{4} = -2$.« -/
+besedilo: »Razmerje je $\dfrac{110}{440} = \dfrac{1}{4} = 2^{-2}$, zato je $\log_2 \dfrac{1}{4} = -2$. 3. a) Pomnožimo z $12$: $12 \cdot (-2) = -24$.« -/
 theorem primer3a : (110 : ℝ) / 440 = 1 / 4 ∧ (1 / 4 : ℝ) = 2 ^ (-2 : ℝ) ∧
     Real.logb 2 (110 / 440) = -2 ∧ 12 * Real.logb 2 (110 / 440) = -24 := by
   have h := (vrednosti).1
@@ -615,7 +615,7 @@ theorem primer3a : (110 : ℝ) / 440 = 1 / 4 ∧ (1 / 4 : ℝ) = 2 ^ (-2 : ℝ) 
 /-- Primer 3 b): za ν > 0 je 12 log₂(ν/440) = 7 ⟺ log₂(ν/440) = 7/12 ⟺ ν/440 = 2^(7/12)
 ⟺ ν = 440·2^(7/12); 2^(7/12) ≈ 1,4983, ν ≈ 659,3 Hz (tudi 440·1,4983 ≈ 659,3).
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#primer3b
-besedilo: »$\nu \approx 440 \cdot 1{,}4983 \approx 659{,}3\,\mathrm{Hz}$,« -/
+besedilo: »Enačbo $12 \log_2 \dfrac{\nu}{440} = 7$ delimo z $12$: $\log_2 \dfrac{\nu}{440} = \dfrac{7}{12}$. 5. b) Po definiciji logaritma je $\dfrac{\nu}{440} = 2^{\frac{7}{12}} \approx 1{,}4983$; osnova $2$ se potencira, desna stran je eksponent. 6. b) Pomnožimo s $440$: $\nu \approx 440 \cdot 1{,}4983 \approx 659{,}3\,\mathrm{Hz}$« -/
 theorem primer3b (ν : ℝ) (hν : 0 < ν) :
     (12 * Real.logb 2 (ν / 440) = 7 ↔ Real.logb 2 (ν / 440) = 7 / 12) ∧
     (Real.logb 2 (ν / 440) = 7 / 12 ↔ ν / 440 = (2 : ℝ) ^ (7 / 12 : ℝ)) ∧
@@ -644,7 +644,7 @@ example :=
 /-- Primer 4: za x > 0 je log x³ = 3 log x in (log x)² − log x³ + 2 = 0 ⟺ t² − 3t + 2 = 0 (t = log x)
 ⟺ (t − 1)(t − 2) = 0 ⟺ log x = 1 ali log x = 2 ⟺ x = 10 ali x = 100.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#primer4
-besedilo: »Iz $\log x = 1$ sledi $x = 10^1 = 10$, iz $\log x = 2$ pa $x = 10^2 = 100$. Obe sta pozitivni. Preizkus za $x = 10$: $1^2 - \log 1000 + 2 = 1 - 3 + 2 = 0$. Za $x = 100$: $2^2 - \log 10^6 + 2 = 4 - 6 + 2 = 0$. Rešitvi enačbe sta $x = 10$ in $x = 100$.« -/
+besedilo: »Rešitvi enačbe sta $x = 10$ in $x = 100$.« -/
 theorem primer4 (x : ℝ) (hx : 0 < x) :
     Real.logb 10 (x ^ 3) = 3 * Real.logb 10 x ∧
     ((Real.logb 10 x) ^ 2 - Real.logb 10 (x ^ 3) + 2 = 0 ↔ x = 10 ∨ x = 100) := by
@@ -669,7 +669,7 @@ example :=
 
 /-- Primer 4, preizkus: 1² − log 1000 + 2 = 1 − 3 + 2 = 0 in 2² − log 10⁶ + 2 = 4 − 6 + 2 = 0.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#primer4-preizkus
-besedilo: »Iz $\log x = 1$ sledi $x = 10^1 = 10$, iz $\log x = 2$ pa $x = 10^2 = 100$. Obe sta pozitivni. Preizkus za $x = 10$: $1^2 - \log 1000 + 2 = 1 - 3 + 2 = 0$. Za $x = 100$: $2^2 - \log 10^6 + 2 = 4 - 6 + 2 = 0$. Rešitvi enačbe sta $x = 10$ in $x = 100$.« -/
+besedilo: »Preizkus za $x = 10$: $1^2 - \log 1000 + 2 = 1 - 3 + 2 = 0$. Za $x = 100$: $2^2 - \log 10^6 + 2 = 4 - 6 + 2 = 0$.« -/
 theorem primer4_preizkus : (1 : ℝ) ^ 2 - Real.logb 10 1000 + 2 = 0 ∧
     (2 : ℝ) ^ 2 - Real.logb 10 (10 ^ 6) + 2 = 0 := by
   constructor
@@ -681,7 +681,7 @@ theorem primer4_preizkus : (1 : ℝ) ^ 2 - Real.logb 10 1000 + 2 = 0 ∧
 /-- Primer 5: pri p = 1 (asimptota x = 1) je g(5) = c·log₂ 4 = 2c = 6 ⟺ c = 3; za x > 1 je
 3 log₂(x − 1) = 0 ⟺ x − 1 = 1 ⟺ x = 2; točka (4, 2) preide v (5, 6), (8, 3) v (9, 9): g(9) = 3 log₂ 8 = 9.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#primer5
-besedilo: »Vstavimo točko: $g(5) = c \log_2 4 = 2c = 6$, zato je $c = 3$.« -/
+besedilo: »Vstavimo točko: $g(5) = c \log_2 4 = 2c = 6$, zato je $c = 3$. 3. Ničla: $3 \log_2 (x - 1) = 0$ velja pri $x - 1 = 1$, torej $x = 2$. 4. Graf $y = \log_2 x$ premaknemo za $1$ v desno in ga raztegnemo s faktorjem $3$ v smeri osi $y$. Točka $(4, 2)$ preide v $(5, 6)$, točka $(1, 0)$ v ničlo $(2, 0)$. 5. Preizkus še v eni točki: $g(9) = 3 \log_2 8 = 9$, iz točke $(8, 3)$ dobimo $(9, 9)$.« -/
 theorem primer5 (c : ℝ) :
     (c * Real.logb 2 ((5 : ℝ) - 1) = 6 ↔ c = 3) ∧
     (∀ x : ℝ, 1 < x → (3 * Real.logb 2 (x - 1) = 0 ↔ x = 2)) ∧
@@ -702,7 +702,7 @@ theorem primer5 (c : ℝ) :
 ≠ 2); log₃(2x + 1) = 2 ⟺ 2x + 1 = 3² = 9 ⟺ x = 4 (pri 2x + 1 > 0), ne 2x + 1 = 6 ali 8;
 (log x)² ≠ log x² (pri x = 1000: 9 ≠ 6). Premik log₂(x + 3) v levo je v `premik_levo`.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#napake
-besedilo: »Napačna pot od logaritma do potence.** Iz $\log_3 (2x + 1) = 2$ ne sledi $2x + 1 = 3 \cdot 2$ ali $2x + 1 = 2^3$. Osnova se potencira, desna stran je eksponent: $2x + 1 = 3^2 = 9$, torej $x = 4$.« -/
+besedilo: »$\log_2 (x + 3) = \log_2 x + \log_2 3$ ne velja. Pravilo $\log_a A + \log_a B = \log_a (AB)$ govori o **produktu** pod logaritmom; za vsoto $x + 3$ pod logaritmom pravila ni, zato tak logaritem pustimo cel. - **Napačna pot od logaritma do potence.** Iz $\log_3 (2x + 1) = 2$ ne sledi $2x + 1 = 3 \cdot 2$ ali $2x + 1 = 2^3$. Osnova se potencira, desna stran je eksponent: $2x + 1 = 3^2 = 9$, torej $x = 4$. - **Premik v napačno smer.** Graf $y = \log_2 (x + 3)$ ni premaknjen v desno. Asimptoto najdeš tako, da logaritmand izenačiš z nič: $x + 3 = 0$, torej $x = -3$; graf je premaknjen za $3$ v levo in $D = (-3, \infty)$. - **Kvadrat logaritma zamenjan z logaritmom kvadrata.** $(\log x)^2$ ni enako $\log x^2 = 2\log x$.« -/
 theorem napake :
     Real.logb 2 (1 + 3) ≠ Real.logb 2 1 + Real.logb 2 3 ∧
     (∀ x : ℝ, 0 < 2 * x + 1 → (Real.logb 3 (2 * x + 1) = 2 ↔ x = 4)) ∧
@@ -752,7 +752,7 @@ theorem matura1 (x : ℝ) :
 /-- Za maturo, naloga 2 a), b): f(x) = log₂(x + 4) − 1: pogoj x + 4 > 0 ⟺ x > −4; za x > −4 je f(x) = 0
 ⟺ log₂(x + 4) = 1 ⟺ x + 4 = 2 ⟺ x = −2; f(0) = log₂ 4 − 1 = 1.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#matura2ab
-besedilo: »b) Iz $\log_2 (x + 4) - 1 = 0$ sledi $\log_2 (x + 4) = 1$, torej $x + 4 = 2$ in $x = -2$.« -/
+besedilo: »Logaritmand mora biti pozitiven: $x + 4 > 0$, zato je $D_f = (-4, \infty)$. Asimptota je navpična premica $x = -4$. 2. b) Iz $\log_2 (x + 4) - 1 = 0$ sledi $\log_2 (x + 4) = 1$, torej $x + 4 = 2$ in $x = -2$. 3. b) $f(0) = \log_2 4 - 1 = 2 - 1 = 1$, presečišče z osjo $y$ je točka $(0, 1)$.« -/
 theorem matura2ab :
     (∀ x : ℝ, 0 < x + 4 ↔ -4 < x) ∧
     (∀ x : ℝ, -4 < x → (Real.logb 2 (x + 4) - 1 = 0 ↔ x = -2)) ∧
@@ -768,7 +768,7 @@ theorem matura2ab :
 in f⁻¹(f(x)) = x za x > −4; zaloga vrednosti f⁻¹ je (−4, ∞) = D_f; točke f: (−3, −1), (−2, 0), (0, 1),
 (4, 2), točke f⁻¹: (−1, −3), (0, −2), (1, 0), (2, 4).
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#matura2cd
-besedilo: »d) Točke grafa $f$: $(-3, -1)$, $(-2, 0)$, $(0, 1)$, $(4, 2)$, navpična asimptota $x = -4$. Točke grafa $f^{-1}$ dobimo z zamenjavo koordinat: $(-1, -3)$, $(0, -2)$, $(1, 0)$, $(2, 4)$, vodoravna asimptota $y = -4$. Grafa sta zrcalna čez premico $y = x$.« -/
+besedilo: »Zapišemo $y = \log_2 (x + 4) - 1$ in izrazimo $x$: $y + 1 = \log_2 (x + 4)$, po definiciji $x + 4 = 2^{y+1}$ in $x = 2^{y+1} - 4$. 5. c) Zamenjamo vlogi spremenljivk: $f^{-1}(x) = 2^{x+1} - 4$. Zaloga vrednosti obratne funkcije je definicijsko območje funkcije $f$, torej $Z_{f^{-1}} = (-4, \infty)$; to se ujema z $2^{x+1} > 0$. 6. d) Točke grafa $f$: $(-3, -1)$, $(-2, 0)$, $(0, 1)$, $(4, 2)$, navpična asimptota $x = -4$. Točke grafa $f^{-1}$ dobimo z zamenjavo koordinat: $(-1, -3)$, $(0, -2)$, $(1, 0)$, $(2, 4)$« -/
 theorem matura2cd :
     (∀ y : ℝ, Real.logb 2 (((2 : ℝ) ^ (y + 1) - 4) + 4) - 1 = y) ∧
     (∀ x : ℝ, -4 < x → (2 : ℝ) ^ ((Real.logb 2 (x + 4) - 1) + 1) - 4 = x) ∧
@@ -799,7 +799,7 @@ theorem matura2cd :
 h(7) = 20 + 6 log₂ 8 = 38; za x > −1: h(x) = 50 ⟺ x = 31, h(x) = 44 ⟺ x = 15; prirastka: 3 tedne,
 nato 15 − 3 = 12 tednov.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#matura3
-besedilo: »a) $h(3) = 20 + s \log_2 4 = 20 + 2s = 32$, zato je $s = 6$ in $h(x) = 20 + 6 \log_2 (x + 1)$.« -/
+besedilo: »$h(0) = r + s \log_2 1 = r$, zato je $r = 20$. 2. a) $h(3) = 20 + s \log_2 4 = 20 + 2s = 32$, zato je $s = 6$ in $h(x) = 20 + 6 \log_2 (x + 1)$. 3. b) $h(7) = 20 + 6 \log_2 8 = 20 + 18 = 38$ besed na minuto. 4. c) Iz $20 + 6 \log_2 (x + 1) = 50$ sledi $\log_2 (x + 1) = 5$, torej $x + 1 = 2^5 = 32$ in $x = 31$ tednov. 5. d) Hitrost $32$ doseže pri $x = 3$. Iz $20 + 6 \log_2 (x + 1) = 44$ sledi $\log_2 (x + 1) = 4$ in $x = 15$. 6. d) Za prvih $12$ besed na minuto potrebuje $3$ tedne, za naslednjih $12$ pa $15 - 3 = 12$ tednov.« -/
 theorem matura3 (r s : ℝ) :
     r + s * Real.logb 2 ((0 : ℝ) + 1) = r ∧ (20 + 2 * s = 32 ↔ s = 6) ∧
     20 + 6 * Real.logb 2 ((3 : ℝ) + 1) = 32 ∧
@@ -822,7 +822,7 @@ theorem matura3 (r s : ℝ) :
 /-- Za maturo, naloga 3 e) in RAČUN: za x > −1 je 20 + 6 log₂(x + 1) = 40 ⟺ log₂(x + 1) = 10/3
 ⟺ x + 1 = 2^(10/3); 2^(10/3) ≈ 10,0794, x ≈ 9,0794 ≈ 9,08 ≈ 9,1 tedna.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#matura3e
-besedilo: »e) Z računalom: $2^{\frac{10}{3}} \approx 10{,}0794$, zato je $x \approx 9{,}0794$, zaokroženo $9{,}1$ tedna.« -/
+besedilo: »Iz $20 + 6 \log_2 (x + 1) = 40$ sledi $\log_2 (x + 1) = \dfrac{10}{3}$, po definiciji $x + 1 = 2^{\frac{10}{3}}$. 8. e) Z računalom: $2^{\frac{10}{3}} \approx 10{,}0794$, zato je $x \approx 9{,}0794$, zaokroženo $9{,}1$ tedna.« -/
 theorem matura3e (x : ℝ) (hx : -1 < x) :
     (20 + 6 * Real.logb 2 (x + 1) = 40 ↔ Real.logb 2 (x + 1) = 10 / 3) ∧
     (Real.logb 2 (x + 1) = 10 / 3 ↔ x + 1 = (2 : ℝ) ^ (10 / 3 : ℝ)) ∧
@@ -866,7 +866,7 @@ example :=
 /-- Ustno vprašanje 3: log₂ x + log₂(x − 2) = 3 s pogojema x > 0, x − 2 > 0 ⟺ x = 4; x(x − 2) = 8
 ⟺ x = 4 ali x = −2 (−2 je odvečna rešitev).
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#ustno3
-besedilo: »dobimo enačbo $x(x - 2) = 8$ z rešitvama $x = 4$ in $x = -2$.« -/
+besedilo: »Ko logaritma združimo, dobimo enačbo $x(x - 2) = 8$ z rešitvama $x = 4$ in $x = -2$. Pri $x = -2$ logaritmanda nista pozitivna, zato prvotna enačba tam ni definirana in $-2$ ni njena rešitev.« -/
 theorem ustno3 (x : ℝ) :
     ((0 < x ∧ 0 < x - 2 ∧ Real.logb 2 x + Real.logb 2 (x - 2) = 3) ↔ x = 4) ∧
     (x * (x - 2) = 8 ↔ x = 4 ∨ x = -2) := by
@@ -892,7 +892,7 @@ theorem ustno3 (x : ℝ) :
 
 /-- Drugače, z analogijo: 0,1·2ˣ = 0,8 ⟺ x = 3 = log₂ 8; za 0,05 mm je log₂(1/2) = −1.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#analogija
-besedilo: »Za $0{,}8\,\mathrm{mm}$ je odgovor $\log_2 8 = 3$.« -/
+besedilo: »Za $0{,}8\,\mathrm{mm}$ je odgovor $\log_2 8 = 3$. Analogija pokaže tudi definicijsko območje. Debelina je vedno pozitivna, zato vprašanje »kolikokrat do debeline $0$« nima odgovora. Za debelino $0{,}05\,\mathrm{mm}$ bi morali list enkrat »odpogniti«, zato je odgovor negativen: $\log_2 \frac{1}{2} = -1$.« -/
 theorem analogija (x : ℝ) : (0.1 * (2 : ℝ) ^ x = 0.8 ↔ x = Real.logb 2 8) ∧ Real.logb 2 8 = 3 ∧
     (0.05 : ℝ) / 0.1 = 1 / 2 ∧ Real.logb 2 (1 / 2) = -1 := by
   refine ⟨?_, (vrednosti).2.2.2.2.2.1, by norm_num, (vrednosti).2.1⟩
@@ -902,7 +902,7 @@ theorem analogija (x : ℝ) : (0.1 * (2 : ℝ) ^ x = 0.8 ↔ x = Real.logb 2 8) 
 /-- Drugače, iz vsakdanjega življenja: log₂ 10⁶ ≈ 19,93; 2¹⁹ < 10⁶ ≤ 2²⁰ (dovolj je 20 vprašanj);
 2⁹ < 1000 ≤ 2¹⁰ in 2²⁹ < 10⁹ ≤ 2³⁰; log₂(1000x) = log₂ 1000 + log₂ x (x > 0), log₂ 1000 ≈ 9,97 ≈ 10.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#ugibanje
-besedilo: »Rešitev je $n \ge \log_2 1\,000\,000 \approx 19{,}93$, torej zadošča $20$ vprašanj.« -/
+besedilo: »Rešitev je $n \ge \log_2 1\,000\,000 \approx 19{,}93$, torej zadošča $20$ vprašanj. Pri $1000$ številih zadošča $10$ vprašanj, pri milijardi pa le $30$. To je značilnost logaritemske funkcije: ko se $x$ tisočkrat poveča, se $\log_2 x$ poveča le za približno $10$.« -/
 theorem ugibanje (x : ℝ) (hx : 0 < x) :
     (19.925 < Real.logb 2 1000000 ∧ Real.logb 2 1000000 < 19.935) ∧
     ((2 : ℕ) ^ 19 < 10 ^ 6 ∧ (10 : ℕ) ^ 6 ≤ 2 ^ 20) ∧ ((2 : ℕ) ^ 9 < 1000 ∧ 1000 ≤ (2 : ℕ) ^ 10) ∧
@@ -926,7 +926,7 @@ example :=
 /-- Drugače, bolj natančno: za a > 0, a ≠ 1 vsakemu y > 0 pripada natanko en x z aˣ = y (x = logₐ y);
 iz logₐ A = logₐ B (A, B > 0) sledi A = B.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#dobro-definirana
-besedilo: »Vsakemu $y > 0$ torej pripada natanko en $x$ z $a^x = y$.« -/
+besedilo: »Vsakemu $y > 0$ torej pripada natanko en $x$ z $a^x = y$. Zato ima obratno funkcijo z definicijskim območjem $(0, \infty)$ in zalogo vrednosti $\mathbb{R}$. To je $\log_a x$. Ker sta grafa obratnih funkcij zrcalna glede na $y = x$, obratna funkcija podeduje monotonost: pri $a > 1$ narašča, pri $0 < a < 1$ pada. **Injektivnost in sklep $A = B$.** Iz $\log_a A = \log_a B$ sledi $A = B$ ravno zato, ker strogo monotona funkcija nobene vrednosti ne zavzame dvakrat.« -/
 theorem dobro_definirana (a y : ℝ) (ha : 0 < a) (ha1 : a ≠ 1) (hy : 0 < y) :
     (∃! x : ℝ, a ^ x = y) ∧
     ∀ A B : ℝ, 0 < A → 0 < B → Real.logb a A = Real.logb a B → A = B := by
@@ -947,7 +947,7 @@ example :=
 /-- Drugače, bolj natančno: log x² = 2 log |x| (x ≠ 0); log x² = 2 ⟺ x = 10 ali x = −10 (x ≠ 0);
 2 log x = 2 ⟺ x = 10 (x > 0).
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#kvadrat-pod-log
-besedilo: »Enačba $\log x^2 = 2$ ima zato rešitvi $x = 10$ in $x = -10$, enačba $2\log x = 2$ pa le $x = 10$.« -/
+besedilo: »Splošno velja $\log x^2 = 2 \log |x|$. Enačba $\log x^2 = 2$ ima zato rešitvi $x = 10$ in $x = -10$, enačba $2\log x = 2$ pa le $x = 10$.« -/
 theorem kvadrat_pod_log :
     (∀ x : ℝ, x ≠ 0 → Real.logb 10 (x ^ 2) = 2 * Real.logb 10 |x|) ∧
     (∀ x : ℝ, x ≠ 0 → (Real.logb 10 (x ^ 2) = 2 ↔ x = 10 ∨ x = -10)) ∧
@@ -983,7 +983,7 @@ theorem kviz1 : Real.logb 2 1 = 0 ∧ (2 : ℝ) ^ (0 : ℝ) = 1 ∧ ¬ ((0 : ℝ
 /-- Preveri se 2: log x + log(x − 3) = 1 s pogojema x > 0, x − 3 > 0 ⟺ x = 5; x² − 3x − 10 = (x − 5)(x + 2);
 logaritem je lahko negativen: log 0,1 = −1.
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#kviz2
-besedilo: »Logaritem je lahko negativen ($\log 0{,}1 = -1$);« -/
+besedilo: »Razcep $(x - 5)(x + 2)$ je pravilen; $x = -2$ res reši kvadratno enačbo, ne pa prvotne.« -/
 theorem kviz2 (x : ℝ) :
     ((0 < x ∧ 0 < x - 3 ∧ Real.logb 10 x + Real.logb 10 (x - 3) = 1) ↔ x = 5) ∧
     x ^ 2 - 3 * x - 10 = (x - 5) * (x + 2) ∧ Real.logb 10 0.1 = -1 := by
@@ -1003,7 +1003,7 @@ theorem kviz2 (x : ℝ) :
 
 /-- Preveri se 3: x² − 4 = (x − 2)(x + 2) > 0 ⟺ x < −2 ali x > 2 (pri x = 0 je 0 − 4 = −4 < 0).
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#kviz3
-besedilo: »1) $x^2 - 4 > 0$; 2) $(x - 2)(x + 2) > 0$; 3) parabola je odprta navzgor, zato je izraz pozitiven med ničlama; 4) $D_f = (-2, 2)$.« -/
+besedilo: »Parabola, odprta navzgor, je med ničlama pod osjo $x$: pri $x = 0$ je $0 - 4 = -4 < 0$. Izraz je pozitiven zunaj ničel, zato je $D_f = (-\infty, -2) \cup (2, \infty)$.« -/
 theorem kviz3 (x : ℝ) : x ^ 2 - 4 = (x - 2) * (x + 2) ∧ (0 < x ^ 2 - 4 ↔ x < -2 ∨ 2 < x) ∧
     (0 : ℝ) ^ 2 - 4 = -4 := by
   refine ⟨by ring, ⟨fun h => ?_, fun h => ?_⟩, by norm_num⟩
@@ -1055,7 +1055,7 @@ theorem kviz7 : (2 : ℝ) ^ (10 : ℝ) = 1024 ∧ ∀ x : ℝ, 0 < x → (Real.l
 
 /-- RAČUN: 2·log₄ x = log₂ x in log₂(4x) = 2 + log₂ x (x > 0).
 trditev: MAT-SS-2/logaritemska-funkcija-in-enacbe#racun-osnove
-besedilo: »graf $y = \log_2 (4x)$ je graf $y = \log_2 x$,« -/
+besedilo: »Na primer $y = \log_4 x$ je graf $y = \log_2 x$, v smeri osi $y$ skrčen s faktorjem $\frac{1}{2}$, ker iz $4^y = x$ sledi $2^{2y} = x$. Pri $g(x) = \log_a (kx)$ s $k > 0$ se graf v smeri osi $x$ skrči s faktorjem $k$ (kot pri vsaki funkciji). Pri logaritmu pa je $\log_a (kx) = \log_a k + \log_a x$, zato je to hkrati premik za $\log_a k$ v smeri osi $y$: graf $y = \log_2 (4x)$ je graf $y = \log_2 x$, premaknjen za $2$ navzgor.« -/
 theorem racun_osnove (x : ℝ) (hx : 0 < x) :
     2 * Real.logb 4 x = Real.logb 2 x ∧ Real.logb 2 (4 * x) = 2 + Real.logb 2 x := by
   refine ⟨?_, (skrcitev 2 4 x (by norm_num) (by norm_num) (by norm_num) hx).2.1⟩

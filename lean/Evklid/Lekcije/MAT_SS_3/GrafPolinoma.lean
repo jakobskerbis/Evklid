@@ -28,7 +28,7 @@ open Polynomial Filter
 /-- Razlaga 2: graf polinoma je neprekinjen, zato je na intervalu brez ničel predznak stalen (poljubni točki
 `x`, `y` z intervala dasta vrednosti istega predznaka, torej zadošča ena testna točka).
 trditev: MAT-SS-3/graf-polinoma#predznak-stalen
-besedilo: »Med sosednjima ničlama je predznak stalen.** Graf polinoma je neprekinjena krivulja, brez skokov in lukenj.« -/
+besedilo: »Zato ima polinom na vsakem intervalu med sosednjima ničlama en sam predznak. Za vsak interval zadošča ena testna točka.« -/
 theorem predznak_stalen (p : ℝ[X]) (a b : ℝ) (h : ∀ x ∈ Set.Ioo a b, p.eval x ≠ 0) (x y : ℝ)
     (hx : x ∈ Set.Ioo a b) (hy : y ∈ Set.Ioo a b) : 0 < p.eval x * p.eval y := by
   wlog hxy : x ≤ y generalizing x y
@@ -56,7 +56,7 @@ example : ∀ x ∈ Set.Ioo (0:ℝ) 1, (X ^ 2 + 1 : ℝ[X]).eval x ≠ 0 := fun 
 dotakne), pri lihem `k` se predznak zamenja (graf os seka). Produkt s `s(c)` meri, ali ima `p(x)` predznak
 `s(c)`.
 trditev: MAT-SS-3/graf-polinoma#stopnja-nicle
-besedilo: »Zakaj odloča parnost stopnje ničle.** Če je $c$ ničla stopnje $k$, je $p(x) = (x - c)^k s(x)$, kjer je $s(c) \ne 0$.« -/
+besedilo: »Če je $c$ ničla stopnje $k$, je $p(x) = (x - c)^k s(x)$, kjer je $s(c) \ne 0$. Blizu $c$ polinom $s$ nima ničel, zato ima povsod tam isti predznak kot $s(c)$. Predznak $p$ se torej zamenja natanko takrat, ko se zamenja predznak $(x - c)^k$, to pa je pri lihem $k$.« -/
 theorem stopnja_nicle (s : ℝ[X]) (c : ℝ) (k : ℕ) (hs : s.eval c ≠ 0) :
     ∃ δ > 0, ∀ x, |x - c| < δ → x ≠ c →
       (Even k → 0 < (x - c) ^ k * s.eval x * s.eval c) ∧
@@ -86,7 +86,7 @@ example :=
 /-- Razlaga 3, obrat (Primer 3, Naloga 3 a): če `p(x) = (x − c)ᵏ s(x)` (`s(c) ≠ 0`) blizu `c` levo in desno od
 `c` nima nasprotnih predznakov (graf se osi le dotakne), je stopnja ničle `k` soda.
 trditev: MAT-SS-3/graf-polinoma#dotik-soda-stopnja
-besedilo: »Če je $c$ ničla stopnje $k$, lahko polinom zapišemo kot $p(x) = (x - c)^k s(x)$, kjer je $s(c) \ne 0$.« -/
+besedilo: »Dotik pomeni sodo stopnjo, najmanjša je $2$« -/
 theorem dotik_soda_stopnja (s : ℝ[X]) (c : ℝ) (k : ℕ) (hs : s.eval c ≠ 0)
     (h : ∃ δ > 0, ∀ x y, c - δ < x → x < c → c < y → y < c + δ →
       0 < ((x - c) ^ k * s.eval x) * ((y - c) ^ k * s.eval y)) : Even k := by
@@ -167,7 +167,7 @@ example : Tendsto (fun y => ((-X : ℝ[X]).comp (-X)).eval y) atTop atTop := by
 sod `n`, `aₙ > 0`: levo in desno `+∞`; sod `n`, `aₙ < 0`: levo in desno `−∞`; lih `n`, `aₙ > 0`: levo `−∞`,
 desno `+∞`; lih `n`, `aₙ < 0`: levo `+∞`, desno `−∞`.
 trditev: MAT-SS-3/graf-polinoma#kraka
-besedilo: »Oba navzdol, levo in desno $-\infty$. Vodilni člen je $-x^4$: stopnja $4$ je soda, vodilni koeficient $-1$ negativen. Prosti člen $7$ na kraka ne vpliva, pa čeprav je zapisan prvi.« -/
+besedilo: »| $n$ sod, $a_n > 0$ | $+\infty$ | $+\infty$ | | $n$ sod, $a_n < 0$ | $-\infty$ | $-\infty$ | | $n$ lih, $a_n > 0$ | $-\infty$ | $+\infty$ | | $n$ lih, $a_n < 0$ | $+\infty$ | $-\infty$ |« -/
 theorem kraka (p : ℝ[X]) (hn : 0 < p.natDegree) :
     (Even p.natDegree → 0 < p.leadingCoeff →
       Tendsto (fun x => p.eval x) atBot atTop ∧ Tendsto (fun x => p.eval x) atTop atTop) ∧
@@ -257,7 +257,7 @@ example :=
 /-- Preveri se 6: s štirimi meritvami polinoma četrte stopnje ne določimo enolično: za vsak polinom stopnje 4
 in vsake štiri točke obstaja drug polinom stopnje 4 z enakimi vrednostmi v teh točkah.
 trditev: MAT-SS-3/graf-polinoma#stiri-ne-zadoscajo
-besedilo: »4 | Polinom četrte stopnje ima pet koeficientov, od $a_4$ do $a_0$; vsaka meritev da le eno enačbo.« -/
+besedilo: »Polinom četrte stopnje ima pet koeficientov, od $a_4$ do $a_0$; vsaka meritev da le eno enačbo.« -/
 theorem stiri_ne_zadoscajo (p : ℝ[X]) (hp : p.natDegree = 4) (t₁ t₂ t₃ t₄ : ℝ) :
     ∃ q : ℝ[X], q ≠ p ∧ q.natDegree = 4 ∧
       q.eval t₁ = p.eval t₁ ∧ q.eval t₂ = p.eval t₂ ∧ q.eval t₃ = p.eval t₃ ∧ q.eval t₄ = p.eval t₄ := by
@@ -295,7 +295,7 @@ example :=
 
 /-- Bolj natančno: polinom lihe stopnje ima vsaj eno realno ničlo.
 trditev: MAT-SS-3/graf-polinoma#liha-stopnja
-besedilo: »Še dve dejstvi.** Polinom lihe stopnje ima vedno vsaj eno realno ničlo,« -/
+besedilo: »Polinom lihe stopnje ima vedno vsaj eno realno ničlo, saj sta kraka na nasprotnih straneh osi $x$.« -/
 theorem liha_stopnja (p : ℝ[X]) (hp : Odd p.natDegree) : ∃ x : ℝ, p.eval x = 0 :=
   IsRealClosed.exists_isRoot_of_odd_natDegree hp
 
@@ -352,7 +352,7 @@ theorem uganka_vrednosti :
 /-- Rešitev uganke: na `(2, 7)` in na `(7, 10]` je temperatura negativna, pri `t = 7` natanko 0; po 1.00 se
 do 4.00 ni otoplilo nad ledišče (`T(t) ≤ 0` za `7 ≤ t ≤ 10`).
 trditev: MAT-SS-3/graf-polinoma#uganka-resitev
-besedilo: »$T(t) = -0{,}04\,(t - 2)(t - 7)^2$« -/
+besedilo: »Med $t = 2$ in $t = 7$ je temperatura negativna, npr. $T(5) = -0{,}04 \cdot 3 \cdot 4 = -0{,}48$. Zato je negativna tudi po $t = 7$. Ob 1.00 se je zrak le ogrel do ledišča in se spet ohladil, nad ledišče se do 4.00 ni dvignil.« -/
 theorem uganka_resitev :
     (∀ t : ℝ, 2 < t → t < 7 → (-0.04:ℝ) * (t - 2) * (t - 7) ^ 2 < 0) ∧
     (∀ t : ℝ, 7 < t → t ≤ 10 → (-0.04:ℝ) * (t - 2) * (t - 7) ^ 2 < 0) ∧
@@ -388,7 +388,7 @@ theorem preizkus2 : 2 * ((0:ℝ) + 1) * (0 - 4) = 2 * 1 * (-4) ∧ (2:ℝ) * 1 *
 
 /-- Razlaga 3, premisli: `q(x) = x²(x − 3)` je pod osjo pri 1 in tudi pri −1: `q(−1) = 1·(−4) = −4`.
 trditev: MAT-SS-3/graf-polinoma#premisli-q
-besedilo: »Graf polinoma $q(x) = x^2(x - 3)$ je pri $x = 1$ pod osjo $x$.« -/
+besedilo: »Račun potrdi: $q(-1) = 1 \cdot (-4) = -4$.« -/
 theorem premisli_q : (1:ℝ) ^ 2 * (1 - 3) < 0 ∧ (-1:ℝ) ^ 2 * (-1 - 3) = 1 * (-4) ∧ (1:ℝ) * (-4) = -4 := by
   norm_num
 
@@ -406,7 +406,7 @@ theorem preizkus4 : (-3 * X * (X - 2) ^ 2 : ℝ[X]).natDegree = 1 + 2 ∧
 /-- Razlaga 5, tabela: `p(x) = x³ − 10x² + 5` ima `p(10) = 5`, `p(100) = 900 005`, `p(1000) = 990 000 005`;
 pri `x = 1000` se `p(x)` in `x³` razlikujeta za manj kot odstotek.
 trditev: MAT-SS-3/graf-polinoma#tabela-krakov
-besedilo: »$p(x) = x^3 - 10x^2 + 5$« -/
+besedilo: »| $10$ | $5$ | $10^3$ | | $100$ | $900\,005$ | $10^6$ | | $1000$ | $990\,000\,005$ | $10^9$ | Pri $x = 10$ sta vrednosti še zelo različni, pri $x = 1000$ se razlikujeta le še za odstotek.« -/
 theorem tabela_krakov : (10:ℝ) ^ 3 - 10 * 10 ^ 2 + 5 = 5 ∧ (100:ℝ) ^ 3 - 10 * 100 ^ 2 + 5 = 900005 ∧
     (1000:ℝ) ^ 3 - 10 * 1000 ^ 2 + 5 = 990000005 ∧ (100:ℝ) ^ 3 = 10 ^ 6 ∧ (1000:ℝ) ^ 3 = 10 ^ 9 ∧
     ((10:ℝ) ^ 9 - 990000005) / 10 ^ 9 < 1 / 100 := by norm_num
@@ -414,7 +414,7 @@ theorem tabela_krakov : (10:ℝ) ^ 3 - 10 * 10 ^ 2 + 5 = 5 ∧ (100:ℝ) ^ 3 - 1
 /-- Razlaga 5, premisli: `p(x) = 7 + 2x − x⁴` ima stopnjo 4 in vodilni koeficient −1, zato gresta oba kraka
 v `−∞`.
 trditev: MAT-SS-3/graf-polinoma#premisli-kraka
-besedilo: »Iz $-16a = 8$ sledi $a = -0{,}5$. Stopnja $4$ je soda, vodilni koeficient $-0{,}5$ negativen, zato gresta oba kraka v $-\infty$. Polinom: $p(x) = -0{,}5\,(x + 1)(x - 2)^2(x - 4)$.« -/
+besedilo: »Oba navzdol, levo in desno $-\infty$. Vodilni člen je $-x^4$: stopnja $4$ je soda, vodilni koeficient $-1$ negativen.« -/
 theorem premisli_kraka :
     (7 + 2 * X - X ^ 4 : ℝ[X]).natDegree = 4 ∧ (7 + 2 * X - X ^ 4 : ℝ[X]).leadingCoeff = -1 ∧
     Tendsto (fun x => (7 + 2 * X - X ^ 4 : ℝ[X]).eval x) atBot atBot ∧
@@ -428,7 +428,7 @@ theorem premisli_kraka :
 
 /-- Primer 1, korak 1: ničle `(x + 2)(x − 1)²(x − 3)` so −2, 1 in 3.
 trditev: MAT-SS-3/graf-polinoma#primer1-nicle
-besedilo: »$p(x) = (x + 2)(x - 1)^2(x - 3)$« -/
+besedilo: »Ničle: $-2$ (stopnja $1$), $1$ (stopnja $2$), $3$ (stopnja $1$), ker vsak faktor da svojo ničlo.« -/
 theorem primer1_nicle (x : ℝ) : (x + 2) * (x - 1) ^ 2 * (x - 3) = 0 ↔ x = -2 ∨ x = 1 ∨ x = 3 := by
   constructor
   · intro h
@@ -472,7 +472,7 @@ theorem primer1_kraka :
 /-- Primer 1, koraki 3–5: `p(0) = 2·1·(−3) = −6`; predznaki: za `x > 3` pozitiven, na `(1, 3)` negativen,
 na `(−2, 1)` negativen, za `x < −2` pozitiven; preizkus `p(2) = 4·1·(−1) = −4 < 0`.
 trditev: MAT-SS-3/graf-polinoma#primer1-predznaki
-besedilo: »Predznaki od desne proti levi: za $x > 3$ pozitiven (desni krak). Pri $3$ (liha) se zamenja: med $1$ in $3$ negativen. Pri $1$ (soda) ostane: med $-2$ in $1$ negativen. Pri $-2$ (liha) se zamenja: za $x < -2$ pozitiven.« -/
+besedilo: »$p(0) = 2 \cdot 1 \cdot (-3) = -6$, graf seka os $y$ v točki $(0, -6)$. 4. Predznaki od desne proti levi: za $x > 3$ pozitiven (desni krak). Pri $3$ (liha) se zamenja: med $1$ in $3$ negativen. Pri $1$ (soda) ostane: med $-2$ in $1$ negativen. Pri $-2$ (liha) se zamenja: za $x < -2$ pozitiven. 5. Preizkus s testno točko: $p(2) = 4 \cdot 1 \cdot (-1) = -4 < 0$« -/
 theorem primer1_predznaki :
     ((0:ℝ) + 2) * (0 - 1) ^ 2 * (0 - 3) = 2 * 1 * (-3) ∧ (2:ℝ) * 1 * (-3) = -6 ∧
     (∀ x : ℝ, 3 < x → 0 < (x + 2) * (x - 1) ^ 2 * (x - 3)) ∧
@@ -506,7 +506,7 @@ theorem primer2_kandidati (a : ℤ) :
 /-- Primer 2, koraki 1–3: `v(1) = 1 − 9 + 24 − 20 = −4`, `v(2) = 8 − 36 + 48 − 20 = 0`; Horner z 2: 1, −7, 10,
 ostanek 0; `d² − 7d + 10 = (d − 2)(d − 5)` in `v(d) = (d − 2)²(d − 5)`.
 trditev: MAT-SS-3/graf-polinoma#primer2-razcep
-besedilo: »Kandidati za cele ničle: $\pm 1, \pm 2, \pm 4, \pm 5, \pm 10, \pm 20$. Velja $v(1) = 1 - 9 + 24 - 20 = -4$, $v(2) = 8 - 36 + 48 - 20 = 0$. Ničla je $2$.« -/
+besedilo: »Velja $v(1) = 1 - 9 + 24 - 20 = -4$, $v(2) = 8 - 36 + 48 - 20 = 0$. Ničla je $2$. 2. Horner z $2$: koeficienti $1, -9, 24, -20$ dajo $1, -7, 10$ in ostanek $0$. Količnik je $d^2 - 7d + 10 = (d - 2)(d - 5)$. 3. Razcep: $v(d) = (d - 2)^2(d - 5)$.« -/
 theorem primer2_razcep :
     (1:ℝ) ^ 3 - 9 * 1 ^ 2 + 24 * 1 - 20 = 1 - 9 + 24 - 20 ∧ (1:ℝ) - 9 + 24 - 20 = -4 ∧
     (2:ℝ) ^ 3 - 9 * 2 ^ 2 + 24 * 2 - 20 = 8 - 36 + 48 - 20 ∧ (8:ℝ) - 36 + 48 - 20 = 0 ∧
@@ -531,7 +531,7 @@ theorem primer2_stopnje :
 /-- Primer 2, koraki 4–6: za `0 ≤ d ≤ 7` je gladina nad običajno višino natanko za `5 < d ≤ 7`; preizkus
 `v(3) = 1·(−2) = −2`, `v(0) = −20`; pri `d = 2` je odmik 0, okoli nje negativen.
 trditev: MAT-SS-3/graf-polinoma#primer2-odgovor
-besedilo: »Odmik gladine od običajne višine (v cm) $d$ dni po začetku merjenja opisuje model $v(d) = d^3 - 9d^2 + 24d - 20$, ki velja za $0 \le d \le 7$.« -/
+besedilo: »Predznaki: vodilni koeficient $1$ je pozitiven, zato je za $d > 5$ odmik pozitiven. Pri $5$ (liha) se predznak zamenja: med $2$ in $5$ negativen. Pri $2$ (soda) ostane: od $0$ do $2$ negativen. 5. Preizkus: $v(3) = 1 \cdot (-2) = -2$ in $v(0) = -20$, oba negativna. 6. Odgovor: gladina je nad običajno višino šele po petem dnevu, za $5 < d \le 7$.« -/
 theorem primer2_odgovor :
     (∀ d : ℝ, 0 ≤ d → d ≤ 7 → (0 < d ^ 3 - 9 * d ^ 2 + 24 * d - 20 ↔ 5 < d)) ∧
     (∀ d : ℝ, 0 ≤ d → d < 5 → d ≠ 2 → d ^ 3 - 9 * d ^ 2 + 24 * d - 20 < 0) ∧
@@ -550,7 +550,7 @@ theorem primer2_odgovor :
 
 /-- Primer 3, koraka 3 in premisli: `p(0) = a·1·4·(−4) = −16a = 8` natanko pri `a = −0,5`.
 trditev: MAT-SS-3/graf-polinoma#primer3-a
-besedilo: »Iz $-16a = 8$ sledi $a = -0{,}5$. Stopnja $4$ je soda, vodilni koeficient $-0{,}5$ negativen, zato gresta oba kraka v $-\infty$. Polinom: $p(x) = -0{,}5\,(x + 1)(x - 2)^2(x - 4)$.« -/
+besedilo: »Iz $-16a = 8$ sledi $a = -0{,}5$.« -/
 theorem primer3_a (a : ℝ) : a * (0 + 1) * (0 - 2) ^ 2 * (0 - 4) = a * 1 * 4 * (-4) ∧
     a * 1 * 4 * (-4) = -16 * a ∧ (-16 * a = 8 ↔ a = -0.5) := by
   refine ⟨by ring, by ring, ?_⟩
@@ -609,7 +609,7 @@ example :=
 /-- Primer 3, premisli: `p(x) = −0,5 (x + 1)(x − 2)²(x − 4)` ima stopnjo 4 in vodilni koeficient −0,5, zato
 gresta oba kraka v `−∞`.
 trditev: MAT-SS-3/graf-polinoma#primer3-kraka
-besedilo: »Iz $-16a = 8$ sledi $a = -0{,}5$. Stopnja $4$ je soda, vodilni koeficient $-0{,}5$ negativen, zato gresta oba kraka v $-\infty$. Polinom: $p(x) = -0{,}5\,(x + 1)(x - 2)^2(x - 4)$.« -/
+besedilo: »Stopnja $4$ je soda, vodilni koeficient $-0{,}5$ negativen, zato gresta oba kraka v $-\infty$.« -/
 theorem primer3_kraka :
     (C (-0.5) * ((X - C (-1)) * (X - C 2) ^ 2 * (X - C 4)) : ℝ[X]).natDegree = 4 ∧
     (C (-0.5) * ((X - C (-1)) * (X - C 2) ^ 2 * (X - C 4)) : ℝ[X]).leadingCoeff = -0.5 ∧
@@ -649,7 +649,7 @@ theorem primer4_sistem (a₃ a₂ a₁ a₀ : ℝ) :
 
 /-- Primer 4, koraka 4 in 5: `C(t) = t³ − 12t² + 36t = t(t − 6)²`; preizkus `C(4) = 4·4 = 16`.
 trditev: MAT-SS-3/graf-polinoma#primer4-model
-besedilo: »$C(t) = t^3 - 12t^2 + 36t = t\,(t - 6)^2$« -/
+besedilo: »$C(t) = t^3 - 12t^2 + 36t = t\,(t - 6)^2$. 5. Preizkus s peto meritvijo: $C(4) = 4 \cdot 4 = 16$.« -/
 theorem primer4_model : (∀ t : ℝ, t ^ 3 - 12 * t ^ 2 + 36 * t = t * (t - 6) ^ 2) ∧
     (4:ℝ) * (4 - 6) ^ 2 = 4 * 4 ∧ (4:ℝ) * 4 = 16 := ⟨fun t => by ring, by norm_num, by norm_num⟩
 
@@ -679,7 +679,7 @@ example :=
 /-- Primer 4, koraka 6 in 7: `C(t) = 0` natanko pri `t = 0` in `t = 6` (6 je ničla stopnje 2); na `(0, 6)` je
 `C > 0`, za `t > 6` bi koncentracija spet rasla.
 trditev: MAT-SS-3/graf-polinoma#primer4-odgovor
-besedilo: »Ničla $6$ je stopnje $2$: graf se osi dotakne in se obrne navzgor. Za $t > 6$ bi koncentracija spet rasla, česar brez nove tablete ni.« -/
+besedilo: »Ničla $6$ je stopnje $2$: graf se osi dotakne in se obrne navzgor. Za $t > 6$ bi koncentracija spet rasla, česar brez nove tablete ni. 7. Odgovor: $C(t) = t\,(t - 6)^2$; po modelu zdravila v krvi ni več po $6$ urah, model velja za $0 \le t \le 6$.« -/
 theorem primer4_odgovor :
     (∀ t : ℝ, t * (t - 6) ^ 2 = 0 ↔ t = 0 ∨ t = 6) ∧
     rootMultiplicity 6 (X * (X - C 6) ^ 2 : ℝ[X]) = 2 ∧
@@ -743,7 +743,7 @@ theorem napaka_stopnja :
 
 /-- Pogoste napake (model velja povsod): `v(d) = d³ − 9d² + 24d − 20` gre za velike `d` v `+∞`.
 trditev: MAT-SS-3/graf-polinoma#napaka-model
-besedilo: »$v(d) = d^3 - 9d^2 + 24d - 20$« -/
+besedilo: »Polinom iz primera 2 gre za velike $d$ v $+\infty$« -/
 theorem napaka_model : Tendsto (fun d => (X ^ 3 - 9 * X ^ 2 + 24 * X - 20 : ℝ[X]).eval d) atTop atTop := by
   have hd : (X ^ 3 - 9 * X ^ 2 + 24 * X - 20 : ℝ[X]).natDegree = 3 := by compute_degree!
   have hl : (X ^ 3 - 9 * X ^ 2 + 24 * X - 20 : ℝ[X]).leadingCoeff = 1 := by
@@ -755,7 +755,7 @@ theorem napaka_model : Tendsto (fun d => (X ^ 3 - 9 * X ^ 2 + 24 * X - 20 : ℝ[
 /-- Naloga 1 (in `<<RACUN`): `x³ − 4x² + 4x = x(x² − 4x + 4) = x(x − 2)²`; ničli 0 (stopnje 1) in 2 (stopnje 2);
 `x³ − 4x² + 4x ≤ 0` natanko za `x ∈ (−∞, 0] ∪ {2}`.
 trditev: MAT-SS-3/graf-polinoma#matura1
-besedilo: »Razcep: $x^3 - 4x^2 + 4x = x(x^2 - 4x + 4) = x(x - 2)^2$. Ničli sta $0$ (stopnje $1$) in $2$ (stopnje $2$).« -/
+besedilo: »Razcep: $x^3 - 4x^2 + 4x = x(x^2 - 4x + 4) = x(x - 2)^2$. Ničli sta $0$ (stopnje $1$) in $2$ (stopnje $2$). 2. Vodilni koeficient je pozitiven, zato je za $x > 2$ polinom pozitiven. Pri $2$ (soda stopnja) se predznak ne zamenja: na $(0, 2)$ je pozitiven. Pri $0$ (liha stopnja) se zamenja: za $x < 0$ je negativen. 3. Polinom je negativen za $x < 0$, enak $0$ pa pri $x = 0$ in $x = 2$. 4. Odgovor: $x \in (-\infty, 0] \cup \{2\}$.« -/
 theorem matura1 :
     (∀ x : ℝ, x ^ 3 - 4 * x ^ 2 + 4 * x = x * (x ^ 2 - 4 * x + 4) ∧ x * (x ^ 2 - 4 * x + 4) = x * (x - 2) ^ 2) ∧
     rootMultiplicity 0 (X * (X - C 2) ^ 2 : ℝ[X]) = 1 ∧ rootMultiplicity 2 (X * (X - C 2) ^ 2 : ℝ[X]) = 2 ∧
@@ -779,7 +779,7 @@ theorem matura1 :
 /-- Naloga 2 a) (in `<<RACUN`): Horner z 2 na `−1, 0, 3, 2`: −1, −2, −1, ostanek 0, torej `p(2) = 0`;
 količnik `−x² − 2x − 1 = −(x + 1)²` in `p(x) = −(x − 2)(x + 1)²`.
 trditev: MAT-SS-3/graf-polinoma#matura2a
-besedilo: »a) Hornerjev algoritem z $2$ na koeficientih $-1, 0, 3, 2$: $-1$; $-2$; $-1$; $0$. Ostanek $0$ pomeni $p(2) = 0$, količnik je $-x^2 - 2x - 1 = -(x + 1)^2$.« -/
+besedilo: »a) Hornerjev algoritem z $2$ na koeficientih $-1, 0, 3, 2$: $-1$; $-2$; $-1$; $0$. Ostanek $0$ pomeni $p(2) = 0$, količnik je $-x^2 - 2x - 1 = -(x + 1)^2$. 2. a) $p(x) = -(x - 2)(x + 1)^2$.« -/
 theorem matura2a :
     (-1:ℝ) * 2 + 0 = -2 ∧ (-2:ℝ) * 2 + 3 = -1 ∧ (-1:ℝ) * 2 + 2 = 0 ∧ -((2:ℝ) ^ 3) + 3 * 2 + 2 = 0 ∧
     (∀ x : ℝ, -x ^ 3 + 3 * x + 2 = (x - 2) * (-x ^ 2 - 2 * x - 1)) ∧
@@ -790,7 +790,7 @@ theorem matura2a :
 /-- Naloga 2 b): ničli −1 (stopnje 2) in 2 (stopnje 1); `p(0) = 2`; vodilni člen `−x³`: levi krak `+∞`,
 desni `−∞`.
 trditev: MAT-SS-3/graf-polinoma#matura2b
-besedilo: »b) Vodilni člen je $-x^3$: stopnja je liha, koeficient negativen, zato gre levi krak v $+\infty$, desni v $-\infty$.« -/
+besedilo: »b) Ničli: $-1$ stopnje $2$ (graf se osi dotakne) in $2$ stopnje $1$ (graf os seka). $p(0) = 2$, presečišče z osjo $y$ je $(0, 2)$. 4. b) Vodilni člen je $-x^3$: stopnja je liha, koeficient negativen, zato gre levi krak v $+\infty$, desni v $-\infty$.« -/
 theorem matura2b :
     rootMultiplicity (-1) (C (-1) * (X - C 2) * (X - C (-1)) ^ 2 : ℝ[X]) = 2 ∧
     rootMultiplicity 2 (C (-1) * (X - C 2) * (X - C (-1)) ^ 2 : ℝ[X]) = 1 ∧
@@ -823,7 +823,7 @@ theorem matura2b_predznaki :
 
 /-- Naloga 2 c) (in `<<RACUN`): `−x³ + 3x + 2 > 0` natanko za `x ∈ (−∞, −1) ∪ (−1, 2)`.
 trditev: MAT-SS-3/graf-polinoma#matura2c
-besedilo: »Odgovor: $p(x) = -(x - 2)(x + 1)^2$; neenačba velja za $x \in (-\infty, -1) \cup (-1, 2)$.« -/
+besedilo: »neenačba velja za $x \in (-\infty, -1) \cup (-1, 2)$« -/
 theorem matura2c (x : ℝ) : 0 < -x ^ 3 + 3 * x + 2 ↔ x < -1 ∨ (-1 < x ∧ x < 2) := by
   rw [show -x ^ 3 + 3 * x + 2 = -(x - 2) * (x + 1) ^ 2 by ring]
   constructor
@@ -851,7 +851,7 @@ theorem matura3a_a (a : ℝ) : a * 2 * (2 - 8) ^ 2 = a * 2 * 36 ∧ a * 2 * 36 =
 /-- Naloga 3 a) (enoličnost): polinom tretje stopnje z ničlo 0 (`d ∣ v`), dotikom osi pri 8 (`(d − 8)² ∣ v`)
 in `v(2) = 36` je natanko `v(d) = ½·d·(d − 8)²`.
 trditev: MAT-SS-3/graf-polinoma#matura3a
-besedilo: »a) Ničli sta $0$ in $8$. Dotik pri $8$ pomeni sodo stopnjo ničle, torej faktor $(d - 8)^2$. Polinom je tretje stopnje, zato ostane za ničlo $0$ faktor $d$: $v(d) = a\,d\,(d - 8)^2$.« -/
+besedilo: »a) Ničli sta $0$ in $8$. Dotik pri $8$ pomeni sodo stopnjo ničle, torej faktor $(d - 8)^2$. Polinom je tretje stopnje, zato ostane za ničlo $0$ faktor $d$: $v(d) = a\,d\,(d - 8)^2$. 2. a) Iz $v(2) = a \cdot 2 \cdot 36 = 72a = 36$ sledi $a = \frac{1}{2}$, torej $v(d) = \frac{1}{2}\,d\,(d - 8)^2$.« -/
 theorem matura3a (v : ℝ[X]) (hd : v.natDegree = 3) (h0 : X ∣ v) (h8 : (X - C 8) ^ 2 ∣ v)
     (h2 : v.eval 2 = 36) : v = C (1 / 2) * (X * (X - C 8) ^ 2) := by
   have hv : v ≠ 0 := by rintro rfl; simp at hd
@@ -890,7 +890,7 @@ example :=
 /-- Naloga 3 b), c) (in `<<RACUN`): `v(5) = ½·5·9 = 22,5`; `v(4) = ½·4·16 = 32`; `v(d) = 32` je enakovredno
 `d³ − 16d² + 64d − 64 = 0`; Horner s 4: 1, −12, 16, 0; `d(d − 8)² − 64 = (d − 4)(d² − 12d + 16)`.
 trditev: MAT-SS-3/graf-polinoma#matura3bc
-besedilo: »c) $v(4) = \frac{1}{2} \cdot 4 \cdot 16 = 32$, zato je $d = 4$ rešitev. Enačba $\frac{1}{2}\,d\,(d - 8)^2 = 32$ je enakovredna $d^3 - 16d^2 + 64d - 64 = 0$.« -/
+besedilo: »b) $v(5) = \frac{1}{2} \cdot 5 \cdot 9 = 22{,}5\,\mathrm{cm}$. 4. c) $v(4) = \frac{1}{2} \cdot 4 \cdot 16 = 32$, zato je $d = 4$ rešitev. Enačba $\frac{1}{2}\,d\,(d - 8)^2 = 32$ je enakovredna $d^3 - 16d^2 + 64d - 64 = 0$. 5. c) Horner s $4$ na $1, -16, 64, -64$: $1$; $-12$; $16$; $0$. Količnik je $d^2 - 12d + 16$.« -/
 theorem matura3bc :
     (1 / 2 : ℝ) * 5 * (5 - 8) ^ 2 = 1 / 2 * 5 * 9 ∧ (1 / 2 : ℝ) * 5 * 9 = 22.5 ∧
     (1 / 2 : ℝ) * 4 * (4 - 8) ^ 2 = 1 / 2 * 4 * 16 ∧ (1 / 2 : ℝ) * 4 * 16 = 32 ∧
@@ -920,7 +920,7 @@ theorem sqrt5_meje : (2.236067 : ℝ) < Real.sqrt 5 ∧ Real.sqrt 5 < 2.236068 :
 /-- Naloga 3 c), d) (in `<<RACUN`): `6 − 2√5 ≈ 1,5279`, `6 + 2√5 ≈ 10,4721 > 8` (zunaj območja),
 `2√5 − 2 ≈ 2,4721` dneva, `(2√5 − 2)·24 ≈ 59,33` h, zaokroženo 59 ur.
 trditev: MAT-SS-3/graf-polinoma#matura3-priblizki
-besedilo: »c) $d^2 - 12d + 16 = 0$ da $d = 6 \pm 2\sqrt{5}$, torej $d \approx 1{,}5279$ ali $d \approx 10{,}4721$. Druga rešitev je zunaj območja modela $0 \le d \le 8$.« -/
+besedilo: »torej $d \approx 1{,}5279$ ali $d \approx 10{,}4721$. Druga rešitev je zunaj območja modela $0 \le d \le 8$. 7. d) Pri $d = 2$ je $v = 36 > 32$, zato je gladina vsaj $32\,\mathrm{cm}$ nad običajno med $d = 6 - 2\sqrt{5}$ in $d = 4$. Med $4$ in $8$ ni več nobene rešitve, zato tam ostane pod $32\,\mathrm{cm}$. 8. d) Trajanje: $4 - (6 - 2\sqrt{5}) = 2\sqrt{5} - 2 \approx 2{,}4721$ dneva $\approx 59{,}33\,\mathrm{h}$.« -/
 theorem matura3_priblizki :
     |6 - 2 * Real.sqrt 5 - 1.5279| < 0.00005 ∧ |6 + 2 * Real.sqrt 5 - 10.4721| < 0.00005 ∧
     8 < 6 + 2 * Real.sqrt 5 ∧ |2 * Real.sqrt 5 - 2 - 2.4721| < 0.00005 ∧
@@ -931,7 +931,7 @@ theorem matura3_priblizki :
 /-- Naloga 3 c), d): na območju `0 ≤ d ≤ 8` je `v(d) = 32` natanko pri `d = 6 − 2√5` in `d = 4`, gladina je
 vsaj 32 cm nad običajno natanko na `[6 − 2√5, 4]`, zapornica je odprta `4 − (6 − 2√5) = 2√5 − 2` dneva.
 trditev: MAT-SS-3/graf-polinoma#matura3d
-besedilo: »d) Pri $d = 2$ je $v = 36 > 32$, zato je gladina vsaj $32\,\mathrm{cm}$ nad običajno med $d = 6 - 2\sqrt{5}$ in $d = 4$. Med $4$ in $8$ ni več nobene rešitve, zato tam ostane pod $32\,\mathrm{cm}$.« -/
+besedilo: »d) Pri $d = 2$ je $v = 36 > 32$, zato je gladina vsaj $32\,\mathrm{cm}$ nad običajno med $d = 6 - 2\sqrt{5}$ in $d = 4$. Med $4$ in $8$ ni več nobene rešitve, zato tam ostane pod $32\,\mathrm{cm}$. 8. d) Trajanje: $4 - (6 - 2\sqrt{5}) = 2\sqrt{5} - 2 \approx 2{,}4721$ dneva« -/
 theorem matura3d :
     (∀ d : ℝ, 0 ≤ d → d ≤ 8 → (1 / 2 * d * (d - 8) ^ 2 = 32 ↔ d = 6 - 2 * Real.sqrt 5 ∨ d = 4)) ∧
     (∀ d : ℝ, 0 ≤ d → d ≤ 8 → (32 ≤ 1 / 2 * d * (d - 8) ^ 2 ↔ 6 - 2 * Real.sqrt 5 ≤ d ∧ d ≤ 4)) ∧
@@ -1049,7 +1049,7 @@ theorem kviz3 : ((-2:ℝ) + 1) * (-2 - 2) ^ 2 = (-1) * 16 ∧ (-1:ℝ) * 16 = -1
 
 /-- Preveri se 4: levi kraki `p(x) = x³ + 1000` in `q(x) = −x⁴ + x` gresta oba v `−∞`; `(−100)³ = −1 000 000`.
 trditev: MAT-SS-3/graf-polinoma#kviz4
-besedilo: »Primerjaj leva kraka grafov $p(x) = x^3 + 1000$ in $q(x) = -x^4 + x$.« -/
+besedilo: »Pri $p$ je vodilni člen $x^3$ (lih, pozitiven): levo $-\infty$. Pri $q$ je $-x^4$ (sod, negativen): oba kraka v $-\infty$.« -/
 theorem kviz4 :
     Tendsto (fun x => (X ^ 3 + 1000 : ℝ[X]).eval x) atBot atBot ∧
     Tendsto (fun x => (-X ^ 4 + X : ℝ[X]).eval x) atBot atBot ∧ (-100:ℝ) ^ 3 = -1000000 := by
@@ -1092,8 +1092,7 @@ theorem kviz6 : (4:ℕ) + 1 = 5 := rfl
 
 /-- Primer 1, Primer 2, Primer 4, Naloga 1, Naloga 2: razcepljene oblike, s katerimi so zgoraj izračunane
 stopnje ničel, so kot polinomi enake razvitim polinomom iz lekcije.
-trditev: MAT-SS-3/graf-polinoma#razcepi-kot-polinomi
-besedilo: »Velja $v(1) = 1 - 9 + 24 - 20 = -4$, $v(2) = 8 - 36 + 48 - 20 = 0$.« -/
+pomozno -/
 theorem razcepi_kot_polinomi :
     ((X - C (-2)) * (X - C 1) ^ 2 * (X - C 3) : ℝ[X]) = (X + 2) * (X - 1) ^ 2 * (X - 3) ∧
     ((X - C 2) ^ 2 * (X - C 5) : ℝ[X]) = X ^ 3 - 9 * X ^ 2 + 24 * X - 20 ∧
@@ -1108,8 +1107,7 @@ theorem razcepi_kot_polinomi :
 /-- `<<RACUN`: `resi: a + b + c = 25, 8a + 4b + 2c = 32, 27a + 9b + 3c = 27` ima edino rešitev
 `a = 1, b = −12, c = 36`; `vrednost: 4(4 − 6)² = 16`;
 `vrednost: −(0³) + 3·0 + 2 = 2`.
-trditev: MAT-SS-3/graf-polinoma#racun
-besedilo: »Ostale tri meritve dajo sistem (drugo in tretjo enačbo smo delili z $2$ in $3$): $a_3 + a_2 + a_1 = 25$, $4a_3 + 2a_2 + a_1 = 16$, $9a_3 + 3a_2 + a_1 = 9$.« -/
+pomozno -/
 theorem racun (a b c : ℝ) :
     ((a + b + c = 25 ∧ 8 * a + 4 * b + 2 * c = 32 ∧ 27 * a + 9 * b + 3 * c = 27) ↔
       (a = 1 ∧ b = -12 ∧ c = 36)) ∧ (4:ℝ) * (4 - 6) ^ 2 = 16 ∧ -((0:ℝ) ^ 3) + 3 * 0 + 2 = 2 := by

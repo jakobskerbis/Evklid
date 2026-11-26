@@ -26,7 +26,7 @@ noncomputable def Pn (n k : ℕ) (p : ℝ) : ℝ := (Nat.choose n k : ℝ) * p ^
 /-- Razlaga 1: poteki ZZN, ZNZ, NZZ imajo verjetnost 0,8·0,8·0,2 = 0,8·0,2·0,8 = 0,2·0,8·0,8 = 0,128,
 skupaj 3·0,128 = 0,384 = P₃(2).
 trditev: MAT-SS-4/zaporedje-neodvisnih-poskusov#razlaga1
-besedilo: »| $ZZN$ | $0{,}8 \cdot 0{,}8 \cdot 0{,}2 = 0{,}128$ |« -/
+besedilo: »Poteki se med seboj izključujejo, zato jih seštejemo: $3 \cdot 0{,}128 = 0{,}384$.« -/
 theorem razlaga1 :
     (0.8 : ℝ) * 0.8 * 0.2 = 0.128 ∧ (0.8 : ℝ) * 0.2 * 0.8 = 0.128 ∧ (0.2 : ℝ) * 0.8 * 0.8 = 0.128 ∧
     (3 : ℝ) * 0.128 = 0.384 ∧ Pn 3 2 0.8 = 0.384 := by
@@ -36,7 +36,7 @@ theorem razlaga1 :
 /-- Razlaga 2 in Ustno vprašanje 2 (izpeljava): potek je množica s uspešnih poskusov med n; potek ima
 verjetnost (∏ p po s)·(∏ q po ostalih) = p^k·q^(n−k), potekov s k uspehi je C(n,k), vsota je C(n,k)·p^k·q^(n−k).
 trditev: MAT-SS-4/zaporedje-neodvisnih-poskusov#vsota-potekov
-besedilo: »vsak potek s $k$ uspehi ima verjetnost $p^k q^{n-k}$,« -/
+besedilo: »Poteki so med seboj nezdružljivi, zato njihove verjetnosti seštejemo in dobimo $P_n(k) = \binom{n}{k}p^k q^{n-k}$.« -/
 theorem vsota_potekov {R : Type*} [CommSemiring R] (n k : ℕ) (p q : R) :
     ∑ s ∈ (univ : Finset (Fin n)).powersetCard k, (∏ _i ∈ s, p) * ∏ _i ∈ univ \ s, q =
       (Nat.choose n k : R) * p ^ k * q ^ (n - k) := by
@@ -49,15 +49,14 @@ theorem vsota_potekov {R : Type*} [CommSemiring R] (n k : ℕ) (p q : R) :
         rw [sum_const, card_powersetCard, card_univ, Fintype.card_fin, nsmul_eq_mul]; ring
 
 /-- Bolj natančno: (p + q)ⁿ je vsota verjetnosti vseh potekov (vsak potek je produkt n neodvisnih faktorjev).
-trditev: MAT-SS-4/zaporedje-neodvisnih-poskusov#vsi-poteki
-besedilo: »Dogodek $X = k$ je vsota $\binom{n}{k}$ nezdružljivih potekov; vsak potek je produkt $n$ neodvisnih dogodkov, $k$ z verjetnostjo $p$ in $n - k$ z verjetnostjo $q$.« -/
+pomozno -/
 theorem vsi_poteki {R : Type*} [CommSemiring R] (n : ℕ) (p q : R) :
     (p + q) ^ n = ∑ s ∈ (univ : Finset (Fin n)).powerset, (∏ _i ∈ s, p) * ∏ _i ∈ univ \ s, q := by
   rw [← prod_add, prod_const, card_univ, Fintype.card_fin]
 
 /-- Razlaga 2: `C(3,2) = 3`.
 trditev: MAT-SS-4/zaporedje-neodvisnih-poskusov#trije-poteki
-besedilo: »$\binom{3}{2} = 3$« -/
+besedilo: »V primeru je $\binom{3}{2} = 3$.« -/
 theorem trije_poteki : Nat.choose 3 2 = 3 := by decide
 
 /-! ## Razlaga 4: vse verjetnosti skupaj -/
@@ -65,7 +64,7 @@ theorem trije_poteki : Nat.choose 3 2 = 3 := by decide
 /-- Razlaga 4 (risba): za n = 3, p = 0,8: P₃(0) = 0,008, P₃(1) = 0,096, P₃(2) = 0,384, P₃(3) = 0,512
 (0,8 %, 9,6 %, 38,4 %, 51,2 %), vsota 1.
 trditev: MAT-SS-4/zaporedje-neodvisnih-poskusov#razlaga4
-besedilo: »Vsota je $0{,}008 + 0{,}096 + 0{,}384 + 0{,}512 = 1$. To ni naključje. Členi $q^3$, $3pq^2$, $3p^2q$, $p^3$ so natanko členi razvoja $(q+p)^3$ po binomskem izreku. Zato za vsak $n$ velja« -/
+besedilo: »Vsota je $0{,}008 + 0{,}096 + 0{,}384 + 0{,}512 = 1$.« -/
 theorem razlaga4 :
     Pn 3 0 0.8 = 0.008 ∧ Pn 3 1 0.8 = 0.096 ∧ Pn 3 2 0.8 = 0.384 ∧ Pn 3 3 0.8 = 0.512 ∧
     (0.008 : ℝ) + 0.096 + 0.384 + 0.512 = 1 ∧
@@ -93,7 +92,7 @@ theorem vsota_ena (n : ℕ) (p : ℝ) : ∑ k ∈ range (n + 1), Pn n k p = 1 :=
 
 /-- Razlaga 4 (simulacija): met kovanca, P₃(2) = C(3,2)·0,5²·0,5 = 3/8; v 16 serijah pričakujemo 16·3/8 = 6.
 trditev: MAT-SS-4/zaporedje-neodvisnih-poskusov#kovanec
-besedilo: »Serijo ponovi vsaj $16$-krat in si zapisuj, kolikokrat padeta natanko dva grba: pričakuješ približno $6$ takih serij, torej $3$ od $8$, kot napove $P_3(2) = \binom{3}{2} \cdot 0{,}5^2 \cdot 0{,}5 = \frac{3}{8}$.« -/
+besedilo: »pričakuješ približno $6$ takih serij, torej $3$ od $8$, kot napove $P_3(2) = \binom{3}{2} \cdot 0{,}5^2 \cdot 0{,}5 = \frac{3}{8}$« -/
 theorem kovanec : Pn 3 2 0.5 = 3 / 8 ∧ (16 : ℝ) * (3 / 8) = 6 := by
   unfold Pn; rw [show Nat.choose 3 2 = 3 by decide]; norm_num
 
@@ -125,7 +124,7 @@ example :=
 
 /-- Razlaga 5, »Premisli«: pri 0 ≤ q < 1 gre 1 − qⁿ proti 1, ko n raste.
 trditev: MAT-SS-4/zaporedje-neodvisnih-poskusov#vsaj-en-limita
-besedilo: »Raste proti $1$. Ker je $0 < q < 1$, postaja $q^n$ vse manjši, $1 - q^n$ pa se približuje $1$. Z dovolj poskusi skoraj gotovo vsaj enkrat uspeš.« -/
+besedilo: »Ker je $0 < q < 1$, postaja $q^n$ vse manjši, $1 - q^n$ pa se približuje $1$.« -/
 theorem vsaj_en_limita (q : ℝ) (h0 : 0 ≤ q) (h1 : q < 1) :
     Tendsto (fun n : ℕ => 1 - q ^ n) atTop (nhds 1) := by
   simpa using (tendsto_const_nhds (x := (1 : ℝ))).sub (tendsto_pow_atTop_nhds_zero_of_lt_one h0 h1)
@@ -142,7 +141,7 @@ example :=
 
 /-- Primer 1: en potek ZZZN ima 0,9³·0,1 = 0,0729, `C(4,3) = 4`, P₄(3) = 4·0,0729 = 0,2916 ≈ 0,29.
 trditev: MAT-SS-4/zaporedje-neodvisnih-poskusov#primer1
-besedilo: »En potek, na primer $ZZZN$, ima verjetnost $0{,}9^3 \cdot 0{,}1 = 0{,}0729$.« -/
+besedilo: »$P_4(3) = 4 \cdot 0{,}0729 = 0{,}2916$.« -/
 theorem primer1 :
     (0.9 : ℝ) ^ 3 * 0.1 = 0.0729 ∧ Nat.choose 4 3 = 4 ∧ |(0.2916 : ℝ) - 0.29| < 0.005 ∧
     Pn 4 3 0.9 = 0.2916 := by
@@ -197,7 +196,7 @@ set_option exponentiation.threshold 2000 in
 /-- Primer 3, korak 3: ln 0,05 / ln 0,7 ≈ 8,40, dokazano kot 8,395 < ln 0,05 / ln 0,7 < 8,405
 (primerjava potenc 0,05²⁰⁰ s 0,7¹⁶⁷⁹ in 0,7¹⁶⁸¹).
 trditev: MAT-SS-4/zaporedje-neodvisnih-poskusov#primer3-priblizek
-besedilo: »Logaritmiramo. Ker je $\ln 0{,}7 < 0$, se znak neenakosti obrne: $n \ge \frac{\ln 0{,}05}{\ln 0{,}7} \approx 8{,}40$.« -/
+besedilo: »$n \ge \frac{\ln 0{,}05}{\ln 0{,}7} \approx 8{,}40$« -/
 theorem primer3_priblizek :
     8.395 < Real.log 0.05 / Real.log 0.7 ∧ Real.log 0.05 / Real.log 0.7 < 8.405 := by
   have hl : Real.log 0.7 < 0 := Real.log_neg (by norm_num) (by norm_num)
@@ -228,7 +227,7 @@ theorem primer3_preizkus :
 
 /-- Primer 3, odgovor: za naravni n velja 1 − 0,7ⁿ ≥ 0,95 natanko tedaj, ko n ≥ 9 (najmanj 9 posnetkov).
 trditev: MAT-SS-4/zaporedje-neodvisnih-poskusov#primer3
-besedilo: »Preizkus: pri $n = 8$ je $1 - 0{,}7^8 \approx 0{,}942$, premalo; pri $n = 9$ je $1 - 0{,}7^9 \approx 0{,}960$.« -/
+besedilo: »Odgovor: posneti morajo najmanj $9$-krat.« -/
 theorem primer3 (n : ℕ) : 1 - (0.7 : ℝ) ^ n ≥ 0.95 ↔ 9 ≤ n := by
   rw [primer3_korak2]
   constructor
@@ -273,7 +272,7 @@ theorem najbolj_verjetna : (5 : ℝ) * 0.8 = 4 ∧ ∀ k ≤ 5, Pn 5 k 0.8 ≤ P
 /-- Naloga 1: n = 4, p = 2/3, q = 1/3; b) P₄(2) = 6·4/9·1/9 = 24/81 = 8/27; c) P₄(0) = (1/3)⁴ = 1/81,
 1 − 1/81 = 80/81; d) P₄(3) = 4·8/27·1/3 = 32/81, P₄(4) = (2/3)⁴ = 16/81, vsota 48/81 = 16/27.
 trditev: MAT-SS-4/zaporedje-neodvisnih-poskusov#naloga1
-besedilo: »b) $P_4(2) = \binom{4}{2}\left(\frac{2}{3}\right)^2\left(\frac{1}{3}\right)^2 = 6 \cdot \frac{4}{9} \cdot \frac{1}{9} = \frac{24}{81} = \frac{8}{27}$.« -/
+besedilo: »Odgovor: a) $n = 4$, $p = \frac{2}{3}$, $q = \frac{1}{3}$, b) $\frac{8}{27}$, c) $\frac{80}{81}$, d) $\frac{16}{27}$.« -/
 theorem naloga1 :
     (1 : ℝ) - 2 / 3 = 1 / 3 ∧
     Pn 4 2 (2 / 3) = 6 * (4 / 9) * (1 / 9) ∧ (6 : ℝ) * (4 / 9) * (1 / 9) = 24 / 81 ∧ (24 : ℝ) / 81 = 8 / 27 ∧
@@ -290,7 +289,7 @@ theorem naloga1 :
 
 /-- Naloga 2 a): P₂₀(0) = 0,96²⁰ = 0,442002… ≈ 0,4420.
 trditev: MAT-SS-4/zaporedje-neodvisnih-poskusov#naloga2-a
-besedilo: »a) Gre za zaporedje neodvisnih poskusov z $n = 20$; $p = 0{,}04$; $q = 0{,}96$. $P_{20}(0) = 0{,}96^{20} = 0{,}442002\ldots \approx 0{,}4420$.« -/
+besedilo: »$P_{20}(0) = 0{,}96^{20} = 0{,}442002\ldots \approx 0{,}4420$« -/
 theorem naloga2_a : Pn 20 0 0.04 = 0.96 ^ 20 ∧ 0.442002 ≤ (0.96 : ℝ) ^ 20 ∧ (0.96 : ℝ) ^ 20 < 0.442003 := by
   refine ⟨by unfold Pn; norm_num, by norm_num, by norm_num⟩
 
@@ -307,7 +306,7 @@ theorem naloga2_b :
 
 /-- Naloga 2 c): P₂₀(1) = 20·0,04·0,96¹⁹ = 0,368335…; P = 1 − P₂₀(0) − P₂₀(1) = 0,189662… ≈ 0,1897.
 trditev: MAT-SS-4/zaporedje-neodvisnih-poskusov#naloga2-c
-besedilo: »$P_{20}(1) = 20 \cdot 0{,}04 \cdot 0{,}96^{19} = 0{,}368335\ldots$« -/
+besedilo: »$P = 1 - P_{20}(0) - P_{20}(1) = 1 - 0{,}442002\ldots - 0{,}368335\ldots = 0{,}189662\ldots \approx 0{,}1897$« -/
 theorem naloga2_c :
     Pn 20 1 0.04 = 20 * 0.04 * 0.96 ^ 19 ∧
     0.368335 ≤ (20 : ℝ) * 0.04 * 0.96 ^ 19 ∧ (20 : ℝ) * 0.04 * 0.96 ^ 19 < 0.368336 ∧
@@ -321,7 +320,7 @@ theorem naloga2_c :
 /-- Naloga 2 d): škatla ni vrnjena z verjetnostjo 1 − 0,189662… = 0,810337…, pet škatel (0,810337…)⁵ =
 0,349406… ≈ 0,3494; z zaokroženo 0,8103 dobimo 0,8103⁵ ≈ 0,3493.
 trditev: MAT-SS-4/zaporedje-neodvisnih-poskusov#naloga2-d
-besedilo: »zato so neodvisni tudi dogodki »škatla ni vrnjena« za različne škatle in je $P = (0{,}810337\ldots)^5 = 0{,}349406\ldots \approx 0{,}3494$.« -/
+besedilo: »$P = (0{,}810337\ldots)^5 = 0{,}349406\ldots \approx 0{,}3494$. (Z zaokroženo vrednostjo $0{,}8103$ dobimo $0{,}3493$« -/
 theorem naloga2_d :
     0.810337 ≤ (0.96 : ℝ) ^ 20 + 20 * 0.04 * 0.96 ^ 19 ∧ (0.96 : ℝ) ^ 20 + 20 * 0.04 * 0.96 ^ 19 < 0.810338 ∧
     0.349406 ≤ ((0.96 : ℝ) ^ 20 + 20 * 0.04 * 0.96 ^ 19) ^ 5 ∧
@@ -377,7 +376,7 @@ theorem kviz5 :
 
 /-- Z analogijo (mešalna miza): štiri stikala od petih gor: `C(5,4) = 5`, verjetnost P₅(4) = C(5,4)·p⁴·q.
 trditev: MAT-SS-4/zaporedje-neodvisnih-poskusov#mesalna-miza
-besedilo: »To je $\binom{5}{4} = 5$. Drugo: kako verjetna je ena taka postavitev? To je $p^4 q$.« -/
+besedilo: »Zmnožek obeh je verjetnost, da so gor točno štiri stikala, ne glede na to, katera.« -/
 theorem mesalna_miza (p : ℝ) : Nat.choose 5 4 = 5 ∧ Pn 5 4 p = 5 * p ^ 4 * (1 - p) := by
   refine ⟨by decide, ?_⟩
   unfold Pn; rw [show Nat.choose 5 4 = 5 by decide]; norm_num

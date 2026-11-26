@@ -82,7 +82,7 @@ variable {V : Type*} [AddCommGroup V] [Module ℝ V]
 /-- Razlaga 2: ničelni vektor je kolinearen z vsakim (0⃗ = 0·a⃗); AB⃗ = r⃗_B − r⃗_A je edini vektor, ki A premakne
 v B.
 trditev: MAT-SS-3/vektorji-v-geometriji#nicelni-in-ab
-besedilo: »Ničelni vektor $\vec 0$ je kolinearen z vsakim vektorjem.« -/
+besedilo: »Ničelni vektor $\vec 0$ je kolinearen z vsakim vektorjem. Za točke potrebujemo vektor med njima. **Krajevni vektor** $\vec r_A = \overrightarrow{OA}$ kaže iz izhodišča v točko $A$; njegove komponente so koordinate točke. Vektor od $A$ do $B$ je razlika: $$\overrightarrow{AB} = \vec r_B - \vec r_A$$« -/
 theorem nicelni_in_AB (a A B v : V) : (0 : V) = (0:ℝ) • a ∧ (A + v = B ↔ v = B - A) :=
   ⟨(zero_smul ℝ a).symm, ⟨fun h => by rw [← h]; abel, fun h => by rw [h]; abel⟩⟩
 
@@ -131,7 +131,7 @@ theorem odvisni_iff_razseznost (n : ℕ) (v : Fin n → V) :
 /-- Razlaga 2 in 4: dva vektorja sta linearno odvisna natanko tedaj, ko je eden večkratnik drugega
 (b⃗ = k a⃗ ali a⃗ = k b⃗; za a⃗ ≠ 0⃗ je to b⃗ = k a⃗).
 trditev: MAT-SS-3/vektorji-v-geometriji#dva-odvisna
-besedilo: »Dva vektorja sta odvisna natanko tedaj,« -/
+besedilo: »Dva vektorja sta odvisna natanko tedaj, ko sta kolinearna.« -/
 theorem dva_odvisna (a b : V) :
     ¬ LinearIndependent ℝ ![a, b] ↔ (∃ k : ℝ, b = k • a) ∨ (∃ k : ℝ, a = k • b) := by
   rw [LinearIndependent.pair_iff]
@@ -155,7 +155,7 @@ theorem dva_odvisna (a b : V) :
 /-- Razlaga 3 in Ustno vprašanje 1: če a⃗, b⃗ nista kolinearna (sta neodvisna), so a⃗, b⃗, c⃗ koplanarni (odvisni)
 natanko tedaj, ko je c⃗ = α a⃗ + β b⃗.
 trditev: MAT-SS-3/vektorji-v-geometriji#koplanarni
-besedilo: »b) Vektorja $\vec a$ in $\vec b$ nista kolinearna (druga komponenta $\vec a$ je $0$, druga komponenta $\vec b$ pa ne), zato določata ravnino. Vektor $\vec c$ leži v njej natanko tedaj, ko je $\vec c = \alpha\vec a + \beta\vec b$.« -/
+besedilo: »Dva nekolinearna vektorja $\vec a$ in $\vec b$ določata ravnino. Vektor $\vec c$ leži v njej natanko tedaj, ko je njuna linearna kombinacija: $$\vec c = \alpha\,\vec a + \beta\,\vec b$$« -/
 theorem koplanarni (a b c : V) (hab : LinearIndependent ℝ ![a, b]) :
     ¬ LinearIndependent ℝ ![a, b, c] ↔ ∃ α β : ℝ, c = α • a + β • b := by
   rw [Fintype.not_linearIndependent_iff]
@@ -204,7 +204,7 @@ example :=
 /-- Razlaga 3 in 4: v ravnini so trije (in štirje) vektorji vedno odvisni (vsi so koplanarni), v prostoru so
 štirje vedno odvisni.
 trditev: MAT-SS-3/vektorji-v-geometriji#vedno-odvisni
-besedilo: »V ravnini so vsi vektorji koplanarni, zato ima vprašanje smisel šele v prostoru.« -/
+besedilo: »**Trije** so v ravnini vedno odvisni, v prostoru neodvisni, če niso koplanarni. - **Štirje** so v ravnini in v prostoru vedno odvisni.« -/
 theorem vedno_odvisni (u : Fin 3 → R2) (w : Fin 4 → R2) (z : Fin 4 → R3) :
     ¬ LinearIndependent ℝ u ∧ ¬ LinearIndependent ℝ w ∧ ¬ LinearIndependent ℝ z := by
   refine ⟨fun h => ?_, fun h => ?_, fun h => ?_⟩ <;> have := h.fintype_card_le_finrank <;> simp at this
@@ -212,7 +212,7 @@ theorem vedno_odvisni (u : Fin 3 → R2) (w : Fin 4 → R2) (z : Fin 4 → R3) :
 /-- Razlaga 4 in Ustno vprašanje 2 (primerjava koeficientov): če sta a⃗, b⃗ neodvisna in
 α a⃗ + β b⃗ = γ a⃗ + δ b⃗, je (α − γ)a⃗ + (β − δ)b⃗ = 0⃗ in zato α = γ, β = δ.
 trditev: MAT-SS-3/vektorji-v-geometriji#primerjava-koeficientov
-besedilo: »Ključna posledica: če sta $\vec a$ in $\vec b$ neodvisna in je $\alpha\vec a + \beta\vec b = \gamma\vec a + \delta\vec b$, potem je $\alpha = \gamma$ in $\beta = \delta$.« -/
+besedilo: »Ključna posledica: če sta $\vec a$ in $\vec b$ neodvisna in je $\alpha\vec a + \beta\vec b = \gamma\vec a + \delta\vec b$, potem je $\alpha = \gamma$ in $\beta = \delta$. Odštejemo namreč desno stran in dobimo $(\alpha - \gamma)\vec a + (\beta - \delta)\vec b = \vec 0$, kar je pri neodvisnih vektorjih mogoče le z ničelnima koeficientoma.« -/
 theorem primerjava_koeficientov (a b : V) (h : LinearIndependent ℝ ![a, b]) (α β γ δ : ℝ)
     (he : α • a + β • b = γ • a + δ • b) :
     (α - γ) • a + (β - δ) • b = 0 ∧ α = γ ∧ β = δ := by
@@ -241,7 +241,7 @@ theorem premisli_odvisna (a : V) :
 /-- Razlaga 5 (delilno razmerje, višja raven): za m + n ≠ 0 je n·AD⃗ = m·DB⃗ natanko tedaj, ko je
 r⃗_D = r⃗_A + m/(m + n)·(r⃗_B − r⃗_A), in to je r⃗_D = (n r⃗_A + m r⃗_B)/(m + n).
 trditev: MAT-SS-3/vektorji-v-geometriji#delilno-razmerje
-besedilo: »$\vec r_D = \vec r_A + \frac{m}{m+n}(\vec r_B - \vec r_A)$« -/
+besedilo: »Točka $D$ na daljici $AB$ jo deli v razmerju $m : n$, če je $AD : DB = m : n$. Od $A$ do $D$ je torej $\frac{m}{m + n}$ poti, $\overrightarrow{AD} = \frac{m}{m+n}\overrightarrow{AB}$. Prištejemo $\vec r_A$, dobimo $\vec r_D = \vec r_A + \frac{m}{m+n}(\vec r_B - \vec r_A)$, in uredimo: $$\vec r_D = \frac{n\,\vec r_A + m\,\vec r_B}{m + n}$$« -/
 theorem delilno_razmerje (A B D : V) (m n : ℝ) (hmn : m + n ≠ 0) :
     (n • (D - A) = m • (B - D) ↔ D = A + (m / (m + n)) • (B - A)) ∧
     A + (m / (m + n)) • (B - A) = (m + n)⁻¹ • (n • A + m • B) := by
@@ -276,7 +276,7 @@ example :=
 |AD| = m/(m + n)|AB| in |DB| = n/(m + n)|AB|, zato je D bližje A (|AD| < |DB|) natanko pri m < n (r⃗_A ima
 večjo utež n).
 trditev: MAT-SS-3/vektorji-v-geometriji#razpolovisce-in-blizina
-besedilo: »$\vec r_S = \frac{\vec r_A + \vec r_B}{2}$« -/
+besedilo: »Pazi na vrstni red: če je $D$ bližje $A$, ima $\vec r_A$ večjo utež, torej večji koeficient v števcu. Razpolovišče $S$ dobiš pri $m = n$: $$\vec r_S = \frac{\vec r_A + \vec r_B}{2}$$« -/
 theorem razpolovisce_in_blizina {W : Type*} [NormedAddCommGroup W] [NormedSpace ℝ W] (A B : W) (m n : ℝ)
     (hm : 0 < m) (hn : 0 < n) (hAB : A ≠ B) :
     A + (1 / (1 + 1) : ℝ) • (B - A) = (2:ℝ)⁻¹ • (A + B) ∧
@@ -309,7 +309,7 @@ example :=
 T leži na vseh treh težiščnicah in vsako deli v razmerju 2 : 1 (1·(T − X) = 2·(S_X − T) za vsako oglišče X in
 razpolovišče S_X nasprotne stranice).
 trditev: MAT-SS-3/vektorji-v-geometriji#tezisce
-besedilo: »Težišče $T$ leži na težiščnici $CS$, kjer je $S$ razpolovišče stranice $AB$, in jo deli v razmerju $CT : TS = 2 : 1$.« -/
+besedilo: »Težišče deli vsako težiščnico v razmerju $2 : 1$, daljši del je ob oglišču. Na težiščnici $CS$, kjer je $S$ razpolovišče $AB$, je $CT : TS = 2 : 1$. Delilno razmerje da $\vec r_T = \frac{\vec r_C + 2\vec r_S}{3}$; vstavimo $2\vec r_S = \vec r_A + \vec r_B$: $$\vec r_T = \frac{\vec r_A + \vec r_B + \vec r_C}{3}$$« -/
 theorem tezisce (A B C : V) :
     (3:ℝ)⁻¹ • (C + (2:ℝ) • ((2:ℝ)⁻¹ • (A + B))) = (3:ℝ)⁻¹ • (A + B + C) ∧
     (1:ℝ) • ((3:ℝ)⁻¹ • (A + B + C) - C) = (2:ℝ) • ((2:ℝ)⁻¹ • (A + B) - (3:ℝ)⁻¹ • (A + B + C)) ∧
@@ -323,7 +323,7 @@ theorem tezisce (A B C : V) :
 /-- Razlaga 7 (diagonali paralelograma, višja raven): pri neodvisnih a⃗ = AB⃗, b⃗ = AD⃗ je
 s(a⃗ + b⃗) = (1 − t)a⃗ + t b⃗ natanko pri s = t = 1/2 (diagonali se razpolavljata; a⃗ + t(b⃗ − a⃗) = (1 − t)a⃗ + t b⃗).
 trditev: MAT-SS-3/vektorji-v-geometriji#diagonali-paralelograma
-besedilo: »Prek $B$ in po diagonali $BD$: $\overrightarrow{AS} = \vec a + t(\vec b - \vec a) = (1 - t)\vec a + t\,\vec b$.« -/
+besedilo: »Po diagonali $AC$: $\overrightarrow{AS} = s(\vec a + \vec b)$. Prek $B$ in po diagonali $BD$: $\overrightarrow{AS} = \vec a + t(\vec b - \vec a) = (1 - t)\vec a + t\,\vec b$. Primerjamo koeficiente: $s = 1 - t$ in $s = t$, zato $s = t = \frac{1}{2}$. Diagonali se razpolavljata.« -/
 theorem diagonali_paralelograma (a b : V) (h : LinearIndependent ℝ ![a, b]) (s t : ℝ) :
     a + t • (b - a) = (1 - t) • a + t • b ∧
     (s • (a + b) = (1 - t) • a + t • b ↔ s = 1 / 2 ∧ t = 1 / 2) := by
@@ -355,7 +355,7 @@ example :=
 
 /-- Razlaga 1: OP⃗ = 2·(2, 1) + 1·(1, 2) = (5, 4) (pot čez (2, 1) in (4, 2)).
 trditev: MAT-SS-3/vektorji-v-geometriji#linearna-kombinacija-mreza
-besedilo: »$y_S = \frac{1 + 4}{2} = 2{,}5$« -/
+besedilo: »Na mreži narišemo vektorja $\vec a = (2, 1)$ in $\vec b = (1, 2)$ z začetkom v izhodišču $O$. Do točke $P(5, 4)$ prideš z dvema korakoma $\vec a$ in enim korakom $\vec b$: Zapišemo $\overrightarrow{OP} = 2\vec a + 1\vec b$.« -/
 theorem linearna_kombinacija_mreza :
     (2:ℝ) • (!₂[2, 1] : R2) + (1:ℝ) • !₂[1, 2] = !₂[5, 4] ∧ (!₂[2, 1] : R2) + !₂[2, 1] = !₂[4, 2] ∧
     (!₂[4, 2] : R2) + !₂[1, 2] = !₂[5, 4] := by
@@ -364,7 +364,7 @@ theorem linearna_kombinacija_mreza :
 /-- Razlaga 1, simulacija: pri a⃗ = (2, 0), b⃗ = (4, 0) ostaneta a⃗ ± b⃗ na osi x; pri (3, 1), (1, 3) vsota (4, 4)
 ni večkratnik (3, 1).
 trditev: MAT-SS-3/vektorji-v-geometriji#simulacija
-besedilo: »V simulaciji spodaj (»Linearna kombinacija vektorjev«) izberi par »a (2, 0), b (4, 0): vzporedna« in preklapljaj med $\vec a + \vec b$ in $\vec a - \vec b$.« -/
+besedilo: »Opazi, da rezultat vedno ostane na osi $x$. Pri paru »a (3, 1), b (1, 3)« pa vsota skoči s premice, na kateri leži $\vec a$.« -/
 theorem simulacija :
     (!₂[2, 0] : R2) + !₂[4, 0] = !₂[6, 0] ∧ (!₂[2, 0] : R2) - !₂[4, 0] = !₂[-2, 0] ∧
     ¬ ∃ k : ℝ, (!₂[4, 4] : R2) = k • !₂[3, 1] := by
@@ -392,7 +392,7 @@ theorem kolinearnost_ravnina :
 /-- Premisli 1 in Pogoste napake: AB⃗ in CD⃗ sta lahko kolinearna (pri pravokotniku A(0, 0), B(1, 0), C(0, 1),
 D(1, 1) je CD⃗ = AB⃗), točke pa niso na isti premici (A, B, C niso kolinearne).
 trditev: MAT-SS-3/vektorji-v-geometriji#vzporedni-ne-ista
-besedilo: »Kolinearna vektorja, torej točke na eni premici.** Iz $\overrightarrow{AB} = k\,\overrightarrow{CD}$ sklepaš, da so $A$, $B$, $C$, $D$ na isti premici.« -/
+besedilo: »Ne. Premici $AB$ in $CD$ sta lahko le vzporedni, kot nasprotni stranici pravokotnika.« -/
 theorem vzporedni_ne_ista (A B C D : R2) (hA : A = !₂[0, 0]) (hB : B = !₂[1, 0]) (hC : C = !₂[0, 1])
     (hD : D = !₂[1, 1]) : D - C = (1:ℝ) • (B - A) ∧ ¬ Collinear ℝ ({A, B, C} : Set R2) := by
   subst hA hB hC hD
@@ -410,7 +410,7 @@ example :=
 
 /-- Razlaga 4: 2·(2, 1) + 1·(−4, −2) = (0, 0), zato sta (2, 1) in (−4, −2) linearno odvisna.
 trditev: MAT-SS-3/vektorji-v-geometriji#primer-odvisna
-besedilo: »Ničelni vektor dobiš samo tako, da oba vzameš ničkrat. Sicer sta **linearno odvisna**. Primer: $2 \cdot (2, 1) + 1 \cdot (-4, -2) = (0, 0)$, zato sta $(2, 1)$ in $(-4, -2)$ odvisna.« -/
+besedilo: »Primer: $2 \cdot (2, 1) + 1 \cdot (-4, -2) = (0, 0)$, zato sta $(2, 1)$ in $(-4, -2)$ odvisna.« -/
 theorem primer_odvisna :
     (2:ℝ) • (!₂[2, 1] : R2) + (1:ℝ) • !₂[-4, -2] = 0 ∧ ¬ LinearIndependent ℝ ![(!₂[2, 1] : R2), !₂[-4, -2]] := by
   have h : (2:ℝ) • (!₂[2, 1] : R2) + (1:ℝ) • !₂[-4, -2] = 0 := by
@@ -424,7 +424,7 @@ theorem primer_odvisna :
 /-- Primer 1: AB⃗ = (4 − 1, 4 − 2) = (3, 2), AC⃗ = (9, 6) = 3·(3, 2), AD⃗ = (6, 5) ni večkratnik (3, 2)
 (6/3 = 2 ≠ 5/2 = 2,5); cesta pelje skozi C, ne pa skozi D; C je 3-krat dlje od A kot B.
 trditev: MAT-SS-3/vektorji-v-geometriji#primer1
-besedilo: »$\overrightarrow{AD} = (7 - 1, 7 - 2) = (6, 5)$. Prva komponenta da $k = \frac{6}{3} = 2$, druga $k = \frac{5}{2} = 2{,}5$. Enega samega $k$ ni, vektorja nista kolinearna.« -/
+besedilo: »Odgovor: cesta pelje skozi $C$ (trikrat dlje od $A$ kot $B$), skozi $D$ pa ne.« -/
 theorem primer1 :
     (!₂[4, 4] : R2) - !₂[1, 2] = !₂[3, 2] ∧ (!₂[10, 8] : R2) - !₂[1, 2] = !₂[9, 6] ∧
     (!₂[9, 6] : R2) = (3:ℝ) • !₂[3, 2] ∧ (!₂[7, 7] : R2) - !₂[1, 2] = !₂[6, 5] ∧
@@ -445,7 +445,7 @@ theorem primer1 :
 /-- Primer 2: T = ((1 + 7 + 4)/3, (1 + 4 + 7)/3) = (4, 4); pri AD : DB = 1 : 2 je r⃗_D = (2r⃗_A + r⃗_B)/3 =
 ((2 + 7)/3, (2 + 4)/3) = (3, 2); S = ((1 + 7)/2, (1 + 4)/2) = (4; 2,5); CT⃗ = (0, −3) = 2·TS⃗ = 2·(0; −1,5).
 trditev: MAT-SS-3/vektorji-v-geometriji#primer2
-besedilo: »Črpališče: $m = 1$, $n = 2$, zato $\vec r_D = \frac{2\vec r_A + \vec r_B}{3}$. Točka $A$ dobi utež $2$, ker je $D$ bližje njej. $x_D = \frac{2 + 7}{3} = 3$ in $y_D = \frac{2 + 4}{3} = 2$, torej $D(3, 2)$.« -/
+besedilo: »Odgovor: gasilski dom bo v $T(4, 4)$, črpališče v $D(3, 2)$. Težišče res deli težiščnico v razmerju $2 : 1$.« -/
 theorem primer2 :
     (3:ℝ)⁻¹ • ((!₂[1, 1] : R2) + !₂[7, 4] + !₂[4, 7]) = !₂[(1 + 7 + 4) / 3, (1 + 4 + 7) / 3] ∧
     (!₂[(1 + 7 + 4) / 3, (1 + 4 + 7) / 3] : R2) = !₂[4, 4] ∧
@@ -461,7 +461,7 @@ theorem primer2 :
 /-- Pogoste napake (zamenjani uteži, težišče kot razpolovišče): (1·r⃗_A + 2·r⃗_B)/3 = (5, 3), kar je bližje B;
 (1 + 7 + 4)/2 = 6 ≠ 4.
 trditev: MAT-SS-3/vektorji-v-geometriji#napake-utezi
-besedilo: »(višja raven) **Zamenjani uteži pri delilnem razmerju.** Kdor pri $AD : DB = 1 : 2$ računa $\frac{1 \cdot \vec r_A + 2\,\vec r_B}{3}$, dobi v Primeru 2 točko $(5, 3)$, ki je bližje $B$.« -/
+besedilo: »Kdor pri $AD : DB = 1 : 2$ računa $\frac{1 \cdot \vec r_A + 2\,\vec r_B}{3}$, dobi v Primeru 2 točko $(5, 3)$, ki je bližje $B$. Pravilno: bližja točka ima večjo utež, $\frac{2\vec r_A + \vec r_B}{3}$. - (višja raven) **Težišče kot razpolovišče.** Vsoto koordinat treh oglišč deliš z $2$ namesto s $3$.« -/
 theorem napake_utezi :
     (3:ℝ)⁻¹ • ((1:ℝ) • (!₂[1, 1] : R2) + (2:ℝ) • !₂[7, 4]) = !₂[5, 3] ∧ ((1:ℝ) + 7 + 4) / 2 = 6 ∧
     ((1:ℝ) + 7 + 4) / 2 ≠ 4 ∧ ‖(!₂[5, 3] : R2) - !₂[7, 4]‖ < ‖(!₂[5, 3] : R2) - !₂[1, 1]‖ := by
@@ -546,8 +546,7 @@ example :=
   primer3 (h := w)
 
 /-- Primer 3, slika: A(0, 0), B(6, 0), D(3, 3) da E = (7, 1) in P = (5,25; 0,75).
-trditev: MAT-SS-3/vektorji-v-geometriji#primer3-slika
-besedilo: »Prva komponenta: $p - 1 = 3 \cdot 2 = 6$, torej $p = 7$. Tretja komponenta: $q - 3 = 3 \cdot (-1) = -3$, torej $q = 0$.« -/
+pomozno -/
 theorem primer3_slika :
     (!₂[6, 0] : R2) + (1 / 3 : ℝ) • ((!₂[9, 3] : R2) - !₂[6, 0]) = !₂[7, 1] ∧
     (!₂[0, 0] : R2) + (3 / 4 : ℝ) • ((!₂[7, 1] : R2) - !₂[0, 0]) = !₂[5.25, 0.75] ∧
@@ -557,7 +556,7 @@ theorem primer3_slika :
 /-- Primer 4: c⃗ = α a⃗ + β b⃗ ↔ (2 = α ∧ 7 = 2α + β ∧ 9 = 3β) ↔ α = 2 ∧ β = 3 (β = 7 − 2·2 = 3, 3·3 = 9);
 c⃗ = 2a⃗ + 3b⃗, vektorji so koplanarni in odvisni: 2a⃗ + 3b⃗ − c⃗ = 0⃗.
 trditev: MAT-SS-3/vektorji-v-geometriji#primer4
-besedilo: »Po komponentah: $2 = 1 \cdot \alpha + 0 \cdot \beta$, $7 = 2\alpha + \beta$ in $9 = 0 \cdot \alpha + 3\beta$.« -/
+besedilo: »Drži: $3\beta = 3 \cdot 3 = 9$. Torej je $\vec c = 2\vec a + 3\vec b$ in vsi trije premiki ležijo v isti ravnini (so koplanarni). Če tretja enačba ne bi držala, bi $\vec c$ štrlel iz ravnine $\vec a$, $\vec b$. (višja raven) Trije koplanarni vektorji so linearno odvisni: $2\vec a + 3\vec b - \vec c = \vec 0$.« -/
 theorem primer4 (α β : ℝ) :
     ((!₂[2, 7, 9] : R3) = α • !₂[1, 2, 0] + β • !₂[0, 1, 3] ↔ (2 = 1 * α + 0 * β ∧ 7 = 2 * α + β ∧
       9 = 0 * α + 3 * β)) ∧
@@ -585,7 +584,7 @@ theorem primer4 (α β : ℝ) :
 /-- Pogoste napake: pri b⃗ = 2a⃗ je α a⃗ + β b⃗ = (α + 2β)a⃗ (vse kombinacije na eni premici); (1, 0) in (1, 1) sta
 neodvisna, a nista pravokotna (skalarni produkt 1 ≠ 0).
 trditev: MAT-SS-3/vektorji-v-geometriji#napake
-besedilo: »Pri $\vec b = 2\vec a$ so vse kombinacije $\alpha\vec a + \beta\vec b = (\alpha + 2\beta)\vec a$ na eni premici.« -/
+besedilo: »Pri $\vec b = 2\vec a$ so vse kombinacije $\alpha\vec a + \beta\vec b = (\alpha + 2\beta)\vec a$ na eni premici. Najprej preveri, ali je en vektor večkratnik drugega. - (višja raven) **Neodvisna pomeni pravokotna.** Vektorja $(1, 0)$ in $(1, 1)$ oklepata $45^\circ$, pa sta neodvisna.« -/
 theorem napake (a : V) (α β : ℝ) :
     α • a + β • ((2:ℝ) • a) = (α + 2 * β) • a ∧
     LinearIndependent ℝ ![(!₂[1, 0] : R2), !₂[1, 1]] ∧ inner ℝ (!₂[1, 0] : R2) !₂[1, 1] ≠ 0 := by
@@ -602,7 +601,7 @@ theorem napake (a : V) (α β : ℝ) :
 /-- Naloga 1: AB⃗ = (3 − 1, 1 + 2, 2 − 3) = (2, 3, −1), AC⃗ = (p − 1, 9, q − 3); A, B, C so na isti premici
 natanko pri p = 7, q = 0 (9 = 3k da k = 3, p − 1 = 6, q − 3 = −3), C(7, 7, 0).
 trditev: MAT-SS-3/vektorji-v-geometriji#naloga1
-besedilo: »$\overrightarrow{AB} = (3 - 1, 1 + 2, 2 - 3) = (2, 3, -1)$ in $\overrightarrow{AC} = (p - 1, 9, q - 3)$.« -/
+besedilo: »Odgovor: $p = 7$ in $q = 0$, točka je $C(7, 7, 0)$.« -/
 theorem naloga1 (p q : ℝ) :
     (!₂[3, 1, 2] : R3) - !₂[1, -2, 3] = !₂[2, 3, -1] ∧ (!₂[p, 7, q] : R3) - !₂[1, -2, 3] = !₂[p - 1, 9, q - 3] ∧
     (Collinear ℝ ({!₂[1, -2, 3], !₂[3, 1, 2], !₂[p, 7, q]} : Set R3) ↔ p = 7 ∧ q = 0) ∧
@@ -622,7 +621,7 @@ theorem naloga1 (p q : ℝ) :
 b) a⃗, b⃗ nista kolinearna in a⃗, b⃗, c⃗ = (u, 3, 1) so koplanarni natanko pri u = 8 (β = 3, α = 2, u = 2 + 2·3);
 c) e⃗ = (0, 1, 1) ni kombinacija (β = 1, α = −2, 2·(−2) − 1 = −5 ≠ 1), a⃗, b⃗, e⃗ niso koplanarni.
 trditev: MAT-SS-3/vektorji-v-geometriji#naloga2
-besedilo: »b) $(\alpha + 2\beta, \beta, 2\alpha - \beta) = (u, 3, 1)$: iz druge komponente $\beta = 3$, iz tretje $2\alpha - 3 = 1$, torej $\alpha = 2$. Prva komponenta da $u = 2 + 2 \cdot 3 = 8$.« -/
+besedilo: »Odgovor: a) $\vec d = 2\vec a + \vec b$; b) $u = 8$; c) vektorji $\vec a$, $\vec b$, $\vec e$ niso koplanarni.« -/
 theorem naloga2 :
     (∀ α β : ℝ, α • (!₂[1, 0, 2] : R3) + β • !₂[2, 1, -1] = !₂[α + 2 * β, β, 2 * α - β]) ∧
     (∀ α β : ℝ, (!₂[4, 1, 3] : R3) = α • !₂[1, 0, 2] + β • !₂[2, 1, -1] ↔ α = 2 ∧ β = 1) ∧
@@ -656,7 +655,7 @@ theorem naloga2 :
 /-- Naloga 3 a), b): z a⃗ = AB⃗, b⃗ = AC⃗, AD⃗ = a⃗/3, AM⃗ = b⃗/2 je CD⃗ = a⃗/3 − b⃗, BM⃗ = b⃗/2 − a⃗; po poti čez CD
 AQ⃗ = b⃗ + λ(a⃗/3 − b⃗) = (λ/3)a⃗ + (1 − λ)b⃗, po poti čez BM AQ⃗ = a⃗ + μ(b⃗/2 − a⃗) = (1 − μ)a⃗ + (μ/2)b⃗.
 trditev: MAT-SS-3/vektorji-v-geometriji#naloga3ab
-besedilo: »$\overrightarrow{AQ} = \vec b + \lambda\left(\frac{1}{3}\vec a - \vec b\right) = \frac{\lambda}{3}\vec a + (1 - \lambda)\vec b$« -/
+besedilo: »$\overrightarrow{AD} = \frac{1}{3}\vec a$ in $\overrightarrow{AM} = \frac{1}{2}\vec b$. Zato $\overrightarrow{CD} = \overrightarrow{AD} - \overrightarrow{AC} = \frac{1}{3}\vec a - \vec b$ in $\overrightarrow{BM} = \overrightarrow{AM} - \overrightarrow{AB} = \frac{1}{2}\vec b - \vec a$. 2. b) $\vec a$ in $\vec b$ ležita na stranicah trikotnika, ki nista na isti premici, zato nista kolinearna. Dva nekolinearna vektorja sta linearno neodvisna, zato smemo pri njiju primerjati koeficiente. 3. b) Prva pot, $Q$ leži na $CD$: $\overrightarrow{AQ} = \vec b + \lambda\left(\frac{1}{3}\vec a - \vec b\right) = \frac{\lambda}{3}\vec a + (1 - \lambda)\vec b$. 4. b) Druga pot, $Q$ leži na $BM$: $\overrightarrow{AQ} = \vec a + \mu\left(\frac{1}{2}\vec b - \vec a\right) = (1 - \mu)\vec a + \frac{\mu}{2}\vec b$.« -/
 theorem naloga3ab (A B C : V) (l μ : ℝ) :
     (A + (1 / 3 : ℝ) • (B - A)) - C = (1 / 3 : ℝ) • (B - A) - (C - A) ∧
     (A + (1 / 2 : ℝ) • (C - A)) - B = (1 / 2 : ℝ) • (C - A) - (B - A) ∧
@@ -667,7 +666,7 @@ theorem naloga3ab (A B C : V) (l μ : ℝ) :
 /-- Naloga 3 c): pri neodvisnih a⃗, b⃗ se poti ujemata natanko pri λ = 3/5, μ = 4/5 (λ/3 = 1 − μ,
 1 − λ = μ/2, 5λ/6 = 1/2); CQ : QD = 3 : 2 (2·CQ⃗ = 3·QD⃗) in BQ : QM = 4 : 1 (1·BQ⃗ = 4·QM⃗); AQ⃗ = a⃗/5 + 2b⃗/5.
 trditev: MAT-SS-3/vektorji-v-geometriji#naloga3c
-besedilo: »Iz prve enačbe $\mu = 1 - \frac{\lambda}{3}$, vstavimo v drugo: $1 - \lambda = \frac{1}{2} - \frac{\lambda}{6}$, torej $\frac{5\lambda}{6} = \frac{1}{2}$ in $\lambda = \frac{3}{5}$, $\mu = \frac{4}{5}$.« -/
+besedilo: »Primerjamo koeficiente: $\frac{\lambda}{3} = 1 - \mu$ in $1 - \lambda = \frac{\mu}{2}$. Iz prve enačbe $\mu = 1 - \frac{\lambda}{3}$, vstavimo v drugo: $1 - \lambda = \frac{1}{2} - \frac{\lambda}{6}$, torej $\frac{5\lambda}{6} = \frac{1}{2}$ in $\lambda = \frac{3}{5}$, $\mu = \frac{4}{5}$. 6. c) $\lambda = \frac{3}{5}$ pomeni $CQ : QD = 3 : 2$, $\mu = \frac{4}{5}$ pa $BQ : QM = 4 : 1$.« -/
 theorem naloga3c (A B C : V) (h : LinearIndependent ℝ ![B - A, C - A]) (l μ : ℝ) :
     ((l / 3) • (B - A) + (1 - l) • (C - A) = (1 - μ) • (B - A) + (μ / 2) • (C - A) ↔ l = 3 / 5 ∧ μ = 4 / 5) ∧
     (∀ l μ : ℝ, (l / 3 = 1 - μ ∧ 1 - l = μ / 2) ↔ (μ = 1 - l / 3 ∧ 5 * l / 6 = 1 / 2)) ∧
@@ -705,7 +704,7 @@ example :=
 /-- Naloga 3 d): AQ⃗ = (1/5)(10, 5) + (2/5)(5, 10) = (2, 1) + (2, 4) = (4, 5), torej Q(4, 5); T = ((0 + 10 + 5)/3,
 (0 + 5 + 10)/3) = (5, 5) ≠ Q, Q ni težišče.
 trditev: MAT-SS-3/vektorji-v-geometriji#naloga3d
-besedilo: »d) Iz koraka 3 je $\overrightarrow{AQ} = \frac{1}{5}\vec a + \frac{2}{5}\vec b$, kjer je $\vec a = (10, 5)$ in $\vec b = (5, 10)$. Torej $\overrightarrow{AQ} = (2, 1) + (2, 4) = (4, 5)$ in ker je $A$ izhodišče, je $Q(4, 5)$.« -/
+besedilo: »Iz koraka 3 je $\overrightarrow{AQ} = \frac{1}{5}\vec a + \frac{2}{5}\vec b$, kjer je $\vec a = (10, 5)$ in $\vec b = (5, 10)$. Torej $\overrightarrow{AQ} = (2, 1) + (2, 4) = (4, 5)$ in ker je $A$ izhodišče, je $Q(4, 5)$. 8. d) Težišče: $x_T = \frac{0 + 10 + 5}{3} = 5$ in $y_T = \frac{0 + 5 + 10}{3} = 5$, torej $T(5, 5)$. Točki sta različni; $Q$ ni težišče, ker $D$ ni razpolovišče stranice $AB$, zato $CD$ ni težiščnica.« -/
 theorem naloga3d :
     (1 / 5 : ℝ) • (!₂[10, 5] : R2) = !₂[2, 1] ∧ (2 / 5 : ℝ) • (!₂[5, 10] : R2) = !₂[2, 4] ∧
     (!₂[2, 1] : R2) + !₂[2, 4] = !₂[4, 5] ∧
@@ -717,7 +716,7 @@ theorem naloga3d :
 /-- Ustno vprašanje 1: za neodvisna a⃗, b⃗ in c⃗ = a⃗ + b⃗ noben par ni kolinearen (a⃗, c⃗ in b⃗, c⃗ sta neodvisna),
 vsi trije pa so koplanarni (odvisni).
 trditev: MAT-SS-3/vektorji-v-geometriji#ustno1
-besedilo: »Vzemimo nekolinearna vektorja $\vec a$ in $\vec b$ ter tretji vektor $\vec c = \vec a + \vec b$.« -/
+besedilo: »Vzemimo nekolinearna vektorja $\vec a$ in $\vec b$ ter tretji vektor $\vec c = \vec a + \vec b$. Nobena dva nista kolinearna, saj bi iz $\vec c = k\vec a$ sledilo $\vec b = (k - 1)\vec a$, kar ni res, in enako za $\vec b$. Vektorji so koplanarni, ker je $\vec c$ linearna kombinacija $\vec a$ in $\vec b$ in zato leži v ravnini, ki jo napenjata.« -/
 theorem ustno1 (a b : V) (h : LinearIndependent ℝ ![a, b]) :
     LinearIndependent ℝ ![a, a + b] ∧ LinearIndependent ℝ ![b, a + b] ∧ ¬ LinearIndependent ℝ ![a, b, a + b] := by
   refine ⟨?_, ?_, (koplanarni a b _ h).2 ⟨1, 1, by simp⟩⟩ <;> rw [LinearIndependent.pair_iff] <;>
@@ -794,8 +793,7 @@ theorem kviz5 (p : ℝ) :
   · rintro rfl; exact ⟨-2, by norm_num, by norm_num⟩
 
 /-- Blok RACUN (vrstice `vrednost`, ki niso že v drugih trditvah).
-trditev: MAT-SS-3/vektorji-v-geometriji#racun
-besedilo: »$x_S = \frac{1 + 7}{2} = 4$ in $y_S = \frac{1 + 4}{2} = 2{,}5$,« -/
+pomozno -/
 theorem racun :
     (9:ℝ) / 3 = 3 ∧ (6:ℝ) / 2 = 3 ∧ (6:ℝ) / 3 = 2 ∧ (5:ℝ) / 2 = 2.5 ∧ ((1:ℝ) + 7 + 4) / 3 = 4 ∧
     ((1:ℝ) + 4 + 7) / 3 = 4 ∧ (2 * (1:ℝ) + 7) / 3 = 3 ∧ (2 * (1:ℝ) + 4) / 3 = 2 ∧ ((1:ℝ) + 4) / 2 = 2.5 ∧

@@ -30,7 +30,7 @@ def igrice : List ℕ := [20, 30, 30, 40, 40, 40, 50, 60, 90, 400]
 
 /-- Uvod in Razlaga 1: vsota je 800, x̄ = 800 : 10 = 80; več kot 80 minut igrata le dva od desetih.
 trditev: MAT-SS-4/statistika#igrice-sredina
-besedilo: »več kot $80$ minut igrata le **dva** od desetih.« -/
+besedilo: »Za igrice: $\bar x = 800 : 10 = 80$ minut.« -/
 theorem igrice_sredina : igrice.sum = 800 ∧ (800 : ℝ) / 10 = 80 ∧ igrice.length = 10 ∧
     (igrice.filter (fun x => 80 < x)).length = 2 := by
   refine ⟨by decide, by norm_num, by decide, by decide⟩
@@ -88,7 +88,7 @@ example :=
 /-- Razlaga 2 in ustno vprašanje 3: varianca je nenegativna (vsota kvadratov, deljena z N), σ = √σ² ≥ 0
 in σ² = (√σ²)², torej koren vrne varianco.
 trditev: MAT-SS-4/statistika#varianca-nenegativna
-besedilo: »Najprej izračunamo varianco $\sigma^2 = \frac{(x_1 - \bar x)^2 + \dots + (x_N - \bar x)^2}{N}$, nato je $\sigma = \sqrt{\sigma^2}$.« -/
+besedilo: »Kvadrati so vsi nenegativni, zato se ne izničijo« -/
 theorem varianca_nenegativna (N : ℕ) (x : Fin N → ℝ) (m : ℝ) :
     0 ≤ (∑ i, (x i - m) ^ 2) / N ∧ 0 ≤ √((∑ i, (x i - m) ^ 2) / N) ∧
     (√((∑ i, (x i - m) ^ 2) / N)) ^ 2 = (∑ i, (x i - m) ^ 2) / N := by
@@ -106,7 +106,7 @@ theorem igrice_kvartili : [20, 30, 30, 40, 40] ++ [40, 50, 60, 90, 400] = igrice
 
 /-- Razlaga 3: Q₃ − Q₁ = 30, 1,5·30 = 45, meja 60 + 45 = 105; 400 > 105 je osamelec (edini v nizu).
 trditev: MAT-SS-4/statistika#igrice-osamelec
-besedilo: »Podatek, ki je od škatle oddaljen več kot $1{,}5$-kratnik te širine (tu nad $60 + 45 = 105$), označimo kot **osamelec**.« -/
+besedilo: »Igralec s $400$ minutami je osamelec.« -/
 theorem igrice_osamelec : (60 : ℝ) - 30 = 30 ∧ (1.5 : ℝ) * 30 = 45 ∧ (60 : ℝ) + 45 = 105 ∧
     (105 : ℝ) < 400 ∧ igrice.filter (fun x => 105 < x) = [400] := by
   refine ⟨by norm_num, by norm_num, by norm_num, by norm_num, by decide⟩
@@ -118,7 +118,7 @@ noncomputable def f (μ σ x : ℝ) : ℝ := 1 / (σ * √(2 * π)) * Real.exp (
 
 /-- Razlaga 5: predpis iz lekcije je Mathlibova gostota normalne porazdelitve z varianco σ² (σ > 0).
 trditev: MAT-SS-4/statistika#f-je-gauss
-besedilo: »je graf **gostote normalne porazdelitve**.« -/
+besedilo: »Gostota je $$f(x) = \frac{1}{\sigma\sqrt{2\pi}}\, e^{-\frac{(x - \mu)^2}{2\sigma^2}}$$« -/
 theorem f_je_gauss (μ σ : ℝ) (hσ : 0 < σ) :
     f μ σ = gaussianPDFReal μ (σ ^ 2).toNNReal := by
   funext x
@@ -161,7 +161,7 @@ example :=
 
 /-- Preveri se 1: krivulja leži povsod nad osjo x (f > 0), zato je v μ ± 3σ ne seka.
 trditev: MAT-SS-4/statistika#f-pozitivna
-besedilo: »Zunaj $\mu \pm 3\sigma$ je le še $0{,}3\,\%$ ploščine, a krivulja osi $x$ nikoli ne doseže, saj je $e^{\ldots} > 0$.« -/
+besedilo: »Krivulja leži povsod nad osjo $x$« -/
 theorem f_pozitivna (μ σ x : ℝ) (hσ : 0 < σ) : 0 < f μ σ x := by
   unfold f; positivity
 
@@ -172,13 +172,13 @@ example :=
 
 /-- Razlaga 5: krivulja je simetrična glede na x = μ: f(μ + t) = f(μ − t).
 trditev: MAT-SS-4/statistika#f-simetricna
-besedilo: »Krivulja je simetrična glede na $x = \mu$ in tam doseže maksimum.« -/
+besedilo: »Krivulja je simetrična glede na $x = \mu$« -/
 theorem f_simetricna (μ σ t : ℝ) : f μ σ (μ + t) = f μ σ (μ - t) := by
   unfold f; ring_nf
 
 /-- Razlaga 5 (in Preveri se 1): maksimum je pri x = μ, kjer je f(μ) = 1/(σ√(2π)).
 trditev: MAT-SS-4/statistika#f-maksimum
-besedilo: »$$f(x) = \frac{1}{\sigma\sqrt{2\pi}}\, e^{-\frac{(x - \mu)^2}{2\sigma^2}}$$« -/
+besedilo: »Krivulja je simetrična glede na $x = \mu$ in tam doseže maksimum.« -/
 theorem f_maksimum (μ σ x : ℝ) (hσ : 0 < σ) : f μ σ x ≤ f μ σ μ ∧ f μ σ μ = 1 / (σ * √(2 * π)) := by
   constructor
   · unfold f
@@ -281,7 +281,7 @@ theorem Φ_liha (z : ℝ) : Φ (-z) = -Φ z := by
 
 /-- Razlaga 6: polovica ploščine je levo od μ = 0: ∫_{(−∞, 0]} φ = 0,5.
 trditev: MAT-SS-4/statistika#polovica
-besedilo: »Ker je polovica ploščine na vsaki strani $\mu$, velja $P(X < x) = 0{,}5 + \Phi(z)$ in $P(X > x) = 0{,}5 - \Phi(z)$.« -/
+besedilo: »Ker je polovica ploščine na vsaki strani $\mu$« -/
 theorem polovica : ∫ x in Iic 0, φ x = 1 / 2 := by
   have hI := intervalIntegral.integral_Iic_add_Ioi (f := φ) (b := 0) (μ := volume)
     φ_integrabilna.integrableOn φ_integrabilna.integrableOn
@@ -320,7 +320,7 @@ theorem P_med (a b : ℝ) : ∫ x in a..b, φ x = Φ b - Φ a := by
 
 /-- Razlaga 6: z = (x − μ)/σ pove, koliko σ je x od μ: x = μ + kσ da z = k (σ ≠ 0).
 trditev: MAT-SS-4/statistika#z-vrednost
-besedilo: »$$z = \frac{x - \mu}{\sigma}$$« -/
+besedilo: »ki pove, koliko standardnih odklonov je $x$ od $\mu$« -/
 theorem z_vrednost (μ σ k : ℝ) (hσ : σ ≠ 0) : ((μ + k * σ) - μ) / σ = k := by
   field_simp; ring
 
@@ -343,7 +343,7 @@ theorem pasovi : (2.3 : ℝ) + 13.6 + 34.1 = 50 ∧ 2 * (34.1 : ℝ) = 68.2 ∧ 
 /-- Primer 1: 3 + 8 + 5 + 12 + 5 + 7 + 2 = 42, x̄ = 42 : 7 = 6; urejeno 2, 3, 5, 5, 7, 8, 12 (permutacija
 podatkov), na 4. mestu je 5 = Me; edini ponovljeni podatek je 5 = Mo.
 trditev: MAT-SS-4/statistika#primer1
-besedilo: »$3 + 8 + 5 + 12 + 5 + 7 + 2 = 42$« -/
+besedilo: »Odgovor: sredina je $6$ obvestil, mediana in modus pa $5$.« -/
 theorem primer1 : [3, 8, 5, 12, 5, 7, 2].sum = 42 ∧ (42 : ℝ) / 7 = 6 ∧
     List.Perm [3, 8, 5, 12, 5, 7, 2] [2, 3, 5, 5, 7, 8, 12] ∧ [2, 3, 5, 5, 7, 8, 12].Pairwise (· ≤ ·) ∧
     [2, 3, 5, 5, 7, 8, 12].getD 3 0 = 5 ∧
@@ -355,7 +355,7 @@ theorem primer1 : [3, 8, 5, 12, 5, 7, 2].sum = 42 ∧ (42 : ℝ) / 7 = 6 ∧
 
 /-- Primer 2, A: x̄ = 100 : 5 = 20; odkloni −2, 0, 2, −1, 1; kvadrati 4, 0, 4, 1, 1; vsota 10; σ² = 2.
 trditev: MAT-SS-4/statistika#primer2-a
-besedilo: »Vsota kvadratov je $10$, zato $\sigma_A^2 = 10 : 5 = 2$ in $\sigma_A = \sqrt{2} \approx 1{,}41\,\mathrm{h}$.« -/
+besedilo: »Vsota kvadratov je $10$, zato $\sigma_A^2 = 10 : 5 = 2$« -/
 theorem primer2_A : ((18 : ℝ) + 20 + 22 + 19 + 21) = 100 ∧ (100 : ℝ) / 5 = 20 ∧
     ((18 : ℝ) - 20 = -2 ∧ (20 : ℝ) - 20 = 0 ∧ (22 : ℝ) - 20 = 2 ∧ (19 : ℝ) - 20 = -1 ∧ (21 : ℝ) - 20 = 1) ∧
     ((-2 : ℝ) ^ 2 = 4 ∧ (0 : ℝ) ^ 2 = 0 ∧ (2 : ℝ) ^ 2 = 4 ∧ (-1 : ℝ) ^ 2 = 1 ∧ (1 : ℝ) ^ 2 = 1) ∧
@@ -371,7 +371,7 @@ theorem primer2_sigmaA : |√(2 : ℝ) - 1.41| < 0.005 := by
 
 /-- Primer 2, B: x̄ = 100 : 5 = 20; odkloni −6, 6, 0, −4, 4; kvadrati 36, 36, 0, 16, 16; vsota 104; σ² = 20,8.
 trditev: MAT-SS-4/statistika#primer2-b
-besedilo: »Za B so odkloni $-6, 6, 0, -4, 4$, kvadrati $36, 36, 0, 16, 16$, vsota $104$. Torej $\sigma_B^2 = 104 : 5 = 20{,}8$ in $\sigma_B \approx 4{,}56\,\mathrm{h}$.« -/
+besedilo: »Za B so odkloni $-6, 6, 0, -4, 4$, kvadrati $36, 36, 0, 16, 16$, vsota $104$. Torej $\sigma_B^2 = 104 : 5 = 20{,}8$« -/
 theorem primer2_B : ((14 : ℝ) + 26 + 20 + 16 + 24) = 100 ∧ (100 : ℝ) / 5 = 20 ∧
     ((14 : ℝ) - 20 = -6 ∧ (26 : ℝ) - 20 = 6 ∧ (20 : ℝ) - 20 = 0 ∧ (16 : ℝ) - 20 = -4 ∧ (24 : ℝ) - 20 = 4) ∧
     ((-6 : ℝ) ^ 2 = 36 ∧ (6 : ℝ) ^ 2 = 36 ∧ (0 : ℝ) ^ 2 = 0 ∧ (-4 : ℝ) ^ 2 = 16 ∧ (4 : ℝ) ^ 2 = 16) ∧
@@ -388,15 +388,14 @@ theorem primer2_sigmaB : |√(20.8 : ℝ) - 4.56| < 0.005 ∧ 3 * √(2 : ℝ) <
   rw [abs_lt]; constructor <;> linarith
 
 /-- Razlaga 2: variacijski razmik A je 22 − 18 = 4, B pa 26 − 14 = 12.
-trditev: MAT-SS-4/statistika#razmik
-besedilo: »Model A je v petih dneh zdržal $18, 20, 22, 19, 21$ ur, model B pa $14, 26, 20, 16, 24$ ur.« -/
+pomozno -/
 theorem razmik : (22 : ℝ) - 18 = 4 ∧ (26 : ℝ) - 14 = 12 := by norm_num
 
 /-! ## Primer 3 in 4: normalna porazdelitev (s tabelnimi vrednostmi iz lekcije) -/
 
 /-- Primer 3: z = (23 − 20)/2 = 1,5; P = 0,5 − 0,4332 = 0,0668; 0,0668·5000 = 334 (6,68 % ≈ 6,7 %).
 trditev: MAT-SS-4/statistika#primer3
-besedilo: »$\Phi(1{,}5)$ je ploščina od sredine do meje. Desno od sredine je $0{,}5$, zato $P(X > 23) = 0{,}5 - 0{,}4332 = 0{,}0668$.« -/
+besedilo: »Odgovor: približno $334$ telefonov ($6{,}7\,\%$) zdrži več kot $23$ ur.« -/
 theorem primer3 : ((23 : ℝ) - 20) / 2 = 1.5 ∧ (0.5 : ℝ) - 0.4332 = 0.0668 ∧ (0.0668 : ℝ) * 5000 = 334 ∧
     |(0.0668 : ℝ) * 100 - 6.7| < 0.05 := by norm_num [abs_lt]
 
@@ -427,7 +426,7 @@ theorem sigma_iz_variance (σ : ℝ) : (σ ^ 2 = 4 ∧ 0 < σ) ↔ σ = 2 := by
 /-- Matura 1: urejeno 8, 10, 12, 15, 16, 18, 20, 25, 30, 50 (permutacija podatkov); spodnja polovica
 8, 10, 12, 15, 16 da Q₁ = 12, zgornja 18, 20, 25, 30, 50 da Q₃ = 25.
 trditev: MAT-SS-4/statistika#matura1-kvartili
-besedilo: »Podatke uredimo po velikosti: $8, 10, 12, 15, 16, 18, 20, 25, 30, 50$. Spodnja polovica je $8, 10, 12, 15, 16$, zgornja $18, 20, 25, 30, 50$.« -/
+besedilo: »Prvi kvartil je mediana spodnje polovice, $Q_1 = 12$; tretji kvartil je mediana zgornje polovice, $Q_3 = 25$.« -/
 theorem matura1_kvartili : List.Perm [15, 30, 8, 20, 12, 50, 16, 25, 10, 18] [8, 10, 12, 15, 16, 18, 20, 25, 30, 50] ∧
     [8, 10, 12, 15, 16, 18, 20, 25, 30, 50].Pairwise (· ≤ ·) ∧
     [8, 10, 12, 15, 16] ++ [18, 20, 25, 30, 50] = [8, 10, 12, 15, 16, 18, 20, 25, 30, 50] ∧
@@ -435,14 +434,14 @@ theorem matura1_kvartili : List.Perm [15, 30, 8, 20, 12, 50, 16, 25, 10, 18] [8,
 
 /-- Matura 1: Q₃ − Q₁ = 25 − 12 = 13; meja 25 + 1,5·13 = 25 + 19,5 = 44,5; 50 > 44,5, zato je 50 osamelec.
 trditev: MAT-SS-4/statistika#matura1
-besedilo: »Osamelci zgoraj so podatki nad $Q_3 + 1{,}5 \cdot 13 = 25 + 19{,}5 = 44{,}5$.« -/
+besedilo: »Odgovor: medkvartilni razmik je $13$ minut. Ker je $50 > 44{,}5$, je podatek $50$ osamelec.« -/
 theorem matura1 : (25 : ℝ) - 12 = 13 ∧ (25 : ℝ) + 1.5 * 13 = 25 + 19.5 ∧ (25 : ℝ) + 19.5 = 44.5 ∧
     (44.5 : ℝ) < 50 := by norm_num
 
 /-- Matura 2 a): x̄ = 1080/6 = 180; odkloni −6, 6, −9, 9, 3, −3; kvadrati 36, 36, 81, 81, 9, 9; vsota 252;
 varianca 252 : 6 = 42.
 trditev: MAT-SS-4/statistika#matura2a
-besedilo: »a) Odkloni od sredine so $-6, 6, -9, 9, 3, -3$, njihovi kvadrati $36, 36, 81, 81, 9, 9$, vsota kvadratov je $252$.« -/
+besedilo: »a) Varianca šestih mas je $252 : 6 = 42$« -/
 theorem matura2a : (174 : ℝ) + 186 + 171 + 189 + 183 + 177 = 1080 ∧ (1080 : ℝ) / 6 = 180 ∧
     ((174 : ℝ) - 180 = -6 ∧ (186 : ℝ) - 180 = 6 ∧ (171 : ℝ) - 180 = -9 ∧ (189 : ℝ) - 180 = 9 ∧
       (183 : ℝ) - 180 = 3 ∧ (177 : ℝ) - 180 = -3) ∧
@@ -452,7 +451,7 @@ theorem matura2a : (174 : ℝ) + 186 + 171 + 189 + 183 + 177 = 1080 ∧ (1080 : 
 
 /-- Matura 2 a): σ = √42 = 6,4807… ≈ 6,48 g; točkovanje: z N − 1 bi bilo √(252/5) ≈ 7,10 g.
 trditev: MAT-SS-4/statistika#matura2a-sigma
-besedilo: »a) Varianca šestih mas je $252 : 6 = 42$, njihov standardni odklon pa $\sqrt{42} = 6{,}4807\ldots \approx 6{,}48\,\mathrm{g}$.« -/
+besedilo: »njihov standardni odklon pa $\sqrt{42} = 6{,}4807\ldots \approx 6{,}48\,\mathrm{g}$« -/
 theorem matura2a_sigma : |√(42 : ℝ) - 6.4807| < 0.0001 ∧ |√(42 : ℝ) - 6.48| < 0.005 ∧
     |√((252 : ℝ) / 5) - 7.10| < 0.005 := by
   have h1 : (6.4806 : ℝ) < √42 := (Real.lt_sqrt (by norm_num)).mpr (by norm_num)
@@ -470,7 +469,7 @@ theorem matura2b : ((170 : ℝ) - 180) / 8 = -1.25 ∧ (0.5 : ℝ) + (-0.3944) =
 /-- Matura 2 c): z₁ = (176 − 180)/8 = −0,5, z₂ = (194 − 180)/8 = 1,75; 0,4599 + 0,1915 = 0,6514;
 0,6514·2000 = 1302,8 ≈ 1303.
 trditev: MAT-SS-4/statistika#matura2c
-besedilo: »$P(176 < X < 194) = \Phi(1{,}75) - \Phi(-0{,}5) = 0{,}4599 + 0{,}1915 = 0{,}6514$« -/
+besedilo: »$0{,}6514 \cdot 2000 = 1302{,}8 \approx 1303$« -/
 theorem matura2c : ((176 : ℝ) - 180) / 8 = -0.5 ∧ ((194 : ℝ) - 180) / 8 = 1.75 ∧
     (0.4599 : ℝ) + 0.1915 = 0.6514 ∧ (0.6514 : ℝ) * 2000 = 1302.8 ∧ |(1302.8 : ℝ) - 1303| < 0.5 := by
   norm_num [abs_lt]
@@ -502,7 +501,7 @@ theorem kviz4 : ((23 : ℝ) - 20) / 1 = 3 ∧ ((23 : ℝ) - 20) / 3 = 1 ∧ (0.5
 /-- Preveri se 4 (brez tabele): ker je Φ naraščajoča (φ > 0), je P(Z > 3) < P(Z > 1), torej je verjetnost
 pri B večja kot pri A.
 trditev: MAT-SS-4/statistika#kviz4-primerjava
-besedilo: »Sredina je enaka, razpršenost ne. Meja $23$ je pri A $3\sigma$, pri B le $1\sigma$ od sredine.« -/
+besedilo: »Pri B je $z = 1$, $P = 0{,}5 - 0{,}3413 \approx 16\,\%$; pri A je $z = 3$, $P \approx 0{,}13\,\%$.« -/
 theorem kviz4_primerjava : ∫ x in Ioi 3, φ x < ∫ x in Ioi 1, φ x := by
   rw [P_vec, P_vec]
   have h : 0 < ∫ x in (1 : ℝ)..3, φ x :=

@@ -103,7 +103,7 @@ example : (0:ℝ) ≤ 2 := by norm_num
 /-- Uvod: kocke z robom 2, 3, 4 porabijo 8, 27, 64 kock; iz 50 kock zgradiš največ kocko z robom 3
 (3³ = 27 ≤ 50 < 64 = 4³), ne 50 : 3.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#uvod
-besedilo: »Za kocko z robom $2$ kocki jih porabiš $8$, za rob $3$ že $27$, za rob $4$ kar $64$.« -/
+besedilo: »Odgovor ni $50 : 3$, ampak največje celo število, katerega tretja potenca ne preseže $50$: to je $3$, ker je $4^3 = 64$ že preveč.« -/
 theorem uvod : (2:ℕ) ^ 3 = 8 ∧ (3:ℕ) ^ 3 = 27 ∧ (4:ℕ) ^ 3 = 64 ∧
     (∀ a : ℕ, a ^ 3 ≤ 50 ↔ a ≤ 3) := by
   refine ⟨by norm_num, by norm_num, by norm_num, fun a => ⟨fun h => ?_, fun h => ?_⟩⟩
@@ -131,7 +131,7 @@ example :=
 
 /-- Najprej opazuj (tabela): vrednosti x², x³, x⁴ pri x = −2, −1, 0, 1, 2.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#tabela
-besedilo: »Dobiš točke grafa $y = \sqrt[3]{x}$: $(-8, -2)$, $(-1, -1)$, $(0, 0)$, $(1, 1)$, $(8, 2)$.« -/
+besedilo: »| $-2$ | $4$ | $-8$ | $16$ | | $-1$ | $1$ | $-1$ | $1$ | | $0$ | $0$ | $0$ | $0$ | | $1$ | $1$ | $1$ | $1$ | | $2$ | $4$ | $8$ | $16$ |« -/
 theorem tabela : ((-2:ℝ) ^ 2 = 4 ∧ (-2:ℝ) ^ 3 = -8 ∧ (-2:ℝ) ^ 4 = 16) ∧
     ((-1:ℝ) ^ 2 = 1 ∧ (-1:ℝ) ^ 3 = -1 ∧ (-1:ℝ) ^ 4 = 1) ∧ ((0:ℝ) ^ 2 = 0 ∧ (0:ℝ) ^ 3 = 0 ∧ (0:ℝ) ^ 4 = 0) ∧
     ((1:ℝ) ^ 2 = 1 ∧ (1:ℝ) ^ 3 = 1 ∧ (1:ℝ) ^ 4 = 1) ∧ ((2:ℝ) ^ 2 = 4 ∧ (2:ℝ) ^ 3 = 8 ∧ (2:ℝ) ^ 4 = 16) := by
@@ -139,7 +139,7 @@ theorem tabela : ((-2:ℝ) ^ 2 = 4 ∧ (-2:ℝ) ^ 3 = -8 ∧ (-2:ℝ) ^ 4 = 16) 
 
 /-- Pravilo za sode eksponente: (−x)ⁿ = xⁿ (soda funkcija), vrednosti niso negativne.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#sod-eksponent
-besedilo: »Pravilo za sode eksponente.** Pri sodem $n \ge 2$ je $(-x)^n = x^n$, zato je funkcija **soda**: graf je simetričen glede na os $y$.« -/
+besedilo: »Pri sodem $n \ge 2$ je $(-x)^n = x^n$, zato je funkcija **soda**: graf je simetričen glede na os $y$. Vrednosti niso nikoli negativne« -/
 theorem sod_eksponent {n : ℕ} (hn : Even n) (x : ℝ) : (-x) ^ n = x ^ n ∧ 0 ≤ x ^ n :=
   ⟨hn.neg_pow x, hn.pow_nonneg x⟩
 
@@ -153,7 +153,7 @@ example :=
 
 /-- Pravilo za sode eksponente: Z_f = [0, ∞) (n sod, n ≥ 2).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#sod-zaloga
-besedilo: »Pravilo za sode eksponente.** Pri sodem $n \ge 2$ je $(-x)^n = x^n$,« -/
+besedilo: »Vrednosti niso nikoli negativne, $Z_f = [0, \infty)$.« -/
 theorem sod_zaloga {n : ℕ} (hn : Even n) (hn0 : n ≠ 0) : Set.range (fun x : ℝ => x ^ n) = Set.Ici 0 := by
   ext y; constructor
   · rintro ⟨x, rfl⟩; exact hn.pow_nonneg x
@@ -202,7 +202,7 @@ example :=
 /-- Pravilo za lihe eksponente: (−x)ⁿ = −xⁿ (liha funkcija), povsod narašča, Z_f = R, skozi (−1, −1),
 (0, 0), (1, 1).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#lih-eksponent
-besedilo: »Pravilo za lihe eksponente.** Pri lihem $n \ge 3$ je $(-x)^n = -x^n$, funkcija je **liha**: graf je simetričen glede na izhodišče. Funkcija povsod narašča in doseže vsa realna števila, $Z_f = \mathbb{R}$. Graf gre skozi $(-1, -1)$, $(0, 0)$ in $(1, 1)$.« -/
+besedilo: »Pri lihem $n \ge 3$ je $(-x)^n = -x^n$, funkcija je **liha**: graf je simetričen glede na izhodišče. Funkcija povsod narašča in doseže vsa realna števila, $Z_f = \mathbb{R}$. Graf gre skozi $(-1, -1)$, $(0, 0)$ in $(1, 1)$.« -/
 theorem lih_eksponent {n : ℕ} (hn : Odd n) :
     (∀ x : ℝ, (-x) ^ n = -x ^ n) ∧ StrictMono (fun x : ℝ => x ^ n) ∧ Set.range (fun x : ℝ => x ^ n) = Set.univ ∧
     (-1:ℝ) ^ n = -1 ∧ (0:ℝ) ^ n = 0 ∧ (1:ℝ) ^ n = 1 := by
@@ -274,7 +274,7 @@ theorem negativni (x : ℝ) (n : ℕ) : x ^ (-(n:ℤ)) = 1 / x ^ n := by
 
 /-- Negativni eksponent: definicijsko območje R \ {0}: imenovalec xⁿ je nič natanko pri x = 0 (n ≥ 1).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#negativni-d
-besedilo: »Funkcija je $f(x) = \frac{1}{x^n}$, zato je definirana za vse $x \ne 0$ in nikoli ne doseže vrednosti $0$.« -/
+besedilo: »Deliti z $0$ ne smemo, zato je $D_f = \mathbb{R} \setminus \{0\}$.« -/
 theorem negativni_D {n : ℕ} (hn : n ≠ 0) (x : ℝ) : x ^ n ≠ 0 ↔ x ≠ 0 :=
   not_congr (pow_eq_zero_iff hn)
 
@@ -308,7 +308,7 @@ example :=
 
 /-- Negativni eksponent: ko gre x z desne proti 0, x^(−n) raste čez vse meje (asimptota x = 0).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#negativni-pri-nic
-besedilo: »graf je hiperbola z asimptotama $x = 0$ in $y = 0$.« -/
+besedilo: »graf se ob osi $y$ dviga (pri lihem $n$ levo od nje spušča) čez vse meje« -/
 theorem negativni_pri_nic {n : ℕ} (hn : n ≠ 0) : Tendsto (fun x : ℝ => x ^ (-(n:ℤ))) (𝓝[>] 0) atTop := by
   have h1 : Tendsto (fun x : ℝ => x ^ n) (𝓝[>] 0) (𝓝[>] 0) := by
     apply tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within
@@ -329,7 +329,7 @@ example :=
 
 /-- Negativni eksponent, lihi n: ko gre x z leve proti 0, gre x^(−n) proti −∞.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#negativni-lih-z-leve
-besedilo: »Ko se $x$ oddaljuje od $0$, gre vrednost proti $0$.« -/
+besedilo: »graf se ob osi $y$ dviga (pri lihem $n$ levo od nje spušča) čez vse meje« -/
 theorem negativni_lih_z_leve {n : ℕ} (hn : Odd n) : Tendsto (fun x : ℝ => x ^ (-(n:ℤ))) (𝓝[<] 0) atBot := by
   have hn0 : n ≠ 0 := by rintro rfl; exact Nat.not_odd_zero hn
   have h1 : Tendsto (fun x : ℝ => x ^ n) (𝓝[<] 0) (𝓝[<] 0) := by
@@ -351,7 +351,7 @@ example :=
 
 /-- Negativni eksponent, sodi n: ko gre x z leve proti 0, gre x^(−n) proti +∞.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#negativni-sod-z-leve
-besedilo: »gre vrednost proti $0$.« -/
+besedilo: »graf se ob osi $y$ dviga (pri lihem $n$ levo od nje spušča) čez vse meje« -/
 theorem negativni_sod_z_leve {n : ℕ} (hn : Even n) (hn0 : n ≠ 0) :
     Tendsto (fun x : ℝ => x ^ (-(n:ℤ))) (𝓝[<] 0) atTop := by
   have h1 : Tendsto (fun x : ℝ => x ^ n) (𝓝[<] 0) (𝓝[>] 0) := by
@@ -374,7 +374,7 @@ example :=
 /-- Negativni eksponent, zaloga vrednosti: pri sodem n (n ≥ 2) je Z = (0, ∞), pri lihem n je Z = R \ {0}
 (D = R \ {0}).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#negativni-zaloga
-besedilo: »Funkcija $y = x^{-2}$ ima zalogo vrednosti $(0, \infty)$;« -/
+besedilo: »Pri sodem $n$ je funkcija soda, vse vrednosti so pozitivne in graf gre skozi točki $(-1, 1)$ in $(1, 1)$. Pri lihem $n$ je funkcija liha, $Z_f = \mathbb{R} \setminus \{0\}$« -/
 theorem negativni_zaloga {n : ℕ} (hn0 : n ≠ 0) :
     (Even n → (fun x : ℝ => x ^ (-(n:ℤ))) '' {x | x ≠ 0} = Ioi 0) ∧
     (Odd n → (fun x : ℝ => x ^ (-(n:ℤ))) '' {x | x ≠ 0} = {y | y ≠ 0}) := by
@@ -504,7 +504,7 @@ example :=
 
 /-- Slika v besedah: točka (2, 8) na grafu x³ preide v (8, 2) na grafu ∛x.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#zrcalna-tocka
-besedilo: »Slika v besedah.** Graf korena dobiš, ko graf potence zrcališ čez premico $y = x$: točka $(2, 8)$ na grafu $x^3$ preide v $(8, 2)$ na grafu $\sqrt[3]{x}$.« -/
+besedilo: »točka $(2, 8)$ na grafu $x^3$ preide v $(8, 2)$ na grafu $\sqrt[3]{x}$« -/
 theorem zrcalna_tocka : (2:ℝ) ^ 3 = 8 ∧ koren 3 8 = 2 :=
   ⟨by norm_num, koren_eq (by norm_num) (by norm_num) (by norm_num)⟩
 
@@ -517,13 +517,13 @@ theorem koren_kvadrata (x : ℝ) : √(x ^ 2) = |x| := Real.sqrt_sq_eq_abs x
 
 /-- Transformacije: graf √(x − 2) + 1 je definiran za x ≥ 2 in se začne v točki (2, 1).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#premik-korena
-besedilo: »Transformacije.** Potence in korene premikamo in raztegujemo kot druge grafe. Graf $\sqrt{x - 2} + 1$ je graf $\sqrt{x}$, premaknjen za $2$ v desno in za $1$ navzgor; začne se v točki $(2, 1)$.« -/
+besedilo: »Graf $\sqrt{x - 2} + 1$ je graf $\sqrt{x}$, premaknjen za $2$ v desno in za $1$ navzgor; začne se v točki $(2, 1)$.« -/
 theorem premik_korena : √((2:ℝ) - 2) + 1 = 1 ∧ ∀ x : ℝ, 2 ≤ x → 1 ≤ √(x - 2) + 1 :=
   ⟨by norm_num, fun x _ => by have := Real.sqrt_nonneg (x - 2); linarith⟩
 
 /-- Transformacije: pri y = a(x − p)ⁿ + q (n ≥ 1) točka (0, 0) preide v (p, q).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#premik-tocka
-besedilo: »Pri $y = a \cdot (x - p)^n + q$ točka $(0, 0)$ preide v $(p, q)$; pri $n < 0$ sta asimptoti $x = p$ in $y = q$.« -/
+besedilo: »Pri $y = a \cdot (x - p)^n + q$ točka $(0, 0)$ preide v $(p, q)$« -/
 theorem premik_tocka (a p q : ℝ) {n : ℕ} (hn : n ≠ 0) : a * (p - p) ^ n + q = q := by
   rw [sub_self, zero_pow hn]; ring
 
@@ -538,7 +538,7 @@ example :=
 /-- Transformacije, negativni eksponent: pri y = a(x − p)^(−n) + q (a ≠ 0) je D = R \ {p} (imenovalec
 (x − p)ⁿ je nič le pri x = p), vrednosti q funkcija ne doseže.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#premik-asimptota
-besedilo: »Pri $y = a \cdot (x - p)^n + q$ točka $(0, 0)$ preide v $(p, q)$;« -/
+besedilo: »Zato je $D = \mathbb{R} \setminus \{p\}$, vrednosti $q$ pa funkcija ne doseže« -/
 theorem premik_asimptota {a p q : ℝ} (ha : a ≠ 0) {n : ℕ} (hn : n ≠ 0) (x : ℝ) :
     ((x - p) ^ n ≠ 0 ↔ x ≠ p) ∧ (x ≠ p → a * (x - p) ^ (-(n:ℤ)) + q ≠ q) := by
   refine ⟨by rw [Ne, pow_eq_zero_iff hn, sub_eq_zero], fun hx => ?_⟩
@@ -556,7 +556,7 @@ example :=
 /-- Transformacije: pri lihem n je (p, q) središče simetrije grafa y = a(x − p)ⁿ + q: točki pri x = p + t in
 x = p − t sta simetrični glede na (p, q), f(p + t) + f(p − t) = 2q.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#premik-sredisce
-besedilo: »Graf $y = a \cdot (x - p)^n + q$ dobiš iz grafa $x^n$ tako,« -/
+besedilo: »Točka $(0, 0)$ preide v $(p, q)$: pri lihem $n$ je to novo središče simetrije« -/
 theorem premik_sredisce {n : ℕ} (hn : Odd n) (a p q t : ℝ) :
     (a * ((p + t) - p) ^ n + q) + (a * ((p - t) - p) ^ n + q) = 2 * q := by
   rw [show (p + t) - p = t by ring, show (p - t) - p = -t by ring, hn.neg_pow]; ring
@@ -574,7 +574,7 @@ example :=
 /-- Potenčna odvisnost: c(2x)ⁿ = 2ⁿ · c · xⁿ; pri V = a³ dvakrat daljši rob da 8-krat večjo prostornino;
 pri y = c x⁻² se y zmanjša na četrtino.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#podvojitev
-besedilo: »Pri premem sorazmerju se $y$ le podvoji, pri $V = a^3$ se poveča $8$-krat, pri $y = c \cdot x^{-2}$ pa pade na četrtino.« -/
+besedilo: »$$c \cdot (2x)^n = 2^n \cdot c \cdot x^n$$ Pri premem sorazmerju se $y$ le podvoji, pri $V = a^3$ se poveča $8$-krat, pri $y = c \cdot x^{-2}$ pa pade na četrtino.« -/
 theorem podvojitev (c x : ℝ) (n : ℕ) : c * (2 * x) ^ n = 2 ^ n * c * x ^ n ∧ (2 * x) ^ 3 = 8 * x ^ 3 ∧
     c * (2 * x) ^ (-2:ℤ) = c * x ^ (-2:ℤ) / 4 := by
   refine ⟨by rw [mul_pow]; ring, by ring, ?_⟩
@@ -583,7 +583,7 @@ theorem podvojitev (c x : ℝ) (n : ℕ) : c * (2 * x) ^ n = 2 ^ n * c * x ^ n �
 /-- Lesene kocke: količniki m/a so 0,6; 2,4; 5,4 (masa ni premo sorazmerna z robom), količniki m/a³ so vsi
 0,6, zato m = 0,6 a³ (0,6 · 3³ = 16,2; 16,2 : 3 = 5,4).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#lesene-kocke
-besedilo: »Količniki $\frac{m}{a}$ so $0{,}6$; $2{,}4$ in $5{,}4$, torej masa ni premo sorazmerna z robom.« -/
+besedilo: »Količniki $\frac{m}{a}$ so $0{,}6$; $2{,}4$ in $5{,}4$, torej masa ni premo sorazmerna z robom. Količniki $\frac{m}{a^3}$ pa so vsi enaki $0{,}6$: masa je potenčno odvisna od roba, $m = 0{,}6 \cdot a^3$« -/
 theorem lesene_kocke : (0.6:ℝ) / 1 = 0.6 ∧ (4.8:ℝ) / 2 = 2.4 ∧ (16.2:ℝ) / 3 = 5.4 ∧
     (0.6:ℝ) / 1 ^ 3 = 0.6 ∧ (4.8:ℝ) / 2 ^ 3 = 0.6 ∧ (16.2:ℝ) / 3 ^ 3 = 0.6 ∧ (0.6:ℝ) * 3 ^ 3 = 16.2 := by
   norm_num
@@ -616,7 +616,7 @@ theorem eksponent_iz_podvojitve (n : ℤ) : (2:ℝ) ^ n = 4 ↔ n = 2 := by
 /-- Modeliranje: skozi dve točki gre premica in tudi parabola (npr. skozi (30; 4,5) in (60; 18) gresta
 s = 0,45v − 9 in s = 0,005v²), zato dve meritvi ne zadoščata za izbiro modela.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#dve-tocki
-besedilo: »Janova premica skozi $(30; 4{,}5)$ in $(60; 18)$ ima smerni koeficient $k = \dfrac{18 - 4{,}5}{60 - 30} = 0{,}45$, njen predpis je $s = 0{,}45 \cdot v - 9$.« -/
+besedilo: »Skozi dve točki gre premica, pa tudi parabola in marsikatera krivulja, zato dve meritvi ne zadoščata za izbiro modela.« -/
 theorem dve_tocki : (0.45:ℝ) * 30 - 9 = 4.5 ∧ (0.45:ℝ) * 60 - 9 = 18 ∧ (0.005:ℝ) * 30 ^ 2 = 4.5 ∧
     (0.005:ℝ) * 60 ^ 2 = 18 := by norm_num
 
@@ -667,7 +667,7 @@ theorem primer2 :
 /-- Primer 3: a₁ = ∛0,5 ≈ 0,794 m (≈ 79 cm), preizkus 0,794³ ≈ 0,5; a₂ = ∛1 = 1; a₂/a₁ = 1/∛0,5 = ∛2 ≈ 1,26,
 tudi 1/0,794 ≈ 1,26 (rob le ≈ 1,26-krat daljši, ne dvakrat).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#primer3
-besedilo: »Razmerje: $\dfrac{a_2}{a_1} = \dfrac{1}{0{,}794} \approx 1{,}26$, kar je $\sqrt[3]{2}$, ker se je prostornina podvojila.« -/
+besedilo: »Rob je inverzna funkcija prostornine: $a_1 = \sqrt[3]{0{,}5}\,\mathrm{m} \approx 0{,}794\,\mathrm{m}$. 2. Preizkus: $0{,}794^3 \approx 0{,}5$, kar se ujema. 3. Za $V_2 = 1\,\mathrm{m^3}$ je $a_2 = \sqrt[3]{1}\,\mathrm{m} = 1\,\mathrm{m}$. 4. Razmerje: $\dfrac{a_2}{a_1} = \dfrac{1}{0{,}794} \approx 1{,}26$, kar je $\sqrt[3]{2}$, ker se je prostornina podvojila.« -/
 theorem primer3 : 0.7935 < koren 3 0.5 ∧ koren 3 0.5 < 0.7945 ∧ 0.785 < koren 3 0.5 ∧ koren 3 0.5 < 0.795 ∧
     0.45 < (0.794:ℝ) ^ 3 ∧ (0.794:ℝ) ^ 3 < 0.55 ∧ koren 3 1 = 1 ∧ 1 / koren 3 0.5 = koren 3 2 ∧
     1.255 < koren 3 2 ∧ koren 3 2 < 1.265 ∧ 1.255 < 1 / (0.794:ℝ) ∧ 1 / (0.794:ℝ) < 1.265 ∧ koren 3 2 ≠ 2 := by
@@ -687,7 +687,7 @@ theorem primer3 : 0.7935 < koren 3 0.5 ∧ koren 3 0.5 < 0.7945 ∧ 0.785 < kore
 /-- Primer 4: b = S · a⁻¹; b₁ = 1,2/0,8 = 1,5 m, b₂ = 1,2/1,6 = 0,75 m (dvakrat daljša → dvakrat ožja),
 preizkus 1,6 · 0,75 = 1,2.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#primer4
-besedilo: »$b_1 = 1{,}5\,\mathrm{m}$. Pri dvakrat daljši plošči je širina dvakrat manjša: $b_2 = 0{,}75\,\mathrm{m}$ (preizkus: $1{,}6 \cdot 0{,}75 = 1{,}2$).« -/
+besedilo: »$b_1 = 1{,}5 \mathrm{m}$. Pri dvakrat daljši plošči je širina dvakrat manjša: $b_2 = 0{,}75 \mathrm{m}$ (preizkus: $1{,}6 \cdot 0{,}75 = 1{,}2$).« -/
 theorem primer4 : (1.2:ℝ) * 0.8⁻¹ = 1.2 / 0.8 ∧ (1.2:ℝ) / 0.8 = 1.5 ∧ (1.2:ℝ) / 1.6 = 0.75 ∧
     (1.2:ℝ) / (2 * 0.8) = (1.2 / 0.8) / 2 ∧ (1.6:ℝ) * 0.75 = 1.2 := by norm_num
 
@@ -696,7 +696,7 @@ s = 0,45v − 9; pri 90: 31,5 ≠ 40,5; pri 10: −4,5 < 0; podvojitev: 4 · 4,5
 c = 4,5/30² = 4,5/900 = 0,005; preizkus 0,005 · 90² = 40,5, 0,005 · 120² = 72, pri v = 0 pot 0; ocena
 0,005 · 50² = 12,5.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#primer5
-besedilo: »Količniki $\dfrac{s}{v}$ so $\dfrac{4{,}5}{30} = 0{,}15$; $\dfrac{18}{60} = 0{,}3$; $\dfrac{40{,}5}{90} = 0{,}45$ in $\dfrac{72}{120} = 0{,}6$. Niso stalni, zato zavorna pot ni premo sorazmerna s hitrostjo.« -/
+besedilo: »Količniki $\dfrac{s}{v}$ so $\dfrac{4{,}5}{30} = 0{,}15$; $\dfrac{18}{60} = 0{,}3$; $\dfrac{40{,}5}{90} = 0{,}45$ in $\dfrac{72}{120} = 0{,}6$. Niso stalni, zato zavorna pot ni premo sorazmerna s hitrostjo. 2. Janova premica skozi $(30; 4{,}5)$ in $(60; 18)$ ima smerni koeficient $k = \dfrac{18 - 4{,}5}{60 - 30} = 0{,}45$, njen predpis je $s = 0{,}45 \cdot v - 9$. 3. Preizkus pri $90\,\mathrm{km/h}$: $0{,}45 \cdot 90 - 9 = 31{,}5$, izmerili pa so $40{,}5\,\mathrm{m}$. Pri $10\,\mathrm{km/h}$ bi bila pot $0{,}45 \cdot 10 - 9 = -4{,}5$ metra, kar je nesmiselno. Linearni model zavrnemo. 4. Ko se hitrost podvoji (s $30$ na $60$ in s $60$ na $120\,\mathrm{km/h}$), se pot početveri: $4 \cdot 4{,}5 = 18$ in $4 \cdot 18 = 72$. Iz $2^n = 4$ sledi $n = 2$. 5. $c = \dfrac{4{,}5}{30^2} = \dfrac{4{,}5}{900} = 0{,}005$, model je $s = 0{,}005 \cdot v^2$. 6. Preizkus: $0{,}005 \cdot 90^2 = 40{,}5$ in $0{,}005 \cdot 120^2 = 72$. Model se ujema z vsemi meritvami, pri $v = 0$ pa smiselno da pot $0$. 7. Ocena: $0{,}005 \cdot 50^2 = 12{,}5$.« -/
 theorem primer5 :
     (4.5:ℝ) / 30 = 0.15 ∧ (18:ℝ) / 60 = 0.3 ∧ (40.5:ℝ) / 90 = 0.45 ∧ (72:ℝ) / 120 = 0.6 ∧
     ((18:ℝ) - 4.5) / (60 - 30) = 0.45 ∧ (0.45:ℝ) * 30 - 9 = 4.5 ∧ (0.45:ℝ) * 60 - 9 = 18 ∧
@@ -715,7 +715,7 @@ noncomputable def f6 (x : ℝ) : ℝ := 2 / (x - 1) - 1
 D_f = R \ {1} (imenovalec je nič le pri x = 1); Z_f = R \ {−1}; ničla x = 3 (2/(x − 1) = 1, x − 1 = 2);
 f(0) = 2/(−1) − 1 = −3; f(−1) = −2, f(2) = 1, f(5) = −0,5.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#primer6
-besedilo: »Še nekaj točk: $f(-1) = -2$; $f(2) = 1$; $f(5) = -0{,}5$.« -/
+besedilo: »Faktor $2$ jo raztegne v smeri osi $y$: $(1, 1)$ preide v $(1, 2)$. Premik za $1$ v desno in za $1$ navzdol prestavi $(1, 2)$ v $(2, 1)$, središče $(0, 0)$ pa v $(1, -1)$. 3. Asimptoti imata enačbi $x = 1$ in $y = -1$. Zato je $D_f = \mathbb{R} \setminus \{1\}$. Ulomek $\frac{2}{x - 1}$ ni nikoli $0$, doseže pa vsa druga števila, zato je $Z_f = \mathbb{R} \setminus \{-1\}$. 4. Ničla je rešitev enačbe $\dfrac{2}{x - 1} = 1$: $x - 1 = 2$, torej $x = 3$. 5. Presečišče z osjo $y$: $f(0) = \dfrac{2}{-1} - 1 = -3$, točka $(0, -3)$. 6. Še nekaj točk: $f(-1) = -2$; $f(2) = 1$; $f(5) = -0{,}5$.« -/
 theorem primer6 :
     (∀ x : ℝ, f6 x = 2 * (x - 1) ^ (-1:ℤ) - 1) ∧ (2 * (1:ℝ) = 2) ∧ ((1:ℝ) + 1 = 2 ∧ (2:ℝ) - 1 = 1) ∧
     ((0:ℝ) + 1 = 1 ∧ (0:ℝ) - 1 = -1) ∧ (∀ x : ℝ, x - 1 ≠ 0 ↔ x ≠ 1) ∧
@@ -778,7 +778,7 @@ theorem primer6_limita : Tendsto f6 atTop (𝓝 (-1)) := by
 
 /-- Primer 6: asimptota x = 1 – ko gre x z desne proti 1, f(x) raste čez vse meje.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#primer6-asimptota-x
-besedilo: »Odgovor: hiperbola s središčem $(1, -1)$ in asimptotama $x = 1$, $y = -1$; $D_f = \mathbb{R} \setminus \{1\}$, $Z_f = \mathbb{R} \setminus \{-1\}$, ničla $x = 3$, presečišče z osjo $y$ je $(0, -3)$, funkcija pada na obeh intervalih.« -/
+besedilo: »Asimptoti imata enačbi $x = 1$ in $y = -1$.« -/
 theorem primer6_asimptota_x : Tendsto f6 (𝓝[>] 1) atTop := by
   have h1 : Tendsto (fun x : ℝ => x - 1) (𝓝[>] 1) (𝓝[>] 0) := by
     apply tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within
@@ -792,7 +792,7 @@ theorem primer6_asimptota_x : Tendsto f6 (𝓝[>] 1) atTop := by
 
 /-- Primer 6: f(x) → −1 tudi, ko x → −∞.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#primer6-limita-minus
-besedilo: »| $-1$ | $1$ | $-1$ | $1$ |« -/
+besedilo: »Asimptoti imata enačbi $x = 1$ in $y = -1$.« -/
 theorem primer6_limita_minus : Tendsto f6 atBot (𝓝 (-1)) := by
   have h1 : Tendsto (fun x : ℝ => x - 1) atBot atBot := tendsto_atBot_add_const_right _ (-1) tendsto_id
   have h2 : Tendsto (fun x : ℝ => 2 * (x - 1)⁻¹) atBot (𝓝 (2 * 0)) :=
@@ -804,7 +804,7 @@ theorem primer6_limita_minus : Tendsto f6 atBot (𝓝 (-1)) := by
 
 /-- Primer 6: asimptota x = 1 – ko gre x z leve proti 1, gre f(x) proti −∞.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#primer6-asimptota-x-leve
-besedilo: »hiperbola s središčem $(1, -1)$ in asimptotama $x = 1$,« -/
+besedilo: »Asimptoti imata enačbi $x = 1$ in $y = -1$.« -/
 theorem primer6_asimptota_x_leve : Tendsto f6 (𝓝[<] 1) atBot := by
   have h1 : Tendsto (fun x : ℝ => x - 1) (𝓝[<] 1) (𝓝[<] 0) := by
     apply tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within
@@ -821,7 +821,7 @@ theorem primer6_asimptota_x_leve : Tendsto f6 (𝓝[<] 1) atBot := by
 /-- Pogoste napake: 2⁻² = 1/4 (ne −4), x⁻² > 0 za x ≠ 0; pri lihem n je (−1)ⁿ = −1; √9 = 3 ≠ −3; ∛(−8) = −2;
 dvakrat daljši rob da 2³ = 8-krat večjo prostornino; pri podvojeni prostornini rob zraste za ∛2 ≈ 1,26.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#pogoste-napake
-besedilo: »»$x^{-2}$ je negativno.«** Učenec bere minus v eksponentu kot minus pred številom: $2^{-2} = -4$.« -/
+besedilo: »Negativni eksponent pomeni obratno vrednost: $2^{-2} = \frac{1}{4}$. Graf $x^{-2}$ leži v celoti nad osjo $x$. - **»Vsi grafi gredo skozi $(-1, 1)$.«** To velja le za sode eksponente. Pri lihem $n$ je $(-1)^n = -1$, graf gre skozi $(-1, -1)$. Pred risanjem preveri parnost eksponenta. - **»$\sqrt{x^2} = x$« (napačno).** Za $x = -3$ dobimo $\sqrt{9} = 3$, ne $-3$. Koren je inverz le desne polovice parabole, zato $\sqrt{x^2} = |x|$. - **»$\sqrt[3]{-8}$ ne obstaja.«** Prepoved negativnih števil velja za korene sode stopnje. Liha potenca je injektivna na vsem $\mathbb{R}$, zato $\sqrt[3]{-8} = -2$. - **»Dvakrat večji rob, dvakrat več lesa.«** Prostornina raste s tretjo potenco: dvakrat daljši rob da $2^3 = 8$-krat večjo prostornino. Obratno pri podvojeni prostornini rob zraste le za faktor $\sqrt[3]{2} \approx 1{,}26$.« -/
 theorem pogoste_napake : (2:ℝ) ^ (-2:ℤ) = 1 / 4 ∧ (2:ℝ) ^ (-2:ℤ) ≠ -4 ∧ (∀ x : ℝ, x ≠ 0 → 0 < x ^ (-2:ℤ)) ∧
     (-1:ℝ) ^ 3 = -1 ∧ √((-3:ℝ) ^ 2) = 3 ∧ koren 3 (-8) = -2 ∧ (2:ℝ) ^ 3 = 8 ∧
     1.255 < koren 3 2 ∧ koren 3 2 < 1.265 := by
@@ -838,7 +838,7 @@ noncomputable def g1 (x : ℝ) : ℝ := (x - 1) ^ (-2:ℤ) + 2
 
 /-- Naloga 1: g(x) = 1/(x − 1)² + 2; D_g = R \ {1}; zaloga x⁻² je (0, ∞), Z_g = (2, ∞).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#matura1
-besedilo: »Odgovor: $D_g = \mathbb{R} \setminus \{1\}$, $Z_g = (2, \infty)$, asimptoti sta $x = 1$ in $y = 2$.« -/
+besedilo: »Odgovor: $D_g = \mathbb{R} \setminus \{1\}$, $Z_g = (2, \infty)$« -/
 theorem matura1 : (∀ x : ℝ, g1 x = 1 / (x - 1) ^ 2 + 2) ∧ (∀ x : ℝ, (x - 1) ^ 2 ≠ 0 ↔ x ≠ 1) ∧
     (fun x : ℝ => x ^ (-2:ℤ)) '' {x | x ≠ 0} = Set.Ioi 0 ∧ g1 '' {x | x ≠ 1} = Set.Ioi 2 := by
   have hg : ∀ x : ℝ, g1 x = 1 / (x - 1) ^ 2 + 2 := fun x => by unfold g1; simp [zpow_neg, one_div]
@@ -864,7 +864,7 @@ theorem matura1 : (∀ x : ℝ, g1 x = 1 / (x - 1) ^ 2 + 2) ∧ (∀ x : ℝ, (x
 
 /-- Naloga 1 in RACUN: asimptoti x = 1 in y = 2: g(x) → 2, ko x → ∞, in g(x) → ∞, ko x → 1.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#matura1-asimptoti
-besedilo: »1 točka za obe asimptoti $x = 1$ in $y = 2$.« -/
+besedilo: »Asimptoti funkcije $y = x^{-2}$ sta $x = 0$ in $y = 0$; po premiku sta to premici $x = 1$ in $y = 2$.« -/
 theorem matura1_asimptoti : Tendsto g1 atTop (𝓝 2) ∧ Tendsto g1 (𝓝[≠] 1) atTop := by
   have hg : ∀ x : ℝ, g1 x = ((x - 1) ^ 2)⁻¹ + 2 := fun x => by unfold g1; rw [zpow_neg]; norm_num
   constructor
@@ -889,7 +889,7 @@ theorem matura1_asimptoti : Tendsto g1 atTop (𝓝 2) ∧ Tendsto g1 (𝓝[≠] 
 /-- Naloga 2 a): T/l: 1,0/0,25 = 4; 2,0/1,00 = 2; 3,0/2,25 ≈ 1,33; 4,0/4,00 = 1 (ni stalen); štirikratna dolžina
 (1 → 4) da le dvakraten čas (2 → 4).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#matura2a
-besedilo: »a) Pri premem sorazmerju bi bil količnik $\dfrac{T}{l}$ stalen. Iz tabele je $\dfrac{1{,}0}{0{,}25} = 4$; $\dfrac{2{,}0}{1{,}00} = 2$; $\dfrac{3{,}0}{2{,}25} \approx 1{,}33$ in $\dfrac{4{,}0}{4{,}00} = 1$.« -/
+besedilo: »Iz tabele je $\dfrac{1{,}0}{0{,}25} = 4$; $\dfrac{2{,}0}{1{,}00} = 2$; $\dfrac{3{,}0}{2{,}25} \approx 1{,}33$ in $\dfrac{4{,}0}{4{,}00} = 1$. 2. a) Količnik ni stalen: ko se dolžina poveča z $1\,\mathrm{m}$ na $4\,\mathrm{m}$ (štirikrat), se nihajni čas le podvoji.« -/
 theorem matura2a : (1.0:ℝ) / 0.25 = 4 ∧ (2.0:ℝ) / 1.00 = 2 ∧ 1.325 < (3.0:ℝ) / 2.25 ∧ (3.0:ℝ) / 2.25 < 1.335 ∧
     (4.0:ℝ) / 4.00 = 1 ∧ (1.0:ℝ) / 0.25 ≠ 2.0 / 1.00 ∧ (4:ℝ) = 4 * 1 ∧ (4.0:ℝ) = 2 * 2.0 := by norm_num
 
@@ -905,7 +905,7 @@ theorem matura2b : √(0.25:ℝ) = 0.5 ∧ √(1:ℝ) = 1 ∧ √(2.25:ℝ) = 1.
 
 /-- Naloga 2 c): T = 2√1,5 ≈ 2,4495 ≈ 2,45 s.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#matura2c
-besedilo: »c) $T = 2\sqrt{1{,}5} \approx 2{,}4495$, torej približno $2{,}45\,\mathrm{s}$.« -/
+besedilo: »c) $T = 2\sqrt{1{,}5} \approx 2{,}4495$, torej približno $2{,}45 \mathrm{s}$.« -/
 theorem matura2c : 2.44945 < 2 * √(1.5:ℝ) ∧ 2 * √(1.5:ℝ) < 2.44955 ∧ 2.445 < 2 * √(1.5:ℝ) ∧ 2 * √(1.5:ℝ) < 2.455 := by
   have a : (1.224725:ℝ) < √1.5 := (Real.lt_sqrt (by norm_num)).mpr (by norm_num)
   have b : √(1.5:ℝ) < 1.224775 := (Real.sqrt_lt' (by norm_num)).mpr (by norm_num)
@@ -914,7 +914,7 @@ theorem matura2c : 2.44945 < 2 * √(1.5:ℝ) ∧ 2 * √(1.5:ℝ) < 2.44955 ∧
 /-- Naloga 2 d): iz T = 2√l (T ≥ 0) sledi √l = T/2 in l = T²/4 (inverz); za T = 1,5: l = 1,5²/4 = 2,25/4 = 0,5625 m
 ≈ 56 cm; RACUN: 2√l = 1,5 ⇔ l = 0,5625.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#matura2d
-besedilo: »d) Za $T = 1{,}5\,\mathrm{s}$: $l = \dfrac{1{,}5^2}{4} = \dfrac{2{,}25}{4} = 0{,}5625\,\mathrm{m}$, torej približno $56\,\mathrm{cm}$.« -/
+besedilo: »Iz $T = 2\sqrt{l}$ dobimo $\sqrt{l} = \dfrac{T}{2}$ in po kvadriranju $l = \dfrac{T^2}{4}$. Dolžina je potenčna funkcija nihajnega časa z eksponentom $2$, inverzna h korenski funkciji $T = 2\sqrt{l}$. 7. d) Za $T = 1{,}5\,\mathrm{s}$: $l = \dfrac{1{,}5^2}{4} = \dfrac{2{,}25}{4} = 0{,}5625\,\mathrm{m}$, torej približno $56\,\mathrm{cm}$.« -/
 theorem matura2d (T l : ℝ) (hT : 0 ≤ T) (hl : 0 ≤ l) : (T = 2 * √l ↔ √l = T / 2) ∧ (T = 2 * √l ↔ l = T ^ 2 / 4) ∧
     (1.5:ℝ) ^ 2 / 4 = 2.25 / 4 ∧ (2.25:ℝ) / 4 = 0.5625 ∧ (55.5:ℝ) ≤ 0.5625 * 100 ∧ (0.5625:ℝ) * 100 < 56.5 ∧
     (2 * √l = 1.5 ↔ l = 0.5625) := by
@@ -940,7 +940,7 @@ example :=
 /-- Korak za korakom: zamenjani stolpci tabele x³ dajo točke grafa ∛x: (−8, −2), (−1, −1), (0, 0), (1, 1), (8, 2);
 iz tabele x² za x ≥ 0 točke grafa √x: (0, 0), (1, 1), (4, 2), (9, 3).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#korak-tocke
-besedilo: »Zamenjaj stolpca. Dobiš točke grafa $y = \sqrt[3]{x}$: $(-8, -2)$, $(-1, -1)$, $(0, 0)$, $(1, 1)$, $(8, 2)$.« -/
+besedilo: »Dobiš točke grafa $y = \sqrt[3]{x}$: $(-8, -2)$, $(-1, -1)$, $(0, 0)$, $(1, 1)$, $(8, 2)$. 3. Vriši jih in poveži. Med $-1$ in $1$ je graf strm, dlje od izhodišča pa zelo položen: da $y$ naraste z $1$ na $2$, mora $x$ zrasti z $1$ na $8$. 4. Za $\sqrt{x}$ vzameš le vrstice z $x \ge 0$ iz tabele $x^2$: $(0, 0)$, $(1, 1)$, $(4, 2)$, $(9, 3)$.« -/
 theorem korak_tocke : koren 3 (-8) = -2 ∧ koren 3 (-1) = -1 ∧ koren 3 0 = 0 ∧ koren 3 1 = 1 ∧ koren 3 8 = 2 ∧
     √(0:ℝ) = 0 ∧ √(1:ℝ) = 1 ∧ √(4:ℝ) = 2 ∧ √(9:ℝ) = 3 := by
   have h3 : Odd 3 := ⟨1, rfl⟩
@@ -952,7 +952,7 @@ theorem korak_tocke : koren 3 (-8) = -2 ∧ koren 3 (-1) = -1 ∧ koren 3 0 = 0 
 
 /-- Kot zgodba: stranica z 2 na 4 m da štirikrat več ploščic (4² = 4 · 2²); za 20 m² je stranica √20 ≈ 4,5 m.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#zgodba
-besedilo: »Maja zdaj računa nazaj, s korenom: $\sqrt{20} \approx 4{,}5$, torej stranico približno $4{,}5\,\mathrm{m}$.« -/
+besedilo: »Maja nariše kvadrat in ga razdeli na četrtine: štirikrat več. Ploščina je $a^2$, soda potenca; dolžina stranice ni nikoli negativna, zato šteje le desna polovica parabole. Naslednji teden naročnik kupi $20\,\mathrm{m^2}$ ploščic po akciji in vpraša, kako veliko teraso bo s tem pokril. Maja zdaj računa nazaj, s korenom: $\sqrt{20} \approx 4{,}5$« -/
 theorem zgodba : (4:ℝ) ^ 2 = 4 * 2 ^ 2 ∧ 4.45 < √(20:ℝ) ∧ √(20:ℝ) < 4.55 :=
   ⟨by norm_num, (Real.lt_sqrt (by norm_num)).mpr (by norm_num), (Real.sqrt_lt' (by norm_num)).mpr (by norm_num)⟩
 
@@ -961,14 +961,14 @@ theorem zgodba : (4:ℝ) ^ 2 = 4 * 2 ^ 2 ∧ 4.45 < √(20:ℝ) ∧ √(20:ℝ) 
 /-- Preveri se, 1: x⁻² da pri −2, −1, 1, 2 vrednosti 1/4, 1, 1, 1/4; x² da pri 2 vrednost 4, x⁻¹ pri −1 vrednost
 −1, −x² da negativne vrednosti.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#preveri1
-besedilo: »$x^2$ je res soda, vendar da pri $x = 2$ vrednost $4$, ne $\frac{1}{4}$.« -/
+besedilo: »$x^{-2} = \frac{1}{x^2}$ je soda: $f(\pm 1) = 1$ in $f(\pm 2) = \frac{1}{4}$.« -/
 theorem preveri1 : (-2:ℝ) ^ (-2:ℤ) = 1 / 4 ∧ (-1:ℝ) ^ (-2:ℤ) = 1 ∧ (1:ℝ) ^ (-2:ℤ) = 1 ∧ (2:ℝ) ^ (-2:ℤ) = 1 / 4 ∧
     (2:ℝ) ^ 2 = 4 ∧ (-1:ℝ) ^ (-1:ℤ) = -1 ∧ -(1:ℝ) ^ 2 < 0 := by norm_num
 
 /-- Preveri se, 2: 3³ = 27 < 30 < 64 = 4³, ∛30 ≈ 3,1 (natančneje ≈ 3,11); 10³ = 1000; 5,5² ≈ 30, 5,5³ ≈ 166;
 2,5³ ≈ 15,6.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#preveri2
-besedilo: »$2{,}5^3 \approx 15{,}6$, kar je polovica od $30$; ker je $30$ blizu $27$, je koren blizu $3$.« -/
+besedilo: »$3^3 = 27$ in $4^3 = 64$, $30$ je malo nad $27$, zato je $\sqrt[3]{30}$ malo nad $3$ (približno $3{,}11$).« -/
 theorem preveri2 : 3.105 < koren 3 30 ∧ koren 3 30 < 3.115 ∧ 3.05 < koren 3 30 ∧ koren 3 30 < 3.15 ∧
     (10:ℝ) ^ 3 = 1000 ∧ (5.5:ℝ) ^ 2 = 30.25 ∧ (5.5:ℝ) ^ 3 = 166.375 ∧ (2.5:ℝ) ^ 3 = 15.625 ∧
     (27:ℝ) < 30 ∧ (30:ℝ) < 64 := by
@@ -984,7 +984,7 @@ theorem preveri3 : Function.Injective (fun x : ℝ => x ^ 3) ∧ (-2:ℝ) ^ 2 = 
 
 /-- Preveri se, 4: 2ⁿ = 1/8 ⇔ n = −3 (2⁻³ = 1/2³ = 1/8); 2³ = 8, 2⁻⁸ = 1/256, 2⁻⁴ = 1/16.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#preveri4
-besedilo: »$2^{-4} = \frac{1}{16}$; ulomek $\frac{1}{8}$ ustreza $2^3$ v imenovalcu.« -/
+besedilo: »$2^{-3} = \frac{1}{2^3} = \frac{1}{8}$.« -/
 theorem preveri4 (n : ℤ) : ((2:ℝ) ^ n = 1 / 8 ↔ n = -3) ∧ (2:ℝ) ^ (-3:ℤ) = 1 / 2 ^ 3 ∧ (2:ℝ) ^ (-8:ℤ) = 1 / 256 ∧
     (2:ℝ) ^ (-4:ℤ) = 1 / 16 := by
   refine ⟨?_, by norm_num, by norm_num, by norm_num⟩
@@ -992,7 +992,7 @@ theorem preveri4 (n : ℤ) : ((2:ℝ) ^ n = 1 / 8 ↔ n = -3) ∧ (2:ℝ) ^ (-3:
 
 /-- Preveri se, 5: (3a)³ = 27a³ (3² = 9 je razmerje ploščin ploskev).
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#preveri5
-besedilo: »$3^2 = 9$ je razmerje ploščin ene ploskve,« -/
+besedilo: »$V = a^3$, zato $(3a)^3 = 27a^3$.« -/
 theorem preveri5 (a : ℝ) : (3 * a) ^ 3 = 27 * a ^ 3 ∧ (3 * a) ^ 2 = 9 * a ^ 2 := ⟨by ring, by ring⟩
 
 /-- Preveri se, 6: y = c xⁿ z vrednostmi 3, 24, 192 pri x = 1, 2, 4: 24/3 = 192/24 = 8 = 2³, torej n = 3, c = 3.
@@ -1039,7 +1039,7 @@ theorem racun (n : ℤ) : (3.0:ℝ) / √2.25 = 2 ∧ (1.0:ℝ) / √0.25 = 2 �
 
 /-- Modeliranje (realni eksponent): 2^r = 4 ⇔ r = 2 in 3 · 2^r = 24 ⇔ r = 3 tudi za realni r.
 trditev: MAT-SS-2/potencna-in-korenska-funkcija#eksponent-realni
-besedilo: »Pri $x = 1$, $2$ in $4$ so vrednosti $y = 3$, $24$ in $192$.« -/
+besedilo: »če se pri podvojenem $x$ vrednost $y$ pomnoži s $4$, je $2^n = 4$ in $n = 2$« -/
 theorem eksponent_realni (r : ℝ) : ((2:ℝ) ^ r = 4 ↔ r = 2) ∧ ((3:ℝ) * 2 ^ r = 24 ↔ r = 3) := by
   have inj : ∀ a b : ℝ, (2:ℝ) ^ a = 2 ^ b ↔ a = b := fun a b =>
     ⟨fun h => le_antisymm ((Real.rpow_le_rpow_left_iff (by norm_num)).mp h.le)

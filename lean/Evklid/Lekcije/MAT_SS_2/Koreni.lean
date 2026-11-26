@@ -49,7 +49,7 @@ example :=
 
 /-- Razlaga 2: za a ≥ 0 in n ≥ 1 je (ⁿ√a)ⁿ = a.
 trditev: MAT-SS-2/koreni#koren-pot
-besedilo: »2. n-ti koren.** Za naravno število $n \ge 2$ je $\sqrt[n]{a}$ tisto število $b$, za katero velja $b^n = a$.« -/
+besedilo: »Za naravno število $n \ge 2$ je $\sqrt[n]{a}$ tisto število $b$, za katero velja $b^n = a$.« -/
 theorem koren_pot {n : ℕ} (hn : n ≠ 0) {a : ℝ} (ha : 0 ≤ a) : koren n a ^ n = a := by
   simp only [koren, ha, ↓reduceIte]; exact Real.rpow_inv_natCast_pow ha hn
 
@@ -63,7 +63,7 @@ example :=
 
 /-- Razlaga 2: če je b ≥ 0 in bⁿ = a, je ⁿ√a = b.
 trditev: MAT-SS-2/koreni#koren-eq
-besedilo: »2. n-ti koren.** Za naravno število $n \ge 2$ je $\sqrt[n]{a}$ tisto število $b$, za katero velja $b^n = a$.« -/
+besedilo: »Za naravno število $n \ge 2$ je $\sqrt[n]{a}$ tisto število $b$, za katero velja $b^n = a$.« -/
 theorem koren_eq {n : ℕ} (hn : n ≠ 0) {a b : ℝ} (hb : 0 ≤ b) (h : b ^ n = a) : koren n a = b := by
   subst h; simp only [koren, pow_nonneg hb n, ↓reduceIte]; exact Real.pow_rpow_inv_natCast hb hn
 
@@ -77,7 +77,7 @@ example :=
 
 /-- Razlaga 2: pri lihem n je (ⁿ√a)ⁿ = a za vsak realni a, tudi negativen.
 trditev: MAT-SS-2/koreni#koren-lih-pot
-besedilo: »Pri **lihem** $n$ je koren definiran tudi za negativne $a$: $\sqrt[3]{-27} = -3$, ker je $(-3)^3 = -27$.« -/
+besedilo: »Pri **lihem** $n$ je koren definiran tudi za negativne $a$« -/
 theorem koren_lih_pot {n : ℕ} (hn : Odd n) (a : ℝ) : koren n a ^ n = a := by
   have hn0 : n ≠ 0 := by rintro rfl; exact Nat.not_odd_zero hn
   by_cases ha : 0 ≤ a
@@ -95,7 +95,7 @@ example :=
 
 /-- Razlaga 2 in Ustno vprašanje 1: pri lihem n je ⁿ√a edino realno število b z bⁿ = a.
 trditev: MAT-SS-2/koreni#koren-lih
-besedilo: »Pri lihem $n$ je $\sqrt[n]{a}$ definiran za vsako realno število $a$,« -/
+besedilo: »Pri lihem $n$ je $\sqrt[n]{a}$ definiran za vsako realno število $a$, tudi za negativno. Enačba $x^n = a$ ima pri lihem $n$ natanko eno realno rešitev $x = \sqrt[n]{a}$.« -/
 theorem koren_lih {n : ℕ} (hn : Odd n) (a b : ℝ) : b ^ n = a ↔ b = koren n a := by
   constructor
   · intro h; exact hn.pow_inj.mp (by rw [h, koren_lih_pot hn])
@@ -126,7 +126,7 @@ example :=
 
 /-- Razlaga 2: pri sodem n negativno število ni n-ta potenca nobenega realnega števila.
 trditev: MAT-SS-2/koreni#sod-negativen
-besedilo: »2. n-ti koren.** Za naravno število $n \ge 2$ je $\sqrt[n]{a}$ tisto število $b$,« -/
+besedilo: »**Sodi koren** negativnega števila ni realen« -/
 theorem sod_negativen {n : ℕ} (hn : Even n) {a : ℝ} (ha : a < 0) (b : ℝ) : b ^ n ≠ a := by
   have := hn.pow_nonneg b; intro h; linarith
 
@@ -140,7 +140,7 @@ example :=
 
 /-- Ustno vprašanje 1: pri sodem n in a > 0 ima xⁿ = a natanko rešitvi ±ⁿ√a.
 trditev: MAT-SS-2/koreni#enacba-sod-poz
-besedilo: »Zato ima enačba $x^n = a$ pri sodem $n$ dve rešitvi $\pm\sqrt[n]{a}$, če je $a > 0$, eno rešitev $0$, če je $a = 0$, in nobene realne rešitve, če je $a < 0$.« -/
+besedilo: »Zato ima enačba $x^n = a$ pri sodem $n$ dve rešitvi $\pm\sqrt[n]{a}$, če je $a > 0$« -/
 theorem enacba_sod_poz {n : ℕ} (hn : Even n) (hn0 : n ≠ 0) {a : ℝ} (ha : 0 < a) (x : ℝ) :
     x ^ n = a ↔ x = koren n a ∨ x = -koren n a := by
   constructor
@@ -164,7 +164,7 @@ example :=
 
 /-- Ustno vprašanje 1: pri sodem n in a = 0 ima xⁿ = 0 le rešitev 0.
 trditev: MAT-SS-2/koreni#enacba-sod-nic
-besedilo: »Zato ima enačba $x^n = a$ pri sodem $n$ dve rešitvi $\pm\sqrt[n]{a}$,« -/
+besedilo: »eno rešitev $0$, če je $a = 0$« -/
 theorem enacba_sod_nic {n : ℕ} (hn0 : n ≠ 0) (x : ℝ) : x ^ n = 0 ↔ x = 0 := pow_eq_zero_iff hn0
 
 /-- Predpostavke trditve `enacba_sod_nic` se dajo izpolniti. -/
@@ -177,7 +177,7 @@ example :=
 
 /-- Ustno vprašanje 1: pri sodem n in a < 0 enačba xⁿ = a nima realne rešitve.
 trditev: MAT-SS-2/koreni#enacba-sod-neg
-besedilo: »Zato ima enačba $x^n = a$ pri sodem $n$ dve rešitvi $\pm\sqrt[n]{a}$, če je $a > 0$, eno rešitev $0$, če je $a = 0$, in nobene realne rešitve, če je $a < 0$.« -/
+besedilo: »in nobene realne rešitve, če je $a < 0$« -/
 theorem enacba_sod_neg {n : ℕ} (hn : Even n) {a : ℝ} (ha : a < 0) : ¬ ∃ x : ℝ, x ^ n = a :=
   fun ⟨x, hx⟩ => sod_negativen hn ha x hx
 
@@ -204,8 +204,7 @@ example :=
   enacba_lih (hn := w)
 
 /-- Kvadratni koren je koren z eksponentom 2: za a ≥ 0 je ²√a = √a.
-trditev: MAT-SS-2/koreni#koren-dva
-besedilo: »Kvadratni koren.** Za $a \ge 0$ je $\sqrt{a}$ **nenegativno** število,« -/
+pomozno -/
 theorem koren_dva {a : ℝ} (ha : 0 ≤ a) : koren 2 a = √a :=
   koren_eq (by norm_num) (Real.sqrt_nonneg a) (Real.sq_sqrt ha)
 
@@ -218,8 +217,7 @@ example :=
   koren_dva (ha := w)
 
 /-- Ocena korena: če je 0 ≤ lo, loⁿ < a < hiⁿ, je lo < ⁿ√a < hi.
-trditev: MAT-SS-2/koreni#koren-med
-besedilo: »Ocena korena.** Če $a$ ni popoln kvadrat,« -/
+pomozno -/
 theorem koren_med {n : ℕ} (hn : n ≠ 0) {a lo hi : ℝ} (ha : 0 ≤ a) (hhi : 0 ≤ hi)
     (h1 : lo ^ n < a) (h2 : a < hi ^ n) : lo < koren n a ∧ koren n a < hi := by
   have hr := koren_pot hn ha
@@ -236,7 +234,7 @@ example :=
 
 /-- Ocena kvadratnega korena: 0 ≤ lo, lo² < x < hi², 0 < hi ⇒ lo < √x < hi.
 trditev: MAT-SS-2/koreni#koren2-med
-besedilo: »Ocena korena.** Če $a$ ni popoln kvadrat, koren ocenimo med dvema celima številoma.« -/
+besedilo: »Če $a$ ni popoln kvadrat, koren ocenimo med dvema celima številoma.« -/
 theorem koren2_med {x lo hi : ℝ} (hlo : 0 ≤ lo) (hhi : 0 < hi) (h1 : lo ^ 2 < x) (h2 : x < hi ^ 2) :
     lo < √x ∧ √x < hi :=
   ⟨(Real.lt_sqrt hlo).mpr h1, (Real.sqrt_lt' hhi).mpr h2⟩
@@ -291,7 +289,7 @@ example : (0:ℝ) ≤ 3 := by norm_num
 
 /-- Razlaga 1: za a ≥ 0 je (√a)² = a.
 trditev: MAT-SS-2/koreni#kvadrat-korena
-besedilo: »$$\left(\sqrt{a}\right)^2 = a \quad (a \ge 0), \qquad \sqrt{x^2} = |x| \quad (x \in \mathbb{R}).$$« -/
+besedilo: »\left(\sqrt{a}\right)^2 = a \quad (a \ge 0)« -/
 theorem kvadrat_korena {a : ℝ} (ha : 0 ≤ a) : √a ^ 2 = a := Real.sq_sqrt ha
 
 /-- Predpostavke trditve `kvadrat_korena` se dajo izpolniti. -/
@@ -304,7 +302,7 @@ example :=
 
 /-- Razlaga 1 in Bolj natančno: √(x²) = |x| za vsak realni x.
 trditev: MAT-SS-2/koreni#koren-kvadrata
-besedilo: »\qquad \sqrt{x^2} = |x| \quad (x \in \mathbb{R}).$$« -/
+besedilo: »\sqrt{x^2} = |x| \quad (x \in \mathbb{R})« -/
 theorem koren_kvadrata (x : ℝ) : √(x ^ 2) = |x| := Real.sqrt_sq_eq_abs x
 
 /-- Razlaga 1 in Pogoste napake: √((−3)²) = √9 = 3 = |−3| in ne −3.
@@ -317,19 +315,19 @@ theorem koren_minus3 : √((-3:ℝ) ^ 2) = √9 ∧ √(9:ℝ) = 3 ∧ (3:ℝ) =
 
 /-- Razlaga 1: √a je nenegativen (in v realnih številih noben y nima y² < 0: koren negativnega števila ne obstaja).
 trditev: MAT-SS-2/koreni#koren-definicija
-besedilo: »1. Kvadratni koren.** Za $a \ge 0$ je $\sqrt{a}$ **nenegativno** število, katerega kvadrat je $a$. Pogoj $a \ge 0$ je nujen: v realnih številih ne obstaja kvadratni koren negativnega števila. Velja« -/
+besedilo: »Za $a \ge 0$ je $\sqrt{a}$ **nenegativno** število, katerega kvadrat je $a$. Pogoj $a \ge 0$ je nujen: v realnih številih ne obstaja kvadratni koren negativnega števila.« -/
 theorem koren_definicija (a : ℝ) : 0 ≤ √a ∧ (a < 0 → ¬ ∃ y : ℝ, y ^ 2 = a) :=
   ⟨Real.sqrt_nonneg a, fun ha ⟨y, hy⟩ => by nlinarith [sq_nonneg y]⟩
 
 /-- Razlaga 2: ∛(−27) = −3, ker je (−3)³ = −27.
 trditev: MAT-SS-2/koreni#kubicni-m27
-besedilo: »Pri **lihem** $n$ je koren definiran tudi za negativne $a$: $\sqrt[3]{-27} = -3$, ker je $(-3)^3 = -27$.« -/
+besedilo: »$\sqrt[3]{-27} = -3$, ker je $(-3)^3 = -27$.« -/
 theorem kubicni_m27 : ((-3:ℝ)) ^ 3 = -27 ∧ koren 3 (-27) = -3 :=
   ⟨by norm_num, ((koren_lih ⟨1, rfl⟩ (-27) (-3)).mp (by norm_num)).symm⟩
 
 /-- Povzetek: lihi koren negativnega števila je realen: ∛(−8) = −2, ker je (−2)³ = −8.
 trditev: MAT-SS-2/koreni#kubicni-m8
-besedilo: »Sodi koren** negativnega števila ni realen; **lihi** je: $\sqrt[3]{-8} = -2$.« -/
+besedilo: »**lihi** je: $\sqrt[3]{-8} = -2$« -/
 theorem kubicni_m8 : ((-2:ℝ)) ^ 3 = -8 ∧ koren 3 (-8) = -2 :=
   ⟨by norm_num, ((koren_lih ⟨1, rfl⟩ (-8) (-2)).mp (by norm_num)).symm⟩
 
@@ -366,7 +364,7 @@ theorem tabela2 : √(4:ℝ) * √25 = 2 * 5 ∧ (2:ℝ) * 5 = 10 ∧ √(100:�
 /-- Razlaga 3, tabela, 3. vrstica in uvod: √2 · √225 = √450 = √225 · √2 = 15√2, oba izraza sta ≈ 21,21
 (tudi 1,414 · 15 = 21,21).
 trditev: MAT-SS-2/koreni#tabela3
-besedilo: »Vsakič dobiš isto: v prvi vrstici $6$, v drugi $10$, v zadnji pa sta oba izraza približno $21{,}21$. Zadnja vrstica je diagonala lista iz uvoda: $\sqrt{450} = \sqrt{225} \cdot \sqrt{2} = 15\sqrt{2}$.« -/
+besedilo: »v zadnji pa sta oba izraza približno $21{,}21$. Zadnja vrstica je diagonala lista iz uvoda: $\sqrt{450} = \sqrt{225} \cdot \sqrt{2} = 15\sqrt{2}$.« -/
 theorem tabela3 : √2 * √225 = √450 ∧ √(450:ℝ) = √225 * √2 ∧ √(225:ℝ) * √2 = 15 * √2 ∧
     (1.414:ℝ) * 15 = 21.21 ∧ 21.205 < √(450:ℝ) ∧ √(450:ℝ) < 21.215 := by
   have h225 : √(225:ℝ) = 15 := by rw [show (225:ℝ) = 15 ^ 2 by norm_num]; exact sqrt_kv (by norm_num)
@@ -378,7 +376,7 @@ theorem tabela3 : √2 * √225 = √450 ∧ √(450:ℝ) = √225 * √2 ∧ �
 /-- Zakaj se tega učimo: diagonala lista s stranico 15 cm je √(15² + 15²) = √450 ≈ 21,2 cm, ploščice s
 stranico 20 cm √(20² + 20²) ≈ 28,3 cm; količnik diagonala/stranica je obakrat √2 ≈ 1,41.
 trditev: MAT-SS-2/koreni#uvod-diagonale
-besedilo: »Ploščica s stranico $20\,\text{cm}$ ima diagonalo približno $28{,}3\,\text{cm}$.« -/
+besedilo: »List s stranico $15\,\text{cm}$ ima diagonalo približno $21{,}2\,\text{cm}$. Ploščica s stranico $20\,\text{cm}$ ima diagonalo približno $28{,}3\,\text{cm}$. Deli diagonalo s stranico: obakrat dobiš približno $1{,}41$. Po Pitagorovem izreku je diagonala lista dolga $\sqrt{15^2 + 15^2} = \sqrt{450}\,\text{cm}$.« -/
 theorem uvod_diagonale :
     √((15:ℝ) ^ 2 + 15 ^ 2) = √450 ∧ 21.15 < √(450:ℝ) ∧ √(450:ℝ) < 21.25 ∧
     28.25 < √((20:ℝ) ^ 2 + 20 ^ 2) ∧ √((20:ℝ) ^ 2 + 20 ^ 2) < 28.35 ∧
@@ -394,7 +392,7 @@ theorem uvod_diagonale :
 /-- Pravila za računanje: √(a · b) = √a · √b za a, b ≥ 0 (Bolj natančno: obe strani sta nenegativni in imata
 kvadrat ab).
 trditev: MAT-SS-2/koreni#koren-produkta
-besedilo: »Edino nenegativno število s kvadratom $ab$ pa je po definiciji $\sqrt{ab}$, zato je $\sqrt{a}\sqrt{b} = \sqrt{ab}$.« -/
+besedilo: »$\sqrt{a \cdot b} = \sqrt{a} \cdot \sqrt{b}$« -/
 theorem koren_produkta {a b : ℝ} (ha : 0 ≤ a) (_hb : 0 ≤ b) : √(a * b) = √a * √b := Real.sqrt_mul ha b
 
 /-- Predpostavke trditve `koren_produkta` se dajo izpolniti. -/
@@ -407,7 +405,7 @@ example :=
 
 /-- Bolj natančno: dokaz pravila za produkt po korakih: (√a√b)² = √a² · √b² = ab in √a√b ≥ 0, zato je to √(ab).
 trditev: MAT-SS-2/koreni#koren-produkta-dokaz
-besedilo: »$\left(\sqrt{a}\sqrt{b}\right)^2 = \sqrt{a}^2 \cdot \sqrt{b}^2 = ab$« -/
+besedilo: »Število $\sqrt{a}\sqrt{b}$ je nenegativno in njegov kvadrat je $\left(\sqrt{a}\sqrt{b}\right)^2 = \sqrt{a}^2 \cdot \sqrt{b}^2 = ab$. Edino nenegativno število s kvadratom $ab$ pa je po definiciji $\sqrt{ab}$, zato je $\sqrt{a}\sqrt{b} = \sqrt{ab}$.« -/
 theorem koren_produkta_dokaz {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) :
     (√a * √b) ^ 2 = √a ^ 2 * √b ^ 2 ∧ √a ^ 2 * √b ^ 2 = a * b ∧ 0 ≤ √a * √b ∧ √a * √b = √(a * b) := by
   refine ⟨by ring, by rw [Real.sq_sqrt ha, Real.sq_sqrt hb], by positivity, ?_⟩
@@ -448,7 +446,7 @@ theorem primer_25_4 : √((25:ℝ) / 4) = 5 / 2 := by
 
 /-- Pravila: ⁿ√(a · b) = ⁿ√a · ⁿ√b za a, b ≥ 0.
 trditev: MAT-SS-2/koreni#koren-n-produkta
-besedilo: »$\sqrt{a^2 b} = a\sqrt{b}$ za $a, b \ge 0$ (na pamet)« -/
+besedilo: »$\sqrt[n]{a \cdot b} = \sqrt[n]{a} \cdot \sqrt[n]{b}$« -/
 theorem koren_n_produkta (n : ℕ) {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) :
     koren n (a * b) = koren n a * koren n b := by
   simp only [koren, mul_nonneg ha hb, ha, hb, ↓reduceIte]; rw [Real.mul_rpow ha hb]
@@ -488,7 +486,7 @@ example :=
 
 /-- Pravila: primer √(√16) = ∜16 = 2.
 trditev: MAT-SS-2/koreni#primer-16
-besedilo: »$2^2 = 4$, $3^2 = 9$ in $4^2 = 16$, zato je $\sqrt{4} = 2$, $\sqrt{9} = 3$ in $\sqrt{16} = 4$.« -/
+besedilo: »$\sqrt{\sqrt{16}} = \sqrt[4]{16} = 2$« -/
 theorem primer_16 : √(√(16:ℝ)) = koren 4 16 ∧ koren 4 16 = 2 := by
   have h2 : koren 4 16 = 2 := koren_eq (by norm_num) (by norm_num) (by norm_num)
   refine ⟨?_, h2⟩
@@ -504,7 +502,7 @@ theorem vsota_ni : √(9:ℝ) + √16 = 3 + 4 ∧ (3:ℝ) + 4 = 7 ∧ √((9:ℝ
 
 /-- Premisli in razlaga: za seštevanje pravila ni, √(a + b) = √a + √b ne velja za vse a, b ≥ 0.
 trditev: MAT-SS-2/koreni#vsota-ni-pravilo
-besedilo: »$\left(\sqrt{a} - \sqrt{b}\right)\left(\sqrt{a} + \sqrt{b}\right) = a - b$« -/
+besedilo: »Za seštevanje pravila ni: **$\sqrt{a + b} \ne \sqrt{a} + \sqrt{b}$**.« -/
 theorem vsota_ni_pravilo : ¬ ∀ a b : ℝ, 0 ≤ a → 0 ≤ b → √(a + b) = √a + √b :=
   fun h => vsota_ni.2.2.2.2 (h 9 16 (by norm_num) (by norm_num))
 
@@ -516,7 +514,7 @@ theorem diagonala_ni_30 : √((15:ℝ) ^ 2 + 15 ^ 2) ≠ 15 + 15 := by
 
 /-- Ocena korena: 4² = 16, 5² = 25, zato 4 < √20 < 5; 4,4² = 19,36, 4,5² = 20,25, zato 4,4 < √20 < 4,5.
 trditev: MAT-SS-2/koreni#ocena-20
-besedilo: »Ker je $4{,}4^2 = 19{,}36$ in $4{,}5^2 = 20{,}25$, je še natančneje $4{,}4 < \sqrt{20} < 4{,}5$.« -/
+besedilo: »Ker je $4^2 = 16$ in $5^2 = 25$, velja $4 < \sqrt{20} < 5$. Ker je $4{,}4^2 = 19{,}36$ in $4{,}5^2 = 20{,}25$, je še natančneje $4{,}4 < \sqrt{20} < 4{,}5$.« -/
 theorem ocena_20 : (4:ℝ) ^ 2 = 16 ∧ (5:ℝ) ^ 2 = 25 ∧ 4 < √(20:ℝ) ∧ √(20:ℝ) < 5 ∧
     (4.4:ℝ) ^ 2 = 19.36 ∧ (4.5:ℝ) ^ 2 = 20.25 ∧ 4.4 < √(20:ℝ) ∧ √(20:ℝ) < 4.5 := by
   obtain ⟨a, b⟩ := koren2_med (x := 20) (lo := 4) (hi := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -548,7 +546,7 @@ theorem istovrstni_primer : 2 * √3 + 5 * √3 = 7 * √(3:ℝ) := by ring
 
 /-- Razlaga 4 in Pogoste napake: 2√3 + 3√5 = 5√8 ni res.
 trditev: MAT-SS-2/koreni#razlicni-koreni
-besedilo: »Seštevanje različnih korenov.** $2\sqrt{3} + 3\sqrt{5} = 5\sqrt{8}$ ni res.« -/
+besedilo: »$2\sqrt{3} + 3\sqrt{5} = 5\sqrt{8}$ ni res.« -/
 theorem razlicni_koreni : 2 * √3 + 3 * √5 ≠ 5 * √(8:ℝ) := by
   obtain ⟨_, a⟩ := s3; obtain ⟨_, b⟩ := s5
   obtain ⟨c, _⟩ := koren2_med (x := 8) (lo := 2.8) (hi := 3) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -572,7 +570,7 @@ example :=
 
 /-- Razlaga 5 in Pogoste napake: √72 = √(36 · 2) = 6√2; tudi √72 = 2√18 drži.
 trditev: MAT-SS-2/koreni#koren72
-besedilo: »Delno korenjenje do polovice.** $\sqrt{72} = 2\sqrt{18}$ drži, a ni končna oblika, ker je v $18$ še popolni kvadrat $9$. Izvleči moraš *največji* popolni kvadrat: $72 = 36 \cdot 2$, zato je $\sqrt{72} = 6\sqrt{2}$.« -/
+besedilo: »$\sqrt{72} = 2\sqrt{18}$ drži, a ni končna oblika, ker je v $18$ še popolni kvadrat $9$. Izvleči moraš *največji* popolni kvadrat: $72 = 36 \cdot 2$, zato je $\sqrt{72} = 6\sqrt{2}$.« -/
 theorem koren72 : √(72:ℝ) = √(36 * 2) ∧ √((36:ℝ) * 2) = 6 * √2 ∧ √(72:ℝ) = 2 * √18 := by
   have h : √((36:ℝ) * 2) = 6 * √2 := by
     rw [show (36:ℝ) = 6 ^ 2 by norm_num]; exact delno_korenjenje (by norm_num) (by norm_num)
@@ -600,7 +598,7 @@ example :=
 
 /-- Razlaga 5 in Korak za korakom: ∛54 = ∛(27 · 2) = 3∛2 ≈ 3,78.
 trditev: MAT-SS-2/koreni#kub54
-besedilo: »Kubični koren $\sqrt[3]{54}$.** Najdemo popolni kub: $54 = 27 \cdot 2$, zato je $\sqrt[3]{54} = 3\sqrt[3]{2} \approx 3{,}78$.« -/
+besedilo: »Najdemo popolni kub: $54 = 27 \cdot 2$, zato je $\sqrt[3]{54} = 3\sqrt[3]{2} \approx 3{,}78$.« -/
 theorem kub54 : koren 3 54 = koren 3 (27 * 2) ∧ koren 3 ((27:ℝ) * 2) = 3 * koren 3 2 ∧
     3.775 < 3 * koren 3 2 ∧ 3 * koren 3 2 < (3.785:ℝ) := by
   have h27 : koren 3 27 = 3 := koren_eq (by norm_num) (by norm_num) (by norm_num)
@@ -636,7 +634,7 @@ example :=
 /-- Razlaga 6 (konjugirani izraz): (√a + √b)(√a − √b) = a − b za a, b ≥ 0; Bolj natančno:
 (u − v)(u + v) = u² − v².
 trditev: MAT-SS-2/koreni#konjugirani
-besedilo: »Zakaj konjugirani izraz deluje?** Pri produktu $(u - v)(u + v)$ se mešana člena uničita in ostane $u^2 - v^2$. Če vstavimo $u = \sqrt{a}$ in $v = \sqrt{b}$, kvadrata korenov izgineta in ostane racionalno število $a - b$.« -/
+besedilo: »\left(\sqrt{a} + \sqrt{b}\right)\left(\sqrt{a} - \sqrt{b}\right) = a - b« -/
 theorem konjugirani {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) : (√a + √b) * (√a - √b) = a - b := by
   linear_combination (Real.sq_sqrt ha) - (Real.sq_sqrt hb)
 
@@ -649,7 +647,8 @@ example :=
   konjugirani (ha := w.1) (hb := w.2)
 
 /-- Pomožna trditev (orodje za dokaze v tej datoteki).
-pomozno -/
+trditev: MAT-SS-2/koreni#razlika-kvadratov
+besedilo: »Pri produktu $(u - v)(u + v)$ se mešana člena uničita in ostane $u^2 - v^2$.« -/
 theorem razlika_kvadratov (u v : ℝ) : (u - v) * (u + v) = u ^ 2 - v ^ 2 := by ring
 
 /-- Razlaga 6: 1/(√a − √b) = (√a + √b)/(a − b) za a, b ≥ 0, a ≠ b.
@@ -672,7 +671,7 @@ example :=
 /-- Razlaga 6: 3/(2 + √3) = 3(2 − √3)/(4 − 3) = 6 − 3√3; preverjanje 3/3,732 ≈ 0,804 in 6 − 5,196 = 0,804
 (6 − 3√3 ≈ 0,804).
 trditev: MAT-SS-2/koreni#racionalizacija-2-3
-besedilo: »Preverjanje: leva stran je $\dfrac{3}{3{,}732} \approx 0{,}804$, desna $6 - 5{,}196 = 0{,}804$.« -/
+besedilo: »$\dfrac{3}{2 + \sqrt{3}} = \dfrac{3\left(2 - \sqrt{3}\right)}{4 - 3} = 6 - 3\sqrt{3}$. Preverjanje: leva stran je $\dfrac{3}{3{,}732} \approx 0{,}804$, desna $6 - 5{,}196 = 0{,}804$.« -/
 theorem racionalizacija_2_3 : 3 / (2 + √3) = 3 * (2 - √3) / (4 - 3) ∧ 3 * (2 - √(3:ℝ)) / (4 - 3) = 6 - 3 * √3 ∧
     0.8035 < (3:ℝ) / 3.732 ∧ (3:ℝ) / 3.732 < 0.8045 ∧ (6:ℝ) - 5.196 = 0.804 ∧
     0.8035 < 6 - 3 * √(3:ℝ) ∧ 6 - 3 * √(3:ℝ) < 0.8045 := by
@@ -714,7 +713,7 @@ theorem kub4_iracionalen : 1 < koren 3 4 ∧ koren 3 4 < 2 ∧ Irrational (koren
 
 /-- Razlaga 7: kvadratni koren naravnega števila, ki ni popolni kvadrat, je iracionalen.
 trditev: MAT-SS-2/koreni#iracionalen
-besedilo: »Konstrukcija kvadratnih korenov.** Kvadratni koren naravnega števila, ki ni popolni kvadrat, je iracionalen: $\sqrt{2}$, $\sqrt{3}$, $\sqrt{5}$, $\sqrt{13}$ (dokaz je podoben kot za $\sqrt{2}$ v razdelku »Bolj natančno«).« -/
+besedilo: »Kvadratni koren naravnega števila, ki ni popolni kvadrat, je iracionalen« -/
 theorem iracionalen (n : ℕ) (h : ¬ IsSquare n) : Irrational (√(n:ℝ)) := irrational_sqrt_natCast_iff.mpr h
 
 /-- Predpostavke trditve `iracionalen` se dajo izpolniti. -/
@@ -727,7 +726,7 @@ example :=
 
 /-- Razlaga 7, Ustno vprašanje 3, Bolj natančno: √2, √3, √5 in √13 so iracionalni.
 trditev: MAT-SS-2/koreni#iracionalni
-besedilo: »Konstrukcija kvadratnih korenov.** Kvadratni koren naravnega števila, ki ni popolni kvadrat, je iracionalen: $\sqrt{2}$, $\sqrt{3}$, $\sqrt{5}$, $\sqrt{13}$ (dokaz je podoben kot za $\sqrt{2}$ v razdelku »Bolj natančno«).« -/
+besedilo: »Kvadratni koren naravnega števila, ki ni popolni kvadrat, je iracionalen: $\sqrt{2}$, $\sqrt{3}$, $\sqrt{5}$, $\sqrt{13}$« -/
 theorem iracionalni : Irrational √(2:ℝ) ∧ Irrational √(3:ℝ) ∧ Irrational √(5:ℝ) ∧ Irrational √(13:ℝ) := by
   refine ⟨irrational_sqrt_two, ?_, ?_, ?_⟩
   · simpa using Nat.prime_three.irrational_sqrt
@@ -750,7 +749,7 @@ example :=
 
 /-- Razlaga 7: decimalke √2, √3, √5 in √13 se nikoli ne končajo.
 trditev: MAT-SS-2/koreni#decimalke-korenov
-besedilo: »Kateti $1$ in $1$ dasta $\sqrt{2}$, kateti $1$ in $2$ dasta $\sqrt{5}$, kateti $2$ in $3$ dasta $\sqrt{13}$.« -/
+besedilo: »Njihove decimalke se nikoli ne končajo,« -/
 theorem decimalke_korenov (m : ℤ) (k : ℕ) : √(2:ℝ) ≠ m / 10 ^ k ∧ √(3:ℝ) ≠ m / 10 ^ k ∧ √(5:ℝ) ≠ m / 10 ^ k ∧
     √(13:ℝ) ≠ m / 10 ^ k :=
   ⟨decimalke_ne_koncajo iracionalni.1 m k, decimalke_ne_koncajo iracionalni.2.1 m k,
@@ -758,7 +757,7 @@ theorem decimalke_korenov (m : ℤ) (k : ℕ) : √(2:ℝ) ≠ m / 10 ^ k ∧ �
 
 /-- Ustno vprašanje 3 (koraki dokaza): iz p² = 2q² sledi, da je p sod; p = 2r da q² = 2r², torej je sod tudi q.
 trditev: MAT-SS-2/koreni#dokaz-koraki
-besedilo: »Zapišemo $p = 2r$ in dobimo $4r^2 = 2q^2$,« -/
+besedilo: »Potem je $p^2 = 2q^2$, torej je $p^2$ sodo, zato je sodo tudi $p$. Zapišemo $p = 2r$ in dobimo $4r^2 = 2q^2$, torej $q^2 = 2r^2$ in je sodo tudi $q$.« -/
 theorem dokaz_koraki (p q : ℤ) (h : p ^ 2 = 2 * q ^ 2) : Even p ∧ Even q := by
   have hp : Even p := by
     have : Even (p ^ 2) := ⟨q ^ 2, by rw [h]; ring⟩
@@ -777,14 +776,14 @@ example :=
 
 /-- Razlaga 7 (koren kot hipotenuza): kateti 1 in 1 dasta √2, 1 in 2 dasta √5, 2 in 3 dasta √13.
 trditev: MAT-SS-2/koreni#hipotenuze
-besedilo: »Koren kot hipotenuza.** Kateti $p$ in $q$ dasta hipotenuzo $\sqrt{p^2 + q^2}$. Kateti $1$ in $1$ dasta $\sqrt{2}$, kateti $1$ in $2$ dasta $\sqrt{5}$, kateti $2$ in $3$ dasta $\sqrt{13}$.« -/
+besedilo: »Kateti $1$ in $1$ dasta $\sqrt{2}$, kateti $1$ in $2$ dasta $\sqrt{5}$, kateti $2$ in $3$ dasta $\sqrt{13}$.« -/
 theorem hipotenuze : √((1:ℝ) ^ 2 + 1 ^ 2) = √2 ∧ √((1:ℝ) ^ 2 + 2 ^ 2) = √5 ∧ √((2:ℝ) ^ 2 + 3 ^ 2) = √13 := by
   norm_num
 
 /-- Razlaga 7 (spirala): na hipotenuzo √n postavimo kateto 1, nova hipotenuza je √((√n)² + 1²) = √(n + 1);
 po vrsti √2, √3, √4 = 2, √5.
 trditev: MAT-SS-2/koreni#spirala
-besedilo: »Spirala.** Na hipotenuzo $\sqrt{n}$ postavimo pravokotno kateto $1$. Nova hipotenuza je $\sqrt{n + 1}$, saj je $\left(\sqrt{n}\right)^2 + 1^2 = n + 1$. Tako dobimo po vrsti $\sqrt{2}$, $\sqrt{3}$, $\sqrt{4} = 2$, $\sqrt{5}$ in naprej (risba).« -/
+besedilo: »Nova hipotenuza je $\sqrt{n + 1}$, saj je $\left(\sqrt{n}\right)^2 + 1^2 = n + 1$.« -/
 theorem spirala (n : ℝ) (hn : 0 ≤ n) : √(√n ^ 2 + 1 ^ 2) = √(n + 1) := by rw [Real.sq_sqrt hn]; ring_nf
 
 /-- Predpostavke trditve `spirala` se dajo izpolniti. -/
@@ -801,7 +800,7 @@ theorem spirala_prvi : √(4:ℝ) = 2 := sqrt4
 
 /-- Razlaga 7 (koren kot kateta): hipotenuza 2 in kateta 1 dasta √(2² − 1²) = √3.
 trditev: MAT-SS-2/koreni#kateta-3
-besedilo: »Koren kot kateta.** Hipotenuza $h$ in kateta $p$ dasta drugo kateto $\sqrt{h^2 - p^2}$. Hipotenuza $2$ in kateta $1$ dasta $\sqrt{3}$.« -/
+besedilo: »Hipotenuza $2$ in kateta $1$ dasta $\sqrt{3}$.« -/
 theorem kateta_3 : √((2:ℝ) ^ 2 - 1 ^ 2) = √3 := by norm_num
 
 /-- Razlaga 7: točka √5 leži med 2 in 3.
@@ -828,7 +827,7 @@ theorem kubicni_na_pamet : koren 3 343 = 7 ∧ koren 3 (-64) = -4 ∧ (0.2:ℝ) 
 
 /-- Razlaga 8: ∛50 ≈ 3,684, ⁵√200 ≈ 2,885; brez oklepaja računalo izračuna 200¹ : 5 = 40.
 trditev: MAT-SS-2/koreni#racunalo
-besedilo: »Oklepaj je nujen, brez njega računalo izračuna $200^1 : 5 = 40$.« -/
+besedilo: »$\sqrt[3]{50} \approx 3{,}684$; - tipka za $n$-ti koren $\sqrt[\square]{\square}$: najprej vtipkaš korenski eksponent, nato korenjenec, na primer $\sqrt[5]{200} \approx 2{,}885$; - potenca z eksponentom $\frac{1}{n}$ (velja $a^{\frac{1}{n}} = \sqrt[n]{a}$, podrobneje v lekciji o potencah z racionalnimi eksponenti): koren $\sqrt[5]{200}$ vtipkaš kot `200 ^ (1 ÷ 5)`. Oklepaj je nujen, brez njega računalo izračuna $200^1 : 5 = 40$.« -/
 theorem racunalo : 3.6835 < koren 3 50 ∧ koren 3 50 < 3.6845 ∧ 2.8845 < koren 5 200 ∧ koren 5 200 < 2.8855 ∧
     (200:ℝ) ^ 1 / 5 = 40 := by
   obtain ⟨a, b⟩ := koren_med (n := 3) (a := 50) (lo := 3.6835) (hi := 3.6845) (by norm_num) (by norm_num)
@@ -839,7 +838,7 @@ theorem racunalo : 3.6835 < koren 3 50 ∧ koren 3 50 < 3.6845 ∧ 2.8845 < kore
 
 /-- Razlaga 8: aⁿ^(1/n) = ⁿ√a za a ≥ 0 (potenca z eksponentom 1/n).
 trditev: MAT-SS-2/koreni#potenca-1-n
-besedilo: »potenca z eksponentom $\frac{1}{n}$ (velja $a^{\frac{1}{n}} = \sqrt[n]{a}$,« -/
+besedilo: »$a^{\frac{1}{n}} = \sqrt[n]{a}$« -/
 theorem potenca_1_n {n : ℕ} {a : ℝ} (ha : 0 ≤ a) : a ^ ((1:ℝ) / n) = koren n a := by
   simp only [koren, ha, ↓reduceIte, one_div]
 
@@ -853,7 +852,7 @@ example :=
 
 /-- Razlaga 8 in Primer 6 b): ∛(−20) = −∛20 ≈ −2,714.
 trditev: MAT-SS-2/koreni#kub-m20
-besedilo: »$\sqrt[3]{-20} \approx -2{,}714$.« -/
+besedilo: »Lihi koren negativnega števila je realen: $\sqrt[3]{-20} \approx -2{,}714$. Nekatera računala pri potenci $(-20)^{1/3}$ javijo napako, tedaj izračunaš $-\sqrt[3]{20}$.« -/
 theorem kub_m20 : koren 3 (-20) = -koren 3 20 ∧ -2.7145 < koren 3 (-20) ∧ koren 3 (-20) < -2.7135 := by
   have e : koren 3 (-20) = -koren 3 20 := by
     simp only [koren]; norm_num
@@ -863,7 +862,7 @@ theorem kub_m20 : koren 3 (-20) = -koren 3 20 ∧ -2.7145 < koren 3 (-20) ∧ ko
 
 /-- Razlaga 8: sodi koren negativnega števila ni realen (npr. ni realnega b z b² = −20).
 trditev: MAT-SS-2/koreni#sodi-negativen
-besedilo: »Lihi koren negativnega števila je realen: $\sqrt[3]{-20} \approx -2{,}714$. Nekatera računala pri potenci $(-20)^{1/3}$ javijo napako, tedaj izračunaš $-\sqrt[3]{20}$. Sodi koren negativnega števila računalo zavrne z napako, ker ni realen.« -/
+besedilo: »Sodi koren negativnega števila računalo zavrne z napako, ker ni realen.« -/
 theorem sodi_negativen : ¬ ∃ b : ℝ, b ^ 2 = -20 := enacba_sod_neg even_two (by norm_num)
 
 /-- Razlaga 8: preverjanje 3,684³ ≈ 50,0 in ocena 27 < 50 < 64, zato je 3 < ∛50 < 4.
@@ -875,7 +874,8 @@ theorem preverjanje_50 : 49.95 < (3.684:ℝ) ^ 3 ∧ (3.684:ℝ) ^ 3 < 50.05 ∧
 /-! ## Rešeni primeri -/
 
 /-- Pomožna trditev (orodje za dokaze v tej datoteki).
-pomozno -/
+trditev: MAT-SS-2/koreni#sqrt50
+besedilo: »$\sqrt{50} = \sqrt{25 \cdot 2} = 5\sqrt{2}$« -/
 theorem sqrt50 : √(50:ℝ) = √(25 * 2) ∧ √((25:ℝ) * 2) = 5 * √2 := by
   refine ⟨by norm_num, ?_⟩
   rw [show (25:ℝ) = 5 ^ 2 by norm_num]; exact delno_korenjenje (by norm_num) (by norm_num)
@@ -883,7 +883,7 @@ theorem sqrt50 : √(50:ℝ) = √(25 * 2) ∧ √((25:ℝ) * 2) = 5 * √2 := b
 /-- Primer 1: √50 + √18 − √8 = 5√2 + 3√2 − 2√2 = (5 + 3 − 2)√2 = 6√2 (delno korenjenje: √50 = √(25 · 2),
 √18 = √(9 · 2), √8 = √(4 · 2)).
 trditev: MAT-SS-2/koreni#primer1
-besedilo: »Vsak koren delno korenimo: $\sqrt{50} = \sqrt{25 \cdot 2} = 5\sqrt{2}$, $\sqrt{18} = \sqrt{9 \cdot 2} = 3\sqrt{2}$, $\sqrt{8} = \sqrt{4 \cdot 2} = 2\sqrt{2}$.« -/
+besedilo: »Odgovor: izraz je enak $6\sqrt{2}$.« -/
 theorem primer1 : √(50:ℝ) + √18 - √8 = 6 * √2 := by
   have h50 : √(50:ℝ) = 5 * √2 := by rw [show (50:ℝ) = 5 ^ 2 * 2 by norm_num]; exact delno_korenjenje (by norm_num) (by norm_num)
   have h18 : √(18:ℝ) = 3 * √2 := by rw [show (18:ℝ) = 3 ^ 2 * 2 by norm_num]; exact delno_korenjenje (by norm_num) (by norm_num)
@@ -942,7 +942,7 @@ theorem primer2_preverjanje : 8.1195 < (10:ℝ) / (2.6458 - 1.4142) ∧ (10:ℝ)
 ≈ 14,14; celih ploščic je ⌊10√2⌋ = 14; zasedejo 14 · 5√2 = 70√2 ≈ 98,99 cm; ostane 100 − 70√2 ≈ 1,01 cm
 (približno 1 cm).
 trditev: MAT-SS-2/koreni#primer3
-besedilo: »Celih ploščic je $14$. Zasedejo $14 \cdot 5\sqrt{2} = 70\sqrt{2} \approx 98{,}99\,\text{cm}$.« -/
+besedilo: »Odgovor: v vrsto gre $14$ celih ploščic. Ob koncu ostane približno $1\,\text{cm}$, ki ga zapolni odrezan kos ploščice.« -/
 theorem primer3 :
     √(50:ℝ) = 5 * √2 ∧ 7.065 < 5 * √(2:ℝ) ∧ 5 * √(2:ℝ) < 7.075 ∧
     100 / (5 * √(2:ℝ)) = 20 / √2 ∧ 20 / √(2:ℝ) = 20 * √2 / 2 ∧ 20 * √(2:ℝ) / 2 = 10 * √2 ∧
@@ -962,7 +962,7 @@ theorem primer3 :
 /-- Primer 4: prvi ulomek (√3 + √2)/(√3 − √2) razširimo s √3 + √2: imenovalec 3 − 2 = 1, števec
 (√3 + √2)² = 3 + 2√6 + 2 = 5 + 2√6.
 trditev: MAT-SS-2/koreni#primer4-prvi
-besedilo: »Prvi ulomek razširimo s $\sqrt{3} + \sqrt{2}$: imenovalec je $3 - 2 = 1$, števec pa $\left(\sqrt{3} + \sqrt{2}\right)^2 = 3 + 2\sqrt{6} + 2 = 5 + 2\sqrt{6}$.« -/
+besedilo: »Prvi ulomek razširimo s $\sqrt{3} + \sqrt{2}$: imenovalec je $3 - 2 = 1$, števec pa $\left(\sqrt{3} + \sqrt{2}\right)^2 = 3 + 2\sqrt{6} + 2 = 5 + 2\sqrt{6}$. Prvi ulomek je torej $5 + 2\sqrt{6}$.« -/
 theorem primer4_prvi : (√3 + √2) / (√3 - √(2:ℝ)) = (√3 + √2) * (√3 + √2) / ((√3 - √2) * (√3 + √2)) ∧
     (√3 - √(2:ℝ)) * (√3 + √2) = 3 - 2 ∧ (√3 + √(2:ℝ)) ^ 2 = 3 + 2 * √6 + 2 ∧
     (√3 + √(2:ℝ)) / (√3 - √2) = 5 + 2 * √6 := by
@@ -977,7 +977,7 @@ theorem primer4_prvi : (√3 + √2) / (√3 - √(2:ℝ)) = (√3 + √2) * (�
 /-- Primer 4 (premisli): drugi ulomek je (√3 − √2)² /(3 − 2) = 3 − 2√6 + 2 = 5 − 2√6, razlika
 (5 + 2√6) − (5 − 2√6) = 4√6; preverjanje 9,899 − 0,101 = 9,798 ≈ 4√6.
 trditev: MAT-SS-2/koreni#primer4
-besedilo: »Preverjanje: prvi ulomek je približno $9{,}899$, drugi $0{,}101$, razlika $9{,}798$, in $4\sqrt{6} \approx 9{,}798$.« -/
+besedilo: »Drugi ulomek: imenovalec je $3 - 2 = 1$, števec $\left(\sqrt{3} - \sqrt{2}\right)^2 = 3 - 2\sqrt{6} + 2 = 5 - 2\sqrt{6}$. Razlika: $\left(5 + 2\sqrt{6}\right) - \left(5 - 2\sqrt{6}\right) = 4\sqrt{6}$. Preverjanje: prvi ulomek je približno $9{,}899$, drugi $0{,}101$, razlika $9{,}798$, in $4\sqrt{6} \approx 9{,}798$.« -/
 theorem primer4 : (√3 - √(2:ℝ)) / (√3 + √2) = 5 - 2 * √6 ∧
     (√3 + √(2:ℝ)) / (√3 - √2) - (√3 - √2) / (√3 + √2) = 4 * √6 ∧
     9.8985 < 5 + 2 * √(6:ℝ) ∧ 5 + 2 * √(6:ℝ) < 9.8995 ∧ 0.1005 < 5 - 2 * √(6:ℝ) ∧ 5 - 2 * √(6:ℝ) < 0.1015 ∧
@@ -1046,7 +1046,7 @@ theorem primer6b_cetrti : 4.7285 < koren 4 500 ∧ koren 4 500 < 4.7295 ∧
 /-- Primer 6 c): q⁵ = 1,3 ima edino realno rešitev q = ⁵√1,3 ≈ 1,0539 ≈ 1,054 (rast ≈ 5,4 %, ne 6 %:
 1,06⁵ ≠ 1,3).
 trditev: MAT-SS-2/koreni#primer6c
-besedilo: »Odgovor: a) $-0{,}5$ in $\dfrac{2}{3}$; b) $\sqrt[3]{-20} \approx -2{,}714$ in $\sqrt[4]{500} \approx 4{,}729$; c) $q \approx 1{,}054$. Naložba vsako leto zraste za približno $5{,}4\,\%$, ne za $30\,\% : 5 = 6\,\%$.« -/
+besedilo: »c) V petih letih se vloga pomnoži s $q^5$, zato velja enačba $q^5 = 1{,}3$ in $q = \sqrt[5]{1{,}3} \approx 1{,}0539$. 5. Odgovor: a) $-0{,}5$ in $\dfrac{2}{3}$; b) $\sqrt[3]{-20} \approx -2{,}714$ in $\sqrt[4]{500} \approx 4{,}729$; c) $q \approx 1{,}054$. Naložba vsako leto zraste za približno $5{,}4\,\%$, ne za $30\,\% : 5 = 6\,\%$.« -/
 theorem primer6c (q : ℝ) : (q ^ 5 = 1.3 ↔ q = koren 5 1.3) ∧ 1.05385 < koren 5 1.3 ∧ koren 5 1.3 < 1.05395 ∧
     1.0535 < koren 5 1.3 ∧ koren 5 1.3 < 1.0545 ∧ (1.06:ℝ) ^ 5 ≠ 1.3 ∧ (30:ℝ) / 5 = 6 := by
   obtain ⟨a, b⟩ := koren_med (n := 5) (a := 1.3) (lo := 1.05385) (hi := 1.05395) (by norm_num) (by norm_num)
@@ -1057,7 +1057,7 @@ theorem primer6c (q : ℝ) : (q ^ 5 = 1.3 ↔ q = koren 5 1.3) ∧ 1.05385 < kor
 
 /-- Naloga 1: √48 = √(16 · 3) = 4√3, √75 = √(25 · 3) = 5√3, 9/√3 = 9√3/3 = 3√3, vsota 4√3 + 3√3 − 5√3 = 2√3.
 trditev: MAT-SS-2/koreni#matura1
-besedilo: »$\sqrt{48} = \sqrt{16 \cdot 3} = 4\sqrt{3}$ in $\sqrt{75} = \sqrt{25 \cdot 3} = 5\sqrt{3}$.« -/
+besedilo: »Odgovor: $2\sqrt{3}$.« -/
 theorem matura1 : √(48:ℝ) + 9 / √3 - √75 = 2 * √3 := by
   have h48 : √(48:ℝ) = 4 * √3 := by rw [show (48:ℝ) = 4 ^ 2 * 3 by norm_num]; exact delno_korenjenje (by norm_num) (by norm_num)
   have h75 : √(75:ℝ) = 5 * √3 := by rw [show (75:ℝ) = 5 ^ 2 * 3 by norm_num]; exact delno_korenjenje (by norm_num) (by norm_num)
@@ -1068,7 +1068,7 @@ theorem matura1 : √(48:ℝ) + 9 / √3 - √75 = 2 * √3 := by
 
 /-- Naloga 2 a): c³ = 128 ima (eksponent 3 je lih) natanko eno realno rešitev c = ∛128 = ∛(4³ · 2) = 4∛2.
 trditev: MAT-SS-2/koreni#matura2a
-besedilo: »a) $c^3 = 128$. Eksponent $3$ je lih, zato ima enačba natanko eno realno rešitev $c = \sqrt[3]{128}$.« -/
+besedilo: »a) $c^3 = 128$. Eksponent $3$ je lih, zato ima enačba natanko eno realno rešitev $c = \sqrt[3]{128}$. 2. a) $128 = 64 \cdot 2 = 4^3 \cdot 2$, zato je $c = \sqrt[3]{4^3 \cdot 2} = 4\sqrt[3]{2}\,\text{cm}$.« -/
 theorem matura2a (c : ℝ) : (c ^ 3 = 128 ↔ c = koren 3 128) ∧ (128:ℝ) = 64 * 2 ∧ (64:ℝ) = 4 ^ 3 ∧
     koren 3 128 = koren 3 (4 ^ 3 * 2) ∧ koren 3 ((4:ℝ) ^ 3 * 2) = 4 * koren 3 2 := by
   refine ⟨koren_lih ⟨1, rfl⟩ _ _, by norm_num, by norm_num, by norm_num, ?_⟩
@@ -1076,7 +1076,7 @@ theorem matura2a (c : ℝ) : (c ^ 3 = 128 ↔ c = koren 3 128) ∧ (128:ℝ) = 6
 
 /-- Naloga 2 b): c ≈ 5,039684 ≈ 5,04; D = c√2 = 4∛2 · √2 ≈ 7,127190 ≈ 7,13.
 trditev: MAT-SS-2/koreni#matura2b
-besedilo: »b) $D = c\sqrt{2} = 4\sqrt[3]{2} \cdot \sqrt{2} \approx 7{,}127190$, torej $D \approx 7{,}13\,\text{cm}$.« -/
+besedilo: »b) Z računalom (tipka za $n$-ti koren ali potenca $128^{1/3}$): $c \approx 5{,}039684$, torej $c \approx 5{,}04\,\text{cm}$. 4. b) $D = c\sqrt{2} = 4\sqrt[3]{2} \cdot \sqrt{2} \approx 7{,}127190$, torej $D \approx 7{,}13\,\text{cm}$.« -/
 theorem matura2b : 5.0396835 < koren 3 128 ∧ koren 3 128 < 5.0396845 ∧ 5.035 < koren 3 128 ∧ koren 3 128 < 5.045 ∧
     koren 3 128 * √2 = 4 * koren 3 2 * √2 ∧
     7.1271895 < koren 3 128 * √2 ∧ koren 3 128 * √2 < 7.1271905 ∧ 7.125 < koren 3 128 * √2 ∧
@@ -1094,7 +1094,7 @@ theorem matura2b : 5.0396835 < koren 3 128 ∧ koren 3 128 < 5.0396845 ∧ 5.035
 
 /-- Naloga 2 c): D³ = (c√2)³ = c³ · (√2)³ = 128 · 2√2 = 256√2 ≈ 362,0387 ≈ 362 cm³.
 trditev: MAT-SS-2/koreni#matura2c
-besedilo: »$D^3 = \left(c\sqrt{2}\right)^3 = c^3 \cdot \left(\sqrt{2}\right)^3 = 128 \cdot 2\sqrt{2} = 256\sqrt{2}\,\text{cm}^3$« -/
+besedilo: »$D^3 = \left(c\sqrt{2}\right)^3 = c^3 \cdot \left(\sqrt{2}\right)^3 = 128 \cdot 2\sqrt{2} = 256\sqrt{2}\,\text{cm}^3$. 6. c) $256\sqrt{2} \approx 362{,}0387$, torej približno $362\,\text{cm}^3$.« -/
 theorem matura2c : (koren 3 128 * √2) ^ 3 = koren 3 128 ^ 3 * √2 ^ 3 ∧ koren 3 128 ^ 3 * √(2:ℝ) ^ 3 = 128 * (2 * √2) ∧
     (128:ℝ) * (2 * √2) = 256 * √2 ∧ 362.03865 < 256 * √(2:ℝ) ∧ 256 * √(2:ℝ) < 362.03875 ∧
     361.5 < 256 * √(2:ℝ) ∧ 256 * √(2:ℝ) < 362.5 := by
@@ -1105,7 +1105,7 @@ theorem matura2c : (koren 3 128 * √2) ^ 3 = koren 3 128 ^ 3 * √2 ^ 3 ∧ kor
 
 /-- RACUN: (4∛2 · √2)³ = 256√2 (rob 4∛2).
 trditev: MAT-SS-2/koreni#racun-kub
-besedilo: »$\sqrt[3]{2} \cdot \sqrt[3]{2} = \sqrt[3]{4}$« -/
+besedilo: »$D^3 = \left(c\sqrt{2}\right)^3 = c^3 \cdot \left(\sqrt{2}\right)^3 = 128 \cdot 2\sqrt{2} = 256\sqrt{2}\,\text{cm}^3$« -/
 theorem racun_kub : (4 * koren 3 2 * √2) ^ 3 = 256 * √(2:ℝ) := by
   have h : koren 3 (2:ℝ) ^ 3 = 2 := koren_pot (by norm_num) (by norm_num)
   have h3 : √(2:ℝ) ^ 3 = 2 * √2 := by rw [pow_succ, sq2]
@@ -1117,14 +1117,14 @@ theorem racun_kub : (4 * koren 3 2 * √2) ^ 3 = 256 * √(2:ℝ) := by
 /-- Na sliki: kvadrat s ploščino 2 ima stranico √2 ≈ 1,41 ((√2)² = 2); diagonala kvadrata s stranico 1 je
 √(1² + 1²) = √2.
 trditev: MAT-SS-2/koreni#na-sliki-kvadrat
-besedilo: »Kvadrat s ploščino $2\,\text{cm}^2$ ima stranico $\sqrt{2}\,\text{cm} \approx 1{,}41\,\text{cm}$.« -/
+besedilo: »Kvadrat s stranico $1\,\text{cm}$ ima ploščino $1\,\text{cm}^2$, njegova diagonala pa je po Pitagorovem izreku dolga $\sqrt{2}\,\text{cm}$. Kvadrat s ploščino $2\,\text{cm}^2$ ima stranico $\sqrt{2}\,\text{cm} \approx 1{,}41\,\text{cm}$.« -/
 theorem na_sliki_kvadrat : √(2:ℝ) ^ 2 = 2 ∧ √((1:ℝ) ^ 2 + 1 ^ 2) = √2 ∧ 1.405 < √(2:ℝ) ∧ √(2:ℝ) < 1.415 := by
   obtain ⟨a, b⟩ := s2
   exact ⟨sq2, by norm_num, by linarith, by linarith⟩
 
 /-- Na sliki: √2 · √3 = √6 ≈ 2,449 in 1,414 · 1,732 ≈ 2,449.
 trditev: MAT-SS-2/koreni#na-sliki-produkt
-besedilo: »Pri $\sqrt{6} \approx 2{,}449$ to tudi preveriš: $1{,}414 \cdot 1{,}732 \approx 2{,}449$.« -/
+besedilo: »Zato je $\sqrt{2}\sqrt{3} = \sqrt{6}$. Pri $\sqrt{6} \approx 2{,}449$ to tudi preveriš: $1{,}414 \cdot 1{,}732 \approx 2{,}449$.« -/
 theorem na_sliki_produkt : √(2:ℝ) * √3 = √6 ∧ 2.4485 < √(6:ℝ) ∧ √(6:ℝ) < 2.4495 ∧
     2.4485 < (1.414:ℝ) * 1.732 ∧ (1.414:ℝ) * 1.732 < 2.4495 := by
   obtain ⟨a, b⟩ := s6
@@ -1132,14 +1132,14 @@ theorem na_sliki_produkt : √(2:ℝ) * √3 = √6 ∧ 2.4485 < √(6:ℝ) ∧ 
 
 /-- Na sliki, tabela: √0 = 0, √1 = 1, √4 = 2, √9 = 3, √16 = 4.
 trditev: MAT-SS-2/koreni#tabela-korenov
-besedilo: »$2^2 = 4$, $3^2 = 9$ in $4^2 = 16$, zato je $\sqrt{4} = 2$, $\sqrt{9} = 3$ in $\sqrt{16} = 4$.« -/
+besedilo: »| $0$ | $0$ | | $1$ | $1$ | | $4$ | $2$ | | $9$ | $3$ | | $16$ | $4$ |« -/
 theorem tabela_korenov : √(0:ℝ) = 0 ∧ √(1:ℝ) = 1 ∧ √(4:ℝ) = 2 ∧ √(9:ℝ) = 3 ∧ √(16:ℝ) = 4 :=
   ⟨Real.sqrt_zero, Real.sqrt_one, sqrt4, sqrt9, sqrt16⟩
 
 /-- Kot zgodba: diagonala √(1,2² + 1,2²) = √(2 · 1,2²) = 1,2√2 ≈ 1,697 m; Majina meritev 1,70 m je natančna na
 centimeter.
 trditev: MAT-SS-2/koreni#zgodba-diagonala
-besedilo: »diagonala je $1{,}2\sqrt{2} \approx 1{,}697\,\text{m}$.« Maja je zadela na centimeter natančno.« -/
+besedilo: »Po Pitagori je diagonala $\sqrt{1{,}2^2 + 1{,}2^2} = \sqrt{2 \cdot 1{,}2^2}$. Kvadrat je faktor, zato ga izvlečeš iz korena: diagonala je $1{,}2\sqrt{2} \approx 1{,}697\,\text{m}$.« Maja je zadela na centimeter natančno.« -/
 theorem zgodba_diagonala : √((1.2:ℝ) ^ 2 + 1.2 ^ 2) = √(2 * 1.2 ^ 2) ∧ √((2:ℝ) * 1.2 ^ 2) = 1.2 * √2 ∧
     1.6965 < 1.2 * √(2:ℝ) ∧ 1.2 * √(2:ℝ) < 1.6975 ∧ |1.70 - 1.2 * √(2:ℝ)| < 0.01 := by
   obtain ⟨a, b⟩ := s2
@@ -1148,7 +1148,7 @@ theorem zgodba_diagonala : √((1.2:ℝ) ^ 2 + 1.2 ^ 2) = √(2 * 1.2 ^ 2) ∧ �
 
 /-- Kot zgodba: s√2 = 1,2 ⇔ s = 1,2/√2; 1,2/√2 = 1,2√2/2 = 0,6√2; 0,6 · 1,414 ≈ 0,85 m.
 trditev: MAT-SS-2/koreni#zgodba-stranica
-besedilo: »$0{,}6 \cdot 1{,}414 \approx 0{,}85\,\text{m}$.« -/
+besedilo: »Iz enačbe $s\sqrt{2} = 1{,}2$ sledi $s = \dfrac{1{,}2}{\sqrt{2}}$. Maja se namršči, saj z $1{,}414$ na pamet ne zna deliti. Tone ulomek razširi s $\sqrt{2}$ in dobi $\dfrac{1{,}2\sqrt{2}}{2} = 0{,}6\sqrt{2}$. Zdaj je treba le množiti: $0{,}6 \cdot 1{,}414 \approx 0{,}85\,\text{m}$.« -/
 theorem zgodba_stranica (s : ℝ) : (s * √2 = 1.2 ↔ s = 1.2 / √2) ∧ (1.2:ℝ) / √2 = 1.2 * √2 / 2 ∧
     (1.2:ℝ) * √2 / 2 = 0.6 * √2 ∧ 0.845 < (0.6:ℝ) * 1.414 ∧ (0.6:ℝ) * 1.414 < 0.855 ∧
     0.845 < 0.6 * √(2:ℝ) ∧ 0.6 * √(2:ℝ) < 0.855 := by
@@ -1161,7 +1161,7 @@ theorem zgodba_stranica (s : ℝ) : (s * √2 = 1.2 ↔ s = 1.2 / √2) ∧ (1.2
 /-- Korak za korakom: 180 = 2 · 2 · 3 · 3 · 5 = 2² · 3² · 5, √(2² · 3² · 5) = 2 · 3 · √5 = 6√5 ≈ 13,416;
 6 · 2,236 = 13,416.
 trditev: MAT-SS-2/koreni#korak-180
-besedilo: »$\sqrt{180} \approx 13{,}416$ in $6\sqrt{5} \approx 6 \cdot 2{,}236 = 13{,}416$.« -/
+besedilo: »$180 = 2 \cdot 2 \cdot 3 \cdot 3 \cdot 5 = 2^2 \cdot 3^2 \cdot 5$. 2. Vsak par enakih praštevil gre ven iz korena kot eno število: $\sqrt{2^2 \cdot 3^2 \cdot 5} = 2 \cdot 3 \cdot \sqrt{5}$. 3. Rezultat je $6\sqrt{5}$. 4. Preverjanje: $\sqrt{180} \approx 13{,}416$ in $6\sqrt{5} \approx 6 \cdot 2{,}236 = 13{,}416$.« -/
 theorem korak_180 : (180:ℝ) = 2 * 2 * 3 * 3 * 5 ∧ (2:ℝ) * 2 * 3 * 3 * 5 = 2 ^ 2 * 3 ^ 2 * 5 ∧
     √((2:ℝ) ^ 2 * 3 ^ 2 * 5) = 2 * 3 * √5 ∧ (2:ℝ) * 3 * √5 = 6 * √5 ∧
     13.4155 < √(180:ℝ) ∧ √(180:ℝ) < 13.4165 ∧ (6:ℝ) * 2.236 = 13.416 := by
@@ -1174,7 +1174,7 @@ theorem korak_180 : (180:ℝ) = 2 * 2 * 3 * 3 * 5 ∧ (2:ℝ) * 2 * 3 * 3 * 5 = 
 /-- Korak za korakom: 7/(2√5) razširimo s √5: števec 7√5, imenovalec 2√5 · √5 = 2 · 5 = 10, rezultat 7√5/10;
 preverjanje 7/(2 · 2,236) ≈ 1,565 in 7 · 2,236/10 ≈ 1,565.
 trditev: MAT-SS-2/koreni#korak-7-2s5
-besedilo: »Preverjanje: $\dfrac{7}{2 \cdot 2{,}236} \approx 1{,}565$ in $\dfrac{7 \cdot 2{,}236}{10} \approx 1{,}565$.« -/
+besedilo: »Števec: $7 \cdot \sqrt{5} = 7\sqrt{5}$. Imenovalec: $2\sqrt{5} \cdot \sqrt{5} = 2 \cdot 5 = 10$. 3. Rezultat: $\dfrac{7\sqrt{5}}{10}$. 4. Preverjanje: $\dfrac{7}{2 \cdot 2{,}236} \approx 1{,}565$ in $\dfrac{7 \cdot 2{,}236}{10} \approx 1{,}565$.« -/
 theorem korak_7_2s5 : 7 / (2 * √5) = 7 * √5 / (2 * √5 * √5) ∧ 2 * √(5:ℝ) * √5 = 2 * 5 ∧
     7 / (2 * √(5:ℝ)) = 7 * √5 / 10 ∧ 1.5645 < (7:ℝ) / (2 * 2.236) ∧ (7:ℝ) / (2 * 2.236) < 1.5655 ∧
     1.5645 < (7:ℝ) * 2.236 / 10 ∧ (7:ℝ) * 2.236 / 10 < 1.5655 := by
@@ -1186,14 +1186,12 @@ theorem korak_7_2s5 : 7 / (2 * √5) = 7 * √5 / (2 * √5 * √5) ∧ 2 * √(
 /-! ## Preveri se -/
 
 /-- Preveri se, 1: √4 = 2, √9 = 3, √16 = 4.
-trditev: MAT-SS-2/koreni#preveri1
-besedilo: »$2^2 = 4$, $3^2 = 9$ in $4^2 = 16$, zato je $\sqrt{4} = 2$, $\sqrt{9} = 3$ in $\sqrt{16} = 4$.« -/
+pomozno -/
 theorem preveri1 : √(4:ℝ) = 2 ∧ √(9:ℝ) = 3 ∧ √(16:ℝ) = 4 := ⟨sqrt4, sqrt9, sqrt16⟩
 
 /-- Preveri se, 2: 5√3 = √(25 · 3) = √75 in 8² = 64 < 75 < 81 = 9², zato 8 < 5√3 < 9 (5√3 ≈ 8,66); napačni
 odgovori: 3 < √15 < 4 in 5 + √3 ≈ 6,73.
-trditev: MAT-SS-2/koreni#preveri2
-besedilo: »$5\sqrt{3} = \sqrt{75}$ in $8^2 = 64 < 75 < 81 = 9^2$, zato je $8 < 5\sqrt{3} < 9$ (natančneje $5\sqrt{3} \approx 8{,}66$).« -/
+pomozno -/
 theorem preveri2 : 5 * √3 = √((25:ℝ) * 3) ∧ √((25:ℝ) * 3) = √75 ∧ 8 < 5 * √(3:ℝ) ∧ 5 * √(3:ℝ) < 9 ∧
     8.655 < 5 * √(3:ℝ) ∧ 5 * √(3:ℝ) < 8.665 ∧ 3 < √(15:ℝ) ∧ √(15:ℝ) < 4 ∧
     6.725 < 5 + √(3:ℝ) ∧ 5 + √(3:ℝ) < 6.735 := by
@@ -1203,8 +1201,7 @@ theorem preveri2 : 5 * √3 = √((25:ℝ) * 3) ∧ √((25:ℝ) * 3) = √75 �
   rw [show (25:ℝ) = 5 ^ 2 by norm_num, delno_korenjenje (by norm_num) (by norm_num)]
 
 /-- Preveri se, 3: 1/(√5 − √2) = (√5 + √2)/3, (√5 − √2)² = 7 − 2√10, √5 + √2 ≠ √7 (≈ 3,65 proti 2,65).
-trditev: MAT-SS-2/koreni#preveri3
-besedilo: »Napačno je misliti, da je $\sqrt{5} + \sqrt{2}$ enako $\sqrt{7}$: vsota korenov ni koren vsote ($3{,}65$ proti $2{,}65$).« -/
+pomozno -/
 theorem preveri3 : 1 / (√5 - √(2:ℝ)) = (√5 + √2) / 3 ∧ (√5 - √(2:ℝ)) ^ 2 = 7 - 2 * √10 ∧
     √5 + √(2:ℝ) ≠ √7 ∧ 3.645 < √5 + √(2:ℝ) ∧ √5 + √(2:ℝ) < 3.655 ∧ 2.645 < √(7:ℝ) ∧ √(7:ℝ) < 2.655 := by
   have h10 : √(5:ℝ) * √2 = √10 := by rw [← Real.sqrt_mul (by norm_num)]; norm_num
@@ -1214,8 +1211,7 @@ theorem preveri3 : 1 / (√5 - √(2:ℝ)) = (√5 + √2) / 3 ∧ (√5 - √(2
   rw [racionalizacija_razlike (by norm_num) (by norm_num) (by norm_num)]; norm_num
 
 /-- Preveri se, 4: 3√5 = √9 · √5 = √45 (in ne √15 ali √75); √75 = √(25 · 3) = 5√3.
-trditev: MAT-SS-2/koreni#preveri4
-besedilo: »$\sqrt{75} = \sqrt{25 \cdot 3} = 5\sqrt{3}$« -/
+pomozno -/
 theorem preveri4 : 3 * √5 = √9 * √(5:ℝ) ∧ √(9:ℝ) * √5 = √45 ∧ √(45:ℝ) ≠ √15 ∧ √(45:ℝ) ≠ √75 ∧
     √(75:ℝ) = 5 * √3 := by
   have i : ∀ x y : ℝ, 0 ≤ x → 0 ≤ y → x ≠ y → √x ≠ √y := fun x y hx hy h e => h ((Real.sqrt_inj hx hy).mp e)
@@ -1225,8 +1221,7 @@ theorem preveri4 : 3 * √5 = √9 * √(5:ℝ) ∧ √(9:ℝ) * √5 = √45 �
 
 /-- Preveri se, 5: diagonala deske √(30² + 30²) = √(900 · 2) = 30√2 ≈ 42,4 cm; napačni odgovori:
 30² + 30² = 1800, √60 ≈ 7,7, √900 = 30.
-trditev: MAT-SS-2/koreni#preveri5
-besedilo: »$\sqrt{30^2 + 30^2} = \sqrt{900 \cdot 2} = 30\sqrt{2} \approx 42{,}4\,\text{cm}$« -/
+pomozno -/
 theorem preveri5 : √((30:ℝ) ^ 2 + 30 ^ 2) = √(900 * 2) ∧ √((900:ℝ) * 2) = 30 * √2 ∧ 42.35 < 30 * √(2:ℝ) ∧
     30 * √(2:ℝ) < 42.45 ∧ (30:ℝ) ^ 2 + 30 ^ 2 = 1800 ∧ 7.65 < √(60:ℝ) ∧ √(60:ℝ) < 7.75 ∧ √(900:ℝ) = 30 := by
   obtain ⟨a, b⟩ := s2
@@ -1235,8 +1230,7 @@ theorem preveri5 : √((30:ℝ) ^ 2 + 30 ^ 2) = √(900 * 2) ∧ √((900:ℝ) *
   refine ⟨by norm_num, by rw [Real.sqrt_mul (by norm_num), h900], by linarith, by linarith, by norm_num, c, d, h900⟩
 
 /-- Preveri se, 6: kateti 1 in 4 dasta hipotenuzo √(1² + 4²) = √17, torej n = 17 (napačno 1 + 4 = 5 in 16 − 1 = 15).
-trditev: MAT-SS-2/koreni#preveri6
-besedilo: »Hipotenuza je $\sqrt{1^2 + 4^2} = \sqrt{17}$, torej $n = 17$.« -/
+pomozno -/
 theorem preveri6 (n : ℝ) (hn : 0 ≤ n) : (√((1:ℝ) ^ 2 + 4 ^ 2) = √n ↔ n = 17) ∧ (1:ℝ) ^ 2 + 4 ^ 2 = 17 ∧
     (1:ℝ) + 4 = 5 ∧ (4:ℝ) ^ 2 - 1 ^ 2 = 15 := by
   refine ⟨⟨fun h => ?_, fun h => by rw [h]; norm_num⟩, by norm_num, by norm_num, by norm_num⟩
@@ -1252,8 +1246,7 @@ example :=
 
 /-- Preveri se, 7: ⁵√300 ≈ 3,129 ≈ 3,13; preverjanje 3,129⁵ ≈ 300 (RACUN: ≈ 299,94); 3⁵ = 243 < 300 < 1024 = 4⁵;
 napačni odgovori 300 : 5 = 60 in √300 ≈ 17,32.
-trditev: MAT-SS-2/koreni#preveri7
-besedilo: »$\sqrt[5]{300} \approx 3{,}129$, zaokroženo $3{,}13$. Preverjanje: $3{,}129^5 \approx 300$, ocena: $3^5 = 243 < 300 < 1024 = 4^5$.« -/
+pomozno -/
 theorem preveri7 : 3.1285 < koren 5 300 ∧ koren 5 300 < 3.1295 ∧ 3.125 < koren 5 300 ∧ koren 5 300 < 3.135 ∧
     299.935 < (3.129:ℝ) ^ 5 ∧ (3.129:ℝ) ^ 5 < 299.945 ∧ (3:ℝ) ^ 5 = 243 ∧ (4:ℝ) ^ 5 = 1024 ∧
     (300:ℝ) / 5 = 60 ∧ 17.315 < √(300:ℝ) ∧ √(300:ℝ) < 17.325 := by

@@ -24,7 +24,7 @@ namespace Evklid.Lekcije.MAT_SS_3.StozniceVPremaknjeniLegiInTangente
 /-- Razlaga 1 (in Ustno vprašanje 1): točka (x, y) leži na elipsi (x − x₀)²/a² + (y − y₀)²/b² = 1 natanko
 tedaj, ko je premik točke (u, v) elipse u²/a² + v²/b² = 1 za vektor (x₀, y₀).
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#premik-elipse
-besedilo: »$$\frac{(x - x_0)^2}{a^2} + \frac{(y - y_0)^2}{b^2} = 1$$« -/
+besedilo: »Točka $(x, y)$ leži na premaknjeni elipsi natanko tedaj, ko točka $(x - x_0, y - y_0)$ leži na prvotni elipsi.« -/
 theorem premik_elipse (x₀ y₀ a b x y : ℝ) :
     (x - x₀) ^ 2 / a ^ 2 + (y - y₀) ^ 2 / b ^ 2 = 1 ↔
       ∃ u v : ℝ, u ^ 2 / a ^ 2 + v ^ 2 / b ^ 2 = 1 ∧ x = u + x₀ ∧ y = v + y₀ := by
@@ -34,7 +34,7 @@ theorem premik_elipse (x₀ y₀ a b x y : ℝ) :
 
 /-- Razlaga 3: premik deluje enako pri hiperboli (x − x₀)²/a² − (y − y₀)²/b² = 1.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#premik-hiperbole
-besedilo: »$$\frac{(x - x_0)^2}{a^2} - \frac{(y - y_0)^2}{b^2} = 1$$« -/
+besedilo: »Premik deluje enako: $$\frac{(x - x_0)^2}{a^2} - \frac{(y - y_0)^2}{b^2} = 1$$« -/
 theorem premik_hiperbole (x₀ y₀ a b x y : ℝ) :
     (x - x₀) ^ 2 / a ^ 2 - (y - y₀) ^ 2 / b ^ 2 = 1 ↔
       ∃ u v : ℝ, u ^ 2 / a ^ 2 - v ^ 2 / b ^ 2 = 1 ∧ x = u + x₀ ∧ y = v + y₀ := by
@@ -44,7 +44,7 @@ theorem premik_hiperbole (x₀ y₀ a b x y : ℝ) :
 
 /-- Razlaga 4: parabola (y − y₀)² = 2p(x − x₀) je parabola v² = 2pu, premaknjena za vektor (x₀, y₀).
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#premik-parabole
-besedilo: »dobiš parabolo $(x - x_0)^2 = 2p(y - y_0)$,« -/
+besedilo: »Parabola s temenom $T(x_0, y_0)$ in osjo, vzporedno z osjo $x$, ima enačbo $$(y - y_0)^2 = 2p(x - x_0)$$« -/
 theorem premik_parabole (x₀ y₀ p x y : ℝ) :
     (y - y₀) ^ 2 = 2 * p * (x - x₀) ↔ ∃ u v : ℝ, v ^ 2 = 2 * p * u ∧ x = u + x₀ ∧ y = v + y₀ := by
   constructor
@@ -53,7 +53,7 @@ theorem premik_parabole (x₀ y₀ p x y : ℝ) :
 
 /-- Razlaga 1 in Povzetek: krožnica je poseben primer elipse z a = b = r (r ≠ 0).
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#kroznica-poseben-primer
-besedilo: »Kot pri krožnici je v oklepaju minus koordinata središča. Oblika, polosi in ekscentričnost $e = \sqrt{a^2 - b^2}$ ostanejo enake; premakneta se le središče in gorišči. Za $a > b$ sta gorišči $F_{1,2}(x_0 \pm e, y_0)$. Krožnica je poseben primer z $a = b = r$.« -/
+besedilo: »Krožnica je poseben primer z $a = b = r$.« -/
 theorem kroznica_poseben_primer (x₀ y₀ r x y : ℝ) (hr : r ≠ 0) :
     (x - x₀) ^ 2 / r ^ 2 + (y - y₀) ^ 2 / r ^ 2 = 1 ↔ (x - x₀) ^ 2 + (y - y₀) ^ 2 = r ^ 2 := by
   rw [← add_div, div_eq_one_iff_eq (pow_ne_zero 2 hr)]
@@ -68,8 +68,7 @@ example :=
 
 /-- Razlaga 1 (gorišči) v središčni legi: za 0 < b ≤ a in e = √(a² − b²) leži točka (u, v) na elipsi
 u²/a² + v²/b² = 1 natanko tedaj, ko je vsota razdalj do (−e, 0) in (e, 0) enaka 2a.
-trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#gorisci-elipse-sredisce
-besedilo: »Oblika, polosi in ekscentričnost $e = \sqrt{a^2 - b^2}$ ostanejo enake; premakneta se le središče in gorišči.« -/
+pomozno -/
 theorem gorisci_elipse_sredisce (a b u v : ℝ) (ha : 0 < a) (hb : 0 < b) (hab : b ≤ a) :
     u ^ 2 / a ^ 2 + v ^ 2 / b ^ 2 = 1 ↔
       √((u + √(a ^ 2 - b ^ 2)) ^ 2 + v ^ 2) + √((u - √(a ^ 2 - b ^ 2)) ^ 2 + v ^ 2) = 2 * a := by
@@ -108,7 +107,7 @@ theorem gorisci_elipse_sredisce (a b u v : ℝ) (ha : 0 < a) (hb : 0 < b) (hab :
 /-- Razlaga 1 in Povzetek: elipsa (x − x₀)²/a² + (y − y₀)²/b² = 1 z 0 < b ≤ a ima gorišči
 F₁,₂(x₀ ∓ e, y₀), e = √(a² − b²): točka leži na elipsi natanko tedaj, ko je vsota razdalj do gorišč 2a.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#gorisci-elipse
-besedilo: »Kot pri krožnici je v oklepaju minus koordinata središča. Oblika, polosi in ekscentričnost $e = \sqrt{a^2 - b^2}$ ostanejo enake; premakneta se le središče in gorišči. Za $a > b$ sta gorišči $F_{1,2}(x_0 \pm e, y_0)$. Krožnica je poseben primer z $a = b = r$.« -/
+besedilo: »Oblika, polosi in ekscentričnost $e = \sqrt{a^2 - b^2}$ ostanejo enake; premakneta se le središče in gorišči. Za $a > b$ sta gorišči $F_{1,2}(x_0 \pm e, y_0)$.« -/
 theorem gorisci_elipse (x₀ y₀ a b x y : ℝ) (ha : 0 < a) (hb : 0 < b) (hab : b ≤ a) :
     (x - x₀) ^ 2 / a ^ 2 + (y - y₀) ^ 2 / b ^ 2 = 1 ↔
       √((x - (x₀ - √(a ^ 2 - b ^ 2))) ^ 2 + (y - y₀) ^ 2) +
@@ -149,7 +148,7 @@ example :=
 /-- Razlaga 3 in Povzetek: hiperbola (x − x₀)²/a² − (y − y₀)²/b² = 1 (a, b > 0) ima gorišči (x₀ ∓ e, y₀),
 e = √(a² + b²): absolutna razlika razdalj vsake njene točke do gorišč je 2a.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#gorisci-hiperbole
-besedilo: »Asimptoti gresta skozi središče: $y - y_0 = \pm\frac{b}{a}(x - x_0)$. Gorišči sta $(x_0 \pm e, y_0)$ z $e = \sqrt{a^2 + b^2}$.« -/
+besedilo: »Gorišči sta $(x_0 \pm e, y_0)$ z $e = \sqrt{a^2 + b^2}$.« -/
 theorem gorisci_hiperbole (x₀ y₀ a b x y : ℝ) (ha : 0 < a) (hb : 0 < b)
     (h : (x - x₀) ^ 2 / a ^ 2 - (y - y₀) ^ 2 / b ^ 2 = 1) :
     |√((x - (x₀ - √(a ^ 2 + b ^ 2))) ^ 2 + (y - y₀) ^ 2) -
@@ -191,7 +190,7 @@ example :=
 (x₀ ∓ e, y₀), e = √(a² + b²), leži na hiperboli (x − x₀)²/a² − (y − y₀)²/b² = 1 (a, b > 0); skupaj z
 `gorisci_hiperbole` je hiperbola natanko množica takih točk.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#gorisci-hiperbole-iff
-besedilo: »Asimptoti gresta skozi središče: $y - y_0 = \pm\frac{b}{a}(x - x_0)$. Gorišči sta $(x_0 \pm e, y_0)$ z $e = \sqrt{a^2 + b^2}$.« -/
+besedilo: »Gorišči sta $(x_0 \pm e, y_0)$ z $e = \sqrt{a^2 + b^2}$.« -/
 theorem gorisci_hiperbole_iff (x₀ y₀ a b x y : ℝ) (ha : 0 < a) (hb : 0 < b) :
     (x - x₀) ^ 2 / a ^ 2 - (y - y₀) ^ 2 / b ^ 2 = 1 ↔
     |√((x - (x₀ - √(a ^ 2 + b ^ 2))) ^ 2 + (y - y₀) ^ 2) -
@@ -221,7 +220,7 @@ example := (gorisci_hiperbole_iff 2 (-1) 4 3 6 (-1) (by norm_num) (by norm_num))
 /-- Razlaga 4 in Povzetek: za točko parabole (y − y₀)² = 2p(x − x₀) je razdalja do gorišča
 F(x₀ + p/2, y₀) enaka razdalji do vodnice x = x₀ − p/2.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#gorisce-vodnica-parabole
-besedilo: »$(y - y_0)^2 = 2p(x - x_0)$, $F\left(x_0 + \frac{p}{2}, y_0\right)$, vodnica $x = x_0 - \frac{p}{2}$; tangenta $(y_1 - y_0)(y - y_0) = p\big((x - x_0) + (x_1 - x_0)\big)$« -/
+besedilo: »Gorišče je $F\left(x_0 + \frac{p}{2}, y_0\right)$, vodnica $x = x_0 - \frac{p}{2}$.« -/
 theorem gorisce_vodnica_parabole (x₀ y₀ p x y : ℝ) (h : (y - y₀) ^ 2 = 2 * p * (x - x₀)) :
     √((x - (x₀ + p / 2)) ^ 2 + (y - y₀) ^ 2) = |x - (x₀ - p / 2)| := by
   rw [h, ← Real.sqrt_sq_eq_abs]; congr 1; ring
@@ -254,8 +253,7 @@ example :=
 
 /-- Razlaga 3: desna zgornja veja hiperbole x²/a² − y²/b² = 1 (y = (b/a)√(x² − a²), x ≥ a) leži pod
 asimptoto y = (b/a)x in se ji približuje: razlika je pozitivna in največ ab/x.
-trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#priblizevanje-asimptoti
-besedilo: »Primer je premica $y = \frac{b}{a}x + 1$, ki je vzporedna asimptoti hiperbole $\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1$.« -/
+pomozno -/
 theorem priblizevanje_asimptoti (a b x : ℝ) (ha : 0 < a) (hb : 0 < b) (hx : a ≤ x) :
     0 < b / a * x - b / a * √(x ^ 2 - a ^ 2) ∧ b / a * x - b / a * √(x ^ 2 - a ^ 2) ≤ a * b / x := by
   have hx0 : 0 < x := by linarith
@@ -282,7 +280,7 @@ example :=
 za x → ∞ (iz ocene `priblizevanje_asimptoti` ≤ ab/x); po simetriji enako za spodnjo desno vejo in asimptoto
 y = −(b/a)x ter za obe levi veji pri x → −∞ (a, b > 0).
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#asimptota-limita
-besedilo: »$y - y_0 = \pm\frac{b}{a}(x - x_0)$« -/
+besedilo: »Asimptoti gresta skozi središče: $y - y_0 = \pm\frac{b}{a}(x - x_0)$.« -/
 theorem asimptota_limita (a b : ℝ) (ha : 0 < a) (hb : 0 < b) :
     Filter.Tendsto (fun x => b / a * x - b / a * √(x ^ 2 - a ^ 2)) Filter.atTop (nhds 0) ∧
     Filter.Tendsto (fun x => -(b / a) * x - (-(b / a) * √(x ^ 2 - a ^ 2))) Filter.atTop (nhds 0) ∧
@@ -359,7 +357,7 @@ example :=
 tangenta: T₁ leži na njej, vzdolž nje (x = x₁ − t(y₁ − y₀)/b², y = y₁ + t(x₁ − x₀)/a²) je leva stran enačbe
 elipse minus 1 enaka c·t² (dvojna ničla pri t = 0), in T₁ je njena edina skupna točka z elipso.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#tangenta-elipse
-besedilo: »$$\frac{(x_1 - x_0)(x - x_0)}{a^2} + \frac{(y_1 - y_0)(y - y_0)}{b^2} = 1$$« -/
+besedilo: »Za točko $T_1(x_1, y_1)$, ki **leži** na stožnici, je pravilo kratko: v vsakem kvadratu en faktor zamenjaj s koordinato točke. Pri elipsi je enačba tangente $$\frac{(x_1 - x_0)(x - x_0)}{a^2} + \frac{(y_1 - y_0)(y - y_0)}{b^2} = 1$$« -/
 theorem tangenta_elipse (x₀ y₀ a b x₁ y₁ : ℝ) (ha : a ≠ 0) (hb : b ≠ 0)
     (h₁ : (x₁ - x₀) ^ 2 / a ^ 2 + (y₁ - y₀) ^ 2 / b ^ 2 = 1) :
     (x₁ - x₀) * (x₁ - x₀) / a ^ 2 + (y₁ - y₀) * (y₁ - y₀) / b ^ 2 = 1 ∧
@@ -393,7 +391,7 @@ example :=
 (x₁ − x₀)(x − x₀)/a² − (y₁ − y₀)(y − y₀)/b² = 1 in vzdolž nje (x = x₁ + t(y₁ − y₀)/b², y = y₁ + t(x₁ − x₀)/a²)
 je leva stran enačbe hiperbole minus 1 enaka c·t² (dvojna ničla pri t = 0).
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#tangenta-hiperbole
-besedilo: »pri hiperboli je med ulomkoma minus. Pri paraboli $(y - y_0)^2 = 2p(x - x_0)$ člen $2p(x - x_0)$ razdelimo na polovici, $p(x - x_0) + p(x_1 - x_0)$, zato je enačba tangente« -/
+besedilo: »$$\frac{(x_1 - x_0)(x - x_0)}{a^2} + \frac{(y_1 - y_0)(y - y_0)}{b^2} = 1$$ pri hiperboli je med ulomkoma minus.« -/
 theorem tangenta_hiperbole (x₀ y₀ a b x₁ y₁ : ℝ)
     (h₁ : (x₁ - x₀) ^ 2 / a ^ 2 - (y₁ - y₀) ^ 2 / b ^ 2 = 1) :
     (x₁ - x₀) * (x₁ - x₀) / a ^ 2 - (y₁ - y₀) * (y₁ - y₀) / b ^ 2 = 1 ∧
@@ -405,7 +403,7 @@ theorem tangenta_hiperbole (x₀ y₀ a b x₁ y₁ : ℝ)
 
 /-- Razlaga 6: za a, b ≠ 0 je T₁ edina skupna točka hiperbole in njene tangente v T₁.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#tangenta-hiperbole-edina
-besedilo: »Tangenta v točki stožnice (višja raven).** Za točko $T_1(x_1, y_1)$,« -/
+besedilo: »$$\frac{(x_1 - x_0)(x - x_0)}{a^2} + \frac{(y_1 - y_0)(y - y_0)}{b^2} = 1$$ pri hiperboli je med ulomkoma minus.« -/
 theorem tangenta_hiperbole_edina (x₀ y₀ a b x₁ y₁ : ℝ) (ha : a ≠ 0) (hb : b ≠ 0)
     (h₁ : (x₁ - x₀) ^ 2 / a ^ 2 - (y₁ - y₀) ^ 2 / b ^ 2 = 1) (x y : ℝ)
     (h : (x - x₀) ^ 2 / a ^ 2 - (y - y₀) ^ 2 / b ^ 2 = 1)
@@ -443,7 +441,7 @@ example :=
 (y₁ − y₀)(y − y₀) = p((x − x₀) + (x₁ − x₀)): T₁ leži na njej, vzdolž nje (x = x₁ + t(y₁ − y₀), y = y₁ + tp)
 je (y − y₀)² − 2p(x − x₀) = p²t² (dvojna ničla), in za p ≠ 0 je T₁ edina skupna točka.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#tangenta-parabole
-besedilo: »$(y - y_0)^2 = 2p(x - x_0)$, $F\left(x_0 + \frac{p}{2}, y_0\right)$, vodnica $x = x_0 - \frac{p}{2}$; tangenta $(y_1 - y_0)(y - y_0) = p\big((x - x_0) + (x_1 - x_0)\big)$« -/
+besedilo: »Pri paraboli $(y - y_0)^2 = 2p(x - x_0)$ člen $2p(x - x_0)$ razdelimo na polovici, $p(x - x_0) + p(x_1 - x_0)$, zato je enačba tangente $$(y_1 - y_0)(y - y_0) = p\big((x - x_0) + (x_1 - x_0)\big)$$« -/
 theorem tangenta_parabole (x₀ y₀ p x₁ y₁ : ℝ) (h₁ : (y₁ - y₀) ^ 2 = 2 * p * (x₁ - x₀)) :
     (y₁ - y₀) * (y₁ - y₀) = p * ((x₁ - x₀) + (x₁ - x₀)) ∧
     (∀ t : ℝ, (y₁ - y₀) * (y₁ + t * p - y₀) = p * ((x₁ + t * (y₁ - y₀) - x₀) + (x₁ - x₀)) ∧
@@ -528,7 +526,7 @@ example :=
 /-- Razlaga 7: premica y = kx + n ima z elipso x²/a² + y²/b² = 1 natanko eno skupno točko (kvadratna enačba
 za x ima dvojno rešitev, D = 0) natanko tedaj, ko je a²k² + b² = n².
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#pogoj-tangentnosti-elipse
-besedilo: »pri elipsi $a^2k^2 + b^2 = n^2$,« -/
+besedilo: »Za stožnice s središčem oziroma temenom v izhodišču ta račun da pogoj tangentnosti: pri elipsi $a^2k^2 + b^2 = n^2$« -/
 theorem pogoj_tangentnosti_elipse (a b k n : ℝ) (ha : a ≠ 0) (hb : b ≠ 0) :
     (∃! x : ℝ, x ^ 2 / a ^ 2 + (k * x + n) ^ 2 / b ^ 2 = 1) ↔ a ^ 2 * k ^ 2 + b ^ 2 = n ^ 2 := by
   have hA : b ^ 2 + a ^ 2 * k ^ 2 ≠ 0 := by positivity
@@ -549,7 +547,7 @@ theorem pogoj_tangentnosti_elipse (a b k n : ℝ) (ha : a ≠ 0) (hb : b ≠ 0) 
 (a²k² ≠ b², da je enačba kvadratna), ima kvadratna enačba dvojno rešitev natanko tedaj, ko je
 a²k² − b² = n².
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#pogoj-tangentnosti-hiperbole
-besedilo: »Primer je premica $y = \frac{b}{a}x + 1$, ki je vzporedna asimptoti hiperbole $\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1$.« -/
+besedilo: »pri hiperboli $a^2k^2 - b^2 = n^2$ (za premice, ki niso vzporedne asimptoti, torej $a^2k^2 \ne b^2$; sicer pogoj da $n = 0$, to je asimptoto, ki ni tangenta)« -/
 theorem pogoj_tangentnosti_hiperbole (a b k n : ℝ) (ha : a ≠ 0) (hb : b ≠ 0) (hk : a ^ 2 * k ^ 2 ≠ b ^ 2) :
     (∃! x : ℝ, x ^ 2 / a ^ 2 - (k * x + n) ^ 2 / b ^ 2 = 1) ↔ a ^ 2 * k ^ 2 - b ^ 2 = n ^ 2 := by
   have hA : b ^ 2 - a ^ 2 * k ^ 2 ≠ 0 := fun h => hk (by linarith)
@@ -589,7 +587,7 @@ example :=
 /-- Razlaga 7: pri paraboli y² = 2px (p ≠ 0) in premici y = kx + n, ki ni vzporedna osi (k ≠ 0), ima
 kvadratna enačba dvojno rešitev natanko tedaj, ko je p = 2kn.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#pogoj-tangentnosti-parabole
-besedilo: »Premico $y = kx + n$ vstaviš v enačbo stožnice in dobiš kvadratno enačbo za $x$.« -/
+besedilo: »pri paraboli $y^2 = 2px$ pogoj $p = 2kn$.« -/
 theorem pogoj_tangentnosti_parabole (p k n : ℝ) (hp : p ≠ 0) (hk : k ≠ 0) :
     (∃! x : ℝ, (k * x + n) ^ 2 = 2 * p * x) ↔ p = 2 * k * n := by
   have hA : k ^ 2 ≠ 0 := by positivity
@@ -616,7 +614,7 @@ example :=
 hiperbole x²/a² − y²/b² = 1, da linearno enačbo (člena z x² se odštejeta) in ima s hiperbolo natanko eno
 skupno točko; leva stran enačbe hiperbole minus 1 vzdolž nje spremeni predznak (premica seka, ne dotika).
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#vzporednica-asimptoti
-besedilo: »Primer je premica $y = \frac{b}{a}x + 1$, ki je vzporedna asimptoti hiperbole $\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1$.« -/
+besedilo: »Ko jo vstaviš, se člena z $x^2$ odštejeta in ostane linearna enačba. Diskriminante sploh ni, ena rešitev pomeni presečišče, ne dotika: premica gre z ene strani veje na drugo.« -/
 theorem vzporednica_asimptoti (a b n : ℝ) (ha : 0 < a) (hb : 0 < b) (hn : n ≠ 0) :
     (∀ x : ℝ, x ^ 2 / a ^ 2 - (b / a * x + n) ^ 2 / b ^ 2 = -2 * n * x / (a * b) - n ^ 2 / b ^ 2) ∧
     (∃! x : ℝ, x ^ 2 / a ^ 2 - (b / a * x + n) ^ 2 / b ^ 2 = 1) ∧
@@ -637,7 +635,7 @@ theorem vzporednica_asimptoti (a b n : ℝ) (ha : 0 < a) (hb : 0 < b) (hn : n �
 /-- Ustno vprašanje 3 (RACUN): za y = (b/a)x + 1 je x²/a² − y²/b² = −2x/(ab) − 1/b²; asimptota (n = 0)
 hiperbole ne seka.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#vzporednica-primer
-besedilo: »ki je vzporedna asimptoti hiperbole $\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1$.« -/
+besedilo: »Primer je premica $y = \frac{b}{a}x + 1$, ki je vzporedna asimptoti hiperbole $\frac{x^2}{a^2} - \frac{y^2}{b^2} = 1$. Ko jo vstavimo v enačbo hiperbole, se člena z $x^2$ odštejeta in ostane linearna enačba z eno samo rešitvijo.« -/
 theorem vzporednica_primer (a b : ℝ) (ha : 0 < a) (hb : 0 < b) :
     (∀ x : ℝ, x ^ 2 / a ^ 2 - (b / a * x + 1) ^ 2 / b ^ 2 = -2 * x / (a * b) - 1 / b ^ 2) ∧
     ∀ x : ℝ, x ^ 2 / a ^ 2 - (b / a * x) ^ 2 / b ^ 2 ≠ 1 := by
@@ -660,7 +658,7 @@ example :=
 /-- Razlaga 5: premica y = c, vzporedna osi parabole (y − y₀)² = 2p(x − x₀) (p ≠ 0), da linearno enačbo in
 eno samo presečišče.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#vzporednica-osi
-besedilo: »Pri paraboli $(y - y_0)^2 = 2p(x - x_0)$ člen $2p(x - x_0)$ razdelimo na polovici, $p(x - x_0) + p(x_1 - x_0)$, zato je enačba tangente« -/
+besedilo: »Le pri premici, vzporedni z asimptoto hiperbole (a ne asimptoti sami, ki hiperbole sploh ne seka) ali z osjo parabole, je enačba linearna in da eno samo presečišče.« -/
 theorem vzporednica_osi (x₀ y₀ p c : ℝ) (hp : p ≠ 0) : ∃! x : ℝ, (c - y₀) ^ 2 = 2 * p * (x - x₀) :=
   ⟨x₀ + (c - y₀) ^ 2 / (2 * p), by field_simp; ring, fun x hx => by field_simp; linear_combination -hx⟩
 
@@ -694,7 +692,7 @@ example : (2:ℝ) = -(6 + -8) ∧ (-48:ℝ) = 6 * -8 := by norm_num
 (0, 0) v (5, −3), (−1, −3), (2, −1), (2, −5) in (2, −3); vsa štiri nova temena ležijo na polni elipsi
 (x − 2)²/9 + (y + 3)²/4 = 1.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#premik-tabela
-besedilo: »$\frac{(x - 2)^2}{9} + \frac{(y + 3)^2}{4} = 1$« -/
+besedilo: »| $(3, 0)$ | $(5, -3)$ | | $(-3, 0)$ | $(-1, -3)$ | | $(0, 2)$ | $(2, -1)$ | | $(0, -2)$ | $(2, -5)$ | | središče $(0, 0)$ | središče $(2, -3)$ |« -/
 theorem premik_tabela :
     ((3:ℝ) + 2, (0:ℝ) - 3) = (5, -3) ∧ ((-3:ℝ) + 2, (0:ℝ) - 3) = (-1, -3) ∧
     ((0:ℝ) + 2, (2:ℝ) - 3) = (2, -1) ∧ ((0:ℝ) + 2, (-2:ℝ) - 3) = (2, -5) ∧
@@ -706,7 +704,7 @@ theorem premik_tabela :
 /-- Razlaga 1: (x, y) leži na polni elipsi (x − 2)²/9 + (y + 3)²/4 = 1 natanko tedaj, ko točka
 (x − 2, y + 3) leži na črtkani elipsi x²/9 + y²/4 = 1.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#polna-elipsa
-besedilo: »Zato v enačbo črtkane namesto $x$ vstavimo $x - 2$ in namesto $y$ vstavimo $y + 3$: dobimo $\frac{(x - 2)^2}{9} + \frac{(y + 3)^2}{4} = 1$.« -/
+besedilo: »točka $(x, y)$ leži na polni elipsi, če točka $(x - 2, y + 3)$, torej $2$ v levo in $3$ navzgor, leži na črtkani. Zato v enačbo črtkane namesto $x$ vstavimo $x - 2$ in namesto $y$ vstavimo $y + 3$: dobimo $\frac{(x - 2)^2}{9} + \frac{(y + 3)^2}{4} = 1$.« -/
 theorem polna_elipsa (x y : ℝ) :
     (x - 2) ^ 2 / 9 + (y + 3) ^ 2 / 4 = 1 ↔
       ∃ u v : ℝ, u ^ 2 / 9 + v ^ 2 / 4 = 1 ∧ x = u + 2 ∧ y = v - 3 := by
@@ -717,7 +715,7 @@ theorem polna_elipsa (x y : ℝ) :
 /-- Razlaga 1, simulacija: pri a = 3, b = 2 je vsota razdalj do gorišč (∓√5, 0) enaka 2a = 6; pri b = 3 je
 e = √(9 − 9) = 0, gorišči se združita v središču (krožnica).
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#simulacija
-besedilo: »Z grafa: $a = 5$, $b = 3$, $e = \sqrt{25 - 9} = 4$. Desno gorišče je bilo $(4, 0)$, po premiku je $(-3 + 4, 2) = (1, 2)$.« -/
+besedilo: »Opazuj, da vsota razdalj do gorišč ostane $2a = 6$. Nato nastavi b = 3: gorišči se združita v središču in dobiš krožnico.« -/
 theorem simulacija (x y : ℝ) :
     (x ^ 2 / 9 + y ^ 2 / 4 = 1 ↔ √((x + √5) ^ 2 + y ^ 2) + √((x - √5) ^ 2 + y ^ 2) = 6) ∧
     √((3:ℝ) ^ 2 - 3 ^ 2) = 0 := by
@@ -740,7 +738,7 @@ theorem premisli_navpicna (x y : ℝ) :
 /-- Razlaga 2, tabela: raztezek s faktorjem 3/5 vzdolž osi y preslika (0, 5), (3, 4), (−4, 3), (5, 0) v
 (0, 3), (3; 2,4), (−4; 1,8), (5, 0); vse točke krožnice x² + y² = 25 gredo na elipso x²/25 + y²/9 = 1.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#raztezek-tabela
-besedilo: »| $(-4, 3)$ | $(-4; 1{,}8)$ |« -/
+besedilo: »| $(0, 5)$ | $(0, 3)$ | | $(3, 4)$ | $(3; 2{,}4)$ | | $(-4, 3)$ | $(-4; 1{,}8)$ | | $(5, 0)$ | $(5, 0)$ |« -/
 theorem raztezek_tabela :
     (3 / 5 * (5:ℝ) = 3 ∧ 3 / 5 * (4:ℝ) = 2.4 ∧ 3 / 5 * (3:ℝ) = 1.8 ∧ 3 / 5 * (0:ℝ) = 0) ∧
     ((0:ℝ) ^ 2 + 5 ^ 2 = 25 ∧ (3:ℝ) ^ 2 + 4 ^ 2 = 25 ∧ (-4:ℝ) ^ 2 + 3 ^ 2 = 25 ∧ (5:ℝ) ^ 2 + 0 ^ 2 = 25) ∧
@@ -751,7 +749,7 @@ theorem raztezek_tabela :
 /-- Razlaga 2: točka (x, y) elipse je nastala iz točke (x, (5/3)y) krožnice: x² + ((5/3)y)² = 25, po deljenju
 s 25 je to x²/25 + y²/9 = 1.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#raztezek-primer
-besedilo: »Delimo s $25$ in dobimo $\frac{x^2}{25} + \frac{y^2}{9} = 1$.« -/
+besedilo: »Ta zadošča enačbi krožnice: $x^2 + \left(\frac53 y\right)^2 = 25$. Delimo s $25$ in dobimo $\frac{x^2}{25} + \frac{y^2}{9} = 1$.« -/
 theorem raztezek_primer (x y : ℝ) : x ^ 2 + (5 / 3 * y) ^ 2 = 25 ↔ x ^ 2 / 25 + y ^ 2 / 9 = 1 :=
   ⟨fun h => by linear_combination h / 25, fun h => by linear_combination 25 * h⟩
 
@@ -760,7 +758,7 @@ theorem raztezek_primer (x y : ℝ) : x ^ 2 + (5 / 3 * y) ^ 2 = 25 ↔ x ^ 2 / 2
 /-- Razlaga 3, primer: 9x² − 16y² − 36x − 32y − 124 = 0 po korakih dopolnjevanja do popolnih kvadratov
 postane (x − 2)²/16 − (y + 1)²/9 = 1.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#hiperbola-primer
-besedilo: »v enačbi $9x^2 - 16y^2 - 36x - 32y - 124 = 0$ združimo člene in dopolnimo do popolnih kvadratov.« -/
+besedilo: »Iz $9(x^2 - 4x) - 16(y^2 + 2y) = 124$ dobimo $9(x - 2)^2 - 36 - 16(y + 1)^2 + 16 = 124$ oziroma $9(x - 2)^2 - 16(y + 1)^2 = 144$. Po deljenju s $144$ je to $\frac{(x - 2)^2}{16} - \frac{(y + 1)^2}{9} = 1$« -/
 theorem hiperbola_primer (x y : ℝ) :
     9 * x ^ 2 - 16 * y ^ 2 - 36 * x - 32 * y - 124 = 0 ↔ (x - 2) ^ 2 / 16 - (y + 1) ^ 2 / 9 = 1 :=
   calc 9 * x ^ 2 - 16 * y ^ 2 - 36 * x - 32 * y - 124 = 0
@@ -797,7 +795,7 @@ theorem kvadratna_funkcija (x y : ℝ) : y = x ^ 2 - 4 * x + 7 ↔ (x - 2) ^ 2 =
 P₂(−8, −3); vmesni koraki: x² + 4y² = 100, x² + 4(x²/4 + x + 1) = 100, 2x² + 4x − 96 = 0,
 x² + 2x − 48 = 0, D = 4 + 192 = 196 = 14², x = (−2 ± 14)/2.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#presecisci-primer
-besedilo: »Vstavimo $y$: $x^2 + 4\left(\frac14 x^2 + x + 1\right) = 100$, torej $2x^2 + 4x - 96 = 0$ oziroma $x^2 + 2x - 48 = 0$.« -/
+besedilo: »Presečišči sta $P_1(6, 4)$ in $P_2(-8, -3)$.« -/
 theorem presecisci_primer (x y : ℝ) :
     (x ^ 2 / 100 + y ^ 2 / 25 = 1 ∧ y = 1 / 2 * x + 1) ↔ (x = 6 ∧ y = 4) ∨ (x = -8 ∧ y = -3) := by
   have hx : x ^ 2 + 4 * (1 / 2 * x + 1) ^ 2 = 100 ↔ x = 6 ∨ x = -8 :=
@@ -820,7 +818,7 @@ theorem presecisci_primer (x y : ℝ) :
 /-- Razlaga 5: diskriminanta 2² + 4·48 = 196 = 14²; preizkus 36/100 + 16/25 = 0,36 + 0,64 = 1 in
 (−8)²/100 + (−3)²/25 = 1.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#presecisci-preizkus
-besedilo: »Preizkus za $P_1$: $\frac{36}{100} + \frac{16}{25} = 0{,}36 + 0{,}64 = 1$.« -/
+besedilo: »Diskriminanta je $4 + 192 = 196 = 14^2$, zato $x = \frac{-2 \pm 14}{2}$: $x = 6$ ali $x = -8$. Ordinati dobimo iz enačbe premice, $y = 4$ in $y = -3$. Presečišči sta $P_1(6, 4)$ in $P_2(-8, -3)$. Preizkus za $P_1$: $\frac{36}{100} + \frac{16}{25} = 0{,}36 + 0{,}64 = 1$.« -/
 theorem presecisci_preizkus : (2:ℝ) ^ 2 + 4 * 48 = 196 ∧ (196:ℝ) = 14 ^ 2 ∧
     (36:ℝ) / 100 + 16 / 25 = 0.36 + 0.64 ∧ (0.36:ℝ) + 0.64 = 1 ∧ (-8:ℝ) ^ 2 / 100 + (-3) ^ 2 / 25 = 1 := by
   norm_num
@@ -830,7 +828,7 @@ theorem presecisci_preizkus : (2:ℝ) ^ 2 + 4 * 48 = 196 ∧ (196:ℝ) = 14 ^ 2 
 /-- Primer 1, koraki 1–4: 4x² + 9y² − 16x + 54y + 61 = 0 ↔ 4(x² − 4x) + 9(y² + 6y) = −61 ↔
 4(x − 2)² − 16 + 9(y + 3)² − 81 = −61 ↔ 4(x − 2)² + 9(y + 3)² = 36 ↔ (x − 2)²/9 + (y + 3)²/4 = 1.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#primer1
-besedilo: »Konstante prenesemo na desno: $-61 + 16 + 81 = 36$, torej $4(x - 2)^2 + 9(y + 3)^2 = 36$.« -/
+besedilo: »Člene z isto spremenljivko združimo in izpostavimo koeficienta: $4(x^2 - 4x) + 9(y^2 + 6y) = -61$. 2. Dopolnimo do popolnih kvadratov. Dodano odštejemo, pomnoženo s koeficientom pred oklepajem: $4(x - 2)^2 - 16 + 9(y + 3)^2 - 81 = -61$. 3. Konstante prenesemo na desno: $-61 + 16 + 81 = 36$, torej $4(x - 2)^2 + 9(y + 3)^2 = 36$. 4. Delimo s $36$, da je na desni $1$: $\frac{(x - 2)^2}{9} + \frac{(y + 3)^2}{4} = 1$.« -/
 theorem primer1 (x y : ℝ) :
     4 * x ^ 2 + 9 * y ^ 2 - 16 * x + 54 * y + 61 = 0 ↔ (x - 2) ^ 2 / 9 + (y + 3) ^ 2 / 4 = 1 :=
   calc 4 * x ^ 2 + 9 * y ^ 2 - 16 * x + 54 * y + 61 = 0
@@ -852,7 +850,7 @@ theorem primer1_formula (x : ℝ) : x ^ 2 - 4 * x = (x - 2) ^ 2 - 4 := by ring
 /-- Primer 1, koraka 5–6: S(2, −3), a = 3, b = 2, e = √(9 − 4) = √5 ≈ 2,24 (2,235 < √5 < 2,245); gorišči sta
 F₁,₂(2 ∓ √5, −3): točka leži na elipsi natanko tedaj, ko je vsota razdalj do njiju 2·3 = 6.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#primer1-gorisci
-besedilo: »Središče je $S(2, -3)$, $a = 3$, $b = 2$. Ekscentričnost $e = \sqrt{9 - 4} = \sqrt5 \approx 2{,}24$.« -/
+besedilo: »Središče je $S(2, -3)$, $a = 3$, $b = 2$. Ekscentričnost $e = \sqrt{9 - 4} = \sqrt5 \approx 2{,}24$. 6. Odgovor: to je polna elipsa s prve slike. Središče $S(2, -3)$, polosi $3$ in $2$, gorišči $F_{1,2}(2 \pm \sqrt5, -3)$.« -/
 theorem primer1_gorisci (x y : ℝ) :
     √((9:ℝ) - 4) = √5 ∧ (2.235 : ℝ) < √5 ∧ √5 < (2.245 : ℝ) ∧
     ((x - 2) ^ 2 / 9 + (y + 3) ^ 2 / 4 = 1 ↔
@@ -929,7 +927,7 @@ theorem primer2_preizkus :
 /-- Primer 3, korak 1: s premikom u = x − 12, v = y − 8 postane premica y = x/2 + n premica v = u/2 + m z
 m = n − 2, saj je y − 8 = (u + 12)/2 + n − 8.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#primer3-premik
-besedilo: »Račun poenostavimo s premikom: $u = x - 12$, $v = y - 8$. Elipsa dobi središče v izhodišču, $\frac{u^2}{36} + \frac{v^2}{16} = 1$. Premica postane $v = \frac12 u + m$ z $m = n - 2$, saj je $y - 8 = \frac12(u + 12) + n - 8$.« -/
+besedilo: »Premica postane $v = \frac12 u + m$ z $m = n - 2$, saj je $y - 8 = \frac12(u + 12) + n - 8$.« -/
 theorem primer3_premik (x y n : ℝ) :
     y = 1 / 2 * x + n ↔ y - 8 = 1 / 2 * (x - 12) + (n - 2) :=
   ⟨fun h => by linear_combination h, fun h => by linear_combination h⟩
@@ -964,7 +962,7 @@ theorem primer3_diskriminanta :
 u = −36m/(2·25) = 180/50 = 3,6, v = 3,6/2 − 5 = −3,2, nazaj x = 15,6, y = 4,8; preizkus
 3,6²/36 + 3,2²/16 = 1.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#primer3-dotikalisce
-besedilo: »Dvojna rešitev: $u = \frac{-36m}{2 \cdot 25} = \frac{180}{50} = 3{,}6$ in $v = \frac12 \cdot 3{,}6 - 5 = -3{,}2$. Nazaj: $x = 15{,}6$, $y = 4{,}8$.« -/
+besedilo: »Pot pod vodnjakom ima manjši odsek: $m = -5$, zato je $n = m + 2 = -3$. (Pri $m = 5$ bi bila pot nad vodnjakom.) 5. Dvojna rešitev: $u = \frac{-36m}{2 \cdot 25} = \frac{180}{50} = 3{,}6$ in $v = \frac12 \cdot 3{,}6 - 5 = -3{,}2$. Nazaj: $x = 15{,}6$, $y = 4{,}8$.« -/
 theorem primer3_dotikalisce :
     (-5:ℝ) + 2 = -3 ∧ (5:ℝ) + 2 = 7 ∧ -36 * (-5:ℝ) / (2 * 25) = 180 / 50 ∧ (180:ℝ) / 50 = 3.6 ∧
     1 / 2 * (3.6:ℝ) - 5 = -3.2 ∧ (3.6:ℝ) + 12 = 15.6 ∧ (-3.2:ℝ) + 8 = 4.8 ∧
@@ -1015,7 +1013,7 @@ theorem primer4_tangenta (x y : ℝ) :
 /-- Primer 4: premica x + 2y = 1 ima z elipso (x − 2)²/9 + (y + 3)²/4 = 1 edino skupno točko T₁(3,8; −1,4)
 (je tangenta po pravilu iz Razlage 6).
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#primer4-edina
-besedilo: »Točka $T_1(3{,}8; -1{,}4)$ leži na elipsi iz Primera 1, $\frac{(x - 2)^2}{9} + \frac{(y + 3)^2}{4} = 1$. Zapiši enačbo tangente v $T_1$.« -/
+besedilo: »Preizkus: $3{,}8 + 2 \cdot (-1{,}4) = 1$, točka $T_1$ leži na tangenti.« -/
 theorem primer4_edina (x y : ℝ) :
     ((x - 2) ^ 2 / 9 + (y + 3) ^ 2 / 4 = 1 ∧ x + 2 * y = 1) ↔ (x = 3.8 ∧ y = -1.4) := by
   constructor
@@ -1029,7 +1027,7 @@ theorem primer4_edina (x y : ℝ) :
 /-- Pogoste napake: x + 2 = x − (−2) (središče ima x₀ = −2); zapis 4(y² + 2y) = 4(y + 1)² − 1 ni pravilen
 (npr. pri y = 0), pravilno je 4(y² + 2y) = 4(y + 1)² − 4.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#napake-predznak-koeficient
-besedilo: »Pozabljen koeficient pri dopolnjevanju.** Zapis $4(y^2 + 2y) = 4(y + 1)^2 - 1$ je napačen,« -/
+besedilo: »Zapiši $x + 2 = x - (-2)$: središče ima $x_0 = -2$. - **Pozabljen koeficient pri dopolnjevanju.** Zapis $4(y^2 + 2y) = 4(y + 1)^2 - 1$ je napačen, ker $4(y + 1)^2$ doda $4 \cdot 1 = 4$. Odšteti moraš $4$.« -/
 theorem napake_predznak_koeficient :
     (∀ x : ℝ, x + 2 = x - (-2)) ∧ ¬ (∀ y : ℝ, 4 * (y ^ 2 + 2 * y) = 4 * (y + 1) ^ 2 - 1) ∧
     ∀ y : ℝ, 4 * (y ^ 2 + 2 * y) = 4 * (y + 1) ^ 2 - 4 := by
@@ -1038,7 +1036,7 @@ theorem napake_predznak_koeficient :
 /-- Pogoste napake (polosi pred deljenjem): enačba 4(x − 2)² + 9(y + 3)² = 36 ni elipsa s polosema 2 in 3:
 točka (5, −3) ji zadošča, (x − 2)²/2² + (y + 3)²/3² = 1 pa ne; pač pa zadošča (x − 2)²/9 + (y + 3)²/4 = 1.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#napake-polosi
-besedilo: »Polosi pred deljenjem.** Iz $4(x - 2)^2 + 9(y + 3)^2 = 36$ ne moreš prebrati $a = 2$ in $b = 3$.« -/
+besedilo: »Iz $4(x - 2)^2 + 9(y + 3)^2 = 36$ ne moreš prebrati $a = 2$ in $b = 3$. Najprej deli, da je na desni $1$; šele imenovalca $9$ in $4$ dasta $a = 3$, $b = 2$.« -/
 theorem napake_polosi :
     4 * ((5:ℝ) - 2) ^ 2 + 9 * ((-3:ℝ) + 3) ^ 2 = 36 ∧ ((5:ℝ) - 2) ^ 2 / 2 ^ 2 + ((-3:ℝ) + 3) ^ 2 / 3 ^ 2 ≠ 1 ∧
     ((5:ℝ) - 2) ^ 2 / 9 + ((-3:ℝ) + 3) ^ 2 / 4 = 1 := by norm_num
@@ -1046,7 +1044,7 @@ theorem napake_polosi :
 /-- Pogoste napake (gorišča brez premika): točki (∓√5, 0) nista gorišči elipse iz Primera 1, saj je za njeno
 teme (5, −3) vsota razdalj do njiju večja od 6.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#napake-gorisca
-besedilo: »Gorišča brez premika.** Gorišči premaknjene elipse nista $(\pm e, 0)$,« -/
+besedilo: »Gorišči premaknjene elipse nista $(\pm e, 0)$, ampak $(x_0 \pm e, y_0)$.« -/
 theorem napake_gorisca :
     6 < √((5 - (-√5)) ^ 2 + ((-3:ℝ) - 0) ^ 2) + √((5 - √5) ^ 2 + ((-3:ℝ) - 0) ^ 2) := by
   have h5 : (2:ℝ) < √5 := (Real.lt_sqrt (by norm_num)).2 (by norm_num)
@@ -1057,7 +1055,7 @@ theorem napake_gorisca :
 /-- Pogoste napake (pravilo za točko zunaj): točka (2, 1) leži zunaj elipse x²/4 + y² = 1 (4/4 + 1 > 1),
 »tangenta« 2x/4 + 1·y/1 = 1 pa elipso seka v dveh točkah (2, 0) in (0, 1), zato ni tangenta.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#napake-zunanja-tocka
-besedilo: »(višja raven) **Pravilo s koordinatami točke za točko zunaj stožnice.** Enačba tangente $\frac{x_1 x}{a^2} + \frac{y_1 y}{b^2} = 1$ velja le za točko na stožnici.« -/
+besedilo: »Enačba tangente $\frac{x_1 x}{a^2} + \frac{y_1 y}{b^2} = 1$ velja le za točko na stožnici. Za točko zunaj daje premico, ki ni tangenta.« -/
 theorem napake_zunanja_tocka :
     (1:ℝ) < 2 ^ 2 / 4 + 1 ^ 2 ∧
     ∀ x y : ℝ, (x ^ 2 / 4 + y ^ 2 = 1 ∧ 2 * x / 4 + 1 * y / 1 = 1) ↔ (x = 2 ∧ y = 0) ∨ (x = 0 ∧ y = 1) := by
@@ -1076,7 +1074,7 @@ theorem napake_zunanja_tocka :
 /-- Naloga 1: gorišči F₁(−4, 2), F₂(2, 2): središče S((−4 + 2)/2, 2) = (−1, 2), e = 2 − (−1) = 3; teme (4, 2) da
 a = 4 − (−1) = 5 in b = √(25 − 9) = 4.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#naloga1-podatki
-besedilo: »Teme $(4, 2)$ leži na isti vodoravni premici kot gorišči, torej na veliki osi: $a = 4 - (-1) = 5$. Mala polos je $b = \sqrt{a^2 - e^2} = \sqrt{25 - 9} = 4$.« -/
+besedilo: »Središče je razpolovišče daljice $F_1F_2$: $S(-1, 2)$. Gorišči sta od središča oddaljeni $e = 3$. 2. Teme $(4, 2)$ leži na isti vodoravni premici kot gorišči, torej na veliki osi: $a = 4 - (-1) = 5$. Mala polos je $b = \sqrt{a^2 - e^2} = \sqrt{25 - 9} = 4$.« -/
 theorem naloga1_podatki :
     ((-4:ℝ) + 2) / 2 = -1 ∧ (2:ℝ) - (-1) = 3 ∧ (4:ℝ) - (-1) = 5 ∧ √((5:ℝ) ^ 2 - 3 ^ 2) = 4 ∧
     √((25:ℝ) - 9) = 4 := by
@@ -1105,7 +1103,7 @@ theorem naloga1 (x y : ℝ) :
 /-- Naloga 2 a): 25x² + 9y² − 50x + 36y − 164 = 0 ↔ 25(x² − 2x) + 9(y² + 4y) = 164 ↔
 25(x − 1)² − 25 + 9(y + 2)² − 36 = 164 ↔ 25(x − 1)² + 9(y + 2)² = 225 ↔ (x − 1)²/9 + (y + 2)²/25 = 1.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#naloga2a
-besedilo: »a) Dopolnimo do popolnih kvadratov in dodano odštejemo, pomnoženo s koeficientom: $25(x - 1)^2 - 25 + 9(y + 2)^2 - 36 = 164$, torej $25(x - 1)^2 + 9(y + 2)^2 = 225$.« -/
+besedilo: »Združimo člene z isto spremenljivko in izpostavimo koeficienta: $25(x^2 - 2x) + 9(y^2 + 4y) = 164$. 2. a) Dopolnimo do popolnih kvadratov in dodano odštejemo, pomnoženo s koeficientom: $25(x - 1)^2 - 25 + 9(y + 2)^2 - 36 = 164$, torej $25(x - 1)^2 + 9(y + 2)^2 = 225$. 3. a) Delimo z $225$: $\frac{(x - 1)^2}{9} + \frac{(y + 2)^2}{25} = 1$.« -/
 theorem naloga2a (x y : ℝ) :
     25 * x ^ 2 + 9 * y ^ 2 - 50 * x + 36 * y - 164 = 0 ↔ (x - 1) ^ 2 / 9 + (y + 2) ^ 2 / 25 = 1 :=
   calc 25 * x ^ 2 + 9 * y ^ 2 - 50 * x + 36 * y - 164 = 0
@@ -1121,7 +1119,7 @@ theorem naloga2a (x y : ℝ) :
 /-- Naloga 2 b): e = √(25 − 9) = 4, gorišči (1, −2 ∓ 4) = (1, −6) in (1, 2) (vsota razdalj 2·5 = 10 natanko za
 točke elipse); temena (−2, −2), (4, −2), (1, 3), (1, −7) ležijo na elipsi.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#naloga2b
-besedilo: »Odgovor: a) elipsa s središčem $S(1, -2)$ in polosema $3$ (vodoravno) in $5$ (navpično); b) gorišči $(1, 2)$ in $(1, -6)$, temena $(-2, -2)$, $(4, -2)$, $(1, 3)$, $(1, -7)$; c) tetiva je dolga $\frac{18}{5}$.« -/
+besedilo: »Daljša polos je navpična, zato gorišči ležita na premici $x = 1$, od središča oddaljeni $e = \sqrt{b^2 - a^2} = \sqrt{25 - 9} = 4$. Gorišči sta $F_1(1, 2)$ in $F_2(1, -6)$. 5. b) Temena so $(-2, -2)$, $(4, -2)$, $(1, 3)$ in $(1, -7)$.« -/
 theorem naloga2b (x y : ℝ) :
     √((25:ℝ) - 9) = 4 ∧
     ((x - 1) ^ 2 / 9 + (y + 2) ^ 2 / 25 = 1 ↔
@@ -1138,7 +1136,7 @@ theorem naloga2b (x y : ℝ) :
 /-- Naloga 2 c): premica y = 2 skozi F₁(1, 2): (x − 1)²/9 + (2 + 2)²/25 = 1 ↔ (x − 1)² = 81/25 ↔
 x = 14/5 ∨ x = −4/5; dolžina tetive 14/5 + 4/5 = 18/5.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#naloga2c
-besedilo: »c) Premica skozi $F_1(1, 2)$, vzporedna osi $x$, je $y = 2$. Vstavimo: $\frac{(x - 1)^2}{9} + \frac{16}{25} = 1$, torej $(x - 1)^2 = \frac{81}{25}$ in $x - 1 = \pm\frac95$.« -/
+besedilo: »Premica skozi $F_1(1, 2)$, vzporedna osi $x$, je $y = 2$. Vstavimo: $\frac{(x - 1)^2}{9} + \frac{16}{25} = 1$, torej $(x - 1)^2 = \frac{81}{25}$ in $x - 1 = \pm\frac95$. 7. c) Krajišči tetive sta $\left(\frac{14}{5}, 2\right)$ in $\left(-\frac45, 2\right)$, dolžina tetive je $\frac{14}{5} + \frac45 = \frac{18}{5}$.« -/
 theorem naloga2c (x : ℝ) :
     ((x - 1) ^ 2 / 9 + (2 + 2) ^ 2 / 25 = 1 ↔ x = 14 / 5 ∨ x = -4 / 5) ∧ (14:ℝ) / 5 + 4 / 5 = 18 / 5 ∧
     (14:ℝ) / 5 - (-4 / 5) = 18 / 5 := by
@@ -1157,7 +1155,7 @@ theorem naloga2c (x : ℝ) :
 /-- Naloga 3 a): 8x² − y² + 32x + 2y + 23 = 0 ↔ 8(x² + 4x) − (y² − 2y) = −23 ↔
 8(x + 2)² − 32 − (y − 1)² + 1 = −23 ↔ 8(x + 2)² − (y − 1)² = 8 ↔ (x + 2)² − (y − 1)²/8 = 1.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#naloga3a
-besedilo: »a) Združimo in dopolnimo: $8(x^2 + 4x) - (y^2 - 2y) = -23$, torej $8(x + 2)^2 - 32 - (y - 1)^2 + 1 = -23$ in $8(x + 2)^2 - (y - 1)^2 = 8$.« -/
+besedilo: »Združimo in dopolnimo: $8(x^2 + 4x) - (y^2 - 2y) = -23$, torej $8(x + 2)^2 - 32 - (y - 1)^2 + 1 = -23$ in $8(x + 2)^2 - (y - 1)^2 = 8$. 2. a) Delimo z $8$: $(x + 2)^2 - \frac{(y - 1)^2}{8} = 1$.« -/
 theorem naloga3a (x y : ℝ) :
     8 * x ^ 2 - y ^ 2 + 32 * x + 2 * y + 23 = 0 ↔ (x + 2) ^ 2 - (y - 1) ^ 2 / 8 = 1 :=
   calc 8 * x ^ 2 - y ^ 2 + 32 * x + 2 * y + 23 = 0 ↔ 8 * (x ^ 2 + 4 * x) - (y ^ 2 - 2 * y) = -23 :=
@@ -1173,7 +1171,7 @@ theorem naloga3a (x y : ℝ) :
 gorišči (−2 ∓ 3, 1) = (−5, 1), (1, 1): absolutna razlika razdalj točke hiperbole do njiju je 2; smerna
 koeficienta asimptot sta ±b/a = ±2√2: asimptoti y − 1 = ±2√2(x + 2) hiperbole ne sekata.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#naloga3ab
-besedilo: »Odgovor: a) hiperbola s središčem $S(-2, 1)$, temeni $(-3, 1)$ in $(-1, 1)$, gorišči $(-5, 1)$ in $(1, 1)$; b) $y - 1 = \pm 2\sqrt2\,(x + 2)$; c) $T_1(1, 9)$, tangenta $y = 3x + 6$; d) tangenta $y = 3x + 8$ z dotikališčem $(-5, -7)$.« -/
+besedilo: »Kvadrata imata nasprotna predznaka, zato je to hiperbola s središčem $S(-2, 1)$, $a = 1$ in $b = \sqrt8 = 2\sqrt2$. 3. a) $e = \sqrt{a^2 + b^2} = \sqrt{1 + 8} = 3$. Temeni sta $(-3, 1)$ in $(-1, 1)$, gorišči $F_1(-5, 1)$ in $F_2(1, 1)$. 4. b) Asimptoti: $y - 1 = 2\sqrt2\,(x + 2)$ in $y - 1 = -2\sqrt2\,(x + 2)$.« -/
 theorem naloga3ab (x y : ℝ) (h : (x + 2) ^ 2 - (y - 1) ^ 2 / 8 = 1) :
     √(8:ℝ) = 2 * √2 ∧ √((1:ℝ) + 8) = 3 ∧
     ((-3:ℝ) + 2) ^ 2 - ((1:ℝ) - 1) ^ 2 / 8 = 1 ∧ ((-1:ℝ) + 2) ^ 2 - ((1:ℝ) - 1) ^ 2 / 8 = 1 ∧
@@ -1204,7 +1202,7 @@ example :=
 /-- Naloga 3 c): 8·(1 + 2)² − (y₁ − 1)² = 8 ↔ (y₁ − 1)² = 64 ↔ y₁ = −7 ∨ y₁ = 9; z y₁ > 1 ostane y₁ = 9,
 T₁(1, 9). Tangenta 3(x + 2) − 8(y − 1)/8 = 1 ↔ 3x + 6 − y + 1 = 1 ↔ y = 3x + 6.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#naloga3c
-besedilo: »c) Pri $x_1 = 1$: $8 \cdot 3^2 - (y_1 - 1)^2 = 8$, torej $(y_1 - 1)^2 = 64$ in $y_1 - 1 = \pm 8$. Ker je $y_1 > 1$, je $y_1 = 9$ in $T_1(1, 9)$.« -/
+besedilo: »Pri $x_1 = 1$: $8 \cdot 3^2 - (y_1 - 1)^2 = 8$, torej $(y_1 - 1)^2 = 64$ in $y_1 - 1 = \pm 8$. Ker je $y_1 > 1$, je $y_1 = 9$ in $T_1(1, 9)$. 6. c) Tangenta v točki hiperbole: $\frac{(x_1 - x_0)(x - x_0)}{a^2} - \frac{(y_1 - y_0)(y - y_0)}{b^2} = 1$, torej $3(x + 2) - \frac{8(y - 1)}{8} = 1$. 7. c) Uredimo: $3x + 6 - y + 1 = 1$, tangenta je $y = 3x + 6$.« -/
 theorem naloga3c (x y : ℝ) :
     (8 * (1 + 2) ^ 2 - (y - 1) ^ 2 = 8 ↔ y = -7 ∨ y = 9) ∧
     ((8 * (1 + 2) ^ 2 - (y - 1) ^ 2 = 8 ∧ 1 < y) ↔ y = 9) ∧
@@ -1234,7 +1232,7 @@ theorem naloga3c (x y : ℝ) :
 D = (38 − 6n)² − 4((n − 1)² − 24) = 32n² − 448n + 1536 = 32(n − 6)(n − 8), D = 0 ↔ n = 6 ∨ n = 8; pri n = 8 je
 x² + 10x + 25 = 0 z dvojno rešitvijo x = −5, y = 3·(−5) + 8 = −7.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#naloga3d
-besedilo: »d) Diskriminanta: $D = (38 - 6n)^2 - 4\big((n - 1)^2 - 24\big) = 32n^2 - 448n + 1536 = 32(n - 6)(n - 8)$. Iz $D = 0$ sledi $n = 6$ (tangenta iz c) ali $n = 8$.« -/
+besedilo: »Vzporedna premica ima enačbo $y = 3x + n$, zato je $y - 1 = 3x + n - 1$. Vstavimo v $8(x + 2)^2 - (y - 1)^2 = 8$: $8x^2 + 32x + 32 - 9x^2 - 6(n - 1)x - (n - 1)^2 = 8$. 9. d) Uredimo in pomnožimo z $-1$: $x^2 - (38 - 6n)x + (n - 1)^2 - 24 = 0$. 10. d) Diskriminanta: $D = (38 - 6n)^2 - 4\big((n - 1)^2 - 24\big) = 32n^2 - 448n + 1536 = 32(n - 6)(n - 8)$. Iz $D = 0$ sledi $n = 6$ (tangenta iz c) ali $n = 8$. 11. d) Pri $n = 8$ je enačba $x^2 + 10x + 25 = 0$, dvojna rešitev $x = -5$, $y = 3 \cdot (-5) + 8 = -7$.« -/
 theorem naloga3d :
     (∀ x n : ℝ, 8 * (x + 2) ^ 2 - (3 * x + n - 1) ^ 2 - 8 = -(x ^ 2 - (38 - 6 * n) * x + (n - 1) ^ 2 - 24)) ∧
     (∀ n : ℝ, (38 - 6 * n) ^ 2 - 4 * ((n - 1) ^ 2 - 24) = 32 * n ^ 2 - 448 * n + 1536) ∧
@@ -1251,7 +1249,7 @@ theorem naloga3d :
 /-- Naloga 3, odgovor c) in d): tangenta y = 3x + 6 ima s hiperbolo edino skupno točko T₁(1, 9), vzporedna
 tangenta y = 3x + 8 pa (−5, −7), ki je zrcalna slika T₁ čez središče S(−2, 1) (2·(−2) − 1 = −5, 2·1 − 9 = −7).
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#naloga3-odgovor
-besedilo: »Odgovor: a) hiperbola s središčem $S(-2, 1)$, temeni $(-3, 1)$ in $(-1, 1)$, gorišči $(-5, 1)$ in $(1, 1)$; b) $y - 1 = \pm 2\sqrt2\,(x + 2)$; c) $T_1(1, 9)$, tangenta $y = 3x + 6$; d) tangenta $y = 3x + 8$ z dotikališčem $(-5, -7)$.« -/
+besedilo: »c) $T_1(1, 9)$, tangenta $y = 3x + 6$; d) tangenta $y = 3x + 8$ z dotikališčem $(-5, -7)$.« -/
 theorem naloga3_odgovor :
     (∀ x y : ℝ, (8 * (x + 2) ^ 2 - (y - 1) ^ 2 = 8 ∧ y = 3 * x + 6) ↔ (x = 1 ∧ y = 9)) ∧
     (∀ x y : ℝ, (8 * (x + 2) ^ 2 - (y - 1) ^ 2 = 8 ∧ y = 3 * x + 8) ↔ (x = -5 ∧ y = -7)) ∧
@@ -1274,7 +1272,7 @@ theorem naloga3_odgovor :
 x² + 4y² − 2x = 3 ↔ (x − 1)² + 4y² = 4; x² + y² + 6y = 0 ↔ x² + (y + 3)² = 9 (krožnica);
 4x² − y² + 8x = 0 ↔ 4(x + 1)² − y² = 4 ↔ (x + 1)² − y²/4 = 1 (hiperbola).
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#kviz1-oblike
-besedilo: »$(x^2 - 6x) + 4(y^2 + 2y) = -9$, nato $(x - 3)^2 - 9 + 4(y + 1)^2 - 4 = -9$, torej $c = -9 + 9 + 4 = 4$. Po deljenju s $4$: $\frac{(x - 3)^2}{4} + (y + 1)^2 = 1$, elipsa s središčem $(3, -1)$.« -/
+besedilo: »Iz $4x^2 - y^2 + 8x = 0$ dobiš $4(x + 1)^2 - y^2 = 4$ oziroma $(x + 1)^2 - \frac{y^2}{4} = 1$.« -/
 theorem kviz1_oblike (x y : ℝ) :
     (x ^ 2 + 4 * y ^ 2 - 2 * x = 3 ↔ (x - 1) ^ 2 + 4 * y ^ 2 = 4) ∧
     (x ^ 2 + y ^ 2 + 6 * y = 0 ↔ x ^ 2 + (y + 3) ^ 2 = 9) ∧
@@ -1288,7 +1286,7 @@ theorem kviz1_oblike (x y : ℝ) :
 /-- Preveri se, vprašanje 1 (pravilni odgovor): krivulja 4x² − y² + 8x = 0 ni nobena elipsa (in zato tudi ne
 krožnica): ima točke s poljubno veliko absciso, elipsa pa je omejena.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#kviz1-ni-elipsa
-besedilo: »Iz $4x^2 - y^2 + 8x = 0$ dobiš $4(x + 1)^2 - y^2 = 4$ oziroma $(x + 1)^2 - \frac{y^2}{4} = 1$.« -/
+besedilo: »oziroma $(x + 1)^2 - \frac{y^2}{4} = 1$. Kvadrata imata nasprotna predznaka, zato je to hiperbola.« -/
 theorem kviz1_ni_elipsa : ¬ ∃ x₀ y₀ a b : ℝ, a ≠ 0 ∧ ∀ x y : ℝ,
     (4 * x ^ 2 - y ^ 2 + 8 * x = 0 ↔ (x - x₀) ^ 2 / a ^ 2 + (y - y₀) ^ 2 / b ^ 2 = 1) := by
   rintro ⟨x₀, y₀, a, b, ha, h⟩
@@ -1390,7 +1388,7 @@ theorem kviz5 :
 /-- Razlaga 4: po dopolnjevanju mora biti pri elipsi desna stran pozitivna: A(x − x₀)² + B(y − y₀)² = c z
 A, B > 0 in c < 0 nima nobene točke (c = 0 da le središče).
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#desna-stran-elipse
-besedilo: »Po dopolnjevanju mora biti pri elipsi desna stran pozitivna,« -/
+besedilo: »Po dopolnjevanju mora biti pri elipsi desna stran pozitivna, sicer krivulje ni, tako kot pri krožnici.« -/
 theorem desna_stran_elipse (x₀ y₀ A B c : ℝ) (hA : 0 < A) (hB : 0 < B) :
     (c < 0 → ∀ x y : ℝ, A * (x - x₀) ^ 2 + B * (y - y₀) ^ 2 ≠ c) ∧
     (∀ x y : ℝ, A * (x - x₀) ^ 2 + B * (y - y₀) ^ 2 = 0 ↔ x = x₀ ∧ y = y₀) := by
@@ -1411,7 +1409,7 @@ example :=
 
 /-- Preveri se, vprašanje 2 (napačni odgovor 2,83): √(25 + 9) − 3 = √34 − 3 ≈ 2,83.
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#kviz2-napacni
-besedilo: »2,83 | To je $\sqrt{34} - 3$. Pri elipsi je $e = \sqrt{a^2 - b^2}$, ne $\sqrt{a^2 + b^2}$.« -/
+besedilo: »To je $\sqrt{34} - 3$. Pri elipsi je $e = \sqrt{a^2 - b^2}$, ne $\sqrt{a^2 + b^2}$.« -/
 theorem kviz2_napacni : |√((25:ℝ) + 9) - 3 - 2.83| < 0.01 := by
   rw [abs_lt]
   have h1 : (5.82:ℝ) < √(25 + 9) := (Real.lt_sqrt (by norm_num)).2 (by norm_num)
@@ -1446,7 +1444,7 @@ theorem racun_enako (x y u m n : ℝ) :
 /-- Blok RACUN, vrstice `vrednost` (vrstica s korenom √(9 − 4) = √5 je v `primer1_gorisci`, √(25 − 9) = 4 v
 `naloga2b`, −3 + √(25 − 9) = 1 in √(5² − 3²) = 4 v `kviz2`, √(1 + 8) = 3 v `naloga3ab`).
 trditev: MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#racun-vrednost
-besedilo: »$\frac{1{,}8(x - 2)}{9} + \frac{1{,}6(y + 3)}{4} = 1$« -/
+besedilo: »Konstante prenesemo na desno: $-61 + 16 + 81 = 36$« -/
 theorem racun_vrednost :
     (-61:ℝ) + 16 + 81 = 36 ∧ √((16:ℝ) + 9) = 5 ∧ (3.6:ℝ) ^ 2 / 36 + 3.2 ^ 2 / 16 = 1 ∧
     (1.8:ℝ) ^ 2 / 9 + 1.6 ^ 2 / 4 = 1 ∧ (14:ℝ) / 5 + 4 / 5 = 18 / 5 ∧ 8 * ((-5:ℝ) + 2) ^ 2 - (-7 - 1) ^ 2 = 8 ∧

@@ -41,7 +41,7 @@ theorem re_in_im (a b : ℝ) : ((a:ℂ) + b * I).re = a ∧ ((a:ℂ) + b * I).im
 
 /-- Razlaga 1: tabela – točke 3 + 4i, −2 − i, 5, 3i imajo koordinati (3, 4), (−2, −1), (5, 0), (0, 3).
 trditev: MAT-SS-2/kompleksna-stevila#tabela-tock
-besedilo: »| $3$ vzhodno, $4$ severno | $3 + 4i$ |« -/
+besedilo: »| $3$ vzhodno, $4$ severno | $3 + 4i$ | | $2$ zahodno, $1$ južno | $-2 - i$ | | le $5$ vzhodno | $5$ | | le $3$ severno | $3i$ |« -/
 theorem tabela_tock : ((3 + 4 * I : ℂ).re = 3 ∧ (3 + 4 * I : ℂ).im = 4) ∧ ((-2 - I : ℂ).re = -2 ∧ (-2 - I : ℂ).im = -1) ∧
     ((5 : ℂ).re = 5 ∧ (5 : ℂ).im = 0) ∧ ((3 * I : ℂ).re = 0 ∧ (3 * I : ℂ).im = 3) := by
   simp
@@ -62,12 +62,12 @@ theorem enakost (a b c d : ℝ) : (a:ℂ) + b * I = c + d * I ↔ a = c ∧ b = 
 
 /-- Razlaga 2: 1 · i = i, i · i = i² = −1.
 trditev: MAT-SS-2/kompleksna-stevila#i-kvadrat
-besedilo: »Dva zasuka sta $i \cdot i$, rezultat pa je $-1$:« -/
+besedilo: »Dva zasuka sta $i \cdot i$, rezultat pa je $-1$: $$i^2 = -1$$« -/
 theorem i_kvadrat : (1:ℂ) * I = I ∧ I * I = -1 ∧ I ^ 2 = -1 := ⟨one_mul I, I_mul_I, I_sq⟩
 
 /-- Razlaga 2: i ni realno število (kvadrat realnega števila je nenegativen, i² = −1).
 trditev: MAT-SS-2/kompleksna-stevila#i-ni-realno
-besedilo: »saj je kvadrat vsakega realnega števila nenegativen.« -/
+besedilo: »Ni realno, saj je kvadrat vsakega realnega števila nenegativen.« -/
 theorem i_ni_realno : (∀ r : ℝ, (r:ℂ) ≠ I) ∧ ¬ ∃ r : ℝ, r ^ 2 = -1 := by
   refine ⟨fun r h => by have := congrArg Complex.im h; simp at this, fun ⟨r, hr⟩ => ?_⟩
   nlinarith [sq_nonneg r]
@@ -102,13 +102,13 @@ theorem sestevanje (a b c d : ℝ) : ((a:ℂ) + b * I) + (c + d * I) = (a + c : 
 
 /-- Razlaga 3: (3 + 4i) + (−1 + 2i) = 2 + 6i.
 trditev: MAT-SS-2/kompleksna-stevila#premik-za-premikom
-besedilo: »$(3 + 2i) - (1 - 4i) = (3 - 1) + (2 + 4)i = 2 + 6i$« -/
+besedilo: »Greš najprej za $3 + 4i$, nato za $-1 + 2i$ ($1$ zahodno in $2$ severno). Končaš v točki $2 + 6i$.« -/
 theorem premik_za_premikom : (3 + 4 * I) + (-1 + 2 * I) = (2 + 6 * I : ℂ) := by ring
 
 /-- Razlaga 3 (grafično): z₁ − z₂ = z₁ + (−z₂), −(c + di) = −c − di (zrcaljenje čez izhodišče),
 |z₁ − z₂| = √((a − c)² + (b − d)²) je razdalja med točkama.
 trditev: MAT-SS-2/kompleksna-stevila#razlika
-besedilo: »zato je $|z_1 - z_2|$ razdalja med točkama.« -/
+besedilo: »Razlika je vsota z nasprotnim številom: $z_1 - z_2 = z_1 + (-z_2)$. Število $-z_2$ je zrcalna slika $z_2$ čez izhodišče. Puščica $z_1 - z_2$ je vzporedna daljici od točke $z_2$ do točke $z_1$ in enako dolga, zato je $|z_1 - z_2|$ razdalja med točkama.« -/
 theorem razlika (a b c d : ℝ) : ((a:ℂ) + b * I) - (c + d * I) = (a + b * I) + -(c + d * I) ∧
     -((c:ℂ) + d * I) = (-c : ℝ) + (-d : ℝ) * I ∧
     ‖((a:ℂ) + b * I) - (c + d * I)‖ = √((a - c) ^ 2 + (b - d) ^ 2) := by
@@ -130,7 +130,7 @@ theorem i_krat_3_4i : I * (3 + 4 * I) = 3 * I + 4 * I ^ 2 ∧ 3 * I + 4 * I ^ 2 
 /-- Razlaga 2, 4 in simulacija: množenje z i zasuka a + bi v −b + ai (za pravi kot v levo) in ohrani absolutno
 vrednost.
 trditev: MAT-SS-2/kompleksna-stevila#zasuk
-besedilo: »Formule si ni treba zapomniti, dovolj je množiti kot dvočlenika. Primer: $i(3 + 4i) = 3i + 4i^2 = -4 + 3i$. Točka $3 + 4i$ se je zasukala za pravi kot v levo, nasproti urinemu kazalcu.« -/
+besedilo: »$z \cdot w$ je vedno $z$, zasukan za pravi kot v levo, z enako absolutno vrednostjo.« -/
 theorem zasuk (a b : ℝ) : I * ((a:ℂ) + b * I) = (-b : ℝ) + a * I ∧ ‖I * ((a:ℂ) + b * I)‖ = ‖(a:ℂ) + b * I‖ := by
   refine ⟨by push_cast; linear_combination (b : ℂ) * I_sq, by rw [norm_mul, norm_I, one_mul]⟩
 
@@ -138,7 +138,7 @@ theorem zasuk (a b : ℝ) : I * ((a:ℂ) + b * I) = (-b : ℝ) + a * I ∧ ‖I 
 
 /-- Razlaga 5: z̄ = a − bi.
 trditev: MAT-SS-2/kompleksna-stevila#konjugirano
-besedilo: »$\bar{z} = a - bi$« -/
+besedilo: »Konjugirano število je $\bar{z} = a - bi$: realni del ostane, imaginarni del spremeni predznak.« -/
 theorem konjugirano (a b : ℝ) : conj ((a:ℂ) + b * I) = a - b * I := by simp; ring
 
 /-- Razlaga 5: 3 + 4i → 3 − 4i; conj(3 + 2i) = 3 − 2i, conj(−4i) = 4i, conj 5 = 5.
@@ -150,7 +150,7 @@ theorem konjugirano_primeri : conj (3 + 4 * I : ℂ) = 3 - 4 * I ∧ conj (3 + 2
 
 /-- Razlaga 5: z + z̄ = 2a; z · z̄ = (a + bi)(a − bi) = a² − b²i² = a² + b² (realno, nenegativno).
 trditev: MAT-SS-2/kompleksna-stevila#z-krat-konj
-besedilo: »$$z \cdot \bar{z} = (a + bi)(a - bi) = a^2 - b^2 i^2$$« -/
+besedilo: »Velja $z + \bar{z} = 2a$. Pri produktu se mešana člena $-abi$ in $+abi$ odštejeta: $$z \cdot \bar{z} = (a + bi)(a - bi) = a^2 - b^2 i^2$$ $$z \cdot \bar{z} = a^2 + b^2$$ Produkt števila s konjugiranim je zato vedno realen in nenegativen.« -/
 theorem z_krat_konj (a b : ℝ) : ((a:ℂ) + b * I) + (a - b * I) = 2 * a ∧
     ((a:ℂ) + b * I) * (a - b * I) = a ^ 2 - b ^ 2 * I ^ 2 ∧ (a:ℂ) ^ 2 - b ^ 2 * I ^ 2 = (a ^ 2 + b ^ 2 : ℝ) ∧
     0 ≤ a ^ 2 + b ^ 2 :=
@@ -158,7 +158,7 @@ theorem z_krat_konj (a b : ℝ) : ((a:ℂ) + b * I) + (a - b * I) = 2 * a ∧
 
 /-- Razlaga 6: |3 − 4i| = √(9 + 16) = 5; |−7| = √49 = 7.
 trditev: MAT-SS-2/kompleksna-stevila#abs-primeri
-besedilo: »$|3 - 4i| = \sqrt{9 + 16} = 5$« -/
+besedilo: »Na primer $|3 - 4i| = \sqrt{9 + 16} = 5$. Za realno število se ujema z znano absolutno vrednostjo: $|-7| = \sqrt{49} = 7$.« -/
 theorem abs_primeri : ‖(3 - 4 * I : ℂ)‖ = √(9 + 16) ∧ √((9:ℝ) + 16) = 5 ∧ ‖(-7 : ℂ)‖ = √49 ∧ √(49:ℝ) = 7 := by
   have e : (3 - 4 * I : ℂ) = ((3:ℝ):ℂ) + ((-4:ℝ):ℂ) * I := by push_cast; ring
   have e7 : (-7 : ℂ) = ((-7:ℝ):ℂ) + ((0:ℝ):ℂ) * I := by push_cast; ring
@@ -166,7 +166,7 @@ theorem abs_primeri : ‖(3 - 4 * I : ℂ)‖ = √(9 + 16) ∧ √((9:ℝ) + 16
 
 /-- Razlaga 6: |z| = √(z · z̄) (z · z̄ = a² + b² je realno), |z̄| = |z|, |z₁z₂| = |z₁||z₂|, |z₁/z₂| = |z₁|/|z₂|.
 trditev: MAT-SS-2/kompleksna-stevila#abs-lastnosti
-besedilo: »Ker je $a^2 + b^2 = z \cdot \bar{z}$, velja tudi $|z| = \sqrt{z \cdot \bar{z}}$.« -/
+besedilo: »Ker je $a^2 + b^2 = z \cdot \bar{z}$, velja tudi $|z| = \sqrt{z \cdot \bar{z}}$. Zrcaljenje razdalje ne spremeni, zato je $|\bar{z}| = |z|$. Velja še $|z_1 \cdot z_2| = |z_1| \cdot |z_2|$ in $\left|\dfrac{z_1}{z_2}\right| = \dfrac{|z_1|}{|z_2|}$.« -/
 theorem abs_lastnosti (z w : ℂ) (_hw : w ≠ 0) : z * conj z = (normSq z : ℂ) ∧ ‖z‖ = √(normSq z) ∧
     ‖conj z‖ = ‖z‖ ∧ ‖z * w‖ = ‖z‖ * ‖w‖ ∧ ‖z / w‖ = ‖z‖ / ‖w‖ :=
   ⟨mul_conj z, norm_def z, norm_conj z, norm_mul z w, norm_div z w⟩
@@ -232,7 +232,7 @@ example :=
 /-- Razlaga 7: 1/(3 + 4i) = (3 − 4i)/25 = 3/25 − 4/25 i; preizkus (3 + 4i)(3 − 4i) = 9 + 16 = 25; 1/i = −i
 (i · (−i) = −i² = 1); 1/(3 + 4i) ≠ 1/3 + 1/4 i.
 trditev: MAT-SS-2/kompleksna-stevila#obratna-primeri
-besedilo: »Preizkus: $(3 + 4i)(3 - 4i) = 9 + 16 = 25$, deljeno s $25$ je $1$.« -/
+besedilo: »Na primer $\dfrac{1}{3 + 4i} = \dfrac{3 - 4i}{25} = \dfrac{3}{25} - \dfrac{4}{25}\,i$. Preizkus: $(3 + 4i)(3 - 4i) = 9 + 16 = 25$, deljeno s $25$ je $1$. Posebej je $\dfrac{1}{i} = -i$, saj je $i \cdot (-i) = -i^2 = 1$. Pozor: $\dfrac{1}{3 + 4i}$ ni $\dfrac{1}{3} + \dfrac{1}{4}\,i$« -/
 theorem obratna_primeri : 1 / (3 + 4 * I : ℂ) = (3 - 4 * I) / 25 ∧ (3 - 4 * I : ℂ) / 25 = 3 / 25 - 4 / 25 * I ∧
     (3 + 4 * I : ℂ) * (3 - 4 * I) = 9 + 16 ∧ (1 : ℂ) / I = -I ∧ I * -I = -I ^ 2 ∧ -I ^ 2 = 1 ∧
     1 / (3 + 4 * I : ℂ) ≠ 1 / 3 + 1 / 4 * I := by
@@ -246,7 +246,7 @@ theorem obratna_primeri : 1 / (3 + 4 * I : ℂ) = (3 - 4 * I) / 25 ∧ (3 - 4 * 
 
 /-- Razlaga 8: x² = −9 ima v C rešitvi ±3i, (3i)² = (−3i)² = 9i² = −9.
 trditev: MAT-SS-2/kompleksna-stevila#x2-minus9
-besedilo: »Kvadratne enačbe s kompleksnimi rešitvami.** Enačba $x^2 = -9$ v realnih številih nima rešitve, v kompleksnih ima dve: $x_{1,2} = \pm 3i$, saj je $(3i)^2 = (-3i)^2 = 9i^2 = -9$.« -/
+besedilo: »Enačba $x^2 = -9$ v realnih številih nima rešitve, v kompleksnih ima dve: $x_{1,2} = \pm 3i$, saj je $(3i)^2 = (-3i)^2 = 9i^2 = -9$.« -/
 theorem x2_minus9 (x : ℂ) : (x ^ 2 = -9 ↔ x = 3 * I ∨ x = -(3 * I)) ∧ (3 * I) ^ 2 = 9 * I ^ 2 ∧
     (-(3 * I)) ^ 2 = 9 * I ^ 2 ∧ 9 * I ^ 2 = -9 := by
   have h9 : (3 * I) ^ 2 = (-9 : ℂ) := by rw [mul_pow, I_sq]; norm_num
@@ -254,7 +254,7 @@ theorem x2_minus9 (x : ℂ) : (x ^ 2 = -9 ↔ x = 3 * I ∨ x = -(3 * I)) ∧ (3
 
 /-- Razlaga 8: (x − 3)² = x² − 6x + 9, x² − 6x + 13 = (x − 3)² + 4; enačba je (x − 3)² = −4, rešitvi 3 ± 2i.
 trditev: MAT-SS-2/kompleksna-stevila#kvadratna-primer
-besedilo: »Ker je $(x - 3)^2 = x^2 - 6x + 9$, enačbo $x^2 - 6x + 13 = 0$ zapišemo kot $(x - 3)^2 + 4 = 0$, torej $(x - 3)^2 = -4$.« -/
+besedilo: »Ker je $(x - 3)^2 = x^2 - 6x + 9$, enačbo $x^2 - 6x + 13 = 0$ zapišemo kot $(x - 3)^2 + 4 = 0$, torej $(x - 3)^2 = -4$. Od tod je $x - 3 = 2i$ ali $x - 3 = -2i$.« -/
 theorem kvadratna_primer (x : ℂ) : (x - 3) ^ 2 = x ^ 2 - 6 * x + 9 ∧ x ^ 2 - 6 * x + 13 = (x - 3) ^ 2 + 4 ∧
     (x ^ 2 - 6 * x + 13 = 0 ↔ (x - 3) ^ 2 = -4) ∧ (x ^ 2 - 6 * x + 13 = 0 ↔ x - 3 = 2 * I ∨ x - 3 = -(2 * I)) ∧
     (x ^ 2 - 6 * x + 13 = 0 ↔ x = 3 + 2 * I ∨ x = 3 - 2 * I) := by
@@ -273,7 +273,7 @@ theorem kvadratna_primer (x : ℂ) : (x - 3) ^ 2 = x ^ 2 - 6 * x + 9 ∧ x ^ 2 -
 /-- Razlaga 8: rešitvi sta konjugirani; (3 + 2i) + (3 − 2i) = 6, (3 + 2i)(3 − 2i) = 9 + 4 = 13,
 (x − 3 − 2i)(x − 3 + 2i) = x² − 6x + 13.
 trditev: MAT-SS-2/kompleksna-stevila#konjugirani-resitvi
-besedilo: »Vsota in produkt konjugiranih števil sta realna: $(3 + 2i) + (3 - 2i) = 6$ in $(3 + 2i)(3 - 2i) = 9 + 4 = 13$.« -/
+besedilo: »Vsota in produkt konjugiranih števil sta realna: $(3 + 2i) + (3 - 2i) = 6$ in $(3 + 2i)(3 - 2i) = 9 + 4 = 13$. Zato ima produkt $(x - 3 - 2i)(x - 3 + 2i) = x^2 - 6x + 13$ realne koeficiente.« -/
 theorem konjugirani_resitvi (x : ℂ) : conj (3 + 2 * I : ℂ) = 3 - 2 * I ∧ (3 + 2 * I) + (3 - 2 * I : ℂ) = 6 ∧
     (3 + 2 * I : ℂ) * (3 - 2 * I) = 9 + 4 ∧ (9 + 4 : ℂ) = 13 ∧
     (x - 3 - 2 * I) * (x - 3 + 2 * I) = x ^ 2 - 6 * x + 13 := by
@@ -283,7 +283,7 @@ theorem konjugirani_resitvi (x : ℂ) : conj (3 + 2 * I : ℂ) = 3 - 2 * I ∧ (
 /-- Razlaga 8, Povzetek in Ustno vprašanje 3: kvadratna enačba x² + px + q = 0 z realnima p, q in
 p² − 4q < 0 ima v C natanko dve rešitvi (−p ± i√(4q − p²))/2, ki sta konjugirani.
 trditev: MAT-SS-2/kompleksna-stevila#kvadratna-splosno
-besedilo: »(brez računala) Kvadratna enačba $x^2 + px + q = 0$ z realnima koeficientoma $p$ in $q$ ima rešitev $x_1 = 2 + 5i$.« -/
+besedilo: »Kvadratna enačba z realnimi koeficienti in negativno diskriminanto ima vedno dve konjugirani kompleksni rešitvi.« -/
 theorem kvadratna_splosno (p q : ℝ) (hD : p ^ 2 - 4 * q < 0) (x : ℂ) :
     (x ^ 2 + p * x + q = 0 ↔ x = (-p + √(4 * q - p ^ 2) * I) / 2 ∨ x = (-p - √(4 * q - p ^ 2) * I) / 2) ∧
     conj ((-p + √(4 * q - p ^ 2) * I) / 2 : ℂ) = (-p - √(4 * q - p ^ 2) * I) / 2 := by
@@ -348,8 +348,7 @@ example :=
 
 /-- Razlaga 8: kvadratna enačba ax² + bx + c = 0 z realnimi koeficienti (a ≠ 0) nima realne rešitve natanko
 tedaj, ko je D = b² − 4ac < 0 (posebej x² + px + q: natanko tedaj, ko je p² − 4q < 0).
-trditev: MAT-SS-2/kompleksna-stevila#brez-realne
-besedilo: »Kvadratna enačba z realnimi koeficienti in negativno diskriminanto ima vedno dve konjugirani kompleksni rešitvi.« -/
+pomozno -/
 theorem brez_realne (a b c : ℝ) (ha : a ≠ 0) : (¬ ∃ x : ℝ, a * x ^ 2 + b * x + c = 0) ↔ b ^ 2 - 4 * a * c < 0 := by
   constructor
   · intro h
@@ -372,8 +371,7 @@ example :=
   brez_realne (ha := w)
 
 /-- Razlaga 8: x² + px + q = 0 nima realne rešitve natanko tedaj, ko je p² − 4q < 0.
-trditev: MAT-SS-2/kompleksna-stevila#brez-realne-pq
-besedilo: »enačbo $x^2 - 6x + 13 = 0$ zapišemo kot $(x - 3)^2 + 4 = 0$,« -/
+pomozno -/
 theorem brez_realne_pq (p q : ℝ) : (¬ ∃ x : ℝ, x ^ 2 + p * x + q = 0) ↔ p ^ 2 - 4 * q < 0 := by
   have := brez_realne 1 p q one_ne_zero; simp only [one_mul, mul_one] at this; exact this
 
@@ -382,7 +380,7 @@ theorem brez_realne_pq (p q : ℝ) : (¬ ∃ x : ℝ, x ^ 2 + p * x + q = 0) ↔
 /-- Primer 1: z₁ + z₂ = (3 + 1) + (2 − 4)i = 4 − 2i; z₁ − z₂ = (3 − 1) + (2 + 4)i = 2 + 6i;
 z₁z₂ = 3 − 12i + 2i − 8i² = 3 − 10i + 8 = 11 − 10i; grafično −z₂ = −1 + 4i in z₁ + (−z₂) = 2 + 6i.
 trditev: MAT-SS-2/kompleksna-stevila#primer1
-besedilo: »$(3 + 2i)(1 - 4i) = 3 - 12i + 2i - 8i^2 = 3 - 10i + 8 = 11 - 10i$« -/
+besedilo: »Odgovor: $z_1 + z_2 = 4 - 2i$, $z_1 - z_2 = 2 + 6i$ in $z_1 \cdot z_2 = 11 - 10i$.« -/
 theorem primer1 :
     (3 + 2 * I) + (1 - 4 * I) = ((3 + 1) + (2 - 4) * I : ℂ) ∧ ((3 + 1) + (2 - 4) * I : ℂ) = 4 - 2 * I ∧
     (3 + 2 * I) - (1 - 4 * I) = ((3 - 1) + (2 + 4) * I : ℂ) ∧ ((3 - 1) + (2 + 4) * I : ℂ) = 2 + 6 * I ∧
@@ -394,7 +392,7 @@ theorem primer1 :
 /-- Primer 2: imenovalec (2 + i)(2 − i) = 2² + 1² = 5; števec (1 + 8i)(2 − i) = 2 − i + 16i − 8i² = 2 + 15i + 8
 = 10 + 15i; w = (10 + 15i)/5 = 2 + 3i; preverjanje (2 + 3i)(2 + i) = 4 + 2i + 6i + 3i² = 1 + 8i.
 trditev: MAT-SS-2/kompleksna-stevila#primer2
-besedilo: »Števec: $(1 + 8i)(2 - i) = 2 - i + 16i - 8i^2 = 2 + 15i + 8 = 10 + 15i$.« -/
+besedilo: »Količnik: $w = \dfrac{10 + 15i}{5} = 2 + 3i$.« -/
 theorem primer2 :
     (2 + I) * (2 - I) = (2 ^ 2 + 1 ^ 2 : ℂ) ∧ (2 ^ 2 + 1 ^ 2 : ℂ) = 5 ∧
     (1 + 8 * I) * (2 - I) = (2 - I + 16 * I - 8 * I ^ 2 : ℂ) ∧ (2 - I + 16 * I - 8 * I ^ 2 : ℂ) = 2 + 15 * I + 8 ∧
@@ -421,7 +419,7 @@ theorem primer2_abs : ‖(2 + 3 * I : ℂ)‖ = √(2 ^ 2 + 3 ^ 2) ∧ √((2:�
 /-- Primer 3: z₂ = i(3 + 4i) = 3i + 4i² = −4 + 3i; z = (3 + 4i) + (−4 + 3i) = −1 + 7i; |z| = √((−1)² + 7²) = √50
 ≈ 7,07; vsak premik je dolg |3 + 4i| = √(9 + 16) = 5, pot 5 + 5 = 10 km > √50.
 trditev: MAT-SS-2/kompleksna-stevila#primer3
-besedilo: »Vsak premik je dolg $|3 + 4i| = \sqrt{9 + 16} = 5$, pot je zato $5\,\text{km} + 5\,\text{km} = 10\,\text{km}$.« -/
+besedilo: »Odgovor: zaklad je $1\,\text{km}$ zahodno in $7\,\text{km}$ severno od tabora, zračne črte do tabora je približno $7{,}07\,\text{km}$, Nika pa je prehodila $10\,\text{km}$.« -/
 theorem primer3 : I * (3 + 4 * I) = (3 * I + 4 * I ^ 2 : ℂ) ∧ (3 * I + 4 * I ^ 2 : ℂ) = -4 + 3 * I ∧
     (3 + 4 * I) + (-4 + 3 * I) = (-1 + 7 * I : ℂ) ∧ ‖(-1 + 7 * I : ℂ)‖ = √((-1) ^ 2 + 7 ^ 2) ∧
     √((-1:ℝ) ^ 2 + 7 ^ 2) = √50 ∧ 7.065 < √(50:ℝ) ∧ √(50:ℝ) < 7.075 ∧
@@ -437,7 +435,7 @@ theorem primer3 : I * (3 + 4 * I) = (3 * I + 4 * I ^ 2 : ℂ) ∧ (3 * I + 4 * I
 /-- Primer 4: za z = a + bi je (1 + i)(a + bi) = (a − b) + (a + b)i, 3z̄ = 3a − 3bi, leva stran
 (4a − b) + (a − 2b)i; enačba (1 + i)z + 3z̄ = 10 − i ⇔ 4a − b = 10 in a − 2b = −1 ⇔ a = 3, b = 2.
 trditev: MAT-SS-2/kompleksna-stevila#primer4
-besedilo: »Vsota leve strani: $(a - b + 3a) + (a + b - 3b)i = (4a - b) + (a - 2b)i$.« -/
+besedilo: »Izenačimo z desno stranjo $10 - i$, ker sta števili enaki le, če se ujemata oba dela: realna dela $4a - b = 10$, imaginarna dela $a - 2b = -1$.« -/
 theorem primer4 (a b : ℝ) :
     (1 + I) * ((a:ℂ) + b * I) = (a - b : ℝ) + (a + b : ℝ) * I ∧ 3 * conj ((a:ℂ) + b * I) = 3 * a - 3 * b * I ∧
     (1 + I) * ((a:ℂ) + b * I) + 3 * conj ((a:ℂ) + b * I) = (4 * a - b : ℝ) + (a - 2 * b : ℝ) * I ∧
@@ -455,7 +453,7 @@ theorem primer4 (a b : ℝ) :
 /-- Primer 4 (koraki): iz druge enačbe je a = 2b − 1; vstavimo v prvo: 4(2b − 1) − b = 10, torej 7b = 14 in
 b = 2, nato a = 2 · 2 − 1 = 3.
 trditev: MAT-SS-2/kompleksna-stevila#primer4-koraki
-besedilo: »Vstavimo v prvo: $4(2b - 1) - b = 10$, torej $7b = 14$ in $b = 2$, nato $a = 2 \cdot 2 - 1 = 3$.« -/
+besedilo: »Iz druge enačbe je $a = 2b - 1$. Vstavimo v prvo: $4(2b - 1) - b = 10$, torej $7b = 14$ in $b = 2$, nato $a = 2 \cdot 2 - 1 = 3$.« -/
 theorem primer4_koraki (a b : ℝ) : (a - 2 * b = -1 ↔ a = 2 * b - 1) ∧ (4 * (2 * b - 1) - b = 10 ↔ 7 * b = 14) ∧
     (7 * b = 14 ↔ b = 2) ∧ (2:ℝ) * 2 - 1 = 3 :=
   ⟨⟨fun h => by linarith, fun h => by linarith⟩, ⟨fun h => by linarith, fun h => by linarith⟩,
@@ -464,7 +462,7 @@ theorem primer4_koraki (a b : ℝ) : (a - 2 * b = -1 ↔ a = 2 * b - 1) ∧ (4 *
 /-- Primer 4 (premisli): z = 3 + 2i, |z| = √(3² + 2²) = √13 ≈ 3,61; preizkus (1 + i)(3 + 2i) = 1 + 5i,
 3(3 − 2i) = 9 − 6i, vsota 10 − i.
 trditev: MAT-SS-2/kompleksna-stevila#primer4-resitev
-besedilo: »Preizkus: $(1 + i)(3 + 2i) = 3 + 2i + 3i - 2 = 1 + 5i$ in $3(3 - 2i) = 9 - 6i$, vsota je $10 - i$.« -/
+besedilo: »Torej je $z = 3 + 2i$ in $|z| = \sqrt{3^2 + 2^2} = \sqrt{13} \approx 3{,}61$. Preizkus: $(1 + i)(3 + 2i) = 3 + 2i + 3i - 2 = 1 + 5i$ in $3(3 - 2i) = 9 - 6i$, vsota je $10 - i$.« -/
 theorem primer4_resitev : ‖(3 + 2 * I : ℂ)‖ = √(3 ^ 2 + 2 ^ 2) ∧ √((3:ℝ) ^ 2 + 2 ^ 2) = √13 ∧
     (1 + I) * (3 + 2 * I) = (1 + 5 * I : ℂ) ∧ 3 * conj (3 + 2 * I : ℂ) = 9 - 6 * I ∧ (1 + 5 * I) + (9 - 6 * I) = (10 - I : ℂ) := by
   have e : (3 + 2 * I : ℂ) = ((3:ℝ):ℂ) + ((2:ℝ):ℂ) * I := by push_cast; ring
@@ -476,7 +474,7 @@ theorem primer4_resitev : ‖(3 + 2 * I : ℂ)‖ = √(3 ^ 2 + 2 ^ 2) ∧ √((
 /-- Pogoste napake: i² = −1 ≠ 1, zato −8i² = +8 in (3 + 2i)(1 − 4i) = 11 − 10i ≠ 3 − 10i − 8; Im(4 − 7i) = −7;
 conj(3 + 2i) = 3 − 2i ≠ −3 − 2i (to je nasprotno število); |3 − 4i| = √(3² + (−4)²) = 5 ≠ −1; i · i = −1 ≠ 1.
 trditev: MAT-SS-2/kompleksna-stevila#pogoste-napake
-besedilo: »$i^2 = 1$.** Ko množiš, rad pozabiš, da je $i^2 = -1$. Napačno: $(3 + 2i)(1 - 4i) = 3 - 10i - 8$. Pravilno: $-8i^2 = -8 \cdot (-1) = +8$, zato je rezultat $11 - 10i$.« -/
+besedilo: »Ko množiš, rad pozabiš, da je $i^2 = -1$. Napačno: $(3 + 2i)(1 - 4i) = 3 - 10i - 8$. Pravilno: $-8i^2 = -8 \cdot (-1) = +8$, zato je rezultat $11 - 10i$.« -/
 theorem pogoste_napake : I ^ 2 ≠ (1 : ℂ) ∧ -8 * I ^ 2 = (8 : ℂ) ∧ (3 + 2 * I) * (1 - 4 * I) ≠ (3 - 10 * I - 8 : ℂ) ∧
     (4 - 7 * I : ℂ).im = -7 ∧ conj (3 + 2 * I : ℂ) ≠ -3 - 2 * I ∧ -(3 + 2 * I : ℂ) = -3 - 2 * I ∧
     ‖(3 - 4 * I : ℂ)‖ = √(3 ^ 2 + (-4) ^ 2) ∧ √((3:ℝ) ^ 2 + (-4) ^ 2) = 5 ∧ I * I ≠ (1 : ℂ) := by
@@ -493,7 +491,7 @@ theorem pogoste_napake : I ^ 2 ≠ (1 : ℂ) ∧ -8 * I ^ 2 = (8 : ℂ) ∧ (3 +
 /-- Naloga 1: 23 = 5 · 4 + 3, i²³ = (i⁴)⁵ · i³ = −i, z = 2 − i; 1/(2 − i) = (2 + i)/((2 − i)(2 + i)) = (2 + i)/5
 = 2/5 + 1/5 i.
 trditev: MAT-SS-2/kompleksna-stevila#matura1
-besedilo: »Ker je $23 = 5 \cdot 4 + 3$, je $i^{23} = \left(i^4\right)^5 \cdot i^3 = 1 \cdot (-i) = -i$. Torej je $z = 2 - i$.« -/
+besedilo: »Odgovor: $\dfrac{1}{z} = \dfrac{2}{5} + \dfrac{1}{5}\,i$.« -/
 theorem matura1 : 23 = 5 * 4 + 3 ∧ I ^ 23 = (I ^ 4) ^ 5 * I ^ 3 ∧ I ^ 23 = -I ∧ 2 + I ^ 23 = (2 - I : ℂ) ∧
     (2 - I) * (2 + I) = (2 ^ 2 + 1 ^ 2 : ℂ) ∧ 1 / (2 - I : ℂ) = (2 + I) / 5 ∧ (2 + I : ℂ) / 5 = 2 / 5 + 1 / 5 * I := by
   have h23 : I ^ 23 = -I := by
@@ -505,7 +503,7 @@ theorem matura1 : 23 = 5 * 4 + 3 ∧ I ^ 23 = (I ^ 4) ^ 5 * I ^ 3 ∧ I ^ 23 = -
 
 /-- Naloga 2 a): D = (−4)² − 4 · 1 · 13 = −36, (6i)² = −36; x² − 4x + 13 = 0 ⇔ x = (4 ± 6i)/2 = 2 ± 3i.
 trditev: MAT-SS-2/kompleksna-stevila#matura2a
-besedilo: »a) Diskriminanta: $D = (-4)^2 - 4 \cdot 1 \cdot 13 = 16 - 52 = -36$, zato je $\sqrt{D} = \sqrt{-36} = 6i$.« -/
+besedilo: »a) $x_{1,2} = \dfrac{4 \pm 6i}{2} = 2 \pm 3i$.« -/
 theorem matura2a (x : ℂ) : ((-4:ℝ) ^ 2 - 4 * 1 * 13 = -36) ∧ (6 * I) ^ 2 = (-36 : ℂ) ∧
     ((4 + 6 * I) / 2 = (2 + 3 * I : ℂ) ∧ (4 - 6 * I) / 2 = (2 - 3 * I : ℂ)) ∧
     (x ^ 2 - 4 * x + 13 = 0 ↔ x = 2 + 3 * I ∨ x = 2 - 3 * I) := by
@@ -516,7 +514,7 @@ theorem matura2a (x : ℂ) : ((-4:ℝ) ^ 2 - 4 * 1 * 13 = -36) ∧ (6 * I) ^ 2 =
 /-- Naloga 2 b): z₁ = 2 + 3i je točka (2, 3), z₂ = 2 − 3i točka (2, −3); z₂ = z̄₁ (zrcalni čez realno os);
 |z₁| = |z₂| = √(2² + 3²) = √13.
 trditev: MAT-SS-2/kompleksna-stevila#matura2b
-besedilo: »Odgovor: $z_1 = 2 + 3i$, $z_2 = 2 - 3i$; točki sta zrcalni glede na realno os, $|z_1| = |z_2| = \sqrt{13}$; $\dfrac{z_1}{z_2} = -\dfrac{5}{13} + \dfrac{12}{13}\,i$ z absolutno vrednostjo $1$.« -/
+besedilo: »$z_1 = 2 + 3i$, $z_2 = 2 - 3i$; točki sta zrcalni glede na realno os, $|z_1| = |z_2| = \sqrt{13}$« -/
 theorem matura2b : ((2 + 3 * I : ℂ).re = 2 ∧ (2 + 3 * I : ℂ).im = 3) ∧ ((2 - 3 * I : ℂ).re = 2 ∧ (2 - 3 * I : ℂ).im = -3) ∧
     conj (2 + 3 * I : ℂ) = 2 - 3 * I ∧ ‖(2 + 3 * I : ℂ)‖ = √13 ∧ ‖(2 - 3 * I : ℂ)‖ = √13 := by
   have e1 : (2 + 3 * I : ℂ) = ((2:ℝ):ℂ) + ((3:ℝ):ℂ) * I := by push_cast; ring
@@ -527,7 +525,7 @@ theorem matura2b : ((2 + 3 * I : ℂ).re = 2 ∧ (2 + 3 * I : ℂ).im = 3) ∧ (
 /-- Naloga 2 c): števec (2 + 3i)² = 4 + 12i + 9i² = −5 + 12i, imenovalec (2 − 3i)(2 + 3i) = 4 + 9 = 13;
 z₁/z₂ = (−5 + 12i)/13 = −5/13 + 12/13 i; |z₁/z₂| = √(25 + 144)/13 = 13/13 = 1 = |z₁|/|z₂|.
 trditev: MAT-SS-2/kompleksna-stevila#matura2c
-besedilo: »c) Ulomek razširimo s številom $2 + 3i$, ki je konjugirano imenovalcu: števec $(2 + 3i)^2 = 4 + 12i + 9i^2 = -5 + 12i$, imenovalec $(2 - 3i)(2 + 3i) = 4 + 9 = 13$.« -/
+besedilo: »$\dfrac{z_1}{z_2} = -\dfrac{5}{13} + \dfrac{12}{13}\,i$ z absolutno vrednostjo $1$.« -/
 theorem matura2c : (2 + 3 * I : ℂ) ^ 2 = 4 + 12 * I + 9 * I ^ 2 ∧ (4 + 12 * I + 9 * I ^ 2 : ℂ) = -5 + 12 * I ∧
     (2 - 3 * I) * (2 + 3 * I) = (4 + 9 : ℂ) ∧ (2 + 3 * I) / (2 - 3 * I) = ((-5 + 12 * I) / 13 : ℂ) ∧
     ((-5 + 12 * I) / 13 : ℂ) = -5 / 13 + 12 / 13 * I ∧ ‖(-5 / 13 + 12 / 13 * I : ℂ)‖ = √(25 + 144) / 13 ∧
@@ -546,7 +544,7 @@ theorem matura2c : (2 + 3 * I : ℂ) ^ 2 = 4 + 12 * I + 9 * I ^ 2 ∧ (4 + 12 * 
 
 /-- Ustno vprašanje 1: z̄ = a − bi, z · z̄ = a² + b² = |z|².
 trditev: MAT-SS-2/kompleksna-stevila#ustno1
-besedilo: »$z \cdot \bar{z} = a^2 + b^2$« -/
+besedilo: »Produkt je $z \cdot \bar{z} = a^2 + b^2$, torej realno nenegativno število, enako $|z|^2$.« -/
 theorem ustno1 (a b : ℝ) : conj ((a:ℂ) + b * I) = a - b * I ∧ ((a:ℂ) + b * I) * conj ((a:ℂ) + b * I) = (a ^ 2 + b ^ 2 : ℝ) ∧
     ‖(a:ℂ) + b * I‖ ^ 2 = a ^ 2 + b ^ 2 := by
   refine ⟨konjugirano a b, by rw [konjugirano]; push_cast; linear_combination (-(b:ℂ) ^ 2) * I_sq, ?_⟩
@@ -566,7 +564,7 @@ theorem ustno3 (x : ℂ) : (¬ ∃ r : ℝ, r ^ 2 = -1) ∧ (x - 2 * I) * (x + 2
 /-- Z analogijo: (1 + 2√5) + (3 − √5) = 4 + √5 in (1 + 2i) + (3 − i) = 4 + i; (3 + √5)(3 − √5) = 9 − 5 = 4 in
 (3 + i)(3 − i) = 9 − i² = 10; √5 leži med 2 in 3, i pa ni realno število.
 trditev: MAT-SS-2/kompleksna-stevila#analogija
-besedilo: »Konjugirani par.** $(3 + \sqrt{5})(3 - \sqrt{5}) = 9 - 5 = 4$ in $(3 + i)(3 - i) = 9 - i^2 = 10$.« -/
+besedilo: »$(3 + \sqrt{5})(3 - \sqrt{5}) = 9 - 5 = 4$ in $(3 + i)(3 - i) = 9 - i^2 = 10$.« -/
 theorem analogija : (1 + 2 * √5) + (3 - √(5:ℝ)) = 4 + √5 ∧ (1 + 2 * I) + (3 - I) = (4 + I : ℂ) ∧
     (3 + √5) * (3 - √(5:ℝ)) = 9 - 5 ∧ (9:ℝ) - 5 = 4 ∧ (3 + I) * (3 - I) = (9 - I ^ 2 : ℂ) ∧ (9 - I ^ 2 : ℂ) = 10 ∧
     2 < √(5:ℝ) ∧ √(5:ℝ) < 3 ∧ ∀ r : ℝ, (r:ℂ) ≠ I := by
@@ -576,7 +574,7 @@ theorem analogija : (1 + 2 * √5) + (3 - √(5:ℝ)) = 4 + √5 ∧ (1 + 2 * I)
 
 /-- Iz vsakdanjega življenja: |400 + 30i| = √(400² + 30²) ≈ 401 km/h; impedanca |30 + 40i| = √(30² + 40²) = 50 Ω.
 trditev: MAT-SS-2/kompleksna-stevila#vsakdan
-besedilo: »Za upor $30\,\Omega$ in imaginarni del $40\,\Omega$ je velikost impedance $\sqrt{30^2 + 40^2}\,\Omega = 50\,\Omega$,« -/
+besedilo: »Za upor $30\,\Omega$ in imaginarni del $40\,\Omega$ je velikost impedance $\sqrt{30^2 + 40^2}\,\Omega = 50\,\Omega$, torej ravno absolutna vrednost.« -/
 theorem vsakdan : ‖(400 + 30 * I : ℂ)‖ = √(400 ^ 2 + 30 ^ 2) ∧ 400.5 < √((400:ℝ) ^ 2 + 30 ^ 2) ∧
     √((400:ℝ) ^ 2 + 30 ^ 2) < 401.5 ∧ ‖(30 + 40 * I : ℂ)‖ = √(30 ^ 2 + 40 ^ 2) ∧ √((30:ℝ) ^ 2 + 40 ^ 2) = 50 := by
   have e1 : (400 + 30 * I : ℂ) = ((400:ℝ):ℂ) + ((30:ℝ):ℂ) * I := by push_cast; ring
@@ -595,7 +593,7 @@ theorem urejeni_pari (z w : ℂ) : (z * w).re = z.re * w.re - z.im * w.im ∧ (z
 
 /-- Bolj natančno: conj(z₁ + z₂) = z̄₁ + z̄₂, conj(z₁z₂) = z̄₁z̄₂, |z₁z₂|² = |z₁|²|z₂|².
 trditev: MAT-SS-2/kompleksna-stevila#konjugiranje-lastnosti
-besedilo: »da velja $\overline{z_1 + z_2} = \bar{z}_1 + \bar{z}_2$ in $\overline{z_1 \cdot z_2} = \bar{z}_1 \cdot \bar{z}_2$.« -/
+besedilo: »Z računom preveriš, da velja $\overline{z_1 + z_2} = \bar{z}_1 + \bar{z}_2$ in $\overline{z_1 \cdot z_2} = \bar{z}_1 \cdot \bar{z}_2$. Od tod sledi pravilo za absolutno vrednost produkta: $|z_1 z_2|^2 = z_1 z_2 \cdot \bar{z}_1 \bar{z}_2 = \left(z_1 \bar{z}_1\right)\left(z_2 \bar{z}_2\right) = |z_1|^2 |z_2|^2$.« -/
 theorem konjugiranje_lastnosti (z w : ℂ) : conj (z + w) = conj z + conj w ∧ conj (z * w) = conj z * conj w ∧
     ‖z * w‖ ^ 2 = ‖z‖ ^ 2 * ‖w‖ ^ 2 :=
   ⟨map_add conj z w, map_mul conj z w, by rw [norm_mul, mul_pow]⟩
@@ -716,8 +714,7 @@ example :=
 1/(3 + 4i) = 3/25 − 4i/25; 1/i = −i; (x − 3)² = x² − 6x + 9; (x − 3)² + 4 = x² − 6x + 13;
 (3 + 2i)² − 6(3 + 2i) + 13 = 0; (3i)² = −9; (x − 3 − 2i)(x − 3 + 2i) = x² − 6x + 13; (2 + 3i) − (4 − i) = −2 + 4i;
 1/(1 − 2i) = 1/5 + 2i/5; (x − 2 − 5i)(x − 2 + 5i) = x² − 4x + 29.
-trditev: MAT-SS-2/kompleksna-stevila#racun
-besedilo: »$(1 + i)(3 + 2i) = 3 + 2i + 3i - 2 = 1 + 5i$ in $3(3 - 2i) = 9 - 6i$,« -/
+pomozno -/
 theorem racun (x : ℂ) : I ^ 23 = -I ∧ 1 / (2 - I) = (2 / 5 + I / 5 : ℂ) ∧ ((-4:ℝ) ^ 2 - 4 * 1 * 13 = -36) ∧
     (x - 2 - 3 * I) * (x - 2 + 3 * I) = x ^ 2 - 4 * x + 13 ∧ (6 * I) ^ 2 = (-36 : ℂ) ∧ (4 + 6 * I) / 2 = (2 + 3 * I : ℂ) ∧
     (2 + 3 * I : ℂ) ^ 2 = -5 + 12 * I ∧ (2 + 3 * I) / (2 - 3 * I) = (-5 / 13 + 12 * I / 13 : ℂ) ∧

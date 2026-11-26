@@ -235,23 +235,24 @@ theorem visina_stranske (a v : ℝ) :
 
 /-- Razlaga 4: površina valja P = 2πr² + 2πrv = 2πr(r + v).
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#povrsina-valja
-besedilo: »$$P = 2\pi r^2 + 2\pi r v = 2\pi r(r + v) \qquad V = \pi r^2 v$$« -/
+besedilo: »P = 2\pi r^2 + 2\pi r v = 2\pi r(r + v)« -/
 theorem povrsina_valja (r v : ℝ) : 2 * π * r ^ 2 + 2 * π * r * v = 2 * π * r * (r + v) := by ring
 
 /-- Razlaga 5, Povzetek: površina stožca P = πr² + πrs = πr(r + s).
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#povrsina-stozca
-besedilo: »$$P = \pi r^2 + \pi r s \qquad V = \frac{\pi r^2 v}{3}$$« -/
+besedilo: »P = \pi r^2 + \pi r s«
+besedilo-kratko: formula površine stožca (14 znakov) -/
 theorem povrsina_stozca (r s : ℝ) : π * r ^ 2 + π * r * s = π * r * (r + s) := by ring
 
 /-- Ustno vprašanje 1, Na sliki: plašč stožca je izsek s polmerom s in lokom 2πr, ploščina izseka je
 ½·lok·polmer = ½·2πr·s = πrs; pri valju je plašč pravokotnik 2πr × v.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#plasc-izsek
-besedilo: »Stožec:** en krog in krožni izsek s polmerom $s$. Lok izseka ima dolžino $2\pi r$ (obseg osnovnega kroga). Ploščina izseka je $\dfrac12 \cdot s \cdot 2\pi r = \pi r s$.« -/
+besedilo: »Lok izseka ima dolžino $2\pi r$ (obseg osnovnega kroga). Ploščina izseka je $\dfrac12 \cdot s \cdot 2\pi r = \pi r s$.« -/
 theorem plasc_izsek (r s : ℝ) : 1 / 2 * (2 * π * r) * s = π * r * s := by ring
 
 /-- Razlaga 6 (krogla): prostornina krogle s polmerom r ≥ 0 je 4πr³/3 (Lebesgueova mera v ℝ³).
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#prostornina-krogle
-besedilo: »$$P = 4\pi r^2 \qquad V = \frac{4\pi r^3}{3}$$« -/
+besedilo: »V = \frac{4\pi r^3}{3}« -/
 theorem prostornina_krogle (x : EuclideanSpace ℝ (Fin 3)) (r : ℝ) (hr : 0 ≤ r) :
     (MeasureTheory.volume (Metric.closedBall x r)).toReal = 4 * π * r ^ 3 / 3 := by
   rw [EuclideanSpace.volume_closedBall_fin_three, ENNReal.toReal_mul, ENNReal.toReal_pow,
@@ -284,7 +285,7 @@ example :=
 /-- Razlaga 6 (premisli), Iz vsakdanjega življenja (žoga): pri dvakratnem premeru se prostornina poveča
 osemkrat (2³ = 8; 8·4 g = 32 g), površina štirikrat (2² = 4).
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#toca
-besedilo: »Osemkrat, ker je v prostornini $r^3$ in $2^3 = 8$. Zrno s premerom $4\,\text{cm}$ tehta okoli $8 \cdot 4\,\text{g} = 32\,\text{g}$, ne $8\,\text{g}$. Površina pa se poveča le štirikrat ($2^2 = 4$).« -/
+besedilo: »Osemkrat, ker je v prostornini $r^3$ in $2^3 = 8$. Zrno s premerom $4 \text{cm}$ tehta okoli $8 \cdot 4 \text{g} = 32 \text{g}$, ne $8 \text{g}$. Površina pa se poveča le štirikrat ($2^2 = 4$).« -/
 theorem toca (r : ℝ) :
     4 * π * (2 * r) ^ 3 / 3 = 8 * (4 * π * r ^ 3 / 3) ∧ 4 * π * (2 * r) ^ 2 = 4 * (4 * π * r ^ 2) ∧
     (2 : ℝ) ^ 3 = 8 ∧ (8 : ℝ) * 4 = 32 ∧ (2 : ℝ) ^ 2 = 4 := by
@@ -292,7 +293,7 @@ theorem toca (r : ℝ) :
 
 /-- Ustno vprašanje 2: pri polmeru kr se površina krogle poveča k²-krat, prostornina k³-krat.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#krogla-k
-besedilo: »Površina krogle je $P = 4\pi r^2$, zato se pri polmeru $k r$ poveča $k^2$-krat.« -/
+besedilo: »Površina krogle je $P = 4\pi r^2$, zato se pri polmeru $k r$ poveča $k^2$-krat. Prostornina je $V = \frac{4\pi r^3}{3}$, zato se poveča $k^3$-krat.« -/
 theorem krogla_k (k r : ℝ) :
     4 * π * (k * r) ^ 2 = k ^ 2 * (4 * π * r ^ 2) ∧
     4 * π * (k * r) ^ 3 / 3 = k ^ 3 * (4 * π * r ^ 3 / 3) := ⟨by ring, by ring⟩
@@ -301,7 +302,7 @@ open scoped Pointwise in
 /-- Ustno vprašanje 2 (splošno): telo, povečano k-krat (k ≥ 0), ima k³-krat večjo prostornino
 (Lebesgueova mera v ℝ³).
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#podobno-telo-prostornina
-besedilo: »Prostornina je $V = \frac{4\pi r^3}{3}$, zato se poveča $k^3$-krat.« -/
+besedilo: »Enako velja za vsa podobna telesa: ploščine se povečajo s kvadratom, prostornine s kubom razmerja dolžin.« -/
 theorem podobno_telo_prostornina (K : Set (EuclideanSpace ℝ (Fin 3))) (k : ℝ) (hk : 0 ≤ k) :
     MeasureTheory.volume (k • K) = ENNReal.ofReal (k ^ 3) * MeasureTheory.volume K := by
   rw [MeasureTheory.Measure.addHaar_smul, finrank_euclideanSpace_fin, abs_of_nonneg (pow_nonneg hk 3)]
@@ -317,7 +318,7 @@ example :=
 /-- Razlaga 7, Na sliki, Preveri se (2): stožec je zložen iz plasti – presek na višini h je krog s polmerom
 r(v − h)/v; vsota (integral) ploščin presekov je πr²v/3, tretjina valja πr²·v.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#stozec-plasti
-besedilo: »presek »valja brez stožca« je kolobar: velik krog $\pi r^2$ minus krog stožca s polmerom $h$ (stožec ima enako višino in polmer, zato je na višini $h$ polmer $h$): $\pi r^2 - \pi h^2$.« -/
+besedilo: »Pri piramidi in stožcu se plasti proti vrhu manjšajo, zato je prostornina manjša, natanko tretjina.« -/
 theorem stozec_plasti (r v : ℝ) (hv : 0 < v) :
     ∫ h in (0:ℝ)..v, π * (r * (v - h) / v) ^ 2 = π * r ^ 2 * v / 3 := by
   have hF : ∀ x ∈ Set.uIcc (0:ℝ) v, HasDerivAt (fun h : ℝ => -(π * r ^ 2 * (v - h) ^ 3 / (3 * v ^ 2)))
@@ -338,7 +339,7 @@ theorem stozec_plasti (r v : ℝ) (hv : 0 < v) :
 ploskev, pomanjšana v razmerju (v − h)/v; ∫ ploščin = S·v/3, tretjina prizme S·v. Pri kocki z robom a:
 a³/3 = a²·a/3 (Ustno vprašanje 3).
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#piramida-plasti
-besedilo: »Enako razmerje velja za vsako piramido in prizmo z enako osnovno ploskvijo in višino, zato je prostornina piramide $V = \frac{S\,v}{3}$, kjer je $S$ ploščina osnovne ploskve in $v$ višina.« -/
+besedilo: »Pri piramidi in stožcu se plasti proti vrhu manjšajo, zato je prostornina manjša, natanko tretjina.« -/
 theorem piramida_plasti (S v : ℝ) (hv : 0 < v) :
     ∫ h in (0:ℝ)..v, S * ((v - h) / v) ^ 2 = S * v / 3 := by
   have hF : ∀ x ∈ Set.uIcc (0:ℝ) v, HasDerivAt (fun h : ℝ => -(S * (v - h) ^ 3 / (3 * v ^ 2)))
@@ -376,7 +377,7 @@ example :=
 /-- Bolj natančno (višja raven): presek polkrogle na višini h je krog s polmerom √(r² − h²), ploščina
 π(r² − h²) = πr² − πh² (kolobar valja brez stožca); ∫₀ʳ = πr²·r − πr²·r/3 = 2πr³/3, krogla 4πr³/3.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#polkrogla
-besedilo: »presek polkrogle je krog s polmerom $\sqrt{r^2 - h^2}$, ploščina $\pi(r^2 - h^2)$,« -/
+besedilo: »presek polkrogle je krog s polmerom $\sqrt{r^2 - h^2}$, ploščina $\pi(r^2 - h^2)$, - presek »valja brez stožca« je kolobar: velik krog $\pi r^2$ minus krog stožca s polmerom $h$ (stožec ima enako višino in polmer, zato je na višini $h$ polmer $h$): $\pi r^2 - \pi h^2$. Preseka sta enaka, zato sta enaki tudi prostornini: $$V_{\text{polkrogle}} = \pi r^2 \cdot r - \frac{\pi r^2 \cdot r}{3} = \frac{2\pi r^3}{3}$$ Krogla je dvakrat tolikšna: $V = \dfrac{4\pi r^3}{3}$.« -/
 theorem polkrogla (r : ℝ) (hr : 0 ≤ r) :
     (∀ h, |h| ≤ r → π * √(r ^ 2 - h ^ 2) ^ 2 = π * (r ^ 2 - h ^ 2)) ∧
     (∀ h : ℝ, π * (r ^ 2 - h ^ 2) = π * r ^ 2 - π * h ^ 2) ∧
@@ -406,7 +407,7 @@ example :=
 /-- Razlaga 8: pri pravilni štiristrani piramidi tan α = v/(a/2) = 2v/a, tan φ = v/(a√2/2) = 2v/(a√2);
 ker je a√2/2 > a/2, je stranski rob položnejši od stranske ploskve: φ < α.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#rob-polozenejsi
-besedilo: »Iz tabele preberemo $\tan\alpha = \frac{2v}{a}$ in $\tan\varphi = \frac{2v}{a\sqrt{2}}$.« -/
+besedilo: »Iz tabele preberemo $\tan\alpha = \frac{2v}{a}$ in $\tan\varphi = \frac{2v}{a\sqrt{2}}$. Ker je polovica diagonale daljša od polovice roba, je stranski rob vedno položnejši od stranske ploskve: $\varphi < \alpha$.« -/
 theorem rob_polozenejsi (a v : ℝ) (ha : 0 < a) (hv : 0 < v) :
     v / (a / 2) = 2 * v / a ∧ v / (a * √2 / 2) = 2 * v / (a * √2) ∧ a / 2 < a * √2 / 2 ∧
     arctan (2 * v / (a * √2)) < arctan (2 * v / a) := by
@@ -417,7 +418,7 @@ theorem rob_polozenejsi (a v : ℝ) (ha : 0 < a) (hv : 0 < v) :
 /-- Razlaga 8 (tabela): stranski rob pravilne štiristrane piramide je hipotenuza trikotnika s katetama v in
 a√2/2: l² = v² + a²/2 (vrh (0,0,v), oglišče (a/2, a/2, 0)).
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#rob-piramide
-besedilo: »Kateta $\frac{a}{2}$ seže do sredine roba, $\frac{a\sqrt{2}}{2}$ do oglišča, $l$ je stranski rob. Kot ob osnovni ploskvi je v prvem trikotniku naklon stranske ploskve $\alpha$, v drugem naklon stranskega roba $\varphi$.« -/
+besedilo: »| $\frac{a\sqrt{2}}{2}$ | $l$ | $\varphi$ |« -/
 theorem rob_piramide (a v : ℝ) :
     dist (!₂[0, 0, v] : EuclideanSpace ℝ (Fin 3)) !₂[a / 2, a / 2, 0] ^ 2 = v ^ 2 + a ^ 2 / 2 := by
   rw [EuclideanSpace.dist_eq, Real.sq_sqrt (by positivity)]
@@ -456,7 +457,7 @@ example :=
 /-- Primer 1: S = 6² = 36, V = 36·4/3 = 48, v_s = √(4² + 3²) = √25 = 5, stranska ploskev 6·5/2 = 15,
 S_p = 4·15 = 60, P = 36 + 60 = 96.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#primer1
-besedilo: »Ena stranska ploskev je trikotnik: $\dfrac{a \cdot v_s}{2} = \dfrac{6 \cdot 5}{2} = 15\,\text{cm}^2$. Plašč ima 4 takšne ploskve: $S_p = 60\,\text{cm}^2$.« -/
+besedilo: »**Osnovna ploskev** je kvadrat: $S = 6^2 = 36\,\text{cm}^2$. 2. **Prostornina:** $V = \dfrac{S \cdot v}{3} = \dfrac{36 \cdot 4}{3} = 48\,\text{cm}^3$. 3. Za površino potrebujemo plašč, torej višino stranske ploskve. Pravokotni trikotnik s katetama $v = 4$ in $\frac{a}{2} = 3$ ima hipotenuzo $v_s$: $v_s = \sqrt{4^2 + 3^2} = \sqrt{25} = 5\,\text{cm}$. Zakaj polovica roba? Višina piramide pade v središče kvadrata, kjer je od sredine roba oddaljena za $\frac{a}{2}$. 4. Ena stranska ploskev je trikotnik: $\dfrac{a \cdot v_s}{2} = \dfrac{6 \cdot 5}{2} = 15\,\text{cm}^2$. Plašč ima 4 takšne ploskve: $S_p = 60\,\text{cm}^2$. 5. **Površina:** $P = S + S_p = 36 + 60 = 96\,\text{cm}^2$.« -/
 theorem primer1 :
     (6 : ℝ) ^ 2 = 36 ∧ (36 : ℝ) * 4 / 3 = 48 ∧ (6 : ℝ) / 2 = 3 ∧ √((4 : ℝ) ^ 2 + 3 ^ 2) = √25 ∧
     √(25 : ℝ) = 5 ∧ (6 : ℝ) * 5 / 2 = 15 ∧ (4 : ℝ) * 15 = 60 ∧ (36 : ℝ) + 60 = 96 := by
@@ -465,7 +466,7 @@ theorem primer1 :
 
 /-- Primer 2 a) (valj r = 3, v = 8): V = π·9·8 = 72π ≈ 226,19, P = 2π·3·11 = 66π ≈ 207,35.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#primer2a
-besedilo: »$V = \pi r^2 v = \pi \cdot 9 \cdot 8 = 72\pi \approx 226{,}19\,\text{cm}^3$« -/
+besedilo: »$V = \pi r^2 v = \pi \cdot 9 \cdot 8 = 72\pi \approx 226{,}19\,\text{cm}^3$, ker je osnovna ploskev krog s ploščino $9\pi$. 2. $P = 2\pi r(r + v) = 2\pi \cdot 3 \cdot 11 = 66\pi \approx 207{,}35\,\text{cm}^2$, ker štejemo dva kroga in plašč.« -/
 theorem primer2a :
     π * 3 ^ 2 * 8 = 72 * π ∧ |72 * π - 226.19| < 0.005 ∧ 2 * π * 3 * (3 + 8) = 66 * π ∧
     |66 * π - 207.35| < 0.005 := by
@@ -475,7 +476,7 @@ theorem primer2a :
 /-- Primer 2 b) (stožec r = 3, v = 4): s = √(9 + 16) = 5, V = π·9·4/3 = 12π ≈ 37,70, P = 9π + 15π = 24π
 ≈ 75,40; opazi: 12π ≠ 72π/3 (primerjava s tretjino valja velja le pri enaki višini).
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#primer2b
-besedilo: »$P = \pi r^2 + \pi r s = 9\pi + 15\pi = 24\pi \approx 75{,}40\,\text{cm}^2$« -/
+besedilo: »Najprej stranica: $s = \sqrt{r^2 + v^2} = \sqrt{9 + 16} = 5\,\text{cm}$. Potrebujemo jo za plašč, ker ta leži »poševno«. 2. $V = \dfrac{\pi \cdot 9 \cdot 4}{3} = 12\pi \approx 37{,}70\,\text{cm}^3$. 3. $P = \pi r^2 + \pi r s = 9\pi + 15\pi = 24\pi \approx 75{,}40\,\text{cm}^2$.« -/
 theorem primer2b :
     √((3 : ℝ) ^ 2 + 4 ^ 2) = √(9 + 16) ∧ √(9 + 16 : ℝ) = 5 ∧ π * 9 * 4 / 3 = 12 * π ∧
     |12 * π - 37.70| < 0.005 ∧ π * 3 ^ 2 + π * 3 * 5 = 9 * π + 15 * π ∧ 9 * π + 15 * π = 24 * π ∧
@@ -488,7 +489,7 @@ theorem primer2b :
 /-- Primer 3 (kornet): stožec 12π, polkrogla ½·4π·27/3 = ½·36π = 18π, skupaj 30π ≈ 94,25; plašč
 π·3·5 = 15π, polkrogla ½·4π·9 = 18π, skupaj 33π ≈ 103,67.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#primer3
-besedilo: »Odgovor: kornet s sladoledom ima prostornino $30\pi \approx 94{,}25\,\text{cm}^3$, od zunaj vidiš $33\pi \approx 103{,}67\,\text{cm}^2$.« -/
+besedilo: »Odgovor: kornet s sladoledom ima prostornino $30\pi \approx 94{,}25 \text{cm}^3$, od zunaj vidiš $33\pi \approx 103{,}67 \text{cm}^2$.« -/
 theorem primer3 :
     1 / 2 * (4 * π * 27 / 3) = 1 / 2 * (36 * π) ∧ 1 / 2 * (36 * π) = 18 * π ∧ 12 * π + 18 * π = 30 * π ∧
     |30 * π - 94.25| < 0.005 ∧ π * 3 * 5 = 15 * π ∧ 1 / 2 * (4 * π * 9) = 18 * π ∧
@@ -499,7 +500,7 @@ theorem primer3 :
 
 /-- Primer 4 (dežemer): 0,5 l = 500 cm³, S = 64π ≈ 201,1; π·64·v = 500 ⇔ v = 500/(64π) ≈ 2,49 cm ≈ 25 mm.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#primer4
-besedilo: »$v = \dfrac{500}{201{,}1} \approx 2{,}49\,\text{cm} \approx 25\,\text{mm}$« -/
+besedilo: »$v = \dfrac{500}{201{,}1} \approx 2{,}49 \text{cm} \approx 25 \text{mm}$« -/
 theorem primer4 (v : ℝ) :
     (0.5 : ℝ) * 1000 = 500 ∧ π * 8 ^ 2 = 64 * π ∧ |64 * π - 201.1| < 0.05 ∧
     (π * 8 ^ 2 * v = 500 ↔ v = 500 / (64 * π)) ∧ |500 / (64 * π) - 2.49| < 0.005 ∧
@@ -519,7 +520,7 @@ theorem primer4 (v : ℝ) :
 S_p = 4·8·8/2 = 128 m², polovica diagonale 8√2/2 = 4√2 ≈ 5,66, tan φ = 4√3/(4√2) ≈ 1,2247,
 φ ≈ 50,8° < 60°.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#primer5
-besedilo: »Stranski rob** se projicira na polovico diagonale kvadrata: $\dfrac{a\sqrt{2}}{2} = 4\sqrt{2} \approx 5{,}66\,\text{m}$. Zato je $\tan\varphi = \dfrac{4\sqrt{3}}{4\sqrt{2}} \approx 1{,}2247$ in $\varphi \approx 50{,}8^\circ$.« -/
+besedilo: »polovica roba $\frac{a}{2} = 4\,\text{m}$ in višina stranske ploskve $v_s$ tvorijo pravokotni trikotnik. Kot $60^\circ$ leži ob kateti $\frac{a}{2}$. 2. **Višina:** $v = \dfrac{a}{2} \cdot \tan 60^\circ = 4\sqrt{3} \approx 6{,}93\,\text{m}$, ker je $v$ nasprotna kateta kota. 3. **Višina stranske ploskve:** $v_s = \dfrac{a/2}{\cos 60^\circ} = \dfrac{4}{0{,}5} = 8\,\text{m}$, ker je $v_s$ hipotenuza. 4. **Kritina** pokrije plašč (dna strehe ne pokrivamo): $S_p = 4 \cdot \dfrac{8 \cdot 8}{2} = 128\,\text{m}^2$. 5. **Stranski rob** se projicira na polovico diagonale kvadrata: $\dfrac{a\sqrt{2}}{2} = 4\sqrt{2} \approx 5{,}66\,\text{m}$. Zato je $\tan\varphi = \dfrac{4\sqrt{3}}{4\sqrt{2}} \approx 1{,}2247$ in $\varphi \approx 50{,}8^\circ$.« -/
 theorem primer5 :
     (8 : ℝ) / 2 = 4 ∧ 4 * tan (60 * π / 180) = 4 * √3 ∧ |4 * √3 - 6.93| < 0.005 ∧
     4 / cos (60 * π / 180) = 4 / 0.5 ∧ (4 : ℝ) / 0.5 = 8 ∧ (4 : ℝ) * (8 * 8 / 2) = 128 ∧
@@ -548,7 +549,7 @@ theorem primer5 :
 /-- Pogoste napake (pozabljena osnovna ploskev): pri r > 0 je sam plašč 2πrv manjši od površine
 2πr(r + v), ker manjkata dno in pokrov 2πr².
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#pozabljena-osnovna
-besedilo: »Pozabljena osnovna ploskev.** Površino valja učenec računa samo kot plašč $2\pi r v$. Pločevinka pa ima tudi dno in pokrov. Popravek: valj in prizma imata dve osnovni ploskvi, stožec in piramida eno; izpusti jo le, če to zahteva naloga (šotor, kornet).« -/
+besedilo: »Površino valja učenec računa samo kot plašč $2\pi r v$. Pločevinka pa ima tudi dno in pokrov.« -/
 theorem pozabljena_osnovna (r v : ℝ) (hr : 0 < r) :
     2 * π * r * (r + v) - 2 * π * r * v = 2 * π * r ^ 2 ∧ 2 * π * r * v < 2 * π * r * (r + v) := by
   have := pi_pos
@@ -566,7 +567,7 @@ example :=
 /-- Pogoste napake: brez 1/3 dobiš π·9·4 = 36π (valj), stožec ima 12π; plašč s v namesto s: πrv ≠ πrs
 (3·4 ≠ 3·5); premer 4 namesto polmera 2 da (4/2)³ = 8-krat preveč; r = 6: r³ = 216, ne r² = 36.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#pogoste-napake
-besedilo: »Pozabljen faktor $\frac13$.** Učenec za stožec z $r = 3\,\text{cm}$, $v = 4\,\text{cm}$ računa $\pi \cdot 9 \cdot 4 = 36\pi$, kot pri valju.« -/
+besedilo: »Učenec za stožec z $r = 3\,\text{cm}$, $v = 4\,\text{cm}$ računa $\pi \cdot 9 \cdot 4 = 36\pi$, kot pri valju. To je prostornina valja, stožec pa se proti vrhu oži in zavzame le tretjino. Popravek: pri piramidi in stožcu deli s $3$. - **Višina namesto stranice.** »Plašč stožca je $\pi r v$, saj je $v$ višina.« Plašč pa leži poševno in razgrnjen je izsek s polmerom $s$. Popravek: najprej $s = \sqrt{r^2 + v^2}$; pri piramidi enako $v_s$ namesto $v$. - **Premer namesto polmera.** Pri toči s premerom $4\,\text{cm}$ učenec vstavi $r = 4$ in dobi osemkrat preveliko prostornino. Popravek: premer najprej razpolovi. - **Napačna potenca.** »Krogla je okrogla kot krog, torej $r^2$.« A prostornina ima tri razsežnosti, zato $r^3$. Pri $r = 6$ je $r^3 = 216$, ne $36$.« -/
 theorem pogoste_napake :
     π * 9 * 4 = 36 * π ∧ 36 * π / 3 = 12 * π ∧ π * 3 * 4 ≠ π * 3 * 5 ∧
     4 * π * 4 ^ 3 / 3 = 8 * (4 * π * 2 ^ 3 / 3) ∧ (6 : ℝ) ^ 3 = 216 ∧ (6 : ℝ) ^ 2 = 36 := by
@@ -579,7 +580,7 @@ theorem pogoste_napake :
 /-- Naloga 1: valj z v = 2r ima V = πr²·2r = 2πr³; 2πr³ = 54π ⇔ r³ = 27 ⇔ r = 3 (za realni r), v = 6,
 P = 2π·3·9 = 54π.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#naloga1
-besedilo: »Iz $2\pi r^3 = 54\pi$ sledi $r^3 = 27$, torej $r = 3\,\text{cm}$ in $v = 6\,\text{cm}$.« -/
+besedilo: »Višina je enaka premeru: $v = 2r$. Zato je $V = \pi r^2 \cdot 2r = 2\pi r^3$. 2. Iz $2\pi r^3 = 54\pi$ sledi $r^3 = 27$, torej $r = 3\,\text{cm}$ in $v = 6\,\text{cm}$. 3. $P = 2\pi r(r + v) = 2\pi \cdot 3 \cdot 9 = 54\pi\,\text{cm}^2$.« -/
 theorem naloga1 (r : ℝ) :
     π * r ^ 2 * (2 * r) = 2 * π * r ^ 3 ∧ (2 * π * r ^ 3 = 54 * π ↔ r ^ 3 = 27) ∧ (r ^ 3 = 27 ↔ r = 3) ∧
     2 * (3 : ℝ) = 6 ∧ 2 * π * 3 * (3 + 6) = 54 * π := by
@@ -593,8 +594,7 @@ theorem naloga1 (r : ℝ) :
     · rintro rfl; norm_num
 
 /-- RAČUN: 27^(1/3) = 3, 2π·3³ = 54π.
-trditev: MAT-SS-3/povrsina-in-prostornina-teles#racun-naloga1
-besedilo: »Iz $2\pi r^3 = 54\pi$ sledi $r^3 = 27$,« -/
+pomozno -/
 theorem racun_naloga1 : (27 : ℝ) ^ ((1 : ℝ) / 3) = 3 ∧ 2 * π * 3 ^ 3 = 54 * π := by
   refine ⟨?_, by ring⟩
   rw [show (27 : ℝ) = 3 ^ (3 : ℝ) by norm_num, ← Real.rpow_mul (by norm_num)]; norm_num
@@ -602,7 +602,7 @@ theorem racun_naloga1 : (27 : ℝ) ^ ((1 : ℝ) / 3) = 3 ∧ 2 * π * 3 ^ 3 = 54
 /-- Naloga 2 a) (silos, r = 2, kot 35°): višina strehe v₂ = 2 tan 35° ≈ 1,4004 ≈ 1,40 m, stranica
 s = 2/cos 35° ≈ 2,4415 ≈ 2,44 m.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#naloga2a
-besedilo: »a) $v_2 = r\tan 35^\circ = 2\tan 35^\circ \approx 1{,}4004\,\text{m} \approx 1{,}40\,\text{m}$ in $s = \dfrac{r}{\cos 35^\circ} \approx 2{,}4415\,\text{m} \approx 2{,}44\,\text{m}$.« -/
+besedilo: »a) $v_2 = r\tan 35^\circ = 2\tan 35^\circ \approx 1{,}4004 \text{m} \approx 1{,}40 \text{m}$ in $s = \dfrac{r}{\cos 35^\circ} \approx 2{,}4415 \text{m} \approx 2{,}44 \text{m}$.« -/
 theorem naloga2a :
     |2 * tan (35 * π / 180) - 1.4004| < 0.00005 ∧ |2 * tan (35 * π / 180) - 1.40| < 0.005 ∧
     |2 / cos (35 * π / 180) - 2.4415| < 0.00005 ∧ |2 / cos (35 * π / 180) - 2.44| < 0.005 := by
@@ -615,7 +615,7 @@ theorem naloga2a :
 /-- Naloga 2 b): V₁ = π·4·9 = 36π ≈ 113,097, V₂ = π·4·v₂/3 ≈ 5,866 (tudi z zaokroženim v₂ = 1,4004),
 skupaj ≈ 118,963 ≈ 119,0 m³.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#naloga2b
-besedilo: »b) Streha: $V_2 = \dfrac{\pi r^2 v_2}{3} \approx \dfrac{\pi \cdot 4 \cdot 1{,}4004}{3} \approx 5{,}866\,\text{m}^3$. Skupaj $V \approx 118{,}963\,\text{m}^3 \approx 119{,}0\,\text{m}^3$.« -/
+besedilo: »b) Valj: $V_1 = \pi r^2 v_1 = \pi \cdot 4 \cdot 9 = 36\pi \approx 113{,}097\,\text{m}^3$. 4. b) Streha: $V_2 = \dfrac{\pi r^2 v_2}{3} \approx \dfrac{\pi \cdot 4 \cdot 1{,}4004}{3} \approx 5{,}866\,\text{m}^3$. Skupaj $V \approx 118{,}963\,\text{m}^3 \approx 119{,}0\,\text{m}^3$.« -/
 theorem naloga2b :
     π * 2 ^ 2 * 9 = 36 * π ∧ |36 * π - 113.097| < 0.0005 ∧
     |π * 4 * (2 * tan (35 * π / 180)) / 3 - 5.866| < 0.0005 ∧ |π * 4 * 1.4004 / 3 - 5.866| < 0.0005 ∧
@@ -629,7 +629,7 @@ theorem naloga2b :
 /-- Naloga 2 c): plašč valja 2π·2·9 = 36π ≈ 113,097, plašč stožca π·2·s ≈ 15,341 (s = 2/cos 35°), skupaj
 ≈ 128,44 m²; navzgor zaokroženo ⌈·⌉ = 129 m².
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#naloga2c
-besedilo: »c) Plašč valja: $2\pi r v_1 = 36\pi \approx 113{,}097\,\text{m}^2$. Plašč stožca: $\pi r s = \pi \cdot 2 \cdot s \approx 15{,}341\,\text{m}^2$.« -/
+besedilo: »c) Plašč valja: $2\pi r v_1 = 36\pi \approx 113{,}097\,\text{m}^2$. Plašč stožca: $\pi r s = \pi \cdot 2 \cdot s \approx 15{,}341\,\text{m}^2$. 6. c) Skupaj $\approx 128{,}44\,\text{m}^2$; pločevine ne sme zmanjkati, zato zaokrožimo navzgor na $129\,\text{m}^2$.« -/
 theorem naloga2c :
     2 * π * 2 * 9 = 36 * π ∧ |π * 2 * (2 / cos (35 * π / 180)) - 15.341| < 0.0005 ∧
     |36 * π + π * 2 * (2 / cos (35 * π / 180)) - 128.44| < 0.005 ∧
@@ -648,7 +648,7 @@ theorem naloga2c :
 /-- Naloga 2 d): m = 36π m³ · 750 kg/m³ ≈ 84 823 kg ≈ 84,8 t (tudi 113,097·750 ≈ 84 823); RAČUN
 π·2²·9·0,75 ≈ 84,82 t.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#naloga2d
-besedilo: »$m = 113{,}097\,\text{m}^3 \cdot 750\,\text{kg/m}^3 \approx 84\,823\,\text{kg} \approx 84{,}8\,\text{t}$« -/
+besedilo: »$m = 113{,}097 \text{m}^3 \cdot 750 \text{kg/m}^3 \approx 84 823 \text{kg} \approx 84{,}8 \text{t}$« -/
 theorem naloga2d :
     |36 * π * 750 - 84823| < 0.5 ∧ |(113.097 : ℝ) * 750 - 84823| < 0.5 ∧
     |36 * π * 750 / 1000 - 84.8| < 0.05 ∧ |π * 2 ^ 2 * 9 * 0.75 - 84.82| < 0.005 := by
@@ -657,7 +657,7 @@ theorem naloga2d :
 
 /-- Naloga 3 a) (r = 6, v = 8): s = √(36 + 64) = 10, P = 36π + 60π = 96π, V = π·36·8/3 = 96π.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#naloga3a
-besedilo: »a) Stranica: $s = \sqrt{6^2 + 8^2} = 10\,\text{cm}$. Površina: $P = \pi r^2 + \pi r s = 36\pi + 60\pi = 96\pi\,\text{cm}^2$.« -/
+besedilo: »a) Stranica: $s = \sqrt{6^2 + 8^2} = 10\,\text{cm}$. Površina: $P = \pi r^2 + \pi r s = 36\pi + 60\pi = 96\pi\,\text{cm}^2$. 2. a) Prostornina: $V = \dfrac{\pi r^2 v}{3} = \dfrac{\pi \cdot 36 \cdot 8}{3} = 96\pi\,\text{cm}^3$.« -/
 theorem naloga3a :
     √((6 : ℝ) ^ 2 + 8 ^ 2) = 10 ∧ π * 6 ^ 2 + π * 6 * 10 = 36 * π + 60 * π ∧ 36 * π + 60 * π = 96 * π ∧
     π * 6 ^ 2 * 8 / 3 = 96 * π := by
@@ -669,7 +669,7 @@ središče O = (0, ρ) na osi je od nje oddaljeno |6ρ − 48|/10, dotik pomeni 
 je to natanko ρ = 3. Enačba iz podobnosti ρ/(8 − ρ) = 6/10 da 10ρ = 48 − 6ρ, 16ρ = 48, ρ = 3; tudi
 ploščina 48 deljena s polobsegom 16 je 3.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#naloga3b
-besedilo: »b) $10\rho = 48 - 6\rho$, $16\rho = 48$, $\rho = 3\,\text{cm}$. (Enako da formula za polmer včrtanega kroga: ploščina $48\,\text{cm}^2$ deljena s polobsegom $16\,\text{cm}$.)« -/
+besedilo: »torej $\dfrac{\rho}{8 - \rho} = \dfrac{6}{10}$. 6. b) $10\rho = 48 - 6\rho$, $16\rho = 48$, $\rho = 3\,\text{cm}$. (Enako da formula za polmer včrtanega kroga: ploščina $48\,\text{cm}^2$ deljena s polobsegom $16\,\text{cm}$.)« -/
 theorem naloga3b (ρ : ℝ) (h8 : ρ < 8) :
     (|6 * ρ - 48| / 10 = ρ ↔ ρ = 3) ∧ (ρ / (8 - ρ) = 6 / 10 ↔ 10 * ρ = 48 - 6 * ρ) ∧
     (10 * ρ = 48 - 6 * ρ ↔ 16 * ρ = 48) ∧ (16 * ρ = 48 ↔ ρ = 3) ∧
@@ -690,7 +690,7 @@ example :=
 
 /-- Naloga 3 c): V_k = 4π·27/3 = 36π, delež 36π/(96π) = 3/8 = 37,5 %.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#naloga3c
-besedilo: »c) $V_k = \dfrac{4\pi \rho^3}{3} = \dfrac{4\pi \cdot 27}{3} = 36\pi\,\text{cm}^3$. Delež: $\dfrac{36\pi}{96\pi} = \dfrac{3}{8} = 37{,}5\,\%$.« -/
+besedilo: »c) $V_k = \dfrac{4\pi \rho^3}{3} = \dfrac{4\pi \cdot 27}{3} = 36\pi \text{cm}^3$. Delež: $\dfrac{36\pi}{96\pi} = \dfrac{3}{8} = 37{,}5 \%$.« -/
 theorem naloga3c : 4 * π * 3 ^ 3 / 3 = 36 * π ∧ (36 * π) / (96 * π) = 3 / 8 ∧ (3 : ℝ) / 8 * 100 = 37.5 := by
   have := pi_pos
   refine ⟨by ring, by field_simp; ring, by norm_num⟩
@@ -706,7 +706,7 @@ theorem naloga3d : ∫ h in (0:ℝ)..8, π * (6 * (8 - h) / 8) ^ 2 = 96 * π := 
 
 /-- Preveri se (3): 4πr³/3 = 288π ⇔ r³ = 3·288/4 = 216 ⇔ r = 6; napačni odgovori ∛288 ≈ 6,6 in √216 ≈ 14,7.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#krogla-288
-besedilo: »6,6 | To je $\sqrt[3]{288}$. Pozabljen je faktor $\frac{4}{3}$: iz $\frac{4\pi r^3}{3} = 288\pi$ najprej dobiš $r^3 = 216$.« -/
+besedilo: »Iz $\dfrac{4\pi r^3}{3} = 288\pi$ sledi $r^3 = \dfrac{3 \cdot 288}{4} = 216$, torej $r = \sqrt[3]{216} = 6\,\text{cm}$.« -/
 theorem krogla_288 (r : ℝ) :
     (4 * π * r ^ 3 / 3 = 288 * π ↔ r ^ 3 = 216) ∧ (3 : ℝ) * 288 / 4 = 216 ∧ (r ^ 3 = 216 ↔ r = 6) ∧
     |(288 : ℝ) ^ ((1 : ℝ) / 3) - 6.6| < 0.05 ∧ |√(216 : ℝ) - 14.7| < 0.05 := by
@@ -731,7 +731,7 @@ theorem krogla_288 (r : ℝ) :
 /-- Preveri se (4): kup soli r = 2, v = 1,5: V = π·4·1,5/3 = 2π ≈ 6,3 (≈ 6 m³); napačni: valj
 π·4·1,5 ≈ 18,8 (≈ 19), brez kvadrata π·2·1,5/3 ≈ 3,1 (≈ 3), premer π·16·1,5/3 ≈ 25,1 (≈ 25).
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#sol
-besedilo: »$V = \dfrac{\pi r^2 v}{3} = \dfrac{\pi \cdot 4 \cdot 1{,}5}{3} = 2\pi \approx 6{,}3\,\text{m}^3$« -/
+besedilo: »$V = \dfrac{\pi r^2 v}{3} = \dfrac{\pi \cdot 4 \cdot 1{,}5}{3} = 2\pi \approx 6{,}3 \text{m}^3$« -/
 theorem sol :
     π * 4 * 1.5 / 3 = 2 * π ∧ |2 * π - 6.3| < 0.05 ∧ |2 * π - 6| < 0.5 ∧ |π * 4 * 1.5 - 18.8| < 0.05 ∧
     |π * 2 * 1.5 / 3 - 3.1| < 0.05 ∧ |π * 16 * 1.5 / 3 - 25.1| < 0.05 := by
@@ -741,7 +741,7 @@ theorem sol :
 /-- Preveri se (5): r = 5, v = 12: s = √(25 + 144) = 13, P = 25π + 65π = 90π; napačni: 25π + 5·12π = 85π,
 plašč 65π, prostornina π·25·12/3 = 100π.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#stozec-90
-besedilo: »Stranica je $s = \sqrt{25 + 144} = 13\,\text{cm}$. Potem $P = \pi r^2 + \pi r s = 25\pi + 65\pi = 90\pi$. Odgovor $85\pi$ uporabi $v$ namesto $s$, $65\pi$ je samo plašč, $100\pi$ pa je prostornina.« -/
+besedilo: »Stranica je $s = \sqrt{25 + 144} = 13 \text{cm}$. Potem $P = \pi r^2 + \pi r s = 25\pi + 65\pi = 90\pi$. Odgovor $85\pi$ uporabi $v$ namesto $s$, $65\pi$ je samo plašč, $100\pi$ pa je prostornina.« -/
 theorem stozec_90 :
     √((25 : ℝ) + 144) = 13 ∧ π * 5 ^ 2 + π * 5 * 13 = 25 * π + 65 * π ∧ 25 * π + 65 * π = 90 * π ∧
     25 * π + 5 * 12 * π = 85 * π ∧ π * 25 * 12 / 3 = 100 * π := by
@@ -771,15 +771,14 @@ theorem stozec_60 :
 
 /-- Iz vsakdanjega življenja: pločevinka r = 3, v = 8 ima V = 72π ≈ 226 cm³ ≈ 0,23 l.
 trditev: MAT-SS-3/povrsina-in-prostornina-teles#plocevinka
-besedilo: »Pločevinka z $r = 3\,\text{cm}$ in $v = 8\,\text{cm}$ ima $V \approx 226\,\text{cm}^3$, torej okoli $0{,}23\,\text{l}$.« -/
+besedilo: »Pločevinka z $r = 3 \text{cm}$ in $v = 8 \text{cm}$ ima $V \approx 226 \text{cm}^3$, torej okoli $0{,}23 \text{l}$.« -/
 theorem plocevinka : |72 * π - 226| < 0.5 ∧ |72 * π / 1000 - 0.23| < 0.005 := by
   have p1 := pi_gt_d6; have p2 := pi_lt_d6
   constructor <;> rw [abs_lt] <;> constructor <;> linarith
 
 /-- RAČUN: 4·tan 60° ≈ 6,93; 4/cos 60° = 8; 4·8·8/2 = 128; 10x = 6(8 − x) ⇔ x = 3. (Ostali računi
 so v `primer5`, `naloga3a`, `naloga3b` in `naloga3c`.)
-trditev: MAT-SS-3/povrsina-in-prostornina-teles#racun
-besedilo: »$v = \dfrac{a}{2} \cdot \tan 60^\circ = 4\sqrt{3} \approx 6{,}93\,\text{m}$« -/
+pomozno -/
 theorem racun :
     |4 * tan (60 * π / 180) - 6.93| < 0.005 ∧ 4 / cos (60 * π / 180) = 8 ∧ (4 : ℝ) * 8 * 8 / 2 = 128 ∧
     (∀ x : ℝ, 10 * x = 6 * (8 - x) ↔ x = 3) := by

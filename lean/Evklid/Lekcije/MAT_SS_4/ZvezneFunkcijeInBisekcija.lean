@@ -174,7 +174,7 @@ theorem stanje_nikoli_nic : stanje 0 = -30 ∧ stanje 20 = 50 ∧ ∀ t, stanje 
 /-- Razlaga 2 (izrek o ničli): `f` zvezna na `[a, b]` in `f(a)·f(b) < 0` ⇒ `f(c) = 0` za vsaj en
 `c ∈ (a, b)`.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#izrek-o-nicli
-besedilo: »Izrek o ničli:** če je $f$ zvezna na $[a, b]$ in $f(a) \cdot f(b) < 0$, ima vsaj eno ničlo na $(a, b)$.« -/
+besedilo: »Če je funkcija $f$ zvezna na zaprtem intervalu $[a, b]$ in velja $f(a) \cdot f(b) < 0$, ima $f$ na odprtem intervalu $(a, b)$ vsaj eno ničlo.« -/
 theorem izrek_o_nicli (f : ℝ → ℝ) (a b : ℝ) (hab : a ≤ b) (hf : ContinuousOn f (Icc a b))
     (h : f a * f b < 0) : ∃ c ∈ Ioo a b, f c = 0 := by
   rcases lt_or_gt_of_ne (show f a ≠ 0 by rintro h0; rw [h0, zero_mul] at h; exact lt_irrefl 0 h)
@@ -191,7 +191,7 @@ example : ContinuousOn (fun x : ℝ => x) (Icc (-1) 1) ∧ (-1:ℝ) ≤ 1 ∧ (-
 /-- Razlaga 2, premisli: `x² − 1` ima na `[−2, 2]` na krajiščih enaka predznaka (`3` in `3`), pa vseeno
 ničli `−1` in `1`.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#enaka-predznaka-dve-nicli
-besedilo: »Funkcija $f(x) = x^2 - 1$ ima na krajiščih intervala $[-2, 2]$ vrednosti $f(-2) = 3$ in $f(2) = 3$, torej enak predznak.« -/
+besedilo: »$x^2 - 1$ ima na $[-2, 2]$ na obeh krajiščih vrednost $3$ in vseeno dve ničli.« -/
 theorem enaka_predznaka_dve_nicli :
     ((-2:ℝ) ^ 2 - 1 = 3 ∧ (2:ℝ) ^ 2 - 1 = 3) ∧ ∀ x : ℝ, x ^ 2 - 1 = 0 ↔ x = -1 ∨ x = 1 := by
   refine ⟨by norm_num, fun x => ?_⟩
@@ -219,7 +219,7 @@ example : ContinuousOn (fun x : ℝ => x) (Icc 0 1) ∧ (0:ℝ) ≤ 1 ∧ (1/2:�
 /-- Razlaga 4: zvezna funkcija na zaprtem intervalu `[a, b]` doseže najmanjšo vrednost `m` in največjo
 vrednost `M` ter zavzame natanko vse vrednosti od `m` do `M`.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#najmanjsa-najvecja
-besedilo: »4. Največja in najmanjša vrednost.** Zvezna funkcija na **zaprtem** intervalu $[a, b]$ na njem doseže najmanjšo vrednost $m$ in največjo vrednost $M$. Zato zavzame vse vrednosti od $m$ do $M$ in nobene zunaj.« -/
+besedilo: »Zvezna funkcija na **zaprtem** intervalu $[a, b]$ na njem doseže najmanjšo vrednost $m$ in največjo vrednost $M$. Zato zavzame vse vrednosti od $m$ do $M$ in nobene zunaj.« -/
 theorem najmanjsa_najvecja (f : ℝ → ℝ) (a b : ℝ) (hab : a ≤ b) (hf : ContinuousOn f (Icc a b)) :
     ∃ m M : ℝ, (∃ x ∈ Icc a b, f x = m) ∧ (∃ x ∈ Icc a b, f x = M) ∧ f '' Icc a b = Icc m M := by
   obtain ⟨x1, hx1, hmin⟩ := isCompact_Icc.exists_isMinOn (nonempty_Icc.mpr hab) hf
@@ -253,7 +253,7 @@ theorem odprt_brez_maksimuma : ¬ ∃ c ∈ Ioo (0:ℝ) 1, ∀ x ∈ Ioo (0:ℝ)
 
 /-- Razlaga 4: `1/x` na `[−1, 1]` (za `x ≠ 0`) raste čez vse meje, zato največje vrednosti nima.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#ena-skozi-x-neomejena
-besedilo: »Funkcija $f(x) = \frac{1}{x}$ pa na $[-1, 1]$ ni zvezna, ker v $0$ ni definirana; blizu $0$ raste čez vse meje in največje vrednosti nima.« -/
+besedilo: »blizu $0$ raste čez vse meje in največje vrednosti nima.« -/
 theorem ena_skozi_x_neomejena (M : ℝ) : ∃ x ∈ Icc (-1:ℝ) 1, x ≠ 0 ∧ M < 1 / x := by
   refine ⟨1 / (|M| + 2), ⟨?_, ?_⟩, by positivity, ?_⟩
   · have : 0 < 1 / (|M| + 2) := by positivity
@@ -266,7 +266,7 @@ theorem ena_skozi_x_neomejena (M : ℝ) : ∃ x ∈ Icc (-1:ℝ) 1, x ≠ 0 ∧ 
 /-- Razlaga 4 in pogoste napake: `1/x` na `[−1, 1]` ni zvezna (sicer bi bila omejena), čeprav imata
 `f(−1) = −1` in `f(1) = 1` različna predznaka, ničle pa ni.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#ena-skozi-x
-besedilo: »Funkcija $f(x) = \frac{1}{x}$ pa na $[-1, 1]$ ni zvezna,« -/
+besedilo: »Brez zveznosti izrek ne velja: $\frac{1}{x}$ na $[-1, 1]$ ničle nima.« -/
 theorem ena_skozi_x :
     ¬ ContinuousOn (fun x : ℝ => 1 / x) (Icc (-1) 1) ∧ (1 / (-1:ℝ)) * (1 / 1) < 0 ∧
       ∀ x ∈ Icc (-1:ℝ) 1, x ≠ 0 → 1 / x ≠ 0 := by
@@ -280,7 +280,7 @@ theorem ena_skozi_x :
 
 /-- Razlaga 5: po `n` korakih bisekcije ima interval dolžino `dₙ = (b − a)/2ⁿ`.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#dolzina
-besedilo: »$$d_n = \frac{b - a}{2^n}$$« -/
+besedilo: »Po vsakem koraku je interval pol krajši. Po $n$ korakih ima dolžino $$d_n = \frac{b - a}{2^n}$$« -/
 theorem dolzina (f : ℝ → ℝ) (a b : ℝ) (n : ℕ) :
     (bisekcija f a b n).2 - (bisekcija f a b n).1 = (b - a) / 2 ^ n := by
   induction n with
@@ -294,7 +294,7 @@ theorem dolzina (f : ℝ → ℝ) (a b : ℝ) (n : ℕ) :
 /-- Razlaga 5 in ustno vprašanje 3: bisekcija ohrani pogoj — vsak interval leži v `[a, b]`, krajišči
 imata vrednosti različnih predznakov (`f(aₙ)·f(bₙ) ≤ 0`).
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#bisekcija-pogoj
-besedilo: »Začnemo z intervalom $[a, b]$, na katerem je $f$ zvezna in ima na krajiščih vrednosti različnih predznakov.« -/
+besedilo: »Izračunamo sredino $c = \frac{a + b}{2}$ in vrednost $f(c)$, nato obdržimo tisto polovico, na kateri imata krajišči vrednosti različnih predznakov.« -/
 theorem bisekcija_pogoj (f : ℝ → ℝ) (a b : ℝ) (hab : a ≤ b) (hf : f a * f b ≤ 0) (n : ℕ) :
     a ≤ (bisekcija f a b n).1 ∧ (bisekcija f a b n).1 ≤ (bisekcija f a b n).2 ∧
       (bisekcija f a b n).2 ≤ b ∧ f (bisekcija f a b n).1 * f (bisekcija f a b n).2 ≤ 0 := by
@@ -319,7 +319,7 @@ theorem bisekcija_pogoj (f : ℝ → ℝ) (a b : ℝ) (hab : a ≤ b) (hf : f a 
 /-- Razlaga 5 in ustno vprašanje 3: če je `f` zvezna na `[a, b]` in `f(a)·f(b) ≤ 0`, je v vsakem intervalu
 bisekcije ničla; po `n` korakih jo torej poznamo na natančnost `(b − a)/2ⁿ`.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#bisekcija-nicla
-besedilo: »Vsak korak interval razpolovi, zato je po $n$ korakih njegova dolžina $\frac{b - a}{2^n}$ in ničlo poznamo na to natančnost.« -/
+besedilo: »Ničlo poznaš na **natančnost** $d_n$: ne veš točno, kje je, veš pa, da je v intervalu te dolžine.« -/
 theorem bisekcija_nicla (f : ℝ → ℝ) (a b : ℝ) (hab : a ≤ b) (hf : ContinuousOn f (Icc a b))
     (h : f a * f b ≤ 0) (n : ℕ) :
     ∃ c ∈ Icc (bisekcija f a b n).1 (bisekcija f a b n).2, f c = 0 := by
@@ -354,7 +354,7 @@ theorem premisli_tisocinka :
 /-- Razlaga 6: če je ničla med krajiščema `lo ≤ x ≤ hi` in se obe krajišči zaokrožita na isto
 število, se nanj zaokroži tudi ničla.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#zaokrozitev-krajisc
-besedilo: »ko se obe krajišči končnega intervala zaokrožita na isto število.« -/
+besedilo: »Rezultat na $k$ decimalk je zanesljiv šele, ko se obe krajišči končnega intervala zaokrožita na isto število.« -/
 theorem zaokrozitev_krajisc (k : ℕ) (lo x hi : ℝ) (h1 : lo ≤ x) (h2 : x ≤ hi)
     (h : zaokrozi k lo = zaokrozi k hi) : zaokrozi k x = zaokrozi k lo := by
   have hp : (0:ℝ) < 10 ^ k := by positivity
@@ -368,7 +368,7 @@ example : (1.2:ℝ) ≤ 1.2 ∧ zaokrozi 1 1.2 = zaokrozi 1 1.2 := ⟨le_rfl, rf
 
 /-- Razlaga 6: točka na krivulji z `f(x) = 2` je ničla `f(x) − 2`; presečišče `f` in `g` je ničla `f − g`.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#prevod-na-niclo
-besedilo: »Točka na krivulji, na primer tam, kjer je $f(x) = 2$, je ničla funkcije $f(x) - 2$.« -/
+besedilo: »Točka na krivulji, na primer tam, kjer je $f(x) = 2$, je ničla funkcije $f(x) - 2$. Presečišče grafov $f$ in $g$ je ničla razlike $f - g$.« -/
 theorem prevod_na_niclo (f g : ℝ → ℝ) (x : ℝ) :
     (f x = 2 ↔ f x - 2 = 0) ∧ (f x = g x ↔ f x - g x = 0) :=
   ⟨sub_eq_zero.symm, sub_eq_zero.symm⟩
@@ -396,7 +396,7 @@ theorem primer1_nicli : (∃ c ∈ Ioo (0:ℝ) 1, f₁ c = 0) ∧ (∃ c ∈ Ioo
 /-- Primer 1, korak 4 (splošno): polinom tretje stopnje `ax³ + bx² + cx + d`, `a ≠ 0`, ima največ 3
 ničle — vsaka končna množica ničel ima največ 3 elemente.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#kubicni-najvec-tri
-besedilo: »Polinom tretje stopnje ima največ $3$ ničle, na $[0, 2]$ pa vsaj $2$.« -/
+besedilo: »Polinom tretje stopnje ima največ $3$ ničle« -/
 theorem kubicni_najvec_tri (a b c d : ℝ) (ha : a ≠ 0) (s : Finset ℝ)
     (hs : ∀ x ∈ s, a * x ^ 3 + b * x ^ 2 + c * x + d = 0) : s.card ≤ 3 := by
   open Polynomial in
@@ -430,7 +430,7 @@ example :=
 
 /-- Primer 1, korak 5: `f` na `[0, 2]` doseže najmanjšo vrednost `m ≤ −1` in največjo `M ≥ 3`.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#primer1-min-max
-besedilo: »Funkcija doseže najmanjšo vrednost $m \le -1$ in največjo $M \ge 3$. Zavzame vse vrednosti od $-1$ do $3$, na primer tudi $2$.« -/
+besedilo: »Funkcija doseže najmanjšo vrednost $m \le -1$ in največjo $M \ge 3$.« -/
 theorem primer1_min_max :
     ∃ m M : ℝ, (∃ x ∈ Icc (0:ℝ) 2, f₁ x = m ∧ ∀ y ∈ Icc (0:ℝ) 2, m ≤ f₁ y) ∧
       (∃ x ∈ Icc (0:ℝ) 2, f₁ x = M ∧ ∀ y ∈ Icc (0:ℝ) 2, f₁ y ≤ M) ∧ m ≤ -1 ∧ 3 ≤ M := by
@@ -446,7 +446,7 @@ theorem primer1_min_max :
 
 /-- Primer 1, koraka 5 in 6: `f` na `[0, 2]` zavzame vsako vrednost med `−1` in `3`, na primer tudi `2`.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#primer1-vmesne
-besedilo: »Odgovor: na $[0, 2]$ ima $f$ vsaj dve ničli (eno na $(0, 1)$, drugo na $(1, 2)$) in zavzame vsako vrednost med $-1$ in $3$.« -/
+besedilo: »Zavzame vse vrednosti od $-1$ do $3$, na primer tudi $2$.« -/
 theorem primer1_vmesne (y : ℝ) (hy : y ∈ Icc (-1:ℝ) 3) : ∃ c ∈ Icc (0:ℝ) 2, f₁ c = y := by
   have hc : ContinuousOn f₁ (Icc 1 2) := by unfold f₁; fun_prop
   obtain ⟨c, hc1, hc2⟩ := intermediate_value_Icc (show (1:ℝ) ≤ 2 by norm_num) hc
@@ -493,7 +493,7 @@ theorem primer2_pogoj : f₂ 1 = -1 ∧ f₂ 2 = 7 := by norm_num [f₂]
 /-- Primer 2, korak 2: vrednosti v sredinah — `f(1,5) = 1,875`, `f(1,25) ≈ 0,203`, `f(1,125) ≈ −0,451`,
 `f(1,1875) ≈ −0,138`, `f(1,21875) ≈ 0,029` (z znaki, ki jih lekcija zapiše).
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#primer2-vrednosti
-besedilo: »korak 5: $[1{,}1875; 1{,}25]$, $c = 1{,}21875$, $f(c) \approx 0{,}029 > 0$« -/
+besedilo: »korak 1: $[1; 2]$, $c = 1{,}5$, $f(c) = 1{,}875 > 0$ - korak 2: $[1; 1{,}5]$, $c = 1{,}25$, $f(c) \approx 0{,}203 > 0$ - korak 3: $[1; 1{,}25]$, $c = 1{,}125$, $f(c) \approx -0{,}451 < 0$ - korak 4: $[1{,}125; 1{,}25]$, $c = 1{,}1875$, $f(c) \approx -0{,}138 < 0$ - korak 5: $[1{,}1875; 1{,}25]$, $c = 1{,}21875$, $f(c) \approx 0{,}029 > 0$« -/
 theorem primer2_vrednosti :
     f₂ 1.5 = 1.875 ∧ |f₂ 1.25 - 0.203| ≤ 0.0005 ∧ |f₂ 1.125 - (-0.451)| ≤ 0.0005 ∧
       |f₂ 1.1875 - (-0.138)| ≤ 0.0005 ∧ |f₂ 1.21875 - 0.029| ≤ 0.0005 ∧
@@ -532,7 +532,7 @@ theorem primer2_koraki :
 `[1,5; 2]` (kjer je `f(c) > 0`), ne pa `[1; 1,5]` z različnima predznakoma na krajiščih, na njej nima
 ničle: `f` je naraščajoča, zato je `f(x) ≥ f(1,5) > 0` za `x ≥ 1,5`; ničla leži v `(1; 1,5)`.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#napacna-polovica
-besedilo: »Napačna polovica pri bisekciji.** Nekateri obdržijo polovico, kjer je $f(c) > 0$, ne glede na drugo krajišče. Obdrži polovico, kjer imata **krajišči** različna predznaka; sicer se oddaljiš od ničle.« -/
+besedilo: »Obdrži polovico, kjer imata **krajišči** različna predznaka; sicer se oddaljiš od ničle.« -/
 theorem napacna_polovica :
     0 < f₂ 1.5 ∧ 0 < f₂ 2 ∧ (∀ x ∈ Set.Icc (1.5:ℝ) 2, 0 < f₂ x) ∧ ∃ x ∈ Set.Ioo (1:ℝ) 1.5, f₂ x = 0 := by
   have hc : Continuous f₂ := by unfold f₂; fun_prop
@@ -553,7 +553,7 @@ theorem primer2_zaokrozitev :
 /-- Primer 2, korak 5: `x³ + x − 3` ima natanko eno ničlo; leži na `(1,1875; 1,21875)` in se na eno
 decimalko zaokroži na `1,2`.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#primer2-nicla
-besedilo: »Obe krajišči se na eno decimalko zaokrožita na $1{,}2$. Po četrtem koraku je bil interval $[1{,}1875; 1{,}25]$ in to še ni veljalo: $1{,}25$ bi dal $1{,}3$.« -/
+besedilo: »Odgovor: ničla je $x \approx 1{,}2$.« -/
 theorem primer2_nicla :
     ∃ x ∈ Ioo (1.1875:ℝ) 1.21875, f₂ x = 0 ∧ (∀ y, f₂ y = 0 → y = x) ∧ zaokrozi 1 x = 12 := by
   have hc : ContinuousOn f₂ (Icc 1.1875 1.21875) := by unfold f₂; fun_prop
@@ -635,7 +635,7 @@ theorem f₃_narasca (x y : ℝ) (hx : 1 / 2 ≤ x) (hxy : x < y) : f₃ x < f�
 /-- Primer 3, koraki 5 in 7: enačba `f(r) = 0` ima natanko eno pozitivno rešitev; ta leži na
 `(1,0535; 1,0545)`, zato je `p = 100(r − 1)` na desetinko odstotka `5,4 %`.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#primer3-obrestna-mera
-besedilo: »Za desetinko odstotka preverimo meji zaokroževanja $p = 5{,}35$ % in $p = 5{,}45$ %: $f(1{,}0535) \approx -0{,}12 < 0$ in $f(1{,}0545) \approx 0{,}098 > 0$. Ničla je na $(1{,}0535; 1{,}0545)$.« -/
+besedilo: »Odgovor: skrita letna obrestna mera je približno $5{,}4$ %.« -/
 theorem primer3_obrestna_mera :
     ∃ r ∈ Ioo (1.0535:ℝ) 1.0545, f₃ r = 0 ∧ (∀ s, 0 < s → f₃ s = 0 → s = r) ∧
       zaokrozi 1 (100 * (r - 1)) = 54 := by
@@ -673,7 +673,7 @@ noncomputable def g₄ (x : ℝ) : ℝ := x ^ 3 - 3 * x - 1
 
 /-- Primer 4, formula: `g(x) = x³ − 3x + 1 − 2 = x³ − 3x − 1`.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#primer4-g
-besedilo: »$g(x) = x^3 - 3x + 1 - 2 = x^3 - 3x - 1$« -/
+besedilo: »Točka z $y = 2$ je ničla funkcije $g(x) = x^3 - 3x + 1 - 2 = x^3 - 3x - 1$.« -/
 theorem primer4_g (x : ℝ) : x ^ 3 - 3 * x + 1 - 2 = g₄ x := by unfold g₄; ring
 
 /-- Primer 4, koraka 1 in 2 ter premisli: `g(1,8) = −0,568`, `g(1,9) = 0,159`, `g(1,87) ≈ −0,071`,
@@ -726,7 +726,7 @@ theorem naloga1_vrednosti :
 /-- Naloga 1 a), koraki 2 in 3: enačba `x³ − 4x + 1 = 0` ima natanko tri realne rešitve, po eno na
 `(−3, −2)`, `(0, 1)` in `(1, 2)`.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#naloga1-tri-resitve
-besedilo: »da ima enačba $x^3 - 4x + 1 = 0$ natanko tri realne rešitve,« -/
+besedilo: »Polinom tretje stopnje ima največ $3$ ničle, zato ima enačba natanko tri rešitve, po eno na vsakem od teh intervalov.« -/
 theorem naloga1_tri_resitve :
     ∃ x₁ ∈ Ioo (-3:ℝ) (-2), ∃ x₂ ∈ Ioo (0:ℝ) 1, ∃ x₃ ∈ Ioo (1:ℝ) 2,
       ∀ x, n₁ x = 0 ↔ x = x₁ ∨ x = x₂ ∨ x = x₃ := by
@@ -745,7 +745,7 @@ theorem naloga1_tri_resitve :
 /-- Naloga 1 b): `f(0,5) = 0,125 − 2 + 1 = −0,875`, `f(0,25) = 1/64 − 1 + 1 = 1/64`; dva koraka
 bisekcije na `[0, 1]` dasta `[0; 0,5]` in `[0,25; 0,5]`, na katerem leži ničla.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#naloga1-bisekcija
-besedilo: »b) Prvi korak: $c_1 = 0{,}5$ in $f(0{,}5) = 0{,}125 - 2 + 1 = -0{,}875 < 0$. Ker je $f(0) > 0$, obdržimo $[0; 0{,}5]$.« -/
+besedilo: »b) Drugi korak: $c_2 = 0{,}25$ in $f(0{,}25) = \frac{1}{64} - 1 + 1 = \frac{1}{64} > 0$. Ker je $f(0{,}5) < 0$, obdržimo $[0{,}25; 0{,}5]$.« -/
 theorem naloga1_bisekcija :
     n₁ 0.5 = 0.125 - 2 + 1 ∧ (0.125:ℝ) - 2 + 1 = -0.875 ∧ n₁ 0.25 = 1 / 64 - 1 + 1 ∧
       (1 / 64 : ℝ) - 1 + 1 = 1 / 64 ∧ bisekcija n₁ 0 1 1 = (0, 0.5) ∧
@@ -808,8 +808,7 @@ theorem naloga2_b :
     h₂_zvezna.continuousOn (by rw [v1, v2]; norm_num)⟩
 
 /-- Ocene potenc `2ᶜ` v sredinah in točkah tabele naloge 2.
-trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#ocene-potenc
-besedilo: »korak 3: $[-1{,}75; -1{,}5]$, $c = -1{,}625$, $h(c) \approx -0{,}035 < 0$« -/
+pomozno -/
 theorem ocene_potenc :
     ((0.353553:ℝ) < 2 ^ (-1.5:ℝ) ∧ (2:ℝ) ^ (-1.5:ℝ) < 0.353554) ∧
     ((0.297301:ℝ) < 2 ^ (-1.75:ℝ) ∧ (2:ℝ) ^ (-1.75:ℝ) < 0.297302) ∧
@@ -828,8 +827,7 @@ theorem ocene_potenc :
 
 set_option exponentiation.threshold 400 in
 /-- Ocena potence `2^(−1,635)` (meja zaokroževanja v nalogi 2 d).
-trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#ocena-meje
-besedilo: »d) Meja zaokroževanja: $h(-1{,}635) \approx -0{,}0048 < 0$, zato je ničla na $(-1{,}64; -1{,}635)$ in se zaokroži na $-1{,}64$.« -/
+pomozno -/
 theorem ocena_meje : (0.321970:ℝ) < 2 ^ (-1.635:ℝ) ∧ (2:ℝ) ^ (-1.635:ℝ) < 0.321971 :=
   ocena_dva _ 200 (-327) (by norm_num) _ _ (by norm_num) (by norm_num) (by norm_num) (by norm_num)
 
@@ -861,7 +859,7 @@ theorem naloga2_vrednosti :
 /-- Naloga 2 c): trije koraki bisekcije na `[−2, −1]` dajo `[−2; −1,5]`, `[−1,75; −1,5]` in
 `[−1,75; −1,625]`.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#naloga2-koraki
-besedilo: »korak 3: $[-1{,}75; -1{,}5]$, $c = -1{,}625$, $h(c) \approx -0{,}035 < 0$« -/
+besedilo: »c) Po tretjem koraku ostane interval $[-1{,}75; -1{,}625]$.« -/
 theorem naloga2_koraki :
     bisekcija h₂ (-2) (-1) 1 = (-2, -1.5) ∧ bisekcija h₂ (-2) (-1) 2 = (-1.75, -1.5) ∧
       bisekcija h₂ (-2) (-1) 3 = (-1.75, -1.625) := by
@@ -909,7 +907,7 @@ theorem h₂_pada (x y : ℝ) (hx : -2 ≤ x) (hxy : x < y) (hy : y ≤ -1) : h�
 /-- Naloga 2 d): na `[−2, −1]` ima `h` natanko eno ničlo; ta leži na `(−1,64; −1,635)` in se na dve
 decimalki zaokroži na `−1,64`.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#naloga2-d
-besedilo: »zato je ničla na $(-1{,}64; -1{,}635)$ in se zaokroži na $-1{,}64$.« -/
+besedilo: »d) Meja zaokroževanja: $h(-1{,}635) \approx -0{,}0048 < 0$, zato je ničla na $(-1{,}64; -1{,}635)$ in se zaokroži na $-1{,}64$.« -/
 theorem naloga2_d :
     ∃ x ∈ Ioo (-1.64:ℝ) (-1.635), h₂ x = 0 ∧ (∀ y ∈ Icc (-2:ℝ) (-1), h₂ y = 0 → y = x) ∧
       zaokrozi 2 x = -164 := by
@@ -944,7 +942,7 @@ noncomputable def predznak (x : ℝ) : ℝ := if x < 0 then -1 else 1
 različna predznaka na krajiščih, ničle pa ne); `x² + 1` je zvezna z enakima predznakoma brez ničle,
 `x²` pa ima pri enakih predznakih ničlo `0`.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#ustno1
-besedilo: »Brez zveznosti izrek ne velja, saj lahko funkcija z negativne vrednosti skoči na pozitivno in ničle ne doseže, kot funkcija, ki je na $[-1, 1]$ enaka $-1$ za $x < 0$ in $1$ za $x \ge 0$.« -/
+besedilo: »Brez zveznosti izrek ne velja, saj lahko funkcija z negativne vrednosti skoči na pozitivno in ničle ne doseže, kot funkcija, ki je na $[-1, 1]$ enaka $-1$ za $x < 0$ in $1$ za $x \ge 0$. Brez pogoja o različnih predznakih sklep prav tako ne velja: $f(x) = x^2 + 1$ je na $[-1, 1]$ zvezna, na krajiščih ima enaka predznaka in nima ničle, funkcija $x^2$ pa ima na istem intervalu pri enakih predznakih ničlo, zato izrek v tem primeru ne pove ničesar.« -/
 theorem ustno1 :
     (predznak (-1) * predznak 1 < 0 ∧ ∀ x, predznak x ≠ 0) ∧
       ((-1:ℝ) ^ 2 + 1 > 0 ∧ (1:ℝ) ^ 2 + 1 > 0 ∧ ∀ x : ℝ, x ^ 2 + 1 ≠ 0) ∧
@@ -1013,7 +1011,7 @@ example :=
 
 /-- Preveri se 2: `f(0) = −3`, `f(4) = 4`, `f(2) = 2`, `f(3) = 3`; na `[0, 4]` ni ničle in `f` ni zvezna.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#kviz2-ni-nicle
-besedilo: »Na grafu je funkcija $f$ na $[0, 4]$ z $f(0) = -3$ in $f(4) = 4$.« -/
+besedilo: »Pogoj zveznosti ni izpolnjen. Bisekcija vrne točko, kjer se predznak zamenja, to pa je tu skok pri $x = 2$.« -/
 theorem kviz2_ni_nicle :
     skok 0 = -3 ∧ skok 4 = 4 ∧ skok 2 = 2 ∧ skok 3 = 3 ∧ (∀ x ∈ Icc (0:ℝ) 4, skok x ≠ 0) ∧
       ¬ ContinuousOn skok (Icc 0 4) := by
@@ -1031,7 +1029,7 @@ theorem kviz2_ni_nicle :
 /-- Preveri se 2: bisekcija na `[0, 4]` po `n + 1` korakih da interval `[2 − 2/2ⁿ, 2]`, ki se krči proti
 `x = 2`, kjer funkcija skoči.
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#kviz2-bisekcija
-besedilo: »Intervali se krčijo proti $x = 2$, kjer funkcija skoči; ničle ni.« -/
+besedilo: »Intervali se res krčijo proti $2$, a tam je skok, ne ničla.« -/
 theorem kviz2_bisekcija (n : ℕ) : bisekcija skok 0 4 (n + 1) = (2 - 2 / 2 ^ n, 2) := by
   induction n with
   | zero =>
@@ -1057,7 +1055,7 @@ theorem kviz2_bisekcija (n : ℕ) : bisekcija skok 0 4 (n + 1) = (2 - 2 / 2 ^ n,
 /-- Preveri se 4: na `[2, 3]` je interval krajši od `0,01` natanko po vsaj `7` korakih
 (`1/2⁶ ≈ 0,016`, `2⁷ = 128`, `1/2⁷ = 0,0078125`).
 trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#kviz4
-besedilo: »6 | Po $6$ korakih je dolžina $\frac{1}{64} \approx 0{,}016$, kar je še več od $0{,}01$.« -/
+besedilo: »Dolžina po $n$ korakih je $\frac{1}{2^n}$. Potrebuješ $2^n > 100$: $2^6 = 64$ je premalo, $2^7 = 128$ zadošča.« -/
 theorem kviz4 :
     |(1:ℝ) / 2 ^ 6 - 0.016| ≤ 0.0005 ∧ (1:ℝ) / 2 ^ 7 = 0.0078125 ∧
       ∀ n : ℕ, ((3:ℝ) - 2) / 2 ^ n < 0.01 ↔ 7 ≤ n := by
@@ -1091,8 +1089,7 @@ theorem kviz5 :
 /-- RACUN: `2³ − 3·2 + 1 = 3`, `1,375³ + 2·1,375 − 5 ≈ 0,350`, `(−3)³ − 4·(−3) + 1 = −14`,
 `1³ − 4·1 + 1 = −2`, `0,5³ − 4·0,5 + 1 = −0,875`, `0,25³ − 4·0,25 + 1 = 0,015625`, `1/2⁷ = 0,0078125`,
 `1/2⁸ = 0,00390625`.
-trditev: MAT-SS-4/zvezne-funkcije-in-bisekcija#racun
-besedilo: »$h(-2) = 0{,}25 + 4 - 3 = 1{,}25 > 0$ in $h(-1) = 0{,}5 + 1 - 3 = -1{,}5 < 0$,« -/
+pomozno -/
 theorem racun :
     (2:ℝ) ^ 3 - 3 * 2 + 1 = 3 ∧ |(1.375:ℝ) ^ 3 + 2 * 1.375 - 5 - 0.350| ≤ 0.0005 ∧
       (-3:ℝ) ^ 3 - 4 * (-3) + 1 = -14 ∧ (1:ℝ) ^ 3 - 4 * 1 + 1 = -2 ∧

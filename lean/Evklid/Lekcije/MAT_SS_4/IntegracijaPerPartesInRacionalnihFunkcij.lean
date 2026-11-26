@@ -85,7 +85,7 @@ theorem bliznjica_odvod (x : ℝ) :
 /-- Razlaga, točka 1, in »Pogoste napake«: x²/2 · eˣ ni primitivna funkcija za x eˣ
 (pri x = 1 je odvod e + e/2, ne e).
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#bliznjica-napacna
-besedilo: »$\int x\,dx \cdot \int e^x\,dx = \frac{x^2}{2}\,e^x$ (napačno).« -/
+besedilo: »$\int x\,e^x\,dx \ne \frac{x^2}{2}\,e^x$: odvod desne strani ima člen $\frac{x^2}{2}\,e^x$ preveč.« -/
 theorem bliznjica_napacna : ¬ HasDerivAt (fun x => x ^ 2 / 2 * exp x) (1 * exp 1) 1 := by
   intro h
   have := h.unique (bliznjica_odvod 1)
@@ -94,7 +94,7 @@ theorem bliznjica_napacna : ¬ HasDerivAt (fun x => x ^ 2 / 2 * exp x) (1 * exp 
 
 /-- Razlaga, točka 2: pravilo za odvod produkta (uv)' = u'v + uv'.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#produkt
-besedilo: »Izhajamo iz pravila za odvod produkta $(uv)' = u'v + uv'$.« -/
+besedilo: »$$(u\,v)' = u'\,v + u\,v'$$« -/
 theorem produkt (u v : ℝ → ℝ) (u' v' x : ℝ) (hu : HasDerivAt u u' x) (hv : HasDerivAt v v' x) :
     HasDerivAt (fun x => u x * v x) (u' * v x + u x * v') x := hu.mul hv
 
@@ -128,8 +128,7 @@ example :=
 
 /-- Razlaga, točka 2 (določena oblika per partes): za zvezno odvedljivi u, v na [a, b] je
 ∫ₐᵇ u v' dx = u(b)v(b) − u(a)v(a) − ∫ₐᵇ u' v dx.
-trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#per-partes-dolocen
-besedilo: »$(u\,v)' = u'\,v + u\,v'$« -/
+pomozno -/
 theorem per_partes_dolocen (u v u' v' : ℝ → ℝ) (a b : ℝ) (hu : ∀ x, HasDerivAt u (u' x) x)
     (hv : ∀ x, HasDerivAt v (v' x) x) (hu' : Continuous u') (hv' : Continuous v') :
     ∫ x in a..b, u x * v' x = u b * v b - u a * v a - ∫ x in a..b, u' x * v x :=
@@ -150,7 +149,7 @@ example :=
 /-- Razlaga, točka 3 (in vrstici `integral`/`odvod` za x eˣ, povzetek): ∫ x eˣ dx = x eˣ − eˣ + C
 = (x − 1)eˣ + C; preizkus (x eˣ − eˣ)' = eˣ + x eˣ − eˣ = x eˣ.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#integral-x-exp
-besedilo: »Preizkus: $(x\,e^x - e^x)' = e^x + x\,e^x - e^x = x\,e^x$.« -/
+besedilo: »$$\int x\,e^x\,dx = x\,e^x - \int e^x\,dx = x\,e^x - e^x + C$$« -/
 theorem integral_x_exp (C x : ℝ) :
     HasDerivAt (fun x => x * exp x - exp x + C) (x * exp x) x ∧ x * exp x - exp x = (x - 1) * exp x := by
   refine ⟨?_, by ring⟩
@@ -215,7 +214,7 @@ example :=
 /-- Razlaga, točka 7, in »Pogoste napake«: ln|x² − 1| ni primitivna funkcija za 1/(x² − 1)
 (pri x = 2 je odvod 4/3, ne 1/3).
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#ln-imenovalca-napacno
-besedilo: »4 | To je samo števec pri $x = 1$. Iz $3x + 1 = A(x + 1) + B(x - 1)$ pri $x = 1$ sledi $4 = 2A$.« -/
+besedilo: »$\int \frac{dx}{x^2 - 1}$ ni $\ln\lvert x^2 - 1\rvert + C$, ker v števcu ni odvoda $2x$.« -/
 theorem ln_imenovalca_napacno : ¬ HasDerivAt (fun x => log |x ^ 2 - 1|) (1 / ((2:ℝ) ^ 2 - 1)) 2 := by
   intro h
   have := h.unique (d_ln_x2_1 2 (by norm_num))
@@ -223,7 +222,7 @@ theorem ln_imenovalca_napacno : ¬ HasDerivAt (fun x => log |x ^ 2 - 1|) (1 / ((
 
 /-- Razlaga, točka 7: 1 = A(x + 1) + B(x − 1) za vsak x natanko pri A = 1/2, B = −1/2.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#razcep-x2-1-ab
-besedilo: »$\frac{1}{x^2 - 1} = \frac{A}{x - 1} + \frac{B}{x + 1}$« -/
+besedilo: »Pomnožimo z $(x - 1)(x + 1)$ in dobimo $1 = A(x + 1) + B(x - 1)$. Pri $x = 1$ ostane $1 = 2A$, torej $A = \frac{1}{2}$. Pri $x = -1$ ostane $1 = -2B$, torej $B = -\frac{1}{2}$.« -/
 theorem razcep_x2_1_AB (A B : ℝ) : (∀ x : ℝ, 1 = A * (x + 1) + B * (x - 1)) ↔ A = 1 / 2 ∧ B = -1 / 2 := by
   constructor
   · intro h
@@ -235,7 +234,7 @@ theorem razcep_x2_1_AB (A B : ℝ) : (∀ x : ℝ, 1 = A * (x + 1) + B * (x - 1)
 /-- Razlaga, točka 7 (in vrstica `enako: 1/(x^2-1)`): 1/(x² − 1) = (1/2)/(x − 1) − (1/2)/(x + 1)
 za x ≠ ±1.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#razcep-x2-1
-besedilo: »$$\int \frac{dx}{x^2 - 1} = \frac{1}{2} \ln\lvert x - 1\rvert - \frac{1}{2} \ln\lvert x + 1\rvert + C$$« -/
+besedilo: »$$\frac{1}{x^2 - 1} = \frac{A}{x - 1} + \frac{B}{x + 1}$$« -/
 theorem razcep_x2_1 (x : ℝ) (h1 : x - 1 ≠ 0) (h2 : x + 1 ≠ 0) :
     1 / (x ^ 2 - 1) = 1 / 2 / (x - 1) - 1 / 2 / (x + 1) := by
   have h : x ^ 2 - 1 ≠ 0 := by
@@ -252,7 +251,7 @@ example :=
 
 /-- Razlaga, točka 7 (in vrstica `odvod`): ∫ dx/(x² − 1) = ½ ln|x − 1| − ½ ln|x + 1| + C (x ≠ ±1).
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#integral-x2-1
-besedilo: »$x^2 - 1 = (x - 1)(x + 1)$« -/
+besedilo: »$$\int \frac{dx}{x^2 - 1} = \frac{1}{2} \ln\lvert x - 1\rvert - \frac{1}{2} \ln\lvert x + 1\rvert + C$$« -/
 theorem integral_x2_1 (C x : ℝ) (h1 : x - 1 ≠ 0) (h2 : x + 1 ≠ 0) :
     HasDerivAt (fun x => 1 / 2 * log |x - 1| - 1 / 2 * log |x + 1| + C) (1 / (x ^ 2 - 1)) x := by
   rw [razcep_x2_1 x h1 h2]
@@ -269,7 +268,7 @@ example :=
 
 /-- Razlaga, točka 7, tabela: (k ln|x − a|)' = k/(x − a) in (−ln|a − x|)' = 1/(a − x) za x ≠ a.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#tabela-ulomkov
-besedilo: »| $\frac{1}{a - x}$ | $-\ln\lvert a - x\rvert$ |« -/
+besedilo: »| $\frac{k}{x - a}$ | $k \ln\lvert x - a\rvert$ | | $\frac{1}{a - x}$ | $-\ln\lvert a - x\rvert$ |« -/
 theorem tabela_ulomkov (k a x : ℝ) (h : x - a ≠ 0) :
     HasDerivAt (fun x => k * log |x - a|) (k / (x - a)) x ∧
       HasDerivAt (fun x => -log |a - x|) (1 / (a - x)) x := by
@@ -301,7 +300,7 @@ theorem nastavek_brez_deljenja : ¬ ∃ A B : ℝ, ∀ x : ℝ, x - 1 ≠ 0 → 
 /-- Razlaga, točka 8 (in vrstici `enako`): (x² + 1)/(x² − 1) = 1 + 2/(x² − 1) = 1 + 1/(x − 1) − 1/(x + 1)
 za x ≠ ±1.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#deljenje
-besedilo: »Števec zapišemo kot $(x^2 - 1) + 2$, zato deljenje da $\frac{x^2 + 1}{x^2 - 1} = 1 + \frac{2}{x^2 - 1}$. Razcep ostanka je dvakratnik razcepa iz točke 7: $\frac{2}{x^2 - 1} = \frac{1}{x - 1} - \frac{1}{x + 1}$. Zato je« -/
+besedilo: »Števec zapišemo kot $(x^2 - 1) + 2$, zato deljenje da $\frac{x^2 + 1}{x^2 - 1} = 1 + \frac{2}{x^2 - 1}$. Razcep ostanka je dvakratnik razcepa iz točke 7: $\frac{2}{x^2 - 1} = \frac{1}{x - 1} - \frac{1}{x + 1}$.« -/
 theorem deljenje (x : ℝ) (h1 : x - 1 ≠ 0) (h2 : x + 1 ≠ 0) :
     (x ^ 2 + 1) / (x ^ 2 - 1) = 1 + 2 / (x ^ 2 - 1) ∧ 2 / (x ^ 2 - 1) = 1 / (x - 1) - 1 / (x + 1) := by
   have h : x ^ 2 - 1 ≠ 0 := by
@@ -373,7 +372,7 @@ theorem primer2_AB (A B : ℝ) : (∀ x : ℝ, x + 5 = A * (x + 2) + B * (x - 1)
 /-- Primer 2 (in vrstica `enako`): (x + 5)/(x² + x − 2) = 2/(x − 1) − 1/(x + 2) za x ≠ 1, −2; korak 6:
 2(x + 2) − (x − 1) = x + 5.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#primer2-ulomki
-besedilo: »$\int \frac{x + 5}{x^2 + x - 2}\,dx = 2\ln\lvert x - 1\rvert - \ln\lvert x + 2\rvert + C$« -/
+besedilo: »Preizkus: odvod je $\frac{2}{x - 1} - \frac{1}{x + 2}$; na skupnem imenovalcu je števec $2(x + 2) - (x - 1) = x + 5$.« -/
 theorem primer2_ulomki (x : ℝ) (h1 : x - 1 ≠ 0) (h2 : x + 2 ≠ 0) :
     (x + 5) / (x ^ 2 + x - 2) = 2 / (x - 1) - 1 / (x + 2) ∧ 2 * (x + 2) - (x - 1) = x + 5 := by
   have h : x ^ 2 + x - 2 ≠ 0 := by
@@ -410,7 +409,7 @@ example :=
 /-- Primer 3, koraka 1–2 (in vrstica `enako: 1/(1-s^2)`): 1 − s² = (1 − s)(1 + s); 1 = A(1 + s) + B(1 − s)
 za vsak s natanko pri A = B = 1/2; 1/(1 − s²) = (1/2)/(1 − s) + (1/2)/(1 + s) za s ≠ ±1.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#primer3-razcep
-besedilo: »Nastavek pomnožimo z imenovalcem: $1 = A(1 + s) + B(1 - s)$. Pri $s = 1$: $A = \frac{1}{2}$; pri $s = -1$: $B = \frac{1}{2}$.« -/
+besedilo: »Imenovalec: $1 - s^2 = (1 - s)(1 + s)$. 2. Nastavek pomnožimo z imenovalcem: $1 = A(1 + s) + B(1 - s)$. Pri $s = 1$: $A = \frac{1}{2}$; pri $s = -1$: $B = \frac{1}{2}$.« -/
 theorem primer3_razcep (A B : ℝ) :
     ((∀ s : ℝ, 1 = A * (1 + s) + B * (1 - s)) ↔ A = 1 / 2 ∧ B = 1 / 2) ∧
       ∀ s : ℝ, 1 - s ≠ 0 → 1 + s ≠ 0 → 1 - s ^ 2 = (1 - s) * (1 + s) ∧
@@ -491,7 +490,7 @@ example : IsOpen (Set.Ioo (0:ℝ) 1) ∧ IsPreconnected (Set.Ioo (0:ℝ) 1) ∧ 
 /-- Primer 3, korak 4: vsaka funkcija F z F'(s) = 1/(1 − s²) na (−1, 1) in F(0) = 0 je tam
 F(s) = ½ ln|(1 + s)/(1 − s)|.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#primer3-enolicno
-besedilo: »kar združimo v $F(s) = \frac{1}{2}\ln\left\lvert\frac{1 + s}{1 - s}\right\rvert + C$.« -/
+besedilo: »kar združimo v $F(s) = \frac{1}{2}\ln\left\lvert\frac{1 + s}{1 - s}\right\rvert + C$. 4. Pogoj $F(0) = 0$: $\frac{1}{2}\ln 1 + C = C$, torej $C = 0$.« -/
 theorem primer3_enolicno (F : ℝ → ℝ) (hF : ∀ s ∈ Set.Ioo (-1:ℝ) 1, HasDerivAt F (1 / (1 - s ^ 2)) s)
     (h0 : F 0 = 0) : ∀ s ∈ Set.Ioo (-1:ℝ) 1, F s = 1 / 2 * log |(1 + s) / (1 - s)| := by
   have h := enolicnost_na isOpen_Ioo isPreconnected_Ioo F
@@ -524,7 +523,7 @@ theorem primer3_lok : |46 * π / 180 - 0.8029| < 0.00005 ∧ |10 * (46 * π / 18
 /-- Primer 4 (premisli, in vrstici za x² eˣ): ∫ x² eˣ dx = x² eˣ − 2(x eˣ − eˣ) + C = (x² − 2x + 2)eˣ + C;
 preizkus (2x − 2)eˣ + (x² − 2x + 2)eˣ = x² eˣ.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#primer4
-besedilo: »$\int x^2\,e^x\,dx = x^2\,e^x - 2(x\,e^x - e^x) + C = (x^2 - 2x + 2)\,e^x + C$. Preizkus: odvod je $(2x - 2)\,e^x + (x^2 - 2x + 2)\,e^x = x^2\,e^x$. Kdor pozabi oklepaj, dobi $-2e^x$ namesto $+2e^x$ in preizkus ne uspe.« -/
+besedilo: »$\int x^2\,e^x\,dx = x^2\,e^x - 2(x\,e^x - e^x) + C = (x^2 - 2x + 2)\,e^x + C$. Preizkus: odvod je $(2x - 2)\,e^x + (x^2 - 2x + 2)\,e^x = x^2\,e^x$.« -/
 theorem primer4 (C x : ℝ) :
     x ^ 2 * exp x - 2 * (x * exp x - exp x) = (x ^ 2 - 2 * x + 2) * exp x ∧
       HasDerivAt (fun x => (x ^ 2 - 2 * x + 2) * exp x + C) ((2 * x - 2) * exp x + (x ^ 2 - 2 * x + 2) * exp x) x ∧
@@ -536,7 +535,7 @@ theorem primer4 (C x : ℝ) :
 /-- Primer 4, premisli: kdor pozabi oklepaj, dobi (x² − 2x − 2)eˣ, ki ni primitivna funkcija za x² eˣ
 (pri x = 0 je njen odvod −4, ne 0).
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#primer4-brez-oklepaja
-besedilo: »$\int x^2\,e^x\,dx = x^2\,e^x - 2(x\,e^x - e^x) + C = (x^2 - 2x + 2)\,e^x + C$. Preizkus: odvod je $(2x - 2)\,e^x + (x^2 - 2x + 2)\,e^x = x^2\,e^x$. Kdor pozabi oklepaj, dobi $-2e^x$ namesto $+2e^x$ in preizkus ne uspe.« -/
+besedilo: »Kdor pozabi oklepaj, dobi $-2e^x$ namesto $+2e^x$ in preizkus ne uspe.« -/
 theorem primer4_brez_oklepaja : ¬ HasDerivAt (fun x => (x ^ 2 - 2 * x - 2) * exp x) ((0:ℝ) ^ 2 * exp 0) 0 := by
   intro h
   have h2 := ((((hasDerivAt_pow 2 (0:ℝ)).sub ((hasDerivAt_id' (0:ℝ)).const_mul (2:ℝ))).sub_const 2).mul
@@ -546,7 +545,7 @@ theorem primer4_brez_oklepaja : ¬ HasDerivAt (fun x => (x ^ 2 - 2 * x - 2) * ex
 
 /-- Pogoste napake, »Izgubljeni minusi«: ∫ dx/(1 − x) = −ln|1 − x| + C (x ≠ 1).
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#napaka-1-minus-x
-besedilo: »Izgubljeni minusi.** Pri $v' = \sin x$ je $v = -\cos x$, ne $\cos x$. Pred novim integralom je minus, ki se pri dveh korakih razširi na cel oklepaj. In $\int \frac{dx}{1 - x} = -\ln\lvert 1 - x\rvert + C$, ker je odvod notranje funkcije $1 - x$ enak $-1$.« -/
+besedilo: »$\int \frac{dx}{1 - x} = -\ln\lvert 1 - x\rvert + C$, ker je odvod notranje funkcije $1 - x$ enak $-1$.« -/
 theorem napaka_1_minus_x (C x : ℝ) (h : 1 - x ≠ 0) :
     HasDerivAt (fun x => -log |1 - x| + C) (1 / (1 - x)) x :=
   ((d_log_rsub 1 x h).neg.add_const C).congr_deriv (by odv)
@@ -562,7 +561,7 @@ example :=
 /-- Matura, naloga 1 a) (in vrstici `integral`/`odvod`): ∫ (2x + 1)eˣ dx = (2x + 1)eˣ − 2eˣ + C =
 (2x − 1)eˣ + C; preizkus 2eˣ + (2x − 1)eˣ = (2x + 1)eˣ.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#matura1a
-besedilo: »a) Preizkus: $\bigl((2x - 1)\,e^x\bigr)' = 2e^x + (2x - 1)\,e^x = (2x + 1)\,e^x$.« -/
+besedilo: »a) $\int (2x + 1)\,e^x\,dx = (2x + 1)\,e^x - \int 2e^x\,dx = (2x + 1)\,e^x - 2e^x + C = (2x - 1)\,e^x + C$. 3. a) Preizkus: $\bigl((2x - 1)\,e^x\bigr)' = 2e^x + (2x - 1)\,e^x = (2x + 1)\,e^x$.« -/
 theorem matura1a (C x : ℝ) :
     (2 * x + 1) * exp x - 2 * exp x = (2 * x - 1) * exp x ∧
       HasDerivAt (fun x => (2 * x - 1) * exp x + C) (2 * exp x + (2 * x - 1) * exp x) x ∧
@@ -656,7 +655,7 @@ example :=
 
 /-- Matura, naloga 2 c) (in vrstica `integral`): ∫ f dx = x + 2 ln|x − 3| + ln|x + 1| + C na D_f.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#matura2c
-besedilo: »d) Na intervalu $(3, \infty)$ sta $x - 3$ in $x + 1$ pozitivna, zato je $G(x) = x + 2\ln(x - 3) + \ln(x + 1) + C$.« -/
+besedilo: »c) $\int f(x)\,dx = \int \left(1 + \dfrac{2}{x - 3} + \dfrac{1}{x + 1}\right) dx = x + 2\ln\lvert x - 3\rvert + \ln\lvert x + 1\rvert + C$.« -/
 theorem matura2c (C x : ℝ) (h1 : x - 3 ≠ 0) (h2 : x + 1 ≠ 0) :
     HasDerivAt (fun x => x + 2 * log |x - 3| + log |x + 1| + C)
       ((x ^ 2 + x - 4) / (x ^ 2 - 2 * x - 3)) x := by
@@ -719,7 +718,7 @@ example :=
 /-- Ustno vprašanje 2 (in vrstici `enako`/`integral`): 1 = A(x + 1) + Bx za vsak x natanko pri A = 1,
 B = −1; 1/(x(x + 1)) = 1/x − 1/(x + 1) in ∫ dx/(x(x + 1)) = ln|x| − ln|x + 1| + C.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#ustno2
-besedilo: »Pri $\frac{1}{x(x + 1)}$ dobimo $1 = A(x + 1) + Bx$, torej $A = 1$ in $B = -1$.« -/
+besedilo: »Pri $\frac{1}{x(x + 1)}$ dobimo $1 = A(x + 1) + Bx$, torej $A = 1$ in $B = -1$. Vsak parcialni ulomek integriramo v logaritem: $\int \frac{dx}{x(x + 1)} = \ln\lvert x\rvert - \ln\lvert x + 1\rvert + C$.« -/
 theorem ustno2 (A B : ℝ) :
     ((∀ x : ℝ, 1 = A * (x + 1) + B * x) ↔ A = 1 ∧ B = -1) ∧
       ∀ C x : ℝ, x ≠ 0 → x + 1 ≠ 0 → 1 / (x * (x + 1)) = 1 / x - 1 / (x + 1) ∧
@@ -747,7 +746,7 @@ theorem stevilke_naklon : HasDerivAt (fun x => (x - 1) * exp x) (1 * exp 1) 1 �
 /-- Drugače, s številkami, koraka 2–3: F(1,01) = 0,01 · e^1,01 ≈ 0,02746, F(0,99) = −0,01 · e^0,99 ≈
 −0,02691 in naklon sekante (0,02746 + 0,02691)/0,02 ≈ 2,72.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#stevilke-sekanta
-besedilo: »Izračunamo $F$ malo levo in desno: $F(1{,}01) = 0{,}01 \cdot e^{1{,}01} \approx 0{,}02746$, $F(0{,}99) = -0{,}01 \cdot e^{0{,}99} \approx -0{,}02691$.« -/
+besedilo: »Izračunamo $F$ malo levo in desno: $F(1{,}01) = 0{,}01 \cdot e^{1{,}01} \approx 0{,}02746$, $F(0{,}99) = -0{,}01 \cdot e^{0{,}99} \approx -0{,}02691$. 3. Naklon sekante: $\frac{0{,}02746 + 0{,}02691}{0{,}02} \approx 2{,}72$.« -/
 theorem stevilke_sekanta :
     |(1.01 - 1) * exp (1.01:ℝ) - 0.02746| < 0.000005 ∧
       |(0.99 - 1) * exp (0.99:ℝ) - (-0.02691)| < 0.000005 ∧
@@ -769,7 +768,7 @@ theorem stevilke_sekanta :
 /-- Drugače, s številkami, koraka 4–5: razcep iz primera 2 pri x = 3: (3 + 5)/(9 + 3 − 2) = 8/10 = 0,8 in
 2/(3 − 1) − 1/(3 + 2) = 1 − 0,2 = 0,8.
 trditev: MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij#stevilke-razcep
-besedilo: »Razcep iz Primera 2 preverimo pri $x = 3$. Levo: $\frac{3 + 5}{9 + 3 - 2} = \frac{8}{10} = 0{,}8$.« -/
+besedilo: »Razcep iz Primera 2 preverimo pri $x = 3$. Levo: $\frac{3 + 5}{9 + 3 - 2} = \frac{8}{10} = 0{,}8$. 5. Desno: $\frac{2}{3 - 1} - \frac{1}{3 + 2} = 1 - 0{,}2 = 0{,}8$.« -/
 theorem stevilke_razcep : ((3:ℝ) + 5) / (9 + 3 - 2) = 8 / 10 ∧ (8 / 10 : ℝ) = 0.8 ∧
     2 / ((3:ℝ) - 1) - 1 / (3 + 2) = 1 - 0.2 ∧ (1 : ℝ) - 0.2 = 0.8 := by norm_num
 

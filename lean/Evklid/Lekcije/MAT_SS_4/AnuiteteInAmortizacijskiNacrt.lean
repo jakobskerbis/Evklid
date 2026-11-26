@@ -20,14 +20,14 @@ open Finset
 
 /-- Razlaga 1: pri obroku 1100 € je D₁ = 4000·1,05 − 1100 = 3100 in D₂ = 3100·1,05 − 1100 = 2155.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#ugibanje-d1-d2
-besedilo: »$$D_2 = 3100 \cdot 1{,}05 - 1100 = 2155$$« -/
+besedilo: »$$D_1 = 4000 \cdot 1{,}05 - 1100 = 3100$$ in po drugem letu $$D_2 = 3100 \cdot 1{,}05 - 1100 = 2155$$« -/
 theorem ugibanje_D1_D2 : (4000 : ℝ) * 1.05 - 1100 = 3100 ∧ (3100 : ℝ) * 1.05 - 1100 = 2155 := by
   norm_num
 
 /-- Razlaga 1, tabela: dolg po 4 letih ((((4000·1,05 − a)·1,05 − a)·1,05 − a)·1,05 − a) je pri
 a = 1000 natanko 551,90, pri a = 1100 ≈ 120,89, pri a = 1150 ≈ −94,62 (preplačilo).
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#ugibanje-tabela
-besedilo: »$120{,}89 + 94{,}62 = 215{,}51$« -/
+besedilo: »| $1000$ | $551{,}90$ | | $1100$ | $120{,}89$ | | $1150$ | $-94{,}62$ (preplačilo) |« -/
 theorem ugibanje_tabela :
     (((4000 * (1.05 : ℝ) - 1000) * 1.05 - 1000) * 1.05 - 1000) * 1.05 - 1000 = 551.90 ∧
     |(((4000 * (1.05 : ℝ) - 1100) * 1.05 - 1100) * 1.05 - 1100) * 1.05 - 1100 - 120.89| < 0.005 ∧
@@ -44,7 +44,7 @@ theorem ugibanje_ocena : (120.89 : ℝ) + 94.62 = 215.51 ∧ |50 * (120.89 : ℝ
 
 /-- Razlaga 2: D₂ = (G₀r − a)r − a = G₀r² − ar − a in D₃ = (G₀r² − ar − a)r − a = G₀r³ − ar² − ar − a.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#vzorec-d2-d3
-besedilo: »$$D_3 = (G_0 r^2 - a r - a)\,r - a = G_0 r^3 - a r^2 - a r - a$$« -/
+besedilo: »$$D_2 = (G_0 r - a)\,r - a = G_0 r^2 - a r - a$$ $$D_3 = (G_0 r^2 - a r - a)\,r - a = G_0 r^3 - a r^2 - a r - a$$« -/
 theorem vzorec_D2_D3 (G₀ r a : ℝ) : (G₀ * r - a) * r - a = G₀ * r ^ 2 - a * r - a ∧
     (G₀ * r ^ 2 - a * r - a) * r - a = G₀ * r ^ 3 - a * r ^ 2 - a * r - a := by
   constructor <;> ring
@@ -99,7 +99,7 @@ example :=
 /-- Razlaga 3–4: pri r > 1 in n ≥ 1 je posojilo odplačano (G₀rⁿ − a(rⁿ − 1)/(r − 1) = 0) natanko tedaj,
 ko je G₀rⁿ = a(rⁿ − 1)/(r − 1) (enačba), in natanko tedaj, ko je a = G₀·rⁿ(r − 1)/(rⁿ − 1).
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#anuiteta
-besedilo: »$$G_0 \cdot r^n = a \cdot \frac{r^n - 1}{r - 1} \qquad \text{(enačba)}$$« -/
+besedilo: »Po načelu ekvivalence glavnic velja $G_0 r^n = a \cdot \frac{r^n - 1}{r - 1}$, od koder je $a = G_0 \cdot \frac{r^n (r - 1)}{r^n - 1}$.« -/
 theorem anuiteta (G₀ r a : ℝ) (n : ℕ) (hr : 1 < r) (hn : n ≠ 0) :
     (G₀ * r ^ n - a * ((r ^ n - 1) / (r - 1)) = 0 ↔ G₀ * r ^ n = a * ((r ^ n - 1) / (r - 1))) ∧
     (G₀ * r ^ n = a * ((r ^ n - 1) / (r - 1)) ↔ a = G₀ * (r ^ n * (r - 1) / (r ^ n - 1))) := by
@@ -168,7 +168,7 @@ theorem brez_obrokov : (4000 : ℝ) * 1.05 ^ 4 = 4862.025 ∧ |(4862.025 : ℝ) 
 
 /-- Razlaga 4: r⁴ = 1,05⁴ = 1,21550625 in a = 4000·1,21550625·0,05/0,21550625 ≈ 1128,05.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#teleskop-anuiteta
-besedilo: »$$a = 4000 \cdot \frac{1{,}21550625 \cdot 0{,}05}{0{,}21550625} \approx 1128{,}05$$« -/
+besedilo: »Za teleskop je $r^4 = 1{,}05^4 = 1{,}21550625$ in $$a = 4000 \cdot \frac{1{,}21550625 \cdot 0{,}05}{0{,}21550625} \approx 1128{,}05$$« -/
 theorem teleskop_anuiteta : (1.05 : ℝ) ^ 4 = 1.21550625 ∧
     |(4000 : ℝ) * (1.21550625 * 0.05 / 0.21550625) - 1128.05| < 0.005 := by
   norm_num [abs_lt]
@@ -183,13 +183,13 @@ theorem teleskop_skupaj : 4 * (1128.05 : ℝ) = 4512.20 ∧ (4512.20 : ℝ) - 40
 
 /-- Razlaga 5: vrstica načrta z oₖ = Dₖ₋₁·p/100, Rₖ = a − oₖ da Dₖ = Dₖ₋₁ − Rₖ = Dₖ₋₁·r − a, r = 1 + p/100.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#vrstica
-besedilo: »$a = G_0 \cdot \dfrac{r^n (r - 1)}{r^n - 1}$, kjer je $r = 1 + \dfrac{p}{100}$« -/
+besedilo: »$o_k = D_{k-1} \cdot \dfrac{p}{100}$, $R_k = a - o_k$, $D_k = D_{k-1} - R_k$« -/
 theorem vrstica (Dp a p : ℝ) : Dp - (a - Dp * (p / 100)) = Dp * (1 + p / 100) - a := by ring
 
 /-- Ustno vprašanje 3 (in Razlaga 5): pri Dₖ₊₁ = Dₖ·r − a je vsaka razdolžnina r-krat večja od prejšnje:
 Rₖ₊₂ = Rₖ₊₁·r, kjer je Rₖ₊₁ = a − Dₖ(r − 1).
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#razdolznina-geometrijska
-besedilo: »da je pri odplačevanju z enakimi anuitetami vsaka razdolžnina $r$-krat večja od prejšnje.« -/
+besedilo: »Vsaka razdolžnina je za faktor $r$ večja od prejšnje« -/
 theorem razdolznina_geometrijska (D : ℕ → ℝ) (r a : ℝ) (h : ∀ k, D (k + 1) = D k * r - a) (k : ℕ) :
     a - D (k + 1) * (r - 1) = (a - D k * (r - 1)) * r := by
   rw [h k]; ring
@@ -208,7 +208,7 @@ example : True :=
 
 /-- Razlaga 5: vsota razdolžnin (Dₖ − Dₖ₊₁) v n letih je D₀ − Dₙ; ko je Dₙ = 0, je to ravno posojilo.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#vsota-razdolznin
-besedilo: »Vsota razdolžnin je ravno posojilo: $928{,}05 + 974{,}45 + 1023{,}17 + 1074{,}33 = 4000$.« -/
+besedilo: »Vsota razdolžnin je posojilo.« -/
 theorem vsota_razdolznin (D : ℕ → ℝ) (n : ℕ) (hn : D n = 0) :
     ∑ k ∈ range n, (D k - D (k + 1)) = D 0 := by
   have : ∀ m, ∑ k ∈ range m, (D k - D (k + 1)) = D 0 - D m := by
@@ -234,7 +234,7 @@ theorem zadnja_razdolznina (Dp R : ℝ) : Dp - R = 0 ↔ R = Dp := by
 
 /-- Razlaga 5, tabela za teleskop (a = 1128,05, zaokroženo na cente): vrstice 1–4.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#nacrt-teleskop
-besedilo: »Za teleskop ($a = 1128{,}05$ € v vsakem letu,« -/
+besedilo: »| 1 | 200,00 | 928,05 | 3071,95 | | 2 | 153,60 | 974,45 | 2097,50 | | 3 | 104,88 | 1023,17 | 1074,33 | | 4 | 53,72 | 1074,33 | 0,00 |« -/
 theorem nacrt_teleskop :
     (4000 : ℝ) * 0.05 = 200 ∧ (1128.05 : ℝ) - 200 = 928.05 ∧ (4000 : ℝ) - 928.05 = 3071.95 ∧
     |(3071.95 : ℝ) * 0.05 - 153.60| < 0.005 ∧ (1128.05 : ℝ) - 153.60 = 974.45 ∧
@@ -246,13 +246,13 @@ theorem nacrt_teleskop :
 
 /-- Razlaga 5: 928,05·1,05 = 974,4525 in 928,05 + 974,45 + 1023,17 + 1074,33 = 4000.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#nacrt-teleskop-preizkus
-besedilo: »$928{,}05 + 974{,}45 + 1023{,}17 + 1074{,}33 = 4000$« -/
+besedilo: »$928{,}05 \cdot 1{,}05 = 974{,}4525$. Vsota razdolžnin je ravno posojilo: $928{,}05 + 974{,}45 + 1023{,}17 + 1074{,}33 = 4000$.« -/
 theorem nacrt_teleskop_preizkus : (928.05 : ℝ) * 1.05 = 974.4525 ∧
     (928.05 : ℝ) + 974.45 + 1023.17 + 1074.33 = 4000 := by norm_num
 
 /-- Razlaga 5 (varčevanje): če je S₀ = 0 in Sₖ₊₁ = Sₖ·r + a, je Sₙ = a(rⁿ − 1)/(r − 1) (r ≠ 1).
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#varcevanje
-besedilo: »ima po $n$ letih $a \cdot \frac{r^n - 1}{r - 1}$,« -/
+besedilo: »kdor ob koncu vsakega leta vplača $a$, ima po $n$ letih $a \cdot \frac{r^n - 1}{r - 1}$« -/
 theorem varcevanje (S : ℕ → ℝ) (r a : ℝ) (hr : r ≠ 1) (h0 : S 0 = 0) (h : ∀ k, S (k + 1) = S k * r + a)
     (n : ℕ) : S n = a * ((r ^ n - 1) / (r - 1)) := by
   rw [← geom_sum_eq hr]
@@ -287,7 +287,7 @@ theorem primer1 : 1 + (4 : ℝ) / 100 = 1.04 ∧ (1.04 : ℝ) ^ 3 = 1.124864 ∧
 /-- Primer 2, koraki 1–3: o₁ = 108, R₁ = 864,94, D₁ = 1835,06; o₂ ≈ 73,40, R₂ = 899,54, D₂ = 935,52;
 o₃ ≈ 37,42, R₃ = 935,52 = D₂, D₃ = 0.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#primer2
-besedilo: »Drugo leto: $o_2 = 1835{,}06 \cdot 0{,}04 \approx 73{,}40$, $R_2 = 972{,}94 - 73{,}40 = 899{,}54$, $D_2 = 1835{,}06 - 899{,}54 = 935{,}52$.« -/
+besedilo: »| 108,00 | 864,94 | 1835,06 | | 73,40 | 899,54 | 935,52 | | 37,42 | 935,52 | 0,00 |« -/
 theorem primer2 :
     (2700 : ℝ) * 0.04 = 108 ∧ (972.94 : ℝ) - 108 = 864.94 ∧ (2700 : ℝ) - 864.94 = 1835.06 ∧
     |(1835.06 : ℝ) * 0.04 - 73.40| < 0.005 ∧ (972.94 : ℝ) - 73.40 = 899.54 ∧
@@ -306,7 +306,7 @@ theorem primer2_preizkus : (864.94 : ℝ) + 899.54 + 935.52 = 2700 ∧ (108 : �
 /-- Primer 3: 1,06⁵ = 1,3382255776; G₀ = 1500·0,3382255776/(1,3382255776·0,06) ≈ 6318,55;
 6500 − 6318,55 = 181,45; 5·1500 = 7500 > 6318,55.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#primer3
-besedilo: »$G_0 = 1500 \cdot \dfrac{0{,}3382255776}{1{,}3382255776 \cdot 0{,}06} \approx 6318{,}55$« -/
+besedilo: »Odgovor: društvo lahko najame največ $6318{,}55$ € in mora iz svojega dodati $181{,}45$ €.« -/
 theorem primer3 : (1.06 : ℝ) ^ 5 = 1.3382255776 ∧
     |(1500 : ℝ) * (0.3382255776 / (1.3382255776 * 0.06)) - 6318.55| < 0.005 ∧
     (6500 : ℝ) - 6318.55 = 181.45 ∧ 5 * (1500 : ℝ) = 7500 ∧ (6318.55 : ℝ) < 7500 := by
@@ -315,15 +315,14 @@ theorem primer3 : (1.06 : ℝ) ^ 5 = 1.3382255776 ∧
 /-! ## Primer 4: preostanek naenkrat -/
 
 /-- Primer 4, podatek: anuiteta za 3200 €, 6 %, 5 let je 3200·1,06⁵·0,06/(1,06⁵ − 1) ≈ 759,67.
-trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#primer4-anuiteta
-besedilo: »Tri plačane anuitete ob istem trenutku: $759{,}67 \cdot \dfrac{0{,}191016}{0{,}06} \approx 2418{,}4854$.« -/
+pomozno -/
 theorem primer4_anuiteta : |(3200 : ℝ) * (1.06 ^ 5 * 0.06 / (1.06 ^ 5 - 1)) - 759.67| < 0.005 := by
   norm_num [abs_lt]
 
 /-- Primer 4: 1,06³ = 1,191016; 3200·1,191016 = 3811,2512; 759,67·0,191016/0,06 ≈ 2418,4854;
 D₃ = 3811,2512 − 2418,4854 ≈ 1392,77.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#primer4
-besedilo: »$D_3 = 3811{,}2512 - 2418{,}4854 \approx 1392{,}77$ €. Preizkus: $\dfrac{759{,}67}{1{,}06} + \dfrac{759{,}67}{1{,}06^2} \approx 716{,}67 + 676{,}10 = 1392{,}77$ €. Oba načina dasta isto, kot zahteva načelo ekvivalence glavnic.« -/
+besedilo: »$D_3 = 3811{,}2512 - 2418{,}4854 \approx 1392{,}77$ €.« -/
 theorem primer4 : (1.06 : ℝ) ^ 3 = 1.191016 ∧ (3200 : ℝ) * 1.191016 = 3811.2512 ∧
     |(759.67 : ℝ) * (0.191016 / 0.06) - 2418.4854| < 0.00005 ∧
     |(3811.2512 : ℝ) - 2418.4854 - 1392.77| < 0.005 := by
@@ -340,7 +339,7 @@ theorem primer4_preizkus : |(759.67 : ℝ) / 1.06 - 716.67| < 0.005 ∧ |(759.67
 
 /-- Pogoste napake: 4000·0,05·4 = 800; 4000/4 + 200 = 1200; z 1,05⁴ ≈ 1,22 je a = 4000·1,22·0,05/0,22 ≈ 1109,09.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#napake
-besedilo: »Prezgodnje zaokroževanje.** Z $1{,}05^4 \approx 1{,}22$ dobiš $a \approx 1109{,}09$ € namesto $1128{,}05$ €.« -/
+besedilo: »Z $1{,}05^4 \approx 1{,}22$ dobiš $a \approx 1109{,}09$ € namesto $1128{,}05$ €.« -/
 theorem napake : (4000 : ℝ) * 0.05 * 4 = 800 ∧ (4000 : ℝ) / 4 + 200 = 1200 ∧
     |(4000 : ℝ) * 1.22 * 0.05 / 0.22 - 1109.09| < 0.005 := by
   norm_num [abs_lt]
@@ -364,7 +363,7 @@ theorem zgodba : (4000 : ℝ) * 0.05 = 200 ∧ (1128.05 : ℝ) - 200 = 928.05 :=
 /-- Matura 1: o₅ = 6300·10/100 = 630; R₅ = 3630 − 630 = 3000; D₅ = 6300 − 3000 = 3300;
 preizkus 3300·0,1 = 330, 3630 − 330 = 3300 (6. anuiteta zapre dolg).
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#matura1
-besedilo: »Preizkus: v 6. letu so obresti $3300 \cdot 0{,}1 = 330$ €, razdolžnina $3630 - 330 = 3300$ € pa je ravno ostanek, zato se dolg s 6. anuiteto zapre.« -/
+besedilo: »Odgovor: v 5. letu so obresti $630$ €, razdolžnina $3000$ €, po 5. letu ostane $3300$ € dolga.« -/
 theorem matura1 : (6300 : ℝ) * 10 / 100 = 630 ∧ (3630 : ℝ) - 630 = 3000 ∧ (6300 : ℝ) - 3000 = 3300 ∧
     (3300 : ℝ) * 0.1 = 330 ∧ (3630 : ℝ) - 330 = 3300 := by norm_num
 
@@ -379,7 +378,7 @@ theorem matura2a : |(1.045 : ℝ) ^ 5 - 1.24618194| < 0.000000005 ∧
 
 /-- Matura 2 b): o₁ = 675, R₁ = 2741,87, D₁ = 12 258,13; o₂ ≈ 551,62, R₂ = 2865,25, D₂ = 9392,88.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#matura2b
-besedilo: »b) 2. leto: $o_2 = 12\,258{,}13 \cdot 0{,}045 \approx 551{,}62$; $R_2 = 3416{,}87 - 551{,}62 = 2865{,}25$; $D_2 = 12\,258{,}13 - 2865{,}25 = 9392{,}88$.« -/
+besedilo: »| $o_k$ | 675,00 | 551,62 | | $R_k$ | 2741,87 | 2865,25 | | $D_k$ | 12 258,13 | 9392,88 |« -/
 theorem matura2b : (15000 : ℝ) * 0.045 = 675 ∧ (3416.87 : ℝ) - 675 = 2741.87 ∧
     (15000 : ℝ) - 2741.87 = 12258.13 ∧ |(12258.13 : ℝ) * 0.045 - 551.62| < 0.005 ∧
     (3416.87 : ℝ) - 551.62 = 2865.25 ∧ (12258.13 : ℝ) - 2865.25 = 9392.88 := by
@@ -399,7 +398,7 @@ theorem matura2c : (15000 : ℝ) * 1.045 = 15675 ∧
 /-- Preveri se 3 (stolpci): pri 6000 €, 6 %, 5 letih je ostanek po letih ≈ 4936, 3807, 2611, 1344, 0 €;
 po 2. letu natančno ≈ 3807,38 €. Tu je a = 6000·1,06⁵·0,06/(1,06⁵ − 1) in Dₖ = 6000·1,06ᵏ − a(1,06ᵏ − 1)/0,06.
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#kviz3-stolpci
-besedilo: »Po 2. letu ostane približno $3800$ € (natančno $3807{,}38$ €), obresti 3. leta so $3800 \cdot 0{,}06 = 228$ € (natančno $228{,}44$ €).« -/
+besedilo: »Po 2. letu ostane približno $3800$ € (natančno $3807{,}38$ €)« -/
 theorem kviz3_stolpci :
     let a : ℝ := 6000 * (1.06 ^ 5 * 0.06 / (1.06 ^ 5 - 1))
     |6000 * 1.06 - a - 4936| < 0.5 ∧
@@ -414,7 +413,7 @@ theorem kviz3_stolpci :
 /-- Preveri se 3: obresti 3. leta 3800·0,06 = 228 € (natančno 3807,38·0,06 ≈ 228,44); napačna odgovora:
 6000·0,06 = 360 (1. leto) in 4936·0,06 ≈ 296 (2. leto).
 trditev: MAT-SS-4/anuitete-in-amortizacijski-nacrt#kviz3-obresti
-besedilo: »Po 2. letu ostane približno $3800$ € (natančno $3807{,}38$ €), obresti 3. leta so $3800 \cdot 0{,}06 = 228$ € (natančno $228{,}44$ €).« -/
+besedilo: »obresti 3. leta so $3800 \cdot 0{,}06 = 228$ € (natančno $228{,}44$ €)« -/
 theorem kviz3_obresti : (3800 : ℝ) * 0.06 = 228 ∧ |(3807.38 : ℝ) * 0.06 - 228.44| < 0.005 ∧
     (6000 : ℝ) * 0.06 = 360 ∧ |(4936 : ℝ) * 0.06 - 296| < 0.5 := by
   norm_num [abs_lt]

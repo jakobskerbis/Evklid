@@ -32,7 +32,7 @@ variable {V P : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [MetricS
 /-- Razlaga 1 (definicija): če je △A'B'C' ∼ △ABC, so ustrezni koti enaki in obstaja k > 0, da je a' = k·a,
 b' = k·b, c' = k·c (a = |BC|, b = |CA|, c = |AB|); skladna trikotnika (k = 1) sta podobna.
 trditev: MAT-SS-2/podobnost#definicija
-besedilo: »Število $k$ je **koeficient podobnosti**. Če je $k > 1$, je drugi trikotnik večji, če je $k < 1$, je manjši. Pri $k = 1$ sta trikotnika skladna.« -/
+besedilo: »Trikotnika sta **podobna**, če imata enake ustrezne kote in enaka razmerja ustreznih stranic.« -/
 theorem definicija (A B C A' B' C' : P) :
     (Similar ![A', B', C'] ![A, B, C] →
       (∠ A' B' C' = ∠ A B C ∧ ∠ B' C' A' = ∠ B C A ∧ ∠ C' A' B' = ∠ C A B) ∧
@@ -46,7 +46,7 @@ theorem definicija (A B C A' B' C' : P) :
 /-- Razlaga 3 in Ustno vprašanje 1: če se trikotnika ujemata v dveh kotih, se ujemata tudi v tretjem (vsota kotov
 je π = 180°).
 trditev: MAT-SS-2/podobnost#tretji-kot
-besedilo: »KK:** ujemata se v dveh kotih. Tretji kot je potem samodejno enak, saj je vsota kotov $180^\circ$.« -/
+besedilo: »Dva kota zadoščata, ker je vsota notranjih kotov trikotnika $180^\circ$, zato sta enaka tudi tretja kota.« -/
 theorem tretji_kot (A B C A' B' C' : P) (hAB : B ≠ A) (hAB' : B' ≠ A') (h₁ : ∠ A B C = ∠ A' B' C')
     (h₂ : ∠ B C A = ∠ B' C' A') : ∠ C A B = ∠ C' A' B' := by
   have s := angle_add_angle_add_angle_eq_pi C hAB
@@ -76,7 +76,7 @@ example : (0:ℂ) ≠ 1 ∧ ∠ (1:ℂ) 0 Complex.I = π / 2 ∧ (1:ℂ) ≠ 0 �
 /-- Razlaga 3 (izrek KK) in Povzetek: nekolinearna trikotnika, ki se ujemata v dveh kotih, sta podobna, ujemata pa
 se tudi v tretjem kotu.
 trditev: MAT-SS-2/podobnost#izrek-kk
-besedilo: »Trikotnika se ujemata v dveh kotih, zato sta po izreku KK podobna.« -/
+besedilo: »Po izreku KK sta trikotnika podobna, če se ujemata v dveh kotih. Dva kota zadoščata, ker je vsota notranjih kotov trikotnika $180^\circ$, zato sta enaka tudi tretja kota.« -/
 theorem izrek_KK {A B C A' B' C' : P} (h : ¬ Collinear ℝ {A, B, C}) (h₁ : ∠ A B C = ∠ A' B' C')
     (h₂ : ∠ B C A = ∠ B' C' A') : Similar ![A, B, C] ![A', B', C'] ∧ ∠ C A B = ∠ C' A' B' :=
   ⟨similar_of_angle_angle h h₁ h₂, (similar_of_angle_angle h h₁ h₂).angle_eq_all.2.2⟩
@@ -101,7 +101,7 @@ example : dist (1:ℂ) 0 ≠ 0 ∧ dist (1:ℂ) 0 * dist (0:ℂ) Complex.I = dis
 /-- Razlaga 3 (izrek SKS): nekolinearna trikotnika z enakim razmerjem dveh parov stranic in enakim kotom med njima
 sta podobna.
 trditev: MAT-SS-2/podobnost#izrek-sks
-besedilo: »SKS:** razmerje dveh parov ustreznih stranic je enako in kota med njima sta enaka.« -/
+besedilo: »Po izreku SKS sta podobna, če sta razmerji dveh parov ustreznih stranic enaki in sta enaka kota med tema stranicama.« -/
 theorem izrek_SKS {A B C A' B' C' : P} (h : ¬ Collinear ℝ {A, B, C}) (h' : ¬ Collinear ℝ {A', B', C'})
     (hk : ∠ A B C = ∠ A' B' C') (hd : dist A B * dist B' C' = dist B C * dist A' B') :
     Similar ![A, B, C] ![A', B', C'] :=
@@ -118,7 +118,7 @@ example : ¬ Collinear ℝ {(1:ℂ), 0, Complex.I} ∧
 se pri k-krat daljših dolžinah pomnoži s k²: ½·(kz)·(kv) = k²·(½·z·v); Premisli 1: 3² = 9; simulacija:
 2² = 4, 0,5² = 0,25.
 trditev: MAT-SS-2/podobnost#ploscina-k2
-besedilo: »Če je razmerje dolžin $k$, je razmerje ploščin $k^2$.« -/
+besedilo: »Ploščina je zato $\dfrac{k z \cdot k v}{2} = k^2 \cdot \dfrac{z v}{2}$, torej $k^2$-krat večja.« -/
 theorem ploscina_k2 :
     (∀ k z v : ℝ, (k * z) * (k * v) / 2 = k ^ 2 * (z * v / 2)) ∧ (3:ℝ) ^ 2 = 9 ∧ (2:ℝ) ^ 2 = 4 ∧
     (0.5:ℝ) ^ 2 = 0.25 :=
@@ -131,7 +131,7 @@ noncomputable def pl (A B C : ℝ × ℝ) : ℝ :=
 /-- Razlaga 8, Primer 5 in Povzetek: središčni razteg s središčem S(x_S, y_S) in koeficientom k slika točko (x, y)
 v (x_S + k(x − x_S), y_S + k(y − y_S)); pri središču v izhodišču v (kx, ky).
 trditev: MAT-SS-2/podobnost#razteg-koordinate
-besedilo: »$$x' = x_S + k\,(x - x_S), \qquad y' = y_S + k\,(y - y_S)$$« -/
+besedilo: »$$x' = x_S + k\,(x - x_S), \qquad y' = y_S + k\,(y - y_S)$$ Pri središču v izhodišču je preprosto $T'(kx, ky)$.« -/
 theorem razteg_koordinate (xS yS k x y : ℝ) :
     AffineMap.homothety ((xS, yS) : ℝ × ℝ) k (x, y) = (xS + k * (x - xS), yS + k * (y - yS)) ∧
     AffineMap.homothety ((0, 0) : ℝ × ℝ) k (x, y) = (k * x, k * y) := by
@@ -187,8 +187,7 @@ theorem evklid_visinski {A B C D : P} (hD : Sbtw ℝ A D B) (hCD : ∠ A D C = �
 
 /-- Pogoji izreka `evklid_visinski` se dajo izpolniti: v ℂ so A = 0, B = 25, D = 16, C = 16 + 12i (trikotnik z
 risbe v razlagi).
-trditev: MAT-SS-2/podobnost#primer-risba
-besedilo: »Višina.** Uporabimo višinski izrek: $v_c^2 = c_a \cdot c_b = 9 \cdot 16 = 144$, zato $v_c = \sqrt{144} = 12\,\text{cm}$.« -/
+pomozno -/
 theorem primer_risba :
     Sbtw ℝ (0:ℂ) 16 25 ∧ ∠ (0:ℂ) 16 (16 + 12 * Complex.I) = π / 2 ∧
     ∠ (0:ℂ) (16 + 12 * Complex.I) 25 = π / 2 := by
@@ -214,7 +213,7 @@ example : (0:ℝ) ≤ 1 ∧ (1:ℝ) ^ 2 = 1 ^ 2 := by norm_num
 /-- Razlaga 5 in Drugače: Bolj natančno, Na sliki: višina na hipotenuzo razdeli pravokotni trikotnik ABC na
 trikotnika, ki sta podobna drug drugemu in velikemu: △ABC ∼ △CBD, △ABC ∼ △ACD in △ACD ∼ △CBD.
 trditev: MAT-SS-2/podobnost#trije-podobni
-besedilo: »zato je $c = c_a + c_b$. Višina razdeli trikotnik na dva manjša pravokotna trikotnika, ki sta podobna drug drugemu in tudi velikemu trikotniku. Dokaz je spodaj v razdelku »Drugače: Bolj natančno«.« -/
+besedilo: »Višina razdeli trikotnik na dva manjša pravokotna trikotnika, ki sta podobna drug drugemu in tudi velikemu trikotniku.« -/
 theorem trije_podobni {A B C D : P} (hD : Sbtw ℝ A D B) (hCD : ∠ A D C = π / 2) (hC : ∠ A C B = π / 2) :
     Similar ![A, B, C] ![C, B, D] ∧ Similar ![A, B, C] ![A, C, D] ∧ Similar ![A, C, D] ![C, B, D] := by
   obtain ⟨ea, eb, ev, ec, -, -⟩ := evklid_visinski hD hCD hC
@@ -260,7 +259,7 @@ theorem risba : (15:ℝ) ^ 2 = 25 * 9 ∧ (20:ℝ) ^ 2 = 25 * 16 ∧ (12:ℝ) ^ 
 /-- Razlaga 7, Premisli 2: če je c_a = c_b, je iz v_c² = c_a·c_b višina v_c = c_a, iz a² = c·c_a = b² pa a = b
 (enakokraki pravokotni trikotnik).
 trditev: MAT-SS-2/podobnost#premisli2
-besedilo: »Iz $v_c^2 = c_a \cdot c_a = c_a^2$ sledi $v_c = c_a$: višina je enako dolga kot vsak odsek. Kateti sta enaki ($a^2 = c \cdot c_a = b^2$), zato je trikotnik enakokrak pravokotni, kota ob hipotenuzi sta $45^\circ$.« -/
+besedilo: »Iz $v_c^2 = c_a \cdot c_a = c_a^2$ sledi $v_c = c_a$: višina je enako dolga kot vsak odsek. Kateti sta enaki ($a^2 = c \cdot c_a = b^2$)« -/
 theorem premisli2 (a b c ca cb v : ℝ) (hv : 0 ≤ v) (hca : 0 ≤ ca) (ha : 0 ≤ a) (hb : 0 ≤ b) (he : ca = cb)
     (h1 : v ^ 2 = ca * cb) (h2 : a ^ 2 = c * ca) (h3 : b ^ 2 = c * cb) : v = ca ∧ a = b :=
   ⟨iz_kvadratov hv hca (by rw [h1, he]; ring), iz_kvadratov ha hb (by rw [h2, h3, he])⟩
@@ -277,7 +276,7 @@ example :=
 /-- Razlaga 7, Premisli 2: v enakokrakem pravokotnem trikotniku (|CA| = |CB|, pravi kot pri C) sta kota ob
 hipotenuzi enaka (kota ob osnovnici enakokrakega trikotnika) in skupaj merita π − π/2, zato je vsak π/4 = 45°.
 trditev: MAT-SS-2/podobnost#premisli2-koti
-besedilo: »Kateti sta enaki ($a^2 = c \cdot c_a = b^2$), zato je trikotnik enakokrak pravokotni, kota ob hipotenuzi sta $45^\circ$.« -/
+besedilo: »zato je trikotnik enakokrak pravokotni, kota ob hipotenuzi sta $45^\circ$.« -/
 theorem premisli2_koti {A B C : P} (hA : A ≠ C) (hd : dist C A = dist C B) (hC : ∠ A C B = π / 2) :
     ∠ C A B = π / 4 ∧ ∠ C B A = π / 4 := by
   have he := angle_eq_angle_of_dist_eq hd
@@ -301,7 +300,7 @@ example :=
 v |k|-krat daljšo (|A'B'| = |k|·|AB|) in je z njo vzporedna (A'B'→ = k·AB→), S se preslika vase, ST'→ = k·ST→ (pri k > 0 na poltraku ST, pri k < 0 na
 nasprotni strani), pri k = 1 ostane vse na mestu, pri k = −1 je razteg zrcaljenje čez točko S.
 trditev: MAT-SS-2/podobnost#razteg
-besedilo: »Pri $|k| > 1$ se lik poveča, pri $|k| < 1$ se pomanjša. Pri $k = 1$ ostane vse na mestu, pri $k = -1$ je razteg zrcaljenje čez točko $S$.« -/
+besedilo: »Daljica se preslika v vzporedno daljico, ki je $|k|$-krat daljša: $|A'B'| = |k| \cdot |AB|$.« -/
 theorem razteg (S T A B : P) (k : ℝ) :
     dist (AffineMap.homothety S k T) S = |k| * dist S T ∧
     dist (AffineMap.homothety S k A) (AffineMap.homothety S k B) = |k| * dist A B ∧
@@ -318,7 +317,7 @@ theorem razteg (S T A B : P) (k : ℝ) :
 /-- Razlaga 8 in Povzetek: za k ≠ 0 je slika trikotnika pri središčnem raztegu podobna trikotniku s koeficientom
 |k|, zato se koti ohranijo.
 trditev: MAT-SS-2/podobnost#razteg-podobnost
-besedilo: »8. Središčni razteg.** Podobne like dobimo s preslikavo. Izberemo točko $S$, **središče raztega**, in število $k \ne 0$, **koeficient raztega**. **Središčni razteg** vsaki točki $T$ priredi točko $T'$ na premici $ST$, za katero je« -/
+besedilo: »Zato je slika lika podobna liku s koeficientom podobnosti $|k|$« -/
 theorem razteg_podobnost (S A B C : P) (k : ℝ) (hk : k ≠ 0) :
     Similar ![AffineMap.homothety S k A, AffineMap.homothety S k B, AffineMap.homothety S k C] ![A, B, C] ∧
     ∠ (AffineMap.homothety S k A) (AffineMap.homothety S k B) (AffineMap.homothety S k C) = ∠ A B C := by
@@ -339,7 +338,7 @@ example :=
 /-- Razlaga 8 (slika): pri središču v izhodišču se A(2, 1), B(4, 1), C(3, 3) pri k = 2 preslikajo v (4, 2), (8, 2),
 (6, 6), pri k = −1/2 pa v (−1; −0,5), (−2; −0,5), (−1,5; −1,5).
 trditev: MAT-SS-2/podobnost#slika-razteg
-besedilo: »a) Pri $k = 2$ odmike podvojimo: $A'(1 + 2, 1 + 2) = A'(3, 3)$, $B'(1 + 6, 1 + 2) = B'(7, 3)$, $C'(1 + 2, 1 + 4) = C'(3, 5)$.« -/
+besedilo: »Na risbi je središče v izhodišču: večji trikotnik je slika trikotnika $ABC$ pri $k = 2$, manjši na drugi strani središča pri $k = -\frac{1}{2}$.« -/
 theorem slika_razteg :
     ((2:ℝ) * 2, (2:ℝ) * 1) = (4, 2) ∧ ((2:ℝ) * 4, (2:ℝ) * 1) = (8, 2) ∧ ((2:ℝ) * 3, (2:ℝ) * 3) = (6, 6) ∧
     ((-1 / 2 : ℝ) * 2, (-1 / 2 : ℝ) * 1) = (-1, -0.5) ∧ ((-1 / 2 : ℝ) * 4, (-1 / 2 : ℝ) * 1) = (-2, -0.5) ∧
@@ -351,7 +350,7 @@ theorem slika_razteg :
 /-- Primer 1: k = a'/a = 10/4 = 2,5, b' = 2,5·6 = 15 cm, c' = 2,5·8 = 20 cm; preizkus 15/6 = 20/8 = 2,5; iz
 b'/b = a'/a sledi b' = 15 (enolično).
 trditev: MAT-SS-2/podobnost#primer1
-besedilo: »$\dfrac{15}{6} = 2{,}5$ in $\dfrac{20}{8} = 2{,}5$. ✓« -/
+besedilo: »Odgovor: $b' = 15\,\text{cm}$ in $c' = 20\,\text{cm}$.« -/
 theorem primer1 :
     (10:ℝ) / 4 = 2.5 ∧ (2.5:ℝ) * 6 = 15 ∧ (2.5:ℝ) * 8 = 20 ∧ (15:ℝ) / 6 = 2.5 ∧ (20:ℝ) / 8 = 2.5 ∧
     ∀ b' c' : ℝ, b' / 6 = 10 / 4 → c' / 8 = 10 / 4 → b' = 15 ∧ c' = 20 := by
@@ -387,7 +386,7 @@ example : (0:ℝ) ≤ 1 := zero_le_one
 /-- Primer 3: c = 9 + 16 = 25; v_c² = 9·16 = 144, v_c = 12; a² = 25·9 = 225, a = 15; b² = 25·16 = 400, b = 20
 (dolžine so nenegativne); preizkus 15² + 20² = 225 + 400 = 625 = 25².
 trditev: MAT-SS-2/podobnost#primer3
-besedilo: »zato $a^2 = c \cdot c_a = 25 \cdot 9 = 225$ in $a = 15\,\text{cm}$.« -/
+besedilo: »Odgovor: višina je $12\,\text{cm}$, kateti merita $15\,\text{cm}$ in $20\,\text{cm}$.« -/
 theorem primer3 :
     (9:ℝ) + 16 = 25 ∧ (∀ v : ℝ, 0 ≤ v → (v ^ 2 = 9 * 16 ↔ v = 12)) ∧ (9:ℝ) * 16 = 144 ∧
     (∀ a : ℝ, 0 ≤ a → (a ^ 2 = 25 * 9 ↔ a = 15)) ∧ (∀ b : ℝ, 0 ≤ b → (b ^ 2 = 25 * 16 ↔ b = 20)) ∧
@@ -447,7 +446,7 @@ theorem napake : √((4:ℝ) * 25) = 10 ∧ (4:ℝ) + 25 = 29 ∧ (29:ℝ) < 4 *
 /-- Naloga 1: |CA| = 4 + 2 = 6, k = 6/4 = 3/2, razmerje ploščin k² = 9/4, ploščina △ABC = 9/4·12 = 27 cm²,
 trapez 27 − 12 = 15 cm²; ploščina se pri raztegu s središčem C in koeficientom 3/2 pomnoži z (3/2)² (`razteg_ploscina`).
 trditev: MAT-SS-2/podobnost#naloga1
-besedilo: »Razmerje ploščin je $k^2 = \dfrac{9}{4}$, zato je ploščina trikotnika $ABC$ enaka $\dfrac{9}{4} \cdot 12\,\text{cm}^2 = 27\,\text{cm}^2$.« -/
+besedilo: »Trapez $ABNM$ je trikotnik $ABC$ brez trikotnika $MNC$: $27\,\text{cm}^2 - 12\,\text{cm}^2 = 15\,\text{cm}^2$.« -/
 theorem naloga1 :
     (4:ℝ) + 2 = 6 ∧ (6:ℝ) / 4 = 3 / 2 ∧ (3 / 2 : ℝ) ^ 2 = 9 / 4 ∧ (9 / 4 : ℝ) * 12 = 27 ∧ (27:ℝ) - 12 = 15 ∧
     ∀ (C : EuclideanSpace ℝ (Fin 2)) (s : Set (EuclideanSpace ℝ (Fin 2))),
@@ -492,7 +491,7 @@ theorem vsakdan : (6:ℝ) * 50000 = 300000 ∧ (300000:ℝ) / 100000 = 3 ∧ (5:
 /-- Drugače: Korak za korakom: a = 6, b = 8, c = 10 (36 + 64 = 100); c_a = 36/10 = 3,6, c_b = 64/10 = 6,4,
 3,6 + 6,4 = 10; v_c² = 3,6·6,4 = 23,04, v_c = 4,8; ploščina 6·8/2 = 24 = 10·4,8/2.
 trditev: MAT-SS-2/podobnost#korak-za-korakom
-besedilo: »$v_c^2 = 3{,}6 \cdot 6{,}4 = 23{,}04$« -/
+besedilo: »Ploščina je $\dfrac{a \cdot b}{2} = \dfrac{6 \cdot 8}{2} = 24\,\text{cm}^2$ in tudi $\dfrac{c \cdot v_c}{2} = \dfrac{10 \cdot 4{,}8}{2} = 24\,\text{cm}^2$.« -/
 theorem korak_za_korakom :
     (36:ℝ) + 64 = 100 ∧ (36:ℝ) / 10 = 3.6 ∧ (64:ℝ) / 10 = 6.4 ∧ (3.6:ℝ) + 6.4 = 10 ∧ (3.6:ℝ) * 6.4 = 23.04 ∧
     (∀ v : ℝ, 0 ≤ v → (v ^ 2 = 23.04 ↔ v = 4.8)) ∧ (6:ℝ) * 8 / 2 = 24 ∧ (10:ℝ) * 4.8 / 2 = 24 := by
@@ -517,7 +516,7 @@ example :=
 
 /-- Preveri se 4: 1 cm na sliki pomeni 3500/3,5 = 1000 km, krater 0,2·1000 = 200 km (napaka 0,2·3500 = 700).
 trditev: MAT-SS-2/podobnost#kviz4
-besedilo: »Fotografija je pomanjšana za $3500\,\text{km} : 3{,}5\,\text{cm}$, torej $1\,\text{cm}$ pomeni $1000\,\text{km}$; $0{,}2\,\text{cm}$ je $200\,\text{km}$, ne $20$.« -/
+besedilo: »Krater in Luna sta na sliki pomanjšana z istim koeficientom: $1\,\text{cm}$ na sliki je $1000\,\text{km}$, zato $0{,}2\,\text{cm}$ pomeni $200\,\text{km}$.« -/
 theorem kviz4 : (3500:ℝ) / 3.5 = 1000 ∧ (0.2:ℝ) * 1000 = 200 ∧ (0.2:ℝ) / 3.5 * 3500 = 200 ∧ (0.2:ℝ) * 3500 = 700 := by
   norm_num
 
@@ -543,7 +542,7 @@ theorem kviz6 :
 
 /-- Preveri se 7 (in blok RACUN): pri k = −3 se ploščina 5 cm² pomnoži s k² = 9: 9·5 = 45 cm² (ne −45, ne 15).
 trditev: MAT-SS-2/podobnost#kviz7
-besedilo: »15 | Dolžine se pomnožijo s $|k| = 3$, ploščina pa s $k^2 = 9$.« -/
+besedilo: »Slika je podobna liku s koeficientom $|k| = 3$, zato je njena ploščina $9 \cdot 5\,\text{cm}^2 = 45\,\text{cm}^2$.« -/
 theorem kviz7 : (-3:ℝ) ^ 2 = 9 ∧ (-3:ℝ) ^ 2 * 5 = 45 ∧ |(-3:ℝ)| = 3 ∧ (3:ℝ) * 5 = 15 := by norm_num
 
 /-! ## Primeri izpolnljivosti (izrek, uporabljen na konkretnih vrednostih) -/

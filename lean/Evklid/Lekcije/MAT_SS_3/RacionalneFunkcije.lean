@@ -91,7 +91,7 @@ example : Tendsto (fun x : ℝ => (x - 0) ^ 2) (𝓝[>] 0) (𝓝[>] 0) ∧
 /-- Razlaga, »Ničle, poli in luknje« (in Povzetek): ulomek p/q z imenovalcem q ≠ 0 je enak 0 natanko
 tedaj, ko je števec p = 0 (ničle funkcije dá števec).
 trditev: MAT-SS-3/racionalne-funkcije#nicle-iz-stevca
-besedilo: »Ničle, poli in luknje.** Najprej števec in imenovalec razcepi ter okrajšaj skupne faktorje.« -/
+besedilo: »Ulomek je enak $0$, ko je števec $0$, imenovalec pa ne.« -/
 theorem nicle_iz_stevca (p q : ℝ) (hq : q ≠ 0) : p / q = 0 ↔ p = 0 := by
   rw [div_eq_zero_iff]; tauto
 
@@ -101,7 +101,7 @@ example : (0 : ℝ) / 1 = 0 ↔ (0 : ℝ) = 0 := nicle_iz_stevca 0 1 one_ne_zero
 /-- Razlaga, »Stopnja pola«, pol lihe stopnje (in »Drugače: Bolj natančno«): f(x) = g(x)/(x − c)ᵐ, g
 zvezna v c, g(c) > 0, m lih: levo od c gre f v −∞, desno v +∞ (veji na nasprotnih straneh).
 trditev: MAT-SS-3/racionalne-funkcije#pol-liha-stopnja
-besedilo: »Pol in njegova stopnja.** Če je po krajšanju $f(x) = \dfrac{g(x)}{(x - c)^m}$ in $g(c) \ne 0$,« -/
+besedilo: »pri lihi stopnji ima graf na obeh straneh pola nasproten predznak (ena veja $+\infty$, druga $-\infty$)« -/
 theorem pol_liha_stopnja {g : ℝ → ℝ} {c : ℝ} {m : ℕ} (hg : ContinuousAt g c) (h0 : 0 < g c)
     (hm : Odd m) :
     Tendsto (fun x => g x / (x - c) ^ m) (𝓝[<] c) atBot ∧
@@ -120,7 +120,7 @@ example : Tendsto (fun x : ℝ => (fun _ => (1 : ℝ)) x / (x - 0) ^ 1) (𝓝[<]
 
 /-- Razlaga, »Stopnja pola«, pol lihe stopnje pri g(c) < 0: levo +∞, desno −∞.
 trditev: MAT-SS-3/racionalne-funkcije#pol-liha-stopnja-crtica
-besedilo: »Stopnja pola.** Če je v imenovalcu faktor $(x - c)^m$, je $c$ pol stopnje $m$.« -/
+besedilo: »pri lihi stopnji ima graf na obeh straneh pola nasproten predznak (ena veja $+\infty$, druga $-\infty$)« -/
 theorem pol_liha_stopnja' {g : ℝ → ℝ} {c : ℝ} {m : ℕ} (hg : ContinuousAt g c) (h0 : g c < 0)
     (hm : Odd m) :
     Tendsto (fun x => g x / (x - c) ^ m) (𝓝[<] c) atTop ∧
@@ -136,7 +136,7 @@ example : Tendsto (fun x : ℝ => (fun _ => (-1 : ℝ)) x / (x - 0) ^ 1) (𝓝[<
 
 /-- Razlaga, »Stopnja pola«, pol sode stopnje: g zvezna v c, g(c) > 0, m sod, m ≥ 1: obe veji gresta v +∞.
 trditev: MAT-SS-3/racionalne-funkcije#pol-soda-stopnja
-besedilo: »Pol $2$ funkcije $g(x) = \dfrac{1}{(x - 2)^2}$ je sode stopnje, zato gresta veji ob njem v isto smer.« -/
+besedilo: »pri sodi stopnji gresta obe veji v isto smer.« -/
 theorem pol_soda_stopnja {g : ℝ → ℝ} {c : ℝ} {m : ℕ} (hg : ContinuousAt g c) (h0 : 0 < g c)
     (hm : Even m) (hm1 : 1 ≤ m) :
     Tendsto (fun x => g x / (x - c) ^ m) (𝓝[<] c) atTop ∧
@@ -154,7 +154,7 @@ example : Tendsto (fun x : ℝ => (fun _ => (1 : ℝ)) x / (x - 0) ^ 2) (𝓝[<]
 
 /-- Razlaga, »Stopnja pola«, pol sode stopnje pri g(c) < 0: obe veji gresta v −∞.
 trditev: MAT-SS-3/racionalne-funkcije#pol-soda-stopnja-crtica
-besedilo: »Pol $2$ funkcije $g(x) = \dfrac{1}{(x - 2)^2}$ je sode stopnje, zato gresta veji ob njem v isto smer. V katero, $+\infty$ ali $-\infty$? Odgovori brez računanja.« -/
+besedilo: »pri sodi stopnji gresta obe veji v isto smer.« -/
 theorem pol_soda_stopnja' {g : ℝ → ℝ} {c : ℝ} {m : ℕ} (hg : ContinuousAt g c) (h0 : g c < 0)
     (hm : Even m) (hm1 : 1 ≤ m) :
     Tendsto (fun x => g x / (x - c) ^ m) (𝓝[<] c) atBot ∧
@@ -171,7 +171,7 @@ example : Tendsto (fun x : ℝ => (fun _ => (-1 : ℝ)) x / (x - 0) ^ 2) (𝓝[<
 /-- Razlaga, »luknja« (in Povzetek »okrajšan skupni faktor pusti luknjo«): če je f(x) = k(x) za vse
 x ≠ c (po krajšanju) in je k zvezna v c, ima f v c limito k(c): graf je graf k brez ene točke.
 trditev: MAT-SS-3/racionalne-funkcije#luknja
-besedilo: »Okrajšan skupni faktor pusti **luknjo**.« -/
+besedilo: »Če ga po krajšanju v imenovalcu ni več, namesto pola ostane v grafu le prazna točka, **luknja**.« -/
 theorem luknja {f k : ℝ → ℝ} {c : ℝ} (h : ∀ x, x ≠ c → f x = k x) (hk : ContinuousAt k c) :
     Tendsto f (𝓝[≠] c) (𝓝 (k c)) :=
   (hk.tendsto.mono_left nhdsWithin_le_nhds).congr'
@@ -184,7 +184,7 @@ example : Tendsto (fun x : ℝ => x) (𝓝[≠] 0) (𝓝 ((fun x : ℝ => x) 0))
 /-- Razlaga, »Asimptote iz deljenja«: iz p(x) = q(x)k(x) + r(x) in q(x) ≠ 0 sledi
 f(x) = p(x)/q(x) = k(x) + r(x)/q(x).
 trditev: MAT-SS-3/racionalne-funkcije#deljenje
-besedilo: »Asimptote iz deljenja.** Pri prvem primeru je pomagalo deljenje z $x$. Splošno števec delimo z imenovalcem, kot znaš iz lekcije o polinomih: $p(x) = q(x)\,k(x) + r(x)$, stopnja ostanka $r$ je manjša od stopnje $q$. Potem je« -/
+besedilo: »$p(x) = q(x)\,k(x) + r(x)$, stopnja ostanka $r$ je manjša od stopnje $q$. Potem je $$f(x) = k(x) + \frac{r(x)}{q(x)}$$« -/
 theorem deljenje (p q k r : ℝ) (h : p = q * k + r) (hq : q ≠ 0) : p / q = k + r / q := by
   rw [h]; field_simp
 
@@ -215,7 +215,7 @@ example : Tendsto (fun x => (X ^ 2 + 1 : ℝ[X]).eval x / (X : ℝ[X]).eval x - 
 
 /-- Razlaga, vodoravna asimptota, »števec nižje stopnje: y = 0«.
 trditev: MAT-SS-3/racionalne-funkcije#asimptota-nizja-stopnja
-besedilo: »Števec nižje stopnje: $y = 0$, npr.« -/
+besedilo: »Če ima števec nižjo stopnjo kot imenovalec, je asimptota $y = 0$.« -/
 theorem asimptota_nizja_stopnja (P Q : ℝ[X]) (hdeg : P.degree < Q.degree) :
     Tendsto (fun x => P.eval x / Q.eval x) atTop (𝓝 0) ∧
       Tendsto (fun x => P.eval x / Q.eval x) atBot (𝓝 0) :=
@@ -228,7 +228,7 @@ example : Tendsto (fun x => (C 5 : ℝ[X]).eval x / (X : ℝ[X]).eval x) atTop (
 
 /-- Razlaga, vodoravna asimptota, »enaki stopnji: y = aₙ/bₙ« (vodilna koeficienta).
 trditev: MAT-SS-3/racionalne-funkcije#asimptota-enaki-stopnji
-besedilo: »Asimptota je $y = 2$ (enaki stopnji,« -/
+besedilo: »Pri enakih stopnjah je asimptota $y = \frac{a_n}{b_n}$, kjer sta $a_n$ in $b_n$ vodilna koeficienta števca in imenovalca.« -/
 theorem asimptota_enaki_stopnji (P Q : ℝ[X]) (hdeg : P.degree = Q.degree) :
     Tendsto (fun x => P.eval x / Q.eval x) atTop (𝓝 (P.leadingCoeff / Q.leadingCoeff)) ∧
       Tendsto (fun x => P.eval x / Q.eval x) atBot (𝓝 (P.leadingCoeff / Q.leadingCoeff)) :=
@@ -253,7 +253,7 @@ theorem uvod_ura : (6 : ℝ) / 6 = 1 ∧ (3 : ℝ) / 3 = 1 := by norm_num
 /-- Uvod: čas poti je 3/3 + 3/v = 1 + 3/v ur, povprečna hitrost 6/(1 + 3/v), po razširitvi z v je
 v̄(v) = 6v/(v + 3) (v > 0).
 trditev: MAT-SS-3/racionalne-funkcije#uvod-povprecna
-besedilo: »Če greš nazaj s hitrostjo $v$, porabiš za vso pot $1 + \frac{3}{v}$ ur. Povprečna hitrost je pot, deljena s časom: $\bar v = \dfrac{6}{1 + \frac{3}{v}}$. Ko ulomek razširimo z $v$, dobimo« -/
+besedilo: »Če greš nazaj s hitrostjo $v$, porabiš za vso pot $1 + \frac{3}{v}$ ur. Povprečna hitrost je pot, deljena s časom: $\bar v = \dfrac{6}{1 + \frac{3}{v}}$. Ko ulomek razširimo z $v$, dobimo $$\bar v(v) = \frac{6v}{v + 3}.$$« -/
 theorem uvod_povprecna (v : ℝ) (hv : 0 < v) :
     (6 : ℝ) / (3 / 3 + 3 / v) = 6 / (1 + 3 / v) ∧ (6 : ℝ) / (1 + 3 / v) = 6 * v / (v + 3) := by
   have h3 : v + 3 ≠ 0 := by linarith
@@ -278,7 +278,7 @@ theorem uvod_v300 : |(6 : ℝ) * 300 / (300 + 3) - 594 / 100| < 5 / 1000 := by
 /-- Uvod: povprečna hitrost 6v/(v + 3) pri v > 0 nikoli ne doseže 6 (je manjša od 6) in se 6 bliža,
 ko v raste.
 trditev: MAT-SS-3/racionalne-funkcije#uvod-nikoli-6
-besedilo: »Povprečna hitrost je pot, deljena s časom: $\bar v = \dfrac{6}{1 + \frac{3}{v}}$.« -/
+besedilo: »Vrednost se številu $6$ vedno bolj približuje, a ga nikoli ne doseže.« -/
 theorem uvod_nikoli_6 : (∀ v : ℝ, 0 < v → 6 * v / (v + 3) < 6) ∧
     Tendsto (fun v : ℝ => 6 * v / (v + 3)) atTop (𝓝 6) := by
   refine ⟨fun v hv => by rw [div_lt_iff₀ (by linarith)]; linarith, ?_⟩
@@ -296,13 +296,13 @@ noncomputable def f₀ (x : ℝ) : ℝ := 6 * x / (x + 3)
 
 /-- Razlaga, »Kje ni definirana«: x + 3 ≠ 0 natanko tedaj, ko x ≠ −3.
 trditev: MAT-SS-3/racionalne-funkcije#f0-definicija
-besedilo: »Kje ni definirana.* Z ničlo ne smemo deliti, zato mora biti $x + 3 \ne 0$, torej $x \ne -3$.« -/
+besedilo: »Z ničlo ne smemo deliti, zato mora biti $x + 3 \ne 0$, torej $x \ne -3$.« -/
 theorem f₀_definicija (x : ℝ) : x + 3 ≠ 0 ↔ x ≠ -3 := by
   constructor <;> intro h e <;> apply h <;> linarith
 
 /-- Razlaga, »Ničla«: za x ≠ −3 je f(x) = 0 natanko pri x = 0.
 trditev: MAT-SS-3/racionalne-funkcije#f0-nicla
-besedilo: »Kje ni definirana.* Z ničlo ne smemo deliti, zato mora biti $x + 3 \ne 0$, torej $x \ne -3$. Definicijsko območje je $\mathbb{R} \setminus \{-3\}$.« -/
+besedilo: »Ulomek je enak $0$, ko je števec $0$, imenovalec pa ne. To je pri $x = 0$.« -/
 theorem f₀_nicla (x : ℝ) (hx : x ≠ -3) : f₀ x = 0 ↔ x = 0 := by
   have : x + 3 ≠ 0 := (f₀_definicija x).2 hx
   rw [f₀, nicle_iz_stevca _ _ this]; constructor <;> intro h <;> linarith
@@ -312,7 +312,7 @@ example : f₀ 0 = 0 ↔ (0 : ℝ) = 0 := f₀_nicla 0 (by norm_num)
 
 /-- Razlaga, tabela blizu −3: x + 3 in f(x) pri x = −3,1; −3,01; −2,99; −2,9.
 trditev: MAT-SS-3/racionalne-funkcije#f0-tabela
-besedilo: »| $-3{,}1$ | $-0{,}1$ | $186$ |« -/
+besedilo: »| $-3{,}1$ | $-0{,}1$ | $186$ | | $-3{,}01$ | $-0{,}01$ | $1806$ | | $-2{,}99$ | $0{,}01$ | $-1794$ | | $-2{,}9$ | $0{,}1$ | $-174$ |« -/
 theorem f₀_tabela :
     ((-31 / 10 : ℝ) + 3 = -1 / 10 ∧ f₀ (-31 / 10) = 186) ∧
     ((-301 / 100 : ℝ) + 3 = -1 / 100 ∧ f₀ (-301 / 100) = 1806) ∧
@@ -322,7 +322,7 @@ theorem f₀_tabela :
 
 /-- Razlaga, »Blizu −3«: števec 6x gre proti −18; levo od −3 gre f v +∞, desno v −∞ (pol stopnje 1).
 trditev: MAT-SS-3/racionalne-funkcije#f0-pol
-besedilo: »Iz $\dfrac{6v}{v + 3} = 6$ po množenju dobimo $6v = 6v + 18$, torej $0 = 18$.« -/
+besedilo: »Števec ostaja blizu $-18$, imenovalec pa postaja vedno manjši. Količnik je zato po absolutni vrednosti ogromen. Levo od $-3$ sta števec in imenovalec negativna, zato gre graf v $+\infty$. Desno je imenovalec pozitiven in graf gre v $-\infty$.« -/
 theorem f₀_pol : Tendsto (fun x : ℝ => 6 * x) (𝓝 (-3)) (𝓝 (-18)) ∧
     Tendsto f₀ (𝓝[<] (-3)) atTop ∧ Tendsto f₀ (𝓝[>] (-3)) atBot := by
   have h := pol_liha_stopnja' (g := fun x : ℝ => 6 * x) (c := -3) (m := 1) (by fun_prop)
@@ -336,7 +336,7 @@ theorem f₀_pol : Tendsto (fun x : ℝ => 6 * x) (𝓝 (-3)) (𝓝 (-18)) ∧
 
 /-- Razlaga, »Daleč levo in desno«: f(1000) ≈ 5,982 in f(−1000) ≈ 6,018 (na tri decimalke).
 trditev: MAT-SS-3/racionalne-funkcije#f0-dalec
-besedilo: »Daleč levo in desno.* $f(1000) \approx 5{,}982$ in $f(-1000) \approx 6{,}018$.« -/
+besedilo: »$f(1000) \approx 5{,}982$ in $f(-1000) \approx 6{,}018$.« -/
 theorem f₀_daleč : |f₀ 1000 - 5982 / 1000| < 5 / 10000 ∧ |f₀ (-1000) - 6018 / 1000| < 5 / 10000 := by
   unfold f₀; constructor <;> rw [abs_lt] <;> constructor <;> norm_num
 
@@ -353,7 +353,7 @@ example : f₀ 1 = 6 / (1 + 3 / 1) := f₀_deljeno 1 one_ne_zero (by norm_num)
 /-- Razlaga: y = 6 je vodoravna asimptota (f → 6 v +∞ in v −∞); desno od −3 je graf pod njo, levo nad
 njo (»desno se ji bliža od spodaj, levo od zgoraj«).
 trditev: MAT-SS-3/racionalne-funkcije#f0-asimptota
-besedilo: »Tudi uganka iz uvoda je racionalna enačba. Iz $\dfrac{6v}{v + 3} = 6$ po množenju dobimo $6v = 6v + 18$, torej $0 = 18$. To ne velja za noben $v$, zato povprečja $6\,\mathrm{km/h}$ res ne dosežeš: $y = 6$ je vodoravna asimptota, ki je graf nikjer ne doseže.« -/
+besedilo: »Premica $y = 6$ je **vodoravna asimptota**. Desno se ji graf bliža od spodaj, levo od zgoraj.« -/
 theorem f₀_asimptota : Tendsto f₀ atTop (𝓝 6) ∧ Tendsto f₀ atBot (𝓝 6) ∧
     (∀ x, -3 < x → f₀ x < 6) ∧ (∀ x, x < -3 → 6 < f₀ x) := by
   refine ⟨?_, ?_, fun x hx => ?_, fun x hx => ?_⟩
@@ -374,7 +374,7 @@ theorem f₀_asimptota : Tendsto f₀ atTop (𝓝 6) ∧ Tendsto f₀ atBot (�
 
 /-- Razlaga, premisli: g(x) = 1/(x − 2)² ima pol sode stopnje 2; obe veji gresta v +∞.
 trditev: MAT-SS-3/racionalne-funkcije#premisli-pol-sod
-besedilo: »Pol $2$ funkcije $g(x) = \dfrac{1}{(x - 2)^2}$ je sode stopnje, zato gresta veji ob njem v isto smer.« -/
+besedilo: »Na obeh straneh gre v $+\infty$. Imenovalec je kvadrat, torej pozitiven in zelo majhen, števec $1$ pa pozitiven.« -/
 theorem premisli_pol_sod : Tendsto (fun x : ℝ => 1 / (x - 2) ^ 2) (𝓝[<] 2) atTop ∧
     Tendsto (fun x : ℝ => 1 / (x - 2) ^ 2) (𝓝[>] 2) atTop :=
   pol_soda_stopnja (g := fun _ => 1) continuousAt_const one_pos even_two (by norm_num)
@@ -382,7 +382,7 @@ theorem premisli_pol_sod : Tendsto (fun x : ℝ => 1 / (x - 2) ^ 2) (𝓝[<] 2) 
 /-- Razlaga, premisli: h(x) = (2x² − 2x)/(x² + 1) ima asimptoto y = 2 (enaki stopnji, 2/1), graf pa jo
 seka pri x = −1: h(−1) = (2 + 2)/(1 + 1) = 2.
 trditev: MAT-SS-3/racionalne-funkcije#premisli-seka
-besedilo: »Lahko. Asimptota je $y = 2$ (enaki stopnji, $\frac{2}{1}$), in $h(-1) = \frac{2 + 2}{1 + 1} = 2$. Vodoravna asimptota opisuje le obnašanje daleč levo in desno. Navpične pa graf ne more sekati, ker funkcija na njej ni definirana.« -/
+besedilo: »Lahko. Asimptota je $y = 2$ (enaki stopnji, $\frac{2}{1}$), in $h(-1) = \frac{2 + 2}{1 + 1} = 2$.« -/
 theorem premisli_seka :
     Tendsto (fun x : ℝ => (2 * x ^ 2 - 2 * x) / (x ^ 2 + 1)) atTop (𝓝 2) ∧
     Tendsto (fun x : ℝ => (2 * x ^ 2 - 2 * x) / (x ^ 2 + 1)) atBot (𝓝 2) ∧
@@ -405,7 +405,7 @@ theorem premisli_seka :
 /-- Razlaga, racionalne enačbe: 6v/(v + 3) = 5 s pogojem v ≠ −3 ima natanko rešitev v = 15
 (koraki 6v = 5(v + 3) = 5v + 15, v = 15).
 trditev: MAT-SS-3/racionalne-funkcije#enacba-sestop
-besedilo: »$6v = 5(v + 3) = 5v + 15$« -/
+besedilo: »Sestopiti moraš s hitrostjo $15\,\mathrm{km/h}$.« -/
 theorem enacba_sestop (v : ℝ) : (v ≠ -3 ∧ 6 * v / (v + 3) = 5) ↔ v = 15 := by
   constructor
   · rintro ⟨hv, h⟩
@@ -418,13 +418,13 @@ theorem enacba_sestop (v : ℝ) : (v ≠ -3 ∧ 6 * v / (v + 3) = 5) ↔ v = 15 
 
 /-- Razlaga, preizkus: 15 ≠ −3 in 6·15/18 = 5.
 trditev: MAT-SS-3/racionalne-funkcije#enacba-sestop-preizkus
-besedilo: »Preizkus.* Število $15$ ustreza pogoju $v \ne -3$. Res: $\frac{6 \cdot 15}{18} = 5$. Sestopiti moraš s hitrostjo $15\,\mathrm{km/h}$.« -/
+besedilo: »Število $15$ ustreza pogoju $v \ne -3$. Res: $\frac{6 \cdot 15}{18} = 5$.« -/
 theorem enacba_sestop_preizkus : (15 : ℝ) ≠ -3 ∧ 6 * (15 : ℝ) / 18 = 5 := by norm_num
 
 /-- Razlaga, »Zakaj je preizkus nujen«: pri imenovalcu b ≠ 0 je a/b = c/b natanko tedaj, ko a = c
 (pomnožena enačba ima vse rešitve prvotne).
 trditev: MAT-SS-3/racionalne-funkcije#mnozenje-ohrani
-besedilo: »Pomnožena enačba ima vse rešitve prvotne,« -/
+besedilo: »Pomnožena enačba ima vse rešitve prvotne, lahko pa še kakšno več.« -/
 theorem mnozenje_ohrani (a b c : ℝ) (hb : b ≠ 0) : a / b = c / b ↔ a = c := div_left_inj₀ hb
 
 /-- Predpostavka `mnozenje_ohrani` se da izpolniti (b = 1). -/
@@ -433,7 +433,7 @@ example : (1 : ℝ) / 1 = 1 / 1 ↔ (1 : ℝ) = 1 := mnozenje_ohrani 1 1 1 one_n
 /-- Razlaga, navidezna rešitev: x/(x − 2) = 2/(x − 2) s pogojem x ≠ 2 nima rešitve (pomnožena enačba
 x = 2 ima rešitev, ki jo pogoj prepoveduje).
 trditev: MAT-SS-3/racionalne-funkcije#enacba-navidezna
-besedilo: »Primer: $\dfrac{x}{x - 2} = \dfrac{2}{x - 2}$, pogoj $x \ne 2$.« -/
+besedilo: »Primer: $\dfrac{x}{x - 2} = \dfrac{2}{x - 2}$, pogoj $x \ne 2$. Po množenju z $x - 2$ dobimo $x = 2$, kar pogoj prepoveduje. Enačba nima rešitve.« -/
 theorem enacba_navidezna (x : ℝ) : (x ≠ 2 ∧ x / (x - 2) = 2 / (x - 2)) ↔ False := by
   constructor
   · rintro ⟨hx, h⟩
@@ -444,7 +444,7 @@ theorem enacba_navidezna (x : ℝ) : (x ≠ 2 ∧ x / (x - 2) = 2 / (x - 2)) ↔
 
 /-- Razlaga: pomnožena enačba x = 2 ima rešitev 2, ki je ničla imenovalca x − 2.
 trditev: MAT-SS-3/racionalne-funkcije#navidezna-kandidat
-besedilo: »0 | Število $0$ reši pomnoženo enačbo $x^2 - x = 0$, a je ničla imenovalcev $x$ in $x^2 - 3x$: navidezna rešitev.« -/
+besedilo: »Po množenju z $x - 2$ dobimo $x = 2$, kar pogoj prepoveduje.« -/
 theorem navidezna_kandidat : (2 : ℝ) - 2 = 0 := by norm_num
 
 /-- Razlaga: razlika x/(x − 2) − 2/(x − 2) = (x − 2)/(x − 2) je za x ≠ 2 enaka 1 (premica y = 1 z luknjo
@@ -462,7 +462,7 @@ example : (3 : ℝ) / (3 - 2) - 2 / (3 - 2) = (3 - 2) / (3 - 2) ∧ ((3 : ℝ) -
 
 /-- Razlaga, uganka: 6v/(v + 3) = 6 s pogojem v ≠ −3 nima rešitve (6v = 6v + 18, torej 0 = 18).
 trditev: MAT-SS-3/racionalne-funkcije#enacba-uganka
-besedilo: »Iz $\dfrac{6v}{v + 3} = 6$ po množenju dobimo $6v = 6v + 18$, torej $0 = 18$.« -/
+besedilo: »Iz $\dfrac{6v}{v + 3} = 6$ po množenju dobimo $6v = 6v + 18$, torej $0 = 18$. To ne velja za noben $v$« -/
 theorem enacba_uganka (v : ℝ) : (v ≠ -3 ∧ 6 * v / (v + 3) = 6) ↔ False := by
   constructor
   · rintro ⟨hv, h⟩
@@ -487,7 +487,7 @@ theorem f₁_korak12 (x : ℝ) : (x + 1 ≠ 0 ↔ x ≠ -1) ∧ 2 * x - 4 = 2 * 
 
 /-- Primer 1, korak 3: za x ≠ −1 je f(x) = 0 natanko pri x = 2.
 trditev: MAT-SS-3/racionalne-funkcije#f1-nicla
-besedilo: »Odgovor: leva veja leži nad $y = 2$ in se ob $x = -1$ dviga v $+\infty$.« -/
+besedilo: »Ničla: $2x - 4 = 0$, $x = 2$.« -/
 theorem f₁_nicla (x : ℝ) (hx : x ≠ -1) : f₁ x = 0 ↔ x = 2 := by
   have : x + 1 ≠ 0 := ((f₁_korak12 x).1).2 hx
   rw [f₁, nicle_iz_stevca _ _ this]; constructor <;> intro h <;> linarith
@@ -497,7 +497,7 @@ example : f₁ 2 = 0 ↔ (2 : ℝ) = 2 := f₁_nicla 2 (by norm_num)
 
 /-- Primer 1, koraka 3 in 6: pol x = −1 stopnje 1: levo +∞, desno −∞ (števec tam −6 < 0).
 trditev: MAT-SS-3/racionalne-funkcije#f1-pol
-besedilo: »Ničla: $2x - 4 = 0$, $x = 2$. Pol: $x = -1$, stopnje $1$, zato veji ob njem na nasprotnih straneh.« -/
+besedilo: »Ob polu: $f(-1{,}1) = 62$, $f(-0{,}9) = -58$, torej levo $+\infty$, desno $-\infty$.« -/
 theorem f₁_pol : Tendsto f₁ (𝓝[<] (-1)) atTop ∧ Tendsto f₁ (𝓝[>] (-1)) atBot := by
   have h := pol_liha_stopnja' (g := fun x : ℝ => 2 * x - 4) (c := -1) (m := 1) (by fun_prop)
     (by norm_num) odd_one
@@ -585,7 +585,7 @@ theorem f₂_luknja : Tendsto f₂ (𝓝[≠] 2) (𝓝 (4 / 3)) := by
 
 /-- Primer 2, korak 4: ničla x = −2 (pogoji x ≠ 2, x ≠ −1).
 trditev: MAT-SS-3/racionalne-funkcije#f2-nicla
-besedilo: »Krajšanje: $f(x) = \dfrac{x + 2}{x + 1}$ za $x \ne 2$.« -/
+besedilo: »Po krajšanju: ničla $x = -2$ (števec), pol $x = -1$ (imenovalec), stopnje $1$.« -/
 theorem f₂_nicla (x : ℝ) (h2 : x ≠ 2) (h1 : x ≠ -1) : f₂ x = 0 ↔ x = -2 := by
   have b : x + 1 ≠ 0 := fun e => h1 (by linarith)
   rw [f₂_okrajsano x h2 h1, nicle_iz_stevca _ _ b]; constructor <;> intro h <;> linarith
@@ -670,7 +670,7 @@ theorem t₃_pol : Tendsto t₃ (𝓝[>] 3) atTop ∧ (3 : ℝ) ^ 2 - 9 = 0 ∧ 
 
 /-- Primer 3, korak 3: tudi v = −3 je pol (lihe stopnje): levo od −3 gre t(v) v −∞, desno v +∞.
 trditev: MAT-SS-3/racionalne-funkcije#t3-pol-minus3
-besedilo: »$t(v) = \dfrac{12(v + 3) + 12(v - 3)}{(v - 3)(v + 3)} = \dfrac{24v}{v^2 - 9}$« -/
+besedilo: »Pola sta $v = 3$ in $v = -3$; smisel ima le $v > 3$.« -/
 theorem t₃_pol_minus3 : Tendsto t₃ (𝓝[<] (-3)) atBot ∧ Tendsto t₃ (𝓝[>] (-3)) atTop := by
   have h := pol_liha_stopnja (g := fun v : ℝ => 24 * v / (v - 3)) (c := -3) (m := 1)
     (by fun_prop (disch := norm_num)) (by norm_num) odd_one
@@ -713,7 +713,7 @@ theorem t₃_asimptota : Tendsto t₃ atTop (𝓝 0) ∧ t₃ 5 = 120 / 16 ∧ (
 /-- Primer 3, korak 5 in premisli: 24v/(v² − 9) = 3 s pogojema v ≠ ±3 ↔ v = 9 ali v = −1
 (24v = 3v² − 27, v² − 8v − 9 = 0, (v − 9)(v + 1) = 0).
 trditev: MAT-SS-3/racionalne-funkcije#t3-enacba
-besedilo: »Pogoj $\dfrac{24v}{v^2 - 9} = 3$ pomnožimo z $v^2 - 9$: $24v = 3v^2 - 27$, po deljenju s $3$ dobimo $v^2 - 8v - 9 = 0$.« -/
+besedilo: »$v^2 - 8v - 9 = (v - 9)(v + 1) = 0$, torej $v = 9$ ali $v = -1$.« -/
 theorem t₃_enacba (v : ℝ) : (v ≠ 3 ∧ v ≠ -3 ∧ 24 * v / (v ^ 2 - 9) = 3) ↔ (v = 9 ∨ v = -1) := by
   constructor
   · rintro ⟨h1, h2, h⟩
@@ -735,7 +735,7 @@ theorem t₃_enacba (v : ℝ) : (v ≠ 3 ∧ v ≠ -3 ∧ 24 * v / (v ^ 2 - 9) =
 
 /-- Primer 3, premisli: hitrost mora biti večja od 3 km/h, zato je v = 9; preizkus t(9) = 216/72 = 3.
 trditev: MAT-SS-3/racionalne-funkcije#t3-odgovor
-besedilo: »$v^2 - 8v - 9 = (v - 9)(v + 1) = 0$, torej $v = 9$ ali $v = -1$. Hitrost mora biti večja od $3\,\mathrm{km/h}$, zato je $v = 9\,\mathrm{km/h}$. Preizkus: $t(9) = \dfrac{216}{72} = 3\,\mathrm{h}$.« -/
+besedilo: »Hitrost mora biti večja od $3\,\mathrm{km/h}$, zato je $v = 9\,\mathrm{km/h}$. Preizkus: $t(9) = \dfrac{216}{72} = 3\,\mathrm{h}$.« -/
 theorem t₃_odgovor (v : ℝ) : (3 < v ∧ t₃ v = 3) ↔ v = 9 := by
   constructor
   · rintro ⟨hv, h⟩
@@ -755,7 +755,7 @@ theorem t₃_odgovor (v : ℝ) : (3 < v ∧ t₃ v = 3) ↔ v = 9 := by
 (koraki: x(x + 1) − 2(x − 1) = 4; x² + x − 2x + 2 = 4; x² − x − 2 = 0; (x − 2)(x + 1) = 0; x = −1 je
 navidezna).
 trditev: MAT-SS-3/racionalne-funkcije#primer4
-besedilo: »Odpravimo oklepaje: $x^2 + x - 2x + 2 = 4$, torej $x^2 - x - 2 = 0$.« -/
+besedilo: »Odgovor: enačba ima eno rešitev, $x = 2$.« -/
 theorem primer4 (x : ℝ) :
     (x ≠ 1 ∧ x ≠ -1 ∧ x / (x - 1) - 2 / (x + 1) = 4 / (x ^ 2 - 1)) ↔ x = 2 := by
   constructor
@@ -781,7 +781,7 @@ theorem primer4 (x : ℝ) :
 /-- Primer 4, korak 1 in 5: x² − 1 = (x − 1)(x + 1), x² − x − 2 = (x − 2)(x + 1) ima rešitvi −1 in 2
 (RACUN: resi x^2-x-2=0).
 trditev: MAT-SS-3/racionalne-funkcije#primer4-kvadratna
-besedilo: »Razcep: $x^2 - 4 = (x - 2)(x + 2)$ in $x^2 - x - 2 = (x - 2)(x + 1)$.« -/
+besedilo: »Razcep: $(x - 2)(x + 1) = 0$, kandidata sta $x = 2$ in $x = -1$.« -/
 theorem primer4_kvadratna (x : ℝ) : x ^ 2 - 1 = (x - 1) * (x + 1) ∧
     (x ^ 2 - x - 2 = 0 ↔ x = -1 ∨ x = 2) := by
   refine ⟨by ring, ?_⟩
@@ -799,7 +799,7 @@ theorem primer4_kvadratna (x : ℝ) : x ^ 2 - 1 = (x - 1) * (x + 1) ∧
 
 /-- Pogoste napake: (x − 5)/(x + 2) ima ničlo 5 (za x ≠ −2) in pol −2 (levo +∞, desno −∞).
 trditev: MAT-SS-3/racionalne-funkcije#napaka-pol-nicla
-besedilo: »Pol zamenjaš z ničlo.** Pri $f(x) = \dfrac{x - 5}{x + 2}$ kdo reče, da je pol $5$. Ničle dá števec, pole imenovalec: ničla je $5$, pol $-2$.« -/
+besedilo: »Ničle dá števec, pole imenovalec: ničla je $5$, pol $-2$.« -/
 theorem napaka_pol_nicla :
     (∀ x : ℝ, x ≠ -2 → ((x - 5) / (x + 2) = 0 ↔ x = 5)) ∧
     Tendsto (fun x : ℝ => (x - 5) / (x + 2)) (𝓝[<] (-2)) atTop ∧
@@ -815,7 +815,7 @@ theorem napaka_pol_nicla :
 
 /-- Pogoste napake: asimptota (3x + 1)/(x − 2) je y = 3 (vodilna koeficienta), ne −1/2 in ne 0.
 trditev: MAT-SS-3/racionalne-funkcije#napaka-asimptota
-besedilo: »Asimptota iz prostih členov ali vedno $y = 0$.** Pri $\dfrac{3x + 1}{x - 2}$ asimptota ni $y = -\frac{1}{2}$ (prosta člena) in ne $y = 0$, ampak $y = 3$. Pri enakih stopnjah deliš vodilna koeficienta.« -/
+besedilo: »Pri $\dfrac{3x + 1}{x - 2}$ asimptota ni $y = -\frac{1}{2}$ (prosta člena) in ne $y = 0$, ampak $y = 3$.« -/
 theorem napaka_asimptota : Tendsto (fun x : ℝ => (3 * x + 1) / (x - 2)) atTop (𝓝 3) ∧
     Tendsto (fun x : ℝ => (3 * x + 1) / (x - 2)) atBot (𝓝 3) :=
   asimptota_inv (R := fun t => (3 + t) / (1 - 2 * t)) 10 (by fun_prop (disch := norm_num))
@@ -829,7 +829,7 @@ theorem napaka_asimptota : Tendsto (fun x : ℝ => (3 * x + 1) / (x - 2)) atTop 
 
 /-- Naloga 1, korak 1: števec v x = 1 je 1 − 3 + 4 = 2 ≠ 0, imenovalec 0.
 trditev: MAT-SS-3/racionalne-funkcije#matura1-korak1
-besedilo: »Imenovalec je enak $0$ pri $x = 1$. Števec tam ni $0$, saj je $1 - 3 + 4 = 2$, zato je $x = 1$ pol in premica $x = 1$ navpična asimptota.« -/
+besedilo: »Imenovalec je enak $0$ pri $x = 1$. Števec tam ni $0$, saj je $1 - 3 + 4 = 2$« -/
 theorem matura1_korak1 : (1 : ℝ) ^ 2 - 3 * 1 + 4 = 1 - 3 + 4 ∧ (1 : ℝ) - 3 + 4 = 2 ∧ (1 : ℝ) - 1 = 0 := by
   norm_num
 
@@ -887,7 +887,7 @@ theorem matura2_razcep (x : ℝ) : x ^ 2 - 4 * x + 3 = (x - 1) * (x - 3) ∧ x ^
 
 /-- Naloga 2 a): D_f = ℝ ∖ {0, 2}; v D_f sta ničli 1 in 3.
 trditev: MAT-SS-3/racionalne-funkcije#matura2-nicle
-besedilo: »Odgovor: $D_f = \mathbb{R} \setminus \{0, 2\}$, ničli $1$ in $3$, pola $0$ in $2$; asimptote $x = 0$, $x = 2$ in $y = 1$; graf seka vodoravno asimptoto v točki $\left(\frac{3}{2}, 1\right)$.« -/
+besedilo: »Imenovalec je $0$ pri $x = 0$ in $x = 2$, zato je $D_f = \mathbb{R} \setminus \{0, 2\}$. Ničli sta $x = 1$ in $x = 3$« -/
 theorem matura2_nicle (x : ℝ) : (x ^ 2 - 2 * x ≠ 0 ↔ x ≠ 0 ∧ x ≠ 2) ∧
     (x ^ 2 - 2 * x ≠ 0 → (g₂ x = 0 ↔ x = 1 ∨ x = 3)) := by
   refine ⟨by rw [ne_eq, (matura2_razcep x).2.2.2.2]; tauto, fun h => ?_⟩
@@ -895,7 +895,7 @@ theorem matura2_nicle (x : ℝ) : (x ^ 2 - 2 * x ≠ 0 ↔ x ≠ 0 ∧ x ≠ 2) 
 
 /-- Naloga 2 b) in d): pola 0 in 2 sta lihe stopnje; ob 0: levo +∞, desno −∞; ob 2: levo +∞, desno −∞.
 trditev: MAT-SS-3/racionalne-funkcije#matura2-pola
-besedilo: »d) Oba pola sta lihe stopnje,« -/
+besedilo: »d) Oba pola sta lihe stopnje, zato graf ob vsakem zamenja predznak.« -/
 theorem matura2_pola : Tendsto g₂ (𝓝[<] 0) atTop ∧ Tendsto g₂ (𝓝[>] 0) atBot ∧
     Tendsto g₂ (𝓝[<] 2) atTop ∧ Tendsto g₂ (𝓝[>] 2) atBot := by
   have h0 := pol_liha_stopnja' (g := fun x : ℝ => (x ^ 2 - 4 * x + 3) / (x - 2)) (c := 0) (m := 1)
@@ -911,7 +911,7 @@ theorem matura2_pola : Tendsto g₂ (𝓝[<] 0) atTop ∧ Tendsto g₂ (𝓝[>] 
 
 /-- Naloga 2 b): vodoravna asimptota y = 1/1 = 1 (RACUN limita).
 trditev: MAT-SS-3/racionalne-funkcije#matura2-asimptota
-besedilo: »zato je vodoravna asimptota $y = \frac{1}{1} = 1$.« -/
+besedilo: »Števec in imenovalec imata stopnjo $2$ in vodilna koeficienta $1$ in $1$, zato je vodoravna asimptota $y = \frac{1}{1} = 1$.« -/
 theorem matura2_asimptota : Tendsto g₂ atTop (𝓝 1) ∧ Tendsto g₂ atBot (𝓝 1) :=
   asimptota_inv (R := fun t => (1 - 4 * t + 3 * t ^ 2) / (1 - 2 * t)) 10
     (by fun_prop (disch := norm_num)) (by norm_num) (by
@@ -923,7 +923,7 @@ theorem matura2_asimptota : Tendsto g₂ atTop (𝓝 1) ∧ Tendsto g₂ atBot (
 
 /-- Naloga 2 c) (RACUN resi): f(x) = 1 v D_f ↔ x = 3/2 (koraka x² − 4x + 3 = x² − 2x, −2x = −3).
 trditev: MAT-SS-3/racionalne-funkcije#matura2-presecisce
-besedilo: »$x^2 - 4x + 3 = (x - 1)(x - 3)$ in $x^2 - 2x = x(x - 2)$.« -/
+besedilo: »c) Kvadratna člena se odštejeta: $-2x = -3$, torej $x = \frac{3}{2}$. To število je v $D_f$, zato je presečišče $\left(\frac{3}{2}, 1\right)$.« -/
 theorem matura2_presecisce (x : ℝ) : (x ^ 2 - 2 * x ≠ 0 ∧ g₂ x = 1) ↔ x = 3 / 2 := by
   constructor
   · rintro ⟨h, e⟩
@@ -953,7 +953,7 @@ theorem matura2_predznaki :
 /-- Naloga 2 d): leva veja (x < 0) leži nad y = 1, desna (x > 2) pod y = 1; srednja gre skozi (1, 0) in
 (3/2, 1), desna skozi (3, 0).
 trditev: MAT-SS-3/racionalne-funkcije#matura2-veje
-besedilo: »Srednja veja pride iz $-\infty$ desno od $x = 0$, gre skozi $(1, 0)$ in $\left(\frac{3}{2}, 1\right)$ ter se ob $x = 2$ dviga v $+\infty$.« -/
+besedilo: »Leva veja leži nad premico $y = 1$, se ji daleč levo bliža od zgoraj in se ob $x = 0$ dviga v $+\infty$. Srednja veja pride iz $-\infty$ desno od $x = 0$, gre skozi $(1, 0)$ in $\left(\frac{3}{2}, 1\right)$ ter se ob $x = 2$ dviga v $+\infty$. Desna veja pride iz $-\infty$ desno od $x = 2$, gre skozi $(3, 0)$ in se od spodaj bliža premici $y = 1$.« -/
 theorem matura2_veje : (∀ x, x < 0 → 1 < g₂ x) ∧ (∀ x, 2 < x → g₂ x < 1) ∧
     g₂ 1 = 0 ∧ g₂ (3 / 2) = 1 ∧ g₂ 3 = 0 := by
   refine ⟨fun x h => ?_, fun x h => ?_, by unfold g₂; norm_num, by unfold g₂; norm_num,
@@ -965,7 +965,7 @@ theorem matura2_veje : (∀ x, x < 0 → 1 < g₂ x) ∧ (∀ x, 2 < x → g₂ 
 
 /-- Ustno vprašanje 3 (RACUN enako): (x² − 1)/(x − 1) = x + 1 za x ≠ 1; pri x = 1 je luknja (1, 2).
 trditev: MAT-SS-3/racionalne-funkcije#ustno3
-besedilo: »Primer je $f(x) = \frac{x^2 - 1}{x - 1}$, ki pri $x = 1$ ni definirana.« -/
+besedilo: »Po krajšanju je $f(x) = x + 1$ za $x \ne 1$, faktor $(x - 1)$ v imenovalcu torej ne ostane. Graf je premica $y = x + 1$ brez točke $(1, 2)$, ki ji rečemo luknja.« -/
 theorem ustno3 : (∀ x : ℝ, x ≠ 1 → (x ^ 2 - 1) / (x - 1) = x + 1) ∧
     Tendsto (fun x : ℝ => (x ^ 2 - 1) / (x - 1)) (𝓝[≠] 1) (𝓝 2) := by
   have h : ∀ x : ℝ, x ≠ 1 → (x ^ 2 - 1) / (x - 1) = x + 1 := by
@@ -999,7 +999,7 @@ theorem trak : Tendsto (fun v : ℝ => 12 / (v - 3)) (𝓝[>] 3) atTop := by
 /-- Analogija s taksijem (in Preveri se, vprašanje 4): cena na km (4 + 0,8x)/x je pri 100 km 0,84 €, pri
 1 km 4,80 €, nikoli ne pade pod 0,80 € in se 0,80 € bliža (asimptota y = 0,8).
 trditev: MAT-SS-3/racionalne-funkcije#taksi
-besedilo: »Funkcija $\frac{4 + 0{,}8x}{x}$ ima asimptoto $y = 0{,}8$.« -/
+besedilo: »Pri $100\,\mathrm{km}$ je že $0{,}84\,€$ na kilometer. Nikoli pa ne pade pod $0{,}80\,€$: vstopnina se razredči, ne izgine. Funkcija $\frac{4 + 0{,}8x}{x}$ ima asimptoto $y = 0{,}8$.« -/
 theorem taksi : (4 + 8 / 10 * 100 : ℝ) / 100 = 84 / 100 ∧ (4 + 8 / 10 * 1 : ℝ) / 1 = 48 / 10 ∧
     (∀ x : ℝ, 0 < x → 8 / 10 < (4 + 8 / 10 * x) / x) ∧
     Tendsto (fun x : ℝ => (4 + 8 / 10 * x) / x) atTop (𝓝 (8 / 10)) := by
@@ -1011,7 +1011,7 @@ theorem taksi : (4 + 8 / 10 * 100 : ℝ) / 100 = 84 / 100 ∧ (4 + 8 / 10 * 1 : 
 
 /-- Preveri se, vprašanje 2: asimptote h → 0, g → 1/2, f → 3, in 0 < 1/2 < 3 (vrstni red h, g, f).
 trditev: MAT-SS-3/racionalne-funkcije#preveri2
-besedilo: »Uredi funkcije po vrednosti vodoravne asimptote od najmanjše do največje: $f(x) = \dfrac{3x + 1}{x - 2}$, $g(x) = \dfrac{x^2}{2x^2 + 1}$, $h(x) = \dfrac{5}{x + 4}$.« -/
+besedilo: »Asimptote: $h$ ima $y = 0$ (števec nižji), $g$ ima $y = \frac{1}{2}$, $f$ ima $y = 3$.« -/
 theorem preveri2 : Tendsto (fun x : ℝ => 5 / (x + 4)) atTop (𝓝 0) ∧
     Tendsto (fun x : ℝ => x ^ 2 / (2 * x ^ 2 + 1)) atTop (𝓝 (1 / 2)) ∧
     Tendsto (fun x : ℝ => (3 * x + 1) / (x - 2)) atTop (𝓝 3) ∧ (0 : ℝ) < 1 / 2 ∧ (1 / 2 : ℝ) < 3 := by
@@ -1031,7 +1031,7 @@ theorem preveri2 : Tendsto (fun x : ℝ => 5 / (x + 4)) atTop (𝓝 0) ∧
 
 /-- Preveri se, vprašanje 3: pri a = 1 je (x − 1)/(x − 1) = 1 za x ≠ 1 (premica y = 1 z luknjo).
 trditev: MAT-SS-3/racionalne-funkcije#preveri3
-besedilo: »Graf postane premica $y = 1$ z luknjo pri $x = 1$.« -/
+besedilo: »Pozabil si okrajšati: $\frac{x - 1}{x - 1} = 1$ za $x \ne 1$, pol izgine.« -/
 theorem preveri3 (x : ℝ) (hx : x ≠ 1) : (x - 1) / (x - 1) = 1 := div_self (sub_ne_zero.2 hx)
 
 /-- Predpostavka `preveri3` se da izpolniti (x = 0). -/
