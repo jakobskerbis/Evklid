@@ -402,3 +402,32 @@ test("ležeč telefon 844 × 390: okno ustnega spraševanja je levo od tipkovnic
     await ctx.close();
   });
 });
+
+// Klepet kot spodnji list (mehurček nad učbenikom): list je bil čez vso širino, tipkovnica desno je prekrila polje za
+// pisanje in »Pošlji« (polje 375–682 px, tipkovnica od 371 px).
+test("ležeč telefon 844 × 390: klepet v spodnjem listu ima polje in »Pošlji« levo od tipkovnice", opts, async () => {
+  await withApp(async (base) => {
+    const { ctx, p, errors } = await phone(base, L);
+    await p.evaluate(() => window.evklid.showView("textbook"));
+    await p.waitForSelector("#chat-bubble:not([hidden])");
+    await p.waitForTimeout(600);
+    await p.click("#chat-bubble .cb-main");
+    await p.waitForSelector(".okno-sheet #input", { state: "visible" });
+    await p.locator("#input").tap();
+    await p.waitForSelector(".tk:not([hidden])");
+    await p.waitForTimeout(400);
+    const m = await p.evaluate(() => {
+      const tk = document.querySelector(".tk:not([hidden])").getBoundingClientRect();
+      const tapljiv = (s) => {
+        const e = document.querySelector(s);
+        const r = e.getBoundingClientRect();
+        const top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+        return { desno: Math.round(r.right), tapljiv: !!top && (e === top || e.contains(top)) };
+      };
+      return { tk: Math.round(tk.left), polje: tapljiv("#input"), poslji: tapljiv("#send") };
+    });
+    for (const k of ["polje", "poslji"]) assert.ok(m[k].tapljiv && m[k].desno <= m.tk + 1, `${k} levo od tipkovnice in tapljiv: ${JSON.stringify(m)}`);
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+});
