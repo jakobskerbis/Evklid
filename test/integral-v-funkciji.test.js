@@ -50,3 +50,15 @@ test("∫(f; a; b) ostane po x, kadar je x v f (∫(x^2; 0; 1), ∫(sin(x); 0; �
   assert.ok(close(run(["∫(sin(x);0;π)"])[0].value, 2));
   assert.ok(close(run(["∫(sin(t);0;1)"])[0].value, 0.4596976941318602826));
 });
+
+// Pregled ponovne združitve (26. 11. 2026): v grafu drsnik v integrandu ni spremenljivka integrala (a = 3,
+// y = ∫(a; 0; x) pri x = 2 je 6, ne 2); črka brez definicije ostane kot na main: manjka, graf ponudi drsnik.
+test("graf: drsnik v integrandu, ∫ po x; nedefinirana črka manjka (kot prej)", async () => {
+  const { buildModel, ZAPIS } = await import("../public/graph/model.js");
+  const m = buildModel({ zapis: ZAPIS, settings: {}, items: [{ id: "a", type: "expr", text: "a = 3" }, { id: "b", type: "expr", text: "y = ∫(a; 0; x)" }, { id: "c", type: "expr", text: "y = ∫(b; 0; x)" }] }, { comma: true });
+  assert.ok(close(m.items[1].fn(2), 6), String(m.items[1].fn(2)));
+  assert.deepEqual(m.items[2].error?.info?.names, ["b"]);
+  // znanstveni kalkulator: shranjena spremenljivka ni spremenljivka integrala, sin(t) je še vedno po t (AUDIT-085)
+  assert.ok(close(evaluate("∫(a;0;2)", { vars: { a: 3 }, funcs: {}, ans: 0, comma: true }).value, 6));
+  assert.ok(close(run(["∫(sin(t);0;1)"])[0].value, 0.4596976941318602826));
+});

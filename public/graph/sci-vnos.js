@@ -101,13 +101,8 @@ function embeddedTex(text, env) {
   return tex;
 }
 
+// taylor(sin(x); x; 0,5; 3): argumente loči »;« kot na tipki (vejica bi bila dvoumna z decimalno vejico 0{,}5)
 export function liveTex(text, env = {}) {
-  const tex = liveTexAll(text, env);
-  // ukaz, ki ga CAS izriše kot ime z argumenti (taylor(sin(x); x; 0; 5)): argumente loči vejica, ne surovo »;«
-  return typeof tex === "string" && /^\\operatorname\{[^}]+\}\\left\(/.test(tex) ? tex.replace(/;\\ /g, ",\\ ") : tex;
-}
-
-function liveTexAll(text, env = {}) {
   if (embeddedCmd(text)) {
     const t = embeddedTex(String(text ?? ""), env);
     if (t) return t;
@@ -484,8 +479,9 @@ function visualOrder(s, A) {
           continue;
         }
       }
-      // root(x; n) → ⁿ√x in logb(x; b) → log_b x: drugi argument je v zapisu pred prvim (AUDIT-022)
-      if ((s.startsWith("root(", i) || s.startsWith("logb(", i)) && !/[A-Za-zčšž]/.test(s[i - 1] ?? "")) {
+      // root(x; n) → ⁿ√x in logb(x; b) → log_b x: drugi argument je v zapisu pred prvim (AUDIT-022);
+      // tudi za črko (xroot(3; 8) = x·⁸√3): razčlenjevalnik ime loči od črke pred njim
+      if (s.startsWith("root(", i) || s.startsWith("logb(", i)) {
         const o = i + 4;
         const c = closeOf(o);
         const g = c > 0 && c < hi ? slots(o, c) : null;
@@ -598,6 +594,30 @@ function depthAt(toks, i) {
   return d;
 }
 
+// Žetona [open, close), med katerima sme stati \left( … \right.: na isti globini {} in okolij (\begin … \end), brez
+// zapiranja skupine vmes. Ukaz sredi izraza je ena skupina ({\lim…}, {\det\begin{pmatrix}…\end{pmatrix}}): če prvi in
+// zadnji atom v oklepaju nista v isti skupini, se meji razširita na celo skupino (2·(limita(…), (det([[1;2];[3;4]])).
+function parenSpan(toks, open, close) {
+  const step = (t) => (t.kind === "open" || /^\\begin\b/.test(t.s) ? 1 : t.kind === "close" || /^\\end\b/.test(t.s) ? -1 : 0);
+  const lvl = [0];
+  for (const t of toks) lvl.push(lvl.at(-1) + step(t));
+  if (open >= close) return null;
+  let min = Math.min(lvl[open], lvl[close]);
+  for (let j = open; j < close; j++) min = Math.min(min, lvl[j]);
+  for (let target = min; target >= 0; target--) {
+    let a = open;
+    while (a > 0 && lvl[a] > target) a--;
+    let b = close;
+    while (b < toks.length && lvl[b] > target) b++;
+    if (lvl[a] !== target || lvl[b] !== target) return null;
+    // ne čez celice matrike ali vrstice sistema (& in \\ na isti globini): oklepaj gre okoli cele matrike
+    let cell = false;
+    for (let j = a; j < b && !cell; j++) cell = lvl[j] === target && (toks[j].s === "&" || toks[j].s === "\\\\");
+    if (!cell && canInsert(toks, a) && canInsert(toks, b)) return [a, b];
+  }
+  return null;
+}
+
 /** TeX z vstavljenimi \left( in \right. za učenčeve odprte oklepaje, ki jih je previewTex odstranil; null, če ni kaj vstaviti. */
 function openParens(end, A, to, toks) {
   const stack = [];
@@ -614,10 +634,9 @@ function openParens(end, A, to, toks) {
       let last = -1;
       for (let j = i - 1; j > o; j--) if (to[j] >= 0) { last = j; break; }
       if (first < 0 || last < 0) return;
-      const open = texAtoms(toks)[to[first]].t;
-      const close = texAtoms(toks)[to[last]].t + 1;
-      if (open >= close || depthAt(toks, open) !== depthAt(toks, close) || !canInsert(toks, open) || !canInsert(toks, close)) return;
-      ins.push([open, 1, `\\left${A[o].k} `], [close, 0, "\\right."]);
+      const r = parenSpan(toks, texAtoms(toks)[to[first]].t, texAtoms(toks)[to[last]].t + 1);
+      if (!r) return;
+      ins.push([r[0], 1, `\\left${A[o].k} `], [r[1], 0, "\\right."]);
     }
   });
   if (!ins.length) return null;
@@ -697,7 +716,8 @@ export function caretTex(base, p) {
     const at = Math.max(0, Math.min(base.raw.length, p));
     return `\\text{${esc(base.raw.slice(0, at))}}${CARET}\\text{${esc(base.raw.slice(at))}}`;
   }
-  return join(base, new Map([[base.place(p).at, CARET]]));
+  // kazalec na začetku indeksa korena (xroot(|;)): \sqrt[{kazalec}□] KaTeX zavrne, zato indeks v eno skupino
+  return optGroups(join(base, new Map([[base.place(p).at, CARET]])));
 }
 
 /** Vsa različna mesta kazalca: [{ p, at }] (za vsako mesto najbolj naraven položaj v besedilu). */
@@ -749,7 +769,7 @@ function optGroups(tex) {
       else if (tex[e] === "}") d--;
       else if (tex[e] === "]" && d === 0) break;
     }
-    const inner = tex.slice(a, e);
+    const inner = optGroups(tex.slice(a, e)); // tudi koren v indeksu korena
     out += tex.slice(i, a) + (inner.startsWith("{") ? `{${inner}}` : inner);
     i = e;
   }
@@ -1311,8 +1331,27 @@ const topSemis = (t) => {
   }
   return n;
 };
-// »;« v zapisu (zunaj \text) je surovo ločilo: predloga ni prepoznana (»(□; 0; 1)« v eksponentu)
-const texSemis = (tex) => (String(tex ?? "").replace(/\\text\{[^}]*\}/g, "").match(/;/g) || []).length;
+// »;« v zapisu (zunaj \text) je surovo ločilo: predloga ni prepoznana (»(□; 0; 1)« v eksponentu). Izjema so ločila
+// argumentov funkcij, ki jih zapis loči s »;« (\gcd(12; 18), \max(1; 2), taylor(f; x; 0; 5)): ta so del predloge
+const OWN_SEMI = /(?:\\(?:gcd|min|max)|\\operatorname\{(?:lcm|mod|round|nPr|Pol|Rec|mean|median|stdev|stdevp|total|taylor)\}|\\mathrm\{RanInt\})\s*$/;
+function texSemis(tex) {
+  const s = String(tex ?? "").replace(/\\text\{[^}]*\}/g, "");
+  const st = []; // \left … \right: [ločila so del predloge, globina {} ob odprtju]
+  let br = 0;
+  let n = 0;
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (c === "\\") {
+      if (s.startsWith("\\left", i) && !/[A-Za-z]/.test(s[i + 5] ?? "")) st.push([OWN_SEMI.test(s.slice(Math.max(0, i - 40), i)) && s[i + 5] === "(", br]);
+      else if (s.startsWith("\\right", i) && !/[A-Za-z]/.test(s[i + 6] ?? "")) st.pop();
+      const m = /^\\(?:[A-Za-z]+|.)/.exec(s.slice(i));
+      i += (m?.[0].length ?? 1) - 1;
+    } else if (c === "{") br++;
+    else if (c === "}") br--;
+    else if (c === ";" && !(st.at(-1)?.[0] && st.at(-1)[1] === br)) n++;
+  }
+  return n;
+}
 
 // največ »;« v predlogi (reže − 1); brez imena (navaden oklepaj, točka, matrika) in seznami niso omejeni
 const SEMIS_MAX = { "∫": 2, "d/dx": 1, integriraj: 1, limita: 2, taylor: 3, reši: 1, resi: 1, nCr: 1, nPr: 1, gcd: Infinity, lcm: Infinity, mod: 1, round: 1, randint: 1, Pol: 1, Rec: 1, root: 1, logb: 1, mean: Infinity, median: Infinity, stdev: Infinity, stdevp: Infinity, min: Infinity, max: Infinity, total: Infinity };

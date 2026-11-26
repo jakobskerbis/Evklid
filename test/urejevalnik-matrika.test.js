@@ -114,7 +114,8 @@ for (const t of TEMPLATES) {
     for (let p = 0; p <= t.length; p++) {
       const tex = caretTex(b, p);
       assert.equal(tex.split(CARET).length - 1, 1, `@${p}: en kazalec`);
-      assert.equal(stripCaret(tex), plain, `@${p}: kazalec ne spremeni zapisa`);
+      // kazalec na začetku indeksa korena: indeks je ena skupina (\sqrt[{{kazalec}8}]), zapis je isti
+      assert.equal(stripCaret(tex).replace(/\\sqrt\[\{([^{}\]]*)\}\]/g, "\\sqrt[$1]"), plain, `@${p}: kazalec ne spremeni zapisa`);
       render(tex);
     }
     // merilne točke za dotik: nikoli sredi imena ali odpirala, vsaka ima svoj atom v izrisu
@@ -212,7 +213,19 @@ function slotsAt(t, p) {
     return `${o}:${sep}:${cl >= 0}`;
   }).join(",");
 }
-const texSemi = (tex) => (tex.replace(/\\text\{[^}]*\}/g, "").match(/;/g) || []).length;
+// surova ločila; »;« med argumenti funkcij, ki jih zapis tako loči (\gcd(12;18), \max(1;2), taylor(f; x; 0; 5)), ni surov
+const OWN_SEMI = /(?:\\(?:gcd|min|max)|\\operatorname\{(?:lcm|mod|round|nPr|Pol|Rec|mean|median|stdev|stdevp|total|taylor)\}|\\mathrm\{RanInt\})\s*\\left\($/;
+const texSemi = (tex) => {
+  const s = tex.replace(/\\text\{[^}]*\}/g, "");
+  const st = [];
+  let n = 0;
+  for (let i = 0; i < s.length; i++) {
+    if (s.startsWith("\\left", i)) st.push(OWN_SEMI.test(s.slice(0, i + 6)));
+    else if (s.startsWith("\\right", i)) st.pop();
+    else if (s[i] === ";" && !st.at(-1)) n++;
+  }
+  return n;
+};
 test(`tipke predlog v vsaki reži vsake predloge: zunanja predloga ostane (AUDIT-067)`, () => {
   let n = 0, done = 0;
   for (const T of TEMPLATES) {
@@ -322,6 +335,49 @@ test("ukazi sredi izraza: zapis brez surovih ločil in imen, kazalec povsod (AUD
         assert.ok(b?.ok && katexOk(caretTex(b, r.pos)) && texSemi(b.tex) <= texSemi(b0.tex), `${T} @${p} ${k} → ${r.text}`);
       }
   }
+});
+
+// Pregled ponovne združitve (26. 11. 2026): varovalo tipk (AUDIT-067/071) ne sme zavrniti tipke, ki je na main delala.
+test("ponovna združitev: predloge z lastnim »;«, ; v seznamih, ⁿ√ za črko, ( pred ukazom, taylor z »;«", () => {
+  const run = (keys, t = "", p = 0) => {
+    for (const k of keys) {
+      const r = pressKey(t, p, k, env, { check: katexOk });
+      assert.ok(r, `${keys.join(" ")}: tipka »${k}« zavrnjena pri ${t} @${p}`);
+      ({ text: t, pos: p } = r);
+      const b = entryBase(t, env);
+      assert.ok(b?.ok && katexOk(caretTex(b, p)), `${keys.join(" ")}: po »${k}« ${t} @${p} ne izriše`);
+    }
+    return t;
+  };
+  // 1. predloge, ki v zapisu same ločijo argumente s »;« (\gcd(12; 18)): na praznem, za 2+, v reži ∫
+  assert.equal(run(["gcd(@;)", "1", "2", ";", "1", "8"]), "gcd(12;18)");
+  for (const k of ["gcd(@;)", "lcm(@;)", "mod(@;)", "round(@;)", "nPr(@;)", "randint(@;)", "Pol(@;)", "Rec(@;)"]) {
+    const c = k.replace("@", "");
+    assert.equal(run([k]), c, k);
+    assert.equal(run([k], "2+", 2), `2+${c}`, `2+ ${k}`);
+    assert.equal(run([k], "∫(;0;1)", 2), `∫(${c};0;1)`, `∫ ${k}`);
+  }
+  // 2. ; v funkcijah seznamov (zaslonska tipka in tipkovnica gresta po isti poti)
+  for (const f of ["max", "min", "mean", "median", "stdev", "stdevp", "total"]) assert.equal(run([`${f}(@)`, "1", ";", "2", ";", "3"]), `${f}(1;2;3)`, f);
+  // ; v funkciji z eno režo ostane zavrnjen
+  assert.equal(pressKey("sin(x)", 5, ";", env, { check: katexOk }), null);
+  // 4. ⁿ√ za črko; kazalec po tipki je v korenjencu, zapis se izriše na vsakem mestu
+  assert.equal(run(["x", "root(@;)"]), "xroot(;)");
+  assert.equal(run(["root(@;)"], "2x+1=0", 2), "2xroot(;)+1=0");
+  const br = entryBase("xroot(;)", env);
+  for (let p = 0; p <= 8; p++) assert.ok(katexOk(caretTex(br, p)), `xroot(;) @${p}`);
+  assert.match(caretTex(br, 6), /\\sqrt\[[^\]]*\]\{\{?\\htmlClass\{sc-caret\}/, "kazalec v korenjencu");
+  // 5. ( pred ukazom z matriko in pred limito: oklepaj je viden (\left( … \right.) in zapis veljaven
+  assert.equal(run(["2", "·", "(", "det([[@; ]; [; ]])"]), "2·(det([[; ]; [; ]])");
+  assert.equal(run(["2", "·", "(", "inverz([[@; ]; [; ]])"]), "2·(inverz([[; ]; [; ]])");
+  assert.equal(run(["("], "det([[1;2];[3;4]])", 0), "(det([[1;2];[3;4]])");
+  for (const t of ["(det([[1;2];[3;4]])", "2·(limita(sin(x)/x; x; 0)", "2·(inverz([[1;2];[3;4]])"]) {
+    const b = entryBase(t, env);
+    assert.ok(b?.ok && b.tex.includes("\\left(") && katexOk(b.tex), `${t}: ${b?.tex}`);
+  }
+  // 6. taylor: argumente loči »;« kot na tipki (vejica bi bila dvoumna z 0{,}5)
+  const tt = liveTex("taylor(sin(x); x; 0,5; 3)", env);
+  assert.match(tt, /;\\ x;\\ 0\{,\}5;\\ 3/, tt);
 });
 
 test("vnos, zapis in izračun se ujemajo (decimalna vejica, predloge)", () => {

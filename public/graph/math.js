@@ -319,7 +319,7 @@ function intVar(f, names, lims = "") {
   if (ids.size === 1) return [...ids][0];
   return "x";
 }
-function rewriteIntegrals(s, names = null) {
+function rewriteIntegrals(s, names = null, freeInt = true) {
   for (let guard = 0; guard < 20; guard++) {
     const i = s.indexOf("∫(");
     if (i < 0) break;
@@ -331,7 +331,7 @@ function rewriteIntegrals(s, names = null) {
     }
     const args = splitTop(s.slice(i + 2, j), ",");
     if (args.length !== 3) break;
-    s = `${s.slice(0, i)}(∫_(${args[1]})^(${args[2]}) (${args[0]}) d${intVar(args[0], names, `${args[1]} ${args[2]}`)})${s.slice(j + 1)}`;
+    s = `${s.slice(0, i)}(∫_(${args[1]})^(${args[2]}) (${args[0]}) d${freeInt ? intVar(args[0], names, `${args[1]} ${args[2]}`) : "x"})${s.slice(j + 1)}`;
   }
   return s;
 }
@@ -344,11 +344,14 @@ function rewriteIntegrals(s, names = null) {
  *   decimalno ločilo. Drugače je e Eulerjevo število (»2e^x«, »2e3x« = 2·e·3·x, »2e-x«), E pa spremenljivka.
  *   »E« ostane spremenljivka tudi, kadar je E v names (graf z vrstico »E = …«, spremenljivka E v kalkulatorju):
  *   takrat je »3E-2« 3·E − 2. Število je v oklepaju (AUDIT-041): x/1e8 = x/10⁸, 2e3^2 = (2·10³)², −1e2 = −100,
- * - ∫(f; a; b) je določeni integral od a do b,
+ * - ∫(f; a; b) je določeni integral od a do b; spremenljivka integrala je x ali (freeInt, znanstveni kalkulator) edina
+ *   druga črka v f, ki ni v names (AUDIT-085: k(x) = ∫(sin(t); 0; x)). Graf poda freeInt: false: tam je črka brez
+ *   definicije parameter, za katerega graf ponudi drsnik (∫(a; 0; x) = a·x, kot prej), drsnik pa nikoli ni spremenljivka
+ *   integrala (a = 3, y = ∫(a; 0; x) → 3x),
  * - close: manjkajoče zaklepaje doda na konec (znanstveni kalkulator; grafični jih pokaže kot napako).
  * Pomen zapisa po razčlenitvi poenoti še calcRewrite (odstotki, round na decimalke).
  */
-export function calcText(s, { comma = true, names = null, close = false } = {}) {
+export function calcText(s, { comma = true, names = null, close = false, freeInt = true } = {}) {
   let out = numberText(s, comma);
   const bigE = !(names && (names.has ? names.has("E") : "E" in names));
   out = out.replace(/(?<![A-Za-z_\d.])(\d+(?:\.\d+)?|\.\d+)([eE])([+\-−]?)(\d+)(?![\d.A-Za-zα-ωΑ-Ω_(])/g, (m, a, e, sign, d) =>
@@ -362,7 +365,7 @@ export function calcText(s, { comma = true, names = null, close = false } = {}) 
     }
     out += ")".repeat(open);
   }
-  return rewriteIntegrals(out, names);
+  return rewriteIntegrals(out, names, freeInt);
 }
 
 /**

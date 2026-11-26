@@ -102,6 +102,8 @@ for (const engine of ["chromium", "webkit", "firefox"]) {
         [["∫(@;;)", "x", ";", "0", ";", "1"], "∫(x;0;1)"],
         [["∫(@;;)", "x", "kb:;", "0", "kb:;", "1"], "∫(x;0;1)"],
         [["∫(@;;)", "kb:(", "x", "+", "1", "kb:)"], "∫((x+1);;)"],
+        // pregled ponovne združitve: »;« s tipkovnice v funkciji seznama (max(1;2), ne max(12))
+        [["kb:max(1", "kb:;", "kb:2"], "max(1;2"],
       ]) {
         await page.evaluate(() => {
           const i = document.querySelector(".sc-input");
@@ -124,7 +126,8 @@ for (const engine of ["chromium", "webkit", "firefox"]) {
         });
         const where = `${engine} ${vw} ${keys.join(" ")}`;
         assert.equal(s.v, want, `${where}: vnos`);
-        assert.ok(!s.raw && !s.shown.includes(";") && s.caret, `${where}: zapis ${JSON.stringify(s)}`);
+        // »;« je v zapisu le med argumenti funkcije seznama (\max(1;2)), nikoli surovo ločilo predloge
+        assert.ok(!s.raw && (!s.shown.includes(";") || /^max\(/.test(want)) && s.caret, `${where}: zapis ${JSON.stringify(s)}`);
       }
       // AUDIT-071: zavrnjena tipka da vidno in bralniku dostopno sporočilo; ukaz sredi izraza je zapis, ne besedilo
       const press = async (k) => {
