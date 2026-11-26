@@ -1,0 +1,1335 @@
+{
+ "opis": "PV-07: formule z enotami (40 parov) in pretvorbe enot (10 parov); vsak par pravilna in napačna. Sestavil isti avtor kot preverjevalnik.",
+ "naloge": [
+  {
+   "id": "e01-pra",
+   "opis": "hitrost",
+   "resnica": "pravilna",
+   "given": [
+    "s = 2\\ \\mathrm{m}",
+    "t = 2\\ \\mathrm{s}"
+   ],
+   "find": [
+    "v"
+   ],
+   "unit": "m/s",
+   "formula": "v = \\dfrac{s}{t}"
+  },
+  {
+   "id": "e01-nap",
+   "opis": "hitrost",
+   "resnica": "napacna",
+   "given": [
+    "s = 2\\ \\mathrm{m}",
+    "t = 2\\ \\mathrm{s}"
+   ],
+   "find": [
+    "v"
+   ],
+   "unit": "m/s",
+   "formula": "v = s \\cdot t"
+  },
+  {
+   "id": "e02-pra",
+   "opis": "pospešek",
+   "resnica": "pravilna",
+   "given": [
+    "v = 2\\ \\mathrm{m/s}",
+    "t = 2\\ \\mathrm{s}"
+   ],
+   "find": [
+    "a"
+   ],
+   "unit": "m/s²",
+   "formula": "a = \\dfrac{v}{t}"
+  },
+  {
+   "id": "e02-nap",
+   "opis": "pospešek",
+   "resnica": "napacna",
+   "given": [
+    "v = 2\\ \\mathrm{m/s}",
+    "t = 2\\ \\mathrm{s}"
+   ],
+   "find": [
+    "a"
+   ],
+   "unit": "m/s²",
+   "formula": "a = v \\cdot t"
+  },
+  {
+   "id": "e03-pra",
+   "opis": "2. Newtonov zakon",
+   "resnica": "pravilna",
+   "given": [
+    "m = 2\\ \\mathrm{kg}",
+    "a = 2\\ \\mathrm{m/s^2}"
+   ],
+   "find": [
+    "F"
+   ],
+   "unit": "N",
+   "formula": "F = m \\cdot a"
+  },
+  {
+   "id": "e03-nap",
+   "opis": "2. Newtonov zakon",
+   "resnica": "napacna",
+   "given": [
+    "m = 2\\ \\mathrm{kg}",
+    "a = 2\\ \\mathrm{m/s^2}"
+   ],
+   "find": [
+    "F"
+   ],
+   "unit": "N",
+   "formula": "F = \\dfrac{m}{a}"
+  },
+  {
+   "id": "e04-pra",
+   "opis": "tlak",
+   "resnica": "pravilna",
+   "given": [
+    "F = 2\\ \\mathrm{N}",
+    "S = 2\\ \\mathrm{m^2}"
+   ],
+   "find": [
+    "p"
+   ],
+   "unit": "Pa",
+   "formula": "p = \\dfrac{F}{S}"
+  },
+  {
+   "id": "e04-nap",
+   "opis": "tlak",
+   "resnica": "napacna",
+   "given": [
+    "F = 2\\ \\mathrm{N}",
+    "S = 2\\ \\mathrm{m^2}"
+   ],
+   "find": [
+    "p"
+   ],
+   "unit": "Pa",
+   "formula": "p = F \\cdot S"
+  },
+  {
+   "id": "e05-pra",
+   "opis": "kinetična energija",
+   "resnica": "pravilna",
+   "given": [
+    "m = 2\\ \\mathrm{kg}",
+    "v = 2\\ \\mathrm{m/s}"
+   ],
+   "find": [
+    "W_k"
+   ],
+   "unit": "J",
+   "formula": "W_k = \\dfrac{m v^2}{2}"
+  },
+  {
+   "id": "e05-nap",
+   "opis": "kinetična energija",
+   "resnica": "napacna",
+   "given": [
+    "m = 2\\ \\mathrm{kg}",
+    "v = 2\\ \\mathrm{m/s}"
+   ],
+   "find": [
+    "W_k"
+   ],
+   "unit": "J",
+   "formula": "W_k = \\dfrac{m v}{2}"
+  },
+  {
+   "id": "e06-pra",
+   "opis": "moč",
+   "resnica": "pravilna",
+   "given": [
+    "A = 2\\ \\mathrm{J}",
+    "t = 2\\ \\mathrm{s}"
+   ],
+   "find": [
+    "P"
+   ],
+   "unit": "W",
+   "formula": "P = \\dfrac{A}{t}"
+  },
+  {
+   "id": "e06-nap",
+   "opis": "moč",
+   "resnica": "napacna",
+   "given": [
+    "A = 2\\ \\mathrm{J}",
+    "t = 2\\ \\mathrm{s}"
+   ],
+   "find": [
+    "P"
+   ],
+   "unit": "W",
+   "formula": "P = A \\cdot t"
+  },
+  {
+   "id": "e07-pra",
+   "opis": "gostota",
+   "resnica": "pravilna",
+   "given": [
+    "m = 2\\ \\mathrm{kg}",
+    "V = 2\\ \\mathrm{m^3}"
+   ],
+   "find": [
+    "\\rho"
+   ],
+   "unit": "kg/m³",
+   "formula": "\\rho = \\dfrac{m}{V}"
+  },
+  {
+   "id": "e07-nap",
+   "opis": "gostota",
+   "resnica": "napacna",
+   "given": [
+    "m = 2\\ \\mathrm{kg}",
+    "V = 2\\ \\mathrm{m^3}"
+   ],
+   "find": [
+    "\\rho"
+   ],
+   "unit": "kg/m³",
+   "formula": "\\rho = \\dfrac{V}{m}"
+  },
+  {
+   "id": "e08-pra",
+   "opis": "potencialna energija",
+   "resnica": "pravilna",
+   "given": [
+    "m = 2\\ \\mathrm{kg}",
+    "g = 2\\ \\mathrm{m/s^2}",
+    "h = 2\\ \\mathrm{m}"
+   ],
+   "find": [
+    "W_p"
+   ],
+   "unit": "J",
+   "formula": "W_p = m g h"
+  },
+  {
+   "id": "e08-nap",
+   "opis": "potencialna energija",
+   "resnica": "napacna",
+   "given": [
+    "m = 2\\ \\mathrm{kg}",
+    "g = 2\\ \\mathrm{m/s^2}",
+    "h = 2\\ \\mathrm{m}"
+   ],
+   "find": [
+    "W_p"
+   ],
+   "unit": "J",
+   "formula": "W_p = \\dfrac{m g}{h}"
+  },
+  {
+   "id": "e09-pra",
+   "opis": "Ohmov zakon",
+   "resnica": "pravilna",
+   "given": [
+    "U = 2\\ \\mathrm{V}",
+    "R = 2\\ \\mathrm{\\Omega}"
+   ],
+   "find": [
+    "I"
+   ],
+   "unit": "A",
+   "formula": "I = \\dfrac{U}{R}"
+  },
+  {
+   "id": "e09-nap",
+   "opis": "Ohmov zakon",
+   "resnica": "napacna",
+   "given": [
+    "U = 2\\ \\mathrm{V}",
+    "R = 2\\ \\mathrm{\\Omega}"
+   ],
+   "find": [
+    "I"
+   ],
+   "unit": "A",
+   "formula": "I = U \\cdot R"
+  },
+  {
+   "id": "e10-pra",
+   "opis": "toplota",
+   "resnica": "pravilna",
+   "given": [
+    "m = 2\\ \\mathrm{kg}",
+    "c = 2\\ \\mathrm{J/(kg\\,K)}",
+    "\\Delta T = 2\\ \\mathrm{K}"
+   ],
+   "find": [
+    "Q"
+   ],
+   "unit": "J",
+   "formula": "Q = m c \\Delta T"
+  },
+  {
+   "id": "e10-nap",
+   "opis": "toplota",
+   "resnica": "napacna",
+   "given": [
+    "m = 2\\ \\mathrm{kg}",
+    "c = 2\\ \\mathrm{J/(kg\\,K)}",
+    "\\Delta T = 2\\ \\mathrm{K}"
+   ],
+   "find": [
+    "Q"
+   ],
+   "unit": "J",
+   "formula": "Q = \\dfrac{m c}{\\Delta T}"
+  },
+  {
+   "id": "e11-pra",
+   "opis": "množina",
+   "resnica": "pravilna",
+   "given": [
+    "m = 2\\ \\mathrm{g}",
+    "M = 2\\ \\mathrm{g/mol}"
+   ],
+   "find": [
+    "n"
+   ],
+   "unit": "mol",
+   "formula": "n = \\dfrac{m}{M}"
+  },
+  {
+   "id": "e11-nap",
+   "opis": "množina",
+   "resnica": "napacna",
+   "given": [
+    "m = 2\\ \\mathrm{g}",
+    "M = 2\\ \\mathrm{g/mol}"
+   ],
+   "find": [
+    "n"
+   ],
+   "unit": "mol",
+   "formula": "n = m \\cdot M"
+  },
+  {
+   "id": "e12-pra",
+   "opis": "koncentracija",
+   "resnica": "pravilna",
+   "given": [
+    "n = 2\\ \\mathrm{mol}",
+    "V = 2\\ \\mathrm{L}"
+   ],
+   "find": [
+    "c"
+   ],
+   "unit": "mol/L",
+   "formula": "c = \\dfrac{n}{V}"
+  },
+  {
+   "id": "e12-nap",
+   "opis": "koncentracija",
+   "resnica": "napacna",
+   "given": [
+    "n = 2\\ \\mathrm{mol}",
+    "V = 2\\ \\mathrm{L}"
+   ],
+   "find": [
+    "c"
+   ],
+   "unit": "mol/L",
+   "formula": "c = n \\cdot V"
+  },
+  {
+   "id": "e13-pra",
+   "opis": "hidrostatski tlak",
+   "resnica": "pravilna",
+   "given": [
+    "\\rho = 2\\ \\mathrm{kg/m^3}",
+    "g = 2\\ \\mathrm{m/s^2}",
+    "h = 2\\ \\mathrm{m}"
+   ],
+   "find": [
+    "p"
+   ],
+   "unit": "Pa",
+   "formula": "p = \\rho g h"
+  },
+  {
+   "id": "e13-nap",
+   "opis": "hidrostatski tlak",
+   "resnica": "napacna",
+   "given": [
+    "\\rho = 2\\ \\mathrm{kg/m^3}",
+    "g = 2\\ \\mathrm{m/s^2}",
+    "h = 2\\ \\mathrm{m}"
+   ],
+   "find": [
+    "p"
+   ],
+   "unit": "Pa",
+   "formula": "p = \\dfrac{\\rho g}{h}"
+  },
+  {
+   "id": "e14-pra",
+   "opis": "pot pri enakomerno pospešenem",
+   "resnica": "pravilna",
+   "given": [
+    "a = 2\\ \\mathrm{m/s^2}",
+    "t = 2\\ \\mathrm{s}",
+    "v_0 = 2\\ \\mathrm{m/s}"
+   ],
+   "find": [
+    "s"
+   ],
+   "unit": "m",
+   "formula": "s = v_0 t + \\dfrac{a t^2}{2}"
+  },
+  {
+   "id": "e14-nap",
+   "opis": "pot pri enakomerno pospešenem",
+   "resnica": "napacna",
+   "given": [
+    "a = 2\\ \\mathrm{m/s^2}",
+    "t = 2\\ \\mathrm{s}",
+    "v_0 = 2\\ \\mathrm{m/s}"
+   ],
+   "find": [
+    "s"
+   ],
+   "unit": "m",
+   "formula": "s = v_0 + \\dfrac{a t^2}{2}"
+  },
+  {
+   "id": "e15-pra",
+   "opis": "električna moč",
+   "resnica": "pravilna",
+   "given": [
+    "U = 2\\ \\mathrm{V}",
+    "I = 2\\ \\mathrm{A}"
+   ],
+   "find": [
+    "P"
+   ],
+   "unit": "W",
+   "formula": "P = U I"
+  },
+  {
+   "id": "e15-nap",
+   "opis": "električna moč",
+   "resnica": "napacna",
+   "given": [
+    "U = 2\\ \\mathrm{V}",
+    "I = 2\\ \\mathrm{A}"
+   ],
+   "find": [
+    "P"
+   ],
+   "unit": "W",
+   "formula": "P = \\dfrac{U}{I}"
+  },
+  {
+   "id": "e16-pra",
+   "opis": "prožnostna sila",
+   "resnica": "pravilna",
+   "given": [
+    "k = 2\\ \\mathrm{N/m}",
+    "x = 2\\ \\mathrm{m}"
+   ],
+   "find": [
+    "F"
+   ],
+   "unit": "N",
+   "formula": "F = k x"
+  },
+  {
+   "id": "e16-nap",
+   "opis": "prožnostna sila",
+   "resnica": "napacna",
+   "given": [
+    "k = 2\\ \\mathrm{N/m}",
+    "x = 2\\ \\mathrm{m}"
+   ],
+   "find": [
+    "F"
+   ],
+   "unit": "N",
+   "formula": "F = k x^2"
+  },
+  {
+   "id": "e17-pra",
+   "opis": "nihajni čas vzmeti",
+   "resnica": "pravilna",
+   "given": [
+    "m = 2\\ \\mathrm{kg}",
+    "k = 2\\ \\mathrm{N/m}"
+   ],
+   "find": [
+    "T"
+   ],
+   "unit": "s",
+   "formula": "T = 2\\pi \\sqrt{\\dfrac{m}{k}}"
+  },
+  {
+   "id": "e17-nap",
+   "opis": "nihajni čas vzmeti",
+   "resnica": "napacna",
+   "given": [
+    "m = 2\\ \\mathrm{kg}",
+    "k = 2\\ \\mathrm{N/m}"
+   ],
+   "find": [
+    "T"
+   ],
+   "unit": "s",
+   "formula": "T = 2\\pi \\sqrt{\\dfrac{k}{m}}"
+  },
+  {
+   "id": "e18-pra",
+   "opis": "valovna dolžina",
+   "resnica": "pravilna",
+   "given": [
+    "c = 2\\ \\mathrm{m/s}",
+    "\\nu = 2\\ \\mathrm{Hz}"
+   ],
+   "find": [
+    "\\lambda"
+   ],
+   "unit": "m",
+   "formula": "\\lambda = \\dfrac{c}{\\nu}"
+  },
+  {
+   "id": "e18-nap",
+   "opis": "valovna dolžina",
+   "resnica": "napacna",
+   "given": [
+    "c = 2\\ \\mathrm{m/s}",
+    "\\nu = 2\\ \\mathrm{Hz}"
+   ],
+   "find": [
+    "\\lambda"
+   ],
+   "unit": "m",
+   "formula": "\\lambda = c \\cdot \\nu"
+  },
+  {
+   "id": "e19-pra",
+   "opis": "energija fotona",
+   "resnica": "pravilna",
+   "given": [
+    "h = 2\\ \\mathrm{J\\,s}",
+    "\\nu = 2\\ \\mathrm{Hz}"
+   ],
+   "find": [
+    "E"
+   ],
+   "unit": "J",
+   "formula": "E = h \\nu"
+  },
+  {
+   "id": "e19-nap",
+   "opis": "energija fotona",
+   "resnica": "napacna",
+   "given": [
+    "h = 2\\ \\mathrm{J\\,s}",
+    "\\nu = 2\\ \\mathrm{Hz}"
+   ],
+   "find": [
+    "E"
+   ],
+   "unit": "J",
+   "formula": "E = \\dfrac{h}{\\nu}"
+  },
+  {
+   "id": "e20-pra",
+   "opis": "kotna hitrost",
+   "resnica": "pravilna",
+   "given": [
+    "\\nu = 2\\ \\mathrm{Hz}"
+   ],
+   "find": [
+    "\\omega"
+   ],
+   "unit": "s⁻¹",
+   "formula": "\\omega = 2\\pi\\nu"
+  },
+  {
+   "id": "e20-nap",
+   "opis": "kotna hitrost",
+   "resnica": "napacna",
+   "given": [
+    "\\nu = 2\\ \\mathrm{Hz}"
+   ],
+   "find": [
+    "\\omega"
+   ],
+   "unit": "s⁻¹",
+   "formula": "\\omega = \\dfrac{2\\pi}{\\nu}"
+  },
+  {
+   "id": "e21-pra",
+   "opis": "plinska enačba",
+   "resnica": "pravilna",
+   "given": [
+    "n = 2\\ \\mathrm{mol}",
+    "R = 2\\ \\mathrm{J/(mol\\,K)}",
+    "T = 2\\ \\mathrm{K}",
+    "V = 2\\ \\mathrm{m^3}"
+   ],
+   "find": [
+    "p"
+   ],
+   "unit": "Pa",
+   "formula": "p = \\dfrac{n R T}{V}"
+  },
+  {
+   "id": "e21-nap",
+   "opis": "plinska enačba",
+   "resnica": "napacna",
+   "given": [
+    "n = 2\\ \\mathrm{mol}",
+    "R = 2\\ \\mathrm{J/(mol\\,K)}",
+    "T = 2\\ \\mathrm{K}",
+    "V = 2\\ \\mathrm{m^3}"
+   ],
+   "find": [
+    "p"
+   ],
+   "unit": "Pa",
+   "formula": "p = \\dfrac{n R}{T V}"
+  },
+  {
+   "id": "e22-pra",
+   "opis": "masa iz množine",
+   "resnica": "pravilna",
+   "given": [
+    "n = 2\\ \\mathrm{mol}",
+    "M = 2\\ \\mathrm{g/mol}"
+   ],
+   "find": [
+    "m"
+   ],
+   "unit": "g",
+   "formula": "m = n M"
+  },
+  {
+   "id": "e22-nap",
+   "opis": "masa iz množine",
+   "resnica": "napacna",
+   "given": [
+    "n = 2\\ \\mathrm{mol}",
+    "M = 2\\ \\mathrm{g/mol}"
+   ],
+   "find": [
+    "m"
+   ],
+   "unit": "g",
+   "formula": "m = \\dfrac{n}{M}"
+  },
+  {
+   "id": "e23-pra",
+   "opis": "gravitacijska sila",
+   "resnica": "pravilna",
+   "given": [
+    "G = 2\\ \\mathrm{N\\,m^2/kg^2}",
+    "m_1 = 2\\ \\mathrm{kg}",
+    "m_2 = 2\\ \\mathrm{kg}",
+    "r = 2\\ \\mathrm{m}"
+   ],
+   "find": [
+    "F"
+   ],
+   "unit": "N",
+   "formula": "F = \\dfrac{G m_1 m_2}{r^2}"
+  },
+  {
+   "id": "e23-nap",
+   "opis": "gravitacijska sila",
+   "resnica": "napacna",
+   "given": [
+    "G = 2\\ \\mathrm{N\\,m^2/kg^2}",
+    "m_1 = 2\\ \\mathrm{kg}",
+    "m_2 = 2\\ \\mathrm{kg}",
+    "r = 2\\ \\mathrm{m}"
+   ],
+   "find": [
+    "F"
+   ],
+   "unit": "N",
+   "formula": "F = \\dfrac{G m_1 m_2}{r}"
+  },
+  {
+   "id": "e24-pra",
+   "opis": "prožnostna energija",
+   "resnica": "pravilna",
+   "given": [
+    "k = 2\\ \\mathrm{N/m}",
+    "x = 2\\ \\mathrm{m}"
+   ],
+   "find": [
+    "W_{pr}"
+   ],
+   "unit": "J",
+   "formula": "W_{pr} = \\dfrac{k x^2}{2}"
+  },
+  {
+   "id": "e24-nap",
+   "opis": "prožnostna energija",
+   "resnica": "napacna",
+   "given": [
+    "k = 2\\ \\mathrm{N/m}",
+    "x = 2\\ \\mathrm{m}"
+   ],
+   "find": [
+    "W_{pr}"
+   ],
+   "unit": "J",
+   "formula": "W_{pr} = \\dfrac{k x}{2}"
+  },
+  {
+   "id": "e25-pra",
+   "opis": "Joulova toplota",
+   "resnica": "pravilna",
+   "given": [
+    "I = 2\\ \\mathrm{A}",
+    "R = 2\\ \\mathrm{\\Omega}",
+    "t = 2\\ \\mathrm{s}"
+   ],
+   "find": [
+    "Q"
+   ],
+   "unit": "J",
+   "formula": "Q = I^2 R t"
+  },
+  {
+   "id": "e25-nap",
+   "opis": "Joulova toplota",
+   "resnica": "napacna",
+   "given": [
+    "I = 2\\ \\mathrm{A}",
+    "R = 2\\ \\mathrm{\\Omega}",
+    "t = 2\\ \\mathrm{s}"
+   ],
+   "find": [
+    "Q"
+   ],
+   "unit": "J",
+   "formula": "Q = \\dfrac{I^2 t}{R}"
+  },
+  {
+   "id": "e26-pra",
+   "opis": "hitrost prostega pada",
+   "resnica": "pravilna",
+   "given": [
+    "g = 2\\ \\mathrm{m/s^2}",
+    "h = 2\\ \\mathrm{m}"
+   ],
+   "find": [
+    "v"
+   ],
+   "unit": "m/s",
+   "formula": "v = \\sqrt{2 g h}"
+  },
+  {
+   "id": "e26-nap",
+   "opis": "hitrost prostega pada",
+   "resnica": "napacna",
+   "given": [
+    "g = 2\\ \\mathrm{m/s^2}",
+    "h = 2\\ \\mathrm{m}"
+   ],
+   "find": [
+    "v"
+   ],
+   "unit": "m/s",
+   "formula": "v = \\sqrt{\\dfrac{2 g}{h}}"
+  },
+  {
+   "id": "e27-pra",
+   "opis": "frekvenca nihajnega kroga",
+   "resnica": "pravilna",
+   "given": [
+    "L = 2\\ \\mathrm{H}",
+    "C = 2\\ \\mathrm{F}"
+   ],
+   "find": [
+    "\\nu"
+   ],
+   "unit": "Hz",
+   "formula": "\\nu = \\dfrac{1}{2\\pi\\sqrt{L C}}"
+  },
+  {
+   "id": "e27-nap",
+   "opis": "frekvenca nihajnega kroga",
+   "resnica": "napacna",
+   "given": [
+    "L = 2\\ \\mathrm{H}",
+    "C = 2\\ \\mathrm{F}"
+   ],
+   "find": [
+    "\\nu"
+   ],
+   "unit": "Hz",
+   "formula": "\\nu = 2\\pi\\sqrt{L C}"
+  },
+  {
+   "id": "e28-pra",
+   "opis": "delo sile",
+   "resnica": "pravilna",
+   "given": [
+    "F = 2\\ \\mathrm{N}",
+    "s = 2\\ \\mathrm{m}"
+   ],
+   "find": [
+    "A"
+   ],
+   "unit": "J",
+   "formula": "A = F s"
+  },
+  {
+   "id": "e28-nap",
+   "opis": "delo sile",
+   "resnica": "napacna",
+   "given": [
+    "F = 2\\ \\mathrm{N}",
+    "s = 2\\ \\mathrm{m}"
+   ],
+   "find": [
+    "A"
+   ],
+   "unit": "J",
+   "formula": "A = \\dfrac{F}{s}"
+  },
+  {
+   "id": "e29-pra",
+   "opis": "gibalna količina",
+   "resnica": "pravilna",
+   "given": [
+    "m = 2\\ \\mathrm{kg}",
+    "v = 2\\ \\mathrm{m/s}"
+   ],
+   "find": [
+    "G"
+   ],
+   "unit": "kg m/s",
+   "formula": "G = m v"
+  },
+  {
+   "id": "e29-nap",
+   "opis": "gibalna količina",
+   "resnica": "napacna",
+   "given": [
+    "m = 2\\ \\mathrm{kg}",
+    "v = 2\\ \\mathrm{m/s}"
+   ],
+   "find": [
+    "G"
+   ],
+   "unit": "kg m/s",
+   "formula": "G = m v^2"
+  },
+  {
+   "id": "e30-pra",
+   "opis": "centripetalni pospešek",
+   "resnica": "pravilna",
+   "given": [
+    "v = 2\\ \\mathrm{m/s}",
+    "r = 2\\ \\mathrm{m}"
+   ],
+   "find": [
+    "a_r"
+   ],
+   "unit": "m/s²",
+   "formula": "a_r = \\dfrac{v^2}{r}"
+  },
+  {
+   "id": "e30-nap",
+   "opis": "centripetalni pospešek",
+   "resnica": "napacna",
+   "given": [
+    "v = 2\\ \\mathrm{m/s}",
+    "r = 2\\ \\mathrm{m}"
+   ],
+   "find": [
+    "a_r"
+   ],
+   "unit": "m/s²",
+   "formula": "a_r = \\dfrac{v}{r}"
+  },
+  {
+   "id": "e31-pra",
+   "opis": "naboj",
+   "resnica": "pravilna",
+   "given": [
+    "I = 2\\ \\mathrm{A}",
+    "t = 2\\ \\mathrm{s}"
+   ],
+   "find": [
+    "e"
+   ],
+   "unit": "C",
+   "formula": "e = I t"
+  },
+  {
+   "id": "e31-nap",
+   "opis": "naboj",
+   "resnica": "napacna",
+   "given": [
+    "I = 2\\ \\mathrm{A}",
+    "t = 2\\ \\mathrm{s}"
+   ],
+   "find": [
+    "e"
+   ],
+   "unit": "C",
+   "formula": "e = \\dfrac{I}{t}"
+  },
+  {
+   "id": "e32-pra",
+   "opis": "kapaciteta",
+   "resnica": "pravilna",
+   "given": [
+    "e = 2\\ \\mathrm{C}",
+    "U = 2\\ \\mathrm{V}"
+   ],
+   "find": [
+    "C"
+   ],
+   "unit": "F",
+   "formula": "C = \\dfrac{e}{U}"
+  },
+  {
+   "id": "e32-nap",
+   "opis": "kapaciteta",
+   "resnica": "napacna",
+   "given": [
+    "e = 2\\ \\mathrm{C}",
+    "U = 2\\ \\mathrm{V}"
+   ],
+   "find": [
+    "C"
+   ],
+   "unit": "F",
+   "formula": "C = e U"
+  },
+  {
+   "id": "e33-pra",
+   "opis": "inducirana napetost",
+   "resnica": "pravilna",
+   "given": [
+    "B = 2\\ \\mathrm{T}",
+    "l = 2\\ \\mathrm{m}",
+    "v = 2\\ \\mathrm{m/s}"
+   ],
+   "find": [
+    "U_i"
+   ],
+   "unit": "V",
+   "formula": "U_i = B l v"
+  },
+  {
+   "id": "e33-nap",
+   "opis": "inducirana napetost",
+   "resnica": "napacna",
+   "given": [
+    "B = 2\\ \\mathrm{T}",
+    "l = 2\\ \\mathrm{m}",
+    "v = 2\\ \\mathrm{m/s}"
+   ],
+   "find": [
+    "U_i"
+   ],
+   "unit": "V",
+   "formula": "U_i = \\dfrac{B l}{v}"
+  },
+  {
+   "id": "e34-pra",
+   "opis": "amplituda generatorja",
+   "resnica": "pravilna",
+   "given": [
+    "N = 2",
+    "B = 2\\ \\mathrm{T}",
+    "S = 2\\ \\mathrm{m^2}",
+    "\\nu = 2\\ \\mathrm{Hz}"
+   ],
+   "find": [
+    "U_0"
+   ],
+   "unit": "V",
+   "formula": "U_0 = N B S \\cdot 2\\pi\\nu"
+  },
+  {
+   "id": "e34-nap",
+   "opis": "amplituda generatorja",
+   "resnica": "napacna",
+   "given": [
+    "N = 2",
+    "B = 2\\ \\mathrm{T}",
+    "S = 2\\ \\mathrm{m^2}",
+    "\\nu = 2\\ \\mathrm{Hz}"
+   ],
+   "find": [
+    "U_0"
+   ],
+   "unit": "V",
+   "formula": "U_0 = \\dfrac{N B S}{2\\pi\\nu}"
+  },
+  {
+   "id": "e35-pra",
+   "opis": "vzgon",
+   "resnica": "pravilna",
+   "given": [
+    "\\rho = 2\\ \\mathrm{kg/m^3}",
+    "g = 2\\ \\mathrm{m/s^2}",
+    "V = 2\\ \\mathrm{m^3}"
+   ],
+   "find": [
+    "F_{vzg}"
+   ],
+   "unit": "N",
+   "formula": "F_{vzg} = \\rho g V"
+  },
+  {
+   "id": "e35-nap",
+   "opis": "vzgon",
+   "resnica": "napacna",
+   "given": [
+    "\\rho = 2\\ \\mathrm{kg/m^3}",
+    "g = 2\\ \\mathrm{m/s^2}",
+    "V = 2\\ \\mathrm{m^3}"
+   ],
+   "find": [
+    "F_{vzg}"
+   ],
+   "unit": "N",
+   "formula": "F_{vzg} = \\rho V"
+  },
+  {
+   "id": "e36-pra",
+   "opis": "molska prostornina",
+   "resnica": "pravilna",
+   "given": [
+    "n = 2\\ \\mathrm{mol}",
+    "V_m = 2\\ \\mathrm{L/mol}"
+   ],
+   "find": [
+    "V"
+   ],
+   "unit": "L",
+   "formula": "V = n V_m"
+  },
+  {
+   "id": "e36-nap",
+   "opis": "molska prostornina",
+   "resnica": "napacna",
+   "given": [
+    "n = 2\\ \\mathrm{mol}",
+    "V_m = 2\\ \\mathrm{L/mol}"
+   ],
+   "find": [
+    "V"
+   ],
+   "unit": "L",
+   "formula": "V = \\dfrac{n}{V_m}"
+  },
+  {
+   "id": "e37-pra",
+   "opis": "masni delež",
+   "resnica": "pravilna",
+   "given": [
+    "m_{topljenca} = 2\\ \\mathrm{g}",
+    "m_{raztopine} = 2\\ \\mathrm{g}"
+   ],
+   "find": [
+    "w"
+   ],
+   "unit": "%",
+   "formula": "w = \\dfrac{m_{topljenca}}{m_{raztopine}} \\cdot 100\\ \\%"
+  },
+  {
+   "id": "e37-nap",
+   "opis": "masni delež",
+   "resnica": "napacna",
+   "given": [
+    "m_{topljenca} = 2\\ \\mathrm{g}",
+    "m_{raztopine} = 2\\ \\mathrm{g}"
+   ],
+   "find": [
+    "w"
+   ],
+   "unit": "%",
+   "formula": "w = m_{topljenca} \\cdot m_{raztopine} \\cdot 100\\ \\%"
+  },
+  {
+   "id": "e38-pra",
+   "opis": "povprečna hitrost (vsota)",
+   "resnica": "pravilna",
+   "given": [
+    "s_1 = 2\\ \\mathrm{m}",
+    "s_2 = 2\\ \\mathrm{m}",
+    "t = 2\\ \\mathrm{s}"
+   ],
+   "find": [
+    "v"
+   ],
+   "unit": "m/s",
+   "formula": "v = \\dfrac{s_1 + s_2}{t}"
+  },
+  {
+   "id": "e38-nap",
+   "opis": "povprečna hitrost (vsota)",
+   "resnica": "napacna",
+   "given": [
+    "s_1 = 2\\ \\mathrm{m}",
+    "s_2 = 2\\ \\mathrm{m}",
+    "t = 2\\ \\mathrm{s}"
+   ],
+   "find": [
+    "v"
+   ],
+   "unit": "m/s",
+   "formula": "v = \\dfrac{s_1 + t}{s_2}"
+  },
+  {
+   "id": "e39-pra",
+   "opis": "toplotni tok",
+   "resnica": "pravilna",
+   "given": [
+    "\\lambda = 2\\ \\mathrm{W/(m\\,K)}",
+    "S = 2\\ \\mathrm{m^2}",
+    "\\Delta T = 2\\ \\mathrm{K}",
+    "d = 2\\ \\mathrm{m}"
+   ],
+   "find": [
+    "P"
+   ],
+   "unit": "W",
+   "formula": "P = \\dfrac{\\lambda S \\Delta T}{d}"
+  },
+  {
+   "id": "e39-nap",
+   "opis": "toplotni tok",
+   "resnica": "napacna",
+   "given": [
+    "\\lambda = 2\\ \\mathrm{W/(m\\,K)}",
+    "S = 2\\ \\mathrm{m^2}",
+    "\\Delta T = 2\\ \\mathrm{K}",
+    "d = 2\\ \\mathrm{m}"
+   ],
+   "find": [
+    "P"
+   ],
+   "unit": "W",
+   "formula": "P = \\lambda S \\Delta T d"
+  },
+  {
+   "id": "e40-pra",
+   "opis": "aktivnost",
+   "resnica": "pravilna",
+   "given": [
+    "N = 2",
+    "\\lambda = 2\\ \\mathrm{s^{-1}}"
+   ],
+   "find": [
+    "A"
+   ],
+   "unit": "Bq",
+   "formula": "A = \\lambda N"
+  },
+  {
+   "id": "e40-nap",
+   "opis": "aktivnost",
+   "resnica": "napacna",
+   "given": [
+    "N = 2",
+    "\\lambda = 2\\ \\mathrm{s^{-1}}"
+   ],
+   "find": [
+    "A"
+   ],
+   "unit": "Bq",
+   "formula": "A = \\dfrac{N}{\\lambda}"
+  },
+  {
+   "id": "k01-pra",
+   "opis": "pretvorba",
+   "resnica": "pravilna",
+   "given": [],
+   "find": [],
+   "unit": "",
+   "formula": "1\\ \\mathrm{km} = 1000\\ \\mathrm{m}"
+  },
+  {
+   "id": "k01-nap",
+   "opis": "pretvorba",
+   "resnica": "napacna",
+   "given": [],
+   "find": [],
+   "unit": "",
+   "formula": "1\\ \\mathrm{km} = 100\\ \\mathrm{m}"
+  },
+  {
+   "id": "k02-pra",
+   "opis": "pretvorba",
+   "resnica": "pravilna",
+   "given": [],
+   "find": [],
+   "unit": "",
+   "formula": "1\\ \\mathrm{h} = 3600\\ \\mathrm{s}"
+  },
+  {
+   "id": "k02-nap",
+   "opis": "pretvorba",
+   "resnica": "napacna",
+   "given": [],
+   "find": [],
+   "unit": "",
+   "formula": "1\\ \\mathrm{h} = 360\\ \\mathrm{s}"
+  },
+  {
+   "id": "k03-pra",
+   "opis": "pretvorba",
+   "resnica": "pravilna",
+   "given": [],
+   "find": [],
+   "unit": "",
+   "formula": "1\\ \\mathrm{kWh} = 3{,}6\\ \\mathrm{MJ}"
+  },
+  {
+   "id": "k03-nap",
+   "opis": "pretvorba",
+   "resnica": "napacna",
+   "given": [],
+   "find": [],
+   "unit": "",
+   "formula": "1\\ \\mathrm{kWh} = 3{,}6\\ \\mathrm{kJ}"
+  },
+  {
+   "id": "k04-pra",
+   "opis": "pretvorba",
+   "resnica": "pravilna",
+   "given": [],
+   "find": [],
+   "unit": "",
+   "formula": "1\\ \\mathrm{L} = 1\\ \\mathrm{dm^3}"
+  },
+  {
+   "id": "k04-nap",
+   "opis": "pretvorba",
+   "resnica": "napacna",
+   "given": [],
+   "find": [],
+   "unit": "",
+   "formula": "1\\ \\mathrm{L} = 1\\ \\mathrm{m^3}"
+  },
+  {
+   "id": "k05-pra",
+   "opis": "pretvorba",
+   "resnica": "pravilna",
+   "given": [],
+   "find": [],
+   "unit": "",
+   "formula": "1\\ \\mathrm{bar} = 10^5\\ \\mathrm{Pa}"
+  },
+  {
+   "id": "k05-nap",
+   "opis": "pretvorba",
+   "resnica": "napacna",
+   "given": [],
+   "find": [],
+   "unit": "",
+   "formula": "1\\ \\mathrm{bar} = 10^3\\ \\mathrm{Pa}"
+  },
+  {
+   "id": "k06-pra",
+   "opis": "pretvorba",
+   "resnica": "pravilna",
+   "given": [],
+   "find": [],
+   "unit": "",
+   "formula": "1\\ \\mathrm{km/h} = \\dfrac{1}{3{,}6}\\ \\mathrm{m/s}"
+  },
+  {
+   "id": "k06-nap",
+   "opis": "pretvorba",
+   "resnica": "napacna",
+   "given": [],
+   "find": [],
+   "unit": "",
+   "formula": "1\\ \\mathrm{km/h} = 3{,}6\\ \\mathrm{m/s}"
+  },
+  {
+   "id": "k07-pra",
+   "opis": "pretvorba",
+   "resnica": "pravilna",
+   "given": [],
+   "find": [],
+   "unit": "",
+   "formula": "1\\ \\mathrm{cm^2} = 10^{-4}\\ \\mathrm{m^2}"
+  },
+  {
+   "id": "k07-nap",
+   "opis": "pretvorba",
+   "resnica": "napacna",
+   "given": [],
+   "find": [],
+   "unit": "",
+   "formula": "1\\ \\mathrm{cm^2} = 10^{-2}\\ \\mathrm{m^2}"
+  },
+  {
+   "id": "k08-pra",
+   "opis": "pretvorba",
+   "resnica": "pravilna",
+   "given": [],
+   "find": [],
+   "unit": "",
+   "formula": "1\\ \\mathrm{t} = 1000\\ \\mathrm{kg}"
+  },
+  {
+   "id": "k08-nap",
+   "opis": "pretvorba",
+   "resnica": "napacna",
+   "given": [],
+   "find": [],
+   "unit": "",
+   "formula": "1\\ \\mathrm{t} = 1000\\ \\mathrm{g}"
+  },
+  {
+   "id": "k09-pra",
+   "opis": "pretvorba",
+   "resnica": "pravilna",
+   "given": [],
+   "find": [],
+   "unit": "",
+   "formula": "1\\ \\mathrm{mL} = 1\\ \\mathrm{cm^3}"
+  },
+  {
+   "id": "k09-nap",
+   "opis": "pretvorba",
+   "resnica": "napacna",
+   "given": [],
+   "find": [],
+   "unit": "",
+   "formula": "1\\ \\mathrm{mL} = 1\\ \\mathrm{mm^3}"
+  },
+  {
+   "id": "k10-pra",
+   "opis": "pretvorba",
+   "resnica": "pravilna",
+   "given": [],
+   "find": [],
+   "unit": "",
+   "formula": "1\\ \\mathrm{min} = 60\\ \\mathrm{s}"
+  },
+  {
+   "id": "k10-nap",
+   "opis": "pretvorba",
+   "resnica": "napacna",
+   "given": [],
+   "find": [],
+   "unit": "",
+   "formula": "1\\ \\mathrm{min} = 100\\ \\mathrm{s}"
+  }
+ ]
+}
