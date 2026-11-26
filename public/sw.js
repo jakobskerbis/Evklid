@@ -411,7 +411,9 @@ self.addEventListener("fetch", (e) => {
   // razreda /?koda=, /?ref=, /?vir= …; pregled A2 P1-1). Takoj iz predpomnilnika samo statične datoteke
   // aplikacije; strani, ki jih sestavi strežnik (/sole, /ucbenik/…, /3d, /kalkulator.html, manifest), ostanejo
   // najprej omrežje, tudi te pa preverijo različico (noteVersion v networkFirst).
-  const entry = (url.pathname === "/" || url.pathname === "/index.html") && (req.mode === "navigate" || !url.search);
+  // Povezava s skupnim geslom (/?geslo=, server/gate.js) ni vstopna stran: strežnik nastavi piškotek in geslo odstrani iz
+  // naslova (shranjena stran bi ga pustila v naslovu, novo geslo pa ne bi prišlo do strežnika).
+  const entry = (url.pathname === "/" || url.pathname === "/index.html") && (req.mode === "navigate" || !url.search) && !url.searchParams.has("geslo");
   // Zahteve nove strani dobijo kopije različice strani, ki jo je dobila (fresh): shranjena (starejša) stran svoje
   // stare module, nova stran nove. Zapis velja za novo stran (brskalnik lahko ob osvežitvi isti id uporabi znova).
   const id = req.mode === "navigate" ? e.resultingClientId || "" : "";

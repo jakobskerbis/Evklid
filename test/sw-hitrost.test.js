@@ -254,6 +254,17 @@ test("vstopna stran (N-08b): odgovor brez oznake strežnika ne zamenja shranjene
   assert.equal(await (await st2.match(`${ORIGIN}/`)).text(), `net:${ORIGIN}/`);
 });
 
+// Povezava za prijatelje s skupnim geslom (scripts/telefon.js, /?geslo=…, server/gate.js): strežnik nastavi piškotek in
+// geslo odstrani iz naslova (303). Shranjena stran bi ga pustila v vrstici naslova in zgodovini, novo geslo pa ne bi prišlo
+// do strežnika (po menjavi gesla aplikacija brez prijave, klici API 401).
+test("vstopna stran (N-08b): povezava z geslom (/?geslo=) gre vedno na strežnik", async () => {
+  const sw = loadSw("abc", { served: "abc" });
+  await (await sw.caches.open("evklid-v1-static")).put(`${ORIGIN}/`, new Response("shranjena stran", { headers: { "X-Evklid-App": "abc" } }));
+  sw.calls.length = 0;
+  assert.equal(await sw.get("/?geslo=skrivnost", "navigate"), `net:${ORIGIN}/?geslo=skrivnost`);
+  assert.deepEqual(sw.calls, [`${ORIGIN}/?geslo=skrivnost`]);
+});
+
 test("vstopna stran (N-08b): kopija druge različice ni takojšnja (čaka omrežje do 1 s)", async () => {
   const sw = loadSw("nova", { served: "nova" });
   const st = await sw.caches.open("evklid-v1-static");
