@@ -90,5 +90,3 @@ export function initObrat() {
     }, 300);
   });
 }
-
-export const _zaTest = { sledeni, zapomni, obnovi };
