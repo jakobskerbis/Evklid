@@ -208,3 +208,26 @@ test("pregled sodbe: navodila zajamejo »Pravilno« pred namigom, dvom o praviln
   assert.match(system, /casting doubt on a right result or step/);
   assert.match(system, /pointing at a wrong place while the real error is elsewhere/);
 });
+
+test("sodba koraka AUDIT-092: naloga brez realne rešitve, »x = ±2« in popoln odgovor brez oštevilčenja", () => {
+  const o = (naloga) => ({ pre: presolve(naloga, { first: true }), prevTutor: "Kaj narediš?" });
+  // Pregled pilota 26. 11.: pri $x^6 = -64$ je bila sodba null, napačno rešitev je presojal le model.
+  for (const ans of ["x = 2", "x = -2", "x = ±2", "$x = \\pm 2$"]) {
+    const v = verdict(ans, o("Reši enačbo $x^6 = -64$."));
+    assert.equal(v?.wrong, true, ans);
+    assert.match(v.finding, /has no real solution/);
+  }
+  assert.match(verdict("x = ±2", o("Reši enačbo $x^6 = -64$.")).finding, /x = ±2 is wrong/);
+  assert.equal(verdict("x = 2", o("Reši enačbo $x^2 = -4$."))?.wrong, true);
+  assert.equal(verdict("Ni rešitve.", o("Reši enačbo $x^6 = -64$.")), null);
+  // Popoln odgovor ni »partial« (sicer zavrnitev pravilnega ne bi sprožila ponovnega odgovora).
+  for (const [naloga, ans] of [["Reši enačbo $x^2 - 5x + 6 = 0$.", "x = 2 in x = 3"], ["Reši enačbo $x^2 - 5x + 6 = 0$.", "x = 2, x = 3"], ["Reši (x - 2)^2 = 9", "x = 5 ali x = -1"], ["Reši enačbo $x^2 = 4$.", "x = ±2"], ["Reši enačbo $x^2 = 4$.", "$x = \\pm 2$"]]) {
+    const v = verdict(ans, o(naloga));
+    assert.equal(v?.wrong, false, ans);
+    assert.equal(v.partial, false, ans);
+  }
+  // Nepopoln ostane nepopoln, napačen ostane napačen.
+  assert.equal(verdict("x = 5", o("Reši (x - 2)^2 = 9")).partial, true);
+  assert.equal(verdict("x = ±2", o("Reši enačbo $x^2 - 5x + 6 = 0$."))?.wrong, true);
+  assert.equal(verdict("x = 2, x = 3, x = 4", o("Reši enačbo $x^2 - 5x + 6 = 0$."))?.wrong, true);
+});

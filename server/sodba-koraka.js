@@ -346,12 +346,15 @@ export function stepVerdict(text, { pre = null, prevTutor = "" } = {}) {
     // »Skoraj, manjka še ena« ni zavrnitev pravilnega, zato ob njem ni ponovnega odgovora (partial).
     const sols = solverValues((pre.problems || []).find((x) => x.type === "equation")?.answerTex);
     const roots = sols.length > 1 ? rootList(text, sols[0].v) : null;
-    const partial = sols.length > 1 && !(roots && sameSet(roots.map((r) => r.x), sols.map((s) => s.x), Math.max(...roots.map((r) => decimalsTol(r.src)))));
+    // AUDIT-092: »x = 2 in x = 3« in »x = ±2« sta popolna odgovora, čeprav nista oštevilčena.
+    const stated = sols.length > 1 ? statedRoots(text, sols[0].v) : [];
+    const complete = (xs, tol) => sameSet([...new Set(xs)], sols.map((s) => s.x), tol);
+    const partial = sols.length > 1 && !(roots && complete(roots.map((r) => r.x), Math.max(...roots.map((r) => decimalsTol(r.src))))) && !(stated.length && complete(stated.map((r) => r.x), Math.max(...stated.map((r) => r.tol))));
     // Nepopoln odgovor: opomba »CORRECT« je inštruktorja zavedla v »sta pravilna« brez druge rešitve (meritev 19. 11.,
     // brezplačni paket, (x - 2)^2 = 9 → »x = 5«). Opomba zato pove, da je odgovor nepopoln.
     // rootList bere le oštevilčene rešitve (x1 = …, x2 = …): »x = 5 ali x = -1« je zanj tudi partial. Opomba
     // »INCOMPLETE« bi tedaj zavrnila popoln odgovor, zato le, ko kakšne rešitve ni nikjer med števili v sporočilu.
-    const nums = [...plain(text).matchAll(/(?<![\d.,])([-−]?\d+(?:[.,]\d+)?)(?:\s*\/\s*(\d+))?/g)].map((m) => ({ x: Number(m[1].replace("−", "-").replace(",", ".")) / (m[2] ? Number(m[2]) : 1), tol: m[2] ? 0 : decimalsTol(m[1]) }));
+    const nums = [...plain(text).matchAll(/(?<![\d.,])([-−]?\d+(?:[.,]\d+)?)(?:\s*\/\s*(\d+))?/g)].map((m) => ({ x: Number(m[1].replace("−", "-").replace(",", ".")) / (m[2] ? Number(m[2]) : 1), tol: m[2] ? 0 : decimalsTol(m[1]) })).concat(stated);
     const incomplete = partial && sols.some((s) => !nums.some((n) => has([n.x], s.x, n.tol)));
     if (incomplete) {
       const finding = `the student's value is one of the solutions, but the answer is INCOMPLETE: the task has ${sols.length} solutions (exact result of the task: ${/is CORRECT \(exact result of the task: (.+?)\)\.\n/.exec(claim)?.[1] || "several values"})`;
@@ -364,6 +367,23 @@ export function stepVerdict(text, { pre = null, prevTutor = "" } = {}) {
     return { wrong: false, finding, note: `<${NOTE_TAG}>\nAn exact check compared the student's last message with the equation being solved: ${finding}.\n${RIGHT_RULES}\n</${NOTE_TAG}>` };
   }
   return null;
+}
+
+// Vse učenčeve končne vrednosti neznanke v sporočilu (»x = 2 in x = 3«, »x1 = 2, x2 = 3«, »x = ±2«); vrednost,
+// ki ji sledi operator ali črka, je vmesni korak in ne šteje.
+function statedRoots(text, v) {
+  const t = String(text || "").replace(/\$/g, " ").replace(/−/g, "-");
+  const re = new RegExp(`(?<![\\p{L}\\d\\\\])${v}(?:_?\\{?\\d\\}?)?\\s*=\\s*(±|\\\\pm\\s*|\\+-|\\+\\/-)?([-+]?\\d+(?:[.,]\\d+)?(?:\\/\\d+)?)(?![\\d\\/\\p{L}]|[.,]\\d)(?![ \\t]*[-+*/:·×÷^=(\\\\])`, "gu");
+  const out = [];
+  for (const m of t.matchAll(re)) {
+    const [a, b] = m[2].replace(",", ".").split("/");
+    const x = Number(a) / (b ? Number(b) : 1);
+    if (!Number.isFinite(x)) return [];
+    const tol = b ? 0 : decimalsTol(m[2]);
+    out.push({ x, tol });
+    if (m[1]) out.push({ x: -x, tol });
+  }
+  return out;
 }
 
 // Inštruktorjevo zadnje sporočilo vsebuje enačbo z drugimi rešitvami kot naloga (nov primer): sodba proti nalogi ne velja.

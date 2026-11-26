@@ -954,6 +954,12 @@ function claimValues(text, vars) {
   // Vrednost, ki ji sledi operator ali črka (»x = 6 - 3«, »x = 2x - 1«, »x = 12 : 4«), je vmesni korak, ne rezultat:
   // o njem sodi model. Pri večkratni navedbi iste neznanke šteje zadnja (»x = 6 … torej x = 3«).
   const byKey = new Map();
+  // »x = ±2«, »x = \pm 2«: obe vrednosti (AUDIT-092); sodi se, kot da bi učenec napisal obe.
+  for (const m of t.matchAll(/(?<![\p{L}\d])([a-zA-Z])(?:_?\{?(\d)\}?)?=(?:±|\\pm|\+-|\+\/-)\s*(\d+(?:[.,]\d+)?(?:\/\d+)?)(?![\d\/\p{L}]|[.,]\d)(?![ \t]*[-+*/:·×÷^=(\\])/gu)) {
+    if (!vars.includes(m[1])) continue;
+    byKey.set(`${m[1]}${m[2] || ""}+`, { v: m[1], val: m[3], shown: `±${m[3]}` });
+    byKey.set(`${m[1]}${m[2] || ""}-`, { v: m[1], val: `-${m[3]}`, shown: `±${m[3]}` });
+  }
   for (const m of t.matchAll(/(?<![\p{L}\d])([a-zA-Z])(?:_?\{?(\d)\}?)?=([-+]?\s*(?:\d{1,3}(?:\.\d{3})+(?!\d)|\d+(?:[.,]\d+)?(?:\/\d+)?|[.,]\d+))(?![\d\/\p{L}]|[.,]\d)(?![ \t]*[-+*/:·×÷^=(\\])/gu)) {
     if (vars.includes(m[1])) byKey.set(m[1] + (m[2] || ""), { v: m[1], val: m[3].replace(/\s+/g, "") });
   }
@@ -975,6 +981,16 @@ export function claimReadings(val) {
   return [v];
 }
 
+// Reševalnik je pokazal, da enačba nima realne rešitve: [neznanka] ali null.
+function noSolution(p) {
+  const a = String(p.answerTex || "").trim();
+  const m = /^([a-zA-Z])\s*\\in\s*\\emptyset$/.exec(a);
+  if (m) return [m[1]];
+  if (!/^D\s*<\s*0$/.test(a)) return null;
+  const letters = [...new Set(String(p.problem || "").match(/(?<![a-zA-Z])[a-zA-Z](?![a-zA-Z])/g) || [])];
+  return letters.length === 1 ? letters : null;
+}
+
 /**
  * Sodba kode o učenčevem rezultatu, če je naloga iz prvega sporočila znana (presolve) in učenec navede
  * vrednost. Vrne opombo za model (pravilno ali napačno z rešitvijo) ali null, če koda ne more soditi.
@@ -983,7 +999,11 @@ export function claimNote(text, pre) {
   const problems = (pre?.problems || []).filter((p) => p.type === "equation" || p.type === "arith");
   if (problems.length !== 1) return null;
   const p = problems[0];
-  const vars = p.type === "arith" ? ["r"] : [...new Set([...String(p.answerTex || "").matchAll(/([a-zA-Z])(?:_\{?\d+\}?)?\s*=/g)].map((m) => m[1]))];
+  let vars = p.type === "arith" ? ["r"] : [...new Set([...String(p.answerTex || "").matchAll(/([a-zA-Z])(?:_\{?\d+\}?)?\s*=/g)].map((m) => m[1]))];
+  // AUDIT-092: enačba brez realne rešitve ($x^6 = -64$ → $x \in \emptyset$, $x^2 = -4$ → $D < 0$). Vsako učenčevo
+  // vrednost spodaj vstavi verifyAi, zato zadošča neznanka iz rešitve ali edina črka naloge.
+  const none = p.type === "equation" ? noSolution(p) : null;
+  if (none && !vars.length) vars = none;
   if (!vars.length) return null;
   const claims = claimValues(text, vars);
   if (!claims.length) return null;
@@ -1012,11 +1032,11 @@ export function claimNote(text, pre) {
       }
       if (!right) {
         if (vals.length > 1) return null;
-        wrong = `${c.v} = ${c.val}`;
+        wrong = `${c.v} = ${c.shown || c.val}`;
       }
     }
   }
-  const task = p.type === "arith" ? `$${p.problemTex} = ${p.answer}$` : `$${p.problemTex}$ → $${p.answer}$`;
+  const task = p.type === "arith" ? `$${p.problemTex} = ${p.answer}$` : none ? `that $${p.problemTex}$ has no real solution` : `$${p.problemTex}$ → $${p.answer}$`;
   const finding = wrong ? `the student's result ${wrong} is WRONG; the exact result of the task is ${task}` : `the student's result is CORRECT (exact result of the task: ${task})`;
   return (
     `<${NOTE_TAG}>\nAn exact check compared the student's last message with the task: ${finding}.\n` +
