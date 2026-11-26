@@ -342,3 +342,28 @@ test("AUDIT-064 (pregled): zaokrožene vrednosti in zapis števil kot v kalkulat
   }
   assert.ok(visibleIssue(R`$x = 1{,}5$` + block("resi: x^2=2 | x | sqrt(2)"), parseClaims(R`$x = 1{,}5$` + block("resi: x^2=2 | x | sqrt(2)"))));
 });
+
+// Pregled prevzema (ugotovitev 4): vidno besedilo ob bloku RACUN po istih pravilih kot končne vrednosti v live-check.js;
+// napaka je le končna navedena vrednost, ki ni enaka nobeni rešitvi iz blokov.
+test("pregled prevzema: pogoj, poskus, učenčev zapis, ≐ in izbran koren niso napaka", async () => {
+  const { visibleIssue } = await import("../server/racun.js");
+  const R = String.raw;
+  const block = (b) => `\n<<RACUN\n${b}\n>>`;
+  const none = [
+    R`Za $x = 0$ je leva stran $3$. Kaj moraš narediti, da dobiš 11?` + block("resi: 2*x+3=11 | x | 4"),
+    R`Vstavimo $x = 1$: $1 - 5 + 6 = 2 \neq 0$. Rešitvi sta $2$ in $3$.` + block("resi: x^2-5*x+6=0 | x | 2, 3"),
+    R`Preizkus: pri $x = 1$ je leva stran 5, kar ni 11.` + block("resi: 2*x+3=11 | x | 4"),
+    R`Ti si napisal $x = 5$. Kaj dobiš, če vstaviš?` + block("resi: 2*x+3=11 | x | 4"),
+    R`Najprej poglej graf: presečišče z osjo $y$ je pri $x = 0$.` + block("resi: 2*x+3=11 | x | 4"),
+    R`$x = \frac{1}{3} \doteq 0,33$` + block("resi: 3*x=1 | x | 1/3"),
+    R`$x = \sqrt{2} \doteq 1{,}41$` + block("resi: x^2=2 | x | -sqrt(2), sqrt(2)"),
+    R`Telo pade na tla po $t = 2$ s.` + block("resi: 5*t^2=20 | t | -2, 2"),
+    R`Pozitivna rešitev je $x = 4$ (dolžina ne more biti negativna).` + block("resi: x^2=16 | x | -4, 4"),
+    R`Na začetku je $x = 0$, nato dobimo rešitev $x = 4$.` + block("resi: 2*x+3=11 | x | 4"),
+    R`Prva: $x = 4$. Druga: $x = 2$.` + block("resi: 3*x-2=10 | x | 4\nresi: x+1=3 | x | 2"),
+  ];
+  for (const t of none) assert.equal(visibleIssue(t, parseClaims(t)), null, t);
+  for (const t of [R`Torej $x = 5$.` + block("resi: 2*x+3=11 | x | 4"), R`Rešitev je $t = 3$ s.` + block("resi: 5*t^2=20 | t | -2, 2"), R`Vstavimo $x = 1$: leva stran je 5. Rešitev je $x = 5$.` + block("resi: 2*x+3=11 | x | 4")]) {
+    assert.ok(visibleIssue(t, parseClaims(t)), t);
+  }
+});

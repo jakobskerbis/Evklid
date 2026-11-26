@@ -16,6 +16,7 @@ import { parseSpecies } from "../public/graph/chemcore.js";
 import { MASSES } from "../public/graph/pse-data.js";
 import { texToText } from "../public/scan/solvecore.js";
 import { parse, compile, calcText } from "../public/graph/math.js";
+import { notClaimAt } from "./live-check.js";
 
 // Tudi »RAČUN« (model piše slovensko); bloka učenec v nobeni obliki ne vidi (server/meta.js).
 const BLOCK_RE = /<<\s*RA[CČ]UN\b([\s\S]*?)>>/g;
@@ -169,36 +170,56 @@ const numOf = (t) => {
   }
 };
 const close = (a, b) => Math.abs(a - b) <= 1e-6 * Math.max(1, Math.abs(a), Math.abs(b));
-/** Vrednosti neznanke v vidnem besedilu (brez blokov): »$x = 4$«, »$x_1 = \frac{1}{2}$«, »$x = 8/2 = 4$«. */
+/**
+ * Zadnja navedena vrednost vsake oznake neznanke (x, x_1, x_2) v vidnem besedilu (brez blokov): »$x = 4$«,
+ * »$x_1 = \frac{1}{2}$«, »$x = 8/2 = 4$«. Pregled prevzema (26. 11.): ista pravila kot končne vrednosti v
+ * server/live-check.js (notClaimAt): pogoj (»za $x = 0$ je leva stran 3«, »pri $x = 0$«), poskus (»Vstavimo $x = 1$«,
+ * »Preizkus: …«), učenčev zapis (»Ti si napisal $x = 5$«), vprašanje in namig niso rešitev. Približek (≈, ≐) se ne bere.
+ */
 function visibleValues(text, v) {
   const plain = String(text || "").replace(BLOCK_RE, "").replace(/<<META[^>]*>>/g, "");
-  const out = [];
-  for (const m of plain.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) {
-    const tex = m[1] ?? m[2];
-    if (/\\pm|\\mp|[±∓]|\\approx|≈|\\neq|≠|<|>|\\le|\\ge/.test(tex)) continue;
-    // ločila med vrednostmi: », « (z presledkom), »;«, »in«, \quad; »2,5« je eno število
-    for (const piece of texToText(tex).split(/,\s+|;|\bin\b/)) {
-      const parts = piece.split("=").map((x) => x.trim());
-      if (parts.length < 2 || !new RegExp(`^${v}(?:_?\\(?\\d\\)?)?$`).test(parts[0])) continue;
-      const last = parts.at(-1).replace(/[.]$/, "");
-      const n = numOf(last);
-      // zaokrožena vrednost (»x = 1,41« za √2, »0,33« za 1/3): pol zadnjega zapisanega mesta
-      const dec = /^[-−+]?\d+[.,](\d+)$/.exec(last.replace(/\s/g, ""))?.[1].length ?? null;
-      if (n !== null) out.push({ n, tol: dec === null ? 0 : 0.5 * 10 ** -dec });
+  const lhsRe = new RegExp(`^${v}(?:_?\\(?(\\d)\\)?)?$`);
+  const out = new Map();
+  for (const line of plain.split("\n")) {
+    for (const m of line.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) {
+      const tex = m[1] ?? m[2];
+      if (/\\pm|\\mp|[±∓]|\\approx|\\doteq|≈|≐|\\neq|≠|<|>|\\le|\\ge/.test(tex)) continue;
+      if (notClaimAt(line, m.index, { value: true })) continue;
+      // ločila med vrednostmi: », « (z presledkom), »;«, »in«, \quad; »2,5« je eno število
+      for (const piece of texToText(tex).split(/,\s+|;|\bin\b/)) {
+        const parts = piece.split("=").map((x) => x.trim());
+        const lhs = parts.length >= 2 ? lhsRe.exec(parts[0]) : null;
+        if (!lhs) continue;
+        const last = parts.at(-1).replace(/[.]$/, "");
+        const n = numOf(last);
+        // zaokrožena vrednost (»x = 1,41« za √2, »0,33« za 1/3): pol zadnjega zapisanega mesta
+        const dec = /^[-−+]?\d+[.,](\d+)$/.exec(last.replace(/\s/g, ""))?.[1].length ?? null;
+        if (n !== null) out.set(lhs[1] || "", { n, tol: dec === null ? 0 : 0.5 * 10 ** -dec });
+      }
     }
   }
-  return out;
+  return [...out.values()];
 }
+/**
+ * Končna vidna vrednost neznanke, ki ni enaka nobeni rešitvi iz blokov »resi« za to neznanko, je napaka. Vrednost, ki
+ * se ujema s katerokoli rešitvijo, je v redu (»$t = 2$ s« ob rešitvah -2, 2; »Pozitivna rešitev je $x = 4$«). Ob dvomu
+ * (rešitve iz bloka ni mogoče prebrati) nič.
+ */
 export function visibleIssue(text, claims) {
+  const sols = new Map();
   for (const c of claims) {
     if (c.op !== "solve" || c.args.length < 3 || !/^[a-zA-Z]$/.test(c.args[1])) continue;
-    const claimed = c.args[2].split(/[,;]/).map((x) => numOf(x.trim())).filter((x) => x !== null);
-    if (!claimed.length) continue;
-    const seen = visibleValues(text, c.args[1]);
-    // le kadar besedilo vrednost neznanke navede (način A rezultata ne pove): vsaka rešitev iz bloka mora biti v besedilu
+    const raw = c.args[2].split(/[,;]/).map((x) => x.trim()).filter(Boolean);
+    const vals = raw.map(numOf);
+    const prev = sols.get(c.args[1]) || { vals: [], text: [], unsure: false };
+    sols.set(c.args[1], { vals: [...prev.vals, ...vals.filter((x) => x !== null)], text: [...prev.text, c.args[2]], unsure: prev.unsure || !raw.length || vals.includes(null) });
+  }
+  for (const [v, s] of sols) {
+    if (s.unsure) continue;
     const near = (x, y) => close(x.n, y) || Math.abs(x.n - y) <= x.tol * (1 + 1e-9);
-    if (seen.length && claimed.some((y) => !seen.some((x) => near(x, y)))) {
-      return `the answer text states ${c.args[1]} = ${seen.map((x) => String(+x.n.toPrecision(10)).replace(".", ",")).join(", ")}, but the exactly checked solution is ${c.args[1]} = ${c.args[2]}`;
+    const bad = visibleValues(text, v).filter((x) => !s.vals.some((y) => near(x, y)));
+    if (bad.length) {
+      return `the answer text states ${v} = ${bad.map((x) => String(+x.n.toPrecision(10)).replace(".", ",")).join(", ")}, but the exactly checked solution is ${v} = ${s.text.join("; ")}`;
     }
   }
   return null;

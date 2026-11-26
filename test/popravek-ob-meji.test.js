@@ -24,7 +24,7 @@ class NearCap extends Usage {
     return h;
   }
 }
-async function run({ answers, fixText = "Popravek: $7 \\cdot 8 = 56$.", n = 1, msgs }) {
+async function run({ answers, fixText = "Popravek: $7 \\cdot 8 = 56$.", n = 1, msgs, review = "OK" }) {
   const store = openDb(":memory:");
   const calls = [];
   const streamFn = async ({ system, mode, onText }) => {
@@ -34,7 +34,10 @@ async function run({ answers, fixText = "Popravek: $7 \\cdot 8 = 56$.", n = 1, m
     if (!isFix) onText(text);
     return { content: [{ type: "text", text }], text, stopReason: "end_turn", model: modeParams(mode).model, usage: { input_tokens: 100, output_tokens: 20 } };
   };
-  const reviewCreateFn = async (p) => ({ content: [{ type: "text", text: "OK" }], stop_reason: "end_turn", model: p.model, usage: { input_tokens: 10, output_tokens: 1 } });
+  const reviewCreateFn = async (p) => {
+    calls.push("review");
+    return { content: [{ type: "text", text: review }], stop_reason: "end_turn", model: p.model, usage: { input_tokens: 10, output_tokens: 1 } };
+  };
   const server = createApp(store, { streamFn, reviewCreateFn, usage: n == null ? undefined : new NearCap(store.db, n) }).listen(0);
   const base = `http://127.0.0.1:${server.address().port}`;
   const call = async (p, b) => {
@@ -86,4 +89,17 @@ test("meja porabe: ponovni odgovor po napačni sodbi ni mogoč → opozorilo o s
   assert.equal(r.calls.filter((c) => c === "chat").length, 2, "brez ponovnega odgovora");
   assert.match(r.display, /Da, pravilno![\s\S]*> \*\*Popravek:\*\* Ta ocena tvojega koraka morda ni pravilna/);
   assert.match(r.skips, /meja-sodba/);
+});
+
+// Pregled prevzema (ugotovitev 7): ob meji opozorilo o sodbi le, ko je sodila koda; ugotovitev modela za pregled sama
+// (lahko se zmoti) ne prikaže »Ta ocena tvojega koraka morda ni pravilna« (kot pri popravku odgovora).
+test("pregled prevzema: meja porabe, sodbo je zavrnil le model za pregled → brez opozorila", async () => {
+  const msgs = ["Mama je 3-krat starejša od hčere, skupaj imata 40 let. Koliko je stara hči?", "hči je stara 7 let"];
+  for (const n of [2, 3, 4]) {
+    const r = await run({ answers: ["Kaj narediš najprej?", "Da, pravilno!"], n, msgs, review: "NAPAKA: hči je stara 10 let" });
+    if (!r.calls.includes("review")) continue; // pod to mejo pregled sodbe sploh ni stekel
+    assert.doesNotMatch(r.display, /Ta ocena tvojega koraka/, `n=${n}: ${r.calls}`);
+    return;
+  }
+  assert.fail("pregled sodbe z modelom ni stekel");
 });

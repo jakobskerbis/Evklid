@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { modeParams } from "../server/claude.js";
-import { presolve, codeFindings, needsReview, fixBlock, insertFix, withNote, claimNote, hasClaims, claimReviewFor, LIVE_REVIEW_SYSTEM, LIVE_REVIEW_SS_DAILY_USD, LIVE_REVIEW_PER_PUPIL, reviewBlock, reviewKindFor, reviewAnswer, SKIP_KV, valenceIssue, groupIssue, periodIssue, pairsIssue, lewisIssue, subscriptIssue, ionRatioIssue, celsiusIssue } from "../server/live-check.js";
+import { presolve, codeFindings, looksLikeTask, needsReview, fixBlock, insertFix, withNote, claimNote, hasClaims, claimReviewFor, LIVE_REVIEW_SYSTEM, LIVE_REVIEW_SS_DAILY_USD, LIVE_REVIEW_PER_PUPIL, reviewBlock, reviewKindFor, reviewAnswer, SKIP_KV, valenceIssue, groupIssue, periodIssue, pairsIssue, lewisIssue, subscriptIssue, ionRatioIssue, celsiusIssue } from "../server/live-check.js";
 
 const META = '\n<<META subject=MAT topic="enačbe" error=0 mode=A flag=none done=0>>';
 const LONG = "Pri tekmovalnih nalogah iz geometrije najprej narišemo skico in označimo vse dane količine. Pitagorov izrek velja v vsakem trikotniku, zato ga uporabimo kar takoj, brez dodatnega preverjanja kotov.";
@@ -1235,4 +1235,78 @@ test("AUDIT-069: napačen gol rezultat dobi issue, pravilen, zaokrožen in voden
     ["Koliko je 7 · 8 + 2?", "Najprej izračunaj $7 \\cdot 8 = 56$, nato prištej 2.", false], // vmesni korak, ne rezultat
   ];
   for (const [q, a, bad] of cases) assert.equal(!!codeFindings(a, presolve(q, { first: true }), q).issue, bad, `${q} | ${a}`);
+});
+
+// Pregled prevzema (26. 11.): koda ne sme biti slabša od main; ob dvomu nič (lažen »napaka« stane klic popravka ali
+// brez meje učencu pokaže napačno »V tem odgovoru je napaka«).
+test("pregled prevzema (1): inštruktor potrdi učenčevo napačno vrednost ali račun → napaka kot na main", () => {
+  const R = String.raw;
+  const cases = [
+    [R`Reši $2x + 3 = 11$. Dobil sem $x = 5$, je prav?`, R`Da, $x = 5$ je pravilno. Bravo!`],
+    [R`Reši $2x + 3 = 11$. Mislim, da je $x = 5$.`, R`Odlično, $x = 5$ je rešitev.`],
+    [R`Izračunaj $7 \cdot 8 + 2$. Jaz dobim $7 \cdot 8 = 54$.`, R`Prav, $7 \cdot 8 = 54$, nato prišteješ 2 in dobiš $56$.`],
+  ];
+  for (const [q, a] of cases) assert.ok(codeFindings(a, presolve(q), q).issue, a);
+  // citat z zavrnitvijo ostane brez popravka
+  const st = "Izračunal sem 7 · 8 = 54, ali je prav?";
+  assert.equal(codeFindings(R`$7 \cdot 8 = 54$ je napaka, ki jo pogosto vidim; prav je $56$.`, null, st).issue, null);
+});
+
+test("pregled prevzema (2): gol rezultat le, ko je vprašanje samo ta račun, in le končni rezultat", () => {
+  const R = String.raw;
+  const none = [
+    [R`Koliko je $\frac{3}{4}$ od 200?`, "**Rezultat:** 150"],
+    [R`V razredu je $\frac{2}{5}$ deklet, vseh je 25. Koliko je fantov?`, "**Odgovor:** 15 fantov"],
+    [R`Zapiši $\frac{3}{4}$ v odstotkih.`, "75 %"],
+    [R`Koliko je ostanek pri deljenju $17 : 5$?`, "**Odgovor:** 2"],
+    [R`Zaokroži $\frac{17}{3}$ na celo število.`, "**Rezultat:** 6"],
+    [R`Zapiši $\frac{7}{4}$ kot mešano število.`, "**Rezultat:** 1 3/4"],
+    [R`Izračunaj $7 \cdot 8$ in nato prištej 2.`, "**Rezultat:** 58"],
+    [R`Kvadrat ima stranico $3 + 2$ cm. Ploščina?`, "25 cm"],
+    [R`Koliko je $2^5$ deljeno s 4?`, "**8**"],
+    [R`Izračunaj $7 \cdot 8 + 2$.`, "**1. korak:** množenje\nRezultat: 56\n\n**2. korak:** seštevanje\nRezultat: 58"],
+    [R`Izračunaj $7 \cdot 8 + 2$.`, "Rezultat: 56\n\nZdaj prištej še 2."],
+    [R`Izračunaj $7 \cdot 8$.`, "Odgovor: 56\nPreizkus: $56 : 8 = 7$"],
+  ];
+  for (const [q, a] of none) assert.equal(codeFindings(a, presolve(q), q).issue, null, `${q} | ${a}`);
+  // skrita opomba ne navaja »točnega rezultata« dela besedilne naloge (»3/4 = 3/4«)
+  for (const q of [R`Koliko je $\frac{3}{4}$ od 200?`, R`Zapiši $\frac{3}{4}$ v odstotkih.`, R`Koliko je ostanek pri deljenju $17 : 5$?`, R`Izračunaj $7 \cdot 8$ in nato prištej 2.`]) assert.equal(presolve(q), null, q);
+  // učenčev gol odgovor ni nova naloga (looksLikeTask kot na main)
+  for (const t of ["1/2", "20 %", "3 + 5", "0,5"]) assert.equal(looksLikeTask(t), false, t);
+  // prave ulovitve ostanejo
+  assert.ok(codeFindings("**54**", presolve(R`Izračunaj $7 \cdot 8$.`), "").issue);
+  assert.ok(codeFindings("Rezultat: 59\n\nŽeliš še eno nalogo?", presolve(R`Izračunaj $7 \cdot 8 + 2$.`), "").issue);
+  assert.ok(codeFindings("**Rezultat:** 242", presolve("Izračunaj 81% od 300"), "").issue);
+});
+
+test("pregled prevzema (3): odvod le funkcije iz naloge; primer, pomožne funkcije in pogoji niso napaka", () => {
+  const R = String.raw;
+  const none = [
+    ["Odvajaj $\\sin(x^2)$.", R`Notranja funkcija: $g(x) = x^2$, njen odvod $g'(x) = 2x$.` + "\nZdaj odvajaj še zunanjo funkcijo."],
+    ["Odvajaj $\\sin(x^2)$.", R`$g'(x)=2x$`],
+    ["Odvajaj $x^2 \\sin x$.", R`Naj bo $u(x) = x^2$ in $v(x) = \sin x$. Potem $u'(x) = 2x$ in $v'(x)=\cos x$.`],
+    ["Odvajaj $x^3$.", R`Primer: $f(x)=x^2$ ima odvod $f'(x) = 2x$.` + "\nZdaj poskusi sam z $x^3$."],
+    ["Odvajaj $x^3$.", R`$f'(x) = 3x^2 \quad (x \in \mathbb{R})$`],
+    ["Odvajaj $\\ln x$.", R`$f'(x) = \frac{1}{x}, \; x > 0$`],
+    ["Odvajaj $x^3$.", R`$f'(x) = 3x^2 \text{ za vse } x$`],
+    ["Odvajaj $x^3$.", R`Najprej $f'(x) = 2x$ … ne, $f'(x) = 3x^2$.`],
+  ];
+  for (const [q, a] of none) assert.equal(codeFindings(a, presolve(q), q).issue, null, a);
+  for (const [q, a] of [["Odvajaj $x^3$.", R`$f'(x) = 2x$`], ["Odvajaj $x^3$.", R`$y' = 2x$`], ["Odvajaj $g(x) = x^3$.", R`$g'(x) = 2x$`]]) assert.ok(codeFindings(a, presolve(q), q).issue, a);
+});
+
+test("pregled prevzema (5): »če«, poskus in pogosta zmota niso trditev; »Če najprej množimo: …« je", () => {
+  const R = String.raw;
+  const EQ = "Reši $2x + 3 = 11$.";
+  const AR = R`Izračunaj $7 \cdot 8 + 2$.`;
+  const none = [
+    [EQ, R`Če vzamemo $x = 5$, je leva stran $13$, torej preveč.`],
+    [AR, R`Pogosta zmota: $7 \cdot 8 + 2 = 70$ dobiš, če najprej sešteješ. Prav je $58$.`],
+    [AR, R`Če pozabiš na vrstni red, dobiš $7 \cdot 8 + 2 = 70$.`],
+    [AR, R`$7 \cdot 8 + 2 = 70$, če najprej sešteješ.`],
+    [EQ, R`Vstavimo $x = 1$: leva stran je $5$. Rešitev je $x = 4$.`],
+    [EQ, R`Rešitev je $x = 4$ ali $x = 5$?`],
+  ];
+  for (const [q, a] of none) assert.equal(codeFindings(a, presolve(q), q).issue, null, a);
+  for (const [q, a] of [[AR, R`Če najprej množimo: $7 \cdot 8 = 54$, potem prištejemo 2.`], [EQ, R`Če od obeh strani odštejemo 3: $2x = 8$. Torej $x = 5$.`], [EQ, R`Vstavimo $x = 1$: leva stran je $5$. Rešitev je $x = 5$.`]]) assert.ok(codeFindings(a, presolve(q), q).issue, a);
 });
