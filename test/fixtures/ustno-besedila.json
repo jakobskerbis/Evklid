@@ -2646,7 +2646,7 @@
  "MAT-SS-3/skalarni-produkt#n5": "Pogosta napaka pri tej snovi: »Produkt nič pomeni ničelni vektor«. Pojasni, kaj je tu narobe in kako je prav.",
  "MAT-SS-3/skalarni-produkt#s": "Povej, kaj veš o temi »Skalarni produkt«. Omeni glavne stvari.",
  "MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#p0": "Napovej, kje je središče elipse $\\frac{(x + 1)^2}{4} + \\frac{(y - 5)^2}{25} = 1$ in na kateri premici ležita njeni gorišči.",
- "MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#p1": "Premica, vzporedna asimptoti hiperbole, seka hiperbolo v natanko eni točki. Zakaj kljub temu ni tangenta?",
+ "MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#p1": "Premica, vzporedna asimptoti hiperbole (a ne asimptota sama), seka hiperbolo v natanko eni točki. Zakaj kljub temu ni tangenta?",
  "MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#p3": "Kako iz enačbe elipse s središčem v izhodišču dobiš enačbo elipse s središčem v točki $S(x_0, y_0)$? Utemelji, zakaj je v oklepajih minus.",
  "MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#p4": "Pojasni, kako z raztegom krožnice $x^2 + y^2 = a^2$ vzdolž osi $y$ dobiš elipso, in izpelji njeno enačbo.",
  "MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#p5": "Navedi primer premice, ki ima s hiperbolo natanko eno skupno točko, pa ni njena tangenta, in pojasni, zakaj.",
