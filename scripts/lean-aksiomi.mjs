@@ -19,7 +19,8 @@ function walk(dir, out = []) {
   return out;
 }
 
-// Imena izrekov: `theorem ime` znotraj `namespace X` (gnezdenje imenskih prostorov upoštevano).
+// Imena izrekov: `theorem ime` znotraj `namespace X` (gnezdenje imenskih prostorov upoštevano). `private theorem`
+// se izpusti: od zunaj ni dosegljiv, njegovi aksiomi pa se pokažejo pri javnih izrekih, ki ga uporabljajo.
 export function izreki(src) {
   const ns = [];
   const out = [];
@@ -27,7 +28,7 @@ export function izreki(src) {
     let m;
     if ((m = line.match(/^namespace\s+(\S+)/))) ns.push(m[1]);
     else if ((m = line.match(/^end\s+(\S+)/)) && ns.at(-1) === m[1]) ns.pop();
-    else if ((m = line.match(/^(?:private\s+|protected\s+)?theorem\s+([^\s:({[]+)/))) out.push([...ns, m[1]].join("."));
+    else if ((m = line.match(/^(?:protected\s+)?theorem\s+([^\s:({[]+)/))) out.push([...ns, m[1]].join("."));
   }
   return out;
 }

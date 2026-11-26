@@ -24,7 +24,7 @@ const pdfHref = (path, { topic = "", unit = "" } = {}) => {
   return `/ucbenik/${path}/${topic}?${q}#natisni`;
 };
 
-let ctx = null; // { api, renderRich, escapeHtml, getStudent, openTopic, nextPractice, learnWithTutor, showView, openLab, open3d }
+let ctx = null; // { api, renderRich, renderMath, escapeHtml, getStudent, openTopic, nextPractice, learnWithTutor, showView, openLab, open3d }
 const $ = (sel) => document.querySelector(sel);
 // Zaporedni številki prikaza: odgovor starejše zahteve (prejšnja poizvedba iskanja, prej kliknjena lekcija,
 // domača stran po »Nazaj«) ne sme prepisati novejšega, ki je prišel prej.
@@ -77,6 +77,25 @@ const ic = (n) => iconFn(n);
 export function initTextbook(c) {
   ctx = c;
   wireSelectionAsk();
+  // Kazalo: položaj seznama si zapomnimo (ob vrnitvi iz lekcije ali z drugega zavihka se kazalo izriše znova).
+  $("#view-textbook")?.addEventListener(
+    "scroll",
+    (e) => {
+      if (!current && !tb.topicId && e.target.id === "view-textbook") tb.homeY = { k: homeKey(), y: e.target.scrollTop };
+    },
+    { passive: true },
+  );
+}
+
+// Kazalo z istim predmetom, ravnjo, iskanjem in načinom: ob vrnitvi isti položaj seznama (UX PR 2: izguba stanja ob
+// navigaciji; prej je vsak izris kazala skočil na vrh).
+const homeKey = () => [tb.subject, tb.book, tb.group, tb.query, tb.browse, tb.mode].join("|");
+async function renderHomeKeep() {
+  const k = homeKey();
+  const y = tb.homeY?.k === k ? tb.homeY.y : 0;
+  await renderHome();
+  const box = $("#view-textbook");
+  if (y && box && !tb.topicId && homeKey() === k) box.scrollTop = y;
 }
 
 // ---------- Označi besedilo in vprašaj tutorja ----------
@@ -184,6 +203,12 @@ function wireSelectionAsk() {
 }
 
 const esc = (s) => ctx.escapeHtml(String(s ?? ""));
+// Odlomek zadetka iskanja: besedilo ubežano, formule $…$ (strežnik jih ne odreže na pol) izrisane s KaTeX (N-07).
+const snipHtml = (s) =>
+  String(s)
+    .split(/(\$[^$\n]+\$)/)
+    .map((p, i) => (i % 2 && ctx.renderMath ? ctx.renderMath(p.slice(1, -1), false, false) : esc(p)))
+    .join("");
 
 // Odpre učbenik (kazalo ali zadnjo odprto lekcijo).
 // Tipka Nazaj (telefon): iz odprte lekcije nazaj na seznam lekcij. Vrne true, če je bila lekcija odprta.
@@ -193,7 +218,7 @@ export function textbookBack() {
   if (gr) return setGradiva(gr, false, gr.contains(document.activeElement)), true;
   if (!tb.topicId || !$("#view-textbook") || $("#view-textbook").closest("[hidden]")) return false;
   tb.topicId = null;
-  renderHome();
+  renderHomeKeep();
   window.scrollTo(0, 0);
   return true;
 }
@@ -212,7 +237,7 @@ export async function showTextbook() {
   if (!box) return;
   syncProfile();
   if (tb.topicId) return renderLesson(tb.topicId);
-  await renderHome();
+  await renderHomeKeep();
 }
 
 // Na širokem zaslonu so poskusi v desnem stolpcu (ostanejo vidni med branjem), sicer med besedilom.
@@ -294,7 +319,7 @@ async function renderHome() {
       <h1>${ic("book-open")}${esc(t("nav.textbook"))}</h1>
       <p class="muted">${esc(t(tb.browse ? "tbk.introBrowse" : "tbk.intro"))}</p>
       <div class="tb-search">
-        <input id="tb-q" type="search" placeholder="${esc(t("tbk.searchPh"))}" value="${esc(tb.query)}" aria-label="${esc(t("tbk.searchAria"))}" autocomplete="off">
+        <input id="tb-q" type="search" data-ne-prekrij placeholder="${esc(t("tbk.searchPh"))}" value="${esc(tb.query)}" aria-label="${esc(t("tbk.searchAria"))}" autocomplete="off">
       </div>
       ${tb.browse ? "" : `<button type="button" class="text-btn tb-browse" id="tb-browse">${ic("library")}${esc(t("tbk.browse"))}</button>`}
       <div class="tb-filters"${tb.browse ? "" : " hidden"}>
@@ -388,7 +413,7 @@ async function renderBody() {
             (h) => `<li><button type="button" class="tb-topic" data-lesson="${esc(h.id)}">
               <span class="tb-name">${esc(h.name)}</span>
               <span class="tb-sub">${esc(h.pathLabel)}${LOCILO}${esc(h.unit)}</span>
-              ${h.snippet ? `<span class="tb-snip">${esc(h.snippet)}</span>` : ""}
+              ${h.snippet ? `<span class="tb-snip" dir="auto">${snipHtml(h.snippet)}</span>` : ""}
             </button></li>`,
           )
           .join("")}</ul>`
@@ -636,7 +661,7 @@ async function renderLesson(topicId, name = "") {
   const locked = !L.interactive && !!L.locked?.demo;
   const demos = L.demos || (L.demo ? [L.demo] : []);
   const demoHtml = demos.length
-    ? demos.map((d, i) => `<section class="card tb-demo"><h2>${ic("flask-conical")}Preizkusi sam: ${esc(d.title)}</h2><div class="tb-demo-mount" data-sim="${i}"></div></section>`).join("")
+    ? demos.map((d, i) => `<section class="card tb-demo"><h2>${ic("flask-conical")}Preizkusi sam: ${esc(d.title)}</h2><div class="tb-demo-mount" data-sim="${i}" data-ne-prekrij></div></section>`).join("")
     : locked
       ? `<section class="card tb-locked"><h2>${ic("lock")}Poskus: ${esc(L.locked.demo)}</h2>
           <p>Interaktivni poskusi, simulacije in sprotno preverjanje so na voljo v plačljivem paketu in med 7-dnevnim preizkusom. Besedilo lekcije in PDF sta brezplačna.</p>
@@ -805,7 +830,7 @@ async function renderLesson(topicId, name = "") {
 
   $("#tb-back").addEventListener("click", () => {
     tb.topicId = null;
-    renderHome();
+    renderHomeKeep();
   });
   wireGradivaMenu(box.querySelector(".tb-gr-menu"));
   wireLessonReport($("#tb-report"), {

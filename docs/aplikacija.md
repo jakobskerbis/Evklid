@@ -82,6 +82,16 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
   (`SEJA_POZNEJE`), so v `<template data-evklid-slogi>` do konca zagona (`withSessionStyles`); skener, zbirke in lige
   (`ZASLONI_POZNEJE`) app.js naloži po zagonu (`lenModul`, `zasloniPozneje`). Pasici sta znani iz `/api/config`.
   Izklop: `EVKLID_ZACETNI_PODATKI=0`. Test `test/zacetni-podatki.test.js`.
+- Ponovni obisk prijavljenega (N-08, 25. 11. 2026): service worker postreže shranjeno vstopno stran (brez začetnih
+  podatkov, ker je osebna stran `no-store`), zato `zacetek.js` (`vnaprejPaket`, samo ko stran nadzira service worker,
+  podatkov v strani ni in je bila naprava že prijavljena, `evklid.racun`; brez računov ni klica) iste podatke zahteva v enem klicu `GET /api/zacetni-podatki` (`zacetniPodatkiKlic`: isti
+  `zberi` kot za stran; samo `Sec-Fetch-Site: same-origin` ali brez, ne navigacija, ne `X-App-Client`, ne predhodno
+  nalaganje, piškotka seje in naprave; `no-store`, brez ETag; brez podatkov 204). Klic app.js za naslov iz paketa
+  (`PAKET`) počaka paket; česar v paketu ni, gre na strežnik. Neuspeh paketa (204, napaka, star strežnik) → isti štirje
+  klici kot prej; sprememba (klic, ki ni GET) pred odgovorom paket zavrže. Vsebina naslednjih tem z Učne poti
+  (`kliki.js temeVnaprej`) je prenos v ozadju (`ozadje`), ki ga `finishStart` ne čaka. Meritev (telefon, CPU 4×,
+  Slow 4G, strežnik 0,5 CPU): app.js pripravljen ob ponovnem obisku 4,7 → 3,3 s. Testi `test/zacetek-paket.test.js`,
+  `test/pot-zagon.test.js`, `test/zacetni-podatki.test.js`.
 - Pristajalna stran takoj (j 19. 11. 2026, zunanji pregled »LCP ~18 s na počasnem 4G«): obiskovalec brez seje
   (brez piškotka `sm_session`, ne aplikacija `EvklidApp/`, računi vklopljeni) dobi pristajalno stran že v HTML
   (`server/pristajalna-takoj.js landingPage`, `server/vstopna-stran.js withLanding`): isti izris kot v brskalniku
