@@ -678,8 +678,15 @@ export function placeToast() {
   // Brez spodnje vrstice ostane nad varnim območjem (domača črta na iPhonu), kot v style.css.
   const odDna = window.innerHeight - dno;
   el.style.bottom = odDna > 1 ? `${odDna + 16}px` : "calc(16px + var(--varno-sp, env(safe-area-inset-bottom, 0px)))";
-  const r = el.getBoundingClientRect();
-  const h = r.height;
+  // Mesto v mirovanju: brez premika animacije prikaza (style.css @keyframes rise), sicer bi bilo prvo mesto zamaknjeno in bi
+  // obvestilo med dvigom zdrsnilo čez vrstico za pisanje, ob naslednjem preverjanju pa poskočilo (pregled 3).
+  const rr = el.getBoundingClientRect();
+  let dy = 0;
+  try {
+    dy = new DOMMatrixReadOnly(getComputedStyle(el).transform).f || 0;
+  } catch {}
+  const r = { left: rr.left, right: rr.right, top: rr.top - dy };
+  const h = rr.height;
   // 4 px razmika do vsake ovire, da obvestilo ne sede tik na rob vrstice za pisanje.
   const pokrije = (y) => ovire.filter((o) => Math.min(r.right, o.right) - Math.max(r.left, o.left) > 2 && Math.min(y + h, o.bottom + 4) - Math.max(y, o.top - 4) > 0).length;
   let best = { y: r.top, n: pokrije(r.top) };

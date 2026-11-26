@@ -446,7 +446,8 @@ body.onboarding .test-notice .tn-report, body.auth-mode .test-notice .tn-report 
   animation: rise 0.25s ease;
 }
 .toast svg.i { color: var(--gold); }
-@keyframes rise { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
+/* Dvig največ 4 px: toliko razmika do ovir pusti okna.js placeToast, da obvestilo ob prikazu ne zdrsne čez vrstico za pisanje. */
+@keyframes rise { from { opacity: 0; transform: translate(-50%, 4px); } to { opacity: 1; transform: translate(-50%, 0); } }
 
 /* ---------- klepet z inštruktorjem ---------- */
 .chat-view { display: grid; grid-template-columns: var(--split-chat, 270px) minmax(0, 1fr); }

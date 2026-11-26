@@ -421,3 +421,30 @@ test("telefon 390 × 844: obvestilo je nad odprto Evklidovo tipkovnico, ne pod n
     await ctx.close();
   });
 });
+
+test("telefon 360 × 740, klepet: obvestilo med dvigom (animacija prikaza) ne zdrsne čez vrstico za pisanje (pregled 3)", opts, async () => {
+  await withApp(async (base) => {
+    const { ctx, p, errors } = await phone(base, { width: 360, height: 740 });
+    await p.waitForTimeout(300);
+    const najnizje = await p.evaluate(
+      () =>
+        new Promise((res) => {
+          const t = document.querySelector("#toast");
+          t.textContent = "Napaka je zapisana. Najdeš jo v Računu pod »Prijave napak«.";
+          t.hidden = false;
+          t.dataset.at = Date.now();
+          const vrstica = document.querySelector("#view-chat .composer-row").getBoundingClientRect().top;
+          let max = -Infinity;
+          const t0 = performance.now();
+          const okvir = () => {
+            max = Math.max(max, t.getBoundingClientRect().bottom);
+            performance.now() - t0 < 400 ? requestAnimationFrame(okvir) : res({ max, vrstica });
+          };
+          requestAnimationFrame(okvir);
+        }),
+    );
+    assert.ok(najnizje.max <= najnizje.vrstica, `obvestilo med prikazom zdrsne čez vrstico za pisanje: ${JSON.stringify(najnizje)}`);
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+});
