@@ -88,16 +88,11 @@ export function passwordGate(password) {
     const b = Buffer.from(String(value ?? ""));
     return b.length === expected.length && crypto.timingSafeEqual(b, expected);
   };
-  // Naslov za omejitev (K-13): s trust proxy req.ip, sicer vtičnica; glava CF-Connecting-IP samo od lokalnega cloudflared.
-  // Prvi vnos X-Forwarded-For pošlje odjemalec sam, zato ga ne beremo. Skupna meja (vsi naslovi) velja vedno; ob napadu
-  // za 15 minut ustavi tudi nove prijave, kdor ima piškotek, ostane prijavljen.
-  const loopback = (a) => a === "127.0.0.1" || a === "::1" || a === "::ffff:127.0.0.1";
-  const clientIp = (req) => {
-    if (req.app?.get("trust proxy")) return String(req.ip || req.socket?.remoteAddress || "");
-    const sock = String(req.socket?.remoteAddress || "");
-    // Glava Cloudflare samo, ko zahteva pride od cloudflared na istem računalniku (tunel).
-    return String((loopback(sock) && req.headers["cf-connecting-ip"]) || sock);
-  };
+  // Naslov za omejitev (K-13): s trust proxy req.ip, sicer naslov vtičnice. Glav, ki jih pošlje odjemalec
+  // (X-Forwarded-For, CF-Connecting-IP), ne beremo. Za tunelom cloudflared imajo vsi isti naslov (127.0.0.1), zato je
+  // tam omejitev skupna. Skupna meja (vsi naslovi) velja vedno; ob napadu za 15 minut ustavi nove prijave, kdor ima
+  // piškotek, ostane prijavljen.
+  const clientIp = (req) => String((req.app?.get("trust proxy") ? req.ip : null) || req.socket?.remoteAddress || "");
   const blocked = (req) => {
     const now = Date.now();
     if (vsi.n >= GATE_FAILS_ALL && vsi.until > now) return true;

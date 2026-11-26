@@ -4,8 +4,9 @@ import assert from "node:assert/strict";
 import express from "express";
 import { passwordGate, gateNeeded } from "../server/gate.js";
 
-async function withServer(fn) {
+async function withServer(fn, { trustProxy = false } = {}) {
   const app = express();
+  if (trustProxy) app.set("trust proxy", 1);
   app.use(passwordGate("skrivno geslo"));
   app.get("/", (_req, res) => res.send("DOMOV"));
   app.get("/api/x", (_req, res) => res.json({ ok: true }));
@@ -92,17 +93,24 @@ test("ugibanje gesla: Basic šteje napake, X-Forwarded-For ne pomaga", () => wit
   assert.equal(f.status, 429);
 }));
 
-test("ugibanje gesla: skupna meja velja tudi za različne naslove (cf-connecting-ip)", () => withServer(async (base) => {
+test("ugibanje gesla: skupna meja velja tudi za različne naslove (za posrednikom)", () => withServer(async (base) => {
   const { GATE_FAILS_ALL, GATE_FAILS_IP } = await import("../server/gate.js");
   const prijava = await fetch(base + "/api/x", { headers: basic("skrivno geslo") });
   assert.equal(prijava.status, 200);
   const piskotek = cookieOf(prijava);
+  // S trust proxy je naslov zadnji vnos X-Forwarded-For (ga doda posrednik): vsak poskus z drugega naslova.
   for (let i = 0; i < GATE_FAILS_ALL; i++) {
-    await fetch(base + "/api/x", { headers: { ...basic("napacno"), "cf-connecting-ip": `198.51.100.${i % 250}` } });
+    await fetch(base + "/api/x", { headers: { ...basic("napacno"), "x-forwarded-for": `198.51.100.${i % 250}` } });
   }
   assert.ok(GATE_FAILS_ALL / 250 < GATE_FAILS_IP, "noben posamezen naslov ni dosegel svoje meje");
-  const r = await fetch(base + "/api/x", { headers: { ...basic("skrivno geslo"), "cf-connecting-ip": "203.0.113.7" } });
+  const r = await fetch(base + "/api/x", { headers: { ...basic("skrivno geslo"), "x-forwarded-for": "203.0.113.7" } });
   assert.equal(r.status, 401);
   // Kdor že ima piškotek, ostane prijavljen.
   assert.equal((await fetch(base + "/api/x", { headers: { cookie: piskotek } })).status, 200);
+}, { trustProxy: true }));
+
+test("ugibanje gesla: glava CF-Connecting-IP omejitve ne obide", () => withServer(async (base) => {
+  for (let i = 0; i < 20; i++) await fetch(base + "/api/x", { headers: { ...basic("napacno"), "cf-connecting-ip": `198.51.100.${i}` } });
+  const r = await fetch(base + "/api/x", { headers: { ...basic("skrivno geslo"), "cf-connecting-ip": "203.0.113.9" } });
+  assert.equal(r.status, 401);
 }));
