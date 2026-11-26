@@ -147,6 +147,15 @@ function uiText(code, key) {
   }
   return UI.get(code)[key];
 }
+/** Kratka opomba v ležečem tisku v jeziku učenca (veriga uiChain, sicer slovensko). */
+export function uiNote(key, language = "sl") {
+  let t = null;
+  for (const c of uiChain(language || "sl")) {
+    t = c === "sl" ? SL[key] : uiText(c, key);
+    if (t) break;
+  }
+  return `\n\n*(${t || SL[key]})*`;
+}
 export function cutNote(language = "sl") {
   const key = "chat.cutNote";
   let t = null;

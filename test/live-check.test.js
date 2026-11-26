@@ -1330,7 +1330,7 @@ test("pregled prevzema 2 (A, B, D): isClaim, gol rezultat in dolgi odgovori v li
   for (const t of ["x = 5" + " ne".repeat(18) + " y?", "x = 5" + " ne".repeat(400) + " y?", "1" + " ".repeat(100) + "x?", "(" + "1 ".repeat(50) + "= 5 x?", "5" + " m".repeat(50) + " x?"]) {
     assert.ok(ms(() => isClaim(t)) < 100, t.slice(0, 30));
   }
-  for (const t of ["x = 5?", "je 7 · 8 = 54?", "mogoče 12?", "x = 4, ne?", "a je 5 m/s?"]) assert.equal(isClaim(t), false, t); // pregled prevzema 4: kot main
+  for (const t of ["x = 5?", "je 7 · 8 = 54?", "mogoče 12?", "x = 4, ne?", "a je 5 m/s?"]) assert.equal(isClaim(t), true, t); // AUDIT-059 (pregled prevzema 5)
   for (const t of ["Kaj dobim, če je x = 5?", "Kaj pa 3x = 15?"]) assert.equal(isClaim(t), false, t);
   // B (AUDIT-069): prej 34 s oziroma > 20 s
   const q = R`Izračunaj $7 \cdot 8$.`;
@@ -1500,4 +1500,33 @@ test("pregled prevzema 4 (AUDIT-063): pravilo, odvod člena, vrednost v točki i
 test("pregled prevzema 4 (AUDIT-069): dvoumna naloga »6 : 2(1+2)« brez sodbe golega rezultata", () => {
   for (const a of ["Rezultat: 1", "Rezultat: 9"]) assert.equal(codeFindings(a, presolve(R`Izračunaj $6 : 2(1+2)$.`), "").issue, null, a);
   assert.ok(codeFindings("Rezultat: 6", presolve(R`Izračunaj $12 : 4 + 2$.`), "").issue);
+});
+
+// Pregled prevzema 5 (26. 11.): delni koraki odvoda niso napaka, ko je pravilen odvod kjerkoli v odgovoru ali ko za
+// zapisom odvoda sledi še korak; »\log« brez osnove brez sodbe; največ 50 kandidatov.
+test("pregled prevzema 5 (AUDIT-063): delni koraki odvoda, »\\log« brez osnove in omejitev kandidatov", () => {
+  const A = "Odvajaj $x^3 + 2x$.";
+  const B = "Odvajaj $(3x+1)^5$.";
+  const C = R`Odvajaj $\sin(x^2)$.`;
+  const none = [
+    [A, R`Najprej odvajamo prvi del: $f'(x) = 3x^2$, potem še drugi: $2$. Skupaj $3x^2 + 2$.`],
+    [A, R`Za začetek: $f'(x) = 3x^2$ ... in še $+2$.`],
+    [B, R`Po pravilu za potenco dobimo $y' = 5(3x+1)^4$, potem pomnožimo s $3$: $15(3x+1)^4$.`],
+    [C, R`Odvod sinusa je kosinus: $f'(x) = \cos x$. Torej skupaj $2x\cos(x^2)$.`],
+    [C, R`Sinus odvajamo v kosinus, $f'(x) = \cos(x^2)$, in množimo z $2x$.`],
+    [R`Odvajaj $f(x) = \log x$.`, R`$f'(x) = \frac{1}{x}$`],
+    [R`Odvajaj $f(x) = \log x$.`, R`$f'(x) = \frac{1}{x \ln 10}$`],
+  ];
+  for (const [q, a] of none) assert.equal(codeFindings(a, presolve(q), q).issue, null, a);
+  for (const [q, a] of [[A, R`Odvod je $f'(x) = 3x^2$.`], [B, R`$y' = 5(3x+1)^4$`], [C, R`$f'(x) = \cos(x^2)$`]]) assert.ok(codeFindings(a, presolve(q), q).issue, a);
+  const many = R`$f'(x) = 2x$ `.repeat(7500);
+  // čas odvoda: razlika do istega odgovora brez naloge (preostali čas je račun v besedilu, kot na main)
+  const ms = (pre) => {
+    const s = performance.now();
+    codeFindings(many, pre, A);
+    return performance.now() - s;
+  };
+  const base = ms(null);
+  assert.equal(codeFindings(many, presolve(A), A).issue, null, "več kot 50 kandidatov: brez sodbe");
+  assert.ok(ms(presolve(A)) - base < 200);
 });

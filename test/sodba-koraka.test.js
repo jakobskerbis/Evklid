@@ -209,10 +209,20 @@ test("pregled sodbe: navodila zajamejo »Pravilno« pred namigom, dvom o praviln
   assert.match(system, /pointing at a wrong place while the real error is elsewhere/);
 });
 
-// AUDIT-059 (pregled prevzema 4): vprašanje-predlog (»x = 5?«) ostane kot na main vprašanje: koda o njem ne sodi, ker
-// so pravilni odgovori (»Pravilno je $x = 4$.«, »Dobro razmišljaš, a …«) šteli za prezrto sodbo.
-test("pregled prevzema 4 (AUDIT-059): vprašanje-predlog ni trditev (kot main), brez ponovnega odgovora", async () => {
-  for (const t of ["x = 5?", "a je x = 5?", "je 7 · 8 = 54?", "mogoče 12?", "x = 4, ne?", "x = 6, ne?", "x = 4 ali x = 6?", "Koliko je 7 · 8?"]) assert.equal(isClaim(t, ""), false, t);
+// AUDIT-059 (pregled prevzema 5): vprašanje-predlog z eno vrednostjo (»x = 5?«) je trditev; kot prezrta sodba šteje le
+// izrecna potrditev (»Da, pravilno!«), ne »Pravilno je $x = 4$.«, »Dobro razmišljaš, a …«, »Ne, …« ali »Vstavi …«.
+test("pregled prevzema 5 (AUDIT-059): vprašanje-predlog, ponovni odgovor le ob izrecni potrditvi", async () => {
+  for (const t of ["x = 5?", "a je x = 5?", "je 7 · 8 = 54?", "mogoče 12?", "x = 4, ne?"]) assert.equal(isClaim(t, ""), true, t);
+  for (const t of ["x = 4 ali x = 6?", "x = 6 ali 4?", "Koliko je 7 · 8?", "Kaj pa 3x = 15?"]) assert.equal(isClaim(t, ""), false, t);
+  const pre = presolve("Reši enačbo $2x + 3 = 11$.", { narrow: false });
+  for (const q of ["x = 5?", "a je x = 5?", "je 7 · 8 = 54?"]) {
+    const v = stepVerdict(q, { pre, prevTutor: "Koliko je x?" });
+    assert.equal(v?.wrong, true, q);
+    assert.equal(v.asked, true, q);
+    for (const a of ["Da, pravilno!", "Tako je.", "Točno!"]) assert.equal(verdictIgnored(a, v), true, `${q} ${a}`);
+    for (const a of ["Pravilno je $x = 4$.", "Dobro razmišljaš, a $8 : 2 = 4$.", "Ne, $x = 5$ ne da 11.", "Vstavi $x = 5$ v enačbo. Koliko dobiš?", "Točno – $x = 4$.", "Da, ampak preveri še enkrat."]) assert.equal(verdictIgnored(a, v), false, `${q} ${a}`);
+  }
+  assert.equal(stepVerdict("x = 5", { pre }).asked, undefined);
   for (const t of ["x = 5", "7 · 8 = 54", "12"]) assert.equal(isClaim(t, ""), true, t);
   const { openDb } = await import("../server/db.js");
   const run = async (msg) => {
@@ -245,7 +255,7 @@ test("pregled prevzema 4 (AUDIT-059): vprašanje-predlog ni trditev (kot main), 
     }
   };
   assert.ok((await run("x = 5")) >= 3, "»x = 5« sproži ponovni odgovor");
-  assert.equal(await run("x = 5?"), 2, "»x = 5?« ostane vprašanje");
+  assert.ok((await run("x = 5?")) >= 3, "»x = 5?« z odgovorom »Da, pravilno!« tudi");
 });
 
 // Pregled prevzema 4: ERROR_MARK in verdictIgnored kot na main (»kar ni 0«, »Poskusi znova z drugo nalogo« ob potrditvi).

@@ -486,6 +486,8 @@ export default {
   "chat.ctx3d": "Inštruktor bo videl izbrani del v 3D svetu.",
   // Odgovor inštruktorja, odrezan na meji izhoda, ki ga strežnik ni mogel dokončati (P1-2, server/odrezan-odgovor.js).
   "chat.cutNote": "Odgovor je bil predolg, zato je bil odrezan. Napiši »nadaljuj«, da ga dokončam.",
+  "chat.checkNote": "Ta odgovor morda vsebuje napako v računu. Preveri ga še sam.",
+  "chat.checkNoteVerdict": "Ta ocena tvojega koraka morda ni pravilna. Preveri ga še sam.",
   "chat.list": "Pogovori",
   "chat.photoPreview": "Predogled fotografije",
   "chat.removeImage": "Odstrani sliko",

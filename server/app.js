@@ -73,7 +73,7 @@ import { createNameStream, withName, maskHistory, nameMasker, choiceAsToken, pup
 import { openMessage } from "./db.js";
 import { verifyAnswer, codeCheck, VERIFY_MODELS, VERIFY_DAILY_USD } from "./verify.js";
 import { checkAnswerClaims, hasClaimBlock, noteClaimStats } from "./racun.js";
-import { continueCut, cutNote } from "./odrezan-odgovor.js";
+import { continueCut, cutNote, uiNote } from "./odrezan-odgovor.js";
 import { replyReserveUsd, checkReserveUsd, summaryReserveUsd, callMaxUsd, imageCallReserveUsd, FALLBACK_MODES, fitLongPrompt } from "./meje-ai.js";
 import { liveCheckOn, presolve, withNote, codeFindings, needsReview, reviewAnswer, correction, fixModeFor, insertFix, isClaim, needsVerdictReview, reviewVerdict, verdictNote, looksLikeTask, hasClaims, claimReviewFor, reviewCalls, reviewBlock, reviewPoolCaps, reviewKindFor, noteReviewSkip, REVIEW_KINDS, LIVE_REVIEW_POOL_RESERVE_USD } from "./live-check.js";
 import { stepVerdict, verdictIgnored } from "./sodba-koraka.js";
@@ -1506,12 +1506,12 @@ export function createApp(store, opts = {}) {
       const textOf = (m) => (Array.isArray(m.content) ? m.content : [{ text: m.content }]).map((b) => b.text || "").join("\n");
       const prevTutor = fullHistory.filter((m) => m.role === "assistant").at(-1);
       const prevTutorText = prevTutor ? stripMeta(textOf(prevTutor)) : "";
-      const claim = !pre && liveCheckOn() && !cached && !image && !win && !hinted && !isFirst && isClaim(text, prevTutorText);
+      const claimAsked = !pre && liveCheckOn() && !cached && !image && !win && !hinted && !isFirst && isClaim(text, prevTutorText);
       // Naloga je zadnja, ki jo je reševalnik rešil (prvo sporočilo ali poznejša »Reši …«): učenčev rezultat
       // sodi koda le proti nalogi, o kateri pogovor zdaj teče.
       // Če je učenec po tej nalogi poslal še eno, ki je reševalnik ne zna (»Kaj pa 3x = 15?«), koda ne sodi.
       let firstPre = null;
-      if (claim) {
+      if (claimAsked) {
         // Brez skrite opombe pole (server/paper-context.js), sicer reševalnik prve naloge ne prepozna.
         const ownText = (m) => textOf(Array.isArray(m.content) ? { content: m.content.filter((x) => !isHiddenNote(x.text) && !isImagePlaceholder(x.text)) } : m);
         const earlier = fullHistory.filter((m) => m.role === "user").slice(0, -1).map(ownText);
@@ -1524,7 +1524,10 @@ export function createApp(store, opts = {}) {
       }
       // Sodba kode (server/sodba-koraka.js): računi v sporočilu, enačba proti nalogi ali inštruktorjevi zadnji enačbi,
       // končna vrednost. { wrong, finding, note } ali null, ko koda ne more soditi (tedaj sodbo pregleda model).
-      const codeVerdict = claim ? stepVerdict(text, { pre: firstPre, prevTutor: prevTutorText }) : null;
+      const codeVerdict = claimAsked ? stepVerdict(text, { pre: firstPre, prevTutor: prevTutorText }) : null;
+      // Vprašanje-predlog (»x = 5?«, AUDIT-059) je trditev le, ko o njem sodi koda; sicer kot na main (vprašanje): brez
+      // plačanega pregleda sodbe in brez zadrževanja odgovora (pregled prevzema 2 in 5).
+      const claim = claimAsked && (!/\?\s*$/.test(text) || !!codeVerdict);
       const notes = [pre?.note, codeVerdict?.note].filter(Boolean).join("\n");
       const held = []; // zadržani deli odgovora, dokler sodba ni preverjena
       // Poskus brez razmišljanja za lahek prvi korak (privzeto izklopljen, server/hitri-korak.js).
@@ -1610,6 +1613,9 @@ export function createApp(store, opts = {}) {
       let result = first;
       let { rest } = filter.end();
       let verdictChecked = false;
+      // Opomba brez modela (AUDIT-060, pregled prevzema 5): koda je napako zanesljivo našla, popravek ali ponovni odgovor
+      // pa ni mogoč (meja porabe, napaka klica). Kratka in previdna; gumbi in kartice odgovora ostanejo.
+      let checkNote = "";
       const verdictReserve = checkReserveUsd(MODEL_MID, `${prevTutorText}${text}${result.text || ""}`);
       const judgeable = claim && result.text && result.stopReason !== "refusal" && !result.toolCalls && !settingsTools.state.used;
       // Koda je sodila, inštruktor pa ji ni sledil (»Prav!« ob napačnem koraku ali zavrnitev pravilnega): brez modela za
@@ -1627,8 +1633,13 @@ export function createApp(store, opts = {}) {
             hold.settle(verdictReserve);
             reason = rv.reason;
           }
-          // Ponovni odgovor samo, če je zanj prostor pod mejo (sicer ostane prvi odgovor).
-          if (reason && hold.take(mainReserve)) {
+          // Ponovni odgovor samo, če je zanj prostor pod mejo (sicer ostane prvi odgovor, ob sodbi kode z opombo).
+          const room = !!reason && hold.take(mainReserve);
+          if (reason && !room && codeIgnored) {
+            checkNote = uiNote("chat.checkNoteVerdict", jezik);
+            noteReviewSkip(store.db, jeOs(student.settings) ? "OS" : jeSs(student.settings) ? "SS" : "FAKS", "meja-sodba");
+          }
+          if (room) {
             // Napačna sodba: isti model odgovori še enkrat z ugotovitvijo preverjevalca v skriti opombi.
             const again2 = createStreamFilter({ language: jezik });
             held.length = 0;
@@ -1677,6 +1688,7 @@ export function createApp(store, opts = {}) {
       // vidna opomba, učenec napiše »nadaljuj« (P1-2). Ne gre v predpomnilnik (stopReason ni end_turn).
       const odrezano = !cached && result.stopReason === "max_tokens" ? cutNote(jezik) : "";
       if (odrezano) send("delta", { text: odrezano });
+      if (checkNote) send("delta", { text: checkNote });
 
       // Preverjanje odgovora (server/live-check.js): koda vedno, model samo, kjer je potrebno.
       // Ob napaki en kratek »Popravek:«, ki se pripne odgovoru (prikaz in zgodovina).
@@ -1687,13 +1699,17 @@ export function createApp(store, opts = {}) {
         const plain = stripMeta(result.text);
         const found = codeFindings(plain, pre, text);
         let issue = found.issue;
+        let sure = !!(issue && found.sure); // zanesljiv vir: gol rezultat, odvod, vidna rešitev proti SymPy (AUDIT-060)
         // Skrit »račun za kodo« (server/racun.js): vsako računsko trditev preveri SymPy ali urejevalnik enačb.
         const hadBlock = hasClaimBlock(result.text);
         let claimRes = null;
         if (!issue && hadBlock && !controller.signal.aborted) {
           phase(true);
           claimRes = await checkAnswerClaims(result.text);
-          if (claimRes.issue) issue = claimRes.issue;
+          if (claimRes.issue) {
+            issue = claimRes.issue;
+            sure = !!claimRes.sure;
+          }
           claimFailed = claimRes.failed.length > 0;
         }
         noteClaimStats(store.db, { hadBlock, res: claimRes });
@@ -1740,12 +1756,14 @@ export function createApp(store, opts = {}) {
         // rezerva po njegovih parametrih.
         const fixMode = fixModeFor(mode);
         const fixReserve = callMaxUsd(modeParams(fixMode).model, Buffer.byteLength(plain + (issue || ""), "utf8") + 3000, modeParams(fixMode).max_tokens);
+        let fixTried = false; // model popravka je odgovoril (tudi z »OK«: napako je zavrnil)
         if (issue && liveFixOn() && hold.take(fixReserve)) {
           phase(true);
           try {
             const c = await correction({ streamFn, mode, answer: plain, issue, language: student.settings.language || "sl", stopnja, signal: controller.signal });
             extraCost += usage.log(student.id, c.model || modeParams(c.mode).model, c.usage || {}, "popravek");
             hold.settle(fixReserve);
+            fixTried = true;
             if (c.block) {
               fix = c.block;
               send("delta", { text: fix });
@@ -1755,6 +1773,13 @@ export function createApp(store, opts = {}) {
             if (!controller.signal.aborted) console.warn(`[evklid] popravek ni uspel: ${e?.message || e}`);
           }
         }
+        // Popravka ni bilo (meja porabe ali napaka klica): pri zanesljivem viru le previdna opomba brez modela. Nikoli pri
+        // računih v besedilu (checkArithmetic), vrednostih neznanke ali ugotovitvi modela za pregled.
+        if (issue && sure && !fix && !fixTried && !checkNote && liveFixOn() && !controller.signal.aborted) {
+          checkNote = uiNote("chat.checkNote", jezik);
+          send("delta", { text: checkNote });
+          noteReviewSkip(store.db, stopnja, "meja-popravek");
+        }
       }
       mestoAi?.sprosti(); // klici modela za ta odgovor so končani (preverjanje v ozadju ne drži mesta)
 
@@ -1763,11 +1788,12 @@ export function createApp(store, opts = {}) {
       // Fotografija, ki ni učno gradivo (obraz, oseba, osebni dokument …): inštruktor jo zavrne z flag=photo,
       // slika pa se takoj odstrani iz shranjenega sporočila (j, 2026-10-30).
       if (image && meta?.flag === "photo") store.setMessageContent(userMsgId, withoutImages(userContent, PHOTO_REJECTED_TEXT), 2);
-      let display = (note || "") + replyText(result.text, { language: jezik }) + odrezano + fix;
+      let display = (note || "") + replyText(result.text, { language: jezik }) + odrezano + fix + checkNote;
       // V zgodovino shranimo samo besedilo (brez blokov razmišljanja): manj žetonov
       // pri naslednjih klicih in nobenih težav ob krajšanju zgodovine.
       // Popravek preverjanja zamenja konec odgovora: gumbi z izbirami ne veljajo več (ne ob ponovnem odprtju).
       let content = [{ type: "text", text: (fix ? insertFix(stripChoices(result.text), fix) : result.text) || "…" }];
+      if (checkNote) content[0].text = insertFix(content[0].text, checkNote); // opomba ne odstrani gumbov in kartic
       // Tudi zgodovina za model brez »s osnovo« in oznak (sicer jih model iz nje ponavlja); strojni bloki ostanejo.
       content[0].text = polishReply(content[0].text, { language: jezik });
       if (odrezano) content[0].text += odrezano; // model ob »nadaljuj« ve, da je odgovor odrezan
@@ -1796,7 +1822,7 @@ export function createApp(store, opts = {}) {
       // v stiski (j 18. 11. 2026, pregled #846): ne ob flag=distress, ne ob zadetku lokalnega zaznavalnika ali pregleda B
       // (tudi poslanem oknu »nujno«). Na pregled B počakamo kot spodaj (največ do NUJNO_ROK_MS od začetka).
       const stiska = meta?.flag === "distress" || !!vrstaLokalno || nujnoPoslano || !!(await pocakajNujno());
-      if (key && !cached && !fix && !claimFailed && !result.toolCalls && !settingsTools.state.used && result.stopReason === "end_turn" && result.text && !stiska) {
+      if (key && !cached && !fix && !checkNote && !claimFailed && !result.toolCalls && !settingsTools.state.used && result.stopReason === "end_turn" && result.text && !stiska) {
         // Drugim učencem gre odgovor šele po trojnem preverjanju (koda + dva AI pregleda, server/verify.js).
         // null: ime učenca je ostalo v sklonjeni obliki (»Jakobu«), zato se odgovor ne shrani za druge (P3).
         // Model imena ne pozna več (oznaka {{IME}}): ime v odgovoru je beseda iz naloge (»Bor ima 3 elektrone«) ali

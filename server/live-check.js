@@ -338,6 +338,8 @@ const sameFn = (f, g) => {
   return n ? "match" : null;
 };
 function derivativeIssue(answer, p) {
+  // »\log x« brez osnove je lahko desetiški ali naravni logaritem (pregled prevzema 5): brez sodbe.
+  if (/\\log(?![_a-zA-Z])|(?<![\\a-zA-Z])log(?![_a-zA-Z\d])/.test(`${p.problem} ${p.problemTex}`)) return null;
   const want = derivFn(String(p.answerTex || p.answer).split("=").at(-1));
   if (!want) return null;
   // Ime iz naloge (»g(x) = …«), sicer »f(x)« ali »y«. Ime, ki ga odgovor kjerkoli uporabi za drugo funkcijo
@@ -373,9 +375,15 @@ function derivativeIssue(answer, p) {
       if (rhs.length) found.push({ tex: tex.trim(), rhs });
     }
   }
-  if (!found.length) return null;
+  if (!found.length || found.length > 50) return null; // največ 50 kandidatov (linearno)
+  // Sodi se le zadnji zapis odgovora: za »$f'(x) = \cos(x^2)$, in množimo z $2x$« sledi še korak (pregled prevzema 5).
+  if (found.at(-1).tex !== String(formulas.at(-1) || "").trim()) return null;
   const judge = (rhs) => sameFn(want, derivFn(rhs));
   if (found.some((f) => f.rhs.map(judge).includes("match"))) return { checked: 1, issue: null };
+  // Pravilen odvod kjerkoli v odgovoru (tudi brez »f'(x) =«, v vrstici, ki se preskoči): »f'(x) = 3x^2« je bil delni
+  // korak (»Najprej prvi del: $f'(x) = 3x^2$ … Skupaj $3x^2 + 2$.«), pregled prevzema 5. Največ 50 delov, sicer brez sodbe.
+  const pieces = formulas.flatMap((tex) => tex.split("=").slice(0, 9)).map((x) => cutCondition(x.replace(/\s+/g, " ").trim())).filter((x) => x && x.length <= 300 && /x|\d/.test(x));
+  if (pieces.length > 50 || pieces.some((x) => judge(x) === "match")) return { checked: 1, issue: null };
   const last = found.at(-1);
   if (last.rhs.map(judge).some((v) => v === null)) return { checked: 0, issue: null };
   return { checked: 1, issue: `the derivative $${last.tex}$ is wrong: the derivative of $${p.problemTex}$ is $${p.answerTex}$` };
@@ -475,7 +483,7 @@ export function codeFindings(answer, pre = null, question = "") {
     const d = derivativeIssue(answer, der[0]);
     if (d) {
       checked += d.checked;
-      if (d.issue) return { checked, issue: d.issue };
+      if (d.issue) return { checked, issue: d.issue, sure: true }; // sure: AUDIT-060, opomba brez modela
     }
   }
   const ar = (pre?.problems || []).filter((p) => p.type === "arith");
@@ -483,7 +491,7 @@ export function codeFindings(answer, pre = null, question = "") {
     const b = bareResultIssue(answer, ar[0]);
     if (b) {
       checked += b.checked;
-      if (b.issue) return { checked, issue: b.issue };
+      if (b.issue) return { checked, issue: b.issue, sure: true };
     }
   }
   const eq = (pre?.problems || []).filter((p) => p.type === "equation" || p.type === "system");
@@ -1136,12 +1144,27 @@ export function noteReviewSkip(db, stopnja, reason) {
 // 4. Sodba o učenčevem koraku
 
 // Učenčevo sporočilo je rezultat ali trditev, o kateri bo inštruktor sodil: število, enačba, zapis
-// z »=«, ali odgovor (ne vprašanje) na inštruktorjevo vprašanje. Vprašanje-predlog (»x = 6?«, AUDIT-059) ostane kot na
-// main vprašanje (pregled prevzema 4: pravilni odgovori »Pravilno je $x = 4$.« so šteli za prezrto sodbo).
+// z »=«, ali odgovor (ne vprašanje) na inštruktorjevo vprašanje.
+// Brez dvoumnih zaporednih \s* v ponovljeni skupini (pregled prevzema 2: »x = 5« + 18 × » ne« + » y?« je trajalo > 30 s):
+// enota ne sme biti beseda repa (»ne«, »ali« …), med deli je vejica ali presledek (ne oboje kot dva \s*), rep največ 3-krat,
+// sporočilo največ CQ_MAX znakov. Za besedo repa ni nove vrednosti (pregled prevzema 3: »x = 4 ali x = 6?« je vprašanje).
+// Pregled prevzema 5: kot prezrta sodba šteje le izrecna potrditev (sodba-koraka.js, verdictIgnored, »asked«).
+const CQ_TAIL_WORD = String.raw`(?:ali|ne|prav|kajne|a ne|res|right)(?![\p{L}])`;
+const CQ_NUM = String.raw`[-−+]?\d+(?:[.,]\d+)?(?:\s*\/\s*\d+)?(?:\s*(?!${CQ_TAIL_WORD})[A-Za-zµΩ]{1,4}(?:\/[A-Za-z]{1,3})?[²³]?(?![\p{L}]))?`;
+const CQ_LHS = String.raw`(?:[a-zA-Z](?:_?\{?\d\}?)?|\d+[a-zA-Z]|[\d(][\d.,+\-−*·×:/()^ ]{0,60}?)`;
+const CQ_VAL = String.raw`(?:${CQ_LHS}\s*(?:=|je)\s*${CQ_NUM}|${CQ_NUM})`;
+const CQ_MAX = 120;
+const CLAIM_QUESTION = new RegExp(
+  String.raw`^(?:(?:a|ali)\s+)?(?:je\s+)?(?:(?:mogoče|morda|menda|torej|potem|rezultat(?:\s+je)?|to\s+je)\s*)?${CQ_VAL}(?:(?:\s*,\s*|\s+)${CQ_TAIL_WORD}){0,3}\s*\?+$`,
+  "iu",
+);
 export function isClaim(text, prevTutor = "") {
   const t = String(text || "").trim();
   if (!t || t.length > 1500) return false;
-  if (/\?\s*$/.test(t)) return false; // vprašanje, ne trditev
+  // Vprašanje ni trditev, razen če je VSE sporočilo predlog vrednosti ali rezultata (»x = 5?«, »je 7 · 8 = 54?«,
+  // »mogoče 12?«, »x = 4, ne?«): tak negotov odgovor je trditev, o kateri inštruktor sodi (AUDIT-059). Vprašanje z
+  // drugimi besedami (»Kaj dobim, če je x = 5?«, »Lahko narediš še eno z x = 2?«, »Kaj pa 3x = 15?«) ostane vprašanje.
+  if (/\?\s*$/.test(t)) return t.length <= CQ_MAX && CLAIM_QUESTION.test(t.replace(/\s+/g, " "));
   if (/\d|=/.test(t)) return true;
   return /\?\s*$/.test(String(prevTutor || "").trim()) && /\p{L}{2,}/u.test(t);
 }

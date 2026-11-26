@@ -323,7 +323,16 @@ const RIGHT_RULES =
  * Sodba kode o učenčevem sporočilu (koraki, računi, končna vrednost). Vrne null, če koda ne more soditi, sicer
  * { wrong: bool, finding: besedilo za ponovni odgovor, note: skrita opomba za ta klic }.
  */
-export function stepVerdict(text, { pre = null, prevTutor = "" } = {}) {
+export function stepVerdict(text, opts = {}) {
+  // Vprašanje-predlog (»x = 5?«, »je 7 · 8 = 54?«, AUDIT-059): sodi se predlog brez uvodne besede in vprašaja;
+  // verdictIgnored ga šteje za prezrtega le ob izrecni potrditvi (pregled prevzema 5).
+  const t = String(text || "");
+  if (!/\?\s*$/.test(t)) return judgeStep(t, opts);
+  const core = t.replace(/^\s*(?:(?:a|ali)\s+)?(?:je\s+)?(?:(?:mogoče|morda|menda|torej|potem|rezultat(?:\s+je)?|to\s+je)\s+)?/iu, "").replace(/\s*\?+\s*$/, "");
+  const v = judgeStep(core, opts);
+  return v ? { ...v, asked: true } : v;
+}
+function judgeStep(text, { pre = null, prevTutor = "" } = {}) {
   const wrong = [];
   const right = [];
   // Končna vrednost proti nalogi (obstoječa sodba kode). Ko je inštruktor medtem zastavil drugo enačbo, ne.
@@ -418,6 +427,11 @@ const POSITIVE_OPEN = /^[\s>*_"'»«„“(]*(?:\p{L}+\s*,\s*)?(?:prav|pravilno|
 const ERROR_MARK = /(?<!\p{L})(?:napak\p{L}*|narobe|napačn\p{L}*|ni (?:čisto |povsem |še |ravno |res )?(?:prav|pravilno|pravilen|res|tako|točno|enako)|ne drži|ne velja|ne ujema|ne more|zmot\p{L}*|spodrsl\p{L}*|zalomil\p{L}*|pazi|preveri\p{L}*|poglej\p{L}*|še enkrat|ponovno|skoraj|ampak|vendar|toda|hmm?|wrong|mistake|not quite|almost|check)(?!\p{L})|≠/iu;
 const SOFT_MARK = /(?<!\p{L})(?:pazi\p{L}*|preveri\p{L}*|poglej\p{L}*|še enkrat|ponovno|check\p{L}*)(?!\p{L})/giu;
 const NEGATIVE_OPEN = /^[\s>*_"'»«„“(]*(?:\p{L}+\s*,\s*)?(?:ne(?=\s*[,.!:—–])|ni (?:čisto |povsem |še |ravno )?(?:prav|pravilno|res|tako|točno)|narobe|napačno|napaka|ne drži|skoraj|hmm?|not quite|wrong|no(?=\s*[,.!:—–]))/iu;
+// Izrecna potrditev učenčevega predloga: prvi stavek so le besede potrditve (»Da, pravilno!«, »Tako je.«, »Točno!«).
+// »Pravilno je $x = 4$.«, »Dobro razmišljaš, a …«, »Prav, da vprašaš!«, »Točno – $x = 4$« niso potrditev predloga
+// (pregled prevzema 5).
+const CONFIRM_WORD = String.raw`(?:da|ja|tako je|res je|pravilno|prav|točno|drži|odlično|super|bravo|natanko|seveda|yes|correct|right|exactly)`;
+const CONFIRM_OPEN = new RegExp(String.raw`^[\s>*_"'»«„“(]*${CONFIRM_WORD}(?:\s*,\s*${CONFIRM_WORD})*\s*[!.]+(?:\s|$)`, "iu");
 const firstSentence = (s) => (/^[\s\S]{0,240}?(?:[.!?](?=\s|$)|\n|$)/.exec(String(s || "").trim())?.[0] || "");
 
 /** Ali odgovor nasprotuje sodbi kode (potrdi napačen korak ali zavrne pravilnega)? */
@@ -425,6 +439,9 @@ export function verdictIgnored(answer, verdict) {
   if (!verdict) return false;
   const head = firstSentence(answer);
   // V prvem stavku za potrditvijo štejejo le besede, ki res zavrnejo (»Prav, preverimo …«, »Dobro, poglejmo …« ostaneta potrditev).
+  // Vprašanje-predlog: prezrt je le izrecno potrjen napačen predlog; pravilnega koda ne brani (zavrnitev je dvoumna:
+  // »Hmm, $8 : 2 = 4$, torej $x = 4$.«).
+  if (verdict.asked) return !!verdict.wrong && CONFIRM_OPEN.test(head) && !ERROR_MARK.test(head);
   if (verdict.wrong) return (POSITIVE_OPEN.test(head) && !ERROR_MARK.test(head.replace(SOFT_MARK, ""))) || !ERROR_MARK.test(String(answer || ""));
   return !verdict.partial && NEGATIVE_OPEN.test(head);
 }

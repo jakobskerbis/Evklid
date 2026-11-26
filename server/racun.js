@@ -275,7 +275,10 @@ export async function checkAnswerClaims(text) {
   const r = await checkClaims(claims);
   // Vidno besedilo le proti blokom, ki jih je SymPy res potrdil (pregled prevzema 2): nepreverjen blok ali blok z le
   // enim od dveh korenov ni »točno preverjena rešitev«; brez SymPy ni primerjave.
-  return { ...r, issue: claimIssue(r) || (r.failed.length ? null : visibleIssue(text, r.confirmed || [])), claims: claims.length };
+  const own = claimIssue(r);
+  const seen = own || r.failed.length ? null : visibleIssue(text, r.confirmed || []);
+  // sure: neskladje z rešitvijo, ki jo je SymPy potrdil (AUDIT-060: opomba brez modela, ko popravek ni mogoč).
+  return { ...r, issue: own || seen, sure: !!seen, claims: claims.length };
 }
 
 // Števec (kv »racun_statistika«): { "2026-11-11": { odgovori, z_blokom, potrjene, napake, nepreverjene } },
