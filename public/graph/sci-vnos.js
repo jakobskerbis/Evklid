@@ -1386,11 +1386,13 @@ function innerGroup(t, s) {
 }
 // 0: ne sme; 1: nova reža predloge s stalnimi režami (zapis brez surovega ločila); 2: prosto ločilo (vrh, [, navaden
 // oklepaj, funkcija poljubno ali več argumentov)
-function semiAllowed(t, s) {
+function semiAllowed(t, s, env = {}) {
   const g = innerGroup(t, s);
   if (!g) return 2;
   const { o, name } = g;
   if (!name) return 2;
+  // uporabniška funkcija (f(x) = …) ima en argument: ∫(f(x|; 0; 2) – »;« gre v naslednjo režo ∫
+  if (env.funcs && Object.hasOwn(env.funcs, name)) return 0;
   // ime, ki ga ni v SEMIS_MAX: funkcija z enim argumentom (sin, ln, abs …) ne sprejme »;«; vse drugo (avg, binom, var,
   // sort, uporabniška f(2; 3) …) ga sprejme kot na main – števke se nikoli ne zlepijo (avg(126)), napaka arity ostane
   const lower = Object.keys(SEMIS_MAX).find((k) => k.toLowerCase() === name.toLowerCase());
@@ -1463,8 +1465,10 @@ export function pressKey(text, s, ins, env = {}, { render, check } = {}) {
   if (ins === ";") {
     const next = nextSlot(t, s);
     if (next.inner >= 0) return { text: t, pos: next.inner };
-    const how = semiAllowed(t, s);
-    if (!how) return next.outer >= 0 ? { text: t, pos: next.outer } : null;
+    const how = semiAllowed(t, s, env);
+    // funkcija z enim argumentom: v naslednjo režo zunanje predloge (∫(sin(t|); 0; 1)); brez nje gre »;« noter kot na
+    // main, da Izračunaj pokaže napako arity (log(8; 2), sin(1; 2)), ne zlepi števk v log(82)
+    if (!how) return next.outer >= 0 ? { text: t, pos: next.outer } : insertKey(t, s, ins);
     // prosto ločilo (matrika na roko det([[1; 2]; …]), točka (1; 2), avg(1; 2), binom(5; 2), f(2; 3) z napako arity
     // kot na main): zapis ga sme pokazati; če se zapis ne izriše, gre kazalec v naslednjo režo zunanje predloge (kot ▶),
     // v funkciji več argumentov pa gre »;« noter kot na main – števke se nikoli ne zlepijo (avg(126))

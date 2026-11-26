@@ -210,6 +210,8 @@ const plainSemi = (t, p, k) => {
   // uporabniška funkcija f(2; 3) (napaka arity kot na main), ne predloga s stalnimi režami
   return /(?<![A-Za-z])[a-z]$/.test(t.slice(0, o)) ? 1 : 0;
 };
+// »;« brez proste in brez zunanje reže gre noter kot na main (log(8; 2) pokaže napako arity, ne log(82)): zapis je surov
+const semiAsMain = (t, p, k, r) => k === ";" && r?.text === `${t.slice(0, p)};${t.slice(p)}`;
 const KEYS_T = ["²", "^(", "√(", "⁻¹", "sin(", "∫(@;;)", "d/dx(@)", ";", "×10^(", "!", "%", "°", "(", ")", "abs(", "nCr(@;)"];
 const katexOk = (tex) => {
   try {
@@ -262,7 +264,7 @@ test(`tipke predlog v vsaki reži vsake predloge: zunanja predloga ostane (AUDIT
         done++;
         const w = `${T} @${p} ${k} → ${r.text}`;
         // zaklepaj brez odprtega oklepaja gre noter kot na main (pregled 2/3): zapis je surov, kot je bil tam
-        if (stray(T, p, k)) continue;
+        if (stray(T, p, k) || semiAsMain(T, p, k, r)) continue;
         const b = entryBase(r.text, env);
         assert.ok(b?.ok && !BAD.test(b.tex) && katexOk(caretTex(b, r.pos)), `${w}: ne izriše`);
         assert.ok(texSemi(b.tex) <= texSemi(b0.tex) + plainSemi(T, p, k), `${w}: surovo ločilo v ${b.tex}`);
@@ -282,7 +284,8 @@ test(`tipke predlog v vsaki reži vsake predloge: zunanja predloga ostane (AUDIT
     ["sin(x)", 6, "²", "sin(x)²"], ["2+3", 1, "^(", "2^(+3"], ["", 0, "√(", "√("],
   ]) assert.equal(pressKey(t, p, k, env, { check: katexOk })?.text, want, `${t} @${p} ${k}`);
   // ; v predlogi brez proste reže se ne zgodi
-  for (const [t, p] of [["sin(x)", 5], ["nCr(5;2)", 6], ["2^(5)", 3]]) assert.equal(pressKey(t, p, ";", env), null, `${t} @${p} ;`);
+  // ; v predlogi brez proste reže in brez zunanje reže gre noter kot na main (napaka arity, števke se ne zlepijo)
+  for (const [t, p] of [["sin(x)", 5], ["nCr(5;2)", 6], ["2^(5)", 3]]) assert.equal(pressKey(t, p, ";", env)?.text, `${t.slice(0, p)};${t.slice(p)}`, `${t} @${p} ;`);
 });
 
 // Pregled #1017: naravna zaporedja tipk z lastnimi oklepaji in »;« (zaslonska tipka ali tipkovnica gre po isti poti):
@@ -293,7 +296,7 @@ test("zaporedja tipk v predlogah: lastni oklepaji in ; (AUDIT-067)", () => {
     let p = 0;
     for (const k of keys) {
       const r = pressKey(t, p, k, env, { check: katexOk });
-      const st = stray(t, p, k);
+      const st = stray(t, p, k) || semiAsMain(t, p, k, r);
       if (r) ({ text: t, pos: p } = r);
       const b = t.trim() && entryBase(t, env);
       assert.ok(st || !t.trim() || (b?.ok && katexOk(caretTex(b, p)) && texSemi(b.tex) === 0), `${keys.join(" ")}: po »${k}« ${t} @${p}`);
@@ -325,7 +328,7 @@ test("zaporedja tipk v predlogah: lastni oklepaji in ; (AUDIT-067)", () => {
     for (const p of new Set([...stopsTex(b0).matchAll(/evk-p=(\d+)/g)].map((m) => Number(m[1]))))
       for (const k of [";", ")", "(", "]"]) {
         const r = pressKey(T, p, k, env, { check: katexOk });
-        if (!r || stray(T, p, k)) continue;
+        if (!r || stray(T, p, k) || semiAsMain(T, p, k, r)) continue;
         const b = entryBase(r.text, env);
         assert.ok(b?.ok && katexOk(caretTex(b, r.pos)) && texSemi(b.tex) <= plainSemi(T, p, k), `${T} @${p} ${k} → ${r.text}`);
       }
@@ -389,7 +392,7 @@ test("ponovna združitev: predloge z lastnim »;«, ; v seznamih, ⁿ√ za črk
   // 2. ; v funkcijah seznamov (zaslonska tipka in tipkovnica gresta po isti poti)
   for (const f of ["max", "min", "mean", "median", "stdev", "stdevp", "total"]) assert.equal(run([`${f}(@)`, "1", ";", "2", ";", "3"]), `${f}(1;2;3)`, f);
   // ; v funkciji z eno režo ostane zavrnjen
-  assert.equal(pressKey("sin(x)", 5, ";", env, { check: katexOk }), null);
+  assert.equal(pressKey("sin(x)", 5, ";", env, { check: katexOk })?.text, "sin(x;)"); // brez zunanje reže kot na main (napaka arity)
   // 4. ⁿ√ za črko; kazalec po tipki je v korenjencu, zapis se izriše na vsakem mestu
   assert.equal(run(["x", "root(@;)"]), "xroot(;)");
   assert.equal(run(["root(@;)"], "2x+1=0", 2), "2xroot(;)+1=0");
@@ -441,7 +444,7 @@ test("pregled 2/3: zaklepaj se premakne, ; v matriki in točki, d t na koncu, pr
   assert.equal(pressKey("limit(x)", 7, ";", env, { check: katexOk })?.text, "limit(x;)");
   assert.equal(pressKey("integrate(x)", 11, ";", env, { check: katexOk })?.text, "integrate(x;)");
   assert.equal(pressKey("lim(x)", 5, ";", env, { check: katexOk })?.text, "lim(x;)");
-  assert.equal(pressKey("inv(x)", 5, ";", env, { check: katexOk }), null);
+  assert.equal(pressKey("inv(x)", 5, ";", env, { check: katexOk })?.text, "inv(x;)");
   // 3. integral po t: kazalec na koncu je za »dt«, ne med d in t
   for (const [t, end] of [["∫(t²;0;2)", "dt"], ["k(x)=∫(sin(t);0;x)", "dt"], ["∫(sin(θ);0;π)", "d\\theta"], ["∫(x²;0;1)", "dx"]]) {
     const c = caretTex(entryBase(t, env), t.length);
@@ -484,8 +487,17 @@ test("pregled 3: ; v vsaki funkciji več argumentov, ∑ v reži, ) iz matrike",
     else if (want !== null) assert.equal(r?.value, want, s);
   }
   // funkcija z enim argumentom še vedno ne sprejme »;«
-  assert.equal(pressKey("sin(1)", 5, ";", env, { check: katexOk }), null);
-  assert.equal(pressKey("SIN(1)", 5, ";", env, { check: katexOk }), null);
+  // funkcija z enim argumentom: v zunanjo režo, sicer »;« kot na main (napaka arity), nikoli log(82)
+  for (const [t, p, want] of [["log(8)", 5, "log(8;"], ["sin(1)", 5, "sin(1;"], ["SIN(1)", 5, "SIN(1;"]]) {
+    const r = pressKey(t, p, ";", env, { check: katexOk });
+    assert.equal(r?.text, `${want})`, t);
+    const r2 = pressKey(r.text, r.pos, "2", env, { check: katexOk });
+    if (t !== "SIN(1)") assert.equal(analyze(r2.text, env)?.error?.code, "arity", r2.text);
+  }
+  assert.deepEqual(pressKey("∫(sin(t);0;1)", 7, ";", env, { check: katexOk }), { text: "∫(sin(t);0;1)", pos: 9 });
+  // uporabniška funkcija v reži ∫: »;« gre v naslednjo režo
+  const eF = { ...env, funcs: { f: { param: "x", body: "x²" } } };
+  assert.deepEqual(seq("", 0, ["∫(@;;)", "f(", "x", ";", "0", ";", "2"], eF), { t: "∫(f(x);0;2)", p: 10 });
   // ∑ in ∏ v prazni reži: vstavita se, naslednje tipke gredo v prave reže
   assert.deepEqual(seq("", 0, ["∫(@;;)", "∑_(n=1)^(@) ", "3", ";", "0", ";", "1"]), { t: "∫(∑_(n=1)^(3) ;0;1)", p: 18 });
   assert.equal(seq("∫(;0;1)", 2, ["∏_(n=1)^(@) "]).t, "∫(∏_(n=1)^() ;0;1)");

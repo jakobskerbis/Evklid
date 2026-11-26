@@ -47,7 +47,7 @@ const CASES = [
   ["∫(x;0;1)", 5, "√(", "∫(x;0√();1)"],
   ["nCr(5;2)", 4, "√(", "nCr(√(5);2)"],
   ["∫(;0;1)", 2, ";", "∫(;0;1)"], // ∫ ima tri reže: ; gre v naslednjo režo
-  ["sin(x)", 5, ";", null],
+  ["∫(sin(x);0;1)", 7, ";", "∫(sin(x);0;1)"], // iz sin v naslednjo režo ∫ (brez zunanje reže gre »;« noter kot na main)
 ];
 for (const engine of ["chromium", "webkit", "firefox"]) {
   for (const [vw, opt] of [
@@ -144,15 +144,16 @@ for (const engine of ["chromium", "webkit", "firefox"]) {
           i.setSelectionRange(p, p);
           i.dispatchEvent(new KeyboardEvent("keyup"));
         }, [text, p]);
-      await setAt("sin(x)", 5);
-      await press(";");
+      // zaklepaj, ki bi ∫ zaprl prezgodaj (»;« v sin(x) brez zunanje reže zdaj gre noter kot na main, napaka arity)
+      await setAt("∫(x;;)", 3);
+      await press(")");
       const fb = await page.evaluate(() => ({
         v: document.querySelector(".sc-input").value,
         live: document.querySelector(".sc-live").textContent,
         polite: document.querySelector(".sc-live").getAttribute("aria-live"),
         shake: document.querySelector(".sc-entry").classList.contains("sc-zavrni"),
       }));
-      assert.deepEqual(fb, { v: "sin(x)", live: "sc.keyRefused", polite: "polite", shake: true }, `${engine} ${vw}: zavrnjena tipka`);
+      assert.deepEqual(fb, { v: "∫(x;;)", live: "sc.keyRefused", polite: "polite", shake: true }, `${engine} ${vw}: zavrnjena tipka`);
       await setAt("limita(x; x; 0)", 0);
       await press("2");
       await press("×");
