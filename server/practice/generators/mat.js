@@ -575,7 +575,10 @@ export const MAT_GENERATORS = [
       "MAT-OS-7/mnozenje-in-deljenje-ulomkov",
       "MAT-OS-7/razsirjanje-in-krajsanje-ulomkov",
     ],
-    gen(level, r) {
+    gen(level, r, topic) {
+      // Naloga mora biti na temi (meritev K-08): pri seštevanju in odštevanju samo + in −, pri množenju in deljenju samo · in :.
+      const sestevanje = /sestevanje-in-odstevanje/.test(topic || "");
+      const mnozenje = /mnozenje-in-deljenje/.test(topic || "");
       if (level === 3) {
         // Večkoračne in besedilne naloge z ulomki.
         const name = r.pick(NAMES);
@@ -583,7 +586,7 @@ export const MAT_GENERATORS = [
           const d = r.int(2, maxD);
           return [r.int(1, d - 1), d];
         };
-        const kind = r.pick(["ostanek", "del-od", "vrstni-red"]);
+        const kind = r.pick(sestevanje ? ["ostanek"] : mnozenje ? ["del-od", "vrstni-red"] : ["ostanek", "del-od", "vrstni-red"]);
         if (kind === "ostanek") {
           let f1, f2;
           do {
@@ -663,7 +666,7 @@ export const MAT_GENERATORS = [
       let n2 = r.int(1, d2);
       if (n1 === d1) n1 = n1 > 1 ? n1 - 1 : n1 + 1;
       if (n2 === d2) n2 = n2 > 1 ? n2 - 1 : n2 + 1;
-      const op = level === 1 ? r.pick(["+", "-"]) : r.pick(["+", "-", "·", ":"]);
+      const op = r.pick(sestevanje ? ["+", "-"] : mnozenje ? ["·", ":"] : level === 1 ? ["+", "-"] : ["+", "-", "·", ":"]);
       let n, d;
       if (op === "+") [n, d] = [n1 * d2 + n2 * d1, d1 * d2];
       if (op === "-") [n, d] = [n1 * d2 - n2 * d1, d1 * d2];
