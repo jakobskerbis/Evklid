@@ -201,7 +201,7 @@
      "points": 3,
      "format": "fill",
      "text": "Dopolni.\n\nStranica očrtanega kvadrata meri $\\underline{\\qquad\\qquad}\\,\\mathrm{cm}$.\n\nDiagonala $AC$ kvadrata $ABCD$ meri $\\underline{\\qquad\\qquad}\\,\\mathrm{cm}$.\n\nRazdalja med sosednjima ogliščema $A$ in $B$ je $|AB| = \\underline{\\qquad\\qquad}\\,\\mathrm{cm}$.",
-     "answer": "$12\\,\\mathrm{cm}$; $12\\,\\mathrm{cm}$; $|AB| = 6\\sqrt{2}\\,\\mathrm{cm}$ (približno $8{,}46\\,\\mathrm{cm}$)",
+     "answer": "$12\\,\\mathrm{cm}$; $12\\,\\mathrm{cm}$; $|AB| = 6\\sqrt{2}\\,\\mathrm{cm}$ (približno $8{,}49\\,\\mathrm{cm}$; s približkom $\\sqrt{2} \\approx 1{,}41$ pa $8{,}46\\,\\mathrm{cm}$)",
      "ways": [
       {
        "title": "Po korakih",
@@ -212,7 +212,7 @@
        "text": "Za kvadrat s stranico $a$ velja $d = a\\sqrt{2}$. Diagonala kvadrata $ABCD$ je premer, $d = 12\\,\\mathrm{cm}$, zato\n\n$a = \\frac{d}{\\sqrt{2}} = \\frac{12}{\\sqrt{2}} = \\frac{12\\sqrt{2}}{2} = 6\\sqrt{2}\\,\\mathrm{cm}$.\n\nPreverimo s ploščino: kvadrat $ABCD$ je razdeljen na štiri skladne pravokotne trikotnike s katetama $6\\,\\mathrm{cm}$, zato je njegova ploščina $4 \\cdot \\frac{6 \\cdot 6}{2} = 72\\,\\mathrm{cm}^2$, stranica pa $\\sqrt{72} = 6\\sqrt{2}\\,\\mathrm{cm}$ ✓."
       }
      ],
-     "scoring": "Po 1 t. za vsako pravilno dopolnjeno vrednost: $12$, $12$ in $6\\sqrt{2}$ (ali približek $8{,}46$ oziroma $8{,}5$).",
+     "scoring": "Po 1 t. za vsako pravilno dopolnjeno vrednost: $12$, $12$ in $6\\sqrt{2}$ (ali približek $8{,}49$, $8{,}46$ oziroma $8{,}5$).",
      "mistake": "Pogosta napaka je odgovor $|AB| = 6\\,\\mathrm{cm}$, enako polmeru: to bi veljalo za stranico včrtanega pravilnega šestkotnika, ne kvadrata. Napačno je tudi diagonalo $AC$ računati z obrazcem $d = a\\sqrt{2}$ in vstaviti polmer namesto stranice."
     },
     {

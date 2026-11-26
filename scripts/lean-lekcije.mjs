@@ -769,6 +769,20 @@ export function preveri({ dir = DIR, root = ROOT, dolgPot = path.join(root, "lea
       napake.push(`lean/izpolnljivo-dolg.json: ${x.izrek} ni (več) izrek brez primera z istim podpisom; odstrani vnos ali dodaj primer`);
     }
   }
+  // L3: dokazi izpitnih pol (lean/Evklid/Pole/*.lean, vir: content/exam-papers/<id>.json); preveri se le, da pola
+  // obstaja in se ni spremenila po dokazu (oznake PV-09 za pole še niso določene).
+  const pole = path.join(root, "lean", "Evklid", "Pole");
+  for (const f of walk(pole)) {
+    const rel = path.relative(root, f);
+    const glava = fs.readFileSync(f, "utf8").slice(0, 4000);
+    const vir = glava.match(/^vir: (content\/exam-papers\/[^\s/]+\.json)$/m)?.[1];
+    const sha = glava.match(/^sha256: ([0-9a-f]{64})$/m)?.[1];
+    if (!vir || !sha) { napake.push(`${rel}: v glavi manjka »vir: content/exam-papers/….json« ali »sha256:«`); continue; }
+    const pot = path.join(root, vir);
+    if (!fs.existsSync(pot)) { napake.push(`${rel}: pola ${vir} ne obstaja več`); continue; }
+    const zdaj = crypto.createHash("sha256").update(fs.readFileSync(pot)).digest("hex");
+    if (zdaj !== sha) napake.push(`${rel}: pola ${vir} je bila spremenjena po dokazu; preveri dokaz in posodobi sha256`);
+  }
   trditve.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
   return { napake, opozorila, pokrite: [...pokrite].sort(), pokriteMat, vseMat: vseMat.length, trditve, dolg: vDolgu.size, brezOznak: brezOznak.length };
 }

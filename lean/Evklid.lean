@@ -150,3 +150,13 @@ import Evklid.Lekcije.MAT_OS_7.VrsteKotovInPariKotov
 import Evklid.Lekcije.MAT_OS_7.VrsteStirikotnikov
 import Evklid.Lekcije.MAT_OS_7.VrsteTrikotnikovInNotranjiKoti
 import Evklid.Lekcije.MAT_OS_7.ZnacilneTockeTrikotnika
+import Evklid.Pole.NPZ6_MAT_2023_redni
+import Evklid.Pole.NPZ6_MAT_2024_redni
+import Evklid.Pole.NPZ6_MAT_2025_redni
+import Evklid.Pole.NPZ6_MAT_2026_redni
+import Evklid.Pole.NPZ9_MAT_2022_redni
+import Evklid.Pole.NPZ9_MAT_2023_redni
+import Evklid.Pole.NPZ9_MAT_2024_redni
+import Evklid.Pole.NPZ9_MAT_2025_redni
+import Evklid.Pole.NPZ9_MAT_2026_redni
+import Evklid.Pole.POKLICNA_MAT_2024_spomladanski
