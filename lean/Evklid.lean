@@ -49,3 +49,8 @@ import Evklid.Lekcije.MAT_SS_2.IracionalneEnacbe
 import Evklid.Lekcije.MAT_SS_2.PotencnaInKorenskaFunkcija
 import Evklid.Lekcije.MAT_SS_2.KompleksnaStevila
 import Evklid.Lekcije.MAT_SS_2.FunkcijeInNjihoveLastnosti
+import Evklid.Lekcije.MAT_SS_2.KvadratnaEnacba
+import Evklid.Lekcije.MAT_SS_2.KvadratnaFunkcija
+import Evklid.Lekcije.MAT_SS_2.KvadratnaNeenacba
+import Evklid.Lekcije.MAT_SS_2.EkstremalniProblemiSKvadratnoFunkcijo
+import Evklid.Lekcije.MAT_SS_2.PreseciscaParabolInSistemiKvadratnihNeenacb
