@@ -4238,7 +4238,7 @@
   "gc.reg.quart": "Negyedfokú",
   "gc.reg.logistic": "Logisztikus",
   "gc.reg.sin": "Szinuszos",
-  "gc.reg.expe": "Exponenciális e alapú (a·e^(bx))",
+  "gc.reg.expe": "Exponenciális e alapú (a·eᵇˣ)",
   "gc.reg.inv": "Reciprok (a + b/x)",
   "chat.full": "Teljes megoldás mutatása",
   "chat.fullMsg": "Mutasd meg a feladat teljes megoldását.",
