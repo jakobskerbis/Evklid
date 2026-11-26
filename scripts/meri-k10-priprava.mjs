@@ -3,13 +3,15 @@
 // Vsak komplet gre skozi PRAVO aplikacijo (server/app.js v istem procesu, začasna baza), kot bi ga učenec: profil na ravni
 // kompleta, test (pot, sklopi, datum) ali priprava brez poti, prilepljeni zapiski, teme, prvi kviz (6 nalog), razlaga iz
 // zapiskov za največ --razlage tem in načrt do testa. Zapiše, kaj učenec vidi, in čas sistema do prve dejavnosti.
-// Ocene tu ni: izhod (data/k10/evklid.json in data/k10/evklid-<komplet>.md) slepo oceni ločen ocenjevalec skupaj z Astrinim
+// Ocene tu ni: izhod (data/meri-k10-evklid.json in data/k10/evklid-<komplet>.md) slepo oceni ločen ocenjevalec skupaj z Astrinim
 // (scripts/k10-slepo.mjs). Ne piše v pravo bazo. Plačljivi so samo klici razlage; ustavi se, preden bi strošek presegel
 // --max-usd (ostale razlage zapiše kot »izpuščeno: meja«).
 //   node scripts/meri-k10-priprava.mjs [--max-usd 2] [--razlage 2] [--samo 01-mat-integral,06-fiz-elektrika] [--suho] [--preizkus]
 //   --suho      samo izpiše načrt in najslabši strošek, nič ne zažene
 //   --preizkus  brez ključa API (preizkusni način): vse razen razlage, za preverjanje skripte
-// Zagon s ključem: GitHub Actions > Meritev, skripta scripts/meri-k10-priprava.mjs (artefakt »meritev«).
+// Zagon s ključem: GitHub Actions > Meritev, skripta scripts/meri-k10-priprava.mjs. Artefakt »meritev« nalaga samo
+// data/meri-*.json, zato je JSON tam (z vsem, iz česar nastanejo .md) in se zapiše po vsakem kompletu: prekinjen zagon
+// pusti plačane razlage.
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -46,7 +48,12 @@ const ROOT = path.join(import.meta.dirname, "..");
 const DIR = path.join(ROOT, "test/fixtures/priprava/k10");
 const { kompleti: vsi } = JSON.parse(fs.readFileSync(path.join(DIR, "pricakovano.json"), "utf8"));
 const kompleti = vsi.filter((k) => !SAMO || SAMO.has(k.id));
-const OUT = process.env.EVKLID_MERI_IZID || path.join(ROOT, "data/k10/evklid.json");
+const OUT = process.env.EVKLID_MERI_IZID || path.join(ROOT, "data/meri-k10-evklid.json");
+const MD_DIR = process.env.EVKLID_MERI_IZID ? path.dirname(OUT) : path.join(ROOT, "data/k10");
+const zapisiJson = () => {
+  fs.mkdirSync(path.dirname(OUT), { recursive: true });
+  fs.writeFileSync(OUT, JSON.stringify({ kdaj: new Date().toISOString(), preizkus: PREIZKUS, model: RAZLAGA_MODEL(), usd: porabljeno(), izidi }, null, 2));
+};
 
 // Okolje pred uvozom aplikacije: začasna baza (nikoli prava), svoj ključ za šifriranje zapiskov.
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-k10-"));
@@ -185,12 +192,13 @@ for (const k of kompleti) {
     dnevi: (n.dnevi || []).slice(0, 7).map((d) => ({ datum: d.datum, enote: d.naloge.map((x) => `${x.vrsta}${x.tema ? `: ${x.tema.ime}` : ""}`) })),
   };
   izidi.push(izid);
+  zapisiJson();
   console.log(`${k.id}: tem ${izid.teme.length}, kviz ${izid.kviz.length || izid.kvizNi}, razlag ${izid.razlage.filter((r) => r.odstavki).length}, ${izid.casDoPrveDejavnostiMs} ms`);
 }
 
 const usd = porabljeno();
-fs.mkdirSync(path.dirname(OUT), { recursive: true });
-fs.writeFileSync(OUT, JSON.stringify({ kdaj: new Date().toISOString(), preizkus: PREIZKUS, model: RAZLAGA_MODEL(), usd, izidi }, null, 2));
+zapisiJson();
+fs.mkdirSync(MD_DIR, { recursive: true });
 // Kar učenec vidi, kot besedilo za slepo oceno (brez imena sistema).
 for (const z of izidi) {
   const md = [
@@ -205,7 +213,7 @@ for (const z of izidi) {
     ...z.nacrt.dnevi.map((d) => `- ${d.datum}: ${d.enote.join("; ") || "prosto"}`),
     z.nacrt.poskusniTest ? "Pred testom je poskusni test." : "",
   ].filter((x) => x !== "");
-  fs.writeFileSync(path.join(path.dirname(OUT), `evklid-${z.id}.md`), md.join("\n") + "\n");
+  fs.writeFileSync(path.join(MD_DIR, `evklid-${z.id}.md`), md.join("\n") + "\n");
 }
 console.log(`Skupaj ${usd.toFixed(4)} $ (meja ${MAX_USD} $). Izid: ${OUT}`);
 server.close();
