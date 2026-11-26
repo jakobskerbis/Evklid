@@ -397,3 +397,36 @@ test("pregleda A in B: drug sistem, namig, označena napaka in vmesni korak brez
   }
 });
 
+test("pregled B (4cf3be1fb): ura s piko in angleške tisočice brez opombe na meji, ob »OK« in brez popravka", async () => {
+  for (const a of [R`Če začneš ob 8.45 in delaš 30 minut: $8.45 + 0.30 = 9.15$.`, R`Ali prideš ob $8.45 + 0.30 = 9.15$?`, R`Rezultat: $14.30 + 2.45 = 17.15$`, R`Result: $1,000 + 1 = 1,001$`, R`So the answer is $2,500 + 500 = 3,000$.`]) {
+    for (const opt of [{ n: 1 }, { n: null, fixText: "OK" }, { n: null, fixText: null }]) {
+      const r = await run({ answers: [a], msgs: ["Koliko je to?"], ...opt });
+      assert.ok(!r.calls.includes("fix"), `${a}: brez klica popravka`);
+      none(r);
+    }
+  }
+});
+
+test("pregled A (4cf3be1fb): spremenjena naloga, beseda za formulo in hipoteza inštruktorja brez opombe na meji in ob napaki klica", async () => {
+  const cases = [
+    { answers: [R`Potem je rešitev $x = 5$.`], msgs: [R`Reši enačbo $2x + 3 = 11$. Kaj pa, če je desna stran 13?`] },
+    { answers: [R`Rešitev je $x = 4$.`], msgs: [R`Reši enačbo $x + 3 = 5$, a namesto 5 vzemi 7.`] },
+    { answers: [R`Torej $25 : 6 = 5$ avtobusov (zaokrožimo navzgor).`], msgs: ["Koliko avtobusov po 6 sedežev potrebujemo za 25 otrok?"] },
+    { answers: [R`Skupaj torej $3 \cdot 500 = 1{,}5$ kg.`], msgs: ["Koliko kilogramov so 3 vrečke po 500 g?"] },
+    { answers: [R`Torej $x = 3$ (na cela zaokroženo).`], msgs: [R`Reši enačbo $3x = 10$.`] },
+  ];
+  for (const c of cases) {
+    for (const opt of [{ n: 1 }, { n: null, fixText: null }]) none(await run({ ...c, answers: [...c.answers], ...opt }));
+  }
+  const steps = [
+    { answers: ["Kaj pa, če bi bila desna stran 13?", "Odlično!"], msgs: [R`Reši enačbo $2x + 3 = 11$.`, "x = 5"] },
+    { answers: ["Vzemimo enostavnejšo enačbo x + 3 = 5. Kaj dobiš?", "Bravo!"], msgs: [R`Reši enačbo $2x + 3 = 11$.`, "x = 2"] },
+  ];
+  for (const c of steps) {
+    none(await run({ ...c, answers: [...c.answers], n: 2 }));
+    none(await run({ ...c, answers: [...c.answers], n: null, chatFail: 3 }));
+  }
+  // inštruktor ponovi le nalogo: opomba ostane (primer ChatGPT)
+  const kept = await run({ answers: [R`Reši $2x + 3 = 11$. Kaj dobiš za $x$?`, "Da, pravilno!"], n: 2, msgs: ["Reši 2x + 3 = 11", "x = 5"] });
+  has(kept, R`*(Opomba: $x = 5$ ni rešitev enačbe $2x + 3 = 11$ (rešitev: $x = 4$). Preveri še sam.)*`);
+});

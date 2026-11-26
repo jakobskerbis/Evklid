@@ -17,7 +17,8 @@ export const hasExercise = (answer) => EXERCISE_RE.test(String(answer || ""));
 // Zapis števila, ki ga račun ne bere zanesljivo (pregled B, 7f565d941): periodična decimalka (»0{,}(3)«, »0,1(6)«,
 // »\overline«, »\dot«, »\ldots«), pika za tisočice (»2.500«, »1.200 €«), kratki TeX (»\frac12«) in mešano število
 // (»1\tfrac12«). Neujemanje v takem zapisu ni ugotovitev kode (ne popravek ne opomba).
-export const AMBIGUOUS_NUM = /\d(?:[.,]|\{,\})\d*\(\d+\)|\\overline|\\dot(?![a-zA-Z])|\\l?dots|…|(?<![\d.,{])\d{1,3}(?:\.\d{3})+(?![\d,{])|\d\s*\\[dt]?frac(?![a-zA-Z])/;
+// Pregled B (4cf3be1fb): tudi angleška vejica za tisočice (»1,000 + 1 = 1,001«) in ura s piko (»8.45 + 0.30 = 9.15«).
+export const AMBIGUOUS_NUM = /\d(?:[.,]|\{,\})\d*\(\d+\)|\\overline|\\dot(?![a-zA-Z])|\\l?dots|…|(?<![\d.,{])\d{1,3}(?:\.\d{3})+(?![\d,{])|(?<![\d.,{])\d{1,3}(?:,\d{3})+(?![\d{])|(?<![\d.,{])\d{1,2}\.[0-5]\d(?![\d.])|\d\s*\\[dt]?frac(?![a-zA-Z])/;
 // Vrstica, kjer zapis lahko stoji namenoma ali v drugem pomenu (pregled A, 7f565d941): zgled, pogosta napaka, vaja,
 // namig, teme, os, ekstrem, asimptota, vrednost funkcije, ura, ostanek, enota (»cm«, »mm«, enota za vrednostjo,
 // »\text{…}«). Ugotovitev ostane (popravek modela kot main), opombe brez modela pa ni: ob pravilnem odgovoru bi bila
@@ -27,14 +28,14 @@ export const AMBIGUOUS_NUM = /\d(?:[.,]|\{,\})\d*\(\d+\)|\\overline|\\dot(?![a-z
 // Pregled B (018af7ab6): odgovor, ki zapis sam označi kot napako (»Mnogi zamenjajo …«, »Ne piši …«, »❌«, »~~«,
 // »Trditev … je lažna«, opis učenčevega lista ali slike, izbirni odgovori »(a) … (b)«), ali račun v drugem sistemu
 // (dvojiški, po modulu, $\mathbb{Z}_5$, Boolova algebra, logični ALI) prav tako ne dobi opombe brez modela.
-const NOTE_WORDS = /(?<!\p{L})(?:npr|primer\p{L}*|zgled\p{L}*|podob\p{L}*|vaj\p{L}*|pogost\p{L}*|napak\p{L}*|napačn\p{L}*|namig\p{L}*|ugani|ugib\p{L}*|poskus\p{L}*|ur[aeio]?|polnoč\p{L}*|ostan\p{L}*|mod|modul\p{L}*|mnog\p{L}*|tipičn\p{L}*|zamenja\p{L}*|zamenjav\p{L}*|past\p{L}*|zmot\p{L}*|piš[ei]|zapiši|napiši|zapišeš|zapisal\p{L}*|pozab\p{L}*|namesto|izogib\p{L}*|lažn\p{L}*|narobe|zalomil\p{L}*|spodrsl\p{L}*|temveč|ne drži|ne velja|ne gre|ne more|ni (?:čisto |povsem |res )?(?:prav|pravilno|res|v redu|točno)|zdi|sošol\p{L}*|trdi\p{L}*|fotografij\p{L}*|slik\p{L}*|listu|tabl\p{L}*|kalkulator\p{L}*|upoštev\p{L}*|prednost\p{L}*|dvojišk\p{L}*|binar\p{L}*|šestnajst\p{L}*|osmišk\p{L}*|boole\p{L}*|logičn\p{L}*|e\.g|example|instance|common|mistake|exercise|hint|clock|instead|slip|never|don't|avoid|false|wrong|typical\p{L}*|often|binary|modulo)(?!\p{L})|❌|✗|✘|~~/iu;
+const NOTE_WORDS = /(?<!\p{L})(?:npr|primer\p{L}*|zgled\p{L}*|podob\p{L}*|vaj\p{L}*|pogost\p{L}*|napak\p{L}*|napačn\p{L}*|namig\p{L}*|ugani|ugib\p{L}*|poskus\p{L}*|ur[aeio]?|polnoč\p{L}*|ostan\p{L}*|mod|modul\p{L}*|mnog\p{L}*|tipičn\p{L}*|zamenja\p{L}*|zamenjav\p{L}*|past\p{L}*|zmot\p{L}*|piš[ei]|zapiši|napiši|zapišeš|zapisal\p{L}*|pozab\p{L}*|namesto|izogib\p{L}*|lažn\p{L}*|narobe|zalomil\p{L}*|spodrsl\p{L}*|temveč|ne drži|ne velja|ne gre|ne more|ni (?:čisto |povsem |res )?(?:prav|pravilno|res|v redu|točno)|zdi|sošol\p{L}*|trdi\p{L}*|fotografij\p{L}*|slik\p{L}*|listu|tabl\p{L}*|kalkulator\p{L}*|upoštev\p{L}*|prednost\p{L}*|dvojišk\p{L}*|binar\p{L}*|šestnajst\p{L}*|osmišk\p{L}*|boole\p{L}*|logičn\p{L}*|zaokrož\p{L}*|round\p{L}*|e\.g|example|instance|common|mistake|exercise|hint|clock|instead|slip|never|don't|avoid|false|wrong|typical\p{L}*|often|binary|modulo)(?!\p{L})|❌|✗|✘|~~/iu;
 const NOTE_UPPER = /(?<!\p{L})(?:ALI|IN|OR|AND|XOR|NE)(?!\p{L})/u; // logični operatorji
 const NOTE_CHOICE = /(?:^|\s)\(?[a-dA-D]\)\s*\$|^\s*[a-dA-D][.)]\s/;
 const NOTE_TEX = /\\(?:pmod|bmod|equiv|oplus|lor|vee)(?![a-zA-Z])|\\mathbb\s*\{?\s*Z/;
 // Drug številski sistem, ostanki, ura ali logika kjerkoli v odgovoru (pregled A in B, 018af7ab6): »$1 + 1 = 10$« v
 // dvojiškem, »$3 + 4 = 2$« v $\mathbb{Z}_5$, »$22 + 5 = 3$ zjutraj«, »Dan v tednu: $6 + 3 = 2$«, »Logično ALI: $1 + 1 = 1$«.
 // Tak račun ne dobi nobene opombe brez modela (ne trdne ne blage).
-const OTHER_SYSTEM_WORDS = /(?<!\p{L})(?:mod|modul\p{L}*|dvojišk\p{L}*|binar\p{L}*|šestnajst\p{L}*|osmišk\p{L}*|boole\p{L}*|logičn\p{L}*|binary|modulo|hex\p{L}*|na uri|ura (?:je|bo|kaže)|uri kaže|zjutraj|zvečer|ponoči|popoldn\p{L}*|dopoldn\p{L}*|opoldn\p{L}*|polnoč\p{L}*|dan v tednu|dnevi v tednu|dni v tednu|clock|o'clock)(?!\p{L})|(?<![\p{L}/])h(?![\p{L}/])/iu;
+const OTHER_SYSTEM_WORDS = /(?<!\p{L})(?:mod|modul\p{L}*|dvojišk\p{L}*|binar\p{L}*|šestnajst\p{L}*|osmišk\p{L}*|boole\p{L}*|logičn\p{L}*|binary|modulo|hex\p{L}*|na uri|ura (?:je|bo|kaže)|uri kaže|zjutraj|zvečer|ponoči|popoldn\p{L}*|dopoldn\p{L}*|opoldn\p{L}*|polnoč\p{L}*|dan v tednu|dnevi v tednu|dni v tednu|clock|o'clock|minut\p{L}*|ob\s+\d+)(?!\p{L})|(?<![\p{L}/])h(?![\p{L}/])/iu;
 const OTHER_SYSTEM_TEX = /\\(?:pmod|bmod|mod|equiv|oplus|lor|vee|land|wedge)(?![a-zA-Z])|\\mathbb\s*\{?\s*Z|(?<![\p{L}\\])Z_\{?\d/u;
 const LOGIC_UPPER = /(?<!\p{L})(?:ALI|OR|XOR|AND|NOT)(?!\p{L})/u;
 // besede in »h« (ura) le zunaj formul: »$h = \sqrt{16}$« je višina
@@ -81,6 +82,10 @@ export function presentedAsResult(answer, lines, i, start, end) {
   if (/\\(?:boxed|mathbf)(?![a-zA-Z])/.test(line.slice(start, end))) return true;
   if (/\*\*\s*$/.test(line.slice(0, start)) && /^\s*\*\*/.test(line.slice(end))) return true;
   return (proseOf(answer).match(/\p{L}+/gu) || []).length <= 3;
+}
+/** Za formulo v vrstici sledi beseda ali enota (»$25 : 6 = 5$ avtobusov«, »$= 1{,}5$ kg«; pregled A, 4cf3be1fb). */
+export function wordAfter(line, end) {
+  return /^\s*(?:(?:\\,|~)\s*)?(?!(?:in|and|ali|or|ter|kar|ker|saj|zato|ki)(?!\p{L}))\p{L}/u.test(String(line || "").slice(end));
 }
 /** Zapis je zadnja formula odgovora: za njim le presledki in ločila (brez »?«). */
 export function lastFormula(lines, i, end) {

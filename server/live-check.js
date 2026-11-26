@@ -20,7 +20,7 @@ import { verifyAi } from "../public/scan/verify.js";
 import { checkArithmetic } from "./lesson-math.js";
 import { askModel, checkerUser, SYSTEM as CHECKER_SYSTEM } from "./verify.js";
 import { MODEL_MID, addUsage } from "./claude.js";
-import { SKIP_LINE, notClaimAt, TEX_SHORT, EXERCISE_RE, hasExercise, calcFact, plainToTex, numTex, ambiguousCalc, noteLine, valueTex, OTHER_SYSTEM, LABELLED_REPLY, presentedAsResult, lastFormula, segmentOf, statesNumber, prevLine } from "./besedilo-trditev.js";
+import { SKIP_LINE, notClaimAt, TEX_SHORT, EXERCISE_RE, hasExercise, calcFact, plainToTex, numTex, ambiguousCalc, noteLine, valueTex, OTHER_SYSTEM, LABELLED_REPLY, presentedAsResult, lastFormula, segmentOf, statesNumber, prevLine, wordAfter } from "./besedilo-trditev.js";
 export { SKIP_LINE, notClaimAt, TEX_SHORT, hasExercise };
 
 export const liveCheckOn = () => process.env.EVKLID_LIVE_CHECK !== "0";
@@ -307,7 +307,7 @@ function valueNoteFact(answer, vars, sols, wrongs, fact) {
     // zanikana vrednost (»ne $x = 7$«, »(ne $x = 7$)«)
     if (/(?<!\p{L})(?:ne|ni|not|nikakor)\s*[(:]?\s*$/iu.test(String(s.line).slice(0, s.start))) return null;
     const t = valueTex(s.tex);
-    if (!t || !noteLine(`${prevLine(lines, s.lineIdx)}\n${s.line}`) || !presentedAsResult(answer, lines, s.lineIdx, s.start, s.end)) return null;
+    if (!t || !noteLine(`${prevLine(lines, s.lineIdx)}\n${s.line}`) || wordAfter(s.line, s.end) || !presentedAsResult(answer, lines, s.lineIdx, s.start, s.end)) return null;
     texs.push(`${s.v}${s.idx ? `_{${s.idx}}` : ""} ${s.approx ? "\\approx" : "="} ${t}`);
   }
   return texs.length ? { ...fact, wrong: texs.join(",\\; ") } : null;
@@ -556,9 +556,21 @@ function calcNote(answer, lines, m, { hard = true } = {}) {
     const i = m.line - 1;
     const seg = segmentOf(lines[i], m.tex);
     const cue = seg && presentedAsResult(text, lines, i, seg[0], seg[1]);
-    if (!seg || !(lastFormula(lines, i, seg[1]) || cue) || String(lines[i]).slice(seg[1]).includes("?")) return { fact: null };
+    if (!seg || !(lastFormula(lines, i, seg[1]) || cue) || String(lines[i]).slice(seg[1]).includes("?") || wordAfter(lines[i], seg[1])) return { fact: null };
   }
   return { fact: calcFact(m) };
+}
+
+// Učenec je nalogo spremenil ali dodal drugo (pregled A, 4cf3be1fb): »Kaj pa, če je desna stran 13?«, »a namesto 5
+// vzemi 7«, druga enačba ali število zunaj zapisa naloge. Opomba proti nalogi (vrednost, gol rezultat, odvod) bi bila
+// lahko lažna: brez nje; ugotovitev gre v popravek kot na main.
+const TASK_CHANGE = /(?<!\p{L})(?:kaj pa|kaj če|če je|če bi|namesto|vzemi|vzemimo|zamenj\p{L}*|spremen\p{L}*|recimo|denimo|potem pa|nato pa|pa še|what if|instead|suppose)(?!\p{L})/iu;
+function taskModified(question, pre) {
+  if ((pre?.problems || []).length !== 1) return true;
+  const q = String(question || "");
+  if (TASK_CHANGE.test(q) || (q.match(/=/g) || []).length > 1) return true;
+  const segs = [...q.matchAll(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g)].filter((m) => /[\d=]/.test(m[0]));
+  return segs.length > 1 || (segs.length === 1 && /\d/.test(q.replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, " ")));
 }
 
 export function codeFindings(answer, pre = null, question = "") {
@@ -598,7 +610,7 @@ export function codeFindings(answer, pre = null, question = "") {
     const d = derivativeIssue(answer, der[0]);
     if (d) {
       checked += d.checked;
-      if (d.issue) return { checked, issue: d.issue, fact: d.fact };
+      if (d.issue) return { checked, issue: d.issue, fact: taskModified(question, pre) ? null : d.fact };
     }
   }
   const ar = (pre?.problems || []).filter((p) => p.type === "arith");
@@ -606,7 +618,7 @@ export function codeFindings(answer, pre = null, question = "") {
     const b = bareResultIssue(answer, ar[0]);
     if (b) {
       checked += b.checked;
-      if (b.issue) return { checked, issue: b.issue, fact: b.fact };
+      if (b.issue) return { checked, issue: b.issue, fact: taskModified(question, pre) ? null : b.fact };
     }
   }
   const eq = (pre?.problems || []).filter((p) => p.type === "equation" || p.type === "system");
@@ -614,7 +626,7 @@ export function codeFindings(answer, pre = null, question = "") {
     const v = valueIssue(answer, eq[0]);
     if (v) {
       checked += v.checked;
-      if (v.issue) return { checked, issue: v.issue, fact: v.fact };
+      if (v.issue) return { checked, issue: v.issue, fact: taskModified(question, pre) ? null : v.fact };
     }
   }
   // Kemijske preverbe se združijo v eno napako (en »Popravek:«), da »Dušik je v 5. skupini in v 3. periodi.« popravi

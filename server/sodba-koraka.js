@@ -386,6 +386,7 @@ export function stepVerdict(text, opts = {}) {
   if (said && !vals.length) vals.push({ v: null, x: num(said) });
   return v ? { ...v, asked: true, vals } : v;
 }
+const TUTOR_HYPO = /(?<!\p{L})(?:če bi|kaj pa|kaj če|vzemimo|recimo|denimo|namesto|predpostavimo|what if|suppose|instead)(?!\p{L})/iu;
 // Vmesni korak v inštruktorjevem vprašanju (»Najprej …«, »Nato …«, »prvi korak«).
 const SUBSTEP = /(?<!\p{L})(?:najprej|nato|potem|zdaj|sedaj|prv\p{L}*|drug\p{L}*|tretj\p{L}*|naslednj\p{L}*|korak\p{L}*|vmesn\p{L}*|first|then|next|step)(?!\p{L})/iu;
 // Števila, ki jih učenec v pogovoru že vidi (»$7 \\cdot 8$« → 7, 8).
@@ -586,8 +587,17 @@ const firstSentence = (s) => (/^[\s\S]{0,240}?(?:[.!?](?=\s|$)|\n|$)/.exec(Strin
  * pravilna zavrnitev in opomba bi le razkrila rešitev (pregled A, 7f565d941). Vprašanje-predlog in zavrnjen pravilen
  * korak že zahtevata izrecen začetek.
  */
-export function verdictNoteSafe(answer, verdict) {
+export function verdictNoteSafe(answer, verdict, { prevTutor = "", pre = null } = {}) {
   if (!verdict || !verdictIgnored(answer, verdict)) return false;
+  // Inštruktor je zastavil hipotezo ali drugo enačbo (»Kaj pa, če bi bila desna stran 13?«, »Vzemimo enostavnejšo
+  // enačbo x + 3 = 5«): sodba proti nalogi je kot na main, vidne opombe pa ne (pregled A, 4cf3be1fb).
+  const prev = String(prevTutor || "");
+  if (TUTOR_HYPO.test(prev)) return false;
+  const nums = (t) => (String(t || "").match(/\d+(?:[.,]\d+)?/g) || []).join(" ");
+  const tasks = (pre?.problems || []).map((p) => nums(p.problemTex || p.problem));
+  for (const m of prev.matchAll(/([^\n=.,;:?!]{0,40})=([^\n=.;:?!]{0,40})/g)) {
+    if (!tasks.includes(nums(m[1] + "=" + m[2]))) return false;
+  }
   if (verdict.asked || !verdict.wrong) return true;
   const head = firstSentence(answer);
   return POSITIVE_OPEN.test(head) && !ERROR_MARK.test(head.replace(SOFT_MARK, "")) && !NEGATIVE_OPEN.test(head);

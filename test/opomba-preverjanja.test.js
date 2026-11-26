@@ -598,3 +598,87 @@ test("pregled B (018af7ab6): golo število, ki je rezultat naloge ali že vidno,
   }
 });
 
+// Pregled B (4cf3be1fb): ura s piko in angleška vejica za tisočice niso ugotovitev kode (ne opomba ne popravek).
+export const B_CLOCK = [
+  R`Če začneš ob 8.45 in delaš 30 minut: $8.45 + 0.30 = 9.15$.`,
+  R`Ali prideš ob $8.45 + 0.30 = 9.15$?`,
+  R`Rezultat: $8.45 + 0.30 = 9.15$`,
+  R`Rezultat: $14.30 + 2.45 = 17.15$`,
+  R`Rezultat: $10.15 - 9.50 = 0.25$`,
+  R`Konec: $9.50 + 0.25 = 10.15$`,
+  R`Result: $1,000 + 1 = 1,001$`,
+  R`Result: $2,000 - 500 = 1,500$`,
+  R`So the answer is $2,500 + 500 = 3,000$.`,
+];
+test("pregled B: ura s piko in angleške tisočice brez ugotovitve", () => {
+  for (const a of B_CLOCK) assert.equal(codeFindings(a, null, "").issue, null, a);
+  for (const a of [R`Torej $7 \cdot 8 = 54$.`, R`Torej $2{,}5 + 0{,}5 = 4$.`, R`Torej $2.5 + 0.5 = 4$.`]) assert.ok(codeFindings(a, null, "").fact, a);
+});
+
+// Pregled A (4cf3be1fb): spremenjena naloga, beseda ali enota za formulo, zaokroževanje in inštruktorjeva hipoteza →
+// brez opombe (ugotovitev gre v popravek kot na main); vprašanje z nalogo in brez spremembe obdrži opombo.
+export const A_TASK_CHANGE = [
+  [R`Reši enačbo $2x + 3 = 11$. Kaj pa, če je desna stran 13?`, R`Potem je rešitev $x = 5$.`],
+  [R`Reši enačbo $2x + 3 = 11$. Kaj pa, če je desna stran 13?`, "Pri desni strani 11: $x = 4$.\nČe je desna stran 13, je rešitev $x = 5$."],
+  [R`Reši enačbo $x + 3 = 5$, a namesto 5 vzemi 7.`, R`Rešitev je $x = 4$.`],
+  [R`Reši enačbo $2x + 3 = 11$, potem pa še $2x + 3 = 13$.`, R`Prva: $2x = 8$. Druga: $2x = 10$, torej $x = 5$.`],
+  [R`Reši enačbo $2x + 3 = 11$. What if the right side is 13?`, R`Then $x = 5$.`],
+  ["Koliko avtobusov po 6 sedežev potrebujemo za 25 otrok?", R`Torej $25 : 6 = 5$ avtobusov (zaokrožimo navzgor).`],
+  ["Koliko kilogramov so 3 vrečke po 500 g?", R`Skupaj torej $3 \cdot 500 = 1{,}5$ kg.`],
+  ["Čas?", R`Skupaj torej $2 \cdot 45 = 1{,}5$ h.`],
+  [R`Reši enačbo $3x = 10$.`, R`Torej $x = 3$ (na cela zaokroženo).`],
+  ["Zaokroževanje?", R`Na stotice zaokroženo je torej $1249 = 1200$.`],
+  ["Zaokroževanje?", R`Zaokroženo na desetice je torej $47 = 50$.`],
+];
+test("pregled A (4cf3be1fb): spremenjena naloga, beseda za formulo in zaokroževanje brez opombe", () => {
+  for (const [q, a] of A_TASK_CHANGE) {
+    const f = codeFindings(a, presolve(q, { first: true }), q);
+    assert.ok(!f.issue || !f.fact || f.soft, `${q} → ${a}: ${f.fact && checkNoteFor(f.fact, "sl")}`);
+  }
+  // brez spremembe naloge in brez besede za formulo opomba ostane
+  for (const [q, a] of [
+    [R`Reši enačbo $2x + 3 = 11$.`, R`$2x = 8$, torej $x = 5$.`],
+    ["Reši enačbo 2x + 3 = 11.", R`Rešitev je $x = 5$.`],
+    ["Koliko je 7 krat 8?", R`Torej $7 \cdot 8 = 54$.`],
+    ["Koliko je 7 krat 8?", R`Torej $7 \cdot 8 = 54$ in to je vse.`],
+  ]) {
+    const f = codeFindings(a, presolve(q, { first: true }), q);
+    assert.ok(f.issue && f.fact && !f.soft, `${q} → ${a}`);
+  }
+});
+
+test("pregled A (4cf3be1fb): opomba ob prezrti sodbi ne po inštruktorjevi hipotezi ali drugi enačbi", () => {
+  const T = R`Reši enačbo $2x + 3 = 11$.`;
+  const pre = presolve(T, { first: true, narrow: false });
+  const at = (prev, q, a) => {
+    const v = stepVerdict(q, { pre, prevTutor: prev, seen: T + "\n" + prev });
+    return !!v && verdictNoteSafe(a, v, { prevTutor: prev, pre });
+  };
+  assert.equal(at("Kaj pa, če bi bila desna stran 13?", "x = 5", "Odlično!"), false);
+  assert.equal(at("Vzemimo enostavnejšo enačbo x + 3 = 5. Kaj dobiš?", "x = 2", "Bravo!"), false);
+  assert.equal(at(R`Poskusi najprej z $x + 3 = 5$.`, "x = 2", "Odlično, tako je!"), false);
+  assert.equal(at(R`Zdaj pa sam: reši $2x + 3 = 13$.`, "x = 5", "Odlično!"), false);
+  assert.equal(at("Recimo, da je desna stran 13. Kaj dobiš?", "x = 5", "Da!"), false);
+  // primer ChatGPT: inštruktor brez druge enačbe ali le z enačbo naloge → opomba ostane
+  assert.equal(at("Kaj narediš najprej?", "x = 5", "Da, pravilno!"), true);
+  assert.equal(at("Kaj dobiš za x?", "x = 5", "Da, pravilno!"), true);
+  assert.equal(at(R`Reši $2x + 3 = 11$. Kaj dobiš za $x$?`, "x = 5", "Da, pravilno!"), true);
+});
+
+test("pregled A (4cf3be1fb): beseda za formulo, spremenjena naloga in hipoteza v linearnem času", () => {
+  const ms = (f) => {
+    const s = performance.now();
+    f();
+    return performance.now() - s;
+  };
+  const T = R`Reši enačbo $2x + 3 = 11$.`;
+  const pre = presolve(T, { first: true, narrow: false });
+  const v = stepVerdict("x = 5", { pre, prevTutor: "Kaj dobiš?" });
+  for (const s of [" ".repeat(60000) + "1", " ".repeat(30000) + "~" + " ".repeat(30000) + "1"]) {
+    assert.ok(ms(() => codeFindings(R`Torej $7 \cdot 8 = 54$` + s, null, "")) < 300, "beseda za formulo");
+  }
+  for (const q of ["$".repeat(60000), "$a".repeat(30000), "a".repeat(60000) + "=", "$1$ ".repeat(15000)]) {
+    assert.ok(ms(() => codeFindings(R`Rešitev je $x = 5$.`, pre, T + q)) < 300, q.slice(0, 10));
+    assert.ok(ms(() => verdictNoteSafe("Da, pravilno!", v, { prevTutor: q, pre })) < 300, q.slice(0, 10));
+  }
+});

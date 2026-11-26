@@ -1643,7 +1643,7 @@ export function createApp(store, opts = {}) {
           // Ponovni odgovor samo, če je zanj prostor pod mejo. Sicer ostane prvi odgovor, ob sodbi kode s konkretno
           // opombo (»$x = 5$ ni rešitev enačbe …«), ki je resnična tudi, če je verdictIgnored odgovor prebral narobe.
           if (reason && !hold.take(mainReserve)) {
-            if (codeIgnored && verdictNoteSafe(stripMeta(result.text), codeVerdict)) stepNote = checkNoteFor(codeVerdict.fact, jezik, { verdict: true });
+            if (codeIgnored && verdictNoteSafe(stripMeta(result.text), codeVerdict, { prevTutor: prevTutorText, pre: firstPre })) stepNote = checkNoteFor(codeVerdict.fact, jezik, { verdict: true });
           } else if (reason) {
             // Napačna sodba: isti model odgovori še enkrat z ugotovitvijo preverjevalca v skriti opombi.
             const again2 = createStreamFilter({ language: jezik });
@@ -1687,7 +1687,7 @@ export function createApp(store, opts = {}) {
           console.warn(`[evklid] pregled sodbe ni uspel: ${e?.message || e}`);
           // Ponovni odgovor ni uspel: učenec vidi prvi odgovor (ne delnega ponovnega), ob sodbi kode z opombo.
           if (firstHeld) held.splice(0, held.length, ...firstHeld);
-          if (codeIgnored && verdictNoteSafe(stripMeta(result.text), codeVerdict)) stepNote = checkNoteFor(codeVerdict.fact, jezik, { verdict: true });
+          if (codeIgnored && verdictNoteSafe(stripMeta(result.text), codeVerdict, { prevTutor: prevTutorText, pre: firstPre })) stepNote = checkNoteFor(codeVerdict.fact, jezik, { verdict: true });
         }
       }
       phase(false); // preverjanje sodbe je končano: napis »Preverjam odgovor …« izgine
