@@ -17,6 +17,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { GENERATORS, plainCommas } from "../server/practice/index.js";
+import { checkAnswer } from "../server/practice/check.js";
 import { makeRng } from "../server/practice/rng.js";
 import { getTopic } from "../server/curriculum.js";
 import { kljucIz, sifriraj, odsifriraj } from "./preizkus3-sifra.mjs";
@@ -34,6 +35,13 @@ const TEMA_OK = /^(MAT|FIZ|KEM|BIO)-(OS-[6-9]|SS-[1-4]|TEK-(OS|SS))\//;
 const RAVNI = [1, 2, 3];
 
 const sha = (s) => crypto.createHash("sha256").update(s).digest("hex");
+// Prstni odtis besedila naloge: test brez ključa ujame, če sprememba generatorja da pri istem semenu drugo nalogo.
+export const odtis = (besedilo) => sha(String(besedilo)).slice(0, 16);
+// Ločena podključa iz NABOR_KLJUC za izbiro semen in za razdelitev (šifra uporablja glavni ključ).
+export const podkljuc = (kljuc, namen) => crypto.createHmac("sha256", kljuc).update(`evklid-nabor/${namen}`).digest();
+// Seme iz ključa: brez ključa skritih nalog iz generatorjev ni mogoče ponoviti (javni so samo razvojni pari).
+const semeIz = (semeKljuc, osnova, kaj) =>
+  semeKljuc ? osnova + (crypto.createHmac("sha256", semeKljuc).update(kaj).digest().readUInt32BE(0) % 1_000_000) : osnova;
 // En predmet v vrstici: pregleden diff in majhna datoteka.
 const stabilno = (x) => (Array.isArray(x) ? "[\n" + x.map((p) => JSON.stringify(p)).join(",\n") + "\n]\n" : JSON.stringify(x, null, 1) + "\n");
 
@@ -62,8 +70,9 @@ function odgovorKode(a) {
 const zapisStevila = (v, unit) => String(+Number(v).toPrecision(10)).replace(".", ",") + (unit ? ` ${unit}` : "");
 
 // Postavke iz generatorjev: krožno po generatorjih predmeta (vsak generator najprej raven 1, 2, 3, nato novo seme),
-// dokler ni `n` postavk; isto besedilo se ne ponovi.
-export function postavkeGeneratorjev(predmeti, n, napak = 0) {
+// dokler ni `n` postavk; isto besedilo se ne ponovi. Semena izhajajo iz `semeKljuc` (podključ NABOR_KLJUC), brez njega
+// (samo testi) so 1000 + krog in 5000 + krog.
+export function postavkeGeneratorjev(predmeti, n, napak = 0, semeKljuc = null) {
   const gens = GENERATORS.filter((g) => !g.langs && g.topics.some((t) => TEMA_OK.test(t) && predmeti.includes(predmetTeme(t)) && getTopic(t)));
   const out = [];
   const videno = new Set();
@@ -73,7 +82,7 @@ export function postavkeGeneratorjev(predmeti, n, napak = 0) {
       const teme = g.topics.filter((t) => TEMA_OK.test(t) && predmeti.includes(predmetTeme(t)) && getTopic(t));
       const tema = teme[krog % teme.length];
       const raven = RAVNI[krog % 3];
-      const seme = 1000 + krog;
+      const seme = semeIz(semeKljuc, 1000 + krog, `naloga|${g.id}|${krog}`);
       let t;
       try {
         t = nalogaGeneratorja({ generator: g.id, tema, raven, seme });
@@ -89,6 +98,7 @@ export function postavkeGeneratorjev(predmeti, n, napak = 0) {
         skupina: `GEN/${g.id}`,
         tema,
         vrsta: t.answer.type === "choice" ? "izbirna" : "racun",
+        besedilo_odtis: odtis(t.text),
         odgovor: odgovorKode(t.answer),
         odgovor_vir: "koda generatorja",
       });
@@ -102,7 +112,7 @@ export function postavkeGeneratorjev(predmeti, n, napak = 0) {
       const teme = g.topics.filter((t) => TEMA_OK.test(t) && predmeti.includes(predmetTeme(t)) && getTopic(t));
       const tema = teme[krog % teme.length];
       const raven = RAVNI[krog % 3];
-      const seme = 5000 + krog;
+      const seme = semeIz(semeKljuc, 5000 + krog, `napaka|${g.id}|${krog}`);
       let t;
       try {
         t = nalogaGeneratorja({ generator: g.id, tema, raven, seme });
@@ -112,6 +122,9 @@ export function postavkeGeneratorjev(predmeti, n, napak = 0) {
       const a = t.answer;
       const m = a.type === "number" && (a.mistakes || []).find((x) => x && Number.isFinite(x.value) && Math.abs(x.value - a.value) > 1e-9 * Math.max(1, Math.abs(a.value)) && x.why);
       if (!m || videno.has(t.text)) continue;
+      // Napačna rešitev mora biti za preverjanje aplikacije napačna, ne le slabo zaokrožena (sicer meri drugo napako).
+      const ucenec = zapisStevila(m.value, a.unit);
+      if (["correct", "rounding"].includes(checkAnswer(a, ucenec).kind)) continue;
       videno.add(t.text);
       nap.push({
         id: `GEN-NAPAKA/${g.id}/${tema}/${raven}/${seme}`,
@@ -120,7 +133,8 @@ export function postavkeGeneratorjev(predmeti, n, napak = 0) {
         skupina: `GEN/${g.id}`,
         tema,
         vrsta: "napaka",
-        napaka: { ucenec: zapisStevila(m.value, a.unit), vrsta_napake: "napačen rezultat", zakaj: m.why },
+        besedilo_odtis: odtis(t.text),
+        napaka: { ucenec, vrsta_napake: "napačen rezultat", zakaj: m.why },
         odgovor: odgovorKode(a),
         odgovor_vir: "koda generatorja",
       });
@@ -149,7 +163,8 @@ export function brezPonovitev() {
 }
 
 // Skrit del: v vsakem sloju (nabor × vrsta vira) skupine v vrstnem redu HMAC(ključ, skupina), dokler skritih postavk
-// ni vsaj SKRITO deleža sloja. Brez ključa izbire ni mogoče ponoviti ali uganiti.
+// ni vsaj SKRITO deleža sloja. Brez ključa izbire ni mogoče ponoviti. Meja (docs/nabor-instruktorja.md): kateri
+// generatorji so skriti, se da razbrati iz javne kode (vsi primerni so v naboru), skrite naloge same pa ne.
 export function razdeli(postavke, kljuc) {
   const sloji = new Map();
   for (const p of postavke) {
@@ -194,13 +209,23 @@ export function sestava(razvoj, skrito) {
       po_vrsti: steje(v, (p) => p.vrsta),
       po_ravni: steje(v, (p) => (p.tema || "").split("/")[0].split("-").slice(1).join("-") || "?"),
       tem: new Set(v.map((p) => p.tema)).size,
+      // Uradne postavke po sliki (ne / opisana / nujna): meritev jih poroča posebej.
+      uradne_po_sliki: steje(v.filter((p) => p.vir.vrsta === "uradno"), (p) => p.slika || "ne"),
     };
   }
   return { razlicica: 1, nabori };
 }
 
-function zgradi(uradnoMapa, izhod) {
-  const kljuc = kljucIz(process.env.NABOR_KLJUC);
+function kljucNabora() {
+  try {
+    return kljucIz(process.env.NABOR_KLJUC);
+  } catch {
+    throw new Error("NABOR_KLJUC manjka ali ni 32 bajtov v base64 (ključ je v zasebni mapi projekta, k06-nabor/).");
+  }
+}
+
+// Uradne postavke, ki gredo v nabor (pred razdelitvijo): uporabne, brez ponovljenega dela B pri VR, brez ponovitev.
+export function uradnePostavke(uradnoMapa) {
   const uradneVse = fs
     .readdirSync(uradnoMapa)
     .filter((f) => f.endsWith(".json"))
@@ -212,13 +237,20 @@ function zgradi(uradnoMapa, izhod) {
   // prepisana tudi pola OR istega roka. Nato še ponovitve po besedilu.
   const rokiOR = new Set(uradneVse.filter((p) => p.predmet === "MAT" && p.vir.raven === "OR").map((p) => `${p.vir.leto}|${p.vir.rok}`));
   const uradne = uradneVse.filter((p) => !(p.predmet === "MAT" && p.vir.raven === "VR" && /^B/i.test(String(p.vir.naloga)) && rokiOR.has(`${p.vir.leto}|${p.vir.rok}`))).filter(brezPonovitev());
+  return uradne;
+}
+
+function zgradi(uradnoMapa, izhod) {
+  const kljuc = kljucNabora();
+  const semeKljuc = podkljuc(kljuc, "semena");
+  const uradne = uradnePostavke(uradnoMapa);
   const uradnihPo = steje(uradne, (p) => NABOR(p.predmet));
   const gen = [
-    ...postavkeGeneratorjev(["MAT"], CILJI.MAT - (uradnihPo.MAT || 0), NAPAKE.MAT),
-    ...postavkeGeneratorjev(["FIZ", "KEM"], CILJI["FIZ/KEM"] - (uradnihPo["FIZ/KEM"] || 0), NAPAKE["FIZ/KEM"]),
-    ...postavkeGeneratorjev(["BIO"], CILJI.BIO - (uradnihPo.BIO || 0), NAPAKE.BIO),
+    ...postavkeGeneratorjev(["MAT"], CILJI.MAT - (uradnihPo.MAT || 0), NAPAKE.MAT, semeKljuc),
+    ...postavkeGeneratorjev(["FIZ", "KEM"], CILJI["FIZ/KEM"] - (uradnihPo["FIZ/KEM"] || 0), NAPAKE["FIZ/KEM"], semeKljuc),
+    ...postavkeGeneratorjev(["BIO"], CILJI.BIO - (uradnihPo.BIO || 0), NAPAKE.BIO, semeKljuc),
   ];
-  const { razvoj, skrito } = razdeli([...uradne, ...gen], kljuc);
+  const { razvoj, skrito } = razdeli([...uradne, ...gen], podkljuc(kljuc, "razdelitev"));
   const razvojGen = razvoj.filter((p) => p.vir.vrsta === "generator");
   const razvojUradno = razvoj.filter((p) => p.vir.vrsta === "uradno");
   fs.mkdirSync(izhod, { recursive: true });
@@ -228,8 +260,7 @@ function zgradi(uradnoMapa, izhod) {
   fs.writeFileSync(path.join(izhod, "skrito.enc"), sifriraj(t.skrito, kljuc));
   const s = sestava(razvoj, skrito);
   s.sha256 = { "razvoj-generatorji.json": sha(t.gen), "razvoj-uradno (čisto besedilo)": sha(t.uradno), "skrito (čisto besedilo)": sha(t.skrito) };
-  // Id-ji razvojnih uradnih postavk so javni (vir brez besedila), skriti ne.
-  s.razvoj_uradno_id = razvojUradno.map((p) => p.id);
+  // Brez seznama id-jev razvojnih uradnih postavk: iz njega in javnih pol bi se dalo razbrati skrite.
   fs.writeFileSync(path.join(izhod, "sestava.json"), stabilno(s));
   for (const [nab, v] of Object.entries(s.nabori)) console.log(`${nab}: ${v.n}/${v.cilj}, uradnih ${v.uradnih} (${(v.delez_uradnih * 100).toFixed(1)} %), skritih ${v.skritih}`);
 }
@@ -239,7 +270,13 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const arg = (k) => (a.includes(k) ? a[a.indexOf(k) + 1] : null);
   try {
     if (a.includes("--uradno")) zgradi(arg("--uradno"), arg("--izhod") || MAPA);
-    else if (a.includes("--odsifriraj")) fs.writeFileSync(a[a.indexOf("--odsifriraj") + 2], odsifriraj(fs.readFileSync(arg("--odsifriraj"), "utf8"), kljucIz(process.env.NABOR_KLJUC)));
+    else if (a.includes("--odsifriraj")) {
+      const izhod = path.resolve(a[a.indexOf("--odsifriraj") + 2] || "");
+      const koren = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+      // Čisto besedilo (© RIC, skriti del) nikoli v delovno mapo repozitorija.
+      if (izhod === koren || izhod.startsWith(koren + path.sep)) throw new Error("Odšifrirano zapiši izven repozitorija (npr. v /tmp).");
+      fs.writeFileSync(izhod, odsifriraj(fs.readFileSync(arg("--odsifriraj"), "utf8"), kljucNabora()));
+    }
     else {
       console.error("Uporaba: NABOR_KLJUC=… node scripts/nabor-instruktorja.mjs --uradno <mapa> [--izhod <mapa>] | --odsifriraj <vhod.enc> <izhod.json>");
       process.exit(1);

@@ -6,9 +6,10 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
 import fs from "node:fs";
-import { MAPA, CILJI, MIN_URADNO, SKRITO, NABOR, nalogaGeneratorja, razdeli, postavkaUradna } from "../scripts/nabor-instruktorja.mjs";
+import { MAPA, CILJI, MIN_URADNO, SKRITO, NABOR, nalogaGeneratorja, razdeli, postavkaUradna, odtis } from "../scripts/nabor-instruktorja.mjs";
 import { jeSifrirano, kljucIz, odsifriraj } from "../scripts/preizkus3-sifra.mjs";
 import { getTopic } from "../server/curriculum.js";
+import { checkAnswer } from "../server/practice/check.js";
 
 const beri = (f) => fs.readFileSync(`${MAPA}/${f}`, "utf8");
 const sestava = JSON.parse(beri("sestava.json"));
@@ -32,16 +33,22 @@ test("javni del: vse iz generatorjev, odgovor iz kode, teme obstajajo, id-ji enk
     assert.ok(!ids.has(p.id), p.id);
     ids.add(p.id);
   }
-  for (const id of sestava.razvoj_uradno_id) assert.ok(!ids.has(id) && /^[MN]\d{3}-\d{3}-\d-\d\//.test(id), id);
+  // Javni so samo števci: seznam razvojnih uradnih id-jev bi skupaj z javnimi polami izdal skrite naloge.
+  assert.deepEqual(Object.keys(sestava).sort(), ["nabori", "razlicica", "sha256"]);
+  const sha = crypto.createHash("sha256").update(beri("razvoj-generatorji.json")).digest("hex");
+  assert.equal(sha, sestava.sha256["razvoj-generatorji.json"], "razvoj-generatorji.json se ne ujema s sestava.json");
 });
 
-test("naloge iz generatorjev se ponovijo z istim odgovorom (vsaka 25.)", () => {
-  for (let i = 0; i < gen.length; i += 25) {
-    const p = gen[i];
+// Vse postavke (≈ 2 s): sprememba generatorja, ki pri istem semenu da drugo nalogo ali odgovor, pade tu. Popravek
+// zahteva ponovno gradnjo (ključ in zasebni prepisi, docs/nabor-instruktorja.md).
+test("naloge iz generatorjev se ponovijo z istim besedilom in odgovorom (vse)", () => {
+  for (const p of gen) {
     const t = nalogaGeneratorja(p.vir);
     const a = t.answer;
     const v = a.type === "number" ? a.value : a.type === "choice" ? a.index : a.type === "fraction" ? `${a.num}/${a.den}` : (a.values ?? a.value ?? null);
+    assert.equal(odtis(t.text), p.besedilo_odtis, `${p.id}: besedilo naloge se je spremenilo`);
     assert.deepEqual(v, p.odgovor.vrednost, p.id);
+    if (p.vrsta === "napaka") assert.ok(!["correct", "rounding"].includes(checkAnswer(a, p.napaka.ucenec).kind), `${p.id}: napačna rešitev ni napačna`);
   }
 });
 
@@ -65,7 +72,13 @@ test("uradna postavka brez uradnega odgovora ne gre v nabor", () => {
 });
 
 test("uradne in skrite naloge so v repozitoriju samo šifrirane", () => {
-  for (const f of ["razvoj-uradno.enc", "skrito.enc"]) assert.ok(jeSifrirano(beri(f)), f);
+  for (const f of ["razvoj-uradno.enc", "skrito.enc"]) {
+    assert.ok(jeSifrirano(beri(f)), f);
+    // Samo glava in base64 šifra, nič drugega (glava sama ne zagotavlja, da je vsebina šifrirana).
+    const o = JSON.parse(beri(f));
+    assert.deepEqual(Object.keys(o).sort(), ["alg", "data", "iv", "oblika", "tag", "v"], f);
+    assert.match(o.data, /^[A-Za-z0-9+/]{1000,}={0,2}$/, f);
+  }
   const javno = fs.readdirSync(MAPA).filter((f) => !f.endsWith(".enc"));
   assert.deepEqual(javno.sort(), ["razvoj-generatorji.json", "sestava.json"]);
 });
