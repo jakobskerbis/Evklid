@@ -28,21 +28,24 @@ open Real
 
 /-! ## Pomožne trditve -/
 
-/-- Pomožno: če je y > 0 in y² = x, je √x = y. -/
+/-- Pomožno: če je y > 0 in y² = x, je √x = y.
+pomozno – orodje: y > 0, y² = x ⇒ √x = y -/
 theorem koren (x y : ℝ) (hy : 0 < y) (h : y ^ 2 = x) : √x = y := by
   rw [← h]; exact Real.sqrt_sq hy.le
 
 /-- Predpostavki `koren` se dasta izpolniti (y = 3, x = 9). -/
 example : (0 : ℝ) < 3 ∧ (3 : ℝ) ^ 2 = 9 := by norm_num
 
-/-- Pomožno: če je 0 ≤ a, a² < x < b² in b > 0, je a < √x < b. -/
+/-- Pomožno: če je 0 ≤ a, a² < x < b² in b > 0, je a < √x < b.
+pomozno – orodje: a² < x < b² ⇒ a < √x < b -/
 theorem med (x a b : ℝ) (ha : 0 ≤ a) (hb : 0 < b) (h1 : a ^ 2 < x) (h2 : x < b ^ 2) : a < √x ∧ √x < b :=
   ⟨(Real.lt_sqrt ha).mpr h1, (Real.sqrt_lt' hb).mpr h2⟩
 
 /-- Predpostavke `med` se dajo izpolniti (x = 2, a = 1, b = 2). -/
 example : (0 : ℝ) ≤ 1 ∧ (0 : ℝ) < 2 ∧ (1 : ℝ) ^ 2 < 2 ∧ (2 : ℝ) < 2 ^ 2 := by norm_num
 
-/-- Pomožno: naravno število n med zaporednima kvadratoma k² < n < (k + 1)² ni popolni kvadrat. -/
+/-- Pomožno: naravno število n med zaporednima kvadratoma k² < n < (k + 1)² ni popolni kvadrat.
+pomozno – orodje: število med zaporednima kvadratoma ni popolni kvadrat -/
 theorem ni_popolni_kvadrat (n k : ℕ) (h1 : k ^ 2 < n) (h2 : n < (k + 1) ^ 2) : ¬ IsSquare n := by
   rintro ⟨r, rfl⟩
   rcases Nat.lt_or_ge k r with h | h
@@ -55,7 +58,8 @@ theorem ni_popolni_kvadrat (n k : ℕ) (h1 : k ^ 2 < n) (h2 : n < (k + 1) ^ 2) :
 example : (2 : ℕ) ^ 2 < 7 ∧ 7 < (2 + 1) ^ 2 := by norm_num
 
 /-- Pomožno: periodični decimalni zapis z dobo p dolžine L (0,ppp…) je vrsta Σ p/(10ᴸ)ᵏ⁺¹ in je enak
-ulomku p/(10ᴸ − 1). -/
+ulomku p/(10ᴸ − 1).
+pomozno – orodje: periodični zapis kot geometrijska vrsta -/
 theorem periodicni (p : ℝ) (L : ℕ) (hL : 0 < L) :
     ∑' k : ℕ, p / (10 ^ L) ^ (k + 1) = p / (10 ^ L - 1) := by
   have h1 : (1 : ℝ) < 10 ^ L := one_lt_pow₀ (by norm_num) hL.ne'
@@ -76,7 +80,9 @@ example : 0 < 1 := Nat.one_pos
 /-! ## Zakaj se tega učimo -/
 
 /-- Zakaj se tega učimo: kalkulator pokaže √2 ≈ 1,414213562 (1,414213562 < √2 < 1,414213563); kvadrat
-prikazanega števila je 1,99999999894…, ne natanko 2. -/
+prikazanega števila je 1,99999999894…, ne natanko 2.
+trditev: MAT-OS-8/realna-stevila#kalkulator
+besedilo: »Dobiš $1{,}99999999894\ldots$, ne pa natanko $2$.« -/
 theorem kalkulator :
     (1.414213562 : ℝ) < √2 ∧ √2 < 1.414213563 ∧ (1.99999999894 : ℝ) < 1.414213562 ^ 2 ∧
       (1.414213562 : ℝ) ^ 2 < 1.99999999895 ∧ (1.414213562 : ℝ) ^ 2 ≠ 2 := by
@@ -84,7 +90,9 @@ theorem kalkulator :
   exact ⟨h1, h2, by norm_num, by norm_num, by norm_num⟩
 
 /-- Zakaj se tega učimo: kvadratna nalepka s ploščino 2 cm² ima stranico √2 cm: √2 je edino pozitivno
-število a z a² = 2; √2 je iracionalen. -/
+število a z a² = 2; √2 je iracionalen.
+trditev: MAT-OS-8/realna-stevila#nalepka
+besedilo: »Kvadratna nalepka za telefon s ploščino $2\,\text{cm}^2$ ima stranico $\sqrt{2}\,\text{cm}$.« -/
 theorem nalepka (a : ℝ) (ha : 0 < a) : (a ^ 2 = 2 ↔ a = √2) ∧ Irrational √2 := by
   refine ⟨⟨fun h => (koren 2 a ha h).symm, fun h => by rw [h]; exact Real.sq_sqrt (by norm_num)⟩,
     irrational_sqrt_two⟩
@@ -95,7 +103,9 @@ example : (0 : ℝ) < 1 := one_pos
 /-! ## Razlaga 1: racionalna števila -/
 
 /-- Razlaga 1: število je racionalno (x ∈ ℚ) natanko tedaj, ko ga zapišemo kot m/n z m celim in n
-naravnim (n ≥ 1). -/
+naravnim (n ≥ 1).
+trditev: MAT-OS-8/realna-stevila#racionalno
+besedilo: »Število je **racionalno**, če ga lahko zapišemo kot ulomek $\dfrac{m}{n}$, kjer je $m$ celo število, $n$ pa naravno število.« -/
 theorem racionalno_iff (x : ℝ) : (∃ q : ℚ, (q : ℝ) = x) ↔ ∃ m : ℤ, ∃ n : ℕ, 0 < n ∧ x = m / n := by
   constructor
   · rintro ⟨q, rfl⟩
@@ -103,24 +113,32 @@ theorem racionalno_iff (x : ℝ) : (∃ q : ℚ, (q : ℝ) = x) ↔ ∃ m : ℤ,
   · rintro ⟨m, n, -, rfl⟩
     exact ⟨m / n, by push_cast; ring⟩
 
-/-- Razlaga 1: 5 = 5/1, −3 = −3/1, 0,75 = 3/4; hitra preizkušnja: −1,5 = −3/2. -/
+/-- Razlaga 1: 5 = 5/1, −3 = −3/1, 0,75 = 3/4; hitra preizkušnja: −1,5 = −3/2.
+trditev: MAT-OS-8/realna-stevila#racionalni-primeri
+besedilo: »Sem sodijo naravna števila ($5 = \dfrac{5}{1}$), cela števila ($-3 = \dfrac{-3}{1}$), ulomki, končna decimalna števila ($0{,}75 = \dfrac{3}{4}$)« -/
 theorem racionalni_primeri :
     (5 : ℝ) = (5 : ℤ) / (1 : ℕ) ∧ (-3 : ℝ) = (-3 : ℤ) / (1 : ℕ) ∧ (0.75 : ℝ) = (3 : ℤ) / (4 : ℕ) ∧
       (-1.5 : ℝ) = (-3 : ℤ) / (2 : ℕ) := by
   norm_num
 
-/-- Razlaga 1 in Pogoste napake 2: periodično število 0,333… = 3/10 + 3/100 + … = 1/3 je racionalno. -/
+/-- Razlaga 1 in Pogoste napake 2: periodično število 0,333… = 3/10 + 3/100 + … = 1/3 je racionalno.
+trditev: MAT-OS-8/realna-stevila#nic-cela-tri
+besedilo: »Zapis $0{,}333\ldots$ je neskončen, a periodičen, zato je to $\dfrac{1}{3}$.« -/
 theorem nic_cela_tri : ∑' k : ℕ, (3 : ℝ) / (10 ^ 1) ^ (k + 1) = 1 / 3 := by
   rw [periodicni 3 1 (by norm_num)]; norm_num
 
 /-! ## Razlaga 2: iracionalna števila -/
 
-/-- Razlaga 2: število je iracionalno natanko tedaj, ko ga ni mogoče zapisati kot ulomek m/n. -/
+/-- Razlaga 2: število je iracionalno natanko tedaj, ko ga ni mogoče zapisati kot ulomek m/n.
+trditev: MAT-OS-8/realna-stevila#iracionalno
+besedilo: »Število je **iracionalno**, če ga **ni mogoče** zapisati kot ulomek.« -/
 theorem iracionalno_iff (x : ℝ) : Irrational x ↔ ¬ ∃ m : ℤ, ∃ n : ℕ, 0 < n ∧ x = m / n := by
   rw [← racionalno_iff]; rfl
 
 /-- Razlaga 2 in Povzetek: √2, √3 in π so iracionalni; √2 = 1,41421356…, √3 = 1,7320508…,
-π = 3,14159265… -/
+π = 3,14159265…
+trditev: MAT-OS-8/realna-stevila#iracionalni-primeri
+besedilo: »Primeri: $\sqrt{2} = 1{,}41421356\ldots$, $\sqrt{3} = 1{,}7320508\ldots$, $\pi = 3{,}14159265\ldots$« -/
 theorem iracionalni_primeri :
     Irrational √2 ∧ Irrational √3 ∧ Irrational π ∧
       ((1.41421356 : ℝ) < √2 ∧ √2 < 1.41421357) ∧ ((1.7320508 : ℝ) < √3 ∧ √3 < 1.7320509) ∧
@@ -132,7 +150,9 @@ theorem iracionalni_primeri :
   · have := Real.pi_lt_d20; linarith
 
 /-- Razlaga 2 (hitra preizkušnja): 0,121212… = 12/100 + 12/10000 + … = 12/99 = 4/33 je periodično in
-racionalno, ne iracionalno. -/
+racionalno, ne iracionalno.
+trditev: MAT-OS-8/realna-stevila#nic-cela-dvanajst
+besedilo: »(Ne, vzorec $12$ se ponavlja, zato je periodično.)« -/
 theorem nic_cela_dvanajst : ∑' k : ℕ, (12 : ℝ) / (10 ^ 2) ^ (k + 1) = 4 / 33 ∧
     ¬ Irrational (∑' k : ℕ, (12 : ℝ) / (10 ^ 2) ^ (k + 1)) := by
   have h : ∑' k : ℕ, (12 : ℝ) / (10 ^ 2) ^ (k + 1) = 4 / 33 := by
@@ -142,7 +162,9 @@ theorem nic_cela_dvanajst : ∑' k : ℕ, (12 : ℝ) / (10 ^ 2) ^ (k + 1) = 4 / 
   exact fun hi => hi ⟨4 / 33, by push_cast; ring⟩
 
 /-- Razlaga 2 (premisli): pri 1/7 se skupina 142857 ponavlja v nedogled (1/7 = 0,142857142857…), zaslon
-pa zapis le zaokroži (|1/7 − 0,1428571429| < 10⁻¹⁰); √2 je iracionalen. -/
+pa zapis le zaokroži (|1/7 − 0,1428571429| < 10⁻¹⁰); √2 je iracionalen.
+trditev: MAT-OS-8/realna-stevila#ena-sedmina
+besedilo: »Pri $\dfrac{1}{7}$ se skupina števk $142857$ ponavlja v nedogled; zaslon je zapis le zaokrožil. Pri $\sqrt{2}$ se tudi za zaslonom noben vzorec ne ponavlja.« -/
 theorem ena_sedmina :
     ∑' k : ℕ, (142857 : ℝ) / (10 ^ 6) ^ (k + 1) = 1 / 7 ∧ |(1 / 7 : ℝ) - 0.1428571429| < 1 / (2 * 10 ^ 10) ∧
       Irrational √2 := by
@@ -153,7 +175,9 @@ theorem ena_sedmina :
 /-! ## Razlaga 3: kdaj je koren iracionalen -/
 
 /-- Razlaga 3 in Povzetek: za naravni n je √n naravno število, če je n popolni kvadrat, sicer je √n
-iracionalno; Primer 1 (formula): √n je racionalen natanko tedaj, ko je n popolni kvadrat. -/
+iracionalno; Primer 1 (formula): √n je racionalen natanko tedaj, ko je n popolni kvadrat.
+trditev: MAT-OS-8/realna-stevila#koren-naravnega
+besedilo: »$\sqrt{n}$ za naravni $n$ je naravno število, če je $n$ popolni kvadrat, sicer je iracionalno.« -/
 theorem koren_naravnega (n : ℕ) :
     (IsSquare n → ∃ k : ℕ, √(n : ℝ) = k) ∧ (¬ IsSquare n → Irrational √(n : ℝ)) ∧
       (¬ Irrational √(n : ℝ) ↔ IsSquare n) := by
@@ -162,7 +186,9 @@ theorem koren_naravnega (n : ℕ) :
   exact ⟨k, by push_cast; exact Real.sqrt_mul_self (Nat.cast_nonneg k)⟩
 
 /-- Razlaga 3: popolni kvadrati 1, 4, 9, 16, 25 so 1², 2², 3², 4², 5²; √16 = 4; hitra preizkušnja:
-√36 = 6 ni iracionalno. -/
+√36 = 6 ni iracionalno.
+trditev: MAT-OS-8/realna-stevila#popolni-kvadrati
+besedilo: »Če je $n$ popolni kvadrat ($1$, $4$, $9$, $16$, $25$, …), je $\sqrt{n}$ naravno število, na primer $\sqrt{16} = 4$.« -/
 theorem popolni_kvadrati :
     ((1 : ℕ) = 1 ^ 2 ∧ (4 : ℕ) = 2 ^ 2 ∧ (9 : ℕ) = 3 ^ 2 ∧ (16 : ℕ) = 4 ^ 2 ∧ (25 : ℕ) = 5 ^ 2) ∧
       √(16 : ℝ) = 4 ∧ √(36 : ℝ) = 6 ∧ ¬ Irrational √(36 : ℝ) := by
@@ -170,7 +196,9 @@ theorem popolni_kvadrati :
   refine ⟨by norm_num, koren 16 4 (by norm_num) (by norm_num), h36, ?_⟩
   rw [h36]; exact fun hi => hi ⟨6, by norm_num⟩
 
-/-- Razlaga 3: √2, √7 in √10 so iracionalni (2, 7, 10 niso popolni kvadrati). -/
+/-- Razlaga 3: √2, √7 in √10 so iracionalni (2, 7, 10 niso popolni kvadrati).
+trditev: MAT-OS-8/realna-stevila#iracionalni-koreni
+besedilo: »Če $n$ ni popolni kvadrat, je $\sqrt{n}$ iracionalno, na primer $\sqrt{2}$, $\sqrt{7}$, $\sqrt{10}$.« -/
 theorem iracionalni_koreni : Irrational √(2 : ℝ) ∧ Irrational √(7 : ℝ) ∧ Irrational √(10 : ℝ) :=
   ⟨irrational_sqrt_two,
     irrational_sqrt_ofNat_iff.mpr (ni_popolni_kvadrat 7 2 (by norm_num) (by norm_num)),
@@ -180,7 +208,9 @@ theorem iracionalni_koreni : Irrational √(2 : ℝ) ∧ Irrational √(7 : ℝ)
 
 /-- Razlaga 4 in Povzetek: ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ (vsaka množica je strogo vsebovana v naslednji; primeri, ki
 jih ni v manjši: −3, 2/3, √2); iracionalna števila so v ℝ, niso pa v ℚ. Hitra preizkušnja: vsako celo
-število je realno. -/
+število je realno.
+trditev: MAT-OS-8/realna-stevila#n-z-q-r
+besedilo: »Racionalna in iracionalna števila skupaj so realna števila: $\mathbb{N} \subset \mathbb{Z} \subset \mathbb{Q} \subset \mathbb{R}$.« -/
 theorem N_Z_Q_R :
     {x : ℝ | ∃ n : ℕ, 1 ≤ n ∧ (n : ℝ) = x} ⊂ Set.range (Int.cast : ℤ → ℝ) ∧
       Set.range (Int.cast : ℤ → ℝ) ⊂ Set.range (Rat.cast : ℚ → ℝ) ∧
@@ -205,7 +235,9 @@ theorem N_Z_Q_R :
     omega
 
 /-- Razlaga 4, tabela: 1, 7 in √9 = 3 so naravna (n ≥ 1); −3, 0, 7 cela; 2/3, −1,5 in 0,333… = 1/3
-racionalna (0,333… kot vrsta je `nic_cela_tri`); √2, π in −√5 so realna, a iracionalna. -/
+racionalna (0,333… kot vrsta je `nic_cela_tri`); √2, π in −√5 so realna, a iracionalna.
+trditev: MAT-OS-8/realna-stevila#tabela-mnozic
+besedilo: »| naravna | $\mathbb{N}$ | $1$, $7$, $\sqrt{9}$ | | cela | $\mathbb{Z}$ | $-3$, $0$, $7$ | | racionalna | $\mathbb{Q}$ | $\dfrac{2}{3}$; $-1{,}5$; $0{,}333\ldots$ | | realna | $\mathbb{R}$ | vsa zgoraj ter $\sqrt{2}$, $\pi$, $-\sqrt{5}$ |« -/
 theorem tabela :
     ((1 : ℝ) = ((1 : ℕ) : ℝ) ∧ (7 : ℝ) = ((7 : ℕ) : ℝ) ∧ √(9 : ℝ) = ((3 : ℕ) : ℝ) ∧ 1 ≤ 1 ∧ 1 ≤ 7 ∧ 1 ≤ 3) ∧
       ((-3 : ℝ) = ((-3 : ℤ) : ℝ) ∧ (0 : ℝ) = ((0 : ℤ) : ℝ) ∧ (7 : ℝ) = ((7 : ℤ) : ℝ)) ∧
@@ -219,13 +251,17 @@ theorem tabela :
 
 /-! ## Razlaga 5: številska premica -/
 
-/-- Razlaga 5: 1² = 1 < 2 < 4 = 2², zato je 1 < √2 < 2 (tudi Na sliki, brez povečave). -/
+/-- Razlaga 5: 1² = 1 < 2 < 4 = 2², zato je 1 < √2 < 2 (tudi Na sliki, brez povečave).
+trditev: MAT-OS-8/realna-stevila#koren2-med-1-2
+besedilo: »ker je $1^2 = 1 < 2 < 4 = 2^2$, je $1 < \sqrt{2} < 2$.« -/
 theorem koren2_med_1_2 : (1 : ℝ) ^ 2 = 1 ∧ (2 : ℝ) ^ 2 = 4 ∧ (1 : ℝ) < √2 ∧ √2 < 2 := by
   obtain ⟨h1, h2⟩ := med 2 1 2 (by norm_num) (by norm_num) (by norm_num) (by norm_num)
   exact ⟨by norm_num, by norm_num, h1, h2⟩
 
 /-- Razlaga 5 (premisli) in Pogoste napake 4: 4 < 5 < 9, zato 2 < √5 < 3, √5 ≈ 2,24
-(2,235 < √5 < 2,245); −√5 ≈ −2,24 leži levo od −2, med −3 in −2, in ne med 2 in 3. -/
+(2,235 < √5 < 2,245); −√5 ≈ −2,24 leži levo od −2, med −3 in −2, in ne med 2 in 3.
+trditev: MAT-OS-8/realna-stevila#minus-koren5
+besedilo: »Levo. Ker je $4 < 5 < 9$, je $\sqrt{5}$ med $2$ in $3$, približno $2{,}24$. Nasprotno število $-\sqrt{5} \approx -2{,}24$ leži zrcalno čez $0$, torej levo od $-2$.« -/
 theorem minus_koren5 :
     ((2 : ℝ) < √5 ∧ √5 < 3) ∧ ((2.235 : ℝ) < √5 ∧ √5 < 2.245) ∧ -√5 < -2 ∧ (-3 : ℝ) < -√5 ∧
       ¬ ((2 : ℝ) < -√5) := by
@@ -236,7 +272,9 @@ theorem minus_koren5 :
 /-! ## Razlaga 6: približki -/
 
 /-- Razlaga 6, tabela: 1,4² = 1,96 < 2, 1,5² = 2,25 > 2, 1,41² = 1,9881 < 2, 1,42² = 2,0164 > 2; torej
-1,41 < √2 < 1,42 (in √2 ≈ 1,41: 1,405 < √2 < 1,415, zato se zaokroži na 1,41; ne √2 = 1,41). -/
+1,41 < √2 < 1,42 (in √2 ≈ 1,41: 1,405 < √2 < 1,415, zato se zaokroži na 1,41; ne √2 = 1,41).
+trditev: MAT-OS-8/realna-stevila#priblizki-koren2
+besedilo: »| $1{,}4$ | $1{,}96$ | premalo | | $1{,}5$ | $2{,}25$ | preveč | | $1{,}41$ | $1{,}9881$ | premalo | | $1{,}42$ | $2{,}0164$ | preveč | Torej $1{,}41 < \sqrt{2} < 1{,}42$.« -/
 theorem priblizki_koren2 :
     (1.4 : ℝ) ^ 2 = 1.96 ∧ (1.5 : ℝ) ^ 2 = 2.25 ∧ (1.41 : ℝ) ^ 2 = 1.9881 ∧ (1.42 : ℝ) ^ 2 = 2.0164 ∧
       (((1.41 : ℝ) < √2 ∧ √2 < 1.42) ∧ ((1.405 : ℝ) < √2 ∧ √2 < 1.415)) ∧ √2 ≠ 1.41 := by
@@ -245,7 +283,9 @@ theorem priblizki_koren2 :
   exact ⟨by norm_num, by norm_num, by norm_num, by norm_num, ⟨⟨a, b⟩, ⟨c, d⟩⟩, by linarith⟩
 
 /-- Razlaga 6 in Na sliki: postopek se nikoli ne konča s kvadratom natanko 2: noben končni decimalni
-približek m/10ⁿ ni √2 (točka √2 nikoli ne pade natanko na oznako). -/
+približek m/10ⁿ ni √2 (točka √2 nikoli ne pade natanko na oznako).
+trditev: MAT-OS-8/realna-stevila#nikoli-natanko
+besedilo: »Postopek lahko nadaljuješ, a se nikoli ne konča s kvadratom natanko $2$.« -/
 theorem nikoli_natanko (m : ℤ) (n : ℕ) : √2 ≠ (m : ℝ) / 10 ^ n ∧ ((m : ℝ) / 10 ^ n) ^ 2 ≠ 2 := by
   have hq : ¬ Irrational ((m : ℝ) / 10 ^ n) := fun hi => hi ⟨m / 10 ^ n, by push_cast; ring⟩
   refine ⟨fun h => hq (h ▸ irrational_sqrt_two), fun h => ?_⟩
@@ -260,19 +300,25 @@ theorem nikoli_natanko (m : ℤ) (n : ℕ) : √2 ≠ (m : ℝ) / 10 ^ n ∧ ((m
 /-! ## Primer 1: razvrščanje števil -/
 
 /-- Primer 1, koraki 1–3 in 6: 7 = 7/1, −3 = −3/1, 0,5 = 1/2 so racionalni; √9 = 3 (3² = 9);
-√(16/25) = 4/5 ((4/5)² = 16/25). -/
+√(16/25) = 4/5 ((4/5)² = 16/25).
+trditev: MAT-OS-8/realna-stevila#primer1-racionalni
+besedilo: »$7 = \dfrac{7}{1}$ in $-3 = \dfrac{-3}{1}$ sta racionalni, ker sta celi števili. 2. $0{,}5 = \dfrac{1}{2}$ je racionalno, ker je končno decimalno število. 3. $\sqrt{9} = 3$, ker je $3^2 = 9$.« -/
 theorem primer1_racionalni :
     (7 : ℝ) = (7 : ℤ) / (1 : ℕ) ∧ (-3 : ℝ) = (-3 : ℤ) / (1 : ℕ) ∧ (0.5 : ℝ) = (1 : ℤ) / (2 : ℕ) ∧
       (3 : ℝ) ^ 2 = 9 ∧ √(9 : ℝ) = 3 ∧ (4 / 5 : ℝ) ^ 2 = 16 / 25 ∧ √(16 / 25 : ℝ) = 4 / 5 := by
   refine ⟨by norm_num, by norm_num, by norm_num, by norm_num, koren 9 3 (by norm_num) (by norm_num),
     by norm_num, koren _ _ (by norm_num) (by norm_num)⟩
 
-/-- Primer 1, korak 4: 2² = 4 < 7 < 9 = 3², 7 ni popolni kvadrat, √7 je iracionalen. -/
+/-- Primer 1, korak 4: 2² = 4 < 7 < 9 = 3², 7 ni popolni kvadrat, √7 je iracionalen.
+trditev: MAT-OS-8/realna-stevila#primer1-koren7
+besedilo: »$\sqrt{7}$ je iracionalno, ker $7$ ni popolni kvadrat: $2^2 = 4$ in $3^2 = 9$.« -/
 theorem primer1_koren7 : (2 : ℕ) ^ 2 = 4 ∧ (3 : ℕ) ^ 2 = 9 ∧ ¬ IsSquare 7 ∧ Irrational √(7 : ℝ) :=
   ⟨by norm_num, by norm_num, ni_popolni_kvadrat 7 2 (by norm_num) (by norm_num), iracionalni_koreni.2.1⟩
 
 /-- Primer 1, odgovor: od 7, −3, 0,5, √9, √7, π, √(16/25) sta iracionalni natanko √7 in π, vsa druga so
-racionalna (vsa so realna). -/
+racionalna (vsa so realna).
+trditev: MAT-OS-8/realna-stevila#primer1-odgovor
+besedilo: »Odgovor: iracionalni sta le $\sqrt{7}$ in $\pi$, vsa druga števila so racionalna.« -/
 theorem primer1_odgovor :
     ¬ Irrational 7 ∧ ¬ Irrational (-3) ∧ ¬ Irrational 0.5 ∧ ¬ Irrational √(9 : ℝ) ∧ Irrational √(7 : ℝ) ∧
       Irrational π ∧ ¬ Irrational √(16 / 25 : ℝ) := by
@@ -282,7 +328,9 @@ theorem primer1_odgovor :
 
 /-! ## Primer 2: položaj na številski premici -/
 
-/-- Primer 2, formula: če je k celo število in k² < x < (k + 1)², je k < √x < k + 1. -/
+/-- Primer 2, formula: če je k celo število in k² < x < (k + 1)², je k < √x < k + 1.
+trditev: MAT-OS-8/realna-stevila#med-kvadratoma
+besedilo: »Če je $k^2 < x < (k + 1)^2$, je $k < \sqrt{x} < k + 1$.« -/
 theorem med_kvadratoma (k : ℤ) (x : ℝ) (h1 : (k : ℝ) ^ 2 < x) (h2 : x < ((k : ℝ) + 1) ^ 2) :
     (k : ℝ) < √x ∧ √x < k + 1 := by
   have hk : (0 : ℤ) ≤ k := by
@@ -296,7 +344,9 @@ theorem med_kvadratoma (k : ℤ) (x : ℝ) (h1 : (k : ℝ) ^ 2 < x) (h2 : x < ((
 example : ((7 : ℤ) : ℝ) ^ 2 < 50 ∧ (50 : ℝ) < (((7 : ℤ) : ℝ) + 1) ^ 2 := by norm_num
 
 /-- Primer 2, koraka 1–2: 7² = 49 < 50 < 64 = 8², zato 7 < √50 < 8; 7,07² = 49,9849, 7,08² = 50,1264, zato
-7,07 < √50 < 7,08 in √50 ≈ 7,07 (7,065 < √50 < 7,075); √50 je bližje 7 kot 8. -/
+7,07 < √50 < 7,08 in √50 ≈ 7,07 (7,065 < √50 < 7,075); √50 je bližje 7 kot 8.
+trditev: MAT-OS-8/realna-stevila#primer2-koren50
+besedilo: »Za $\sqrt{50}$: $7^2 = 49$ in $8^2 = 64$, torej $49 < 50 < 64$ in zato $7 < \sqrt{50} < 8$. 2. Število $50$ je zelo blizu $49$, zato je $\sqrt{50}$ blizu $7$. Preverimo: $7{,}07^2 = 49{,}9849$ in $7{,}08^2 = 50{,}1264$, torej $\sqrt{50} \approx 7{,}07$.« -/
 theorem primer2_koren50 :
     (7 : ℝ) ^ 2 = 49 ∧ (8 : ℝ) ^ 2 = 64 ∧ ((7 : ℝ) < √50 ∧ √50 < 8) ∧ (7.07 : ℝ) ^ 2 = 49.9849 ∧
       (7.08 : ℝ) ^ 2 = 50.1264 ∧ ((7.07 : ℝ) < √50 ∧ √50 < 7.08) ∧ ((7.065 : ℝ) < √50 ∧ √50 < 7.075) ∧
@@ -310,7 +360,9 @@ theorem primer2_koren50 :
   linarith
 
 /-- Primer 2, koraki 3–5: 4² = 16 < 20 < 25 = 5², zato 4 < √20 < 5; 4,47² = 19,9809, 4,48² = 20,0704,
-√20 ≈ 4,47 (4,465 < √20 < 4,475); −5 < −√20 < −4, približno −4,47, bližje −4 kot −5. -/
+√20 ≈ 4,47 (4,465 < √20 < 4,475); −5 < −√20 < −4, približno −4,47, bližje −4 kot −5.
+trditev: MAT-OS-8/realna-stevila#primer2-koren20
+besedilo: »Za $\sqrt{20}$: $4^2 = 16$ in $5^2 = 25$, torej $4 < \sqrt{20} < 5$. Ker je $4{,}47^2 = 19{,}9809$ in $4{,}48^2 = 20{,}0704$, je $\sqrt{20} \approx 4{,}47$. 4. Nasprotno število leži zrcalno čez $0$: $-5 < -\sqrt{20} < -4$, približno pri $-4{,}47$.« -/
 theorem primer2_koren20 :
     ((4 : ℝ) < √20 ∧ √20 < 5) ∧ (4.47 : ℝ) ^ 2 = 19.9809 ∧ (4.48 : ℝ) ^ 2 = 20.0704 ∧
       ((4.47 : ℝ) < √20 ∧ √20 < 4.48) ∧ ((4.465 : ℝ) < √20 ∧ √20 < 4.475) ∧
@@ -325,7 +377,9 @@ theorem primer2_koren20 :
 
 /-! ## Primer 3: zaslon pametne ure -/
 
-/-- Primer 3, formula: stranica kvadrata s ploščino S je a = √S (edino pozitivno a z a² = S). -/
+/-- Primer 3, formula: stranica kvadrata s ploščino S je a = √S (edino pozitivno a z a² = S).
+trditev: MAT-OS-8/realna-stevila#stranica
+besedilo: »Stranica kvadrata je koren ploščine« -/
 theorem stranica (a S : ℝ) (ha : 0 < a) : a ^ 2 = S ↔ a = √S := by
   constructor
   · intro h; exact (koren S a ha h).symm
@@ -337,7 +391,9 @@ theorem stranica (a S : ℝ) (ha : 0 < a) : a ^ 2 = S ↔ a = √S := by
 example : (0 : ℝ) < 1 := one_pos
 
 /-- Primer 3, koraki 1–3: √10 je iracionalen; 3,16² = 9,9856, 3,17² = 10,0489, √10 ≈ 3,162 (3,1615 <
-√10 < 3,1625); π ≈ 3,1416 (3,14155 < π < 3,14165); 22/7 = 3,142857… (3,142857 < 22/7 < 3,142858). -/
+√10 < 3,1625); π ≈ 3,1416 (3,14155 < π < 3,14165); 22/7 = 3,142857… (3,142857 < 22/7 < 3,142858).
+trditev: MAT-OS-8/realna-stevila#primer3-priblizki
+besedilo: »Ker $10$ ni popolni kvadrat, je to iracionalno število. 2. Približek: $3{,}16^2 = 9{,}9856$ in $3{,}17^2 = 10{,}0489$, torej $\sqrt{10} \approx 3{,}162$. 3. Ugibanja zapišemo z decimalkami: $3{,}1$; $\pi \approx 3{,}1416$; $\dfrac{22}{7} = 3{,}142857\ldots$« -/
 theorem primer3_priblizki :
     Irrational √(10 : ℝ) ∧ (3.16 : ℝ) ^ 2 = 9.9856 ∧ (3.17 : ℝ) ^ 2 = 10.0489 ∧
       ((3.16 : ℝ) < √10 ∧ √10 < 3.17) ∧ ((3.1615 : ℝ) < √10 ∧ √10 < 3.1625) ∧
@@ -350,7 +406,9 @@ theorem primer3_priblizki :
     ⟨by linarith, by linarith⟩, by norm_num, by norm_num⟩
 
 /-- Primer 3, koraki 4–6: 3,1 < π < 22/7 < √10; najbližje √10 je 22/7 (razlika približno 0,02:
-0,015 < √10 − 22/7 < 0,025); 22/7 ni π. -/
+0,015 < √10 − 22/7 < 0,025); 22/7 ni π.
+trditev: MAT-OS-8/realna-stevila#primer3-vrstni-red
+besedilo: »Po velikosti: $3{,}1 < \pi < \dfrac{22}{7} < \sqrt{10}$. 5. Najbližje $\sqrt{10}$ je največje ugibanje, $\dfrac{22}{7}$: razlika je le približno $0{,}02\,\text{cm}$.« -/
 theorem primer3_vrstni_red :
     (3.1 : ℝ) < π ∧ π < 22 / 7 ∧ (22 / 7 : ℝ) < √10 ∧
       |√10 - 22 / 7| < |√10 - π| ∧ |√10 - π| < |√10 - 3.1| ∧
@@ -369,7 +427,9 @@ theorem primer3_vrstni_red :
 
 /-- Primer 4: 1500² = 2 250 000, zato je slika 1500 × 1500 mogoča (√2 250 000 = 1500); 1414² = 1 999 396
 in 1415² = 2 002 225, zato 1414 < √2 000 000 < 1415; 2 000 000 ni popolni kvadrat (ni naravnega a z
-a² = 2 000 000), √2 000 000 ≈ 1414,2 (1414,15 < √2 000 000 < 1414,25) je iracionalen. -/
+a² = 2 000 000), √2 000 000 ≈ 1414,2 (1414,15 < √2 000 000 < 1414,25) je iracionalen.
+trditev: MAT-OS-8/realna-stevila#primer4
+besedilo: »$1414^2 = 1\,999\,396$ in $1415^2 = 2\,002\,225$, zato $1414 < \sqrt{2\,000\,000} < 1415$. Število $2\,000\,000$ ni popolni kvadrat, $\sqrt{2\,000\,000} \approx 1414{,}2$ je iracionalno.« -/
 theorem primer4 :
     (1500 : ℕ) ^ 2 = 2250000 ∧ √(2250000 : ℝ) = 1500 ∧ (1414 : ℕ) ^ 2 = 1999396 ∧
       (1415 : ℕ) ^ 2 = 2002225 ∧ ((1414 : ℝ) < √2000000 ∧ √2000000 < 1415) ∧
@@ -385,19 +445,25 @@ theorem primer4 :
 
 /-! ## Pogoste napake -/
 
-/-- Pogoste napake 1: ni vsak koren iracionalen: √16 = 4 in √0,49 = 0,7 sta racionalna. -/
+/-- Pogoste napake 1: ni vsak koren iracionalen: √16 = 4 in √0,49 = 0,7 sta racionalna.
+trditev: MAT-OS-8/realna-stevila#napaka-koren
+besedilo: »Toda $\sqrt{16} = 4$ in $\sqrt{0{,}49} = 0{,}7$ sta racionalni.« -/
 theorem napaka_koren : √(16 : ℝ) = 4 ∧ √(0.49 : ℝ) = 0.7 ∧ ¬ Irrational √(0.49 : ℝ) := by
   have h : √(0.49 : ℝ) = 0.7 := koren _ _ (by norm_num) (by norm_num)
   refine ⟨koren _ _ (by norm_num) (by norm_num), h, ?_⟩
   rw [h]; exact fun hi => hi ⟨7 / 10, by norm_num⟩
 
-/-- Pogoste napake 3: π ≠ 3,14, √2 ≠ 1,41 in 22/7 ≠ π (to so le približki). -/
+/-- Pogoste napake 3: π ≠ 3,14, √2 ≠ 1,41 in 22/7 ≠ π (to so le približki).
+trditev: MAT-OS-8/realna-stevila#napaka-priblizek
+besedilo: »Zapisa $\pi = 3{,}14$ in $\sqrt{2} = 1{,}41$ sta napačna, ker sta to zaokrožena približka. Tudi $\dfrac{22}{7}$ ni $\pi$.« -/
 theorem napaka_priblizek : π ≠ 3.14 ∧ √2 ≠ 1.41 ∧ (22 / 7 : ℝ) ≠ π :=
   ⟨by have := Real.pi_gt_d6; intro h; rw [h] at this; norm_num at this,
     priblizki_koren2.2.2.2.2.2, primer3_vrstni_red.2.2.2.2.2.2⟩
 
 /-- Pogoste napake 5 in Preveri se 2: √70 ni okrog 35 (70 : 2), ampak 8² = 64 < 70 < 81 = 9², zato
-8 < √70 < 9, približno 8,37 (8,365 < √70 < 8,375); ni med 7 in 8 in ni med 35 in 36. -/
+8 < √70 < 9, približno 8,37 (8,365 < √70 < 8,375); ni med 7 in 8 in ni med 35 in 36.
+trditev: MAT-OS-8/realna-stevila#koren70
+besedilo: »$8^2 = 64$ in $9^2 = 81$, torej $64 < 70 < 81$ in zato $8 < \sqrt{70} < 9$ (približno $8{,}37$).« -/
 theorem koren70 :
     ((8 : ℝ) < √70 ∧ √70 < 9) ∧ ((8.365 : ℝ) < √70 ∧ √70 < 8.375) ∧ (70 : ℝ) / 2 = 35 ∧ √70 ≠ 35 ∧
       ¬ (√70 < 8) ∧ ¬ ((35 : ℝ) < √70) := by
@@ -407,7 +473,9 @@ theorem koren70 :
 
 /-! ## Drugače: Na sliki -/
 
-/-- Na sliki (povečevalno steklo): √2 je med 1 in 2, nato med 1,4 in 1,5, nato med 1,41 in 1,42. -/
+/-- Na sliki (povečevalno steklo): √2 je med 1 in 2, nato med 1,4 in 1,5, nato med 1,41 in 1,42.
+trditev: MAT-OS-8/realna-stevila#povecava
+besedilo: »Brez povečave vidiš le, da je točka $\sqrt{2}$ med $1$ in $2$. - Razdelek med $1$ in $2$ povečaš in razdeliš na deset delov: $1{,}1$; $1{,}2$; …; $1{,}9$. Točka $\sqrt{2}$ je med $1{,}4$ in $1{,}5$. - Povečaš še razdelek med $1{,}4$ in $1{,}5$: točka je med $1{,}41$ in $1{,}42$.« -/
 theorem povecava : ((1 : ℝ) < √2 ∧ √2 < 2) ∧ ((1.4 : ℝ) < √2 ∧ √2 < 1.5) ∧ ((1.41 : ℝ) < √2 ∧ √2 < 1.42) :=
   ⟨med 2 _ _ (by norm_num) (by norm_num) (by norm_num) (by norm_num),
     med 2 _ _ (by norm_num) (by norm_num) (by norm_num) (by norm_num),
@@ -415,7 +483,9 @@ theorem povecava : ((1 : ℝ) < √2 ∧ √2 < 2) ∧ ((1.4 : ℝ) < √2 ∧ �
 
 /-! ## Drugače: Bolj natančno: zakaj √2 ni ulomek -/
 
-/-- Bolj natančno, korak 2: kvadrat lihega števila je lih, zato je m sod, če je m² sod. -/
+/-- Bolj natančno, korak 2: kvadrat lihega števila je lih, zato je m sod, če je m² sod.
+trditev: MAT-OS-8/realna-stevila#sod-kvadrat
+besedilo: »Kvadrat lihega števila je lih, zato mora biti sodo tudi $m$.« -/
 theorem sod_kvadrat (m : ℤ) : (Odd m → Odd (m ^ 2)) ∧ (Even (m ^ 2) → Even m) := by
   refine ⟨fun h => h.pow, fun h => ?_⟩
   by_contra hm
@@ -423,7 +493,9 @@ theorem sod_kvadrat (m : ℤ) : (Odd m → Odd (m ^ 2)) ∧ (Even (m ^ 2) → Ev
   exact (Int.not_even_iff_odd.mpr hm.pow) h
 
 /-- Bolj natančno, koraki 1–4: če bi bil √2 = m/n z okrajšanim ulomkom (m celo, n ≥ 1, brez skupnega
-delitelja, večjega od 1), bi bilo m² = 2n², m = 2k, n² = 2k², zato m in n soda – protislovje. -/
+delitelja, večjega od 1), bi bilo m² = 2n², m = 2k, n² = 2k², zato m in n soda – protislovje.
+trditev: MAT-OS-8/realna-stevila#koren2-ni-ulomek
+besedilo: »Oba, $m$ in $n$, sta soda in imata skupni delitelj $2$. To nasprotuje predpostavki, da je ulomek okrajšan.« -/
 theorem koren2_ni_ulomek (m : ℤ) (n : ℕ) (hn : 0 < n)
     (hokr : ∀ d : ℕ, 1 < d → ¬ ((d : ℤ) ∣ m ∧ (d : ℤ) ∣ (n : ℤ))) : √2 ≠ (m : ℝ) / n := by
   intro h
@@ -453,13 +525,17 @@ example : 0 < 1 ∧ ∀ d : ℕ, 1 < d → ¬ ((d : ℤ) ∣ 1 ∧ (d : ℤ) ∣
   omega
 
 /-- Bolj natančno, sklep: √2 ni racionalno število; podobno za koren vsakega naravnega števila, ki ni
-popolni kvadrat (`koren_naravnega`). -/
+popolni kvadrat (`koren_naravnega`).
+trditev: MAT-OS-8/realna-stevila#koren2-iracionalen
+besedilo: »Predpostavka je bila napačna, zato $\sqrt{2}$ ni racionalno število.« -/
 theorem koren2_iracionalen : Irrational √2 := irrational_sqrt_two
 
 /-! ## Preveri se -/
 
 /-- Preveri se 1: √16 = 4 in 0,333… = 1/3 sta racionalna; √15 (15 ni popolni kvadrat) in π sta
-iracionalna. -/
+iracionalna.
+trditev: MAT-OS-8/realna-stevila#preveri1
+besedilo: »$\sqrt{16} = 4$ in $0{,}333\ldots = \dfrac{1}{3}$ sta racionalni. $15$ ni popolni kvadrat, zato je $\sqrt{15}$ iracionalno, enako kot $\pi$.« -/
 theorem preveri1 :
     ¬ Irrational √(16 : ℝ) ∧ ¬ Irrational (∑' k : ℕ, (3 : ℝ) / (10 ^ 1) ^ (k + 1)) ∧
       Irrational √(15 : ℝ) ∧ Irrational π := by
@@ -468,7 +544,9 @@ theorem preveri1 :
     irrational_sqrt_ofNat_iff.mpr (ni_popolni_kvadrat 15 3 (by norm_num) (by norm_num)), irrational_pi⟩
 
 /-- Preveri se 3: 0,333… = 1/3 je racionalno, √2 ne; velikost ne odloča: 5,5 = 11/2 je racionalno,
-√0,5 pa iracionalno. -/
+√0,5 pa iracionalno.
+trditev: MAT-OS-8/realna-stevila#preveri3
+besedilo: »Periodičen zapis lahko zapišemo kot ulomek ($0{,}333\ldots = \dfrac{1}{3}$)« -/
 theorem preveri3 :
     ¬ Irrational (∑' k : ℕ, (3 : ℝ) / (10 ^ 1) ^ (k + 1)) ∧ Irrational √2 ∧ ¬ Irrational 5.5 ∧
       Irrational √(0.5 : ℝ) := by
@@ -480,7 +558,9 @@ theorem preveri3 :
     irrational_sqrt_two.div_natCast (by norm_num)⟩
 
 /-- Preveri se 4: 36 < 40 < 49, zato 6 < √40 < 7 in √40 je iracionalen; √50 je med 7 in 8 (ne med 6 in 7);
-√49 = 7 ni iracionalen in ne leži med 6 in 7; 6,5 = 13/2 leži med 6 in 7, a je racionalen. -/
+√49 = 7 ni iracionalen in ne leži med 6 in 7; 6,5 = 13/2 leži med 6 in 7, a je racionalen.
+trditev: MAT-OS-8/realna-stevila#preveri4
+besedilo: »$36 < 40 < 49$, zato $6 < \sqrt{40} < 7$. Ker $40$ ni popolni kvadrat, je $\sqrt{40}$ iracionalno.« -/
 theorem preveri4 :
     ((6 : ℝ) < √40 ∧ √40 < 7) ∧ Irrational √(40 : ℝ) ∧ (7 : ℝ) < √50 ∧ √(49 : ℝ) = 7 ∧
       ¬ Irrational √(49 : ℝ) ∧ ¬ ((6 : ℝ) < √49 ∧ √(49 : ℝ) < 7) ∧ (6 : ℝ) < 6.5 ∧ (6.5 : ℝ) < 7 ∧ ¬ Irrational 6.5 := by
@@ -491,7 +571,9 @@ theorem preveri4 :
   rw [h49]; exact fun h => h ⟨7, by norm_num⟩
 
 /-- Preveri se 5: ikona s ploščino 8 cm² ima stranico √8 cm (edino pozitivno a z a² = 8), ki je
-iracionalna, približno 2,83 (2,825 < √8 < 2,835); 4² = 16 ≠ 8 in 2,83² = 8,0089 ≠ 8. -/
+iracionalna, približno 2,83 (2,825 < √8 < 2,835); 4² = 16 ≠ 8 in 2,83² = 8,0089 ≠ 8.
+trditev: MAT-OS-8/realna-stevila#preveri5
+besedilo: »Stranica je $\sqrt{8}\,\text{cm}$. Ker $8$ ni popolni kvadrat, je to iracionalno število, približno $2{,}83\,\text{cm}$.« -/
 theorem preveri5 (a : ℝ) (ha : 0 < a) :
     (a ^ 2 = 8 ↔ a = √8) ∧ Irrational √(8 : ℝ) ∧ ((2.825 : ℝ) < √8 ∧ √8 < 2.835) ∧ (4 : ℝ) ^ 2 = 16 ∧
       (2.83 : ℝ) ^ 2 = 8.0089 ∧ √(8 : ℝ) ≠ 2.83 := by
