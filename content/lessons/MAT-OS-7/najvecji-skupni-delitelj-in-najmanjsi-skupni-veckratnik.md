@@ -200,7 +200,7 @@ Preizkus: $D(12, 18) \cdot v(12, 18) = 6 \cdot 36 = 216 = 12 \cdot 18$. ✓
 
 Iz tega sledi uporaben trik: če poznaš $D$, lahko dobiš $v = \dfrac{a \cdot b}{D}$. Za tuji števili ($D = 1$) je $v(a, b) = a \cdot b$. Na primer $v(8, 15) = 120$.
 
-**Zakaj je pri seštevanju ulomkov dovolj $v$ imenovalcev?** Skupni imenovalec mora biti večkratnik obeh imenovalcev, da ulomka lahko razširimo na isti imenovalec. Najmanjši tak imenovalec je po definiciji $v$. Računanje z najmanjšim imenovalcem pomeni manjša števila in manj krajšanja na koncu.
+**Zakaj je pri seštevanju ulomkov dovolj $v$ imenovalcev?** Ko sta ulomka do konca okrajšana, mora biti skupni imenovalec večkratnik obeh imenovalcev, da ulomka lahko razširimo na isti imenovalec. Najmanjši tak imenovalec je po definiciji $v$. Računanje z najmanjšim imenovalcem pomeni manjša števila in manj krajšanja na koncu.
 
 ## Preveri se
 

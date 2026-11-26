@@ -1,6 +1,6 @@
 /-
 vir: content/lessons/MAT-OS-7/razmerje.md
-sha256: 25a8dfd504166c2a630c940eaae7c61848f3393361eec5652ab4893d530a1ebb
+sha256: 971052b82715543e346a3c8feb9f173b95778c6cac94ef1ec78f7b2673dfb9ea
 Ni v Leanu: zgodbe (klop, okvir, letev, barva, sestre, malinovec, riž, zidar, Jure in Tina) so dokazane
 samo kot račun s števili; risbi (trak) in simulacija (sok) kot slike, dokazan je le račun (1 : 3 = 2 : 6,
 800 mL → 200 mL in 600 mL); enote so pretvorjene kot števila (1 m = 100 cm, 1 kg = 1000 g, 1 l = 1000 ml),

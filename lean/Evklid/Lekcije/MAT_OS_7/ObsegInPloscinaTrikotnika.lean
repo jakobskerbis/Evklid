@@ -1,6 +1,6 @@
 /-
 vir: content/lessons/MAT-OS-7/obseg-in-ploscina-trikotnika.md
-sha256: 0b43e1b6d45fbf61ec2515b14f243d4ce97a6e2c3671db08ea2f2268b1c5d333
+sha256: ffdb4d0316c349fe50821285206d71786c982672b3bcfdafa65cb0888fd24bfe
 Model: trikotnik z osnovnico a > 0 in višino h > 0 postavimo v ravnino ℝ × ℝ s koordinatama (y, x): y je višina
 nad osnovnico, x vodoravna lega. Oglišča so (0, 0), (0, a) in vrh (h, s); s je »zamik vrha« (simulacija), vsak
 realen s je dovoljen (s < 0 ali s > a: višina pade zunaj, na podaljšek osnovnice). Trikotnik je množica točk,
