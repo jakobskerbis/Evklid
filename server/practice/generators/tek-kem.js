@@ -1,6 +1,6 @@
 // Tekmovalne naloge iz kemije (Preglovo priznanje, kemijska olimpijada), OŠ in SŠ.
 // Vse količine in odgovori so izračunani v kodi; molske mase so vedno navedene v besedilu.
-import { tx, dat, res, num, roundHalfUp, gcd, choiceAns } from "./tek-util.js";
+import { tx, dat, res, korak, num, roundHalfUp, gcd, choiceAns } from "./tek-util.js";
 
 const OS = (slug) => `KEM-TEK-OS/${slug}`;
 const SS = (slug) => `KEM-TEK-SS/${slug}`;
@@ -769,7 +769,7 @@ export const TEK_KEM = [
           hint: "Toplota $Q = m c \\Delta T$ (masa raztopine je masa vode in soli). Če se raztopina segreje, je proces eksotermen in $\\Delta H < 0$.",
           data: { given: [dat("m", tx(m), "g"), dat("m_{voda}", mw, "g"), `\\Delta T = ${tx(Math.abs(dT))}\\ \\mathrm{K}`, "c = 4{,}18\\ \\mathrm{J/(g\\,K)}", Md(f)], find: ["\\Delta H"] },
           formula: ["Q = m c \\Delta T", "\\Delta H = -\\dfrac{Q}{n}"],
-          solution: `$Q = ${tx(m + mw)} \\cdot 4{,}18 \\cdot ${tx(Math.abs(dT))} = ${tx((m + mw) * 4.18 * Math.abs(dT), 1)}$ J (toplota se ${dT > 0 ? "sprosti" : "porabi"}), $n = ${tx(n, 4)}$ mol.\n$\\Delta H ${res(H, 1, "kJ/mol")}$.`,
+          solution: `$Q = ${tx(m + mw)} \\cdot 4{,}18 \\cdot ${tx(Math.abs(dT))} ${korak((m + mw) * 4.18 * Math.abs(dT), 1)}\\ \\mathrm{J}$ (toplota se ${dT > 0 ? "sprosti" : "porabi"}), $n = ${tx(n, 4)}$ mol.\n$\\Delta H ${res(H, 1, "kJ/mol")}$.`,
         };
       }
       const FUEL = [["CH4", -74.8, "metana"], ["C2H6", -84.7, "etana"], ["C3H8", -103.8, "propana"], ["C4H10", -125.6, "butana"], ["C2H4", 52.3, "etena"], ["C2H2", 226.7, "etina"], ["CH3OH", -238.7, "metanola"], ["C2H5OH", -277.7, "etanola"], ["C6H12O6", -1273.3, "glukoze"]];
@@ -792,13 +792,15 @@ export const TEK_KEM = [
       const L = r.int(1, 10), t1 = r.int(10, 25), t2 = r.int(60, 100), eta = r.int(40, 90);
       const Q = L * 1000 * 4.18 * (t2 - t1);
       const m = ((Q / (eta / 100)) / (-Hcr * 1000)) * molar(f);
+      // izpis rešitve: vsak korak računa z zaokroženo vrednostjo prejšnjega koraka, kot jo vidi učenec
+      const Qk = roundHalfUp(Q / 1000, 1), Qg = roundHalfUp(Qk / (eta / 100), 1);
       return {
         text: `Koliko gramov ${name} moramo sežgati, da ${L} L vode segrejemo s ${t1} °C na ${t2} °C, če se za segrevanje porabi le ${eta} % sproščene toplote? Entalpija gorenja ${name} je $${tx(Hcr)}\\ \\mathrm{kJ/mol}$, specifična toplota vode $4{,}18\\ \\mathrm{J/(g\\,K)}$, gostota vode $1\\ \\mathrm{kg/L}$. ${Mx([f])}. ${RND(1)}`,
         answer: num(m, "g", 1),
         hint: "Izračunaj toploto za segrevanje vode, jo deli z izkoristkom, nato deli z molsko entalpijo gorenja.",
         data: { given: [dat("V", L, "L"), dat("t_1", t1, "°C"), dat("t_2", t2, "°C"), `\\eta = ${eta}\\,\\%`, `\\Delta H_c = ${tx(Hcr)}\\ \\mathrm{kJ/mol}`, Md(f)], find: ["m"] },
         formula: ["Q = m_{voda} c \\Delta T", "n = \\dfrac{Q}{\\eta\\, |\\Delta H_c|}", "m = n M"],
-        solution: `$Q = ${L * 1000} \\cdot 4{,}18 \\cdot ${t2 - t1} = ${tx(Q / 1000, 1)}$ kJ, potrebna toplota gorenja $\\dfrac{${tx(Q / 1000, 1)}}{${tx(eta / 100)}} = ${tx(Q / 1000 / (eta / 100), 1)}$ kJ.\n$n = \\dfrac{${tx(Q / 1000 / (eta / 100), 1)}}{${tx(-Hcr)}} = ${tx(Q / 1000 / (eta / 100) / -Hcr, 4)}$ mol, $m ${res(m, 1, "g")}$.`,
+        solution: `$Q = ${L * 1000} \\cdot 4{,}18 \\cdot ${t2 - t1} = ${tx(Q, 0).replace(/\B(?=(\d{3})+(?!\d))/g, "\\,")}\\ \\mathrm{J} ${korak(Q / 1000, 1)}\\ \\mathrm{kJ}$, potrebna toplota gorenja $\\dfrac{${tx(Qk, 1)}}{${tx(eta / 100)}} ${korak(Qk / (eta / 100), 1)}\\ \\mathrm{kJ}$.\n$n = \\dfrac{${tx(Qg, 1)}}{${tx(-Hcr)}} ${korak(Qg / -Hcr, 4)}\\ \\mathrm{mol}$, $m ${res(m, 1, "g")}$.`,
       };
     },
   },
