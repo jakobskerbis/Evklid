@@ -37,7 +37,7 @@ const IZHODISCE = {
     ujete: 504,
     potrjena: 484,
   },
-  // Ob počasnem SymPy (rok 9 s) skener uporabi lokalno preverjanje, zato so dovoljeni tudi njegovi znani alarmi.
+  // Ob počasnem SymPy (rok 9 s) skener uporabi lokalno preverjanje; lokalnih alarmov ni več (LOKALNO_ALARMI je prazen).
   skener: {
     potrjene: [],
     previsoki: [],

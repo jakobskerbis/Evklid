@@ -4,7 +4,7 @@
 // izraze primerjamo v naključnih točkah, odvode z numeričnim odvodom, nedoločene integrale z odvajanjem.
 // Vsak izid ima status iz public/scan/status.js; numerična potrditev nikoli ni »Preverjeno« (AUDIT-001).
 import { parse, compile, integrate } from "../graph/math.js";
-import { prep, splitSystem, satisfies, equalNumerically, bigLiteral } from "./solvecore.js";
+import { prep, splitSystem, satisfies, equalNumerically, bigLiteral, kombinatorika, argumentiKlica } from "./solvecore.js";
 import { tryPoly, withLimit, surdOf, polyEquationProof, polyGcd, inequalityCheck, qFromFloat, evalCs, constQ, P, Q } from "./algebra.js";
 import { statusOf } from "./status.js";
 
@@ -284,22 +284,42 @@ function compileValue(e) {
  * ne manjka (lahko le numerično); partial: true = popolnosti (ni drugih rešitev) nismo preverili (sistem,
  * periodične rešitve). status: public/scan/status.js.
  */
-// Ime funkcije, ki je razčlenjevalnik ne pozna (»gamma(5)« bi bil g·a·m·m·a·5): lokalno ni mogoče izračunati,
-// zato ni sodbe (»Nepreverjeno«), ne »Napačno« (meritev brez SymPy 26. 11.: factorial, log z osnovo).
-function neznanaFunkcija(t) {
-  for (const m of prep(String(t ?? "")).matchAll(/(?<![A-Za-z_])([A-Za-z]{2,})\s*\(/g)) {
-    if (m[1] === "pi") continue; // pi(x+1) je π·(x+1)
-    try {
-      if (parse(`${m[1]}(2)`).k !== "call") return true;
-    } catch {
-      return true;
+// Lokalno ni mogoče izračunati (»Nepreverjeno«, ne »Napačno«; meritev brez SymPy 26. 11.):
+// - funkcija, ki je razčlenjevalnik ne pozna (»gamma(5)« bi bil g·a·m·m·a·5); seznam, ker je »ab(a+b)« ali
+//   »d/dx(x^2)« veljaven zapis;
+// - log z več kot dvema argumentoma, ostanek C(…)/V(…), ki ni kombinatorika s celimi števili;
+// - kombinatorika s spremenljivko (n!, nCr(n, 2)): kalkulator jo izračuna tudi za n = −4 ali n = 2,5 (gama).
+const NEZNANE = /(?<![A-Za-z_])(?:factorial|gamma|Gamma|digamma|perm|comb|choose|fact|erf|beta|zeta|Sum|summation|product|integrate|diff|limit|Matrix|det|rank|Mod|arg|re|im|conjugate|Abs|Max|Min|Rational)\s*\(/;
+function neizracunljivo(t, { identiteta = false } = {}) {
+  if (t === undefined || t === null || t === "") return false;
+  const s = prep(String(t));
+  if (NEZNANE.test(s) || /(?<![A-Za-z_])[CV]\s*\(/.test(s)) return true;
+  for (const m of s.matchAll(/(?<![A-Za-z_])(log|nCr|nPr)\s*\(/g)) {
+    const k = argumentiKlica(s, m.index + m[0].length);
+    if (!k) return true;
+    if (m[1] === "log" ? k.args.length > 2 : !identiteta && k.args.some((a) => /[A-Za-z]/.test(a))) return true;
+  }
+  // Pri istovetnosti izrazov (n!/(n−2)! = n(n−1)) je razširitev z gama pravilna tudi za realne n: primerjava v
+  // točkah velja. Pri enačbi bi dala tuje rešitve (nCr(n, 2) = 10 tudi pri n = −4).
+  if (identiteta) return false;
+  for (let i = s.indexOf("!"); i >= 0; i = s.indexOf("!", i + 1)) {
+    if (s[i + 1] === "=") continue;
+    if (/[A-Za-z]/.test(s[i - 1] || "")) return true;
+    if (s[i - 1] === ")") {
+      let d = 0;
+      let j = i - 1;
+      for (; j >= 0; j--) if ((d += s[j] === ")" ? 1 : s[j] === "(" ? -1 : 0) === 0) break;
+      if (/[A-Za-z]/.test(s.slice(j, i))) return true;
     }
   }
   return false;
 }
 
-export function verifyAi(problemText, ai) {
-  if ([problemText, ai?.value, ...(Array.isArray(ai?.solutions) ? ai.solutions : [])].some(neznanaFunkcija)) return { verified: false, reason: "parse", status: "unverified" };
+export function verifyAi(problemText0, ai0) {
+  const problemText = kombinatorika(problemText0);
+  const ai = ai0 && { ...ai0, value: kombinatorika(ai0.value), ...(Array.isArray(ai0.solutions) ? { solutions: ai0.solutions.map(kombinatorika) } : {}) };
+  const identiteta = ai?.kind === "expression" || ai?.kind === "arith";
+  if ([problemText, ai?.value, ...(Array.isArray(ai?.solutions) ? ai.solutions : [])].some((t) => neizracunljivo(t, { identiteta }))) return { verified: false, reason: "parse", status: "unverified" };
   // prevelika števila: prebrana vrednost ni vrednost iz naloge, odloči SymPy (status »unverified«)
   if (bigLiteral(problemText) || [...(ai?.solutions || []), ai?.value].some((x) => bigLiteral(x))) return { verified: false, reason: "big", status: "unverified" };
   const r = check(problemText, ai);

@@ -59,38 +59,54 @@ export function prep(text) {
 }
 
 // Funkcije, ki jih kalkulator (public/graph/math.js) pozna pod drugim imenom: log(a, b) → logb(a, b) (logaritem z
-// osnovo b), factorial(n) → (n)!, binomial(n, k) → nCr(n, k), C(n, k) → nCr, V(n, k) → nPr (le s celima številoma:
-// »C(1, 2)« je lahko točka). Brez tega razčlenjevalnik vrže napako ali »factorial« prebere kot f·a·c·t·o·r·i·a·l, in
-// pravilen odgovor bi bil »Napačno« (meritev brez SymPy 26. 11.: 40/468, družini log in racun2).
-const KLIC = /(?<![A-Za-z_])(log|factorial|binomial|C|V)\s*\(/g;
-function klici(s) {
+// osnovo b), factorial(n) → (n)!, binomial(n, k) → nCr(n, k). Brez tega razčlenjevalnik vrže napako ali »factorial«
+// prebere kot f·a·c·t·o·r·i·a·l, in pravilen odgovor bi bil »Napačno« (meritev brez SymPy 26. 11.: 40/468).
+// C(n, k) in V(n, k) prepiše le preverjanje (kombinatorika spodaj): v besedilu naloge je »V(2, 3)« lahko teme parabole.
+const KLIC = /(?<![A-Za-z_])(log|factorial|binomial)\s*\(/g;
+const KOMB = /(?<![A-Za-z_])(C|V)\s*\(/g;
+
+// Argumenti klica, ki se začne na indeksu i (za oklepajem): { args, end } ali null brez zaklepaja.
+export function argumentiKlica(s, i) {
+  let d = 1;
+  let j = i;
+  const args = [];
+  let start = j;
+  for (; j < s.length && d; j++) {
+    if (s[j] === "(") d++;
+    else if (s[j] === ")") d--;
+    if ((d === 1 && s[j] === ",") || d === 0) (args.push(s.slice(start, j)), (start = j + 1));
+  }
+  return d ? null : { args, end: j };
+}
+
+function prepisi(s, re, nov) {
   let out = "";
   let i = 0;
-  for (const m of s.matchAll(KLIC)) {
+  for (const m of s.matchAll(re)) {
     if (m.index < i) continue;
-    let d = 1;
-    let j = m.index + m[0].length;
-    const args = [];
-    let start = j;
-    for (; j < s.length && d; j++) {
-      if (s[j] === "(") d++;
-      else if (s[j] === ")") d--;
-      if ((d === 1 && s[j] === ",") || d === 0) (args.push(s.slice(start, j)), (start = j + 1));
-    }
-    if (d) break; // brez zaklepaja: pustimo
-    const a = args.map((x) => klici(x).trim());
-    const cela = a.every((x) => /^\d+$/.test(x));
-    const ime = m[1];
-    let nov = null;
-    if (ime === "log" && a.length === 2) nov = `logb(${a[0]}, ${a[1]})`;
-    else if (ime === "factorial" && a.length === 1) nov = `(${a[0]})!`;
-    else if (ime === "binomial" && a.length === 2) nov = `nCr(${a[0]}, ${a[1]})`;
-    else if ((ime === "C" || ime === "V") && a.length === 2 && cela) nov = `${ime === "C" ? "nCr" : "nPr"}(${a[0]}, ${a[1]})`;
-    if (nov === null) continue;
-    out += s.slice(i, m.index) + nov;
-    i = j;
+    const k = argumentiKlica(s, m.index + m[0].length);
+    if (!k) break; // brez zaklepaja: pustimo
+    const z = nov(m[1], k.args.map((x) => prepisi(x, re, nov).trim()));
+    if (z === null) continue;
+    out += s.slice(i, m.index) + z;
+    i = k.end;
   }
   return out + s.slice(i);
+}
+
+function klici(s) {
+  return prepisi(s, KLIC, (ime, a) => {
+    if (ime === "log" && a.length === 2) return `logb(${a[0]}, ${a[1]})`;
+    if (ime === "factorial" && a.length === 1) return `(${a[0]})!`;
+    if (ime === "binomial" && a.length === 2) return `nCr(${a[0]}, ${a[1]})`;
+    return null;
+  });
+}
+
+// Kombinatorika za preverjanje: C(n, k) → nCr, V(n, k) → nPr, le s celima številoma.
+export function kombinatorika(s) {
+  if (typeof s !== "string") return s;
+  return prepisi(s, KOMB, (ime, a) => (a.length === 2 && a.every((x) => /^\d+$/.test(x)) ? `${ime === "C" ? "nCr" : "nPr"}(${a[0]}, ${a[1]})` : null));
 }
 
 // Sistem: dve (ali več) enačb, ločenih s podpičjem, novo vrstico ali », « (decimalna vejica nima presledka).
