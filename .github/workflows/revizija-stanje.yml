@@ -1,0 +1,55 @@
+# K-01 (načrt dviga kakovosti po reviziji, j 26. 11. 2026: »Redno usklajuj revizijski register z dejanskim stanjem
+# GitHuba«): vsak dan primerja register revizije (veja review/chatgpt-audit) z združenimi in odprtimi PR-ji ter testi
+# z oznako AUDIT-NNN. Samo bere; razlike so v povzetku zagona in v artefaktu »revizija-stanje« (30 dni).
+# Ne pade zaradi razlik (te ureja nit revizije); pade samo, če skripta ne more prebrati registra ali zgodovine.
+name: Revizija – stanje registra
+on:
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+  pull-requests: read
+concurrency:
+  group: revizija-stanje
+  cancel-in-progress: true
+defaults:
+  run:
+    shell: bash
+jobs:
+  stanje:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - name: Primerjava
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set +e
+          node scripts/revizija-stanje.mjs --github --json revizija-stanje.json > revizija-stanje.txt 2>&1
+          izhod=$?
+          set -e
+          cat revizija-stanje.txt
+          {
+            echo '## Register revizije proti GitHubu'
+            echo '```'
+            cat revizija-stanje.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$izhod"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: revizija-stanje
+          if-no-files-found: ignore
+          path: |
+            revizija-stanje.txt
+            revizija-stanje.json
+          retention-days: 30

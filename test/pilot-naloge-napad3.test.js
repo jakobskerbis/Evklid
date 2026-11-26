@@ -86,12 +86,12 @@ test("B3-1 tuj račun ne more oddati preizkusa, odgovora, obvestila ali izbrisat
   });
 });
 
-test("B3-2 XP: vzporedni zadnji odgovori, ponovni začetek, »Ne vem« ×6 ne dajo več kot 2 × XP.quiz", async () => {
+test("B3-2 XP: vzporedni zadnji odgovori, ponovni začetek, »Ne vem« ×12 ne dajo več kot 2 × XP.quiz", async () => {
   await withServer({}, async ({ client, store }) => {
     const a = await account(client, store, "xp@b3.si", 40);
     await a.call(`/api/students/${a.sid}/pilot/quiz`, { method: "POST", body: { phase: "pre" } });
-    for (let i = 0; i < 5; i++) await a.call(`/api/students/${a.sid}/pilot/quiz/answer`, { method: "POST", body: { phase: "pre", index: i, skip: true } });
-    const rs = await Promise.all(Array.from({ length: 8 }, () => a.call(`/api/students/${a.sid}/pilot/quiz/answer`, { method: "POST", body: { phase: "pre", index: 5, skip: true } })));
+    for (let i = 0; i < 11; i++) await a.call(`/api/students/${a.sid}/pilot/quiz/answer`, { method: "POST", body: { phase: "pre", index: i, skip: true } });
+    const rs = await Promise.all(Array.from({ length: 8 }, () => a.call(`/api/students/${a.sid}/pilot/quiz/answer`, { method: "POST", body: { phase: "pre", index: 11, skip: true } })));
     assert.equal(rs.filter((r) => r.status === 200).length, 1);
     await a.call(`/api/students/${a.sid}/pilot/quiz`, { method: "POST", body: { phase: "pre" } });
     const n = store.db.prepare("SELECT COALESCE(SUM(amount),0) AS n FROM xp_events WHERE student_id = ? AND reason LIKE 'pilot: quiz%'").get(a.sid).n;
@@ -151,14 +151,14 @@ test("B3-6 skrbnik: iz razlike dveh zaporednih poročil se rezultat posameznega 
   const db = store.db;
   impactReport(db, 3);
   const ids = [1, 2, 3, 4, 5, 6].map((i) => Number(db.prepare("INSERT INTO students (name, settings) VALUES (?, '{}')").run(`U${i}`).lastInsertRowid));
-  const add = (sid, score) => db.prepare("INSERT INTO pilot_quiz (student_id, phase, topic_id, items, answers, score, finished_at) VALUES (?, 'pre', 't', '[0,0,0,0,0,0]', '[0,0,0,0,0,0]', ?, datetime('now'))").run(sid, score);
+  const add = (sid, score) => db.prepare("INSERT INTO pilot_quiz (student_id, phase, topic_id, items, answers, score, finished_at, form) VALUES (?, 'pre', 't', '[]', ?, ?, datetime('now'), 'A')").run(sid, JSON.stringify(Array(12).fill(0)), score);
   add(ids[0], 2);
   add(ids[1], 5);
   add(ids[2], 3);
   const r3 = impactReport(db, 3).quiz;
   add(ids[3], 1); // četrti učenec (skrbnik ve, kdo je ravnokar končal: pilot_add v dnevniku, e-naslovi v poročilu)
   const r4 = impactReport(db, 3).quiz;
-  const leaked = Math.round((r4.pre * r4.nPre - r3.pre * r3.nPre) * 6);
+  const leaked = Math.round((r4.pre * r4.nPre - r3.pre * r3.nPre) * 12);
   assert.notEqual(leaked, 1, "rezultat četrtega učenca je izračunljiv iz dveh poročil");
   assert.equal(r4.pre, r3.pre, "vsota se osveži šele po 3 novih");
   // Tudi s »prikazanimi« števili (shownPre) se razlika ne da izračunati: paket ostane enak.
