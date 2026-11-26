@@ -724,7 +724,28 @@ export function stopsTex(base) {
       return base.place(o).at === s.at ? { ...s, p: o } : null;
     })
     .filter(Boolean);
-  return join(base, new Map(stops.map((s) => [s.at, `{\\htmlData{evk-p=${s.p}}{\\rule{0em}{0.4em}}}`])));
+  return optGroups(join(base, new Map(stops.map((s) => [s.at, `{\\htmlData{evk-p=${s.p}}{\\rule{0em}{0.4em}}}`]))));
+}
+// KaTeX: neobvezni argument, ki se začne z »{«, je ena skupina (\sqrt[{a}8]{3} je napaka); merilna točka pred indeksom
+// korena (root(3; 8), AUDIT-022) zato ovije cel indeks v svojo skupino: \sqrt[{{…}8{…}}]{3}
+function optGroups(tex) {
+  let out = "";
+  let i = 0;
+  for (let k = tex.indexOf("\\sqrt[", i); k >= 0; k = tex.indexOf("\\sqrt[", i)) {
+    const a = k + 6;
+    let d = 0;
+    let e = a;
+    for (; e < tex.length; e++) {
+      if (tex[e] === "\\") e++;
+      else if (tex[e] === "{") d++;
+      else if (tex[e] === "}") d--;
+      else if (tex[e] === "]" && d === 0) break;
+    }
+    const inner = tex.slice(a, e);
+    out += tex.slice(i, a) + (inner.startsWith("{") ? `{${inner}}` : inner);
+    i = e;
+  }
+  return out + tex.slice(i);
 }
 
 /** Zapis vnosa s kazalcem: { ok, tex } ali null za prazen vnos. */
