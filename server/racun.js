@@ -16,7 +16,7 @@ import { parseSpecies } from "../public/graph/chemcore.js";
 import { MASSES } from "../public/graph/pse-data.js";
 import { texToText } from "../public/scan/solvecore.js";
 import { parse, compile, calcText } from "../public/graph/math.js";
-import { notClaimAt, hasExercise, TEX_SHORT, numTex, calcToTex, noteLine } from "./besedilo-trditev.js";
+import { notClaimAt, hasExercise, TEX_SHORT, numTex, calcToTex, noteLine, presentedAsResult, prevLine } from "./besedilo-trditev.js";
 
 // Tudi »RAČUN« (model piše slovensko); bloka učenec v nobeni obliki ne vidi (server/meta.js).
 const BLOCK_RE = /<<\s*RA[CČ]UN\b([\s\S]*?)>>/g;
@@ -286,9 +286,21 @@ export function visibleFinding(text, claims) {
       const rights = s.vals.map((x, i) => valTex(x, s.raw[i]));
       const right = rights.every(Boolean) ? rights.map((r) => `${v} = ${r}`).join(",\\; ") : null;
       const eq = new Set(s.eqs).size === 1 ? calcToTex(s.eqs[0]) : null;
-      // Vrstica z vrednostjo neznanke kaže na zgled, vajo, teme, os, enoto … (noteLine): brez opombe (pregled A).
-      const varLine = new RegExp(`\\$[^$\n]*(?<![a-zA-Z\\\\])${v}(?:_\\{?\\d+\\}?)?\\s*(?:=|\\\\approx)`);
-      const safe = plain.split("\n").filter((l) => varLine.test(l)).every(noteLine);
+      // Opomba le ob pozitivnih znakih (pregled A, 018af7ab6): vse navedbe neznanke so ista (napačna) vrednost, zadnja
+      // je predstavljena kot rezultat, vrstica ni zgled, vaja, teme, enota … Sicer brez opombe (kot main).
+      const lines = plain.split("\n");
+      const seg = new RegExp(`(?:^|[^a-zA-Z\\\\])${v}(?:_\\{?\\d+\\}?)?\\s*(?:=|\\\\approx)\\s*([-−]?\\d+(?:(?:[.,]|\\{,\\})\\d+)?)\\s*$`);
+      const hasVar = new RegExp(`(?<![a-zA-Z\\\\])${v}(?![a-zA-Z])`);
+      const found = [];
+      for (const [i, l] of lines.entries()) {
+        for (const mm of l.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) {
+          if (!hasVar.test(mm[1] ?? mm[2])) continue;
+          const k = seg.exec(mm[1] ?? mm[2]);
+          found.push({ i, start: mm.index, end: mm.index + mm[0].length, x: k ? Number(k[1].replace("−", "-").replace("{,}", ".").replace(",", ".")) : NaN });
+        }
+      }
+      const last = found.at(-1);
+      const safe = bad.length === 1 && !!last && found.every((f) => Math.abs(f.x - bad[0].n) <= 1e-9 * Math.max(1, Math.abs(bad[0].n))) && noteLine(`${prevLine(lines, last.i)}\n${lines[last.i]}`) && presentedAsResult(plain, lines, last.i, last.start, last.end);
       return { issue, fact: wrong && right && safe ? { kind: "value", wrong, eq, right } : null };
     }
   }

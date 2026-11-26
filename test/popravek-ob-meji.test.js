@@ -99,11 +99,19 @@ async function fourWays({ answers, msgs, note }) {
   return { cap, failed, ok, free };
 }
 
-test("AUDIT-060: napačen račun v besedilu (7 · 8 = 54) → konkretna opomba ob meji in napaki klica", async () => {
+test("AUDIT-060: napačen račun kot rezultat (»Torej $7 \\cdot 8 = 54$.«) → konkretna opomba ob meji in napaki klica", async () => {
   const note = R`*(Opomba: $7 \cdot 8 = 54$ ne drži, ker je $7 \cdot 8 = 56$. Preveri še sam.)*`;
-  const { cap } = await fourWays({ answers: [R`Izračunajmo: $7 \cdot 8 = 54$. Zdaj prištej še $2$.`], msgs: ["Koliko je 7 krat 8 plus 2?"], note });
-  assert.match(cap.display, /^Izračunajmo: \$7 \\cdot 8 = 54\$\. Zdaj prištej še \$2\$\./, "besedilo odgovora ostane");
+  const { cap } = await fourWays({ answers: [R`Najprej pomnožimo. Torej $7 \cdot 8 = 54$.`], msgs: ["Koliko je 7 krat 8?"], note });
+  assert.match(cap.display, /^Najprej pomnožimo\. Torej \$7 \\cdot 8 = 54\$\./, "besedilo odgovora ostane");
   assert.ok(cap.content.includes(JSON.stringify(note).slice(1, -1)), "opomba je tudi v zgodovini za model");
+  // zadnja formula odgovora je tudi rezultat
+  const last = await run({ answers: [R`Pomnožimo: $7 \cdot 8 = 54$`], msgs: ["Koliko je 7 krat 8?"] });
+  has(last, note);
+  // pregled A (018af7ab6): račun sredi razlage brez znaka rezultata → brez opombe (ugotovitev gre v popravek kot main)
+  const mid = await run({ answers: [R`Izračunajmo: $7 \cdot 8 = 54$. Zdaj prištej še $2$.`], msgs: ["Koliko je 7 krat 8 plus 2?"] });
+  none(mid);
+  const fix = await run({ answers: [R`Izračunajmo: $7 \cdot 8 = 54$. Zdaj prištej še $2$.`], msgs: ["Koliko je 7 krat 8 plus 2?"], n: null });
+  assert.ok(fix.calls.includes("fix"), "popravek kot main");
 });
 
 test("AUDIT-060: napačen končni odvod (x³ → 2x) → konkretna opomba", async () => {
@@ -251,11 +259,12 @@ test("AUDIT-066: 13 znanih blagih zadetkov na pravilnih odgovorih → le blaga o
   for (const [q, a] of SOFT_HITS) {
     for (const opt of [{ n: null, fixText: "OK" }, { n: 1 }]) {
       const r = await run({ answers: [a], msgs: [q], ...opt });
-      assert.match(r.display, SOFT, `${a} ${JSON.stringify(opt)}`);
+      // pregled A (018af7ab6): blaga opomba odpade, ko odgovor sam navede pravo vrednost istega računa
       assert.doesNotMatch(r.display, HARD, a);
       assert.doesNotMatch(r.display, GENERIC, a);
       assert.ok(r.display.startsWith(a.split("\n")[0]), "besedilo odgovora ostane");
-      assert.equal((r.display.match(/Opomba:/g) || []).length, 1, "ena opomba");
+      assert.ok((r.display.match(/Opomba:/g) || []).length <= 1, "največ ena opomba");
+      if ((r.display.match(/Opomba:/g) || []).length) assert.match(r.display, SOFT, a);
     }
   }
 });
@@ -361,6 +370,30 @@ test("pregled A: lažni alarmi main pri vrednosti, uri, bloku RACUN in zavrnitvi
       const r = await run({ answers: ["Kaj dobiš za x?", ans], msgs: [task, "x = 6"], ...opt });
       none(r);
     }
+  }
+});
+
+// Pregleda A in B (018af7ab6): pravilni odgovori brez opombe na meji in ob napaki klica; popravek kot main.
+test("pregleda A in B: drug sistem, namig, označena napaka in vmesni korak brez opombe na meji", async () => {
+  const cases = [
+    ["Dvojiško?", R`V dvojiškem zapisu je $1 + 1 = 10$.`],
+    ["Ostanki?", R`V $\mathbb{Z}_5$ je $3 + 4 = 2$.`],
+    ["Ura?", R`Ob 22h čez 5 h je $22 + 5 = 3$ zjutraj.`],
+    ["Logika?", R`Logično ALI: $1 + 1 = 1$.`],
+    ["Potence?", R`Mnogi zamenjajo potenco z množenjem: $2^3 = 6$. Prav je $2^3 = 8$.`],
+    ["Poštevanka?", "❌ $7 \\cdot 8 = 54$\n✅ $7 \\cdot 8 = 56$"],
+    ["Poštevanka?", R`Ne piši $7 \cdot 8 = 54$.`],
+    [R`Reši enačbo $2x + 3 = 11$.`, R`Ne deli z 2, sicer dobiš $x = 6$.`],
+    [R`Reši enačbo $2x + 3 = 11$.`, R`Začni z $x = 0$: leva stran je 3. Nato povečuj $x$, dokler ne dobiš 11.`],
+    [R`Reši enačbo $2x + 3 = 11$.`, R`Preverimo $x = 3$: $2 \cdot 3 + 3 = 9$, kar ni 11. Torej več.`],
+  ];
+  for (const [q, a] of cases) {
+    for (const opt of [{ n: 1 }, { n: null, fixText: null }]) none(await run({ answers: [a], msgs: [q], ...opt }));
+  }
+  // vmesni korak v besedilni nalogi: »58?« in »Da, 58!« brez sodbe kode in brez opombe
+  for (const opt of [{ n: 2 }, { n: null, chatFail: 3 }]) {
+    const r = await run({ answers: [R`Najprej množenje. Koliko je $7 \cdot 8$?`, "Da, 58!"], msgs: ["Ana ima 7 vrečk po 8 bonbonov in še 2 bonbona. Koliko jih ima?", "58?"], ...opt });
+    none(r);
   }
 });
 

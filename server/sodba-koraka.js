@@ -356,7 +356,22 @@ export function stepVerdict(text, opts = {}) {
   // main (judgeStep: le končni rezultat naloge; FINAL_ASK ostane odstranjen).
   const asks = /^[-−+]?\d+(?:[.,]\d+)?$/.test(core.trim()) && TUTOR_ASK.test(String(opts.prevTutor || "").slice(-400).trim());
   let v = asks ? guessVerdict(core, opts) : null;
-  if (!v) {
+  // Napačno glede na inštruktorjev račun, a število je morda odgovor na kaj drugega (pregled B, 018af7ab6): končni
+  // rezultat naloge (sodba kot main), število, ki je v pogovoru že vidno (naloga, prejšnji korak), ali vmesni korak
+  // (»Najprej množenje. Koliko je …?«) brez rešene računske naloge. Ob dvomu brez sodbe.
+  let unsure = false;
+  if (v?.wrong) {
+    const x = num(core.trim());
+    const fin = judgeStep(core, opts);
+    const arith = (opts.pre?.problems || []).some((p) => p.type === "arith");
+    const near = (y) => Math.abs(y - x) <= 1e-9 * Math.max(1, Math.abs(x));
+    if (fin && !fin.wrong) v = null;
+    else if (x === null || seenNumbers(`${opts.prevTutor || ""}\n${opts.seen || ""}`).some(near) || (SUBSTEP.test(String(opts.prevTutor || "")) && !arith)) {
+      v = null;
+      unsure = true;
+    }
+  }
+  if (!v && !unsure) {
     v = judgeStep(core, opts);
     // Pravilno po kodi, a zavrnitev je lahko prav (kot main, brez ponovnega odgovora in opombe): golo število proti
     // nalogi (inštruktor je morda medtem vprašal kaj drugega, pregled B) in zaokrožena decimalka (»0,5?« pri »zapiši
@@ -371,6 +386,13 @@ export function stepVerdict(text, opts = {}) {
   if (said && !vals.length) vals.push({ v: null, x: num(said) });
   return v ? { ...v, asked: true, vals } : v;
 }
+// Vmesni korak v inštruktorjevem vprašanju (»Najprej …«, »Nato …«, »prvi korak«).
+const SUBSTEP = /(?<!\p{L})(?:najprej|nato|potem|zdaj|sedaj|prv\p{L}*|drug\p{L}*|tretj\p{L}*|naslednj\p{L}*|korak\p{L}*|vmesn\p{L}*|first|then|next|step)(?!\p{L})/iu;
+// Števila, ki jih učenec v pogovoru že vidi (»$7 \\cdot 8$« → 7, 8).
+const seenNumbers = (t) =>
+  [...String(t || "").slice(-4000).matchAll(/(?<![\d.,{}])[-−]?\d+(?:(?:[.,]|\{,\})\d+)?(?![\d]|[.,]\d|\{,\})/g)]
+    .map((m) => Number(m[0].replace("−", "-").replace("{,}", ".").replace(",", ".")))
+    .filter(Number.isFinite);
 const ASK_TAIL = /(?:(?:\s*,\s*|\s+)(?:ali|ne|prav|kajne|a ne|res|right))+\s*$/iu;
 // Inštruktorjevo zadnje vprašanje je en sam račun (»Koliko je $7 \cdot 8$?«): golo število v učenčevem predlogu
 // (»54?«) je odgovor nanj in koda ga preračuna (AUDIT-059, dokončanje 27. 11.).
@@ -388,6 +410,8 @@ function guessVerdict(core, { prevTutor = "" } = {}) {
   if (/°|\\circ|\\degree|['′]/.test(raw) || /ostan|remainder/i.test(tail)) return null;
   const expr = (m[1] != null ? plain(`$${m[1]}$`) : m[2]).trim();
   if (/[a-zA-Z]/.test(expr.replace(/sqrt|pi/g, "")) || !/[+\-−*/^·×÷:√]/.test(expr.replace(/^[-−]/, ""))) return null;
+  // Dvoumna dogovora (pregled B): »6 : 2(1+2)« (množenje brez znaka za deljenjem) in »-3^2« (predznak pred potenco).
+  if (/[:÷/]\s*\d+(?:[.,]\d+)?\s*\(/.test(expr) || /^\s*[-−]\s*\d+(?:[.,]\d+)?\s*\^/.test(expr)) return null;
   const y = value(expr);
   const x = value(c);
   if (y === null || x === null) return null;

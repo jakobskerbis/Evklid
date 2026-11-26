@@ -1525,7 +1525,9 @@ export function createApp(store, opts = {}) {
       }
       // Sodba kode (server/sodba-koraka.js): računi v sporočilu, enačba proti nalogi ali inštruktorjevi zadnji enačbi,
       // končna vrednost. { wrong, finding, note } ali null, ko koda ne more soditi (tedaj sodbo pregleda model).
-      const codeVerdict = claimAsked ? stepVerdict(text, { pre: firstPre, prevTutor: prevTutorText }) : null;
+      // »seen«: prejšnja sporočila (števila, ki jih učenec že vidi; pregled B, 018af7ab6)
+      const seenText = claimAsked ? fullHistory.slice(0, -1).map(textOf).join("\n").slice(-4000) : "";
+      const codeVerdict = claimAsked ? stepVerdict(text, { pre: firstPre, prevTutor: prevTutorText, seen: seenText }) : null;
       // Vprašanje-predlog (»x = 5?«, AUDIT-059) je trditev le, ko o njem sodi koda; sicer kot na main (vprašanje): brez
       // plačanega pregleda sodbe in brez zadrževanja odgovora (pregled prevzema 2 in 5).
       const claim = claimAsked && (!/\?\s*$/.test(text) || !!codeVerdict);
@@ -1802,7 +1804,7 @@ export function createApp(store, opts = {}) {
             noteReviewSkip(store.db, stopnja, "meja-popravek");
           }
           // Blaga ugotovitev brez popravka zanjo (»OK«, meja, napaka klica): blaga opomba, odgovor ostane.
-          if (softIssue && !(usingSoft && fix)) checkNote += checkNoteFor(found.fact, jezik, { soft: true });
+          if (softIssue && !found.quiet && !(usingSoft && fix)) checkNote += checkNoteFor(found.fact, jezik, { soft: true });
           if (checkNote && checkNote === stepNote) checkNote = "";
           if (checkNote) send("delta", { text: checkNote });
         }

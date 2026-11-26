@@ -131,7 +131,7 @@ test("časovna meja: nova koda na 60 000 znakih pod 200 ms", () => {
     fn();
     return performance.now() - s;
   };
-  const many = R`Izračunajmo: $7 \cdot 8 = 54$.` + "\n";
+  const many = R`Torej $7 \cdot 8 = 54$.` + "\n";
   const long = many.repeat(Math.ceil(60000 / many.length)).slice(0, 60000);
   const pre = presolve("Koliko je 7 krat 8 plus 2?");
   // checkArithmetic sam je kot na main; nova je le ugotovitev prvega neujemanja in opomba
@@ -290,5 +290,311 @@ test("pregled A: opomba ob prezrti sodbi le ob izrecni potrditvi napačnega kora
   const v5 = stepVerdict("x = 5", { pre: presolve(R`Reši enačbo $2x + 3 = 11$.`), prevTutor: "Kaj dobiš za x?" });
   assert.equal(verdictNoteSafe(R`Napisal si $x = 5$. Vstavi v enačbo: $2 \cdot 5 + 3 = 13$, kar ni 11. Poskusi znova.`, v5), false);
   assert.equal(verdictNoteSafe("Da, pravilno!", v5), true);
+});
+
+// Pregled B (018af7ab6), rt3/h3 t7 in t8: pravilne razlage z označenim napačnim zapisom, drugim sistemom, izbirnimi
+// odgovori … Nobena trdna opomba brez modela (ugotovitev za popravek ostane kot na main).
+export const B_T78 = ["Pogosta napaka je $2^3 = 6$.",
+  "Pogosto vidim $2^3 = 6$. Pravilno: $2^3 = 8$.",
+  "Pogosto učenci zapišejo $2^3 = 6$. Ali vidiš, zakaj ne drži?",
+  "Mnogi zamenjajo potenco z množenjem: $2^3 = 6$. Prav je $2^3 = 8$.",
+  "Mnogi zamenjajo potenco z množenjem: $2^3 = 6$. Ali vidiš razliko? $2^3 = 8$.",
+  "Kaj je narobe tukaj? $2^3 = 6$",
+  "Kaj je narobe tukaj: $2^3 = 6$? Potenca ni množenje.",
+  "Je $2^3 = 6$? Ne, $2^3 = 8$.",
+  "Ali je $2^3 = 6$? Ne.",
+  "Zakaj ni $2^3 = 6$? Ker potenca pomeni množenje osnove.",
+  "Zakaj ne $2^3 = 6$? Ker potenca pomeni množenje osnove.",
+  "Zakaj $2^3 \\neq 6$? Ker …",
+  "Zamenjati $2^3 = 6$ in $2 \\cdot 3 = 6$ je lahko. Prvo ne drži.",
+  "Primerjaj $2 \\cdot 3 = 6$ in $2^3 = 8$. Kaj opaziš?",
+  "Vprašanje zate: koliko je $2^3$? Ni $6$! $2^3 = 8$.",
+  "Recimo, da bi kdo napisal $2^3 = 6$.",
+  "Npr. $2^3 = 6$ je tipična zamenjava.",
+  "Npr. zapis $2^3 = 6$ je tipična zamenjava.",
+  "Zapis $2^3 = 6$ je tipična zamenjava.",
+  "Zapis $2^3 = 6$ je zmota.",
+  "Tole ne drži: $2^3 = 6$.",
+  "Tole ne velja: $2^3 = 6$.",
+  "Ta vrstica je napačna: $7 \\cdot 8 = 54$.",
+  "✗ $7 \\cdot 8 = 54$\n✓ $7 \\cdot 8 = 56$",
+  "❌ $7 \\cdot 8 = 54$\n✅ $7 \\cdot 8 = 56$",
+  "~~$7 \\cdot 8 = 54$~~ $7 \\cdot 8 = 56$",
+  "Ne $7 \\cdot 8 = 54$, temveč $7 \\cdot 8 = 56$.",
+  "Ne: $7 \\cdot 8 = 54$. Da: $7 \\cdot 8 = 56$.",
+  "Namesto $7 \\cdot 8 = 54$ pišemo $7 \\cdot 8 = 56$.",
+  "| Napačno | Pravilno |\n|---|---|\n| $7 \\cdot 8 = 54$ | $7 \\cdot 8 = 56$ |",
+  "Napačno: $7 \\cdot 8 = 54$\nPravilno: $7 \\cdot 8 = 56$",
+  "Kje je napaka? $7 \\cdot 8 = 54$",
+  "Najdi napako: $7 \\cdot 8 = 54$.",
+  "Poišči napako v računu $7 \\cdot 8 = 54$.",
+  "Kje se je zalomilo pri $7 \\cdot 8 = 54$?",
+  "Pri $7 \\cdot 8 = 54$ se je zalomilo.",
+  "Se ti zdi $7 \\cdot 8 = 54$ prav? Preveri.",
+  "Se ti zdi $7 \\cdot 8 = 54$ prav. Preveri.",
+  "Zdi se, da je $7 \\cdot 8 = 54$. Preverimo.",
+  "Napisala si $7 \\cdot 8 = 54$. Preveri še enkrat.",
+  "Zapišeš $7 \\cdot 8 = 54$. Poglejva še enkrat.",
+  "Si zapisal $7 \\cdot 8 = 54$? Poglejva.",
+  "V tvojem računu stoji $7 \\cdot 8 = 54$.",
+  "Pri tebi piše $7 \\cdot 8 = 54$.",
+  "Piše $7 \\cdot 8 = 54$. Ni čisto prav.",
+  "Na listu je $7 \\cdot 8 = 54$.",
+  "Na sliki vidim $7 \\cdot 8 = 54$.",
+  "Na fotografiji je $7 \\cdot 8 = 54$.",
+  "V nalogi piše $7 \\cdot 8 = 54$, kar ni res.",
+  "V nalogi piše $7 \\cdot 8 = 54$ — to ni res.",
+  "»$7 \\cdot 8 = 54$« — to ni res.",
+  "Trditev $7 \\cdot 8 = 54$ je neresnična.",
+  "Trditev $7 \\cdot 8 = 54$ je lažna.",
+  "Trditev »$7 \\cdot 8 = 54$« je napačna.",
+  "Trditev »$7 \\cdot 8 = 54$« ne drži.",
+  "Izjava $7 \\cdot 8 = 54$ je neresnična.",
+  "$7 \\cdot 8 = 54$ je neresnična izjava.",
+  "$7 \\cdot 8 = 54$? Ne!",
+  "$7 \\cdot 8 = 54$? Ne, $56$.",
+  "$7 \\cdot 8 = 54$ ali $56$?",
+  "Je $7 \\cdot 8$ enako $54$ ali $56$? $7 \\cdot 8 = 56$.",
+  "Kaj dobimo, če zamenjamo vrstni red? $7 \\cdot 8 = 8 \\cdot 7 = 56$.",
+  "Če bi množil narobe, $7 \\cdot 8 = 54$.",
+  "Če narobe množiš, $7 \\cdot 8 = 54$.",
+  "Če narobe množiš: $7 \\cdot 8 = 54$.",
+  "Če množiš narobe, pride $7 \\cdot 8 = 54$.",
+  "Kdor množi narobe, dobi $7 \\cdot 8 = 54$.",
+  "Kdor množi narobe, ima $7 \\cdot 8 = 54$.",
+  "Kdor množi narobe, pride do $7 \\cdot 8 = 54$.",
+  "If you multiply wrongly: $7 \\cdot 8 = 54$.",
+  "A typical slip: $7 \\cdot 8 = 54$.",
+  "A typical slip is $7 \\cdot 8 = 54$; correct is $56$.",
+  "Students often write $7 \\cdot 8 = 54$. It should be $56$.",
+  "Don't write $7 \\cdot 8 = 54$.",
+  "Never write $7 \\cdot 8 = 54$.",
+  "Nikoli ne piši $7 \\cdot 8 = 54$.",
+  "Ne piši $7 \\cdot 8 = 54$.",
+  "Ne zapiši $7 \\cdot 8 = 54$.",
+  "Izogibaj se zapisu $7 \\cdot 8 = 54$.",
+  "Ali res velja $7 \\cdot 8 = 54$? Ne.",
+  "Velja ali ne velja $7 \\cdot 8 = 54$? Ne velja.",
+  "Kaj pa $7 \\cdot 8 = 54$? To ne gre.",
+  "Kaj pa $7 \\cdot 8 = 54$. To ne gre.",
+  "Preverimo $7 \\cdot 8 = 54$: ne, $56$.",
+  "Rezultat $7 \\cdot 8 = 54$ ne more biti, ker je produkt dveh števil ...",
+  "Če pa zamenjaš $+$ in $\\cdot$, je $2 + 3 \\cdot 4 = 20$ – to se zgodi, ko ne upoštevaš vrstnega reda.",
+  "Kaj dobiš, če pozabiš na oklepaj?\n\n$2 + 3 \\cdot 4 = 20$",
+  "Kaj dobiš, če pozabiš na oklepaj?\n$2 + 3 \\cdot 4 = 20$ – narobe!",
+  "Ko pozabiš na vrstni red, dobiš $2 + 3 \\cdot 4 = 20$.",
+  "Ko pozabiš na vrstni red: $2 + 3 \\cdot 4 = 20$.",
+  "Brez upoštevanja vrstnega reda: $2 + 3 \\cdot 4 = 20$.",
+  "Od leve proti desni: $2 + 3 \\cdot 4 = 20$. Pravilno: $14$.",
+  "Od leve proti desni bi bilo $2 + 3 \\cdot 4 = 20$.",
+  "Kalkulator brez prednosti pokaže $2 + 3 \\cdot 4 = 20$.",
+  "Kalkulator brez prednosti računskih operacij pokaže 20 pri $2 + 3 \\cdot 4$.",
+  "Pravilno: $(2 + 3) \\cdot 4 = 20$ in $2 + 3 \\cdot 4 = 14$.",
+  "Velja $0{,}1 + 0{,}2 = 0{,}3$.",
+  "Velja $\\frac{1}{3} \\approx 0{,}33$.",
+  "Velja $\\frac{1}{3} = 0{,}33$.",
+  "Velja $\\frac{1}{3} = 0{,}\\overline{3}$.",
+  "Velja $\\frac{2}{3} = 0{,}67$.",
+  "Velja $\\pi = 3{,}14$.",
+  "Velja $\\sqrt{2} = 1{,}414$.",
+  "Velja $\\sqrt 2 = 1{,}41$.",
+  "Ploščina: $3{,}14 \\cdot 2^2 = 12{,}56\\,\\text{cm}^2$.",
+  "$S = \\pi r^2 = 3{,}14 \\cdot 4 = 12{,}56$",
+  "$S = \\pi \\cdot 4 = 12{,}57$",
+  "$S = \\pi \\cdot 4 = 12{,}56$",
+  "$S = \\pi \\cdot 4 \\approx 12{,}57$",
+  "$1\\,\\text{h} = 60\\,\\text{min}$",
+  "$1 \\text{ km} = 1000 \\text{ m}$",
+  "$2{,}5\\,\\text{m} = 250\\,\\text{cm}$",
+  "$20 \\% \\text{ od } 50 = 10$",
+  "$20\\,\\% \\cdot 50 = 10$",
+  "$50 \\cdot 1{,}2 = 60$ (povečanje za $20\\,\\%$)",
+  "$100\\% + 20\\% = 120\\%$",
+  "$3 \\tfrac{1}{3} = \\frac{10}{3}$",
+  "$3\\frac{1}{3} = \\frac{10}{3}$",
+  "$2\\frac12 \\cdot 2 = 5$",
+  "$5! = 120$",
+  "$10^{-3} = 0{,}001$",
+  "$2^{10} = 1024$",
+  "$2^{10} = 1\\,024$",
+  "$2^{10} = 1.024$",
+  "$1000 \\cdot 1000 = 1\\,000\\,000$",
+  "$1000 \\cdot 1000 = 10^6$",
+  "$\\lim_{x \\to \\infty} \\frac{1}{x} = 0$",
+  "$\\frac{x^2 - 1}{x - 1} = x + 1$",
+  "Asimptota: $y = 0$, ker $\\frac{1}{x} \\to 0$.",
+  "$x > 3$, torej $2x > 6$.",
+  "$|-3| = 3$",
+  "$-3^2 = -9$",
+  "$(-3)^2 = 9$",
+  "$\\sqrt{9} = \\pm 3$ ni prav, $\\sqrt{9} = 3$.",
+  "$\\sqrt{9} = 3$",
+  "$8^{1/3} = 2$",
+  "$0{,}\\overline{9} = 1$",
+  "$1 - 0{,}999 = 0{,}001$",
+  "$\\log_2 8 = 3$",
+  "$\\binom{5}{2} = 10$",
+  "$6 : 2(1+2) = 9$",
+  "$6 / 2 \\cdot 3 = 9$",
+  "$7 \\cdot 8 = 56$, kar ni $54$.",
+  "Če najprej množimo: $7 \\cdot 8 = 54$.",
+  "Mnogi pišejo $2^3 = 6$. Zakaj to ne gre?",
+  "Mnogi pišejo $2^3 = 6$. Vidiš, kje je zanka?",
+  "Pogosto vidim $2^3 = 6$. Kje je past?",
+  "Pogosto vidim $2^3 = 6$. Ali veš zakaj?",
+  "Klasična past: $2^3 = 6$. Ali jo prepoznaš?",
+  "Klasična past: $2^3 = 6$. Prepoznaš?",
+  "Past: $2^3 = 6$ (osnova krat eksponent). Pravilno: $2 \\cdot 2 \\cdot 2 = 8$.",
+  "Zamenjava: $2^3 = 6$. Pravilno: $8$.",
+  "Tipična zamenjava je $2^3 = 6$, pravilno je $8$.",
+  "Tipično: $2^3 = 6$ namesto $8$.",
+  "$2^3 = 6$ namesto $8$ je tipično.",
+  "Pazi na past $2^3 = 6$. Ali vidiš, zakaj?",
+  "Kot primer zamenjave: $2^3 = 6$. Opaziš razliko? Prava vrednost je $8$.",
+  "Sošolec je trdil, da $7 \\cdot 8 = 54$. Kdo ima prav?",
+  "Sošolec trdi $7 \\cdot 8 = 54$. Ali ima prav?",
+  "Sošolec trdi: $7 \\cdot 8 = 54$. Ima prav?",
+  "Učitelj je na tablo napisal $7 \\cdot 8 = 54$. Je to res?",
+  "Na tabli piše $7 \\cdot 8 = 54$. Je to res?",
+  "Recimo, da v nalogi piše $7 \\cdot 8 = 54$. Je to res?",
+  "V knjigi je tiskarska napaka $7 \\cdot 8 = 54$.",
+  "Miha trdi: $7 \\cdot 8 = 54$. Kaj praviš?",
+  "Miha je izračunal $7 \\cdot 8 = 54$. Kaj praviš?",
+  "Miha meni: $7 \\cdot 8 = 54$. Ali ima prav? Ne: $7 \\cdot 8 = 56$.",
+  "Miha meni, da je $7 \\cdot 8 = 54$. Ne drži: $56$.",
+  "Ana pravi, da $7 \\cdot 8 = 54$. Ali se strinjaš?",
+  "Ana pravi, da $7 \\cdot 8 = 54$. Se strinjaš?",
+  "Ana: »$7 \\cdot 8 = 54$.« Se strinjaš?",
+  "Kateri račun je pravilen: $7 \\cdot 8 = 54$ ali $7 \\cdot 8 = 56$?",
+  "Kateri račun je pravilen? $7 \\cdot 8 = 54$ ali $7 \\cdot 8 = 56$",
+  "Izberi pravilnega: $7 \\cdot 8 = 54$ ali $7 \\cdot 8 = 56$.",
+  "Izberi pravilnega: (a) $7 \\cdot 8 = 54$ (b) $7 \\cdot 8 = 56$",
+  "A) $7 \\cdot 8 = 54$\nB) $7 \\cdot 8 = 56$\nKateri je pravilen?",
+  "Kateri je pravilen?\nA) $7 \\cdot 8 = 54$\nB) $7 \\cdot 8 = 56$",
+  "Kviz: $7 \\cdot 8 = 54$. Drži ali ne drži?",
+  "Drži ali ne drži: $7 \\cdot 8 = 54$.",
+  "Res ali ni res: $7 \\cdot 8 = 54$?",
+  "Res ali ni res? $7 \\cdot 8 = 54$",
+  "Pravilno ali napačno? $7 \\cdot 8 = 54$",
+  "True or false? $7 \\cdot 8 = 54$",
+  "True or false: $7 \\cdot 8 = 54$.",
+  "Is this right? $7 \\cdot 8 = 54$",
+  "Is $7 \\cdot 8 = 54$ right? No, it is $56$.",
+  "Check this: $7 \\cdot 8 = 54$. Does it hold?",
+  "Look at $7 \\cdot 8 = 54$. Something is off. Can you see it?",
+  "Poglej $7 \\cdot 8 = 54$. Nekaj ni v redu.",
+  "Oglej si $7 \\cdot 8 = 54$. Nekaj ni v redu. Kaj?",
+  "Oglej si $7 \\cdot 8 = 54$. Kaj ni v redu?",
+  "Je tole prav: $7 \\cdot 8 = 54$? Ne.",
+  "Tole: $7 \\cdot 8 = 54$. Je prav? Ne.",
+  "Ugotovi, ali drži: $7 \\cdot 8 = 54$.",
+  "Ugotovi, ali drži $7 \\cdot 8 = 54$.",
+  "Preveri, če drži $7 \\cdot 8 = 54$.",
+  "Preveri, ali velja $7 \\cdot 8 = 54$.",
+  "Ocena: $7 \\cdot 8 \\approx 50$. Točno: $56$.",
+  "Ocenimo: $7 \\cdot 8 = 50$ približno.",
+  "Zaokroženo: $7 \\cdot 8 = 60$.",
+  "Na desetice zaokroženo je $7 \\cdot 8 = 60$.",
+  "Zaokrožimo na desetice: $56 \\approx 60$.",
+  "Groba ocena: $49 \\cdot 21 = 50 \\cdot 20 = 1000$.",
+  "Groba ocena: $49 \\cdot 21 \\approx 50 \\cdot 20 = 1000$.",
+  "Ocena: $49 \\cdot 21 \\approx 1000$. Točno: $49 \\cdot 21 = 1029$.",
+  "Pri dvojiškem sistemu je $1 + 1 = 10$.",
+  "V dvojiškem sistemu: $1 + 1 = 10$. Zakaj?",
+  "Po modulu 5: $3 + 4 = 2$.",
+  "Na uri: $10 + 5 = 3$.",
+  "Na uri velja $10 + 5 = 3$ (ura 15 je 3 popoldne). Vidiš?",
+  "V Booleovi algebri je $1 + 1 = 1$.",
+  "Ure: $45 + 30 = 75$ min, kar je $1$ h $15$ min. Ali $1{,}25$ h?",
+  "Kot: $90° + 45° = 135°$. Ali ga znaš narisati?",
+  "Čas: $1\\text{ h } 30\\text{ min} + 45\\text{ min} = 2\\text{ h } 15\\text{ min}$. Prav?",
+  "Če pa najprej sešteješ, dobiš $(2+3) \\cdot 4 = 20$; če ne, $2 + 3 \\cdot 4 = 14$.",
+  "Pri prvem: $2 + 3 = 5$; ali pri drugem $5 \\cdot 4 = 20$?"];
+// Pregled A (018af7ab6), rt2/k10: pravilni odgovori z vrednostmi in računi, ki niso rezultat odgovora.
+export const A_K10 = [["Koliko je 22 h + 5 h?","Ob 22h čez 5 h je $22 + 5 = 3$ zjutraj."],
+  ["Kot?","$350° + 20° = 10°$ (poln kot se odšteje)."],
+  ["Kot?","Smer $350^\\circ + 20^\\circ = 10^\\circ$."],
+  ["Dvojiško?","V dvojiškem sistemu je $1 + 1 = 10$."],
+  ["Logika?","Pri logičnem ALI je $1 + 1 = 1$."],
+  ["Modulo?","V $\\mathbb{Z}_5$ velja $3 + 4 = 2$."],
+  ["Modulo?","Ostanki pri deljenju s 5: $3 + 4 = 2$."],
+  ["Teden?","Dan v tednu: $6 + 3 = 2$ (sobota + 3 = torek)."],
+  ["Koliko je 1 + 1 v Z2?","V $\\mathbb{Z}_2$: $1 + 1 = 0$."],
+  ["Odstotek?","Cena zraste za 10 % in pade za 10 %: $100 \\cdot 1{,}1 \\cdot 0{,}9 = 99$."],
+  ["Pretvori.","$1 h = 60 min$, torej $2{,}5 h = 150 min$."],
+  ["Pretvori.","$3 dm = 30 cm = 300 mm$."],
+  ["Pretvori.","$1 \\ \\text{m}^2 = 10000 \\ \\text{cm}^2$."],
+  ["Kaj je napačno?","Učenec je napisal $2 \\cdot 3^2 = 36$; prav je $2 \\cdot 3^2 = 18$."],
+  ["Kaj je narobe?","V nalogi piše $5 - 2 \\cdot 2 = 6$, a prav je $1$."],
+  ["Razloži.","Zapis $\\sqrt{16} = \\pm 4$ ni pravilen, ker je $\\sqrt{16} = 4$."],
+  ["Razloži.","Trditev $0{,}1 + 0{,}2 = 0{,}3$ v računalniku ne drži natančno, v matematiki pa drži."],
+  ["Primerjaj.","Kdo ima prav: Ana ($2^3 = 8$) ali Bor ($2^3 = 6$)? Ana."],
+  ["Razloži.","Bor misli, da je $2^3 = 6$. Ana ga popravi: $2^3 = 8$."],
+  ["Razloži.","Kalkulator pokaže $2/3 = 0{,}6666667$."],
+  ["Razloži.","Na tri decimalke: $\\pi \\cdot 2 = 6{,}283$."],
+  ["Reši enačbo $2x + 3 = 11$.","Preverimo $x = 3$: $2 \\cdot 3 + 3 = 9$, kar ni 11. Torej več."],
+  ["Reši enačbo $2x + 3 = 11$.","Ali je $x = 3$? $2 \\cdot 3 + 3 = 9$, premalo. Kaj misliš, koliko je $x$?"],
+  ["Reši enačbo $2x + 3 = 11$.","Odštej 3 in deli z 2. Pri $x = 1$ bi bila leva stran 5."],
+  ["Reši enačbo $2x + 3 = 11$.","Začni z $x = 0$: leva stran je 3. Nato povečuj $x$, dokler ne dobiš 11."],
+  ["Reši enačbo $2x + 3 = 11$.","Tabela: $x = 1 \\to 5$, $x = 2 \\to 7$, $x = 3 \\to 9$. Nadaljuj!"],
+  ["Reši enačbo $x^2 - 5x + 6 = 0$.","Razcepi: $(x - 2)(x - 3) = 0$. Kateri dve števili zadoščata?"],
+  ["Reši enačbo $x^2 - 5x + 6 = 0$.","Diskriminanta: $D = 25 - 24 = 1$. Torej $x = \\frac{5 \\pm 1}{2}$."],
+  ["Reši enačbo $x^2 - 5x + 6 = 0$.","Ena rešitev je $x = 2$. Drugo poišči sam."],
+  ["Reši enačbo $x^2 - 5x + 6 = 0$.","Vsota rešitev je 5, produkt 6. Pri $x = 1$ je izraz 2, pri $x = 4$ je 2."],
+  ["Reši enačbo $x^2 - 5x + 6 = 0$.","Parabola $y = x^2 - 5x + 6$ seka abscisno os dvakrat; najnižja točka je pri $x = 2{,}5$."],
+  ["Reši enačbo $x^2 = 9$.","$x = 3$ ali $x = -3$; za dolžino stranice vzamemo $x = 3$."],
+  ["Reši enačbo $x^2 = 9$.","Pozitivna rešitev: $x = 3$. (Pri $x = 0$ je leva stran 0.)"],
+  ["Reši enačbo $3x = 12$.","Deli s 3. Prej smo imeli $3x = 9$ in $x = 3$; zdaj je podobno."],
+  ["Reši enačbo $3x = 12$.","Lani si reševal $3x = 9$, takrat je bilo $x = 3$."],
+  ["Reši enačbo $3x = 12$.","Deli s 3.\nČe bi delil z 2, bi dobil $x = 6$, kar ni prav."],
+  ["Reši enačbo $3x = 12$.","Deli s 3.\nNe deli z 2, sicer dobiš $x = 6$."],
+  ["Reši enačbo $3x = 12$.","Deli obe strani s 3.\nKaj pa dobiš? Ali je $x = 5$? Preveri."],
+  ["Reši sistem $x + y = 5$, $x - y = 1$.","Seštej enačbi. Ko dobiš $x$, vstavi.\nZačetni približek $x = 0$, $y = 0$ ne zadošča."],
+  ["Reši enačbo $\\sin x = 0$ na $[0, \\pi]$.","$x = 0$ in $x = \\pi$."],
+  ["Reši enačbo $x^2 - 4 = 0$.","Prestavi 4: $x^2 = 4$. Koren: $x = 2$ in $x = -2$. Graf ima ničli tam."],
+  ["Reši enačbo $x^2 - 4 = 0$.","Pri $x = 1$: $1 - 4 = -3 \\neq 0$. Pri $x = 2$: $0$. Torej $x = 2$ in po simetriji $x = -2$."]];
+
+const hardNote = (f) => !!(f.issue && !f.soft && f.fact);
+test("pregleda A in B (018af7ab6): trdna opomba le ob pozitivnem znaku rezultata", () => {
+  for (const a of B_T78) assert.equal(hardNote(codeFindings(a, null, "")), false, a);
+  for (const [q, a] of A_K10) assert.equal(hardNote(codeFindings(a, presolve(q), q)), false, a);
+  // drug številski sistem, ura, logika: nobene opombe, tudi blage ne
+  for (const a of [R`V dvojiškem zapisu je $1 + 1 = 10$.`, R`V binarnem sistemu: $1 + 1 = 10$.`, R`Po modulu $5$ je $3 + 4 = 2$.`, R`V $\mathbb{Z}_5$ je $3 + 4 = 2$.`, R`V $\mathbb{Z}_2$: $1 + 1 = 0$.`, R`Logično ALI: $1 + 1 = 1$.`, R`Ob 22h čez 5 h je $22 + 5 = 3$ zjutraj.`, R`Dan v tednu: $6 + 3 = 2$.`, R`V dvojiškem sistemu: $1 + 1 = 10$. Zakaj?`, R`Če je ura 23, čez 3 ure na uri piše $23 + 3 = 2$?`]) {
+    const f = codeFindings(a, null, "");
+    assert.equal(f.fact ?? null, null, a);
+    if (f.soft) assert.equal(f.quiet, true, a);
+  }
+  // označena napaka s pravo vrednostjo v odgovoru: brez blage opombe
+  const lab = codeFindings(R`Je $2^3 = 6$? Ne, $2^3 = 8$.`, null, "");
+  assert.ok(!lab.issue || lab.quiet || !lab.soft);
+  // vrednosti, ki niso rezultat (pregled A, k10)
+  const T = R`Reši enačbo $2x + 3 = 11$.`;
+  for (const a of [R`Lani si reševal $3x = 9$, takrat je bilo $x = 3$.`, R`Ne deli z 2, sicer dobiš $x = 6$.`, R`Začni z $x = 0$: leva stran je 3.`, R`(Pri $x = 0$ je leva stran 3.)`, R`Preverimo $x = 3$: $2 \cdot 3 + 3 = 9$, kar ni 11. Torej več.`, R`Odgovor $x = 7$ dobiš, ko pozabiš odšteti.`]) {
+    assert.equal(hardNote(codeFindings(a, presolve(T), T)), false, a);
+  }
+  // prava napaka, predstavljena kot rezultat, ostane s konkretno opombo (060)
+  for (const a of [R`Torej $7 \cdot 8 = 54$.`, R`Pomnožimo: $7 \cdot 8 = 54$`, R`Ker je $7 \cdot 8 = 54$, sledi ...`]) assert.equal(hardNote(codeFindings(a, null, "")), true, a);
+  for (const a of [R`$2x = 8$, torej $x = 5$.`, R`Rešitev je $x = 5$.`, R`$x = 5$`, R`**$x = 5$**`]) assert.equal(hardNote(codeFindings(a, presolve(T), T)), true, a);
+  const Q = R`Reši enačbo $x^2 + x - 12 = 0$.`;
+  assert.equal(hardNote(codeFindings(R`$(x - 4)(x + 3) = 0$, rešitvi $x_1 = 4$, $x_2 = -3$.`, presolve(Q), Q)), true);
+  assert.equal(hardNote(codeFindings(R`Vsota rešitev je 5, produkt 6. Pri $x = 1$ je izraz 2, pri $x = 4$ je 2.`, presolve(R`Reši enačbo $x^2 - 5x + 6 = 0$.`), "")), false);
+});
+
+test("pregled B (018af7ab6): golo število, ki je rezultat naloge ali že vidno, ni napaka vmesnega koraka", () => {
+  const T1 = R`Izračunaj $7 \cdot 8 + 2$.`;
+  const K = R`Najprej množenje. Koliko je $7 \cdot 8$?`;
+  const v = stepVerdict("58?", { pre: presolve(T1, { first: true, narrow: false }), prevTutor: K });
+  assert.equal(v?.wrong, false, "kot main: končni rezultat naloge");
+  assert.equal(v.noReject, true);
+  assert.equal(verdictIgnored("Ne.", v), false);
+  assert.equal(stepVerdict("58?", { prevTutor: K }), null, "vmesni korak brez rešene naloge");
+  assert.equal(stepVerdict("8?", { prevTutor: R`Koliko je $7 \cdot 8$?` }), null, "število je v vprašanju");
+  assert.equal(stepVerdict("12?", { prevTutor: R`Koliko je $7 \cdot 8$?`, seen: "Ana ima 12 jabolk." }), null, "število je že v pogovoru");
+  assert.equal(stepVerdict("54?", { prevTutor: R`Koliko je $7 \cdot 8$?` })?.wrong, true, "jedro 059 ostane");
+  assert.equal(stepVerdict("54?", { pre: presolve(T1, { first: true, narrow: false }), prevTutor: K })?.wrong, true);
+  // dvoumna dogovora: brez sodbe
+  for (const [prev, q] of [[R`Koliko je $6 : 2(1+2)$?`, "1?"], [R`Koliko je $6 : 2(1+2)$?`, "9?"], [R`Koliko je $-3^2$?`, "9?"], [R`Koliko je $-3^2$?`, "-9?"]]) {
+    assert.equal(stepVerdict(q, { prevTutor: prev }), null, `${prev} ${q}`);
+  }
 });
 
