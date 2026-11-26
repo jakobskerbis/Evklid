@@ -4743,5 +4743,20 @@
   "set.grpHelp": "Help",
   "set.grpHelpSub": "Intro tour and app guide",
   "path.noCurriculum": "Your country's curriculum{country} is not available yet, so you are using the Slovenian curriculum, arranged by year of school. The grades are those of your school system; the tutor explains everything in your language.",
-  "path.noExam": "Preparation for the final exam ({exam}) is not available yet."
+  "path.noExam": "Preparation for the final exam ({exam}) is not available yet.",
+  "oz.kaj": "What does this mean?",
+  "oz.osnutek": "Draft",
+  "oz.osnutekTip": "This lesson has not finished all its reviews yet, or the program found a mistake in a calculation or in how it is written.",
+  "oz.osnutekTipPola": "This paper has not finished all its reviews yet, or the program found a mistake in it.",
+  "oz.pregledalAi": "Reviewed by AI",
+  "oz.pregledalAiTip": "The content was reviewed by AI models. It contains no calculations the program could recompute on its own.",
+  "oz.strojno": "Machine-checked",
+  "oz.strojnoTip": "The program recomputed the calculations and identities itself ({n} steps checked) and found no mistake. The content was reviewed by AI models. The program only checks what it can recompute.",
+  "oz.strokovno": "Expert-reviewed",
+  "oz.strokovnoTip": "A teacher reviewed this content on {datum}.",
+  "oz.formalno": "Formally proven: {n}",
+  "oz.formalnoTip": "The proof assistant Lean proved statements from this lesson ({n} proven). The other statements are not formally proven.",
+  "oz.niStrokovno": "No teacher has reviewed this lesson yet. If you spot a mistake, press “Report a mistake”.",
+  "oz.niStrokovnoPola": "No teacher has reviewed this paper yet.",
+  "oz.niStrokovnoCip": "Not reviewed by a teacher"
 }
