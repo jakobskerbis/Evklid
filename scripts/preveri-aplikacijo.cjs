@@ -1288,6 +1288,21 @@ async function examsView(p, label) {
   await p.waitForTimeout(300);
   if (await p.locator(".pv").count()) throw new Error("Esc ne zapre poskusnega izpita");
   await expectVisible(p, "#exams-content .exam-sims .sim-list li", "Tvoje poskusne pole", 8000);
+  // Naša pola (public/our-paper.js openOurPaper): izbirni odgovor z dotikom, rešitve samo na koncu (»Preveri rešitve«).
+  await click(p, "#exam-papers .pp-ours", { wait: 500 });
+  await expectVisible(p, ".pv.op [data-op-finish]", "naša pola: Preveri rešitve", 8000);
+  if (await p.locator(".pv.op .op-sol, .pv.op [data-op-show]").count()) throw new Error("naša pola: rešitve so vidne pred koncem");
+  if (await p.locator(".pv.op [data-op-ch]").count()) {
+    await click(p, ".pv.op [data-op-ch]", { wait: 100 });
+    if ((await p.locator(".pv.op [data-op-ch]").first().getAttribute("aria-pressed")) !== "true") throw new Error("naša pola: dotik ne izbere odgovora");
+  }
+  await screen(p, `nasa-pola-izbira-${label}`);
+  await click(p, ".pv.op [data-op-finish]", { wait: 300 });
+  await expectVisible(p, ".pv.op .op-sol", "naša pola: rešitve na koncu");
+  await screen(p, `nasa-pola-resitve-${label}`);
+  await p.keyboard.press("Escape");
+  await p.waitForTimeout(300);
+  if (await p.locator(".pv").count()) throw new Error("Esc ne zapre naše pole");
   await click(p, "#exams-content [data-er-practice]", { wait: 500 });
   await expectVisible(p, "#view-topic #practice .task", "vaja šibke teme");
   await click(p, "#back-to-path", { wait: 300 });
