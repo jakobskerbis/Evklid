@@ -40,6 +40,13 @@ test("verifyAi: pravilno ni »Napačno«, napačno ni potrjeno", () => {
   assert.notEqual(st("factorial(n)/factorial(n-2)", { kind: "expression", value: "n*(n-1)" }), "wrong");
   assert.equal(st("factorial(n)/factorial(n-2)", { kind: "expression", value: "n*(n-1)*(n-2)" }), "wrong");
   assert.equal(st("log(8, 2, 3)", { kind: "arith", value: "3" }), "unverified");
+  // decimalna vejica v klicu funkcije (AUDIT-096): »arcsin(0,5)« = 30° ni »Napačno«; »log(0,5)« je lahko log 0,5
+  // ali log z osnovo 5, zato brez sodbe; s presledkom (»log(15625, 5)«) in pri kombinatoriki sta to dva argumenta
+  assert.equal(st("arcsin(0,5)", { kind: "arith", value: "30°" }), "unverified");
+  assert.equal(st("sqrt(2,25)", { kind: "arith", value: "1,5" }), "unverified");
+  assert.equal(st("log(0,5)", { kind: "arith", value: "-0,30103" }), "unverified");
+  assert.equal(st("C(5,2)", { kind: "arith", value: "11" }), "wrong");
+  assert.equal(st("2,5+1", { kind: "arith", value: "3,5" }), "verified");
   // veljaven zapis ni »neznana funkcija«: d/dx(…), produkt črk pred oklepajem
   assert.equal(st("d/dx(x^2)", { kind: "derivative", value: "3x" }), "wrong");
   assert.equal(st("a^2b+ab^2", { kind: "expression", value: "ab(a+2b)" }), "wrong");

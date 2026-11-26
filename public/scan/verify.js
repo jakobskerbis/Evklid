@@ -294,6 +294,15 @@ function neizracunljivo(t, { identiteta = false } = {}) {
   if (t === undefined || t === null || t === "") return false;
   const s = prep(String(t));
   if (NEZNANE.test(s) || /(?<![A-Za-z_])[CV]\s*\(/.test(s)) return true;
+  // Decimalna vejica v klicu funkcije (»arcsin(0,5)«, »log(0,5)«): ni jasno, ali je to 0,5 ali dva argumenta.
+  // Lokalno bi »arcsin(0,5)« = 30° razglasili za napačno (AUDIT-096); kombinatorika ima vedno cela števila.
+  // Gleda prvotni zapis: prep iz »log(0,5)« naredi »logb(0, 5)«.
+  const z = String(t);
+  for (const m of z.matchAll(/(?<![A-Za-z_])([A-Za-z_]\w*)\s*\(/g)) {
+    if (/^(?:nCr|nPr|C|V|binomial)$/.test(m[1])) continue;
+    const k = argumentiKlica(z, m.index + m[0].length);
+    if (k && k.args.length > 1 && /\d,\d/.test(z.slice(m.index, k.end))) return true;
+  }
   for (const m of s.matchAll(/(?<![A-Za-z_])(log|nCr|nPr)\s*\(/g)) {
     const k = argumentiKlica(s, m.index + m[0].length);
     if (!k) return true;
