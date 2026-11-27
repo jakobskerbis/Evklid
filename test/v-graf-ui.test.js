@@ -146,11 +146,24 @@ test("»Pokaži na grafu«: integral, odvod, enačba in divergenten integral v g
       assert.equal(last.tools, undefined, where);
       assert.ok(s.items.some((x) => x.type === "note" && x.text.startsWith(msg)), `${where}: opomba ${msg}`);
 
-      // sprememba nastavitve grafa (DEG) dobi kratko opombo
+      // sprememba nastavitve grafa (DEG) se vidi na stikalu DEG/RAD v glavi grafa, brez opombe (predlog 1, j 27. 11.)
       await run("sin(x)=0,5");
       s = await show();
       assert.equal(s.settings.deg, true, where);
-      assert.ok(s.items.some((x) => x.type === "note" && x.text.includes("gc.fromSci.setDeg")), where);
+      assert.ok(!s.items.some((x) => x.type === "note" && x.text.includes("gc.fromSci.setDeg")), where);
+      assert.ok(await page.isVisible('#g .gc-angle [data-deg="1"].active'), `${where}: DEG je vklopljen`);
+      // stikalo v glavi: RAD izklopi stopinje, razveljavi vrne DEG
+      await tap('#g .gc-angle [data-deg="0"]');
+      assert.equal(await page.evaluate(() => window.graph.state.settings.deg), false, where);
+      assert.ok(await page.isVisible('#g .gc-angle [data-deg="0"].active'), where);
+      // ena razveljavitev vrne DEG (en sam vnos v zgodovini), ponovna uveljavitev spet RAD
+      await tap('#g [data-act="undo"]');
+      assert.equal(await page.evaluate(() => window.graph.state.settings.deg), true, `${where}: razveljavi`);
+      assert.ok(await page.isVisible('#g .gc-angle [data-deg="1"].active'), where);
+      await tap('#g [data-act="redo"]');
+      assert.equal(await page.evaluate(() => window.graph.state.settings.deg), false, `${where}: uveljavi znova`);
+      await tap('#g .gc-angle [data-deg="1"]');
+      assert.equal(await page.evaluate(() => window.graph.state.settings.deg), true, where);
 
       // osnovna šola: integral brez gumba, enačba z njim
       await page.evaluate(() => (window.stage = "OS"));

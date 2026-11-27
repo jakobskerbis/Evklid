@@ -809,6 +809,39 @@ export function entryTex(text, caret = String(text ?? "").length, env = {}, rend
 /** Zapis brez kazalca in brez okvirčkov (za preverjanje): odstrani vstavljeni kazalec. */
 export const stripCaret = (tex) => tex.split(CARET).join("");
 
+// vodoravni okvirji vidnih znakov zapisa (brez kazalca) po vrsti
+export function glyphBoxes(root) {
+  const out = [];
+  const w = document.createTreeWalker(root.querySelector(".katex-html") || root, NodeFilter.SHOW_TEXT);
+  for (let n; (n = w.nextNode()); ) {
+    if (n.parentElement.closest(".sc-caret")) continue;
+    for (let k = 0; k < n.data.length; k++) {
+      if (!n.data[k].trim()) continue;
+      const r = document.createRange();
+      r.setStart(n, k);
+      r.setEnd(n, k + 1);
+      const b = r.getBoundingClientRect();
+      if (b.width > 0) out.push([b.left, b.right]);
+    }
+  }
+  return out;
+}
+// x v prvem izrisu → x v drugem: znotraj znaka sorazmerno, med znakoma sorazmerno, zunaj premik najbližjega
+export function mapX(x, A, B) {
+  if (!A.length || A.length !== B.length) return x;
+  const lin = (x, a0, a1, b0, b1) => (a1 - a0 > 0.5 ? b0 + ((x - a0) * (b1 - b0)) / (a1 - a0) : b0 + (x - a0));
+  const idx = A.map((_, i) => i).sort((i, j) => A[i][0] - A[j][0]);
+  const first = idx[0], last = idx.at(-1);
+  if (x <= A[first][0]) return B[first][0] + (x - A[first][0]);
+  if (x >= A[last][1]) return B[last][1] + (x - A[last][1]);
+  for (const i of idx) if (A[i][0] <= x && x <= A[i][1]) return lin(x, A[i][0], A[i][1], B[i][0], B[i][1]);
+  for (let k = 0; k + 1 < idx.length; k++) {
+    const i = idx[k], j = idx[k + 1];
+    if (A[i][1] <= x && x <= A[j][0]) return lin(x, A[i][1], A[j][0], B[i][1], B[j][0]);
+  }
+  return x;
+}
+
 // ---------- brisanje in premik kazalca (AUDIT-004) ----------
 // Ena pot za zaslonsko ⌫ in strojni Backspace/Delete: ime funkcije ali ukaza se nikoli ne razpolovi, predloga
 // (∫(f;a;b), d/dx(…), limita(…), ∑_(…)^(…), det([[…]])) ne pusti ostankov (»integriraj)«, »;;)«, »)«).

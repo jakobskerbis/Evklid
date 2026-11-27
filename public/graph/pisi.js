@@ -304,6 +304,8 @@ export function createWriter(sc, o) {
       if (!ink) {
         ink = createInk(win.querySelector("canvas.ink"));
         ink.onChange = schedule;
+        // dvojni dotik v crnilo.js preklopi pisalo/radirko: gumb »Radirka« naj to pokaže
+        ink.onTool = (tl) => win.querySelector('[data-a="eraser"]')?.setAttribute("aria-pressed", String(tl === "eraser"));
         ro = new ResizeObserver(() => apply());
         ro.observe(sc);
       }

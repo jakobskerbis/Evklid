@@ -7,7 +7,7 @@ import { analyze, solutionTex, intervalsTex, systemTex, ANGLE_SUP, integralError
 import { commandName } from "./cas.js";
 import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
 import { graphable } from "./v-graf.js";
-import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret, selectionSpan, deleteSpan, texSpeech, SAY_WORDS, SAY_GREEK, pressKey, insertKey } from "./sci-vnos.js";
+import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret, selectionSpan, deleteSpan, texSpeech, SAY_WORDS, SAY_GREEK, pressKey, insertKey, glyphBoxes, mapX } from "./sci-vnos.js";
 import { chemSub, chemNumbers } from "./molska.js";
 import { UNIT_GROUPS, token, unitResultTex, parseUnit, hasUnits, OFFSET_TEMP } from "./enote.js";
 import { pomanjsaj, prilagodiSirini } from "../sirina.js";
@@ -839,38 +839,6 @@ export function createScientific(root, opts) {
       txt = tex && window.katex?.__parse ? texSpeech(tex, { say: (k, v) => t(`sc.say.${k}`, v), words: sayWords(), greek: sayGreek(), parse: window.katex.__parse }) : "";
     } catch {}
     if (el.textContent !== txt) el.textContent = txt;
-  }
-  // vodoravni okvirji vidnih znakov zapisa (brez kazalca) po vrsti
-  function glyphBoxes(root) {
-    const out = [];
-    const w = document.createTreeWalker(root.querySelector(".katex-html") || root, NodeFilter.SHOW_TEXT);
-    for (let n; (n = w.nextNode()); ) {
-      if (n.parentElement.closest(".sc-caret")) continue;
-      for (let k = 0; k < n.data.length; k++) {
-        if (!n.data[k].trim()) continue;
-        const r = document.createRange();
-        r.setStart(n, k);
-        r.setEnd(n, k + 1);
-        const b = r.getBoundingClientRect();
-        if (b.width > 0) out.push([b.left, b.right]);
-      }
-    }
-    return out;
-  }
-  // x v prvem izrisu → x v drugem: znotraj znaka sorazmerno, med znakoma sorazmerno, zunaj premik najbližjega
-  function mapX(x, A, B) {
-    if (!A.length || A.length !== B.length) return x;
-    const lin = (x, a0, a1, b0, b1) => (a1 - a0 > 0.5 ? b0 + ((x - a0) * (b1 - b0)) / (a1 - a0) : b0 + (x - a0));
-    const idx = A.map((_, i) => i).sort((i, j) => A[i][0] - A[j][0]);
-    const first = idx[0], last = idx.at(-1);
-    if (x <= A[first][0]) return B[first][0] + (x - A[first][0]);
-    if (x >= A[last][1]) return B[last][1] + (x - A[last][1]);
-    for (const i of idx) if (A[i][0] <= x && x <= A[i][1]) return lin(x, A[i][0], A[i][1], B[i][0], B[i][1]);
-    for (let k = 0; k + 1 < idx.length; k++) {
-      const i = idx[k], j = idx[k + 1];
-      if (A[i][1] <= x && x <= A[j][0]) return lin(x, A[i][1], A[j][0], B[i][1], B[j][0]);
-    }
-    return x;
   }
   // Dotik na lep zapis: položaj v besedilu iz izrisa (merilne točke na vseh mestih kazalca), ne iz prosojnega polja.
   function caretFromPoint(x, y) {
