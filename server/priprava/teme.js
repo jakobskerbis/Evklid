@@ -126,6 +126,69 @@ async function drugiKrog(izseki, st, obseg, poTemi, samoVZapiskih, zadetki) {
   samoVZapiskih.splice(0, samoVZapiskih.length, ...samoVZapiskih.filter((id) => !dodani.has(id)));
 }
 
+// Naslov vira (K-10): zapiski brez naslovov razdelkov (fotografija zvezka, prepis) imajo naslov pogosto v prvi vrstici
+// (»MAT 2. letnik – kvadratna funkcija«). Taka vrstica velja kot naslov razdelka za ves vir, enako kot naslov »# …«:
+// izsek, ki po obeh krogih še nima teme, dobi temo naslova (lastna tema izseka ima vedno prednost), a samo kadar prva
+// vrstica sama dobi temo in vsebuje VSE besede njenega imena (»kvadratna funkcija«, ne le »funkcija« ali »ELEKTRIKA«).
+// Samo za vir brez naslovov razdelkov, kjer je prvi izsek ena kratka vrstica, ki ni stavek ali navodilo. Zvezek z več
+// lekcijami: če prva vrstica KATEREGA KOLI drugega izseka vira (z ločili ali brez, tudi kadar se snov nadaljuje v isti
+// vrstici) vsebuje vse besede imena druge teme, prva vrstica vira ni naslov celega vira in vir ostane brez naslova (širša
+// tema, katere besede so vse v imenu teme naslova, kot »Funkcija«, ne šteje). Varovalo lahko povezave le odvzame.
+// Vir brez vir_id (testi) je en vir.
+function temaNaslovaVira(naslov, st, obseg) {
+  const id = temaIzseka({ besedilo: naslov, naslov: null }, st, obseg);
+  if (!id) return null;
+  const h = rankLessons(brezFormul(naslov).slice(0, IZSEK_ZNAKOV), st).find((x) => x.d.id === id);
+  return h && h.inTitle === h.d.title.size ? h.d : null;
+}
+export const NASLOV_VIRA_ZNAKOV = 120;
+const kratkaVrstica = (i) => {
+  const t = String(i.besedilo || "").trim();
+  // Stavek (konča s piko, vprašajem, klicajem) ali navodilo/naloga ni naslov.
+  return t && !t.includes("\n") && t.length <= NASLOV_VIRA_ZNAKOV && !/[.?!:]$/.test(t) && !/^\(?\s*(navodil|reši|naloga|naloge|domača)/i.test(t) ? t : null;
+};
+async function naslovVira(izseki, st, obseg, poTemi, samoVZapiskih) {
+  const viri = new Map();
+  for (const i of izseki) {
+    if (!viri.has(i.vir_id)) viri.set(i.vir_id, []);
+    viri.get(i.vir_id).push(i);
+  }
+  const brez = new Set(samoVZapiskih);
+  const dodani = new Map();
+  // Teme, katerih celo ime je v vrstici (po besedilu vrstice, da se ista vrstica ne išče dvakrat).
+  const celaImena = new Map();
+  let n = 0;
+  for (const iz of viri.values()) {
+    const prvi = iz[0];
+    const naslov = kratkaVrstica(prvi);
+    if (!naslov || iz.some((i) => i.naslov) || !iz.some((i) => brez.has(i.id))) continue;
+    const tema = temaNaslovaVira(naslov, st, obseg);
+    if (!tema) continue;
+    let druga = false;
+    for (const i of iz) {
+      if (i === prvi) continue;
+      // Ne zadrži strežnika (kot oba kroga).
+      if (++n % 200 === 0) await new Promise((r) => setImmediate(r));
+      const v = String(i.besedilo || "").trim().split("\n")[0].slice(0, NASLOV_VIRA_ZNAKOV);
+      if (!celaImena.has(v)) celaImena.set(v, rankLessons(brezFormul(v), st).filter((h) => h.inTitle === h.d.title.size).map((h) => h.d));
+      if (celaImena.get(v).some((d) => d.id !== tema.id && [...d.title].some((w) => !tema.title.has(w)))) {
+        druga = true;
+        break;
+      }
+    }
+    if (druga) continue;
+    for (const i of iz) if (i !== prvi && brez.has(i.id)) dodani.set(i.id, tema.id);
+  }
+  if (!dodani.size) return;
+  for (const [iid, id] of dodani) {
+    if (!poTemi.has(id)) poTemi.set(id, []);
+    poTemi.get(id).push(iid);
+  }
+  const mesto = new Map(izseki.map((i, k) => [i.id, k]));
+  for (const ids of poTemi.values()) ids.sort((x, y) => mesto.get(x) - mesto.get(y));
+  samoVZapiskih.splice(0, samoVZapiskih.length, ...samoVZapiskih.filter((id) => !dodani.has(id)));
+}
+
 // Teme sklopov poti (sklopi so indeksi sklopov, kot v načrtu testa).
 export function temeObsega(pot, sklopi) {
   const path = pot ? getPath(pot) : null;
@@ -185,6 +248,7 @@ export async function zemljevid({ pot = null, sklopi = null, predmet = null, izk
     poTemi.get(id).push(i.id);
   }
   if (obseg && iskanje && samoVZapiskih.length) await drugiKrog(izseki.slice(0, MAX_IZSEKOV), st, obseg, poTemi, samoVZapiskih, zadetki);
+  if (iskanje && samoVZapiskih.length) await naslovVira(izseki.slice(0, MAX_IZSEKOV), st, obseg, poTemi, samoVZapiskih);
   // Teme v vrstnem redu učnega načrta (pot, sklop, tema), sicer po imenu.
   const red = (id) => {
     const t = getTopic(id);
