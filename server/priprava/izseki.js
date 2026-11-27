@@ -60,7 +60,8 @@ const OKNO = 12;
 function indeksZapis(koef, w, za, cel, kje) {
   const skupine = [...w.matchAll(/(\p{L}{1,3})(\d{1,2})/gu)];
   const cisto = !koef && /^(?:\p{L}\d)+$/u.test(w);
-  const okno = cel.slice(Math.max(0, kje - OKNO), kje + w.length + OKNO);
+  // En znak več na levi, da (?<!\p{L}) vidi črko tik pred sosedom (ax1 ni x1).
+  const okno = cel.slice(Math.max(0, kje - OKNO - 1), kje + w.length + OKNO);
   const zadnja = skupine.length - 1;
   const poZapisu = cel.slice(kje + w.length, kje + w.length + 3);
   return skupine.every((m, i) => {
@@ -138,7 +139,13 @@ export function oznaciNegotovo(t) {
       let off = off0;
       return celNiz
         .split(/([()])/)
-        .map((kos) => {
+        .map((kos, i, vsi) => {
+          // Števka tik za zaklepajem izraza ((a + b)2, (x + 1)2): lahko kvadrat ali množenje.
+          if (/^\d{1,2}$/.test(kos) && vsi[i - 1] === ")" && !/^[,.]\d/.test(cel.slice(off + kos.length))) {
+            negotovo.push({ vrsta: "zapis", izvirno: `)${kos}` });
+            off += kos.length;
+            return `${kos} ${NEGOTOVO}`;
+          }
           const r = kos === "(" || kos === ")" || !kos ? kos : preglejKos(kos, off, cel, negotovo);
           off += kos.length;
           return r;

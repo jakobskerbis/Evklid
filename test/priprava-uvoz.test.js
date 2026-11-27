@@ -503,6 +503,7 @@ test("negotovo (K-10): gotovi indeksi brez [?], potence in oklepaji izraza z [?]
   // Oklepaj sredi niza (funkcija, gnezdenje) ne skrije potence; tabela s cevmi ni absolutna vrednost.
   assert.deepEqual(ozn("y = ln(x2 + 1), sin(x2), (a + (b2))"), ["x2", "x2", "b2"]);
   assert.deepEqual(ozn("x|1|2|3"), []);
+  assert.deepEqual(ozn("(a + b)2 = a2 + 2ab + b2, (x + 1)2"), [")2", "a2", "b2", ")2"]);
   // Uravnoteženi oklepaji ostanejo del kemijske formule.
   assert.equal(oznaciNegotovo("Ca(OH)2 + 2HCl → CaCl2 + 2H2O").negotovo.map((n) => n.izvirno).join(" "), "Ca(OH)2 CaCl2 H2O");
   assert.deepEqual(oznaciNegotovo("((NH4)2SO4 → x"), { besedilo: `((NH₄)₂SO₄ ${NEGOTOVO} → x`, negotovo: [{ vrsta: "kemija", izvirno: "(NH4)2SO4", prepis: "(NH₄)₂SO₄" }] });

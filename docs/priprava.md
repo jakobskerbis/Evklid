@@ -112,7 +112,7 @@ R1), LaTeX in indeksi z `_` se ne označijo, prav tako gotovi indeksi (K-10):
 števka brez koeficienta, ob katerem je do 12 znakov stran ista črka z indeksom 0 ali 1 (x1 + x2, y2 - y1); potence
 (ax2, at2, πr2, cm2, x10) ostanejo negotove tudi ob indeksih drugje v izseku. Oklepaji izraza (»(6x2«, »ln(x2«,
 »r2)«) ne skrijejo potence, kemijska formula z oklepaji (Ca(OH)2, (NH4)2SO4) se pregleda cela; absolutna vrednost
-s števko (`|a|2`) dobi `[?]`; formula, ki je KaTeX ne izriše, dobi `[?]`. Tabela `priprava_izseki`
+s števko (`|a|2`) in števka za zaklepajem (`(a + b)2`) dobita `[?]`; formula, ki je KaTeX ne izriše, dobi `[?]`. Tabela `priprava_izseki`
 (besedilo, naslov in seznam negotovih mest šifrirani, v `SEALED`, v izvozu odšifrirani, kaskada z virom in pripravo;
 ponovna obdelava briše s `secure_delete`); `priprava_viri` ima `stanje` (caka, obdelan, branje, napaka), `strani`,
 `napaka`, `opozorila`. Vir se obdela ob nalaganju (hkrati največ 2 obdelavi, sicer ostane »caka«; če je vir med
