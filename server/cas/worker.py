@@ -80,6 +80,8 @@ def _rank(m):
 
 
 def _logb(x, b=None, **_):
+    if b is not None and getattr(b, "is_number", False) and b.is_extended_real and (b <= 0 or b == 1):
+        raise Unsure("osnova logaritma mora biti pozitivna in različna od 1")  # log(5, 0) bi SymPy izračunal kot 0
     return sp.log(x) if b is None else sp.log(x, b)
 
 
@@ -147,8 +149,10 @@ def _decimalna_vejica(s):
     return t.replace("\0", ",")
 
 
-LOG_OSNOVA = re.compile(r"(?<![A-Za-z0-9_])log(?:_(?:\{([^{}]+)\}|\(([^()]+)\)|([0-9]+(?:\.[0-9]+)?|[A-Za-z]))|([0-9]+))\s*\(")
-FUNKCIJA_Z_INDEKSOM = re.compile(r"(?<![A-Za-z0-9_])([A-Za-z][A-Za-z0-9]*)_")
+LOG_OSNOVA = re.compile(r"(?<![A-Za-z_])log(?:_(?:\{([^{}]+)\}|\(([^()]+)\)|([0-9]+(?:\.[0-9]+)?|[A-Za-z]))|([0-9]+))\s*\(")
+# log_…, lg_…, ln_… so vedno logaritem z osnovo; druga funkcija z indeksom le pred oklepajem (sin_2(x)), ker je
+# sin_a ali exp_1 lahko tudi ime spremenljivke. Števka pred imenom (2log_2(x)) je množenje, ne del imena.
+FUNKCIJA_Z_INDEKSOM = re.compile(r"(?<![A-Za-z_])(?:(log|lg|ln)_|([A-Za-z][A-Za-z0-9]*)_[A-Za-z0-9]+\s*\()")
 
 
 def _log_osnova(s):
@@ -179,19 +183,19 @@ def clean(text):
         .replace("≤", "<=").replace("≥", ">=").replace("≠", "!=").replace("%", "*(1/100)")
     )
     s = re.sub(r"^\s*(?:≈|~|\\approx)\s*", "", s)
-    return _decimalna_vejica(_log_osnova(s))
+    return _decimalna_vejica(_log_osnova(s) if len(s) <= 600 else s)
 
 
 def parse(text, variables=None, units=False, evaluate=True):
     s = clean(text)
-    if not s or len(s) > 600:
+    if not s or len(str(text).strip()) > 600 or len(s) > 1200:  # log2(x) → log(x, 2) podaljša zapis
         raise Unsure("prazen ali predolg izraz")
     if BAD.search(s) or not s.isascii():
         raise Unsure("nedovoljen znak")
     local = dict(CONSTS)
     local.update(FUNCS)
     # ime funkcije z indeksom, ki ga _log_osnova ne prebere (log_2 x, sin_2(x)): ni simbol krat oklepaj, ampak »ne vem«
-    if any(m.group(1) in FUNCS for m in FUNKCIJA_Z_INDEKSOM.finditer(s)):
+    if any(m.group(1) or m.group(2) in FUNCS for m in FUNKCIJA_Z_INDEKSOM.finditer(s)):
         raise Unsure("funkcije z indeksom ne razumem")
     if units:
         local.update(UNITS)
@@ -411,6 +415,10 @@ def op_solve(eq_text, var_text, claim_text):
     eqs = [equation(e, names) for e in split_top(eq_text)]
     eqs = [e.subs({sp.Symbol(str(v), real=True): v for v in vs}) for e in eqs]
     if len(vs) == 1 and len(eqs) == 1:
+        if ALL.match(claim_text) and vs[0].is_real and (("log(" in clean(eq_text) and "," in clean(eq_text)) or any(_pogoji(d, names) for d in eq_text.split("="))):
+            # ln(x) − ln(x) = 0 in log_x(x) = 1 se okrajšata v 0 = 0: »vsa realna števila« bi bila potrjena mimo
+            # definicijskega območja (log z osnovo SymPy izračuna takoj, zato ga _pogoji ne vidi; ne sodimo)
+            raise Unsure("»vsa števila« pri enačbi z definicijskim območjem ne znam potrditi")
         return solve_one(eqs[0], vs[0], claim_text, names)
     return solve_system(eqs, vs, claim_text, names)
 
