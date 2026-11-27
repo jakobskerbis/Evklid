@@ -500,6 +500,20 @@ test("negotovo (K-10): gotovi indeksi brez [?], potence in oklepaji izraza z [?]
   assert.deepEqual(ozn("x10 + x1"), ["x10"]);
   assert.deepEqual(ozn("x2y^2 + 1"), ["x2y"]);
   assert.deepEqual(ozn("x1/2 = √x, x0,5"), ["x1", "x0"]);
+  // Bližina indeksa iste črke ne zadošča (pregled 3, K-10): Evklidov izrek, rešitve enačbe, r1 ob πr2.
+  assert.deepEqual(ozn("Evklidov izrek: a2 = c · a1, b2 = c · b1"), ["a2", "b2"]);
+  assert.deepEqual(ozn("c2 = a2 + b2; a1, b1 sta projekciji"), ["c2", "a2", "b2"]);
+  assert.deepEqual(ozn("x2 - 1 = 0, x1 = 1, x2 = -1"), ["x2"]);
+  assert.deepEqual(ozn("x2 = 9 ⇒ x1 = 3, x2 = -3"), ["x2"]);
+  assert.deepEqual(ozn("S = π r2, r1 = 2 cm"), ["r2"]);
+  assert.deepEqual(ozn("Ek = m v2 / 2, v1 = 2 m/s"), ["v2"]);
+  assert.deepEqual(ozn("v2 = v0^2 + 2as"), ["v2"]);
+  assert.deepEqual(ozn("y = x2 + x1"), ["x2"]);
+  assert.deepEqual(ozn("a + b = (a1 + b1, a2 + b2), F = k q1 q2 / r^2, ničli x1 = 2 in x2 = 3"), []);
+  // Ustaljeni zapisi indeksov ostanejo brez oznake.
+  assert.deepEqual(ozn("x1 + x2, x1·x2, x1 in x2, (x - x1)(x - x2), y2 - y1, a1b1 + a2b2, q1q2, ničli x1 = 1, x2 = 3"), []);
+  // Oznaka a) ali (str. 5) pred števko ni kvadrat.
+  assert.deepEqual(ozn("a)2 kg b)3 kg, glej (str. 5)2 in (1)2"), []);
   // Oklepaj sredi niza (funkcija, gnezdenje) ne skrije potence; tabela s cevmi ni absolutna vrednost.
   assert.deepEqual(ozn("y = ln(x2 + 1), sin(x2), (a + (b2))"), ["x2", "x2", "b2"]);
   assert.deepEqual(ozn("x|1|2|3"), []);

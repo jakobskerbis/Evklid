@@ -52,16 +52,15 @@ export const izrise = (latex, blok = false) => napakaIzraza(latex, { blok, katex
  * Ali so vse števke v zapisu gotovo indeksi, ne potence (K-10). To ni ugibanje, ker:
  * - potenca 0 ali 1 v zapiskih ne nastopa (v0, e0, ε0, q1, a1b1), razen kot ulomek ali decimalka (x1/2, x0,5);
  * - »^« tik za zadnjo števko (a1^2, v0^2) pomeni, da je ta števka indeks;
- * - par ena črka + ena števka brez koeficienta (x2, q2) je indeks, kadar je ista črka z indeksom 0 ali 1 tik ob njem
- *   (x1 + x2, (x - x1)(x - x2), y2 - y1, q1q2; do OKNO znakov stran).
+ * - par ena črka + ena števka brez koeficienta (x2, q2) je indeks samo v ustaljenem zapisu z isto črko z indeksom 0
+ *   ali 1 (sosedom): q1q2, x1 + x2, x1·x2, x1, x2, a1b1 + a2b2, x1 = 3, x2 = …, (x - x1)(x - x2), x2 - x1, y2 - y1.
+ *   Sama bližina ne zadošča (Evklidov izrek a2 = c · a1: a2 je kvadrat, a1 projekcija).
  * Vse drugo (x2, 6x2, ab2, at2, πr2, x2y, x10, r22) ostane negotovo. kje = odmik zapisa w v besedilu cel.
  */
-const OKNO = 12;
+const SOSED = (c) => `(?<!\\p{L})(?:\\p{L}[01])*${c}[01](?:\\p{L}[01])*`;
 function indeksZapis(koef, w, za, cel, kje) {
   const skupine = [...w.matchAll(/(\p{L}{1,3})(\d{1,2})/gu)];
   const cisto = !koef && /^(?:\p{L}\d)+$/u.test(w);
-  // En znak več na levi, da (?<!\p{L}) vidi črko tik pred sosedom (ax1 ni x1).
-  const okno = cel.slice(Math.max(0, kje - OKNO - 1), kje + w.length + OKNO);
   const zadnja = skupine.length - 1;
   const poZapisu = cel.slice(kje + w.length, kje + w.length + 3);
   return skupine.every((m, i) => {
@@ -74,8 +73,23 @@ function indeksZapis(koef, w, za, cel, kje) {
       return true;
     }
     if (!cisto || st.length > 1) return false;
-    return new RegExp(`(?<!\\p{L})${crke}[01](?!\\d|[,.]\\d)`, "u").test(okno);
+    const kjeS = kje + m.index;
+    const pred = cel.slice(Math.max(0, kjeS - 24), kjeS);
+    const po = cel.slice(kjeS + 2, kjeS + 12);
+    const s = SOSED(crke);
+    return [
+      new RegExp(`${s}\\s*$`, "u"), // q1q2, q1 q2, x1x2
+      new RegExp(`${s}(?:\\s*(?:[+\\-−±·*,]|in|ter)\\s*(?:\\p{L}\\d)*){1,3}$`, "u"), // x1 + x2, x1·x2, x1, x2, a1b1 + a2b2, (a1 + b1, a2 + b2)
+      new RegExp(`${s}\\s*=\\s*[^,;=()]{1,10}(?:,|\\s(?:in|ter))\\s*$`, "u"), // x1 = 3, x2 · x1 = 2 in x2
+      new RegExp(`${s}\\)\\s*\\(\\s*\\p{L}?\\s*[-+−]\\s*$`, "u"), // (x - x1)(x - x2)
+    ].some((re) => re.test(pred)) || new RegExp(`^\\s*[-−·*]\\s*${crke}[01](?![\\d^]|[,.]\\d)`, "u").test(po); // x2 - x1
   });
+}
+
+// Ali je pred zaklepajem na mestu z izraz z operatorjem ((a + b), (x - p)), ne oznaka a) ali (str. 5).
+function izrazVOklepaju(cel, z) {
+  const o = cel.lastIndexOf("(", z);
+  return o >= 0 && /[\p{L}\d]\s*[+\-−·*/]\s*[\p{L}\d]/u.test(cel.slice(o + 1, z));
 }
 
 // Pregled enega dela niza (brez oklepajev izraza): koeficient, kemijska formula, zapis črka + števka.
@@ -141,7 +155,7 @@ export function oznaciNegotovo(t) {
         .split(/([()])/)
         .map((kos, i, vsi) => {
           // Števka tik za zaklepajem izraza ((a + b)2, (x + 1)2): lahko kvadrat ali množenje.
-          if (/^\d{1,2}$/.test(kos) && vsi[i - 1] === ")" && !/^[,.]\d/.test(cel.slice(off + kos.length))) {
+          if (/^\d{1,2}$/.test(kos) && vsi[i - 1] === ")" && !/^[,.]\d/.test(cel.slice(off + kos.length)) && izrazVOklepaju(cel, off - 1)) {
             negotovo.push({ vrsta: "zapis", izvirno: `)${kos}` });
             off += kos.length;
             return `${kos} ${NEGOTOVO}`;
