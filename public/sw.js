@@ -1,5 +1,6 @@
 // Service worker: aplikacija se odpre tudi brez povezave in ponovno ne prenaša knjižnic.
-// - knjižnice in pisave (/vendor/): najprej iz predpomnilnika (se ne spreminjajo),
+// - knjižnice in pisave (/vendor/): najprej iz predpomnilnika (se ne spreminjajo); brez kopije s strežnika, nikoli iz
+//   predpomnilnika brskalnika (tam je lahko starejša različica knjižnice, cacheFirst),
 // - vstopna stran (/ z ali brez poizvedbe, npr. /?pogled=chat, /?koda=): kopija iste različice takoj, omrežje jo preveri
 //   v ozadju (stale-while-revalidate, entryPage); brez take kopije najprej omrežje s kratkim rokom (1 s), ob izpadu ali
 //   počasni povezavi shranjena kopija (ena, pod »/«). Vsak odgovor strežnika pove
@@ -29,7 +30,12 @@ const APP = "";
 const APP_FILE = /\.(?:m?js|css|svg|png|jpe?g|webp|avif|gif|woff2?)$/i; // statične datoteke iz public/
 const STAMP = "X-Evklid-App"; // glava v shranjeni kopiji: katera različica jo je shranila
 const STATIC = `${VERSION}-static`;
-const VENDOR = `${VERSION}-vendor`;
+// »-2« (27. 11. 2026): iPad je imel v predpomnilniku knjižnic star three.module.js (0.186) ob novem three.core.js
+// (0.187) – »Indirectly exported binding name 'CubeUVReflectionMapping' is not found«. Novo ime ob aktivaciji pobriše
+// tako zastrupljene kopije (activate spodaj); knjižnice se prenesejo enkrat znova.
+const VENDOR = `${VERSION}-vendor-2`;
+// Stara imena predpomnilnika knjižnic (brez številke ali z drugo številko), ki jih activate pobriše.
+const OLD_VENDOR = /-vendor(-\d+)?$/;
 // Samo javni odgovori API (enaki za vse uporabnike). Prej »-api« z vsemi odgovori: ob aktivaciji se pobriše.
 const API = `${VERSION}-api-javni`;
 const OLD_API = `${VERSION}-api`;
@@ -79,7 +85,7 @@ self.addEventListener("activate", (e) => {
   e.waitUntil(
     caches
       .keys()
-      .then((keys) => Promise.all(keys.filter((k) => (!k.startsWith(VERSION) && k !== MODELS) || k === OLD_API).map((k) => caches.delete(k))))
+      .then((keys) => Promise.all(keys.filter((k) => (!k.startsWith(VERSION) && k !== MODELS) || k === OLD_API || (k !== VENDOR && OLD_VENDOR.test(k))).map((k) => caches.delete(k))))
       // kopije drugih različic pobrišemo samo, ko ni odprte strani (stara stran še potrebuje svoje lene module)
       .then(() => self.clients.matchAll({ type: "window" }))
       .then((open) => (open.length ? null : pruneStatic()))
@@ -135,7 +141,11 @@ self.addEventListener("message", (e) => {
         // Različico pove shranjena glava X-Evklid-App (put, fresh); česar brskalnik nima, pride z omrežja kot prej.
         // Samo datoteke aplikacije: vstopno stran in drug HTML vedno preveri strežnik (stara kopija iz predpomnilnika
         // brskalnika bi lahko prepisala kopijo vstopne strani; pregled PR #919).
-        const res = await fetch(u, APP_FILE.test(new URL(u, self.location.origin).pathname) ? { cache: "force-cache" } : undefined).catch(() => null);
+        // Knjižnice (/vendor/) pa nikoli iz predpomnilnika brskalnika: tam je lahko datoteka starejše različice knjižnice
+        // (naslov je brez različice, max-age teden), ki bi ostala v VENDOR do naslednje nove knjižnice. Tako je iPad dobil
+        // star three.module.js ob novem three.core.js (27. 11. 2026). »no-cache«: strežnik preveri (ETag, 304 brez telesa).
+        const pot = new URL(u, self.location.origin).pathname;
+        const res = await fetch(u, cache !== statics ? { cache: "no-cache" } : APP_FILE.test(pot) ? { cache: "force-cache" } : undefined).catch(() => null);
         if (res?.ok) await put(cache, u, res);
       }),
     ).finally(() => e.ports?.[0]?.postMessage("ok")), // stran pošilja seznam po kosih (public/app.js predpomni)
@@ -358,11 +368,14 @@ async function appFile(req, clientId) {
   return networkFirst(req, STATIC, TIMEOUT.static, { page, key });
 }
 
+// Knjižnica brez kopije gre na strežnik mimo predpomnilnika brskalnika (»no-cache«, ETag): kopija iz predpomnilnika
+// brskalnika je lahko starejša različica knjižnice (naslov brez različice), ki se ne ujema z ostalimi datotekami iste
+// knjižnice (three.module.js + three.core.js, 27. 11. 2026), in bi v VENDOR ostala do naslednje nove knjižnice.
 async function cacheFirst(req) {
   const cache = await caches.open(VENDOR);
   const hit = await cache.match(req);
   if (hit) return hit;
-  const res = await fetch(req);
+  const res = await (req.mode === "navigate" ? fetch(req) : fetch(req, { cache: "no-cache" }));
   if (res.ok) cache.put(req, res.clone()).catch(() => null);
   return res;
 }

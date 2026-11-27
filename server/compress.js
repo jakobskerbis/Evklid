@@ -50,6 +50,12 @@ const encode = (buf, enc) =>
 const defaultStaticMax = () => (Number(process.env.EVKLID_STATIC_MB) > 0 ? Number(process.env.EVKLID_STATIC_MB) : 16) * 1024 * 1024;
 
 // skrci(buf, datoteka): neobvezno, pred stiskanjem vrne skrčeno vsebino ali null (server/skrci.js); samo predpona »/«.
+// Knjižnice (/vendor/) se ne spreminjajo: teden v predpomnilniku brskalnika. Izjema three (3D): njen naslov je brez
+// različice, three.module.js pa uvozi ./three.core.js, zato bi stara kopija enega ob novi drugega (po posodobitvi three)
+// dala »Indirectly exported binding name … is not found« (iPad 27. 11. 2026). Tam brskalnik vsakič preveri (ETag, 304);
+// odprtje 3D je vseeno hitro, ker datoteke da service worker (public/sw.js cacheFirst).
+export const vendorCache = (prefix) => (prefix.startsWith("/vendor/three/") ? "no-cache" : prefix.startsWith("/vendor") ? "public, max-age=604800" : "no-cache");
+
 export function compressedStatic(mounts, { maxBytes = defaultStaticMax(), skrci = null } = {}) {
   const cache = new Map(); // "enc:datoteka" -> { mtime, body, etag } (vrstni red = nazadnje uporabljen na koncu)
   const pending = new Map(); // "enc:datoteka" -> Promise (ista datoteka se stiska samo enkrat naenkrat)
@@ -140,7 +146,7 @@ export function compressedStatic(mounts, { maxBytes = defaultStaticMax(), skrci 
     if (typeof res.vary === "function") res.vary("Accept-Encoding");
     else res.setHeader("Vary", "Accept-Encoding");
     res.setHeader("ETag", hit.etag);
-    res.setHeader("Cache-Control", found.prefix.startsWith("/vendor") ? "public, max-age=604800" : "no-cache");
+    res.setHeader("Cache-Control", vendorCache(found.prefix));
     if (req.headers["if-none-match"] === hit.etag) return res.status(304).end();
     res.setHeader("Content-Type", TYPES[path.extname(found.file).toLowerCase()]);
     res.setHeader("Content-Encoding", enc);

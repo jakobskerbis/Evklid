@@ -9,7 +9,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import zlib from "node:zlib";
 import { fileURLToPath } from "node:url";
-import { pickEncoding } from "./compress.js";
+import { pickEncoding, vendorCache } from "./compress.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(here, "..", "public");
@@ -109,7 +109,7 @@ function addonsHandler(root) {
     const etag = enc ? hit.etag.replace(/"$/, `-${enc}"`) : hit.etag;
     res.setHeader("Vary", "Accept-Encoding");
     res.setHeader("ETag", etag);
-    res.setHeader("Cache-Control", "public, max-age=604800");
+    res.setHeader("Cache-Control", vendorCache("/vendor/three/")); // dodatek se mora ujemati z jedrom three (compress.js)
     if (req.headers["if-none-match"] === etag) return res.status(304).end();
     res.setHeader("Content-Type", "text/javascript; charset=utf-8");
     const body = enc ? hit[enc] : hit.raw;
@@ -231,7 +231,8 @@ export function mount3d(app, { csp, modules }) {
     res.set("Cache-Control", "no-cache").json(modelList());
   });
   // three: samo izdelana knjižnica in dodatki (examples/jsm), ne cel paket. Izdelano knjižnico (/vendor/three/build)
-  // streže server/app.js za stisnjenimi datotekami (brotli, en teden v predpomnilniku), kot ostale knjižnice.
+  // streže server/app.js za stisnjenimi datotekami (brotli). Brskalnik three in dodatke vsakič preveri (no-cache + ETag,
+  // compress.js vendorCache), ker naslov nima različice: stara in nova datoteka se ne smeta srečati.
   app.use("/vendor/three/examples/jsm", addonsHandler(path.join(modules, "three", "examples", "jsm")));
   const modeli = brModeli();
   app.use("/3d/modeli", modeli);

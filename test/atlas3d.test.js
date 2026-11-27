@@ -328,13 +328,20 @@ test("CSP: /3d doda samo 'wasm-unsafe-eval', drugje ostane stroga", async () => 
     const jedro = await get("/vendor/three/build/three.module.js");
     assert.equal(jedro.status, 200);
     assert.match(jedro.headers.get("content-type"), /javascript/);
-    // Izdelana knjižnica (~0,7 MB + jedro) gre stisnjena in za en teden v predpomnilnik, kot ostale knjižnice.
+    // Izdelana knjižnica (~0,7 MB + jedro) gre stisnjena. Brskalnik jo vsakič preveri (no-cache + ETag, 304), ne teden kot
+    // ostale knjižnice: naslov je brez različice, zato bi stara kopija three.module.js ob novem three.core.js po posodobitvi
+    // three zlomila 3D (iPad 27. 11. 2026, »Indirectly exported binding name 'CubeUVReflectionMapping' is not found«).
     const stisnjeno = await get("/vendor/three/build/three.core.js", { headers: { "accept-encoding": "br, gzip" } });
     assert.equal(stisnjeno.status, 200);
     assert.match(stisnjeno.headers.get("content-encoding") || "", /^(br|gzip)$/);
-    assert.match(stisnjeno.headers.get("cache-control") || "", /max-age=[1-9]/);
+    assert.equal(stisnjeno.headers.get("cache-control"), "no-cache");
+    assert.ok(stisnjeno.headers.get("etag"), "three.core.js z ETag (preverjanje brez prenosa)");
+    assert.equal(jedro.headers.get("cache-control"), "no-cache");
+    const katex = await get("/vendor/katex/katex.min.js", { headers: { "accept-encoding": "br, gzip" } });
+    assert.match(katex.headers.get("cache-control") || "", /max-age=[1-9]/, "ostale knjižnice ostanejo teden v predpomnilniku");
     const gltf = await get("/vendor/three/examples/jsm/loaders/GLTFLoader.js");
     assert.equal(gltf.status, 200);
+    assert.equal(gltf.headers.get("cache-control"), "no-cache", "dodatek se mora ujemati z jedrom three");
     assert.match(gltf.headers.get("content-type"), /javascript/);
     const src = await gltf.text();
     assert.ok(!/from\s*['"]three['"]/.test(src), "dodatek še uvaža golo 'three'");

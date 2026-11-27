@@ -129,6 +129,42 @@ test("osvežitev mimo starih kopij: service worker dobi »app-stale« z različi
   }
 });
 
+// iPad 27. 11. 2026: v predpomnilniku knjižnic service workerja star three.module.js (0.186) ob novem three.core.js (0.187).
+// »Poskusi znova« je pobrisal samo kopije aplikacije (app-stale), zato je napaka ostala. Pri neskladju izvozov (vrsta
+// »posodobitev«) zdaj pobriše tudi predpomnilnik knjižnic; pri napaki omrežja ne (knjižnice ostanejo za delo brez povezave).
+test("neskladje v knjižnici (Safari »Indirectly exported binding name«): Poskusi znova pobriše predpomnilnik knjižnic", async () => {
+  const err = new SyntaxError("Indirectly exported binding name 'CubeUVReflectionMapping' is not found.");
+  assert.deepEqual([na(err).vrsta, na(err).modul], ["posodobitev", true]);
+  // predpomnilniki: ime → seznam naslovov
+  const shramba = () => ({
+    "evklid-v1-ab12-static": ["https://x/app.js"],
+    "evklid-v1-ab12-vendor": ["https://x/vendor/three/build/three.module.js"],
+    "evklid-v1-ab12-vendor-2": ["https://x/vendor/three/build/three.core.js", "https://x/vendor/three/examples/jsm/loaders/GLTFLoader.js", "https://x/vendor/katex/katex.min.js"],
+    "evklid-3d-v1": ["https://x/3d/modeli/telo/okostje.glb"],
+  });
+  const okno = (s, osvezi) => ({
+    navigator: {},
+    location: { reload: osvezi },
+    caches: {
+      keys: async () => Object.keys(s),
+      open: async (ime) => ({ keys: async () => s[ime].map((url) => ({ url })), delete: async (r) => ((s[ime] = s[ime].filter((u) => u !== r.url)), true) }),
+    },
+  });
+  let osvezeno = 0;
+  const s1 = shramba();
+  await osveziMimoStarih({ okno: okno(s1, () => osvezeno++), knjiznice: true });
+  assert.deepEqual(s1["evklid-v1-ab12-vendor"], []);
+  assert.deepEqual(s1["evklid-v1-ab12-vendor-2"], ["https://x/vendor/katex/katex.min.js"], "ostale knjižnice ostanejo");
+  assert.deepEqual(s1["evklid-v1-ab12-static"], ["https://x/app.js"]);
+  assert.deepEqual(s1["evklid-3d-v1"], ["https://x/3d/modeli/telo/okostje.glb"]);
+  assert.equal(osvezeno, 1);
+  const s2 = shramba();
+  await osveziMimoStarih({ okno: okno(s2, () => osvezeno++) });
+  assert.deepEqual(s2, shramba(), "brez knjiznice: predpomnilnik knjižnic ostane");
+  // gumb kartice napake pošlje knjiznice samo pri neskladju (vrsta »posodobitev«)
+  assert.match(fs.readFileSync(new URL("../public/3d/napake.js", import.meta.url), "utf8"), /osveziMimoStarih\(\{ knjiznice: n\.vrsta === "posodobitev" \}\)/);
+});
+
 // Pregled #1064: SyntaxError iz JSON ali izbirnika ni »prestar brskalnik«; RangeError ni vedno pomnilnik.
 test("HTML namesto JSON (prestrezna stran) je povezava s ponovnim poskusom, neveljaven izbirnik je druga napaka", () => {
   for (const m of [`Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, "JSON Parse error: Unrecognized token '<'", "JSON.parse: unexpected character at line 1 column 1 of the JSON data"]) {
