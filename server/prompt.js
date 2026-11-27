@@ -84,8 +84,7 @@ export function buildSystemPrompt({ settings, weaknesses = [], studentName = "",
     language: languagePrompt(settings.language, settings.region),
     dialect: dialectPrompt(settings),
     school_system: schoolSystemPrompt(settings) + goalPrompt(settings),
-    // Stikalo »Podrobna razlaga« (j, 27. 11. 2026): izklopljeno = kratki odgovori (prompt, Šolski sistem in lahki način).
-    reply_length: lite ? "kratka (lahki način)" : settings.detailed ? "podrobna" : "kratka",
+    reply_length: lite ? "kratka (lahki način)" : "običajna",
     student_schedule: schedule || "(ni podatkov)",
     interests: interestsPrompt(settings),
   };

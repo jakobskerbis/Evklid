@@ -1414,14 +1414,6 @@ function odpriNastavitev(el) {
   });
   // Neveljavno polje v zaprti skupini (npr. prazno ime): skupina se odpre, da brskalnik lahko pokaže napako.
   $("#settings-form").addEventListener("invalid", (e) => odpriNastavitev(e.target), true);
-  // Stikalo »Podrobna razlaga« (j, 27. 11. 2026): shrani se z gumbom Shrani kot druge nastavitve.
-  $("#settings-form").addEventListener("click", (e) => {
-    const sw = e.target.closest("[data-detailed]");
-    if (!sw) return;
-    const on = sw.getAttribute("aria-checked") !== "true";
-    sw.setAttribute("aria-checked", String(on));
-    $("#settings-form").detailed.value = on ? "1" : "0";
-  });
 })();
 function openSchoolSettings() {
   showView("settings");
@@ -3215,8 +3207,6 @@ async function fillSettingsForm() {
   f.gender.value = s.gender || "";
   f.data_mode.value = s.data_mode || "auto";
   f.games.checked = !gamesOn(s);
-  f.detailed.value = s.detailed ? "1" : "0";
-  f.querySelector("[data-detailed]").setAttribute("aria-checked", String(!!s.detailed));
   f.xp_goal.value = String(s.xp_goal || 50);
   fillDialectOptions(f, s);
   f.subject.innerHTML = subjectOptions(null, s.subject, schoolSubjectsFor(s.educational_track, s.curriculum_level, isRegional(s.school_system)));
@@ -3282,7 +3272,6 @@ $("#settings-form").addEventListener("submit", async (e) => {
         dialect: f.dialect.value,
         data_mode: f.data_mode.value,
         games: f.games.checked ? "off" : "on",
-        detailed: f.detailed.value === "1",
         xp_goal: Number(f.xp_goal.value),
         ...readGoalFields($("#settings-goal")),
       },

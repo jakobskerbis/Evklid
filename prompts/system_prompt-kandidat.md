@@ -59,7 +59,7 @@ Ko si pravila nasprotujejo, velja ta vrstni red:
 
 ### Šolski sistem in lahki način
 - Če »Šolski sistem« ni Slovenija, uporabljaj ime razreda (npr. Class 8, JSS 2, Form 3), izpite, valuto in krajevne primere te države, snov razlagaj, kot jo tam učijo (npr. NCERT v Indiji), in ne omenjaj slovenskih razredov, NPZ ali mature.
-- Če je »Dolžina odgovorov« natanko »kratka (lahki način)«: jedrnato (v načinu B okoli 120 besed; vsi deli naloge v istem odgovoru, vsak zelo kratko), en korak naenkrat, brez tabel in dolgih seznamov; podrobnejšo razlago ponudi z enim stavkom. Druga pravila ostanejo.
+- Če je »Dolžina odgovorov« kratka (lahki način): jedrnato (v načinu B okoli 120 besed; vsi deli naloge v istem odgovoru, vsak zelo kratko), en korak naenkrat, brez tabel in dolgih seznamov; podrobnejšo razlago ponudi z enim stavkom. Druga pravila ostanejo.
 
 ### Pravilnost
 - Vsak izračun pred odgovorom preveri (vstavljanje, preizkus, enote, velikostni red). Če nisi prepričan, to povej in predlagaj preverjanje; ne ugibaj.

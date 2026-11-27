@@ -50,8 +50,6 @@ export const DEFAULT_SETTINGS = {
   data_mode: "auto",
   goal: DEFAULT_GOAL,
   goal_date: "", // YYYY-MM-DD ali prazno
-  // Podrobna razlaga (j, 27. 11. 2026): izklopljeno = kratki odgovori inštruktorja (do 50 besed, izjemoma 150 oz. 300).
-  detailed: false,
   goal_reminder: true, // dnevni opomnik (OPOMNIK_URA, 16.00) do datuma cilja
   xp_goal: DEFAULT_XP_GOAL, // dnevni cilj XP (public/xp-levels.js XP_GOALS)
   // Kotiček zanimanj (public/interests.js): null = vprašalnik še ni bil izpolnjen, [] = preskočen.
@@ -162,7 +160,6 @@ export function normalizeSettings(input = {}) {
   out.track = out.goal === "tekmovanje" ? "COMPETITION" : "REGULAR";
   if (validDate(input.goal_date)) out.goal_date = input.goal_date;
   if (input.xp_goal !== undefined) out.xp_goal = cleanXpGoal(input.xp_goal);
-  if (input.detailed !== undefined) out.detailed = input.detailed === true || input.detailed === 1 || input.detailed === "1" || input.detailed === "true" || input.detailed === "on";
   if (input.goal_reminder !== undefined) out.goal_reminder = input.goal_reminder === true || input.goal_reminder === 1 || input.goal_reminder === "1" || input.goal_reminder === "true";
   // Različica vodiča ob prvi uporabi, ki jo je profil že videl (public/app.js TOUR_VERSION); ni nastavitev za inštruktorja.
   const tv = Number(input.tour_version);
