@@ -168,7 +168,7 @@ razdelkov, katerega prvi izsek je ena kratka vrstica (do 120 znakov, ne stavek s
 navodilo ali naloga), ki dobi temo in vsebuje VSE besede njenega imena (»MAT 2. letnik – kvadratna funkcija«, ne
 »Fizika 2. letnik – ELEKTRIKA«), velja ta vrstica kot naslov razdelka za ves vir (enako kot `# Kvadratna funkcija`, tudi
 pri naslovu z dvema temama); izseki brez lastne teme dobijo njeno temo. Ne velja, če druga kratka vrstica vira imenuje
-drugo temo (zvezek z več lekcijami). K-10: nepovezanih 21 → 15 (02 in 03 v celoti); ob tujih zapiskih 15 novih povezav,
+drugo temo (zvezek z več lekcijami). K-10: nepovezanih 21 → 15 (02 in 03 v celoti); ob tujih zapiskih 20 novih povezav,
 vse k pravi temi naslova vira (zunaj obsega). Pragovi so nastavljeni na istih K-10 zapiskih (ni ločenega preizkusa). Vrne teme v vrstnem redu učnega načrta (z id-ji izsekov in `vObsegu`), obseg z `izsekov` na temo,
 `pokritost` (pokrite / vse teme obsega) in `predznanje` (5 tem poti pred prvim sklopom testa, brez trditev o znanju).
 Računa se sproti iz trenutnih izsekov, zato tabela `priprava_teme` ni potrebna. Faks in tuji šolski sistemi: `iskanje:
