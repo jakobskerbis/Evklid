@@ -223,7 +223,9 @@ export function createScientific(root, opts) {
   // Podatki o zapisu v praznem delu zaslona (j, 27. 11.): po poglavju (analiza: 1. in 2. odvod, nedoločeni integral;
   // drugje razstavljeno …), za število prafaktorji in znanstveni zapis; računa se po premoru tipkanja (sci-info.js)
   let infoTimer = 0;
-  let infoMore = false; // »Več«: vse vrstice v dveh stolpcih namesto grafa (ostane do zaprtja)
+  let infoMore = false; // »Več«: vse vrstice v treh stolpcih namesto grafa (ostane do zaprtja)
+  let infoRoom = false; // fitEntry: ali je nad zapisom prostor za podatke (sicer jih sploh ne računamo)
+  let infoLast = { key: "", d: null }; // »Več« in ponoven izris ne računata znova
   function scheduleInfo(text, r) {
     clearTimeout(infoTimer);
     const box = $(".sc-info");
@@ -239,10 +241,16 @@ export function createScientific(root, opts) {
   function renderInfo(text, r) {
     const box = $(".sc-info");
     if (input.value !== text) return;
-    let d = null;
-    try {
-      d = infoFor(text, r, { profile, comma: comma(), env: env() });
-    } catch {}
+    if (!infoRoom) return (box.hidden = true);
+    const e = env();
+    const key = JSON.stringify([text, profile, comma(), e.deg, e.grad, e.vars]);
+    let d = infoLast.key === key ? infoLast.d : null;
+    if (infoLast.key !== key) {
+      try {
+        d = infoFor(text, r, { profile, comma: comma(), env: e });
+      } catch {}
+      infoLast = { key, d };
+    }
     if (!d) {
       if (box.hidden) return;
       return box.classList.add("sc-info-empty");
@@ -303,7 +311,8 @@ export function createScientific(root, opts) {
     const pad = (cs) => (parseFloat(cs.paddingTop) || 0) + (parseFloat(cs.paddingBottom) || 0);
     // podatki (ničle, odvod, graf) nad zapisom le, če ostane dovolj prostora za zapis (110 px); zaslon tedaj do 42 %
     const info = $(".sc-info");
-    const on = !info.hidden && Math.min(root.clientHeight * 0.42, avail) - pad(getComputedStyle(entry)) - INFO_H - 8 >= 110;
+    infoRoom = Math.min(root.clientHeight * 0.42, avail) - pad(getComputedStyle(entry)) - INFO_H - 8 >= 110;
+    const on = !info.hidden && infoRoom;
     root.classList.toggle("sc-info-on", on);
     const cs = getComputedStyle(entry);
     const max = Math.min(parseFloat(cs.maxHeight) || Infinity, avail);

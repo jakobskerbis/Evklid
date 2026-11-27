@@ -85,3 +85,23 @@ test("vidne so prve tri vrstice, ostale pod »Več«", () => {
   assert.equal(INFO_FIRST, 3);
   assert.ok(info("x^2-1", { profile: "ana" }).rows.length > INFO_FIRST);
 });
+
+test("pregled 27. 11.: dvojni pol ni luknja, brez lažnih ničel, ekstrem pri 0, dolg seznam ničel z »…«, NH₄⁺", () => {
+  const p = info("1/x^2");
+  assert.deepEqual(p.plot.holes, []);
+  assert.equal(row(p, "sc.infoAsym").tex, "x = 0,\\ y = 0");
+  assert.equal(row(info("x*ln(x)"), "sc.infoRoots").tex, "x = 1");
+  assert.equal(row(info("x*ln(x)=0"), "sc.infoSolutions").tex, "x = 1");
+  assert.equal(row(info("x^x"), "sc.infoRoots").text, "sc.infoNoRoots");
+  assert.match(row(info("x^4-x^2"), "sc.infoExtrema").tex, /\\max\\,\(0;\\,0\)/);
+  assert.match(row(info("x*sin(x)"), "sc.infoRoots").tex, /\\ldots$/);
+  assert.equal(row(info("sin(x)^2+cos(x)^2"), "sc.infoPeriod"), undefined);
+  assert.equal(row(info("M(NH4+)", { r: { kind: "value", value: 18 } }), "sc.infoCharge").tex, "+");
+  assert.equal(row(info("M(Fe3+)", { r: { kind: "value", value: 167 } }), "sc.infoCharge"), undefined);
+});
+
+test("hitro: podatki za kotno funkcijo v manj kot 200 ms (prej do 1,2 s)", () => {
+  const t0 = performance.now();
+  for (const s of ["sin(x)+cos(x)", "cos(x)^2+sin(x)^2", "x^3-3x", "1/x^2"]) info(s);
+  assert.ok(performance.now() - t0 < 800, `${Math.round(performance.now() - t0)} ms`);
+});

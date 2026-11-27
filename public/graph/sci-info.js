@@ -4,7 +4,7 @@
 // Vrstice so po pomembnosti za trenutni vnos: prve tri so vidne, ostale pod »Več«. Vse izračuna kalkulator sam
 // (CAS in numerika), brez strežnika. Brez DOM razen SVG-niza (testi v test/sci-info.test.js).
 import { analyze, solutionTex, polyCoeffs } from "./scisolve.js";
-import { evaluate, formatNumber, primeFactors, factorsTex, exactTex, mixedTex } from "./scicore.js";
+import { evaluate, compileLine, formatNumber, primeFactors, factorsTex, exactTex, mixedTex } from "./scicore.js";
 import { molarMass } from "./toolscore.js";
 import { MASSES } from "./pse-data.js";
 import { siUnit, unitTexInner, OFFSET_TEMP } from "./enote.js";
@@ -80,11 +80,15 @@ export function infoFor(text, r, { profile = null, comma = true, env: base = nul
     const els = [...m.counts];
     add("sc.infoAtoms", els.map(([e, c]) => `\\mathrm{${e}}\\!:\\,${c}`).join(",\\ "));
     if (els.length > 1) add("sc.infoMassFrac", els.map(([e, c]) => `w(\\mathrm{${e}}) = ${num(Number(((100 * c * MASSES[e]) / m.M).toFixed(2)))}\\,\\%`).join(",\\ "));
-    const q = /(?:\^\s*(\d*)\s*([+-])|([⁰¹²³⁴⁵⁶⁷⁸⁹]*)([⁺⁻]))$/.exec(f);
-    if (q) {
+    // SO4^2-, SO₄²⁻, NH4+ (brez ^: le predznak; Fe3+ je kot v periodnem sistemu Fe₃)
+    // brez ^ (NH4+, OH-): le predznak; ob števki le pri več elementih (Fe3+ je kot v periodnem sistemu Fe₃)
+    const plain = /[+-]$/.test(f) && !/\^/.test(f) && (/[A-Za-z)\]]\s*[+-]$/.test(f) || m.counts.size > 1);
+    const q = /(?:\^\s*(\d*)\s*([+-])|([⁰¹²³⁴⁵⁶⁷⁸⁹]*)([⁺⁻])|([+-]))$/.exec(f);
+    if (q && q[5] && !plain) q.length = 0;
+    if (q?.length) {
       const sup = "⁰¹²³⁴⁵⁶⁷⁸⁹";
       const n = q[1] ?? [...(q[3] || "")].map((c) => sup.indexOf(c)).join("");
-      const sign = (q[2] || q[4]) === "+" || q[4] === "⁺" ? "+" : "-";
+      const sign = (q[2] || q[4] || q[5]) === "+" || q[4] === "⁺" ? "+" : "-";
       add("sc.infoCharge", `${n || ""}${sign}`);
     }
     return rows.length ? { rows, plot: null } : null;
@@ -167,10 +171,12 @@ export function infoFor(text, r, { profile = null, comma = true, env: base = nul
     const fn = `(${sides[0]})-(${sides[1]})`;
     const solved = { ...r, complex: [] };
     const P = periodOf(fn, env);
-    const roots = (r.roots || []).filter(Number.isFinite);
+    const F = fnOf(fn, env);
+    const roots = (r.roots || []).filter((x) => Number.isFinite(x) && (r.poly || realRoot(F, x)));
+    const bad = roots.length !== (r.roots || []).filter(Number.isFinite).length;
     if (!roots.length && !r.all) rows.push({ key: "sc.infoSolutions", text: "sc.infoNoRoots" });
-    else if (!r.all) add("sc.infoSolutions", P ? periodicTex(roots, P, env, nt, num) : safe(() => solutionTex(solved, comma)));
-    const p = r.poly || safe(() => polyCoeffs((x) => evalAt(fn, x, env)));
+    else if (!r.all) add("sc.infoSolutions", P ? periodicTex(roots, P, env, nt, num) : roots.length > 4 || bad ? rootsTex(roots, nt) : safe(() => solutionTex(solved, comma)));
+    const p = r.poly || safe(() => polyCoeffs(F));
     if (p && p.length === 3 && p[0]) {
       const [a, b, c] = p;
       add("sc.infoDisc", `D = ${nt(b * b - 4 * a * c)}`);
@@ -187,7 +193,7 @@ export function infoFor(text, r, { profile = null, comma = true, env: base = nul
 
   // funkcija f(x)
   if (r.kind === "expr" && r.v === "x" && !/[=<>≤≥;]/.test(s)) {
-    const f = (x) => evalAt(s, x, env);
+    const f = fnOf(s, env);
     // odvod in integral sta v radianih (AUDIT-055): pri kotnih funkcijah v DEG/GRA ju ne kažemo
     const trig = TRIG.test(s);
     const calc = !((env.deg || env.grad) && trig);
@@ -195,14 +201,16 @@ export function infoFor(text, r, { profile = null, comma = true, env: base = nul
     const P = trig ? periodOf(s, env) : 0;
     const dom = trig ? null : domainOf(s, env, nt, sep);
     const holes = (dom?.excl || []).map((a) => hole(f, a)).filter(Boolean);
-    const solved = safe(() => analyze(`${s}=0`, env));
+    // stopničaste (floor, round …): ničle in ekstremi bi bili le izsek okna, zato jih ne kažemo
+    const step = /\b(?:floor|ceil|round|frac|mod|sign|zaokrozi)\s*\(/.test(s);
+    const solved = step ? null : safe(() => analyze(`${s}=0`, env));
     let roots = solved?.kind === "solve" ? (solved.roots || []).filter(Number.isFinite) : [];
-    if (holes.length) roots = roots.filter((x) => !holes.some((h) => Math.abs(h[0] - x) < 1e-9));
+    roots = roots.filter((x) => !holes.some((h) => Math.abs(h[0] - x) < 1e-9) && realRoot(f, x));
     const R = {};
     if (solved?.kind === "solve" && !solved.all) {
       // brez realnih ničel (1/x, x² + 1, e^x): besedilo, ne »x ∉ [−10¹²; 10¹²]«
       if (!roots.length) R.roots = { key: "sc.infoRoots", text: "sc.infoNoRoots" };
-      else R.roots = { key: "sc.infoRoots", tex: P ? periodicTex(roots, P, env, nt, num) : roots.map((x, i) => `x_{${i + 1}} = ${nt(x)}`).join(",\\ ").replace(/x_\{1\} = (.*)$/, (m, a) => (roots.length === 1 ? `x = ${a}` : m)) };
+      else R.roots = { key: "sc.infoRoots", tex: (P ? periodicTex(roots, P, env, nt, num) : rootsTex(roots, nt)).replace(/\\frac/g, "\\tfrac") };
     }
     const one = (key, tex) => tex && (R[key] = { key, tex: String(tex).replace(/\\frac/g, "\\tfrac") });
     if (dom?.tex) one("sc.infoDomain", dom.tex);
@@ -210,7 +218,7 @@ export function infoFor(text, r, { profile = null, comma = true, env: base = nul
     if (ok(d1) && d1.resTex) one("sc.infoDeriv", `f'(x) = ${d1.resTex}`);
     const poly = !trig && safe(() => polyCoeffs(f));
     if (poly && poly.length === 3 && poly[0]) one("sc.infoVertex", `T(${nt(-poly[1] / (2 * poly[0]))}${sep}${nt(poly[2] - (poly[1] * poly[1]) / (4 * poly[0]))})`);
-    else if (!trig && topic !== "log") one("sc.infoExtrema", extremaTex(f, roots, dom?.excl || [], nt, sep));
+    else if (!trig && !step && topic !== "log") one("sc.infoExtrema", extremaTex(f, roots, dom?.excl || [], nt, sep));
     const y0 = f(0);
     if (Number.isFinite(y0)) one("sc.infoY0", `f(0) = ${nt(y0)}`);
     if (!trig) one("sc.infoAsym", asymptotesTex(f, dom, holes, nt));
@@ -220,7 +228,7 @@ export function infoFor(text, r, { profile = null, comma = true, env: base = nul
         const ys = [];
         for (let i = 0; i < 720; i++) ys.push(f((P * i) / 720));
         const fin = ys.filter(Number.isFinite);
-        if (fin.length > 600) one("sc.infoRange", `[${nt(Number(Math.min(...fin).toFixed(9)))}${sep}${nt(Number(Math.max(...fin).toFixed(9)))}]`);
+        if (fin.length > 600) one("sc.infoRange", `[${nt(Number(Math.min(...fin).toPrecision(12)))}${sep}${nt(Number(Math.max(...fin).toPrecision(12)))}]`);
       }
       const tan = argsOf(s, /\btan/);
       const cot = argsOf(s, /\bcot/);
@@ -255,6 +263,43 @@ export function infoFor(text, r, { profile = null, comma = true, env: base = nul
   return null;
 }
 
+/**
+ * f(x) za številne točke (perioda, zaloga vrednosti, ekstremi, graf): zapis prevedemo enkrat, brez natančnega
+ * preračuna (natancnost.js) pri vsaki točki; sicer bi premor tipkanja zamrznil zaslon (pregled 27. 11.).
+ */
+export function fnOf(text, env) {
+  try {
+    const L = compileLine(text, { ...env, vars: { ...env.vars, x: 0 } });
+    if (L && L.ast.k !== "cmp") {
+      const code = L.run(L.ast);
+      return (x) => {
+        L.scope.x = x;
+        try {
+          const v = code(L.scope);
+          return typeof v === "number" ? v : NaN;
+        } catch {
+          return NaN;
+        }
+      };
+    }
+  } catch {}
+  return (x) => evalAt(text, x, env);
+}
+/** Prava ničla: f(x) ≈ 0 in majhna glede na okolico (x·ln x pri 0 ni definirana, x^x pri −20 je le majhna). */
+function realRoot(f, x) {
+  const y = f(x);
+  if (!Number.isFinite(y)) return false;
+  if (y === 0) return true;
+  const n = Math.max(Math.abs(f(x - 1e-3)), Math.abs(f(x + 1e-3)));
+  return Math.abs(y) < 1e-9 && Math.abs(y) < 1e-6 * n;
+}
+/** Seznam ničel: največ štiri (najbližje 0), sicer »…« (x·sin x ima neskončno ničel). */
+function rootsTex(roots, nt) {
+  if (roots.length === 1) return `x = ${nt(roots[0])}`;
+  const shown = roots.length > 4 ? [...roots].sort((a, b) => Math.abs(a) - Math.abs(b)).slice(0, 4).sort((a, b) => a - b) : roots;
+  return shown.map((x, i) => `x_{${i + 1}} = ${nt(x)}`).join(",\\ ") + (roots.length > 4 ? ",\\ \\ldots" : "");
+}
+
 function evalAt(fn, x, env) {
   try {
     const v = evaluate(fn, { ...env, vars: { ...env.vars, x }, live: true }).value;
@@ -272,9 +317,10 @@ export function periodOf(fn, env) {
   for (let q = 1; q <= 12; q++) for (let p = 1; p <= 24; p++) cand.push((base * p) / q);
   cand.sort((a, b) => a - b);
   const xs = [0.37, 1.29, 2.71, 5.3, 11.7, 0.05, 3.9];
-  const f = (x) => evalAt(fn, x, env);
+  const f = fnOf(fn, env);
   const fx = xs.map(f);
   if (fx.filter(Number.isFinite).length < 4) return 0;
+  if (fx.every((y) => Math.abs(y - fx[0]) < 1e-9)) return 0; // stalna (sin² x + cos² x): brez periode
   for (const P of cand) if (xs.every((x, i) => !Number.isFinite(fx[i]) || Math.abs(f(x + P) - fx[i]) < 1e-9 * Math.max(1, Math.abs(fx[i])))) return P;
   return 0;
 }
@@ -327,7 +373,9 @@ function domainOf(s, env, nt, sep) {
 function hole(f, a) {
   const l = f(a - 1e-7);
   const r = f(a + 1e-7);
-  if (!Number.isFinite(l) || !Number.isFinite(r) || Math.abs(l - r) > 1e-4 * Math.max(1, Math.abs(l))) return null;
+  if (!Number.isFinite(l) || !Number.isFinite(r) || Math.abs(l) > 1e6 || Math.abs(l - r) > 1e-4 * Math.max(1, Math.abs(l))) return null;
+  // dvojni pol (1/x²): na obeh straneh enako, a raste; prava luknja ima isto vrednost tudi malo dlje
+  if (Math.abs(f(a + 1e-4) - l) > 1e-2 * Math.max(1, Math.abs(l)) || Math.abs(f(a - 1e-4) - l) > 1e-2 * Math.max(1, Math.abs(l))) return null;
   return [a, Number(((l + r) / 2).toFixed(6))];
 }
 
@@ -342,7 +390,7 @@ function extremaTex(f, roots, excl, nt, sep) {
   let x0 = lo;
   let d0 = d(lo);
   for (let i = 1; i <= N; i++) {
-    const x1 = lo + ((hi - lo) * i) / N;
+    const x1 = lo + ((hi - lo) * i) / N + 0.00731; // zamik: odvod v mreži ni točno 0 (x⁴ − x² pri 0, |x|)
     const d1 = d(x1);
     if (Number.isFinite(d0) && Number.isFinite(d1) && d0 * d1 < 0 && !excl.some((e) => e >= x0 - 1e-9 && e <= x1 + 1e-9)) {
       let [a, b, da] = [x0, x1, d0];
@@ -375,8 +423,8 @@ function asymptotesTex(f, dom, holes, nt) {
       }
   const ys = new Set();
   for (const s of [-1, 1]) {
-    const a = f(s * 1e4);
-    const b = f(s * 1e5);
+    const a = f(s * 10000.37);
+    const b = f(s * 100000.71); // ne cela števila (x − floor(x))
     if (Number.isFinite(a) && Number.isFinite(b) && Math.abs(a - b) < 1e-3 * Math.max(1, Math.abs(b)) && Math.abs(b) < 1e6) ys.add(Number(b.toFixed(3)));
   }
   for (const y of ys) out.push(`y = ${nt(Math.abs(y) < 1e-3 ? 0 : y)}`);
@@ -387,12 +435,13 @@ function asymptotesTex(f, dom, holes, nt) {
 export function plotSvg(fn, roots = [], { w = 280, h = 130, env = {}, holes = [] } = {}) {
   const lo = Math.min(-5, ...roots.map((x) => x - 2), ...holes.map((p) => p[0] - 2));
   const hi = Math.max(5, ...roots.map((x) => x + 2), ...holes.map((p) => p[0] + 2));
+  const f = fnOf(fn, env);
   const xs = [];
   const ys = [];
   const N = 160;
   for (let i = 0; i <= N; i++) {
     const x = lo + ((hi - lo) * i) / N;
-    const y = evalAt(fn, x, env);
+    const y = f(x);
     xs.push(x);
     ys.push(Number.isFinite(y) ? y : NaN);
   }
