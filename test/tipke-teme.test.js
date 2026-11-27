@@ -46,3 +46,18 @@ test("vsaka predloga teme ima največ en @ in se izriše", () => {
       for (const t of tex(value)) assert.doesNotThrow(() => katex.renderToString(t, { throwOnError: true, strict: "ignore" }), `${ins} → ${t}`);
     }
 });
+
+test("»Moje tipke«: dodaj (izbrano ali zapis pred kazalcem), brez podvojitve, odstrani, pokvarjen zapis", async () => {
+  const { parseMoje, mojeAdd, mojeDel, mojeFrom, MOJE_KEY } = await import("../public/tipkovnica-data.js");
+  assert.equal(MOJE_KEY, "evklid.mojeTipke");
+  let m = parseMoje("ni json");
+  assert.deepEqual(m, { mat: [], sym: [], kem: [] });
+  assert.equal(mojeFrom("Ion SO₄²⁻", 9, 9), "SO₄²⁻");
+  assert.equal(mojeFrom("g = 9,81 m/s²", 0, 8), "g = 9,81");
+  assert.equal(mojeFrom("abc ", 4, 4), "");
+  m = mojeAdd(mojeAdd(mojeAdd(m, "kem", "SO₄²⁻"), "kem", "NH₄⁺"), "kem", "SO₄²⁻");
+  assert.deepEqual(m.kem, ["NH₄⁺", "SO₄²⁻"]);
+  assert.deepEqual(mojeDel(m, "kem", "NH₄⁺").kem, ["SO₄²⁻"]);
+  assert.deepEqual(parseMoje(JSON.stringify(m)).kem, ["NH₄⁺", "SO₄²⁻"]);
+  assert.deepEqual(mojeAdd(m, "kem", "x".repeat(41)), m);
+});

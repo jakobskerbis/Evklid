@@ -94,6 +94,7 @@ export const FX_GROUPS = [
   ["num", "sc.grp.num", [["n!", "!"], ["nCr", "nCr(@;)"], ["nPr", "nPr(@;)"], ["gcd", "gcd(@;)"], ["lcm", "lcm(@;)"], ["mod", "mod(@;)"], ["round", "round(@;)"], ["⌊x⌋", "floor(@)"], ["⌈x⌉", "ceil(@)"], ["sgn", "sgn(@)"], ["Int", "Int(@)"], ["frac", "frac(@)"], ["Ran#", "rand"], ["RanInt", "randint(@;)"], ["Pol", "Pol(@;)"], ["Rec", "Rec(@;)"], ["%", "%"], ["Ans", "Ans"]]],
   ["stat", "sc.grp.stat", [["mean", "mean(@)"], ["median", "median(@)"], ["σ", "stdev(@)"], ["min", "min(@)"], ["max", "max(@)"], ["Σ", "total(@)"], [";", ";"]]],
   ["cplx", "sc.grp.cplx", [["i", "i"], ["|z|", "abs(@)"]]],
+  ["moje", "tk.moje", []], // »Moje tipke«
 ];
 
 // Imena ukazov CAS v slovenščini (enako kot commandName v public/graph/cas.js; kalkulator razume oboje).
@@ -123,6 +124,7 @@ export const KEM_GROUPS = [
     ["°C", "kPa", "mol", "g/mol", "mol/L", "kJ/mol", "pH"],
   ]],
   ["pse", "tk.kem.pse", []],
+  ["moje", "tk.moje", []], // »Moje tipke« (učenčevi zapisi, tipkovnica.js mojeHtml)
 ];
 /** Strani »Vsi elementi«: začetnice simbolov (brez J in Q, s katerima se ne začne noben element), dve vrsti. */
 export const KEM_LETTERS = [
@@ -454,4 +456,33 @@ export function glideDecode(points, keyCenters, words, { n = 3, keyW, radius } =
     scored.push({ w, s: loc + 0.5 * shape + 0.3 * cover + 0.05 * Math.log10(rank + 1) });
   }
   return scored.sort((x, y) => x.s - y.s).slice(0, n).map((x) => x.w);
+}
+
+// ---------- »Moje tipke« (j, 27. 11.) ----------
+// Učenec doda svoje zapise (SO₄²⁻, NH₄⁺, g = 9,81 …) s »+« na strani »Moje« (f(x), Σ, Kem); shranjeni so na napravi
+// (j: hitreje, brez novih osebnih podatkov). Odstrani jih »Uredi« ali dolg pritisk (vklopi urejanje).
+export const MOJE_KEY = "evklid.mojeTipke";
+export const MOJE_SECTIONS = ["mat", "sym", "kem"];
+export const MOJE_MAX = 30;
+const mojeOk = (x) => typeof x === "string" && x.trim() && x.length <= 40;
+/** Shranjene tipke iz localStorage (pokvarjen zapis → prazno). */
+export function parseMoje(raw) {
+  let o = null;
+  try {
+    o = JSON.parse(raw || "{}");
+  } catch {}
+  return Object.fromEntries(MOJE_SECTIONS.map((k) => [k, Array.isArray(o?.[k]) ? o[k].filter(mojeOk).slice(0, MOJE_MAX) : []]));
+}
+/** Doda zapis na konec (brez podvojitve, največ MOJE_MAX). */
+export function mojeAdd(m, sec, x) {
+  const v = String(x ?? "").trim();
+  if (!mojeOk(v) || !MOJE_SECTIONS.includes(sec)) return m;
+  return { ...m, [sec]: [...(m[sec] || []).filter((y) => y !== v), v].slice(-MOJE_MAX) };
+}
+export const mojeDel = (m, sec, x) => ({ ...m, [sec]: (m[sec] || []).filter((y) => y !== x) });
+/** Kaj doda »+«: izbrano besedilo ali zapis tik pred kazalcem do presledka (SO₄²⁻, NH₄⁺). */
+export function mojeFrom(value, a, b) {
+  const v = String(value ?? "");
+  if (b > a) return v.slice(a, b).trim();
+  return /(\S+)$/.exec(v.slice(0, a))?.[1] || "";
 }
