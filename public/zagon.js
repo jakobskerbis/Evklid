@@ -60,8 +60,8 @@ function obrazecSPristajalne() {
   const z = window.evklidZacetek;
   if (!z) return;
   const odpri = () => {
+    // Poslušalec ostane: dotik, Nazaj pred account.js in nov dotik (obrazecVnaprej izriše enkrat, ko stran še velja).
     if (!OBRAZCI.includes(location.hash) || !document.documentElement.hasAttribute("data-pristajalna")) return;
-    removeEventListener("hashchange", odpri);
     z.obrazec ||= () => {}; // pasici sta na pristajalni strani že pokazani (zacetek.js pasovi)
     import("./account.js").then((m) => m.obrazecVnaprej()).catch(() => {});
   };

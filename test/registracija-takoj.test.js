@@ -258,6 +258,40 @@ test("v brskalniku: pristajalna stran odpre obrazec pred app.js; slogi drugih za
       assert.equal(await p.locator("#view-auth .land").isVisible(), true);
       await ctx.close();
     }
+    // 6. Dotik, Nazaj, preden je account.js tu, in nov dotik: obrazec še vedno pred app.js (pregled PR #1203).
+    {
+      const { ctx, p, errors, spustiRacun, appPoslan } = await open({ zadrziRacun: true });
+      await p.click('#view-auth a[data-land="register"]');
+      await p.goBack();
+      await p.waitForFunction(() => location.hash === "");
+      await p.click('#view-auth a[data-land="register"]');
+      spustiRacun();
+      await vidnaForma(p);
+      assert.equal(appPoslan(), false);
+      assert.deepEqual(errors, []);
+      await ctx.close();
+    }
+    // 5. Dotik, ko app.js že teče, a pristajalna stran še čaka cene (account.js renderLanding, do 1,5 s): obrazec, ne prazen zaslon.
+    {
+      const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, locale: "sl-SI", timezoneId: "Europe/Ljubljana", serviceWorkers: "block" });
+      const p = await ctx.newPage();
+      const errors = [];
+      p.on("pageerror", (e) => errors.push(e.message));
+      let stevec = 0;
+      await p.route(/\/api\/account\/prices/, async (r) => {
+        if (stevec++ === 0) await new Promise((ok) => setTimeout(ok, 1400)); // samo klic renderLanding (strežnik je cene že dal v stran)
+        await r.continue();
+      });
+      await p.goto(base + "/");
+      await p.waitForFunction(() => !document.getElementById("account-tab").hidden, null, { timeout: 30_000 });
+      await p.click('#view-auth a[data-land="register"]');
+      await vidnaForma(p);
+      await p.waitForTimeout(1500); // cene so prišle: obrazec ostane
+      assert.equal(await p.locator("#auth-form").isVisible(), true);
+      assert.equal(new URL(p.url()).hash, "#registracija");
+      assert.deepEqual(errors, []);
+      await ctx.close();
+    }
   } finally {
     await browser.close();
     server.close();

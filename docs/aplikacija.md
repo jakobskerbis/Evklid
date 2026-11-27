@@ -145,7 +145,8 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
   `app.js` ga prevzame brez ponovnega izrisa). Slogi za druge zaslone se na pristajalni strani ne vklopijo takoj po prvem izrisu,
   ampak ko so moduli obrazca tu (`zagon.js` po uvozu `account.js` pokliče `evklidZacetek.slogi`; varovalo 3 s, sicer v
   `konec`): prej so jim na počasni povezavi vzeli ~0,7 s. Meritev `scripts/hitrost-prvi-obisk.cjs` (z računi, kot v
-  produkciji; `docs/meritve/prvi-obisk-2026-11-27.md`); test `test/registracija-takoj.test.js`.
+  produkciji; `docs/meritve/prvi-obisk-2026-11-27.md`); test `test/registracija-takoj.test.js`. Dotik sidra, ko `app.js` že teče,
+  a `renderLanding` še čaka cene (do 1,5 s): `renderLanding` izriše obrazec sidra (prej prazen zaslon, napaka že na `main`).
 - Opis aplikacije (`/manifest.webmanifest`) je v jeziku vmesnika (`server/webapp.js`).
 - Posnetki zaslona za okno »Namesti« so v `public/icons/screen-*.png`; ob večji spremembi videza
   jih je dobro posneti znova (telefon 390 × 844 pri 2×, računalnik 1440 × 900).
