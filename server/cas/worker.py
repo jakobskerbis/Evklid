@@ -147,6 +147,30 @@ def _decimalna_vejica(s):
     return t.replace("\0", ",")
 
 
+LOG_OSNOVA = re.compile(r"(?<![A-Za-z0-9_])log(?:_(?:\{([^{}]+)\}|\(([^()]+)\)|([0-9]+(?:\.[0-9]+)?|[A-Za-z]))|([0-9]+))\s*\(")
+FUNKCIJA_Z_INDEKSOM = re.compile(r"(?<![A-Za-z0-9_])([A-Za-z][A-Za-z0-9]*)_")
+
+
+def _log_osnova(s):
+    """log_b(x), log_(b)(x), log_{b}(x) in logN(x) → log(x, b). Prej je parse_expr »log_2« prebral kot simbol, krat
+    (x), in pravilno rešitev zavrnil (RACUN inštruktorja, 27. 11.; skener to pretvori že v server/scan.js casText)."""
+    out = []
+    i = 0
+    while True:
+        m = LOG_OSNOVA.search(s, i)
+        if not m:
+            return "".join(out) + s[i:]
+        globina, j = 1, m.end()
+        while j < len(s) and globina:
+            globina += {"(": 1, ")": -1}.get(s[j], 0)
+            j += 1
+        if globina:
+            return "".join(out) + s[i:]  # brez zaklepaja: ime z »_« ostane, parse vrne Unsure
+        osnova = next(g for g in m.groups() if g is not None)
+        out.append(f"{s[i:m.start()]}log({_log_osnova(s[m.end():j - 1])}, {osnova})")
+        i = j
+
+
 def clean(text):
     s = str(text).strip()
     s = (
@@ -155,7 +179,7 @@ def clean(text):
         .replace("≤", "<=").replace("≥", ">=").replace("≠", "!=").replace("%", "*(1/100)")
     )
     s = re.sub(r"^\s*(?:≈|~|\\approx)\s*", "", s)
-    return _decimalna_vejica(s)
+    return _decimalna_vejica(_log_osnova(s))
 
 
 def parse(text, variables=None, units=False, evaluate=True):
@@ -166,6 +190,9 @@ def parse(text, variables=None, units=False, evaluate=True):
         raise Unsure("nedovoljen znak")
     local = dict(CONSTS)
     local.update(FUNCS)
+    # ime funkcije z indeksom, ki ga _log_osnova ne prebere (log_2 x, sin_2(x)): ni simbol krat oklepaj, ampak »ne vem«
+    if any(m.group(1) in FUNCS for m in FUNKCIJA_Z_INDEKSOM.finditer(s)):
+        raise Unsure("funkcije z indeksom ne razumem")
     if units:
         local.update(UNITS)
     for name in set(IDENT.findall(s)):
