@@ -135,20 +135,32 @@ test("osvežitev mimo starih kopij: service worker dobi »app-stale« z različi
 test("neskladje v knjižnici (Safari »Indirectly exported binding name«): Poskusi znova pobriše predpomnilnik knjižnic", async () => {
   const err = new SyntaxError("Indirectly exported binding name 'CubeUVReflectionMapping' is not found.");
   assert.deepEqual([na(err).vrsta, na(err).modul], ["posodobitev", true]);
-  const okno = (kljuci, pobrisano, osvezi) => ({
+  // predpomnilniki: ime → seznam naslovov
+  const shramba = () => ({
+    "evklid-v1-ab12-static": ["https://x/app.js"],
+    "evklid-v1-ab12-vendor": ["https://x/vendor/three/build/three.module.js"],
+    "evklid-v1-ab12-vendor-2": ["https://x/vendor/three/build/three.core.js", "https://x/vendor/three/examples/jsm/loaders/GLTFLoader.js", "https://x/vendor/katex/katex.min.js"],
+    "evklid-3d-v1": ["https://x/3d/modeli/telo/okostje.glb"],
+  });
+  const okno = (s, osvezi) => ({
     navigator: {},
     location: { reload: osvezi },
-    caches: { keys: async () => kljuci, delete: async (k) => (pobrisano.push(k), true) },
+    caches: {
+      keys: async () => Object.keys(s),
+      open: async (ime) => ({ keys: async () => s[ime].map((url) => ({ url })), delete: async (r) => ((s[ime] = s[ime].filter((u) => u !== r.url)), true) }),
+    },
   });
-  const kljuci = ["evklid-v1-ab12-static", "evklid-v1-ab12-vendor", "evklid-v1-ab12-vendor-2", "evklid-v1-ab12-api-javni", "evklid-3d-v1"];
   let osvezeno = 0;
-  const pobrisano = [];
-  await osveziMimoStarih({ okno: okno(kljuci, pobrisano, () => osvezeno++), knjiznice: true });
-  assert.deepEqual(pobrisano, ["evklid-v1-ab12-vendor", "evklid-v1-ab12-vendor-2"]);
+  const s1 = shramba();
+  await osveziMimoStarih({ okno: okno(s1, () => osvezeno++), knjiznice: true });
+  assert.deepEqual(s1["evklid-v1-ab12-vendor"], []);
+  assert.deepEqual(s1["evklid-v1-ab12-vendor-2"], ["https://x/vendor/katex/katex.min.js"], "ostale knjižnice ostanejo");
+  assert.deepEqual(s1["evklid-v1-ab12-static"], ["https://x/app.js"]);
+  assert.deepEqual(s1["evklid-3d-v1"], ["https://x/3d/modeli/telo/okostje.glb"]);
   assert.equal(osvezeno, 1);
-  const brez = [];
-  await osveziMimoStarih({ okno: okno(kljuci, brez, () => osvezeno++) });
-  assert.deepEqual(brez, [], "brez knjiznice: predpomnilnik knjižnic ostane");
+  const s2 = shramba();
+  await osveziMimoStarih({ okno: okno(s2, () => osvezeno++) });
+  assert.deepEqual(s2, shramba(), "brez knjiznice: predpomnilnik knjižnic ostane");
   // gumb kartice napake pošlje knjiznice samo pri neskladju (vrsta »posodobitev«)
   assert.match(fs.readFileSync(new URL("../public/3d/napake.js", import.meta.url), "utf8"), /osveziMimoStarih\(\{ knjiznice: n\.vrsta === "posodobitev" \}\)/);
 });

@@ -231,7 +231,8 @@ export function mount3d(app, { csp, modules }) {
     res.set("Cache-Control", "no-cache").json(modelList());
   });
   // three: samo izdelana knjižnica in dodatki (examples/jsm), ne cel paket. Izdelano knjižnico (/vendor/three/build)
-  // streže server/app.js za stisnjenimi datotekami (brotli, en teden v predpomnilniku), kot ostale knjižnice.
+  // streže server/app.js za stisnjenimi datotekami (brotli). Brskalnik three in dodatke vsakič preveri (no-cache + ETag,
+  // compress.js vendorCache), ker naslov nima različice: stara in nova datoteka se ne smeta srečati.
   app.use("/vendor/three/examples/jsm", addonsHandler(path.join(modules, "three", "examples", "jsm")));
   const modeli = brModeli();
   app.use("/3d/modeli", modeli);

@@ -80,12 +80,16 @@ export function napakaBesedilo(err, { naVoljo = typeof navigator !== "undefined"
 // Osveži stran mimo starih kopij: service worker pobriše kopije različice, ki ni več na strežniku (public/sw.js
 // »app-stale«, kot public/app.js dropStaleCopies), nato ponovno nalaganje. Tako star modul ob novi strani ne ostane.
 // knjiznice: neskladje izvozov (vrsta »posodobitev«) je lahko v sami knjižnici (iPad 27. 11. 2026: star three.module.js
-// ob novem three.core.js), ki je »app-stale« ne pobriše, zato pobrišemo še predpomnilnik knjižnic (»…-vendor…«); service
-// worker jih prenese znova s strežnika. Ob napaki omrežja ne (knjižnice ostanejo za delo brez povezave).
+// ob novem three.core.js), ki je »app-stale« ne pobriše, zato iz predpomnilnika knjižnic (»…-vendor…«) pobrišemo še kopije
+// three (/vendor/three/); service worker jih prenese znova s strežnika. Ostale knjižnice (KaTeX, pisave, pdf.js) ostanejo
+// za delo brez povezave, prav tako ob napaki omrežja (tedaj knjiznice ni).
 export async function osveziMimoStarih({ okno = typeof window !== "undefined" ? window : null, knjiznice = false } = {}) {
   try {
     const shrambe = knjiznice ? okno?.caches : null;
-    if (shrambe) await Promise.all((await shrambe.keys()).filter((k) => /-vendor(-\d+)?$/.test(k)).map((k) => shrambe.delete(k)));
+    for (const ime of shrambe ? (await shrambe.keys()).filter((k) => /-vendor(-\d+)?$/.test(k)) : []) {
+      const c = await shrambe.open(ime);
+      for (const req of await c.keys()) if (new URL(req.url).pathname.startsWith("/vendor/three/")) await c.delete(req);
+    }
   } catch {}
   try {
     const sw = okno?.navigator?.serviceWorker?.controller;
