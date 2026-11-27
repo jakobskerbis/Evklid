@@ -10,6 +10,7 @@ import { evaluate, functionDef } from "./scicore.js";
 import { parseCommand, commandInside, COMMAND_NAMES } from "./cas.js";
 import { BUILTINS, intVar, oneArgFn } from "./math.js";
 import { chemSub } from "./molska.js";
+import { OPEN, CLOSE, unitKeys, tokenAround, hasUnits, unitTokens } from "./enote.js";
 
 // Barvi kazalca in okvirčka sta v graph.css (.sc-caret, .sc-hole: CSS spremenljivke, tudi temna tema).
 // \smash: črta kazalca ne sme dvigniti eksponenta, ko stoji pred ^ ali _ (odmik enak kot brez kazalca)
@@ -24,7 +25,10 @@ export const TRUST = (c) => c.command === "\\htmlClass" || c.command === "\\html
 export function withChem(text, fn, env = {}, extra) {
   const k = chemSub(text);
   if (!k) return fn(text, { ...env, ...extra });
-  const r = k.fix(fn(k.text, { ...env, ...extra, vars: { ...(env.vars || {}), ...k.vars } }));
+  // z enotami (⟦mol⟧ · M(H₂O), tudi Ans v molih) je molska masa v g/mol
+  const ansUnit = extra?.ansUnit ?? env.ansUnit;
+  const varUnits = hasUnits(k.text) || (ansUnit && /(?<![A-Za-z])Ans(?![A-Za-z])/.test(k.text)) ? Object.fromEntries(Object.keys(k.vars).map((n) => [n, "g/mol"])) : undefined;
+  const r = k.fix(fn(k.text, { ...env, ...extra, vars: { ...(env.vars || {}), ...k.vars }, ...(varUnits ? { varUnits } : {}) }));
   // »M(NaCl) = 58,44« je preverjanje, ne shranjevanje v spremenljivko
   if (r?.assign?.startsWith("M_kem")) return { kind: "bool", value: Math.abs(r.value - k.vars[r.assign]) < 1e-9 * Math.max(1, Math.abs(r.value)), tex: r.tex };
   // molska masa je merjena vrednost: rezultat samo decimalno (ne 249677/1000)
@@ -151,10 +155,10 @@ function liveTexPlain(text, env = {}) {
 
 const OPENERS = "([";
 const CLOSERS = ")]";
-const OPS = "+-−×÷*/^·=<>≤≥,.";
+const OPS = "+-−×÷*/^·=<>≤≥,.→";
 const POSTFIX = "²³⁻¹!%°′″"; // brez operanda pred seboj (√(² , ∫(⁻¹;;)) dobijo okvirček
 const OPSX = OPS + "_"; // za indeksom manjka operand kot za operatorjem
-const LEFT = "×÷*/^·=<>≤≥,._" + POSTFIX; // potrebujejo levi operand (predznaki + − ne)
+const LEFT = "×÷*/^·=<>≤≥,._→" + POSTFIX; // potrebujejo levi operand (predznaki + − ne)
 
 /**
  * Dokonča besedilo za izris: zapre oklepaje in na mesto manjkajočega operanda vstavi `hole`.
@@ -237,7 +241,7 @@ const PREFIX = { frac: 2, dfrac: 2, tfrac: 2, binom: 2, dbinom: 2, tbinom: 2, sq
 const OPAQUE = { operatorname: 1, text: 1, textrm: 1, textbf: 1, textit: 1, mbox: 1, color: 1, rule: 2, begin: 1, end: 1, htmlClass: 1, htmlData: 1 };
 const BIGOP = new Set(["int", "iint", "iiint", "oint", "sum", "prod", "lim", "limsup", "liminf", "max", "min", "sup", "inf", "bigcup", "bigcap"]);
 const NOKEY = new Set(["quad", "qquad", "nobreak", "displaystyle", "textstyle", "scriptstyle", "limits", "nolimits", "cdots", "ldots", "dots", "to", "mapsto"]);
-const CW = { cdot: "*", times: "*", ast: "*", div: "/", le: "≤", leq: "≤", ge: "≥", geq: "≥", ne: "≠", neq: "≠", infty: "∞", pm: "±", circ: "°", degree: "°", approx: "≈", lt: "<", gt: ">", mid: "|", vert: "|", lbrack: "[", rbrack: "]" };
+const CW = { cdot: "*", times: "*", ast: "*", div: "/", le: "≤", leq: "≤", ge: "≥", geq: "≥", ne: "≠", neq: "≠", infty: "∞", pm: "±", circ: "°", degree: "°", approx: "≈", rightarrow: "→", lt: "<", gt: ">", mid: "|", vert: "|", lbrack: "[", rbrack: "]" };
 const DELIM = /^\\(left|right|bigl|bigr|Bigl|Bigr|biggl|biggr|big|Big|bigg|Bigg|middle)$/;
 const DKEY = { "(": "(", ")": ")", "[": "[", "]": "]", "|": "|", "\\|": "|", "\\{": "(", "\\}": ")", "\\lvert": "|", "\\rvert": "|", "\\lfloor": "(", "\\rfloor": ")", "\\lceil": "(", "\\rceil": ")", "\\langle": "(", "\\rangle": ")" };
 
@@ -379,7 +383,7 @@ export function canInsert(toks, i) {
 
 const SUP = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁻": "-", "⁺": "+" };
 // grške črke kot v zapisu (math.js TEXVAR): kazalec za »α« je za \alpha (prej pred njo; pregled #974)
-const TKEY = { "θ": "theta", "α": "alpha", "β": "beta", "γ": "gamma", "δ": "delta", "λ": "lambda", "μ": "mu", "φ": "varphi", "ω": "omega", "σ": "sigma", "ρ": "rho", "ε": "varepsilon", "τ": "tau", "π": "pi", "√": "sqrt", "∛": "sqrt", "∫": "int", "∑": "sum", "∏": "prod", "×": "*", "·": "*", "⋅": "*", "÷": "/", "−": "-", ",": ".", "∞": "∞" };
+const TKEY = { "θ": "theta", "α": "alpha", "β": "beta", "γ": "gamma", "δ": "delta", "λ": "lambda", "μ": "mu", "φ": "varphi", "ω": "omega", "σ": "sigma", "ρ": "rho", "ε": "varepsilon", "τ": "tau", "π": "pi", "→": "→", "√": "sqrt", "∛": "sqrt", "∫": "int", "∑": "sum", "∏": "prod", "×": "*", "·": "*", "⋅": "*", "÷": "/", "−": "-", ",": ".", "∞": "∞" };
 
 function textAtoms(s, hole) {
   const out = [];
@@ -391,6 +395,16 @@ function textAtoms(s, hole) {
     }
     const c = s[i];
     if (/\s/.test(c)) continue;
+    // enota ⟦km⟧ je en žeton zapisa (\operatorname{km}): vsi njeni ključi pokrivajo cel žeton, da je kazalec le pred
+    // ali za njo (public/graph/enote.js)
+    if (c === OPEN) {
+      const e = s.indexOf(CLOSE, i + 1);
+      if (e > 0) {
+        for (const k of unitKeys(s.slice(i + 1, e))) out.push({ k, s: i, e: e + 1 });
+        i = e;
+        continue;
+      }
+    }
     // x³ ali x⁻¹: potenca kot ^(…), da se kazalec za njo postavi ZA eksponent
     const keys = c in SUP ? (s[i - 1] in SUP ? "" : "^(") + SUP[c] + (s[i + 1] in SUP ? "" : ")") : TKEY[c] ?? c;
     for (const k of keys) out.push({ k, s: i, e: i + 1 });
@@ -734,6 +748,7 @@ export function caretStops(base) {
   if (!base?.ok) return [];
   const best = new Map();
   for (let p = 0; p <= base.raw.length; p++) {
+    if (tokenAround(base.raw, p)) continue; // nikoli sredi enote ⟦k|m⟧ (enote.js)
     const { at, rank, dist = 0 } = base.place(p);
     const b = best.get(at);
     // mesto dobi položaj, ki se z njim ujema najbolje (najmanjši rang, nato najmanjša razdalja do atoma):
@@ -892,6 +907,11 @@ export function selectionSpan(text, s, e) {
   let a = Math.max(0, Math.min(s, e));
   let b = Math.min(t.length, Math.max(s, e));
   if (a === b) return [a, b];
+  // enota ⟦km⟧ je cela ali je ni
+  for (const u of unitTokens(t)) {
+    if (u.start < a && a < u.end) a = u.start;
+    if (u.start < b && b < u.end) b = u.end;
+  }
   for (let changed = true, guard = 0; changed && guard < 50; guard++) {
     changed = false;
     for (let o = 0; o < t.length; o++) {
@@ -953,6 +973,13 @@ function backspaceRaw(text, s, e = s) {
   const t = String(text ?? "");
   if (s !== e) return deleteSpan(t, s, e);
   if (s <= 0) return done(t, 0);
+  // enota ⟦km⟧ gre cela (kazalec v njej šteje kot za njo)
+  const ut = tokenAround(t, s);
+  if (ut) s = ut.end;
+  if (t[s - 1] === CLOSE) {
+    const o = t.lastIndexOf(OPEN, s - 1);
+    if (o >= 0) return done(t.slice(0, o) + t.slice(s), o);
+  }
   // kazalec sredi odpirala (»integr|iraj(«, »sin|(«, »d/d|x(«, »∫|(«): kot da je za njegovim oklepajem
   const inOp = openerAround(t, s);
   if (inOp && inOp[0] < s) s = inOp[1];
@@ -1028,6 +1055,12 @@ function deleteForwardRaw(text, s, e = s) {
   const t = String(text ?? "");
   if (s !== e) return backspaceRaw(t, s, e);
   if (s >= t.length) return done(t, t.length);
+  const ut = tokenAround(t, s);
+  if (ut) s = ut.start;
+  if (t[s] === OPEN) {
+    const e = t.indexOf(CLOSE, s);
+    if (e > 0) return done(t.slice(0, s) + t.slice(e + 1), s);
+  }
   const inOp = openerAround(t, s);
   if (inOp) s = inOp[0];
   const w = wordAround(t, s);
@@ -1276,6 +1309,8 @@ export function texSpeech(tex, { say, words, greek = {}, parse }) {
 export function insertKey(text, s, ins) {
   const t = String(text ?? "");
   s = Math.max(0, Math.min(t.length, s));
+  const ut = tokenAround(t, s); // nikoli v ime enote ⟦k|m⟧
+  if (ut) s = ut.end;
   const at = ins.indexOf("@");
   let clean = ins.replace("@", "");
   let open = 0;
