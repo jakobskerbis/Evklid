@@ -137,7 +137,7 @@ export async function continueCut(first, { streamFn, args, reserveUsd, hold, cos
 // Opomba pod odrezanim odgovorom v jeziku odgovora (živi jeziki vmesnika, sicer veriga uiChain, nazadnje slovensko).
 const here = path.dirname(fileURLToPath(import.meta.url));
 const UI = new Map();
-function uiText(code, key) {
+export function uiText(code, key) {
   if (!UI.has(code)) {
     let j = {};
     try {

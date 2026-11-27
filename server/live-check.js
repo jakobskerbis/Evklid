@@ -20,7 +20,7 @@ import { verifyAi } from "../public/scan/verify.js";
 import { checkArithmetic } from "./lesson-math.js";
 import { askModel, checkerUser, SYSTEM as CHECKER_SYSTEM } from "./verify.js";
 import { MODEL_MID, addUsage } from "./claude.js";
-import { SKIP_LINE, notClaimAt, TEX_SHORT, EXERCISE_RE, hasExercise } from "./besedilo-trditev.js";
+import { SKIP_LINE, notClaimAt, TEX_SHORT, EXERCISE_RE, hasExercise, calcFact, plainToTex, numTex, ambiguousCalc, noteAmbiguousCalc, noteLine, valueTex, OTHER_SYSTEM, LABELLED_REPLY, presentedAsResult, lastFormula, segmentOf, statesNumber, prevLine, wordAfter } from "./besedilo-trditev.js";
 export { SKIP_LINE, notClaimAt, TEX_SHORT, hasExercise };
 
 export const liveCheckOn = () => process.env.EVKLID_LIVE_CHECK !== "0";
@@ -209,12 +209,24 @@ export function withNote(messages, note) {
 // napačnem »x = 5« je prav napaka, ki jo mora koda ujeti; citat z zavrnitvijo ujame SKIP_LINE (»napisal«, »tvoj«).
 export function statedValues(answer, vars) {
   const out = new Map();
-  for (const line of String(answer).split("\n")) {
-    if (notClaimAt(line)) continue;
+  for (const e of statedEntries(answer, vars)) out.set(e.key, e);
+  return out;
+}
+
+// Vse navedene vrednosti (»all«: tudi v vrsticah, ki jih koda ne sodi, in »$x = \pm 3$« kot dve vrednosti), z vrstico
+// in zapisom vrednosti za opombo brez modela.
+function* statedEntries(answer, vars, all = false) {
+  for (const [lineIdx, line] of String(answer).split("\n").entries()) {
+    if (!all && notClaimAt(line)) continue;
     for (const m of line.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) {
       let tex = m[1] ?? m[2];
       // »±« je par vrednosti; »≈« (texToText ga izpusti) loči točno vrednost od približka.
-      if (/\\pm|\\mp|[±∓]/.test(tex)) continue;
+      if (/\\pm|\\mp|[±∓]/.test(tex)) {
+        const pm = all ? /^\s*([a-zA-Z])(?:_\{?\d+\}?)?\s*=\s*(?:\\pm|±)\s*([^=]+)$/.exec(tex) : null;
+        const x = pm && vars.includes(pm[1]) ? num(texToText(pm[2])) : null;
+        if (x !== null) for (const y of [x, -x]) yield { key: pm[1], v: pm[1], val: String(y), approx: false, line, lineIdx, start: m.index, end: m.index + m[0].length, tex: null };
+        continue;
+      }
       const ap = tex.search(/\\approx|\\doteq|≈|≐/);
       let approx = false;
       if (ap >= 0) {
@@ -228,10 +240,9 @@ export function statedValues(answer, vars) {
       if (!lhs || !vars.includes(lhs[1])) continue;
       const val = parts.at(-1).replace(/[.,;]$/, "");
       if (!val || /[a-zA-Z]/.test(val.replace(/sqrt|π/g, "")) || !/\d/.test(val)) continue;
-      out.set(lhs[1] + (lhs[2] || ""), { v: lhs[1], val, approx });
+      yield { key: lhs[1] + (lhs[2] || ""), v: lhs[1], idx: lhs[2] || "", val, approx, line, lineIdx, start: m.index, end: m.index + m[0].length, tex: tex.split("=").at(-1) };
     }
   }
-  return out;
 }
 
 // Število ali račun (»1.234,5«, »2e3«, »1 000«, »√2«) po istem pravilu kot kalkulatorja in preverjanje odgovorov
@@ -268,6 +279,40 @@ function nearSolver(s, sols) {
   return sols.some((r) => r.v === s.v && Math.abs(r.x - x) <= tol * (dec || s.approx ? 1 : Math.max(1, Math.abs(r.x))));
 }
 
+// Opomba brez modela pri napačni vrednosti (AUDIT-060; pregled A, 018af7ab6): le ob pozitivnih znakih, da je vrednost
+// odgovor. Odgovor ne navede nobene druge vrednosti te neznanke (»pri $x = 0$«, »sicer dobiš $x = 6$«, vse prave
+// rešitve), vrednost je predstavljena kot rezultat (presentedAsResult: »Rešitev«, »torej«, krepko, sam zapis), za njo
+// v vrstici ni »?«, vrstica ni zgled, vaja, teme, enota … (noteLine) in vrednost se da zapisati v TeX. Sicer brez
+// opombe (kot main); ugotovitev gre v popravek kot na main.
+function valueNoteFact(answer, vars, sols, wrongs, fact) {
+  const lines = String(answer).split("\n");
+  const all = [...statedEntries(answer, vars, true)];
+  const texs = [];
+  for (const s of wrongs) {
+    const x = num(s.val);
+    if (x === null) return null;
+    // Druga vrednost iste neznanke je dovoljena le v istem stavku (navedba rešitev »$x_1 = 4$, $x_2 = -3$«).
+    const sameSentence = (e) => {
+      if (e.lineIdx !== s.lineIdx) return false;
+      const [a, b] = [Math.min(e.start, s.start), Math.max(e.end, s.end)];
+      return !/[.!?;]/.test(String(s.line).slice(a, b).replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, " "));
+    };
+    const others = all.filter((e) => e.v === s.v).some((e) => {
+      const y = num(e.val);
+      if (y !== null && Math.abs(y - x) <= 1e-9 * Math.max(1, Math.abs(x))) return false;
+      // v istem stavku le druge napačne vrednosti (»$x_1 = 4$, $x_2 = -3$«), ne prava (»$x = 4$, ne $x = 7$«)
+      return !sameSentence(e) || y === null || (sols.length && nearSolver(e, sols));
+    });
+    if (others) return null;
+    // zanikana vrednost (»ne $x = 7$«, »(ne $x = 7$)«)
+    if (/(?<!\p{L})(?:ne|ni|not|nikakor)\s*[(:]?\s*$/iu.test(String(s.line).slice(0, s.start))) return null;
+    const t = valueTex(s.tex);
+    if (!t || !noteLine(`${prevLine(lines, s.lineIdx)}\n${s.line}`) || wordAfter(s.line, s.end) || !presentedAsResult(answer, lines, s.lineIdx, s.start, s.end)) return null;
+    texs.push(`${s.v}${s.idx ? `_{${s.idx}}` : ""} ${s.approx ? "\\approx" : "="} ${t}`);
+  }
+  return texs.length ? { ...fact, wrong: texs.join(",\\; ") } : null;
+}
+
 function valueIssue(answer, p) {
   const vars = [...new Set([...String(p.answerTex || "").matchAll(/([a-zA-Z])(?:_\{?\d+\}?)?\s*=/g)].map((m) => m[1]))];
   if (!vars.length) return null;
@@ -279,12 +324,14 @@ function valueIssue(answer, p) {
     const sol = vars.map((v) => `${v} = ${byVar.get(v)}`).join("; ");
     const sols = solverValues(p.answerTex);
     const rounded = sols.length && [...stated.values()].every((s) => nearSolver(s, sols));
-    return !rounded && verifyAi(p.problem, { kind: "system", solutions: [sol] }).reason === "wrong" ? { checked: 1, issue: `the answer gives ${sol} for the system ${p.problem}, but the correct solution is ${p.answer}` } : { checked: 1 };
+    return !rounded && verifyAi(p.problem, { kind: "system", solutions: [sol] }).reason === "wrong"
+      ? { checked: 1, issue: `the answer gives ${sol} for the system ${p.problem}, but the correct solution is ${p.answer}`, fact: valueNoteFact(answer, vars, sols, vars.map((v) => [...stated.values()].findLast((s) => s.v === v)), { kind: "value", sys: true, eq: p.problemTex, right: p.answerTex }) }
+      : { checked: 1 };
   }
   const sols = solverValues(p.answerTex);
   for (const s of stated.values()) {
     const r = verifyAi(p.problem, { kind: "equation", variable: s.v, solutions: [s.val] });
-    if (r.reason === "wrong" && !(sols.length && nearSolver(s, sols))) return { checked: 1, issue: `the answer gives ${s.v} = ${s.val} for the equation ${p.problem}, but the correct solution is ${p.answer}` };
+    if (r.reason === "wrong" && !(sols.length && nearSolver(s, sols))) return { checked: 1, issue: `the answer gives ${s.v} = ${s.val} for the equation ${p.problem}, but the correct solution is ${p.answer}`, fact: valueNoteFact(answer, vars, sols, [s], { kind: "value", eq: p.problemTex, right: p.answerTex }) };
   }
   return { checked: 1 };
 }
@@ -404,7 +451,7 @@ function derivativeIssue(answer, p) {
   if (pieces.length > 50 || pieces.some((x) => judge(x) === "match")) return { checked: 1, issue: null };
   const last = found.at(-1);
   if (last.rhs.map(judge).some((v) => v === null)) return { checked: 0, issue: null };
-  return { checked: 1, issue: `the derivative $${last.tex}$ is wrong: the derivative of $${p.problemTex}$ is $${p.answerTex}$` };
+  return { checked: 1, issue: `the derivative $${last.tex}$ is wrong: the derivative of $${p.problemTex}$ is $${p.answerTex}$`, fact: { kind: "deriv", wrong: last.tex, fn: p.problemTex, right: p.answerTex } };
 }
 // Desna stran zapisa funkcije: presledki strnjeni, dolga (> 300 znakov) brez sodbe (prep v solvecore ni linearen).
 const rhsFn = (x) => {
@@ -470,7 +517,11 @@ function bareResultIssue(answer, p) {
   const cut = (x, d) => !exact && !Number.isInteger(y) && Math.sign(x) === Math.sign(y) && Math.abs(x) <= Math.abs(y) + eps && Math.abs(y) - Math.abs(x) < 10 ** -d;
   const near = (x, d) => Math.abs(x - y) <= Math.max(exact ? 0 : 0.5 * 10 ** -d * (d || !Number.isInteger(y) ? 1 : 0), eps) * (1 + 1e-9) || cut(x, d);
   if (near(v.x, dec) || (unit === "%" && near(v.x / 100, dec + 2))) return { checked: 1, issue: null };
-  return { checked: 1, issue: `the stated result ${m[1].trim()} is wrong: $${p.problemTex} = ${p.answerTex}$` };
+  // »\frac{10}{3}« dobi še decimalni približek, da je opomba razumljiva (»= \frac{10}{3} \approx 3{,}33333«)
+  const n = numTex(y);
+  const approx = n && !/\\approx|\d(?:[.,]|\{,\})\d/.test(String(p.answerTex)) && n.tex !== String(p.answerTex).trim() ? ` ${n.rel} ${n.tex}` : "";
+  const stated = plainToTex(m[1].trim()) + (unit === "%" ? " \\%" : "");
+  return { checked: 1, issue: `the stated result ${m[1].trim()} is wrong: $${p.problemTex} = ${p.answerTex}$`, fact: { kind: "calc", wrong: `${p.problemTex} = ${stated}`, right: `${p.problemTex} = ${p.answerTex}${approx}` } };
 }
 
 /**
@@ -485,25 +536,125 @@ const softSkip = (line) => notClaimAt(line) && !SKIP_LINE.test(line.replace(SOFT
 const SOFT_HINT =
   "This line may be a deliberate example of a mistake (an »if«/»or« case, a hypothetical or a question to the student): answer OK unless the tutor really presents the wrong value as true.";
 
+// Vrstica računa z vrstico pred njo (»Kaj dobiš, če pozabiš na oklepaj?⏎⏎$2 + 3 \\cdot 4 = 20$«).
+const withPrev = (lines, i) => `${prevLine(lines, i)}\n${lines[i] || ""}`;
+// Prava vrednost računa (leva stran; pri »54 = 7 \\cdot 8« desna).
+const calcValue = (m) => {
+  const bare = (t) => /^[-+]?[\d\s.,{}]+$/.test(String(t || ""));
+  return bare(m.lhs) && !bare(m.rhs) && typeof m.rv === "number" ? m.rv : m.lv;
+};
+// Opomba brez modela za napačen račun (AUDIT-060; pregleda A in B, 018af7ab6): le ob pozitivnih znakih. Račun je
+// zadnja formula odgovora ali v vrstici z besedo rezultata, odgovor nikjer ne navede prave vrednosti istega računa,
+// v odgovoru ni drugega številskega sistema, ostankov, ure ali logike (OTHER_SYSTEM), ne oznak napake (❌, ~~,
+// »namesto«) in vrstica ni zgled, napaka, vaja … (noteLine). Sicer brez opombe; ugotovitev gre v popravek kot na main.
+// Blaga (AUDIT-066) ostane previdna opomba, razen ob pravi vrednosti v odgovoru ali drugem sistemu (quiet).
+// Rezultat besedilne naloge (pregled A, bd0af5dac): deljenje, zaokroženo navzgor ali navzdol (»$25 : 6 = 5$«
+// avtobusov), in pretvorba enot, kjer je navedena vrednost prava, pomnožena ali deljena s potenco 10, 60, 24, 3600
+// ali 1440 (»$3 \cdot 500 = 1{,}5$« kg). Ugotovitev ostane (popravek kot main), opombe brez modela pa ni.
+export function wordProblemResult(m) {
+  const reversed = calcValue(m) !== m.lv;
+  const [side, exact, stated] = reversed ? [m.rhs, m.rv, m.lv] : [m.lhs, m.lv, m.rv];
+  if (typeof exact !== "number" || typeof stated !== "number" || !Number.isFinite(exact) || !Number.isFinite(stated)) return false;
+  const near = (a, b) => Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(b));
+  if (/:|\/|÷|\\div(?![a-zA-Z])|\\[dt]?frac(?![a-zA-Z])/.test(String(side || "")) && (near(stated, Math.floor(exact)) || near(stated, Math.ceil(exact)))) return true;
+  if (!exact || !stated) return false;
+  for (const r of [stated / exact, exact / stated]) {
+    if (r <= 1) continue;
+    const k = Math.round(Math.log10(r));
+    if ((k >= 1 && near(r, 10 ** k)) || [60, 24, 3600, 1440].some((f) => near(r, f))) return true;
+  }
+  return false;
+}
+
+function calcNote(answer, lines, m, { hard = true } = {}) {
+  const text = String(answer || "");
+  if (OTHER_SYSTEM.test(text) || statesNumber(text, calcValue(m), m.tex) || noteAmbiguousCalc(m) || wordProblemResult(m)) return { fact: null, quiet: true };
+  if (LABELLED_REPLY.test(text) || !noteLine(withPrev(lines, m.line - 1), { value: false })) return { fact: null };
+  if (hard) {
+    const i = m.line - 1;
+    const seg = segmentOf(lines[i], m.tex);
+    const cue = seg && presentedAsResult(text, lines, i, seg[0], seg[1]);
+    if (!seg || !(lastFormula(lines, i, seg[1]) || cue) || String(lines[i]).slice(seg[1]).includes("?") || wordAfter(lines[i], seg[1])) return { fact: null };
+  }
+  return { fact: calcFact(m) };
+}
+
+// Učenec je nalogo spremenil ali dodal drugo (pregleda A, 4cf3be1fb in bd0af5dac): opomba proti nalogi (vrednost,
+// gol rezultat, odvod) le, ko je v sporočilu samo stavek z nalogo: za zapisom naloge nič razen ločil (»Oprosti, mislil
+// sem trinajst.«, », oziroma kvadrat«, »(v knjigi je desno trinajst)« ne), ena enačba in nobenega števila zunaj zapisa.
+// Sicer brez opombe; ugotovitev gre v popravek kot na main.
+const ONLY_PUNCT = /^[\s.!?:;,)\]]*(?:(?:prosim|please)[\s.!?]*)?$/iu;
+// Pred zapisom naloge le glagol naloge (pregled A, f3d3893c3: »V knjigi piše trinajst, ne enajst: $2x + 3 = 11$.«,
+// »Desni strani prištej dva. Reši …« ne).
+// Ločila na robovih odreže zanka (regex z ločili na obeh straneh je bil kvadraten: 60 000 presledkov 2 s).
+function taskLead(s) {
+  let i = 0;
+  let j = s.length;
+  while (i < j && /[\s,:;.!]/.test(s[i])) i++;
+  while (j > i && /[\s,:;.]/.test(s[j - 1])) j--;
+  return TASK_LEAD.test(s.slice(i, j));
+}
+const TASK_LEAD = /^(?:(?:prosim|please)[\s,:]*)?(?:(?:reši(?:te)?|izračunaj(?:te)?|odvajaj(?:te)?|poenostavi(?:te)?|določi(?:te)?|poišči(?:te)?|koliko\s+je|solve|calculate|compute|differentiate|simplify|find|what\s+is|what's)(?:\s+(?:prosim|please|enačbo|enačba|nalogo|funkcijo|izraz|sistem|odvod|the|equation|expression|function|derivative|of|za\s+\p{L}|for\s+\p{L}))*)?$/iu;
+// začetek zapisa brez »$« (»Reši x + 3 = 5«: »x + « je del zapisa): odreže presledke, operatorje in posamične črke
+function withoutMathTail(s) {
+  let i = s.length;
+  while (i > 0) {
+    const c = s[i - 1];
+    if (/[\s\-+*/^()=·×:{}\[\]]/.test(c) || (/\p{L}/u.test(c) && !(i > 1 && /\p{L}/u.test(s[i - 2])))) i--;
+    else break;
+  }
+  return s.slice(0, i);
+}
+const TASK_CHANGE = /(?<!\p{L})(?:kaj pa|kaj če|če je|če bi|namesto|vzemi|vzemimo|zamenj\p{L}*|spremen\p{L}*|recimo|denimo|potem pa|nato pa|pa še|what if|instead|suppose)(?!\p{L})/iu;
+export function taskModified(question, pre) {
+  if ((pre?.problems || []).length !== 1) return true;
+  const q = String(question || "");
+  if (TASK_CHANGE.test(q) || (q.match(/=/g) || []).length > 1) return true;
+  const all = [...q.matchAll(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g)];
+  const segs = all.filter((m) => /[\d=]/.test(m[0]));
+  if (segs.length > 1) return true;
+  if (all.length) {
+    if (!taskLead(q.slice(0, all[0].index))) return true;
+    const last = all.at(-1);
+    return /\d/.test(q.replace(/\$\$[\s\S]+?\$\$|\$[^$\n]+?\$/g, " ")) || !ONLY_PUNCT.test(q.slice(last.index + last[0].length));
+  }
+  // brez »$«: za zadnjo števko (zapis naloge) le ločila
+  if (!q.trim()) return false; // klicatelj ni podal sporočila (le pre)
+  const first = q.search(/\d/);
+  if (first >= 0 && !taskLead(withoutMathTail(q.slice(0, first)))) return true;
+  const tail = q.match(/\d[^\d]*$/);
+  return !tail || !ONLY_PUNCT.test(tail[0].slice(1).replace(/^(?:\s*(?:\p{L}(?!\p{L})|[-+*/^()=·×:{}\[\]]))*/u, ""));
+}
+
 export function codeFindings(answer, pre = null, question = "") {
   let checked = 0;
   let soft = null; // AUDIT-066: le če koda sicer ne najde ničesar
+  let softFact = null;
+  let softQuiet = false;
   try {
     const r = checkArithmetic(String(answer || ""));
     checked += r.checked;
     // Vrstice z učenčevim ali namerno napačnim računom (»Ti si napisal $3 + 4 \\cdot 2 = 14$«) niso napaka odgovora.
     const lines = String(answer || "").split("\n");
     // Račun, ki ga je napisal tudi učenec, se preverja: »Prav, $7 \cdot 8 = 54$« ob učenčevem 54 je napaka (P1).
-    const real = r.mismatches.filter((m) => {
+    // Periodični zapis, pika za tisočice, kratki TeX: branje ni zanesljivo, brez ugotovitve (pregled B, 7f565d941).
+    const clear = r.mismatches.filter((m) => !ambiguousCalc(m));
+    const real = clear.filter((m) => {
       const line = lines[m.line - 1] || "";
       return !notClaimAt(line);
     });
     if (real.length) {
       const m = real[0];
-      return { checked, issue: `in the step $${m.tex}$ the calculation does not hold: ${m.left} ≠ ${m.right}` };
+      // Vrstica z uro, ostankom, zgledom, enoto … (noteLine): ugotovitev ostane, opombe brez modela ni (pregled A).
+      return { checked, issue: `in the step $${m.tex}$ the calculation does not hold: ${m.left} ≠ ${m.right}`, fact: calcNote(answer, lines, m).fact };
     }
-    const s = r.mismatches.find((m) => softSkip(lines[m.line - 1] || ""));
-    if (s) soft = `in the step $${s.tex}$ the calculation does not hold: ${s.left} ≠ ${s.right}. ${SOFT_HINT}`;
+    const s = clear.find((m) => softSkip(lines[m.line - 1] || ""));
+    if (s) {
+      soft = `in the step $${s.tex}$ the calculation does not hold: ${s.left} ≠ ${s.right}. ${SOFT_HINT}`;
+      const n = calcNote(answer, lines, s, { hard: false });
+      softFact = n.fact;
+      softQuiet = !!n.quiet;
+    }
   } catch {
     // račun, ki ga ni mogoče prebrati, ni napaka
   }
@@ -512,7 +663,7 @@ export function codeFindings(answer, pre = null, question = "") {
     const d = derivativeIssue(answer, der[0]);
     if (d) {
       checked += d.checked;
-      if (d.issue) return { checked, issue: d.issue };
+      if (d.issue) return { checked, issue: d.issue, fact: taskModified(question, pre) ? null : d.fact };
     }
   }
   const ar = (pre?.problems || []).filter((p) => p.type === "arith");
@@ -520,7 +671,7 @@ export function codeFindings(answer, pre = null, question = "") {
     const b = bareResultIssue(answer, ar[0]);
     if (b) {
       checked += b.checked;
-      if (b.issue) return { checked, issue: b.issue, sure: true }; // sure: AUDIT-060, opomba brez modela
+      if (b.issue) return { checked, issue: b.issue, fact: taskModified(question, pre) ? null : b.fact };
     }
   }
   const eq = (pre?.problems || []).filter((p) => p.type === "equation" || p.type === "system");
@@ -528,7 +679,7 @@ export function codeFindings(answer, pre = null, question = "") {
     const v = valueIssue(answer, eq[0]);
     if (v) {
       checked += v.checked;
-      if (v.issue) return { checked, issue: v.issue };
+      if (v.issue) return { checked, issue: v.issue, fact: taskModified(question, pre) ? null : v.fact };
     }
   }
   // Kemijske preverbe se združijo v eno napako (en »Popravek:«), da »Dušik je v 5. skupini in v 3. periodi.« popravi
@@ -539,7 +690,9 @@ export function codeFindings(answer, pre = null, question = "") {
   if (chemIssues.length) return { checked, issue: chemIssues.join("; ") };
   const c = celsiusIssue(answer, question);
   checked += c.checked;
-  if (!c.issue && soft) return { checked, issue: soft, soft: true }; // ni sodba kode, nikoli »sure«
+  // Blaga ugotovitev (AUDIT-066) ni sodba kode: le za popravek in blago opombo. Kemija in °C (ožje, hevristične preverbe)
+  // nimata »fact«: brez opombe brez modela.
+  if (!c.issue && soft) return { checked, issue: soft, soft: true, fact: softFact, ...(softQuiet ? { quiet: true } : {}) };
   return { checked, issue: c.issue || null };
 }
 

@@ -16,7 +16,7 @@ import { parseSpecies } from "../public/graph/chemcore.js";
 import { MASSES } from "../public/graph/pse-data.js";
 import { texToText } from "../public/scan/solvecore.js";
 import { parse, compile, calcText } from "../public/graph/math.js";
-import { notClaimAt, hasExercise, TEX_SHORT } from "./besedilo-trditev.js";
+import { notClaimAt, hasExercise, TEX_SHORT, numTex, calcToTex, noteLine, presentedAsResult, prevLine } from "./besedilo-trditev.js";
 
 // Tudi »RAČUN« (model piše slovensko); bloka učenec v nobeni obliki ne vidi (server/meta.js).
 const BLOCK_RE = /<<\s*RA[CČ]UN\b([\s\S]*?)>>/g;
@@ -250,6 +250,15 @@ function visibleValues(text, v) {
  * ničli pa sta $x = 0$ in $x = 6$«: druge vrednosti so del razlage).
  */
 export function visibleIssue(text, claims) {
+  return visibleFinding(text, claims)?.issue ?? null;
+}
+// Vrednost za opombo: točno število ali zapis iz bloka (»sqrt(2)«) v TeX.
+const valTex = (x, raw) => {
+  const n = numTex(x);
+  return n && n.rel === "=" ? n.tex : calcToTex(raw);
+};
+/** Kot visibleIssue, z ugotovitvijo za opombo brez modela (AUDIT-060): { issue, fact } ali null. */
+export function visibleFinding(text, claims) {
   const sols = new Map();
   for (const c of claims) {
     if (c.op !== "solve" || c.args.length < 3 || !/^[a-zA-Z]$/.test(c.args[1])) continue;
@@ -257,8 +266,8 @@ export function visibleIssue(text, claims) {
     const unsureEq = /log|(?<![a-zA-Z])ln(?![a-zA-Z])/i.test(c.args[0]);
     const raw = c.args[2].split(/[,;]/).map((x) => x.trim()).filter(Boolean);
     const vals = raw.map(numOf);
-    const prev = sols.get(c.args[1]) || { vals: [], text: [], unsure: false };
-    sols.set(c.args[1], { vals: [...prev.vals, ...vals.filter((x) => x !== null)], text: [...prev.text, c.args[2]], unsure: prev.unsure || unsureEq || !raw.length || vals.includes(null) });
+    const prev = sols.get(c.args[1]) || { vals: [], raw: [], text: [], eqs: [], unsure: false };
+    sols.set(c.args[1], { vals: [...prev.vals, ...vals.filter((x) => x !== null)], raw: [...prev.raw, ...raw], text: [...prev.text, c.args[2]], eqs: [...prev.eqs, c.args[0]], unsure: prev.unsure || unsureEq || !raw.length || vals.includes(null) });
   }
   for (const [v, s] of sols) {
     if (s.unsure) continue;
@@ -272,7 +281,27 @@ export function visibleIssue(text, claims) {
     if (anyValues(plain, v).some((n) => s.vals.some((y) => close(n, y)))) continue;
     const bad = distinct.filter((x) => !s.vals.some((y) => near(x, y)));
     if (bad.length) {
-      return `the answer text states ${v} = ${bad.map((x) => String(+x.n.toPrecision(10)).replace(".", ",")).join(", ")}, but the exactly checked solution is ${v} = ${s.text.join("; ")}`;
+      const issue = `the answer text states ${v} = ${bad.map((x) => String(+x.n.toPrecision(10)).replace(".", ",")).join(", ")}, but the exactly checked solution is ${v} = ${s.text.join("; ")}`;
+      const wrong = bad.map((x) => numTex(x.n)).every((n) => n?.rel === "=") ? bad.map((x) => `${v} = ${numTex(x.n).tex}`).join(",\\; ") : null;
+      const rights = s.vals.map((x, i) => valTex(x, s.raw[i]));
+      const right = rights.every(Boolean) ? rights.map((r) => `${v} = ${r}`).join(",\\; ") : null;
+      const eq = new Set(s.eqs).size === 1 ? calcToTex(s.eqs[0]) : null;
+      // Opomba le ob pozitivnih znakih (pregled A, 018af7ab6): vse navedbe neznanke so ista (napačna) vrednost, zadnja
+      // je predstavljena kot rezultat, vrstica ni zgled, vaja, teme, enota … Sicer brez opombe (kot main).
+      const lines = plain.split("\n");
+      const seg = new RegExp(`(?:^|[^a-zA-Z\\\\])${v}(?:_\\{?\\d+\\}?)?\\s*(?:=|\\\\approx)\\s*([-−]?\\d+(?:(?:[.,]|\\{,\\})\\d+)?)\\s*$`);
+      const hasVar = new RegExp(`(?<![a-zA-Z\\\\])${v}(?![a-zA-Z])`);
+      const found = [];
+      for (const [i, l] of lines.entries()) {
+        for (const mm of l.matchAll(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$/g)) {
+          if (!hasVar.test(mm[1] ?? mm[2])) continue;
+          const k = seg.exec(mm[1] ?? mm[2]);
+          found.push({ i, start: mm.index, end: mm.index + mm[0].length, x: k ? Number(k[1].replace("−", "-").replace("{,}", ".").replace(",", ".")) : NaN });
+        }
+      }
+      const last = found.at(-1);
+      const safe = bad.length === 1 && !!last && found.every((f) => Math.abs(f.x - bad[0].n) <= 1e-9 * Math.max(1, Math.abs(bad[0].n))) && noteLine(`${prevLine(lines, last.i)}\n${lines[last.i]}`) && presentedAsResult(plain, lines, last.i, last.start, last.end);
+      return { issue, fact: wrong && right && safe ? { kind: "value", wrong, eq, right } : null };
     }
   }
   return null;
@@ -285,7 +314,10 @@ export async function checkAnswerClaims(text) {
   const r = await checkClaims(claims);
   // Vidno besedilo le proti blokom, ki jih je SymPy res potrdil (pregled prevzema 2): nepreverjen blok ali blok z le
   // enim od dveh korenov ni »točno preverjena rešitev«; brez SymPy ni primerjave.
-  return { ...r, issue: claimIssue(r) || (r.failed.length ? null : visibleIssue(text, r.confirmed || [])), claims: claims.length };
+  const own = claimIssue(r);
+  const seen = own || r.failed.length ? null : visibleFinding(text, r.confirmed || []);
+  // fact: ugotovitev za opombo brez modela (AUDIT-060); trditev iz bloka brez nje dobi splošno opombo
+  return { ...r, issue: own || seen?.issue || null, fact: seen?.fact || null, claims: claims.length };
 }
 
 // Števec (kv »racun_statistika«): { "2026-11-11": { odgovori, z_blokom, potrjene, napake, nepreverjene } },
