@@ -2981,7 +2981,8 @@ export function toTex(node, opt = {}) {
       const ua = unwrap(n.a);
       const b = wrap(n.b, unwrap(n.b).k === "*" ? 2 : 2.5);
       const ub = unwrap(n.b);
-      const numNext = ub.k === "num" || (ub.k === "^" && unwrap(ub.a).k === "num") || ub.k === "neg" || (ub.k === "*" && unwrap(ub.a).k === "num");
+      // izrecno množenje pred številko (5·(10³ m), 2·3!) in med enotama (m·s, scicore.js): brez pike bi se stikali
+      const numNext = ub.k === "num" || (ub.k === "^" && unwrap(ub.a).k === "num") || ub.k === "neg" || (ub.k === "*" && unwrap(ub.a).k === "num") || (/^\d/.test(b) && (!n.imp || /\d\}*$/.test(a))) || (!n.imp && ub.k === "var" && ub.name.startsWith("U_uu"));
       const piece = ub.k === "pw" && ub.cases.every(([, v]) => isNum(v, 1)) && !ub.other;
       if (piece) return `${a}\\left\\{${ub.cases.map(([c]) => T(c)).join(",\\ ")}\\right\\}`;
       const dot = numNext || (ua.k === "num" && ub.k === "num") || ub.k === "/";

@@ -3,6 +3,7 @@
 // Koraki rešitve niso tukaj: »Po korakih« odpre zaslon Skeniraj (public/scan/), ki ima svoj reševalnik.
 import { simplify, diff, toTex, MathError, freeVars } from "./math.js";
 import { vectorLine } from "./vektor.js";
+import { hasUnits } from "./enote.js";
 import { evaluate, compileLine, unknownsOf, functionDef, lineTex, splitTop, prepare, exactTex, toFraction, formatNumber, exactForm } from "./scicore.js";
 import { antiderivativeAst } from "./calculus.js";
 import { evalComplex, polyRoots } from "./toolscore.js";
@@ -1165,6 +1166,13 @@ function splitCmp(text) {
 /** Samo zapis vrstice v TeX (brez reševanja), za sproten predogled enačb in sistemov. */
 export function previewTex(text, env = {}) {
   const comma = env.comma !== false;
+  // pretvorba enot »72 km/h → m/s« (public/graph/enote.js): obe strani posebej, med njima puščica
+  const arrow = String(text ?? "").split("→");
+  if (arrow.length === 2 && hasUnits(text)) {
+    const a = previewTex(arrow[0], env);
+    const b = previewTex(arrow[1], env);
+    return a && b ? `${a}\\rightarrow{}${b}` : null;
+  }
   try {
     const parts = splitTop(String(text ?? "").trim(), ";\n").map((x) => x.trim()).filter(Boolean);
     if (!parts.length) return null;
@@ -1490,6 +1498,14 @@ export function analyze(text, env = {}) {
   let raw = String(text ?? "").trim();
   if (!raw) return null;
   deadline = Date.now() + BUDGET_MS;
+
+  // z enotami (⟦km⟧ ali Ans z enoto) le račun in pretvorba: enačbe, ukazi CAS, Pol/Rec in kompleksna števila ne
+  // (rešitev bi bila število brez enote); scicore.js evaluate pove, kaj je narobe
+  if (hasUnits(raw) || (env.ansUnit && /(?<![A-Za-z])Ans(?![A-Za-z])/.test(raw))) {
+    if (functionDef(raw) || parseCommand(raw)) return { error: { code: "unitCalcOnly", info: {} } };
+    const r = evaluate(raw, env);
+    return r && !r.error ? { kind: "value", ...r } : r;
+  }
 
   // sistem: več enačb, ločenih s »;« na vrhnji ravni
   const parts = splitTop(raw, ";\n").map((x) => x.trim()).filter(Boolean);

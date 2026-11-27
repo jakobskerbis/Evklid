@@ -9,6 +9,7 @@ import { chapterProfile, adaptKeys } from "./tipke-poglavja.js";
 import { graphable } from "./v-graf.js";
 import { entryBase, caretTex, stopsTex, withChem as withChemEnv, analyzeLive as analyzeLiveEnv, liveTex, TRUST, backspace, deleteForward, stepCaret, selectionSpan, deleteSpan, texSpeech, SAY_WORDS, SAY_GREEK, pressKey, insertKey } from "./sci-vnos.js";
 import { chemSub, chemNumbers } from "./molska.js";
+import { UNIT_GROUPS, token, unitResultTex, parseUnit, hasUnits, OFFSET_TEMP } from "./enote.js";
 import { pomanjsaj, prilagodiSirini } from "../sirina.js";
 import { izrisi } from "../mat/izris.js";
 
@@ -56,7 +57,7 @@ const NUM_KEYS = [
   ["1", "1"], ["2", "2"], ["3", "3"], ["+", "+"], ["−", "−"],
   ["0", "0"], [",", "#dec"], ["×10ˣ", "×10^("], ["Ans", "Ans", "MR", "M"], ["=", "#eq"],
 ];
-const KEY_LABEL = { "#2nd": "sc.second", "#left": "sc.left", "#right": "sc.right", "#del": "sc.del", "#ac": "sc.ac", "#eq": "sc.equals", "#more": "sc.more" };
+const KEY_LABEL = { "#units": "sc.units", "#2nd": "sc.second", "#left": "sc.left", "#right": "sc.right", "#del": "sc.del", "#ac": "sc.ac", "#eq": "sc.equals", "#more": "sc.more" };
 // spomin M (kot na kalkulatorju): M+ prišteje rezultat, M− ga odšteje, MR vstavi M, MC izbriše
 const MEM_LABEL = { "#m+": "sc.mPlus", "#m-": "sc.mMinus", M: "sc.mRecall", "#mc": "sc.mClear" };
 // Meni »⋯«: vse funkcije po skupinah. [napis (TeX), vstavi]
@@ -69,6 +70,7 @@ const MORE = [
   ["num", [["\\gcd", "gcd(@;)"], ["\\operatorname{lcm}", "lcm(@;)"], ["\\bmod", "mod(@;)"], ["\\operatorname{round}", "round(@;)"], ["\\lfloor x\\rfloor", "floor("], ["\\lceil x\\rceil", "ceil("], ["\\binom{n}{k}", "nCr(@;)"], ["n!", "!"], ["\\%", "%"], ["\\operatorname{sgn}", "sgn("], ["\\operatorname{Int}", "Int("], ["\\operatorname{frac}", "frac("], ["\\mathrm{Ran\\#}", "rand"], ["\\operatorname{RanInt}", "randint(@;)"], ["\\operatorname{Pol}", "Pol(@;)"], ["\\operatorname{Rec}", "Rec(@;)"]]],
   ["stat", [["\\bar{x}", "mean(@)"], ["\\mathrm{Me}", "median(@)"], ["\\sigma", "stdevp(@)"], ["s", "stdev(@)"], ["\\min", "min(@)"], ["\\max", "max(@)"], ["\\Sigma", "total(@)"]]],
   ["cplx", [["i", "i"], ["|z|", "abs("]]],
+  ["units", [["\\mathrm{m},\\ \\mathrm{kg},\\ \\mathrm{s}\\ldots", "#units"], ["\\rightarrow", "→"]]], // enote (enote.js): plošča z enotami, pretvorba
   ["mem", [["\\mathrm{M+}", "#m+"], ["\\mathrm{M-}", "#m-"], ["\\mathrm{MR}", "M"], ["\\mathrm{MC}", "#mc"]]],
 ];
 
@@ -152,6 +154,8 @@ export function createScientific(root, opts) {
       vars: s.vars && typeof s.vars === "object" ? s.vars : {},
       funcs: s.funcs && typeof s.funcs === "object" ? s.funcs : {},
       ans: Number.isFinite(s.ans) ? s.ans : 0,
+      // enota rezultata Ans (5,3 km): Ans v naslednjem računu je 5,3 km, ne 5,3
+      ansUnit: typeof s.ansUnit === "string" && (parseUnit(s.ansUnit) || s.ansUnit in OFFSET_TEMP) ? s.ansUnit : null,
       angle: ANGLES.includes(s.angle) ? s.angle : s.deg === false ? "rad" : "deg", // »deg« iz starejših različic
       format: FORMATS.includes(s.format) ? s.format : "auto",
     };
@@ -186,19 +190,21 @@ export function createScientific(root, opts) {
       <div class="sc-num"></div>
       <div class="sc-consts sc-panel" hidden></div>
       <div class="sc-more sc-panel" hidden></div>
+      <div class="sc-units sc-more sc-panel" hidden></div>
     </div>`;
   const $ = (s) => root.querySelector(s);
   const input = $(".sc-input");
   const hist = $(".sc-history");
   const consts = $(".sc-consts");
-  const more = $(".sc-more");
+  const more = $(".sc-more:not(.sc-units)");
+  const units = $(".sc-units");
   const varsBar = $(".sc-vars");
 
   // --- tipkovnica ---
   const keyHtml = (k, cls) => {
     const label = KEY_LABEL[k[1]] ? ` aria-label="${esc(t(KEY_LABEL[k[1]]))}" title="${esc(t(KEY_LABEL[k[1]]))}"` : "";
     const c = [cls, k[1] === "#eq" ? "eq" : "", k[1] === "#ac" || k[1] === "#del" ? "warn" : "", k[1] === "#2nd" ? "second" : "", k[1] === "#more" ? "more" : "", /^[0-9]$/.test(k[1]) || k[1] === "#dec" ? "digit" : ""].filter(Boolean).join(" ");
-    return `<button type="button" class="sc-key ${c}" data-ins="${esc(k[1])}"${k[3] ? ` data-ins2="${esc(k[3])}" data-l1="${esc(k[0])}" data-l2="${esc(k[2])}"` : ""}${label}${k[1] === "#more" ? ' aria-expanded="false"' : ""}>${k[1] === "#dec" ? (comma() ? "," : ".") : esc(k[0])}</button>`;
+    return `<button type="button" class="sc-key ${c}" data-ins="${esc(k[1])}"${k[3] ? ` data-ins2="${esc(k[3])}" data-l1="${esc(k[0])}" data-l2="${esc(k[2])}"` : ""}${label}${k[1] === "#more" || k[1] === "#units" ? ' aria-expanded="false"' : ""}>${k[1] === "#dec" ? (comma() ? "," : ".") : esc(k[0])}</button>`;
   };
   // funkcijske tipke po poglavju, iz katerega je kalkulator odprt (tipke-poglavja.js)
   let profile = null;
@@ -206,7 +212,11 @@ export function createScientific(root, opts) {
     profile = chapterProfile(opts.chapter?.());
     const box = $(".sc-fn");
     box.dataset.profile = profile || "";
-    box.innerHTML = adaptKeys(FN_KEYS, profile).map((k) => keyHtml(k, "fn")).join("");
+    // tipka »Enote« (fizika, kemija): napis v jeziku vmesnika, 2nd je pretvorba →
+    box.innerHTML = adaptKeys(FN_KEYS, profile)
+      .map((k) => (k[1] === "#units" ? [t("sc.unitsKey"), ...k.slice(1)] : k))
+      .map((k) => keyHtml(k, "fn"))
+      .join("");
   }
   renderFn();
   $(".sc-num").innerHTML = NUM_KEYS.map((k) => keyHtml(k, "n")).join("");
@@ -219,7 +229,7 @@ export function createScientific(root, opts) {
   }
 
   // --- vnos ---
-  const OPS = /^[+×÷^²³⁻!%−]/;
+  const OPS = /^[+×÷^²³⁻!%−→]/;
   // o.replace: vnos zamenja vrstico (formula iz zbirke); o.hint: namig pod vrstico, kaj storiti z njo
   // o.angle: formula s koti v radianih (sin ω t) preklopi kalkulator v RAD
   // Lastna razveljavitev (Ctrl+Z, Ctrl+Shift+Z, Ctrl+Y, »razveljavi« na telefonu): vnos se spreminja tudi s kodo
@@ -351,7 +361,7 @@ export function createScientific(root, opts) {
   // imenom (F = 6 iz prejšnjega računa, spomin M) ne veljajo, dokler je ne izračunaš ali pobrišeš.
   let fromFormula = null;
   const vars = () => (fromFormula ? Object.fromEntries(Object.entries(st.vars).filter(([n]) => !fromFormula.has(n))) : st.vars);
-  const env = () => ({ vars: vars(), funcs: st.funcs, ans: st.ans, deg: st.angle === "deg", grad: st.angle === "grad", comma: comma() });
+  const env = () => ({ vars: vars(), funcs: st.funcs, ans: st.ans, ...(st.ansUnit ? { ansUnit: st.ansUnit } : {}), deg: st.angle === "deg", grad: st.angle === "grad", comma: comma() });
   // M(H2SO4) v vnosu je molska masa (public/graph/molska.js): fn dobi vnos s spremenljivkami namesto M(…)
   // (pot je v sci-vnos.js, da lep zapis vnosa in predogled uporabljata isto)
   const withChem = (text, fn, extra) => withChemEnv(text, fn, env(), extra);
@@ -373,6 +383,23 @@ export function createScientific(root, opts) {
         return t("sc.notReal", { z: complexText(e.info) });
       case "missing":
         return t("gc.errMissing", { names });
+      // enote (scicore.js evaluateUnits)
+      case "unitMismatch":
+        return t("sc.errUnitMismatch");
+      case "unitConvert":
+        return e.info.from ? t("sc.errUnitConvert", { from: e.info.from, to: e.info.to }) : t("sc.errUnitConvertNone", { to: e.info.to });
+      case "unitTemp":
+        return t("sc.errUnitTemp");
+      case "unitCalcOnly":
+        return t("sc.errUnitCalcOnly");
+      case "unitPower":
+        return t("sc.errUnitPower");
+      case "unitFunc":
+        return t("sc.errUnitFunc");
+      case "unitTarget":
+        return t("sc.errUnitTarget");
+      case "unitUnknown":
+        return t("sc.errUnitUnknown", { u: e.info.u });
       case "char":
         return t("gc.errChar", { ch: e.info.ch });
       case "unknownFn":
@@ -489,6 +516,7 @@ export function createScientific(root, opts) {
         if (r.precision) e.note = { key: "sc.precision" }; // AUDIT-049: navadnih 16 mest ni bilo dovolj
         if (r.big) e.big = r.big; // AUDIT-050: točne števke celega števila nad 2⁵³
         if (r.bigApprox) e.bigApprox = true;
+        if (r.unit) e.unit = r.unit.sym; // 5,3 km (enote)
         break;
       case "complex":
         e.re = r.re;
@@ -589,6 +617,7 @@ export function createScientific(root, opts) {
         const d = e.dms ? dmsOf(e.value, { comma: comma() }) : null;
         const big = bigShown(e);
         if (big) return texHtml(`${e.assign ? `${e.assign} ` : ""}${big.rel} ${big.tex}`);
+        if (e.unit) return texHtml(`${e.est ? "\\approx" : "="} ${fmt(e.value).tex}${unitResultTex(e.unit)}`);
         return texHtml(`${e.assign ? `${e.assign} ` : ""}${e.est ? "\\approx" : "="} ${d ? `${fmt(e.value).tex} = ${d.tex}` : valueTex(e.value, e.approx)}`);
       }
       case "complex":
@@ -778,7 +807,7 @@ export function createScientific(root, opts) {
     live.className = "sc-live muted";
     const big = r.kind === "value" ? bigShown(r) : null;
     if (big) live.innerHTML = texHtml(`${big.rel} ${big.tex}`);
-    else if (r.kind === "value") live.innerHTML = Number.isFinite(r.value) ? texHtml(`${r.est ? "\\approx" : "="} ${fmt(r.value).tex}`) : "";
+    else if (r.kind === "value") live.innerHTML = Number.isFinite(r.value) ? texHtml(`${r.est ? "\\approx" : "="} ${fmt(r.value).tex}${unitResultTex(r.unit?.sym)}`) : "";
     else if (r.kind === "complex") live.innerHTML = texHtml(`= ${complexTex(r.re, r.im)}`);
     else if (r.kind === "deriv") live.innerHTML = texHtml(`= ${r.resTex}`);
     else if (r.kind === "cas" && !r.resTex && !r.none) live.innerHTML = ""; // samo zapis (predogled matrike z okvirčki)
@@ -808,7 +837,7 @@ export function createScientific(root, opts) {
       live.className = "sc-live sc-err";
       live.innerHTML = `${icon("info")}<span>${esc(msg)}</span>`;
       // divergenten integral, limita brez vrednosti: graf vseeno pokaže f in to sporočilo (brez osenčene vrednosti)
-      if (opts.showOnGraph && /∫|lim/.test(text) && !simple()) {
+      if (opts.showOnGraph && /∫|lim/.test(text) && !hasUnits(text) && !simple()) {
         const ans = st.ans;
         live.insertAdjacentHTML("beforeend", grafBtn(-1));
         live.querySelector(".sc-h-graf").addEventListener("click", () => showOnGraph(text, ans, msg));
@@ -820,8 +849,11 @@ export function createScientific(root, opts) {
     if (r.kind === "value") {
       if (r.assign && !fromFormula?.has(r.assign)) st.vars[r.assign] = r.value;
       st.ans = r.value;
-    } else if (r.kind === "complex") st.ans = r.im ? st.ans : r.re;
-    else if (r.kind === "func") st.funcs[r.name] = { param: r.param, body: r.body };
+      st.ansUnit = r.unit?.sym || null;
+    } else if (r.kind === "complex" && !r.im) {
+      st.ans = r.re;
+      st.ansUnit = null;
+    } else if (r.kind === "func") st.funcs[r.name] = { param: r.param, body: r.body };
     const e = entryOf(text, r);
     if (radNote(text, r) && !e.note) e.note = { key: radKey(text) }; // ∫, d/dx v DEG/GRA (AUDIT-055)
     if (/Ans/.test(text)) e.ga = ansBefore; // graf iz te vrstice z Ans, kot je bil ob računu
@@ -829,11 +861,12 @@ export function createScientific(root, opts) {
     if (e.kind === "value" && st.angle === "deg" && /\d\s*[′″]/.test(text) && dmsOf(e.value)) e.dms = true;
     if (e.first !== undefined) {
       st.ans = e.first;
+      st.ansUnit = null;
       delete e.first;
     }
     fromFormula = null;
     // skupna zgodovina zavihkov: številski izid (Grafični ga ponudi kot vrednost)
-    if (e.kind === "value" && Number.isFinite(e.value)) {
+    if (e.kind === "value" && Number.isFinite(e.value) && !e.unit) {
       // 10 mest; zelo velika in majhna števila z ×10ˣ (»E« kot tipka ×10ˣ: v vnosu se izriše kot 6,022 · 10²³)
       const a = Math.abs(e.value);
       const txt = a && (a >= 1e10 || a < 1e-4) ? e.value.toExponential(9).replace(/\.?0+e/, "e").replace(/e\+?/, "E") : String(Number(e.value.toPrecision(10)));
@@ -864,6 +897,13 @@ export function createScientific(root, opts) {
     if (op === "#mc") delete st.vars.M;
     else {
       if (input.value.trim() && !compute()) return;
+      if (st.ansUnit) {
+        // spomin M je število brez enote: 5 km in 300 m bi dala 305
+        const live = $(".sc-live");
+        live.className = "sc-live sc-err";
+        live.innerHTML = `${icon("info")}<span>${esc(t("sc.errUnitCalcOnly"))}</span>`;
+        return;
+      }
       const m = (Number.isFinite(st.vars.M) ? st.vars.M : 0) + (op === "#m+" ? st.ans : -st.ans);
       st.vars.M = Number(m.toPrecision(15)); // brez šuma 0,1 + 0,2
     }
@@ -889,7 +929,7 @@ export function createScientific(root, opts) {
 
   // ---------- »Pokaži na grafu« (public/graph/v-graf.js) ----------
   const simple = () => opts.stage?.() === "OS"; // osnovna šola: brez analize (integral, odvod, limita, vsota)
-  const canGraph = (e) => !!opts.showOnGraph && graphable(e, { simple: simple() });
+  const canGraph = (e) => !!opts.showOnGraph && !e.unit && !hasUnits(e.text) && graphable(e, { simple: simple() });
   const grafBtn = (i) => `<button type="button" class="sc-act sc-h-graf" data-act="graf" data-i="${i}" title="${esc(t("sc.showOnGraph"))}" aria-label="${esc(t("sc.showOnGraph"))}">${icon("chart-spline")}</button>`;
   function showOnGraph(text, ans, message) {
     opts.showOnGraph?.({ text, message, simple: simple(), env: { vars: vars(), funcs: st.funcs, ans: Number.isFinite(ans) ? ans : st.ans, angle: st.angle, comma: comma() } });
@@ -915,12 +955,12 @@ export function createScientific(root, opts) {
       if (fg) acts.push(fromGraphBtn(fg, i));
     }
     if (e.steps && opts.steps && opts.canSteps?.()) acts.push(btn("steps", "list-ordered", "sc.steps"));
-    if ((e.kind || "value") === "value" && primeFactors(e.value)?.some(([, k], j, a) => a.length > 1 || k > 1) && !e.fact) acts.push(btn("fact", "grid-2x2", "sc.factor"));
+    if ((e.kind || "value") === "value" && !e.unit && primeFactors(e.value)?.some(([, k], j, a) => a.length > 1 || k > 1) && !e.fact) acts.push(btn("fact", "grid-2x2", "sc.factor"));
     // kot v stopinjah → stopinje, minute, sekunde (in nazaj), kot tipka °′″ na kalkulatorju
-    if ((e.kind || "value") === "value" && st.angle === "deg" && /°|\d\s*[′″]|arc(?:sin|cos|tan|cot)/.test(e.text) && !Number.isInteger(e.value) && dmsOf(e.value))
+    if ((e.kind || "value") === "value" && !e.unit && st.angle === "deg" && /°|\d\s*[′″]|arc(?:sin|cos|tan|cot)/.test(e.text) && !Number.isInteger(e.value) && dmsOf(e.value))
       acts.push(`<button type="button" class="sc-act" data-act="dms" data-i="${i}" aria-pressed="${!!e.dms}" title="${esc(t("sc.toDms"))}"><span aria-hidden="true">°′″</span><span class="sr-only">${esc(t("sc.toDms"))}</span></button>`);
     // fizika in kemija: izid v pretvornik enot (Orodja), vrednost se vpiše tam (povezani zavihki)
-    if ((e.kind || "value") === "value" && opts.convert && Number.isFinite(e.value) && (profile === "fiz" || profile === "kem")) acts.push(btn("convert", "ruler", "sc.toUnits"));
+    if ((e.kind || "value") === "value" && !e.unit && !hasUnits(e.text) && opts.convert && Number.isFinite(e.value) && (profile === "fiz" || profile === "kem")) acts.push(btn("convert", "ruler", "sc.toUnits"));
     if (["value", "solve", "ineq", "system", "deriv", "complex", "pair", "cas"].includes(e.kind || "value")) acts.push(btn("copy", "copy", "sc.copy"));
     return acts.length ? `<div class="sc-acts">${acts.join("")}</div>` : "";
   }
@@ -1062,6 +1102,13 @@ export function createScientific(root, opts) {
     more.innerHTML = `<div class="sc-consts-h"><b>${esc(t("sc.functions"))}</b><button type="button" class="ghost icon-only sc-more-x" aria-label="${esc(t("pad.close"))}">${icon("x")}</button></div>
       ${MORE.map(([g, keys]) => [g, keys || (g === "alg" ? algKeys() : anaKeys())]).map(([g, keys]) => `<div class="sc-more-g" data-g="${g}"><div class="sc-more-h">${esc(t(`sc.grp.${g}`))}</div><div class="sc-more-keys">${keys.map(([l, ins]) => `<button type="button" class="sc-mk" data-ins="${esc(ins)}"${g === "mem" ? ` title="${esc(t(MEM_LABEL[ins]))}" aria-label="${esc(t(MEM_LABEL[ins]))}"` : ""}>${texHtml(l)}</button>`).join("")}</div></div>`).join("")}`;
   }
+  // plošča »Enote«: vse enote po količinah (kot pretvornik) in pretvorba »→«; enota je en žeton ⟦km⟧ (enote.js)
+  function renderUnits() {
+    const key = (l, ins, label) => `<button type="button" class="sc-mk" data-ins="${esc(ins)}"${label ? ` aria-label="${esc(label)}"` : ""}>${texHtml(l)}</button>`;
+    units.innerHTML = `<div class="sc-consts-h"><b>${esc(t("sc.units"))}</b><button type="button" class="ghost icon-only sc-more-x" aria-label="${esc(t("pad.close"))}">${icon("x")}</button></div>
+      <div class="sc-more-g" data-g="to"><div class="sc-more-h">${esc(t("sc.unitsTo"))}</div><div class="sc-more-keys">${key("\\rightarrow", "→", t("sc.unitsTo"))}</div></div>
+      ${UNIT_GROUPS.map(([g, syms]) => `<div class="sc-more-g" data-g="${g}"><div class="sc-more-h">${esc(t(`sc.q.${g}`))}</div><div class="sc-more-keys">${syms.map((u) => key(unitResultTex(u).replace("\\,", ""), token(u))).join("")}</div></div>`).join("")}`;
+  }
   function algKeys() {
     const n = (op) => commandName(op, opts.locale?.());
     const nm = (op) => `\\operatorname{${n(op)}}`;
@@ -1076,15 +1123,20 @@ export function createScientific(root, opts) {
   function showPanel(which) {
     consts.hidden = which !== "consts";
     more.hidden = which !== "more";
+    units.hidden = which !== "units";
     root.classList.toggle("sc-panel-open", !!which);
     $(".sc-const-btn").setAttribute("aria-expanded", String(which === "consts"));
     root.querySelector('.sc-key[data-ins="#more"]')?.setAttribute("aria-expanded", String(which === "more"));
+    root.querySelector('.sc-key[data-ins="#units"]')?.setAttribute("aria-expanded", String(which === "units"));
     if (which === "consts") {
       renderConsts();
       consts.querySelector(".sc-const")?.focus({ preventScroll: true });
     } else if (which === "more") {
       renderMore();
       more.scrollTop = 0;
+    } else if (which === "units") {
+      renderUnits();
+      units.scrollTop = 0;
     }
   }
 
@@ -1132,6 +1184,7 @@ export function createScientific(root, opts) {
     const ins = second && b.dataset.ins2 ? b.dataset.ins2 : b.dataset.ins;
     if (ins === "#2nd") return setSecond(!second);
     if (ins === "#more") showPanel(more.hidden ? "more" : null);
+    else if (ins === "#units") showPanel(units.hidden ? "units" : null);
     else if (ins === "#eq") compute();
     else if (ins === "#ac") {
       input.value = "";
@@ -1147,10 +1200,22 @@ export function createScientific(root, opts) {
     if (second && ins !== "#2nd") setSecond(false);
     if (!touch) input.focus({ preventScroll: true });
   });
+  units.addEventListener("pointerdown", (e) => {
+    if (e.target.closest(".sc-mk")) e.preventDefault();
+  });
+  units.addEventListener("click", (e) => {
+    if (e.target.closest(".sc-more-x")) return showPanel(null);
+    const b = e.target.closest(".sc-mk");
+    if (!b) return;
+    insert(b.dataset.ins);
+    showPanel(null);
+    if (!touch) input.focus({ preventScroll: true });
+  });
   more.addEventListener("click", (e) => {
     if (e.target.closest(".sc-more-x")) return showPanel(null);
     const b = e.target.closest(".sc-mk");
     if (!b) return;
+    if (b.dataset.ins === "#units") return showPanel("units");
     if (MEM_LABEL[b.dataset.ins]) memory(b.dataset.ins);
     else insert(b.dataset.ins);
     showPanel(null);
@@ -1306,6 +1371,7 @@ export function createScientific(root, opts) {
       input.setSelectionRange(it.text.length, it.text.length);
       update();
     } else if ((it.kind || "value") === "value" && it.big && bigShown(it)?.rel === "=") insert(it.big);
+    else if ((it.kind || "value") === "value" && it.unit) insert(formatNumber(it.value, { mode: "auto", comma: comma() }).text.replace(" · 10^", "E").replace("−", "-") + token(it.unit));
     else if ((it.kind || "value") === "value") insert(it.dms && dmsOf(it.value) ? dmsOf(it.value, { comma: comma() }).text.replace("−", "-") : formatNumber(it.value, { mode: "auto", comma: comma() }).text.replace(" · 10^", "E").replace("−", "-"));
     else if (it.kind === "complex") insert(`(${complexText(it)})`);
     if (!touch) input.focus({ preventScroll: true });
@@ -1321,6 +1387,7 @@ export function createScientific(root, opts) {
     const c = comma();
     if (it.none) return t("sc.cas.limitNone");
     if ((it.kind || "value") === "value" && it.big && bigShown(it)?.rel === "=") return it.big.replace("-", "−");
+    if ((it.kind || "value") === "value" && it.unit) return `${formatNumber(it.value, { mode: st.format, comma: c }).text} ${it.unit}`;
     if ((it.kind || "value") === "value") return it.dms && dmsOf(it.value) ? dmsOf(it.value, { comma: c }).text : formatNumber(it.value, { mode: st.format, comma: c }).text;
     if (it.kind === "complex") return complexText(it);
     return texPlain(String(resTex(it)));
@@ -1344,6 +1411,7 @@ export function createScientific(root, opts) {
     st.vars = {};
     st.funcs = {};
     st.ans = 0;
+    st.ansUnit = null;
     save();
     opts.clearRecent?.(); // tudi skupna zgodovina zavihkov (čipi »Nedavno«)
     renderVars();
