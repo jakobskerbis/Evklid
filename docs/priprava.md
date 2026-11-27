@@ -111,12 +111,13 @@ R1), LaTeX in indeksi z `_` se ne označijo, prav tako gotovi indeksi (K-10):
 števka 0 ali 1 (v0, e0, q1q2; ne pred ulomkom ali decimalko, x1/2), števka pred `^` (a1^2) in par ena črka + ena
 števka brez koeficienta, ki stoji v ustaljenem zapisu ob isti črki z indeksom 0 ali 1: tik za njo ali s presledkom
 (q1q2, q1 q2), v naštevanju ali vsoti (x1 + x2, x1·x2, x1 in x2, (a1 + b1, a2 + b2), A(x1, y1), B(x2, y2)), v
-produktu ničel ((x - x1)(x - x2)), pred razliko (x2 - x1) ali za vrednostjo neposredno prejšnjega indeksa, kadar mu
-sledi »=« in kratka vrednost brez iste črke z indeksom (x1 = 3, x2 = -3; a2 = 4, a3 = 8); bližina sama ne zadošča, zato
+produktu ničel ((x - x1)(x - x2)), pred razliko (x2 - x1) ali za vrednostjo; sosed je vedno neposredno prejšnji indeks
+(x1 pred x2, nikoli v0 pred v2), za vrednostjo pa mora slediti »=« in kratka vrednost brez zapisa črka + števka
+(x1 = 3, x2 = -3; a2 = 4, a3 = 8; ne a2 = 36 cm2); bližina sama ne zadošča, zato
 potence (ax2, at2, πr2, cm2, x10, Evklidov a2 = c · a1, x2 = 9 ⇒ x1 = 3, v0 = 0, v2 = 2gh) ostanejo negotove tudi ob
 indeksih drugje v izseku. Oklepaji izraza (»(6x2«, »ln(x2«,
 »r2)«) ne skrijejo potence, kemijska formula z oklepaji (Ca(OH)2, (NH4)2SO4) se pregleda cela; absolutna vrednost
-s števko (`|a|2`) in števka za zaklepajem (`(a + b)2`, `(-3)2`, `(2x)2`) dobita `[?]`, razen za oznako (a), 1), (1),
+s števko (`|a|2`) in števka za zaklepajem (`(a + b)2`, `(-3)2`, `(2x)2`, `(sin x)2`) dobita `[?]`, razen za oznako (a), 1), (1),
 (str. 5)); formula, ki je KaTeX ne izriše, dobi `[?]`. Tabela `priprava_izseki`
 (besedilo, naslov in seznam negotovih mest šifrirani, v `SEALED`, v izvozu odšifrirani, kaskada z virom in pripravo;
 ponovna obdelava briše s `secure_delete`); `priprava_viri` ima `stanje` (caka, obdelan, branje, napaka), `strani`,

@@ -57,7 +57,7 @@ export const izrise = (latex, blok = false) => napakaIzraza(latex, { blok, katex
  *   Sama bližina ne zadošča (Evklidov izrek a2 = c · a1: a2 je kvadrat, a1 projekcija).
  * Vse drugo (x2, 6x2, ab2, at2, πr2, x2y, x10, r22) ostane negotovo. kje = odmik zapisa w v besedilu cel.
  */
-const SOSED = (c) => `(?<!\\p{L})(?:\\p{L}[01])*${c}[01](?:\\p{L}[01])*`;
+const SOSED = (c, d) => `(?<!\\p{L})(?:\\p{L}[01])*${c}${d}(?:\\p{L}[01])*`;
 function indeksZapis(koef, w, za, cel, kje) {
   const skupine = [...w.matchAll(/(\p{L}{1,3})(\d{1,2})/gu)];
   const cisto = !koef && /^(?:\p{L}\d)+$/u.test(w);
@@ -76,30 +76,32 @@ function indeksZapis(koef, w, za, cel, kje) {
     const kjeS = kje + m.index;
     const pred = cel.slice(Math.max(0, kjeS - 40), kjeS);
     const po = cel.slice(kjeS + 2, kjeS + 30);
-    const s = SOSED(crke);
+    // Sosed je neposredno prejšnji indeks iste črke (x1 pred x2, nikoli v0 pred v2: v0, v2 = v02 + 2as je v²).
+    const prejsnji = Number(st) - 1;
+    const s = SOSED(crke, prejsnji);
     // Za vrednostjo (x1 = 3, x2 = -3): samo neposredno prejšnji indeks (x1 pred x2, a2 pred a3, nikoli v0 pred v2), za
     // žetonom »=« in kratka vrednost brez iste črke z indeksom (a2 = c · a1 je Evklidov a², v0 = 0, v2 = 2gh je v²).
     const zaVrednostjo = () => {
-      if (!new RegExp(`(?<!\\p{L})${crke}${Number(st) - 1}\\s*=\\s*[^,;=()]{1,10}(?:,|\\s(?:in|ter))\\s*$`, "u").test(pred)) return false;
+      if (!new RegExp(`(?<!\\p{L})${crke}${prejsnji}\\s*=\\s*[^,;=()]{1,10}(?:[,.]|\\s(?:in|ter))\\s*$`, "u").test(pred)) return false;
       const v = /^\s*=\s*([^,;=]{1,12}?)\s*(?:[,;\n]|\.(?:\s|$)|\s(?:in|ter)\s|$)/u.exec(po);
-      return !!v && !new RegExp(`${crke}\\d`, "u").test(v[1]);
+      return !!v && !/\p{L}\d/u.test(v[1]); // a2 = c · a1, a2 = 36 cm2
     };
     // Veriga indeksov (x1 + x2, (a1 + b1, a2 + b2), A(x1, y1), B(x2, y2), a1 + a2 + … + a5).
-    const vez = `(?:[+\\-−±·*,]|in|ter|\\)\\s*,\\s*\\p{L}{0,2}\\()`;
+    const vez = `(?:[+\\-−±·*,]|in|ter|\\)\\s*(?:,|in|ter)\\s*\\p{L}{0,2}\\d?\\()`;
     return [
       new RegExp(`${s}\\s*$`, "u"), // q1q2, q1 q2, x1x2
       new RegExp(`${s}(?:\\s*${vez}\\s*(?:\\p{L}\\d)*){1,6}$`, "u"),
       new RegExp(`${s}\\)\\s*\\(\\s*\\p{L}?\\s*[-+−]\\s*$`, "u"), // (x - x1)(x - x2)
-    ].some((re) => re.test(pred)) || zaVrednostjo() || new RegExp(`^\\s*[-−·*]\\s*${crke}[01](?![\\d^]|[,.]\\d)`, "u").test(po); // x2 - x1
+    ].some((re) => re.test(pred)) || zaVrednostjo() || new RegExp(`^\\s*[-−·*]\\s*${crke}${prejsnji}(?![\\d^]|[,.]\\d)`, "u").test(po); // x2 - x1
   });
 }
 
-// Ali je števka za zaklepajem na mestu z lahko potenca ((a + b)2, (-3)2, (2x)2), ne oznaka a), 1), (1), (a) ali (str. 5).
+// Ali je števka za zaklepajem na mestu z lahko potenca ((a + b)2, (-3)2, (2x)2, (sin x)2), ne oznaka a), 1), (1), (a) ali (str. 5).
 function izrazVOklepaju(cel, z) {
   const o = cel.lastIndexOf("(", z);
   if (o < 0 || cel.lastIndexOf(")", z - 1) > o) return false;
   const v = cel.slice(o + 1, z).trim();
-  return !!v && !/^(?:\d+|\p{L})$/u.test(v) && !/^\p{L}{2,}\.?\s/u.test(v);
+  return !!v && !/^(?:\d+|\p{L})$/u.test(v) && !/^(?!(?:sin|cos|tg|tan|ctg|cot|ln|log|lg|exp|arc\p{L}+|sh|ch|th)(?!\p{L}))\p{L}{2,}\.?\s/iu.test(v);
 }
 
 // Pregled enega dela niza (brez oklepajev izraza): koeficient, kemijska formula, zapis črka + števka.

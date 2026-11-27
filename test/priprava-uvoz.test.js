@@ -521,6 +521,12 @@ test("negotovo (K-10): gotovi indeksi brez [?], potence in oklepaji izraza z [?]
   assert.deepEqual(ozn("A(x1, y1), B(x2, y2), T(x1, y1), T(x2, y2), a1 + a2 + a3 + a4 + a5"), []);
   // Števka za zaklepajem je negotova razen pri oznakah: (-3)2, (2x)2, (ab)2 da, a) 1) (1) (str. 5) ne.
   assert.deepEqual(ozn("(-3)2 = 9, (2x)2, (ab)2"), [")2", ")2", ")2"]);
+  assert.deepEqual(ozn("Iz v0, v2 = v02 + 2as"), ["v2", "v02"]);
+  assert.deepEqual(ozn("Pri v0 in v2 = 2as"), ["v2"]);
+  assert.deepEqual(ozn("a1 = 3 cm, a2 = 36 cm2, a = 6 cm"), ["a2", "cm2"]);
+  assert.deepEqual(ozn("c = 12 cm, a1 = 3 cm, a2 = 36 cm2"), ["a2", "cm2"]);
+  assert.deepEqual(ozn("(sin x)2 + (cos x)2 = 1, (ln x)2"), [")2", ")2", ")2"]);
+  assert.deepEqual(ozn("Točke T1(x1, y1), T2(x2, y2) in T3(x3, y3); x1 = 2. x2 = 3; x0, x1, x2"), []);
   // Ustaljeni zapisi indeksov ostanejo brez oznake.
   assert.deepEqual(ozn("x1 + x2, x1·x2, x1 in x2, (x - x1)(x - x2), y2 - y1, a1b1 + a2b2, q1q2, ničli x1 = 1, x2 = 3"), []);
   // Oznaka a) ali (str. 5) pred števko ni kvadrat.
