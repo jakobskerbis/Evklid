@@ -12,6 +12,7 @@ import { chemSub, chemNumbers } from "./molska.js";
 import { UNIT_GROUPS, token, unitResultTex, parseUnit, hasUnits, OFFSET_TEMP } from "./enote.js";
 import { pomanjsaj, prilagodiSirini } from "../sirina.js";
 import { izrisi } from "../mat/izris.js";
+import { createWriter, writerDefaultOpen } from "./pisi.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const isTouch = () => typeof matchMedia !== "undefined" && matchMedia("(hover: none) and (pointer: coarse)").matches;
@@ -172,6 +173,7 @@ export function createScientific(root, opts) {
         <label class="sc-format-l"><span class="sr-only">${esc(t("sc.format"))}</span><select class="sc-format" aria-label="${esc(t("sc.format"))}"></select></label>
         <div class="sc-vars" hidden></div>
         <span class="sc-sp"></span>
+        <button type="button" class="ghost small sc-write-btn" aria-pressed="false" hidden>${icon("pencil")}<span>${esc(t("sc.write"))}</span></button>
         <button type="button" class="ghost small sc-const-btn" aria-expanded="false" title="${esc(t("sc.constants"))}">${icon("atom")}<span>${esc(t("sc.constants"))}</span></button>
         <button type="button" class="ghost icon-only sc-clear-h" title="${esc(t("sc.clearHistory"))}" aria-label="${esc(t("sc.clearHistory"))}">${icon("trash-2")}</button>
       </div>
@@ -182,6 +184,7 @@ export function createScientific(root, opts) {
         </div>
         <input class="sc-input" data-kb-own autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done" aria-label="${esc(t("sc.title"))}" aria-describedby="${sayId}" placeholder="${esc(t("sc.placeholder"))}">
         <div class="sc-say sr-only" id="${sayId}"></div>
+        <div class="sc-ink-note" hidden><span>✎ ${esc(t("sc.inkRead"))}</span><button type="button" class="ghost small sc-ink-fix">${esc(t("sc.inkFix"))}</button></div>
         <div class="sc-live" aria-live="polite"></div>
       </div>
     </div>
@@ -198,6 +201,60 @@ export function createScientific(root, opts) {
   const consts = $(".sc-consts");
   const more = $(".sc-more:not(.sc-units)");
   const units = $(".sc-units");
+  // Postavitev po velikosti kalkulatorja (graph.css »izbira C«): širok in ležeč → zgodovina levo, zaslon nad tipkami;
+  // širok in pokončen → tipke spodaj čez vso širino. Velja tudi v plavajočem oknu (okna.js), kjer zaslon ni merilo.
+  const layout = () => {
+    const { width: w, height: h } = root.getBoundingClientRect();
+    if (!w || !h) return;
+    root.classList.toggle("sc-c", w >= 861 && h >= 600 && w > h);
+    root.classList.toggle("sc-tall", w >= 861 && h > w);
+    root.style.setProperty("--sc-h", `${Math.round(h)}px`);
+    keysNeed = 0; // nova velikost: prostor za tipke izmerimo znova
+    fitEntry();
+  };
+  // .sc-c: zapis, ki je višji od zaslona ali od prostora nad tipkami (sistem štirih enačb, matrika), se pomanjša
+  // namesto drsenja – kazalka in sproten izid ostaneta vidna, nevidni vnos pokrije ves zapis, tipke ostanejo cele.
+  // Hitro (vsak pritisk): višina zapisa je sorazmerna faktorju, zato ena meritev pri trenutnem faktorju da novega;
+  // prostor za tipke (keysNeed) se izmeri le ob spremembi velikosti.
+  let keysNeed = 0;
+  const fitEntry = () => {
+    // pripeto okno »Piši« ima svojo mrežo (graph.css): zapis tam raste, zgodovina se skrči
+    if (!root.classList.contains("sc-c") || root.matches(".sc-pisi-r, .sc-pisi-l, .sc-pisi-b")) return root.style.removeProperty("--sc-fit");
+    const entry = $(".sc-entry");
+    const prev = $(".sc-preview");
+    const k = prev.querySelector(".katex");
+    const s0 = parseFloat(root.style.getPropertyValue("--sc-fit")) || 1;
+    const set = (s) => Math.abs(s - s0) > 0.004 && root.style.setProperty("--sc-fit", s.toFixed(3));
+    if (!k) return set(1);
+    if (!keysNeed) {
+      root.style.gridTemplateRows = "auto auto min-content"; // tipke v najmanjši višini (40 px)
+      keysNeed = $(".sc-keys").offsetHeight;
+      root.style.gridTemplateRows = "";
+    }
+    k.style.fontSize = ""; // širinski pomanjšaj (showEntry) znova po novem faktorju
+    const cs = getComputedStyle(entry);
+    const max = Math.min(parseFloat(cs.maxHeight) || Infinity, root.clientHeight - $(".sc-bar").offsetHeight - keysNeed);
+    const room = max - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0) - 2;
+    const full = ($(".sc-line").offsetHeight + $(".sc-live").offsetHeight) / s0; // višina pri faktorju 1
+    let s = full > 0 ? Math.max(0.3, Math.min(1, room / full)) : 1;
+    set(s);
+    pomanjsaj(k, prev.clientWidth, () => prev.scrollWidth);
+    // KaTeX ni povsem sorazmeren (črte ulomkov, oklepaji): en popravek, če še vedno preliva
+    if (s > 0.3 && entry.scrollHeight > entry.clientHeight + 1) {
+      root.style.setProperty("--sc-fit", (s = Math.max(0.3, s * (entry.clientHeight / entry.scrollHeight) * 0.97)).toFixed(3));
+      pomanjsaj(k, prev.clientWidth, () => prev.scrollWidth);
+    }
+  };
+  if (typeof ResizeObserver === "function") new ResizeObserver(layout).observe(root);
+  // ob vsaki spremembi zapisa ali izida (tipkanje, =, napaka); slog na root ni opazovan, zato brez zanke
+  if (typeof MutationObserver === "function") new MutationObserver(fitEntry).observe($(".sc-entry"), { childList: true, subtree: true, characterData: true });
+  // odprto, zaprto ali prestavljeno okno »Piši« (pisi.js menja razrede sc-pisi-*): znova prilagodi
+  let pisiCls = "";
+  if (typeof MutationObserver === "function")
+    new MutationObserver(() => {
+      const c = root.className.match(/sc-pisi-\w+/g)?.join(" ") || "";
+      if (c !== pisiCls) (pisiCls = c), (keysNeed = 0), fitEntry();
+    }).observe(root, { attributes: true, attributeFilter: ["class"] });
   const varsBar = $(".sc-vars");
 
   // --- tipkovnica ---
@@ -360,6 +417,8 @@ export function createScientific(root, opts) {
   // Vrstica je formula iz zbirke (insert z replace): njene črke so neznanke, zato shranjene spremenljivke z istim
   // imenom (F = 6 iz prejšnjega računa, spomin M) ne veljajo, dokler je ne izračunaš ali pobrišeš.
   let fromFormula = null;
+  let writer = null; // okno »Piši« (spodaj, opts.readInk)
+  let inkText = null; // vnos, ki ga je postavilo branje pisave (ob spremembi opomba »prebrano« izgine)
   const vars = () => (fromFormula ? Object.fromEntries(Object.entries(st.vars).filter(([n]) => !fromFormula.has(n))) : st.vars);
   const env = () => ({ vars: vars(), funcs: st.funcs, ans: st.ans, ...(st.ansUnit ? { ansUnit: st.ansUnit } : {}), deg: st.angle === "deg", grad: st.angle === "grad", comma: comma() });
   // M(H2SO4) v vnosu je molska masa (public/graph/molska.js): fn dobi vnos s spremenljivkami namesto M(…)
@@ -777,7 +836,13 @@ export function createScientific(root, opts) {
     if (input.value === undo.cur.v) undo.cur.p = input.selectionStart ?? undo.cur.p; // kazalec pred naslednjo spremembo
     showEntry();
   });
+  function inkNote(on) {
+    const n = root.querySelector(".sc-ink-note");
+    if (n) n.hidden = !on;
+    if (!on) inkText = null;
+  }
   function update() {
+    if (inkText !== null && input.value !== inkText) inkNote(false);
     record();
     const text = input.value;
     const prev = $(".sc-preview");
@@ -875,6 +940,8 @@ export function createScientific(root, opts) {
     st.history.push(e);
     if (st.history.length > MAX_HISTORY) st.history.splice(0, st.history.length - MAX_HISTORY);
     save();
+    writer?.clear(); // okno »Piši«: nov račun na prazen list
+    inkNote(false);
     input.value = "";
     recall = -1;
     update();
@@ -1418,6 +1485,45 @@ export function createScientific(root, opts) {
     renderHistory(false);
   });
   $(".sc-const-btn").addEventListener("click", () => showPanel(consts.hidden ? "consts" : null));
+  // ---------- okno »Piši« (public/graph/pisi.js): zapis s pisalom se prebere in postavi v vnos ----------
+  // opts.readInk(dataUrl, { comma }) → { text, message } (prijavljen učenec; javni /kalkulator ga nima: gumb skrit)
+  const writeBtn = $(".sc-write-btn");
+  function writerOpen(on) {
+    if (on && !writer)
+      writer = createWriter(root, {
+        t,
+        read: (image) => opts.readInk(image, { comma: comma() }), // decimalni ločilnik kot pri tipkanju (en: pika)
+        onText: (text) => {
+          input.value = text;
+          input.setSelectionRange(text.length, text.length);
+          recall = -1;
+          update();
+          inkText = input.value;
+          inkNote(true);
+        },
+        entry: () => input.value,
+        onFail: () => inkNote(false),
+        onClose: (focused) => {
+          writeBtn.setAttribute("aria-pressed", "false");
+          if (focused) input.focus({ preventScroll: true });
+        },
+      });
+    if (on) writer.open();
+    else writer?.close();
+    writeBtn.setAttribute("aria-pressed", String(!!writer?.isOpen));
+  }
+  if (opts.readInk) {
+    writeBtn.hidden = false;
+    writeBtn.addEventListener("click", () => writerOpen(!writer?.isOpen));
+    // »Popravi«: tipke (okno se skrije), kazalec na konec zapisa
+    $(".sc-ink-fix").addEventListener("click", () => {
+      writer?.close(false); // le tokrat: na tablici se okno ob naslednjem odprtju spet pokaže
+      inkNote(false);
+      input.focus({ preventScroll: true });
+      input.setSelectionRange(input.value.length, input.value.length);
+    });
+    if (writerDefaultOpen()) queueMicrotask(() => root.isConnected && writerOpen(true));
+  }
   consts.addEventListener("click", (e) => {
     if (e.target.closest(".sc-consts-x")) return showPanel(null);
     const b = e.target.closest(".sc-const");

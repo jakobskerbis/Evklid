@@ -4457,7 +4457,7 @@ function splitOpts(name) {
     topic: { side: "end", min: 320, max: 900, otherMin: 400, grid: () => $("#topic-content > .topic-grid, #topic-content > .session-grid") },
     lesson: { side: "end", min: 320, max: 900, otherMin: 400, grid: () => $("#view-textbook > .tb-lesson-grid.has-side") },
     gc: { side: "start", min: 280, max: 640, otherMin: 320, varName: "--gc-panel" },
-    sc: { side: "end", min: 320, max: 720, otherMin: 280 },
+    sc: { side: "end", min: 320, max: (a) => Math.max(720, Math.round(a * 0.75)), otherMin: 280 }, // desni del: zaslon in tipkovnica
   }[name];
   return { ...base, key: name, varName: `--split-${name}`, ...o };
 }
