@@ -105,10 +105,11 @@ test("tutor prompt names the school system, local helpline and short replies in 
   const p = buildSystemPrompt({ settings: s, lite: true });
   assert.match(p, /Šolski sistem: India – CBSE \/ NCERT; razred Class 10/);
   assert.match(p, /CHILDLINE 1098/);
-  assert.match(p, /Dolžina odgovorov: kratka/);
+  assert.match(p, /Dolžina odgovorov: kratka \(lahki način\)/);
   const si = buildSystemPrompt({ settings: normalizeSettings({}) });
   assert.match(si, /Šolski sistem: Slovenija/);
-  assert.match(si, /Dolžina odgovorov: običajna/);
+  assert.match(si, /Dolžina odgovorov: kratka$/m);
+  assert.match(buildSystemPrompt({ settings: normalizeSettings({ detailed: true }) }), /Dolžina odgovorov: podrobna/);
 });
 
 test("textbook books per school system", () => {

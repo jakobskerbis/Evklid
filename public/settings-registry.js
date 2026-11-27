@@ -30,6 +30,7 @@ export const PROFILE_SETTINGS = {
   personality_setting: { desc: "tutor tone / theme of examples, max 200 chars, e.g. 'strog', 'šaljiv, primeri iz nogometa'" },
   language: { desc: "conversation and app language, ISO 639 code (e.g. 'sl', 'en', 'de', 'hr', 'zh-Hant'); the app reloads in it" },
   dialect: { desc: `tutor's dialect or language variant, only for the chat tone (terms, formulas, boxes and tasks stay standard); '' = standard language; must belong to the conversation language: ${DIALECT_LIST}` },
+  detailed: { values: ["on", "off"], desc: "switch »Podrobna razlaga«: on = longer, detailed explanations; off (default) = short replies (essence only, ~50 words)" },
   data_mode: { values: ["auto", "lite", "normal"], desc: "light mode (less data, shorter replies): auto = on slow connection, lite = always, normal = never" },
   goal: { values: ["sprotno", "test", "npz", "matura", "tekmovanje", "izpit"], desc: "student's goal: sprotno = everyday learning, test = school test, npz (OŠ), matura (SŠ), tekmovanje (competition), izpit (faculty / regional exam)" },
   goal_date: { desc: `date of the goal 'YYYY-MM-DD', or '' to delete it (daily reminder at ${OPOMNIK_URA}:00 until then)` },

@@ -294,7 +294,7 @@ test("Preizkus 3, meritev po #836 (2026-11-18): no praise opener on a wrong step
   // Popravki inštruktorja 21. 11. 2026 (#910, #913): +1745 znakov (62 015 → 63 760; ~480 žetonov), meja +1760.
   // Kandidat 2 v produkciji (#918, #920, 21. 11. 2026): +2438 znakov (63 760 → 66 198; ~650 žetonov), meja +2460.
   // Orodja vaja in kalkulator (P1-3, P1-9, 25. 11. 2026, s popravki pregleda): +1116 znakov (66 198 → 67 314; ~300 žetonov), meja +1100.
-  assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226 + 1760 + 2460 + 1100, `stalni del ${stat.length} znakov`);
+  assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226 + 1760 + 2460 + 1100 + 1600, `stalni del ${stat.length} znakov`);
 });
 
 test("Preizkus 3, krog 2 (2026-11-18): one definition of a drill list, parts with another method are one task, grades 1–4 short", () => {
@@ -392,7 +392,7 @@ test("Preizkus 3 (j 2026-11-17): every sub-question in one reply, short answers 
     // Popravki inštruktorja 21. 11. 2026 (#910, #913): +1745 znakov (62 015 → 63 760; ~480 žetonov), meja +1760.
     // Kandidat 2 v produkciji (#918, #920, 21. 11. 2026): +2438 znakov (63 760 → 66 198; ~650 žetonov), meja +2460.
     // Orodja vaja in kalkulator (P1-3, P1-9, 25. 11. 2026, s popravki pregleda): +1116 znakov (66 198 → 67 314; ~300 žetonov), meja +1100.
-    assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226 + 1760 + 2460 + 1100, `stalni del ${stat.length} znakov`);
+    assert.ok(stat.length < 58164 + 1800 + 200 + 330 + 800 + 510 + 226 + 1760 + 2460 + 1100 + 1600, `stalni del ${stat.length} znakov`);
   });
 });
 
