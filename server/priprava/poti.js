@@ -643,9 +643,9 @@ export function mountPriprave(app, store, { loadStudent, now = () => Date.now(),
     const kljuc = JSON.stringify([p.id, sled.n, sled.m, sled.d, sled.c, p.pot, p.sklopi, p.izkljucene ?? null, p.predmet, settings?.subject, settings?.curriculum_level, settings?.educational_track, settings?.school_system]);
     if (zemljevidi.has(kljuc)) return zemljevidi.get(kljuc);
     const izseki = db
-      .prepare("SELECT id, naslov, besedilo FROM priprava_izseki WHERE priprava_id = ? AND student_id = ? ORDER BY vir_id, zaporedje")
+      .prepare("SELECT id, vir_id, vrsta, naslov, besedilo FROM priprava_izseki WHERE priprava_id = ? AND student_id = ? ORDER BY vir_id, zaporedje")
       .all(p.id, s.id)
-      .map((r) => ({ id: r.id, naslov: r.naslov == null ? null : unseal(r.naslov), besedilo: unseal(r.besedilo) }));
+      .map((r) => ({ id: r.id, vir_id: r.vir_id, vrsta: r.vrsta, naslov: r.naslov == null ? null : unseal(r.naslov), besedilo: unseal(r.besedilo) }));
     const z = await zemljevid({ pot: p.pot, sklopi: sklopiIz(p.sklopi), predmet: p.predmet, izkljucene: izkljuceneIz(p.izkljucene) }, izseki, settings || {});
     zemljevidi.set(kljuc, z);
     while (zemljevidi.size > 50) zemljevidi.delete(zemljevidi.keys().next().value);

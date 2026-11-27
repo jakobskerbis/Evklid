@@ -33,8 +33,12 @@ const brezFormul = (t) =>
  * izseke razdelka brez jasne lastne teme. obseg: Set id-jev tem testa ali null; tema iz obsega dobi prednost pred
  * sosednjo temo drugega sklopa z malo boljšo oceno.
  */
-export function temaIzseka(izsek, settings, obseg = null, predpomnilnik = new Map()) {
-  const iz = temaBesedila(brezFormul(izsek.besedilo).slice(0, IZSEK_ZNAKOV), settings, obseg);
+export function temaIzseka(izsek, settings, obseg = null, predpomnilnik = new Map(), zadetki = null) {
+  const tekst = brezFormul(izsek.besedilo).slice(0, IZSEK_ZNAKOV);
+  const vsi = rankLessons(tekst, settings);
+  const iz = temaBesedila(tekst, settings, obseg, false, vsi);
+  // Zadetki izseka brez teme iz besedila ostanejo za drugi krog (isto iskanje, ne še enkrat).
+  if (!iz && zadetki) zadetki.set(izsek.id, vsi);
   if (iz) return iz;
   const naslov = brezFormul(izsek.naslov).trim();
   if (!naslov) return null;
@@ -42,8 +46,8 @@ export function temaIzseka(izsek, settings, obseg = null, predpomnilnik = new Ma
   return predpomnilnik.get(naslov);
 }
 
-function temaBesedila(tekst, settings, obseg, naslov = false) {
-  const hits = rankLessons(tekst, settings).slice(0, 8);
+function temaBesedila(tekst, settings, obseg, naslov = false, vsi = null) {
+  const hits = (vsi || rankLessons(tekst, settings)).slice(0, 8);
   const [best, second] = hits;
   if (!best || !best.inTitle || best.score < MIN_SCORE) return null;
   const q = new Set(terms(tekst));
@@ -70,51 +74,60 @@ function temaBesedila(tekst, settings, obseg, naslov = false) {
 }
 
 // Drugi krog (K-10): izsek, ki v prvem krogu ni dobil teme (brez imena teme v besedilu, npr. »Splošna oblika: f(x) = …«),
-// dobi temo iz OBSEGA TESTA, kadar je izbira med temami obsega jasna; učenec je sam povedal, katere sklope test pokrije,
+// dobi temo iz OBSEGA TESTA, kadar jo podpira njegovo LASTNO besedilo; učenec je sam povedal, katere sklope test pokrije,
 // zato izbira med nekaj temami obsega ni ugibanje po vsem učnem načrtu. Po vrsti:
 // 1. besedilo: najboljša tema obsega ima oceno vsaj OBSEG_MIN, je boljša od vsake teme zunaj obsega in vodi za
-//    OBSEG_VODI pred drugo temo obsega; pri tesnem vodstvu znotraj obsega odloči tema izseka tik pred njim, če je med obema;
-// 2. primer ali zgled brez teme gre k temi izseka tik pred njim (primer razlaga snov pred seboj);
-// 3. izsek med dvema izsekoma z isto temo obsega dobi to temo.
-// Izsek, ki se ne ujema z nobeno temo obsega (navodilo, naslovna vrstica), ostane »samo v zapiskih«.
+//    OBSEG_VODI pred drugo temo obsega; pri tesnem vodstvu (pod OBSEG_TESNO) odloči tema izseka tik pred njim, če je med obema;
+// 2. primer ali zgled brez teme gre k temi izseka tik pred njim (primer razlaga snov pred seboj), a samo v istem viru in
+//    razdelku in samo, kadar je ta tema med zadetki obsega njegovega lastnega besedila.
+// Sosedstvo samo nikoli ne da teme: navodilo, naslovna vrstica ali opomba učitelja sredi snovi ostane »samo v zapiskih«.
 export const OBSEG_MIN = 9;
 export const OBSEG_VODI = 1.25;
-function drugiKrog(izseki, st, obseg, poTemi, samoVZapiskih) {
+export const OBSEG_TESNO = 1.1;
+async function drugiKrog(izseki, st, obseg, poTemi, samoVZapiskih, zadetki) {
   const tema = new Map();
   for (const [id, ids] of poTemi) for (const x of ids) tema.set(x, id);
   const brez = new Set(samoVZapiskih);
+  const dodani = new Map();
   const dodaj = (i, id) => {
     tema.set(i.id, id);
-    brez.delete(i.id);
+    dodani.set(i.id, id);
   };
-  izseki.forEach((i, k) => {
-    if (!brez.has(i.id)) return;
-    const prej = k > 0 ? tema.get(izseki[k - 1].id) : null;
-    const vsi = rankLessons(brezFormul(i.besedilo).slice(0, IZSEK_ZNAKOV), st);
+  const primer = (i) => i.vrsta === "primer" || /^\s*(?:\d+\.\s*)?(?:rešen[i]?\s+)?(?:primer|zgled)/i.test(i.besedilo);
+  let n = 0;
+  for (let k = 0; k < izseki.length; k++) {
+    const i = izseki[k];
+    if (!brez.has(i.id)) continue;
+    // Ne zadrži strežnika (kot prvi krog).
+    if (++n % 200 === 0) await new Promise((r) => setImmediate(r));
+    const p = k > 0 ? izseki[k - 1] : null;
+    const prej = p && p.vir_id === i.vir_id && p.naslov === i.naslov ? tema.get(p.id) : null;
+    const vsi = zadetki.get(i.id) || rankLessons(brezFormul(i.besedilo).slice(0, IZSEK_ZNAKOV), st);
     const hits = vsi.filter((h) => obseg.has(h.d.id));
     const zunaj = vsi.find((h) => !obseg.has(h.d.id));
     const [a, b] = hits;
     // Splošno besedilo (»Funkcija je predpis …«) se bolje ujema s temo zunaj obsega: ne pristane v obsegu.
     if (a && a.score >= OBSEG_MIN && (!zunaj || a.score > zunaj.score)) {
-      if (!b || a.score >= b.score * OBSEG_VODI) return dodaj(i, a.d.id);
-      if (prej && (a.d.id === prej || b.d.id === prej)) return dodaj(i, prej);
+      if (!b || a.score >= b.score * OBSEG_VODI) {
+        dodaj(i, a.d.id);
+        continue;
+      }
+      if (prej && (a.d.id === prej || (b.d.id === prej && a.score < b.score * OBSEG_TESNO))) {
+        dodaj(i, prej);
+        continue;
+      }
     }
-    if (prej && obseg.has(prej) && (i.vrsta === "primer" || /^\s*(primer|zgled)\b/i.test(i.besedilo))) dodaj(i, prej);
-  });
-  izseki.forEach((i, k) => {
-    if (!brez.has(i.id) || k === 0 || k === izseki.length - 1) return;
-    const [p, n] = [tema.get(izseki[k - 1].id), tema.get(izseki[k + 1].id)];
-    if (p && p === n && obseg.has(p)) dodaj(i, p);
-  });
-  for (const i of izseki) {
-    if (samoVZapiskih.includes(i.id) && !brez.has(i.id)) {
-      const id = tema.get(i.id);
-      if (!poTemi.has(id)) poTemi.set(id, []);
-      poTemi.get(id).push(i.id);
-    }
+    if (prej && obseg.has(prej) && primer(i) && hits.some((h) => h.d.id === prej && h.score > 0)) dodaj(i, prej);
   }
-  for (const ids of poTemi.values()) ids.sort((x, y) => x - y);
-  samoVZapiskih.splice(0, samoVZapiskih.length, ...samoVZapiskih.filter((id) => brez.has(id)));
+  if (!dodani.size) return;
+  for (const [iid, id] of dodani) {
+    if (!poTemi.has(id)) poTemi.set(id, []);
+    poTemi.get(id).push(iid);
+  }
+  // Izseki teme v vrstnem redu zapiskov (vir, zaporedje), ne po id-ju (ponovno obdelan vir dobi nove id-je).
+  const mesto = new Map(izseki.map((i, k) => [i.id, k]));
+  for (const ids of poTemi.values()) ids.sort((x, y) => mesto.get(x) - mesto.get(y));
+  samoVZapiskih.splice(0, samoVZapiskih.length, ...samoVZapiskih.filter((id) => !dodani.has(id)));
 }
 
 // Teme sklopov poti (sklopi so indeksi sklopov, kot v načrtu testa).
@@ -161,12 +174,13 @@ export async function zemljevid({ pot = null, sklopi = null, predmet = null, izk
   const poTemi = new Map();
   const samoVZapiskih = [];
   const pp = new Map();
+  const zadetki = obseg ? new Map() : null;
   const delno = izseki.length > MAX_IZSEKOV;
   let n = 0;
   for (const i of izseki.slice(0, MAX_IZSEKOV)) {
     // Ne zadrži strežnika: po vsakih 200 izsekih prepusti zanko drugim zahtevkom.
     if (++n % 200 === 0) await new Promise((r) => setImmediate(r));
-    const id = iskanje ? temaIzseka(i, st, obseg, pp) : null;
+    const id = iskanje ? temaIzseka(i, st, obseg, pp, zadetki) : null;
     if (!id) {
       samoVZapiskih.push(i.id);
       continue;
@@ -174,7 +188,7 @@ export async function zemljevid({ pot = null, sklopi = null, predmet = null, izk
     if (!poTemi.has(id)) poTemi.set(id, []);
     poTemi.get(id).push(i.id);
   }
-  if (obseg && iskanje && samoVZapiskih.length) drugiKrog(izseki.slice(0, MAX_IZSEKOV), st, obseg, poTemi, samoVZapiskih);
+  if (obseg && iskanje && samoVZapiskih.length) await drugiKrog(izseki.slice(0, MAX_IZSEKOV), st, obseg, poTemi, samoVZapiskih, zadetki);
   // Teme v vrstnem redu učnega načrta (pot, sklop, tema), sicer po imenu.
   const red = (id) => {
     const t = getTopic(id);
