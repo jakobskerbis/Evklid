@@ -69,6 +69,54 @@ function temaBesedila(tekst, settings, obseg, naslov = false) {
   return best.d.id;
 }
 
+// Drugi krog (K-10): izsek, ki v prvem krogu ni dobil teme (brez imena teme v besedilu, npr. »Splošna oblika: f(x) = …«),
+// dobi temo iz OBSEGA TESTA, kadar je izbira med temami obsega jasna; učenec je sam povedal, katere sklope test pokrije,
+// zato izbira med nekaj temami obsega ni ugibanje po vsem učnem načrtu. Po vrsti:
+// 1. besedilo: najboljša tema obsega ima oceno vsaj OBSEG_MIN, je boljša od vsake teme zunaj obsega in vodi za
+//    OBSEG_VODI pred drugo temo obsega; pri tesnem vodstvu znotraj obsega odloči tema izseka tik pred njim, če je med obema;
+// 2. primer ali zgled brez teme gre k temi izseka tik pred njim (primer razlaga snov pred seboj);
+// 3. izsek med dvema izsekoma z isto temo obsega dobi to temo.
+// Izsek, ki se ne ujema z nobeno temo obsega (navodilo, naslovna vrstica), ostane »samo v zapiskih«.
+export const OBSEG_MIN = 9;
+export const OBSEG_VODI = 1.25;
+function drugiKrog(izseki, st, obseg, poTemi, samoVZapiskih) {
+  const tema = new Map();
+  for (const [id, ids] of poTemi) for (const x of ids) tema.set(x, id);
+  const brez = new Set(samoVZapiskih);
+  const dodaj = (i, id) => {
+    tema.set(i.id, id);
+    brez.delete(i.id);
+  };
+  izseki.forEach((i, k) => {
+    if (!brez.has(i.id)) return;
+    const prej = k > 0 ? tema.get(izseki[k - 1].id) : null;
+    const vsi = rankLessons(brezFormul(i.besedilo).slice(0, IZSEK_ZNAKOV), st);
+    const hits = vsi.filter((h) => obseg.has(h.d.id));
+    const zunaj = vsi.find((h) => !obseg.has(h.d.id));
+    const [a, b] = hits;
+    // Splošno besedilo (»Funkcija je predpis …«) se bolje ujema s temo zunaj obsega: ne pristane v obsegu.
+    if (a && a.score >= OBSEG_MIN && (!zunaj || a.score > zunaj.score)) {
+      if (!b || a.score >= b.score * OBSEG_VODI) return dodaj(i, a.d.id);
+      if (prej && (a.d.id === prej || b.d.id === prej)) return dodaj(i, prej);
+    }
+    if (prej && obseg.has(prej) && (i.vrsta === "primer" || /^\s*(primer|zgled)\b/i.test(i.besedilo))) dodaj(i, prej);
+  });
+  izseki.forEach((i, k) => {
+    if (!brez.has(i.id) || k === 0 || k === izseki.length - 1) return;
+    const [p, n] = [tema.get(izseki[k - 1].id), tema.get(izseki[k + 1].id)];
+    if (p && p === n && obseg.has(p)) dodaj(i, p);
+  });
+  for (const i of izseki) {
+    if (samoVZapiskih.includes(i.id) && !brez.has(i.id)) {
+      const id = tema.get(i.id);
+      if (!poTemi.has(id)) poTemi.set(id, []);
+      poTemi.get(id).push(i.id);
+    }
+  }
+  for (const ids of poTemi.values()) ids.sort((x, y) => x - y);
+  samoVZapiskih.splice(0, samoVZapiskih.length, ...samoVZapiskih.filter((id) => brez.has(id)));
+}
+
 // Teme sklopov poti (sklopi so indeksi sklopov, kot v načrtu testa).
 export function temeObsega(pot, sklopi) {
   const path = pot ? getPath(pot) : null;
@@ -126,6 +174,7 @@ export async function zemljevid({ pot = null, sklopi = null, predmet = null, izk
     if (!poTemi.has(id)) poTemi.set(id, []);
     poTemi.get(id).push(i.id);
   }
+  if (obseg && iskanje && samoVZapiskih.length) drugiKrog(izseki.slice(0, MAX_IZSEKOV), st, obseg, poTemi, samoVZapiskih);
   // Teme v vrstnem redu učnega načrta (pot, sklop, tema), sicer po imenu.
   const red = (id) => {
     const t = getTopic(id);

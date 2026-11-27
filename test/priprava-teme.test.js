@@ -144,3 +144,29 @@ test("brez napačnih tem: naslov z več temami ne da teme izsekom; obseg ne posr
   const f = await zemljevid({ predmet: "MAT" }, [{ id: 1, naslov: null, besedilo: "$\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$" }], SS4);
   assert.ok(!f.teme.some((t) => /Kotne/.test(t.ime)), JSON.stringify(f.teme));
 });
+
+test("drugi krog (K-10): izseki brez imena teme dobijo temo obsega testa, navodilo in naslovna vrstica ne", async () => {
+  const k10 = async (f) => razrezi((await preberiVir("besedilo", vir(`k10/${f}`))).strani).map((x, i) => ({ ...x, id: i + 1 }));
+  // Kvadratna funkcija: prej le naslovna vrstica pri temi (»v zapiskih je le naslov«), zdaj vsa snov.
+  const kv = await k10("02-mat-kvadratna.md");
+  const z = await zemljevid({ pot: "MAT-SS-2", sklopi: [3] }, kv, { curriculum_level: "2. letnik", educational_track: "SREDNJA_SOLA" });
+  const id = (re) => kv.find((i) => re.test(i.besedilo)).id;
+  const tema = (iid) => z.teme.find((t) => t.izseki.includes(iid))?.ime;
+  assert.equal(tema(id(/^Splošna oblika/)), "Kvadratna funkcija");
+  assert.equal(tema(id(/^Teme T\(p, q\)/)), "Kvadratna funkcija");
+  assert.equal(tema(id(/^Zgled:/)), "Kvadratna funkcija");
+  assert.deepEqual(z.samoVZapiskih, []);
+  // Vsak izsek natanko enkrat, izseki teme po vrsti.
+  const vsi = [...z.teme.flatMap((t) => t.izseki), ...z.samoVZapiskih].sort((a, b) => a - b);
+  assert.deepEqual(vsi, kv.map((i) => i.id));
+  assert.ok(z.teme.every((t) => t.izseki.every((x, i, a) => !i || a[i - 1] < x)));
+  // Elektrika: navodilo umetni inteligenci in naslovna vrstica ostaneta samo v zapiskih; osnovni naboj gre k Coulombu.
+  const el = await k10("06-fiz-elektrika.md");
+  const e = await zemljevid({ pot: "FIZ-SS-2", sklopi: [2] }, el, { curriculum_level: "2. letnik", educational_track: "SREDNJA_SOLA", subject: "FIZ" });
+  const eid = (re) => el.find((i) => re.test(i.besedilo)).id;
+  assert.ok(e.samoVZapiskih.includes(eid(/Navodilo za pomočnika/)) && e.samoVZapiskih.includes(eid(/^Fizika 2\. letnik/)));
+  assert.equal(e.teme.find((t) => t.izseki.includes(eid(/^Naboj/)))?.ime, "Električni naboj in Coulombov zakon");
+  // Brez obsega (ni poti) drugega kroga ni.
+  const b = await zemljevid({ predmet: "MAT" }, kv, { curriculum_level: "2. letnik", educational_track: "SREDNJA_SOLA" });
+  assert.ok(b.samoVZapiskih.includes(id(/^Splošna oblika/)));
+});
