@@ -97,6 +97,10 @@ test("kalkulator: prepis pisave je ena vrstica, ≤ ≥ ≠ v zapisu kalkulatorj
   assert.match(fn, /slice\(0, 200\)/);
   assert.match(fn, /m \? m\[1\] : ""/, "brez <zapis> nič ne vstavimo (ne besedila modela)");
   assert.match(fn, /comma \? "decimalna števila z vejico/);
+  // samo prepis (j, 27. 11.: boljše branje ne sme popravljati učenčevega računa)
+  assert.match(fn, /Ne računaj, ne poenostavljaj, ne dopolnjuj/);
+  assert.match(fn, /ne popravljaj napak v računu ter ne dodajaj in ne izpuščaj znakov ali oklepajev/);
+  assert.match(fn, /comma \? ", pika na sredini višine med števili je množenje/, "pika kot množenje le pri decimalni vejici");
 });
 
 // ---------- pravi brskalnik ----------

@@ -77,6 +77,8 @@ function build() {
   });
   pad.querySelector(".pad-check").addEventListener("click", submit);
   ink = createInk(pad.querySelector("canvas.ink"));
+  // dvojni dotik prsta (naprava s pisalom) zamenja orodje: gumb naj to pokaže
+  ink.onTool = (tool) => pad.querySelectorAll("[data-tool]").forEach((x) => x.classList.toggle("on", x.dataset.tool === tool));
   pad.querySelectorAll("[data-tool]").forEach((b) =>
     b.addEventListener("click", () => {
       ink.tool = b.dataset.tool;
