@@ -255,4 +255,24 @@ test("naslov vira (K-10): prva vrstica z vsem imenom teme velja kot naslov razde
   const zz = await zemljevid({ pot: "MAT-SS-2", sklopi: [3] }, zvezek, ss2);
   const lin = zz.teme.find((t) => t.ime === "Linearna funkcija");
   for (const re of [/^Splošna oblika/, /^Teme T/]) assert.ok(!lin?.izseki.includes(zvezek.find((i) => re.test(i.besedilo)).id), String(re));
+  // Tudi kadar naslov druge lekcije ni sam v svoji vrstici (pregled): snov nadaljuje v isti vrstici, dvopičje, stavek.
+  for (const kv2 of [
+    "Kvadratna funkcija\nSplošna oblika: f(x) = ax^2 + bx + c, a ≠ 0",
+    "Kvadratna funkcija:\n\nSplošna oblika: f(x) = ax^2 + bx + c, a ≠ 0",
+    "12. 3. Kvadratna funkcija – nova snov.\n\nSplošna oblika: f(x) = ax^2 + bx + c, a ≠ 0",
+  ]) {
+    const zv = razrezi((await preberiVir("besedilo", Buffer.from(
+      `Linearna funkcija\n\nf(x) = kx + n, k je smerni koeficient\n\n${kv2}\n\nTeme T(p, q): p = -b/(2a), q = -D/(4a)\n\nZgled: f(x) = x^2 - 4x + 3\n`,
+    ))).strani).map((x, i) => ({ ...x, id: i + 1, vir_id: 1 }));
+    const zl = await zemljevid({ pot: "MAT-SS-2", sklopi: [3] }, zv, ss2);
+    const l = zl.teme.find((t) => t.ime === "Linearna funkcija");
+    for (const i of zv.slice(1)) assert.ok(!l?.izseki.includes(i.id), JSON.stringify([kv2, i.besedilo]));
+  }
+  // Lastna tema izseka iz drugega kroga ima prednost pred naslovom vira (pregled).
+  const en = [
+    { id: 1, vir_id: 1, naslov: null, besedilo: "MAT 2. letnik – kvadratna funkcija" },
+    { id: 2, vir_id: 1, naslov: null, besedilo: "Enačba x^2 - 5x + 6 = 0, diskriminanta D = 1, rešitvi x1 = 2, x2 = 3." },
+  ];
+  const ze = await zemljevid({ pot: "MAT-SS-2", sklopi: [3] }, en, ss2);
+  assert.equal(ze.teme.find((t) => t.izseki.includes(2))?.ime, "Kvadratna enačba");
 });
