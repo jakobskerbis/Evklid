@@ -105,3 +105,27 @@ test("hitro: podatki za kotno funkcijo v manj kot 200 ms (prej do 1,2 s)", () =>
   for (const s of ["sin(x)+cos(x)", "cos(x)^2+sin(x)^2", "x^3-3x", "1/x^2"]) info(s);
   assert.ok(performance.now() - t0 < 800, `${Math.round(performance.now() - t0)} ms`);
 });
+
+// Revizija 27. 11. 2026 (»pravilno ali nič«): zaloga vrednosti in vodoravne asimptote, ki jih vidi dijak
+test("zaloga vrednosti: brez napačnega intervala pri polih, natančna krajišča", () => {
+  const rg = (s) => row(info(s), "sc.infoRange")?.tex ?? null;
+  assert.equal(rg("1/sin(x)"), null); // prava zaloga (−∞, −1] ∪ [1, ∞) ni en interval: vrstice ni
+  assert.equal(rg("1/cos(x)"), null);
+  assert.equal(rg("sin(x+0,1)"), "[-1;\\,1]");
+  assert.equal(rg("sin(x)^2"), "[0;\\,1]");
+  assert.equal(rg("1/(2+sin(x))"), "[\\tfrac{1}{3};\\,1]");
+  assert.equal(rg("3sin(2x)-1"), "[-4;\\,2]"); // množenje brez znaka pred sin: perioda in zaloga
+  assert.equal(rg("sin(x)+cos(x)"), "[-\\sqrt{2};\\,\\sqrt{2}]");
+});
+
+test("vodoravne asimptote: le zanesljive, z ulomkom", () => {
+  const as = (s) => row(info(s), "sc.infoAsym")?.tex ?? null;
+  assert.equal(as("1/3+1/x"), "x = 0,\\ y = \\tfrac{1}{3}");
+  assert.equal(as("(2x+1)/(3x)"), "x = 0,\\ y = \\tfrac{2}{3}");
+  assert.equal(as("x/10^9"), null); // premica: ni vodoravne asimptote
+  assert.equal(as("1/x"), "x = 0,\\ y = 0");
+  assert.equal(as("x^2/(x^2+1)"), "y = 1");
+  assert.equal(as("2+1/(x-1)"), "x = 1,\\ y = 2");
+  assert.equal(as("e^(1/x)"), "y = 1");
+  assert.equal(as("(x^2+1)/x"), "x = 0"); // poševna asimptota ni vodoravna
+});
