@@ -38,7 +38,11 @@ export function temaIzseka(izsek, settings, obseg = null, predpomnilnik = new Ma
   const vsi = rankLessons(tekst, settings);
   const iz = temaBesedila(tekst, settings, obseg, false, vsi);
   // Zadetki izseka brez teme iz besedila ostanejo za drugi krog (isto iskanje, ne še enkrat).
-  if (!iz && zadetki) zadetki.set(izsek.id, vsi);
+  // Shrani le zadetke obsega in prvi zadetek zunaj obsega (več drugi krog ne potrebuje).
+  if (!iz && zadetki) {
+    const prvi = vsi.find((h) => !obseg.has(h.d.id));
+    zadetki.set(izsek.id, vsi.filter((h) => obseg.has(h.d.id) || h === prvi));
+  }
   if (iz) return iz;
   const naslov = brezFormul(izsek.naslov).trim();
   if (!naslov) return null;
@@ -84,6 +88,7 @@ function temaBesedila(tekst, settings, obseg, naslov = false, vsi = null) {
 export const OBSEG_MIN = 9;
 export const OBSEG_VODI = 1.25;
 export const OBSEG_TESNO = 1.1;
+export const PRIMER_MIN = 3; // primer mora sam vsaj malo podpirati temo (K-10: 3,6 in 5,8)
 async function drugiKrog(izseki, st, obseg, poTemi, samoVZapiskih, zadetki) {
   const tema = new Map();
   for (const [id, ids] of poTemi) for (const x of ids) tema.set(x, id);
@@ -93,7 +98,7 @@ async function drugiKrog(izseki, st, obseg, poTemi, samoVZapiskih, zadetki) {
     tema.set(i.id, id);
     dodani.set(i.id, id);
   };
-  const primer = (i) => i.vrsta === "primer" || /^\s*(?:\d+\.\s*)?(?:rešen[i]?\s+)?(?:primer|zgled)/i.test(i.besedilo);
+  const primer = (i) => i.vrsta === "primer" || /^\s*(?:\d+\.\s*)?(?:rešen[i]?\s+)?(?:primer|zgled)i?(?!\p{L})/iu.test(i.besedilo);
   let n = 0;
   for (let k = 0; k < izseki.length; k++) {
     const i = izseki[k];
@@ -117,7 +122,7 @@ async function drugiKrog(izseki, st, obseg, poTemi, samoVZapiskih, zadetki) {
         continue;
       }
     }
-    if (prej && obseg.has(prej) && primer(i) && hits.some((h) => h.d.id === prej && h.score > 0)) dodaj(i, prej);
+    if (prej && obseg.has(prej) && primer(i) && hits.some((h) => h.d.id === prej && h.score >= PRIMER_MIN)) dodaj(i, prej);
   }
   if (!dodani.size) return;
   for (const [iid, id] of dodani) {
