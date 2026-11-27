@@ -128,10 +128,6 @@ function definitionOf(text) {
 const err = (code, info = {}) => ({ code, info });
 
 /**
- * Zgradi model iz stanja grafa.
- * @returns {{ items: object[], scope: object, ctx: object }}
- */
-/**
  * TeX ene vrstice, kot ga izriše buildModel (za vnos s kazalcem v calc.js, sci-vnos.js entryBase). Vrže napako, če
  * se besedilo ne razčleni.
  */
@@ -151,6 +147,10 @@ export function rowTex(text, state, { comma = true } = {}) {
   return toTex(parse(lineText(text, zv, readComma, namesE), { funcs: funcNames }), { comma, sep: zv >= 2 && readComma ? ";" : "," });
 }
 
+/**
+ * Zgradi model iz stanja grafa.
+ * @returns {{ items: object[], scope: object, ctx: object }}
+ */
 export function buildModel(state, { comma = true } = {}) {
   const deg = !!state.settings?.deg;
   const items = state.items || [];

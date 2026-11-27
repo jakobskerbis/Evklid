@@ -8,7 +8,7 @@ import { EXAMPLES } from "./examples.js";
 import { exampleIcon } from "./ex-ikone.js";
 import { configureKeyboard, initKeyboard, toggleKeyboard, keyboardOpenFor } from "../tipkovnica.js";
 import { izrisi } from "../mat/izris.js";
-import { entryBase, caretTex, stopsTex, TRUST } from "./sci-vnos.js";
+import { entryBase, caretTex, stopsTex, TRUST, glyphBoxes, mapX } from "./sci-vnos.js";
 
 const MAX_HISTORY = 80;
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -59,6 +59,7 @@ export function createCalculator(root, opts) {
         <button type="button" class="gc-btn" data-act="undo" title="${esc(t("gc.undo"))}" aria-label="${esc(t("gc.undo"))}">${icon("undo-2")}</button>
         <button type="button" class="gc-btn" data-act="redo" title="${esc(t("gc.redo"))}" aria-label="${esc(t("gc.redo"))}">${icon("redo-2")}</button>
         <button type="button" class="gc-btn gc-playall" data-act="playall" data-on="false" hidden></button>
+        <div class="seg gc-angle" role="group" aria-label="${esc(t("gc.angles"))}"><button type="button" data-act="angle" data-deg="1" title="${esc(t("gc.deg"))}">DEG</button><button type="button" data-act="angle" data-deg="0" title="${esc(t("gc.rad"))}">RAD</button></div>
         <span class="gc-bar-sp"></span>
         <button type="button" class="gc-btn gc-text-btn" data-act="examples" title="${esc(t("gc.examples"))}">${icon("sparkles")}<span>${esc(t("gc.examples"))}</span></button>
         ${opts.api ? `<button type="button" class="gc-btn gc-text-btn" data-act="graphs" title="${esc(t("gc.myGraphs"))}">${icon("folder-open")}<span class="gc-lbl">${esc(t("gc.myGraphs"))}</span></button>` : ""}
@@ -186,6 +187,7 @@ export function createCalculator(root, opts) {
 
   function refresh() {
     rebuild();
+    root.querySelectorAll(".gc-angle button").forEach((x) => x.classList.toggle("active", (x.dataset.deg === "1") === !!state.settings.deg));
     for (const o of model.items) updateRow(o);
     updatePlayAll();
     view.draw();
@@ -300,28 +302,35 @@ export function createCalculator(root, opts) {
 
   // Vnos kot v znanstvenem kalkulatorju (j, 27. 11.): med urejanjem je vrstica lep zapis (KaTeX) s kazalcem, surovo
   // besedilo je nevidno polje čez njo. Zapis brez kazalca se izračuna enkrat na besedilo, premik kazalca ga le vstavi.
-  const edits = new WeakMap(); // polje → { text, base }
+  const edits = new WeakMap(); // polje → { key, base }
   const entryOf = (input) => {
     const text = input.value;
+    // zapis vrstice je odvisen tudi od vejice, različice zapisa in imen funkcij v drugih vrsticah
+    const key = [text, comma(), state.zapis, state.vejica, ...(state.items || []).map((it) => (it.type === "expr" ? it.text : ""))].join("\0");
     let e = edits.get(input);
-    if (!e || e.text !== text) {
+    if (!e || e.key !== key) {
       let base = null;
       try {
         base = entryBase(text, {}, (x) => rowTex(x, state, { comma: comma() }));
       } catch {}
-      edits.set(input, (e = { text, base }));
+      edits.set(input, (e = { key, base }));
     }
     return e;
   };
   function showEdit(input) {
     const prev = input?.parentElement?.querySelector(".gc-preview");
     if (!prev) return;
-    if (document.activeElement !== input || !input.value.trim()) return void (prev.innerHTML = "");
     let s = null;
-    try {
-      s = caretTex(entryOf(input).base, input.selectionStart ?? input.value.length);
-    } catch {}
-    prev.innerHTML = s ? izrisi(s, { zaupaj: TRUST }) : "";
+    if (document.activeElement === input && input.value.trim()) {
+      try {
+        s = caretTex(entryOf(input).base, input.selectionStart ?? input.value.length);
+      } catch {}
+    }
+    // isti zapis → nič ne izrisujemo znova (drsnik med predvajanjem kliče refresh vsako sličico; kazalec naj utripa)
+    const h = s || "";
+    if (prev._tex === h) return;
+    prev._tex = h;
+    prev.innerHTML = h ? izrisi(h, { zaupaj: TRUST }) : "";
     const c = prev.querySelector(".sc-caret");
     if (c && prev.scrollWidth > prev.clientWidth + 1) {
       const pr = prev.getBoundingClientRect();
@@ -338,7 +347,10 @@ export function createCalculator(root, opts) {
     const shown = prev.innerHTML;
     let best = null;
     try {
+      // izris z merilnimi točkami je lahko nekoliko širši: dotik prevedemo na iste znake (kot sci.js, AUDIT-048)
+      const from = glyphBoxes(prev);
       prev.innerHTML = izrisi(stopsTex(base), { zaupaj: TRUST });
+      x = mapX(x, from, glyphBoxes(prev));
       for (const el of prev.querySelectorAll("[data-evk-p]")) {
         const b = (el.querySelector(".katex-rule, .rule") || el).getBoundingClientRect();
         const dy = y < b.top ? b.top - y : y > b.bottom ? y - b.bottom : 0;
@@ -1384,6 +1396,14 @@ export function createCalculator(root, opts) {
     if (!b) return;
     const act = b.dataset.act;
     if (act === "add") openAddMenu(b);
+    // DEG/RAD v glavi kot v Znanstvenem (predlog 1, j 27. 11.): vedno viden, brez opombe v seznamu
+    if (act === "angle" && state.settings.deg !== (b.dataset.deg === "1")) {
+      undo.push(JSON.stringify(state));
+      redo.length = 0;
+      state.settings.deg = b.dataset.deg === "1";
+      commit();
+      refresh();
+    }
     if (act === "undo" && undo.length) {
       redo.push(JSON.stringify(state));
       restore(undo.pop());
@@ -1566,8 +1586,7 @@ export function createCalculator(root, opts) {
       // spremenjena nastavitev grafa: kratka opomba (učenec ve, zakaj se je graf spremenil; j, 24. 11. 2026)
       const changed = [];
       if (p.deg !== undefined && p.deg !== !!state.settings.deg) {
-        next.settings = { ...next.settings, deg: p.deg };
-        changed.push(t(p.deg ? "gc.fromSci.setDeg" : "gc.fromSci.setRad"));
+        next.settings = { ...next.settings, deg: p.deg }; // vidno na stikalu DEG/RAD v glavi (brez opombe)
       }
       if (p.view) {
         next.view = p.view;
