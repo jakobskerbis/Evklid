@@ -135,6 +135,7 @@ test("pregled: decimalne in iracionalne limite niso ulomki, bližnji vrhovi brez
   assert.equal(as("0,3333+1/x"), "x = 0,\\ y = 0{,}3333");
   assert.equal(as("0,0004+1/x"), "x = 0,\\ y = 0{,}0004");
   assert.equal(as("1000,0004+1/x"), "x = 0,\\ y = 1000{,}0004");
+  assert.doesNotMatch(as("123456,789+1/x") ?? "", /frac/);
   assert.doesNotMatch(as("e+1/x") ?? "", /frac/);
   const rg = (s) => row(info(s), "sc.infoRange")?.tex ?? null;
   assert.equal(rg("sin(x)+0,01sin(300x)"), null);

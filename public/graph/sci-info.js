@@ -221,7 +221,7 @@ export function infoFor(text, r, { profile = null, comma = true, env: base = nul
     else if (!trig && !step && topic !== "log") one("sc.infoExtrema", extremaTex(f, roots, dom?.excl || [], nt, sep));
     const y0 = f(0);
     if (Number.isFinite(y0)) one("sc.infoY0", `f(0) = ${nt(y0)}`);
-    if (!trig) one("sc.infoAsym", asymptotesTex(f, dom, holes, nt));
+    if (!trig) one("sc.infoAsym", asymptotesTex(f, dom, holes, nt, num));
     if (trig) {
       if (P) one("sc.infoPeriod", angleTex(P, env, nt, num));
       if (!/tan|cot/.test(s) && P) {
@@ -489,12 +489,13 @@ export function horizontalAsymptote(f, s) {
   const err = 10 * (r < 1 ? (Math.abs(d2) * r) / (1 - r) : Infinity) + 1e-12 * scale;
   if (!(err < 1e-6 * scale)) return null;
   const q = snapRational(c, err);
-  if (q != null) return q;
-  return Number(c.toFixed(Math.min(12, Math.max(0, Math.floor(-Math.log10(err))))));
+  if (q != null) return { y: q, exact: true };
+  // decimalni zapis: brez ponovnega ugibanja ulomka (exactTex bi 123456,789 zapisal kot 109999999/891)
+  return { y: Number(c.toFixed(Math.min(12, Math.max(0, Math.floor(-Math.log10(err)))))), exact: false };
 }
 
 /** Asimptote: navpične pri polih (izključene točke brez prazne točke, rob logaritma), vodoravne pri ±∞. */
-function asymptotesTex(f, dom, holes, nt) {
+function asymptotesTex(f, dom, holes, nt, num = nt) {
   const out = [];
   for (const a of dom?.excl || []) if (!holes.some((h) => h[0] === a)) out.push(`x = ${nt(a)}`);
   for (const c of dom?.cond || [])
@@ -506,10 +507,10 @@ function asymptotesTex(f, dom, holes, nt) {
       }
   const ys = new Set();
   for (const s of [-1, 1]) {
-    const y = horizontalAsymptote(f, s);
-    if (y != null) ys.add(y);
+    const h = horizontalAsymptote(f, s);
+    if (h) ys.add(`y = ${h.exact ? nt(h.y) : num(h.y)}`);
   }
-  for (const y of ys) out.push(`y = ${nt(y)}`);
+  out.push(...ys);
   return out.length ? [...new Set(out)].join(",\\ ") : null;
 }
 
