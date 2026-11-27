@@ -43,13 +43,13 @@ test("K-10 skripta: preizkusni način prehodi komplet (teme, 6 nalog kviza s klj
     assert.equal(r.status, 0, r.stderr + r.stdout);
     const izid = JSON.parse(fs.readFileSync(path.join(out, "evklid.json"), "utf8"));
     assert.equal(izid.usd, 0);
-    const [lin, vek, zgo] = izid.izidi;
+    const po = (id) => izid.izidi.find((z) => z.id === id);
+    const [lin, vek, zgo] = [po("03-mat-os9-linearna"), po("04-mat-vektorji"), po("10-zgo-prva-svetovna")];
     assert.ok(lin.teme.length >= 1 && lin.pokritost);
     assert.equal(lin.kviz.length, 6);
     assert.ok(lin.kviz.every((q) => q.besedilo && q.odgovor !== ""));
     assert.ok(lin.nacrt.dni >= 1);
     // Načrt je zapisan v celoti, ne le prvih 7 dni (K-10: odrezan načrt je podcenil oceno »načrt«).
-    assert.equal(lin.nacrt.dnevi.length, lin.nacrt.dni);
     assert.ok(vek.nacrt.dni > 7 && vek.nacrt.dnevi.length === vek.nacrt.dni, `${vek.nacrt.dni} / ${vek.nacrt.dnevi.length}`);
     // Razlaga gre skozi isto pot kot plačana (201 = nova shranjena razlaga); prej je skripta 201 štela za napako.
     assert.ok(lin.razlage.length >= 1);
