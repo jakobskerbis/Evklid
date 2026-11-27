@@ -686,6 +686,8 @@
   "set.dataLite": "Always on",
   "set.dataNormal": "Off",
   "set.dataNote": "Shorter tutor replies, smaller photos, no animations and no extra font. Tasks for your learning path are saved so you can practise offline.",
+  "set.detailed": "Detailed explanations",
+  "set.detailedNote": "Off: the tutor answers briefly and gives the essentials. On: longer, more detailed explanations.",
   "set.hideGames": "Hide games",
   "set.hideGamesNote": "The Games section is hidden. Your progress, coins and avatar stay.",
   "set.xpGoal": "Daily XP goal",

@@ -162,6 +162,9 @@ export function cacheKey(text, settings, mode, lite = false, pathTopic = null, w
   // dela ključa (model se spolnim oblikam izogiba), zato shranjeni odgovori ostanejo veljavni.
   if (gender === "m" || gender === "z") parts.push(`g:${gender}`);
   if (lite) parts.push("lite");
+  // Kratki odgovori brez stikala »Podrobna razlaga« (27. 11.): shranjeni dolgi odgovori se ne vrnejo; ključi
+  // vklopljene podrobne razlage ostanejo enaki kot prej.
+  else if (!settings.detailed) parts.push("k1");
   // Način B v krajši obliki (rezultat v prvem stavku, 17. 11.): shranjeni dolgi odgovori se ne vrnejo več, tudi ne ob
   // prošnji za celo rešitev v načinu A; ključi običajnih vprašanj v načinu A ostanejo.
   // »b3« (17. 11., Preizkus 3): vsi deli naloge v enem odgovoru, krajše za OŠ 1.–4., graf narisan; odgovori z »b2« se ne vrnejo.
