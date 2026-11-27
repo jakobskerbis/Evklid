@@ -526,6 +526,9 @@ test("negotovo (K-10): gotovi indeksi brez [?], potence in oklepaji izraza z [?]
   assert.deepEqual(ozn("a1 = 3 cm, a2 = 36 cm2, a = 6 cm"), ["a2", "cm2"]);
   assert.deepEqual(ozn("c = 12 cm, a1 = 3 cm, a2 = 36 cm2"), ["a2", "cm2"]);
   assert.deepEqual(ozn("(sin x)2 + (cos x)2 = 1, (ln x)2"), [")2", ")2", ")2"]);
+  assert.deepEqual(ozn("c = 12, a1 = 3, a2 = 12 · 3, a = 6"), ["a2"]);
+  assert.deepEqual(ozn("c = 12 cm, a1 = 3 cm, a2 = 40 cm², a = 6 cm"), ["a2"]);
+  assert.deepEqual(ozn("(ax + b)2, (xy - 1)2, x1 = √3, x2 = -√3"), [")2", ")2"]);
   assert.deepEqual(ozn("Točke T1(x1, y1), T2(x2, y2) in T3(x3, y3); x1 = 2. x2 = 3; x0, x1, x2"), []);
   // Ustaljeni zapisi indeksov ostanejo brez oznake.
   assert.deepEqual(ozn("x1 + x2, x1·x2, x1 in x2, (x - x1)(x - x2), y2 - y1, a1b1 + a2b2, q1q2, ničli x1 = 1, x2 = 3"), []);

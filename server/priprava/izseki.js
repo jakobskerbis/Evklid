@@ -84,7 +84,7 @@ function indeksZapis(koef, w, za, cel, kje) {
     const zaVrednostjo = () => {
       if (!new RegExp(`(?<!\\p{L})${crke}${prejsnji}\\s*=\\s*[^,;=()]{1,10}(?:[,.]|\\s(?:in|ter))\\s*$`, "u").test(pred)) return false;
       const v = /^\s*=\s*([^,;=]{1,12}?)\s*(?:[,;\n]|\.(?:\s|$)|\s(?:in|ter)\s|$)/u.exec(po);
-      return !!v && !/\p{L}\d/u.test(v[1]); // a2 = c · a1, a2 = 36 cm2
+      return !!v && !/\p{L}\d|[²³⁴-⁹]|.[+\-−±·*/×]/u.test(v[1].trim()); // en člen: ne a2 = c · a1, a2 = 36 cm2, a2 = 12 · 3
     };
     // Veriga indeksov (x1 + x2, (a1 + b1, a2 + b2), A(x1, y1), B(x2, y2), a1 + a2 + … + a5).
     const vez = `(?:[+\\-−±·*,]|in|ter|\\)\\s*(?:,|in|ter)\\s*\\p{L}{0,2}\\d?\\()`;
@@ -101,7 +101,7 @@ function izrazVOklepaju(cel, z) {
   const o = cel.lastIndexOf("(", z);
   if (o < 0 || cel.lastIndexOf(")", z - 1) > o) return false;
   const v = cel.slice(o + 1, z).trim();
-  return !!v && !/^(?:\d+|\p{L})$/u.test(v) && !/^(?!(?:sin|cos|tg|tan|ctg|cot|ln|log|lg|exp|arc\p{L}+|sh|ch|th)(?!\p{L}))\p{L}{2,}\.?\s/iu.test(v);
+  return !!v && !/^(?:\d+|\p{L})$/u.test(v) && !(/^(?!(?:sin|cos|tg|tan|ctg|cot|ln|log|lg|exp|arc\p{L}+|sh|ch|th)(?!\p{L}))\p{L}{2,}\.?\s/iu.test(v) && !/[+\-−±·*/=^]/.test(v));
 }
 
 // Pregled enega dela niza (brez oklepajev izraza): koeficient, kemijska formula, zapis črka + števka.
