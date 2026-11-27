@@ -825,6 +825,11 @@
       }
     );
   }
+  function slogiZdaj() {
+    if (!slogiPoKoncu) return;
+    slogiPoKoncu = false;
+    slogi(false, true);
+  }
   var obrazecCaka = false;
   function obrazecObiskovalca(pm) {
     moduli();
@@ -884,8 +889,10 @@
         }
       });
       poIzrisu.then(function () {
-        slogi(false, true);
         moduli();
+        slogiPoKoncu = true;
+        window.evklidZacetek.slogi = slogiZdaj;
+        setTimeout(slogiZdaj, 3000);
       });
       html.setAttribute("data-pristajalna", "");
       html.lang = pm.getAttribute("content");
