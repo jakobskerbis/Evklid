@@ -1,6 +1,6 @@
 // Grafični kalkulator – vmesnik: seznam izrazov, drsniki z animacijo, tabele z regresijo,
 // tipkovnica za dotik, primeri, shranjeni grafi, izvoz slike in povezava z inštruktorjem.
-import { buildModel, rowTex, emptyState, newId, derivativeOf, sliderRange, sliderText, MODELS, DEFAULT_DOMAIN, toNum, upgradeZapis, degreesToCalc } from "./model.js";
+import { buildModel, rowTex, specialPoints, emptyState, newId, derivativeOf, sliderRange, sliderText, MODELS, DEFAULT_DOMAIN, toNum, upgradeZapis, degreesToCalc } from "./model.js";
 import { niceNumber, parse, compile, arityExample, freeVars, walk } from "./math.js";
 import { GraphView, PALETTE } from "./plot.js";
 import { fitModelView } from "./okno.js";
@@ -85,10 +85,16 @@ export function createCalculator(root, opts) {
   const list = $(".gc-list");
   const pop = $(".gc-pop");
 
+  let quickTimer = 0;
   const view = new GraphView($(".gc-graph"), {
     getState: () => state,
     getModel: () => model,
-    onView: () => scheduleSave(),
+    onView: () => {
+      scheduleSave();
+      // ničle in ekstremi pod vrstico veljajo za vidni del: po premiku pogleda jih osvežimo
+      clearTimeout(quickTimer);
+      if (state.items.some((it) => it.tools?.roots || it.tools?.ext)) quickTimer = setTimeout(() => model.items.forEach((o) => (o.src?.tools?.roots || o.src?.tools?.ext) && updateRow(o)), 200);
+    },
     onSelect: (id) => {
       list.querySelectorAll(".gc-row").forEach((r) => r.classList.toggle("selected", r.dataset.id === id));
       if (id) list.querySelector(`[data-id="${id}"]`)?.scrollIntoView({ block: "nearest" });
@@ -445,6 +451,23 @@ export function createCalculator(root, opts) {
     return out;
   }
 
+  // ničle in ekstremi funkcije v vidnem delu (po x), urejeno od leve proti desni
+  function keyPoints(o) {
+    const v = state.view;
+    try {
+      return specialPoints((x) => o.fn(x), v.xmin, v.xmax, 400).filter((p) => p.type !== "yint").sort((a, b) => a.x - b.x);
+    } catch {
+      return [];
+    }
+  }
+  // označi točke izbranih vrst na grafu (napisi kot ob dotiku točke)
+  function markKeyPoints(id, types) {
+    if (view.selected !== id) view.select(id);
+    list.querySelectorAll(".gc-row").forEach((r) => r.classList.toggle("selected", r.dataset.id === id));
+    view.computePois(model.items);
+    view.shown = view.pois.filter((p) => p.types.some((k) => types.includes(k)));
+  }
+
   function extraHtml(o) {
     const it = o.src;
     if (o.kind === "error") {
@@ -480,6 +503,20 @@ export function createCalculator(root, opts) {
       return `<div class="gc-val gc-seq">${terms.join("")}<span>${tex("\\ldots")}</span></div>`;
     }
     const parts = [];
+    const fnRow = (o.kind === "y" || o.plot === "y") && typeof o.fn === "function";
+    if (fnRow) {
+      // Hitri gumbi pod funkcijo (predlog 2, j 27. 11.): vidni, ko je vrstica izbrana; isto kot v meniju ⋮
+      const tl = it.tools || {};
+      const q = (k, label, on) => `<button type="button" class="gc-q" data-act="quick" data-q="${k}"${on == null ? "" : ` aria-pressed="${!!on}"`}>${esc(label)}</button>`;
+      parts.push(`<div class="gc-quick" role="group" aria-label="${esc(t("gc.tools"))}">${q("roots", t("gc.q.roots"), !!tl.roots)}${q("ext", t("gc.q.ext"), !!tl.ext)}${q("deriv", t("gc.deriv"), !!tl.deriv)}${q("tangent", t("gc.tangent"), tl.tangent != null)}${q("table", t("gc.valueTable"))}</div>`);
+      if (tl.roots || tl.ext) {
+        const pts = keyPoints(o);
+        const sep = comma() ? "; " : ", ";
+        const line = (label, xs) => `<div class="gc-val gc-keyp"><span class="gc-keyp-h">${esc(label)}:</span><span>${xs.length ? xs.slice(0, 6).map(esc).join(sep) + (xs.length > 6 ? sep + "…" : "") : esc(t("gc.q.none"))}</span></div>`;
+        if (tl.roots) parts.push(line(t("gc.q.roots"), pts.filter((p) => p.type === "root").map((p) => `x = ${fmt(p.x, 4)}`)));
+        if (tl.ext) parts.push(line(t("gc.q.ext"), pts.filter((p) => p.type === "max" || p.type === "min").map((p) => `${t(`gc.poi.${p.type}`)} (${fmt(p.x, 4)}${sep}${fmt(p.y, 4)})`)));
+      }
+    }
     if ((o.kind === "y" || o.plot === "y") && o.deriv && it.tools?.deriv && o.deriv.tex) {
       const name = o.kind === "func" ? `${o.fname}'\\left(${o.varName}\\right)` : "y'";
       parts.push(`<div class="gc-val gc-deriv">${tex(`${name} = ${o.deriv.tex}`)}</div>`);
@@ -755,6 +792,7 @@ export function createCalculator(root, opts) {
       return;
     }
     if (act === "del") return removeItem(id);
+    if (act === "quick") return quickTool(id, e.target.closest("[data-q]").dataset.q);
     if (act === "use-area") {
       const txt = areaText(modelItem(id), it);
       if (txt) opts.useInCalc?.(txt);
@@ -974,6 +1012,35 @@ export function createCalculator(root, opts) {
     if (e.key === "Escape" && !pop.hidden) closePop();
   });
 
+  function addValueTable(it, o) {
+    const idx = state.items.indexOf(it);
+    const seq = o?.plot === "seq" ? o.seq : null;
+    const cols = seq ? [{ name: o.varName, values: Array.from({ length: 10 }, (_, i) => seq.n0 + i) }, { name: o.fname, values: [] }] : [{ name: "x", values: [-2, -1, 0, 1, 2] }, { name: "y", values: [] }];
+    state.items.splice(idx + 1, 0, { id: newId(), type: "table", ref: it.id, color: it.color, cols });
+    commit();
+    renderList();
+    refresh();
+  }
+  // hitri gumb pod funkcijo: isto orodje kot v meniju ⋮ (ničle in ekstremi še označi na grafu)
+  function quickTool(id, q) {
+    const it = item(id);
+    const o = modelItem(id);
+    if (!it || !o) return;
+    if (q === "table") return addValueTable(it, o);
+    const tools = it.tools || {};
+    const v = state.view;
+    if (q === "roots" || q === "ext" || q === "deriv") it.tools = { ...tools, [q]: !tools[q] };
+    else if (q === "tangent") it.tools = { ...tools, tangent: tools.tangent != null ? null : roundTo((v.xmin + v.xmax) / 2 + (v.xmax - v.xmin) / 8, (v.xmax - v.xmin) / 100) };
+    else return;
+    commit();
+    refresh();
+    if (q === "roots" || q === "ext") {
+      // ničle so na osi tesno skupaj in napisi bi se prekrivali: na grafu so pike izbrane krivulje, seznam je pod vrstico
+      markKeyPoints(id, it.tools.ext ? ["max", "min"] : []);
+      view.draw();
+    }
+  }
+
   function openRowMenu(id, anchor) {
     const it = item(id);
     const o = modelItem(id);
@@ -1011,15 +1078,8 @@ export function createCalculator(root, opts) {
       }
       if (tool === "label") it.label = it.label === false;
       if (tool === "table") {
-        const idx = state.items.indexOf(it);
         closePop();
-        const seq = o?.plot === "seq" ? o.seq : null;
-        const cols = seq ? [{ name: o.varName, values: Array.from({ length: 10 }, (_, i) => seq.n0 + i) }, { name: o.fname, values: [] }] : [{ name: "x", values: [-2, -1, 0, 1, 2] }, { name: "y", values: [] }];
-        state.items.splice(idx + 1, 0, { id: newId(), type: "table", ref: it.id, color: it.color, cols });
-        commit();
-        renderList();
-        refresh();
-        return;
+        return addValueTable(it, o);
       }
       if (tool === "dup") {
         const idx = state.items.indexOf(it);

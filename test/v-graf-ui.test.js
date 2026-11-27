@@ -173,6 +173,24 @@ test("»Pokaži na grafu«: integral, odvod, enačba in divergenten integral v g
       assert.equal(await page.locator('.sc-h-row.last [data-act="graf"]').count(), 1, where);
       await page.evaluate(() => (window.stage = null));
 
+      // hitri gumbi pod funkcijo (predlog 2): ničle in ekstremi v vidnem delu, ena razveljavitev vrne prejšnje
+      await page.evaluate(() => {
+        document.getElementById("s").hidden = true;
+        document.getElementById("g").hidden = false;
+        window.graph.resize();
+      });
+      await page.evaluate(() => window.graph.loadState({ v: 1, zapis: 3, vejica: true, items: [{ id: "q1", type: "expr", text: "y = x^3 - 3x", color: 0 }], view: { xmin: -10, xmax: 10, ymin: -7, ymax: 7 }, settings: {} }));
+      await tap('#g .gc-row[data-id="q1"] .gc-math');
+      await page.locator('#g .gc-row[data-id="q1"] .gc-q[data-q="roots"]').waitFor({ state: "visible" });
+      await tap('#g .gc-row[data-id="q1"] .gc-q[data-q="roots"]');
+      await tap('#g .gc-row[data-id="q1"] .gc-q[data-q="ext"]');
+      const keyp = await page.locator('#g .gc-row[data-id="q1"] .gc-keyp').allInnerTexts();
+      assert.match(keyp[0], /x = −1,732; x = 0; x = 1,732/, `${where}: ničle ${keyp[0]}`);
+      assert.match(keyp[1], /\(−1; 2\).*\(1; −2\)/, `${where}: ekstremi ${keyp[1]}`);
+      assert.equal(await page.locator('#g .gc-row[data-id="q1"] .gc-q[aria-pressed="true"]').count(), 2, where);
+      await tap('#g [data-act="undo"]');
+      assert.deepEqual(await page.evaluate(() => window.graph.state.items[0].tools), { roots: true }, where);
+
       // brez vodoravnega drsenja
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), where);
       assert.deepEqual(errors, [], where);
