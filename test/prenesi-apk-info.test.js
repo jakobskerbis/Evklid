@@ -39,3 +39,21 @@ test("lokalni APK: približna velikost in datum pod gumbom; brez APK ali z oddal
     fs.rmSync(dir, { recursive: true, force: true });
   }
 });
+
+// Pregled 27. 11. 2026 (revizija za pilot): na evklid.app je pisalo »različica [object Object]«, ker apkVersion vrne
+// { versionCode, versionName }. Dijak mora videti ime različice (»1.0.0«).
+test("različica APK na /prenesi: ime različice iz manifesta, nikoli [object Object]", async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "apk-"));
+  const apkFile = path.join(dir, "evklid.apk");
+  fs.copyFileSync(new URL("./fixtures/mini.apk", import.meta.url), apkFile);
+  try {
+    const sl = await page({ apkFile, env: {} });
+    const info = sl.match(/id="apk-info">([^<]*)</)?.[1] || "";
+    assert.match(info, /različica 1\.0\.0/);
+    assert.doesNotMatch(sl, /object Object/);
+    const en = await page({ apkFile, env: {} }, "?lang=en");
+    assert.match(en.match(/id="apk-info">([^<]*)</)[1], /version 1\.0\.0/);
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
