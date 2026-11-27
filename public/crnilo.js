@@ -78,7 +78,7 @@ function crossings(a, b) {
 }
 
 // Poteze (indeksi v strokes), ki jih čečka izbriše: čečka jih prečka vsaj dvakrat. Drobne poteze (pika, vejica,
-// ki jih ni mogoče prečkati) gredo zraven le, če ležijo v okvirju čečke in je čečka prečkala še kaj drugega.
+// minus, ki jih ni mogoče prečkati) gredo zraven, če ležijo v okvirju čečke in pot čečke gre čez njihov okvir.
 export function scratchVictims(strokes, scratch) {
   const b = bbox(scratch.pts);
   const crossed = [];
@@ -88,10 +88,19 @@ export function scratchVictims(strokes, scratch) {
     const sb = bbox(s.pts);
     if (sb.x1 < b.x0 || sb.x0 > b.x1 || sb.y1 < b.y0 || sb.y0 > b.y1) return;
     if (Math.max(sb.w, sb.h) < 14) {
-      if (sb.x0 >= b.x0 && sb.x1 <= b.x1 && sb.y0 >= b.y0 && sb.y1 <= b.y1) small.push(i);
+      const m = 4;
+      const near = ([x, y]) => x >= sb.x0 - m && x <= sb.x1 + m && y >= sb.y0 - m && y <= sb.y1 + m;
+      // pot čečke (tudi med točkami, ki so pri hitrem zamahu redke) gre čez okvir drobne poteze
+      const over = scratch.pts.some((q, j) => {
+        const r = scratch.pts[j - 1] || q;
+        const n = Math.max(1, Math.ceil(Math.hypot(q[0] - r[0], q[1] - r[1]) / 3));
+        for (let k = 0; k <= n; k++) if (near([r[0] + ((q[0] - r[0]) * k) / n, r[1] + ((q[1] - r[1]) * k) / n])) return true;
+        return false;
+      });
+      if (over && sb.x0 >= b.x0 && sb.x1 <= b.x1 && sb.y0 >= b.y0 && sb.y1 <= b.y1) small.push(i);
     } else if (crossings(scratch.pts, s.pts) >= 2) crossed.push(i);
   });
-  return crossed.length ? [...crossed, ...small].sort((x, y) => x - y) : [];
+  return [...crossed, ...small].sort((x, y) => x - y);
 }
 
 export function createInk(canvas) {
@@ -102,6 +111,7 @@ export function createInk(canvas) {
   let active = null;
   let lastPen = -Infinity; // čas zadnjega dotika s pisalom (zavračanje dlani)
   let penOnly = false; // naprava ima pisalo: prsti ne rišejo
+  let penSaved = -Infinity; // kdaj je bil čas pisala nazadnje zapisan
   try {
     penOnly = Date.now() - Number(localStorage.getItem(PEN_KEY)) < PEN_DAYS * 864e5;
   } catch {}
@@ -209,7 +219,11 @@ export function createInk(canvas) {
   canvas.addEventListener("pointerdown", (e) => {
     if (e.pointerType === "pen") {
       lastPen = performance.now();
-      api.penOnly = true; // tudi osveži čas zadnje uporabe pisala
+      // osveži čas zadnje uporabe pisala (zapis največ enkrat na minuto)
+      if (!penOnly || performance.now() - penSaved > 60_000) {
+        api.penOnly = true;
+        penSaved = performance.now();
+      }
       // dlan se je dotaknila pred pisalom: poteza dlani ni zapis, pisalo ima prednost
       if (active?.touch) {
         const i = strokes.indexOf(active);

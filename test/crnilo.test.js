@@ -47,7 +47,10 @@ test("čečka: izbriše le poteze, ki jih prečka", () => {
   // vejica v okvirju gre zraven le, če je čečka prečkala še kaj
   const comma = { tool: "pen", pts: line(140, 70, 138, 76, 3) };
   assert.deepEqual(scratchVictims([covered, comma, scratch], scratch), [0, 1]);
-  assert.deepEqual(scratchVictims([other, comma, scratch], scratch), [], "brez prečkanega zapisa nič");
+  // sama vejica pod čečko gre, vejica ob čečki (zunaj njene poti) ne
+  assert.deepEqual(scratchVictims([other, comma, scratch], scratch), [1], "vejica pod čečko");
+  const ob = { tool: "pen", pts: line(300, 60, 302, 66, 3) };
+  assert.deepEqual(scratchVictims([ob, scratch], scratch), [], "vejica zunaj okvirja ostane");
 });
 
 // ---------- pravi brskalnik ----------
