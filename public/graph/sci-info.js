@@ -12,8 +12,8 @@ import { siUnit, unitTexInner, OFFSET_TEMP } from "./enote.js";
 const MAX_LEN = 80; // dolgi izrazi: brez podatkov (CAS v predogledu ima kratko mejo)
 export const INFO_FIRST = 3; // toliko vrstic je vidnih brez »Več«
 const ok = (r) => r && !r.error;
-const TRIG = /\b(?:a?sin|a?cos|a?tan|a?cot|arc\w+)\s*\(/;
-const EXPLOG = /\b(?:ln|log\w*)\s*\(|\^\s*(?:\([^()]*x|x)|\bexp\s*\(/;
+const TRIG = /(?<![A-Za-z])(?:a?sin|a?cos|a?tan|a?cot|arc\w+)\s*\(/;
+const EXPLOG = /(?<![A-Za-z])(?:ln|log\w*)\s*\(|\^\s*(?:\([^()]*x|x)|(?<![A-Za-z])exp\s*\(/;
 
 function safe(fn) {
   try {
@@ -202,7 +202,7 @@ export function infoFor(text, r, { profile = null, comma = true, env: base = nul
     const dom = trig ? null : domainOf(s, env, nt, sep);
     const holes = (dom?.excl || []).map((a) => hole(f, a)).filter(Boolean);
     // stopničaste (floor, round …): ničle in ekstremi bi bili le izsek okna, zato jih ne kažemo
-    const step = /\b(?:floor|ceil|round|frac|mod|sign|zaokrozi)\s*\(/.test(s);
+    const step = /(?<![A-Za-z])(?:floor|ceil|round|frac|mod|sign|zaokrozi)\s*\(/.test(s);
     const solved = step ? null : safe(() => analyze(`${s}=0`, env));
     let roots = solved?.kind === "solve" ? (solved.roots || []).filter(Number.isFinite) : [];
     roots = roots.filter((x) => !holes.some((h) => Math.abs(h[0] - x) < 1e-9) && realRoot(f, x));
@@ -221,17 +221,15 @@ export function infoFor(text, r, { profile = null, comma = true, env: base = nul
     else if (!trig && !step && topic !== "log") one("sc.infoExtrema", extremaTex(f, roots, dom?.excl || [], nt, sep));
     const y0 = f(0);
     if (Number.isFinite(y0)) one("sc.infoY0", `f(0) = ${nt(y0)}`);
-    if (!trig) one("sc.infoAsym", asymptotesTex(f, dom, holes, nt));
+    if (!trig) one("sc.infoAsym", asymptotesTex(f, dom, holes, nt, num));
     if (trig) {
       if (P) one("sc.infoPeriod", angleTex(P, env, nt, num));
       if (!/tan|cot/.test(s) && P) {
-        const ys = [];
-        for (let i = 0; i < 720; i++) ys.push(f((P * i) / 720));
-        const fin = ys.filter(Number.isFinite);
-        if (fin.length > 600) one("sc.infoRange", `[${nt(Number(Math.min(...fin).toPrecision(12)))}${sep}${nt(Number(Math.max(...fin).toPrecision(12)))}]`);
+        const rg = rangeOf(f, P);
+        if (rg) one("sc.infoRange", `[${nt(rg[0])}${sep}${nt(rg[1])}]`);
       }
-      const tan = argsOf(s, /\btan/);
-      const cot = argsOf(s, /\bcot/);
+      const tan = argsOf(s, /(?<![A-Za-z])tan/);
+      const cot = argsOf(s, /(?<![A-Za-z])cot/);
       if (P && tan.length + cot.length === 1) {
         const a = safe(() => analyze(tan.length ? `cos(${tan[0]})=0` : `sin(${cot[0]})=0`, env));
         if (a?.kind === "solve" && a.roots?.length) one("sc.infoAsym", periodicTex(a.roots.filter(Number.isFinite), P, env, nt, num));
@@ -311,7 +309,7 @@ function evalAt(fn, x, env) {
 
 /** Perioda kotne funkcije: najmanjši P = osnova·p/q (osnova π, 180° ali 200g), za katero f(x + P) = f(x), ali 0. */
 export function periodOf(fn, env) {
-  if (!TRIG.test(fn) || /x\s*\^|\^\s*(?:\([^()]*x|x)|\bx\s*\*?\s*(?:sin|cos|tan)|\b(?:sin|cos|tan|cot)\s*\(\s*x\s*\^/.test(fn)) return 0;
+  if (!TRIG.test(fn) || /x\s*\^|\^\s*(?:\([^()]*x|x)|\bx\s*\*?\s*(?:sin|cos|tan)|(?<![A-Za-z])(?:sin|cos|tan|cot)\s*\(\s*x\s*\^/.test(fn)) return 0;
   const base = env.grad ? 200 : env.deg ? 180 : Math.PI;
   const cand = [];
   for (let q = 1; q <= 12; q++) for (let p = 1; p <= 24; p++) cand.push((base * p) / q);
@@ -354,10 +352,10 @@ function domainOf(s, env, nt, sep) {
     cond.push(a);
     return true;
   };
-  for (const arg of argsOf(s, /\b(?:ln|log)/)) if (/x/.test(arg) && !ineq(arg, ">")) return null;
+  for (const arg of argsOf(s, /(?<![A-Za-z])(?:ln|log)/)) if (/x/.test(arg) && !ineq(arg, ">")) return null;
   for (const arg of argsOf(s, /sqrt|√/)) if (/x/.test(arg) && !ineq(arg, ">=")) return null;
   // potenca z ulomkom ali spremenljivko v osnovi in eksponentu (x^(1/2), x^x): ne ugibamo
-  if (/\^\s*(?:\([^()]*[/.,]|\d*[.,]\d)|x\s*\^\s*(?:\([^()]*x|x)|logb|\b(?:tan|cot|asin|acos|arc)/.test(s)) return null;
+  if (/\^\s*(?:\([^()]*[/.,]|\d*[.,]\d)|x\s*\^\s*(?:\([^()]*x|x)|logb|(?<![A-Za-z])(?:tan|cot|asin|acos|arc)/.test(s)) return null;
   const end = (x) => (x === -Infinity ? "-\\infty" : x === Infinity ? "\\infty" : nt(x));
   const parts = cond.map((a) => {
     const I = a.intervals;
@@ -410,8 +408,94 @@ function extremaTex(f, roots, excl, nt, sep) {
   return out.length ? out.join(",\\ ") : null;
 }
 
+/**
+ * Zaloga vrednosti periodične funkcije kot en zaprt interval [min, max] — ali nič (revizija 27. 11.: »pravilno ali nič«).
+ * Le, ko je vseh 720 vzorcev periode končnih in brez skoka (1/sin x ima pol in zalogo iz dveh delov); krajišči sta
+ * natančna ekstrema (zlati rez okoli najboljšega vzorca), ne največji vzorec (sin(x + 0,1) → 1, ne 0,99999197).
+ */
+export function rangeOf(f, P) {
+  // tri mreže, zamaknjene za 1/2 in 1/3 koraka: višji vrh med vzorci (sin x + 0,01 sin 300x) da drug rezultat → nič
+  const runs = [0, 1 / 2, 1 / 3].map((o) => rangeOn(f, P, o));
+  if (runs.some((r) => !r)) return null;
+  const same = (u, v) => Math.abs(u - v) <= 1e-9 * Math.max(1, Math.abs(u));
+  if (!runs.every((r) => same(r[0], runs[0][0]) && same(r[1], runs[0][1]))) return null;
+  return runs[0];
+}
+function rangeOn(f, P, off) {
+  const N = 720;
+  const ys = [];
+  for (let i = 0; i < N; i++) ys.push(f((P * (i + off)) / N));
+  if (!ys.every(Number.isFinite)) return null;
+  let lo = 0;
+  let hi = 0;
+  for (let i = 1; i < N; i++) {
+    if (ys[i] < ys[lo]) lo = i;
+    if (ys[i] > ys[hi]) hi = i;
+  }
+  const span = ys[hi] - ys[lo];
+  if (!(span < 1e12)) return null;
+  let step = 0;
+  for (let i = 0; i < N; i++) step = Math.max(step, Math.abs(ys[(i + 1) % N] - ys[i]));
+  // stalna na vzorcih (ozek vrh med njimi, periodOf stalnih ne vrne) ali skok (pol, nezveznost): en interval ne bi bil pravilen
+  if (span <= 1e-12 * Math.max(1, Math.abs(ys[hi])) || step > 0.1 * span) return null;
+  const ext = (i, sgn) => {
+    const g = (x) => sgn * f(x);
+    let a = (P * (i + off - 1)) / N;
+    let b = (P * (i + off + 1)) / N;
+    const r = (Math.sqrt(5) - 1) / 2;
+    let c = b - r * (b - a);
+    let d = a + r * (b - a);
+    let gc = g(c);
+    let gd = g(d);
+    for (let k = 0; k < 80 && b - a > 1e-13 * Math.max(1, Math.abs(a)); k++) {
+      if (gc < gd) [b, d, gd] = [d, c, gc], (c = b - r * (b - a)), (gc = g(c));
+      else [a, c, gc] = [c, d, gd], (d = a + r * (b - a)), (gd = g(d));
+    }
+    const best = Math.min(sgn * ys[i], gc, gd, g((a + b) / 2));
+    return Number.isFinite(best) ? sgn * best : null;
+  };
+  const m = ext(lo, 1);
+  const M = ext(hi, -1);
+  if (m == null || M == null) return null;
+  const snap = (v) => Number(v.toPrecision(12)); // natančni ekstrem: 12 mest, da exactTex prepozna 1/3, √2 …
+  return [snap(m), snap(M)];
+}
+
+/** Vrednost blizu kratkega ulomka p/q (q ≤ 100) zapišemo z ulomkom: limita 1/3 + 1/x je 1/3, ne 0,333. */
+function snapRational(v, tol) {
+  if (Math.abs(v) < tol) return 0;
+  for (let q = 1; q <= 100; q++) {
+    const p = Math.round(v * q);
+    if (Math.abs(v - p / q) < tol) return p / q;
+  }
+  return null;
+}
+
+/**
+ * Vodoravna asimptota pri x → s·∞ (s = ±1) — ali null, če ni zanesljiva (revizija 27. 11.: »pravilno ali nič«).
+ * f pri 10⁴, 10⁶ in 10⁸ (necela) se mora res približevati (razlike padajo; x/10⁹ raste in asimptote nima), vrednost
+ * pa je kratek ulomek ali vsaj šest zanesljivih mest.
+ */
+export function horizontalAsymptote(f, s) {
+  const xs = [10000.37, 1000000.71, 100000000.53].map((x) => s * x);
+  const [a, b, c] = xs.map((x) => f(x));
+  if (![a, b, c].every(Number.isFinite) || Math.abs(c) > 1e6) return null;
+  const d1 = b - a;
+  const d2 = c - b;
+  const scale = Math.max(1, Math.abs(c));
+  if (Math.abs(d2) > 1e-6 * scale || Math.abs(d2) > Math.abs(d1)) return null;
+  // ostanek za c ocenimo iz hitrosti približevanja (geometrijsko, z rezervo); na ulomek ali decimalke le znotraj njega
+  const r = d1 ? Math.abs(d2 / d1) : 0;
+  const err = 10 * (r < 1 ? (Math.abs(d2) * r) / (1 - r) : Infinity) + 1e-12 * scale;
+  if (!(err < 1e-6 * scale)) return null;
+  const q = snapRational(c, err);
+  if (q != null) return { y: q, exact: true };
+  // decimalni zapis: brez ponovnega ugibanja ulomka (exactTex bi 123456,789 zapisal kot 109999999/891)
+  return { y: Number(c.toFixed(Math.min(12, Math.max(0, Math.floor(-Math.log10(err)))))), exact: false };
+}
+
 /** Asimptote: navpične pri polih (izključene točke brez prazne točke, rob logaritma), vodoravne pri ±∞. */
-function asymptotesTex(f, dom, holes, nt) {
+function asymptotesTex(f, dom, holes, nt, num = nt) {
   const out = [];
   for (const a of dom?.excl || []) if (!holes.some((h) => h[0] === a)) out.push(`x = ${nt(a)}`);
   for (const c of dom?.cond || [])
@@ -423,11 +507,10 @@ function asymptotesTex(f, dom, holes, nt) {
       }
   const ys = new Set();
   for (const s of [-1, 1]) {
-    const a = f(s * 10000.37);
-    const b = f(s * 100000.71); // ne cela števila (x − floor(x))
-    if (Number.isFinite(a) && Number.isFinite(b) && Math.abs(a - b) < 1e-3 * Math.max(1, Math.abs(b)) && Math.abs(b) < 1e6) ys.add(Number(b.toFixed(3)));
+    const h = horizontalAsymptote(f, s);
+    if (h) ys.add(`y = ${h.exact ? nt(h.y) : num(h.y)}`);
   }
-  for (const y of ys) out.push(`y = ${nt(Math.abs(y) < 1e-3 ? 0 : y)}`);
+  out.push(...ys);
   return out.length ? [...new Set(out)].join(",\\ ") : null;
 }
 
