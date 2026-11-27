@@ -218,7 +218,11 @@ test("free tier limits tutor questions; subscription via webhook lifts it", asyn
   }
 });
 
-test("daily tutor questions: the plan's limit is the floor, the AI budget raises it; the free plan keeps its own", async () => {
+test("daily tutor questions: the plan's limit is the floor, the AI budget raises it; the free plan keeps its own", async (t) => {
+  // Dnevna meja iz proračuna deli ostanek s preostalimi dnevi meseca (usage.js dailyLimit), zato je ob koncu meseca
+  // višja (27. 11. je preizkus s proračunom dobil 4 vprašanja namesto 3). Test teče sredi meseca, ne glede na datum.
+  const now = new Date();
+  t.mock.timers.enable({ apis: ["Date"], now: Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 10, 12) });
   process.env.EVKLID_FREE_DAILY_QUESTIONS = "2";
   process.env.EVKLID_OSEBNO_DAILY_QUESTIONS = "3";
   process.env.EVKLID_DAILY_QUESTIONS_MAX = "5";

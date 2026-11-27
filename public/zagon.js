@@ -41,9 +41,33 @@ const zacni = () => {
       // Obiskovalec na /#registracija, #prijava ali #pozabljeno-geslo (public/zacetek.js obrazec): obrazec izriše account.js,
       // ko so preneseni njegovi moduli (strežnik jih da na začetek seznama), ne šele za celo aplikacijo; app.js ga prevzame.
       if (window.evklidZacetek?.obrazec) import("./account.js").then((m) => m.obrazecVnaprej()).catch(() => {});
+      else if (document.documentElement.hasAttribute("data-pristajalna")) {
+        obrazecSPristajalne();
+        // Slogi za druge zaslone šele, ko so moduli obrazca tu (public/zacetek.js slogi, sicer najkasneje 3 s po izrisu): prej so
+        // jim na počasni povezavi vzeli ~0,7 s, pristajalna stran in obrazec pa jih ne uporabljata (test/pristajalna-takoj.test.js).
+        import("./account.js").catch(() => {}).then(() => window.evklidZacetek?.slogi?.());
+      }
       return mods.reduce((p, href) => p.then(() => run(href)), Promise.resolve());
     });
 };
+// Pristajalna stran s strežnika (public/zacetek.js): dotik »Začni brezplačno« ali »Prijava« pred zagonom aplikacije odpre
+// obrazec, ko je prenesen account.js (moduli obrazca so prvi na seznamu, server/vstopna-stran.js), kot na /#registracija, ne
+// šele po app.js in ~60 modulih (meritev 27. 11. 2026, telefon, počasen 4G: obrazec ~4,2 s po odprtju strani). Povezavi sta
+// navadni sidri (#registracija, #prijava): sidro se spremeni tudi pred skriptom. Ko aplikacija stran prevzame (account.js
+// renderLanding ali drug zaslon umakne stran in z njo data-pristajalna, endPrerenderedLanding), gumbe ureja account.js.
+const OBRAZCI = ["#registracija", "#prijava", "#pozabljeno-geslo"];
+function obrazecSPristajalne() {
+  const z = window.evklidZacetek;
+  if (!z) return;
+  const odpri = () => {
+    // Poslušalec ostane: dotik, Nazaj pred account.js in nov dotik (obrazecVnaprej izriše enkrat, ko stran še velja).
+    if (!OBRAZCI.includes(location.hash) || !document.documentElement.hasAttribute("data-pristajalna")) return;
+    z.obrazec ||= () => {}; // pasici sta na pristajalni strani že pokazani (zacetek.js pasovi)
+    import("./account.js").then((m) => m.obrazecVnaprej()).catch(() => {});
+  };
+  addEventListener("hashchange", odpri);
+  odpri();
+}
 const izris = window.evklidZacetek?.poIzrisu;
 if (izris) izris.then(zacni, zacni);
 else zacni();
