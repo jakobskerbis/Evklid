@@ -488,6 +488,22 @@ test("negotovo (K-10): gotovi indeksi brez [?], potence in oklepaji izraza z [?]
   const a = oznaciNegotovo("a · a = |a|2, ln|x| + C, |x| = 3");
   assert.equal(a.besedilo, `a · a = |a|2 ${NEGOTOVO}, ln|x| + C, |x| = 3`);
   assert.deepEqual(a.negotovo, [{ vrsta: "zapis", izvirno: "|a|2" }]);
+  // Potence ostanejo negotove tudi ob indeksih iste črke drugje v izseku (pregled 2, K-10).
+  const ozn = (t) => oznaciNegotovo(t).negotovo.map((n) => n.izvirno);
+  assert.deepEqual(ozn("ax2 + bx + c = 0, x1,2 = (-b ± √D)/2a"), ["ax2"]);
+  assert.deepEqual(ozn("f(x) = x2 - 5x + 6, ničli x1 = 2 in x2 = 3"), ["x2"]);
+  assert.deepEqual(ozn("v = v0 + a(t - t0), s = v0t + at2/2"), ["at2"]);
+  assert.deepEqual(ozn("s0 = 5 m, a = 2 m/s2"), ["s2"]);
+  assert.deepEqual(ozn("m1 = 2 kg, S = 3 cm2"), ["cm2"]);
+  assert.deepEqual(ozn("S = πr2, r1 = 2"), ["πr2"]);
+  assert.deepEqual(ozn("S = πr22 - πr12, r1 = 2 cm"), ["πr22", "πr12"]);
+  assert.deepEqual(ozn("x10 + x1"), ["x10"]);
+  assert.deepEqual(ozn("x2y^2 + 1"), ["x2y"]);
+  assert.deepEqual(ozn("x1/2 = √x, x0,5"), ["x1", "x0"]);
+  // Oklepaj sredi niza (funkcija, gnezdenje) ne skrije potence; tabela s cevmi ni absolutna vrednost.
+  assert.deepEqual(ozn("y = ln(x2 + 1), sin(x2), (a + (b2))"), ["x2", "x2", "b2"]);
+  assert.deepEqual(ozn("x|1|2|3"), []);
   // Uravnoteženi oklepaji ostanejo del kemijske formule.
   assert.equal(oznaciNegotovo("Ca(OH)2 + 2HCl → CaCl2 + 2H2O").negotovo.map((n) => n.izvirno).join(" "), "Ca(OH)2 CaCl2 H2O");
+  assert.deepEqual(oznaciNegotovo("((NH4)2SO4 → x"), { besedilo: `((NH₄)₂SO₄ ${NEGOTOVO} → x`, negotovo: [{ vrsta: "kemija", izvirno: "(NH4)2SO4", prepis: "(NH₄)₂SO₄" }] });
 });

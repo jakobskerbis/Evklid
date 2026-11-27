@@ -107,9 +107,12 @@ naslovom razdelka, stranjo in zaporedjem; vrsto določi koda iz začetka bloka (
 primer, naloga, teorija; oštevilčena naloga s točkami je svoj izsek). Negotovo (linearen pregled nizov): »x2« (tudi
 »3x2«, »x2y«, »AB2«) ostane z `[?]`; kemijska formula z vsaj dvema elementoma se dopolni (H2SO4 → H₂SO₄) z `[?]` samo
 v enačbi s puščico in brez naboja, sicer (naboj iona SO42-, BC2 v geometriji) samo `[?]`; en simbol z indeksom (F2,
-R1), LaTeX in indeksi z `_` se ne označijo, prav tako gotovi indeksi (K-10): števka 0 ali 1 (v0, e0, q1q2), števka
-pred `^` (a1^2) in števka ob isti črki z indeksom 0 ali 1 v istem izseku (x1 in x2, y2 - y1); oklepaj izraza, ki se v
-nizu ne zapre (»(6x2«, »r2)«), ne skrije potence; absolutna vrednost s števko (`|a|2`) dobi `[?]`; formula, ki je KaTeX ne izriše, dobi `[?]`. Tabela `priprava_izseki`
+R1), LaTeX in indeksi z `_` se ne označijo, prav tako gotovi indeksi (K-10):
+števka 0 ali 1 (v0, e0, q1q2; ne pred ulomkom ali decimalko, x1/2), števka pred `^` (a1^2) in par ena črka + ena
+števka brez koeficienta, ob katerem je do 12 znakov stran ista črka z indeksom 0 ali 1 (x1 + x2, y2 - y1); potence
+(ax2, at2, πr2, cm2, x10) ostanejo negotove tudi ob indeksih drugje v izseku. Oklepaji izraza (»(6x2«, »ln(x2«,
+»r2)«) ne skrijejo potence, kemijska formula z oklepaji (Ca(OH)2, (NH4)2SO4) se pregleda cela; absolutna vrednost
+s števko (`|a|2`) dobi `[?]`; formula, ki je KaTeX ne izriše, dobi `[?]`. Tabela `priprava_izseki`
 (besedilo, naslov in seznam negotovih mest šifrirani, v `SEALED`, v izvozu odšifrirani, kaskada z virom in pripravo;
 ponovna obdelava briše s `secure_delete`); `priprava_viri` ima `stanje` (caka, obdelan, branje, napaka), `strani`,
 `napaka`, `opozorila`. Vir se obdela ob nalaganju (hkrati največ 2 obdelavi, sicer ostane »caka«; če je vir med
