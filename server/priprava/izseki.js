@@ -49,6 +49,22 @@ function deli(t) {
 export const izrise = (latex, blok = false) => napakaIzraza(latex, { blok, katex }) === null;
 
 /**
+ * Ali so vse števke v zapisu (x1, q1q2, v0, a2b2) gotovo indeksi, ne potence: to ni ugibanje, ker potenca 0 ali 1
+ * v zapiskih ne nastopa, potenca, zapisana s »^« takoj za števko (a1^2, v0^2), pa pomeni, da je števka pred njo indeks.
+ * Števka 2 ali več je indeks samo, če ista črka v istem izseku nastopa z indeksom 0 ali 1 (x1 in x2, y2 - y1).
+ * Vse drugo (x2, 6x2, ab2, x2y) ostane negotovo.
+ */
+function indeksZapis(w, za, cel) {
+  if (za === "^") return true;
+  const skupine = [...w.matchAll(/(\p{L}{1,3})(\d{1,2})/gu)];
+  return skupine.every(([, crke, st]) => {
+    if (st === "0" || st === "1") return true;
+    const c = crke.slice(-1).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(`(?<!\\p{L})${c}[01](?!\\d)`, "u").test(cel);
+  });
+}
+
+/**
  * Označi negotovo branje v enem izseku. Vrne { besedilo, negotovo: [{ vrsta, izvirno, prepis? }] }.
  * Besedilo ohrani vse, kar je bilo prebrano; popravek je samo pri kemijskih indeksih in vedno z [?].
  */
@@ -60,12 +76,25 @@ export function oznaciNegotovo(t) {
       negotovo.push({ vrsta: "formula", izvirno: d.surovo });
       return `${d.surovo} ${NEGOTOVO}`;
     }
+    // Absolutna vrednost s števko tik za njo (|a|2): lahko |a|² ali |a|·2.
+    const tekst = d.tekst.replace(/(\|[^|\s]{1,6}\|)(\d{1,2})(?!\d|[,.]\d)/g, (m, abs, st) => {
+      negotovo.push({ vrsta: "zapis", izvirno: m });
+      return `${abs}${st} ${NEGOTOVO}`;
+    });
     // Celi nizi črk, števk in oklepajev (linearno); števke na začetku so koeficient (3x2, 2H2O) in ostanejo.
-    return d.tekst.replace(/[\p{L}\p{N}_()\\]+/gu, (run, off, cel) => {
-      if (run.includes("\\") || run.includes("_")) return run;
+    // Oklepaj, ki se v nizu ne zapre (»(6x2«, »r2)«), je oklepaj izraza, ne del zapisa: gre ven pred pregledom.
+    return tekst.replace(/[\p{L}\p{N}_()\\]+/gu, (celNiz, off0, cel) => {
+      if (celNiz.includes("\\") || celNiz.includes("_")) return celNiz;
+      const odpri = (celNiz.match(/\(/g) || []).length;
+      const zapri = (celNiz.match(/\)/g) || []).length;
+      const pred = odpri > zapri ? /^\(+/.exec(celNiz)?.[0] || "" : "";
+      const po = zapri > odpri ? /\)+$/.exec(celNiz)?.[0] || "" : "";
+      const run = celNiz.slice(pred.length, celNiz.length - po.length);
+      const off = off0 + pred.length;
+      const ovij = (s) => `${pred}${s}${po}`;
       const koef = /^\d*/.exec(run)[0];
       const w = run.slice(koef.length);
-      if (!w || !/\d/.test(w) || !/^[\p{L}(]/u.test(w)) return run;
+      if (!w || !/\d/.test(w) || !/^[\p{L}(]/u.test(w)) return celNiz;
       const za = cel[off + run.length] || "";
       // Naboj iona (SO42-, PO43−) ali potenca, ki sledi: števk ne spreminjamo, samo oznaka.
       const naboj = /^[+\-−⁺⁻^]/.test(za);
@@ -74,18 +103,18 @@ export function oznaciNegotovo(t) {
         if (!naboj && /→|->|⟶|⇌|⇄/.test(cel)) {
           const p = vPodpis(w);
           negotovo.push({ vrsta: "kemija", izvirno: w, prepis: p });
-          return `${koef}${p} ${NEGOTOVO}`;
+          return ovij(`${koef}${p} ${NEGOTOVO}`);
         }
         negotovo.push({ vrsta: "zapis", izvirno: w });
-        return `${run} ${NEGOTOVO}`;
+        return ovij(`${run} ${NEGOTOVO}`);
       }
       // Ena do tri črke + številka brez presledka (x2, ab2, x12, x2y, AB2): lahko potenca, produkt ali indeks.
-      // En sam velik simbol z indeksom (F2, R1) ostane brez oznake.
-      if (/^(?:\p{L}{1,3}\d{1,2})+\p{L}{0,2}$/u.test(w) && !/^\p{Lu}\d+$/u.test(w)) {
+      // En sam velik simbol z indeksom (F2, R1) ostane brez oznake, prav tako zapis, ki je gotovo indeks (indeksZapis).
+      if (/^(?:\p{L}{1,3}\d{1,2})+\p{L}{0,2}$/u.test(w) && !/^\p{Lu}\d+$/u.test(w) && !indeksZapis(w, za, cel)) {
         negotovo.push({ vrsta: "zapis", izvirno: w });
-        return `${run} ${NEGOTOVO}`;
+        return ovij(`${run} ${NEGOTOVO}`);
       }
-      return run;
+      return celNiz;
     });
   });
   // Formula iz Worda, ki je uvoz ni mogel prebrati (uvoz.js omml): ostane oznaka.

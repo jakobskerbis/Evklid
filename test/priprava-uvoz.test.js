@@ -282,8 +282,8 @@ test("PDF: besedilo po straneh, skenirana stran označena, poškodovan PDF da na
   assert.deepEqual(r.strani[0].vrstice.map((v) => v.besedilo), a);
   const iz = razrezi(r.strani);
   assert.ok(iz.some((x) => x.stran === 3 && x.vrsta === "izrek" && x.besedilo.startsWith("Coulombov zakon")));
-  // q1, q2 sta oznaki (indeksa) zunaj formule: ostaneta z [?].
-  assert.ok(iz.find((x) => x.stran === 3).besedilo.includes(`q1 ${NEGOTOVO}`));
+  // q1, q2 sta gotovo indeksa (potence 1 v zapiskih ni, q2 ob q1): brez [?] (K-10, lažna negotovost).
+  assert.ok(iz.find((x) => x.stran === 3).besedilo.includes("k q1 q2 / r^2") && !iz.find((x) => x.stran === 3).negotovo.length);
   await assert.rejects(preberiVir("pdf", Buffer.from("%PDF-1.4\nsmeti brez strani\n%%EOF")), (e) => e instanceof NapakaUvoza && e.code === "uvoz_pdf");
 });
 
@@ -468,4 +468,26 @@ test("PowerPoint: <a:br/> je presledek, številka prosojnice in noga nista besed
   const sl = `<p:sld xmlns:p="p" xmlns:a="a"><p:cSld><p:spTree><p:sp><p:txBody><a:p><a:r><a:t>Prva</a:t></a:r><a:br/><a:r><a:t>druga</a:t></a:r></a:p></p:txBody></p:sp><p:sp><p:nvSpPr><p:nvPr><p:ph type="sldNum"/></p:nvPr></p:nvSpPr><p:txBody><a:p><a:r><a:t>7</a:t></a:r></a:p></p:txBody></p:sp><p:sp><p:nvSpPr><p:nvPr><p:ph type="ftr"/></p:nvPr></p:nvSpPr><p:txBody><a:p><a:r><a:t>Gimnazija X</a:t></a:r></a:p></p:txBody></p:sp></p:spTree></p:cSld></p:sld>`;
   const st = beriPowerpoint(zip({ "[Content_Types].xml": CT, "ppt/presentation.xml": "<p:presentation/>", "ppt/slides/slide1.xml": sl }));
   assert.deepEqual(st[0].vrstice.filter((v) => v.besedilo).map((v) => v.besedilo), ["Prva druga"]);
+});
+
+test("negotovo (K-10): gotovi indeksi brez [?], potence in oklepaji izraza z [?]", () => {
+  const brez = (t) => assert.deepEqual(oznaciNegotovo(t), { besedilo: t, negotovo: [] }, t);
+  // Indeks 0 ali 1 ni potenca; števka pred »^« je indeks; x2 ob x1 v istem izseku je indeks.
+  brez("h = v0^2/(2g), naboj e0 = 1,6·10^-19 As, 1/(4πε0) = 9·10^9");
+  brez("Coulomb: F = q1q2/(4πε0 r^2)");
+  brez("Vietovi formuli: x1 + x2 = -b/a, x1·x2 = c/a, f(x) = a(x - x1)(x - x2)");
+  brez("a = (a1, a2), b = (b1, b2), |a| = √(a1^2 + a2^2), a · b = a1b1 + a2b2, AB = (x2 - x1, y2 - y1)");
+  // Negotovo ostane: potenca brez »^«, tudi v oklepaju izraza in tik pred zaklepajem.
+  const o = oznaciNegotovo("∫ (6x2 - 4x + 1) dx = 2x3 - 2x2 + x + C");
+  assert.equal(o.besedilo, `∫ (6x2 ${NEGOTOVO} - 4x + 1) dx = 2x3 ${NEGOTOVO} - 2x2 ${NEGOTOVO} + x + C`);
+  const c = oznaciNegotovo("F = q1q2/(4πε0 r2)");
+  assert.equal(c.besedilo, `F = q1q2/(4πε0 r2 ${NEGOTOVO})`);
+  assert.deepEqual(c.negotovo, [{ vrsta: "zapis", izvirno: "r2" }]);
+  // x2 brez x1 v izseku ostane negotov; absolutna vrednost s števko (|a|2) je negotova.
+  assert.equal(oznaciNegotovo("y = x2 + 1").besedilo, `y = x2 ${NEGOTOVO} + 1`);
+  const a = oznaciNegotovo("a · a = |a|2, ln|x| + C, |x| = 3");
+  assert.equal(a.besedilo, `a · a = |a|2 ${NEGOTOVO}, ln|x| + C, |x| = 3`);
+  assert.deepEqual(a.negotovo, [{ vrsta: "zapis", izvirno: "|a|2" }]);
+  // Uravnoteženi oklepaji ostanejo del kemijske formule.
+  assert.equal(oznaciNegotovo("Ca(OH)2 + 2HCl → CaCl2 + 2H2O").negotovo.map((n) => n.izvirno).join(" "), "Ca(OH)2 CaCl2 H2O");
 });
