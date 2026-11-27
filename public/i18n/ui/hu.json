@@ -1037,6 +1037,8 @@
   "gc.home": "Alapnézet",
   "gc.fit": "Mindent mutat",
   "gc.fullGraph": "Grafikon teljes képernyőn",
+  "gc.autoFit": "A nézet az új görbére ugrott.",
+  "gc.autoFitBack": "Vissza",
   "gc.q.roots": "Zérushelyek",
   "gc.q.ext": "Szélsőértékek",
   "gc.q.none": "a látható részen nincs",

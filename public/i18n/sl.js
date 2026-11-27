@@ -1163,6 +1163,8 @@ export default {
   "gc.home": "Privzeti pogled",
   "gc.fit": "Pokaži vse",
   "gc.fullGraph": "Graf čez cel zaslon",
+  "gc.autoFit": "Pogled sem premaknil na novo krivuljo.",
+  "gc.autoFitBack": "Nazaj",
   "gc.q.roots": "Ničle",
   "gc.q.ext": "Ekstremi",
   "gc.q.none": "v vidnem delu jih ni",

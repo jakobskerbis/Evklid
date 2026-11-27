@@ -191,6 +191,17 @@ test("»Pokaži na grafu«: integral, odvod, enačba in divergenten integral v g
       await tap('#g [data-act="undo"]');
       assert.deepEqual(await page.evaluate(() => window.graph.state.items[0].tools), { roots: true }, where);
 
+      // nova krivulja zunaj pogleda (predlog 3): po premoru pri tipkanju pogled pokaže krivuljo, »Nazaj« ga vrne
+      const v0 = await page.evaluate(() => ({ ...window.graph.state.view }));
+      await tap('#g .gc-row[data-id="q1"] .gc-math, #g .gc-row[data-id="q1"] .gc-preview');
+      await page.fill('#g .gc-row[data-id="q1"] .gc-input', "y = x^2 + 50");
+      await page.locator("#g .gc-fitnote").waitFor({ state: "visible" });
+      const v1 = await page.evaluate(() => ({ ...window.graph.state.view }));
+      assert.ok(v1.ymin < 50 && v1.ymax > 50, `${where}: pogled ${JSON.stringify(v1)}`);
+      await tap('#g [data-act="fitback"]');
+      await page.waitForFunction((v0) => Math.abs(window.graph.state.view.xmin - v0.xmin) < 1e-6 && window.graph.state.view.ymax < 20, v0);
+      assert.ok(await page.locator("#g .gc-fitnote").isHidden(), where);
+
       // brez vodoravnega drsenja
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), where);
       assert.deepEqual(errors, [], where);

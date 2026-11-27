@@ -1037,6 +1037,8 @@
   "gc.home": "Default view",
   "gc.fit": "Show all",
   "gc.fullGraph": "Full-screen graph",
+  "gc.autoFit": "The view moved to the new curve.",
+  "gc.autoFitBack": "Back",
   "gc.q.roots": "Zeros",
   "gc.q.ext": "Extrema",
   "gc.q.none": "none in view",

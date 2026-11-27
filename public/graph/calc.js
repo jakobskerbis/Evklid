@@ -78,6 +78,7 @@ export function createCalculator(root, opts) {
         <button type="button" class="gc-fab" data-act="fit" title="${esc(t("gc.fit"))}" aria-label="${esc(t("gc.fit"))}">${icon("maximize")}</button>
       </div>
       <div class="gc-use" hidden></div>
+      <div class="gc-fitnote" hidden role="status"><span>${esc(t("gc.autoFit"))}</span><button type="button" class="sc-act" data-act="fitback">${icon("undo-2")}<span>${esc(t("gc.autoFitBack"))}</span></button></div>
       <button type="button" class="gc-fab gc-expand" data-act="expand" title="${esc(t("gc.fullGraph"))}" aria-label="${esc(t("gc.fullGraph"))}" aria-pressed="false">${icon("maximize-2")}</button>
     </section>
     <div class="gc-pop" hidden role="dialog"></div>`;
@@ -736,7 +737,49 @@ export function createCalculator(root, opts) {
       if (it.type === "note") autoGrow(e.target);
       commit(false);
       refresh();
+      if (it.type === "expr") {
+        clearTimeout(fitTimer);
+        fitTimer = setTimeout(() => autoFit(it.id), 900);
+      }
     }
+  });
+
+  // Nova krivulja zunaj pogleda (predlog 3, j 27. 11.): ko se tipkanje ustavi, pogled premaknemo nanjo in ponudimo
+  // »Nazaj«. Za isto besedilo le enkrat, da ne nagajamo učencu, ki je pogled premaknil sam.
+  let fitTimer = 0;
+  let fitHide = 0;
+  let fitPrev = null;
+  const fitDone = new Map(); // id vrstice → besedilo, za katero smo pogled že prilagodili
+  const fitNote = $(".gc-fitnote");
+  function curveVisible(o, v) {
+    for (let i = 0; i <= 240; i++) {
+      const y = toNum(o.fn(v.xmin + ((v.xmax - v.xmin) * i) / 240));
+      if (Number.isFinite(y) && y >= v.ymin && y <= v.ymax) return true;
+    }
+    return false;
+  }
+  function autoFit(id) {
+    const it = item(id);
+    const o = modelItem(id);
+    if (!it || !o || it.hidden || !(o.kind === "y" || o.plot === "y") || typeof o.fn !== "function") return;
+    if (fitDone.get(id) === it.text) return;
+    try {
+      if (curveVisible(o, state.view)) return;
+      const fit = fitModelView({ items: [o] }, { W: view.W, H: view.H });
+      if (!fit || !curveVisible(o, fit)) return;
+      fitDone.set(id, it.text);
+      fitPrev = { ...state.view };
+      view.animateTo(fit);
+      fitNote.hidden = false;
+      clearTimeout(fitHide);
+      fitHide = setTimeout(() => (fitNote.hidden = true), 8000);
+    } catch {}
+  }
+  fitNote.addEventListener("click", (e) => {
+    if (!e.target.closest('[data-act="fitback"]')) return;
+    if (fitPrev) view.animateTo(fitPrev);
+    fitPrev = null;
+    fitNote.hidden = true;
   });
   list.addEventListener("change", (e) => {
     const row = e.target.closest(".gc-row");

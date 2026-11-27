@@ -1037,6 +1037,8 @@
   "gc.home": "Standardansicht",
   "gc.fit": "Alles zeigen",
   "gc.fullGraph": "Graph im Vollbild",
+  "gc.autoFit": "Die Ansicht wurde zur neuen Kurve verschoben.",
+  "gc.autoFitBack": "Zurück",
   "gc.q.roots": "Nullstellen",
   "gc.q.ext": "Extrema",
   "gc.q.none": "keine im sichtbaren Bereich",

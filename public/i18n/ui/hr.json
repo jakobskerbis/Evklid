@@ -1043,6 +1043,8 @@
   "gc.home": "Zadani prikaz",
   "gc.fit": "Prikaži sve",
   "gc.fullGraph": "Graf preko cijelog zaslona",
+  "gc.autoFit": "Pogled je pomaknut na novu krivulju.",
+  "gc.autoFitBack": "Natrag",
   "gc.q.roots": "Nultočke",
   "gc.q.ext": "Ekstremi",
   "gc.q.none": "nema ih u vidljivom dijelu",
