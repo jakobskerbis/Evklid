@@ -1398,8 +1398,6 @@ export function createCalculator(root, opts) {
     if (act === "add") openAddMenu(b);
     // DEG/RAD v glavi kot v Znanstvenem (predlog 1, j 27. 11.): vedno viden, brez opombe v seznamu
     if (act === "angle" && state.settings.deg !== (b.dataset.deg === "1")) {
-      undo.push(JSON.stringify(state));
-      redo.length = 0;
       state.settings.deg = b.dataset.deg === "1";
       commit();
       refresh();

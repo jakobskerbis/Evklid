@@ -67,6 +67,8 @@
 }
 @container gc-panel (max-width: 370px) {
   .gc-text-btn span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .gc .gc-btn { min-width: 36px; padding-inline: 4px; }
+  .gc-bar .gc-angle > button { padding: 4px 6px !important; }
 }
 }
 

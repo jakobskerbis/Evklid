@@ -156,6 +156,12 @@ test("»Pokaži na grafu«: integral, odvod, enačba in divergenten integral v g
       await tap('#g .gc-angle [data-deg="0"]');
       assert.equal(await page.evaluate(() => window.graph.state.settings.deg), false, where);
       assert.ok(await page.isVisible('#g .gc-angle [data-deg="0"].active'), where);
+      // ena razveljavitev vrne DEG (en sam vnos v zgodovini), ponovna uveljavitev spet RAD
+      await tap('#g [data-act="undo"]');
+      assert.equal(await page.evaluate(() => window.graph.state.settings.deg), true, `${where}: razveljavi`);
+      assert.ok(await page.isVisible('#g .gc-angle [data-deg="1"].active'), where);
+      await tap('#g [data-act="redo"]');
+      assert.equal(await page.evaluate(() => window.graph.state.settings.deg), false, `${where}: uveljavi znova`);
       await tap('#g .gc-angle [data-deg="1"]');
       assert.equal(await page.evaluate(() => window.graph.state.settings.deg), true, where);
 
