@@ -94,6 +94,7 @@ export const FX_GROUPS = [
   ["num", "sc.grp.num", [["n!", "!"], ["nCr", "nCr(@;)"], ["nPr", "nPr(@;)"], ["gcd", "gcd(@;)"], ["lcm", "lcm(@;)"], ["mod", "mod(@;)"], ["round", "round(@;)"], ["⌊x⌋", "floor(@)"], ["⌈x⌉", "ceil(@)"], ["sgn", "sgn(@)"], ["Int", "Int(@)"], ["frac", "frac(@)"], ["Ran#", "rand"], ["RanInt", "randint(@;)"], ["Pol", "Pol(@;)"], ["Rec", "Rec(@;)"], ["%", "%"], ["Ans", "Ans"]]],
   ["stat", "sc.grp.stat", [["mean", "mean(@)"], ["median", "median(@)"], ["σ", "stdev(@)"], ["min", "min(@)"], ["max", "max(@)"], ["Σ", "total(@)"], [";", ";"]]],
   ["cplx", "sc.grp.cplx", [["i", "i"], ["|z|", "abs(@)"]]],
+  ["moje", "tk.moje", []], // »Moje tipke«
 ];
 
 // Imena ukazov CAS v slovenščini (enako kot commandName v public/graph/cas.js; kalkulator razume oboje).
@@ -123,6 +124,7 @@ export const KEM_GROUPS = [
     ["°C", "kPa", "mol", "g/mol", "mol/L", "kJ/mol", "pH"],
   ]],
   ["pse", "tk.kem.pse", []],
+  ["moje", "tk.moje", []], // »Moje tipke« (učenčevi zapisi, tipkovnica.js mojeHtml)
 ];
 /** Strani »Vsi elementi«: začetnice simbolov (brez J in Q, s katerima se ne začne noben element), dve vrsti. */
 export const KEM_LETTERS = [
@@ -142,6 +144,44 @@ export const TUTOR_CHIPS = [
   ["a/b", "(@)/()"], ["=", "="], ["x²", "²"], ["xⁿ", "^(@)"], ["√", "√(@)"], ["aₙ", "_(@)"], ["∫", "∫ (@) dx"], ["∫ₐᵇ", "∫_(@)^() () dx"], ["∑", "∑_(n=1)^(@) "],
   ["π", "π"], ["∞", "∞"], ["→", "→"], ["≤", "≤"], ["≠", "≠"], ["·", "·"], ["°", "°"],
 ];
+// Tipke nad tipkovnico po temi naloge (j, 27. 11.: »vse, ki so relevantne + par najpogosteje rabljenih, ki naj bodo
+// stalne«; dopolnitve ChatGPT). Stalne so spredaj in vedno na istem mestu (√ in xⁿ na en dotik), sledijo tipke teme.
+// Tema = profil poglavja naloge (graph/tipke-poglavja.js, kot v kalkulatorju); zamenja se le ob novi nalogi, ne med
+// tipkanjem. Telefon: največ tri tipke teme in »Vse tipke« (plast f(x)), brez znakov, ki so že na osnovni tipkovnici.
+export const TUTOR_BASE = [["+", "+"], ["−", "−"], ["×", "·"], ["÷", ":"], ["( )", "(@)"], ["=", "="], ["a/b", "(@)/()"], ["x²", "²"], ["xⁿ", "^(@)"], ["√", "√(@)"]];
+const PHONE_BASE = [["a/b", "(@)/()"], ["=", "="], ["xⁿ", "^(@)"], ["√", "√(@)"]];
+export const TOPIC_CHIPS = {
+  cplx: [["i", "i"], ["a + bi", "@ + ()i"], ["|z|", "|@|"], ["z̄", "z̄"], ["arg", "arg(@)"]],
+  trig: [["sin", "sin(@)"], ["cos", "cos(@)"], ["tan", "tan(@)"], ["π", "π"], ["°", "°"]],
+  log: [["log", "log(@)"], ["ln", "ln(@)"], ["logₐ", "log_(@)()"], ["eˣ", "e^(@)"]],
+  seq: [["aₙ", "a_(@)"], ["aₙ₊₁", "a_(n+1)"], ["∑", "∑_(n=1)^(@) "], ["∞", "∞"]],
+  ana: [["d/dx", "d/dx(@)"], ["∫", "∫ (@) dx"], ["∫ₐᵇ", "∫_(@)^() () dx"], ["lim", "lim_(x→@) "], ["∞", "∞"]],
+  eq: [["±", "±"], ["≤", "≤"], ["≥", "≥"], ["≠", "≠"], ["∪", "∪"], ["∞", "∞"]],
+  kem: [["→", " → "], ["⇌", " ⇌ "], ["Xₙ", "_(@)"], ["X⁻", "^(@−)"], ["X⁺", "^(@+)"], ["·", "·"]],
+  fiz: [["→", " → "], ["m/s²", "m/s²"], ["·10ⁿ", "·10^(@)"], ["Δ", "Δ"], ["°C", "°C"]],
+  geo: [["π", "π"], ["°", "°"], ["∠", "∠"], ["△", "△"]],
+  comb: [["n!", "!"], ["C(n, k)", "C(@;)"], ["V(n, k)", "V(@;)"]],
+  stat: [["x̄", "x̄"], ["σ", "σ"], ["%", "%"]],
+  fin: [["%", "%"], ["€", "€"], ["·10ⁿ", "·10^(@)"]],
+  num: [["|x|", "|@|"], ["≠", "≠"], ["π", "π"]],
+};
+const SEQ = /zaporedj|sequence|aritmetic|geometrijsk[a-z]*[- ]zap/;
+/**
+ * Tipke nad tipkovnico v klepetu z inštruktorjem za temo { id, unit, name, subject } (ali null) in napravo.
+ * profile: profil iz graph/tipke-poglavja.js (podamo ga, da ta datoteka ne uvozi kalkulatorja).
+ */
+export function tutorChips(topic, profile, phone = false) {
+  const p = topic && SEQ.test(`${topic.id || ""} ${topic.name || ""} ${topic.unit || ""}`.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")) ? "seq" : profile;
+  const own = TOPIC_CHIPS[p] || [];
+  if (phone) {
+    const base = new Set(PHONE_BASE.map((c) => c[1]));
+    return [...PHONE_BASE, ...own.filter((c) => !base.has(c[1])).slice(0, 3), { label: "Vse tipke", i18n: "tk.allKeys", layer: "fx" }];
+  }
+  const base = new Set(TUTOR_BASE.map((c) => c[1]));
+  // brez teme: dosedanje pogoste tipke (indeks, integral, vsota …)
+  const rest = own.length ? own : TUTOR_CHIPS.filter((c) => !["a/b", "=", "x²", "xⁿ", "√"].includes(c[0]));
+  return [...TUTOR_BASE, ...rest.filter((c) => !base.has(c[1]))];
+}
 export const URL_CHIPS = [["https://", "https://"], [".com", ".com"], [".si", ".si"], ["/", "/"]];
 /** Ali je polje za povezavo (type=url ali inputmode=url): dobi tipko Prilepi in pripone. */
 export const isUrlField = (el) => String(el?.type || el?.getAttribute?.("type") || "").toLowerCase() === "url" || String(el?.getAttribute?.("inputmode") || "").toLowerCase() === "url";
@@ -416,4 +456,33 @@ export function glideDecode(points, keyCenters, words, { n = 3, keyW, radius } =
     scored.push({ w, s: loc + 0.5 * shape + 0.3 * cover + 0.05 * Math.log10(rank + 1) });
   }
   return scored.sort((x, y) => x.s - y.s).slice(0, n).map((x) => x.w);
+}
+
+// ---------- »Moje tipke« (j, 27. 11.) ----------
+// Učenec doda svoje zapise (SO₄²⁻, NH₄⁺, g = 9,81 …) s »+« na strani »Moje« (f(x), Σ, Kem); shranjeni so na napravi
+// (j: hitreje, brez novih osebnih podatkov). Odstrani jih »Uredi« ali dolg pritisk (vklopi urejanje).
+export const MOJE_KEY = "evklid.mojeTipke";
+export const MOJE_SECTIONS = ["mat", "sym", "kem"];
+export const MOJE_MAX = 30;
+const mojeOk = (x) => typeof x === "string" && x.trim() && x.length <= 40;
+/** Shranjene tipke iz localStorage (pokvarjen zapis → prazno). */
+export function parseMoje(raw) {
+  let o = null;
+  try {
+    o = JSON.parse(raw || "{}");
+  } catch {}
+  return Object.fromEntries(MOJE_SECTIONS.map((k) => [k, Array.isArray(o?.[k]) ? o[k].filter(mojeOk).slice(0, MOJE_MAX) : []]));
+}
+/** Doda zapis na konec (brez podvojitve, največ MOJE_MAX). */
+export function mojeAdd(m, sec, x) {
+  const v = String(x ?? "").trim();
+  if (!mojeOk(v) || !MOJE_SECTIONS.includes(sec)) return m;
+  return { ...m, [sec]: [...(m[sec] || []).filter((y) => y !== v), v].slice(-MOJE_MAX) };
+}
+export const mojeDel = (m, sec, x) => ({ ...m, [sec]: (m[sec] || []).filter((y) => y !== x) });
+/** Kaj doda »+«: izbrano besedilo ali zapis tik pred kazalcem do presledka (SO₄²⁻, NH₄⁺). */
+export function mojeFrom(value, a, b) {
+  const v = String(value ?? "");
+  if (b > a) return v.slice(a, b).trim();
+  return /(\S+)$/.exec(v.slice(0, a))?.[1] || "";
 }

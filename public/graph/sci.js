@@ -13,6 +13,7 @@ import { UNIT_GROUPS, token, unitResultTex, parseUnit, hasUnits, OFFSET_TEMP } f
 import { pomanjsaj, prilagodiSirini } from "../sirina.js";
 import { izrisi } from "../mat/izris.js";
 import { createWriter, writerDefaultOpen } from "./pisi.js";
+import { infoFor, plotSvg, INFO_FIRST } from "./sci-info.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const isTouch = () => typeof matchMedia !== "undefined" && matchMedia("(hover: none) and (pointer: coarse)").matches;
@@ -179,6 +180,7 @@ export function createScientific(root, opts) {
       </div>
       <div class="sc-history" aria-label="${esc(t("sc.history"))}" role="log"></div>
       <div class="sc-entry">
+        <div class="sc-info" hidden><div class="sc-info-g"></div><div class="sc-info-rows"></div></div>
         <div class="sc-line">
           <div class="sc-preview" aria-hidden="true"></div>
         </div>
@@ -217,24 +219,105 @@ export function createScientific(root, opts) {
   // Hitro (vsak pritisk): višina zapisa je sorazmerna faktorju, zato ena meritev pri trenutnem faktorju da novega;
   // prostor za tipke (keysNeed) se izmeri le ob spremembi velikosti.
   let keysNeed = 0;
+  const INFO_H = 132; // graph.css .sc-info (stalna višina: tipke ne skačejo ob vsakem pritisku)
+  // Podatki o zapisu v praznem delu zaslona (j, 27. 11.): po poglavju (analiza: 1. in 2. odvod, nedoločeni integral;
+  // drugje razstavljeno …), za število prafaktorji in znanstveni zapis; računa se po premoru tipkanja (sci-info.js)
+  let infoTimer = 0;
+  let infoMore = false; // »Več«: vse vrstice v treh stolpcih namesto grafa (ostane do zaprtja)
+  let infoRoom = false; // fitEntry: ali je nad zapisom prostor za podatke (sicer jih sploh ne računamo)
+  let infoLast = { key: "", d: null }; // »Več« in ponoven izris ne računata znova
+  function scheduleInfo(text, r) {
+    clearTimeout(infoTimer);
+    const box = $(".sc-info");
+    if (!r || !root.classList.contains("sc-c") || root.matches(".sc-pisi-r, .sc-pisi-l, .sc-pisi-b")) {
+      if (!text || !root.classList.contains("sc-c")) box.hidden = true;
+      else box.classList.add("sc-info-empty");
+      return;
+    }
+    // stari podatki se takoj umaknejo (ne le zbledijo); prostor ostane, da se zapis in tipke ne premaknejo
+    box.classList.add("sc-info-empty");
+    infoTimer = setTimeout(() => renderInfo(text, r), 300);
+  }
+  function renderInfo(text, r) {
+    const box = $(".sc-info");
+    if (input.value !== text) return;
+    if (!infoRoom) return (box.hidden = true);
+    const e = env();
+    const key = JSON.stringify([text, profile, comma(), e.deg, e.grad, e.vars]);
+    let d = infoLast.key === key ? infoLast.d : null;
+    if (infoLast.key !== key) {
+      try {
+        d = infoFor(text, r, { profile, comma: comma(), env: e });
+      } catch {}
+      infoLast = { key, d };
+    }
+    if (!d) {
+      if (box.hidden) return;
+      return box.classList.add("sc-info-empty");
+    }
+    const svg = d.plot && !infoMore ? plotSvg(d.plot.fn, d.plot.roots, { env: env(), holes: d.plot.holes }) : "";
+    const g = box.querySelector(".sc-info-g");
+    g.hidden = !svg;
+    g.innerHTML = svg ? `${svg}${opts.openGraph ? `<button type="button" class="ghost small sc-info-graf">${icon("chart-spline")}<span>${esc(t("sc.infoOpenGraph"))}</span></button>` : ""}` : "";
+    g.querySelector(".sc-info-graf")?.addEventListener("click", () => opts.openGraph(r.plot?.length ? r.plot : [`y = ${d.plot.fn}`]));
+    const rows = infoMore ? d.rows : d.rows.slice(0, INFO_FIRST);
+    const more = d.rows.length > INFO_FIRST;
+    const list = box.querySelector(".sc-info-rows");
+    list.classList.toggle("sc-info-all", infoMore);
+    list.innerHTML =
+      rows.map((x) => `<div class="sc-info-row"><span class="sc-info-k">${esc(t(x.key))}</span><span class="sc-info-v">${x.tex ? texHtml(x.tex) : esc(t(x.text))}</span></div>`).join("") +
+      (more ? `<button type="button" class="ghost small sc-info-more" aria-expanded="${infoMore}">${esc(t(infoMore ? "sc.infoLess" : "sc.infoMore"))}</button>` : "");
+    list.querySelector(".sc-info-more")?.addEventListener("click", () => {
+      infoMore = !infoMore;
+      renderInfo(text, r);
+      fitEntry();
+    });
+    box.classList.remove("sc-info-empty");
+    if (box.hidden) {
+      box.hidden = false;
+      fitEntry();
+    } else fitInfo();
+  }
+  // dolgi zapisi v vrsticah (odvod) se pomanjšajo na širino stolpca
+  const fitInfo = () => {
+    if (root.classList.contains("sc-info-on"))
+      for (const v of $(".sc-info").querySelectorAll(".sc-info-v")) {
+        const kv = v.querySelector(".katex");
+        if (kv) pomanjsaj(kv, v.clientWidth, () => v.scrollWidth);
+      }
+  };
   const fitEntry = () => {
     // pripeto okno »Piši« ima svojo mrežo (graph.css): zapis tam raste, zgodovina se skrči
-    if (!root.classList.contains("sc-c") || root.matches(".sc-pisi-r, .sc-pisi-l, .sc-pisi-b")) return root.style.removeProperty("--sc-fit");
+    if (!root.classList.contains("sc-c") || root.matches(".sc-pisi-r, .sc-pisi-l, .sc-pisi-b")) {
+      root.classList.remove("sc-info-on");
+      return root.style.removeProperty("--sc-fit");
+    }
     const entry = $(".sc-entry");
     const prev = $(".sc-preview");
     const k = prev.querySelector(".katex");
     const s0 = parseFloat(root.style.getPropertyValue("--sc-fit")) || 1;
     const set = (s) => Math.abs(s - s0) > 0.004 && root.style.setProperty("--sc-fit", s.toFixed(3));
-    if (!k) return set(1);
+    if (!k) {
+      root.classList.remove("sc-info-on");
+      return set(1);
+    }
     if (!keysNeed) {
       root.style.gridTemplateRows = "auto auto min-content"; // tipke v najmanjši višini (40 px)
       keysNeed = $(".sc-keys").offsetHeight;
       root.style.gridTemplateRows = "";
     }
     k.style.fontSize = ""; // širinski pomanjšaj (showEntry) znova po novem faktorju
+    const avail = root.clientHeight - $(".sc-bar").offsetHeight - keysNeed;
+    const pad = (cs) => (parseFloat(cs.paddingTop) || 0) + (parseFloat(cs.paddingBottom) || 0);
+    // podatki (ničle, odvod, graf) nad zapisom le, če ostane dovolj prostora za zapis (110 px); zaslon tedaj do 42 %
+    const info = $(".sc-info");
+    infoRoom = Math.min(root.clientHeight * 0.42, avail) - pad(getComputedStyle(entry)) - INFO_H - 8 >= 110;
+    const on = !info.hidden && infoRoom;
+    root.classList.toggle("sc-info-on", on);
     const cs = getComputedStyle(entry);
-    const max = Math.min(parseFloat(cs.maxHeight) || Infinity, root.clientHeight - $(".sc-bar").offsetHeight - keysNeed);
-    const room = max - (parseFloat(cs.paddingTop) || 0) - (parseFloat(cs.paddingBottom) || 0) - 2;
+    const max = Math.min(parseFloat(cs.maxHeight) || Infinity, avail);
+    const room = max - pad(cs) - (on ? INFO_H + 8 : 0) - 2;
+    fitInfo();
     const full = ($(".sc-line").offsetHeight + $(".sc-live").offsetHeight) / s0; // višina pri faktorju 1
     let s = full > 0 ? Math.max(0.3, Math.min(1, room / full)) : 1;
     set(s);
@@ -854,6 +937,7 @@ export function createScientific(root, opts) {
       speak(null);
       live.textContent = "";
       live.className = "sc-live";
+      scheduleInfo(text, null);
       return;
     }
     let r;
@@ -866,9 +950,11 @@ export function createScientific(root, opts) {
       showEntry(null);
       live.textContent = "";
       live.className = "sc-live";
+      scheduleInfo(text, null);
       return;
     }
     showEntry(r);
+    scheduleInfo(text, r);
     live.className = "sc-live muted";
     const big = r.kind === "value" ? bigShown(r) : null;
     if (big) live.innerHTML = texHtml(`${big.rel} ${big.tex}`);

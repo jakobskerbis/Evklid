@@ -2837,8 +2837,19 @@ setKeyboardContext({ settings: () => state.student?.settings, chapter: calcChapt
 mountKeyboardSettings($("#tipkovnica-card"));
 // Predlogi nad tipkovnico (TUTOR_CHIPS) so v tipkovnica-data.js, ki pride s tipkovnico (tipkovnica-lena.js).
 obTipkovnici(() =>
-  import("./tipkovnica-data.js")
-    .then(({ TUTOR_CHIPS }) => configureKeyboard(input, { layers: ["abc", "num", "fx", "sym", "kem"], start: "abc", enter: "send", ctx: TUTOR_CHIPS }))
+  Promise.all([import("./tipkovnica-data.js"), import("./graph/tipke-poglavja.js")])
+    .then(([{ tutorChips }, { chapterProfile }]) => {
+      // tipke nad tipkovnico po temi naloge (kot v kalkulatorju); tema se zamenja ob novi nalogi, ne med tipkanjem
+      let last = null;
+      const ctx = () => {
+        const topic = calcChapter();
+        const phone = matchMedia("(max-width: 600px)").matches;
+        const key = `${topic?.id || ""}|${topic?.unit || ""}|${phone}`;
+        if (last?.key !== key) last = { key, list: tutorChips(topic, chapterProfile(topic), phone) };
+        return last.list;
+      };
+      configureKeyboard(input, { layers: ["abc", "num", "fx", "sym", "kem"], start: "abc", enter: "send", ctx });
+    })
     .catch(() => {}),
 );
 $("#sym-btn").addEventListener("click", () => toggleKeyboard(input, { layer: "sym" }));

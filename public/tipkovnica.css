@@ -249,3 +249,8 @@ body.tk-open :is(.graph-overlay, .overlay, .corner-board) { bottom: calc(var(--t
    spraševanja se skrajša in drsi, da polje in »Oddaj« nista pod tipkami. */
 dialog:has(> .tk:not([hidden])) { margin-bottom: calc(var(--tk-h, 0px) + var(--tk-vv, 0px)); }
 .us-okno:has(> .tk:not([hidden])) .us-box { max-height: calc(100dvh - var(--tk-h, 0px) - var(--tk-vv, 0px)); }
+
+/* »Moje tipke« (tipkovnica.js mojeHtml): namig čez vso vrstico, v urejanju tap odstrani (×) */
+.tk-moje-hint { grid-column: 1 / -1; align-self: center; padding: 4px 8px; font-size: 0.85rem; color: var(--muted); text-align: center; }
+.tk-k.moje.del { gap: 4px; color: var(--tk-del, #d14343); } /* --danger ni v /3d (3d.css html.k3-stran) */
+.tk-k.moje.del > span[aria-hidden] { font-weight: 800; margin-right: 4px; }
