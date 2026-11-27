@@ -1041,6 +1041,8 @@
   "gc.autoFitBack": "Back",
   "gc.q.roots": "Zeros",
   "gc.q.ext": "Extrema",
+  "gc.q.hide": "Remove the {name} button",
+  "gc.q.reset": "Reset",
   "gc.q.none": "none in view",
   "gc.poi.root": "zero",
   "gc.poi.max": "maximum",

@@ -1041,6 +1041,8 @@
   "gc.autoFitBack": "Indietro",
   "gc.q.roots": "Zeri",
   "gc.q.ext": "Estremi",
+  "gc.q.hide": "Rimuovi il pulsante {name}",
+  "gc.q.reset": "Ripristina",
   "gc.q.none": "nessuno nella parte visibile",
   "gc.poi.root": "zero",
   "gc.poi.max": "massimo",

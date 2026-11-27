@@ -387,7 +387,7 @@ export function createCalculator(root, opts) {
     if (a?.classList?.contains("gc-input") && !a.classList.contains("gc-note-in") && list.contains(a)) showEdit(a);
   });
   // hitri gumb ne vzame fokusa polju (Safari, Firefox na macOS): vrstica ostane v urejanju, klik pride do gumba
-  list.addEventListener("mousedown", (ev) => ev.target.closest?.(".gc-q") && ev.preventDefault());
+  list.addEventListener("mousedown", (ev) => ev.target.closest?.(".gc-q, .gc-qx") && ev.preventDefault());
   let tapAt = null;
   list.addEventListener("pointerdown", (ev) => {
     if (ev.target.classList?.contains("gc-input")) tapAt = { x: ev.clientX, y: ev.clientY, t: ev.timeStamp };
@@ -491,8 +491,30 @@ export function createCalculator(root, opts) {
   function quickHtml(o) {
     if (!((o.kind === "y" || o.plot === "y") && typeof o.fn === "function")) return "";
     const tl = o.src.tools || {};
-    const q = (k, label, on) => `<button type="button" class="gc-q" data-act="quick" data-q="${k}"${on == null ? "" : ` aria-pressed="${!!on}"`}>${esc(label)}</button>`;
-    return `${q("roots", t("gc.q.roots"), !!tl.roots)}${q("ext", t("gc.q.ext"), !!tl.ext)}${q("deriv", t("gc.deriv"), !!tl.deriv)}${q("tangent", t("gc.tangent"), tl.tangent != null)}${q("table", t("gc.valueTable"))}`;
+    const off = quickHidden();
+    // vsak gumb ima križec za odstranitev (na tej napravi); »Ponastavi« vrne vse naenkrat (j 27. 11.)
+    const q = (k, label, on) =>
+      off.includes(k)
+        ? ""
+        : `<span class="gc-qw"><button type="button" class="gc-q" data-act="quick" data-q="${k}"${on == null ? "" : ` aria-pressed="${!!on}"`}>${esc(label)}</button><button type="button" class="gc-qx" data-act="quickhide" data-q="${k}" aria-label="${esc(t("gc.q.hide", { name: label }))}">${icon("x")}</button></span>`;
+    const reset = off.length ? `<button type="button" class="gc-q gc-qreset" data-act="quickreset">${icon("rotate-ccw")}<span>${esc(t("gc.q.reset"))}</span></button>` : "";
+    return `${q("roots", t("gc.q.roots"), !!tl.roots)}${q("ext", t("gc.q.ext"), !!tl.ext)}${q("deriv", t("gc.deriv"), !!tl.deriv)}${q("tangent", t("gc.tangent"), tl.tangent != null)}${q("table", t("gc.valueTable"))}${reset}`;
+  }
+  const QUICK_KEY = "evklid.grafHitriSkriti";
+  function quickHidden() {
+    try {
+      const a = JSON.parse(localStorage.getItem(QUICK_KEY) || "[]");
+      return Array.isArray(a) ? a.filter((x) => typeof x === "string") : [];
+    } catch {
+      return [];
+    }
+  }
+  function setQuickHidden(a) {
+    try {
+      if (a.length) localStorage.setItem(QUICK_KEY, JSON.stringify(a));
+      else localStorage.removeItem(QUICK_KEY);
+    } catch {}
+    for (const o of model.items) updateRow(o);
   }
 
   function extraHtml(o) {
@@ -861,6 +883,20 @@ export function createCalculator(root, opts) {
     }
     if (act === "del") return removeItem(id);
     if (act === "quick") return quickTool(id, e.target.closest("[data-q]").dataset.q);
+    if (act === "quickhide" || act === "quickreset") {
+      const k = e.target.closest("[data-q]")?.dataset.q;
+      const tl = it?.tools || {};
+      // skrit gumb, ki je vklopljen, izklopi svoje orodje (ničle in ekstremi nimajo stikala v meniju ⋮)
+      if (act === "quickhide" && k && (k === "tangent" ? tl.tangent != null : tl[k])) {
+        it.tools = { ...tl, [k]: k === "tangent" ? null : false };
+        commit();
+        refresh();
+      }
+      const kbd = !!document.activeElement?.closest?.(".gc-quick");
+      setQuickHidden(act === "quickreset" ? [] : [...new Set([...quickHidden(), k])]);
+      if (kbd) row.querySelector(".gc-input")?.focus(); // tipkovnica: gumb je izginil, fokus ostane v vrstici
+      return;
+    }
     if (act === "use-area") {
       const txt = areaText(modelItem(id), it);
       if (txt) opts.useInCalc?.(txt);

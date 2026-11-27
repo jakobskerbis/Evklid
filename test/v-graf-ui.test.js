@@ -190,6 +190,14 @@ test("»Pokaži na grafu«: integral, odvod, enačba in divergenten integral v g
       assert.equal(await page.locator('#g .gc-row[data-id="q1"] .gc-q[aria-pressed="true"]').count(), 2, where);
       await tap('#g [data-act="undo"]');
       assert.deepEqual(await page.evaluate(() => window.graph.state.items[0].tools), { roots: true }, where);
+      // gumb se odstrani s križcem, »Ponastavi« vrne vse (j 27. 11.)
+      await tap('#g .gc-row[data-id="q1"] .gc-qx[data-q="roots"]'); // vklopljen gumb: skritje izklopi ničle
+      assert.deepEqual(await page.evaluate(() => window.graph.state.items[0].tools), { roots: false }, where);
+      await tap('#g .gc-row[data-id="q1"] .gc-qx[data-q="table"]');
+      assert.equal(await page.locator('#g .gc-row[data-id="q1"] .gc-q[data-q="table"], #g .gc-row[data-id="q1"] .gc-q[data-q="roots"]').count(), 0, where);
+      await tap('#g .gc-row[data-id="q1"] .gc-qreset');
+      assert.equal(await page.locator('#g .gc-row[data-id="q1"] .gc-q[data-q]').count(), 5, where);
+      assert.equal(await page.evaluate(() => localStorage.getItem("evklid.grafHitriSkriti")), null, where);
 
       // nova krivulja zunaj pogleda (predlog 3): po premoru pri tipkanju pogled pokaže krivuljo, »Nazaj« ga vrne
       const v0 = await page.evaluate(() => ({ ...window.graph.state.view }));

@@ -1041,6 +1041,8 @@
   "gc.autoFitBack": "Zurück",
   "gc.q.roots": "Nullstellen",
   "gc.q.ext": "Extrema",
+  "gc.q.hide": "Schaltfläche {name} entfernen",
+  "gc.q.reset": "Zurücksetzen",
   "gc.q.none": "keine im sichtbaren Bereich",
   "gc.poi.root": "Nullstelle",
   "gc.poi.max": "Maximum",

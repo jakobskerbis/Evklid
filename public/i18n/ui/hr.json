@@ -1047,6 +1047,8 @@
   "gc.autoFitBack": "Natrag",
   "gc.q.roots": "Nultočke",
   "gc.q.ext": "Ekstremi",
+  "gc.q.hide": "Ukloni gumb {name}",
+  "gc.q.reset": "Vrati",
   "gc.q.none": "nema ih u vidljivom dijelu",
   "gc.poi.root": "nultočka",
   "gc.poi.max": "maksimum",
