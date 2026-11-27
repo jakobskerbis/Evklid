@@ -144,14 +144,15 @@ višja od ravni v profilu); tema iz obsega ima prednost, če ima vsaj 80 % ocene
 dve besedi naslova ali besede, ki jih nima nobena druga tema). Merjeno na 133 izsekih (23 zapiskov, OŠ in SŠ):
 natančnost 0,99, priklic 0,57. Največ 5000 izsekov na izračun (`delno`), računanje prepušča zanko drugim zahtevkom,
 zadnji izračuni so v predpomnilniku. Drugi krog (K-10, 27. 11. 2026), samo z obsegom testa: izsek brez teme dobi temo obsega,
-če to podpira njegovo LASTNO besedilo: najboljša tema obsega je boljša od vseh tem zunaj obsega, ima oceno vsaj 9 in
-vodi za 1,25 pred drugo temo obsega (pri vodstvu pod 1,1 odloči tema izseka tik pred njim v istem viru in razdelku); primer
-ali zgled gre k temi izseka pred njim (isti vir in razdelek), samo če je ta tema med zadetki obsega njegovega besedila.
-Sosedstvo samo nikoli ne da teme (navodilo, opomba ali naslovna vrstica med dvema izsekoma iste teme ostane v zapiskih).
-Isto iskanje kot prvi krog (zadetki se ne računajo znova), prepušča zanko vsakih 200 izsekov; izseki teme ostanejo v
-vrstnem redu zapiskov. Na 10 kompletih K-10 (69 izsekov s potjo) nepovezanih 25 → 13, novih 12 povezav pravilnih (ročni
-pregled). Pragovi so nastavljeni na istih K-10 zapiskih (ni ločenega preizkusa); znana napaka: splošen biološki uvod
-(»Živa bitja delimo v kraljestva …«) lahko dobi temo obsega, ker teme nad ravnjo učenca niso v kazalu. Vrne teme v vrstnem redu učnega načrta (z id-ji izsekov in `vObsegu`), obseg z `izsekov` na temo,
+če to podpira njegovo LASTNO besedilo z vsaj eno besedo iz imena teme: tema obsega ima besedo naslova, oceno vsaj 9, je
+boljša od vseh tem zunaj obsega in vodi za 1,25 pred drugo temo obsega; pri tesnem vodstvu odloči tema izseka tik pred
+njim v istem viru in razdelku (vodilna kadar koli, druga le pod 1,1 in če sama izpolni vse pogoje). Vsebinska ocena brez
+besede imena teme ne zadošča (visoko oceno pri kaki temi obsega dobi tudi besedilo drugega predmeta), sosedstvo samo
+nikoli ne da teme (navodilo, »Primer«, opomba ali naslovna vrstica med izseki iste teme ostane v zapiskih). Isto iskanje
+kot prvi krog (shranjeni so le zadetki obsega in prvi zunaj njega), prepušča zanko vsakih 200 izsekov; izseki teme ostanejo
+v vrstnem redu zapiskov. Na 10 kompletih K-10 (69 izsekov s potjo) nepovezanih 25 → 21, vse 4 nove povezave pravilne
+(ročni pregled); ob zapiskih drugih predmetov (vsi kompleti × vsi tuji zapiski) 3 nove napačne povezave. Snov brez imena teme
+(»Splošna oblika: f(x) = …«) ostane v zapiskih. Pragovi so nastavljeni na istih K-10 zapiskih (ni ločenega preizkusa). Vrne teme v vrstnem redu učnega načrta (z id-ji izsekov in `vObsegu`), obseg z `izsekov` na temo,
 `pokritost` (pokrite / vse teme obsega) in `predznanje` (5 tem poti pred prvim sklopom testa, brez trditev o znanju).
 Računa se sproti iz trenutnih izsekov, zato tabela `priprava_teme` ni potrebna. Faks in tuji šolski sistemi: `iskanje:
 false`, vse ostane v zapiskih. Test: `test/priprava-teme.test.js`.

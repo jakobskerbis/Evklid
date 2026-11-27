@@ -77,18 +77,16 @@ function temaBesedila(tekst, settings, obseg, naslov = false, vsi = null) {
   return best.d.id;
 }
 
-// Drugi krog (K-10): izsek, ki v prvem krogu ni dobil teme (brez imena teme v besedilu, npr. »Splošna oblika: f(x) = …«),
-// dobi temo iz OBSEGA TESTA, kadar jo podpira njegovo LASTNO besedilo; učenec je sam povedal, katere sklope test pokrije,
-// zato izbira med nekaj temami obsega ni ugibanje po vsem učnem načrtu. Po vrsti:
-// 1. besedilo: najboljša tema obsega ima oceno vsaj OBSEG_MIN, je boljša od vsake teme zunaj obsega in vodi za
-//    OBSEG_VODI pred drugo temo obsega; pri tesnem vodstvu (pod OBSEG_TESNO) odloči tema izseka tik pred njim, če je med obema;
-// 2. primer ali zgled brez teme gre k temi izseka tik pred njim (primer razlaga snov pred seboj), a samo v istem viru in
-//    razdelku in samo, kadar je ta tema med zadetki obsega njegovega lastnega besedila.
+// Drugi krog (K-10): izsek, ki v prvem krogu ni dobil teme, dobi temo iz OBSEGA TESTA, kadar jo podpira njegovo LASTNO
+// besedilo z vsaj eno besedo iz imena teme; učenec je sam povedal, katere sklope test pokrije, zato je izbira med nekaj
+// temami obsega z imenom teme v besedilu varna, ocena vsebine brez imena teme pa ne (tudi besedilo drugega predmeta dobi
+// visoko oceno pri kaki temi obsega). Pogoji: tema obsega ima besedo naslova, oceno vsaj OBSEG_MIN, je boljša od vsake
+// teme zunaj obsega in vodi za OBSEG_VODI pred drugo temo obsega. Pri tesnem vodstvu odloči tema izseka tik pred njim
+// (isti vir in razdelek), če je ena od obeh: vodilna kadar koli, druga le pod OBSEG_TESNO in če sama izpolni vse pogoje.
 // Sosedstvo samo nikoli ne da teme: navodilo, naslovna vrstica ali opomba učitelja sredi snovi ostane »samo v zapiskih«.
 export const OBSEG_MIN = 9;
 export const OBSEG_VODI = 1.25;
 export const OBSEG_TESNO = 1.1;
-export const PRIMER_MIN = 3; // primer mora sam vsaj malo podpirati temo (K-10: 3,6 in 5,8)
 async function drugiKrog(izseki, st, obseg, poTemi, samoVZapiskih, zadetki) {
   const tema = new Map();
   for (const [id, ids] of poTemi) for (const x of ids) tema.set(x, id);
@@ -98,7 +96,6 @@ async function drugiKrog(izseki, st, obseg, poTemi, samoVZapiskih, zadetki) {
     tema.set(i.id, id);
     dodani.set(i.id, id);
   };
-  const primer = (i) => i.vrsta === "primer" || /^\s*(?:\d+\.\s*)?(?:rešen[i]?\s+)?(?:primer|zgled)i?(?!\p{L})/iu.test(i.besedilo);
   let n = 0;
   for (let k = 0; k < izseki.length; k++) {
     const i = izseki[k];
@@ -112,17 +109,11 @@ async function drugiKrog(izseki, st, obseg, poTemi, samoVZapiskih, zadetki) {
     const zunaj = vsi.find((h) => !obseg.has(h.d.id));
     const [a, b] = hits;
     // Splošno besedilo (»Funkcija je predpis …«) se bolje ujema s temo zunaj obsega: ne pristane v obsegu.
-    if (a && a.score >= OBSEG_MIN && (!zunaj || a.score > zunaj.score)) {
-      if (!b || a.score >= b.score * OBSEG_VODI) {
-        dodaj(i, a.d.id);
-        continue;
-      }
-      if (prej && (a.d.id === prej || (b.d.id === prej && a.score < b.score * OBSEG_TESNO))) {
-        dodaj(i, prej);
-        continue;
-      }
-    }
-    if (prej && obseg.has(prej) && primer(i) && hits.some((h) => h.d.id === prej && h.score >= PRIMER_MIN)) dodaj(i, prej);
+    const dobra = (h) => h && h.inTitle && h.score >= OBSEG_MIN && (!zunaj || h.score > zunaj.score);
+    if (!dobra(a)) continue;
+    if (!b || a.score >= b.score * OBSEG_VODI) dodaj(i, a.d.id);
+    else if (prej && a.d.id === prej) dodaj(i, prej);
+    else if (prej && b.d.id === prej && a.score < b.score * OBSEG_TESNO && dobra(b)) dodaj(i, prej);
   }
   if (!dodani.size) return;
   for (const [iid, id] of dodani) {
