@@ -129,6 +129,30 @@ test("osvežitev mimo starih kopij: service worker dobi »app-stale« z različi
   }
 });
 
+// iPad 27. 11. 2026: v predpomnilniku knjižnic service workerja star three.module.js (0.186) ob novem three.core.js (0.187).
+// »Poskusi znova« je pobrisal samo kopije aplikacije (app-stale), zato je napaka ostala. Pri neskladju izvozov (vrsta
+// »posodobitev«) zdaj pobriše tudi predpomnilnik knjižnic; pri napaki omrežja ne (knjižnice ostanejo za delo brez povezave).
+test("neskladje v knjižnici (Safari »Indirectly exported binding name«): Poskusi znova pobriše predpomnilnik knjižnic", async () => {
+  const err = new SyntaxError("Indirectly exported binding name 'CubeUVReflectionMapping' is not found.");
+  assert.deepEqual([na(err).vrsta, na(err).modul], ["posodobitev", true]);
+  const okno = (kljuci, pobrisano, osvezi) => ({
+    navigator: {},
+    location: { reload: osvezi },
+    caches: { keys: async () => kljuci, delete: async (k) => (pobrisano.push(k), true) },
+  });
+  const kljuci = ["evklid-v1-ab12-static", "evklid-v1-ab12-vendor", "evklid-v1-ab12-vendor-2", "evklid-v1-ab12-api-javni", "evklid-3d-v1"];
+  let osvezeno = 0;
+  const pobrisano = [];
+  await osveziMimoStarih({ okno: okno(kljuci, pobrisano, () => osvezeno++), knjiznice: true });
+  assert.deepEqual(pobrisano, ["evklid-v1-ab12-vendor", "evklid-v1-ab12-vendor-2"]);
+  assert.equal(osvezeno, 1);
+  const brez = [];
+  await osveziMimoStarih({ okno: okno(kljuci, brez, () => osvezeno++) });
+  assert.deepEqual(brez, [], "brez knjiznice: predpomnilnik knjižnic ostane");
+  // gumb kartice napake pošlje knjiznice samo pri neskladju (vrsta »posodobitev«)
+  assert.match(fs.readFileSync(new URL("../public/3d/napake.js", import.meta.url), "utf8"), /osveziMimoStarih\(\{ knjiznice: n\.vrsta === "posodobitev" \}\)/);
+});
+
 // Pregled #1064: SyntaxError iz JSON ali izbirnika ni »prestar brskalnik«; RangeError ni vedno pomnilnik.
 test("HTML namesto JSON (prestrezna stran) je povezava s ponovnim poskusom, neveljaven izbirnik je druga napaka", () => {
   for (const m of [`Unexpected token '<', "<!DOCTYPE "... is not valid JSON`, "JSON Parse error: Unrecognized token '<'", "JSON.parse: unexpected character at line 1 column 1 of the JSON data"]) {

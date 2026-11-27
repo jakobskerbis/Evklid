@@ -9,7 +9,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import zlib from "node:zlib";
 import { fileURLToPath } from "node:url";
-import { pickEncoding } from "./compress.js";
+import { pickEncoding, vendorCache } from "./compress.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(here, "..", "public");
@@ -109,7 +109,7 @@ function addonsHandler(root) {
     const etag = enc ? hit.etag.replace(/"$/, `-${enc}"`) : hit.etag;
     res.setHeader("Vary", "Accept-Encoding");
     res.setHeader("ETag", etag);
-    res.setHeader("Cache-Control", "public, max-age=604800");
+    res.setHeader("Cache-Control", vendorCache("/vendor/three/")); // dodatek se mora ujemati z jedrom three (compress.js)
     if (req.headers["if-none-match"] === etag) return res.status(304).end();
     res.setHeader("Content-Type", "text/javascript; charset=utf-8");
     const body = enc ? hit[enc] : hit.raw;
