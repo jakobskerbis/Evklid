@@ -222,7 +222,6 @@ function profileView(student) {
     personality_setting: s.personality_setting,
     language: s.language,
     dialect: s.dialect || "",
-    detailed: s.detailed ? "on" : "off",
     data_mode: s.data_mode,
     goal: s.goal,
     goal_date: s.goal_date,
@@ -367,10 +366,6 @@ function validateProfile(changes, student) {
     const d = String(changes.goal_date).trim();
     if (d === "" || validDate(d)) patch.goal_date = d;
     else errors.push("goal_date: use YYYY-MM-DD or '' to delete");
-  }
-  if (changes.detailed !== undefined) {
-    if (["on", "off"].includes(changes.detailed)) patch.detailed = changes.detailed === "on";
-    else errors.push("detailed: on or off");
   }
   if (changes.goal_reminder !== undefined) {
     if (["on", "off"].includes(changes.goal_reminder)) patch.goal_reminder = changes.goal_reminder === "on";
