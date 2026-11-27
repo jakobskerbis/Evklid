@@ -883,8 +883,20 @@ export function createCalculator(root, opts) {
     }
     if (act === "del") return removeItem(id);
     if (act === "quick") return quickTool(id, e.target.closest("[data-q]").dataset.q);
-    if (act === "quickhide") return setQuickHidden([...new Set([...quickHidden(), e.target.closest("[data-q]").dataset.q])]);
-    if (act === "quickreset") return setQuickHidden([]);
+    if (act === "quickhide" || act === "quickreset") {
+      const k = e.target.closest("[data-q]")?.dataset.q;
+      const tl = it?.tools || {};
+      // skrit gumb, ki je vklopljen, izklopi svoje orodje (ničle in ekstremi nimajo stikala v meniju ⋮)
+      if (act === "quickhide" && k && (k === "tangent" ? tl.tangent != null : tl[k])) {
+        it.tools = { ...tl, [k]: k === "tangent" ? null : false };
+        commit();
+        refresh();
+      }
+      const kbd = !!document.activeElement?.closest?.(".gc-quick");
+      setQuickHidden(act === "quickreset" ? [] : [...new Set([...quickHidden(), k])]);
+      if (kbd) row.querySelector(".gc-input")?.focus(); // tipkovnica: gumb je izginil, fokus ostane v vrstici
+      return;
+    }
     if (act === "use-area") {
       const txt = areaText(modelItem(id), it);
       if (txt) opts.useInCalc?.(txt);
