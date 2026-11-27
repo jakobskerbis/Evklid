@@ -1041,6 +1041,8 @@
   "gc.autoFitBack": "Vissza",
   "gc.q.roots": "Zérushelyek",
   "gc.q.ext": "Szélsőértékek",
+  "gc.q.hide": "{name} gomb eltávolítása",
+  "gc.q.reset": "Visszaállítás",
   "gc.q.none": "a látható részen nincs",
   "gc.poi.root": "zérushely",
   "gc.poi.max": "maximum",

@@ -1167,6 +1167,8 @@ export default {
   "gc.autoFitBack": "Nazaj",
   "gc.q.roots": "Ničle",
   "gc.q.ext": "Ekstremi",
+  "gc.q.hide": "Odstrani gumb {name}",
+  "gc.q.reset": "Ponastavi",
   "gc.q.none": "v vidnem delu jih ni",
   "gc.poi.root": "ničla",
   "gc.poi.max": "maksimum",
