@@ -129,3 +129,14 @@ test("vodoravne asimptote: le zanesljive, z ulomkom", () => {
   assert.equal(as("e^(1/x)"), "y = 1");
   assert.equal(as("(x^2+1)/x"), "x = 0"); // poševna asimptota ni vodoravna
 });
+
+test("pregled: decimalne in iracionalne limite niso ulomki, bližnji vrhovi brez napačne zaloge", () => {
+  const as = (s) => row(info(s), "sc.infoAsym")?.tex ?? null;
+  assert.equal(as("0,3333+1/x"), "x = 0,\\ y = 0{,}3333");
+  assert.equal(as("0,0004+1/x"), "x = 0,\\ y = 0{,}0004");
+  assert.equal(as("1000,0004+1/x"), "x = 0,\\ y = 1000{,}0004");
+  assert.doesNotMatch(as("e+1/x") ?? "", /frac/);
+  const rg = (s) => row(info(s), "sc.infoRange")?.tex ?? null;
+  assert.equal(rg("sin(x)+0,01sin(300x)"), null);
+  assert.equal(rg("2cos(x)+1"), "[-1;\\,3]");
+});

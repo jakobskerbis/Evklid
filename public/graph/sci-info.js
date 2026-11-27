@@ -414,9 +414,17 @@ function extremaTex(f, roots, excl, nt, sep) {
  * natančna ekstrema (zlati rez okoli najboljšega vzorca), ne največji vzorec (sin(x + 0,1) → 1, ne 0,99999197).
  */
 export function rangeOf(f, P) {
+  // tri mreže, zamaknjene za 1/2 in 1/3 koraka: višji vrh med vzorci (sin x + 0,01 sin 300x) da drug rezultat → nič
+  const runs = [0, 1 / 2, 1 / 3].map((o) => rangeOn(f, P, o));
+  if (runs.some((r) => !r)) return null;
+  const same = (u, v) => Math.abs(u - v) <= 1e-9 * Math.max(1, Math.abs(u));
+  if (!runs.every((r) => same(r[0], runs[0][0]) && same(r[1], runs[0][1]))) return null;
+  return runs[0];
+}
+function rangeOn(f, P, off) {
   const N = 720;
   const ys = [];
-  for (let i = 0; i < N; i++) ys.push(f((P * i) / N));
+  for (let i = 0; i < N; i++) ys.push(f((P * (i + off)) / N));
   if (!ys.every(Number.isFinite)) return null;
   let lo = 0;
   let hi = 0;
@@ -428,11 +436,12 @@ export function rangeOf(f, P) {
   if (!(span < 1e12)) return null;
   let step = 0;
   for (let i = 0; i < N; i++) step = Math.max(step, Math.abs(ys[(i + 1) % N] - ys[i]));
-  if (span > 1e-12 && step > 0.1 * span) return null; // skok (pol, nezveznost): en interval ne bi bil pravilen
+  // stalna na vzorcih (ozek vrh med njimi, periodOf stalnih ne vrne) ali skok (pol, nezveznost): en interval ne bi bil pravilen
+  if (span <= 1e-12 * Math.max(1, Math.abs(ys[hi])) || step > 0.1 * span) return null;
   const ext = (i, sgn) => {
     const g = (x) => sgn * f(x);
-    let a = (P * (i - 1)) / N;
-    let b = (P * (i + 1)) / N;
+    let a = (P * (i + off - 1)) / N;
+    let b = (P * (i + off + 1)) / N;
     const r = (Math.sqrt(5) - 1) / 2;
     let c = b - r * (b - a);
     let d = a + r * (b - a);
@@ -471,14 +480,17 @@ export function horizontalAsymptote(f, s) {
   const xs = [10000.37, 1000000.71, 100000000.53].map((x) => s * x);
   const [a, b, c] = xs.map((x) => f(x));
   if (![a, b, c].every(Number.isFinite) || Math.abs(c) > 1e6) return null;
-  const d1 = Math.abs(b - a);
-  const d2 = Math.abs(c - b);
+  const d1 = b - a;
+  const d2 = c - b;
   const scale = Math.max(1, Math.abs(c));
-  if (d2 > 1e-6 * scale || d2 > d1 + 1e-15 * scale) return null;
-  const q = snapRational(c, Math.max(1e-6 * scale, 50 * d2));
+  if (Math.abs(d2) > 1e-6 * scale || Math.abs(d2) > Math.abs(d1)) return null;
+  // ostanek za c ocenimo iz hitrosti približevanja (geometrijsko, z rezervo); na ulomek ali decimalke le znotraj njega
+  const r = d1 ? Math.abs(d2 / d1) : 0;
+  const err = 10 * (r < 1 ? (Math.abs(d2) * r) / (1 - r) : Infinity) + 1e-12 * scale;
+  if (!(err < 1e-6 * scale)) return null;
+  const q = snapRational(c, err);
   if (q != null) return q;
-  // ostanek je pri 10⁸ manjši od 10⁻⁶: šest mest je zanesljivih
-  return Number(c.toPrecision(6));
+  return Number(c.toFixed(Math.min(12, Math.max(0, Math.floor(-Math.log10(err))))));
 }
 
 /** Asimptote: navpične pri polih (izključene točke brez prazne točke, rob logaritma), vodoravne pri ±∞. */
