@@ -461,7 +461,9 @@ function criticalPoints(f, a, b, n = SAMPLES) {
   let x0 = a;
   let y0 = val(a);
   let ym = NaN;
-  if (Math.abs(y0) < 1e-12) add(a);
+  // rob intervala le kot prava ničla: e^x pri x = −100 je ≈ 4·10⁻⁴⁴, a ni ničla (vrednost se ob robu
+  // komaj spremeni, pri pravi ničli pa je majhna glede na spremembo do naslednje točke)
+  if (y0 === 0 || (Math.abs(y0) < 1e-12 && Math.abs(y0) < 1e-6 * Math.abs(val(a + h) - y0))) add(a);
   for (let i = 1; i <= n; i++) {
     if (Date.now() > deadline) throw new MathError("notCalc");
     // veliko robov definicijskega območja (x^x pri x < 0) ali ničel (floor) ne sme ustaviti iskanja
