@@ -282,8 +282,8 @@ test("PDF: besedilo po straneh, skenirana stran označena, poškodovan PDF da na
   assert.deepEqual(r.strani[0].vrstice.map((v) => v.besedilo), a);
   const iz = razrezi(r.strani);
   assert.ok(iz.some((x) => x.stran === 3 && x.vrsta === "izrek" && x.besedilo.startsWith("Coulombov zakon")));
-  // q1, q2 sta oznaki (indeksa) zunaj formule: ostaneta z [?].
-  assert.ok(iz.find((x) => x.stran === 3).besedilo.includes(`q1 ${NEGOTOVO}`));
+  // q1, q2 sta gotovo indeksa (potence 1 v zapiskih ni, q2 ob q1): brez [?] (K-10, lažna negotovost).
+  assert.ok(iz.find((x) => x.stran === 3).besedilo.includes("k q1 q2 / r^2") && !iz.find((x) => x.stran === 3).negotovo.length);
   await assert.rejects(preberiVir("pdf", Buffer.from("%PDF-1.4\nsmeti brez strani\n%%EOF")), (e) => e instanceof NapakaUvoza && e.code === "uvoz_pdf");
 });
 
@@ -468,4 +468,77 @@ test("PowerPoint: <a:br/> je presledek, številka prosojnice in noga nista besed
   const sl = `<p:sld xmlns:p="p" xmlns:a="a"><p:cSld><p:spTree><p:sp><p:txBody><a:p><a:r><a:t>Prva</a:t></a:r><a:br/><a:r><a:t>druga</a:t></a:r></a:p></p:txBody></p:sp><p:sp><p:nvSpPr><p:nvPr><p:ph type="sldNum"/></p:nvPr></p:nvSpPr><p:txBody><a:p><a:r><a:t>7</a:t></a:r></a:p></p:txBody></p:sp><p:sp><p:nvSpPr><p:nvPr><p:ph type="ftr"/></p:nvPr></p:nvSpPr><p:txBody><a:p><a:r><a:t>Gimnazija X</a:t></a:r></a:p></p:txBody></p:sp></p:spTree></p:cSld></p:sld>`;
   const st = beriPowerpoint(zip({ "[Content_Types].xml": CT, "ppt/presentation.xml": "<p:presentation/>", "ppt/slides/slide1.xml": sl }));
   assert.deepEqual(st[0].vrstice.filter((v) => v.besedilo).map((v) => v.besedilo), ["Prva druga"]);
+});
+
+test("negotovo (K-10): gotovi indeksi brez [?], potence in oklepaji izraza z [?]", () => {
+  const brez = (t) => assert.deepEqual(oznaciNegotovo(t), { besedilo: t, negotovo: [] }, t);
+  // Indeks 0 ali 1 ni potenca; števka pred »^« je indeks; x2 ob x1 v istem izseku je indeks.
+  brez("h = v0^2/(2g), naboj e0 = 1,6·10^-19 As, 1/(4πε0) = 9·10^9");
+  brez("Coulomb: F = q1q2/(4πε0 r^2)");
+  brez("Vietovi formuli: x1 + x2 = -b/a, x1·x2 = c/a, f(x) = a(x - x1)(x - x2)");
+  brez("a = (a1, a2), b = (b1, b2), |a| = √(a1^2 + a2^2), a · b = a1b1 + a2b2, AB = (x2 - x1, y2 - y1)");
+  // Negotovo ostane: potenca brez »^«, tudi v oklepaju izraza in tik pred zaklepajem.
+  const o = oznaciNegotovo("∫ (6x2 - 4x + 1) dx = 2x3 - 2x2 + x + C");
+  assert.equal(o.besedilo, `∫ (6x2 ${NEGOTOVO} - 4x + 1) dx = 2x3 ${NEGOTOVO} - 2x2 ${NEGOTOVO} + x + C`);
+  const c = oznaciNegotovo("F = q1q2/(4πε0 r2)");
+  assert.equal(c.besedilo, `F = q1q2/(4πε0 r2 ${NEGOTOVO})`);
+  assert.deepEqual(c.negotovo, [{ vrsta: "zapis", izvirno: "r2" }]);
+  // x2 brez x1 v izseku ostane negotov; absolutna vrednost s števko (|a|2) je negotova.
+  assert.equal(oznaciNegotovo("y = x2 + 1").besedilo, `y = x2 ${NEGOTOVO} + 1`);
+  const a = oznaciNegotovo("a · a = |a|2, ln|x| + C, |x| = 3");
+  assert.equal(a.besedilo, `a · a = |a|2 ${NEGOTOVO}, ln|x| + C, |x| = 3`);
+  assert.deepEqual(a.negotovo, [{ vrsta: "zapis", izvirno: "|a|2" }]);
+  // Potence ostanejo negotove tudi ob indeksih iste črke drugje v izseku (pregled 2, K-10).
+  const ozn = (t) => oznaciNegotovo(t).negotovo.map((n) => n.izvirno);
+  assert.deepEqual(ozn("ax2 + bx + c = 0, x1,2 = (-b ± √D)/2a"), ["ax2"]);
+  assert.deepEqual(ozn("f(x) = x2 - 5x + 6, ničli x1 = 2 in x2 = 3"), ["x2"]);
+  assert.deepEqual(ozn("v = v0 + a(t - t0), s = v0t + at2/2"), ["at2"]);
+  assert.deepEqual(ozn("s0 = 5 m, a = 2 m/s2"), ["s2"]);
+  assert.deepEqual(ozn("m1 = 2 kg, S = 3 cm2"), ["cm2"]);
+  assert.deepEqual(ozn("S = πr2, r1 = 2"), ["πr2"]);
+  assert.deepEqual(ozn("S = πr22 - πr12, r1 = 2 cm"), ["πr22", "πr12"]);
+  assert.deepEqual(ozn("x10 + x1"), ["x10"]);
+  assert.deepEqual(ozn("x2y^2 + 1"), ["x2y"]);
+  assert.deepEqual(ozn("x1/2 = √x, x0,5"), ["x1", "x0"]);
+  // Bližina indeksa iste črke ne zadošča (pregled 3, K-10): Evklidov izrek, rešitve enačbe, r1 ob πr2.
+  assert.deepEqual(ozn("Evklidov izrek: a2 = c · a1, b2 = c · b1"), ["a2", "b2"]);
+  assert.deepEqual(ozn("c2 = a2 + b2; a1, b1 sta projekciji"), ["c2", "a2", "b2"]);
+  assert.deepEqual(ozn("x2 - 1 = 0, x1 = 1, x2 = -1"), ["x2"]);
+  assert.deepEqual(ozn("x2 = 9 ⇒ x1 = 3, x2 = -3"), ["x2"]);
+  assert.deepEqual(ozn("S = π r2, r1 = 2 cm"), ["r2"]);
+  assert.deepEqual(ozn("Ek = m v2 / 2, v1 = 2 m/s"), ["v2"]);
+  assert.deepEqual(ozn("v2 = v0^2 + 2as"), ["v2"]);
+  assert.deepEqual(ozn("y = x2 + x1"), ["x2"]);
+  assert.deepEqual(ozn("a + b = (a1 + b1, a2 + b2), F = k q1 q2 / r^2, ničli x1 = 2 in x2 = 3"), []);
+  // Za vrednostjo velja indeks le za neposredno prejšnjim indeksom in pred kratko vrednostjo brez iste črke (ponovni 3. pregled).
+  assert.deepEqual(ozn("Prosti pad: v0 = 0, v2 = 2gh"), ["v2"]);
+  assert.deepEqual(ozn("v0 = 0 in v2 = 2as"), ["v2"]);
+  assert.deepEqual(ozn("c = 10 cm, a1 = 4 cm, a2 = c · a1 = 40 cm2"), ["a2", "cm2"]);
+  assert.deepEqual(ozn("c = 13, a1 = 5, a2 = c a1"), ["a2"]);
+  assert.deepEqual(ozn("a1 = 3 cm, a2 + b2 = c2"), ["a2", "b2", "c2"]);
+  assert.deepEqual(ozn("x1 = 2, x2 - 4 = 0"), ["x2"]);
+  assert.deepEqual(ozn("r1 = 2 cm, r2 = 3 cm; q1 = 2 nC, q2 = 3 nC; a1 = 2, a2 = 4, a3 = 8"), []);
+  assert.deepEqual(ozn("A(x1, y1), B(x2, y2), T(x1, y1), T(x2, y2), a1 + a2 + a3 + a4 + a5"), []);
+  // Števka za zaklepajem je negotova razen pri oznakah: (-3)2, (2x)2, (ab)2 da, a) 1) (1) (str. 5) ne.
+  assert.deepEqual(ozn("(-3)2 = 9, (2x)2, (ab)2"), [")2", ")2", ")2"]);
+  assert.deepEqual(ozn("Iz v0, v2 = v02 + 2as"), ["v2", "v02"]);
+  assert.deepEqual(ozn("Pri v0 in v2 = 2as"), ["v2"]);
+  assert.deepEqual(ozn("a1 = 3 cm, a2 = 36 cm2, a = 6 cm"), ["a2", "cm2"]);
+  assert.deepEqual(ozn("c = 12 cm, a1 = 3 cm, a2 = 36 cm2"), ["a2", "cm2"]);
+  assert.deepEqual(ozn("(sin x)2 + (cos x)2 = 1, (ln x)2"), [")2", ")2", ")2"]);
+  assert.deepEqual(ozn("c = 12, a1 = 3, a2 = 12 · 3, a = 6"), ["a2"]);
+  assert.deepEqual(ozn("c = 12 cm, a1 = 3 cm, a2 = 40 cm², a = 6 cm"), ["a2"]);
+  assert.deepEqual(ozn("(ax + b)2, (xy - 1)2, x1 = √3, x2 = -√3"), [")2", ")2"]);
+  assert.deepEqual(ozn("Točke T1(x1, y1), T2(x2, y2) in T3(x3, y3); x1 = 2. x2 = 3; x0, x1, x2"), []);
+  // Ustaljeni zapisi indeksov ostanejo brez oznake.
+  assert.deepEqual(ozn("x1 + x2, x1·x2, x1 in x2, (x - x1)(x - x2), y2 - y1, a1b1 + a2b2, q1q2, ničli x1 = 1, x2 = 3"), []);
+  // Oznaka a) ali (str. 5) pred števko ni kvadrat.
+  assert.deepEqual(ozn("a)2 kg b)3 kg, glej (str. 5)2 in (1)2"), []);
+  // Oklepaj sredi niza (funkcija, gnezdenje) ne skrije potence; tabela s cevmi ni absolutna vrednost.
+  assert.deepEqual(ozn("y = ln(x2 + 1), sin(x2), (a + (b2))"), ["x2", "x2", "b2"]);
+  assert.deepEqual(ozn("x|1|2|3"), []);
+  assert.deepEqual(ozn("(a + b)2 = a2 + 2ab + b2, (x + 1)2"), [")2", "a2", "b2", ")2"]);
+  // Uravnoteženi oklepaji ostanejo del kemijske formule.
+  assert.equal(oznaciNegotovo("Ca(OH)2 + 2HCl → CaCl2 + 2H2O").negotovo.map((n) => n.izvirno).join(" "), "Ca(OH)2 CaCl2 H2O");
+  assert.deepEqual(oznaciNegotovo("((NH4)2SO4 → x"), { besedilo: `((NH₄)₂SO₄ ${NEGOTOVO} → x`, negotovo: [{ vrsta: "kemija", izvirno: "(NH4)2SO4", prepis: "(NH₄)₂SO₄" }] });
 });

@@ -6,6 +6,7 @@
 import { t, locale, currentLang } from "./i18n-zasloni.js";
 import { SL_MONTH } from "./datum.js";
 import { icon, hydrateIcons } from "./icons.js";
+import { fitPilotTables } from "./pilot-tabele.js";
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -699,6 +700,7 @@ export async function renderPilotAdmin(box, { api, toast }) {
     ${r.notes.length ? `<h3>${esc(t("pilot.n.notes"))}</h3><ul class="pn-admin-notes">${r.notes.map((n) => `<li><small class="muted">${esc(n.kind === "scan" ? cond(n.what) : feat(n.what))} · ${esc(t(n.kind === "scan" ? (n.ok ? "pn.ok" : "pn.bad") : n.ok ? "pn.works" : "pn.broken"))}</small><br>${esc(n.note)}</li>`).join("")}</ul>` : ""}
     ${r.photoList.length ? `<h3>${esc(t("pilot.n.photosH"))}</h3><ul class="pn-admin-photos">${r.photoList.map((p) => `<li><a href="/api/admin/pilot-naloge/foto/${p.id}">${icon("image")} ${esc(cond(p.cond))} · ${esc(t(p.ok ? "pn.ok" : "pn.bad"))}</a></li>`).join("")}</ul>` : ""}
     ${r.canAdd ? `<button type="button" class="secondary" data-pn-members>${icon("users")}<span>${esc(t("pilot.n.manage"))}</span></button>` : ""}`;
+  fitPilotTables(box);
   box.querySelector("[data-pn-members]")?.addEventListener("click", () => renderPilotMembers(box, { api, toast }));
 }
 

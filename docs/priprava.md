@@ -107,7 +107,18 @@ naslovom razdelka, stranjo in zaporedjem; vrsto določi koda iz začetka bloka (
 primer, naloga, teorija; oštevilčena naloga s točkami je svoj izsek). Negotovo (linearen pregled nizov): »x2« (tudi
 »3x2«, »x2y«, »AB2«) ostane z `[?]`; kemijska formula z vsaj dvema elementoma se dopolni (H2SO4 → H₂SO₄) z `[?]` samo
 v enačbi s puščico in brez naboja, sicer (naboj iona SO42-, BC2 v geometriji) samo `[?]`; en simbol z indeksom (F2,
-R1), LaTeX in indeksi z `_` se ne označijo; formula, ki je KaTeX ne izriše, dobi `[?]`. Tabela `priprava_izseki`
+R1), LaTeX in indeksi z `_` se ne označijo, prav tako gotovi indeksi (K-10):
+števka 0 ali 1 (v0, e0, q1q2; ne pred ulomkom ali decimalko, x1/2), števka pred `^` (a1^2) in par ena črka + ena
+števka brez koeficienta, ki stoji v ustaljenem zapisu ob isti črki z indeksom 0 ali 1: tik za njo ali s presledkom
+(q1q2, q1 q2), v naštevanju ali vsoti (x1 + x2, x1·x2, x1 in x2, (a1 + b1, a2 + b2), A(x1, y1), B(x2, y2)), v
+produktu ničel ((x - x1)(x - x2)), pred razliko (x2 - x1) ali za vrednostjo; sosed je vedno neposredno prejšnji indeks
+(x1 pred x2, nikoli v0 pred v2), za vrednostjo pa mora slediti »=« in en člen brez računa in brez
+potence (x1 = 3, x2 = -3; a2 = 4, a3 = 8; ne a2 = 36 cm2, a2 = 12 · 3); bližina sama ne zadošča, zato
+potence (ax2, at2, πr2, cm2, x10, Evklidov a2 = c · a1, x2 = 9 ⇒ x1 = 3, v0 = 0, v2 = 2gh) ostanejo negotove tudi ob
+indeksih drugje v izseku. Oklepaji izraza (»(6x2«, »ln(x2«,
+»r2)«) ne skrijejo potence, kemijska formula z oklepaji (Ca(OH)2, (NH4)2SO4) se pregleda cela; absolutna vrednost
+s števko (`|a|2`) in števka za zaklepajem (`(a + b)2`, `(-3)2`, `(2x)2`, `(sin x)2`) dobita `[?]`, razen za oznako brez računa (a), 1), (1),
+(str. 5)); formula, ki je KaTeX ne izriše, dobi `[?]`. Tabela `priprava_izseki`
 (besedilo, naslov in seznam negotovih mest šifrirani, v `SEALED`, v izvozu odšifrirani, kaskada z virom in pripravo;
 ponovna obdelava briše s `secure_delete`); `priprava_viri` ima `stanje` (caka, obdelan, branje, napaka), `strani`,
 `napaka`, `opozorila`. Vir se obdela ob nalaganju (hkrati največ 2 obdelavi, sicer ostane »caka«; če je vir med
@@ -143,7 +154,16 @@ ugibamo). Obseg testa so teme sklopov iz načrta testa (`pot`, `sklopi`, samo š
 višja od ravni v profilu); tema iz obsega ima prednost, če ima vsaj 80 % ocene najboljše in ni dvoumna (cel naslov,
 dve besedi naslova ali besede, ki jih nima nobena druga tema). Merjeno na 133 izsekih (23 zapiskov, OŠ in SŠ):
 natančnost 0,99, priklic 0,57. Največ 5000 izsekov na izračun (`delno`), računanje prepušča zanko drugim zahtevkom,
-zadnji izračuni so v predpomnilniku. Vrne teme v vrstnem redu učnega načrta (z id-ji izsekov in `vObsegu`), obseg z `izsekov` na temo,
+zadnji izračuni so v predpomnilniku. Drugi krog (K-10, 27. 11. 2026), samo z obsegom testa: izsek brez teme dobi temo obsega,
+če to podpira njegovo LASTNO besedilo z vsaj eno besedo iz imena teme: tema obsega ima besedo naslova, oceno vsaj 9, je
+boljša od vseh tem zunaj obsega in vodi za 1,25 pred drugo temo obsega; pri tesnem vodstvu odloči tema izseka tik pred
+njim v istem viru in razdelku (vodilna kadar koli, druga le pod 1,1 in če sama izpolni vse pogoje). Vsebinska ocena brez
+besede imena teme ne zadošča (visoko oceno pri kaki temi obsega dobi tudi besedilo drugega predmeta), sosedstvo samo
+nikoli ne da teme (navodilo, »Primer«, opomba ali naslovna vrstica med izseki iste teme ostane v zapiskih). Isto iskanje
+kot prvi krog (shranjeni so le zadetki obsega in prvi zunaj njega), prepušča zanko vsakih 200 izsekov; izseki teme ostanejo
+v vrstnem redu zapiskov. Na 10 kompletih K-10 (69 izsekov s potjo) nepovezanih 25 → 21, vse 4 nove povezave pravilne
+(ročni pregled); ob zapiskih drugih predmetov (vsi kompleti × vsi tuji zapiski) 3 nove napačne povezave. Snov brez imena teme
+(»Splošna oblika: f(x) = …«) ostane v zapiskih. Pragovi so nastavljeni na istih K-10 zapiskih (ni ločenega preizkusa). Vrne teme v vrstnem redu učnega načrta (z id-ji izsekov in `vObsegu`), obseg z `izsekov` na temo,
 `pokritost` (pokrite / vse teme obsega) in `predznanje` (5 tem poti pred prvim sklopom testa, brez trditev o znanju).
 Računa se sproti iz trenutnih izsekov, zato tabela `priprava_teme` ni potrebna. Faks in tuji šolski sistemi: `iskanje:
 false`, vse ostane v zapiskih. Test: `test/priprava-teme.test.js`.

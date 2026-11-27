@@ -1513,12 +1513,47 @@ export function pressKey(text, s, ins, env = {}, { render, check } = {}) {
       return innerGroup(t, s)?.name ? insertKey(t, s, ins) : null; // v funkciji več argumentov kot na main
     }
   }
+  // + ali − na koncu števca (3x|÷□ → kazalec je v ulomku nad črto): števec dobi oklepaj, da ostane cel nad črto
+  // ((3x+|)÷□), ne 3x + |÷□ (j, 27. 11.: »na ulomkih ne morem vnesti več členov«)
+  const wrapped = numeratorWrap(t, s, ins);
+  if (wrapped) return keyGuard(t, wrapped, env, render, check);
   const r = insertKey(t, s, ins);
   // števka, črka ali operator: le varovalo izrisa (»0|,5« + x → 0x,5 ni zapis; AUDIT-071), reže se ne preverjajo
   if (!TEMPLATE_KEY(ins)) return keyGuard(t, r, env, render, check);
   const g = keyGuard(t, r, env, render, check);
   if (g && ins !== ";" && (groupsAt(t, s) !== groupsAt(r.text, s) || topSemis(t) !== topSemis(r.text))) return null;
   return g;
+}
+
+const LOW_OPS = new Set(["+", "−", "-", "=", "<", ">", "≤", "≥", "≠"]);
+/** Kazalec tik pred ÷ ali / (konec števca) ter + ali −: števec v oklepaj, kazalec pred zaklepaj. */
+export function numeratorWrap(t, s, ins) {
+  if (!"+−-".includes(ins) || ins.length !== 1 || !/^\s*[÷/]/.test(t.slice(s)) || tokenAround(t, s)) return null;
+  if (openerAround(t, s)?.[0] < s) return null; // sredi d/dx( (dotik): ni konec števca
+  let p = s;
+  let d = 0;
+  for (let i = s - 1; i >= 0; i--) {
+    const c = t[i];
+    if (CLOSERS.includes(c)) d++;
+    else if (OPENERS.includes(c)) {
+      if (d === 0) break;
+      d--;
+    } else if (d === 0 && (LOW_OPS.has(c) || ";→".includes(c))) {
+      if ("+−-".includes(c) && /\dE$/.test(t.slice(0, i))) {
+        p = i; // 3E−2: predznak eksponenta je del števila
+        continue;
+      }
+      if ("+−-".includes(c) && /(^|[([{=<>≤≥≠;→·×*÷/^+−-])\s*$/.test(t.slice(0, i))) {
+        p = i; // −3÷□, 2·−3÷□, x=−3÷□: predznak (enomestni minus) je del števca, kot ga izriše ulomek
+        continue;
+      }
+      break;
+    }
+    p = i;
+  }
+  while (/\s/.test(t[p] ?? "")) p++;
+  if (p >= s || !t.slice(p, s).trim()) return null; // prazen števec: »−« je predznak
+  return { text: `${t.slice(0, p)}(${t.slice(p, s)}${ins})${t.slice(s)}`, pos: s + 1 + ins.length };
 }
 
 // r, če se zapis po njem izriše brez surovih ločil (in ga je bilo pred njim mogoče izrisati); sicer null

@@ -4,7 +4,8 @@
 // kompleta, test (pot, sklopi, datum) ali priprava brez poti, prilepljeni zapiski, teme, prvi kviz (6 nalog), razlaga iz
 // zapiskov za največ --razlage tem in načrt do testa. Zapiše, kaj učenec vidi, in čas sistema do prve dejavnosti.
 // Ocene tu ni: izhod (data/meri-k10-evklid.json in data/k10/evklid-<komplet>.md) slepo oceni ločen ocenjevalec skupaj z Astrinim
-// (scripts/k10-slepo.mjs). Ne piše v pravo bazo. Plačljivi so samo klici razlage; ustavi se, preden bi strošek presegel
+// (postopek in prva meritev: docs/meritve/k10-astra-2026-11-27.md). Načrt je zapisan v celoti (vsi dnevi do testa), ker je
+// odrezan načrt pri prvi meritvi podcenil oceno »načrt«. Ne piše v pravo bazo. Plačljivi so samo klici razlage; ustavi se, preden bi strošek presegel
 // --max-usd (ostale razlage zapiše kot »izpuščeno: meja«).
 //   node scripts/meri-k10-priprava.mjs [--max-usd 2] [--razlage 2] [--samo 01-mat-integral,06-fiz-elektrika] [--suho] [--preizkus]
 //   --suho      samo izpiše načrt in najslabši strošek, nič ne zažene
@@ -192,7 +193,7 @@ for (const k of kompleti) {
     poskusniTest: !!n.dnevi?.some((d) => d.naloge.some((x) => x.vrsta === "poskusni_test")),
     stisnjeno: !!n.stisnjeno,
     pripravljenost: n.pripravljenost?.odstotek ?? null,
-    dnevi: (n.dnevi || []).slice(0, 7).map((d) => ({ datum: d.datum, enote: d.naloge.map((x) => `${x.vrsta}${x.tema ? `: ${x.tema.ime}` : ""}`) })),
+    dnevi: (n.dnevi || []).map((d) => ({ datum: d.datum, enote: d.naloge.map((x) => `${x.vrsta}${x.tema ? `: ${x.tema.ime}` : ""}`) })),
   };
   izidi.push(izid);
   zapisiJson();

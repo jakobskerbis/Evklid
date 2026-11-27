@@ -322,7 +322,7 @@ test("AUDIT-064: vidna »x = 5« ob bloku »| x | 4« je napaka; brez navedene v
   const block = (b) => `\n<<RACUN\n${b}\n>>`;
   const cases = [
     [R`Torej $x = 5$.` + block("resi: 2*x+3=11 | x | 4"), true],
-    [R`$x_1 = 2$, $x_2 = 4$` + block("resi: x^2-5*x+6=0 | x | 2, 3"), false], // pregled prevzema 4: ena vrednost se ujema
+    [R`$x_1 = 2$, $x_2 = 4$` + block("resi: x^2-5*x+6=0 | x | 2, 3"), true], // ostanek AUDIT-064: oštevilčena korena, drugi je napačen (prej: ena vrednost se ujema → brez sodbe)
     [R`Torej $x = 4$.` + block("resi: 2*x+3=11 | x | 4"), false],
     ["Kaj narediš najprej?" + block("resi: 2*x+3=11 | x | 4"), false], // način A: rezultat ni naveden
     [R`Rešitvi sta $x_1 = 2$ in $x_2 = 3$.` + block("resi: x^2-5*x+6=0 | x | 2, 3"), false],
@@ -449,4 +449,31 @@ test("pregled prevzema 6 (AUDIT-064): \\frac12, periodični zapis, mešani ulome
   ];
   for (const t of none) assert.equal(visibleIssue(t, parseClaims(t)), null, t);
   for (const t of [R`Rešitev: $x = 3$.` + block("resi: 2*x=10 | x | 5"), R`**Rešitev:** $x = 3$` + block("resi: 2*x=10 | x | 5")]) assert.ok(visibleIssue(t, parseClaims(t)), t);
+});
+
+// AUDIT-064 (ostanek): oštevilčena korena v besedilu proti bloku RACUN z drugačnimi koreni, tudi ko je en koren pravilen.
+test("AUDIT-064: navedena korena x₁, x₂ se ne ujemata z blokom RACUN", async () => {
+  const { visibleIssue } = await import("../server/racun.js");
+  const R = String.raw;
+  const Q = [{ op: "solve", args: ["x^2-5*x+6=0", "x", "2, 3"] }];
+  const Q2 = [{ op: "solve", args: ["x^2-5*x+6=0", "x", "2"] }, { op: "solve", args: ["x^2-5*x+6=0", "x", "3"] }];
+  const issue = [
+    [Q, R`Rešitvi sta $x_1 = 2$ in $x_2 = 4$.`],
+    [Q, R`$x_1 = 2$, $x_2 = 4$`],
+    [Q2, R`Rešitvi sta $x_1 = 4$ in $x_2 = 2$.`],
+    [Q, R`Rešitvi sta $x_{1,2} = 1, 6$.`],
+    [Q, R`Rešitvi sta $x_{1,2} = 2, 4$.`],
+    [Q, R`Rešitvi sta $x_1 = 2$ in $x_2 = 2$.`],
+    [Q, R`Teme je pri $x_0 = 2{,}5$, rešitvi sta $x_1 = 2$ in $x_2 = 4$.`],
+  ];
+  for (const [cl, t] of issue) assert.ok(visibleIssue(t, cl), t);
+  const none = [
+    [Q, R`Rešitvi sta $x_1 = 2$ in $x_2 = 3$.`],
+    [Q, R`Rešitvi sta $x_1 = 3$ in $x_2 = 2$.`],
+    [Q, R`Rešitvi sta $x_{1,2} = 3, 2$.`],
+    [Q, R`Rešitvi sta $x_1 = 2$, $x_2 = 3$.` + "\n" + R`**Zdaj ti:** $x^2 - 7x + 12 = 0$, $x_1 = 3$, $x_2 = 4$`],
+    [Q, R`Rešitev je $x = 2$.`], // en sam koren ni oštevilčen: brez sodbe (kot prej)
+    [Q, R`Prva ničla je $x_1 = 2$, teme je pri $x_0 = 2{,}5$.`], // x₀ ni koren
+  ];
+  for (const [cl, t] of none) assert.equal(visibleIssue(t, cl), null, t);
 });

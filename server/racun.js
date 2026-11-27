@@ -207,6 +207,7 @@ function visibleValues(text, v) {
   const plain = String(text || "").replace(BLOCK_RE, "").replace(/<<META[^<>]*>>/g, "");
   const lhsRe = new RegExp(`^${v}(?:_?\\(?(\\d)\\)?)?$`);
   const varRe = new RegExp(`(?<![a-zA-Z])${v}(?![a-zA-Z])`);
+  const pairRe = new RegExp(`^${v}_?\\(?1,\\s*2\\)?\\s*=\\s*(.+)$`);
   const out = [];
   for (const line of plain.split("\n")) {
     // Od vaje ali druge naloge naprej se ne bere (pregled prevzema 4: »**Zdaj ti:** $3x + 1 = 16$«, »Podobna naloga: …«).
@@ -216,7 +217,7 @@ function visibleValues(text, v) {
     if (!segs.length) continue;
     const texts = segs.map((m) => texToText(m[1] ?? m[2]));
     // druga enačba v tej neznanki (leva stran ni sama neznanka): od tod naprej postopek ali druga naloga
-    if (texts.some((t) => t.includes("=") && varRe.test(t) && !lhsRe.test(t.split("=")[0].trim()))) break;
+    if (texts.some((t) => t.includes("=") && varRe.test(t) && !lhsRe.test(t.split("=")[0].trim()) && !pairRe.test(t.trim()))) break;
     const onlyMath = !/[\p{L}\d]/u.test(line.replace(MATH_SEG, " ").replace(/(?<!\p{L})(?:in|and|ter)(?!\p{L})/giu, " "));
     segs.forEach((m, k) => {
       const tex = m[1] ?? m[2];
@@ -229,16 +230,26 @@ function visibleValues(text, v) {
         const cut = Math.max(before.lastIndexOf(". "), before.lastIndexOf("! "), before.lastIndexOf("? "));
         if (!SOLUTION_WORD.test(cut >= 0 ? before.slice(cut + 2) : before)) return;
       }
+      const add = (raw, idx) => {
+        const last = raw.trim().replace(/[.]$/, "");
+        if (/^[-−+]?\d[\d.,\s]*[\p{L}µ%]/u.test(last)) return; // enota ali beseda za številom v zapisu
+        const n = numOf(last);
+        // zaokrožena vrednost (»x = 1,41« za √2, »0,33« za 1/3): pol zadnjega zapisanega mesta
+        const dec = /^[-−+]?\d+[.,](\d+)$/.exec(last.replace(/\s/g, ""))?.[1].length ?? null;
+        if (n !== null) out.push({ n, tol: dec === null ? 0 : 0.5 * 10 ** -dec, idx });
+      };
+      // »x_{1,2} = 1, 6«: oba korena v enem zapisu (AUDIT-064)
+      const pair = pairRe.exec(texts[k].trim());
+      if (pair) {
+        const vals = pair[1].split(/,\s+|;|\bin\b|\band\b/).filter((x) => x.trim());
+        if (vals.length === 2) vals.forEach((x, i) => add(x, String(i + 1)));
+        return;
+      }
       // ločila med vrednostmi: », « (z presledkom), »;«, »in«, \quad; »2,5« je eno število
       for (const piece of texts[k].split(/,\s+|;|\bin\b/)) {
         const parts = piece.split("=").map((x) => x.trim());
         if (parts.length < 2 || !lhsRe.test(parts[0])) continue;
-        const last = parts.at(-1).replace(/[.]$/, "");
-        if (/^[-−+]?\d[\d.,\s]*[\p{L}µ%]/u.test(last)) continue; // enota ali beseda za številom v zapisu
-        const n = numOf(last);
-        // zaokrožena vrednost (»x = 1,41« za √2, »0,33« za 1/3): pol zadnjega zapisanega mesta
-        const dec = /^[-−+]?\d+[.,](\d+)$/.exec(last.replace(/\s/g, ""))?.[1].length ?? null;
-        if (n !== null) out.push({ n, tol: dec === null ? 0 : 0.5 * 10 ** -dec });
+        add(parts.at(-1), lhsRe.exec(parts[0])[1]);
       }
     });
   }
@@ -276,6 +287,22 @@ export function visibleFinding(text, claims) {
     const keys = new Set();
     const distinct = seen.filter((x) => !keys.has(+x.n.toPrecision(9)) && keys.add(+x.n.toPrecision(9)));
     if (!distinct.length || distinct.length > new Set(s.vals).size) continue;
+    // Navedeni koreni x₁, x₂ (AUDIT-064): besedilo kot rešitev navede natanko toliko oštevilčenih korenov, kot jih ima
+    // preverjena rešitev, vsak z eno vrednostjo. Napačen koren je napaka, tudi če je drugi pravilen (prej: pravilna
+    // vrednost kjerkoli v besedilu je ugotovitev utišala). Oštevilčenje je pozitiven znak, da gre za isto nalogo; le indeksi
+    // 1 … n (x₀ je npr. teme, ne koren).
+    const roots = new Set(s.vals.map((y) => +y.toPrecision(12)));
+    const byIdx = new Map();
+    for (const x of seen.filter((x) => +x.idx >= 1 && +x.idx <= roots.size)) byIdx.set(x.idx, [...(byIdx.get(x.idx) || []), x]);
+    if (roots.size >= 2 && byIdx.size === roots.size && [...byIdx.values()].every((a) => a.every((x) => close(x.n, a[0].n)))) {
+      const stated = [...byIdx.values()].map((a) => a[0]);
+      const wrongRoots = stated.filter((x) => !s.vals.some((y) => near(x, y)));
+      const missing = new Set(stated.map((x) => +x.n.toPrecision(12))).size < roots.size; // x₁ = x₂ = 2 pri korenih 2 in 3
+      if (wrongRoots.length || missing) {
+        const shown = stated.map((x) => String(+x.n.toPrecision(10)).replace(".", ",")).join(", ");
+        return { issue: `the answer text states the roots ${v} = ${shown}, but the exactly checked solution is ${v} = ${s.text.join("; ")}`, fact: null };
+      }
+    }
     // Pravilna vrednost kjerkoli v besedilu (tudi v preskočeni vrstici): brez sodbe (pregled prevzema 4).
     const plain = String(text || "").replace(BLOCK_RE, "").replace(/<<META[^<>]*>>/g, "");
     if (anyValues(plain, v).some((n) => s.vals.some((y) => close(n, y)))) continue;

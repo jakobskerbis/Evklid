@@ -7,6 +7,7 @@ import { t, locale, currentLang, currentRegion, deviceRegion } from "./i18n-zasl
 import { guaranteeLine, guaranteeBox, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
 import { consentFields, termsField, setTermsVersion, isStoreApp, consentsOk, consentMessage, consentBody, markCheckout, linkBox, bindLinkBox } from "./pay-ui.js";
 import { icon } from "./icons.js";
+import { fitPilotTables } from "./pilot-tabele.js";
 import { renderPilotAdmin, proofHtml, wireProof, proofBody, paintAccountPilot, paintAccountWtp } from "./pilot-naloge.js";
 import { renderAdminReports } from "./prijave.js";
 import { clearPrivate, deviceData } from "./offline.js";
@@ -332,6 +333,7 @@ async function loadPilot(days = 30, school = "", focusId = "") {
     ${g ? growthHtml(g, loc) : ""}
     ${o ? deliHtml(o, loc) : ""}
     ${k ? anketaHtml(k, loc) : ""}`;
+  fitPilotTables(out);
   // Kartica se izriše znova: fokus ostane na izbiri, ki jo je uporabnik spremenil (tipkovnica).
   if (focusId) setTimeout(() => $(`#${focusId}`)?.focus());
   const reload = (e) => loadPilot($("#pilot-days").value, $("#pilot-school")?.value || "", e.target.id);

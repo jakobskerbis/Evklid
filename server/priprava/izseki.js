@@ -22,7 +22,7 @@ const PODPISANO = "₀₁₂₃₄₅₆₇₈₉";
 
 // Ali je beseda (npr. H2SO4, Na2SO4, CO2, Fe2O3) kemijska formula s številkami, ki bi morale biti indeksi.
 function kemijska(w) {
-  if (!/\d/.test(w) || !/^[A-Z]/.test(w)) return false;
+  if (!/\d/.test(w) || !/^[A-Z(]/.test(w)) return false;
   const deli = w.match(/[A-Z][a-z]?\d*|\(|\)\d*/g);
   // En sam simbol s številko (F2, R1, H2) je navadno oznaka z indeksom (sila F₂, upor R₁): ni negotov, ne popravljamo.
   if (!deli || deli.join("") !== w || deli.filter((d) => /^[A-Z]/.test(d)).length < 2) return false;
@@ -49,6 +49,89 @@ function deli(t) {
 export const izrise = (latex, blok = false) => napakaIzraza(latex, { blok, katex }) === null;
 
 /**
+ * Ali so vse števke v zapisu gotovo indeksi, ne potence (K-10). To ni ugibanje, ker:
+ * - potenca 0 ali 1 v zapiskih ne nastopa (v0, e0, ε0, q1, a1b1), razen kot ulomek ali decimalka (x1/2, x0,5);
+ * - »^« tik za zadnjo števko (a1^2, v0^2) pomeni, da je ta števka indeks;
+ * - par ena črka + ena števka brez koeficienta (x2, q2) je indeks samo v ustaljenem zapisu z isto črko z indeksom 0
+ *   ali 1 (sosedom): q1q2, x1 + x2, x1·x2, x1, x2, a1b1 + a2b2, x1 = 3, x2 = …, (x - x1)(x - x2), x2 - x1, y2 - y1.
+ *   Sama bližina ne zadošča (Evklidov izrek a2 = c · a1: a2 je kvadrat, a1 projekcija).
+ * Vse drugo (x2, 6x2, ab2, at2, πr2, x2y, x10, r22) ostane negotovo. kje = odmik zapisa w v besedilu cel.
+ */
+const SOSED = (c, d) => `(?<!\\p{L})(?:\\p{L}[01])*${c}${d}(?:\\p{L}[01])*`;
+function indeksZapis(koef, w, za, cel, kje) {
+  const skupine = [...w.matchAll(/(\p{L}{1,3})(\d{1,2})/gu)];
+  const cisto = !koef && /^(?:\p{L}\d)+$/u.test(w);
+  const zadnja = skupine.length - 1;
+  const poZapisu = cel.slice(kje + w.length, kje + w.length + 3);
+  return skupine.every((m, i) => {
+    const [, crke, st] = m;
+    const konec = m.index + m[0].length === w.length;
+    if (konec && i === zadnja && za === "^") return true;
+    if (st === "0" || st === "1") {
+      // Ulomek ali decimalka za števko (x1/2, x0,5) je lahko potenca; x1,2 (obe rešitvi) je indeks.
+      if (konec && /^[/,.]\d/.test(poZapisu) && !(st === "1" && /^,2(?!\d)/.test(poZapisu))) return false;
+      return true;
+    }
+    if (!cisto || st.length > 1) return false;
+    const kjeS = kje + m.index;
+    const pred = cel.slice(Math.max(0, kjeS - 40), kjeS);
+    const po = cel.slice(kjeS + 2, kjeS + 30);
+    // Sosed je neposredno prejšnji indeks iste črke (x1 pred x2, nikoli v0 pred v2: v0, v2 = v02 + 2as je v²).
+    const prejsnji = Number(st) - 1;
+    const s = SOSED(crke, prejsnji);
+    // Za vrednostjo (x1 = 3, x2 = -3): samo neposredno prejšnji indeks (x1 pred x2, a2 pred a3, nikoli v0 pred v2), za
+    // žetonom »=« in kratka vrednost brez iste črke z indeksom (a2 = c · a1 je Evklidov a², v0 = 0, v2 = 2gh je v²).
+    const zaVrednostjo = () => {
+      if (!new RegExp(`(?<!\\p{L})${crke}${prejsnji}\\s*=\\s*[^,;=()]{1,10}(?:[,.]|\\s(?:in|ter))\\s*$`, "u").test(pred)) return false;
+      const v = /^\s*=\s*([^,;=]{1,12}?)\s*(?:[,;\n]|\.(?:\s|$)|\s(?:in|ter)\s|$)/u.exec(po);
+      return !!v && !/\p{L}\d|[²³⁴-⁹]|.[+\-−±·*/×]/u.test(v[1].trim()); // en člen: ne a2 = c · a1, a2 = 36 cm2, a2 = 12 · 3
+    };
+    // Veriga indeksov (x1 + x2, (a1 + b1, a2 + b2), A(x1, y1), B(x2, y2), a1 + a2 + … + a5).
+    const vez = `(?:[+\\-−±·*,]|in|ter|\\)\\s*(?:,|in|ter)\\s*\\p{L}{0,2}\\d?\\()`;
+    return [
+      new RegExp(`${s}\\s*$`, "u"), // q1q2, q1 q2, x1x2
+      new RegExp(`${s}(?:\\s*${vez}\\s*(?:\\p{L}\\d)*){1,6}$`, "u"),
+      new RegExp(`${s}\\)\\s*\\(\\s*\\p{L}?\\s*[-+−]\\s*$`, "u"), // (x - x1)(x - x2)
+    ].some((re) => re.test(pred)) || zaVrednostjo() || new RegExp(`^\\s*[-−·*]\\s*${crke}${prejsnji}(?![\\d^]|[,.]\\d)`, "u").test(po); // x2 - x1
+  });
+}
+
+// Ali je števka za zaklepajem na mestu z lahko potenca ((a + b)2, (-3)2, (2x)2, (sin x)2), ne oznaka a), 1), (1), (a) ali (str. 5).
+function izrazVOklepaju(cel, z) {
+  const o = cel.lastIndexOf("(", z);
+  if (o < 0 || cel.lastIndexOf(")", z - 1) > o) return false;
+  const v = cel.slice(o + 1, z).trim();
+  return !!v && !/^(?:\d+|\p{L})$/u.test(v) && !(/^(?!(?:sin|cos|tg|tan|ctg|cot|ln|log|lg|exp|arc\p{L}+|sh|ch|th)(?!\p{L}))\p{L}{2,}\.?\s/iu.test(v) && !/[+\-−±·*/=^]/.test(v));
+}
+
+// Pregled enega dela niza (brez oklepajev izraza): koeficient, kemijska formula, zapis črka + števka.
+function preglejKos(run, off, cel, negotovo) {
+  const koef = /^\d*/.exec(run)[0];
+  const w = run.slice(koef.length);
+  if (!w || !/\d/.test(w) || !/^[\p{L}(]/u.test(w)) return run;
+  const za = cel[off + run.length] || "";
+  // Naboj iona (SO42-, PO43−) ali potenca, ki sledi: števk ne spreminjamo, samo oznaka.
+  const naboj = /^[+\-−⁺⁻^]/.test(za);
+  if (kemijska(w)) {
+    // Dopolnimo samo v kemijski enačbi (puščica) in brez naboja; sicer (BC2 v geometriji) samo oznaka.
+    if (!naboj && /→|->|⟶|⇌|⇄/.test(cel)) {
+      const p = vPodpis(w);
+      negotovo.push({ vrsta: "kemija", izvirno: w, prepis: p });
+      return `${koef}${p} ${NEGOTOVO}`;
+    }
+    negotovo.push({ vrsta: "zapis", izvirno: w });
+    return `${run} ${NEGOTOVO}`;
+  }
+  // Ena do tri črke + številka brez presledka (x2, ab2, x12, x2y, AB2): lahko potenca, produkt ali indeks.
+  // En sam velik simbol z indeksom (F2, R1) ostane brez oznake, prav tako zapis, ki je gotovo indeks (indeksZapis).
+  if (/^(?:\p{L}{1,3}\d{1,2})+\p{L}{0,2}$/u.test(w) && !/^\p{Lu}\d+$/u.test(w) && !indeksZapis(koef, w, za, cel, off + koef.length)) {
+    negotovo.push({ vrsta: "zapis", izvirno: w });
+    return `${run} ${NEGOTOVO}`;
+  }
+  return run;
+}
+
+/**
  * Označi negotovo branje v enem izseku. Vrne { besedilo, negotovo: [{ vrsta, izvirno, prepis? }] }.
  * Besedilo ohrani vse, kar je bilo prebrano; popravek je samo pri kemijskih indeksih in vedno z [?].
  */
@@ -60,32 +143,40 @@ export function oznaciNegotovo(t) {
       negotovo.push({ vrsta: "formula", izvirno: d.surovo });
       return `${d.surovo} ${NEGOTOVO}`;
     }
+    // Absolutna vrednost s črko in števko tik za njo (|a|2): lahko |a|² ali |a|·2.
+    const tekst = d.tekst.replace(/(\|[^|\s]{0,5}\p{L}[^|\s]{0,5}\|)(\d{1,2})(?!\d|[,.]\d)/gu, (m, abs, st) => {
+      negotovo.push({ vrsta: "zapis", izvirno: m });
+      return `${abs}${st} ${NEGOTOVO}`;
+    });
     // Celi nizi črk, števk in oklepajev (linearno); števke na začetku so koeficient (3x2, 2H2O) in ostanejo.
-    return d.tekst.replace(/[\p{L}\p{N}_()\\]+/gu, (run, off, cel) => {
-      if (run.includes("\\") || run.includes("_")) return run;
-      const koef = /^\d*/.exec(run)[0];
-      const w = run.slice(koef.length);
-      if (!w || !/\d/.test(w) || !/^[\p{L}(]/u.test(w)) return run;
-      const za = cel[off + run.length] || "";
-      // Naboj iona (SO42-, PO43−) ali potenca, ki sledi: števk ne spreminjamo, samo oznaka.
-      const naboj = /^[+\-−⁺⁻^]/.test(za);
-      if (kemijska(w)) {
-        // Dopolnimo samo v kemijski enačbi (puščica) in brez naboja; sicer (BC2 v geometriji) samo oznaka.
-        if (!naboj && /→|->|⟶|⇌|⇄/.test(cel)) {
-          const p = vPodpis(w);
-          negotovo.push({ vrsta: "kemija", izvirno: w, prepis: p });
-          return `${koef}${p} ${NEGOTOVO}`;
-        }
-        negotovo.push({ vrsta: "zapis", izvirno: w });
-        return `${run} ${NEGOTOVO}`;
-      }
-      // Ena do tri črke + številka brez presledka (x2, ab2, x12, x2y, AB2): lahko potenca, produkt ali indeks.
-      // En sam velik simbol z indeksom (F2, R1) ostane brez oznake.
-      if (/^(?:\p{L}{1,3}\d{1,2})+\p{L}{0,2}$/u.test(w) && !/^\p{Lu}\d+$/u.test(w)) {
-        negotovo.push({ vrsta: "zapis", izvirno: w });
-        return `${run} ${NEGOTOVO}`;
-      }
-      return run;
+    // Kemijska formula z oklepaji (Ca(OH)2, (NH4)2SO4) se pregleda cela; sicer so oklepaji oklepaji izraza
+    // (»(6x2«, »ln(x2«, »r2)«) in se vsak del med njimi pregleda posebej.
+    return tekst.replace(/[\p{L}\p{N}_()\\]+/gu, (celNiz, off0, cel) => {
+      if (celNiz.includes("\\") || celNiz.includes("_")) return celNiz;
+      const odpri = (celNiz.match(/\(/g) || []).length;
+      const zapri = (celNiz.match(/\)/g) || []).length;
+      const pred = "(".repeat(Math.min(Math.max(0, odpri - zapri), /^\(*/.exec(celNiz)[0].length));
+      const po = ")".repeat(Math.min(Math.max(0, zapri - odpri), /\)*$/.exec(celNiz)[0].length));
+      const jedro = celNiz.slice(pred.length, celNiz.length - po.length);
+      // Ves niz v enem paru oklepajev (»(CH3COOH)«, »(x2)«) je oklepaj besedila ali izraza, ne del formule.
+      if (/^\([^()]*\)$/.test(jedro)) return `${pred}(${preglejKos(jedro.slice(1, -1), off0 + pred.length + 1, cel, negotovo)})${po}`;
+      const brezKoef = jedro.replace(/^\d+/, "");
+      if (/[()]/.test(jedro) && kemijska(brezKoef)) return `${pred}${preglejKos(jedro, off0 + pred.length, cel, negotovo)}${po}`;
+      let off = off0;
+      return celNiz
+        .split(/([()])/)
+        .map((kos, i, vsi) => {
+          // Števka tik za zaklepajem izraza ((a + b)2, (x + 1)2): lahko kvadrat ali množenje.
+          if (/^\d{1,2}$/.test(kos) && vsi[i - 1] === ")" && !/^[,.]\d/.test(cel.slice(off + kos.length)) && izrazVOklepaju(cel, off - 1)) {
+            negotovo.push({ vrsta: "zapis", izvirno: `)${kos}` });
+            off += kos.length;
+            return `${kos} ${NEGOTOVO}`;
+          }
+          const r = kos === "(" || kos === ")" || !kos ? kos : preglejKos(kos, off, cel, negotovo);
+          off += kos.length;
+          return r;
+        })
+        .join("");
     });
   });
   // Formula iz Worda, ki je uvoz ni mogel prebrati (uvoz.js omml): ostane oznaka.
