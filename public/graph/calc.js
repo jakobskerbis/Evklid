@@ -1,6 +1,6 @@
 // Grafični kalkulator – vmesnik: seznam izrazov, drsniki z animacijo, tabele z regresijo,
 // tipkovnica za dotik, primeri, shranjeni grafi, izvoz slike in povezava z inštruktorjem.
-import { buildModel, rowTex, emptyState, newId, derivativeOf, sliderRange, sliderText, MODELS, DEFAULT_DOMAIN, toNum, upgradeZapis, degreesToCalc } from "./model.js";
+import { buildModel, rowTex, specialPoints, emptyState, newId, derivativeOf, sliderRange, sliderText, MODELS, DEFAULT_DOMAIN, toNum, upgradeZapis, degreesToCalc } from "./model.js";
 import { niceNumber, parse, compile, arityExample, freeVars, walk } from "./math.js";
 import { GraphView, PALETTE } from "./plot.js";
 import { fitModelView } from "./okno.js";
@@ -78,6 +78,7 @@ export function createCalculator(root, opts) {
         <button type="button" class="gc-fab" data-act="fit" title="${esc(t("gc.fit"))}" aria-label="${esc(t("gc.fit"))}">${icon("maximize")}</button>
       </div>
       <div class="gc-use" hidden></div>
+      <div class="gc-fitnote" hidden role="status"><span>${esc(t("gc.autoFit"))}</span><button type="button" class="sc-act" data-act="fitback">${icon("undo-2")}<span>${esc(t("gc.autoFitBack"))}</span></button></div>
       <button type="button" class="gc-fab gc-expand" data-act="expand" title="${esc(t("gc.fullGraph"))}" aria-label="${esc(t("gc.fullGraph"))}" aria-pressed="false">${icon("maximize-2")}</button>
     </section>
     <div class="gc-pop" hidden role="dialog"></div>`;
@@ -85,10 +86,27 @@ export function createCalculator(root, opts) {
   const list = $(".gc-list");
   const pop = $(".gc-pop");
 
+  let quickTimer = 0;
+  let fitTimer = 0;
+  let fitHide = 0;
+  let fitPrev = null;
+  const fitDone = new Map(); // id vrstice → besedilo, za katero smo pogled že prilagodili
+  const fitNote = root.querySelector(".gc-fitnote");
+  const resetFit = () => {
+    clearTimeout(fitTimer);
+    clearTimeout(fitHide);
+    fitPrev = null;
+    fitNote.hidden = true;
+  };
   const view = new GraphView($(".gc-graph"), {
     getState: () => state,
     getModel: () => model,
-    onView: () => scheduleSave(),
+    onView: () => {
+      scheduleSave();
+      // ničle in ekstremi pod vrstico veljajo za vidni del: po premiku pogleda jih osvežimo
+      clearTimeout(quickTimer);
+      if (state.items.some((it) => it.tools?.roots || it.tools?.ext)) quickTimer = setTimeout(() => model.items.forEach((o) => (o.src?.tools?.roots || o.src?.tools?.ext) && updateRow(o)), 200);
+    },
     onSelect: (id) => {
       list.querySelectorAll(".gc-row").forEach((r) => r.classList.toggle("selected", r.dataset.id === id));
       if (id) list.querySelector(`[data-id="${id}"]`)?.scrollIntoView({ block: "nearest" });
@@ -97,6 +115,8 @@ export function createCalculator(root, opts) {
     onMark: (p) => showUse(p),
     onDragEnd: () => commit(),
     label: (k) => t(`gc.poi.${k}`),
+    // ekstremi izbrane krivulje z vklopljenim gumbom »Ekstremi« imajo napis (iz stanja, ne enkratnega izbora)
+    labelled: (p) => !!item(view.selected)?.tools?.ext && p.types.some((k) => k === "max" || k === "min"),
     fmt: (v, digits) => fmt(v, digits), // oznake točk: značilna mesta
     axisFmt: (v, decimals) => fmtFixed(v, decimals), // števila na oseh
   });
@@ -243,6 +263,7 @@ export function createCalculator(root, opts) {
         <div class="gc-math" tabindex="-1"></div>
         <div class="gc-edit"><input class="gc-input" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="next" placeholder="${esc(i === 0 ? t("gc.placeholder") : "")}" value="${esc(it.text)}">
         <div class="gc-preview" aria-hidden="true"></div></div>
+        <div class="gc-quick" role="group" aria-label="${esc(t("gc.tools"))}"></div>
         <div class="gc-extra"></div>
       </div>
       <div class="gc-acts"><button type="button" class="gc-x" data-act="menu" aria-label="${esc(t("gc.options"))}">${icon("ellipsis-vertical")}</button><button type="button" class="gc-x" data-act="del" aria-label="${esc(t("gc.delete"))}">${icon("x")}</button></div>
@@ -365,6 +386,8 @@ export function createCalculator(root, opts) {
     const a = document.activeElement;
     if (a?.classList?.contains("gc-input") && !a.classList.contains("gc-note-in") && list.contains(a)) showEdit(a);
   });
+  // hitri gumb ne vzame fokusa polju (Safari, Firefox na macOS): vrstica ostane v urejanju, klik pride do gumba
+  list.addEventListener("mousedown", (ev) => ev.target.closest?.(".gc-q") && ev.preventDefault());
   let tapAt = null;
   list.addEventListener("pointerdown", (ev) => {
     if (ev.target.classList?.contains("gc-input")) tapAt = { x: ev.clientX, y: ev.clientY, t: ev.timeStamp };
@@ -407,6 +430,9 @@ export function createCalculator(root, opts) {
     const t1 = o.tex ? tex(o.tex) : "";
     math.innerHTML = t1 || `<span class="muted">${esc(it.text)}</span>`;
     showEdit(input);
+    const quick = row.querySelector(".gc-quick");
+    const qh = quickHtml(o);
+    if (quick && quick._html !== qh) quick.innerHTML = quick._html = qh;
     const extra = row.querySelector(".gc-extra");
     // drsnik med animacijo posodobimo na mestu: če bi ga vsako sličico zgradili znova,
     // gumb za ustavitev in drsnik ne bi nikoli dobila klika
@@ -445,6 +471,30 @@ export function createCalculator(root, opts) {
     return out;
   }
 
+  // ničle in ekstremi funkcije v vidnem delu (po x), urejeno od leve proti desni
+  function keyPoints(o) {
+    const v = state.view;
+    try {
+      return specialPoints((x) => o.fn(x), v.xmin, v.xmax, 400).filter((p) => p.type !== "yint").sort((a, b) => a.x - b.x);
+    } catch {
+      return [];
+    }
+  }
+  // izbere krivuljo (pike ničel in ekstremov so na grafu le pri izbrani krivulji)
+  function selectRow(id) {
+    if (view.selected !== id) view.select(id);
+    list.querySelectorAll(".gc-row").forEach((r) => r.classList.toggle("selected", r.dataset.id === id));
+  }
+
+  // Hitri gumbi pod funkcijo (predlog 2, j 27. 11.): vidni, ko je vrstica izbrana ali v urejanju; isto kot v meniju ⋮.
+  // Svoj okvir zunaj .gc-extra: med predvajanjem drsnika se ne zgradijo znova, da dotik na iPadu ostane (glej updateRow).
+  function quickHtml(o) {
+    if (!((o.kind === "y" || o.plot === "y") && typeof o.fn === "function")) return "";
+    const tl = o.src.tools || {};
+    const q = (k, label, on) => `<button type="button" class="gc-q" data-act="quick" data-q="${k}"${on == null ? "" : ` aria-pressed="${!!on}"`}>${esc(label)}</button>`;
+    return `${q("roots", t("gc.q.roots"), !!tl.roots)}${q("ext", t("gc.q.ext"), !!tl.ext)}${q("deriv", t("gc.deriv"), !!tl.deriv)}${q("tangent", t("gc.tangent"), tl.tangent != null)}${q("table", t("gc.valueTable"))}`;
+  }
+
   function extraHtml(o) {
     const it = o.src;
     if (o.kind === "error") {
@@ -480,6 +530,18 @@ export function createCalculator(root, opts) {
       return `<div class="gc-val gc-seq">${terms.join("")}<span>${tex("\\ldots")}</span></div>`;
     }
     const parts = [];
+    const fnRow = (o.kind === "y" || o.plot === "y") && typeof o.fn === "function";
+    if (fnRow) {
+      // ničle in ekstremi v vidnem delu (hitri gumbi so v svojem okvirju .gc-quick, quickHtml)
+      const tl = it.tools || {};
+      if (tl.roots || tl.ext) {
+        const pts = keyPoints(o);
+        const sep = comma() ? "; " : ", ";
+        const line = (label, xs) => `<div class="gc-val gc-keyp"><span class="gc-keyp-h">${esc(label)}:</span><span>${xs.length ? xs.slice(0, 6).map(esc).join(sep) + (xs.length > 6 ? sep + "…" : "") : esc(t("gc.q.none"))}</span></div>`;
+        if (tl.roots) parts.push(line(t("gc.q.roots"), pts.filter((p) => p.type === "root").map((p) => `x = ${fmt(p.x, 4)}`)));
+        if (tl.ext) parts.push(line(t("gc.q.ext"), pts.filter((p) => p.type === "max" || p.type === "min").map((p) => `${t(`gc.poi.${p.type}`)} (${fmt(p.x, 4)}${sep}${fmt(p.y, 4)})`)));
+      }
+    }
     if ((o.kind === "y" || o.plot === "y") && o.deriv && it.tools?.deriv && o.deriv.tex) {
       const name = o.kind === "func" ? `${o.fname}'\\left(${o.varName}\\right)` : "y'";
       parts.push(`<div class="gc-val gc-deriv">${tex(`${name} = ${o.deriv.tex}`)}</div>`);
@@ -699,7 +761,50 @@ export function createCalculator(root, opts) {
       if (it.type === "note") autoGrow(e.target);
       commit(false);
       refresh();
+      // nova vrstica dobi izbiro, ko je narisana (kot ob fokusu), da hitri gumbi ostanejo vidni tudi po izgubi fokusa
+      if (it.type === "expr" && row.classList.contains("plotted") && view.selected !== it.id) {
+        view.select(it.id);
+        list.querySelectorAll(".gc-row").forEach((r) => r.classList.toggle("selected", r === row));
+      }
+      if (it.type === "expr") {
+        clearTimeout(fitTimer);
+        fitTimer = setTimeout(() => autoFit(it.id), 900);
+      }
     }
+  });
+
+  // Nova krivulja zunaj pogleda (predlog 3, j 27. 11.): ko se tipkanje ustavi, pogled premaknemo nanjo in ponudimo
+  // »Nazaj«. Za isto besedilo le enkrat, da ne nagajamo učencu, ki je pogled premaknil sam.
+  function curveVisible(o, v) {
+    for (let i = 0; i <= 240; i++) {
+      const y = toNum(o.fn(v.xmin + ((v.xmax - v.xmin) * i) / 240));
+      if (Number.isFinite(y) && y >= v.ymin && y <= v.ymax) return true;
+    }
+    return false;
+  }
+  function autoFit(id) {
+    const it = item(id);
+    const o = modelItem(id);
+    if (!it || !o || it.hidden || !(o.kind === "y" || o.plot === "y") || typeof o.fn !== "function") return;
+    if (fitDone.get(id) === it.text) return;
+    try {
+      if (curveVisible(o, state.view)) return;
+      const raw = fitModelView({ items: [o] }, { W: view.W, H: view.H });
+      const fit = raw && view.squared(raw, "y"); // enaki osi ostanejo, če so vklopljene
+      if (!fit || !curveVisible(o, fit)) return;
+      fitDone.set(id, it.text);
+      fitPrev = { ...state.view };
+      view.animateTo(fit);
+      fitNote.hidden = false;
+      clearTimeout(fitHide);
+      fitHide = setTimeout(() => (fitNote.hidden = true), 8000);
+    } catch {}
+  }
+  fitNote.addEventListener("click", (e) => {
+    if (!e.target.closest('[data-act="fitback"]')) return;
+    if (fitPrev) view.animateTo(fitPrev);
+    fitPrev = null;
+    fitNote.hidden = true;
   });
   list.addEventListener("change", (e) => {
     const row = e.target.closest(".gc-row");
@@ -755,6 +860,7 @@ export function createCalculator(root, opts) {
       return;
     }
     if (act === "del") return removeItem(id);
+    if (act === "quick") return quickTool(id, e.target.closest("[data-q]").dataset.q);
     if (act === "use-area") {
       const txt = areaText(modelItem(id), it);
       if (txt) opts.useInCalc?.(txt);
@@ -974,6 +1080,36 @@ export function createCalculator(root, opts) {
     if (e.key === "Escape" && !pop.hidden) closePop();
   });
 
+  function addValueTable(it, o) {
+    const idx = state.items.indexOf(it);
+    const seq = o?.plot === "seq" ? o.seq : null;
+    const cols = seq ? [{ name: o.varName, values: Array.from({ length: 10 }, (_, i) => seq.n0 + i) }, { name: o.fname, values: [] }] : [{ name: "x", values: [-2, -1, 0, 1, 2] }, { name: "y", values: [] }];
+    state.items.splice(idx + 1, 0, { id: newId(), type: "table", ref: it.id, color: it.color, cols });
+    commit();
+    renderList();
+    refresh();
+  }
+  // hitri gumb pod funkcijo: isto orodje kot v meniju ⋮ (ničle in ekstremi še označi na grafu)
+  function quickTool(id, q) {
+    const it = item(id);
+    const o = modelItem(id);
+    if (!it || !o) return;
+    if (q === "table") return addValueTable(it, o);
+    const tools = it.tools || {};
+    const v = state.view;
+    if (q === "roots" || q === "ext" || q === "deriv") it.tools = { ...tools, [q]: !tools[q] };
+    else if (q === "tangent") it.tools = { ...tools, tangent: tools.tangent != null ? null : roundTo((v.xmin + v.xmax) / 2 + (v.xmax - v.xmin) / 8, (v.xmax - v.xmin) / 100) };
+    else return;
+    commit();
+    refresh();
+    // ničle so na osi tesno skupaj in napisi bi se prekrivali: na grafu so pike izbrane krivulje, seznam je pod vrstico;
+    // napise ekstremov da hook »labelled«
+    if (q === "roots" || q === "ext") {
+      selectRow(id);
+      view.draw();
+    }
+  }
+
   function openRowMenu(id, anchor) {
     const it = item(id);
     const o = modelItem(id);
@@ -1011,15 +1147,8 @@ export function createCalculator(root, opts) {
       }
       if (tool === "label") it.label = it.label === false;
       if (tool === "table") {
-        const idx = state.items.indexOf(it);
         closePop();
-        const seq = o?.plot === "seq" ? o.seq : null;
-        const cols = seq ? [{ name: o.varName, values: Array.from({ length: 10 }, (_, i) => seq.n0 + i) }, { name: o.fname, values: [] }] : [{ name: "x", values: [-2, -1, 0, 1, 2] }, { name: "y", values: [] }];
-        state.items.splice(idx + 1, 0, { id: newId(), type: "table", ref: it.id, color: it.color, cols });
-        commit();
-        renderList();
-        refresh();
-        return;
+        return addValueTable(it, o);
       }
       if (tool === "dup") {
         const idx = state.items.indexOf(it);
@@ -1117,6 +1246,7 @@ export function createCalculator(root, opts) {
     view.shown = [];
     view.trace = null;
     $(".gc-use").hidden = true;
+    resetFit();
     renderList();
     refresh();
     view.view = view.squared(state.view);
@@ -1417,6 +1547,7 @@ export function createCalculator(root, opts) {
     if (act === "settings") openSettings(b);
     if (act === "zoomin") view.zoomAt(0.6, undefined, undefined, true);
     if (act === "zoomout") view.zoomAt(1 / 0.6, undefined, undefined, true);
+    if (act === "home" || act === "fit") resetFit();
     if (act === "home") view.animateTo(view.squared(emptyState().view));
     if (act === "fit") {
       const v = view.fitBounds();
