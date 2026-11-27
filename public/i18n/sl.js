@@ -1114,6 +1114,7 @@ export default {
   "tk.shift": "Velika črka",
   "tk.space": "Preslednica (povleci za premik kazalca)",
   "tk.paste": "Prilepi",
+  "tk.allKeys": "Vse tipke",
   "tk.pasteFail": "Ni dostopa do odložišča: dolgo pritisni v polje in izberi Prilepi.",
   "tk.globe": "Tipkovnica telefona za to polje",
   "tk.next": "Naprej",

@@ -988,6 +988,7 @@
   "tk.shift": "Capital letter",
   "tk.space": "Space (drag to move the cursor)",
   "tk.paste": "Paste",
+  "tk.allKeys": "All keys",
   "tk.pasteFail": "Can't reach the clipboard: long-press the field and choose Paste.",
   "tk.globe": "Phone keyboard for this field",
   "tk.next": "Next",

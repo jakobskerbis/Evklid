@@ -988,6 +988,7 @@
   "tk.shift": "Großbuchstabe",
   "tk.space": "Leertaste (ziehen, um den Cursor zu bewegen)",
   "tk.paste": "Einfügen",
+  "tk.allKeys": "Alle Tasten",
   "tk.pasteFail": "Kein Zugriff auf die Zwischenablage: Feld lange drücken und Einfügen wählen.",
   "tk.globe": "Handytastatur für dieses Feld",
   "tk.next": "Weiter",

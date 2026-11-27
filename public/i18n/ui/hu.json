@@ -988,6 +988,7 @@
   "tk.shift": "Nagybetű",
   "tk.space": "Szóköz (húzd a kurzor mozgatásához)",
   "tk.paste": "Beillesztés",
+  "tk.allKeys": "Összes billentyű",
   "tk.pasteFail": "A vágólap nem érhető el: nyomd hosszan a mezőt, és válaszd a Beillesztést.",
   "tk.globe": "A telefon billentyűzete ehhez a mezőhöz",
   "tk.next": "Tovább",

@@ -994,6 +994,7 @@
   "tk.shift": "Veliko slovo",
   "tk.space": "Razmaknica (povuci za pomicanje pokazivača)",
   "tk.paste": "Zalijepi",
+  "tk.allKeys": "Sve tipke",
   "tk.pasteFail": "Nema pristupa međuspremniku: dugo pritisni polje i odaberi Zalijepi.",
   "tk.globe": "Tipkovnica mobitela za ovo polje",
   "tk.next": "Dalje",

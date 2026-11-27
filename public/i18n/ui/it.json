@@ -988,6 +988,7 @@
   "tk.shift": "Maiuscola",
   "tk.space": "Spazio (trascina per spostare il cursore)",
   "tk.paste": "Incolla",
+  "tk.allKeys": "Tutti i tasti",
   "tk.pasteFail": "Appunti non disponibili: tieni premuto il campo e scegli Incolla.",
   "tk.globe": "Tastiera del telefono per questo campo",
   "tk.next": "Avanti",

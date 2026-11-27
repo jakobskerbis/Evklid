@@ -289,6 +289,8 @@ function ctxChips() {
     html: list
       .map((c) => {
         const o = Array.isArray(c) ? { label: c[0], ins: c[1] ?? c[0] } : c;
+        // { layer }: »Vse tipke« odpre plast (tipke teme nad tipkovnico, tutorChips)
+        if (o.layer) return chip(o.i18n ? t(o.i18n) : o.label, { a: "layer", v: o.layer }, "all");
         return chip(o.label, o.unit ? { a: "unit", v: o.ins ?? o.label } : { a: "ins", v: o.ins ?? o.label }, o.unit ? "unit" : "");
       })
       .join(""),
