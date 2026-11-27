@@ -920,3 +920,108 @@ button.ghost.sc-recent-x { min-width: 40px; min-height: 40px; padding: 0; margin
 .fm-calc:hover, .fm-calc:focus-visible, .fm-graph:hover, .fm-graph:focus-visible { color: var(--accent); }
 @media (pointer: coarse) { .fm-calc, .fm-graph { width: 44px; height: 44px; } .pse-act button { min-height: 44px; } }
 .pse-mm-res { margin: 8px 0 4px; }
+
+/* ---------- znanstveni na tablici in računalniku (j, 27. 11., izbira C) ----------
+   Razred postavi sci.js po velikosti samega kalkulatorja (tudi v plavajočem oknu), ne po zaslonu:
+   .sc-c (širok ≥ 861 px, visok ≥ 600 px, ležeče): zgodovina v levem stolpcu, desno vrstica, velik zaslon (vnos in sproten
+   izid) tik nad celo tipkovnico, kot pravi kalkulator (prej je bila tipkovnica majhna spodaj desno pod praznim prostorom).
+   Tipke zapolnijo višino (vrstice 1fr); zaslon do tretjine višine. Višji zapis (sistem, matrika) sci.js pomanjša (--sc-fit),
+   da zaslon nikoli ne drsi (kazalka in sproten izid ostaneta vidna, dotik zadene vnos) in so tipke vedno cele.
+   .sc-tall (širok ≥ 861 px, pokončno, npr. iPad Pro 13): kot telefon, tipkovnica spodaj čez vso širino.
+   Brez razreda (ožje ali nižje): prejšnja postavitev. */
+.sc.sc-c { grid-template-columns: minmax(280px, 1fr) var(--split-sc, min(66%, 880px)); grid-template-rows: auto auto minmax(0, 1fr); grid-template-areas: "hist bar" "hist entry" "hist keys"; }
+.sc.sc-c .sc-screen { display: contents; }
+.sc.sc-c .sc-bar { grid-area: bar; background: var(--surface); flex-wrap: wrap; row-gap: 4px; }
+.sc.sc-c .sc-history { grid-area: hist; background: var(--surface); border-inline-end: 1px solid var(--border); padding: 0 16px 12px; }
+/* naslov stolpca: isto besedilo kot oznaka za bralnik zaslona (prevedeno) */
+.sc.sc-c .sc-history::before { content: attr(aria-label); position: sticky; top: 0; z-index: 1; background: var(--surface); padding: 12px 0 6px; font-size: 0.8rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.sc.sc-c .sc-entry { grid-area: entry; min-height: max(84px, calc(var(--sc-h, 100vh) * 0.16)); max-height: calc(var(--sc-h, 100vh) * 0.32); overflow: hidden; display: flex; flex-direction: column; background: var(--surface); border-top: 0; padding: 12px 24px 14px; box-shadow: inset 0 -1px 0 var(--border); }
+.sc.sc-c .sc-entry:focus-within { box-shadow: inset 0 -3px 0 var(--accent); }
+.sc.sc-c .sc-line { margin-top: auto; } /* zapis spodaj, tik nad tipkami */
+.sc.sc-c .sc-preview { font-size: calc(2.4rem * var(--sc-fit, 1)); }
+.sc.sc-c .sc-input { font-size: 2rem; }
+.sc.sc-c .sc-live { font-size: calc(1.4rem * var(--sc-fit, 1)); }
+.sc.sc-c .sc-keys { grid-area: keys; gap: 10px; padding: 12px 14px calc(12px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); }
+.sc.sc-c :is(.sc-fn, .sc-num) { gap: 8px; grid-auto-rows: 1fr; }
+.sc.sc-c .sc-fn { flex: 4 1 0; }
+.sc.sc-c .sc-num { flex: 4.4 1 0; }
+.sc.sc-c .sc-key { min-height: 40px; font-size: clamp(0.95rem, calc(var(--sc-h, 100vh) * 0.016), 1.2rem); border-radius: 14px; }
+.sc.sc-c .sc-key.n { min-height: 40px; font-size: clamp(1.15rem, calc(var(--sc-h, 100vh) * 0.022), 1.5rem); }
+.sc.sc-c .sc-key:is(.digit, .eq) { font-size: clamp(1.3rem, calc(var(--sc-h, 100vh) * 0.026), 1.8rem); }
+.sc.sc-tall { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; }
+.sc.sc-tall .sc-screen { border-right: 0; }
+.sc.sc-tall .sc-keys { gap: 10px; padding: 12px 16px calc(14px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); }
+.sc.sc-tall :is(.sc-fn, .sc-num) { gap: 8px; }
+.sc.sc-tall .sc-key { min-height: clamp(44px, calc(var(--sc-h, 100vh) * 0.046), 64px); font-size: 1.15rem; border-radius: 14px; }
+.sc.sc-tall .sc-key.n { min-height: clamp(50px, calc(var(--sc-h, 100vh) * 0.053), 74px); font-size: 1.5rem; }
+.sc.sc-tall .sc-key:is(.digit, .eq) { font-size: 1.8rem; }
+.sc.sc-tall .sc-entry { padding: 10px 24px 12px; }
+.sc.sc-tall .sc-preview { font-size: 2rem; }
+.sc.sc-tall .sc-history { padding: 8px 24px; }
+
+/* ---------- okno »Piši« (public/graph/pisi.js; j, 27. 11.) ----------
+   Pripeto desno ali levo: kalkulator (vrstica, zgodovina, zaslon, tipke) v enem stolpcu, okno ob strani.
+   Pripeto spodaj: okno namesto tipk. Prosto: okno nad kalkulatorjem (vlečenje, velikost v kotu). */
+.sc.sc-pisi-on { position: relative; column-gap: 0; }
+.sc.sc-pisi-on > .split-handle { display: none !important; } /* ločnico zgodovina | tipke nadomesti ločnica okna */
+.sc:is(.sc-pisi-r, .sc-pisi-l) { grid-template-rows: auto minmax(0, 1fr) auto auto; }
+.sc.sc-pisi-r { grid-template-columns: minmax(0, 1fr) var(--pisi-w, 46%); grid-template-areas: "bar pisi" "hist pisi" "entry pisi" "keys pisi"; }
+.sc.sc-pisi-l { grid-template-columns: var(--pisi-w, 46%) minmax(0, 1fr); grid-template-areas: "pisi bar" "pisi hist" "pisi entry" "pisi keys"; }
+.sc.sc-pisi-b { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto auto var(--pisi-h, 36%); grid-template-areas: "bar" "hist" "entry" "keys" "pisi"; }
+.sc.sc-pisi-b .sc-keys { grid-area: keys; }
+/* telefon (ožje od 700 px): okno nadomesti tipke (⌨ Tipke jih vrne) */
+.sc.sc-pisi-b.sc-pisi-narrow { grid-template-rows: auto minmax(0, 1fr) auto var(--pisi-h, 50%); grid-template-areas: "bar" "hist" "entry" "pisi"; }
+.sc.sc-pisi-b.sc-pisi-narrow .sc-keys { display: none; }
+/* desno od leve: okno ostane na fizični strani (r desno), ločnica in vlečenje v zaslonskih koordinatah; vsebina ostane RTL */
+.sc:is(.sc-pisi-r, .sc-pisi-l, .sc-pisi-b) { direction: ltr; }
+[dir="rtl"] .sc:is(.sc-pisi-r, .sc-pisi-l, .sc-pisi-b) > * { direction: rtl; }
+.sc:is(.sc-pisi-r, .sc-pisi-l, .sc-pisi-b) .sc-screen { display: contents; }
+.sc:is(.sc-pisi-r, .sc-pisi-l, .sc-pisi-b) .sc-bar { grid-area: bar; }
+.sc:is(.sc-pisi-r, .sc-pisi-l, .sc-pisi-b) :is(.sc-bar, .sc-history, .sc-entry) { background: var(--surface); }
+.sc:is(.sc-pisi-r, .sc-pisi-l, .sc-pisi-b) .sc-history { grid-area: hist; border-right: 0; }
+.sc:is(.sc-pisi-r, .sc-pisi-l, .sc-pisi-b) .sc-history::before { content: none; }
+.sc:is(.sc-pisi-r, .sc-pisi-l, .sc-pisi-b) .sc-entry { grid-area: entry; min-height: 64px; max-height: none; overflow: visible; }
+.sc:is(.sc-pisi-r, .sc-pisi-l) .sc-keys { grid-area: keys; }
+.sc:is(.sc-pisi-r, .sc-pisi-l) .sc-key { min-height: 40px; }
+.sc:is(.sc-pisi-r, .sc-pisi-l) .sc-key.n { min-height: 46px; }
+.sc-pisi { grid-area: pisi; position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--surface); }
+.sc-pisi[hidden] { display: none; }
+.sc.sc-pisi-r .sc-pisi { padding-left: 14px; border-left: 1px solid var(--border); }
+.sc.sc-pisi-l .sc-pisi { padding-right: 14px; border-right: 1px solid var(--border); }
+.sc.sc-pisi-b .sc-pisi { padding-top: 14px; border-top: 1px solid var(--border); }
+.sc.sc-pisi-f .sc-pisi { position: absolute; z-index: 5; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: 0 10px 40px rgb(0 0 0 / 0.22); }
+.sc-pisi-head { display: flex; align-items: center; gap: 6px; padding: 6px 8px; background: var(--surface-2); border-bottom: 1px solid var(--border); flex-shrink: 0; overflow-x: auto; scrollbar-width: none; }
+.sc-pisi-head::-webkit-scrollbar { display: none; }
+.sc-pisi-head button { min-height: 40px; padding: 6px 10px; border: 0; border-radius: 10px; background: var(--surface); color: var(--text); font-weight: 800; font-size: 0.85rem; white-space: nowrap; cursor: pointer; touch-action: manipulation; }
+.sc-pisi-head button[aria-pressed="true"] { background: var(--accent); color: var(--accent-text); }
+.sc-pisi-head .sc-pisi-k { background: var(--accent-soft); color: var(--accent); }
+.sc-pisi-head .sc-pisi-drag { background: none; color: var(--muted); font-size: 1.3rem; padding: 4px 8px; cursor: grab; touch-action: none; }
+.sc-pisi-t { white-space: nowrap; }
+.sc-pisi-sp { flex: 1; }
+.sc-pisi-paper { flex: 1; min-height: 0; position: relative; }
+.sc-pisi-hint { margin: 0; padding: 6px 12px calc(6px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); font-size: 0.8rem; color: var(--muted); flex-shrink: 0; }
+.sc-pisi-hint.sc-pisi-err { color: var(--danger); font-weight: 700; }
+.sc-pisi-rs { position: absolute; z-index: 2; display: flex; align-items: center; justify-content: center; background: var(--surface-2); touch-action: none; outline: none; }
+.sc-pisi-rs > span { background: var(--muted); opacity: 0.6; border-radius: 3px; }
+.sc-pisi-rs:focus-visible, .sc-pisi-rs.dragging { background: var(--accent-soft); }
+.sc.sc-pisi-r .sc-pisi-rs { left: 0; top: 0; bottom: 0; width: 14px; cursor: col-resize; }
+.sc.sc-pisi-l .sc-pisi-rs { right: 0; top: 0; bottom: 0; width: 14px; cursor: col-resize; }
+.sc:is(.sc-pisi-r, .sc-pisi-l) .sc-pisi-rs > span { width: 5px; height: 56px; }
+.sc.sc-pisi-b .sc-pisi-rs { left: 0; right: 0; top: 0; height: 14px; cursor: row-resize; }
+.sc.sc-pisi-b .sc-pisi-rs > span { width: 56px; height: 5px; }
+.sc.sc-pisi-f .sc-pisi-rs { display: none; }
+.sc-pisi-corner { display: none; }
+.sc.sc-pisi-f .sc-pisi-corner { display: block; position: absolute; right: 2px; bottom: 2px; width: 28px; height: 28px; cursor: nwse-resize; touch-action: none; z-index: 2; }
+.sc.sc-pisi-f .sc-pisi-corner::after { content: ""; position: absolute; right: 5px; bottom: 5px; width: 14px; height: 14px; border-right: 3px solid var(--muted); border-bottom: 3px solid var(--muted); border-radius: 0 0 6px 0; opacity: 0.7; }
+.sc-pisi-snap { position: absolute; z-index: 6; display: flex; align-items: center; justify-content: center; border: 3px dashed var(--accent); border-radius: 16px; color: var(--accent); font-weight: 800; background: color-mix(in srgb, var(--accent) 6%, transparent); pointer-events: none; }
+.sc-pisi-snap[hidden] { display: none; }
+.sc-pisi-snap.on { background: color-mix(in srgb, var(--accent) 18%, transparent); }
+.sc-pisi-snap-l { left: 8px; top: 8px; bottom: 8px; width: 80px; writing-mode: vertical-rl; }
+.sc-pisi-snap-r { right: 8px; top: 8px; bottom: 8px; width: 80px; writing-mode: vertical-rl; }
+.sc-pisi-snap-b { left: 96px; right: 96px; bottom: 8px; height: 64px; }
+.sc-write-btn[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); }
+.sc-ink-note { position: absolute; left: 12px; top: 6px; z-index: 1; display: flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 700; color: var(--muted); }
+.sc-ink-note[hidden] { display: none; }
+.sc-entry:has(.sc-ink-note:not([hidden])) { padding-top: 44px; } /* opomba nad zapisom, ne čez njega */
+.sc-ink-note .sc-ink-fix { background: var(--accent-soft); color: var(--accent); min-height: 32px; }
+@media (max-width: 760px) { .sc-write-btn span { display: none; } }

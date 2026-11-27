@@ -147,6 +147,19 @@ function calcTool(mode) {
         stage: () => (imaStopnjo(state.student) ? stopnja(state.student) : null), // brez zapisane stopnje vse
         // »Po korakih«: zaslon Skeniraj (public/scan/) ima reševalnik po korakih
         canSteps: () => !!document.getElementById("view-scan"),
+        // okno »Piši«: ročno napisan izraz prebere strežnik (server/app.js /calc/read, meje AI kot pri nalogah)
+        readInk: async (image, { comma = true } = {}) => {
+          if (!state.student?.id) throw new Error(t("pad.readFail"));
+          let r;
+          try {
+            r = await api(`/api/students/${state.student.id}/calc/read`, { method: "POST", body: { image, comma } });
+          } catch (e) {
+            if (currentLang() === "sl" || e?.body?.code) throw e; // blokada porabe (code) je že prevedena
+            throw new Error(t("pad.readFail"));
+          }
+          // sporočilo strežnika je slovensko: v drugih jezikih splošno besedilo (kot pad.js)
+          return currentLang() === "sl" || !r?.message ? r : { ...r, message: t("pad.readFail") };
+        },
         // goal: po »Razstavi« pokaže korake razstavljanja, ne poenostavljanja
         steps: async (text, goal) => {
           if (!document.getElementById("view-scan")) return;

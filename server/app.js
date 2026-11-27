@@ -14,7 +14,7 @@ import { createStreamFilter, parseMeta, parseCards, parseChoices, stripChoices, 
 import { jezikOdgovora, polishReply } from "./instruktor-kandidat.js";
 import { summarizedHistory } from "./povzetek.js";
 import { studentResults } from "./results.js";
-import { streamReply, readHandwriting, isMockMode, MODEL, MODEL_DEEP, MODEL_MID, REFUSAL_TEXT, errorText, apiErrorCode, modeParams, costUsd, OCR_MODEL, nastaviOpazovalcaAi } from "./claude.js";
+import { streamReply, readHandwriting, readCalcInk, isMockMode, MODEL, MODEL_DEEP, MODEL_MID, REFUSAL_TEXT, errorText, apiErrorCode, modeParams, costUsd, OCR_MODEL, nastaviOpazovalcaAi } from "./claude.js";
 import { Usage, LIMITS, NOTES, windowHistory, recentHistory, staleImages, isImagePlaceholder } from "./usage.js";
 import { pricingAdvice } from "./advice.js";
 import { codeHint } from "./hints.js";
@@ -293,7 +293,7 @@ export const SLIKE_3D_CACHE = "public, max-age=86400, stale-while-revalidate=604
 export const POSODOBITEV_TEXT = "Evklid se posodablja. Pošlji vprašanje znova čez minuto.";
 
 export function createApp(store, opts = {}) {
-  const { streamFn = streamReply, readFn = readHandwriting } = opts;
+  const { streamFn = streamReply, readFn = readHandwriting, readCalcFn = readCalcInk } = opts;
   const app = express();
   app.disable("x-powered-by");
   securityHeaders(app);
@@ -397,6 +397,7 @@ export function createApp(store, opts = {}) {
     [/^\/api\/conversations\/[^/]+\/messages$/i, "10mb"], // sporočilo s sliko (MAX_IMAGE_B64)
     // skener, zapiski, urnik s fotografije, zapis s prstom, fotografija naloge v pilotu
     [/^\/api\/students\/[^/]+\/(scan\/read(?:-task)?|zapiski\/preberi|schedule\/photo|tasks\/[^/]+\/read|pilot\/scan)$/i, "10mb"],
+    [/^\/api\/students\/[^/]+\/calc\/read$/i, "3mb"], // okno »Piši« kalkulatorja (slika do 2 MB base64)
     [/^\/api\/students\/[^/]+\/schedule\/ics$/i, "4mb"], // vsebina datoteke .ics (do 3 MB)
     [/^\/api\/students\/[^/]+\/graphs(\/[^/]+)?$/i, "1mb"], // graf s sličico (MAX_DATA + MAX_THUMB)
     [/^\/api\/conversations\/[^/]+\/messages\/[^/]+\/report$/i, "1mb"], // prijava odgovora z izrisanim HTML (SHOWN_MAX)
@@ -2437,6 +2438,38 @@ export function createApp(store, opts = {}) {
     } catch (err) {
       console.error("[evklid] branje rokopisa:", err?.message || err);
       res.status(502).json({ error: errorText(err, "Branje zapisa trenutno ne deluje. Odgovor vpiši s tipkami.") });
+    } finally {
+      hold.release();
+    }
+  });
+  // Okno »Piši« znanstvenega kalkulatorja (public/graph/pisi.js): prepis ročno napisanega izraza v vnos kalkulatorja.
+  // Enake meje kot branje odgovora pri nalogi (blokada, trda meja AI na profil); odjemalec bere le po premoru pisanja.
+  const CALC_READ_MAX = 30;
+  const calcReads = new Map(); // id učenca → časi branj v zadnji minuti
+  app.post("/api/students/:id/calc/read", async (req, res) => {
+    const s = loadStudent(req, res);
+    if (!s) return;
+    const m = /^data:(image\/(?:png|jpeg|webp));base64,(.+)$/.exec(String(req.body?.image || ""));
+    if (!m || m[2].length > 2 * 1024 * 1024) return res.status(400).json({ error: "Slika zapisa manjka ali je prevelika." });
+    const blocked = usage.blockInfo(s.id);
+    if (blocked) return res.status(429).json(blocked);
+    // odjemalec bere le po premoru; več kot CALC_READ_MAX branj v minuti je zanka ali zloraba
+    const now = Date.now();
+    for (const [id, ts] of calcReads) if (now - ts[ts.length - 1] >= 60_000) calcReads.delete(id); // stari vnosi ne rastejo
+    const recent = (calcReads.get(s.id) || []).filter((x) => now - x < 60_000);
+    if (recent.length >= CALC_READ_MAX) return res.status(429).json({ error: "Preveč branj pisave v kratkem času. Počakaj minuto ali uporabi tipke." });
+    recent.push(now);
+    calcReads.set(s.id, recent);
+    const hold = usage.guard(s.id, imageCallReserveUsd(OCR_MODEL, 200, 1, 2000));
+    if (!hold) return res.status(429).json(usage.guardBlock(s.id));
+    try {
+      const out = await readCalcFn({ imageBase64: m[2], mediaType: m[1], comma: req.body?.comma !== false });
+      if (out.mock) return res.json({ text: null, message: "Branje pisave trenutno ne deluje. Uporabi tipke." });
+      if (out.usage) usage.log(s.id, out.model, out.usage, "ocr");
+      res.json({ text: out.text, message: out.text ? null : "Zapisa nisem uspel prebrati. Poskusi pisati večje ali uporabi tipke." });
+    } catch (err) {
+      console.error("[evklid] branje pisave v kalkulatorju:", err?.message || err);
+      res.status(502).json({ error: errorText(err, "Branje pisave trenutno ne deluje. Uporabi tipke.") });
     } finally {
       hold.release();
     }

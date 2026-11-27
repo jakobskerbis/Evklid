@@ -7,7 +7,7 @@
 // v stran (zacetek.js ucenec); ponovni obisk: localStorage.
 // Vse naenkrat (HTTP/2: ena povezava, manjše datoteke pridejo prej). Valovi bi dodali po en krog (~0,56 s na Slow 4G).
 // Podatke zaslona app.js zahteva hkrati z modulom (zModulom in prefetchGet v openTopic, loadCompetition, showFlashcards, showCorner).
-const ZASLONI = ["./i18n-zasloni.js", "./i18n/zasloni-sl.js", "./vadnica.js", "./pad.js", "./enote-izbira.js", "./slike-nalog.js", "./povabi.js", "./check-progress.js", "./games/reward.js", "./flashcards.js", "./kartice-sklopi.js", "./corner.js", "./fokus-okna.js", "./interests.js", "./kalkulator-zaslon.js", "./schedule.js", "./pass-offer.js", "./racun.js", "./garancija-ui.js", "./pilot-naloge.js", "./prijave.js", "./odstop-ui.js", "./credit-card.js", "./laboratorij.js"];
+const ZASLONI = ["./i18n-zasloni.js", "./i18n/zasloni-sl.js", "./vadnica.js", "./pad.js", "./crnilo.js", "./enote-izbira.js", "./slike-nalog.js", "./povabi.js", "./check-progress.js", "./games/reward.js", "./flashcards.js", "./kartice-sklopi.js", "./corner.js", "./fokus-okna.js", "./interests.js", "./kalkulator-zaslon.js", "./schedule.js", "./pass-offer.js", "./racun.js", "./garancija-ui.js", "./pilot-naloge.js", "./prijave.js", "./odstop-ui.js", "./credit-card.js", "./laboratorij.js"];
 const prenesi = (val) =>
   Promise.all(
     val.map((u) => {
