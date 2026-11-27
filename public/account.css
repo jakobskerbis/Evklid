@@ -129,9 +129,10 @@ details .card { margin-top: 8px; }
 .pilot-scroll.stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .pilot-scroll.stack tr { padding: 6px 0; border-bottom: 1px solid var(--border); }
 .pilot-scroll.stack tr:last-child { border-bottom: 0; }
-.pilot-scroll.stack th, .pilot-scroll.stack td { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 2px 8px; border: 0; white-space: normal; text-align: end; overflow-wrap: anywhere; min-width: 0; }
-.pilot-scroll.stack td[data-label]::before { content: attr(data-label); text-align: start; font-weight: 600; color: var(--muted); }
-.pilot-scroll.stack tr > :first-child { justify-content: flex-start; text-align: start; font-weight: 700; }
+/* Celica ostane blok (vsebina z več deli, npr. »Zelo 5 · Malo 3«, teče v eni vrstici); ime stolpca plava levo. */
+.pilot-scroll.stack th, .pilot-scroll.stack td { display: block; padding: 2px 8px; border: 0; white-space: normal; text-align: end; overflow-wrap: anywhere; }
+.pilot-scroll.stack td[data-label]::before { content: attr(data-label); float: left; float: inline-start; margin-inline-end: 12px; text-align: start; font-weight: 600; color: var(--muted); }
+.pilot-scroll.stack tr > :first-child { text-align: start; font-weight: 700; }
 .pilot-scroll.stack tr > :first-child::before { content: none; }
 .pilot-scroll + .pilot-scroll { margin-top: 10px; }
 .rast-title { margin: 18px 0 8px; font-size: 1.05rem; }

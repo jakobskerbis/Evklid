@@ -60,10 +60,14 @@ async function openAccount(base, width, height) {
     s ||= await (await fetch("/api/students", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: "Skrbnik", self: true, consent: true, settings: { curriculum_level: "4. letnik" } }) })).json();
     localStorage.setItem("studentId", String(s.id));
   }, ADMIN);
+  const errors = [];
+  page.on("pageerror", (e) => errors.push(e.message));
   await page.goto(base + "/?pogled=racun");
   await page.locator(".pilot-scroll", { hasText: "Skupina konceptov" }).waitFor({ timeout: 30000 });
-  await page.waitForTimeout(500);
-  return { ctx, page };
+  // Obe kartici (merjenje v pilotu in naloge članov) sta izrisani: počakamo na tabele, ne na fiksen čas.
+  await page.waitForFunction(() => document.querySelectorAll("#pilot-out .pilot-scroll").length >= 1 && document.querySelectorAll("#pilot-tasks-out .pilot-scroll").length >= 3, null, { timeout: 30000 });
+  await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
+  return { ctx, page, errors };
 }
 
 // Vse vidne tabele pilota in cela stran: širina vsebine ≤ širina okvirja.
@@ -77,8 +81,9 @@ const concept = (r) => r.tables.find((x) => x.head === "Skupina konceptov");
 test("tabele pilota se ne pomikajo vstran: računalnik, tablica, telefon (seznam kartic) in ob spremembi širine", opts, async () => {
   await withAdmin(async (base) => {
     for (const [w, h] of [[1280, 900], [768, 1000], [390, 844], [360, 740]]) {
-      const { ctx, page } = await openAccount(base, w, h);
+      const { ctx, page, errors } = await openAccount(base, w, h);
       const r = await measure(page);
+      assert.deepEqual(errors, [], `${w}: brez napak na strani`);
       assert.ok(r.tables.length >= 5, `${w}: tabele pilota so prikazane (${r.tables.length})`);
       assert.ok(r.page <= 0, `${w}: stran se ne pomika vstran`);
       for (const x of r.tables) assert.ok(x.over <= 1, `${w}: tabela »${x.head}« se pomika vstran za ${x.over} px`);
@@ -90,14 +95,24 @@ test("tabele pilota se ne pomikajo vstran: računalnik, tablica, telefon (seznam
       }
       await ctx.close();
     }
-    // Ožanje okna (ali obrnjen telefon): tabela se sama preuredi brez ponovnega nalaganja.
-    const { ctx, page } = await openAccount(base, 1280, 900);
+    // Ožanje in širjenje okna (ali obrnjen telefon): tabela se sama preuredi brez ponovnega nalaganja in brez napake
+    // »ResizeObserver loop« (pregled PR #1209).
+    const { ctx, page, errors } = await openAccount(base, 1280, 900);
     assert.equal(concept(await measure(page)).stack, false);
-    await page.setViewportSize({ width: 390, height: 844 });
-    await page.waitForTimeout(400);
+    for (const w of [900, 500, 390, 320, 1280, 390]) {
+      await page.setViewportSize({ width: w, height: 844 });
+      await page.waitForTimeout(250);
+    }
     const r = await measure(page);
     assert.equal(concept(r).stack, true, "po zožitvi kartice");
     for (const x of r.tables) assert.ok(x.over <= 1, `po zožitvi: »${x.head}« ${x.over} px`);
+    // Ime stolpca in vrednost v isti vrstici kartice.
+    const cell = await page.locator(".pilot-scroll", { hasText: "Skupina konceptov" }).locator("tbody tr:first-child td").first().evaluate((td) => {
+      const r = td.getBoundingClientRect();
+      return { h: r.height, line: parseFloat(getComputedStyle(td).lineHeight) || 24 };
+    });
+    assert.ok(cell.h < cell.line * 1.8, `ime stolpca in vrednost v eni vrstici (${cell.h} px)`);
+    assert.deepEqual(errors, [], "brez napak na strani");
     await ctx.close();
   });
 });
@@ -106,6 +121,7 @@ test("CSS: glave se lomijo samo med besedami (brez deljenja besed), seznam karti
   const css = fs.readFileSync(new URL("../public/account.css", import.meta.url), "utf8");
   assert.match(css, /\.pilot-table thead th, \.pilot-table tbody tr > :first-child \{ white-space: normal; \}/);
   assert.doesNotMatch(css.match(/\.pilot-table[^{]*\{[^}]*\}/g).join("\n"), /hyphens/);
+  assert.doesNotMatch(css, /\.pilot-scroll\.stack t[dh][^{]*\{[^}]*display: flex/, "celica s sestavljeno vsebino ni razbita na kose");
   assert.match(css, /\.pilot-scroll\.stack thead \{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset\(50%\)/);
 });
 

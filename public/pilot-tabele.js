@@ -31,10 +31,14 @@ export function fitPilotTables(root) {
   if (!watched.has(root) && typeof ResizeObserver === "function") {
     watched.add(root);
     let width = root.clientWidth;
-    new ResizeObserver(() => {
-      if (root.clientWidth === width) return;
-      width = root.clientWidth;
-      fitPilotTables(root);
-    }).observe(root);
+    // V naslednji sličici: sprememba razreda »stack« spremeni višino opazovanega elementa, kar bi v istem krogu
+    // sprožilo napako »ResizeObserver loop« (kot public/sirina.js).
+    new ResizeObserver(() =>
+      requestAnimationFrame(() => {
+        if (root.clientWidth === width) return;
+        width = root.clientWidth;
+        fitPilotTables(root);
+      }),
+    ).observe(root);
   }
 }
