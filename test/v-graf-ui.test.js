@@ -201,6 +201,12 @@ test("»Pokaži na grafu«: integral, odvod, enačba in divergenten integral v g
       await tap('#g [data-act="fitback"]');
       await page.waitForFunction((v0) => Math.abs(window.graph.state.view.xmin - v0.xmin) < 1e-6 && window.graph.state.view.ymax < 20, v0);
       assert.ok(await page.locator("#g .gc-fitnote").isHidden(), where);
+      // nalaganje drugega grafa pobriše ponujeni »Nazaj« (ne premakne novega grafa na star pogled)
+      await tap('#g .gc-row[data-id="q1"] .gc-math, #g .gc-row[data-id="q1"] .gc-preview');
+      await page.fill('#g .gc-row[data-id="q1"] .gc-input', "y = x^2 + 200");
+      await page.locator("#g .gc-fitnote").waitFor({ state: "visible" });
+      await page.evaluate(() => window.graph.loadState({ v: 1, zapis: 3, vejica: true, items: [{ id: "q2", type: "expr", text: "y = x", color: 0 }], view: { xmin: -10, xmax: 10, ymin: -7, ymax: 7 }, settings: {} }));
+      assert.ok(await page.locator("#g .gc-fitnote").isHidden(), `${where}: nalaganje skrije »Nazaj«`);
 
       // brez vodoravnega drsenja
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), where);

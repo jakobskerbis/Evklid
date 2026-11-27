@@ -1116,7 +1116,7 @@ export class GraphView {
     for (const p of this.pois) {
       const px = this.X(p.x);
       const py = this.Y(p.y);
-      const on = this.shown.some((s) => Math.abs(s.x - p.x) < 1e-9 && Math.abs(s.y - p.y) < 1e-9);
+      const on = this.shown.some((s) => Math.abs(s.x - p.x) < 1e-9 && Math.abs(s.y - p.y) < 1e-9) || !!this.hooks.labelled?.(p);
       ctx.fillStyle = on ? C.text : C.poi;
       ctx.strokeStyle = C.bg;
       ctx.lineWidth = 2;

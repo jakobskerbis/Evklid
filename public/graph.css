@@ -141,9 +141,8 @@
 }
 
 /* hitri gumbi pod funkcijo: vidni, ko je vrstica izbrana ali v urejanju */
-.gc-quick { display: none; flex-wrap: wrap; gap: 6px; }
-.gc-row.selected .gc-quick, .gc-row.editing .gc-quick { display: flex; }
-.gc-row:not(.selected):not(.editing) .gc-extra:not(:has(> :not(.gc-quick))) { display: none; }
+.gc-quick { display: none; flex-wrap: wrap; gap: 6px; padding: 0 2px 6px; }
+.gc-row.selected .gc-quick:not(:empty), .gc-row.editing .gc-quick:not(:empty) { display: flex; }
 .gc .gc-q {
   min-height: 36px; padding: 4px 12px; border-radius: 999px; font-size: 0.85rem; font-weight: 800;
   border: 1.5px solid var(--border); color: var(--text); background: var(--surface);
