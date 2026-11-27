@@ -74,22 +74,32 @@ function indeksZapis(koef, w, za, cel, kje) {
     }
     if (!cisto || st.length > 1) return false;
     const kjeS = kje + m.index;
-    const pred = cel.slice(Math.max(0, kjeS - 24), kjeS);
-    const po = cel.slice(kjeS + 2, kjeS + 12);
+    const pred = cel.slice(Math.max(0, kjeS - 40), kjeS);
+    const po = cel.slice(kjeS + 2, kjeS + 30);
     const s = SOSED(crke);
+    // Za vrednostjo (x1 = 3, x2 = -3): samo neposredno prejšnji indeks (x1 pred x2, a2 pred a3, nikoli v0 pred v2), za
+    // žetonom »=« in kratka vrednost brez iste črke z indeksom (a2 = c · a1 je Evklidov a², v0 = 0, v2 = 2gh je v²).
+    const zaVrednostjo = () => {
+      if (!new RegExp(`(?<!\\p{L})${crke}${Number(st) - 1}\\s*=\\s*[^,;=()]{1,10}(?:,|\\s(?:in|ter))\\s*$`, "u").test(pred)) return false;
+      const v = /^\s*=\s*([^,;=]{1,12}?)\s*(?:[,;\n]|\.(?:\s|$)|\s(?:in|ter)\s|$)/u.exec(po);
+      return !!v && !new RegExp(`${crke}\\d`, "u").test(v[1]);
+    };
+    // Veriga indeksov (x1 + x2, (a1 + b1, a2 + b2), A(x1, y1), B(x2, y2), a1 + a2 + … + a5).
+    const vez = `(?:[+\\-−±·*,]|in|ter|\\)\\s*,\\s*\\p{L}{0,2}\\()`;
     return [
       new RegExp(`${s}\\s*$`, "u"), // q1q2, q1 q2, x1x2
-      new RegExp(`${s}(?:\\s*(?:[+\\-−±·*,]|in|ter)\\s*(?:\\p{L}\\d)*){1,3}$`, "u"), // x1 + x2, x1·x2, x1, x2, a1b1 + a2b2, (a1 + b1, a2 + b2)
-      new RegExp(`${s}\\s*=\\s*[^,;=()]{1,10}(?:,|\\s(?:in|ter))\\s*$`, "u"), // x1 = 3, x2 · x1 = 2 in x2
+      new RegExp(`${s}(?:\\s*${vez}\\s*(?:\\p{L}\\d)*){1,6}$`, "u"),
       new RegExp(`${s}\\)\\s*\\(\\s*\\p{L}?\\s*[-+−]\\s*$`, "u"), // (x - x1)(x - x2)
-    ].some((re) => re.test(pred)) || new RegExp(`^\\s*[-−·*]\\s*${crke}[01](?![\\d^]|[,.]\\d)`, "u").test(po); // x2 - x1
+    ].some((re) => re.test(pred)) || zaVrednostjo() || new RegExp(`^\\s*[-−·*]\\s*${crke}[01](?![\\d^]|[,.]\\d)`, "u").test(po); // x2 - x1
   });
 }
 
-// Ali je pred zaklepajem na mestu z izraz z operatorjem ((a + b), (x - p)), ne oznaka a) ali (str. 5).
+// Ali je števka za zaklepajem na mestu z lahko potenca ((a + b)2, (-3)2, (2x)2), ne oznaka a), 1), (1), (a) ali (str. 5).
 function izrazVOklepaju(cel, z) {
   const o = cel.lastIndexOf("(", z);
-  return o >= 0 && /[\p{L}\d]\s*[+\-−·*/]\s*[\p{L}\d]/u.test(cel.slice(o + 1, z));
+  if (o < 0 || cel.lastIndexOf(")", z - 1) > o) return false;
+  const v = cel.slice(o + 1, z).trim();
+  return !!v && !/^(?:\d+|\p{L})$/u.test(v) && !/^\p{L}{2,}\.?\s/u.test(v);
 }
 
 // Pregled enega dela niza (brez oklepajev izraza): koeficient, kemijska formula, zapis črka + števka.
