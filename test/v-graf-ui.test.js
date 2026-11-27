@@ -173,6 +173,41 @@ test("»Pokaži na grafu«: integral, odvod, enačba in divergenten integral v g
       assert.equal(await page.locator('.sc-h-row.last [data-act="graf"]').count(), 1, where);
       await page.evaluate(() => (window.stage = null));
 
+      // hitri gumbi pod funkcijo (predlog 2): ničle in ekstremi v vidnem delu, ena razveljavitev vrne prejšnje
+      await page.evaluate(() => {
+        document.getElementById("s").hidden = true;
+        document.getElementById("g").hidden = false;
+        window.graph.resize();
+      });
+      await page.evaluate(() => window.graph.loadState({ v: 1, zapis: 3, vejica: true, items: [{ id: "q1", type: "expr", text: "y = x^3 - 3x", color: 0 }], view: { xmin: -10, xmax: 10, ymin: -7, ymax: 7 }, settings: {} }));
+      await tap('#g .gc-row[data-id="q1"] .gc-math');
+      await page.locator('#g .gc-row[data-id="q1"] .gc-q[data-q="roots"]').waitFor({ state: "visible" });
+      await tap('#g .gc-row[data-id="q1"] .gc-q[data-q="roots"]');
+      await tap('#g .gc-row[data-id="q1"] .gc-q[data-q="ext"]');
+      const keyp = await page.locator('#g .gc-row[data-id="q1"] .gc-keyp').allInnerTexts();
+      assert.match(keyp[0], /x = −1,732; x = 0; x = 1,732/, `${where}: ničle ${keyp[0]}`);
+      assert.match(keyp[1], /\(−1; 2\).*\(1; −2\)/, `${where}: ekstremi ${keyp[1]}`);
+      assert.equal(await page.locator('#g .gc-row[data-id="q1"] .gc-q[aria-pressed="true"]').count(), 2, where);
+      await tap('#g [data-act="undo"]');
+      assert.deepEqual(await page.evaluate(() => window.graph.state.items[0].tools), { roots: true }, where);
+
+      // nova krivulja zunaj pogleda (predlog 3): po premoru pri tipkanju pogled pokaže krivuljo, »Nazaj« ga vrne
+      const v0 = await page.evaluate(() => ({ ...window.graph.state.view }));
+      await tap('#g .gc-row[data-id="q1"] .gc-math, #g .gc-row[data-id="q1"] .gc-preview');
+      await page.fill('#g .gc-row[data-id="q1"] .gc-input', "y = x^2 + 50");
+      await page.locator("#g .gc-fitnote").waitFor({ state: "visible" });
+      const v1 = await page.evaluate(() => ({ ...window.graph.state.view }));
+      assert.ok(v1.ymin < 50 && v1.ymax > 50, `${where}: pogled ${JSON.stringify(v1)}`);
+      await tap('#g [data-act="fitback"]');
+      await page.waitForFunction((v0) => Math.abs(window.graph.state.view.xmin - v0.xmin) < 1e-6 && window.graph.state.view.ymax < 20, v0);
+      assert.ok(await page.locator("#g .gc-fitnote").isHidden(), where);
+      // nalaganje drugega grafa pobriše ponujeni »Nazaj« (ne premakne novega grafa na star pogled)
+      await tap('#g .gc-row[data-id="q1"] .gc-math, #g .gc-row[data-id="q1"] .gc-preview');
+      await page.fill('#g .gc-row[data-id="q1"] .gc-input', "y = x^2 + 200");
+      await page.locator("#g .gc-fitnote").waitFor({ state: "visible" });
+      await page.evaluate(() => window.graph.loadState({ v: 1, zapis: 3, vejica: true, items: [{ id: "q2", type: "expr", text: "y = x", color: 0 }], view: { xmin: -10, xmax: 10, ymin: -7, ymax: 7 }, settings: {} }));
+      assert.ok(await page.locator("#g .gc-fitnote").isHidden(), `${where}: nalaganje skrije »Nazaj«`);
+
       // brez vodoravnega drsenja
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), where);
       assert.deepEqual(errors, [], where);
