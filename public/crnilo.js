@@ -5,12 +5,14 @@
 //
 // Pisalo (j, 27. 11.):
 // - Ko naprava enkrat zazna pisalo (Apple Pencil), prsti ne rišejo več, tudi ko pisala ni na zaslonu
-//   (shranjeno na tej napravi, »evklid.pisalo«). Miška riše kot prej.
-// - Počečkaj za brisanje: cikcak čez zapisano (vsaj 4 obrati) izbriše poteze pod njim; Razveljavi jih vrne.
+//   (»evklid.pisalo« na tej napravi: velja 3 dni od zadnje uporabe pisala, nato prsti spet rišejo, npr. na
+//   skupnem iPadu ali brez pisala). Miška riše kot prej.
+// - Počečkaj za brisanje: cikcak čez zapisano (vsaj 5 obratov) izbriše poteze, ki jih prečka; Razveljavi jih vrne.
 // - Dvojni tap pisala (Apple Pencil 2/Pro) brskalnik v iPadu ne sporoči (Safari nima dogodka za to), zato je
 //   nadomestilo dvojni dotik s prstom na površini: zamenja pisalo in radirko.
 
 const PEN_KEY = "evklid.pisalo";
+const PEN_DAYS = 3;
 
 // Število obratov smeri vzdolž osi a (0 = x, 1 = y); manjši tresljaji od tol niso obrat.
 export function reversals(pts, a, tol) {
@@ -45,31 +47,51 @@ const bbox = (pts) => {
   return { x0, y0, x1, y1, w: x1 - x0, h: y1 - y0 };
 };
 
-// Je poteza čečka (cikcak)? Vsaj 4 obrati vzdolž ene osi in pot vsaj 2-krat daljša od obsega okvirja / 2.
-// Črke in znaki (W, M, ≈, ~, 3) imajo največ 3 obrate.
+// Je poteza čečka (cikcak)? Vsaj 5 obratov vzdolž ene osi, vsak zamah čez vsaj 40 % okvirja, in dolga pot.
+// Črke in znaki (m, w, M, 8, ≈, ~, 3, ε) imajo največ 4 take obrate; pisana »mm« jih ima več, a ne prečka
+// zapisanega (scratchVictims), zato ne briše.
 export function isScratch(pts) {
   if (pts.length < 10) return false;
   const b = bbox(pts);
   if (Math.max(b.w, b.h) < 24) return false;
   let len = 0;
   for (let i = 1; i < pts.length; i++) len += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
-  const rx = reversals(pts, 0, Math.max(6, b.w * 0.2));
-  const ry = reversals(pts, 1, Math.max(6, b.h * 0.2));
-  return Math.max(rx, ry) >= 4 && len >= 2 * (b.w + b.h);
+  const rx = reversals(pts, 0, Math.max(6, b.w * 0.4));
+  const ry = reversals(pts, 1, Math.max(6, b.h * 0.4));
+  return Math.max(rx, ry) >= 5 && len >= 2.5 * (b.w + b.h);
 }
 
-// Poteze (indeksi v strokes), ki jih čečka prekrije: vsaj polovica točk poteze leži v okvirju čečke (+ rob).
+// Število presečišč dveh lomljenk (daljša se redči na ~200 točk).
+const thin = (pts, n = 200) => (pts.length <= n ? pts : pts.filter((_, i) => i % Math.ceil(pts.length / n) === 0));
+function crossings(a, b) {
+  a = thin(a);
+  b = thin(b);
+  const cross = (p, q, r) => (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]);
+  let n = 0;
+  for (let i = 1; i < a.length; i++)
+    for (let j = 1; j < b.length; j++) {
+      const d1 = cross(a[i - 1], a[i], b[j - 1]), d2 = cross(a[i - 1], a[i], b[j]);
+      const d3 = cross(b[j - 1], b[j], a[i - 1]), d4 = cross(b[j - 1], b[j], a[i]);
+      if (d1 * d2 < 0 && d3 * d4 < 0) n++;
+    }
+  return n;
+}
+
+// Poteze (indeksi v strokes), ki jih čečka izbriše: čečka jih prečka vsaj dvakrat. Drobne poteze (pika, vejica,
+// ki jih ni mogoče prečkati) gredo zraven le, če ležijo v okvirju čečke in je čečka prečkala še kaj drugega.
 export function scratchVictims(strokes, scratch) {
   const b = bbox(scratch.pts);
-  const m = 8;
-  const out = [];
+  const crossed = [];
+  const small = [];
   strokes.forEach((s, i) => {
     if (s === scratch || s.tool !== "pen") return;
-    let inside = 0;
-    for (const [x, y] of s.pts) if (x >= b.x0 - m && x <= b.x1 + m && y >= b.y0 - m && y <= b.y1 + m) inside++;
-    if (inside * 2 >= s.pts.length) out.push(i);
+    const sb = bbox(s.pts);
+    if (sb.x1 < b.x0 || sb.x0 > b.x1 || sb.y1 < b.y0 || sb.y0 > b.y1) return;
+    if (Math.max(sb.w, sb.h) < 14) {
+      if (sb.x0 >= b.x0 && sb.x1 <= b.x1 && sb.y0 >= b.y0 && sb.y1 <= b.y1) small.push(i);
+    } else if (crossings(scratch.pts, s.pts) >= 2) crossed.push(i);
   });
-  return out;
+  return crossed.length ? [...crossed, ...small].sort((x, y) => x - y) : [];
 }
 
 export function createInk(canvas) {
@@ -81,7 +103,7 @@ export function createInk(canvas) {
   let lastPen = -Infinity; // čas zadnjega dotika s pisalom (zavračanje dlani)
   let penOnly = false; // naprava ima pisalo: prsti ne rišejo
   try {
-    penOnly = localStorage.getItem(PEN_KEY) === "1";
+    penOnly = Date.now() - Number(localStorage.getItem(PEN_KEY)) < PEN_DAYS * 864e5;
   } catch {}
   const touches = new Map(); // dotiki prsta, ko prsti ne rišejo: id → { t, x, y, multi }
   let lastTap = null; // { t, x, y } zadnjega kratkega dotika (za dvojni dotik)
@@ -155,7 +177,7 @@ export function createInk(canvas) {
     set: (v) => {
       penOnly = !!v;
       try {
-        if (penOnly) localStorage.setItem(PEN_KEY, "1");
+        if (penOnly) localStorage.setItem(PEN_KEY, String(Date.now()));
         else localStorage.removeItem(PEN_KEY);
       } catch {}
     },
@@ -187,7 +209,7 @@ export function createInk(canvas) {
   canvas.addEventListener("pointerdown", (e) => {
     if (e.pointerType === "pen") {
       lastPen = performance.now();
-      if (!penOnly) api.penOnly = true;
+      api.penOnly = true; // tudi osveži čas zadnje uporabe pisala
       // dlan se je dotaknila pred pisalom: poteza dlani ni zapis, pisalo ima prednost
       if (active?.touch) {
         const i = strokes.indexOf(active);
@@ -223,7 +245,7 @@ export function createInk(canvas) {
   });
   // Počečkano: čečka in poteze pod njo izginejo (ena sprememba v zgodovini).
   function scratchOut(s) {
-    if (s.tool !== "pen" || !isScratch(s.pts)) return false;
+    if (s.tool !== "pen" || !strokes.includes(s) || !isScratch(s.pts)) return false;
     const victims = scratchVictims(strokes, s);
     if (!victims.length) return false;
     const removed = victims.map((i) => [i, strokes[i]]);
@@ -256,6 +278,7 @@ export function createInk(canvas) {
   }).observe(wrap);
 
   api.undo = () => {
+    if (active) return; // med potezo ne (poteza bi izginila pod pisalom)
     const h = hist.pop();
     if (!h) return;
     if (h.add) {

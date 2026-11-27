@@ -20,9 +20,14 @@ const zigzag = (n, x0 = 100, x1 = 220, y0 = 40, y1 = 80) => {
 };
 const line = (x0, y0, x1, y1, n = 20) => Array.from({ length: n + 1 }, (_, i) => [x0 + ((x1 - x0) * i) / n, y0 + ((y1 - y0) * i) / n]);
 
-test("čečka: cikcak z vsaj 4 obrati je čečka, črke in ravne črte niso", () => {
+test("čečka: cikcak z vsaj 5 obrati je čečka, črke in ravne črte niso", () => {
   assert.equal(isScratch(zigzag(6)), true);
   assert.equal(isScratch(zigzag(2)), false, "trije zamahi (kot Z) niso čečka");
+  // m: dol, gor, dol, gor, dol = 4 obrati
+  const m = [...line(0, 0, 0, 40, 10), ...line(0, 40, 10, 0, 10), ...line(10, 0, 20, 40, 10), ...line(20, 40, 30, 0, 10), ...line(30, 0, 40, 40, 10)];
+  assert.equal(isScratch(m), false, "m");
+  const osem = Array.from({ length: 80 }, (_, i) => [20 + 12 * Math.sin((4 * Math.PI * i) / 79), 30 + 28 * Math.sin((2 * Math.PI * i) / 79)]);
+  assert.equal(isScratch(osem), false, "8");
   assert.equal(isScratch(line(0, 0, 200, 0)), false);
   // W: dol-gor-dol-gor = 3 obrati po y
   const W = [...line(0, 0, 20, 60, 10), ...line(20, 60, 40, 10, 10), ...line(40, 10, 60, 60, 10), ...line(60, 60, 80, 0, 10)];
@@ -32,13 +37,17 @@ test("čečka: cikcak z vsaj 4 obrati je čečka, črke in ravne črte niso", ()
   assert.equal(isScratch(zigzag(6, 0, 10, 0, 6)), false);
 });
 
-test("čečka: izbriše le poteze, ki ležijo pod njo", () => {
-  const covered = { tool: "pen", pts: line(120, 60, 200, 60) };
+test("čečka: izbriše le poteze, ki jih prečka", () => {
+  const covered = { tool: "pen", pts: line(160, 42, 162, 78) }; // »1« pod čečko: prečkan večkrat
   const other = { tool: "pen", pts: line(400, 60, 480, 60) };
   const half = { tool: "pen", pts: line(180, 60, 300, 60) }; // le del pod čečko
   const scratch = { tool: "pen", pts: zigzag(6) };
   const strokes = [covered, other, half, scratch];
   assert.deepEqual(scratchVictims(strokes, scratch), [0]);
+  // vejica v okvirju gre zraven le, če je čečka prečkala še kaj
+  const comma = { tool: "pen", pts: line(140, 70, 138, 76, 3) };
+  assert.deepEqual(scratchVictims([covered, comma, scratch], scratch), [0, 1]);
+  assert.deepEqual(scratchVictims([other, comma, scratch], scratch), [], "brez prečkanega zapisa nič");
 });
 
 // ---------- pravi brskalnik ----------
@@ -84,9 +93,17 @@ test("crnilo v brskalniku: pisalo izključi prste, dvojni dotik zamenja orodje, 
     await p.evaluate(() => window.stroke("touch", [[10, 10], [60, 10]]));
     assert.equal(await hasInk(), true);
     await p.evaluate(() => window.ink.clear());
+    // pisalo pred več kot 3 dnevi: prsti spet rišejo (skupni iPad, pisalo izgubljeno)
+    await p.evaluate(async () => {
+      localStorage.setItem("evklid.pisalo", String(Date.now() - 4 * 864e5));
+      const { createInk } = await import("/crnilo.js");
+      window.old = createInk(document.createElement("div").appendChild(document.createElement("canvas")));
+    });
+    assert.equal(await p.evaluate(() => window.old.penOnly), false);
     // pisalo: od zdaj prsti ne rišejo (tudi pozneje, shranjeno na napravi)
-    await p.evaluate(() => window.stroke("pen", [[120, 60], [160, 60], [200, 60]]));
-    assert.equal(await p.evaluate(() => localStorage.getItem("evklid.pisalo")), "1");
+    await p.evaluate(() => window.stroke("pen", [[160, 45], [160, 60], [161, 75]]));
+    const stamp = Number(await p.evaluate(() => localStorage.getItem("evklid.pisalo")));
+    assert.ok(Date.now() - stamp < 60_000, "čas zadnje uporabe pisala");
     await p.waitForTimeout(600); // po pisalu dotik ni takoj ukaz (dlan)
     const before = await p.evaluate(() => window.ink.version);
     await p.evaluate(() => window.stroke("touch", [[300, 200], [380, 220]]));

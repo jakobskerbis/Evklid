@@ -608,10 +608,12 @@ export async function readCalcInk({ imageBase64, mediaType = "image/png", comma 
               "sistem enačb z ; med enačbama.\n" +
               // j, 27. 11.: »izboljšaj prepoznavo pisave« (pogoste zamenjave v rokopisu in razbiranje po položaju)
               "Beri po položaju: manjši znak desno zgoraj je eksponent (x^2), znaki nad in pod vodoravno črto so ulomek, " +
-              "kratka vodoravna črta med členoma je minus, pika na sredini višine med števili je množenje *.\n" +
+              "kratka vodoravna črta med členoma je minus" +
+              (comma ? ", pika na sredini višine med števili je množenje *.\n" : ".\n") +
               "Pazi na zamenjave v rokopisu: 1 in 7, 2 in z, 5 in s, 0 in o, 4 in 9, 6 in b, t in +, x in × " +
               "(× med dvema številoma je množenje *, sicer je to spremenljivka x), y in 4, ( in 1, minus in ulomkova črta. " +
-              "Pri dvomu izberi zapis, ki je smiseln matematični izraz (npr. 2x namesto zx), a ne popravljaj napak v računu.\n" +
+              "Pri dvomu med dvema podobnima znakoma izberi tistega, s katerim je zapis smiseln (npr. 2x namesto zx), " +
+              "a ne popravljaj napak v računu ter ne dodajaj in ne izpuščaj znakov ali oklepajev.\n" +
               "Odgovori samo z eno vrstico: <zapis>prepis</zapis>. Če zapisa ni mogoče prebrati, odgovori <zapis>?</zapis>.",
           },
         ],
