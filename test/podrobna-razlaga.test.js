@@ -24,8 +24,8 @@ test("stalni del prompta ima meje 50/150/300 in je enak ne glede na stikalo", ()
   const a = systemBlocks(buildSystemPrompt({ settings: normalizeSettings({}) }))[0].text;
   const b = systemBlocks(buildSystemPrompt({ settings: normalizeSettings({ detailed: true }) }))[0].text;
   assert.equal(a, b);
-  assert.match(a, /Največ 50 besed\. Do 150 besed le, kadar krajše res ne gre/);
-  assert.match(a, /do 300 pa le/);
+  assert.match(a, /Največ 50 besed za vsak odgovor .*Do 150 besed le za celotno rešitev ene naloge/);
+  assert.match(a, /do 300 le za rešitev naloge s podvprašanji/);
   assert.match(a, /»Podrobna razlaga«/);
 });
 

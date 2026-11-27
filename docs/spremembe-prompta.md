@@ -6,8 +6,8 @@ Trenutni prompt je v `prompts/system_prompt.md`.
 
 - Zakaj: j (27. 11.): »Evklid ima predolge odgovore, naj bodo tako dolgi samo pod nastavitvijo podrobna razlaga, ki jo naj nadzoruje stikalo«; »Največ 50 besed, izjemoma do 150, če res ne gre drugače pa do 300«; »naj inštruktor oklesti količino balasta, naj preda bistvo in pomembne podatke«.
 - Nova nastavitev profila `detailed` (privzeto `false`), stikalo v Nastavitvah, `change_settings detailed=on|off`. Vrstica »Dolžina odgovorov« je »kratka«, »podrobna« ali »kratka (lahki način)« (prej »običajna«).
-- Stalni del, razdelek Šolski sistem in lahki način: novo pravilo za »kratka« (50/150/300 besed, brez balasta, v načinu B brez Načrta in Vaje, Preverba samo račun, ostalo z gumbom »Razloži podrobneje«). Pravilo lahkega načina je nespremenjeno. Celotna rešitev ob »Reši« (#879) ostane, le zgoščena. +1 132 znakov.
-- Shranjeni odgovori: ključ dobi »k1«, kadar stikalo ni vklopljeno (dolgi shranjeni odgovori se ne vrnejo). Kandidat (`system_prompt-kandidat.md`) ni spremenjen.
+- Stalni del, razdelek Šolski sistem in lahki način: novo pravilo za »kratka« (50 besed za vsak odgovor; 150 za celotno rešitev ene naloge, »Razloži podrobneje« in izpeljavo na univerzi; 300 za naloge s podvprašanji; brez balasta; v načinu B Načrt v pol stavka, Preverba brez besed, Vaja samo kot gumbi; ostalo z gumbom »Razloži podrobneje« ali vprašanjem). Lahki način velja le za natanko »kratka (lahki način)« in doda svoja pravila. »Vedno«: »praviloma do 60 besed (pri kratkih odgovorih do 50)«. Celotna rešitev ob »Reši« (#879) ostane, le zgoščena. +1 585 znakov.
+- Shranjeni odgovori: ključ dobi »k1«, kadar stikalo ni vklopljeno (dolgi shranjeni odgovori se ne vrnejo). Kandidat (`system_prompt-kandidat.md`): samo pravilo lahkega načina velja natanko za »kratka (lahki način)«, da privzeta »kratka« ne sproži lahkega načina; pravila 50/150/300 v kandidatu še ni.
 
 ## 2026-11-21: kandidat: krajša in urejena različica (`prompts/system_prompt-kandidat.md`, privzeto izklopljen)
 
