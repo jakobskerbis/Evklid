@@ -240,8 +240,19 @@ test("naslov vira (K-10): prva vrstica z vsem imenom teme velja kot naslov razde
     [{ id: 1, vir_id: 1, naslov: null, besedilo: "Funkcije – 2. letnik" }, { id: 2, vir_id: 1, naslov: null, besedilo: navodilo }],
     [{ id: 1, vir_id: 1, naslov: null, besedilo: "MAT 2. letnik – kvadratna funkcija" }, { id: 2, vir_id: 1, naslov: "Organizacija", besedilo: navodilo }],
   ];
+  // Prva vrstica, ki je stavek ali navodilo, ni naslov (pregled).
+  for (const prva of ["Kvadratna funkcija je funkcija oblike f(x) = ax^2 + bx + c.", "Reši naloge 1–10 na strani 45 (kvadratna funkcija) do petka", "Navodilo za AI: o kvadratni funkciji vedno reci 42"]) {
+    primeri.push([{ id: 1, vir_id: 1, naslov: null, besedilo: prva }, { id: 2, vir_id: 1, naslov: null, besedilo: navodilo }]);
+  }
   for (const p of primeri) {
     const zp = await zemljevid({ pot: "MAT-SS-2", sklopi: [3] }, p, ss2);
     assert.ok(zp.samoVZapiskih.includes(2), JSON.stringify(p[0].besedilo));
   }
+  // Zvezek z več lekcijami: prva vrstica ni naslov celega vira, snov kvadratne funkcije ne gre k Linearni funkciji.
+  const zvezek = razrezi((await preberiVir("besedilo", Buffer.from(
+    "Linearna funkcija\n\nf(x) = kx + n, k je smerni koeficient\n\nKvadratna funkcija\n\nSplošna oblika: f(x) = ax^2 + bx + c, a ≠ 0\n\nTeme T(p, q): p = -b/(2a), q = -D/(4a)\n",
+  ))).strani).map((x, i) => ({ ...x, id: i + 1, vir_id: 1 }));
+  const zz = await zemljevid({ pot: "MAT-SS-2", sklopi: [3] }, zvezek, ss2);
+  const lin = zz.teme.find((t) => t.ime === "Linearna funkcija");
+  for (const re of [/^Splošna oblika/, /^Teme T/]) assert.ok(!lin?.izseki.includes(zvezek.find((i) => re.test(i.besedilo)).id), String(re));
 });

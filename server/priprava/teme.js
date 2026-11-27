@@ -130,7 +130,8 @@ async function drugiKrog(izseki, st, obseg, poTemi, samoVZapiskih, zadetki) {
 // (»MAT 2. letnik – kvadratna funkcija«). Taka vrstica velja kot naslov razdelka za ves vir, enako kot naslov »# …«:
 // izsek brez lastne teme dobi temo naslova, a samo kadar prva vrstica sama dobi temo in vsebuje VSE besede njenega imena
 // (»kvadratna funkcija«, ne le »funkcija« ali »ELEKTRIKA«). Samo za vir brez naslovov razdelkov, kjer je prvi izsek ena
-// kratka vrstica.
+// kratka vrstica, ki ni stavek ali navodilo, in samo če nobena druga kratka vrstica vira ne imenuje druge teme (zvezek z
+// več lekcijami). Vir brez vir_id (testi) je en vir.
 function temaNaslovaVira(naslov, st, obseg) {
   const id = temaIzseka({ besedilo: naslov, naslov: null }, st, obseg);
   if (!id) return null;
@@ -138,19 +139,39 @@ function temaNaslovaVira(naslov, st, obseg) {
   return h && h.inTitle === h.d.title.size ? id : null;
 }
 export const NASLOV_VIRA_ZNAKOV = 120;
-function nasloviVirov(izseki) {
-  const prvi = new Map();
-  const zNaslovi = new Set();
+const kratkaVrstica = (i) => {
+  const t = String(i.besedilo || "").trim();
+  // Stavek (konča s piko, vprašajem, klicajem) ali navodilo/naloga ni naslov.
+  return t && !t.includes("\n") && t.length <= NASLOV_VIRA_ZNAKOV && !/[.?!:]$/.test(t) && !/^\(?\s*(navodil|reši|naloga|naloge|domača)/i.test(t) ? t : null;
+};
+function naslovVira(izseki, teIzseka, st, obseg, poTemi, samoVZapiskih, zadetki) {
+  const viri = new Map();
   for (const i of izseki) {
-    if (!prvi.has(i.vir_id)) prvi.set(i.vir_id, i);
-    if (i.naslov) zNaslovi.add(i.vir_id);
+    if (!viri.has(i.vir_id)) viri.set(i.vir_id, []);
+    viri.get(i.vir_id).push(i);
   }
-  const out = new Map();
-  for (const [vir, i] of prvi) {
-    const t = String(i.besedilo || "").trim();
-    if (!zNaslovi.has(vir) && t && !t.includes("\n") && t.length <= NASLOV_VIRA_ZNAKOV) out.set(vir, { id: i.id, besedilo: t });
+  const brez = new Set(samoVZapiskih);
+  const dodani = new Map();
+  for (const iz of viri.values()) {
+    const prvi = iz[0];
+    const naslov = kratkaVrstica(prvi);
+    if (!naslov || iz.some((i) => i.naslov)) continue;
+    const tema = temaNaslovaVira(naslov, st, obseg);
+    if (!tema) continue;
+    // Zvezek z več lekcijami: druga kratka vrstica z imenom druge teme pomeni, da prva vrstica ni naslov celega vira.
+    const druga = iz.some((i) => i !== prvi && teIzseka.get(i.id) && teIzseka.get(i.id) !== tema && kratkaVrstica(i) && temaNaslovaVira(kratkaVrstica(i), st, obseg));
+    if (druga) continue;
+    for (const i of iz) if (i !== prvi && brez.has(i.id)) dodani.set(i.id, tema);
   }
-  return out;
+  if (!dodani.size) return;
+  for (const [iid, id] of dodani) {
+    if (!poTemi.has(id)) poTemi.set(id, []);
+    poTemi.get(id).push(iid);
+    zadetki?.delete(iid);
+  }
+  const mesto = new Map(izseki.map((i, k) => [i.id, k]));
+  for (const ids of poTemi.values()) ids.sort((x, y) => mesto.get(x) - mesto.get(y));
+  samoVZapiskih.splice(0, samoVZapiskih.length, ...samoVZapiskih.filter((id) => !dodani.has(id)));
 }
 
 // Teme sklopov poti (sklopi so indeksi sklopov, kot v načrtu testa).
@@ -200,19 +221,12 @@ export async function zemljevid({ pot = null, sklopi = null, predmet = null, izk
   const zadetki = obseg ? new Map() : null;
   const delno = izseki.length > MAX_IZSEKOV;
   let n = 0;
-  const naslovi = nasloviVirov(izseki.slice(0, MAX_IZSEKOV));
+  const teIzseka = new Map();
   for (const i of izseki.slice(0, MAX_IZSEKOV)) {
     // Ne zadrži strežnika: po vsakih 200 izsekih prepusti zanko drugim zahtevkom.
     if (++n % 200 === 0) await new Promise((r) => setImmediate(r));
-    let id = iskanje ? temaIzseka(i, st, obseg, pp, zadetki) : null;
-    const nv = naslovi.get(i.vir_id);
-    if (!id && iskanje && nv && nv.id !== i.id) {
-      if (!("tema" in nv)) nv.tema = temaNaslovaVira(nv.besedilo, st, obseg);
-      if (nv.tema) {
-        id = nv.tema;
-        zadetki?.delete(i.id);
-      }
-    }
+    const id = iskanje ? temaIzseka(i, st, obseg, pp, zadetki) : null;
+    teIzseka.set(i.id, id);
     if (!id) {
       samoVZapiskih.push(i.id);
       continue;
@@ -220,6 +234,7 @@ export async function zemljevid({ pot = null, sklopi = null, predmet = null, izk
     if (!poTemi.has(id)) poTemi.set(id, []);
     poTemi.get(id).push(i.id);
   }
+  if (iskanje && samoVZapiskih.length) naslovVira(izseki.slice(0, MAX_IZSEKOV), teIzseka, st, obseg, poTemi, samoVZapiskih, zadetki);
   if (obseg && iskanje && samoVZapiskih.length) await drugiKrog(izseki.slice(0, MAX_IZSEKOV), st, obseg, poTemi, samoVZapiskih, zadetki);
   // Teme v vrstnem redu učnega načrta (pot, sklop, tema), sicer po imenu.
   const red = (id) => {

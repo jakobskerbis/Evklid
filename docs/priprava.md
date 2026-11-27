@@ -164,9 +164,12 @@ kot prvi krog (shranjeni so le zadetki obsega in prvi zunaj njega), prepušča z
 v vrstnem redu zapiskov. Na 10 kompletih K-10 (69 izsekov s potjo) nepovezanih 25 → 21, vse 4 nove povezave pravilne
 (ročni pregled); ob zapiskih drugih predmetov (vsi kompleti × vsi tuji zapiski) 3 nove napačne povezave. Snov brez imena teme
 (»Splošna oblika: f(x) = …«) ostane v zapiskih, razen kadar ima vir naslov v prvi vrstici: v viru brez naslovov
-razdelkov, katerega prvi izsek je ena kratka vrstica (do 120 znakov) z VSEMI besedami imena ene teme (»MAT 2. letnik –
-kvadratna funkcija«, ne »Fizika 2. letnik – ELEKTRIKA«), velja ta vrstica kot naslov razdelka za ves vir (enako kot
-`# Kvadratna funkcija`); izseki brez lastne teme dobijo njeno temo. K-10: nepovezanih 21 → 15 (02 in 03 v celoti). Pragovi so nastavljeni na istih K-10 zapiskih (ni ločenega preizkusa). Vrne teme v vrstnem redu učnega načrta (z id-ji izsekov in `vObsegu`), obseg z `izsekov` na temo,
+razdelkov, katerega prvi izsek je ena kratka vrstica (do 120 znakov, ne stavek s piko, vprašajem ali klicajem, ne
+navodilo ali naloga), ki dobi temo in vsebuje VSE besede njenega imena (»MAT 2. letnik – kvadratna funkcija«, ne
+»Fizika 2. letnik – ELEKTRIKA«), velja ta vrstica kot naslov razdelka za ves vir (enako kot `# Kvadratna funkcija`, tudi
+pri naslovu z dvema temama); izseki brez lastne teme dobijo njeno temo. Ne velja, če druga kratka vrstica vira imenuje
+drugo temo (zvezek z več lekcijami). K-10: nepovezanih 21 → 15 (02 in 03 v celoti); ob tujih zapiskih 15 novih povezav,
+vse k pravi temi naslova vira (zunaj obsega). Pragovi so nastavljeni na istih K-10 zapiskih (ni ločenega preizkusa). Vrne teme v vrstnem redu učnega načrta (z id-ji izsekov in `vObsegu`), obseg z `izsekov` na temo,
 `pokritost` (pokrite / vse teme obsega) in `predznanje` (5 tem poti pred prvim sklopom testa, brez trditev o znanju).
 Računa se sproti iz trenutnih izsekov, zato tabela `priprava_teme` ni potrebna. Faks in tuji šolski sistemi: `iskanje:
 false`, vse ostane v zapiskih. Test: `test/priprava-teme.test.js`.
