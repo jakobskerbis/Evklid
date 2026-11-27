@@ -126,6 +126,33 @@ async function drugiKrog(izseki, st, obseg, poTemi, samoVZapiskih, zadetki) {
   samoVZapiskih.splice(0, samoVZapiskih.length, ...samoVZapiskih.filter((id) => !dodani.has(id)));
 }
 
+// Naslov vira (K-10): zapiski brez naslovov razdelkov (fotografija zvezka, prepis) imajo naslov pogosto v prvi vrstici
+// (»MAT 2. letnik – kvadratna funkcija«). Taka vrstica velja kot naslov razdelka za ves vir, enako kot naslov »# …«:
+// izsek brez lastne teme dobi temo naslova, a samo kadar prva vrstica sama dobi temo in vsebuje VSE besede njenega imena
+// (»kvadratna funkcija«, ne le »funkcija« ali »ELEKTRIKA«). Samo za vir brez naslovov razdelkov, kjer je prvi izsek ena
+// kratka vrstica.
+function temaNaslovaVira(naslov, st, obseg) {
+  const id = temaIzseka({ besedilo: naslov, naslov: null }, st, obseg);
+  if (!id) return null;
+  const h = rankLessons(brezFormul(naslov).slice(0, IZSEK_ZNAKOV), st).find((x) => x.d.id === id);
+  return h && h.inTitle === h.d.title.size ? id : null;
+}
+export const NASLOV_VIRA_ZNAKOV = 120;
+function nasloviVirov(izseki) {
+  const prvi = new Map();
+  const zNaslovi = new Set();
+  for (const i of izseki) {
+    if (!prvi.has(i.vir_id)) prvi.set(i.vir_id, i);
+    if (i.naslov) zNaslovi.add(i.vir_id);
+  }
+  const out = new Map();
+  for (const [vir, i] of prvi) {
+    const t = String(i.besedilo || "").trim();
+    if (!zNaslovi.has(vir) && t && !t.includes("\n") && t.length <= NASLOV_VIRA_ZNAKOV) out.set(vir, { id: i.id, besedilo: t });
+  }
+  return out;
+}
+
 // Teme sklopov poti (sklopi so indeksi sklopov, kot v načrtu testa).
 export function temeObsega(pot, sklopi) {
   const path = pot ? getPath(pot) : null;
@@ -173,10 +200,19 @@ export async function zemljevid({ pot = null, sklopi = null, predmet = null, izk
   const zadetki = obseg ? new Map() : null;
   const delno = izseki.length > MAX_IZSEKOV;
   let n = 0;
+  const naslovi = nasloviVirov(izseki.slice(0, MAX_IZSEKOV));
   for (const i of izseki.slice(0, MAX_IZSEKOV)) {
     // Ne zadrži strežnika: po vsakih 200 izsekih prepusti zanko drugim zahtevkom.
     if (++n % 200 === 0) await new Promise((r) => setImmediate(r));
-    const id = iskanje ? temaIzseka(i, st, obseg, pp, zadetki) : null;
+    let id = iskanje ? temaIzseka(i, st, obseg, pp, zadetki) : null;
+    const nv = naslovi.get(i.vir_id);
+    if (!id && iskanje && nv && nv.id !== i.id) {
+      if (!("tema" in nv)) nv.tema = temaNaslovaVira(nv.besedilo, st, obseg);
+      if (nv.tema) {
+        id = nv.tema;
+        zadetki?.delete(i.id);
+      }
+    }
     if (!id) {
       samoVZapiskih.push(i.id);
       continue;
