@@ -131,6 +131,26 @@ const err = (code, info = {}) => ({ code, info });
  * Zgradi model iz stanja grafa.
  * @returns {{ items: object[], scope: object, ctx: object }}
  */
+/**
+ * TeX ene vrstice, kot ga izriše buildModel (za vnos s kazalcem v calc.js, sci-vnos.js entryBase). Vrže napako, če
+ * se besedilo ne razčleni.
+ */
+export function rowTex(text, state, { comma = true } = {}) {
+  const items = state.items || [];
+  const zv = state.zapis === 2 || state.zapis === ZAPIS ? state.zapis : 0;
+  const readComma = zv >= 2 && typeof state.vejica === "boolean" ? state.vejica : comma;
+  const namesE = new Set(items.some((it) => it.type === "expr" && /^\s*E\s*(?:\([^()]*\)\s*)?=(?!=)/.test(String(it.text ?? ""))) ? ["E"] : []);
+  const funcNames = new Set();
+  for (const it of items) {
+    if (it.type !== "expr") continue;
+    try {
+      const d = definitionOf(lineText(it.text, zv, readComma, namesE));
+      if (d) funcNames.add(d.name);
+    } catch {}
+  }
+  return toTex(parse(lineText(text, zv, readComma, namesE), { funcs: funcNames }), { comma, sep: zv >= 2 && readComma ? ";" : "," });
+}
+
 export function buildModel(state, { comma = true } = {}) {
   const deg = !!state.settings?.deg;
   const items = state.items || [];

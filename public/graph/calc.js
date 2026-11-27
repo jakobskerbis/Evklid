@@ -1,6 +1,6 @@
 // Grafični kalkulator – vmesnik: seznam izrazov, drsniki z animacijo, tabele z regresijo,
 // tipkovnica za dotik, primeri, shranjeni grafi, izvoz slike in povezava z inštruktorjem.
-import { buildModel, emptyState, newId, derivativeOf, sliderRange, sliderText, MODELS, DEFAULT_DOMAIN, toNum, upgradeZapis, degreesToCalc } from "./model.js";
+import { buildModel, rowTex, emptyState, newId, derivativeOf, sliderRange, sliderText, MODELS, DEFAULT_DOMAIN, toNum, upgradeZapis, degreesToCalc } from "./model.js";
 import { niceNumber, parse, compile, arityExample, freeVars, walk } from "./math.js";
 import { GraphView, PALETTE } from "./plot.js";
 import { fitModelView } from "./okno.js";
@@ -8,6 +8,7 @@ import { EXAMPLES } from "./examples.js";
 import { exampleIcon } from "./ex-ikone.js";
 import { configureKeyboard, initKeyboard, toggleKeyboard, keyboardOpenFor } from "../tipkovnica.js";
 import { izrisi } from "../mat/izris.js";
+import { entryBase, caretTex, stopsTex, TRUST } from "./sci-vnos.js";
 
 const MAX_HISTORY = 80;
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -238,8 +239,8 @@ export function createCalculator(root, opts) {
       <div class="gc-side"><button type="button" class="gc-dot" data-act="vis" aria-label="${esc(t("gc.toggle"))}" style="--c: var(${PALETTE[(it.color ?? 0) % PALETTE.length]})"></button><span class="gc-num">${i + 1}</span></div>
       <div class="gc-main">
         <div class="gc-math" tabindex="-1"></div>
-        <input class="gc-input" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="next" placeholder="${esc(i === 0 ? t("gc.placeholder") : "")}" value="${esc(it.text)}">
-        <div class="gc-preview" aria-hidden="true"></div>
+        <div class="gc-edit"><input class="gc-input" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="next" placeholder="${esc(i === 0 ? t("gc.placeholder") : "")}" value="${esc(it.text)}">
+        <div class="gc-preview" aria-hidden="true"></div></div>
         <div class="gc-extra"></div>
       </div>
       <div class="gc-acts"><button type="button" class="gc-x" data-act="menu" aria-label="${esc(t("gc.options"))}">${icon("ellipsis-vertical")}</button><button type="button" class="gc-x" data-act="del" aria-label="${esc(t("gc.delete"))}">${icon("x")}</button></div>
@@ -297,6 +298,79 @@ export function createCalculator(root, opts) {
     }
   }
 
+  // Vnos kot v znanstvenem kalkulatorju (j, 27. 11.): med urejanjem je vrstica lep zapis (KaTeX) s kazalcem, surovo
+  // besedilo je nevidno polje čez njo. Zapis brez kazalca se izračuna enkrat na besedilo, premik kazalca ga le vstavi.
+  const edits = new WeakMap(); // polje → { text, base }
+  const entryOf = (input) => {
+    const text = input.value;
+    let e = edits.get(input);
+    if (!e || e.text !== text) {
+      let base = null;
+      try {
+        base = entryBase(text, {}, (x) => rowTex(x, state, { comma: comma() }));
+      } catch {}
+      edits.set(input, (e = { text, base }));
+    }
+    return e;
+  };
+  function showEdit(input) {
+    const prev = input?.parentElement?.querySelector(".gc-preview");
+    if (!prev) return;
+    if (document.activeElement !== input || !input.value.trim()) return void (prev.innerHTML = "");
+    let s = null;
+    try {
+      s = caretTex(entryOf(input).base, input.selectionStart ?? input.value.length);
+    } catch {}
+    prev.innerHTML = s ? izrisi(s, { zaupaj: TRUST }) : "";
+    const c = prev.querySelector(".sc-caret");
+    if (c && prev.scrollWidth > prev.clientWidth + 1) {
+      const pr = prev.getBoundingClientRect();
+      const cr = c.getBoundingClientRect();
+      if (cr.left < pr.left + 8) prev.scrollLeft -= pr.left + 8 - cr.left;
+      else if (cr.right > pr.right - 8) prev.scrollLeft += cr.right - pr.right + 8;
+    }
+  }
+  /** Dotik na lep zapis → položaj kazalca v besedilu (merilne točke stopsTex, kot sci.js). */
+  function caretFromPoint(input, x, y) {
+    const prev = input.parentElement.querySelector(".gc-preview");
+    const base = entryOf(input).base;
+    if (!prev || !base?.ok) return null;
+    const shown = prev.innerHTML;
+    let best = null;
+    try {
+      prev.innerHTML = izrisi(stopsTex(base), { zaupaj: TRUST });
+      for (const el of prev.querySelectorAll("[data-evk-p]")) {
+        const b = (el.querySelector(".katex-rule, .rule") || el).getBoundingClientRect();
+        const dy = y < b.top ? b.top - y : y > b.bottom ? y - b.bottom : 0;
+        const d = Math.abs(x - b.left) + 2 * dy + 0.25 * Math.abs(y - (b.top + b.bottom) / 2);
+        if (!best || d < best.d) best = { d, p: Number(el.dataset.evkP) };
+      }
+    } catch {}
+    prev.innerHTML = shown;
+    return best && Number.isFinite(best.p) ? best.p : null;
+  }
+  document.addEventListener("selectionchange", () => {
+    const a = document.activeElement;
+    if (a?.classList?.contains("gc-input") && !a.classList.contains("gc-note-in") && list.contains(a)) showEdit(a);
+  });
+  let tapAt = null;
+  list.addEventListener("pointerdown", (ev) => {
+    if (ev.target.classList?.contains("gc-input")) tapAt = { x: ev.clientX, y: ev.clientY, t: ev.timeStamp };
+  });
+  list.addEventListener("click", (ev) => {
+    const input = ev.target;
+    if (!input.classList?.contains("gc-input") || input.classList.contains("gc-note-in") || !input.value) return;
+    const near = tapAt && ev.timeStamp - tapAt.t < 1500 && Math.hypot(ev.clientX - tapAt.x, ev.clientY - tapAt.y) < 48;
+    const p = ev.detail > 0 ? caretFromPoint(input, ...(near ? [tapAt.x, tapAt.y] : [ev.clientX, ev.clientY])) : null;
+    tapAt = null;
+    setTimeout(() => {
+      if (p != null && (input.selectionStart === input.selectionEnd || ev.detail > 1)) input.setSelectionRange(p, p);
+      showEdit(input);
+    });
+  });
+  list.addEventListener("focusout", (ev) => ev.target.classList?.contains("gc-input") && setTimeout(() => showEdit(ev.target)));
+  list.addEventListener("focusin", (ev) => ev.target.classList?.contains("gc-input") && showEdit(ev.target));
+
   function updateRow(o) {
     const row = list.querySelector(`.gc-row[data-id="${o.id}"]`);
     if (!row) return;
@@ -318,10 +392,9 @@ export function createCalculator(root, opts) {
     const input = row.querySelector(".gc-input");
     if (document.activeElement !== input && input.value !== it.text) input.value = it.text;
     const math = row.querySelector(".gc-math");
-    const preview = row.querySelector(".gc-preview");
     const t1 = o.tex ? tex(o.tex) : "";
     math.innerHTML = t1 || `<span class="muted">${esc(it.text)}</span>`;
-    preview.innerHTML = o.tex && o.kind !== "error" ? t1 : "";
+    showEdit(input);
     const extra = row.querySelector(".gc-extra");
     // drsnik med animacijo posodobimo na mestu: če bi ga vsako sličico zgradili znova,
     // gumb za ustavitev in drsnik ne bi nikoli dobila klika

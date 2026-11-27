@@ -103,8 +103,15 @@
 .gc-input::placeholder { color: var(--muted); font-weight: 600; }
 .gc-row:not(.editing):not(.empty) .gc-input { display: none; }
 .gc-row.editing .gc-math, .gc-row.empty .gc-math { display: none; }
-.gc-preview { display: none; font-size: 0.95rem; color: var(--muted); overflow-x: auto; padding: 0 2px 2px; }
-.gc-row.editing .gc-preview:not(:empty) { display: block; }
+/* vnos kot v znanstvenem (j, 27. 11.): med urejanjem lep zapis s kazalcem, besedilo je nevidno polje čez njim */
+.gc-edit { position: relative; }
+.gc-preview { display: none; min-height: 44px; align-items: center; font-size: 1.12rem; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; padding: 2px 2px; cursor: text; }
+.gc-preview::-webkit-scrollbar { display: none; }
+.gc-row.editing .gc-preview:not(:empty) { display: flex; }
+.gc-row.editing .gc-edit:has(.gc-preview:not(:empty)) .gc-input { position: absolute; inset: 0; min-height: 0; height: 100%; opacity: 0; z-index: 1; }
+.gc-preview .sc-caret { color: var(--accent); animation: sc-blink 1.1s steps(1) infinite; }
+.gc-preview .sc-caret .rule { border-color: currentColor; }
+@media (prefers-reduced-motion: reduce) { .gc-preview .sc-caret { animation: none; } }
 .gc-note .gc-input { display: block !important; resize: none; font-weight: 600; font-size: 0.98rem; color: var(--muted); font-style: italic; overflow: hidden; }
 .gc-note .gc-side { background: none; }
 .gc-acts { display: flex; align-items: center; padding: 6px 2px 0 0; }
