@@ -284,3 +284,22 @@ test("koti v podatkih s π tudi v DEG in GRA; enakomerne rešitve v enem zapisu;
   assert.equal(axisLabel({ fn: "x+sin(x)", period: 0 }, "deg"), "x [°]");
   assert.equal(axisLabel(info("x^2-4").plot, "deg"), null);
 });
+
+test("DEG in GRA: sin(3x/2) = 0 in cos(3x/2) = 0 imata vse rešitve (prej le x = 0 oz. nobene; pregled 28. 11.)", () => {
+  const sol = (s, unit) => analyze(s, { ...env, deg: unit === "deg", grad: unit === "grad", comma: true, live: true }).roots;
+  const deg = sol("sin(3x/2)=0", "deg");
+  for (const x of [-240, -120, 0, 120, 240]) assert.ok(deg.some((r) => Math.abs(r - x) < 1e-6), `sin(3x/2) = 0 v DEG: ${x}°`);
+  const c = sol("cos(3x/2)=0", "deg");
+  for (const x of [-180, -60, 60, 180]) assert.ok(c.some((r) => Math.abs(r - x) < 1e-6), `cos(3x/2) = 0 v DEG: ${x}°`);
+  assert.ok(sol("cos(3x/2)=0", "grad").some((r) => Math.abs(r - 200 / 3) < 1e-6));
+  // RAD: 12 najbližjih 0 na obeh straneh (prej večinoma negativne)
+  const rad = sol("sin(3x/2)=0", "rad");
+  assert.equal(rad.length, 12);
+  assert.ok(rad.some((r) => Math.abs(r - (8 * Math.PI) / 3) < 1e-6) && rad.some((r) => Math.abs(r + (8 * Math.PI) / 3) < 1e-6));
+  // več kot 1000 točk z leve (seznam odrezan): znova na simetričnem oknu, ne −510,5 … −499,5
+  assert.deepEqual(sol("x-floor(x)=0.5", "deg").map((x) => +x.toFixed(6)), [-5.5, -4.5, -3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5, 4.5, 5.5]);
+  assert.ok(sol("sin(x^2)=0", "deg").some((r) => Math.abs(r - Math.sqrt(180)) < 1e-6));
+  // podatki: x = 2kπ/3 in π/3 + 2kπ/3
+  assert.equal(row(info("sin(3x/2)", { deg: true }), "sc.infoRoots").tex, "x = \\tfrac{2k\\pi}{3},\\ k \\in \\mathbb{Z}");
+  assert.equal(row(info("cos(3x/2)", { deg: true }), "sc.infoRoots").tex, "x = \\tfrac{\\pi}{3} + \\tfrac{2k\\pi}{3},\\ k \\in \\mathbb{Z}");
+});
