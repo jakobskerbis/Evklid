@@ -42,13 +42,18 @@ function argsOf(s, re) {
   }
   return out;
 }
-/** Imenovalci: vse za »/« (oklepaj ali en člen). */
+/** Imenovalci: vse za »/«, »÷« ali »:« (oklepaj ali en člen, tudi z gnezdenim klicem: 1/√(sin(x))). */
 function denominators(s) {
   const out = [];
-  for (let i = s.indexOf("/"); i >= 0; i = s.indexOf("/", i + 1)) {
+  for (let i = 0; i < s.length; i++) {
+    if (!"/÷:".includes(s[i])) continue;
     let j = i + 1;
     while (s[j] === " ") j++;
-    const g = s[j] === "(" ? group(s, j) : /^[\p{L}\d.,√^]+(?:\([^()]*\))?/u.exec(s.slice(j))?.[0];
+    let g = s[j] === "(" ? group(s, j) : /^[\p{L}\d.,√^]+/u.exec(s.slice(j))?.[0];
+    if (g && s[j] !== "(" && s[j + g.length] === "(") {
+      const arg = group(s, j + g.length);
+      g = arg == null ? null : `${g}(${arg})`;
+    }
     if (g && /x/.test(g)) out.push(g);
   }
   return out;
@@ -228,12 +233,11 @@ export function infoFor(text, r, { profile = null, comma = true, env: base = nul
         const rg = rangeOf(f, P);
         if (rg) one("sc.infoRange", `[${nt(rg[0])}${sep}${nt(rg[1])}]`);
       }
-      const tan = argsOf(s, /(?<![A-Za-z])tan/);
-      const cot = argsOf(s, /(?<![A-Za-z])cot/);
-      if (P && tan.length + cot.length === 1) {
-        const a = safe(() => analyze(tan.length ? `cos(${tan[0]})=0` : `sin(${cot[0]})=0`, env));
-        if (a?.kind === "solve" && a.roots?.length) one("sc.infoAsym", periodicTex(a.roots.filter(Number.isFinite), P, env, nt, num));
-      }
+      // navpične asimptote le pri točkah, kjer gre f res proti ±∞ (revizija 28. 11.: 1/tan x ima x = kπ, ne π/2 + kπ;
+      // cos x · tan x nima nobene); odstranljive prekinitve so prazne točke grafa
+      const vp = P ? safe(() => polesPeriodic(s, f, P, env)) : null;
+      if (vp?.poles.length) one("sc.infoAsym", periodicTex(vp.poles, P, env, nt, num));
+      if (vp) holes.push(...vp.holes);
     }
     if (topic === "ana" && calc) {
       const d2 = safe(() => analyze(`d/dx(d/dx(${s}))`, env));
@@ -494,17 +498,95 @@ export function horizontalAsymptote(f, s) {
   return { y: Number(c.toFixed(Math.min(12, Math.max(0, Math.floor(-Math.log10(err)))))), exact: false };
 }
 
+/**
+ * Ali gre f proti +∞ ali −∞ vsaj z ene strani točke a (navpična asimptota)? Na vsaki strani |f| pri razdaljah
+ * 10⁻²…10⁻¹⁰ (glede na |a|): strogo narašča in zraste vsaj tisočkrat (pol: 1/x, tan x) ali narašča z nepojemajočimi
+ * prirastki (logaritem: ln x pri 0). Končna limita (sin x pri π/2 za cos x · tan x), skok (|x|/x) ali nihanje → false,
+ * tudi ko ne vemo (»pravilno ali nič«: navpično asimptoto raje izpustimo kot napačno pokažemo).
+ */
+export function divergesAt(f, a) {
+  const u = Math.max(1, Math.abs(a));
+  for (const s of [-1, 1]) {
+    const ys = [];
+    for (let k = 2; k <= 10; k++) ys.push(Math.abs(f(a + s * u * 10 ** -k)));
+    if (ys.some(Number.isNaN)) continue; // na tej strani f ni definirana (ali ne vemo)
+    const inf = ys.indexOf(Infinity);
+    const fin = inf < 0 ? ys : ys.slice(0, inf);
+    let up = true;
+    for (let i = 1; i < fin.length; i++) if (!(fin[i] > fin[i - 1])) up = false;
+    if (!up) continue;
+    if (inf >= 0 && ys.slice(inf).every((y) => y === Infinity)) return true; // e^(1/x) pri 0⁺: prekorači obseg števil
+    if (inf >= 0 || fin.length < 3) continue;
+    if (fin.at(-1) >= 1e3 * fin[0] && fin.at(-1) > 0) return true;
+    const d1 = fin[1] - fin[0];
+    const dn = fin.at(-1) - fin.at(-2);
+    if (dn >= 0.5 * d1 && fin.at(-1) - fin[0] >= 4 * d1) return true;
+  }
+  return false;
+}
+
+/**
+ * Navpične asimptote periodične funkcije na eni periodi [0, P): kandidati so ničle imenovalcev ter točke, kjer
+ * tan, cot, sec, csc niso definirani; obdržimo le tiste, kjer f gre proti ±∞ (divergesAt). Ostali kandidati s končno
+ * limito so prazne točke grafa (v oknu [−5, 5]). null, če ne vemo (logaritem, negativna potenca, nerešljiv imenovalec
+ * ali velika vrednost f daleč od vseh najdenih polov): takrat vrstice ni.
+ */
+function polesPeriodic(s, f, P, env) {
+  if (/(?<![A-Za-z])(?:ln|log\w*)\s*\(|\^\s*\(?\s*[-−]/.test(s)) return null;
+  const Q = env.grad ? 400 : env.deg ? 360 : 2 * Math.PI;
+  const eqs = [
+    ...argsOf(s, /(?<![A-Za-z])(?:tan|tg|sec)/).map((a) => `cos(${a})=0`),
+    ...argsOf(s, /(?<![A-Za-z])(?:cot|ctg|csc)/).map((a) => `sin(${a})=0`),
+    ...denominators(s).map((d) => `(${d})=0`),
+  ];
+  const mod = (x) => {
+    const m = ((x % P) + P) % P;
+    return Math.abs(m - P) < 1e-9 * Math.max(1, P) ? 0 : m;
+  };
+  const cand = [];
+  for (const e of eqs) {
+    const a = analyze(e, env);
+    if (a?.kind !== "solve" || a.all) return null;
+    for (const r of (a.roots || []).filter(Number.isFinite)) {
+      // periodična enačba da rešitve le na [0, Q): ostale v [0, P) so r + jQ
+      const shifts = a.periodic ? Math.max(1, Math.ceil(P / Q - 1e-9)) : 1;
+      for (let j = 0; j < shifts; j++) {
+        const x = mod(r + j * Q);
+        if (!cand.some((y) => Math.abs(y - x) < 1e-7 * Math.max(1, P))) cand.push(x);
+      }
+    }
+  }
+  const poles = cand.filter((a) => divergesAt(f, a)).sort((a, b) => a - b);
+  // varovalka: vsak visok lokalni vrh |f| na periodi mora biti tik ob najdenem polu (sicer kakšen pol manjka)
+  const N = 2000;
+  const X = (i) => (P * (i + 0.37)) / N;
+  const ys = [];
+  for (let i = 0; i < N; i++) ys.push(Math.abs(f(X(i))));
+  const fin = ys.filter(Number.isFinite).sort((a, b) => a - b);
+  if (fin.length < N / 4) return null;
+  const big = 100 * (1 + fin[Math.floor(fin.length / 2)]);
+  const at = (i) => (Number.isNaN(ys[(i + N) % N]) ? -1 : ys[(i + N) % N]);
+  const near = (x) => poles.some((p) => Math.min(Math.abs(x - p), P - Math.abs(x - p)) < (2 * P) / N);
+  for (let i = 0; i < N; i++) if (at(i) > big && at(i) >= at(i - 1) && at(i) >= at(i + 1) && !near(X(i))) return null;
+  const holes = [];
+  for (const a of cand)
+    if (!poles.includes(a))
+      for (let x = a - P * Math.ceil((a + 5) / P); x <= 5; x += P) {
+        if (x < -5) continue;
+        const h = hole(f, x);
+        if (h) holes.push(h);
+      }
+  return { poles, holes };
+}
+
 /** Asimptote: navpične pri polih (izključene točke brez prazne točke, rob logaritma), vodoravne pri ±∞. */
 function asymptotesTex(f, dom, holes, nt, num = nt) {
   const out = [];
-  for (const a of dom?.excl || []) if (!holes.some((h) => h[0] === a)) out.push(`x = ${nt(a)}`);
+  // izključena točka ali rob območja je navpična asimptota le, če gre f vsaj z ene strani proti ±∞ (revizija 28. 11.:
+  // |x|/x pri 0 ima skok, ne asimptote); prazne točke so že izločene, ker je tam limita končna
+  for (const a of dom?.excl || []) if (!holes.some((h) => h[0] === a) && divergesAt(f, a)) out.push(`x = ${nt(a)}`);
   for (const c of dom?.cond || [])
-    for (const i of c.intervals) for (const e of [i.lo, i.hi]) {
-        if (e == null || !Number.isFinite(e)) continue;
-        // rob logaritma: f proti ±∞ (ln x pri 0), ne končna vrednost (√(x − 2) pri 2)
-        const g = (d) => (Number.isFinite(f(e + 1e-9)) ? f(e + d) : f(e - d));
-        if (Math.abs(g(1e-9)) > Math.abs(g(1e-3)) + 5) out.push(`x = ${nt(e)}`);
-      }
+    for (const i of c.intervals) for (const e of [i.lo, i.hi]) if (e != null && Number.isFinite(e) && divergesAt(f, e)) out.push(`x = ${nt(e)}`);
   const ys = new Set();
   for (const s of [-1, 1]) {
     const h = horizontalAsymptote(f, s);
