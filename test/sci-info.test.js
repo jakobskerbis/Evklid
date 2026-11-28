@@ -364,3 +364,20 @@ test("mali graf: osnovna funkcija črtkano, vektor premika iz izhodišča, okno 
   // okno do vsaj 11 (8 + 3): konec puščice (8; 1) je v oknu
   assert.ok(!plotSvg(d.plot.fn, d.plot.roots, { env }).includes("ghost"));
 });
+
+test("premik: pravilno ali nič tudi daleč od p (pregled 28. 11.): min(2√x, 10), cos x + sin 100000x, x² + sin 100000x", () => {
+  for (const s of ["min(2sqrt(x),10)", "min(e^(x-1),10000)+2", "cos(x)+sin(100000x)", "x^2+sin(100000x)"]) {
+    const d = info(s);
+    assert.ok(!d || !keys(d).some((k) => k === "sc.infoParent" || k === "sc.infoShift" || k === "sc.infoStretch"), s);
+  }
+  // veliko rešitev na periodo: kratek zapis
+  assert.ok(row(info("cos(x)+sin(100000x)"), "sc.infoRoots").tex.length < 400);
+});
+
+test("premik v DEG s π tudi pri decimalnem kotu (25,3° → 253π/1800); skoraj π ni π; |3x + 6| in abs(3x + 6) enako", () => {
+  assert.equal(row(info("sin(x-25.3)", { deg: true }), "sc.infoShift").tex, "y = \\sin x,\\ \\vec{v} = (\\tfrac{253\\pi}{1800};\\,0)");
+  assert.doesNotMatch(row(info("cos(x-180.00001)", { deg: true }), "sc.infoShift").tex, /\(\\pi;/);
+  assert.equal(row(info("-2abs(3x+6)"), "sc.infoStretch").tex, "a = -6");
+  assert.equal(row(info("2e^(x-1)"), "sc.infoStretch").tex, "a = 2");
+  assert.equal(row(info("cos(13x)"), "sc.infoPeriod").tex, "\\tfrac{2\\pi}{13}");
+});

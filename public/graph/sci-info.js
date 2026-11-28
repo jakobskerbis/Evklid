@@ -409,7 +409,8 @@ export function periodOf(fn, env) {
   if (!TRIG.test(fn) || /x\s*\^|\^\s*(?:\([^()]*x|x)|\bx\s*\*?\s*(?:sin|cos|tan)|(?<![A-Za-z])(?:sin|cos|tan|cot)\s*\(\s*x\s*\^/.test(fn)) return 0;
   const base = env.grad ? 200 : env.deg ? 180 : Math.PI;
   const cand = [];
-  for (let q = 1; q <= 12; q++) for (let p = 1; p <= 24; p++) cand.push((base * p) / q);
+  // q do 48: cos 13x ima periodo 2π/13, ne 2π (pregled 28. 11.)
+  for (let q = 1; q <= 48; q++) for (let p = 1; p <= 24; p++) cand.push((base * p) / q);
   cand.sort((a, b) => a - b);
   const xs = [0.37, 1.29, 2.71, 5.3, 11.7, 0.05, 3.9];
   const f = fnOf(fn, env);
@@ -428,7 +429,14 @@ const angleTex = (P, env, nt) => {
   // kot iz reševanja: 0,99999999999° → 1°; ulomek stopinje (2/3° → π/270) z imenovalcem do 2·180 oz. 2·200
   const r = P / half;
   let f = null;
-  for (let q = 1; q <= 2 * half && !f; q++) if (Math.abs(r * q - Math.round(r * q)) < 1e-7) f = { p: Math.round(r * q), q };
+  for (let q = 1; q <= 2 * half && !f; q++) if (Math.abs(r - Math.round(r * q) / q) < 1e-9) f = { p: Math.round(r * q), q };
+  // kot z največ tremi decimalkami (25,3° → 253π/1800), ne dvanajst mest radianov
+  if (!f && Math.abs(P * 1000 - Math.round(P * 1000)) < 1e-6 * Math.max(1, Math.abs(P))) {
+    const gcd = (u, v) => (v ? gcd(v, u % v) : u);
+    const [n, d] = [Math.round(P * 1000), 1000 * half];
+    const g = gcd(Math.abs(n), d);
+    f = { p: n / g, q: d / g };
+  }
   if (!f || !f.p) return nt((P * Math.PI) / half);
   const a = Math.abs(f.p);
   const num = `${a === 1 ? "" : a}\\pi`;
@@ -445,6 +453,8 @@ function periodicTex(roots, P, env, nt, num) {
   // enakomerno razmaknjene rešitve v enem zapisu: sin x → x = kπ (ne x₁ = 2kπ, x₂ = π + 2kπ)
   const m = one.length;
   if (m > 1 && one.every((a, i) => Math.abs(a - one[0] - (i * P) / m) < 1e-9 * Math.max(1, P))) return periodicTex([one[0]], P / m, env, nt, num);
+  // veliko rešitev na periodo (cos x + sin 100000x): štiri najbližje 0 in »…«, ne tisoč zapisov
+  if (m > 6) return rootsTex(roots, nt);
   const pt = angleTex(P, env, nt, num);
   // 2π → 2kπ, 2π/3 → 2kπ/3 (kot v učbeniku), sicer k · P
   const pi = /^(\d*)\\pi$/.exec(pt);
@@ -737,7 +747,7 @@ export function axisLabel(plot, angle, funcs = {}, comma = true) {
   return `x: −${v} … ${v}`;
 }
 
-/** Osnovne funkcije za premike: TeX in zapis za mali graf (ime, kot ga je napisal uporabnik: tg, ctg …). */
+/** Osnovne funkcije za premike: TeX (tg in ctg kot \\tan, \\cot); zapis za mali graf ostane, kot ga je napisal uporabnik. */
 const PARENT = { sin: "\\sin x", cos: "\\cos x", tan: "\\tan x", tg: "\\tan x", cot: "\\cot x", ctg: "\\cot x", sqrt: "\\sqrt{x}", abs: "|x|", ln: "\\ln x", log: "\\log x", exp: "e^{x}" };
 const ANGLE = new Set(["sin", "cos", "tan", "tg", "cot", "ctg"]);
 const near9 = (u, v) => Math.abs(u - v) <= 1e-8 * (1 + Math.abs(v));
@@ -771,7 +781,7 @@ export function transformOf(text, env, f = fnOf(text, env)) {
   const named = /(?<![A-Za-z_])(sin|cos|tan|tg|cot|ctg|sqrt|abs|ln|log|exp)\s*(?:(\()|(\d*[.,]?\d*\s*x)(?![\w(^²³]))/g;
   for (const m of s.matchAll(named)) {
     const inner = m[2] ? group(s, m.index + m[0].length - 1) : m[3];
-    if (inner != null) cands.push({ name: m[1], inner, G: (u) => `${m[1]}(${u})`, parent: PARENT[m[1]] });
+    if (inner != null) cands.push({ name: m[1], inner, G: (u) => `${m[1]}(${u})`, parent: PARENT[m[1]], fold: m[1] === "abs" ? 1 : 0 });
   }
   for (const m of s.matchAll(/(?<![A-Za-z])log_\s*(?:\((\d+(?:[.,]\d+)?)\)|(\d+))\s*\(/g)) {
     const inner = group(s, m.index + m[0].length - 1);
@@ -784,7 +794,7 @@ export function transformOf(text, env, f = fnOf(text, env)) {
   }
   const bars = [...s.matchAll(/\|/g)].map((m) => m.index);
   if (bars.length === 2) cands.push({ name: "abs", inner: s.slice(bars[0] + 1, bars[1]), G: (u) => `abs(${u})`, parent: PARENT.abs, fold: 1 });
-  for (const m of s.matchAll(/(?<![A-Za-z\d.,)])(e|\d+(?:[.,]\d+)?)\s*\^\s*(?:(\()|(-?\d*[.,]?\d*\s*x)(?![\w(^²³]))/g)) {
+  for (const m of s.matchAll(/((?<![A-Za-z])e|(?<![A-Za-z\d.,)])\d+(?:[.,]\d+)?)\s*\^\s*(?:(\()|(-?\d*[.,]?\d*\s*x)(?![\w(^²³]))/g)) {
     const inner = m[2] ? group(s, m.index + m[0].length - 1) : m[3];
     const b = m[1];
     if (inner != null && b !== "0" && b !== "1") cands.push({ name: "pow", inner, G: (u) => `${b}^(${u})`, parent: b === "e" ? "e^{x}" : `${dec(b)}^{x}` });
@@ -821,6 +831,14 @@ export function transformOf(text, env, f = fnOf(text, env)) {
       if (Number.isFinite(y) !== Number.isFinite(g)) bad = true;
       if (Number.isFinite(y) && Number.isFinite(g) && Math.abs(g) < 1e6) pts.push([g, y]);
     }
+    // tudi v stalnih točkah daleč od p (min(2√x, 10) je √x le do 25; cos x + sin 100000x ni sin pri velikem b)
+    const far = [];
+    for (const t of [-97.1, -47.3, -19.7, -13.1, -8.3, -4.9, -2.2, -0.9, 0.55, 1.7, 3.4, 6.1, 9.8, 14.2, 19.3, 47.3, 97.1]) {
+      const x = t * (angle ? unit : 1);
+      const [y, g] = [f(x), G(x)];
+      if (Number.isFinite(y) !== Number.isFinite(g)) bad = true;
+      if (Number.isFinite(y) && Number.isFinite(g) && Math.abs(g) < 1e6) far.push([g, y]);
+    }
     if (bad || pts.length < 6) continue;
     const mg = pts.reduce((u, [g]) => u + g, 0) / pts.length;
     const my = pts.reduce((u, [, y]) => u + y, 0) / pts.length;
@@ -828,9 +846,9 @@ export function transformOf(text, env, f = fnOf(text, env)) {
     if (!(vg > 1e-12)) continue;
     const a = pts.reduce((u, [g, y]) => u + (g - mg) * (y - my), 0) / vg;
     const q = my - a * mg;
-    if (!(Math.abs(a) > 1e-12) || !pts.every(([g, y]) => near9(a * g + q, y))) continue;
+    if (!(Math.abs(a) > 1e-12) || ![...pts, ...far].every(([g, y]) => near9(a * g + q, y))) continue;
     // |b(x − p)| = |b| · |x − p|, 1/(b(x − p))ⁿ = b⁻ⁿ/(x − p)ⁿ: raztezek le v smeri y
-    const A = c.fold === 1 && c.name === "abs" ? a * Math.abs(b) : c.fold ? a / b ** c.fold : a;
+    const A = c.name === "abs" ? a * Math.abs(b) : c.fold ? a / b ** c.fold : a;
     const B = c.fold ? 1 : b;
     return { parent: c.parent, ghost: c.G("x"), a: clean(A), b: clean(B), p: clean(p), q: clean(q), angle };
   }
