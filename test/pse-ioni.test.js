@@ -98,6 +98,9 @@ test("PSE: naboj iona ne spremeni sestave in molske mase (Fe3+ = Fe), tudi v kal
       assert.deepEqual(so4.rows, [["S", "1"], ["O", "4"]], where);
       assert.match(so4.tex, /\\mathrm\{SO_\{4\}\}\^\{2-\}/, where);
       assert.match(so4.text, /96,06/, where);
+      const o22 = await molar("O22-");
+      assert.deepEqual(o22.rows, [["O", "2"]], where);
+      assert.match(o22.tex, /\\mathrm\{O_\{2\}\}\^\{2-\}/, `${where}: ${o22.tex}`);
       const h2o = await molar("H2O");
       assert.deepEqual(h2o.rows, [["H", "2"], ["O", "1"]], where);
       const fecl3 = await molar("FeCl3");

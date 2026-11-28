@@ -223,6 +223,8 @@ test("pregled 28. 11.: M(Fe3+) v kalkulatorju je M(Fe), naboj ostane v zapisu", 
   // aritmetika ni naboj: M(2 + 3) in M(x − 1) ostaneta spomin krat oklepaj
   assert.equal(chemSub("M(C+H)"), null);
   assert.equal(chemSub("M(x-1)"), null);
+  assert.equal(chemSub("M(C^-1)"), null); // potenca spremenljivke C, ne ogljikov ion
+  assert.equal(run("M(Hg22+)").value, 2 * molarMass("Hg", MASSES).M); // Hg₂²⁺
 });
 
 test("periodni sistem vpiše celo formulo v kalkulator", () => {

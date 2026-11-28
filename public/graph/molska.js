@@ -5,8 +5,9 @@
 import { molarMass, splitCharge } from "./toolscore.js";
 import { MASSES } from "./pse-data.js";
 
-// formula in na koncu morda naboj iona: Fe3+, Fe^3+, Fe³⁺, SO4^2−, NH4+ (M(Fe³⁺) = M(Fe), naboj mase ne spremeni)
-const KEM = /^[A-Z([][A-Za-z0-9₀-₉()[\]·•*×.]*(?:\^\{?\d*[+\-−–]\}?|\^\{?[+\-−–]\d*\}?|[⁰¹²³⁴⁵⁶⁷⁸⁹]*[⁺⁻]|\d*[+\-−–])?$/;
+// formula in na koncu morda naboj iona: Fe3+, Fe^3+, Fe³⁺, SO4^2−, NH4+ (M(Fe³⁺) = M(Fe), naboj mase ne spremeni);
+// ^-1 ni naboj, ampak potenca: M(C^-1) ostane spomin krat C⁻¹
+const KEM = /^[A-Z([][A-Za-z0-9₀-₉()[\]·•*×.]*(?:\^\{?\d*[+\-−–]\}?|[⁰¹²³⁴⁵⁶⁷⁸⁹]*[⁺⁻]|\d*[+\-−–])?$/;
 
 /**
  * TeX kemijske formule: H2SO4 → \mathrm{H_{2}SO_{4}}, CuSO4·5H2O → \mathrm{CuSO_{4}\cdot 5H_{2}O},

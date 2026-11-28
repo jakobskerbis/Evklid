@@ -908,6 +908,12 @@ test("pregled 28. 11.: naboj iona ne spremeni sestave (Fe3+ je en atom Fe, ne Fe
   assert.deepEqual([...k.counts], [["Fe", 1], ["C", 6], ["N", 6]]);
   assert.equal(k.charge, -3);
   assert.deepEqual(splitCharge("MnO4-"), { body: "MnO4", charge: -1 });
+  // dve števki pred znakom: zadnja je naboj (peroksid, živo srebro(I), sulfat, karbonat)
+  assert.deepEqual(splitCharge("O22-"), { body: "O2", charge: -2 });
+  assert.deepEqual(splitCharge("Hg22+"), { body: "Hg2", charge: 2 });
+  assert.deepEqual([...molarMass("SO42-", MASSES).counts], [["S", 1], ["O", 4]]);
+  assert.equal(molarMass("CO32-", MASSES).charge, -2);
+  near(molarMass("O22-", MASSES).M, 2 * molarMass("O", MASSES).M, 1e-9);
   assert.deepEqual(splitCharge("H2O"), { body: "H2O", charge: 0 });
   // modul reakcij uporablja isto pravilo
   assert.deepEqual(balance("Fe3+ + e- -> Fe2+", MASSES).coef, [1, 1, 1]);

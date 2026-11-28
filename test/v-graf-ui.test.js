@@ -204,6 +204,9 @@ test("»Pokaži na grafu«: integral, odvod, enačba in divergenten integral v g
       await tap('#g .gc-row[data-id="q1"] .gc-math, #g .gc-row[data-id="q1"] .gc-preview');
       await page.fill('#g .gc-row[data-id="q1"] .gc-input', "y = x^2 + 50");
       await page.locator("#g .gc-fitnote").waitFor({ state: "visible" });
+      // pogled se na novo krivuljo premakne z animacijo (animateTo): počakaj konec, ne beri vmesnega pogleda
+      // (WebKit v CI 28. 11.: ymin 5,4, ymax 22,4 sredi animacije)
+      await page.waitForFunction(() => window.graph.state.view.ymin < 50 && window.graph.state.view.ymax > 50, null, { timeout: 5000 }).catch(() => {});
       const v1 = await page.evaluate(() => ({ ...window.graph.state.view }));
       assert.ok(v1.ymin < 50 && v1.ymax > 50, `${where}: pogled ${JSON.stringify(v1)}`);
       await tap('#g [data-act="fitback"]');

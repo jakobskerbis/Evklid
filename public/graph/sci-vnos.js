@@ -203,7 +203,7 @@ export function complete(text, hole) {
   }
   // M(Fe3+), M(NH4+), M(SO4^2-): znak pred zaklepajem molske mase je naboj iona, ne operator brez desnega operanda
   const chemClose = new Set();
-  for (const m of src.matchAll(/M\s*\(/g)) {
+  for (const m of src.matchAll(/(?<![A-Za-z_α-ωΑ-Ω])M\s*\(/g)) {
     let d = 0;
     let j = m.index + m[0].length - 1;
     for (; j < src.length; j++) {
