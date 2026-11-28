@@ -13,7 +13,7 @@ import { UNIT_GROUPS, token, unitResultTex, parseUnit, hasUnits, OFFSET_TEMP } f
 import { pomanjsaj, prilagodiSirini } from "../sirina.js";
 import { izrisi } from "../mat/izris.js";
 import { createWriter, writerDefaultOpen } from "./pisi.js";
-import { infoFor, plotSvg, INFO_FIRST } from "./sci-info.js";
+import { infoFor, plotSvg, INFO_FIRST, axisLabel } from "./sci-info.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const isTouch = () => typeof matchMedia !== "undefined" && matchMedia("(hover: none) and (pointer: coarse)").matches;
@@ -275,7 +275,8 @@ export function createScientific(root, opts) {
     const svg = d.plot && !infoMore ? plotSvg(d.plot.fn, d.plot.roots, { env: env(), holes: d.plot.holes, period: d.plot.period }) : "";
     const g = box.querySelector(".sc-info-g");
     g.hidden = !svg;
-    g.innerHTML = svg ? `${svg}${opts.openGraph ? `<button type="button" class="ghost small sc-info-graf" aria-label="${esc(t("sc.infoOpenGraph"))}" title="${esc(t("sc.infoOpenGraph"))}">${icon("chart-spline")}<span>${esc(t("sc.infoOpenGraph"))}</span></button>` : ""}` : "";
+    const axis = svg ? axisLabel(d.plot, st.angle, st.funcs, comma()) : null; // stopinje ali radiani na osi x
+    g.innerHTML = svg ? `${svg}${axis ? `<span class="sc-info-x">${esc(axis)}</span>` : ""}${opts.openGraph ? `<button type="button" class="ghost small sc-info-graf" aria-label="${esc(t("sc.infoOpenGraph"))}" title="${esc(t("sc.infoOpenGraph"))}">${icon("chart-spline")}<span>${esc(t("sc.infoOpenGraph"))}</span></button>` : ""}` : "";
     g.querySelector(".sc-info-graf")?.addEventListener("click", () => opts.openGraph(r.plot?.length ? r.plot : [`y = ${d.plot.fn}`]));
     const first = root.classList.contains("sc-pn") ? 2 : INFO_FIRST; // telefon: ključ nad vrednostjo, dve vrstici
     const rows = infoMore ? d.rows : d.rows.slice(0, first);

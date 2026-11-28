@@ -1108,6 +1108,8 @@ button.ghost.sc-recent-x { min-width: 40px; min-height: 40px; padding: 0; margin
 .sc-info-g path.hole { stroke-width: 9; stroke-linecap: round; }
 .sc-info-g path.hole-in { stroke: var(--surface-2); stroke-width: 5; stroke-linecap: round; } /* prazna točka (x ≠ 1) */
 .sc-info-g .ax { stroke: var(--muted); stroke-width: 1; opacity: 0.5; vector-effect: non-scaling-stroke; }
+.sc-info-x { position: absolute; top: 4px; right: 6px; padding: 0 4px; border-radius: 6px; background: var(--surface-2); color: var(--muted); font-size: 0.72rem; font-weight: 800; white-space: nowrap; pointer-events: none; }
+.sc.sc-pn .sc-info-x { font-size: 0.62rem; right: 3px; top: 2px; }
 .sc-info-g .sc-info-graf { position: absolute; left: 6px; bottom: 4px; min-height: 32px; color: var(--accent); }
 .sc-info-rows { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 2px; padding: 6px 14px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface-2); overflow: hidden; }
 .sc-info-row { display: flex; align-items: center; gap: 12px; min-height: 0; }

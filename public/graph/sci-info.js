@@ -4,7 +4,7 @@
 // Vrstice so po pomembnosti za trenutni vnos: prve tri so vidne, ostale pod »Več«. Vse izračuna kalkulator sam
 // (CAS in numerika), brez strežnika. Brez DOM razen SVG-niza (testi v test/sci-info.test.js).
 import { analyze, solutionTex, polyCoeffs } from "./scisolve.js";
-import { evaluate, compileLine, formatNumber, primeFactors, factorsTex, exactTex, mixedTex } from "./scicore.js";
+import { evaluate, compileLine, formatNumber, primeFactors, factorsTex, exactTex, mixedTex, usesAngles } from "./scicore.js";
 import { molarMass } from "./toolscore.js";
 import { MASSES } from "./pse-data.js";
 import { siUnit, unitTexInner, OFFSET_TEMP } from "./enote.js";
@@ -406,7 +406,9 @@ export function periodOf(fn, env) {
   for (const P of cand) if (xs.every((x, i) => !Number.isFinite(fx[i]) || Math.abs(f(x + P) - fx[i]) < 1e-9 * Math.max(1, Math.abs(fx[i])))) return P;
   return 0;
 }
-const angleTex = (P, env, nt, num) => (env.deg ? `${num(P)}^{\\circ}` : env.grad ? `${num(P)}^{\\mathrm{g}}` : nt(P));
+// Koti v podatkih vedno v radianih z π (j 28. 11.: »ničle itd pri periodičnih funkcijah s pi, ne s stopinjami«):
+// v DEG in GRA je x v stopinjah oz. gradih, zapis pa je isti kot v radianih (180° → π, 200g → π).
+const angleTex = (P, env, nt) => nt(env.deg ? (P * Math.PI) / 180 : env.grad ? (P * Math.PI) / 200 : P);
 /** x = a + kP za vsako rešitev v eni periodi [0, P). */
 function periodicTex(roots, P, env, nt, num) {
   const mod = (x) => {
@@ -415,8 +417,14 @@ function periodicTex(roots, P, env, nt, num) {
   };
   const one = [];
   for (const x of roots.map(mod).sort((a, b) => a - b)) if (!one.some((y) => Math.abs(y - x) < 1e-9)) one.push(x);
+  // enakomerno razmaknjene rešitve v enem zapisu: sin x → x = kπ (ne x₁ = 2kπ, x₂ = π + 2kπ)
+  const m = one.length;
+  if (m > 1 && one.every((a, i) => Math.abs(a - one[0] - (i * P) / m) < 1e-9 * Math.max(1, P))) return periodicTex([one[0]], P / m, env, nt, num);
   const pt = angleTex(P, env, nt, num);
-  const kP = /^\d|^\\pi/.test(pt) && pt !== "1" ? `k${/^\d/.test(pt) ? " \\cdot " : ""}${pt}` : `k \\cdot ${pt}`;
+  // 2π → 2kπ, 2π/3 → 2kπ/3 (kot v učbeniku), sicer k · P
+  const pi = /^(\d*)\\pi$/.exec(pt);
+  const fr = /^\\frac\{(\d*)\\pi\}\{(\d+)\}$/.exec(pt);
+  const kP = pi ? `${pi[1]}k\\pi` : fr ? `\\frac{${fr[1]}k\\pi}{${fr[2]}}` : /^\d/.test(pt) && pt !== "1" ? `k \\cdot ${pt}` : `k \\cdot ${pt}`;
   const at = (a) => (a ? `${angleTex(a, env, nt, num)} + ${kP}` : kP);
   return `${one.map((a, i) => `x${one.length > 1 ? `_{${i + 1}}` : ""} = ${at(a)}`).join(",\\ ")},\\ k \\in \\mathbb{Z}`;
 }
@@ -681,6 +689,27 @@ function asymptotesTex(f, dom, holes, nt, num = nt) {
   }
   out.push(...ys);
   return out.length ? [...new Set(out)].join(",\\ ") : null;
+}
+
+/** Oznaka osi x malega grafa z merskimi enotami kotov (j 28. 11.: »naj bo označeno, kdaj je mali graf v radianih in
+ * kdaj v stopinjah«): periodična »x: −360° … 360°« / »x: −2π … 2π« / »x: −400ᵍ … 400ᵍ«, druga s koti »x [°]«, »x [rad]«,
+ * »x [ᵍ]«; brez kotov null. angle: "deg" | "rad" | "grad". */
+export function axisLabel(plot, angle, funcs = {}, comma = true) {
+  if (!plot || !usesAngles(plot.fn, funcs)) return null;
+  const unit = angle === "deg" ? "°" : angle === "grad" ? "ᵍ" : "";
+  const P = plot.period;
+  if (!(Number.isFinite(P) && P > 0)) return `x [${unit || "rad"}]`;
+  const dec = (x) => String(+x.toFixed(4)).replace(".", comma ? "," : ".");
+  let v = unit ? `${dec(P)}${unit}` : null;
+  if (!v) {
+    const r = P / Math.PI;
+    for (let d = 1; d <= 12 && !v; d++) {
+      const n = Math.round(r * d);
+      if (n > 0 && Math.abs(r * d - n) < 1e-9) v = `${n === 1 ? "" : n}π${d > 1 ? `/${d}` : ""}`;
+    }
+    v ||= dec(P);
+  }
+  return `x: −${v} … ${v}`;
 }
 
 /** Mali graf funkcije (SVG niz): okno okoli ničel, vsaj [−5, 5]; y po vzorcih, brez skokov čez pole; prazne točke. */

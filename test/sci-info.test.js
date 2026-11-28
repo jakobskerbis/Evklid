@@ -1,7 +1,7 @@
 // Podatki v praznem delu zaslona kalkulatorja (public/graph/sci-info.js; načrt z dopolnitvami ChatGPT, 27. 11. 2026).
 import test from "node:test";
 import assert from "node:assert/strict";
-import { infoFor, plotSvg, INFO_FIRST, divergesAt, fnOf } from "../public/graph/sci-info.js";
+import { infoFor, plotSvg, INFO_FIRST, divergesAt, fnOf, axisLabel } from "../public/graph/sci-info.js";
 import { analyze } from "../public/graph/scisolve.js";
 
 const env = { vars: {}, funcs: {}, ans: 0, deg: false };
@@ -47,7 +47,7 @@ test("sprejemni preizkus: x² − 1 → e^x, e^x nima realnih ničel (brez lažn
 test("kotne: perioda v izbranem načinu, tangens z navpičnimi asimptotami, v DEG brez odvoda", () => {
   assert.equal(row(info("sin(x)"), "sc.infoPeriod").tex, "2\\pi");
   const deg = info("sin(x)", { deg: true });
-  assert.equal(row(deg, "sc.infoPeriod").tex, "360^{\\circ}");
+  assert.equal(row(deg, "sc.infoPeriod").tex, "2\\pi"); // j 28. 11.: koti v podatkih vedno s π
   assert.equal(row(deg, "sc.infoDeriv"), undefined);
   assert.equal(row(info("sin(x)"), "sc.infoRange").tex, "[-1;\\,1]");
   assert.match(row(info("tan(x)"), "sc.infoAsym").tex, /x = \\tfrac\{\\pi\}\{2\} \+ k\\pi/);
@@ -170,7 +170,7 @@ test("navpične asimptote: 1/tan x pri kπ, cos x · tan x brez, |x|/x le vodora
   assert.equal(as("(x^2-1)/(x-1)"), null);
   assert.deepEqual(info("(x^2-1)/(x-1)").plot.holes, [[1, 2]]);
   // v stopinjah in pri analizi enako pravilo
-  assert.equal(as("1/tan(x)", { deg: true }), "x = k \\cdot 180^{\\circ},\\ k \\in \\mathbb{Z}");
+  assert.equal(as("1/tan(x)", { deg: true }), "x = k\\pi,\\ k \\in \\mathbb{Z}");
   assert.equal(as("cos(x)*tan(x)", { deg: true }), null);
   assert.equal(as("1/tan(x)", { profile: "ana" }), "x = k\\pi,\\ k \\in \\mathbb{Z}");
 });
@@ -188,7 +188,7 @@ test("navpične asimptote: ostali poli, robovi in vgnezdeni imenovalci", () => {
   assert.equal(as("(x^2-4)/(x^2-x-2)"), "x = -1,\\ y = 1"); // pri 2 prazna točka
   assert.equal(as("exp(1/x)"), "x = 0,\\ y = 1"); // le z desne proti +∞
   // vgnezden imenovalec: 1/√(sin x) ima pola z ene strani pri 2kπ in π + 2kπ (pri 3π/2 f ni definirana)
-  assert.equal(as("tan(x)+1/sqrt(sin(x))"), "x_{1} = k \\cdot 2\\pi,\\ x_{2} = \\tfrac{\\pi}{2} + k \\cdot 2\\pi,\\ x_{3} = \\pi + k \\cdot 2\\pi,\\ k \\in \\mathbb{Z}");
+  assert.equal(as("tan(x)+1/sqrt(sin(x))"), "x_{1} = 2k\\pi,\\ x_{2} = \\tfrac{\\pi}{2} + 2k\\pi,\\ x_{3} = \\pi + 2k\\pi,\\ k \\in \\mathbb{Z}");
   assert.equal(row(info("1/ln(abs(x))"), "sc.infoDomain").tex, "x \\in (-\\infty;\\,0) \\cup (0;\\,\\infty),\\ x \\neq -1,\\ 1");
   // pregled #1227: deljenje veže le naslednji člen (1/2 sin x = ½ sin x, 1/x(x + 1) = (x + 1)/x)
   for (const s of ["1/2sin(x)", "1/2cos(x)", "1:2x", "1÷2x"]) {
@@ -200,10 +200,10 @@ test("navpične asimptote: ostali poli, robovi in vgnezdeni imenovalci", () => {
   // deljenje s potenco oklepaja: imenovalec ostane (x − 1)², definicijsko območje in asimptota ostaneta
   assert.equal(as("1/(x-1)^2"), "x = 1,\\ y = 0");
   assert.equal(row(info("(x+2)/(x-1)^2"), "sc.infoDomain").tex, "x \\neq 1");
-  assert.equal(as("1/(2*sin(x)-1)^2"), "x_{1} = \\tfrac{\\pi}{6} + k \\cdot 2\\pi,\\ x_{2} = \\tfrac{5\\pi}{6} + k \\cdot 2\\pi,\\ k \\in \\mathbb{Z}");
+  assert.equal(as("1/(2*sin(x)-1)^2"), "x_{1} = \\tfrac{\\pi}{6} + 2k\\pi,\\ x_{2} = \\tfrac{5\\pi}{6} + 2k\\pi,\\ k \\in \\mathbb{Z}");
   // enakomerno razmaknjeni poli v enem zapisu; 1/(tan x − 1) ima pol pri π/4 + kπ (ne pri π/2 + kπ)
   assert.equal(as("1/sin(x)"), "x = k\\pi,\\ k \\in \\mathbb{Z}");
-  assert.equal(as("tan(x)+cot(x)"), "x = k \\cdot \\tfrac{\\pi}{2},\\ k \\in \\mathbb{Z}");
+  assert.equal(as("tan(x)+cot(x)"), "x = \\tfrac{k\\pi}{2},\\ k \\in \\mathbb{Z}");
   assert.equal(as("1/(tan(x)-1)"), "x = \\tfrac{\\pi}{4} + k\\pi,\\ k \\in \\mathbb{Z}");
   // ² ³ s tipkovnice in imenovalci, definirani šele daleč od 0; eksponent z x ne ugibamo (brez lažnega x ≠ −20)
   assert.equal(as("1/x²"), "x = 0,\\ y = 0");
@@ -259,4 +259,23 @@ test("mali graf kotne funkcije: dve periodi okoli 0 tudi v DEG (j 28. 11.: sin x
   assert.ok(Math.abs(r.plot.period - Math.PI) < 1e-9);
   // nekotna funkcija ostane na oknu okoli ničel
   assert.equal(info("x^2-4").plot.period, 0);
+});
+
+test("koti v podatkih s π tudi v DEG in GRA; enakomerne rešitve v enem zapisu; oznaka osi malega grafa (j 28. 11.)", () => {
+  const sinDeg = info("sin(x)", { deg: true });
+  assert.equal(row(sinDeg, "sc.infoRoots").tex, "x = k\\pi,\\ k \\in \\mathbb{Z}");
+  assert.equal(row(info("sin(x)"), "sc.infoRoots").tex, "x = k\\pi,\\ k \\in \\mathbb{Z}");
+  assert.equal(row(info("tan(x)", { deg: true }), "sc.infoAsym").tex, "x = \\tfrac{\\pi}{2} + k\\pi,\\ k \\in \\mathbb{Z}");
+  assert.equal(row(info("sin(x)=0.5", { deg: true }), "sc.infoSolutions").tex, "x_{1} = \\tfrac{\\pi}{6} + 2k\\pi,\\ x_{2} = \\tfrac{5\\pi}{6} + 2k\\pi,\\ k \\in \\mathbb{Z}");
+  assert.equal(row(info("sin(3x)", { deg: true }), "sc.infoPeriod").tex, "\\tfrac{2\\pi}{3}");
+  const e = { vars: {}, funcs: {}, ans: 0, grad: true };
+  const g = infoFor("cos(x)", analyze("cos(x)", { ...e, comma: true, live: true }), { comma: true, env: e });
+  assert.equal(row(g, "sc.infoPeriod").tex, "2\\pi");
+  // oznaka osi: stopinje, radiani, gradi; brez kotov nič
+  assert.equal(axisLabel(sinDeg.plot, "deg"), "x: −360° … 360°");
+  assert.equal(axisLabel(info("sin(x)").plot, "rad"), "x: −2π … 2π");
+  assert.equal(axisLabel(info("sin(3x)").plot, "rad"), "x: −2π/3 … 2π/3");
+  assert.equal(axisLabel(g.plot, "grad"), "x: −400ᵍ … 400ᵍ");
+  assert.equal(axisLabel({ fn: "x+sin(x)", period: 0 }, "deg"), "x [°]");
+  assert.equal(axisLabel(info("x^2-4").plot, "deg"), null);
 });
