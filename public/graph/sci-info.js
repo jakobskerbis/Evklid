@@ -4,7 +4,7 @@
 // Vrstice so po pomembnosti za trenutni vnos: prve tri so vidne, ostale pod »Več«. Vse izračuna kalkulator sam
 // (CAS in numerika), brez strežnika. Brez DOM razen SVG-niza (testi v test/sci-info.test.js).
 import { analyze, solutionTex, polyCoeffs } from "./scisolve.js";
-import { evaluate, compileLine, formatNumber, primeFactors, factorsTex, exactTex, mixedTex } from "./scicore.js";
+import { evaluate, compileLine, formatNumber, primeFactors, factorsTex, exactTex, mixedTex, usesAngles, toFraction } from "./scicore.js";
 import { molarMass } from "./toolscore.js";
 import { MASSES } from "./pse-data.js";
 import { siUnit, unitTexInner, OFFSET_TEMP } from "./enote.js";
@@ -262,7 +262,7 @@ export function infoFor(text, r, { profile = null, comma = true, env: base = nul
     }
     if (p && p.length === 3 && p[0]) add("sc.infoVertex", `T(${nt(-p[1] / (2 * p[0]))}${sep}${nt(p[2] - (p[1] * p[1]) / (4 * p[0]))})`);
     if (P) add("sc.infoPeriod", angleTex(P, env, nt, num));
-    return rows.length ? { rows, plot: { fn, roots: roots.filter((x) => Math.abs(x) < 1e6), holes: [] } } : null;
+    return rows.length ? { rows, plot: { fn, roots: roots.filter((x) => Math.abs(x) < 1e6), holes: [], period: P } } : null;
   }
 
   // funkcija f(x)
@@ -340,7 +340,7 @@ export function infoFor(text, r, { profile = null, comma = true, env: base = nul
     // definicijsko območje ℝ pri polinomu ni novica: le pri ulomkih, korenih, logaritmih
     if (topic === "poly" && R["sc.infoDomain"] && !dom?.excl?.length && !dom?.cond) delete R["sc.infoDomain"];
     for (const k of ORDER) if (R[k] || (k === "sc.infoRoots" && R.roots)) rows.push(R[k] || R.roots);
-    return rows.length ? { rows, plot: { fn: s, roots: roots.filter((x) => Math.abs(x) < 1e6), holes } } : null;
+    return rows.length ? { rows, plot: { fn: s, roots: roots.filter((x) => Math.abs(x) < 1e6), holes, period: P } } : null;
   }
   return null;
 }
@@ -406,7 +406,18 @@ export function periodOf(fn, env) {
   for (const P of cand) if (xs.every((x, i) => !Number.isFinite(fx[i]) || Math.abs(f(x + P) - fx[i]) < 1e-9 * Math.max(1, Math.abs(fx[i])))) return P;
   return 0;
 }
-const angleTex = (P, env, nt, num) => (env.deg ? `${num(P)}^{\\circ}` : env.grad ? `${num(P)}^{\\mathrm{g}}` : nt(P));
+// Koti v podatkih vedno v radianih z π (j 28. 11.: »ničle itd pri periodičnih funkcijah s pi, ne s stopinjami«):
+// v DEG in GRA je x v stopinjah oz. gradih, zapis pa je isti kot v radianih (180° → π, 200g → π).
+// Cel kot v stopinjah ali gradih je vedno ulomek π (1° = π/180, pregled 28. 11.: tan(x − 1) → π/180 + kπ, ne 0,01745 …).
+const angleTex = (P, env, nt) => {
+  const half = env.deg ? 180 : env.grad ? 200 : 0;
+  if (!half) return nt(P);
+  const f = toFraction(Math.round(P * 1e7) / 1e7 / half, 2 * half); // kot iz reševanja: 0,99999999999° → 1°
+  if (!f || !f.p) return nt((P * Math.PI) / half);
+  const a = Math.abs(f.p);
+  const num = `${a === 1 ? "" : a}\\pi`;
+  return `${f.p < 0 ? "-" : ""}${f.q === 1 ? num : `\\frac{${num}}{${f.q}}`}`;
+};
 /** x = a + kP za vsako rešitev v eni periodi [0, P). */
 function periodicTex(roots, P, env, nt, num) {
   const mod = (x) => {
@@ -415,9 +426,15 @@ function periodicTex(roots, P, env, nt, num) {
   };
   const one = [];
   for (const x of roots.map(mod).sort((a, b) => a - b)) if (!one.some((y) => Math.abs(y - x) < 1e-9)) one.push(x);
+  // enakomerno razmaknjene rešitve v enem zapisu: sin x → x = kπ (ne x₁ = 2kπ, x₂ = π + 2kπ)
+  const m = one.length;
+  if (m > 1 && one.every((a, i) => Math.abs(a - one[0] - (i * P) / m) < 1e-9 * Math.max(1, P))) return periodicTex([one[0]], P / m, env, nt, num);
   const pt = angleTex(P, env, nt, num);
-  const kP = /^\d|^\\pi/.test(pt) && pt !== "1" ? `k${/^\d/.test(pt) ? " \\cdot " : ""}${pt}` : `k \\cdot ${pt}`;
-  const at = (a) => (a ? `${angleTex(a, env, nt, num)} + ${kP}` : kP);
+  // 2π → 2kπ, 2π/3 → 2kπ/3 (kot v učbeniku), sicer k · P
+  const pi = /^(\d*)\\pi$/.exec(pt);
+  const fr = /^\\frac\{(\d*)\\pi\}\{(\d+)\}$/.exec(pt);
+  const kP = pi ? `${pi[1]}k\\pi` : fr ? `\\frac{${fr[1]}k\\pi}{${fr[2]}}` : `k \\cdot ${pt}`;
+  const at = (a) => (Math.abs(a) > 1e-9 * Math.max(1, P) ? `${angleTex(a, env, nt, num)} + ${kP}` : kP);
   return `${one.map((a, i) => `x${one.length > 1 ? `_{${i + 1}}` : ""} = ${at(a)}`).join(",\\ ")},\\ k \\in \\mathbb{Z}`;
 }
 
@@ -683,10 +700,33 @@ function asymptotesTex(f, dom, holes, nt, num = nt) {
   return out.length ? [...new Set(out)].join(",\\ ") : null;
 }
 
+/** Oznaka osi x malega grafa z merskimi enotami kotov (j 28. 11.: »naj bo označeno, kdaj je mali graf v radianih in
+ * kdaj v stopinjah«): periodična »x: −360° … 360°« / »x: −2π … 2π« / »x: −400ᵍ … 400ᵍ«, druga s koti »x [°]«, »x [rad]«,
+ * »x [ᵍ]«; brez kotov null. angle: "deg" | "rad" | "grad". */
+export function axisLabel(plot, angle, funcs = {}, comma = true) {
+  if (!plot || !usesAngles(plot.fn, funcs)) return null;
+  const unit = angle === "deg" ? "°" : angle === "grad" ? "ᵍ" : "";
+  const P = plot.period;
+  if (!(Number.isFinite(P) && P > 0)) return `x [${unit || "rad"}]`;
+  const dec = (x, d = 4) => String(+x.toFixed(d)).replace(".", comma ? "," : ".");
+  let v = unit ? `${dec(P, 1)}${unit}` : null;
+  if (!v) {
+    const r = P / Math.PI;
+    for (let d = 1; d <= 12 && !v; d++) {
+      const n = Math.round(r * d);
+      if (n > 0 && Math.abs(r * d - n) < 1e-9) v = `${n === 1 ? "" : n}π${d > 1 ? `/${d}` : ""}`;
+    }
+    v ||= dec(P);
+  }
+  return `x: −${v} … ${v}`;
+}
+
 /** Mali graf funkcije (SVG niz): okno okoli ničel, vsaj [−5, 5]; y po vzorcih, brez skokov čez pole; prazne točke. */
-export function plotSvg(fn, roots = [], { w = 280, h = 130, env = {}, holes = [] } = {}) {
-  const lo = Math.min(-5, ...roots.map((x) => x - 2), ...holes.map((p) => p[0] - 2));
-  const hi = Math.max(5, ...roots.map((x) => x + 2), ...holes.map((p) => p[0] + 2));
+export function plotSvg(fn, roots = [], { w = 280, h = 130, env = {}, holes = [], period = 0 } = {}) {
+  // periodična (kotna) funkcija: dve periodi okoli 0 (j, 28. 11.: sin x v DEG je bil na [−5°; 5°] ravna črta)
+  const per = Number.isFinite(period) && period > 0;
+  const lo = per ? -period : Math.min(-5, ...roots.map((x) => x - 2), ...holes.map((p) => p[0] - 2));
+  const hi = per ? period : Math.max(5, ...roots.map((x) => x + 2), ...holes.map((p) => p[0] + 2));
   const f = fnOf(fn, env);
   const xs = [];
   const ys = [];
@@ -725,7 +765,11 @@ export function plotSvg(fn, roots = [], { w = 280, h = 130, env = {}, holes = []
   const ay = `<line class="ax" x1="0" y1="${Y(0).toFixed(1)}" x2="${w}" y2="${Y(0).toFixed(1)}"/>`;
   // pika kot pot ničelne dolžine z okroglim koncem: ostane okrogla tudi pri raztegnjenem viewBox
   const dot = (x, y, cls) => `<path class="${cls}" d="M${X(x).toFixed(1)} ${Y(y).toFixed(1)}h0"/>`;
-  const dots = roots.filter((x) => x >= lo && x <= hi).map((x) => dot(x, 0, "dot")).join("");
-  const empty = holes.map(([x, y]) => dot(x, y, "hole") + dot(x, y, "hole-in")).join("");
+  // periodična: ničle in prazne točke se ponovijo na vsaki periodi v oknu
+  // (x najprej v [−P/2; P/2], nato −P, 0, P: vse kopije v oknu [−P; P], tudi za ničlo daleč od 0)
+  const copies = (x) => (per ? [-1, 0, 1].map((k) => x - period * Math.round(x / period) + k * period) : [x]);
+  const inWin = (x) => x >= lo - 1e-9 * (hi - lo) && x <= hi + 1e-9 * (hi - lo);
+  const dots = [...new Set(roots.flatMap(copies).filter(inWin).map((x) => dot(x, 0, "dot")))].join("");
+  const empty = [...new Set(holes.flatMap(([x, y]) => copies(x).map((c) => [c, y])).filter(([x]) => inWin(x)).map(([x, y]) => dot(x, y, "hole") + dot(x, y, "hole-in")))].join("");
   return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">${ax}${ay}<path d="${d}"/>${dots}${empty}</svg>`;
 }
