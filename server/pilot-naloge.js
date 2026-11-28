@@ -19,7 +19,9 @@ import { cleanText } from "./settings.js";
 import { schoolAccess } from "./schools.js";
 import { ensureKnowledgeTables } from "./zbirke.js";
 import { audit } from "./dnevnik-dostopov.js";
+import { ageOn, ADULT_AGE, SELF_CONSENT_PREFIX, minAgeFromYear } from "./accounts/age.js";
 import { quizState, wtpState, impactReport, mountPilotImpact, block, shownN } from "./pilot-ucinek.js";
+import { pilotMetricsWeekly, pilotCohortSize, PRAG } from "./pilot-meritve.js";
 
 export const SCAN_CONDITIONS = ["light", "dark", "tilted", "handwritten", "printed", "board", "screen", "crumpled", "many", "notation"];
 // Pet delov aplikacije za preizkus; »exams« (NPZ in matura) ima, kdor ima ta zavihek, drugi »3d«.
@@ -132,19 +134,50 @@ export function migratePilotTasks(db) {
 const hasParents = (db) => !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'parents'").get();
 const hasCol = (db, t, c) => db.prepare(`PRAGMA table_info(${t})`).all().some((x) => x.name === c);
 
-// Ali je profil v pilotu: "all" (EVKLID_PILOT_VSI=1), "account" (skrbnik označil račun), "school" (pilotna šola) ali null.
+// Pilot samo s polnoletnimi (j 2026-11-25, kartica N-11): imetnik računa z znanim (veljavnim) datumom rojstva, star
+// vsaj 18 let. Brez datuma rojstva (stari računi) ne vemo, zato ne.
+export const adultParent = (p, now = new Date()) => !!p?.birth_date && ageOn(p.birth_date, now) >= ADULT_AGE;
+
+// Ali je profil zanesljivo polnoleten: lasten profil imetnika (soglasje »Zame«) po imetnikovem datumu rojstva, a samo,
+// če se letnica profila ujema z imetnikovo (sicer to ni imetnik: npr. profil gosta, ki se je ob prijavi preselil v
+// starševski račun, ali otrokov profil, pomotoma dodan kot »Zame«, pregled #1121). Vsak drug profil samo po letnici,
+// previdno (rojen 31. 12.): v letu 18. rojstnega dne še ne. Brez letnice ne.
+export function pilotAdult(db, studentId, now = new Date()) {
+  try {
+    if (!hasCol(db, "students", "birth_year")) return false;
+    const s = db.prepare(`SELECT birth_year, ${hasCol(db, "students", "parent_id") ? "parent_id" : "NULL AS parent_id"} FROM students WHERE id = ?`).get(studentId);
+    if (!s) return false;
+    if (s.parent_id != null && hasParents(db) && hasCol(db, "parents", "birth_date")) {
+      const self = db
+        .prepare("SELECT 1 FROM consents WHERE student_id = ? AND parent_id = ? AND substr(text, 1, ?) = ? LIMIT 1")
+        .get(studentId, s.parent_id, SELF_CONSENT_PREFIX.length, SELF_CONSENT_PREFIX);
+      const p = self ? db.prepare("SELECT birth_date FROM parents WHERE id = ?").get(s.parent_id) : null;
+      if (p?.birth_date && Number(String(p.birth_date).slice(0, 4)) === s.birth_year) return adultParent(p, now);
+    }
+    return (minAgeFromYear(s.birth_year, now) ?? -1) >= ADULT_AGE;
+  } catch {
+    return false;
+  }
+}
+
+// Ali je profil v pilotu: "all" (EVKLID_PILOT_VSI=1, ne v produkciji), "account" (skrbnik označil račun), "school" (pilotna šola) ali null.
+// Mlajši od 18 let (ali brez znane starosti) ni v pilotu, tudi če je račun označen (naloge, preizkus, fotografije, mnenja).
 export function pilotMember(db, studentId) {
-  if (process.env.EVKLID_PILOT_VSI === "1") return "all";
+  // EVKLID_PILOT_VSI=1: vsi profili, samo za preizkus na lastnem računalniku (v produkciji se ne upošteva, pregled #1121).
+  if (process.env.EVKLID_PILOT_VSI === "1" && process.env.NODE_ENV !== "production") return "all";
+  let kind = null;
   try {
     if (hasParents(db) && hasCol(db, "parents", "pilot_at")) {
       const r = db.prepare("SELECT p.pilot_at FROM students s JOIN parents p ON p.id = s.parent_id WHERE s.id = ?").get(studentId);
-      if (r?.pilot_at) return "account";
+      if (r?.pilot_at) kind = "account";
     }
   } catch {}
-  try {
-    if (schoolAccess(db, studentId)?.plan === "pilot") return "school";
-  } catch {}
-  return null;
+  if (!kind) {
+    try {
+      if (schoolAccess(db, studentId)?.plan === "pilot") kind = "school";
+    } catch {}
+  }
+  return kind && pilotAdult(db, studentId) ? kind : null;
 }
 
 // Fotografijo smemo ponuditi samo profilu z znano letnico rojstva, ki ni mlajši od 15 (previdno kot pri soglasjih:
@@ -340,7 +373,9 @@ export function pilotTasksReport(db) {
   return {
     members,
     minGroup: MIN_GROUP,
-    impact: impactReport(db, MIN_GROUP),
+    // Preizkus znanja in meritve pilota (N-09, N-10): šele od PRAG (5) učencev naprej.
+    impact: impactReport(db, PRAG, { invited: pilotCohortSize(db, (id) => !!pilotMember(db, id)) }),
+    meritve: pilotMetricsWeekly(db, { isMember: (id) => !!pilotMember(db, id) }),
     scans,
     features,
     notes: showNotes ? notes : [],
@@ -365,10 +400,58 @@ export function pilotTasksMarkdown(r) {
   const q = r.impact?.quiz;
   const w = r.impact?.wtp;
   if (q) {
-    lines.push(``, `## Preizkus znanja`, ``, `- začetni preizkusi skupaj: ${q.nPre}; povprečje brez stropa ${pc(q.pre)}`, `- oba preizkusa (isti učenci) skupaj: ${q.nPaired}; brez stropa prej ${pc(q.pairedPre)}, po 14 dneh ${pc(q.pairedPost)}, razlika ${q.diff == null ? "–" : `${q.diff >= 0 ? "+" : "−"}${Math.round(Math.abs(q.diff) * 100)} odstotnih točk`}`);
-    const c = q.ceiling;
+    const pp = (d) => (d == null ? "–" : `${d >= 0 ? "+" : "−"}${Math.round(Math.abs(d) * 100)} odstotnih točk`);
+    lines.push(
+      ``,
+      `## Preizkus znanja (matura MAT, ${q.total} nalog, obliki A in B)`,
+      ``,
+      `- potek: povabljeni ${q.invited ?? "–"}, začeli prvi preizkus ${q.started}, končali prvega ${q.nPre}, končali oba ${q.nPaired}, odpadli ${q.dropped} (drugega niso končali v ${q.dropDays} dneh po odprtju), še lahko končajo ${q.waiting}`,
+      `- začetni preizkusi skupaj: ${q.nPre}; povprečje ${pc(q.pre)}`,
+      `- oba preizkusa (isti učenci) skupaj: ${q.nPaired}; prej ${pc(q.pairedPre)}, po 14 dneh ${pc(q.pairedPost)}, razlika ${pp(q.diff)}${q.ci95 ? ` (95 % interval ${pp(q.ci95[0])} do ${pp(q.ci95[1])})` : ""}`,
+    );
+    if (q.diffBalanced != null) lines.push(`- razlika kot povprečje obeh vrstnih redov (izravna razliko med oblikama): ${pp(q.diffBalanced)}`);
+    lines.push(`- to je napredek udeležencev (vaja v aplikaciji, priprava na maturo, ponovljen preizkus skupaj), brez primerjalne skupine ni učinek samega Evklida; deleži po sklopih so samo opisni`);
+    for (const f of Object.keys(q.byForm || {})) if (q.byForm[f]) lines.push(`- začetni preizkus z obliko ${f}: ${q.byForm[f].n}, povprečje ${pc(q.byForm[f].avg)}`);
+    for (const k of Object.keys(q.byOrder || {})) if (q.byOrder[k]) lines.push(`- vrstni red ${k[0]} nato ${k[1]}: ${q.byOrder[k].n}, prej ${pc(q.byOrder[k].pre)}, po ${pc(q.byOrder[k].post)}, razlika ${pp(q.byOrder[k].diff)}`);
     if (q.allSkip) lines.push(`- preizkusi samo z »Ne vem« (niso v povprečjih): ${q.allSkip}`);
-    if (c) lines.push(`- strop (prvič 6/6, dodatne težje naloge; posebej): ${c.nPre}, oba preizkusa ${c.nPaired}, prej ${pc(c.pairedPre)}, po 14 dneh ${pc(c.pairedPost)}, razlika ${c.diff == null ? "–" : `${c.diff >= 0 ? "+" : "−"}${Math.round(Math.abs(c.diff) * 100)} odstotnih točk`}`);
+    if (q.concept) {
+      const c = q.concept;
+      const row = (name, o) =>
+        o.hidden ? `| ${name} | ${o.candidates} | premalo kandidatov | | | |` : `| ${name} | ${o.candidates} | ${o.n} | ${o.improved} | ${pc(o.share)} | ${o.ci95 ? `${pc(o.ci95[0])}–${pc(o.ci95[1])}` : "–"} |`;
+      lines.push(
+        ``,
+        `Glavni izid: naloge, ki jih je kandidat v prvem preizkusu rešil napačno ali s »Tega še ne znam«, in koliko jih je drugič brez pomoči rešil pravilno (vzporedna naloga istega koncepta); kandidatov: ${c.candidates}, mediana časa med preizkusoma: ${c.gapDays ?? "–"} dni.`,
+        `Izločeni, ker so imeli pri drugem preizkusu pomoč: ${q.helped} (zaznana pomoč v Evklidu ${q.helpedAuto}, sami povedali ${q.helpedSelf}); s pomočjo pri prvem preizkusu (ostanejo v izidu): ${q.helpedPre}.`,
+        ``,
+        `| Skupina konceptov | Kandidatov | Napačno prvič | Pravilno drugič | Delež | 95 % interval |`,
+        `|---|---|---|---|---|---|`,
+        row("vmes vadil v Evklidu", c.practiced),
+        row("vmes ni vadil", c.notPracticed),
+        row("skupaj", c.all),
+        ``,
+        `Interval je preozek (podcenjuje negotovost), ker naloge istega kandidata niso neodvisne; razlika vadil / ni vadil ni dokaz učinka (kandidat sam izbere, kaj vadi). Skupina se pokaže od ${PRAG} kandidatov, delež in interval od 10 nalog naprej.`,
+      );
+    }
+    if (q.slots) {
+      lines.push(``, `| Sklop kataloga | Prej | Po |`, `|---|---|---|`);
+      for (const sl of q.slots) lines.push(`| ${sl.sklop} | ${pc(sl.pre)} | ${pc(sl.post)} |`);
+    }
+  }
+  const m = r.meritve;
+  if (m) {
+    lines.push(``, `## Meritve pilota (člani: ${m.n}; tedenski posnetek do ${m.asOf || "–"})`, ``);
+    if (m.few) lines.push(`Premalo članov za prikaz (vsaj ${m.min}).`);
+    else {
+      for (const [k, v] of Object.entries(m.retention)) lines.push(`- vrnitev ${k.slice(1)}. dan in teden po njem: ${v.pct == null ? `– (${v.eligible} upravičenih)` : `${pc(v.pct)} (${v.returned} od ${v.eligible})`}`);
+      const i = m.independence;
+      lines.push(`- samostojnost (pravilno v 1. poskusu brez namiga in inštruktorja): ${i.pct == null ? `– (učencev ${i.students})` : `${pc(i.pct)} (${i.independent} od ${i.tasks} nalog, ${i.students} učencev)`}`);
+      if (m.ai) lines.push(`- strošek AI na učenca na 30 dni: povprečje ${m.ai.eurPerStudentMonth ?? "–"} €, mediana ${m.ai.medianEurPerStudentMonth ?? "–"} € (z AI ${m.ai.users} od ${m.ai.students})`);
+      if (m.errors.length) {
+        lines.push(``, `| Tema | Učencev | Nalog | Napačno v 1. poskusu |`, `|---|---|---|---|`);
+        for (const e of m.errors) lines.push(`| ${e.topic} | ${e.students} | ${e.tasks} | ${pc(e.wrongPct)} |`);
+      }
+      if (m.hiddenTopics) lines.push(``, `Tem z manj kot ${m.min} učenci (niso prikazane): ${m.hiddenTopics}.`);
+    }
   }
   if (w) {
     const dist = (o) => (o ? Object.entries(o).filter(([, n]) => n).map(([k, n]) => `${k} ${n}`).join(", ") || "–" : "–");
@@ -388,7 +471,7 @@ function isImage(dataUrl) {
 }
 
 // ---------- API ----------
-export function mountPilotTasks(app, store, { loadStudent, progress = null, accounts = false, isLocalRequest = () => false, topicFor = () => null, nextTopicFor = () => null, owner = null }) {
+export function mountPilotTasks(app, store, { loadStudent, progress = null, accounts = false, isLocalRequest = () => false, owner = null }) {
   const db = store.db;
   migratePilotTasks(db);
   const isAdmin = (req) => (accounts ? !!req.parent?.is_admin : isLocalRequest(req));
@@ -408,9 +491,6 @@ export function mountPilotTasks(app, store, { loadStudent, progress = null, acco
     member,
     reply,
     reward: (sid, item) => reward(db, progress, sid, item, XP.quiz),
-    topicFor,
-    nextTopicFor,
-    langFor: (sid) => progress?.taskLang?.(sid) || "sl",
     accounts,
     isMember: (id) => !!pilotMember(db, id),
     confirmOwner: owner?.confirmOwner || (async () => false),
@@ -585,9 +665,14 @@ export function mountPilotTasks(app, store, { loadStudent, progress = null, acco
     if (!isAdmin(req)) return res.status(403).json({ error: "Samo za skrbnika." });
     const email = typeof req.body?.email === "string" ? req.body.email.trim() : "";
     if (!email || email.length > 200) return res.status(400).json({ error: "Vpiši e-naslov." });
-    const p = db.prepare("SELECT id FROM parents WHERE email = ?").get(email);
+    const p = db.prepare(`SELECT id, ${hasCol(db, "parents", "birth_date") ? "birth_date" : "NULL AS birth_date"} FROM parents WHERE email = ?`).get(email);
     if (!p) return res.status(404).json({ error: "Račun s tem e-naslovom ne obstaja." });
     const on = req.body?.on !== false;
+    // Pilot samo s polnoletnimi (N-11): račun brez datuma rojstva ali mlajšega imetnika ne dodamo (odstranitev gre vedno).
+    if (on && !adultParent(p)) {
+      audit(db, { req, parentId: req.parent?.id ?? null, actor: "admin", action: "pilot_add_minor", ok: false, target: `parent:${p.id}` });
+      return res.status(400).json({ error: p.birth_date ? "Imetnik računa je mlajši od 18 let. Pilot je samo za polnoletne." : "Račun nima datuma rojstva. Pilot je samo za polnoletne: imetnik naj datum vpiše v zavihku Račun.", minor: true });
+    }
     if (on) db.prepare("UPDATE parents SET pilot_at = COALESCE(pilot_at, datetime('now')) WHERE id = ?").run(p.id);
     else endAccountPilot(db, p.id); // tudi član iz kode vabila izgubi mejo pilota (pilot-meja.js isPilotParent, #819)
     audit(db, { req, parentId: req.parent?.id ?? null, actor: "admin", action: on ? "pilot_add" : "pilot_remove", target: `parent:${p.id}` });

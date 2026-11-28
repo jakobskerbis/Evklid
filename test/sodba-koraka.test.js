@@ -208,3 +208,152 @@ test("pregled sodbe: navodila zajamejo »Pravilno« pred namigom, dvom o praviln
   assert.match(system, /casting doubt on a right result or step/);
   assert.match(system, /pointing at a wrong place while the real error is elsewhere/);
 });
+
+// AUDIT-059 (pregled prevzema 6): popravek kjerkoli v odgovoru (»Prav. Preverimo: … kar ni 11.«, »Ja.\n\nNe, počakaj«,
+// druga vrednost iste neznanke) pomeni, da sodba ni prezrta.
+test("pregled prevzema 6 (AUDIT-059): vprašanje-predlog, popravek kasneje v odgovoru ni prezrta sodba", () => {
+  const R = String.raw;
+  const pre = presolve("Reši enačbo $2x + 3 = 11$.", { narrow: false });
+  const v = stepVerdict("x = 6?", { pre, prevTutor: "Koliko je x?" });
+  assert.equal(v?.wrong, true);
+  assert.equal(v.asked, true);
+  const fixes = [
+    R`Prav. Preverimo: $2 \cdot 6 + 3 = 15$, kar ni 11.`,
+    "Da. Ampak preveri: koliko je $2 \\cdot 6 + 3$?",
+    R`Seveda. Vstavimo: $2 \cdot 6 + 3 = 15 \neq 11$`,
+    "Seveda. Vstavimo: 2 · 6 + 3 = 15 ≠ 11",
+    R`Odlično! Vstavi zdaj $x = 6$ v enačbo.`,
+    R`Drži. Preizkus pa pokaže $15$, zato $x = 4$.`,
+    R`Ja.
+
+Ne, počakaj: $x = 4$.`,
+    "Correct! Let's check: $2 \\cdot 6 + 3 = 15$.",
+    R`Tako je. Torej $x = 4$.`,
+  ];
+  for (const a of fixes) assert.equal(verdictIgnored(a, v), false, a);
+  // vrednost z vejico za njo (»x = 6, ne?«) se prav tako primerja
+  const vNe = stepVerdict("x = 6, ne?", { pre, prevTutor: "Koliko je x?" });
+  for (const a of ["Točno! Ne, oprosti: $x = 4$.", "Yes. Wait, no: $x = 4$."]) assert.equal(verdictIgnored(a, vNe), false, a);
+  for (const a of ["Da, pravilno!", "Tako je.", "Točno! Zdaj naredi še naslednjo nalogo.", R`Da, pravilno! $x = 6$.`]) assert.equal(verdictIgnored(a, v), true, a);
+});
+
+// AUDIT-059 (pregled prevzema 5): vprašanje-predlog z eno vrednostjo (»x = 5?«) je trditev; kot prezrta sodba šteje le
+// izrecna potrditev (»Da, pravilno!«), ne »Pravilno je $x = 4$.«, »Dobro razmišljaš, a …«, »Ne, …« ali »Vstavi …«.
+test("pregled prevzema 5 (AUDIT-059): vprašanje-predlog, ponovni odgovor le ob izrecni potrditvi", async () => {
+  for (const t of ["x = 5?", "a je x = 5?", "je 7 · 8 = 54?", "mogoče 12?", "x = 4, ne?"]) assert.equal(isClaim(t, ""), true, t);
+  for (const t of ["x = 4 ali x = 6?", "x = 6 ali 4?", "Koliko je 7 · 8?", "Kaj pa 3x = 15?"]) assert.equal(isClaim(t, ""), false, t);
+  const pre = presolve("Reši enačbo $2x + 3 = 11$.", { narrow: false });
+  for (const q of ["x = 5?", "a je x = 5?", "je 7 · 8 = 54?"]) {
+    const v = stepVerdict(q, { pre, prevTutor: "Koliko je x?" });
+    assert.equal(v?.wrong, true, q);
+    assert.equal(v.asked, true, q);
+    for (const a of ["Da, pravilno!", "Tako je.", "Točno!"]) assert.equal(verdictIgnored(a, v), true, `${q} ${a}`);
+    for (const a of ["Pravilno je $x = 4$.", "Dobro razmišljaš, a $8 : 2 = 4$.", "Ne, $x = 5$ ne da 11.", "Vstavi $x = 5$ v enačbo. Koliko dobiš?", "Točno – $x = 4$.", "Da, ampak preveri še enkrat."]) assert.equal(verdictIgnored(a, v), false, `${q} ${a}`);
+  }
+  assert.equal(stepVerdict("x = 5", { pre }).asked, undefined);
+  const R = String.raw;
+  for (const a of [R`Prav. Preverimo: $2 \cdot 6 + 3 = 15$, kar ni 11.`]) assert.equal(verdictIgnored(a, stepVerdict("x = 6?", { pre })), false, a);
+  for (const t of ["x = 5", "7 · 8 = 54", "12"]) assert.equal(isClaim(t, ""), true, t);
+  const { openDb } = await import("../server/db.js");
+  const run = async (msg) => {
+    const store = openDb(":memory:");
+    const calls = [];
+    const answers = ["Kaj narediš najprej?", "Da, pravilno! Zdaj pa naslednji korak."];
+    const META = '\n<<META subject=MAT topic="x" error=0 mode=A flag=none done=0>>';
+    const streamFn = async ({ system, mode, onText }) => {
+      const isFix = String(system).startsWith("You fix");
+      calls.push(isFix ? "fix" : "chat");
+      const text = isFix ? "OK" : (answers.shift() ?? "Ne, preveri še enkrat.") + META;
+      if (!isFix) onText(text);
+      return { content: [{ type: "text", text }], text, stopReason: "end_turn", model: modeParams(mode).model, usage: { input_tokens: 100, output_tokens: 20 } };
+    };
+    const reviewCreateFn = async (p) => ({ content: [{ type: "text", text: "OK" }], stop_reason: "end_turn", model: p.model, usage: { input_tokens: 10, output_tokens: 5 } });
+    const server = createApp(store, { streamFn, reviewCreateFn }).listen(0);
+    const base = `http://127.0.0.1:${server.address().port}`;
+    const call = async (p, b) => {
+      const r = await fetch(base + p, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(b || {}) });
+      return (r.headers.get("content-type") || "").includes("json") ? r.json() : r.text();
+    };
+    try {
+      const s = await call("/api/students", { name: "Ana", settings: {} });
+      const c = await call(`/api/students/${s.id}/conversations`, {});
+      await call(`/api/conversations/${c.id}/messages`, { text: "Reši 2x + 3 = 11" });
+      await call(`/api/conversations/${c.id}/messages`, { text: msg });
+      return calls.filter((x) => x === "chat").length;
+    } finally {
+      server.close();
+    }
+  };
+  assert.ok((await run("x = 5")) >= 3, "»x = 5« sproži ponovni odgovor");
+  assert.ok((await run("x = 5?")) >= 3, "»x = 5?« z odgovorom »Da, pravilno!« tudi");
+});
+
+// Pregled prevzema 4: ERROR_MARK in verdictIgnored kot na main (»kar ni 0«, »Poskusi znova z drugo nalogo« ob potrditvi).
+test("pregled prevzema 4 (AUDIT-059): potrditev napačnega koraka ostane prezrta sodba", () => {
+  const v5 = stepVerdict("x = 5", { pre: presolve("Reši enačbo $2x + 3 = 11$.") });
+  assert.equal(v5.wrong, true);
+  for (const a of ["Odlično, $x = 5$, kar ni 0, zato je dovoljeno.", "Ne, ne, kar dobro: $x = 5$ je pravilno.", "Rešitev $x = 5$ je pravilna. Poskusi znova z drugo nalogo.", "Odlično, poskusi še naslednjo!", "Rešitev $x = 5$ drži, saj $x \\neq 0$."]) assert.equal(verdictIgnored(a, v5), true, a);
+  assert.equal(verdictIgnored("Ne drži: $2 \\cdot 5 + 3 = 13$. Preveri še enkrat.", v5), false);
+});
+
+test("pregled prevzema 3 (AUDIT-069): naloga z eno operacijo ne sodi učenčevega koraka (ohlapno zaokroževanje)", () => {
+  for (const [t, s] of [["Izračunaj $10/3$.", "3,4"], ["Izračunaj $2/3$.", "0,6"], ["Izračunaj $3/4$.", "0,8"]]) {
+    assert.equal(stepVerdict(s, { pre: presolve(t, { narrow: false }) }), null, `${t} ${s}`);
+  }
+});
+
+test("sodba koraka AUDIT-092: naloga brez realne rešitve, »x = ±2« in popoln odgovor brez oštevilčenja", () => {
+  const o = (naloga) => ({ pre: presolve(naloga, { first: true }), prevTutor: "Kaj narediš?" });
+  // Pregled pilota 26. 11.: pri $x^6 = -64$ je bila sodba null, napačno rešitev je presojal le model.
+  for (const ans of ["x = 2", "x = -2", "x = ±2", "$x = \\pm 2$"]) {
+    const v = verdict(ans, o("Reši enačbo $x^6 = -64$."));
+    assert.equal(v?.wrong, true, ans);
+    assert.match(v.finding, /has no real solution/);
+  }
+  assert.match(verdict("x = ±2", o("Reši enačbo $x^6 = -64$.")).finding, /x = ±2 is wrong/);
+  assert.equal(verdict("x = 2", o("Reši enačbo $x^2 = -4$."))?.wrong, true);
+  assert.equal(verdict("Ni rešitve.", o("Reši enačbo $x^6 = -64$.")), null);
+  // Popoln odgovor ni »partial« (sicer zavrnitev pravilnega ne bi sprožila ponovnega odgovora).
+  for (const [naloga, ans] of [["Reši enačbo $x^2 - 5x + 6 = 0$.", "x = 2 in x = 3"], ["Reši enačbo $x^2 - 5x + 6 = 0$.", "x = 2, x = 3"], ["Reši (x - 2)^2 = 9", "x = 5 ali x = -1"], ["Reši enačbo $x^2 = 4$.", "x = ±2"], ["Reši enačbo $x^2 = 4$.", "$x = \\pm 2$"]]) {
+    const v = verdict(ans, o(naloga));
+    assert.equal(v?.wrong, false, ans);
+    assert.equal(v.partial, false, ans);
+  }
+  // Nepopoln ostane nepopoln, napačen ostane napačen.
+  assert.equal(verdict("x = 5", o("Reši (x - 2)^2 = 9")).partial, true);
+  assert.equal(verdict("x = ±2", o("Reši enačbo $x^2 - 5x + 6 = 0$."))?.wrong, true);
+  assert.equal(verdict("x = 2, x = 3, x = 4", o("Reši enačbo $x^2 - 5x + 6 = 0$."))?.wrong, true);
+});
+
+test("sodba koraka AUDIT-092 (pregled): brez lažnega alarma pri preizkusu vrednosti, drugi enačbi inštruktorja in kompleksnih rešitvah", () => {
+  const v = (naloga, ans, prevTutor = "Kaj narediš?") => stepVerdict(ans, { pre: presolve(naloga, { first: true }), prevTutor });
+  // Inštruktor je medtem zastavil drugo enačbo (tudi takšno, ki je koda ne zna rešiti).
+  assert.equal(v("Reši enačbo $x^2 = -4$.", "x = 2", "Poskusiva najprej preprostejšo: $x^2 = 4$. Koliko je x?"), null);
+  assert.equal(v("Reši enačbo $x^2 = -4$.", "x = ±2", "Recimo, da bi bilo $x^2 = 4$. Kaj bi bil x?"), null);
+  assert.equal(v("Reši enačbo $x^6 = -64$.", "x = 2", "Kaj pa enačba $x^6 = 64$?"), null);
+  // Vrednost v razlagi je preizkus, ne odgovor.
+  assert.equal(v("Reši enačbo $x^2 = -4$.", "x = ±2 ni rešitev, ker je kvadrat vedno pozitiven"), null);
+  assert.equal(v("Reši enačbo $x^6 = -64$.", "Ti si rekel x = 2, ampak 2^6 = 64. Torej ni rešitve."), null);
+  assert.equal(v("Reši enačbo $x^2 + 2x + 5 = 0$.", "Teme je pri x = -1. Ni ničel."), null);
+  // Kompleksne rešitve in »2 ± 1« niso realna vrednost 2.
+  assert.equal(v("Reši v množici kompleksnih števil: $x^2 + 2x + 5 = 0$", "x = -1 ± 2i"), null);
+  assert.equal(v("Reši enačbo $x^2 = -4$.", "x = 2 i"), null);
+  assert.equal(v("Reši enačbo $x^2 - 4x + 3 = 0$.", "x = 2 ± 1"), null);
+  // Presledek za ± je popoln odgovor.
+  for (const ans of ["x = ± 2", "x = +- 2", "x = +/- 2"]) assert.equal(v("Reši enačbo $x^2 = 4$.", ans)?.partial, false, ans);
+});
+
+test("sodba koraka AUDIT-092 (pregled 2): stransko vprašanje inštruktorja brez »=« ne da sodbe, ponovljena naloga jo", () => {
+  const v = (naloga, prevTutor, ans) => stepVerdict(ans, { pre: presolve(naloga, { first: true }), prevTutor });
+  assert.equal(v("Reši enačbo $x^2+2x+5=0$.", "Pri katerem x je $(x+1)^2$ enako 0?", "x = -1"), null);
+  assert.equal(v("Reši enačbo $x^2+2x+5=0$.", "Koliko je $-\\frac{b}{2a}$?", "x = -1"), null);
+  assert.equal(v("Reši enačbo $x^2+4=0$.", "Vstavi kakšno število, npr. 2, in poglej, kaj dobiš.", "x = 2"), null);
+  assert.equal(v("Reši enačbo $x^6=-64$.", "Koliko je $\\sqrt[6]{64}$? Zapiši kot x.", "x = 2"), null);
+  assert.equal(v("Reši enačbo $x^6 = -64$.", "Kaj pa, če bi bilo na desni strani $x^6 = -64$ pozitivno število? Koliko bi bil x?", "x = 2"), null);
+  assert.equal(v("Reši enačbo $x^2+2x+5=0$.", "Pri katerem x je leva stran enačbe $x^2 + 2x + 5 = 0$ najmanjša?", "x = -1"), null);
+  assert.equal(v("Reši enačbo $x^2+2x+5=0$.", "Pri katerem x je leva stran najmanjša?", "x = -1"), null);
+  assert.equal(v("Reši enačbo $x^6 = -64$.", "Rešujemo $x^{6} = -64$. Kaj dobiš?", "x = 2")?.wrong, true);
+  const t0 = performance.now();
+  v("Reši enačbo $x^6 = -64$.", "Kaj narediš?", "x = 2" + " ".repeat(50000) + "a");
+  assert.ok(performance.now() - t0 < 300);
+});

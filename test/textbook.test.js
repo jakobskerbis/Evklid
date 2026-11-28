@@ -5,7 +5,8 @@ import path from "node:path";
 import { openDb } from "../server/db.js";
 import { createApp } from "../server/app.js";
 import { getTopic, listPaths, topicOrder, sameTopics } from "../server/curriculum.js";
-import { parseLesson, lessonView, searchTextbook, tocView, simsFor, LESSONS_DIR, lessonSummaryForPrompt, expandFormulaBlocks, hideSolutions, formulaSheetSections } from "../server/textbook.js";
+import { parseLesson, lessonView, searchTextbook, tocView, simsFor, LESSONS_DIR, lessonSummaryForPrompt, expandFormulaBlocks, hideSolutions, formulaSheetSections, hideQuickAnswers, splitQuickAnswer } from "../server/textbook.js";
+import { printPage } from "../server/textbook-print.js";
 import { checkLessonSource } from "../server/lesson-check.js";
 import { SIM_TOPICS, simsForTopic } from "../public/sim/katalog.js";
 import { hasEngine } from "../public/sim/index.js";
@@ -43,13 +44,16 @@ test("checkLessonSource: stanja osnutek / preverjeno / pregledano in polje pregl
     return { errors: r.errors.filter((e) => /stanje|pregled/.test(e)), warnings: r.warnings.filter((w) => /stanje|pregled/.test(w)) };
   };
   for (const s of ["osnutek", "preverjeno"]) assert.deepEqual(st(`stanje: ${s}`), { errors: [], warnings: [] }, s);
-  assert.deepEqual(st("stanje: pregledano\npregledal: Ana Novak"), { errors: [], warnings: [] });
+  // N-03: strokovni pregled mora biti dokazan v glavi (ime učitelja in datum pregleda), sicer je napaka.
+  assert.deepEqual(st("stanje: pregledano\npregledal: Ana Novak\npregledano: 2026-11-20"), { errors: [], warnings: [] });
+  assert.equal(st("stanje: pregledano\npregledal: Ana Novak").errors.length, 1, "pregledano brez datuma je napaka");
+  for (const d of ["20. 11. 2026", "2026-02-30", "2999-01-01"]) assert.equal(st(`stanje: pregledano\npregledal: Ana Novak\npregledano: ${d}`).errors.length, 1, `slab datum ${d}`);
   assert.equal(st("stanje: preverjen").errors.length, 1, "neznano stanje je napaka");
   assert.equal(st("").errors.length, 1, "brez stanja je napaka");
-  assert.equal(st("stanje: pregledano").warnings.length, 1, "pregledano brez imena učitelja je opozorilo");
+  assert.equal(st("stanje: pregledano\npregledano: 2026-11-20").errors.length, 1, "pregledano brez imena učitelja je napaka");
   assert.equal(st("stanje: preverjeno\npregledal: Ana Novak").warnings.length, 1, "ime učitelja brez stanja pregledano");
-  for (const ai of ["AI", "Claude Opus", "program"]) assert.equal(st(`stanje: pregledano\npregledal: ${ai}`).errors.length, 1, `AI ni pregledovalec: ${ai}`);
-  for (const ime of ["Kaia Kos", "Mihael Zupan", "Ana Čaić"]) assert.deepEqual(st(`stanje: pregledano\npregledal: ${ime}`).errors, [], `človek: ${ime}`);
+  for (const ai of ["AI", "Claude Opus", "program"]) assert.equal(st(`stanje: pregledano\npregledal: ${ai}\npregledano: 2026-11-20`).errors.length, 1, `AI ni pregledovalec: ${ai}`);
+  for (const ime of ["Kaia Kos", "Mihael Zupan", "Ana Čaić"]) assert.deepEqual(st(`stanje: pregledano\npregledal: ${ime}\npregledano: 2026-11-20`).errors, [], `človek: ${ime}`);
   assert.equal(parseLesson(src("stanje: pregledano\npregledal: Ana Novak")).meta.pregledal, "Ana Novak");
 });
 
@@ -293,6 +297,18 @@ test("lesson: »Premisli« blocks and per-option feedback »~«", () => {
   assert.equal(expandFormulaBlocks(md, "plain"), "Vprašanje: Kaj je $2+2$?\nOdgovor: Je $4$.");
 });
 
+test("check-lesson: lekcija s simulacijo pove, kaj naj učenec v njej naredi (kakovost §1.9)", () => {
+  const id = "MAT-SS-1/mnozice";
+  assert.ok(simsFor(id).length, "tema ima simulacijo");
+  const base = fs.readFileSync(path.join(LESSONS_DIR, "FIZ-OS-9/upor-in-ohmov-zakon.md"), "utf8").replace(/^.*simulacij.*$/gim, "");
+  const sim = (src, topic = id) => checkLessonSource(src, topic).warnings.filter((w) => /kaj naj učenec v njej naredi/.test(w));
+  assert.equal(sim(base).length, 1, "brez stavka o simulaciji je opozorilo");
+  assert.ok(sim(base)[0].includes(`»${simsForTopic(id)[0].title}«`), "opozorilo imenuje simulacijo iz kataloga, ne »Interaktivni poskus« iz glave");
+  const s = base.replace(/\n## Rešeni primeri/, "\nV simulaciji spodaj izberi A = soda števila in opazuj presek.\n\n## Rešeni primeri");
+  assert.equal(sim(s).length, 0, "stavek »V simulaciji spodaj …« zadošča");
+  assert.equal(sim(base, null).length, 0, "brez teme ni znano, ali je simulacija");
+});
+
 test("university lessons: check-lesson asks for the exam-oriented structure", () => {
   const base = fs.readFileSync(path.join(LESSONS_DIR, "FIZ-OS-9/upor-in-ohmov-zakon.md"), "utf8");
   const id = fs.readdirSync(LESSONS_DIR).filter((d) => d.startsWith("UNI-")).flatMap((d) => fs.readdirSync(path.join(LESSONS_DIR, d)).map((f) => `${d}/${f.replace(/\.md$/, "")}`))[0];
@@ -317,4 +333,76 @@ test("worked example »zadnji korak je tvoj«: steps stay open, only the last st
   // fraza v zadnjem koraku (KEM-TEK-SS, kemijska vez, Primer 3)
   const kem = hideSolutions("### Primer 3: voda\nIzračunaj.\n\n**Rešitev:**\n\n1. Prvi.\n2. Zadnji korak je tvoj: vstavi.\n\n<div class=\"tb-think\">x</div>\n");
   assert.match(kem, /<details class="tb-solution" open><summary>Skrij rešitev<\/summary>/);
+});
+
+// A5 (profil A): odgovor hitrega vprašanja »Preveri: … ? (…)« je v aplikaciji za gumbom, v PDF-ju in tisku ostane izpisan.
+test("quick checks »Preveri: …?«: answer hidden behind »Pokaži odgovor« in the app, visible in print/PDF", async () => {
+  const ans = (html) => [...html.matchAll(/<details class="tb-ans"><summary>Pokaži odgovor<\/summary>\n\n([\s\S]*?)\n\n<\/details>/g)].map((m) => m[1]);
+  const md = [
+    "Preveri: kaj je nasprotni dogodek dogodka »vsaj eno jajce je počeno«? (Obe jajci sta celi.)",
+    "*Preveri:* koliko je $|-7| + (-7)$? *(Odgovor: $0$.)*",
+    "**Preveri:** Ali je reakcija eksotermna? *Odgovor: da, toplota gre iz sistema.*",
+    "*Preveri:* kolikšna je osnovna perioda $y = \\tan 2x$? *Odgovor:* $\\frac{\\pi}{2}$.",
+    "*Preveri:* ali iz $f'(c) = 0$ sledi ekstrem? *Ne: $f(x) = x^3$ ima $f'(0) = 0$.*",
+    "*Hitro preveri:* kako zapišeš $x \\le 7$? ($(-\\infty, 7]$.)",
+    "*Preveri:* reši $x^2 = 5x$. (Iz $x(x - 5) = 0$ sledi $x_1 = 0$ in $x_2 = 5$.)",
+  ].join("\n\n");
+  const html = hideQuickAnswers(md);
+  assert.deepEqual(ans(html), [
+    "Obe jajci sta celi.",
+    "*Odgovor: $0$.*",
+    "*Odgovor: da, toplota gre iz sistema.*",
+    "*Odgovor:* $\\frac{\\pi}{2}$.",
+    "*Ne: $f(x) = x^3$ ima $f'(0) = 0$.*",
+    "$(-\\infty, 7]$.",
+    "Iz $x(x - 5) = 0$ sledi $x_1 = 0$ in $x_2 = 5$.",
+  ]);
+  // vprašanje (z oklepaji v formuli) ostane vidno nad gumbom
+  assert.match(html, /^\*Preveri:\* koliko je \$\|-7\| \+ \(-7\)\$\?\n<details class="tb-ans">/m);
+  assert.match(html, /^Preveri: kaj je nasprotni dogodek dogodka »vsaj eno jajce je počeno«\?\n<details/m);
+  // oklepaji, ki niso odgovor, ostanejo (točke naloge, opomba za trditvijo, namig, »Preveri« sredi vrstice ali v koraku,
+  // odgovor brez oklepaja ali oznake, vprašanje brez odgovora)
+  const keep = [
+    "b) Koliko evrov znaša takrat mesečni račun? (1 točka)",
+    "*Preizkus:* za ploščati kondenzator dobiš $C = \\varepsilon S/d$. (Znano iz elektrostatike.)",
+    "*Preveri:* koliko je $3 \\cdot 4$? (Namig: štej po tri.)",
+    "5. Preveri: brez faktorja bi dobil $0{,}18$ (dvakrat preveč).",
+    "Kje je podpora? Preveri, ali je res na sredini (enako daleč).",
+    "*Preizkus:* katere črke imajo navpično os? Vse tri: T, A in T.",
+    "*Hiter preizkus:* kolikšna je rezultanta na sliki?",
+  ].join("\n\n");
+  assert.equal(hideQuickAnswers(keep), keep);
+  assert.equal(splitQuickAnswer("izračunaj ploščino trikotnika (s Heronovo formulo)."), null, "oklepaj sredi naloge ni odgovor");
+  assert.equal(splitQuickAnswer("izračunaj ploščino. (Heron: $S = 6$.)")?.ans, "Heron: $S = 6$.");
+  // PDF in tutor: besedilo je nespremenjeno; v aplikaciji (lessonView) je skrito
+  assert.doesNotMatch(expandFormulaBlocks(md, "print"), /tb-ans/);
+  assert.match(expandFormulaBlocks(md, "print"), /\? \(Obe jajci sta celi\.\)/);
+  const view = lessonView("MAT-SS-4/verjetnost").lesson.sections.map((s) => s.md).join("\n");
+  assert.match(view, /»vsaj eno od dveh jajc je počeno«\?\n<details class="tb-ans"><summary>Pokaži odgovor<\/summary>\n\nObe jajci sta celi\.\n\n<\/details>/);
+  assert.doesNotMatch(view, /\? \(Obe jajci sta celi\.\)/);
+  const pdf = printPage("MAT-SS-4", "verjetnost");
+  assert.match(pdf, /Obe jajci sta celi\./);
+  assert.doesNotMatch(pdf, /tb-ans|Pokaži odgovor/);
+});
+
+// Vse lekcije: vsaka vrstica z oznako hitrega vprašanja in izrecnim »Odgovor:« je skrita; nobeno besedilo se ne izgubi
+// (razen oklepajev okoli odgovora).
+test("quick checks in all lessons: every explicit »Odgovor:« is hidden and no text is lost", () => {
+  const LABEL = /^(?:\*\*|\*)?(?:Preveri|Hitro preveri|Preveri v eni vrstici|Hitro preverjanje|Preverba|Preizkus|Hitri preizkus|Hiter preizkus|Hitra preizkušnja|Hitri test|Hiter test|Hitro vprašanje|Kratko vprašanje|Vprašanje za sproti):/;
+  const bare = (s) => s.replace(/<details class="tb-ans"><summary>Pokaži odgovor<\/summary>|<\/details>|[\s()*]/g, "");
+  let hidden = 0;
+  const missed = [];
+  for (const d of fs.readdirSync(LESSONS_DIR).filter((d) => fs.statSync(path.join(LESSONS_DIR, d)).isDirectory())) {
+    for (const f of fs.readdirSync(path.join(LESSONS_DIR, d)).filter((f) => f.endsWith(".md"))) {
+      const src = fs.readFileSync(path.join(LESSONS_DIR, d, f), "utf8");
+      assert.equal(bare(hideQuickAnswers(src)), bare(src), `${d}/${f}: besedilo se ne sme izgubiti`);
+      src.split("\n").forEach((line, i) => {
+        if (!LABEL.test(line)) return;
+        if (hideQuickAnswers(line) !== line) hidden++;
+        else if (/Odgovor:|Rešitev:/.test(line)) missed.push(`${d}/${f}:${i + 1}`);
+      });
+    }
+  }
+  assert.deepEqual(missed, [], "vrstica z »Odgovor:« mora imeti odgovor za gumbom");
+  assert.ok(hidden >= 550, `skritih odgovorov: ${hidden}`);
 });

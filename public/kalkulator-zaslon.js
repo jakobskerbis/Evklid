@@ -94,9 +94,21 @@ function izidi() {
 function dodajIzid({ text, src }) {
   text = String(text ?? "").trim();
   if (!NUM_TEXT.test(text)) return;
-  const l = [{ text, src }, ...izidi().filter((x) => !(x.text === text && x.src === src))].slice(0, 12);
+  shraniIzide([{ text, src }, ...izidi().filter((x) => !(x.text === text && x.src === src))].slice(0, 12));
+}
+function shraniIzide(l) {
   try {
     localStorage.setItem(izidiKey(), JSON.stringify(l));
+  } catch {}
+}
+// × na čipu »Nedavno«: odstrani samo ta izid (isto besedilo in isti zavihek, kot ga dodajIzid ne podvoji)
+function odstraniIzid({ text, src }) {
+  shraniIzide(izidi().filter((x) => !(x.text === text && x.src === src)));
+}
+// koš Znanstvenega počisti tudi skupno zgodovino (čipi »Nedavno«, ponudba v meniju »Dodaj« Grafičnega)
+function pocistiIzide() {
+  try {
+    localStorage.removeItem(izidiKey());
   } catch {}
 }
 async function insertIntoCalc(text, o) {
@@ -126,6 +138,8 @@ function calcTool(mode) {
         sharedGraph: () => graphShown?.shared() || null,
         recent: izidi,
         addRecent: dodajIzid,
+        removeRecent: odstraniIzid,
+        clearRecent: pocistiIzide,
         // »Pretvori enote«: zavihek Orodja, pretvornik z vrednostjo izida
         convert: async (v) => (await setCalcMode("tools"))?.units?.(v),
         // »Pokaži na grafu«: rezultat z orodji grafičnega kalkulatorja, doda se trenutnemu grafu (graph/v-graf.js)
@@ -133,6 +147,19 @@ function calcTool(mode) {
         stage: () => (imaStopnjo(state.student) ? stopnja(state.student) : null), // brez zapisane stopnje vse
         // »Po korakih«: zaslon Skeniraj (public/scan/) ima reševalnik po korakih
         canSteps: () => !!document.getElementById("view-scan"),
+        // okno »Piši«: ročno napisan izraz prebere strežnik (server/app.js /calc/read, meje AI kot pri nalogah)
+        readInk: async (image, { comma = true } = {}) => {
+          if (!state.student?.id) throw new Error(t("pad.readFail"));
+          let r;
+          try {
+            r = await api(`/api/students/${state.student.id}/calc/read`, { method: "POST", body: { image, comma } });
+          } catch (e) {
+            if (currentLang() === "sl" || e?.body?.code) throw e; // blokada porabe (code) je že prevedena
+            throw new Error(t("pad.readFail"));
+          }
+          // sporočilo strežnika je slovensko: v drugih jezikih splošno besedilo (kot pad.js)
+          return currentLang() === "sl" || !r?.message ? r : { ...r, message: t("pad.readFail") };
+        },
         // goal: po »Razstavi« pokaže korake razstavljanja, ne poenostavljanja
         steps: async (text, goal) => {
           if (!document.getElementById("view-scan")) return;
@@ -218,7 +245,7 @@ function prefetchNext() {
       navigator.serviceWorker?.controller?.postMessage({
         type: "precache",
         urls: [
-          ...(heavy ? ["/3d/stran.js", "/3d/pregledovalnik.js", "/3d/scena.js", "/3d/3d.css", "/3d/nastavi.js", "/vendor/three/build/three.module.js", "/vendor/three/examples/jsm/controls/OrbitControls.js", "/vendor/three/examples/jsm/environments/RoomEnvironment.js"] : []),
+          ...(heavy ? ["/3d/stran.js", "/3d/pregledovalnik.js", "/3d/scena.js", "/3d/3d.css", "/3d/nastavi.js", "/3d/napake.js", "/3d/podpora.js", "/vendor/three/build/three.module.js", "/vendor/three/examples/jsm/controls/OrbitControls.js", "/vendor/three/examples/jsm/environments/RoomEnvironment.js"] : []),
           "/uvodni-ogled.js",
           ...(usageAdmin ? ["/poraba-skrbnik.js"] : []),
         ],

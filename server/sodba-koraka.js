@@ -11,7 +11,8 @@
 // skrito ugotovitvijo (brez modela za pregled). Ob dvomu koda ne sodi: raje brez sodbe kot napačna sodba.
 import { solve, texToText, prep } from "../public/scan/solvecore.js";
 import { parse, compile, calcText, joinThousands, digitGap } from "../public/graph/math.js";
-import { NOTE_TAG, claimNote, hasExercise, solverValues } from "./live-check.js";
+import { NOTE_TAG, claimNote, hasExercise, solverValues, noSolution, wordProblemResult, taskModified } from "./live-check.js";
+import { plainToTex, AMBIGUOUS_NUM, NOTE_AMBIGUOUS_NUM, OTHER_SYSTEM, noteLine } from "./besedilo-trditev.js";
 
 // Vrstica inštruktorja, ki navaja učenčevo (morda napačno) enačbo ali kandidata: ni enačba, ki se rešuje.
 const QUOTE_LINE = /napačn|narobe|ne velja|ni enako|nepravil|ni res|ne drži|ni prav|ni pravil|ne ustreza|ne zadošča|odpade|kandidat|definicijsk|tvoj|✗|(?<!\p{L})(?:napisal[a]?|zapisal[a]?|dobil[a]?|izračunal[a]?|ali (?:je|res|velja|drži)|wrong|incorrect|you wrote|you got|extraneous|reject)(?!\p{L})/iu;
@@ -125,6 +126,10 @@ const show = (s) => s.replace(/\s+/g, " ").trim();
 
 /** Napačni računi brez neznank v učenčevem sporočilu: [»a = b« z izračunano vrednostjo]. */
 export function arithmeticErrors(text) {
+  return arithmeticFindings(text).map((f) => f.text);
+}
+// Kot arithmeticErrors, z ugotovitvijo za opombo brez modela (AUDIT-060): [{ text, fact }].
+function arithmeticFindings(text) {
   const t = plain(text);
   if (t.length > 1500 || DOUBT_RE.test(t)) return [];
   const out = [];
@@ -141,7 +146,15 @@ export function arithmeticErrors(text) {
       const head = /^\s*([-−]?\d+(?:[.,]\d+)?)\s*[+\-−–*/·×÷:^]/.exec(parts[i + 1]);
       if (head && value(head[1]) !== null && same(parts[i], vals[i], head[1], value(head[1]))) continue;
       if (!same(parts[i], vals[i], parts[i + 1], vals[i + 1])) {
-        out.push(`the student's calculation $${show(parts[i])} = ${show(parts[i + 1])}$ is wrong: $${show(parts[i])} ${rel(vals[i], true)} ${fmt(vals[i]).replace(",", "{,}")}$`);
+        const right = `${show(parts[i])} ${rel(vals[i], true)} ${fmt(vals[i]).replace(",", "{,}")}`;
+        // Ura s piko, angleška vejica za tisočice, periodični zapis ali rezultat besedilne naloge (zaokroženo deljenje,
+        // pretvorba enot): sodba kot main, opombe brez modela pa ne (pregled B, b984798b3).
+        const unsure = [parts[i], parts[i + 1]].some((p) => AMBIGUOUS_NUM.test(p) || NOTE_AMBIGUOUS_NUM.test(p)) || wordProblemResult({ lhs: show(parts[i]), rhs: show(parts[i + 1]), lv: vals[i], rv: vals[i + 1] }) || otherMeaning(parts[i], parts[i + 1], vals[i + 1]);
+        out.push({
+          text: `the student's calculation $${show(parts[i])} = ${show(parts[i + 1])}$ is wrong: $${right}$`,
+          fact: unsure ? null : { kind: "calc", wrong: plainToTex(`${show(parts[i])} = ${show(parts[i + 1])}`), right: plainToTex(right) },
+          ...(unsure ? { quiet: true } : {}),
+        });
         break;
       }
     }
@@ -244,7 +257,7 @@ function tutorReference(prevTutor, v) {
 
 /** Sodba o enačbah v učenčevem sporočilu proti enačbi, ki se rešuje. { wrong: [], right: [] } */
 function equationFindings(text, pre, prevTutor) {
-  const out = { wrong: [], right: [] };
+  const out = { wrong: [], right: [], facts: [], rightFacts: [] };
   const problems = (pre?.problems || []).filter((p) => p.type === "equation");
   let ref = null;
   let v = null;
@@ -279,10 +292,15 @@ function equationFindings(text, pre, prevTutor) {
     const tol = Math.max(...roots.map((r) => decimalsTol(r.src)));
     const mine = roots.map((r) => r.x);
     const shown = `$${roots.map((r) => show(r.src)).join(", ")}$`;
-    if (sameSet(mine, ref.sols, tol)) out.right.push(`the student's solutions ${shown} are exactly the solutions of $${show(ref.eq)}$`);
+    if (sameSet(mine, ref.sols, tol)) {
+      out.right.push(`the student's solutions ${shown} are exactly the solutions of $${show(ref.eq)}$`);
+      out.rightFacts.push({ kind: "rightValue", stmt: plainToTex(roots.map((r) => show(r.src)).join(", ")), eq: plainToTex(show(ref.eq)) });
+    }
     // Vrednost, ki ni rešitev, je napaka; manjkajoča rešitev sama (nepopoln odgovor) ostane modelu.
-    else if (mine.some((x) => !has(ref.sols, x, tol)))
+    else if (mine.some((x) => !has(ref.sols, x, tol))) {
       out.wrong.push(`the student's solutions ${shown} are wrong: $${show(ref.eq)}$ gives ${setTex(v, ref.sols)}`);
+      out.facts.push({ kind: "value", wrong: plainToTex(roots.map((r) => show(r.src)).join(", ")), eq: plainToTex(show(ref.eq)), right: ref.sols.length ? plainToTex(setTex(v, ref.sols)) : null });
+    }
     return out;
   }
   for (const eq of studentEquations(text, v)) {
@@ -296,6 +314,7 @@ function equationFindings(text, pre, prevTutor) {
     const tol = decimalsTol(eq);
     if (sameSet(mine, sols, tol)) {
       out.right.push(`the student's equation $${show(eq)}$ has exactly the same solutions as ${refTex} (${setTex(v, sols)}), so this step is correct`);
+      out.rightFacts.push({ kind: "rightStep", stmt: plainToTex(show(eq)), eq: plainToTex(show(ref.eq)), right: sols.length ? plainToTex(setTex(v, sols)) : null });
       continue;
     }
     if (!mine.length) continue; // npr. x^2 + 1 = 0 kot en primer razcepa
@@ -304,6 +323,7 @@ function equationFindings(text, pre, prevTutor) {
     const disjoint = !mine.some((x) => has(sols, x, tol));
     if (disjoint || (lost && extra)) {
       out.wrong.push(`the student's equation $${show(eq)}$ does not follow from ${refTex}: it gives ${setTex(v, mine)}, but ${refTex} gives ${setTex(v, sols)}`);
+      out.facts.push({ kind: "step", wrong: plainToTex(show(eq)), eq: plainToTex(show(ref.eq)), right: sols.length ? plainToTex(setTex(v, sols)) : null });
     }
   }
   return out;
@@ -323,55 +343,284 @@ const RIGHT_RULES =
  * Sodba kode o učenčevem sporočilu (koraki, računi, končna vrednost). Vrne null, če koda ne more soditi, sicer
  * { wrong: bool, finding: besedilo za ponovni odgovor, note: skrita opomba za ta klic }.
  */
-export function stepVerdict(text, { pre = null, prevTutor = "" } = {}) {
+export function stepVerdict(text, opts = {}) {
+  // Vprašanje-predlog (»x = 5?«, »je 7 · 8 = 54?«, AUDIT-059): sodi se predlog brez uvodne besede in vprašaja;
+  // verdictIgnored ga šteje za prezrtega le ob izrecni potrditvi (pregled prevzema 5).
+  const t = String(text || "");
+  // vprašanje-predlog je kratek (isClaim: največ 120 znakov); daljše besedilo z »?« se ne razčlenjuje
+  if (!/\?\s*$/.test(t) || t.length > 300) return tagClaim(calcContext(explicitCalc(t, judgeStep(t, opts)), t, opts), t, opts);
+  let core = t
+    .replace(/^\s*(?:(?:a|ali)\s+)?(?:je\s+)?(?:(?:mogoče|morda|menda|torej|potem|rezultat(?:\s+je)?|to\s+je)\s+)?/iu, "")
+    .replace(/\s*\?+\s*$/, "")
+    .replace(ASK_TAIL, ""); // »7 · 8 = 54, ne?«, »x = 5, kajne?« (AUDIT-059, dokončanje)
+  // »7 · 8 je 54?« → »7 · 8 = 54«
+  if (!core.includes("=")) core = core.replace(/^([\d(][\d\s.,+\-−*·×:/()^]*?[\d)])\s+je\s+([-−+]?\d+(?:[.,]\d+)?)$/u, "$1 = $2");
+  // Golo število (»58?«) na inštruktorjevo vprašanje z računom (»Koliko je $7 \\cdot 8$?«) sodi le proti temu računu,
+  // ne proti nalogi: »58« je tam napačen odgovor na vmesni korak (pregled A, 7f565d941). Brez računa v vprašanju kot
+  // main (judgeStep: le končni rezultat naloge; FINAL_ASK ostane odstranjen).
+  const asks = /^[-−+]?\d+(?:[.,]\d+)?$/.test(core.trim()) && TUTOR_ASK.test(String(opts.prevTutor || "").slice(-400).trim());
+  let v = asks ? guessVerdict(core, opts) : null;
+  let fromAsk = !!v;
+  // Napačno glede na inštruktorjev račun, a število je morda odgovor na kaj drugega (pregled B, 018af7ab6): končni
+  // rezultat naloge (sodba kot main), število, ki je v pogovoru že vidno (naloga, prejšnji korak), ali vmesni korak
+  // (»Najprej množenje. Koliko je …?«) brez rešene računske naloge. Ob dvomu brez sodbe.
+  let unsure = false;
+  if (v?.wrong) {
+    const x = num(core.trim());
+    const fin = judgeStep(core, opts);
+    const arith = (opts.pre?.problems || []).some((p) => p.type === "arith");
+    const near = (y) => Math.abs(y - x) <= 1e-9 * Math.max(1, Math.abs(x));
+    // število je vrednost vidnega izraza (naloga »$2^{10}$« brez presolve, prejšnji korak): ni napaka (pregled A, b984798b3)
+    const shown = exprValues(`${opts.seen || ""}\n${opts.prevTutor || ""}`);
+    if (fin && !fin.wrong) v = null;
+    else if (x === null || seenNumbers(`${opts.prevTutor || ""}\n${opts.seen || ""}`).some(near) || shown.some(near) || (SUBSTEP.test(String(opts.prevTutor || "")) && !arith)) {
+      v = null;
+      unsure = true;
+    }
+    // sodba o inštruktorjevem računu velja ne glede na vprašanje (explicit) le, ko je ta račun poleg naloge edini izraz
+    // v pogovoru; sicer stroga pravila (verdictNoteSafe)
+    if (v) {
+      const others = [];
+      for (const z of shown) if (Math.abs(z - v.askValue) > 1e-9 * Math.max(1, Math.abs(z)) && !others.some((o) => Math.abs(o - z) <= 1e-9 * Math.max(1, Math.abs(z)))) others.push(z);
+      if (others.length > 1) fromAsk = false;
+    }
+  }
+  if (!v) fromAsk = false;
+  if (!v && !unsure) {
+    v = judgeStep(core, opts);
+    // Pravilno po kodi, a zavrnitev je lahko prav (kot main, brez ponovnega odgovora in opombe): golo število proti
+    // nalogi (inštruktor je morda medtem vprašal kaj drugega, pregled B) in zaokrožena decimalka (»0,5?« pri »zapiši
+    // kot ulomek«, »x = 1,41?«; pregled A). Le točen odgovor na inštruktorjev račun (guessVerdict) brani zavrnjenega.
+    const bare = /^[-−+]?\d+(?:[.,]\d+)?$/.test(core.trim());
+    if (v && !v.wrong && (bare || /\d[.,]\d/.test(core))) v = { ...v, noReject: true };
+  }
+  // vrednosti predloga (»x = 5«): drugačna vrednost iste neznanke v odgovoru je popravek
+  const vals = [...core.matchAll(/(?<![\p{L}\d])([a-zA-Z])(?:_?\d)?\s*=\s*([-−]?\d+(?:[.,]\d+)?)(?!\d|[.,]\d)/gu)].map((m) => ({ v: m[1], x: num(m[2]) }));
+  // število, ki ga je učenec predlagal (»54« v »7 · 8 = 54?« ali »54?«): inštruktorjev »Da, 54.« ga ponovi
+  const said = /(?:^|=)\s*([-−]?\d+(?:[.,]\d+)?)\s*$/.exec(core)?.[1];
+  if (said && !vals.length) vals.push({ v: null, x: num(said) });
+  if (v && fromAsk) v = { ...v, explicit: true };
+  else v = explicitCalc(core, v);
+  v = calcContext(v, t, opts);
+  v = tagClaim(v, t, opts);
+  return v ? { ...v, asked: true, vals } : v;
+}
+// Oblika učenčevega sporočila in dolžina pogovora za opombo (verdictNoteSafe).
+function tagClaim(v, t, opts) {
+  if (!v) return v;
+  const { askValue, ...rest } = v;
+  return { ...rest, bareClaim: bareClaim(t), ...(opts.turns != null ? { turns: opts.turns } : {}) };
+}
+// Račun, ki ima morda drug pomen (pregled A, b984798b3): dvojiški zapis (»1 + 1 = 10«: same ničle in enice) ali
+// »preliv« (vsota ali zmnožek naravnih števil manjši od člena: »22 + 5 = 3« na uri, po modulu). Sodba ostane, opombe ni.
+function otherMeaning(left, right, stated) {
+  const nums = `${left} ${right}`.match(/\d+(?:[.,]\d+)?/g) || [];
+  if (nums.length >= 2 && nums.every((n) => /^[01]+$/.test(n)) && nums.some((n) => n.length > 1)) return true;
+  const ops = String(left).replace(/\d+(?:[.,]\d+)?|\s/g, "");
+  const terms = (String(left).match(/\d+(?:[.,]\d+)?/g) || []).map((n) => Number(n.replace(",", ".")));
+  return /^[+*·×]+$/.test(ops) && Number.isInteger(stated) && stated >= 0 && terms.length >= 2 && stated < Math.max(...terms);
+}
+// Vrednosti izrazov, vidnih v pogovoru (»$2^{10}$«, »7 · 8 + 2«): [število].
+function exprValues(text) {
+  const out = [];
+  const t = plain(String(text || "").slice(-4000));
+  for (const m of t.matchAll(/[\d \t+\-−–*/^().,·×÷:√π]+/gu)) {
+    const p = m[0].replace(/^[\s,.:;]+|[\s,.:;]+$/g, "");
+    if (p.length > 80 || !/\d/.test(p) || !/\d\s*[+\-−–*/^·×÷:]\s*[\d(√π]|[√π]/.test(p)) continue;
+    const v = value(p);
+    if (v !== null) out.push(v);
+  }
+  return out;
+}
+// Sporočilo je le trditev (»x = 5«, »mislim x = 5?«, »54?«, »x = 3 ali x = -3«): brez drugih besed in števil z besedo.
+const CLAIM_FILLER = new Set(["mislim", "da", "je", "a", "ali", "torej", "potem", "dobim", "mogoče", "morda", "menda", "rezultat", "rešitev", "to", "hmm", "ok", "no", "pa", "ja", "so", "is", "it", "i", "think"]);
+function bareClaim(text) {
+  const t = String(text || "").trim();
+  if (!t || t.length > 120 || NUMBER_WORD.test(t)) return false;
+  const words = t.replace(/[?!.\s]+$/, "").replace(ASK_TAIL, "").split(/\s+/);
+  while (words.length && CLAIM_FILLER.has(words[0].toLowerCase().replace(/[,:]+$/, ""))) words.shift();
+  const rest = words.join(" ").replace(/(?<!\p{L})(?:ali|in|or|and)(?!\p{L})/giu, " ").replace(/(?<!\p{L})\p{L}(?:_\{?\d+\}?)?(?!\p{L})/gu, "x");
+  return /\d/.test(rest) && /^[\dx\s+\-−–*/·×^().,=]*$/.test(rest);
+}
+// Račun v drugem sistemu (ura, ostanki, dvojiško …) v učenčevem sporočilu ali prejšnjem inštruktorjevem odgovoru
+// (»Koliko bo ura čez 2 uri, če je zdaj 23?« → »23 + 2 = 1«) ali dvoumen zapis števila: sodba in ponovni odgovor kot
+// main, opombe brez modela pa ni (quiet; pregled B, b984798b3).
+function calcContext(v, text, { prevTutor = "" } = {}) {
+  if (!v || v.fact?.kind !== "calc") return v;
+  const w = String(v.fact.wrong || "");
+  if (OTHER_SYSTEM.test(text) || OTHER_SYSTEM.test(prevTutor) || AMBIGUOUS_NUM.test(w) || NOTE_AMBIGUOUS_NUM.test(w)) return { ...v, fact: null, quiet: true };
+  return v;
+}
+// Sodba o računu, ki ga je zapisal učenec (»je 7 · 8 = 54?«), ali o inštruktorjevem računu iz vprašanja (»Koliko je
+// $7 \cdot 8$?« → »54?«, zgoraj): opomba drži ne glede na to, kaj je inštruktor vprašal (explicit). Vrednost neznanke,
+// korak enačbe in golo število proti nalogi pa ne (verdictNoteSafe).
+function explicitCalc(text, v) {
+  if (!v || v.fact?.kind !== "calc") return v;
+  const t = String(text || "");
+  const left = t.includes("=") ? t.split("=")[0] : t.split(/(?<!\p{L})je(?!\p{L})/u)[0];
+  return /\d\s*(?:[-−+*·×:/^]|\\cdot|\\times|\\div|krat|plus|minus|deljeno)\s*[\d(]/u.test(left) ? { ...v, explicit: true } : v;
+}
+// Števila z besedo (sl, en) z običajnimi skloni, vrstilnimi in samostalniškimi oblikami (»trojka«, »desetica«).
+const NUMBER_WORD = new RegExp(
+  `(?<!\\p{L})(?:${[
+    "nič", "ničl\\p{L}*", "nul\\p{L}*",
+    "en", "ena", "eno", "ene", "eni", "enega", "enemu", "enim", "enkrat", "enic\\p{L}*", "enk\\p{L}*", "enojk\\p{L}*",
+    "dva", "dve", "dveh", "dvema", "dvakrat", "dvoj\\p{L}*", "dvak\\p{L}*",
+    "tri", "treh", "trem", "tremi", "trikrat", "troj\\p{L}*", "tretj\\p{L}*",
+    "štiri", "štirih", "štirim", "štirimi", "štiric\\p{L}*", "štirik\\p{L}*", "štirk\\p{L}*", "četrt\\p{L}*",
+    "pet", "petih", "petim", "petimi", "peti", "peta", "peto", "petega", "petem", "petic\\p{L}*", "petk\\p{L}*",
+    "šest", "šest[aeiou]\\p{L}*", "šestic\\p{L}*", "šestk\\p{L}*",
+    "sedem", "sedm\\p{L}*", "osem", "osm\\p{L}*", "devet\\p{L}*", "deset\\p{L}*",
+    "\\p{L}+najst\\p{L}*", "\\p{L}+deset\\p{L}*", "dvajset\\p{L}*", "sto", "stot\\p{L}*", "tisoč\\p{L}*", "milijon\\p{L}*",
+    "pol", "polovic\\p{L}*", "prv\\p{L}*", "drug[aeiou]?", "drug(?:ega|emu|em|im|ih|ima|imi)", "dvojn\\p{L}*",
+    "zero", "one", "once", "two", "twice", "three", "thrice", "four", "five", "six", "seven", "eight", "nine", "ten",
+    "eleven", "twelve", "\\p{L}+teen", "\\p{L}+ty", "hundred\\p{L}*", "thousand\\p{L}*", "half", "halve\\p{L}*",
+    "double\\p{L}*", "triple\\p{L}*", "first", "second", "third", "fourth", "fifth",
+  ].join("|")})(?!\\p{L})`,
+  "iu",
+);
+// Velelnik ali hipoteza v inštruktorjevem odgovoru: drugačna naloga ali vmesni korak.
+const TUTOR_MOVE = /(?<!\p{L})(?:naj|zamenja\p{L}*|odstran\p{L}*|zmanjša\p{L}*|poveča\p{L}*|del[ie]\p{L}*|razdeli\p{L}*|odšte\p{L}*|odvzem\p{L}*|prište\p{L}*|sešte\p{L}*|dodaj\p{L}*|pomnož\p{L}*|množ\p{L}*|vzem\p{L}*|brez|spremen\p{L}*|recimo|denimo|namesto|vstav\p{L}*|predpostav\p{L}*|kvadrir\p{L}*|koren\p{L}*|premakni\p{L}*|prenes\p{L}*|obrni\p{L}*|izpostav\p{L}*|pokrajš\p{L}*|okraj\p{L}*|če|če bi|kaj pa|kaj če|ko bi|pri|if|let|suppose|instead|what if|replace\p{L}*|remove\p{L}*|add\p{L}*|subtract\p{L}*|multipl\p{L}*|divide\p{L}*|without|take|plug\p{L}*|substitut\p{L}*)(?!\p{L})/iu;
+// Vmesni korak v inštruktorjevem vprašanju (»Najprej …«, »Nato …«, »prvi korak«).
+const SUBSTEP = /(?<!\p{L})(?:najprej|nato|potem|zdaj|sedaj|prv\p{L}*|drug\p{L}*|tretj\p{L}*|naslednj\p{L}*|korak\p{L}*|vmesn\p{L}*|first|then|next|step)(?!\p{L})/iu;
+// Števila, ki jih učenec v pogovoru že vidi (»$7 \\cdot 8$« → 7, 8).
+const seenNumbers = (t) =>
+  [...String(t || "").slice(-4000).matchAll(/(?<![\d.,{}])[-−]?\d+(?:(?:[.,]|\{,\})\d+)?(?![\d]|[.,]\d|\{,\})/g)]
+    .map((m) => Number(m[0].replace("−", "-").replace("{,}", ".").replace(",", ".")))
+    .filter(Number.isFinite);
+const ASK_TAIL = /(?:(?:\s*,\s*|\s+)(?:ali|ne|prav|kajne|a ne|res|right))+\s*$/iu;
+// Inštruktorjevo zadnje vprašanje je en sam račun (»Koliko je $7 \cdot 8$?«): golo število v učenčevem predlogu
+// (»54?«) je odgovor nanj in koda ga preračuna (AUDIT-059, dokončanje 27. 11.).
+const TUTOR_ASK = /(?:^|[.!:\n]\s*)[*_\s]*(?:koliko je|koliko dobiš|koliko znaša|what is|how much is)\s+(?:\$([^$\n]{1,80})\$|(\d[\d +\-−·×*/:()^,.]{0,60}?))\s*\?[*_\s]*$/iu;
+// Le inštruktorjevo vprašanje z računom (pregled B, 7f565d941): »Kaj dobiš na koncu?« po novi vaji ali »kaj če«
+// ni vezano na nalogo, zato golo število brez računa v vprašanju ostane brez sodbe (kot main).
+function guessVerdict(core, { prevTutor = "" } = {}) {
+  const c = String(core || "").trim();
+  if (!/^[-−+]?\d+(?:[.,]\d+)?$/.test(c)) return null;
+  const tail = String(prevTutor || "").slice(-400).trim();
+  const m = TUTOR_ASK.exec(tail);
+  if (!m) return null;
+  const raw = m[1] ?? m[2];
+  // Stopinje (»$45° + 45°$« bi brali kot radiane) in deljenje z ostankom (»10 : 3« → 3 ostanek 1): brez sodbe.
+  if (/°|\\circ|\\degree|['′]/.test(raw) || /ostan|remainder/i.test(tail)) return null;
+  const expr = (m[1] != null ? plain(`$${m[1]}$`) : m[2]).trim();
+  if (/[a-zA-Z]/.test(expr.replace(/sqrt|pi/g, "")) || !/[+\-−*/^·×÷:√]/.test(expr.replace(/^[-−]/, ""))) return null;
+  // Dvoumna dogovora (pregled B): »6 : 2(1+2)« (množenje brez znaka za deljenjem) in »-3^2« (predznak pred potenco).
+  if (/[:÷/]\s*\d+(?:[.,]\d+)?\s*\(/.test(expr) || /^\s*[-−]\s*\d+(?:[.,]\d+)?\s*\^/.test(expr)) return null;
+  const y = value(expr);
+  const x = value(c);
+  if (y === null || x === null) return null;
+  // Deljenje z necelim količnikom (»10 : 3«, »10 : 4«): učenec lahko misli celi del z ostankom, brez sodbe.
+  if (/[:÷/]|\\div|\\frac/.test(raw + expr) && !Number.isInteger(y)) return null;
+  const tex = m[1] != null ? m[1].trim() : plainToTex(m[2]);
+  const said = plainToTex(c);
+  if (same(c, x, expr, y)) {
+    // Zaokrožen rezultat (»0,33« za $1/3$, »6,28« za $2\pi$) ni sodba: inštruktor ga sme zavrniti (»Pusti ulomek«),
+    // koda pa ga ne razglasi za pravilnega (pregled A, 7f565d941). Le točna vrednost.
+    if (Math.abs(x - y) > 1e-9 * Math.max(1, Math.abs(y))) return null;
+    const finding = `the student's result ${c} for $${tex}$ is correct`;
+    return { wrong: false, askValue: y, finding, fact: { kind: "rightCalc", stmt: said, eq: `${tex} = ${said}` }, note: `<${NOTE_TAG}>\nAn exact check compared the student's last message with the tutor's question: ${finding}.\n${RIGHT_RULES}\n</${NOTE_TAG}>` };
+  }
+  const right = `${tex} ${rel(y, true)} ${fmt(y).replace(",", "{,}")}`;
+  const finding = `the student's result ${c} for $${tex}$ is wrong: $${right}$`;
+  if (wordProblemResult({ lhs: expr, rhs: c, lv: y, rv: x }) || otherMeaning(expr, c, x)) return { wrong: true, askValue: y, finding, fact: null, quiet: true, note: `<${NOTE_TAG}>\nAn exact check found an error in the student's last message: ${finding}.\n${WRONG_RULES}\n</${NOTE_TAG}>` };
+  return { wrong: true, askValue: y, finding, fact: { kind: "calc", wrong: `${tex} = ${said}`, right }, note: `<${NOTE_TAG}>\nAn exact check found an error in the student's last message: ${finding}.\n${WRONG_RULES}\n</${NOTE_TAG}>` };
+}
+function judgeStep(text, { pre = null, prevTutor = "" } = {}) {
   const wrong = [];
   const right = [];
+  const facts = []; // ugotovitve za opombo brez modela ob meji porabe (AUDIT-060), v istem vrstnem redu kot »wrong«
+  let rightFact = null;
   // Končna vrednost proti nalogi (obstoječa sodba kode). Ko je inštruktor medtem zastavil drugo enačbo, ne.
   const claim = claimNote(text, pre);
   const eqs = equationFindings(text, pre, prevTutor);
   const otherTask = pre && (hasExercise(prevTutor) || otherEquation(pre, prevTutor));
+  const task = (pre?.problems || []).filter((p) => p.type === "equation" || (p.type === "arith" && !p.narrow));
+  const tp = task.length === 1 ? task[0] : null;
   if (claim && !otherTask) {
     const w = /the student's result (.+?) is WRONG; (.+?)\.\n/.exec(claim);
-    if (w) wrong.push(`the student's result ${w[1]} is wrong; ${w[2]}`);
-    else right.push(`the student's result is correct (${/is CORRECT \((.+?)\)\.\n/.exec(claim)?.[1] || "final value"})`);
+    if (w) {
+      wrong.push(`the student's result ${w[1]} is wrong; ${w[2]}`);
+      facts.push(tp?.type === "equation" && !noSolution(tp) ? { kind: "value", wrong: plainToTex(w[1]), eq: tp.problemTex, right: tp.answerTex } : null);
+    } else {
+      right.push(`the student's result is correct (${/is CORRECT \((.+?)\)\.\n/.exec(claim)?.[1] || "final value"})`);
+      if (tp?.type === "equation" && !noSolution(tp)) rightFact = { kind: "rightValue", stmt: tp.answerTex, eq: tp.problemTex };
+      else if (tp?.type === "arith") rightFact = { kind: "rightCalc", stmt: plainToTex(tp.answer), eq: `${tp.problemTex} = ${tp.answerTex}` };
+    }
   }
-  wrong.push(...arithmeticErrors(text), ...eqs.wrong);
+  const ar = arithmeticFindings(text);
+  wrong.push(...ar.map((f) => f.text), ...eqs.wrong);
+  facts.push(...ar.map((f) => f.fact), ...eqs.facts);
   right.push(...eqs.right);
   if (wrong.length) {
     const finding = [...new Set(wrong)].slice(0, 3).join("; ");
-    return { wrong: true, finding, note: `<${NOTE_TAG}>\nAn exact check found an error in the student's last message: ${finding}.\n${WRONG_RULES}\n</${NOTE_TAG}>` };
+    const quiet = !facts.some(Boolean) && ar.some((f) => f.quiet);
+    return { wrong: true, finding, fact: facts.find(Boolean) || null, ...(quiet ? { quiet: true } : {}), note: `<${NOTE_TAG}>\nAn exact check found an error in the student's last message: ${finding}.\n${WRONG_RULES}\n</${NOTE_TAG}>` };
   }
   if (claim && !otherTask) {
     // Ena od več rešitev (»x = 3« pri $x^2 = 3x$) je za claimNote »CORRECT«, a odgovor je nepopoln: inštruktorjev
     // »Skoraj, manjka še ena« ni zavrnitev pravilnega, zato ob njem ni ponovnega odgovora (partial).
     const sols = solverValues((pre.problems || []).find((x) => x.type === "equation")?.answerTex);
     const roots = sols.length > 1 ? rootList(text, sols[0].v) : null;
-    const partial = sols.length > 1 && !(roots && sameSet(roots.map((r) => r.x), sols.map((s) => s.x), Math.max(...roots.map((r) => decimalsTol(r.src)))));
+    // AUDIT-092: »x = 2 in x = 3« in »x = ±2« sta popolna odgovora, čeprav nista oštevilčena.
+    const stated = sols.length > 1 ? statedRoots(text, sols[0].v) : [];
+    const complete = (xs, tol) => sameSet([...new Set(xs)], sols.map((s) => s.x), tol);
+    const partial = sols.length > 1 && !(roots && complete(roots.map((r) => r.x), Math.max(...roots.map((r) => decimalsTol(r.src))))) && !(stated.length && complete(stated.map((r) => r.x), Math.max(...stated.map((r) => r.tol))));
     // Nepopoln odgovor: opomba »CORRECT« je inštruktorja zavedla v »sta pravilna« brez druge rešitve (meritev 19. 11.,
     // brezplačni paket, (x - 2)^2 = 9 → »x = 5«). Opomba zato pove, da je odgovor nepopoln.
     // rootList bere le oštevilčene rešitve (x1 = …, x2 = …): »x = 5 ali x = -1« je zanj tudi partial. Opomba
     // »INCOMPLETE« bi tedaj zavrnila popoln odgovor, zato le, ko kakšne rešitve ni nikjer med števili v sporočilu.
-    const nums = [...plain(text).matchAll(/(?<![\d.,])([-−]?\d+(?:[.,]\d+)?)(?:\s*\/\s*(\d+))?/g)].map((m) => ({ x: Number(m[1].replace("−", "-").replace(",", ".")) / (m[2] ? Number(m[2]) : 1), tol: m[2] ? 0 : decimalsTol(m[1]) }));
+    const nums = [...plain(text).matchAll(/(?<![\d.,])([-−]?\d+(?:[.,]\d+)?)(?:\s*\/\s*(\d+))?/g)].map((m) => ({ x: Number(m[1].replace("−", "-").replace(",", ".")) / (m[2] ? Number(m[2]) : 1), tol: m[2] ? 0 : decimalsTol(m[1]) })).concat(stated);
     const incomplete = partial && sols.some((s) => !nums.some((n) => has([n.x], s.x, n.tol)));
     if (incomplete) {
       const finding = `the student's value is one of the solutions, but the answer is INCOMPLETE: the task has ${sols.length} solutions (exact result of the task: ${/is CORRECT \(exact result of the task: (.+?)\)\.\n/.exec(claim)?.[1] || "several values"})`;
       return { wrong: false, partial, finding, note: `<${NOTE_TAG}>\nAn exact check compared the student's last message with the task: ${finding}.\n${PARTIAL_RULES}\n</${NOTE_TAG}>` };
     }
-    return { wrong: false, partial, finding: right[0], note: claim };
+    return { wrong: false, partial, finding: right[0], fact: partial ? null : rightFact, note: claim };
   }
   if (right.length) {
     const finding = right.slice(0, 2).join("; ");
-    return { wrong: false, finding, note: `<${NOTE_TAG}>\nAn exact check compared the student's last message with the equation being solved: ${finding}.\n${RIGHT_RULES}\n</${NOTE_TAG}>` };
+    return { wrong: false, finding, fact: eqs.rightFacts[0] || null, note: `<${NOTE_TAG}>\nAn exact check compared the student's last message with the equation being solved: ${finding}.\n${RIGHT_RULES}\n</${NOTE_TAG}>` };
   }
   return null;
+}
+
+// Vse učenčeve končne vrednosti neznanke v sporočilu (»x = 2 in x = 3«, »x1 = 2, x2 = 3«, »x = ±2«); vrednost,
+// ki ji sledi operator ali črka, je vmesni korak in ne šteje.
+function statedRoots(text, v) {
+  const t = String(text || "").replace(/\$/g, " ").replace(/−/g, "-");
+  const re = new RegExp(`(?<![\\p{L}\\d\\\\])${v}(?:_?\\{?\\d\\}?)?\\s*=\\s*(?:(±|\\\\pm|\\+-|\\+\\/-)\\s*)?([-+]?\\d+(?:[.,]\\d+)?(?:\\/\\d+)?)(?![\\d\\/\\p{L}]|[.,]\\d)(?![ \\t]*(?:[-+*/:·×÷^=(\\\\±]|i(?!\\p{L})))`, "gu");
+  const out = [];
+  for (const m of t.matchAll(re)) {
+    const [a, b] = m[2].replace(",", ".").split("/");
+    const x = Number(a) / (b ? Number(b) : 1);
+    if (!Number.isFinite(x)) return [];
+    const tol = b ? 0 : decimalsTol(m[2]);
+    out.push({ x, tol });
+    if (m[1]) out.push({ x: -x, tol });
+  }
+  return out;
 }
 
 // Inštruktorjevo zadnje sporočilo vsebuje enačbo z drugimi rešitvami kot naloga (nov primer): sodba proti nalogi ne velja.
 function otherEquation(pre, prevTutor) {
   const p = (pre?.problems || []).find((x) => x.type === "equation");
   if (!p) return false;
-  const v = solverValues(p.answerTex)[0]?.v;
+  const none = noSolution(p);
+  const v = solverValues(p.answerTex)[0]?.v || none?.[0];
   if (!v) return false;
+  // Naloga brez rešitve: vsaka matematika v inštruktorjevem zadnjem sporočilu razen same naloge (»Kaj pa $x^6 = 64$?«,
+  // »Pri katerem x je $(x+1)^2$ enako 0?«, »npr. 2«) je lahko drugo vprašanje z odgovorom »x = …«, zato brez sodbe
+  // (pregled AUDIT-092).
+  if (none) {
+    const norm = (t) => String(t || "").replace(/\\left|\\right|\\[,;! ]|[\s{}]/g, "");
+    const task = [norm(p.problem), norm(p.problemTex)];
+    const rest = String(prevTutor || "").replace(/\$\$([\s\S]+?)\$\$|\$([^$\n]+?)\$|\\\(([\s\S]+?)\\\)/g, (m, a, b, c) => (task.includes(norm(a ?? b ?? c)) ? " " : m));
+    if (/[=$\d]|\\\(/.test(rest)) return true;
+    // Stransko ali »kaj če« vprašanje brez matematike (»Pri katerem x je leva stran najmanjša?«): sodba le ob splošnem
+    // »Kaj narediš?«.
+    if (/(?<!\p{L})(?:če bi|namesto|recimo|denimo|kaj pa|koliko|kater\p{L}*|kdaj|vstavi\p{L}*|poskus\p{L}*|preizk\p{L}*|najmanj\p{L}*|največ\p{L}*|lih\p{L}*|sod\p{L}*|primer\p{L}*|lev\p{L}*|desn\p{L}*|stran\p{L}*|what if|which|how many|smallest|largest)(?!\p{L})/iu.test(rest)) return true;
+  }
   const t = tutorReference(prevTutor, v);
   if (t === null) return true;
   if (!t) return false;
@@ -385,13 +634,96 @@ const POSITIVE_OPEN = /^[\s>*_"'»«„“(]*(?:\p{L}+\s*,\s*)?(?:prav|pravilno|
 const ERROR_MARK = /(?<!\p{L})(?:napak\p{L}*|narobe|napačn\p{L}*|ni (?:čisto |povsem |še |ravno |res )?(?:prav|pravilno|pravilen|res|tako|točno|enako)|ne drži|ne velja|ne ujema|ne more|zmot\p{L}*|spodrsl\p{L}*|zalomil\p{L}*|pazi|preveri\p{L}*|poglej\p{L}*|še enkrat|ponovno|skoraj|ampak|vendar|toda|hmm?|wrong|mistake|not quite|almost|check)(?!\p{L})|≠/iu;
 const SOFT_MARK = /(?<!\p{L})(?:pazi\p{L}*|preveri\p{L}*|poglej\p{L}*|še enkrat|ponovno|check\p{L}*)(?!\p{L})/giu;
 const NEGATIVE_OPEN = /^[\s>*_"'»«„“(]*(?:\p{L}+\s*,\s*)?(?:ne(?=\s*[,.!:—–])|ni (?:čisto |povsem |še |ravno )?(?:prav|pravilno|res|tako|točno)|narobe|napačno|napaka|ne drži|skoraj|hmm?|not quite|wrong|no(?=\s*[,.!:—–]))/iu;
+// Izrecna potrditev učenčevega predloga: prvi stavek so le besede potrditve (»Da, pravilno!«, »Tako je.«, »Točno!«).
+// »Pravilno je $x = 4$.«, »Dobro razmišljaš, a …«, »Prav, da vprašaš!«, »Točno – $x = 4$« niso potrditev predloga
+// (pregled prevzema 5).
+const CONFIRM_WORD = String.raw`(?:da|ja|tako je|res je|pravilno|prav|točno|drži|odlično|super|bravo|natanko|seveda|yes|correct|right|exactly)`;
+const CONFIRM_OPEN = new RegExp(String.raw`^[\s>*_"'»«„“(]*${CONFIRM_WORD}(?:\s*,\s*${CONFIRM_WORD})*\s*[!.]+(?:\s|$)`, "iu");
+const num = (t) => {
+  const x = Number(String(t).replace("−", "-").replace(",", "."));
+  return Number.isFinite(x) ? x : null;
+};
+// Popravek kjerkoli v odgovoru (pregled prevzema 6): »Prav. Preverimo: … kar ni 11.«, »Da. Ampak …«, »Odlično! Vstavi
+// zdaj $x = 6$ …«, »Ja.\n\nNe, počakaj: $x = 4$.« Pri vprašanju-predlogu je odgovor tedaj popravek, ne potrditev.
+const LATER_FIX = /(?<!\p{L})(?:vstav\p{L}*|preveri\p{L}*|preizkus\p{L}*|poglej\p{L}*|check\p{L}*|n[ie] \d)|\\neq?(?![a-zA-Z])|≠/iu;
+function correctsLater(answer, vals) {
+  if (ERROR_MARK.test(answer) || LATER_FIX.test(answer)) return true;
+  for (const m of answer.matchAll(/(?<![\p{L}\d])([a-zA-Z])(?:_?\{?\d\}?)?\s*=\s*([-−]?\d+(?:[.,]\d+)?)(?!\d|[.,]\d)/gu)) {
+    const x = num(m[2]);
+    if (vals.some((s) => s.v === m[1] && s.x !== null && x !== null && Math.abs(s.x - x) > 1e-9)) return true;
+  }
+  return false;
+}
+// Izrecna zavrnitev predloga kot ves prvi stavek (»Ne, to ni prav.«, »Žal ne.«, »Ne.«, »Narobe.«).
+const REJECT_OPEN = /^[\s>*_"'»«„“(]*(?:(?:žal\s+)?(?:ne|no|nope)(?:\s*,\s*(?:to\s+)?(?:ni\s+(?:prav|pravilno|pravilen|res|točno)|je\s+(?:narobe|napačno|napačen)|not\s+(?:right|correct)))?|narobe|napačno|wrong|incorrect)\s*[.!]+[\s*_"'«»“”)]*$/iu;
+// Prvi stavek ponovi učenčevo napačno vrednost (»Da, $x = 6$ je pravilno.«, »Ja, 54.«) kot potrditev.
+const ECHO_WORD = /(?<!\p{L})(?:pravil\p{L}*|prav|drži|točno|tako je|res je|rešitev|correct|right)(?!\p{L})/iu;
+const ECHO_ONLY = /^[\s>*_"'»«„“(]*(?:da|ja|yes|seveda)\s*[,!.:–—-]\s*[$\s]*[-−]?\d+(?:[.,]\d+)?[$\s]*[.!]*\s*$/iu;
+function echoes(head, vals) {
+  const h = String(head || "").replace(/\{,\}/g, ",");
+  for (const s of vals) {
+    if (s.x === null) continue;
+    let hit = false;
+    if (s.v) {
+      for (const m of h.matchAll(/(?<![\p{L}\d])([a-zA-Z])(?:_?\{?\d\}?)?\s*=\s*([-−]?\d+(?:[.,]\d+)?)(?!\d|[.,]\d)/gu)) if (m[1] === s.v && num(m[2]) === s.x) hit = true;
+    }
+    // golo število (»Ja, 6 drži!«, »Da, 54.«)
+    for (const m of h.replace(/(?<![\p{L}\d])[a-zA-Z](?:_?\{?\d\}?)?\s*=/gu, " ").matchAll(/(?<![\d.,^_{])([-−]?\d+(?:[.,]\d+)?)(?!\d|[.,]\d)/gu)) if (num(m[1]) === s.x) hit = true;
+    if (hit && (ECHO_WORD.test(h) || ECHO_ONLY.test(h))) return true;
+  }
+  return false;
+}
 const firstSentence = (s) => (/^[\s\S]{0,240}?(?:[.!?](?=\s|$)|\n|$)/.exec(String(s || "").trim())?.[0] || "");
 
 /** Ali odgovor nasprotuje sodbi kode (potrdi napačen korak ali zavrne pravilnega)? */
+/**
+ * Opomba brez modela ob prezrti sodbi (meja porabe, napaka ponovnega odgovora; AUDIT-060) le ob izrecni potrditvi
+ * napačnega koraka (»Odlično, $x = 5$ …«). Odgovor brez znaka napake (»Ne. $3 \cdot 6 + 7 = 25$, ne 22.«, »Napisal si
+ * $x = 5$ … kar ni 11. Poskusi znova.«) je za ponovni odgovor dovolj (kot main), za vidno opombo pa ne: pogosto je
+ * pravilna zavrnitev in opomba bi le razkrila rešitev (pregled A, 7f565d941). Vprašanje-predlog in zavrnjen pravilen
+ * korak že zahtevata izrecen začetek.
+ */
+export function verdictNoteSafe(answer, verdict, { prevTutor = "", taskMsg, pre } = {}) {
+  if (!verdict || verdict.quiet || !verdictIgnored(answer, verdict)) return false;
+  // Opomba le, ko je prejšnji inštruktorjev odgovor navadno vprašanje (»Kaj dobiš za x?«, »Koliko je x?«): brez
+  // števke, števila z besedo (tudi »trojka«, »desetica«, »tretji«), zapisa $…$ in brez velelnika ali hipoteze
+  // (»Naj bo desna stran 3.«, »Zamenjaj 3 in 11.«, »Odstrani trojko.«, »Namig: odštej 3.«). Inštruktor je morda
+  // zastavil drugo nalogo ali vmesni korak; sodba in ponovni odgovor ostaneta kot na main, vidne opombe pa ni
+  // (pregledi A, 4cf3be1fb, bd0af5dac in f3d3893c3).
+  // Račun v drugem pomenu po inštruktorjevem odgovoru (»Da, ob treh zjutraj.«, »Da, 3 in ostanek 1.«, »Da, 10°.«): brez opombe.
+  if (/calc/i.test(verdict.fact?.kind || "") && (OTHER_SYSTEM.test(answer) || !noteLine(answer, { value: false }) || /°|\\circ|stopinj|degree/i.test(answer))) return false;
+  // ena sama črka v »$…$« (»Koliko je $x$?«) je navadno besedilo, ne zapis
+  const prev = String(prevTutor || "").replace(/\$\s*[a-zA-Z]\s*\$/g, " x ").trim();
+  // Račun, ki ga je zapisal učenec ali inštruktor v vprašanju: opomba drži ne glede na vprašanje (koordinator, b366f3a5a).
+  // Sicer (vrednost, korak, golo število proti nalogi; pregled A, b984798b3) le: pogovor je naloga, kvečjemu eno
+  // navadno inštruktorjevo vprašanje (en stavek, največ šest besed, brez števil, zapisa, velelnika ali pogoja) in
+  // trditev; učenčevo sporočilo je le trditev.
+  if (!verdict.explicit) {
+    // Učenčevo sporočilo z nalogo jo je spremenilo (»Oprosti, mislil sem trinajst.«, »V knjigi piše trinajst, ne
+    // enajst: …«): učenčev korak je morda pravilen za njegovo enačbo, zato brez opombe (pregled A, c3b53ee53).
+    if (taskMsg !== undefined && taskModified(taskMsg, pre)) return false;
+    if (verdict.turns != null && verdict.turns > 2) return false;
+    if (verdict.bareClaim === false) return false;
+    if (prev && (/\d|\$/.test(prev) || NUMBER_WORD.test(prev) || TUTOR_MOVE.test(prev) || /[.!?;]\s+\S/.test(prev) || prev.split(/\s+/).length > 6)) return false;
+  }
+  if (verdict.asked || !verdict.wrong) return true;
+  const head = firstSentence(answer);
+  return POSITIVE_OPEN.test(head) && !ERROR_MARK.test(head.replace(SOFT_MARK, "")) && !NEGATIVE_OPEN.test(head);
+}
+
 export function verdictIgnored(answer, verdict) {
   if (!verdict) return false;
   const head = firstSentence(answer);
   // V prvem stavku za potrditvijo štejejo le besede, ki res zavrnejo (»Prav, preverimo …«, »Dobro, poglejmo …« ostaneta potrditev).
+  // Vprašanje-predlog: prezrt je le izrecno potrjen napačen predlog; pravilnega koda ne brani (zavrnitev je dvoumna:
+  // »Hmm, $8 : 2 = 4$, torej $x = 4$.«).
+  if (verdict.asked) {
+    // Napačen predlog: izrecna potrditev (»Da, pravilno!«) ali potrditev, ki ponovi učenčevo vrednost (»Da, $x = 6$ je
+    // pravilno.«, »Ja, 54.«), brez popravka kjerkoli v odgovoru. Pravilen predlog: le izrecna zavrnitev (»Ne, to ni
+    // prav.«), ne dvoumen začetek (»Hmm, $8 : 2 = 4$ …«).
+    if (!verdict.wrong) return !verdict.partial && !verdict.noReject && REJECT_OPEN.test(head) && !/\d/.test(head);
+    return (CONFIRM_OPEN.test(head) || (POSITIVE_OPEN.test(head) && echoes(head, verdict.vals || []))) && !correctsLater(String(answer || ""), verdict.vals || []);
+  }
   if (verdict.wrong) return (POSITIVE_OPEN.test(head) && !ERROR_MARK.test(head.replace(SOFT_MARK, ""))) || !ERROR_MARK.test(String(answer || ""));
   return !verdict.partial && NEGATIVE_OPEN.test(head);
 }

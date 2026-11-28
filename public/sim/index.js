@@ -157,6 +157,7 @@ export const ENGINES = {
   "lab-mesanje": ["lab-toplota.js", "labMesanje"],
   "lab-faze": ["lab-toplota.js", "labFaze"],
   "lab-ohlajanje": ["lab-toplota.js", "labOhlajanje"],
+  "lab-boyle": ["lab-toplota.js", "labBoyle"],
   "lab-lom": ["lab-optika.js", "labLom"],
   "lab-leca": ["lab-optika.js", "labLeca"],
   "lab-hooke": ["lab-sile.js", "labHooke"],
@@ -172,6 +173,7 @@ export const ENGINES = {
   "lab-klanec": ["lab-gibanje.js", "labKlanec"],
   "lab-prosti-pad": ["lab-gibanje.js", "labProstiPad"],
   "lab-newton2": ["lab-gibanje.js", "labNewton2"],
+  "lab-nihalo": ["lab-gibanje.js", "labNihalo"],
   "lab-elektromagnet": ["lab-magnetizem.js", "labElektromagnet"],
   "lab-sila-vodnik": ["lab-magnetizem.js", "labSilaVodnik"],
   "lab-indukcija": ["lab-magnetizem.js", "labIndukcija"],
@@ -194,8 +196,9 @@ export const ENGINES = {
 const TRI_D = /^3d-([a-z0-9]+(?:-[a-z0-9]+)*)$/;
 export const hasEngine = (id) => Object.hasOwn(ENGINES, id) || TRI_D.test(id);
 
-// Nariše simulacijo v el. Vrne true, če je uspelo.
-export async function mountSim(id, el, opts = {}) {
+// Nariše simulacijo v el. Vrne true, če je uspelo. naslov: ime risbe za bralnik zaslona (ni del opts, ker so opts
+// del ključa shranjenih meritev laboratorija).
+export async function mountSim(id, el, opts = {}, naslov = "") {
   const m3 = TRI_D.exec(id);
   if (m3) opts = { ...(opts || {}), model: m3[1], noReset: true }; // pregledovalnik ima svoj »Ponastavi«
   const e = ENGINES[m3 ? "3d" : id];
@@ -205,11 +208,20 @@ export async function mountSim(id, el, opts = {}) {
   if (typeof fn !== "function") return false;
   el.replaceChildren();
   el.classList.add("demo", `demo-${id}`);
+  // Laboratorij: ključ shranjenih meritev poskusa (lab.js → shramba); isti poskus z drugimi možnostmi ima svoje meritve.
+  const labId = id.startsWith("lab-") ? (opts && Object.keys(opts).length ? `${id}:${JSON.stringify(opts)}` : id) : "";
+  if (labId) el.dataset.labId = labId;
+  else delete el.dataset.labId;
   try {
     fn(el, opts || {});
     // Laboratorij: na telefonu ostane risba vidna med uporabo kontrol (lab.js → pripni, docs/laboratorij.md).
     if (el.classList.contains("lab")) (await import("./lab.js")).pripni(el);
-    focusableTargets(el);
+    // »Začni znova« (obnovljene meritve) in »Ponastavi«: shranjene meritve pozabi in poskus postavi znova.
+    if (el.classList.contains("lab") && labId) {
+      const { pozabiMeritve } = await import("./lab.js");
+      el._labZnova = () => (pozabiMeritve(labId, el._labKljuc), mountSim(id, el, opts, naslov));
+    } else el._labZnova = null;
+    focusableTargets(el, naslov);
     // Ponastavi: simulacijo postavi znova v začetno stanje (ne pri zbirki, ki ima svoje podsimulacije).
     if (id !== "zbirka" && !opts?.noReset) {
       const b = document.createElement("button");
@@ -217,7 +229,7 @@ export async function mountSim(id, el, opts = {}) {
       b.className = "ghost small demo-reset";
       b.textContent = "↺ Ponastavi";
       b.setAttribute("aria-label", "Ponastavi simulacijo na začetek");
-      b.addEventListener("click", () => mountSim(id, el, opts));
+      b.addEventListener("click", () => (el._labZnova && el.dataset.labId === labId ? el._labZnova() : mountSim(id, el, opts, naslov)));
       el.append(b);
     }
     // Prikaz na grafu: gumbi za vklop in izklop krivulj, točk, oznak in mreže (public/sim/prikaz.js).
@@ -237,13 +249,19 @@ export async function mountSim(id, el, opts = {}) {
 
 // Elementi, ki se jih da klikniti ali vleči (.drag), so dosegljivi s tipko Tab; Enter ali preslednica
 // jih klikne (vlečenje s puščicami doda kit.draggable). Simulacije pogosto rišejo znova, zato opazujemo spremembe.
-function focusableTargets(el) {
-  const mark = () =>
+// Risba (svg role="img") brez opisa dobi ime (WCAG 1.1.1, axe svg-img-alt): naslov simulacije, če ga poznamo.
+function focusableTargets(el, naslov) {
+  const mark = () => {
     el.querySelectorAll(".drag:not([tabindex])").forEach((t) => {
       t.setAttribute("tabindex", "0");
       if (!t.getAttribute("role")) t.setAttribute("role", "button");
       if (!t.getAttribute("aria-label")) t.setAttribute("aria-label", (t.textContent || "").trim() || "Izberi");
     });
+    el.querySelectorAll('svg[role="img"]:not([aria-label]):not([aria-labelledby])').forEach((svg) => {
+      const ime = svg.querySelector(":scope > title")?.textContent?.trim();
+      svg.setAttribute("aria-label", ime || (naslov ? `Slika simulacije: ${naslov}` : "Slika simulacije"));
+    });
+  };
   mark();
   if (el.dataset.kbd) return;
   el.dataset.kbd = "1";
@@ -272,7 +290,7 @@ export function zbirka(el, { items = [] } = {}) {
     const inner = mk("div");
     box.replaceChildren(inner);
     const d = list[Number(sel.value)];
-    mountSim(d.id, inner, d.opts);
+    mountSim(d.id, inner, d.opts, d.title);
   };
   sel.addEventListener("change", show);
   el.append(lab, box);

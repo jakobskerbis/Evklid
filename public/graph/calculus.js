@@ -1243,7 +1243,7 @@ function taylorCmd(ast, v, cmd, env, S, name, innerTex) {
   let resTex = terms.length ? terms.map((t, i) => (t.dec ? decTerm(t, i === 0) : termTex(t, i === 0))).join("") : "0";
   const nT = (cmd.args[2]?.trim() ? `;\\ ${n}` : "");
   const aT = cmd.args[1]?.trim() || nT ? `;\\ ${pt.tex}` : "";
-  return { kind: "cas", op: "taylor", tex: `${name}\\left(${innerTex};\\ ${KIT.varTex(v)}${aT}${nT}\\right)`, resTex, inner: cmd.inner, ...(approx ? { approx: true } : {}) };
+  return { kind: "cas", op: "taylor", tex: `${name}\\left(${innerTex};\\ ${KIT.varTex(v)}${aT}${nT}\\right)`, resTex, inner: cmd.inner, ...(approx ? { approx: true } : {}), ...(poly && a === 0 ? { same: true } : {}) };
 }
 function decTerm(t, first) {
   const neg = t.c.sign < 0;

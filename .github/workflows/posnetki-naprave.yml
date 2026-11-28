@@ -1,0 +1,158 @@
+# Posnetki naprav za zunanji pregled (j, 25. 11. 2026, PR 0 načrta UX/UI): samo ročni zagon (Actions > Posnetki
+# naprav > Run workflow). Vsaka naprava teče v svojem poslu (obe legi, svetla in temna tema) na preizkusnem strežniku
+# (EVKLID_MOCK, začasna baza, brez API-ključev in skrivnosti, brez produkcije). Zadnji posel sestavi kazalo.html in
+# POVZETEK.md ter naloži en ZIP »posnetki-naprav-<sha>«. Rdeč posel pomeni, da je dimni test na tej napravi našel težavo;
+# posnetki se naložijo vseeno. Repozitorij je javen: akcije pripete na SHA, brez pisanja v repozitorij.
+name: Posnetki naprav
+on:
+  workflow_dispatch:
+    inputs:
+      naprave:
+        description: "Naprave (prazno = vse): tel-360,tel-390,tel-430,ipad-820,ipad-1024,pc-1280,pc-1440,pc-1920"
+        required: false
+        default: ""
+permissions:
+  contents: read
+concurrency:
+  group: posnetki-naprav
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
+env:
+  EVKLID_MOCK: "1"
+  PLAYWRIGHT_VERSION: "1.63.0"
+  AXE_VERSION: "4.11.0"
+jobs:
+  # Neznano ime naprave (tipkarska napaka) ustavi zagon, namesto da bi vsi posli preskočili in bi bil ZIP prazen.
+  izbor:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Preveri imena naprav
+        env:
+          IZBOR: ${{ inputs.naprave }}
+        run: |
+          IZBOR="${IZBOR// /}"
+          [ -z "$IZBOR" ] && exit 0
+          IFS=, read -ra imena <<< "$IZBOR"
+          for i in "${imena[@]}"; do
+            case "$i" in
+              tel-360|tel-390|tel-430|ipad-820|ipad-1024|pc-1280|pc-1440|pc-1920) ;;
+              *) echo "::error::Neznana naprava »$i«. Dovoljene: tel-360, tel-390, tel-430, ipad-820, ipad-1024, pc-1280, pc-1440, pc-1920"; exit 1 ;;
+            esac
+          done
+
+  naprava:
+    needs: izbor
+    name: naprava (${{ matrix.naprava }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    strategy:
+      fail-fast: false
+      matrix:
+        naprava: [tel-360, tel-390, tel-430, ipad-820, ipad-1024, pc-1280, pc-1440, pc-1920]
+    steps:
+      - name: Izbira
+        id: izbira
+        env:
+          IZBOR: ${{ inputs.naprave }}
+          NAPRAVA: ${{ matrix.naprava }}
+        run: |
+          IZBOR="${IZBOR// /}"
+          if [ -z "$IZBOR" ] || [[ ",$IZBOR," == *",$NAPRAVA,"* ]]; then echo "tece=1" >> "$GITHUB_OUTPUT"; else echo "tece=0" >> "$GITHUB_OUTPUT"; fi
+      - if: steps.izbira.outputs.tece == '1'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        timeout-minutes: 5
+        with:
+          persist-credentials: false
+      - if: steps.izbira.outputs.tece == '1'
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        timeout-minutes: 5
+        with:
+          node-version: 22
+          cache: npm
+      - if: steps.izbira.outputs.tece == '1'
+        run: npm ci --no-audit --no-fund
+        timeout-minutes: 10
+      - if: steps.izbira.outputs.tece == '1'
+        name: Playwright in axe-core (brez spremembe package.json)
+        timeout-minutes: 5
+        run: npm install --no-save --no-audit --no-fund "playwright@$PLAYWRIGHT_VERSION" "axe-core@$AXE_VERSION"
+      - if: steps.izbira.outputs.tece == '1'
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        timeout-minutes: 5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ env.PLAYWRIGHT_VERSION }}-chromium
+      - if: steps.izbira.outputs.tece == '1'
+        name: Namestitev brskalnika (omejitev časa + ponovitev)
+        timeout-minutes: 42
+        run: |
+          for poskus in 1 2 3; do
+            if timeout -k 10 13m npx playwright install --with-deps chromium; then exit 0; fi
+            echo "::warning::Namestitev brskalnika: poskus $poskus ni uspel ali je potekel (13 min)"
+            sleep 5
+          done
+          echo "::error::Namestitev brskalnika ni uspela v 3 poskusih"
+          exit 1
+      - if: steps.izbira.outputs.tece == '1'
+        name: Dimni test in posnetki
+        timeout-minutes: 60
+        env:
+          NAPRAVA: ${{ matrix.naprava }}
+        run: node scripts/posnetki-naprave.cjs --naprave "$NAPRAVA" --mapa posnetki-naprav --hkrati 2
+      - if: always() && steps.izbira.outputs.tece == '1'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        timeout-minutes: 10
+        with:
+          name: del-${{ matrix.naprava }}
+          path: posnetki-naprav/
+          retention-days: 3
+          if-no-files-found: ignore
+
+  kazalo:
+    needs: naprava
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        timeout-minutes: 5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        timeout-minutes: 5
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        timeout-minutes: 10
+        with:
+          pattern: del-*
+          path: posnetki-naprav
+          merge-multiple: true
+      # Kazalo brez odvisnosti (samo node:fs). Izbrana naprava brez rezultata je v povzetku težava. Izhod 1 ob težavah
+      # ne ustavi nalaganja ZIP; posel »kazalo« pa je rdeč, da je vidno, da nekaj ni v redu.
+      - name: Kazalo
+        id: kazalo
+        env:
+          IZBOR: ${{ inputs.naprave }}
+        run: |
+          IZBOR="${IZBOR// /}"
+          mkdir -p posnetki-naprav
+          set +e
+          if [ -n "$IZBOR" ]; then node scripts/posnetki-naprave.cjs --kazalo --mapa posnetki-naprav --naprave "$IZBOR"; else node scripts/posnetki-naprave.cjs --kazalo --mapa posnetki-naprav; fi
+          echo "izhod=$?" >> "$GITHUB_OUTPUT"
+      - name: Povzetek v poročilo posla
+        run: cat posnetki-naprav/POVZETEK.md >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        timeout-minutes: 10
+        with:
+          name: posnetki-naprav-${{ github.sha }}
+          path: posnetki-naprav/
+          retention-days: 30
+      - name: Izid
+        if: steps.kazalo.outputs.izhod != '0'
+        run: |
+          echo "::error::Na napravah so težave ali manjkajoči rezultati (POVZETEK.md v ZIP)"
+          exit 1

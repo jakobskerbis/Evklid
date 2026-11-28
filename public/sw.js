@@ -1,7 +1,9 @@
 // Service worker: aplikacija se odpre tudi brez povezave in ponovno ne prenaša knjižnic.
-// - knjižnice in pisave (/vendor/): najprej iz predpomnilnika (se ne spreminjajo),
-// - vstopna stran (/ z ali brez poizvedbe, npr. /?pogled=chat, /?koda=): najprej omrežje s kratkim rokom (1 s; stran
-//   je majhna, ob nespremenjeni samo 304), ob izpadu ali počasni povezavi shranjena kopija (ena, pod »/«). Vsak odgovor strežnika pove
+// - knjižnice in pisave (/vendor/): najprej iz predpomnilnika (se ne spreminjajo); brez kopije s strežnika, nikoli iz
+//   predpomnilnika brskalnika (tam je lahko starejša različica knjižnice, cacheFirst),
+// - vstopna stran (/ z ali brez poizvedbe, npr. /?pogled=chat, /?koda=): kopija iste različice takoj, omrežje jo preveri
+//   v ozadju (stale-while-revalidate, entryPage); brez take kopije najprej omrežje s kratkim rokom (1 s), ob izpadu ali
+//   počasni povezavi shranjena kopija (ena, pod »/«). Vsak odgovor strežnika pove
 //   različico datotek (glava X-Evklid-App, server/app.js). Če je drugačna od APP tega service workerja, ta do
 //   zamenjave ne postreže nobene shranjene kopije več (outdated): nova stran tako nikoli ne dobi starih modulov,
 // - stran, ki ji je bila postrežena shranjena (starejša) vstopna stran, ker je omrežje zamujalo, pove svojo
@@ -28,7 +30,12 @@ const APP = "";
 const APP_FILE = /\.(?:m?js|css|svg|png|jpe?g|webp|avif|gif|woff2?)$/i; // statične datoteke iz public/
 const STAMP = "X-Evklid-App"; // glava v shranjeni kopiji: katera različica jo je shranila
 const STATIC = `${VERSION}-static`;
-const VENDOR = `${VERSION}-vendor`;
+// »-2« (27. 11. 2026): iPad je imel v predpomnilniku knjižnic star three.module.js (0.186) ob novem three.core.js
+// (0.187) – »Indirectly exported binding name 'CubeUVReflectionMapping' is not found«. Novo ime ob aktivaciji pobriše
+// tako zastrupljene kopije (activate spodaj); knjižnice se prenesejo enkrat znova.
+const VENDOR = `${VERSION}-vendor-2`;
+// Stara imena predpomnilnika knjižnic (brez številke ali z drugo številko), ki jih activate pobriše.
+const OLD_VENDOR = /-vendor(-\d+)?$/;
 // Samo javni odgovori API (enaki za vse uporabnike). Prej »-api« z vsemi odgovori: ob aktivaciji se pobriše.
 const API = `${VERSION}-api-javni`;
 const OLD_API = `${VERSION}-api`;
@@ -53,11 +60,16 @@ async function storePublicLesson(id) {
 }
 // Odgovor, ki ga strežnik označi kot zaseben, se ne shrani (tudi na javni poti).
 const privateRes = (res) => /no-store|private/i.test(res.headers.get("cache-control") || "");
-// Vstopna stran čaka omrežje največ 1 s (prej 2,5 s; j 2026-11-10, hiter zagon; 0,4 s je pri počasni povezavi
-// po objavi preveč pogosto dala staro kopijo in samodejno osvežitev; pregled #560): ob počasni ali šele vzpostavljeni
-// povezavi telefona se takoj odpre shranjena stran iste različice. Če strežnik medtem že ima novo različico, jo
-// odgovor v ozadju shrani, stran pa se sama osveži (public/app.js reloadOnceFor), kot prej po 2,5 s.
+// Vstopna stran (N-08b, j 26. 11. 2026 »Vse tri«, namesto pravila 10. 11. »čaka omrežje do 1 s«): shranjena kopija
+// različice tega service workerja se odpre takoj, brez čakanja omrežja (entryPage). Omrežje jo preveri v ozadju
+// (ENTRY_PREVERI ms po odprtju, da ne tekmuje z zagonom); če ima strežnik novo različico, se stran sama enkrat osveži
+// s posnetkom zaslona (public/app.js reloadOnceFor, zacetek.js PRENOS). Brez take kopije (prvi obisk, druga različica,
+// zastarelo) vstopna stran čaka omrežje največ 1 s (entry), nato shranjeno kopijo.
 const TIMEOUT = { entry: 1000, static: 4000, api: 7000 };
+const ENTRY_PREVERI = 3000;
+// Rok preverjanja v ozadju: dokler teče, je service worker zaseden (e.waitUntil) in nov service worker ga čaka; brez roka
+// bi ga zataknjena povezava (telefon med omrežji, tunel brez odgovora) zadržala za nedoločen čas.
+const ENTRY_ROK = 15000;
 // Strežnik je objavil novo različico datotek (vstopna stran z drugačno X-Evklid-App): stare kopije niso več sveže.
 let outdated = false;
 // Odprte strani in različica, ki jo izvajajo (clientId → APP strani; sporočilo »page-app«). Ob ponovnem zagonu
@@ -73,7 +85,7 @@ self.addEventListener("activate", (e) => {
   e.waitUntil(
     caches
       .keys()
-      .then((keys) => Promise.all(keys.filter((k) => (!k.startsWith(VERSION) && k !== MODELS) || k === OLD_API).map((k) => caches.delete(k))))
+      .then((keys) => Promise.all(keys.filter((k) => (!k.startsWith(VERSION) && k !== MODELS) || k === OLD_API || (k !== VENDOR && OLD_VENDOR.test(k))).map((k) => caches.delete(k))))
       // kopije drugih različic pobrišemo samo, ko ni odprte strani (stara stran še potrebuje svoje lene module)
       .then(() => self.clients.matchAll({ type: "window" }))
       .then((open) => (open.length ? null : pruneStatic()))
@@ -129,7 +141,11 @@ self.addEventListener("message", (e) => {
         // Različico pove shranjena glava X-Evklid-App (put, fresh); česar brskalnik nima, pride z omrežja kot prej.
         // Samo datoteke aplikacije: vstopno stran in drug HTML vedno preveri strežnik (stara kopija iz predpomnilnika
         // brskalnika bi lahko prepisala kopijo vstopne strani; pregled PR #919).
-        const res = await fetch(u, APP_FILE.test(new URL(u, self.location.origin).pathname) ? { cache: "force-cache" } : undefined).catch(() => null);
+        // Knjižnice (/vendor/) pa nikoli iz predpomnilnika brskalnika: tam je lahko datoteka starejše različice knjižnice
+        // (naslov je brez različice, max-age teden), ki bi ostala v VENDOR do naslednje nove knjižnice. Tako je iPad dobil
+        // star three.module.js ob novem three.core.js (27. 11. 2026). »no-cache«: strežnik preveri (ETag, 304 brez telesa).
+        const pot = new URL(u, self.location.origin).pathname;
+        const res = await fetch(u, cache !== statics ? { cache: "no-cache" } : APP_FILE.test(pot) ? { cache: "force-cache" } : undefined).catch(() => null);
         if (res?.ok) await put(cache, u, res);
       }),
     ).finally(() => e.ports?.[0]?.postMessage("ok")), // stran pošilja seznam po kosih (public/app.js predpomni)
@@ -283,6 +299,57 @@ async function networkFirst(req, cacheName, ms, { entry = false, page = "", onPa
   }
 }
 
+// Vstopna stran: kopija različice tega service workerja takoj (stale-while-revalidate, N-08b), sicer networkFirst.
+// Preverjanje v ozadju (revalidateEntry) je zahteva brez navigacije, zato strežnik vrne javno stran (osebno stran z
+// začetnimi podatki sestavi samo za navigacijo, server/zacetni-podatki.js); zasebna ali no-store bi se vseeno prekinila
+// že ob glavah in ne bi bila shranjena. Javna z oznako te različice se shrani kot nova kopija; nova različica na
+// strežniku (glava STAMP) pobriše stare kopije, prijava z geslom (401, server/gate.js) pobriše kopijo vstopne strani,
+// da naslednje odprtje pokaže prijavo (sicer bi kopija vedno obšla prijavo in klici API bi vračali 401).
+async function entryPage(req, onPage, waitUntil) {
+  const cache = await caches.open(STATIC);
+  const hit = APP && !outdated ? await cache.match(ENTRY) : null;
+  if (!hit || hit.headers.get(STAMP) !== APP) return networkFirst(req, STATIC, TIMEOUT.entry, { entry: true, onPage });
+  onPage(APP);
+  // waitUntil po await: dovoljen, dokler je obljuba respondWith odprta (spec, Chromium, WebKit); če ga brskalnik vseeno
+  // zavrne (InvalidStateError), preverjanje teče brez podaljšanja življenja, stran pa pride (sicer napaka navigacije).
+  const later = revalidateEntry(cache);
+  try {
+    waitUntil(later);
+  } catch {}
+  return hit;
+}
+async function revalidateEntry(cache) {
+  await new Promise((r) => setTimeout(r, ENTRY_PREVERI));
+  const ctl = new AbortController();
+  const rok = setTimeout(() => ctl.abort(), ENTRY_ROK);
+  try {
+    // redirect: "manual" kot pri navigaciji: stara povezava (tunel ngrok ali Cloudflare) strežnik preusmeri na lastno
+    // domeno (server/app.js mountOldLinkRedirect). Sledenje bi preusmeritev na drug izvor končalo z napako (CORS) in
+    // kopija bi ostala za vedno: aplikacija na stari povezavi bi se vedno odprla iz predpomnilnika, klici API (tudi
+    // preusmerjeni) pa ne bi delali. Preusmeritev pomeni, da »/« tu ni več naša vstopna stran: kopijo pobrišemo, da
+    // naslednje odprtje gre na omrežje in brskalnik sledi preusmeritvi.
+    const res = await fetch(new URL(ENTRY, self.location.origin).href, { credentials: "same-origin", headers: { Accept: "text/html" }, redirect: "manual", signal: ctl.signal });
+    if (res.type === "opaqueredirect") return cache.delete(ENTRY);
+    if (tunnelDown(res)) return ctl.abort();
+    const v = noteVersion(res);
+    if (res.status === 401) {
+      ctl.abort();
+      return cache.delete(ENTRY);
+    }
+    if (v && v !== APP) {
+      ctl.abort();
+      return dropStale(v);
+    }
+    // Brez oznake strežnika (server/app.js jo da vsakemu odgovoru zunaj API) ni naša vstopna stran: npr. opozorilna stran
+    // ngrok (ERR_NGROK_6024, status 200) ali stran posrednika. put bi ji dal oznako APP in odpirala bi se takoj.
+    if (!res.ok || res.type !== "basic" || privateRes(res) || v !== APP) return ctl.abort();
+    await put(cache, ENTRY, res);
+  } catch {
+  } finally {
+    clearTimeout(rok);
+  }
+}
+
 // Nov poskus uvoza po napaki (?r=, public/app.js, games/subjects/index.js) je ista datoteka: shranimo in iščemo jo
 // brez r, da jo naslednji zagon brez povezave (uvoz brez ?r=) najde v predpomnilniku.
 function appFileKey(req) {
@@ -301,11 +368,14 @@ async function appFile(req, clientId) {
   return networkFirst(req, STATIC, TIMEOUT.static, { page, key });
 }
 
+// Knjižnica brez kopije gre na strežnik mimo predpomnilnika brskalnika (»no-cache«, ETag): kopija iz predpomnilnika
+// brskalnika je lahko starejša različica knjižnice (naslov brez različice), ki se ne ujema z ostalimi datotekami iste
+// knjižnice (three.module.js + three.core.js, 27. 11. 2026), in bi v VENDOR ostala do naslednje nove knjižnice.
 async function cacheFirst(req) {
   const cache = await caches.open(VENDOR);
   const hit = await cache.match(req);
   if (hit) return hit;
-  const res = await fetch(req);
+  const res = await (req.mode === "navigate" ? fetch(req) : fetch(req, { cache: "no-cache" }));
   if (res.ok) cache.put(req, res.clone()).catch(() => null);
   return res;
 }
@@ -320,8 +390,13 @@ async function modelFirst(req) {
     const path = new URL(req.url).pathname;
     const keep = res.clone();
     (async () => {
+      // telo je že razpakirano (brotli s strežnika): glavi stiskanja odstranimo kot v put() (Safari bi kopijo zavrnil)
+      const headers = new Headers(keep.headers);
+      headers.delete("content-encoding");
+      headers.delete("content-length");
+      const kopija = new Response(await keep.blob(), { status: keep.status, statusText: keep.statusText, headers });
       for (const old of await cache.keys()) if (new URL(old.url).pathname === path) await cache.delete(old);
-      await cache.put(req, keep);
+      await cache.put(req, kopija);
     })().catch(() => null);
   }
   return res;
@@ -357,7 +432,9 @@ self.addEventListener("fetch", (e) => {
   // razreda /?koda=, /?ref=, /?vir= …; pregled A2 P1-1). Takoj iz predpomnilnika samo statične datoteke
   // aplikacije; strani, ki jih sestavi strežnik (/sole, /ucbenik/…, /3d, /kalkulator.html, manifest), ostanejo
   // najprej omrežje, tudi te pa preverijo različico (noteVersion v networkFirst).
-  const entry = (url.pathname === "/" || url.pathname === "/index.html") && (req.mode === "navigate" || !url.search);
+  // Povezava s skupnim geslom (/?geslo=, server/gate.js) ni vstopna stran: strežnik nastavi piškotek in geslo odstrani iz
+  // naslova (shranjena stran bi ga pustila v naslovu, novo geslo pa ne bi prišlo do strežnika).
+  const entry = (url.pathname === "/" || url.pathname === "/index.html") && (req.mode === "navigate" || !url.search) && !url.searchParams.has("geslo");
   // Zahteve nove strani dobijo kopije različice strani, ki jo je dobila (fresh): shranjena (starejša) stran svoje
   // stare module, nova stran nove. Zapis velja za novo stran (brskalnik lahko ob osvežitvi isti id uporabi znova).
   const id = req.mode === "navigate" ? e.resultingClientId || "" : "";
@@ -370,7 +447,7 @@ self.addEventListener("fetch", (e) => {
     else pages.delete(id);
   };
   if (entry) {
-    e.respondWith(networkFirst(req, STATIC, TIMEOUT.entry, { entry: true, onPage }));
+    e.respondWith(entryPage(req, onPage, (p) => e.waitUntil(p)));
     return;
   }
   if (APP_FILE.test(url.pathname) && req.mode !== "navigate") {

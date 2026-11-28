@@ -1,0 +1,126 @@
+{
+ "razlicica": 1,
+ "nabori": {
+  "MAT": {
+   "cilj": 2000,
+   "n": 2000,
+   "uradnih": 652,
+   "delez_uradnih": 0.326,
+   "skritih": 408,
+   "po_predmetu": {
+    "MAT": 2000
+   },
+   "po_viru": {
+    "RIC splošna matura OR": 295,
+    "RIC splošna matura VR": 71,
+    "RIC NPZ 6. razred": 139,
+    "RIC NPZ 9. razred": 147,
+    "generator": 1348
+   },
+   "po_vrsti": {
+    "izbirna": 157,
+    "racun": 1361,
+    "izraz": 56,
+    "graf": 6,
+    "dokaz": 10,
+    "opis": 10,
+    "napaka": 400
+   },
+   "po_ravni": {
+    "SS-1": 170,
+    "SS-3": 205,
+    "OS-8": 130,
+    "SS-2": 263,
+    "SS-4": 389,
+    "OS-7": 166,
+    "OS-6": 328,
+    "OS-9": 113,
+    "TEK-OS": 136,
+    "TEK-SS": 100
+   },
+   "tem": 208,
+   "uradne_po_sliki": {
+    "ne": 493,
+    "nujna": 86,
+    "opisana": 73
+   }
+  },
+  "FIZ/KEM": {
+   "cilj": 1000,
+   "n": 1000,
+   "uradnih": 367,
+   "delez_uradnih": 0.367,
+   "skritih": 205,
+   "po_predmetu": {
+    "KEM": 441,
+    "FIZ": 559
+   },
+   "po_viru": {
+    "RIC splošna matura": 367,
+    "generator": 633
+   },
+   "po_vrsti": {
+    "izbirna": 252,
+    "racun": 453,
+    "izraz": 37,
+    "opis": 57,
+    "graf": 1,
+    "napaka": 200
+   },
+   "po_ravni": {
+    "OS-8": 111,
+    "SS-1": 177,
+    "SS-2": 213,
+    "SS-4": 98,
+    "SS-3": 219,
+    "OS-9": 92,
+    "TEK-OS": 42,
+    "TEK-SS": 48
+   },
+   "tem": 183,
+   "uradne_po_sliki": {
+    "ne": 248,
+    "nujna": 60,
+    "opisana": 59
+   }
+  },
+  "BIO": {
+   "cilj": 500,
+   "n": 500,
+   "uradnih": 201,
+   "delez_uradnih": 0.402,
+   "skritih": 103,
+   "po_predmetu": {
+    "BIO": 500
+   },
+   "po_viru": {
+    "RIC splošna matura": 201,
+    "generator": 299
+   },
+   "po_vrsti": {
+    "izbirna": 350,
+    "opis": 112,
+    "racun": 38
+   },
+   "po_ravni": {
+    "SS-4": 83,
+    "SS-1": 120,
+    "SS-2": 98,
+    "SS-3": 98,
+    "OS-8": 60,
+    "OS-9": 41
+   },
+   "tem": 93,
+   "uradne_po_sliki": {
+    "opisana": 69,
+    "ne": 88,
+    "nujna": 44
+   }
+  }
+ },
+ "sha256": {
+  "razvoj-generatorji.json": "955422145054b019fe9b7e3a4792d7ca0deb5760317a465740fedbc7f0673e17",
+  "razvoj-uradno (čisto besedilo)": "0a5a030272a8d877dcd5205e442044765d572bcd42466ff1541e1c7516d5c335",
+  "skrito (čisto besedilo)": "b34e992d64e0ba018746aa2571670d8e8801218e246aad344cf29ba44489db7c"
+ }
+}

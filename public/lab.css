@@ -3,7 +3,7 @@
 /* Predmeti z enim poskusom stojijo drug ob drugem (auto-fit: brez prazne tretje kolone), predmet z več poskusi čez vso širino (kartice v mreži). */
 .lab-groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 26px 14px; align-items: start; }
 .lab-group { min-width: 0; }
-.lab-group.many { grid-column: 1 / -1; }
+.lab-group.many { grid-column: 1 / -1; column-span: all; }
 .lab-group:not(.many) .lab-grid { grid-template-columns: 1fr; }
 .lab-group > h2 { font-size: 1.15rem; margin: 0 0 10px; }
 .lab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 14px; }
@@ -55,3 +55,47 @@
   .lab-bench { padding: 10px; }
   .lab-start { align-self: stretch; justify-content: center; }
 }
+
+/* Vodeni poskus (public/sim/lab-vodeno.js): izbira »Vodeno | Prosto« in kartica s trenutnim korakom na vrhu kontrol. */
+.lab-vod-wrap { position: relative; display: grid; gap: 10px; margin: 0 0 12px; min-width: 0; grid-column: 1 / -1; column-span: all; }
+.lab-vod-nacin { justify-self: start; }
+.lab-vod { border: 1px solid var(--accent); border-left-width: 4px; border-radius: 10px; padding: 10px 12px; background: var(--surface); min-width: 0; overflow-wrap: anywhere; }
+.lab-vod[hidden] { display: none; }
+.lab-vod h3 { margin: 6px 0 4px; font-size: 1.02rem; }
+.lab-vod p { margin: 4px 0; }
+.lab-vod-head { display: flex; align-items: center; gap: 10px; font-size: 0.86rem; font-weight: 600; color: var(--muted); }
+.lab-vod-oznaka { flex: none; }
+.lab-vod-proga { flex: 1; height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; min-width: 40px; }
+.lab-vod-proga > span { display: block; height: 100%; background: var(--accent); transition: width 0.3s; }
+.lab-vod-cilj-poskusa { color: var(--muted); }
+.lab-vod-zakaj { font-size: 0.9rem; color: var(--muted); }
+.lab-vod-zakaj b { color: var(--ok); }
+.lab-vod-namig summary { cursor: pointer; font-weight: 600; color: var(--accent); min-height: 40px; display: flex; align-items: center; }
+.lab-vod-kje { margin: 4px 0 2px; }
+.lab-vod-kje[hidden] { display: none; }
+/* Samo za bralnik zaslona (napoved novega koraka). Položen v .lab-vod-wrap: sicer bi se meril od cele strani in jo na telefonu podaljšal. */
+.lab-vod-glas { position: absolute; top: 0; inset-inline-start: 0; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* »Pokaži, kje« pri vprašanju »Sklep«: pod pripeto risbo, ne podnjo (--lab-pin-h, lab.js → pripni). */
+.demo.lab .lab-q { scroll-margin-top: calc(var(--lab-pin-h, 0px) + 8px); }
+/* Kontrola, ki jo trenutni korak zahteva. */
+.lab-vod-cilj { outline: 2px dashed var(--accent); outline-offset: 3px; border-radius: 6px; }
+@media (prefers-reduced-motion: reduce) { .lab-vod-proga > span { transition: none; } }
+
+/* Maturitetni poskus (public/sim/lab-matura.js): kartica naloge namesto kartice korakov. Med nalogo so izračunani
+   rezultati poskusa skriti (.lab-mat-skrito), po oddaji spet vidni. */
+.lab-mat-skrito { display: none !important; }
+/* Med maturitetnim poskusom ni pomoči inštruktorja (lab-matura.js → mount.dataset.matura). */
+.lab-stage:has(.lab-mount[data-matura="tece"]) .lab-ask { display: none; }
+.lab-mat-polja { display: grid; gap: 8px; margin: 8px 0 4px; }
+.lab-mat-polja .lab-tit-in { width: 8em; }
+.lab-mat-polja select { min-height: 40px; }
+.lab-mat-tock, .lab-mat-ocena { margin: 4px 0; padding-inline-start: 1.2em; }
+.lab-mat-tock li, .lab-mat-ocena li { margin: 3px 0; }
+.lab-mat-ocena li.ok b { color: var(--ok); }
+.lab-mat-ocena li.bad b { color: var(--danger); }
+
+/* »Preveri se« po poskusu (povezave C4): vaja iste teme v Vadnici. */
+.lab-check { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; justify-content: space-between; }
+.lab-check p { display: flex; align-items: center; gap: 8px; margin: 0; flex: 1 1 220px; }
+.lab-check-go { display: flex; flex-wrap: wrap; gap: 8px; }
+.lab-check-go button { min-height: 44px; }

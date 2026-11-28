@@ -45,7 +45,7 @@ export const READ_MODEL = () => env("EVKLID_ZAPISKI_READ_MODEL", MODEL_MID);
 export const CARDS_MODEL = () => env("EVKLID_ZAPISKI_CARDS_MODEL", MODEL);
 export const REVIEW_MODEL = () => env("EVKLID_ZAPISKI_REVIEW_MODEL", MODEL_MID);
 export const MAX_PAGES = 5; // strani naenkrat
-const MAX_IMAGE = 6 * 1024 * 1024; // kot skener
+export const MAX_IMAGE = 6 * 1024 * 1024; // kot skener (base64)
 export const MAX_PAGE_TEXT = 6000;
 const MAX_TITLE = 80;
 const READ_MAX_TOKENS = 3000;
@@ -361,6 +361,8 @@ const bytes = (s) => Buffer.byteLength(String(s ?? ""), "utf8");
 export const cardsReserveUsd = (pages) => callMaxUsd(CARDS_MODEL(), bytes(CARDS_SYSTEM) + bytes(wrapNotes(pages)) + 200, CARDS_MAX_TOKENS);
 export const reviewReserveUsd = (cards) => callMaxUsd(REVIEW_MODEL(), bytes(REVIEW_SYSTEM) + bytes(cardsForReview(cards)) + 200, REVIEW_MAX_TOKENS);
 const READ_PROMPT_TOKENS = bytes(READ_PROMPT) + 500;
+// Rezerva trde meje AI za branje ene fotografije (tudi priprava na test, server/priprava/poti.js).
+export const readReserveUsd = () => imageCallReserveUsd(READ_MODEL(), READ_MAX_TOKENS, 1, READ_PROMPT_TOKENS);
 
 export function mountZapiski(app, store, { loadStudent, usage, rightsFor = null, readFn = readNotePhoto, cardsFn = makeCards }) {
   const db = store.db;
@@ -391,7 +393,7 @@ export function mountZapiski(app, store, { loadStudent, usage, rightsFor = null,
     const limit = limitFor(s);
     if (!takePage(db, s.id, limit)) return res.status(429).json({ error: "Ta mesec si porabil vse strani.", code: "zapiski_strani", pages: pagesInfo(s) });
     // Trda meja AI (server/meje-ai.js): najvišji strošek branja mora iti pod mejo profila.
-    const hold = usage?.guard ? usage.guard(s.id, imageCallReserveUsd(READ_MODEL(), READ_MAX_TOKENS, 1, READ_PROMPT_TOKENS)) : null;
+    const hold = usage?.guard ? usage.guard(s.id, readReserveUsd()) : null;
     if (usage?.guard && !hold) {
       givePage(db, s.id);
       return res.status(429).json(usage.guardBlock(s.id));

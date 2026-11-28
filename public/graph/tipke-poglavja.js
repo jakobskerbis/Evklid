@@ -62,6 +62,8 @@ const EXTRA = {
   "³": ["x³", "³", "∛", "∛("],
   "<": ["<", "<", "≤", "≤"],
   ">": [">", ">", "≥", "≥"],
+  // plošča enot (public/graph/enote.js); napis tipke je v jeziku vmesnika (sci.js renderFn), 2nd je pretvorba →
+  "#units": ["Enote", "#units", "→", "→"],
 };
 
 // Profil: tipke po pomembnosti (vstavi glavne tipke); ostala mesta zapolnijo privzete v svojem vrstnem redu.
@@ -76,8 +78,8 @@ const PROFILES = {
   num: ["gcd(@;)", "mod(@;)", "%", "!", "²", "^(", "√(", "⁻¹", "x", "="],
   eq: ["x", "=", "<", ">", "²", "^(", "√(", ";", "abs(", "⁻¹", "f(x)=", "π"],
   cplx: ["i", "abs(", "Pol(@;)", "^(", "²", "√(", "x", "=", "π", "#dms", "e^(", "ln("],
-  fiz: ["²", "√(", "^(", "⁻¹", "sin(", "cos(", "tan(", "π", "#dms", "log(", "ln(", "e^("],
-  kem: ["log(", "10^(", "ln(", "^(", "²", "√(", "%", "x", "=", "⁻¹", "e^(", "π"],
+  fiz: ["#units", "²", "√(", "^(", "⁻¹", "sin(", "cos(", "tan(", "π", "#dms", "log(", "ln(", "e^("],
+  kem: ["#units", "log(", "10^(", "ln(", "^(", "²", "√(", "%", "x", "=", "⁻¹", "e^(", "π"],
 };
 
 // skupina f(x) na Evklidovi tipkovnici (FX_GROUPS v tipkovnica-data.js)

@@ -1,0 +1,1827 @@
+{
+ "opis": "PV-06: znani koraki reševanja. 50 napačnih (tipične napake učencev) in 200 pravilnih (ročni in vzorčni s stalnimi koeficienti). Merilo: vsi napačni ok=false, noben pravilni ok=false. Koraki s tujimi rešitvami (kvadriranje, združevanje logaritmov) so pravilni z vrsto »posledica«.",
+ "napacni": [
+  {
+   "id": "N001",
+   "prej": "3(x-2)=6",
+   "potem": "3x-2=6",
+   "pravilen": false,
+   "kategorija": "razčlenjevanje",
+   "opis": "množenje oklepaja samo s prvim členom"
+  },
+  {
+   "id": "N002",
+   "prej": "2x+3=7",
+   "potem": "2x=10",
+   "pravilen": false,
+   "kategorija": "prenos",
+   "opis": "člen prenesen brez spremembe predznaka"
+  },
+  {
+   "id": "N003",
+   "prej": "x-5=3",
+   "potem": "x=-2",
+   "pravilen": false,
+   "kategorija": "prenos",
+   "opis": "člen prenesen brez spremembe predznaka"
+  },
+  {
+   "id": "N004",
+   "prej": "4x=12",
+   "potem": "x=8",
+   "pravilen": false,
+   "kategorija": "deljenje",
+   "opis": "odštet koeficient namesto deljenja"
+  },
+  {
+   "id": "N005",
+   "prej": "-3x=9",
+   "potem": "x=3",
+   "pravilen": false,
+   "kategorija": "deljenje",
+   "opis": "izgubljen predznak pri deljenju"
+  },
+  {
+   "id": "N006",
+   "prej": "x/3=4",
+   "potem": "x=4/3",
+   "pravilen": false,
+   "kategorija": "deljenje",
+   "opis": "deljenje namesto množenja"
+  },
+  {
+   "id": "N007",
+   "prej": "-2x<4",
+   "potem": "x<-2",
+   "pravilen": false,
+   "kategorija": "neenačba",
+   "opis": "pri deljenju z negativnim ni obrnjen znak"
+  },
+  {
+   "id": "N008",
+   "prej": "-x>3",
+   "potem": "x>-3",
+   "pravilen": false,
+   "kategorija": "neenačba",
+   "opis": "pri množenju z -1 ni obrnjen znak"
+  },
+  {
+   "id": "N009",
+   "prej": "x^2=4",
+   "potem": "x=2",
+   "pravilen": false,
+   "kategorija": "izgubljena rešitev",
+   "opis": "pozabljena negativna rešitev"
+  },
+  {
+   "id": "N010",
+   "prej": "x^2=x",
+   "potem": "x=1",
+   "pravilen": false,
+   "kategorija": "deljenje z 0",
+   "opis": "deljenje z x, ki je lahko 0"
+  },
+  {
+   "id": "N011",
+   "prej": "x(x-3)=2x",
+   "potem": "x-3=2",
+   "pravilen": false,
+   "kategorija": "deljenje z 0",
+   "opis": "deljenje z x, ki je lahko 0"
+  },
+  {
+   "id": "N012",
+   "prej": "(x-1)(x+2)=0",
+   "potem": "x-1=0",
+   "pravilen": false,
+   "kategorija": "izgubljena rešitev",
+   "opis": "upoštevan le en faktor"
+  },
+  {
+   "id": "N013",
+   "prej": "x^2=9",
+   "potem": "x=3",
+   "pravilen": false,
+   "kategorija": "izgubljena rešitev",
+   "opis": "pozabljena negativna rešitev"
+  },
+  {
+   "id": "N014",
+   "prej": "(x-2)^2=x-2",
+   "potem": "x-2=1",
+   "pravilen": false,
+   "kategorija": "deljenje z 0",
+   "opis": "deljenje z x-2, ki je lahko 0"
+  },
+  {
+   "id": "N015",
+   "prej": "ln(x^2)=2",
+   "potem": "2*ln(x)=2",
+   "pravilen": false,
+   "kategorija": "območje",
+   "opis": "ln(x²) = 2 ln x velja le za x > 0"
+  },
+  {
+   "id": "N016",
+   "prej": "sqrt(x^2)",
+   "potem": "x",
+   "pravilen": false,
+   "kategorija": "koren",
+   "opis": "√(x²) = |x|, ne x"
+  },
+  {
+   "id": "N017",
+   "prej": "(a+b)^2",
+   "potem": "a^2+b^2",
+   "pravilen": false,
+   "kategorija": "kvadrat vsote",
+   "opis": "pozabljen dvojni produkt"
+  },
+  {
+   "id": "N018",
+   "prej": "(a-b)^2",
+   "potem": "a^2-b^2",
+   "pravilen": false,
+   "kategorija": "kvadrat razlike",
+   "opis": "zamenjava s razliko kvadratov"
+  },
+  {
+   "id": "N019",
+   "prej": "sqrt(a+b)",
+   "potem": "sqrt(a)+sqrt(b)",
+   "pravilen": false,
+   "kategorija": "koren",
+   "opis": "koren vsote ni vsota korenov"
+  },
+  {
+   "id": "N020",
+   "prej": "(a+b)/a",
+   "potem": "b",
+   "pravilen": false,
+   "kategorija": "krajšanje",
+   "opis": "krajšanje člena vsote"
+  },
+  {
+   "id": "N021",
+   "prej": "(2x+4)/2",
+   "potem": "x+4",
+   "pravilen": false,
+   "kategorija": "krajšanje",
+   "opis": "deljen le prvi člen"
+  },
+  {
+   "id": "N022",
+   "prej": "2^3*2^4",
+   "potem": "2^12",
+   "pravilen": false,
+   "kategorija": "potence",
+   "opis": "eksponenta zmnožena namesto seštevanja"
+  },
+  {
+   "id": "N023",
+   "prej": "x^2*x^3",
+   "potem": "x^6",
+   "pravilen": false,
+   "kategorija": "potence",
+   "opis": "eksponenta zmnožena namesto seštevanja"
+  },
+  {
+   "id": "N024",
+   "prej": "(x^3)^2",
+   "potem": "x^9",
+   "pravilen": false,
+   "kategorija": "potence",
+   "opis": "potenca potence: eksponent potenciran"
+  },
+  {
+   "id": "N025",
+   "prej": "ln(2x)",
+   "potem": "ln(2)*ln(x)",
+   "pravilen": false,
+   "kategorija": "logaritmi",
+   "opis": "logaritem produkta kot produkt logaritmov"
+  },
+  {
+   "id": "N026",
+   "prej": "ln(x+1)",
+   "potem": "ln(x)+ln(1)",
+   "pravilen": false,
+   "kategorija": "logaritmi",
+   "opis": "logaritem vsote kot vsota logaritmov"
+  },
+  {
+   "id": "N027",
+   "prej": "sin(2x)",
+   "potem": "2sin(x)",
+   "pravilen": false,
+   "kategorija": "kotne funkcije",
+   "opis": "sin(2x) ni 2 sin x"
+  },
+  {
+   "id": "N028",
+   "prej": "1/(x+1)",
+   "potem": "1/x+1",
+   "pravilen": false,
+   "kategorija": "ulomki",
+   "opis": "ulomek z vsoto v imenovalcu razbit"
+  },
+  {
+   "id": "N029",
+   "prej": "-(x-3)",
+   "potem": "-x-3",
+   "pravilen": false,
+   "kategorija": "predznak",
+   "opis": "minus pred oklepajem le na prvem členu"
+  },
+  {
+   "id": "N030",
+   "prej": "x^2-4",
+   "potem": "(x-2)^2",
+   "pravilen": false,
+   "kategorija": "razcep",
+   "opis": "razlika kvadratov kot kvadrat razlike"
+  },
+  {
+   "id": "N031",
+   "prej": "x^2-5x+6",
+   "potem": "(x-2)(x+3)",
+   "pravilen": false,
+   "kategorija": "razcep",
+   "opis": "napačen predznak v razcepu"
+  },
+  {
+   "id": "N032",
+   "prej": "x/(x-1)=1/(x-1)",
+   "potem": "x=1",
+   "pravilen": false,
+   "kategorija": "preizkus",
+   "opis": "tuja rešitev x = 1 (imenovalec 0) ni zavrnjena"
+  },
+  {
+   "id": "N033",
+   "prej": "x/2+x/3=5",
+   "potem": "x/5=5",
+   "pravilen": false,
+   "kategorija": "ulomki",
+   "opis": "seštevanje ulomkov po števcih in imenovalcih"
+  },
+  {
+   "id": "N034",
+   "prej": "1/x+1/2=1",
+   "potem": "2+x=1",
+   "pravilen": false,
+   "kategorija": "ulomki",
+   "opis": "množenje z 2x le na levi strani"
+  },
+  {
+   "id": "N035",
+   "prej": "sqrt(x)=x-2",
+   "potem": "x=x^2-4",
+   "pravilen": false,
+   "kategorija": "kvadriranje",
+   "opis": "(x-2)² zapisan kot x² - 4"
+  },
+  {
+   "id": "N036",
+   "prej": "abs(x-1)=3",
+   "potem": "x-1=3",
+   "pravilen": false,
+   "kategorija": "absolutna vrednost",
+   "opis": "pozabljen primer x - 1 = -3"
+  },
+  {
+   "id": "N037",
+   "prej": "abs(x)<2",
+   "potem": "x<2",
+   "pravilen": false,
+   "kategorija": "absolutna vrednost",
+   "opis": "pozabljena spodnja meja"
+  },
+  {
+   "id": "N038",
+   "prej": "x^2>4",
+   "potem": "x>2",
+   "pravilen": false,
+   "kategorija": "neenačba",
+   "opis": "pozabljen del x < -2"
+  },
+  {
+   "id": "N039",
+   "prej": "2^x=8",
+   "potem": "x=4",
+   "pravilen": false,
+   "kategorija": "eksponentna",
+   "opis": "8 = 2³, ne 2⁴"
+  },
+  {
+   "id": "N040",
+   "prej": "3^(x+1)=27",
+   "potem": "x+1=9",
+   "pravilen": false,
+   "kategorija": "eksponentna",
+   "opis": "logaritem zamenjan z deljenjem"
+  },
+  {
+   "id": "N041",
+   "prej": "log2(x)=3",
+   "potem": "x=6",
+   "pravilen": false,
+   "kategorija": "logaritmi",
+   "opis": "2³ = 8, ne 2·3"
+  },
+  {
+   "id": "N042",
+   "prej": "sin(x)=1/2",
+   "potem": "x=pi/6",
+   "pravilen": false,
+   "kategorija": "kotne enačbe",
+   "opis": "pozabljena rešitev 5π/6 na [0, 2π)",
+   "neznanka": "x",
+   "obmocje": "[0, 2*pi)"
+  },
+  {
+   "id": "N043",
+   "prej": "cos(x)=0",
+   "potem": "x=pi/2",
+   "pravilen": false,
+   "kategorija": "kotne enačbe",
+   "opis": "pozabljena rešitev 3π/2 na [0, 2π)",
+   "neznanka": "x",
+   "obmocje": "[0, 2*pi)"
+  },
+  {
+   "id": "N044",
+   "prej": "tan(x)=1",
+   "potem": "x=pi/4",
+   "pravilen": false,
+   "kategorija": "kotne enačbe",
+   "opis": "pozabljena rešitev 5π/4 na [0, 2π)",
+   "neznanka": "x",
+   "obmocje": "[0, 2*pi)"
+  },
+  {
+   "id": "N045",
+   "prej": "x^2+2x=0",
+   "potem": "x+2=0",
+   "pravilen": false,
+   "kategorija": "deljenje z 0",
+   "opis": "deljenje z x, ki je lahko 0"
+  },
+  {
+   "id": "N046",
+   "prej": "(x+1)/(x-1)=2",
+   "potem": "x+1=2x-1",
+   "pravilen": false,
+   "kategorija": "ulomki",
+   "opis": "množenje z imenovalcem le pri prvem členu"
+  },
+  {
+   "id": "N047",
+   "prej": "5-2(x+1)=3",
+   "potem": "5-2x+2=3",
+   "pravilen": false,
+   "kategorija": "predznak",
+   "opis": "minus pred oklepajem le na prvem členu"
+  },
+  {
+   "id": "N048",
+   "prej": "x^2-6x+9=0",
+   "potem": "x=3 ali x=-3",
+   "pravilen": false,
+   "kategorija": "kvadratna",
+   "opis": "dvojna rešitev zamenjana z ±3"
+  },
+  {
+   "id": "N049",
+   "prej": "e^(x+1)",
+   "potem": "e^x+e",
+   "pravilen": false,
+   "kategorija": "potence",
+   "opis": "potenca vsote kot vsota potenc"
+  },
+  {
+   "id": "N050",
+   "prej": "2/(x-1)<1",
+   "potem": "2<x-1",
+   "pravilen": false,
+   "kategorija": "neenačba",
+   "opis": "množenje z imenovalcem, ki je lahko negativen"
+  }
+ ],
+ "pravilni": [
+  {
+   "id": "P001",
+   "prej": "5x-2=3x+6",
+   "potem": "2x=8",
+   "pravilen": true,
+   "kategorija": "linearna"
+  },
+  {
+   "id": "P002",
+   "prej": "3(x-2)=6",
+   "potem": "3x-6=6",
+   "pravilen": true,
+   "kategorija": "linearna"
+  },
+  {
+   "id": "P003",
+   "prej": "3(x-2)=6",
+   "potem": "x-2=2",
+   "pravilen": true,
+   "kategorija": "linearna"
+  },
+  {
+   "id": "P004",
+   "prej": "x/3=4",
+   "potem": "x=12",
+   "pravilen": true,
+   "kategorija": "linearna"
+  },
+  {
+   "id": "P005",
+   "prej": "-3x=9",
+   "potem": "x=-3",
+   "pravilen": true,
+   "kategorija": "linearna"
+  },
+  {
+   "id": "P006",
+   "prej": "(x+1)/2=(x-1)/3",
+   "potem": "3(x+1)=2(x-1)",
+   "pravilen": true,
+   "kategorija": "linearna"
+  },
+  {
+   "id": "P007",
+   "prej": "3x+3=2x-2",
+   "potem": "x=-5",
+   "pravilen": true,
+   "kategorija": "linearna"
+  },
+  {
+   "id": "P008",
+   "prej": "0.5x+1=2",
+   "potem": "x+2=4",
+   "pravilen": true,
+   "kategorija": "linearna"
+  },
+  {
+   "id": "P009",
+   "prej": "1.2x=3.6",
+   "potem": "x=3",
+   "pravilen": true,
+   "kategorija": "linearna"
+  },
+  {
+   "id": "P010",
+   "prej": "a*x+b=0",
+   "potem": "a*x=-b",
+   "pravilen": true,
+   "kategorija": "linearna s parametrom",
+   "neznanka": "x"
+  },
+  {
+   "id": "P011",
+   "prej": "5-2(x+1)=3",
+   "potem": "5-2x-2=3",
+   "pravilen": true,
+   "kategorija": "linearna"
+  },
+  {
+   "id": "P012",
+   "prej": "2(x+3)-4=x",
+   "potem": "2x+2=x",
+   "pravilen": true,
+   "kategorija": "linearna"
+  },
+  {
+   "id": "P013",
+   "prej": "x/2+x/3=5",
+   "potem": "5x/6=5",
+   "pravilen": true,
+   "kategorija": "linearna"
+  },
+  {
+   "id": "P014",
+   "prej": "x/2+x/3=5",
+   "potem": "3x+2x=30",
+   "pravilen": true,
+   "kategorija": "linearna"
+  },
+  {
+   "id": "P015",
+   "prej": "x^2-5x+6=0",
+   "potem": "(x-2)(x-3)=0",
+   "pravilen": true,
+   "kategorija": "kvadratna"
+  },
+  {
+   "id": "P016",
+   "prej": "(x-2)(x-3)=0",
+   "potem": "x=2 ali x=3",
+   "pravilen": true,
+   "kategorija": "kvadratna"
+  },
+  {
+   "id": "P017",
+   "prej": "x^2=9",
+   "potem": "x=3 ali x=-3",
+   "pravilen": true,
+   "kategorija": "kvadratna"
+  },
+  {
+   "id": "P018",
+   "prej": "x^2-4x+4=0",
+   "potem": "(x-2)^2=0",
+   "pravilen": true,
+   "kategorija": "kvadratna"
+  },
+  {
+   "id": "P019",
+   "prej": "(x-2)^2=0",
+   "potem": "x=2",
+   "pravilen": true,
+   "kategorija": "kvadratna"
+  },
+  {
+   "id": "P020",
+   "prej": "x^2+2x=0",
+   "potem": "x(x+2)=0",
+   "pravilen": true,
+   "kategorija": "kvadratna"
+  },
+  {
+   "id": "P021",
+   "prej": "x(x+2)=0",
+   "potem": "x=0 ali x=-2",
+   "pravilen": true,
+   "kategorija": "kvadratna"
+  },
+  {
+   "id": "P022",
+   "prej": "2x^2-8=0",
+   "potem": "x^2=4",
+   "pravilen": true,
+   "kategorija": "kvadratna"
+  },
+  {
+   "id": "P023",
+   "prej": "x^2+x-6=0",
+   "potem": "x=2 ali x=-3",
+   "pravilen": true,
+   "kategorija": "kvadratna"
+  },
+  {
+   "id": "P024",
+   "prej": "x^2+1=0",
+   "potem": "x^2=-1",
+   "pravilen": true,
+   "kategorija": "kvadratna"
+  },
+  {
+   "id": "P025",
+   "prej": "x^2-6x+5=0",
+   "potem": "(x-3)^2=4",
+   "pravilen": true,
+   "kategorija": "kvadratna"
+  },
+  {
+   "id": "P026",
+   "prej": "(x-3)^2=4",
+   "potem": "x-3=2 ali x-3=-2",
+   "pravilen": true,
+   "kategorija": "kvadratna"
+  },
+  {
+   "id": "P027",
+   "prej": "x^4-5x^2+4=0",
+   "potem": "(x^2-1)(x^2-4)=0",
+   "pravilen": true,
+   "kategorija": "bikvadratna"
+  },
+  {
+   "id": "P028",
+   "prej": "x^2=x",
+   "potem": "x^2-x=0",
+   "pravilen": true,
+   "kategorija": "kvadratna"
+  },
+  {
+   "id": "P029",
+   "prej": "x^2-x=0",
+   "potem": "x(x-1)=0",
+   "pravilen": true,
+   "kategorija": "kvadratna"
+  },
+  {
+   "id": "P030",
+   "prej": "x^2-6x+9=0",
+   "potem": "x=3",
+   "pravilen": true,
+   "kategorija": "kvadratna"
+  },
+  {
+   "id": "P031",
+   "prej": "x^2-5x+6=0",
+   "potem": "x=2, x=3",
+   "pravilen": true,
+   "kategorija": "kvadratna"
+  },
+  {
+   "id": "P032",
+   "prej": "1/x=2",
+   "potem": "1=2x",
+   "pravilen": true,
+   "kategorija": "racionalna"
+  },
+  {
+   "id": "P033",
+   "prej": "(x+1)/(x-1)=2",
+   "potem": "x+1=2(x-1)",
+   "pravilen": true,
+   "kategorija": "racionalna"
+  },
+  {
+   "id": "P034",
+   "prej": "sqrt(x+3)=x+1",
+   "potem": "x+3=(x+1)^2",
+   "pravilen": true,
+   "kategorija": "korenska (posledica)",
+   "vrsta": "posledica"
+  },
+  {
+   "id": "P035",
+   "prej": "2/x+1=3",
+   "potem": "2/x=2",
+   "pravilen": true,
+   "kategorija": "racionalna"
+  },
+  {
+   "id": "P036",
+   "prej": "2/x=2",
+   "potem": "x=1",
+   "pravilen": true,
+   "kategorija": "racionalna"
+  },
+  {
+   "id": "P037",
+   "prej": "(x^2-1)/(x-1)=0",
+   "potem": "x+1=0",
+   "pravilen": true,
+   "kategorija": "racionalna"
+  },
+  {
+   "id": "P038",
+   "prej": "1/x+1/2=1",
+   "potem": "2+x=2x",
+   "pravilen": true,
+   "kategorija": "racionalna"
+  },
+  {
+   "id": "P039",
+   "prej": "3/(x+2)=1",
+   "potem": "x+2=3",
+   "pravilen": true,
+   "kategorija": "racionalna"
+  },
+  {
+   "id": "P040",
+   "prej": "sqrt(x+2)=x",
+   "potem": "x+2=x^2",
+   "pravilen": true,
+   "kategorija": "korenska (posledica)",
+   "vrsta": "posledica"
+  },
+  {
+   "id": "P041",
+   "prej": "sqrt(x)=3",
+   "potem": "x=9",
+   "pravilen": true,
+   "kategorija": "korenska"
+  },
+  {
+   "id": "P042",
+   "prej": "sqrt(2x+1)=3",
+   "potem": "2x+1=9",
+   "pravilen": true,
+   "kategorija": "korenska"
+  },
+  {
+   "id": "P043",
+   "prej": "sqrt(x-1)=x-3",
+   "potem": "x-1=(x-3)^2",
+   "pravilen": true,
+   "kategorija": "korenska (posledica)",
+   "vrsta": "posledica"
+  },
+  {
+   "id": "P044",
+   "prej": "x+2=x^2",
+   "potem": "x^2-x-2=0",
+   "pravilen": true,
+   "kategorija": "kvadratna"
+  },
+  {
+   "id": "P045",
+   "prej": "sqrt(x)=x-2",
+   "potem": "x=x^2-4x+4",
+   "pravilen": true,
+   "kategorija": "korenska (posledica)",
+   "vrsta": "posledica"
+  },
+  {
+   "id": "P046",
+   "prej": "2^x=8",
+   "potem": "2^x=2^3",
+   "pravilen": true,
+   "kategorija": "eksponentna"
+  },
+  {
+   "id": "P047",
+   "prej": "2^x=2^3",
+   "potem": "x=3",
+   "pravilen": true,
+   "kategorija": "eksponentna"
+  },
+  {
+   "id": "P048",
+   "prej": "3^(x+1)=27",
+   "potem": "x+1=3",
+   "pravilen": true,
+   "kategorija": "eksponentna"
+  },
+  {
+   "id": "P049",
+   "prej": "e^x=5",
+   "potem": "x=ln(5)",
+   "pravilen": true,
+   "kategorija": "eksponentna"
+  },
+  {
+   "id": "P050",
+   "prej": "ln(x)=2",
+   "potem": "x=e^2",
+   "pravilen": true,
+   "kategorija": "logaritemska"
+  },
+  {
+   "id": "P051",
+   "prej": "log2(x)=3",
+   "potem": "x=8",
+   "pravilen": true,
+   "kategorija": "logaritemska"
+  },
+  {
+   "id": "P052",
+   "prej": "log(x)+log(x-1)=log(2)",
+   "potem": "log(x(x-1))=log(2)",
+   "pravilen": true,
+   "kategorija": "logaritemska (posledica)",
+   "vrsta": "posledica"
+  },
+  {
+   "id": "P053",
+   "prej": "x(x-1)=2",
+   "potem": "x^2-x-2=0",
+   "pravilen": true,
+   "kategorija": "kvadratna"
+  },
+  {
+   "id": "P054",
+   "prej": "4^x=2",
+   "potem": "2^(2x)=2^1",
+   "pravilen": true,
+   "kategorija": "eksponentna"
+  },
+  {
+   "id": "P055",
+   "prej": "2^(2x)=2",
+   "potem": "2x=1",
+   "pravilen": true,
+   "kategorija": "eksponentna"
+  },
+  {
+   "id": "P056",
+   "prej": "ln(x^2)=2",
+   "potem": "2ln(abs(x))=2",
+   "pravilen": true,
+   "kategorija": "logaritemska"
+  },
+  {
+   "id": "P057",
+   "prej": "10^x=1000",
+   "potem": "x=3",
+   "pravilen": true,
+   "kategorija": "eksponentna"
+  },
+  {
+   "id": "P058",
+   "prej": "log(x,3)=2",
+   "potem": "x=9",
+   "pravilen": true,
+   "kategorija": "logaritemska"
+  },
+  {
+   "id": "P059",
+   "prej": "2^(x+1)=2^x+4",
+   "potem": "2^x=4",
+   "pravilen": true,
+   "kategorija": "eksponentna"
+  },
+  {
+   "id": "P060",
+   "prej": "abs(x-1)=3",
+   "potem": "x-1=3 ali x-1=-3",
+   "pravilen": true,
+   "kategorija": "absolutna vrednost"
+  },
+  {
+   "id": "P061",
+   "prej": "abs(2x)=4",
+   "potem": "x=2 ali x=-2",
+   "pravilen": true,
+   "kategorija": "absolutna vrednost"
+  },
+  {
+   "id": "P062",
+   "prej": "abs(x)<2",
+   "potem": "-2<x<2",
+   "pravilen": true,
+   "kategorija": "absolutna vrednost"
+  },
+  {
+   "id": "P063",
+   "prej": "abs(x-1)>=3",
+   "potem": "x-1>=3 ali x-1<=-3",
+   "pravilen": true,
+   "kategorija": "absolutna vrednost"
+  },
+  {
+   "id": "P064",
+   "prej": "-2x<4",
+   "potem": "x>-2",
+   "pravilen": true,
+   "kategorija": "neenačba"
+  },
+  {
+   "id": "P065",
+   "prej": "2x+1>5",
+   "potem": "2x>4",
+   "pravilen": true,
+   "kategorija": "neenačba"
+  },
+  {
+   "id": "P066",
+   "prej": "2x>4",
+   "potem": "x>2",
+   "pravilen": true,
+   "kategorija": "neenačba"
+  },
+  {
+   "id": "P067",
+   "prej": "x/2<=3",
+   "potem": "x<=6",
+   "pravilen": true,
+   "kategorija": "neenačba"
+  },
+  {
+   "id": "P068",
+   "prej": "-x>=3",
+   "potem": "x<=-3",
+   "pravilen": true,
+   "kategorija": "neenačba"
+  },
+  {
+   "id": "P069",
+   "prej": "x^2<4",
+   "potem": "-2<x<2",
+   "pravilen": true,
+   "kategorija": "neenačba"
+  },
+  {
+   "id": "P070",
+   "prej": "x^2>4",
+   "potem": "x<-2 ali x>2",
+   "pravilen": true,
+   "kategorija": "neenačba"
+  },
+  {
+   "id": "P071",
+   "prej": "(x-1)(x-3)<0",
+   "potem": "1<x<3",
+   "pravilen": true,
+   "kategorija": "neenačba"
+  },
+  {
+   "id": "P072",
+   "prej": "3-x<1",
+   "potem": "x>2",
+   "pravilen": true,
+   "kategorija": "neenačba"
+  },
+  {
+   "id": "P073",
+   "prej": "1/x>0",
+   "potem": "x>0",
+   "pravilen": true,
+   "kategorija": "neenačba"
+  },
+  {
+   "id": "P074",
+   "prej": "x^2-4x+3<=0",
+   "potem": "1<=x<=3",
+   "pravilen": true,
+   "kategorija": "neenačba"
+  },
+  {
+   "id": "P075",
+   "prej": "(x+1)/2<x",
+   "potem": "x+1<2x",
+   "pravilen": true,
+   "kategorija": "neenačba"
+  },
+  {
+   "id": "P076",
+   "prej": "2/(x-1)<1",
+   "potem": "x<1 ali x>3",
+   "pravilen": true,
+   "kategorija": "neenačba"
+  },
+  {
+   "id": "P077",
+   "prej": "sin(x)=1/2",
+   "potem": "x=pi/6 ali x=5pi/6",
+   "pravilen": true,
+   "kategorija": "kotna enačba",
+   "neznanka": "x",
+   "obmocje": "[0, 2*pi)"
+  },
+  {
+   "id": "P078",
+   "prej": "cos(x)=0",
+   "potem": "x=pi/2 ali x=3pi/2",
+   "pravilen": true,
+   "kategorija": "kotna enačba",
+   "neznanka": "x",
+   "obmocje": "[0, 2*pi)"
+  },
+  {
+   "id": "P079",
+   "prej": "tan(x)=1",
+   "potem": "x=pi/4 ali x=5pi/4",
+   "pravilen": true,
+   "kategorija": "kotna enačba",
+   "neznanka": "x",
+   "obmocje": "[0, 2*pi)"
+  },
+  {
+   "id": "P080",
+   "prej": "2sin(x)=1",
+   "potem": "sin(x)=1/2",
+   "pravilen": true,
+   "kategorija": "kotna enačba"
+  },
+  {
+   "id": "P081",
+   "prej": "sin(x)^2=1/4",
+   "potem": "sin(x)=1/2 ali sin(x)=-1/2",
+   "pravilen": true,
+   "kategorija": "kotna enačba",
+   "neznanka": "x",
+   "obmocje": "[0, 2*pi)"
+  },
+  {
+   "id": "P082",
+   "prej": "sin(2x)=sin(x)",
+   "potem": "2sin(x)cos(x)=sin(x)",
+   "pravilen": true,
+   "kategorija": "kotna enačba"
+  },
+  {
+   "id": "P083",
+   "prej": "cos(x)^2-sin(x)^2=1",
+   "potem": "cos(2x)=1",
+   "pravilen": true,
+   "kategorija": "kotna enačba"
+  },
+  {
+   "id": "P084",
+   "prej": "2cos(x)=sqrt(3)",
+   "potem": "cos(x)=sqrt(3)/2",
+   "pravilen": true,
+   "kategorija": "kotna enačba"
+  },
+  {
+   "id": "P085",
+   "prej": "(a+b)^2",
+   "potem": "a^2+2ab+b^2",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P086",
+   "prej": "(a-b)^2",
+   "potem": "a^2-2ab+b^2",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P087",
+   "prej": "(a+b)(a-b)",
+   "potem": "a^2-b^2",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P088",
+   "prej": "x^2-5x+6",
+   "potem": "(x-2)(x-3)",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P089",
+   "prej": "x^3-1",
+   "potem": "(x-1)(x^2+x+1)",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P090",
+   "prej": "2x+3x",
+   "potem": "5x",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P091",
+   "prej": "3(x-2)",
+   "potem": "3x-6",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P092",
+   "prej": "x^2*x^3",
+   "potem": "x^5",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P093",
+   "prej": "(x^3)^2",
+   "potem": "x^6",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P094",
+   "prej": "2^3*2^4",
+   "potem": "2^7",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P095",
+   "prej": "x^2/x",
+   "potem": "x",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P096",
+   "prej": "(x^2-1)/(x-1)",
+   "potem": "x+1",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P097",
+   "prej": "1/x+1/2",
+   "potem": "(2+x)/(2x)",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P098",
+   "prej": "ln(x^2)",
+   "potem": "2ln(abs(x))",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P099",
+   "prej": "ln(2x)",
+   "potem": "ln(2)+ln(x)",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P100",
+   "prej": "ln(x^3)",
+   "potem": "3ln(x)",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P101",
+   "prej": "sqrt(x^2)",
+   "potem": "abs(x)",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P102",
+   "prej": "sqrt(4x^2)",
+   "potem": "2abs(x)",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P103",
+   "prej": "sin(2x)",
+   "potem": "2sin(x)cos(x)",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P104",
+   "prej": "cos(2x)",
+   "potem": "1-2sin(x)^2",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P105",
+   "prej": "sin(x)^2+cos(x)^2",
+   "potem": "1",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P106",
+   "prej": "tan(x)",
+   "potem": "sin(x)/cos(x)",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P107",
+   "prej": "e^(x+1)",
+   "potem": "e*e^x",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P108",
+   "prej": "(x+1)/2",
+   "potem": "x/2+1/2",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P109",
+   "prej": "(2x+4)/2",
+   "potem": "x+2",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P110",
+   "prej": "sqrt(12)",
+   "potem": "2sqrt(3)",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P111",
+   "prej": "1/sqrt(2)",
+   "potem": "sqrt(2)/2",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P112",
+   "prej": "(a/b)/(c/d)",
+   "potem": "(a*d)/(b*c)",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P113",
+   "prej": "a/b+c/d",
+   "potem": "(a*d+b*c)/(b*d)",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P114",
+   "prej": "x^(-2)",
+   "potem": "1/x^2",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P115",
+   "prej": "8^(1/3)",
+   "potem": "2",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P116",
+   "prej": "sqrt(x)*sqrt(x)",
+   "potem": "x",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P117",
+   "prej": "-(x-3)",
+   "potem": "-x+3",
+   "pravilen": true,
+   "kategorija": "izraz"
+  },
+  {
+   "id": "P118",
+   "prej": "2+3*4",
+   "potem": "14",
+   "pravilen": true,
+   "kategorija": "račun"
+  },
+  {
+   "id": "P119",
+   "prej": "3/4+1/2",
+   "potem": "5/4",
+   "pravilen": true,
+   "kategorija": "račun"
+  },
+  {
+   "id": "P120",
+   "prej": "(2/3)*(9/4)",
+   "potem": "3/2",
+   "pravilen": true,
+   "kategorija": "račun"
+  },
+  {
+   "id": "P121",
+   "prej": "0.25*8",
+   "potem": "2",
+   "pravilen": true,
+   "kategorija": "račun"
+  },
+  {
+   "id": "P122",
+   "prej": "2x+3=11",
+   "potem": "2x=8",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P123",
+   "prej": "2x=8",
+   "potem": "x=4",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P124",
+   "prej": "3x-4=8",
+   "potem": "3x=12",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P125",
+   "prej": "3x=12",
+   "potem": "x=4",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P126",
+   "prej": "5x+7=-3",
+   "potem": "5x=-10",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P127",
+   "prej": "5x=-10",
+   "potem": "x=-2",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P128",
+   "prej": "-4x+1=9",
+   "potem": "-4x=8",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P129",
+   "prej": "-4x=8",
+   "potem": "x=-2",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P130",
+   "prej": "7x-2=12",
+   "potem": "7x=14",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P131",
+   "prej": "7x=14",
+   "potem": "x=2",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P132",
+   "prej": "6x+5=5",
+   "potem": "6x=0",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P133",
+   "prej": "6x=0",
+   "potem": "x=0",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P134",
+   "prej": "-3x-6=0",
+   "potem": "-3x=6",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P135",
+   "prej": "-3x=6",
+   "potem": "x=-2",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P136",
+   "prej": "9x+4=22",
+   "potem": "9x=18",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P137",
+   "prej": "9x=18",
+   "potem": "x=2",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P138",
+   "prej": "-2x+7=-1",
+   "potem": "-2x=-8",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P139",
+   "prej": "-2x=-8",
+   "potem": "x=4",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P140",
+   "prej": "4x-9=3",
+   "potem": "4x=12",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P141",
+   "prej": "4x=12",
+   "potem": "x=3",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P142",
+   "prej": "8x+3=-13",
+   "potem": "8x=-16",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P143",
+   "prej": "8x=-16",
+   "potem": "x=-2",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P144",
+   "prej": "-5x+2=17",
+   "potem": "-5x=15",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P145",
+   "prej": "-5x=15",
+   "potem": "x=-3",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P146",
+   "prej": "11x-1=10",
+   "potem": "11x=11",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P147",
+   "prej": "11x=11",
+   "potem": "x=1",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P148",
+   "prej": "3x+8=2",
+   "potem": "3x=-6",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P149",
+   "prej": "3x=-6",
+   "potem": "x=-2",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P150",
+   "prej": "-6x-5=7",
+   "potem": "-6x=12",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P151",
+   "prej": "-6x=12",
+   "potem": "x=-2",
+   "pravilen": true,
+   "kategorija": "linearna (vzorec)"
+  },
+  {
+   "id": "P152",
+   "prej": "-2x+3<9",
+   "potem": "-2x<6",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P153",
+   "prej": "-2x<6",
+   "potem": "x>-3",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P154",
+   "prej": "-3x-1<8",
+   "potem": "-3x<9",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P155",
+   "prej": "-3x<9",
+   "potem": "x>-3",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P156",
+   "prej": "-5x+4<-6",
+   "potem": "-5x<-10",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P157",
+   "prej": "-5x<-10",
+   "potem": "x>2",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P158",
+   "prej": "-4x+2<10",
+   "potem": "-4x<8",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P159",
+   "prej": "-4x<8",
+   "potem": "x>-2",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P160",
+   "prej": "-7x-3<4",
+   "potem": "-7x<7",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P161",
+   "prej": "-7x<7",
+   "potem": "x>-1",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P162",
+   "prej": "-6x+1<-11",
+   "potem": "-6x<-12",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P163",
+   "prej": "-6x<-12",
+   "potem": "x>2",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P164",
+   "prej": "-9x+5<14",
+   "potem": "-9x<9",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P165",
+   "prej": "-9x<9",
+   "potem": "x>-1",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P166",
+   "prej": "-8x-2<6",
+   "potem": "-8x<8",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P167",
+   "prej": "-8x<8",
+   "potem": "x>-1",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P168",
+   "prej": "-3x+7<-2",
+   "potem": "-3x<-9",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P169",
+   "prej": "-3x<-9",
+   "potem": "x>3",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P170",
+   "prej": "-2x-9<1",
+   "potem": "-2x<10",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P171",
+   "prej": "-2x<10",
+   "potem": "x>-5",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P172",
+   "prej": "2x-3>=9",
+   "potem": "2x>=12",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P173",
+   "prej": "2x>=12",
+   "potem": "x>=6",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P174",
+   "prej": "3x+1>=-8",
+   "potem": "3x>=-9",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P175",
+   "prej": "3x>=-9",
+   "potem": "x>=-3",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P176",
+   "prej": "5x-4>=6",
+   "potem": "5x>=10",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P177",
+   "prej": "5x>=10",
+   "potem": "x>=2",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P178",
+   "prej": "4x+2>=11",
+   "potem": "4x>=9",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P179",
+   "prej": "4x>=9",
+   "potem": "x>=9/4",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P180",
+   "prej": "7x+3>=-4",
+   "potem": "7x>=-7",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P181",
+   "prej": "7x>=-7",
+   "potem": "x>=-1",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P182",
+   "prej": "6x-1>=13",
+   "potem": "6x>=14",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P183",
+   "prej": "6x>=14",
+   "potem": "x>=7/3",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P184",
+   "prej": "9x-5>=4",
+   "potem": "9x>=9",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P185",
+   "prej": "9x>=9",
+   "potem": "x>=1",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P186",
+   "prej": "8x+2>=-6",
+   "potem": "8x>=-8",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P187",
+   "prej": "8x>=-8",
+   "potem": "x>=-1",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P188",
+   "prej": "3x-7>=2",
+   "potem": "3x>=9",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P189",
+   "prej": "3x>=9",
+   "potem": "x>=3",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P190",
+   "prej": "2x+9>=-1",
+   "potem": "2x>=-10",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P191",
+   "prej": "2x>=-10",
+   "potem": "x>=-5",
+   "pravilen": true,
+   "kategorija": "neenačba (vzorec)"
+  },
+  {
+   "id": "P192",
+   "prej": "x^2-5x+4=0",
+   "potem": "(x-1)(x-4)=0",
+   "pravilen": true,
+   "kategorija": "kvadratna (vzorec)"
+  },
+  {
+   "id": "P193",
+   "prej": "x^2-3x-10=0",
+   "potem": "(x+2)(x-5)=0",
+   "pravilen": true,
+   "kategorija": "kvadratna (vzorec)"
+  },
+  {
+   "id": "P194",
+   "prej": "x^2+4x-21=0",
+   "potem": "(x-3)(x+7)=0",
+   "pravilen": true,
+   "kategorija": "kvadratna (vzorec)"
+  },
+  {
+   "id": "P195",
+   "prej": "x^2+7x+6=0",
+   "potem": "(x+1)(x+6)=0",
+   "pravilen": true,
+   "kategorija": "kvadratna (vzorec)"
+  },
+  {
+   "id": "P196",
+   "prej": "x^2-11x+18=0",
+   "potem": "(x-2)(x-9)=0",
+   "pravilen": true,
+   "kategorija": "kvadratna (vzorec)"
+  },
+  {
+   "id": "P197",
+   "prej": "x^2+1x-12=0",
+   "potem": "(x+4)(x-3)=0",
+   "pravilen": true,
+   "kategorija": "kvadratna (vzorec)"
+  },
+  {
+   "id": "P198",
+   "prej": "x^2-5x-6=0",
+   "potem": "(x-6)(x+1)=0",
+   "pravilen": true,
+   "kategorija": "kvadratna (vzorec)"
+  },
+  {
+   "id": "P199",
+   "prej": "x^2+8x+15=0",
+   "potem": "(x+5)(x+3)=0",
+   "pravilen": true,
+   "kategorija": "kvadratna (vzorec)"
+  },
+  {
+   "id": "P200",
+   "prej": "x^2-9x+14=0",
+   "potem": "(x-7)(x-2)=0",
+   "pravilen": true,
+   "kategorija": "kvadratna (vzorec)"
+  }
+ ]
+}

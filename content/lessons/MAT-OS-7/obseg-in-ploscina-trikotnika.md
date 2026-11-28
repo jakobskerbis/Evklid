@@ -48,7 +48,7 @@ Vsak kos ima osnovnico $5\,\text{cm}$ in isto višino $12\,\text{cm}$, zato plo�
 
 **Pravokotni trikotnik.** Kateti sta pravokotni, zato je ena kateta kar višina na drugo. Samo tu smeš množiti dve stranici: $p = \dfrac{a \cdot b}{2}$, kjer sta $a$ in $b$ kateti.
 
-**Topokotni trikotnik.** Višina na krajšo stranico pade zunaj trikotnika, na podaljšek stranice. Obrazec velja enako, le višino moraš izmeriti do podaljška.
+**Topokotni trikotnik.** Višini na stranici ob topem kotu padeta zunaj trikotnika, na podaljšek stranice. Obrazec velja enako, le višino moraš izmeriti do podaljška.
 
 V simulaciji spodaj (»Ploščina trikotnika«) nastavi $a = 6$ in $v = 4$. Nato premikaj drsnik »zamik vrha«. Opazuj: poševni stranici se daljšata ali krajšata, obseg se spreminja, ploščina pa ostane $12$.
 

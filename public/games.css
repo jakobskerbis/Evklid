@@ -200,8 +200,8 @@ body.gm-on .gm-host { flex: 1; min-height: 0; }
 .gm-card-ic svg.i { width: 32px; height: 32px; }
 .gm-big { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 2.4rem; font-weight: 900; }
 .gm-big svg.i { width: 34px; height: 34px; color: var(--gold); }
-.gm-record { color: var(--gold); font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 6px; }
-.gm-xp { color: var(--gold); }
+.gm-record { color: var(--gold-text); font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.gm-xp { color: var(--gold-text); }
 .gm-mist { margin-top: 12px; text-align: start; padding: 10px 12px; border-radius: var(--radius-sm); background: var(--surface-2); }
 .gm-mist ul { list-style: none; margin: 6px 0 0; padding: 0; }
 .gm-mist li { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; border-top: 1px solid var(--border); font-size: 0.92rem; }

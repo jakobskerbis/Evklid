@@ -238,6 +238,18 @@ Redoks reakcije te obdajajo:
 ~ Atomi se res ujemajo, naboj pa ne: levo $2$, desno $3$.
 > Oddanih elektronov je $3$, sprejetih $2$. Prvo polreakcijo pomnožimo z $2$, drugo s $3$: $\mathrm{2\,Al + 3\,Cu^{2+} \rightarrow 2\,Al^{3+} + 3\,Cu}$.
 
+? Raztopino železovih(II) ionov titriramo s kalijevim permanganatom. Do preskoka porabimo $10{,}0\,\mathrm{mL}$ raztopine $\mathrm{KMnO_4}$ s koncentracijo $0{,}0200\,\mathrm{mol/L}$. Koliko milimolov $\mathrm{Fe^{2+}}$ je bilo v raztopini?
+= 1,00 mmol | 0,01
+~ 0,2 | To je množina permanganata. En ion $\mathrm{MnO_4^-}$ oksidira pet ionov $\mathrm{Fe^{2+}}$.
+~ 0,04 | Razmerje si obrnil: železovih ionov je petkrat več kot permanganata, ne petkrat manj.
+> $n(\mathrm{MnO_4^-}) = 0{,}0200\,\mathrm{mol/L} \cdot 0{,}0100\,\mathrm{L} = 2{,}00 \cdot 10^{-4}\,\mathrm{mol}$, $n(\mathrm{Fe^{2+}}) = 5 \cdot 2{,}00 \cdot 10^{-4}\,\mathrm{mol} = 1{,}00 \cdot 10^{-3}\,\mathrm{mol} = 1{,}00\,\mathrm{mmol}$.
+
+? Koliko molov elektronov sprejme $0{,}10\,\mathrm{mol}$ permanganatnih ionov, ko se v kisli raztopini reducirajo do $\mathrm{Mn^{2+}}$?
+= 0,50 mol | 0,005
+~ 0,70 | Mangan ne gre do $0$: iz $+7$ preide v $+2$, kar je $5$ elektronov na ion.
+~ 0,20 | $2$ je končno oksidacijsko število mangana, ne število sprejetih elektronov.
+> Mangan preide iz $+7$ v $+2$: vsak ion sprejme $5$ elektronov, $0{,}10\,\mathrm{mol} \cdot 5 = 0{,}50\,\mathrm{mol}$ elektronov.
+
 :::simboli
 n | množina snovi (permanganata ali železovih ionov) | n = c \cdot V | mol | $n(\mathrm{Fe^{2+}}) = 5 \cdot n(\mathrm{MnO_4^-})$
 c | množinska koncentracija raztopine KMnO₄ | | mol/L

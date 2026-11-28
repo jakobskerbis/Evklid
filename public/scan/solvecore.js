@@ -10,7 +10,8 @@
 // se ne pokaže kot rešitev (vrne ok:false in vmesnik ponudi AI rešitev, ki se preveri enako).
 
 import { parse, compile, diff, simplify, toTex as mathTex, normalize, joinThousands, joinDotThousands, digitGap, twoDots } from "../graph/math.js";
-import { Q, P, AlgebraError, polyOf, tryPoly, constQ, termsTex, termTex, isqrt, lcmInt, gcdInt, approxTex, monoKey } from "./algebra.js";
+import { Q, P, AlgebraError, polyOf, tryPoly, constQ, termsTex, termTex, isqrt, lcmInt, gcdInt, approxTex, monoKey, Surd, polyEquationProof, inequalityProof, squareFree, evalCs } from "./algebra.js";
+import { statusOf, statusShows } from "./status.js";
 
 export { Q, P };
 
@@ -47,12 +48,65 @@ export function prep(text) {
     .replace(/÷/g, "/")
     .replace(/\s*=\s*\?\s*$/, "")
     .replace(/\s*=\s*$/, "")
-    .replace(/^\s*(reši|izračunaj|poenostavi|razstavi|odvajaj|solve|calculate|simplify|factor)\s*[:.]?\s*/i, "")
+    // cela beseda: »factorial(14)« ni ukaz »factor« + »ial(14)« (N-01, racun2-118)
+    .replace(/^\s*(reši|izračunaj|poenostavi|razstavi|odvajaj|solve|calculate|simplify|factori[sz]e|factor)(?![a-zA-Zčšžćđ])\s*[:.]?\s*/i, "")
     .trim();
+  s = klici(s);
   // a/b z dvema celima številoma je ulomek: 3/4·2/5 = (3/4)·(2/5), ne ((3/4)·2)/5.
   // Ne pri znanstvenem zapisu v imenovalcu (»2/1e8« = 2/10⁸, ne (2/1)·10⁸; AUDIT-042).
   s = s.replace(/(?<![\^/\d.,])(\d+)\s*\/\s*(\d+)(?![\d.,]*\s*[\^!]|[\d.,]*[eE][+\-−]?\d)/g, "($1/$2)");
   return s;
+}
+
+// Funkcije, ki jih kalkulator (public/graph/math.js) pozna pod drugim imenom: log(a, b) → logb(a, b) (logaritem z
+// osnovo b), factorial(n) → (n)!, binomial(n, k) → nCr(n, k). Brez tega razčlenjevalnik vrže napako ali »factorial«
+// prebere kot f·a·c·t·o·r·i·a·l, in pravilen odgovor bi bil »Napačno« (meritev brez SymPy 26. 11.: 40/468).
+// C(n, k) in V(n, k) prepiše le preverjanje (kombinatorika spodaj): v besedilu naloge je »V(2, 3)« lahko teme parabole.
+const KLIC = /(?<![A-Za-z_])(log|factorial|binomial)\s*\(/g;
+const KOMB = /(?<![A-Za-z_])(C|V)\s*\(/g;
+
+// Argumenti klica, ki se začne na indeksu i (za oklepajem): { args, end } ali null brez zaklepaja.
+export function argumentiKlica(s, i) {
+  let d = 1;
+  let j = i;
+  const args = [];
+  let start = j;
+  for (; j < s.length && d; j++) {
+    if (s[j] === "(") d++;
+    else if (s[j] === ")") d--;
+    if ((d === 1 && s[j] === ",") || d === 0) (args.push(s.slice(start, j)), (start = j + 1));
+  }
+  return d ? null : { args, end: j };
+}
+
+function prepisi(s, re, nov) {
+  let out = "";
+  let i = 0;
+  for (const m of s.matchAll(re)) {
+    if (m.index < i) continue;
+    const k = argumentiKlica(s, m.index + m[0].length);
+    if (!k) break; // brez zaklepaja: pustimo
+    const z = nov(m[1], k.args.map((x) => prepisi(x, re, nov).trim()));
+    if (z === null) continue;
+    out += s.slice(i, m.index) + z;
+    i = k.end;
+  }
+  return out + s.slice(i);
+}
+
+function klici(s) {
+  return prepisi(s, KLIC, (ime, a) => {
+    if (ime === "log" && a.length === 2) return `logb(${a[0]}, ${a[1]})`;
+    if (ime === "factorial" && a.length === 1) return `(${a[0]})!`;
+    if (ime === "binomial" && a.length === 2) return `nCr(${a[0]}, ${a[1]})`;
+    return null;
+  });
+}
+
+// Kombinatorika za preverjanje: C(n, k) → nCr, V(n, k) → nPr, le s celima številoma.
+export function kombinatorika(s) {
+  if (typeof s !== "string") return s;
+  return prepisi(s, KOMB, (ime, a) => (a.length === 2 && a.every((x) => /^\d+$/.test(x)) ? `${ime === "C" ? "nCr" : "nPr"}(${a[0]}, ${a[1]})` : null));
 }
 
 // Sistem: dve (ali več) enačb, ločenih s podpičjem, novo vrstico ali », « (decimalna vejica nima presledka).
@@ -490,19 +544,8 @@ function linearSteps(pl, pr, v, op = "=") {
 // ---------------------------------------------------------------------------
 // Kvadratna enačba
 
-function sqfree(n) {
-  // n = k² · r
-  n = BigInt(n);
-  let k = 1n;
-  let r = n;
-  for (let p = 2n; p * p <= r; p++) {
-    while (r % (p * p) === 0n) {
-      r /= p * p;
-      k *= p;
-    }
-  }
-  return { k, r };
-}
+// n = k² · r (algebra.js: delitelji do 10⁵ in predpomnilnik; brez meje je pri n ≈ 10²⁹ trajalo več sekund)
+const sqfree = squareFree;
 
 // rešitev (−b ± k√r)/den v najkrajši obliki
 function surdSolutions(a, b, D) {
@@ -526,11 +569,13 @@ function surdSolutions(a, b, D) {
   };
   const pm = num === 0n ? `\\pm ${rad}` : `${num} \\pm ${rad}`;
   const val = (sgn) => (Number(num) + sgn * Number(kk) * Math.sqrt(Number(r))) / Number(den);
+  // surd: točna vrednost (num ± kk·√r)/den za točen preizkus (status »Preverjeno« brez decimalk, public/scan/status.js)
+  const surd = (sgn) => new Surd(new Q(num, den), new Q(BigInt(sgn) * kk, den), r);
   return {
     pmTex: den === 1n ? pm : `\\frac{${pm}}{${den}}`,
     sols: [
-      { tex: part(-1), num: val(-1) },
-      { tex: part(1), num: val(1) },
+      { tex: part(-1), num: val(-1), surd: surd(-1) },
+      { tex: part(1), num: val(1), surd: surd(1) },
     ].sort((x, y) => x.num - y.num),
   };
 }
@@ -750,6 +795,7 @@ function solveOneVar(ast, v, opt = {}) {
         methods: [{ id: "balance", steps }],
         graph,
         verified: true,
+        evidence: EXACT, // 0 = 0 v točnih ulomkih; izločene vrednosti so točne ničle imenovalca
       });
     }
     if (lin.all || lin.none) {
@@ -761,11 +807,12 @@ function solveOneVar(ast, v, opt = {}) {
         graph,
         numberLine: !isEq ? { v, intervals: lin.all ? [{ lo: null, hi: null }] : [] } : null,
         verified: true,
+        evidence: EXACT, // po točnem preoblikovanju ostane 0 = 0, 0 < 5 … (točni ulomki)
       });
     }
     if (isEq) {
       const kept = exclude([{ q: lin.value }], steps);
-      if (!kept.length) return result({ kind: "linear", problemTex, answer: { tex: `${v} \\in \\emptyset`, key: "scan.a.none" }, methods: [{ id: "balance", steps }], graph, verified: true });
+      if (!kept.length) return result({ kind: "linear", problemTex, answer: { tex: `${v} \\in \\emptyset`, key: "scan.a.none" }, methods: [{ id: "balance", steps }], graph, verified: true, evidence: EXACT });
       const chk = checkStep(sides, ops, v, [{ q: lin.value }]);
       if (chk.step) steps.push(chk.step);
       return result({
@@ -775,12 +822,14 @@ function solveOneVar(ast, v, opt = {}) {
         methods: [{ id: "balance", steps }],
         graph,
         verified: chk.ok,
+        // točen preizkus (ulomki); linearna enačba ima natanko eno rešitev
+        evidence: { holds: chk.ok, how: "exact", complete: "exact" },
       });
     }
     // neenačba
     const iv = intervalFor(lin.op, lin.value);
     steps.push(step(T("scan.s.interval"), `${v} \\in ${intervalsTex([iv])}`, { why: T("scan.w.interval") }));
-    const ok = verifyIneq(sides, ops, v, [iv]);
+    const { ok, evidence } = inequalityEvidence(sides, ops, v, [iv]);
     return result({
       kind: "lin-ineq",
       problemTex,
@@ -789,6 +838,7 @@ function solveOneVar(ast, v, opt = {}) {
       graph,
       numberLine: { v, intervals: [iv] },
       verified: ok,
+      evidence,
     });
   }
 
@@ -825,6 +875,7 @@ function solveOneVar(ast, v, opt = {}) {
     const qm = quadraticMethods(a, b, c, v, opt);
     const methods = qm.methods.map((m) => ({ id: m.id, steps: [...steps, ...m.steps] }));
     if (isEq) {
+      const allSols = qm.sols;
       if (opt.exclude?.length) {
         const rej = [];
         qm.sols = exclude(qm.sols, rej);
@@ -840,6 +891,8 @@ function solveOneVar(ast, v, opt = {}) {
         methods,
         graph: graphFor([polyNode(poly), { k: "num", v: 0 }], v, qm.sols),
         verified: chk.ok || !qm.sols.length,
+        // poly ima iste ničle kot naloga, razen izločenih (te so v allSols); Sturm prešteje vse realne ničle
+        evidence: equationEvidence(chk.ok || !qm.sols.length, poly, v, allSols, { denoms: opt.denoms, shown: qm.sols }),
       });
     }
     // kvadratna neenačba: ničle + parabola
@@ -851,7 +904,7 @@ function solveOneVar(ast, v, opt = {}) {
     st.push(...fm.steps.filter((s) => s.title.k !== "scan.s.solutions" && s.title.k !== "scan.s.zeroProduct"));
     if (roots.length) st.push(step(T("scan.s.zeros"), roots.map((r, i) => `${v}${roots.length > 1 ? `_{${i + 1}}` : ""} = ${r.tex}`).join(",\\quad "), { why: T("scan.w.zeros") }));
     st.push(step(T(sign === "below" ? "scan.s.parabolaBelow" : "scan.s.parabolaAbove"), `${v} \\in ${intervalsTex(ivs)}`, { why: T(roots.length ? "scan.w.parabola" : "scan.w.parabolaNoZero") }));
-    const ok = verifyIneq(sides, ops, v, ivs);
+    const { ok, evidence } = inequalityEvidence(sides, ops, v, ivs);
     return result({
       kind: "quad-ineq",
       problemTex,
@@ -860,6 +913,7 @@ function solveOneVar(ast, v, opt = {}) {
       graph: graphFor([polyNode(poly), { k: "num", v: 0 }], v, []),
       numberLine: { v, intervals: ivs },
       verified: ok,
+      evidence,
     });
   }
 
@@ -918,6 +972,7 @@ function solveOneVar(ast, v, opt = {}) {
   }
   let uniq = [];
   for (const s of sols) if (!uniq.some((u) => (u.q && s.q ? u.q.eq(s.q) : Math.abs((u.num ?? u.q?.num()) - (s.num ?? s.q?.num())) < 1e-12))) uniq.push(s);
+  const allSols = uniq;
   uniq = exclude(uniq, st);
   uniq.sort((x, y) => (x.num ?? x.q.num()) - (y.num ?? y.q.num()));
   const sub = (i) => (uniq.length > 1 ? `_{${i + 1}}` : "");
@@ -932,6 +987,9 @@ function solveOneVar(ast, v, opt = {}) {
     methods: [{ id: "horner", steps: st }],
     graph: graphFor([polyNode(poly), { k: "num", v: 0 }], v, uniq),
     verified: chk.ok,
+    // numerične ničle (bisekcija) potrdi Sturmov izrek: če katera manjka (npr. dvojna ničla brez spremembe predznaka),
+    // je status »napačno« in nalogo reši AI (AUDIT-001)
+    evidence: equationEvidence(chk.ok, poly, v, allSols, { denoms: opt.denoms, shown: uniq }),
   });
 }
 
@@ -1074,8 +1132,9 @@ function solveRational(ast, v, opt) {
       .join("") || "0";
   const newAst = parse(`${sideText(mulTerms[0])} = ${sideText(mulTerms[1])}`);
   pre.push(step(T("scan.s.mulLcd", { d: lcdTex }), tex(newAst), { note: `/ \\cdot ${lcdTex}`, why: T("scan.w.mulLcd") }));
-  const domainOpen = [...lcd.values()].some(({ f }) => f.degree(v) >= 2);
-  return solveOneVar(newAst, v, { ...opt, pre, orig: { ast, sides: ast.terms, ops: ast.ops }, exclude: excluded, domainOpen });
+  const denoms = [...lcd.values()].filter(({ f }) => f.degree(v) >= 2).map(({ f }) => f.coeffs(v));
+  const domainOpen = denoms.length > 0;
+  return solveOneVar(newAst, v, { ...opt, pre, orig: { ast, sides: ast.terms, ops: ast.ops }, exclude: excluded, domainOpen, denoms });
 }
 
 function hornerTable(cs, r) {
@@ -1210,7 +1269,7 @@ function solveDouble(ast, v) {
     methods: [{ id: "balance", steps }],
     numberLine: { v, intervals: ivs },
     graph: null,
-    verified: verifyIneq(ast.terms, ast.ops, v, ivs),
+    ...(({ ok, evidence }) => ({ verified: ok, evidence }))(inequalityEvidence(ast.terms, ast.ops, v, ivs)),
   });
 }
 
@@ -1256,10 +1315,13 @@ function solveSystem(parts) {
   const D = e1.a.mul(e2.b).sub(e2.a.mul(e1.b));
   const graph = { exprs: forms.map((f) => lfTex(f, vars).replace(/\\frac\{([^}]*)\}\{([^}]*)\}/g, "($1)/($2)").replace(/\{,\}/g, ".")).map(texToPlain), vars };
   if (D.zero) {
-    // ni rešitve ali neskončno rešitev
-    const dep = e1.a.mul(e2.c).sub(e2.a.mul(e1.c)).zero && e1.b.mul(e2.c).sub(e2.b.mul(e1.c)).zero;
+    // ni rešitve ali neskončno rešitev: točno po rangu (sistem je rešljiv, ko ima razširjena matrika enak rang
+    // kot matrika sistema). Prej je veljal »dep« tudi za 0 = 5 ob 0 = 0 in rezultat je bil vedno »preverjen« (AUDIT-001).
+    const minorsZero = e1.a.mul(e2.c).sub(e2.a.mul(e1.c)).zero && e1.b.mul(e2.c).sub(e2.b.mul(e1.c)).zero;
+    const rankA0 = [e1.a, e1.b, e2.a, e2.b].every((q) => q.zero);
+    const dep = minorsZero && !(rankA0 && !(e1.c.zero && e2.c.zero));
     const st = [...pre, step(T(dep ? "scan.s.sysDependent" : "scan.s.sysNone"), cases(forms.map((f) => lfTex(f, vars))), { why: T(dep ? "scan.w.sysDependent" : "scan.w.sysNone") })];
-    return result({ kind: "system", problemTex, answer: { tex: dep ? "\\infty" : "\\emptyset", key: dep ? "scan.a.sysMany" : "scan.a.none" }, methods: [{ id: "elim", steps: st }], graph, verified: true });
+    return result({ kind: "system", problemTex, answer: { tex: dep ? "\\infty" : "\\emptyset", key: dep ? "scan.a.sysMany" : "scan.a.none" }, methods: [{ id: "elim", steps: st }], graph, verified: true, evidence: EXACT });
   }
   const X = e1.c.mul(e2.b).sub(e2.c.mul(e1.b)).div(D);
   const Y = e1.a.mul(e2.c).sub(e2.a.mul(e1.c)).div(D);
@@ -1298,6 +1360,8 @@ function solveSystem(parts) {
     methods,
     graph: { ...graph, points: [[X.num(), Y.num()]] },
     verified: ok,
+    // točen preizkus; D ≠ 0 pomeni, da je rešitev ena sama
+    evidence: { holds: ok, how: "exact", complete: "exact" },
   });
 }
 
@@ -1570,6 +1634,7 @@ function solveArith(ast) {
     answer: { tex: main, approx: extra.filter((e) => e !== main).map((e) => (e.startsWith("\\approx") ? e : `= ${e}`)).join("\\quad ") || null },
     methods: [{ id: "order", steps: steps.length ? steps : [step(T("scan.s.value"), main)] }],
     verified: ok,
+    evidence: { holds: ok, how: "exact", complete: "na" }, // računano s točnimi ulomki
   });
 }
 
@@ -1633,7 +1698,7 @@ function solveNumeric(ast) {
   if (!ambiguous) {
     const one = line(ast, false);
     if (!one) return null;
-    return result({ kind: "arith", numeric: true, problemTex: tex(ast), answer: { tex: one.value.replace(/^= /, ""), approx: null }, methods: [{ id: "calc", steps: [step(T("scan.s.calc"), one.tex, { why: T("scan.w.calc") })] }], verified: true });
+    return result({ kind: "arith", numeric: true, problemTex: tex(ast), answer: { tex: one.value.replace(/^= /, ""), approx: null }, methods: [{ id: "calc", steps: [step(T("scan.s.calc"), one.tex, { why: T("scan.w.calc") })] }], verified: true, evidence: { holds: true, how: "numeric", complete: "na" } });
   }
   const deg = line(withUnit(ast, "deg"), true);
   const rad = line(withUnit(ast, "rad"), false);
@@ -1641,7 +1706,7 @@ function solveNumeric(ast) {
   const steps = [];
   if (deg) steps.push(step(T("scan.s.angleDeg"), deg.tex, { why: T("scan.w.angleDeg") }));
   if (rad) steps.push(step(T("scan.s.angleRad"), rad.tex, { why: T("scan.w.angleRad") }));
-  return result({ kind: "arith", numeric: true, problemTex: tex(ast), answer: { tex: deg.tex, approx: rad ? rad.tex : null }, methods: [{ id: "calc", steps }], verified: true });
+  return result({ kind: "arith", numeric: true, problemTex: tex(ast), answer: { tex: deg.tex, approx: rad ? rad.tex : null }, methods: [{ id: "calc", steps }], verified: true, evidence: { holds: true, how: "numeric", complete: "na" } });
 }
 
 // ---------------------------------------------------------------------------
@@ -1657,8 +1722,20 @@ function solveSimplify(ast) {
     answer: { tex: p.tex() },
     methods: [{ id: "simplify", steps }],
     graph: p.vars().length === 1 ? { exprs: [`y=${p.text().replaceAll(p.vars()[0], "x")}`] } : null,
-    verified: equalNumerically(ast, polyNode(p)),
+    ...sameExpr(ast, polyNode(p)),
   });
+}
+
+// izraz in rezultat: polinoma primerjamo točno (ulomki), sicer v naključnih točkah (numerično)
+function sameExpr(a, b) {
+  const pa = tryPoly(a);
+  const pb = tryPoly(b);
+  if (pa && pb) {
+    const ok = pa.eq(pb);
+    return { verified: ok, evidence: { holds: ok, how: "exact", complete: "na" } };
+  }
+  const ok = equalNumerically(a, b);
+  return { verified: ok, evidence: { holds: ok, how: "numeric", complete: "na" } };
 }
 
 function solveFactor(ast) {
@@ -1673,7 +1750,7 @@ function solveFactor(ast) {
     problemTex: tex(ast),
     answer: { tex: out },
     methods: [{ id: "factor", steps }],
-    verified: equalNumerically(ast, parse(prep(texToText(out)))),
+    ...sameExpr(ast, parse(prep(texToText(out)))),
   });
 }
 
@@ -2069,6 +2146,19 @@ function solveDerivative(ast, v = "x") {
     ansTex = tex(total);
     ok = true;
   }
+  // polinom odvajamo točno in primerjamo koeficiente; sicer ostane numerični odvod (status »numerično«)
+  let how = "numeric";
+  try {
+    const pf = tryPoly(ast);
+    const pg = tryPoly(parse(prep(texToText(ansTex))));
+    if (pf && pg && [...pf.vars(), ...pg.vars()].every((x) => x === v)) {
+      const d = pf.coeffs(v).slice(1).map((c, i) => ({ m: i ? { [v]: i } : {}, c: c.mul(new Q(i + 1)) }));
+      ok = new P(d).eq(pg);
+      how = "exact";
+    }
+  } catch (err) {
+    if (!(err instanceof AlgebraError)) throw err;
+  }
   return result({
     kind: "derivative",
     problemTex: `f(${v}) = ${tex(ast)}`,
@@ -2076,6 +2166,7 @@ function solveDerivative(ast, v = "x") {
     methods: [{ id: "rules", steps }],
     graph: { exprs: [`f(x)=${toPlainExpr(ast, v)}`, `y=${texToText(ansTex).replaceAll(v, "x")}`] },
     verified: ok,
+    evidence: { holds: ok, how, complete: "na" },
   });
 }
 
@@ -2136,8 +2227,71 @@ function liftFracs(n) {
   return o;
 }
 
+// status (public/scan/status.js) iz dokazov preverjanja r.evidence; rezultat brez dokazov je največ »numerično«.
+// verified ostane true za vse statuse, ki se smejo pokazati (uvozniki: server/live-check.js, server/sodba-koraka.js).
 function result(r) {
-  return { ok: true, ...r };
+  const status = r.verified ? (r.evidence ? statusOf(r.evidence) : "numeric") : "wrong";
+  return { ok: true, ...r, verified: !!r.verified && statusShows(status), status };
+}
+
+// Dokazi preverjanja (public/scan/status.js).
+const EXACT = { holds: true, how: "exact", complete: "exact" };
+// točna vrednost krajišča ali rešitve (Q, { q }, { surd }) kot Surd; približek → null
+function exactOf(e) {
+  if (e == null) return null;
+  if (e instanceof Q) return new Surd(e);
+  if (e.q) return new Surd(e.q);
+  if (e.surd) return e.surd;
+  return null;
+}
+const proofSol = (s) => (exactOf(s) ? { s: exactOf(s) } : { num: s.num });
+// enačba z eno neznanko: poly ima iste realne ničle kot naloga (brez izločenih vrednosti), sols so rešitve pred izločanjem
+// denoms: imenovalci stopnje ≥ 2 (racionalna enačba), shown: prikazane rešitve. Vsako točno vstavimo v vsak imenovalec:
+// rešitev, pri kateri je imenovalec 0, je napačna (x²/(x² − 2) = 2/(x² − 2) nima rešitve); brez točnih rešitev le numerično.
+function equationEvidence(holds, poly, v, sols, { denoms = null, shown = sols } = {}) {
+  let numericHolds = false;
+  if (denoms?.length) {
+    for (const s of shown) {
+      const x = exactOf(s);
+      if (!x) {
+        numericHolds = true;
+        continue;
+      }
+      try {
+        if (denoms.some((cs) => evalCs(cs, x).sign === 0)) return { holds: false };
+      } catch (err) {
+        if (!(err instanceof AlgebraError)) throw err;
+        numericHolds = true;
+      }
+    }
+  }
+  const pe = polyEquationProof(poly.coeffs(v), sols.map(proofSol));
+  if (!pe) return { holds, how: "numeric", complete: "numeric" };
+  return {
+    holds: holds && pe.holds,
+    how: pe.exact && !numericHolds ? "exact" : "numeric",
+    complete: pe.complete === true ? "exact" : pe.complete === false ? false : "unknown",
+  };
+}
+// neenačba (tudi dvojna): točen dokaz na kritičnih točkah (algebra.js inequalityProof), sicer mreža točk (numerično)
+function inequalityEvidence(sides, ops, v, ivs) {
+  let proved = null;
+  try {
+    const rels = ops.map((op, i) => {
+      const a = tryPoly(sides[i]);
+      const b = tryPoly(sides[i + 1]);
+      if (!a || !b || [...a.vars(), ...b.vars()].some((x) => x !== v)) throw new AlgebraError("notpoly");
+      return { cs: a.sub(b).coeffs(v), op };
+    });
+    const ends = ivs.map((iv) => ({ ...iv, lo: exactOf(iv.lo), hi: exactOf(iv.hi), point: exactOf(iv.point) }));
+    const exact = ivs.every((iv) => ["lo", "hi", "point"].every((k) => iv[k] == null || exactOf(iv[k])));
+    if (exact) proved = inequalityProof(rels, ends);
+  } catch (err) {
+    if (!(err instanceof AlgebraError)) throw err;
+  }
+  if (proved !== null) return { evidence: proved ? EXACT : { holds: false }, ok: proved };
+  const ok = verifyIneq(sides, ops, v, ivs);
+  return { evidence: { holds: ok, how: "numeric", complete: "numeric" }, ok };
 }
 
 export const GOALS = { arith: ["evaluate"], eq: ["solve"], expr1: ["simplify", "factor", "zeros", "derivative"], exprN: ["simplify", "factor"], func: ["derivative"] };
@@ -2185,9 +2339,29 @@ export function parseTask(text) {
   return liftFracs(parse(prep(text)));
 }
 
+// Število z več kot 15 mesti (12345678901234567, 10²³ izpisano) ali več kot 15 veljavnimi mesti: razčlenjevalnik ga
+// zaokroži na double, zato točen račun s tako prebrano vrednostjo ne dokazuje ničesar o nalogi. Lastni reševalnik ga
+// prepusti AI, preverjanje AI odločitev prepusti SymPy (dobi besedilo).
+export function bigLiteral(text) {
+  // tudi po združitvi skupin tisočic (»12 345 678 901 234 567« razčlenjevalnik bere kot eno število)
+  let joined = "";
+  try {
+    joined = prep(String(text ?? ""));
+  } catch {}
+  for (const m of `${String(text ?? "")} ${joined}`.matchAll(/\d+(?:[.,]\d+)?/g)) {
+    const [int, frac = ""] = m[0].split(/[.,]/);
+    const whole = int.replace(/^0+/, "");
+    const sig = (whole + frac).replace(/^0+/, "").replace(/0+$/, "");
+    if (whole.length > 15 || sig.length > 15) return true;
+  }
+  return false;
+}
+
 // Glavni vstop. Vrne { ok:false, reason } kadar naloge ne znamo rešiti po korakih (takrat pomaga AI).
+
 export function solve(text, { goal = null, complex = false } = {}) {
   if (unclearNumber(text)) return { ok: false, reason: "parse", goals: [], goal: null, type: "error" };
+  if (bigLiteral(text)) return { ok: false, reason: "unsupported", goals: [], goal: null, type: "big" };
   const info = analyze(text);
   const g = goal && info.goals.includes(goal) ? goal : info.goals[0];
   const base = { goals: info.goals, goal: g ?? null };

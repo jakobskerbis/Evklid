@@ -1,0 +1,3099 @@
+{
+  "opis": "Skriti nabor (26. 11. 2026): neodvisno sestavljene trditve na ravni splošne mature (osnovna raven) za merjenje napačnih ocen »napačno« in spregledanih napak. Napisane brez pogleda v kodo preverjevalnika; resnica izračunana ročno in neodvisno preverjena s SymPy (številsko vzorčenje in simbolno). Ne uglašuj kode na ta nabor.",
+  "polja": {
+    "naloga": "besedilo naloge za skener",
+    "sol": "rešitev v obliki AI rešitve skenerja",
+    "racun": "[ukaz SymPy, argumenti] kot v bloku RACUN",
+    "pravilno": "ali trditev drži",
+    "napaka": "vrsta namerne napake",
+    "najvec": "najvišji upravičen status (zaokrožen odgovor)",
+    "resnica": "prava množica rešitev (kjer je znana)"
+  },
+  "primeri": [
+    {
+      "id": "skrit-001",
+      "skupina": "log-racun",
+      "opis": "logaritem z osnovo 3",
+      "pravilno": true,
+      "naloga": "log(81, 3)",
+      "sol": {
+        "kind": "arith",
+        "value": "4"
+      },
+      "racun": [
+        "value",
+        [
+          "log(81, 3)",
+          "4"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-002",
+      "skupina": "log-racun",
+      "opis": "napaka: deljenje z osnovo namesto logaritma",
+      "pravilno": false,
+      "napaka": "pravilo",
+      "naloga": "log(81, 3)",
+      "sol": {
+        "kind": "arith",
+        "value": "27"
+      },
+      "racun": [
+        "value",
+        [
+          "log(81, 3)",
+          "27"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-003",
+      "skupina": "log-racun",
+      "opis": "dvojiški logaritem",
+      "pravilno": true,
+      "naloga": "log_2(32)",
+      "sol": {
+        "kind": "arith",
+        "value": "5"
+      },
+      "racun": [
+        "value",
+        [
+          "log_2(32)",
+          "5"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-004",
+      "skupina": "log-racun",
+      "opis": "logaritem ulomka",
+      "pravilno": true,
+      "naloga": "log_2(1/8)",
+      "sol": {
+        "kind": "arith",
+        "value": "-3"
+      },
+      "racun": [
+        "value",
+        [
+          "log_2(1/8)",
+          "-3"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-005",
+      "skupina": "log-racun",
+      "opis": "napaka: izgubljen predznak",
+      "pravilno": false,
+      "napaka": "predznak",
+      "naloga": "log_2(1/8)",
+      "sol": {
+        "kind": "arith",
+        "value": "3"
+      },
+      "racun": [
+        "value",
+        [
+          "log_2(1/8)",
+          "3"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-006",
+      "skupina": "log-racun",
+      "opis": "logaritem korena",
+      "pravilno": true,
+      "naloga": "log(sqrt(5), 5)",
+      "sol": {
+        "kind": "arith",
+        "value": "1/2"
+      },
+      "racun": [
+        "value",
+        [
+          "log(sqrt(5), 5)",
+          "1/2"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-007",
+      "skupina": "log-racun",
+      "opis": "napaka: obrnjen eksponent korena",
+      "pravilno": false,
+      "napaka": "obrat",
+      "naloga": "log(sqrt(5), 5)",
+      "sol": {
+        "kind": "arith",
+        "value": "2"
+      },
+      "racun": [
+        "value",
+        [
+          "log(sqrt(5), 5)",
+          "2"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-008",
+      "skupina": "log-racun",
+      "opis": "logaritem z drugo osnovo",
+      "pravilno": true,
+      "naloga": "log(8, 4)",
+      "sol": {
+        "kind": "arith",
+        "value": "3/2"
+      },
+      "racun": [
+        "value",
+        [
+          "log(8, 4)",
+          "3/2"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-009",
+      "skupina": "log-racun",
+      "opis": "napaka: napačna osnova (8 = 2^3, ne 4^2)",
+      "pravilno": false,
+      "napaka": "vrednost",
+      "naloga": "log(8, 4)",
+      "sol": {
+        "kind": "arith",
+        "value": "2"
+      },
+      "racun": [
+        "value",
+        [
+          "log(8, 4)",
+          "2"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-010",
+      "skupina": "log-racun",
+      "opis": "razlika logaritmov",
+      "pravilno": true,
+      "naloga": "log_2(48) - log_2(3)",
+      "sol": {
+        "kind": "arith",
+        "value": "4"
+      },
+      "racun": [
+        "value",
+        [
+          "log_2(48) - log_2(3)",
+          "4"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-011",
+      "skupina": "log-racun",
+      "opis": "napaka: logaritem vsote namesto produkta",
+      "pravilno": false,
+      "napaka": "pravilo",
+      "naloga": "log(18, 3) + log(1/2, 3)",
+      "sol": {
+        "kind": "arith",
+        "value": "log(17, 3)"
+      },
+      "racun": [
+        "value",
+        [
+          "log(18, 3) + log(1/2, 3)",
+          "log(17, 3)"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-012",
+      "skupina": "log-racun",
+      "opis": "prehod na novo osnovo",
+      "pravilno": true,
+      "naloga": "log(9, 2)*log(8, 3)",
+      "sol": {
+        "kind": "arith",
+        "value": "6"
+      },
+      "racun": [
+        "value",
+        [
+          "log(9, 2)*log(8, 3)",
+          "6"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-013",
+      "skupina": "log-racun",
+      "opis": "napaka: produkt logaritmov kot logaritem produkta",
+      "pravilno": false,
+      "napaka": "pravilo",
+      "naloga": "log(9, 2)*log(8, 3)",
+      "sol": {
+        "kind": "arith",
+        "value": "log(72, 6)"
+      },
+      "racun": [
+        "value",
+        [
+          "log(9, 2)*log(8, 3)",
+          "log(72, 6)"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-014",
+      "skupina": "log-racun",
+      "opis": "logaritem decimalnega števila",
+      "pravilno": true,
+      "naloga": "log(0.04, 5)",
+      "sol": {
+        "kind": "arith",
+        "value": "-2"
+      },
+      "racun": [
+        "value",
+        [
+          "log(0.04, 5)",
+          "-2"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-015",
+      "skupina": "log-racun",
+      "opis": "napaka: zamenjana logaritem in potenca",
+      "pravilno": false,
+      "napaka": "obrat",
+      "naloga": "log(1/27, 3)",
+      "sol": {
+        "kind": "arith",
+        "value": "-1/3"
+      },
+      "racun": [
+        "value",
+        [
+          "log(1/27, 3)",
+          "-1/3"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-016",
+      "skupina": "fakulteta",
+      "opis": "fakulteta",
+      "pravilno": true,
+      "naloga": "factorial(6)",
+      "sol": {
+        "kind": "arith",
+        "value": "720"
+      },
+      "racun": [
+        "value",
+        [
+          "factorial(6)",
+          "720"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-017",
+      "skupina": "fakulteta",
+      "opis": "kvocient fakultet",
+      "pravilno": true,
+      "naloga": "7!/5!",
+      "sol": {
+        "kind": "arith",
+        "value": "42"
+      },
+      "racun": [
+        "value",
+        [
+          "7!/5!",
+          "42"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-018",
+      "skupina": "fakulteta",
+      "opis": "napaka: en faktor preveč (7*6*5)",
+      "pravilno": false,
+      "napaka": "vrednost",
+      "naloga": "7!/5!",
+      "sol": {
+        "kind": "arith",
+        "value": "210"
+      },
+      "racun": [
+        "value",
+        [
+          "7!/5!",
+          "210"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-019",
+      "skupina": "fakulteta",
+      "opis": "fakulteta nič",
+      "pravilno": true,
+      "naloga": "factorial(0)",
+      "sol": {
+        "kind": "arith",
+        "value": "1"
+      },
+      "racun": [
+        "value",
+        [
+          "factorial(0)",
+          "1"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-020",
+      "skupina": "fakulteta",
+      "opis": "napaka: 0! = 0",
+      "pravilno": false,
+      "napaka": "vrednost",
+      "naloga": "factorial(0)",
+      "sol": {
+        "kind": "arith",
+        "value": "0"
+      },
+      "racun": [
+        "value",
+        [
+          "factorial(0)",
+          "0"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-021",
+      "skupina": "fakulteta",
+      "opis": "kvocient fakultet",
+      "pravilno": true,
+      "naloga": "10!/(8!*2!)",
+      "sol": {
+        "kind": "arith",
+        "value": "45"
+      },
+      "racun": [
+        "value",
+        [
+          "10!/(8!*2!)",
+          "45"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-022",
+      "skupina": "fakulteta",
+      "opis": "napaka: pozabljen 2!",
+      "pravilno": false,
+      "napaka": "vrednost",
+      "naloga": "10!/(8!*2!)",
+      "sol": {
+        "kind": "arith",
+        "value": "90"
+      },
+      "racun": [
+        "value",
+        [
+          "10!/(8!*2!)",
+          "90"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-023",
+      "skupina": "kombinatorika",
+      "opis": "kombinacije",
+      "pravilno": true,
+      "naloga": "nCr(10, 3)",
+      "sol": {
+        "kind": "arith",
+        "value": "120"
+      },
+      "racun": [
+        "value",
+        [
+          "nCr(10, 3)",
+          "120"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-024",
+      "skupina": "kombinatorika",
+      "opis": "napaka: variacije namesto kombinacij",
+      "pravilno": false,
+      "napaka": "pravilo",
+      "naloga": "nCr(10, 3)",
+      "sol": {
+        "kind": "arith",
+        "value": "720"
+      },
+      "racun": [
+        "value",
+        [
+          "nCr(10, 3)",
+          "720"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-025",
+      "skupina": "kombinatorika",
+      "opis": "binomski koeficient",
+      "pravilno": true,
+      "naloga": "binomial(12, 2)",
+      "sol": {
+        "kind": "arith",
+        "value": "66"
+      },
+      "racun": [
+        "value",
+        [
+          "binomial(12, 2)",
+          "66"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-026",
+      "skupina": "kombinatorika",
+      "opis": "napaka: pozabljeno deljenje z 2!",
+      "pravilno": false,
+      "napaka": "pravilo",
+      "naloga": "binomial(12, 2)",
+      "sol": {
+        "kind": "arith",
+        "value": "132"
+      },
+      "racun": [
+        "value",
+        [
+          "binomial(12, 2)",
+          "132"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-027",
+      "skupina": "kombinatorika",
+      "opis": "kombinacije, simetrija",
+      "pravilno": true,
+      "naloga": "C(7, 4)",
+      "sol": {
+        "kind": "arith",
+        "value": "35"
+      },
+      "racun": [
+        "value",
+        [
+          "C(7, 4)",
+          "35"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-028",
+      "skupina": "kombinatorika",
+      "opis": "kombinacije, vse",
+      "pravilno": true,
+      "naloga": "C(9, 9)",
+      "sol": {
+        "kind": "arith",
+        "value": "1"
+      },
+      "racun": [
+        "value",
+        [
+          "C(9, 9)",
+          "1"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-029",
+      "skupina": "kombinatorika",
+      "opis": "napaka: kombinacije namesto variacij",
+      "pravilno": false,
+      "napaka": "pravilo",
+      "naloga": "V(6, 2)",
+      "sol": {
+        "kind": "arith",
+        "value": "15"
+      },
+      "racun": [
+        "value",
+        [
+          "V(6, 2)",
+          "15"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-030",
+      "skupina": "kombinatorika",
+      "opis": "variacije brez ponavljanja",
+      "pravilno": true,
+      "naloga": "V(5, 3)",
+      "sol": {
+        "kind": "arith",
+        "value": "60"
+      },
+      "racun": [
+        "value",
+        [
+          "V(5, 3)",
+          "60"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-031",
+      "skupina": "kombinatorika",
+      "opis": "napaka: n! namesto n!/(n-k)!",
+      "pravilno": false,
+      "napaka": "pravilo",
+      "naloga": "V(5, 3)",
+      "sol": {
+        "kind": "arith",
+        "value": "120"
+      },
+      "racun": [
+        "value",
+        [
+          "V(5, 3)",
+          "120"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-032",
+      "skupina": "kombinatorika",
+      "opis": "variacije nPr",
+      "pravilno": true,
+      "naloga": "nPr(8, 3)",
+      "sol": {
+        "kind": "arith",
+        "value": "336"
+      },
+      "racun": [
+        "value",
+        [
+          "nPr(8, 3)",
+          "336"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-033",
+      "skupina": "kombinatorika",
+      "opis": "napaka: kombinacije namesto variacij",
+      "pravilno": false,
+      "napaka": "pravilo",
+      "naloga": "nPr(8, 3)",
+      "sol": {
+        "kind": "arith",
+        "value": "56"
+      },
+      "racun": [
+        "value",
+        [
+          "nPr(8, 3)",
+          "56"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-034",
+      "skupina": "kombinatorika",
+      "opis": "produkt kombinacij",
+      "pravilno": true,
+      "naloga": "nCr(6, 2)*nCr(4, 2)",
+      "sol": {
+        "kind": "arith",
+        "value": "90"
+      },
+      "racun": [
+        "value",
+        [
+          "nCr(6, 2)*nCr(4, 2)",
+          "90"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-035",
+      "skupina": "ulomki",
+      "opis": "seštevanje ulomkov",
+      "pravilno": true,
+      "naloga": "2/3 + 3/4",
+      "sol": {
+        "kind": "arith",
+        "value": "17/12"
+      },
+      "racun": [
+        "value",
+        [
+          "2/3 + 3/4",
+          "17/12"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-036",
+      "skupina": "ulomki",
+      "opis": "napaka: predznak razlike",
+      "pravilno": false,
+      "napaka": "predznak",
+      "naloga": "2/3 - 3/4",
+      "sol": {
+        "kind": "arith",
+        "value": "1/12"
+      },
+      "racun": [
+        "value",
+        [
+          "2/3 - 3/4",
+          "1/12"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-037",
+      "skupina": "ulomki",
+      "opis": "deljenje ulomkov",
+      "pravilno": true,
+      "naloga": "(3/5)/(9/10)",
+      "sol": {
+        "kind": "arith",
+        "value": "2/3"
+      },
+      "racun": [
+        "value",
+        [
+          "(3/5)/(9/10)",
+          "2/3"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-038",
+      "skupina": "ulomki",
+      "opis": "napaka: množenje namesto deljenja",
+      "pravilno": false,
+      "napaka": "pravilo",
+      "naloga": "(3/5)/(9/10)",
+      "sol": {
+        "kind": "arith",
+        "value": "27/50"
+      },
+      "racun": [
+        "value",
+        [
+          "(3/5)/(9/10)",
+          "27/50"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-039",
+      "skupina": "potence",
+      "opis": "negativni eksponent",
+      "pravilno": true,
+      "naloga": "(2/3)^(-2)",
+      "sol": {
+        "kind": "arith",
+        "value": "9/4"
+      },
+      "racun": [
+        "value",
+        [
+          "(2/3)^(-2)",
+          "9/4"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-040",
+      "skupina": "potence",
+      "opis": "napaka: negativni eksponent kot predznak",
+      "pravilno": false,
+      "napaka": "pravilo",
+      "naloga": "(2/3)^(-2)",
+      "sol": {
+        "kind": "arith",
+        "value": "-4/9"
+      },
+      "racun": [
+        "value",
+        [
+          "(2/3)^(-2)",
+          "-4/9"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-041",
+      "skupina": "potence",
+      "opis": "racionalni eksponent",
+      "pravilno": true,
+      "naloga": "27^(2/3)",
+      "sol": {
+        "kind": "arith",
+        "value": "9"
+      },
+      "racun": [
+        "value",
+        [
+          "27^(2/3)",
+          "9"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-042",
+      "skupina": "potence",
+      "opis": "napaka: negativni eksponent kot predznak",
+      "pravilno": false,
+      "napaka": "pravilo",
+      "naloga": "16^(-3/4)",
+      "sol": {
+        "kind": "arith",
+        "value": "-8"
+      },
+      "racun": [
+        "value",
+        [
+          "16^(-3/4)",
+          "-8"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-043",
+      "skupina": "koreni",
+      "opis": "razlika korenov",
+      "pravilno": true,
+      "naloga": "sqrt(50) - sqrt(18)",
+      "sol": {
+        "kind": "arith",
+        "value": "2*sqrt(2)"
+      },
+      "racun": [
+        "value",
+        [
+          "sqrt(50) - sqrt(18)",
+          "2*sqrt(2)"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-044",
+      "skupina": "koreni",
+      "opis": "napaka: koren razlike",
+      "pravilno": false,
+      "napaka": "pravilo",
+      "naloga": "sqrt(50) - sqrt(18)",
+      "sol": {
+        "kind": "arith",
+        "value": "4*sqrt(2)"
+      },
+      "racun": [
+        "value",
+        [
+          "sqrt(50) - sqrt(18)",
+          "4*sqrt(2)"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-045",
+      "skupina": "koreni",
+      "opis": "kvadrat dvočlenika s korenom",
+      "pravilno": true,
+      "naloga": "(sqrt(3)+1)^2",
+      "sol": {
+        "kind": "arith",
+        "value": "4+2*sqrt(3)"
+      },
+      "racun": [
+        "value",
+        [
+          "(sqrt(3)+1)^2",
+          "4+2*sqrt(3)"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-046",
+      "skupina": "koreni",
+      "opis": "napaka: pozabljen mešani člen",
+      "pravilno": false,
+      "napaka": "pravilo",
+      "naloga": "(sqrt(3)+1)^2",
+      "sol": {
+        "kind": "arith",
+        "value": "4"
+      },
+      "racun": [
+        "value",
+        [
+          "(sqrt(3)+1)^2",
+          "4"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-047",
+      "skupina": "koreni",
+      "opis": "racionalizacija imenovalca",
+      "pravilno": true,
+      "naloga": "1/(sqrt(3)-1)",
+      "sol": {
+        "kind": "arith",
+        "value": "(sqrt(3)+1)/2"
+      },
+      "racun": [
+        "value",
+        [
+          "1/(sqrt(3)-1)",
+          "(sqrt(3)+1)/2"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-048",
+      "skupina": "koreni",
+      "opis": "napaka: imenovalec 3+1 namesto 3-1",
+      "pravilno": false,
+      "napaka": "vrednost",
+      "naloga": "1/(sqrt(3)-1)",
+      "sol": {
+        "kind": "arith",
+        "value": "(sqrt(3)+1)/4"
+      },
+      "racun": [
+        "value",
+        [
+          "1/(sqrt(3)-1)",
+          "(sqrt(3)+1)/4"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-049",
+      "skupina": "log-enacba",
+      "opis": "logaritemska enačba z osnovo 2",
+      "pravilno": true,
+      "naloga": "log(x+1, 2)=3",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "7"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "log(x+1, 2)=3",
+          "x",
+          "7"
+        ]
+      ],
+      "resnica": [
+        "7"
+      ]
+    },
+    {
+      "id": "skrit-050",
+      "skupina": "log-enacba",
+      "opis": "napaka: 2*3 namesto 2^3",
+      "pravilno": false,
+      "napaka": "pravilo",
+      "naloga": "log(x+1, 2)=3",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "5"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "log(x+1, 2)=3",
+          "x",
+          "5"
+        ]
+      ],
+      "resnica": [
+        "7"
+      ]
+    },
+    {
+      "id": "skrit-051",
+      "skupina": "log-enacba",
+      "opis": "logaritemska enačba z osnovo 3",
+      "pravilno": true,
+      "naloga": "log(2*x-1, 3)=2",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "5"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "log(2*x-1, 3)=2",
+          "x",
+          "5"
+        ]
+      ],
+      "resnica": [
+        "5"
+      ]
+    },
+    {
+      "id": "skrit-052",
+      "skupina": "log-enacba",
+      "opis": "napaka: 3*2 namesto 3^2",
+      "pravilno": false,
+      "napaka": "pravilo",
+      "naloga": "log(2*x-1, 3)=2",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "7/2"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "log(2*x-1, 3)=2",
+          "x",
+          "7/2"
+        ]
+      ],
+      "resnica": [
+        "5"
+      ]
+    },
+    {
+      "id": "skrit-053",
+      "skupina": "log-enacba",
+      "opis": "vsota logaritmov, en koren izločen",
+      "pravilno": true,
+      "naloga": "log_2(x) + log_2(x-2) = 3",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "4"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "log_2(x) + log_2(x-2) = 3",
+          "x",
+          "4"
+        ]
+      ],
+      "resnica": [
+        "4"
+      ]
+    },
+    {
+      "id": "skrit-054",
+      "skupina": "log-enacba",
+      "opis": "napaka: tuji koren ni izločen",
+      "pravilno": false,
+      "napaka": "tuja",
+      "naloga": "log_2(x) + log_2(x-2) = 3",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "-2",
+          "4"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "log_2(x) + log_2(x-2) = 3",
+          "x",
+          "-2, 4"
+        ]
+      ],
+      "resnica": [
+        "4"
+      ]
+    },
+    {
+      "id": "skrit-055",
+      "skupina": "log-enacba",
+      "opis": "napaka: tuji koren ni izločen",
+      "pravilno": false,
+      "napaka": "tuja",
+      "naloga": "log(x, 3) + log(x+6, 3) = 3",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "-9",
+          "3"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "log(x, 3) + log(x+6, 3) = 3",
+          "x",
+          "-9, 3"
+        ]
+      ],
+      "resnica": [
+        "3"
+      ]
+    },
+    {
+      "id": "skrit-056",
+      "skupina": "log-enacba",
+      "opis": "logaritem kvadrata, dve rešitvi",
+      "pravilno": true,
+      "naloga": "log(x^2, 10)=2",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "-10",
+          "10"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "log(x^2, 10)=2",
+          "x",
+          "-10, 10"
+        ]
+      ],
+      "resnica": [
+        "-10",
+        "10"
+      ]
+    },
+    {
+      "id": "skrit-057",
+      "skupina": "log-enacba",
+      "opis": "napaka: manjka negativna rešitev",
+      "pravilno": false,
+      "napaka": "manjka",
+      "naloga": "log(x^2, 10)=2",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "10"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "log(x^2, 10)=2",
+          "x",
+          "10"
+        ]
+      ],
+      "resnica": [
+        "-10",
+        "10"
+      ]
+    },
+    {
+      "id": "skrit-058",
+      "skupina": "log-enacba",
+      "opis": "razlika logaritmov",
+      "pravilno": true,
+      "naloga": "log_3(x-1) - log_3(x-3) = 1",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "4"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "log_3(x-1) - log_3(x-3) = 1",
+          "x",
+          "4"
+        ]
+      ],
+      "resnica": [
+        "4"
+      ]
+    },
+    {
+      "id": "skrit-059",
+      "skupina": "log-enacba",
+      "opis": "negativna vrednost logaritma",
+      "pravilno": true,
+      "naloga": "log(x, 2)=-1",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "1/2"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "log(x, 2)=-1",
+          "x",
+          "1/2"
+        ]
+      ],
+      "resnica": [
+        "1/2"
+      ]
+    },
+    {
+      "id": "skrit-060",
+      "skupina": "log-enacba",
+      "opis": "napaka: -1*2 namesto 2^(-1)",
+      "pravilno": false,
+      "napaka": "pravilo",
+      "naloga": "log(x, 2)=-1",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "-2"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "log(x, 2)=-1",
+          "x",
+          "-2"
+        ]
+      ],
+      "resnica": [
+        "1/2"
+      ]
+    },
+    {
+      "id": "skrit-061",
+      "skupina": "log-enacba",
+      "opis": "napaka: predznak",
+      "pravilno": false,
+      "napaka": "predznak",
+      "naloga": "log(x+3, 5)=0",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "2"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "log(x+3, 5)=0",
+          "x",
+          "2"
+        ]
+      ],
+      "resnica": [
+        "-2"
+      ]
+    },
+    {
+      "id": "skrit-062",
+      "skupina": "log-enacba",
+      "opis": "logaritem z ulomljeno vrednostjo",
+      "pravilno": true,
+      "naloga": "log(x, 4)=3/2",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "8"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "log(x, 4)=3/2",
+          "x",
+          "8"
+        ]
+      ],
+      "resnica": [
+        "8"
+      ]
+    },
+    {
+      "id": "skrit-063",
+      "skupina": "eksp",
+      "opis": "eksponentna enačba",
+      "pravilno": true,
+      "naloga": "2^(x+1)=32",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "4"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "2^(x+1)=32",
+          "x",
+          "4"
+        ]
+      ],
+      "resnica": [
+        "4"
+      ]
+    },
+    {
+      "id": "skrit-064",
+      "skupina": "eksp",
+      "opis": "napaka: za ena prevelik",
+      "pravilno": false,
+      "napaka": "vrednost",
+      "naloga": "2^(x+1)=32",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "5"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "2^(x+1)=32",
+          "x",
+          "5"
+        ]
+      ],
+      "resnica": [
+        "4"
+      ]
+    },
+    {
+      "id": "skrit-065",
+      "skupina": "eksp",
+      "opis": "eksponentna enačba z ulomkom",
+      "pravilno": true,
+      "naloga": "3^(2*x-1)=1/27",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "-1"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "3^(2*x-1)=1/27",
+          "x",
+          "-1"
+        ]
+      ],
+      "resnica": [
+        "-1"
+      ]
+    },
+    {
+      "id": "skrit-066",
+      "skupina": "eksp",
+      "opis": "napaka: predznak",
+      "pravilno": false,
+      "napaka": "predznak",
+      "naloga": "3^(2*x-1)=1/27",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "1"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "3^(2*x-1)=1/27",
+          "x",
+          "1"
+        ]
+      ],
+      "resnica": [
+        "-1"
+      ]
+    },
+    {
+      "id": "skrit-067",
+      "skupina": "eksp",
+      "opis": "eksponentna enačba, skupna osnova 2",
+      "pravilno": true,
+      "naloga": "4^x=8",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "3/2"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "4^x=8",
+          "x",
+          "3/2"
+        ]
+      ],
+      "resnica": [
+        "3/2"
+      ]
+    },
+    {
+      "id": "skrit-068",
+      "skupina": "eksp",
+      "opis": "napaka: osnovi nista izenačeni",
+      "pravilno": false,
+      "napaka": "vrednost",
+      "naloga": "4^x=8",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "2"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "4^x=8",
+          "x",
+          "2"
+        ]
+      ],
+      "resnica": [
+        "3/2"
+      ]
+    },
+    {
+      "id": "skrit-069",
+      "skupina": "eksp",
+      "opis": "eksponentna enačba s substitucijo",
+      "pravilno": true,
+      "naloga": "2^(2*x) - 6*2^x + 8 = 0",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "1",
+          "2"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "2^(2*x) - 6*2^x + 8 = 0",
+          "x",
+          "1, 2"
+        ]
+      ],
+      "resnica": [
+        "1",
+        "2"
+      ]
+    },
+    {
+      "id": "skrit-070",
+      "skupina": "eksp",
+      "opis": "napaka: vrednosti t namesto x",
+      "pravilno": false,
+      "napaka": "pravilo",
+      "naloga": "2^(2*x) - 6*2^x + 8 = 0",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "2",
+          "4"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "2^(2*x) - 6*2^x + 8 = 0",
+          "x",
+          "2, 4"
+        ]
+      ],
+      "resnica": [
+        "1",
+        "2"
+      ]
+    },
+    {
+      "id": "skrit-071",
+      "skupina": "eksp",
+      "opis": "napaka: manjka rešitev 3^x = 1",
+      "pravilno": false,
+      "napaka": "manjka",
+      "naloga": "9^x - 4*3^x + 3 = 0",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "1"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "9^x - 4*3^x + 3 = 0",
+          "x",
+          "1"
+        ]
+      ],
+      "resnica": [
+        "0",
+        "1"
+      ]
+    },
+    {
+      "id": "skrit-072",
+      "skupina": "eksp",
+      "opis": "eksponentna enačba z logaritmom",
+      "pravilno": true,
+      "naloga": "5^x=7",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "log(7, 5)"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "5^x=7",
+          "x",
+          "log(7, 5)"
+        ]
+      ],
+      "resnica": [
+        "log(7, 5)"
+      ]
+    },
+    {
+      "id": "skrit-073",
+      "skupina": "eksp",
+      "opis": "napaka: zamenjana osnova logaritma",
+      "pravilno": false,
+      "napaka": "obrat",
+      "naloga": "5^x=7",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "log(5, 7)"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "5^x=7",
+          "x",
+          "log(5, 7)"
+        ]
+      ],
+      "resnica": [
+        "log(7, 5)"
+      ]
+    },
+    {
+      "id": "skrit-074",
+      "skupina": "kvadratna",
+      "opis": "kvadratna enačba",
+      "pravilno": true,
+      "naloga": "x^2-5*x+6=0",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "2",
+          "3"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "x^2-5*x+6=0",
+          "x",
+          "2, 3"
+        ]
+      ],
+      "resnica": [
+        "2",
+        "3"
+      ]
+    },
+    {
+      "id": "skrit-075",
+      "skupina": "kvadratna",
+      "opis": "napaka: predznak ničel",
+      "pravilno": false,
+      "napaka": "predznak",
+      "naloga": "x^2-5*x+6=0",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "-2",
+          "-3"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "x^2-5*x+6=0",
+          "x",
+          "-2, -3"
+        ]
+      ],
+      "resnica": [
+        "2",
+        "3"
+      ]
+    },
+    {
+      "id": "skrit-076",
+      "skupina": "kvadratna",
+      "opis": "kvadratna enačba z ulomkom",
+      "pravilno": true,
+      "naloga": "2*x^2+3*x-2=0",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "-2",
+          "1/2"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "2*x^2+3*x-2=0",
+          "x",
+          "-2, 1/2"
+        ]
+      ],
+      "resnica": [
+        "-2",
+        "1/2"
+      ]
+    },
+    {
+      "id": "skrit-077",
+      "skupina": "kvadratna",
+      "opis": "dvojna ničla",
+      "pravilno": true,
+      "naloga": "x^2-6*x+9=0",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "3"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "x^2-6*x+9=0",
+          "x",
+          "3"
+        ]
+      ],
+      "resnica": [
+        "3"
+      ]
+    },
+    {
+      "id": "skrit-078",
+      "skupina": "kvadratna",
+      "opis": "kvadratna enačba brez realnih rešitev",
+      "pravilno": true,
+      "naloga": "x^2+4=0",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": []
+      },
+      "racun": [
+        "solve",
+        [
+          "x^2+4=0",
+          "x",
+          "none"
+        ]
+      ],
+      "resnica": []
+    },
+    {
+      "id": "skrit-079",
+      "skupina": "kvadratna",
+      "opis": "napaka: x^2 = 4 namesto -4",
+      "pravilno": false,
+      "napaka": "predznak",
+      "naloga": "x^2+4=0",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "-2",
+          "2"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "x^2+4=0",
+          "x",
+          "-2, 2"
+        ]
+      ],
+      "resnica": []
+    },
+    {
+      "id": "skrit-080",
+      "skupina": "kvadratna",
+      "opis": "kvadratna enačba z iracionalnima ničlama",
+      "pravilno": true,
+      "naloga": "x^2-2*x-2=0",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "1-sqrt(3)",
+          "1+sqrt(3)"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "x^2-2*x-2=0",
+          "x",
+          "1-sqrt(3), 1+sqrt(3)"
+        ]
+      ],
+      "resnica": [
+        "1-sqrt(3)",
+        "1+sqrt(3)"
+      ]
+    },
+    {
+      "id": "skrit-081",
+      "skupina": "kvadratna",
+      "opis": "napaka: pozabljeno deljenje z 2a",
+      "pravilno": false,
+      "napaka": "vrednost",
+      "naloga": "x^2-2*x-2=0",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "2-2*sqrt(3)",
+          "2+2*sqrt(3)"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "x^2-2*x-2=0",
+          "x",
+          "2-2*sqrt(3), 2+2*sqrt(3)"
+        ]
+      ],
+      "resnica": [
+        "1-sqrt(3)",
+        "1+sqrt(3)"
+      ]
+    },
+    {
+      "id": "skrit-082",
+      "skupina": "kvadratna",
+      "opis": "napaka: deljenje z x",
+      "pravilno": false,
+      "napaka": "manjka",
+      "naloga": "3*x^2=12*x",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "4"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "3*x^2=12*x",
+          "x",
+          "4"
+        ]
+      ],
+      "resnica": [
+        "0",
+        "4"
+      ]
+    },
+    {
+      "id": "skrit-083",
+      "skupina": "korenska",
+      "opis": "korenska enačba, en koren izločen",
+      "pravilno": true,
+      "naloga": "sqrt(x+7)=x-5",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "9"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "sqrt(x+7)=x-5",
+          "x",
+          "9"
+        ]
+      ],
+      "resnica": [
+        "9"
+      ]
+    },
+    {
+      "id": "skrit-084",
+      "skupina": "korenska",
+      "opis": "napaka: brez preizkusa",
+      "pravilno": false,
+      "napaka": "tuja",
+      "naloga": "sqrt(x+7)=x-5",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "2",
+          "9"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "sqrt(x+7)=x-5",
+          "x",
+          "2, 9"
+        ]
+      ],
+      "resnica": [
+        "9"
+      ]
+    },
+    {
+      "id": "skrit-085",
+      "skupina": "korenska",
+      "opis": "korenska enačba",
+      "pravilno": true,
+      "naloga": "sqrt(2*x+1)=3",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "4"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "sqrt(2*x+1)=3",
+          "x",
+          "4"
+        ]
+      ],
+      "resnica": [
+        "4"
+      ]
+    },
+    {
+      "id": "skrit-086",
+      "skupina": "korenska",
+      "opis": "napaka: brez preizkusa",
+      "pravilno": false,
+      "napaka": "tuja",
+      "naloga": "sqrt(x+3)=x+1",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "-2",
+          "1"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "sqrt(x+3)=x+1",
+          "x",
+          "-2, 1"
+        ]
+      ],
+      "resnica": [
+        "1"
+      ]
+    },
+    {
+      "id": "skrit-087",
+      "skupina": "korenska",
+      "opis": "korenska enačba s substitucijo",
+      "pravilno": true,
+      "naloga": "sqrt(x)+2=x",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "4"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "sqrt(x)+2=x",
+          "x",
+          "4"
+        ]
+      ],
+      "resnica": [
+        "4"
+      ]
+    },
+    {
+      "id": "skrit-088",
+      "skupina": "korenska",
+      "opis": "napaka: koren ne more biti negativen",
+      "pravilno": false,
+      "napaka": "obmocje",
+      "naloga": "sqrt(x-1)=-2",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "5"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "sqrt(x-1)=-2",
+          "x",
+          "5"
+        ]
+      ],
+      "resnica": []
+    },
+    {
+      "id": "skrit-089",
+      "skupina": "racionalna",
+      "opis": "racionalna enačba, rešitev je izključena",
+      "pravilno": true,
+      "naloga": "(x^2-4)/(x-2)=4",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": []
+      },
+      "racun": [
+        "solve",
+        [
+          "(x^2-4)/(x-2)=4",
+          "x",
+          "none"
+        ]
+      ],
+      "resnica": []
+    },
+    {
+      "id": "skrit-090",
+      "skupina": "racionalna",
+      "opis": "napaka: izključena vrednost kot rešitev",
+      "pravilno": false,
+      "napaka": "obmocje",
+      "naloga": "(x^2-4)/(x-2)=4",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "2"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "(x^2-4)/(x-2)=4",
+          "x",
+          "2"
+        ]
+      ],
+      "resnica": []
+    },
+    {
+      "id": "skrit-091",
+      "skupina": "racionalna",
+      "opis": "napaka: izključena vrednost kot rešitev",
+      "pravilno": false,
+      "napaka": "obmocje",
+      "naloga": "1/(x-1) + 1/(x+1) = 2/(x^2-1)",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "1"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "1/(x-1) + 1/(x+1) = 2/(x^2-1)",
+          "x",
+          "1"
+        ]
+      ],
+      "resnica": []
+    },
+    {
+      "id": "skrit-092",
+      "skupina": "racionalna",
+      "opis": "racionalna enačba",
+      "pravilno": true,
+      "naloga": "(x+1)/(x-2)=2",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "5"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "(x+1)/(x-2)=2",
+          "x",
+          "5"
+        ]
+      ],
+      "resnica": [
+        "5"
+      ]
+    },
+    {
+      "id": "skrit-093",
+      "skupina": "racionalna",
+      "opis": "napaka: 2*(x-2) = 2*x-2",
+      "pravilno": false,
+      "napaka": "pravilo",
+      "naloga": "(x+1)/(x-2)=2",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "3"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "(x+1)/(x-2)=2",
+          "x",
+          "3"
+        ]
+      ],
+      "resnica": [
+        "5"
+      ]
+    },
+    {
+      "id": "skrit-094",
+      "skupina": "racionalna",
+      "opis": "racionalna enačba, dve rešitvi",
+      "pravilno": true,
+      "naloga": "2/x + 3/(x+1) = 2",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "-1/2",
+          "2"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "2/x + 3/(x+1) = 2",
+          "x",
+          "-1/2, 2"
+        ]
+      ],
+      "resnica": [
+        "-1/2",
+        "2"
+      ]
+    },
+    {
+      "id": "skrit-095",
+      "skupina": "racionalna",
+      "opis": "racionalna enačba z izključeno točko",
+      "pravilno": true,
+      "naloga": "(x^2-x-6)/(x-3)=0",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "-2"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "(x^2-x-6)/(x-3)=0",
+          "x",
+          "-2"
+        ]
+      ],
+      "resnica": [
+        "-2"
+      ]
+    },
+    {
+      "id": "skrit-096",
+      "skupina": "racionalna",
+      "opis": "napaka: izključena vrednost kot rešitev",
+      "pravilno": false,
+      "napaka": "obmocje",
+      "naloga": "(x^2-x-6)/(x-3)=0",
+      "sol": {
+        "kind": "equation",
+        "variable": "x",
+        "solutions": [
+          "-2",
+          "3"
+        ]
+      },
+      "racun": [
+        "solve",
+        [
+          "(x^2-x-6)/(x-3)=0",
+          "x",
+          "-2, 3"
+        ]
+      ],
+      "resnica": [
+        "-2"
+      ]
+    },
+    {
+      "id": "skrit-097",
+      "skupina": "fakulteta-izraz",
+      "opis": "kvocient fakultet",
+      "pravilno": true,
+      "naloga": "factorial(n)/factorial(n-2)",
+      "sol": {
+        "kind": "expression",
+        "variable": "n",
+        "value": "n*(n-1)"
+      },
+      "racun": [
+        "equal",
+        [
+          "factorial(n)/factorial(n-2)",
+          "n*(n-1)"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-098",
+      "skupina": "fakulteta-izraz",
+      "opis": "napaka: en faktor preveč",
+      "pravilno": false,
+      "napaka": "vrednost",
+      "naloga": "factorial(n)/factorial(n-2)",
+      "sol": {
+        "kind": "expression",
+        "variable": "n",
+        "value": "n*(n-1)*(n-2)"
+      },
+      "racun": [
+        "equal",
+        [
+          "factorial(n)/factorial(n-2)",
+          "n*(n-1)*(n-2)"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-099",
+      "skupina": "fakulteta-izraz",
+      "opis": "kvocient fakultet, razširjen",
+      "pravilno": true,
+      "naloga": "factorial(n+1)/factorial(n-1)",
+      "sol": {
+        "kind": "expression",
+        "variable": "n",
+        "value": "n^2+n"
+      },
+      "racun": [
+        "equal",
+        [
+          "factorial(n+1)/factorial(n-1)",
+          "n^2+n"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-100",
+      "skupina": "fakulteta-izraz",
+      "opis": "napaka: en faktor premalo",
+      "pravilno": false,
+      "napaka": "vrednost",
+      "naloga": "factorial(n+1)/factorial(n-1)",
+      "sol": {
+        "kind": "expression",
+        "variable": "n",
+        "value": "n+1"
+      },
+      "racun": [
+        "equal",
+        [
+          "factorial(n+1)/factorial(n-1)",
+          "n+1"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-101",
+      "skupina": "fakulteta-izraz",
+      "opis": "kvocient zaporednih fakultet",
+      "pravilno": true,
+      "naloga": "(n+1)!/n!",
+      "sol": {
+        "kind": "expression",
+        "variable": "n",
+        "value": "n+1"
+      },
+      "racun": [
+        "equal",
+        [
+          "(n+1)!/n!",
+          "n+1"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-102",
+      "skupina": "fakulteta-izraz",
+      "opis": "napaka: za ena premalo",
+      "pravilno": false,
+      "napaka": "vrednost",
+      "naloga": "(n+1)!/n!",
+      "sol": {
+        "kind": "expression",
+        "variable": "n",
+        "value": "n"
+      },
+      "racun": [
+        "equal",
+        [
+          "(n+1)!/n!",
+          "n"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-103",
+      "skupina": "fakulteta-izraz",
+      "opis": "kvocient fakultet",
+      "pravilno": true,
+      "naloga": "n!/(n-3)!",
+      "sol": {
+        "kind": "expression",
+        "variable": "n",
+        "value": "n*(n-1)*(n-2)"
+      },
+      "racun": [
+        "equal",
+        [
+          "n!/(n-3)!",
+          "n*(n-1)*(n-2)"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-104",
+      "skupina": "fakulteta-izraz",
+      "opis": "napaka: en faktor preveč",
+      "pravilno": false,
+      "napaka": "vrednost",
+      "naloga": "n!/(n-3)!",
+      "sol": {
+        "kind": "expression",
+        "variable": "n",
+        "value": "n*(n-1)*(n-2)*(n-3)"
+      },
+      "racun": [
+        "equal",
+        [
+          "n!/(n-3)!",
+          "n*(n-1)*(n-2)*(n-3)"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-105",
+      "skupina": "fakulteta-izraz",
+      "opis": "kvocient fakultet, razširjen",
+      "pravilno": true,
+      "naloga": "factorial(n+2)/factorial(n)",
+      "sol": {
+        "kind": "expression",
+        "variable": "n",
+        "value": "n^2+3*n+2"
+      },
+      "racun": [
+        "equal",
+        [
+          "factorial(n+2)/factorial(n)",
+          "n^2+3*n+2"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-106",
+      "skupina": "fakulteta-izraz",
+      "opis": "napaka: zamik za ena",
+      "pravilno": false,
+      "napaka": "vrednost",
+      "naloga": "factorial(n)/factorial(n-1)",
+      "sol": {
+        "kind": "expression",
+        "variable": "n",
+        "value": "n-1"
+      },
+      "racun": [
+        "equal",
+        [
+          "factorial(n)/factorial(n-1)",
+          "n-1"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-107",
+      "skupina": "izraz",
+      "opis": "krajšanje ulomka",
+      "pravilno": true,
+      "naloga": "(x^2-9)/(x-3)",
+      "sol": {
+        "kind": "expression",
+        "variable": "x",
+        "value": "x+3"
+      },
+      "racun": [
+        "equal",
+        [
+          "(x^2-9)/(x-3)",
+          "x+3"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-108",
+      "skupina": "izraz",
+      "opis": "napaka: napačen faktor",
+      "pravilno": false,
+      "napaka": "predznak",
+      "naloga": "(x^2-9)/(x-3)",
+      "sol": {
+        "kind": "expression",
+        "variable": "x",
+        "value": "x-3"
+      },
+      "racun": [
+        "equal",
+        [
+          "(x^2-9)/(x-3)",
+          "x-3"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-109",
+      "skupina": "izraz",
+      "opis": "razlika kvadratov",
+      "pravilno": true,
+      "naloga": "(x+2)^2-(x-2)^2",
+      "sol": {
+        "kind": "expression",
+        "variable": "x",
+        "value": "8*x"
+      },
+      "racun": [
+        "equal",
+        [
+          "(x+2)^2-(x-2)^2",
+          "8*x"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-110",
+      "skupina": "izraz",
+      "opis": "napaka: pozabljen faktor 2",
+      "pravilno": false,
+      "napaka": "vrednost",
+      "naloga": "(x+2)^2-(x-2)^2",
+      "sol": {
+        "kind": "expression",
+        "variable": "x",
+        "value": "4*x"
+      },
+      "racun": [
+        "equal",
+        [
+          "(x+2)^2-(x-2)^2",
+          "4*x"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-111",
+      "skupina": "izraz",
+      "opis": "množenje dvočlenikov",
+      "pravilno": true,
+      "naloga": "(2*x-1)*(x+3)",
+      "sol": {
+        "kind": "expression",
+        "variable": "x",
+        "value": "2*x^2+5*x-3"
+      },
+      "racun": [
+        "equal",
+        [
+          "(2*x-1)*(x+3)",
+          "2*x^2+5*x-3"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-112",
+      "skupina": "izraz",
+      "opis": "napaka: pozabljena mešana člena",
+      "pravilno": false,
+      "napaka": "pravilo",
+      "naloga": "(2*x-1)*(x+3)",
+      "sol": {
+        "kind": "expression",
+        "variable": "x",
+        "value": "2*x^2-3"
+      },
+      "racun": [
+        "equal",
+        [
+          "(2*x-1)*(x+3)",
+          "2*x^2-3"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-113",
+      "skupina": "izraz",
+      "opis": "seštevanje algebrskih ulomkov",
+      "pravilno": true,
+      "naloga": "1/x + 1/(x+1)",
+      "sol": {
+        "kind": "expression",
+        "variable": "x",
+        "value": "(2*x+1)/(x*(x+1))"
+      },
+      "racun": [
+        "equal",
+        [
+          "1/x + 1/(x+1)",
+          "(2*x+1)/(x*(x+1))"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-114",
+      "skupina": "izraz",
+      "opis": "napaka: števca in imenovalca seštejemo",
+      "pravilno": false,
+      "napaka": "pravilo",
+      "naloga": "1/x + 1/(x+1)",
+      "sol": {
+        "kind": "expression",
+        "variable": "x",
+        "value": "2/(2*x+1)"
+      },
+      "racun": [
+        "equal",
+        [
+          "1/x + 1/(x+1)",
+          "2/(2*x+1)"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-115",
+      "skupina": "izraz",
+      "opis": "množenje potenc z racionalnim eksponentom",
+      "pravilno": true,
+      "naloga": "x^(1/2)*x^(1/3)",
+      "sol": {
+        "kind": "expression",
+        "variable": "x",
+        "value": "x^(5/6)"
+      },
+      "racun": [
+        "equal",
+        [
+          "x^(1/2)*x^(1/3)",
+          "x^(5/6)"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-116",
+      "skupina": "izraz",
+      "opis": "napaka: eksponenta zmnožena",
+      "pravilno": false,
+      "napaka": "pravilo",
+      "naloga": "x^(1/2)*x^(1/3)",
+      "sol": {
+        "kind": "expression",
+        "variable": "x",
+        "value": "x^(1/6)"
+      },
+      "racun": [
+        "equal",
+        [
+          "x^(1/2)*x^(1/3)",
+          "x^(1/6)"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-117",
+      "skupina": "izraz",
+      "opis": "potenca potence",
+      "pravilno": true,
+      "naloga": "(x^3)^2*x",
+      "sol": {
+        "kind": "expression",
+        "variable": "x",
+        "value": "x^7"
+      },
+      "racun": [
+        "equal",
+        [
+          "(x^3)^2*x",
+          "x^7"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-118",
+      "skupina": "izraz",
+      "opis": "napaka: logaritem produkta kot produkt",
+      "pravilno": false,
+      "napaka": "pravilo",
+      "naloga": "log(8*x, 2)",
+      "sol": {
+        "kind": "expression",
+        "variable": "x",
+        "value": "3*log(x, 2)"
+      },
+      "racun": [
+        "equal",
+        [
+          "log(8*x, 2)",
+          "3*log(x, 2)"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-119",
+      "skupina": "izraz",
+      "opis": "logaritem produkta",
+      "pravilno": true,
+      "naloga": "log(8*x, 2)",
+      "sol": {
+        "kind": "expression",
+        "variable": "x",
+        "value": "3+log(x, 2)"
+      },
+      "racun": [
+        "equal",
+        [
+          "log(8*x, 2)",
+          "3+log(x, 2)"
+        ]
+      ]
+    },
+    {
+      "id": "skrit-120",
+      "skupina": "neenacba",
+      "opis": "linearna neenačba",
+      "pravilno": true,
+      "naloga": "2*x-3>5",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "(4, oo)"
+      },
+      "racun": [
+        "ineq",
+        [
+          "2*x-3>5",
+          "x",
+          "(4, oo)"
+        ]
+      ],
+      "resnica": "(4, oo)"
+    },
+    {
+      "id": "skrit-121",
+      "skupina": "neenacba",
+      "opis": "napaka: zaprto krajišče",
+      "pravilno": false,
+      "napaka": "krajisca",
+      "naloga": "2*x-3>5",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "[4, oo)"
+      },
+      "racun": [
+        "ineq",
+        [
+          "2*x-3>5",
+          "x",
+          "[4, oo)"
+        ]
+      ],
+      "resnica": "(4, oo)"
+    },
+    {
+      "id": "skrit-122",
+      "skupina": "neenacba",
+      "opis": "linearna neenačba z negativnim koeficientom",
+      "pravilno": true,
+      "naloga": "-3*x+6<=0",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "[2, oo)"
+      },
+      "racun": [
+        "ineq",
+        [
+          "-3*x+6<=0",
+          "x",
+          "[2, oo)"
+        ]
+      ],
+      "resnica": "[2, oo)"
+    },
+    {
+      "id": "skrit-123",
+      "skupina": "neenacba",
+      "opis": "napaka: znak neenačbe ni obrnjen",
+      "pravilno": false,
+      "napaka": "obrat",
+      "naloga": "-3*x+6<=0",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "(-oo, 2]"
+      },
+      "racun": [
+        "ineq",
+        [
+          "-3*x+6<=0",
+          "x",
+          "(-oo, 2]"
+        ]
+      ],
+      "resnica": "[2, oo)"
+    },
+    {
+      "id": "skrit-124",
+      "skupina": "neenacba",
+      "opis": "kvadratna neenačba",
+      "pravilno": true,
+      "naloga": "x^2-4<0",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "(-2, 2)"
+      },
+      "racun": [
+        "ineq",
+        [
+          "x^2-4<0",
+          "x",
+          "(-2, 2)"
+        ]
+      ],
+      "resnica": "(-2, 2)"
+    },
+    {
+      "id": "skrit-125",
+      "skupina": "neenacba",
+      "opis": "napaka: manjka koren -2",
+      "pravilno": false,
+      "napaka": "manjka",
+      "naloga": "x^2-4<0",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "(-oo, 2)"
+      },
+      "racun": [
+        "ineq",
+        [
+          "x^2-4<0",
+          "x",
+          "(-oo, 2)"
+        ]
+      ],
+      "resnica": "(-2, 2)"
+    },
+    {
+      "id": "skrit-126",
+      "skupina": "neenacba",
+      "opis": "kvadratna neenačba, unija",
+      "pravilno": true,
+      "naloga": "x^2-5*x+6>=0",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "(-oo, 2] U [3, oo)"
+      },
+      "racun": [
+        "ineq",
+        [
+          "x^2-5*x+6>=0",
+          "x",
+          "(-oo, 2] U [3, oo)"
+        ]
+      ],
+      "resnica": "(-oo, 2] U [3, oo)"
+    },
+    {
+      "id": "skrit-127",
+      "skupina": "neenacba",
+      "opis": "napaka: komplement množice",
+      "pravilno": false,
+      "napaka": "komplement",
+      "naloga": "x^2-5*x+6>=0",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "[2, 3]"
+      },
+      "racun": [
+        "ineq",
+        [
+          "x^2-5*x+6>=0",
+          "x",
+          "[2, 3]"
+        ]
+      ],
+      "resnica": "(-oo, 2] U [3, oo)"
+    },
+    {
+      "id": "skrit-128",
+      "skupina": "neenacba",
+      "opis": "neenačba, vsa realna števila",
+      "pravilno": true,
+      "naloga": "x^2+1>0",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "(-oo, oo)"
+      },
+      "racun": [
+        "ineq",
+        [
+          "x^2+1>0",
+          "x",
+          "(-oo, oo)"
+        ]
+      ],
+      "resnica": "(-oo, oo)"
+    },
+    {
+      "id": "skrit-129",
+      "skupina": "neenacba",
+      "opis": "racionalna neenačba",
+      "pravilno": true,
+      "naloga": "(x-1)/(x+2)>0",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "(-oo, -2) U (1, oo)"
+      },
+      "racun": [
+        "ineq",
+        [
+          "(x-1)/(x+2)>0",
+          "x",
+          "(-oo, -2) U (1, oo)"
+        ]
+      ],
+      "resnica": "(-oo, -2) U (1, oo)"
+    },
+    {
+      "id": "skrit-130",
+      "skupina": "neenacba",
+      "opis": "napaka: komplement množice",
+      "pravilno": false,
+      "napaka": "komplement",
+      "naloga": "(x-1)/(x+2)>0",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "(-2, 1)"
+      },
+      "racun": [
+        "ineq",
+        [
+          "(x-1)/(x+2)>0",
+          "x",
+          "(-2, 1)"
+        ]
+      ],
+      "resnica": "(-oo, -2) U (1, oo)"
+    },
+    {
+      "id": "skrit-131",
+      "skupina": "neenacba",
+      "opis": "racionalna neenačba z izključeno točko",
+      "pravilno": true,
+      "naloga": "(x+3)/(x-1)<=0",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "[-3, 1)"
+      },
+      "racun": [
+        "ineq",
+        [
+          "(x+3)/(x-1)<=0",
+          "x",
+          "[-3, 1)"
+        ]
+      ],
+      "resnica": "[-3, 1)"
+    },
+    {
+      "id": "skrit-132",
+      "skupina": "neenacba",
+      "opis": "napaka: izključena točka vključena",
+      "pravilno": false,
+      "napaka": "obmocje",
+      "naloga": "(x+3)/(x-1)<=0",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "[-3, 1]"
+      },
+      "racun": [
+        "ineq",
+        [
+          "(x+3)/(x-1)<=0",
+          "x",
+          "[-3, 1]"
+        ]
+      ],
+      "resnica": "[-3, 1)"
+    },
+    {
+      "id": "skrit-133",
+      "skupina": "neenacba",
+      "opis": "eksponentna neenačba z osnovo pod 1",
+      "pravilno": true,
+      "naloga": "(1/2)^x>4",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "(-oo, -2)"
+      },
+      "racun": [
+        "ineq",
+        [
+          "(1/2)^x>4",
+          "x",
+          "(-oo, -2)"
+        ]
+      ],
+      "resnica": "(-oo, -2)"
+    },
+    {
+      "id": "skrit-134",
+      "skupina": "neenacba",
+      "opis": "napaka: znak ni obrnjen pri osnovi pod 1",
+      "pravilno": false,
+      "napaka": "obrat",
+      "naloga": "(1/2)^x>4",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "(-2, oo)"
+      },
+      "racun": [
+        "ineq",
+        [
+          "(1/2)^x>4",
+          "x",
+          "(-2, oo)"
+        ]
+      ],
+      "resnica": "(-oo, -2)"
+    },
+    {
+      "id": "skrit-135",
+      "skupina": "neenacba",
+      "opis": "logaritemska neenačba",
+      "pravilno": true,
+      "naloga": "log(x, 2)<3",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "(0, 8)"
+      },
+      "racun": [
+        "ineq",
+        [
+          "log(x, 2)<3",
+          "x",
+          "(0, 8)"
+        ]
+      ],
+      "resnica": "(0, 8)"
+    },
+    {
+      "id": "skrit-136",
+      "skupina": "neenacba",
+      "opis": "napaka: pozabljeno definicijsko območje",
+      "pravilno": false,
+      "napaka": "obmocje",
+      "naloga": "log(x, 2)<3",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "(-oo, 8)"
+      },
+      "racun": [
+        "ineq",
+        [
+          "log(x, 2)<3",
+          "x",
+          "(-oo, 8)"
+        ]
+      ],
+      "resnica": "(0, 8)"
+    },
+    {
+      "id": "skrit-137",
+      "skupina": "neenacba",
+      "opis": "logaritemska neenačba z osnovo 3",
+      "pravilno": true,
+      "naloga": "log(x-1, 3)>=1",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "[4, oo)"
+      },
+      "racun": [
+        "ineq",
+        [
+          "log(x-1, 3)>=1",
+          "x",
+          "[4, oo)"
+        ]
+      ],
+      "resnica": "[4, oo)"
+    },
+    {
+      "id": "skrit-138",
+      "skupina": "neenacba",
+      "opis": "napaka: znak ni obrnjen pri osnovi pod 1",
+      "pravilno": false,
+      "napaka": "obrat",
+      "naloga": "log(x, 1/2)>1",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "(1/2, oo)"
+      },
+      "racun": [
+        "ineq",
+        [
+          "log(x, 1/2)>1",
+          "x",
+          "(1/2, oo)"
+        ]
+      ],
+      "resnica": "(0, 1/2)"
+    },
+    {
+      "id": "skrit-139",
+      "skupina": "neenacba",
+      "opis": "neenačba z absolutno vrednostjo",
+      "pravilno": true,
+      "naloga": "abs(x-2)<=3",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "[-1, 5]"
+      },
+      "racun": [
+        "ineq",
+        [
+          "abs(x-2)<=3",
+          "x",
+          "[-1, 5]"
+        ]
+      ],
+      "resnica": "[-1, 5]"
+    },
+    {
+      "id": "skrit-140",
+      "skupina": "neenacba",
+      "opis": "napaka: manjka interval",
+      "pravilno": false,
+      "napaka": "manjka",
+      "naloga": "x^3-x>0",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "(1, oo)"
+      },
+      "racun": [
+        "ineq",
+        [
+          "x^3-x>0",
+          "x",
+          "(1, oo)"
+        ]
+      ],
+      "resnica": "(-1, 0) U (1, oo)"
+    },
+    {
+      "id": "skrit-141",
+      "skupina": "neenacba",
+      "opis": "korenska neenačba",
+      "pravilno": true,
+      "naloga": "sqrt(x-2)<3",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "[2, 11)"
+      },
+      "racun": [
+        "ineq",
+        [
+          "sqrt(x-2)<3",
+          "x",
+          "[2, 11)"
+        ]
+      ],
+      "resnica": "[2, 11)"
+    },
+    {
+      "id": "skrit-142",
+      "skupina": "neenacba",
+      "opis": "napaka: pozabljeno definicijsko območje",
+      "pravilno": false,
+      "napaka": "obmocje",
+      "naloga": "sqrt(x-2)<3",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "(-oo, 11)"
+      },
+      "racun": [
+        "ineq",
+        [
+          "sqrt(x-2)<3",
+          "x",
+          "(-oo, 11)"
+        ]
+      ],
+      "resnica": "[2, 11)"
+    },
+    {
+      "id": "skrit-143",
+      "skupina": "neenacba",
+      "opis": "napaka: manjka negativni del",
+      "pravilno": false,
+      "napaka": "manjka",
+      "naloga": "x^2>=9",
+      "sol": {
+        "kind": "inequality",
+        "variable": "x",
+        "value": "[3, oo)"
+      },
+      "racun": [
+        "ineq",
+        [
+          "x^2>=9",
+          "x",
+          "[3, oo)"
+        ]
+      ],
+      "resnica": "(-oo, -3] U [3, oo)"
+    }
+  ]
+}

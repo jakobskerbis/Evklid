@@ -17,7 +17,7 @@ import { chapterProfile, fxGroupFor } from "./graph/tipke-poglavja.js";
 import { brisiNazaj } from "./vnos-formul.js";
 import {
   layoutFor, FX_GROUPS, CAS_SL, KEM_GROUPS, KEM_LETTERS, KEM_CHARGE, NUM_TOP_MATH, NUM_TOP_TEXT, EMAIL_CHIPS, URL_CHIPS, isUrlField,
-  fieldKind, usesOwnKeyboard, applyTemplate, prettyIns, digitFor, autoCapNeeded, doubleSpaceAt, wordsBack, autocorrect, deleteBack, stepCaret, withUnit, PREF_KEY, MODES, parsePrefs, suggest, glideDecode,
+  fieldKind, usesOwnKeyboard, applyTemplate, prettyIns, digitFor, autoCapNeeded, doubleSpaceAt, wordsBack, autocorrect, deleteBack, stepCaret, withUnit, PREF_KEY, MODES, parsePrefs, suggest, glideDecode, MOJE_KEY, parseMoje, mojeAdd, mojeDel, mojeFrom,
 } from "./tipkovnica-data.js";
 
 const touch = () => typeof matchMedia !== "undefined" && matchMedia("(pointer: coarse)").matches;
@@ -31,6 +31,14 @@ const lsGet = (k) => {
 };
 
 let prefs = parsePrefs(lsGet(PREF_KEY));
+// »Moje tipke« na napravi (tipkovnica-data.js MOJE_KEY)
+let moje = parseMoje(lsGet(MOJE_KEY));
+const saveMoje = (m) => {
+  moje = m;
+  try {
+    localStorage.setItem(MOJE_KEY, JSON.stringify(m));
+  } catch {}
+};
 const savePrefs = () => {
   try {
     localStorage.setItem(PREF_KEY, JSON.stringify(prefs));
@@ -289,6 +297,8 @@ function ctxChips() {
     html: list
       .map((c) => {
         const o = Array.isArray(c) ? { label: c[0], ins: c[1] ?? c[0] } : c;
+        // { layer }: »Vse tipke« odpre plast (tipke teme nad tipkovnico, tutorChips)
+        if (o.layer) return chip(o.i18n ? t(o.i18n) : o.label, { a: "layer", v: o.layer }, "all");
         return chip(o.label, o.unit ? { a: "unit", v: o.ins ?? o.label } : { a: "ins", v: o.ins ?? o.label }, o.unit ? "unit" : "");
       })
       .join(""),
@@ -396,12 +406,27 @@ function subtabs(list, cur, act) {
     .join("")}</div>`;
 }
 
+/** Stran »Moje«: učenčeve tipke, »+« (doda izbrano ali zapis pred kazalcem) in »Uredi« (tap odstrani). */
+function mojeHtml(sec, cols) {
+  const list = moje[sec] || [];
+  const ed = S.mojeEdit && list.length;
+  const ks = list.map((x) =>
+    ed
+      ? key(x, { a: "mojeDel", v: x, sec }, { cls: "sm moje del", aria: t("tk.mojeDel", { s: x }), html: `<span aria-hidden="true">×</span>${chemLabel(x)}` })
+      : key(x, { a: "lit", v: x, moje: true }, { cls: "sm moje", html: chemLabel(x) }),
+  );
+  const add = key("+", { a: "mojeAdd", v: sec }, { cls: "fn sm", aria: t("tk.mojeAdd") });
+  const edit = list.length ? key(t(ed ? "tk.mojeDone" : "tk.mojeEdit"), { a: "mojeEdit" }, { cls: "fn word sm w15" }) : "";
+  const hint = list.length ? "" : `<span class="tk-moje-hint">${esc(t("tk.mojeHint"))}</span>`;
+  return `<div class="tk-grid tk-scroll" style="--cols:${cols}">${ks.join("")}${add}${edit}${hint}</div>`;
+}
+
 function fxHtml() {
   if (!FX_GROUPS.some(([id]) => id === S.fxg)) S.fxg = FX_GROUPS[0][0];
   const g = FX_GROUPS.find(([id]) => id === S.fxg);
   const toNum = S.layers.some((l) => layerId(l) === "num") ? key("123", { a: "layer", v: "num" }, { cls: "fn sm w15" }) : "";
   return `${subtabs(FX_GROUPS.map(([id, k]) => [id, t(k)]), S.fxg, "fxg")}
-    <div class="tk-grid tk-scroll" style="--cols:5">${g[2].map(([l, ins]) => fxKey(g[0], l, ins)).join("")}</div>
+    ${S.fxg === "moje" ? mojeHtml("mat", 5) : `<div class="tk-grid tk-scroll" style="--cols:5">${g[2].map(([l, ins]) => fxKey(g[0], l, ins)).join("")}</div>`}
     <div class="tk-row">${toNum}${leftKey()}${rightKey()}${bsKey()}${goKey()}</div>`;
 }
 
@@ -415,15 +440,16 @@ function fxKey(group, l, ins) {
 }
 
 function symName(g) {
-  return g === "analiza" ? t("sc.grp.ana") : t(`tk.g.${g}`);
+  return g === "analiza" ? t("sc.grp.ana") : g === "moje" ? t("tk.moje") : t(`tk.g.${g}`);
 }
 function symHtml() {
   const s = studentSettings() || {};
-  const all = symGroups(stopnja(s), s.subject, S.layers.some((l) => layerId(l) === "kem"));
+  const all = [...symGroups(stopnja(s), s.subject, S.layers.some((l) => layerId(l) === "kem")), "moje"];
   if (!all.includes(S.symg)) S.symg = all[0];
   const tabs = subtabs(all.map((g) => [g, symName(g)]), S.symg, "symg");
   // Σ → Kemija: iste strani kot zavihek »Kem« (j, 13. 11.), strani v drugi, nižji vrsti čipov
   if (S.symg === "kemija") return tabs + kemBody(true);
+  if (S.symg === "moje") return `${tabs}${mojeHtml("sym", 6)}<div class="tk-row">${leftKey()}${rightKey()}${bsKey()}${goKey()}</div>`;
   const sl = currentLang() === "sl";
   return `${tabs}
     <div class="tk-grid tk-scroll" style="--cols:6">${GROUPS[S.symg].keys.map((k) => key(k.label, { a: "ins", v: k.ins }, { cls: "sym", aria: sl && k.title ? k.title : "" })).join("")}</div>
@@ -509,7 +535,8 @@ function kemBody(inSym = false) {
     const syms = ELEMENT_SYMBOLS.filter((x) => x[0] === S.kemL);
     const el = (x) => key(x, { a: "ins", v: x }, { cls: "el", aria: [x, elName(x)].filter(Boolean).join(" "), tip: elName(x) });
     rows = KEM_LETTERS.map((r) => `<div class="tk-row">${r.map(letter).join("")}</div>`).join("") + `<div class="tk-row tk-els">${syms.map(el).join("")}</div>`;
-  } else rows = g[2].map(row).join("");
+  } else if (S.kemg === "moje") rows = mojeHtml("kem", 6);
+  else rows = g[2].map(row).join("");
   const page = subtabs(KEM_GROUPS.map(([id, label]) => [id, t(label)]), S.kemg, "kemg").replace('class="tk-sub"', `class="tk-sub${inSym ? " tk-sub2" : ""}"`);
   return `${page}
     ${rows}
@@ -853,6 +880,16 @@ const buzz = () => {
   }
 };
 
+/** Kratko obvestilo nad tipkami (izgine samo). */
+function say(text) {
+  const p = document.createElement("div");
+  p.className = "tk-pop tk-say";
+  p.setAttribute("role", "status");
+  p.textContent = text;
+  board?.querySelector(".tk-in")?.appendChild(p);
+  setTimeout(() => p.remove(), 3500);
+}
+
 // Prilepi iz odložišča (telefon lahko vpraša za dovoljenje); če ne gre, pove, kako drugače.
 async function paste(f) {
   try {
@@ -880,6 +917,22 @@ function act(a) {
   if (a.a === "symg") return (S.symg = a.v), render();
   if (a.a === "kemg") return (S.kemg = a.v), render();
   if (a.a === "kemL") return (S.kemL = a.v), render();
+  if (a.a === "mojeEdit") return (S.mojeEdit = !S.mojeEdit), render();
+  if (a.a === "mojeDel") {
+    saveMoje(mojeDel(moje, a.sec, a.v));
+    if (!moje[a.sec].length) S.mojeEdit = false;
+    return render();
+  }
+  if (a.a === "mojeAdd") {
+    const f = target();
+    const v = String(f?.value ?? f?.textContent ?? "");
+    const r = (f && sel(f)) || [v.length, v.length];
+    const x = mojeFrom(v, r[0], r[1]);
+    if (!x) return say(t("tk.mojeHint"));
+    S.mojeEdit = false;
+    saveMoje(mojeAdd(moje, a.v, x));
+    return render();
+  }
   if (a.a === "hide") return hideKeyboard({ blur: true });
   if (a.a === "globe") return toSystem();
   if (a.a === "sh") {
@@ -1185,6 +1238,14 @@ function wireBoard() {
     // pritisk lahko začetek potega (j, 4. 11.: »naj se ta vrsta ne klikne, če podrsaš po njej«).
     const scroller = b.closest(".tk-ctx, .tk-scroll, .tk-sub, .tk-tablist");
     if (scroller) down.scroll = [scroller, scroller.scrollLeft, scroller.scrollTop];
+    // »Moje tipke«: dolg pritisk vklopi urejanje (bližnjica za »Uredi«); tipka se ob tem ne vpiše
+    if (a?.moje)
+      down.lp = setTimeout(() => {
+        if (down?.b !== b) return;
+        down.moved = true;
+        S.mojeEdit = true;
+        render();
+      }, 500);
     if (!scroller && (a?.a === "char" || a?.a === "ins" || a?.a === "lit")) {
       down.done = true;
       down.f = S.field;

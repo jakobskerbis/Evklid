@@ -6,7 +6,7 @@
 // (rešitve enačbe vstavimo nazaj v enačbo). Česar ne prestane preverjanja, ne pokažemo.
 // π in e sta simbola (transcendentni števili), zato x·π − π = π(x − 1); pri preverjanju dobita svojo vrednost.
 import { Q, P, AlgebraError, gcdInt, lcmInt, withLimit } from "../scan/algebra.js";
-import { compileLine, lineTex, splitTop, HIDDEN_VARS } from "./scicore.js";
+import { compileLine, lineTex, splitTop, HIDDEN_VARS, usesAngles } from "./scicore.js";
 import { runCalc, CALC_OPS } from "./calculus.js";
 import { runAtoms, atomInfo, ATOM_TEX, isAtom } from "./casalg.js";
 import { MAT_OPS, runMatrix } from "./casmat.js";
@@ -770,6 +770,12 @@ export function commandStart(text) {
   return !!m && m[1].toLowerCase() in CMDS;
 }
 
+/** Je ukaz CAS sredi izraza (1 + razstavi(x² − 1), 2·limita(…))? Izračunaj ga ne zna; ni zmnožek črk r·a·z·s·t·a·v·i. */
+export function commandInside(text) {
+  for (const m of String(text ?? "").matchAll(/(?<![A-Za-zčšžČŠŽ])([A-Za-zčšž]+)\s*\(/g)) if (m[1].toLowerCase() in CMDS) return true;
+  return false;
+}
+
 /** Je besedilo ukaz CAS? Vrne { op, name, inner, v } ali null. */
 export function parseCommand(text) {
   const m = /^\s*([A-Za-zčšž]+)\s*\(/.exec(String(text ?? ""));
@@ -811,9 +817,9 @@ export function runCas(cmd, env = {}) {
   }
   if (MAT_OPS.has(cmd.op)) return runMatrix(cmd, line, env);
   if (CALC_OPS.has(cmd.op)) {
-    // analiza je vedno v radianih; v načinu DEG/GRA to povemo pod rezultatom
+    // analiza je vedno v radianih; v načinu DEG/GRA to povemo pod rezultatom, a le, če izraz ima kote
     const r = runCalc(cmd, env);
-    return (env.deg || env.grad) && !r.error ? { ...r, rad: true } : r;
+    return (env.deg || env.grad) && !r.error && usesAngles([cmd.inner, ...(cmd.args || [])].join(";"), env.funcs) ? { ...r, rad: true } : r;
   }
   const innerTex = lineTex(line.ast, comma);
   const name = `\\operatorname{${cmd.name}}`;

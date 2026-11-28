@@ -178,6 +178,7 @@ export function labHitrost(el, opts = {}) {
   const sd = seme();
   const T = new MarmorBench({ seed: sd }).lab.T; // ena učilnica: vsi štirje poskusi pri isti sobni temperaturi
   const Bs = { marmor: new MarmorBench({ seed: sd, T }), mg: new MagnezijBench({ seed: sd + 1, T }), tio: new TiosulfatBench({ seed: sd + 2, T }), h2o2: new PeroksidBench({ seed: sd + 3, T }) };
+  el._labBench = Bs; // maturitetni poskus (lab-matura.js): matura/lab-hitrost.js (aktivacijska energija tiosulfata, Bs.tio)
   let mode = "marmor", speed = 1, interval = 30, nextAuto = interval, asked = false;
   const W = 400, H = 300, S = 8, yB = 268;
   const svg = svgBox(W, H, "lab-bench lab-ek lab-rk lab-rk-hit");
@@ -274,6 +275,7 @@ export function labHitrost(el, opts = {}) {
       : "Izmeri izgubo mase marmorja v 0,5; 1 in 2 mol/L HCl in iz začetnih hitrosti določi red reakcije glede na kislino. Pri tiosulfatu izmeri čas izginotja križa pri petih koncentracijah in dveh temperaturah: je 1/t sorazmeren s c in kolikokrat se hitrost poveča pri 10 °C višji temperaturi?",
   });
   el.classList.add("lab");
+  el.querySelector(".lab-notes")?.classList.add("lab-rk-viri"); // viri povedo Ea: maturitetni poskus jih med nalogo skrije
 
   const B = () => Bs[mode];
   function sync() {
@@ -353,6 +355,7 @@ export function labHitrost(el, opts = {}) {
     S_.ser.set(S_.run, []);
     S_.m0 = null;
     if (hkratiT.get()) startUra();
+    else log.push("Štoparica še ne teče! Zaženi jo čim prej, sicer bodo časi napačni.", "warn");
     if (mode === "marmor") {
       // začetna masa takoj po dodatku (t = 0)
       const o = b.beriMaso();
@@ -360,9 +363,8 @@ export function labHitrost(el, opts = {}) {
       tabs.marmor.add({ p: String(S_.n), t: "0", m: o.text.replace(".", ","), dm: "0,00" });
       S_.ser.get(S_.run).push([0, 0]);
     }
-    else log.push("Štoparica še ne teče! Zaženi jo čim prej, sicer bodo časi napačni.", "warn");
     if (mode === "marmor") {
-      log.push(`Dodal si ${num(r.m, 2)}${nb}g marmorja${b.vata ? " in vrat zamašil z vato" : ""}.`, "ok");
+      log.push(`Dodal si ${num(r.m, 2)}${nb}g marmorja (${MARMOR_OBLIKE[moSel.get()].name.replace(/ \(.*\)$/, "")})${b.vata ? " in vrat zamašil z vato" : ""}.`, "ok");
       if (!b.vata) once("vata", "Brez vate bodo mehurčki CO₂ iz bučke razpršili tudi kapljice kisline: izguba mase bo prevelika.", "warn");
     }
     if (mode === "mg") log.push(`Spustil si ${glSel.get()}${nb}cm traku (${num(r.m, 3)}${nb}g) v kislino in zamašil z zamaškom s cevko do brizge.`, "ok");

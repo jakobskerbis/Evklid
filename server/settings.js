@@ -50,6 +50,8 @@ export const DEFAULT_SETTINGS = {
   data_mode: "auto",
   goal: DEFAULT_GOAL,
   goal_date: "", // YYYY-MM-DD ali prazno
+  // Podrobna razlaga (j, 27. 11. 2026): izklopljeno = kratki odgovori inštruktorja (do 50 besed, izjemoma 150 oz. 300).
+  detailed: false,
   goal_reminder: true, // dnevni opomnik (OPOMNIK_URA, 16.00) do datuma cilja
   xp_goal: DEFAULT_XP_GOAL, // dnevni cilj XP (public/xp-levels.js XP_GOALS)
   // Kotiček zanimanj (public/interests.js): null = vprašalnik še ni bil izpolnjen, [] = preskočen.
@@ -114,8 +116,11 @@ export function normalizeSettings(input = {}) {
   // Regijski sistem: razred mora biti iz tega sistema, šola sledi letu šolanja, fakultet ni.
   if (isRegional(out.school_system)) {
     if (!gradeInfo(out.school_system, out.curriculum_level)) out.curriculum_level = defaultGrade(out.school_system);
-    out.educational_track = trackForLevel(gradeInfo(out.school_system, out.curriculum_level).level);
-  } else if (/^(Class|Grade|JSS|SS|JHS|SHS|Form|S\d|Prep|Secondary|Kelas|Lớp|[1-6](e|re|nde)|Terminale)/.test(out.curriculum_level)) {
+    out.educational_track = trackForLevel(gradeInfo(out.school_system, out.curriculum_level).level, out.school_system);
+  } else if (
+    /^(Class|Grade|JSS|SS|JHS|SHS|Form|S\d|Prep|Secondary|Kelas|Lớp|[1-6](e|re|nde)|Terminale)/.test(out.curriculum_level) ||
+    (!/^[1-9]\. (razred|letnik)( OR| VR)?$/.test(out.curriculum_level) && SYSTEM_IDS.some((id) => isRegional(id) && gradeInfo(id, out.curriculum_level)))
+  ) {
     // Nazaj na Slovenijo z razredom iz drugega sistema: privzeti slovenski razred.
     out.educational_track = DEFAULT_SETTINGS.educational_track;
     out.curriculum_level = DEFAULT_SETTINGS.curriculum_level;
@@ -157,6 +162,7 @@ export function normalizeSettings(input = {}) {
   out.track = out.goal === "tekmovanje" ? "COMPETITION" : "REGULAR";
   if (validDate(input.goal_date)) out.goal_date = input.goal_date;
   if (input.xp_goal !== undefined) out.xp_goal = cleanXpGoal(input.xp_goal);
+  if (input.detailed !== undefined) out.detailed = input.detailed === true || input.detailed === 1 || input.detailed === "1" || input.detailed === "true" || input.detailed === "on";
   if (input.goal_reminder !== undefined) out.goal_reminder = input.goal_reminder === true || input.goal_reminder === 1 || input.goal_reminder === "1" || input.goal_reminder === "true";
   // Različica vodiča ob prvi uporabi, ki jo je profil že videl (public/app.js TOUR_VERSION); ni nastavitev za inštruktorja.
   const tv = Number(input.tour_version);

@@ -1,38 +1,88 @@
 // Skeniranje nalog (zaslon »Skeniraj«, public/scan/):
-//   POST /api/students/:id/scan/read   { image: dataURL }  → { problems: [{ text, tex, goal, given?, sought? }] }  prepis s fotografije
+//   POST /api/students/:id/scan/read   { image: dataURL }  → { problems: [{ text, tex, goal, given?, sought?, unclear? }] }  prepis s fotografije
+//        (nejasen znak je [?] v text/given, unclear = možnosti za vsako oznako v text; public/scan/nejasno.js)
 //   POST /api/students/:id/scan/solve  { text, goal?, given?, sought? } → { solution }       AI rešitev po korakih
 // Večino nalog reši brez AI že vmesnik (public/scan/solvecore.js). AI pride na vrsto le pri nalogah, ki jih
 // ta ne zna (koreni, logaritmi, trigonometrija, integrali …). AI rešitev strežnik preveri z isto kodo kot vmesnik
-// (public/scan/verify.js); nepreverjena se pokaže z opozorilom, nikoli kot »preverjeno«.
+// (public/scan/verify.js); vsaka rešitev dobi enega od petih statusov (public/scan/status.js), »Preverjeno« samo z dokazom.
 import { AI_JSON } from "./ai-oznaka.js";
 import { getClient, isMockMode, quickParams, MODEL, MODEL_MID, errorText, apiErrorCode } from "./claude.js";
-import { verifyAi } from "../public/scan/verify.js";
-import { prep, splitSystem } from "../public/scan/solvecore.js";
+import { verifyAi, normalizeSet, zaokrozenRacun, kindOfText, parseIntegral, parseLimit, bezKonstante } from "../public/scan/verify.js";
+import { prep, splitSystem, kombinatorika, argumentiKlica } from "../public/scan/solvecore.js";
+import { cleanUnclear, unclearCount, hasUnclear, normalizeUnclear } from "../public/scan/nejasno.js";
 import { casCheck } from "./cas.js";
+import { STATUSES } from "../public/scan/status.js";
+import { preveriPodatke, cleanRacun, iskanaKolicina } from "../public/scan/podatki.js";
 
-// AI rešitev preverita dve neodvisni kodi: numerična (public/scan/verify.js) in SymPy (server/cas.js).
-// SymPy je odločilen, kadar se odloči (true/false); kadar ne zna (null), velja numerično preverjanje.
+// AI rešitev preverita dve neodvisni kodi: public/scan/verify.js (točna algebra za polinome, sicer numerika) in
+// SymPy (server/cas.js). SymPy je odločilen, kadar se odloči (true/false); kadar ne zna (null), velja verify.js.
 // Ujame tudi rešitve izven numeričnega iskanja (|x| > 10⁶) in točne vrednosti (√2 proti 1,414).
-// Pri nalogi s podatki (given) je besedilo le predloga s parametri: tam SymPy ne odloča.
-// Kjer numerika popolnosti ne more preveriti (partial: sistem, periodične rešitve, »ni rešitve«), brez
-// odločitve SymPy rešitev ni »preverjena«, ampak nepreverjena (reason "unknown"; AUDIT-001).
+// Status (public/scan/status.js): »verified« samo, ko SymPy ali točna algebra dokaže celotno množico rešitev;
+// numerična potrditev je največ »numeric«, sistem in periodične rešitve brez dokaza popolnosti »partial« (AUDIT-001).
+// verified: true samo pri statusu »verified« (stari odjemalci prikažejo značko »preverjeno« le takrat).
+// Pri nalogi s podatki (given) besedilo ni naloga, ki bi jo koda razumela. Pri »S=?« AI vrne še »check« (vrednosti in
+// formule), ki ga public/scan/podatki.js sam preračuna: račun drži → »partial«, ne drži → »wrong« (in ponovitev);
+// postavitve naloge (ali so formule prave) koda ne preveri. Druge naloge s podatki ostanejo »unverified«.
+const ROUNDED = /\d\.\d|≈|~|approx|\d\s*[eE][+-]?\d|[*·×]\s*10\s*\^|·\s*10[⁰¹²³⁴⁵⁶⁷⁸⁹⁻]/;
+const periodicClaim = (sol) => (sol?.solutions || []).some((s) => /(?<![A-Za-z])k(?![A-Za-z])/.test(String(s)));
 export async function verifyAiFull(text, sol, { cas = true } = {}) {
   const num = verifyAi(text, sol);
   const c = cas ? await casScan(text, sol).catch(() => ({ ok: null })) : { ok: null };
-  if (c.ok === true) return { verified: true, reason: null };
+  if (c.ok === true) {
+    // Motorja se ne strinjata: točna lokalna algebra je trditev ovrgla, SymPy pa jo je sprejel (lahko le s preizkusom
+    // v točkah ali s toleranco zapisa, worker.py is_zero / decimals_tol). Ne potrdimo: »Nepreverjeno« (PV-02).
+    if (num.exact) return { verified: false, reason: "unknown", status: "unverified" };
+    // SymPy pri periodičnih rešitvah preveri popolnost samo na [−20, 20] (worker.py solve_one): »delno«.
+    // Zaokroženo decimalno število (1.414) SymPy sprejme s toleranco (worker.py decimals_tol): to je približek,
+    // »Preverjeno« ostane le, če ga točna algebra potrdi kot točno vrednost (2.5).
+    // Približek je tudi »≈ 1414«, znanstveni zapis (2e6, 2*10^6, 2·10⁶) in »approx«: SymPy jih sprejme s toleranco.
+    const rounded = ROUNDED.test(JSON.stringify([sol?.solutions, sol?.value])) && num.status !== "verified";
+    // SymPy, ki je odločil le s števili ali v naključnih točkah (worker how ≠ symbolic, PV-03), ni dokaz: »numerično«,
+    // razen če je lokalna točna algebra odgovor dokazala.
+    const sampled = c.how !== "symbolic" && num.status !== "verified"; // brez how ni dokaza: največ numerično
+    const status = sol?.kind === "equation" && periodicClaim(sol) ? "partial" : rounded || sampled ? "numeric" : "verified";
+    return { verified: status === "verified", reason: status === "verified" ? null : "unknown", status };
+  }
+  // Zaokrožena krajišča neenačbe SymPy primerja točno in zavrne. Kadar je lokalni dokaz (Sturm) vse drugo dokazal in
+  // je numeričen le zaradi zaokroženih krajišč (num.rounded), velja »numerično«; izid same mreže točk ne prevlada.
+  if (c.ok === false && sol?.kind === "inequality" && num.rounded && num.status === "numeric") {
+    return { verified: false, reason: "unknown", status: "numeric" };
+  }
   if (c.ok === false) {
     const missing = num.reason === "missing" || /^manjka rešitev/.test(c.why || "");
-    return { verified: false, reason: missing ? "missing" : "wrong", missing: num.missing || [], cas: c.why };
+    return { verified: false, reason: missing ? "missing" : "wrong", missing: num.missing || [], cas: c.why, status: "wrong" };
   }
-  if (num.verified && num.partial) return { verified: false, reason: "unknown" };
-  return num;
+  const status = num.status || (num.verified ? "numeric" : "unverified");
+  if (status === "verified") return { verified: true, reason: null, status };
+  return { verified: false, reason: num.verified ? "unknown" : num.reason, ...(num.missing ? { missing: num.missing } : {}), status };
 }
+// boljši status prej (za izbiro med prvim in ponovljenim odgovorom)
+const statusRank = (s) => STATUSES.length - STATUSES.indexOf(s || "unverified");
 
 // Zapis za SymPy (server/cas/worker.py). Tam je log brez osnove ln, v šoli in v public/graph/math.js pa desetiški,
 // zato log(x) → lg(x); log_b(x), log_(b)(x), log_{b}(x) → log(x, b) (tako ga piše READ_PROMPT); √2 → sqrt(2).
 // Z imeni spremenljivk sistema še implicitno množenje (xy → x*y; worker bi »xy« prebral kot eno ime). Pregled #935.
+// Imena kalkulatorja, ki jih SymPy ne pozna (prep v solvecore jih napiše): nCr(n, k) → binomial(n, k),
+// nPr(n, k) → factorial(n)/factorial(n-k), logb(a, b) → log(a, b); C(n, k) in V(n, k) s celima številoma prav tako
+// (sicer jih SymPy bere kot neznano funkcijo). casText je le za preverjanje, ne gre ne učencu ne AI.
+const CAS_KLIC = /(?<![A-Za-z_])(nCr|nPr|logb)\s*\(/g;
+function casKlici(s) {
+  let out = "";
+  let i = 0;
+  for (const m of s.matchAll(CAS_KLIC)) {
+    if (m.index < i) continue;
+    const k = argumentiKlica(s, m.index + m[0].length);
+    if (!k) break;
+    if (k.args.length !== 2) continue;
+    const [a, b] = k.args.map((x) => casKlici(x).trim());
+    out += s.slice(i, m.index) + (m[1] === "nCr" ? `binomial(${a}, ${b})` : m[1] === "nPr" ? `(factorial(${a})/factorial((${a})-(${b})))` : `log(${a}, ${b})`);
+    i = k.end;
+  }
+  return out + s.slice(i);
+}
+
 export function casText(text, names = []) {
-  let t = String(text).replace(/√\s*\(/g, "sqrt(").replace(/√\s*([0-9]+(?:[.,][0-9]+)?|[a-zA-Z])/g, "sqrt($1)");
+  let t = casKlici(kombinatorika(String(text))).replace(/√\s*\(/g, "sqrt(").replace(/√\s*([0-9]+(?:[.,][0-9]+)?|[a-zA-Z])/g, "sqrt($1)");
   const head = /(?<![A-Za-z_])log(?:_(?:\{([^{}]+)\}|\(([^()]+)\)|([0-9]+|[a-zA-Z])))?\s*\(/y;
   let out = "";
   for (let i = 0; i < t.length; ) {
@@ -84,6 +134,21 @@ function systemGroups(solutions) {
 
 async function casScan(text, sol) {
   const v = /^[a-zA-Z]$/.test(sol?.variable || "") ? sol.variable : "x";
+  // integral in limito po zapisu naloge (public/scan/verify.js kindOfText), ne po vrsti, ki jo je dal AI
+  const kind = kindOfText(text);
+  if (kind === "integral") {
+    const m = parseIntegral(text);
+    if (!m || !sol?.value) return { ok: null };
+    const f = casText(prep(m.f));
+    if (m.a !== undefined) return casCheck("int", [f, m.x, casText(prep(m.a)), casText(prep(m.b)), casText(prep(sol.value))]);
+    const F = bezKonstante(sol.value);
+    return F ? casCheck("int", [f, m.x, casText(prep(F))]) : { ok: null };
+  }
+  if (kind === "limit") {
+    const m = parseLimit(text);
+    if (!m || !sol?.value) return { ok: null };
+    return casCheck("limit", [casText(prep(m.f)), m.x, casText(m.point), casText(prep(sol.value))]);
+  }
   const sols = (sol?.solutions || []).map((x) => String(x).replace(/^\s*[a-zA-Z](?:_\{?\d+\}?)?\s*=(?!=)/, "").trim()).filter(Boolean);
   if (sol?.kind === "equation") return casCheck("solve", [casText(prep(text)), v, sols.length ? sols.map((x) => casText(x)).join(", ") : "none"]);
   if (sol?.kind === "system") {
@@ -102,7 +167,16 @@ async function casScan(text, sol) {
     const claim = groups.length ? groups.map((g) => [...g].map(([n, x]) => `${n}=${casText(x)}`).join(", ")).join("; ") : "none";
     return casCheck("solve", [eqs.join(", "), names.join(", "), claim]);
   }
-  if ((sol?.kind === "expression" || sol?.kind === "arith") && sol.value) return casCheck("equal", [casText(prep(text)), casText(prep(sol.value))]);
+  // Račun brez neznank z zaokroženim decimalnim rezultatom: »value« sprejme zaokroženo decimalno število v mejah zapisa (1/3 = 0.33) kot številsko potrditev;
+  // »equal« ga je zavrnil kot napačnega (N-01, skoraj-016/018/022).
+  // Pogoji kot lokalno (verify.js zaokrozenRacun): golo decimalno število z vsaj dvema števkama, točna vrednost brez
+  // kratkega decimalnega zapisa in toleranca, ki jo 53-bitni Float in relativna rezerva workerja ne prekrijeta
+  // (15240740602.07, 1.2193263111263526*10^17 ostaneta pri strogem »equal«).
+  const zaokrozeno = sol?.kind === "arith" && zaokrozenRacun(text, sol.value) > 0;
+  if ((sol?.kind === "expression" || sol?.kind === "arith") && sol.value) return casCheck(zaokrozeno ? "value" : "equal", [casText(prep(text)), casText(prep(sol.value))]);
+  // Neenačba (P3-3): obstoječa operacija »ineq« primerja množico rešitev s SymPy solveset (worker.py op_ineq).
+  // Dvojne neenačbe (1 < x < 5) worker ne razčleni in vrne null (velja verify.js).
+  if (sol?.kind === "inequality" && sol.value) return casCheck("ineq", [casText(prep(text)), v, casText(normalizeSet(sol.value))]);
   if (sol?.kind === "derivative" && sol.value) {
     const f = String(text).replace(/^\s*(d\/d[a-z]|f\(x\)\s*=)\s*/, "");
     return casCheck("diff", [casText(prep(f)), v, casText(prep(sol.value))]);
@@ -147,6 +221,10 @@ export const READ_PROMPT =
   "a double inequality as a<x<b; a logarithm with its base as log_10(x), log_2(x), log_a(x). Keep the student's letters for variables. " +
   "Copy every base, index and exponent exactly as written: never replace a written digit by a letter (log_10 stays log_10, not log_a). " +
   "Read every sign and digit with care (x+b and x-b; 1, 4 and 7, which look alike in handwriting). If one is unclear, the student's next lines may help with a sign or a letter, but the task line always wins: never change a written value to match the working. " +
+  // P3-5: nejasen znak ni ugibanje (public/scan/nejasno.js); učenec ga popravi pred reševanjem.
+  "Never guess: if a digit, sign, letter, exponent, index or bracket of the task could really be read two ways (smudged, blurred, cut off at the edge, 1 or 7, + or -, x or a times sign) and nothing in the task itself settles it (the student's working may only confirm a sign or a letter, never a digit), " +
+  'write [?] in its place in "text" and \\\\boxed{?} in "tex", and add "unclear": one list per [?], in the order they stand in "text", of what it could be (most likely first, at most 3, each as it would stand in "text", e.g. [["1","7"]]). ' +
+  'An unclear value in "given" is written as [?] there too, not \\\\boxed{?} (no list); never put [?] in "sought". Mark only a real doubt: a clearly written character is never [?].\n' +
   "Coordinates of a point and the values in conditions are numbers unless a letter is clearly written.\n" +
   'Each "text" is one expression, one equation or one inequality (or a system): never chain several = or a definition and an inequality: give only the part that is the task (x^2>4 for h(x)=x^2>4, nCr(5,2) for nCr(5,2)=5!/(2!*3!)); a right-hand side that is working or a result is left out.\n' +
   '- "given": only if the task states data or conditions needed to solve it (a measured quantity with its unit such as a = 3 cm, m = 2 kg or α = 30°, ' +
@@ -154,10 +232,10 @@ export const READ_PROMPT =
   'a list of them in LaTeX, one each, with the meaning of the page, keeping every unit and writing a decimal comma as {,} (e.g. ["a = 3\\\\ \\\\mathrm{cm}", "b = 2{,}5\\\\ \\\\mathrm{cm}", "T(7,2)", "\\\\text{pol: } x=3", "f(0)=5"]). Never drop a value stated in the task; never add a value from the student\'s working or a result, never invent one, and leave out a bare domain such as x ∈ ℝ. Otherwise leave it out.\n' +
   '- "sought": what the task asks you to find is never data. If it is already "text" as <letter>=?, or it is what "goal" does to "text" (solve it, its zeros, simplify, factor, evaluate, differentiate), leave "sought" out. ' +
   'Otherwise (e.g. the angle at which the graph cuts the x-axis, the vertex of the parabola) write it in "sought" as one short phrase (LaTeX for maths), in the language of the language line below, e.g. in Slovene "\\\\text{kot, pod katerim graf seka os x}".\n' +
-  "For a word or geometry problem without one equation or expression, give as \"text\" only the unknown asked for in calculator syntax as <letter>=? (e.g. P=?, v=?), never a sentence, and every stated value in \"given\".\n" +
+  "For a word or geometry problem without one equation or expression, give as \"text\" only the unknown asked for in calculator syntax as <letter>=? (e.g. P=?, v=?), never a sentence, and every stated value in \"given\". When the task asks for the formula of a function that is not written in it (e.g. read from its graph or from given points), \"text\" is its name and variable with =? (f(x)=?, g(x)=?, p(t)=?), never a general form such as a*(x-p)^2+q, and \"sought\" names the form asked for (e.g. \"\\\\text{predpis v temenski obliki}\"). A task with a written formula (izračunaj f(3), odvajaj f(x)=x^2, inverzna funkcija od f(x)=2x+1) keeps that formula in \"text\".\n" +
   '- "tex": the same problem in LaTeX.\n' +
   "Ignore task numbers (1., a)), the wording of instructions (but keep their conditions in \"given\") and crossed-out work. If the instruction says what to do (Razstavi / factor, Poenostavi / simplify, Izračunaj / evaluate, Odvajaj / differentiate), add \"goal\": factor|simplify|evaluate|derivative|solve; if there is neither such an instruction nor an equation or inequality to solve, leave \"goal\" out.\n" +
-  'Return only JSON: {"problems":[{"text":"...","tex":"...","goal":"...","given":["..."],"sought":"..."}]} (most prominent problem first, at most 6). If no maths is readable: {"problems":[]}.\n' +
+  'Return only JSON: {"problems":[{"text":"...","tex":"...","goal":"...","given":["..."],"sought":"...","unclear":[["...","..."]]}]} (most prominent problem first, at most 6). If no maths is readable: {"problems":[]}.\n' +
   // Fotografije, ki niso učno gradivo, zavrnemo (j, 2026-10-30); slike strežnik nikoli ne shrani.
   'Accept schoolwork even if people appear in the frame (book illustrations, a teacher at a whiteboard, hands). Only if a person or a private item is the main subject (face, selfie, ID or other personal document, private message) or it is a random scene, do not describe it and return only {"problems":[],"unrelated":true}. If unsure, read it.';
 
@@ -194,12 +272,16 @@ export function cleanProblems(list) {
     .map((p) => {
       const given = cleanGiven(p.given);
       const sought = cleanSought(p.sought);
+      const text = normalizeUnclear(p.text).trim().slice(0, MAX_TEXT);
+      const unclear = cleanUnclear(p.unclear, unclearCount(text));
       return {
-        text: p.text.trim().slice(0, MAX_TEXT),
-        tex: typeof p.tex === "string" ? p.tex.trim().slice(0, MAX_TEXT * 2) : "",
+        text,
+        // »\b« iz neubežanega \boxed v JSON je znak backspace (JSON.parse): popravimo, da se oznaka izriše
+        tex: typeof p.tex === "string" ? p.tex.replace(/\x08oxed/g, "\\boxed").trim().slice(0, MAX_TEXT * 2) : "",
         goal: GOALS.includes(p.goal) ? p.goal : null,
         ...(given.length ? { given } : {}),
         ...(sought ? { sought } : {}),
+        ...(unclear.length ? { unclear } : {}),
       };
     });
 }
@@ -211,11 +293,12 @@ export function cleanGiven(list) {
   return (Array.isArray(list) ? list : [])
     .filter((g) => typeof g === "string" && g.trim())
     .slice(0, MAX_GIVEN)
-    .map((g) => g.replace(/\s+/g, " ").trim().slice(0, MAX_GIVEN_LEN)); // brez novih vrstic v pozivu
+    .map((g) => normalizeUnclear(g).replace(/\s+/g, " ").trim().slice(0, MAX_GIVEN_LEN)); // brez novih vrstic v pozivu
 }
 // Iskana količina (»kot, pod katerim graf seka os x«): ni podatek, zato ne v given (j 16. 11. 2026: »to ni podatek«).
 // Ne izklopi lastnega reševalnika ne SymPy (ti gledata le given); AI jo dobi, da ve, kaj iskati.
-export const cleanSought = (v) => (typeof v === "string" ? v.replace(/\s+/g, " ").trim().slice(0, MAX_GIVEN_LEN) : "");
+// Oznaka [?] sodi le v račun in podatke; v opisu iskanega je navaden vprašaj (učenec je tam ne more popraviti).
+export const cleanSought = (v) => (typeof v === "string" ? normalizeUnclear(v).split("[?]").join("?").replace(/\s+/g, " ").trim().slice(0, MAX_GIVEN_LEN) : "");
 
 // Cilj, ki ga je učenec izbral na zaslonu (npr. »Razstavi«): brez njega bi AI izraz morda le poenostavil.
 const GOAL_TEXT = {
@@ -225,6 +308,14 @@ const GOAL_TEXT = {
   derivative: "Task: differentiate it with respect to the variable (kind derivative).",
   solve: "Task: solve it.",
 };
+
+// Povratna informacija za ponovni poskus: en niz ali seznam (en vnos za vsak neuspel poskus).
+function feedbackText(feedback) {
+  const list = [].concat(feedback || []).filter(Boolean);
+  if (!list.length) return "";
+  if (list.length === 1) return `Your previous answer failed an automatic check (${list[0]}). Find the mistake and answer again.`;
+  return `Your previous answers failed an automatic check:\n${list.map((f, i) => `- attempt ${i + 1}: ${f}`).join("\n")}\nFind the mistake and answer again; do not repeat a rejected answer.`;
+}
 
 export function solvePrompt(text, lang, feedback = null, goal = null, given = [], sought = "") {
   return (
@@ -237,11 +328,20 @@ export function solvePrompt(text, lang, feedback = null, goal = null, given = []
     "Return only JSON:\n" +
     '{"kind":"equation|inequality|system|expression|arith|derivative|integral|limit|other","variable":"x","problem_tex":"LaTeX",' +
     '"answer_tex":"LaTeX of the final answer","solutions":["values in calculator syntax, one per solution (equations); for periodic solutions use k, e.g. pi/6+2*k*pi; for a system one string like x=2; y=-1"],' +
-    '"value":"final result in calculator syntax (expression, arith, derivative, integral without +C, limit)",' +
+    '"value":"final result in calculator syntax (expression, arith, derivative, integral without +C, limit; for an inequality its solution set as intervals joined by U, e.g. (-oo, -2) U [3, oo), {} if none, R if all)",' +
     '"methods":[{"name":"short method name","steps":[{"title":"what we do, one sentence","tex":"LaTeX of the line after this step","why":"why this step is allowed or how to do it, 1–3 sentences; inline maths in $...$"}]}]}' +
-    (feedback ? `\nYour previous answer failed an automatic check (${feedback}). Find the mistake and answer again.` : "")
+    (given.length && iskanaKolicina(text) ? `\n${checkPrompt(text)}` : "") +
+    (feedbackText(feedback) ? `\n${feedbackText(feedback)}` : "")
   );
 }
+
+// Naloga s podatki »S=?«: AI doda še »check«, ki ga strežnik sam preračuna (public/scan/podatki.js).
+const checkPrompt = (text) =>
+  'Because this task has data, add to the JSON also "check": {"values":{"name":"number"},"equations":["formula"]}, the calculation in a form a program recomputes. ' +
+  `"values": every quantity you use as a plain number without units (decimal point, rounded values with the digits you used; angles in degrees with °, e.g. "22.62°"): each stated datum converted to the units you compute in (2 kW → "2000"), each intermediate result, and the asked quantity named ${JSON.stringify(String(text).replace(/=\s*\?\s*$/, "").trim().replace(/_[{(](\w+)[})]/g, "_$1"))}, in the unit of your final answer and with the same number. ` +
+  "Names are one letter or a Greek letter name, with an optional index (a, S_10, T_1, c_w, alpha), never two letters without _. " +
+  '"equations": the formulas you used, in calculator syntax with these names and no units (S=(a+c)/2*v, P*t=m*c*(T_2-T_1), tan(alpha)=a/b); write π as pi and constants not stated in the task as numbers in the formula (F=m*9.81). ' +
+  "With the values put in, every equation must hold, and together they must determine the asked quantity from the data.";
 
 export function cleanSolution(s) {
   if (!s || typeof s !== "object") return null;
@@ -262,46 +362,104 @@ export function cleanSolution(s) {
     solutions: (Array.isArray(s.solutions) ? s.solutions : []).filter((x) => typeof x === "string").slice(0, 8).map((x) => x.slice(0, 120)),
     value: str(s.value, 400),
     methods,
+    ...(cleanRacun(s.check) ? { racun: cleanRacun(s.check) } : {}),
   };
 }
 
-export async function solveWithAi({ text, lang = "sl", goal = null, given = [], sought = "" }) {
+// Največ toliko klicev AI za eno nalogo: ko preverjanje pokaže napačno ali manjkajočo rešitev (ali odgovor ni
+// berljiv), strežnik sam poskusi znova s povratno informacijo vseh prejšnjih poskusov; učenec ne pritiska ničesar
+// (j, 25. 11. 2026: »Naj preverjanje avtomatsko poskusi znova brez obremenjevanja učenca«).
+export const SOLVE_ATTEMPTS = 3;
+
+/** Manjkajoča ničla za povratno informacijo: »-1.0472 (= -pi/3)«, kadar je racionalen večkratnik π (periodične veje). */
+export function kotPi(m) {
+  const s = m.toFixed(4);
+  if (Math.abs(m) < 1e-9) return s;
+  for (let q = 1; q <= 12; q++) {
+    const p = Math.round((m * q) / Math.PI);
+    if (p && Math.abs(m - (p * Math.PI) / q) < 1e-9 * Math.max(1, Math.abs(m))) {
+      const st = Math.abs(p) === 1 ? "pi" : `${Math.abs(p)}*pi`;
+      return `${s} (= ${p < 0 ? "-" : ""}${st}${q > 1 ? `/${q}` : ""})`;
+    }
+  }
+  return s;
+}
+
+// Kaj je bilo narobe s poskusom (za naslednji poziv AI): navedeni odgovor in izid preverjanja.
+export function retryFeedback(sol, check, { cut = false } = {}) {
+  if (cut) return "your answer was cut off because it was too long: give fewer, shorter steps and only one method";
+  if (!sol) return "the answer was not the requested JSON";
+  const vals = (sol.solutions || []).map(String).filter(Boolean);
+  const said = sol.kind === "inequality" && sol.value ? `your solution set was ${sol.value}` : vals.length ? `your solutions were ${vals.join("; ")}` : sol.value ? `your result was ${sol.value}` : "you gave no solution";
+  const miss = (check.missing || []).filter(Number.isFinite);
+  const why = check.cas
+    ? `an exact check says: ${check.cas}`
+    : check.note
+      ? `recomputing your "check": ${check.note}`
+    : check.reason === "missing"
+      ? miss.length
+        ? `x ≈ ${miss.slice(0, 6).map(kotPi).join(", ")} also satisfies the equation`
+        : "a solution is missing"
+      : "substituting your result back does not give the original";
+  return `${said}; ${why}`.slice(0, 600); // dolžina omejena: rezerva poti računa z ~400 bajti na poskus
+}
+
+/**
+ * Reševanje s samodejnimi ponovitvami. ask(feedback[], { cut }) → { sol, usage, model, cut }, verify(sol) → izid preverjanja.
+ * canAfford(): rezervira strošek naslednjega klica (meje porabe učenca); false → brez nadaljnjih ponovitev.
+ * Ponovi, dokler je zadnji poskus napačen (wrong / missing) ali neberljiv, največ attempts klicev. canRetry: false
+ * izklopi ponovitev ob napačnem izidu (neberljiv odgovor jo še sproži). Naloga s podatki se ponovi, ko preračun
+ * njenega »check« ne drži (public/scan/podatki.js); nepreverljiva ostane brez ponovitve.
+ * Obdrži najboljši poskus po statusu (prvi pri enakem).
+ */
+export async function solveWithRetries({ ask, verify, canRetry = true, attempts = SOLVE_ATTEMPTS, canAfford = () => true }) {
+  const bad = (c) => c.reason === "wrong" || c.reason === "missing";
+  let out = await ask([]);
+  const usage = [out.usage];
+  let check = out.sol ? await verify(out.sol) : { verified: false, reason: "parse", status: "unverified" };
+  let last = { sol: out.sol, check, cut: !!out.cut };
+  const notes = [];
+  while (usage.length < attempts && (!last.sol || (canRetry && bad(last.check)))) {
+    if (!canAfford()) break; // za naslednji klic ni več prostora v mejah porabe: ostane najboljši poskus
+    notes.push(retryFeedback(last.sol, last.check, { cut: last.cut }));
+    let again;
+    try {
+      again = await ask([...notes], { cut: last.cut });
+    } catch (err) {
+      // Napaka ponovitve (529, povezava) ne sme odnesti plačanega prvega klica (pregled #462 L3): ostane najboljša rešitev.
+      console.warn(`[evklid] reševanje: ponovitev ni uspela (${err?.message || err}), ostane najboljša rešitev`);
+      break;
+    }
+    usage.push(again.usage);
+    const c2 = again.sol ? await verify(again.sol) : { verified: false, reason: "parse", status: "unverified" };
+    last = { sol: again.sol, check: c2, cut: !!again.cut };
+    if (again.sol && (!out.sol || statusRank(c2.status) > statusRank(check.status))) {
+      out = again;
+      check = c2;
+    }
+  }
+  return { out, check, usage };
+}
+
+export async function solveWithAi({ text, lang = "sl", goal = null, given = [], sought = "", canAfford }) {
   const model = SOLVE_MODEL();
   if (isMockMode()) return { mock: true, solution: null, usage: null, model };
-  const ask = async (feedback) => {
+  const ask = async (feedback, { cut = false } = {}) => {
     const final = await getClient().messages.create({
       model,
       max_tokens: 8000,
       thinking: { type: "adaptive" },
-      output_config: { effort: "medium" },
+      // ponovitev po napaki: več razmisleka (meja izhodnih žetonov ostane ista); po odrezanem odgovoru ne,
+      // ker bi daljše razmišljanje odgovor spet odrezalo
+      output_config: { effort: feedback.length && !cut ? "high" : "medium" },
       messages: [{ role: "user", content: solvePrompt(text, languagePrompt(lang), feedback, goal, given, sought) }],
     });
-    return { sol: cleanSolution(jsonFrom(textOf(final))), usage: final.usage, model: final.model || model };
+    return { sol: cleanSolution(jsonFrom(textOf(final))), usage: final.usage, model: final.model || model, cut: final.stop_reason === "max_tokens" };
   };
-  let out = await ask(null);
-  let usage = [out.usage];
-  let check = out.sol ? await verifyAiFull(text, out.sol, { cas: !given.length }) : { verified: false, reason: "parse" };
-  // Ena ponovitev, kadar preverjanje pokaže napačno ali manjkajočo rešitev. Pri nalogi s podatki (parametri)
-  // preverjanje vidi le predlogo f(x) = …, zato ponovitve ne sproži (rešitev ostane označena kot nepreverjena).
-  if (out.sol && !given.length && !check.verified && (check.reason === "wrong" || check.reason === "missing")) {
-    const fb = check.cas ? `an exact check says: ${check.cas}` : check.reason === "missing" ? `x ≈ ${check.missing.slice(0, 6).map((m) => m.toFixed(4)).join(", ")} also satisfies the equation` : "substituting your result back does not give the original";
-    // Napaka ponovitve (529, povezava) ne sme odnesti plačanega prvega klica (pregled #462 L3): ostane prva rešitev.
-    let again = null;
-    try {
-      again = await ask(fb);
-    } catch (err) {
-      console.warn(`[evklid] reševanje: ponovitev ni uspela (${err?.message || err}), ostane prva rešitev`);
-    }
-    if (again) {
-      usage.push(again.usage);
-      const c2 = again.sol ? await verifyAiFull(text, again.sol, { cas: !given.length }) : { verified: false };
-      if (again.sol && (c2.verified || !out.sol)) {
-        out = again;
-        check = c2;
-      }
-    }
-  }
-  return { solution: out.sol ? { ...out.sol, verified: !!check.verified, check: check.reason || null } : null, usage, model: out.model };
+  // Naloga s podatki: preračun AI »check« (public/scan/podatki.js); kar ne zna preveriti, ostane »unverified« brez ponovitve
+  const verify = async (sol) => (given.length ? preveriPodatke(text, given, sol) : await verifyAiFull(text, sol));
+  const { out, check, usage } = await solveWithRetries({ ask, verify, ...(canAfford ? { canAfford } : {}) });
+  return { solution: out.sol ? { ...out.sol, verified: !!check.verified, check: check.reason || null, status: check.status || "unverified", attempts: usage.length } : null, usage, model: out.model || model };
 }
 
 // Branje naloge za Inštruktorja: vse predmete (matematika, fizika, kemija, biologija), besedilo kot na listu, formule
@@ -408,14 +566,19 @@ export function mountScan(app, { loadStudent, usage, readFn = readMathPhoto, sol
     const rawSought = req.body?.sought ?? "";
     if (typeof rawSought !== "string" || rawSought.length > MAX_GIVEN_LEN) return res.status(400).json({ error: "Podatki naloge niso veljavni." });
     const sought = cleanSought(rawSought);
+    // Neprebran znak [?] (P3-5) mora učenec popraviti; AI ga ne sme uganiti namesto njega.
+    if ([text, ...given].some(hasUnclear)) return res.status(400).json({ error: "V nalogi so še neprebrani znaki (?). Popravi jih in poskusi znova.", unclear: true });
     const blocked = usage?.blockInfo(s.id);
     if (blocked) return res.status(429).json(blocked);
-    // Do dva klica (ponovitev ob napačni rešitvi), vsak z navodili, nalogo in podatki ter do 8000 izhodnimi žetoni.
-    const input = 6000 + Buffer.byteLength(text + rawGiven.join("") + rawSought, "utf8");
-    const hold = usage?.guard ? usage.guard(s.id, 2 * callMaxUsd(SOLVE_MODEL(), input, 8000)) : null;
+    // Do SOLVE_ATTEMPTS klicev (samodejne ponovitve ob napačni rešitvi), vsak z navodili, nalogo, podatki,
+    // povratno informacijo prejšnjih poskusov (do 600 znakov na poskus) ter do 8000 izhodnimi žetoni.
+    // Rezerviramo en klic; vsako ponovitev posebej, šele ko je potrebna (meja ni strožja kot pred ponovitvami).
+    const input = 6000 + 600 * SOLVE_ATTEMPTS + Buffer.byteLength(text + rawGiven.join("") + rawSought, "utf8");
+    const perCall = callMaxUsd(SOLVE_MODEL(), input, 8000);
+    const hold = usage?.guard ? usage.guard(s.id, perCall) : null;
     if (usage?.guard && !hold) return res.status(429).json(usage.guardBlock(s.id));
     try {
-      const out = await solveFn({ text, goal, given, sought, lang: s.settings?.language || "sl" });
+      const out = await solveFn({ text, goal, given, sought, lang: s.settings?.language || "sl", canAfford: () => !hold || hold.take(perCall) });
       if (out.mock) return res.json({ solution: null, mock: true });
       for (const u of [].concat(out.usage || [])) if (u) usage?.log(s.id, out.model, u, "skeniranje");
       if (!out.solution) return res.status(502).json({ error: "Rešitve ni bilo mogoče sestaviti. Poskusi znova ali vprašaj inštruktorja." });

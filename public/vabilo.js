@@ -41,7 +41,7 @@ function showOk(day) {
     <h3>${esc(t("vab.askTitle"))}</h3>
     <ul><li>${esc(t("vab.ask1"))}</li><li>${esc(t("vab.ask2", { tab: t("nav.me"), btn: t("fb.cardBtn") }))}</li></ul>
     <a class="btn-primary" id="vab-create" href="${REGISTER}">${esc(t("vab.create"))}</a>
-    <p class="muted small">${esc(t("vab.confirm"))}</p>
+    <p class="muted small">${esc(t("vab.adult"))} ${esc(t("vab.confirm"))}</p>
   </div>`;
   $("#vab-create").focus({ preventScroll: true });
 }

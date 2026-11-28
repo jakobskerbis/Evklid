@@ -1,0 +1,790 @@
+{
+ "datum": "2026-11-27",
+ "prej": "main d5addc9",
+ "potem": "claude/project-thread-8nmxre",
+ "naprave": [
+  {
+   "id": "android-360",
+   "prej": {
+    "id": "android-360",
+    "opis": "Android telefon 360 × 740, Chrome",
+    "brskalnik": "chromium",
+    "razlicica": "158.0.8127.36",
+    "pristajalna": {
+     "mediana": 1150,
+     "surovo": [
+      1150,
+      1156,
+      1148,
+      1164,
+      1159,
+      1137,
+      1147
+     ]
+    },
+    "obrazec": {
+     "mediana": 4142,
+     "surovo": [
+      4136,
+      4142,
+      4238,
+      4168,
+      4161,
+      4129,
+      4126
+     ]
+    },
+    "aplikacija": {
+     "mediana": 4142,
+     "surovo": [
+      4136,
+      4142,
+      4238,
+      4168,
+      4161,
+      4129,
+      4126
+     ]
+    }
+   },
+   "potem": {
+    "id": "android-360",
+    "opis": "Android telefon 360 × 740, Chrome",
+    "brskalnik": "chromium",
+    "razlicica": "158.0.8127.36",
+    "pristajalna": {
+     "mediana": 1144,
+     "surovo": [
+      1147,
+      1144,
+      1175,
+      1146,
+      1139,
+      1142,
+      1140
+     ]
+    },
+    "obrazec": {
+     "mediana": 1812,
+     "surovo": [
+      1808,
+      1816,
+      1882,
+      1812,
+      1809,
+      1814,
+      1808
+     ]
+    },
+    "aplikacija": {
+     "mediana": 4245,
+     "surovo": [
+      4237,
+      4245,
+      4326,
+      4248,
+      4223,
+      4257,
+      4215
+     ]
+    }
+   }
+  },
+  {
+   "id": "android-412",
+   "prej": {
+    "id": "android-412",
+    "opis": "Android telefon 412 × 915, Chrome",
+    "brskalnik": "chromium",
+    "razlicica": "158.0.8127.36",
+    "pristajalna": {
+     "mediana": 1139,
+     "surovo": [
+      1147,
+      1138,
+      1139,
+      1154,
+      1138,
+      1140,
+      1136
+     ]
+    },
+    "obrazec": {
+     "mediana": 4131,
+     "surovo": [
+      4131,
+      4118,
+      4195,
+      4150,
+      4141,
+      4113,
+      4112
+     ]
+    },
+    "aplikacija": {
+     "mediana": 4131,
+     "surovo": [
+      4131,
+      4118,
+      4195,
+      4150,
+      4141,
+      4113,
+      4112
+     ]
+    }
+   },
+   "potem": {
+    "id": "android-412",
+    "opis": "Android telefon 412 × 915, Chrome",
+    "brskalnik": "chromium",
+    "razlicica": "158.0.8127.36",
+    "pristajalna": {
+     "mediana": 1147,
+     "surovo": [
+      1149,
+      1140,
+      1221,
+      1147,
+      1147,
+      1137,
+      1139
+     ]
+    },
+    "obrazec": {
+     "mediana": 1814,
+     "surovo": [
+      1820,
+      1806,
+      1908,
+      1820,
+      1814,
+      1806,
+      1806
+     ]
+    },
+    "aplikacija": {
+     "mediana": 4239,
+     "surovo": [
+      4256,
+      4222,
+      4384,
+      4239,
+      4242,
+      4227,
+      4224
+     ]
+    }
+   }
+  },
+  {
+   "id": "iphone-375",
+   "prej": {
+    "id": "iphone-375",
+    "opis": "iPhone SE 375 × 667, Safari",
+    "brskalnik": "webkit",
+    "razlicica": "26.6",
+    "pristajalna": {
+     "mediana": 1311,
+     "surovo": [
+      1311,
+      1327,
+      1308,
+      1337,
+      1373,
+      1212,
+      1237
+     ]
+    },
+    "obrazec": {
+     "mediana": 4426,
+     "surovo": [
+      4388,
+      4595,
+      4426,
+      4429,
+      4516,
+      4300,
+      4308
+     ]
+    },
+    "aplikacija": {
+     "mediana": 4426,
+     "surovo": [
+      4388,
+      4595,
+      4426,
+      4429,
+      4516,
+      4300,
+      4308
+     ]
+    }
+   },
+   "potem": {
+    "id": "iphone-375",
+    "opis": "iPhone SE 375 × 667, Safari",
+    "brskalnik": "webkit",
+    "razlicica": "26.6",
+    "pristajalna": {
+     "mediana": 1319,
+     "surovo": [
+      1180,
+      1341,
+      1319,
+      1347,
+      1302,
+      1295,
+      1385
+     ]
+    },
+    "obrazec": {
+     "mediana": 1984,
+     "surovo": [
+      1863,
+      2015,
+      1984,
+      2008,
+      1958,
+      1964,
+      2060
+     ]
+    },
+    "aplikacija": {
+     "mediana": 4471,
+     "surovo": [
+      4348,
+      4653,
+      4471,
+      4497,
+      4437,
+      4448,
+      4567
+     ]
+    }
+   }
+  },
+  {
+   "id": "iphone-390",
+   "prej": {
+    "id": "iphone-390",
+    "opis": "iPhone 390 × 844, Safari",
+    "brskalnik": "webkit",
+    "razlicica": "26.6",
+    "pristajalna": {
+     "mediana": 1308,
+     "surovo": [
+      1304,
+      1308,
+      1330,
+      1159,
+      1158,
+      1327,
+      1311
+     ]
+    },
+    "obrazec": {
+     "mediana": 4392,
+     "surovo": [
+      4391,
+      4394,
+      4481,
+      4307,
+      4296,
+      4440,
+      4392
+     ]
+    },
+    "aplikacija": {
+     "mediana": 4392,
+     "surovo": [
+      4391,
+      4394,
+      4481,
+      4307,
+      4296,
+      4440,
+      4392
+     ]
+    }
+   },
+   "potem": {
+    "id": "iphone-390",
+    "opis": "iPhone 390 × 844, Safari",
+    "brskalnik": "webkit",
+    "razlicica": "26.6",
+    "pristajalna": {
+     "mediana": 1306,
+     "surovo": [
+      1321,
+      1298,
+      1355,
+      1344,
+      1306,
+      1162,
+      1305
+     ]
+    },
+    "obrazec": {
+     "mediana": 1966,
+     "surovo": [
+      1993,
+      1950,
+      2027,
+      1997,
+      1966,
+      1855,
+      1966
+     ]
+    },
+    "aplikacija": {
+     "mediana": 4503,
+     "surovo": [
+      4503,
+      4599,
+      4538,
+      4510,
+      4483,
+      4339,
+      4452
+     ]
+    }
+   }
+  },
+  {
+   "id": "ipad-820",
+   "prej": {
+    "id": "ipad-820",
+    "opis": "iPad 820 × 1180 pokončno, Safari",
+    "brskalnik": "webkit",
+    "razlicica": "26.6",
+    "pristajalna": {
+     "mediana": 1329,
+     "surovo": [
+      1338,
+      1329,
+      1344,
+      1183,
+      1353,
+      1319,
+      1314
+     ]
+    },
+    "obrazec": {
+     "mediana": 4438,
+     "surovo": [
+      4438,
+      4644,
+      4491,
+      4287,
+      4446,
+      4399,
+      4407
+     ]
+    },
+    "aplikacija": {
+     "mediana": 4438,
+     "surovo": [
+      4438,
+      4644,
+      4491,
+      4287,
+      4446,
+      4399,
+      4407
+     ]
+    }
+   },
+   "potem": {
+    "id": "ipad-820",
+    "opis": "iPad 820 × 1180 pokončno, Safari",
+    "brskalnik": "webkit",
+    "razlicica": "26.6",
+    "pristajalna": {
+     "mediana": 1343,
+     "surovo": [
+      1368,
+      1366,
+      1333,
+      1343,
+      1350,
+      1162,
+      1314
+     ]
+    },
+    "obrazec": {
+     "mediana": 2026,
+     "surovo": [
+      2040,
+      2031,
+      2024,
+      2027,
+      2026,
+      1828,
+      1974
+     ]
+    },
+    "aplikacija": {
+     "mediana": 4531,
+     "surovo": [
+      4566,
+      4623,
+      4530,
+      4544,
+      4531,
+      4303,
+      4484
+     ]
+    }
+   }
+  },
+  {
+   "id": "ipad-1180",
+   "prej": {
+    "id": "ipad-1180",
+    "opis": "iPad 1180 × 820 ležeče, Safari",
+    "brskalnik": "webkit",
+    "razlicica": "26.6",
+    "pristajalna": {
+     "mediana": 1195,
+     "surovo": [
+      1157,
+      1310,
+      1195,
+      1322,
+      1313,
+      1173,
+      1160
+     ]
+    },
+    "obrazec": {
+     "mediana": 4357,
+     "surovo": [
+      4273,
+      4524,
+      4357,
+      4397,
+      4409,
+      4270,
+      4273
+     ]
+    },
+    "aplikacija": {
+     "mediana": 4357,
+     "surovo": [
+      4273,
+      4524,
+      4357,
+      4397,
+      4409,
+      4270,
+      4273
+     ]
+    }
+   },
+   "potem": {
+    "id": "ipad-1180",
+    "opis": "iPad 1180 × 820 ležeče, Safari",
+    "brskalnik": "webkit",
+    "razlicica": "26.6",
+    "pristajalna": {
+     "mediana": 1316,
+     "surovo": [
+      1321,
+      1316,
+      1312,
+      1200,
+      1362,
+      1341,
+      1302
+     ]
+    },
+    "obrazec": {
+     "mediana": 1987,
+     "surovo": [
+      1985,
+      1987,
+      2000,
+      1887,
+      2011,
+      2011,
+      1980
+     ]
+    },
+    "aplikacija": {
+     "mediana": 4483,
+     "surovo": [
+      4483,
+      4596,
+      4483,
+      4368,
+      4499,
+      4490,
+      4463
+     ]
+    }
+   }
+  },
+  {
+   "id": "windows-1366",
+   "prej": {
+    "id": "windows-1366",
+    "opis": "računalnik 1366 × 768, Chrome/Edge",
+    "brskalnik": "chromium",
+    "razlicica": "158.0.8127.36",
+    "pristajalna": {
+     "mediana": 1136,
+     "surovo": [
+      1140,
+      1146,
+      1129,
+      1152,
+      1136,
+      1135,
+      1127
+     ]
+    },
+    "obrazec": {
+     "mediana": 4134,
+     "surovo": [
+      4126,
+      4135,
+      4165,
+      4140,
+      4126,
+      4134,
+      4124
+     ]
+    },
+    "aplikacija": {
+     "mediana": 4134,
+     "surovo": [
+      4126,
+      4135,
+      4165,
+      4140,
+      4126,
+      4134,
+      4124
+     ]
+    }
+   },
+   "potem": {
+    "id": "windows-1366",
+    "opis": "računalnik 1366 × 768, Chrome/Edge",
+    "brskalnik": "chromium",
+    "razlicica": "158.0.8127.36",
+    "pristajalna": {
+     "mediana": 1145,
+     "surovo": [
+      1149,
+      1140,
+      1235,
+      1153,
+      1145,
+      1136,
+      1138
+     ]
+    },
+    "obrazec": {
+     "mediana": 1815,
+     "surovo": [
+      1819,
+      1815,
+      1952,
+      1825,
+      1814,
+      1812,
+      1813
+     ]
+    },
+    "aplikacija": {
+     "mediana": 4235,
+     "surovo": [
+      4260,
+      4235,
+      4405,
+      4229,
+      4249,
+      4227,
+      4226
+     ]
+    }
+   }
+  },
+  {
+   "id": "mac-1440",
+   "prej": {
+    "id": "mac-1440",
+    "opis": "Mac 1440 × 900, Safari",
+    "brskalnik": "webkit",
+    "razlicica": "26.6",
+    "pristajalna": {
+     "mediana": 1312,
+     "surovo": [
+      1160,
+      1330,
+      1312,
+      1329,
+      1190,
+      1328,
+      1185
+     ]
+    },
+    "obrazec": {
+     "mediana": 4425,
+     "surovo": [
+      4280,
+      4579,
+      4426,
+      4425,
+      4282,
+      4471,
+      4289
+     ]
+    },
+    "aplikacija": {
+     "mediana": 4425,
+     "surovo": [
+      4280,
+      4579,
+      4426,
+      4425,
+      4282,
+      4471,
+      4289
+     ]
+    }
+   },
+   "potem": {
+    "id": "mac-1440",
+    "opis": "Mac 1440 × 900, Safari",
+    "brskalnik": "webkit",
+    "razlicica": "26.6",
+    "pristajalna": {
+     "mediana": 1331,
+     "surovo": [
+      1346,
+      1166,
+      1217,
+      1317,
+      1331,
+      1366,
+      1365
+     ]
+    },
+    "obrazec": {
+     "mediana": 1995,
+     "surovo": [
+      2046,
+      1870,
+      1890,
+      1990,
+      1995,
+      2048,
+      2032
+     ]
+    },
+    "aplikacija": {
+     "mediana": 4501,
+     "surovo": [
+      4567,
+      4460,
+      4423,
+      4477,
+      4501,
+      4533,
+      4533
+     ]
+    }
+   }
+  },
+  {
+   "id": "firefox-1920",
+   "prej": {
+    "id": "firefox-1920",
+    "opis": "računalnik 1920 × 1080, Firefox",
+    "brskalnik": "firefox",
+    "razlicica": "155.0",
+    "pristajalna": {
+     "mediana": 1169,
+     "surovo": [
+      1163,
+      1169,
+      1172,
+      1147,
+      1173,
+      1169,
+      1157
+     ]
+    },
+    "obrazec": {
+     "mediana": 4208,
+     "surovo": [
+      4169,
+      4308,
+      4218,
+      4173,
+      4208,
+      4208,
+      4211
+     ]
+    },
+    "aplikacija": {
+     "mediana": 4208,
+     "surovo": [
+      4169,
+      4308,
+      4218,
+      4173,
+      4208,
+      4208,
+      4211
+     ]
+    }
+   },
+   "potem": {
+    "id": "firefox-1920",
+    "opis": "računalnik 1920 × 1080, Firefox",
+    "brskalnik": "firefox",
+    "razlicica": "155.0",
+    "pristajalna": {
+     "mediana": 1162,
+     "surovo": [
+      1159,
+      1153,
+      1162,
+      1151,
+      1168,
+      1163,
+      1173
+     ]
+    },
+    "obrazec": {
+     "mediana": 1881,
+     "surovo": [
+      1881,
+      1868,
+      1890,
+      1876,
+      1889,
+      1885,
+      1872
+     ]
+    },
+    "aplikacija": {
+     "mediana": 4254,
+     "surovo": [
+      4254,
+      4435,
+      4267,
+      4245,
+      4263,
+      4249,
+      4197
+     ]
+    }
+   }
+  }
+ ]
+}

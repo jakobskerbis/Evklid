@@ -1,0 +1,33 @@
+{
+  "paper": "MATURA-MAT-OR-2025-spomladanski",
+  "parts": {
+    "1-A1": "MAT-SS-1/potence-z-naravnimi-in-celimi-eksponenti",
+    "1-A2": "MAT-SS-2/eksponentne-enacbe",
+    "1-A3": "MAT-SS-2/kompleksna-stevila",
+    "1-A4": "MAT-SS-3/kroznica",
+    "1-A5": "MAT-SS-1/stirikotniki-in-krog",
+    "1-A6": "MAT-SS-4/nedoloceni-integral",
+    "1-A7": "MAT-SS-3/povrsina-in-prostornina-teles",
+    "1-A8": "MAT-SS-1/pravokotni-koordinatni-sistem-v-ravnini",
+    "1-B1": "MAT-SS-1/mnozice",
+    "1-B2": "MAT-SS-2/kvadratna-enacba",
+    "1-B3": "MAT-SS-3/kotne-funkcije-poljubnega-kota",
+    "1-B4": "MAT-SS-2/logaritem",
+    "1-B5": "MAT-SS-4/uporaba-odvoda",
+    "1-B6": "MAT-SS-3/elipsa-hiperbola-parabola",
+    "2-A1": "MAT-SS-1/linearna-funkcija",
+    "2-A2": "MAT-OS-7/odstotni-racun",
+    "2-A3": "MAT-SS-1/obdelava-podatkov",
+    "2-A4": "MAT-SS-3/graf-polinoma",
+    "2-A5": "MAT-SS-4/kombinatorika",
+    "2-A6": "MAT-SS-4/odvod",
+    "2-A7": "MAT-SS-3/sinusni-in-kosinusni-izrek",
+    "2-A8": "MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje",
+    "2-B1": "MAT-SS-1/enacbe-premice-in-kot-med-premicama",
+    "2-B2": "MAT-SS-3/skalarni-produkt",
+    "2-B3": "MAT-SS-4/verjetnost",
+    "2-B4": "MAT-SS-3/sinusni-in-kosinusni-izrek",
+    "2-B5": "MAT-SS-2/funkcije-in-njihove-lastnosti",
+    "2-B6": "MAT-SS-4/doloceni-integral"
+  }
+}

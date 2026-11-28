@@ -8,6 +8,7 @@ import { GLTFLoader } from "/vendor/three/examples/jsm/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "/vendor/three/examples/jsm/libs/meshopt_decoder.module.js";
 import { tkivo, ustvariMaterial } from "./tkiva.js";
 import { seznamDatotek, mapaTelesaNaprave } from "./modeli.js";
+import { napakaBesedilo } from "./napake.js";
 import { normalizirajViri } from "./pogodba.js";
 import { t, currentLang } from "/i18n.js";
 import { icon } from "/icons.js";
@@ -16,6 +17,7 @@ import { skoziLupino } from "./izbira.js";
 import { ravenProfila, razlaga } from "./raven.js";
 import { barvniNacin, nastaviBarvniNacin, ucnaBarvaTkiva } from "./barve.js";
 import { preparatAtlasa } from "/mikroskop/mapa.js";
+import { LOCILO, zdruzi } from "../datum.js";
 
 export const SLOJI = [
   { id: "koza", ikona: "user", barva: "#e5b79e" },
@@ -545,6 +547,24 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
     nrm.needsUpdate = true;
   }
 
+  // Pogled na del v skupni geometriji BatchedMesh: iste BufferAttribute (isti medpomnilniki v RAM in na grafični
+  // kartici), le območje indeksov dela. Za sij in obris izbranega dela. Prej je vsak del obdržal še svojo geometrijo iz
+  // GLB, zato so bila vsa oglišča plasti v pomnilniku dvakrat (BatchedMesh jih prepiše v svoje medpomnilnike), vsak
+  // izbrani del pa se je naložil na grafično kartico še enkrat in tam ostal do konca. Pogleda nikoli ne dispose():
+  // three.js bi s tem sprostil skupne medpomnilnike plasti (sprosti jih bm.dispose()).
+  function pogledDela(bm, gid) {
+    const vir = bm.geometry;
+    const g = new THREE.BufferGeometry();
+    for (const [ime, a] of Object.entries(vir.attributes)) g.setAttribute(ime, a);
+    g.setIndex(vir.index);
+    const { start, count } = bm.getGeometryRangeAt(gid);
+    g.setDrawRange(start, count);
+    g.boundingBox = bm.getBoundingBoxAt(gid, new THREE.Box3());
+    g.boundingSphere = bm.getBoundingSphereAt(gid, new THREE.Sphere());
+    g.userData.pogled = true;
+    return g;
+  }
+
   function sestavi(sloj, gltf) {
     gltf.scene.updateMatrixWorld(true);
     const json = gltf.parser.json;
@@ -639,7 +659,7 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
         const inst = bm.addInstance(gid);
         bm.setMatrixAt(inst, k.m0);
         const barvaU = new THREE.Color(ucnaBarvaTkiva(k.razred, k.row));
-        const del = { row: k.row, batch: bm, inst, geo: k.g, m0: k.m0, m: k.m0.clone(), razred: k.razred, barva: ucne ? barvaU : k.barva, barvaN: k.barva, barvaU, sloj: sloj.id };
+        const del = { row: k.row, batch: bm, inst, geo: pogledDela(bm, gid), m0: k.m0, m: k.m0.clone(), razred: k.razred, barva: ucne ? barvaU : k.barva, barvaN: k.barva, barvaU, sloj: sloj.id };
         bm.setColorAt(inst, del.barva);
         bm.userData[inst] = del;
         deli.set(k.row.id, del);
@@ -648,6 +668,9 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
       sloj.skupine.push(bm);
       telo.add(bm);
     }
+    // Geometrije iz GLB (in z njimi ves prebrani GLB) niso več potrebne: vse je v BatchedMesh.
+    for (const k of kandidati) k.g = null;
+    kandidati.length = 0;
   }
 
   async function naloziSloj(id) {
@@ -684,11 +707,12 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
         sloj.nalozen = true;
         uporabiRazmik();
         uporabiVidnost();
+        await kit.pripravi?.(); // senčilniki plasti hkrati, preden se nariše (scena.js): stran med tem ne zamrzne
       } catch (err) {
         console.error(`3D atlas: plast ${id}`, err);
-        sloj.napaka = true;
+        sloj.napaka = napakaBesedilo(err).key; // povezava, pomnilnik, star brskalnik … (napake.js)
         sloj.viden = false;
-        sporocilo(t("a3.loadError"));
+        sporocilo(t(sloj.napaka));
       } finally {
         prenosi.delete(id);
         prikaziNapredek();
@@ -1062,7 +1086,7 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
       li.setAttribute("role", "option");
       li.id = `a3-rez-${rezultati.childElementCount}`;
       const b = mk("b", "", r.prikaz);
-      const s = mk("small", "", [r.la, t(`a3.l.${r.sistem}`)].filter(Boolean).join(" · "));
+      const s = mk("small", "", zdruzi([r.la, t(`a3.l.${r.sistem}`)]));
       li.append(b, s);
       li.addEventListener("mousedown", (e) => e.preventDefault());
       li.addEventListener("click", () => izberiIzSeznama(r.id));
@@ -1167,7 +1191,7 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
       row.classList.toggle("nalaga", !!s.nalaganje);
       const st = row.querySelector("small");
       const p = prenosi.get(s.id);
-      st.textContent = s.nalaganje ? (p ? t("a3.loadingMb", { n: mb(p.n), s: mb(p.s) }) : t("a3.loading")) : s.napaka ? t("a3.loadError") : t("a3.structures", { n: strukture.filter((r) => r.sistem === s.id).length });
+      st.textContent = s.nalaganje ? (p ? t("a3.loadingMb", { n: mb(p.n), s: mb(p.s) }) : t("a3.loading")) : s.napaka ? t(typeof s.napaka === "string" ? s.napaka : "a3.loadError") : t("a3.structures", { n: strukture.filter((r) => r.sistem === s.id).length });
     }
   }
   async function preklopiSloj(id, on) {
@@ -1470,7 +1494,7 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
         s.href = v.url;
         s.target = "_blank";
         s.rel = "noopener";
-        l.append(document.createTextNode(" · "), s);
+        l.append(document.createTextNode(LOCILO), s);
       }
       c.append(l);
       box.append(c);
@@ -1770,6 +1794,8 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
     senca.visible = true;
   }
   uporabiVidnost();
+  // Med nalaganjem je bilo telo skrito (uvod): senčilniki začetnih plasti se prevedejo zdaj, pred uvodnim preletom.
+  if (uvod) await kit.pripravi?.();
   if (uvod) {
     let cas = 0;
     const T = 0.9;
@@ -1796,6 +1822,12 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
       return izbran;
     },
     preklopiSloj, // za preizkuse: plast vklopi/izklopi kot stikalo v Brskaj
+    // Za preizkuse (test/3d-atlas-pomnilnik.test.js): koliko delov ima še svojo kopijo oglišč poleg BatchedMesh.
+    get kopijeOglisc() {
+      let n = 0;
+      for (const d of deli.values()) if (d.geo.attributes.position !== d.batch.geometry.attributes.position) n++;
+      return { deli: deli.size, lastne: n };
+    },
     // Za preizkuse (Playwright) in povezave: /3d#atlas?izberi=Femur.r
     izberiIzSeznama,
     nastavi(k, v) {
@@ -1822,7 +1854,7 @@ export async function odpriAtlas(el, { zapri = null, mikroskop = null } = {}) {
       senca.material.map.dispose();
       senca.material.dispose();
       senca.geometry.dispose();
-      for (const d of deli.values()) d.geo.dispose();
+      // d.geo so pogledi na geometrije BatchedMesh (pogledDela), sproščene zgoraj z bm.dispose()
       el.replaceChildren();
     },
   };

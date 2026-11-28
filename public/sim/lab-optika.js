@@ -1,8 +1,10 @@
 // Virtualni laboratorij, optika: optični disk z laserjem (lab-lom) in optična klop z zbiralno lečo (lab-leca).
 // Modeli: lab-model-optika.js (brez DOM). Optika ne potrebuje ure: risba se nariše ob vsaki spremembi.
 import { h, s, svgBox, slider, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox } from "./kit.js";
-import { lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez } from "./lab.js";
-import { LomBench, LecaBench, SNOVI, DISK, KLOP, LECE, N_ZRAK, mejniKot, naklon, fIzMeritev, slika, POENOSTAVITVE_OPTIKA } from "./lab-model-optika.js";
+import { lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba, racun } from "./lab.js";
+import { LomBench, LecaBench, SNOVI, DISK, KLOP, LECE, N_ZRAK, naklon, fIzMeritev, slika, POENOSTAVITVE_OPTIKA } from "./lab-model-optika.js";
+// lomni količniki iz učbenika: če učenec vpiše tega, ne pa izmerjenega, ga račun zavrne (lab.js → preveriRacun, nazivno)
+const UCBENIK_N = { pmma: [1.49, 1.5], bk7: [1.5, 1.52], voda: [1.33] };
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const RAD = Math.PI / 180;
@@ -23,7 +25,12 @@ const RAZREDI = ["a", "b", "c"];
 
 // ================================================================ optični disk: odboj, lom, popolni odboj
 export function labLom(el) {
-  const B = new LomBench({ seed: (Math.random() * 2 ** 31) | 0 });
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
+  const B = new LomBench({ seed: zap.seed });
+  // Maturitetni poskus (lab-matura.js, matura/lab-lom.js): prava vrednost je lomni količnik neznane snovi X iz modela (B.nX).
+  // Njen n ne sme biti nikjer na zaslonu (napis na disku, viri, opombe, posnetek za inštruktorja); pokaže ga le račun iz
+  // učenčevih meritev (»Pokaži rešitev«).
+  el._labBench = B;
   const W = 400, H = 400, cx = 200, cy = 200, k = 160 / DISK.Rs; // 1 mm = 1,33 px
   const svg = svgBox(W, H, "lab-bench lab-opt lab-opt-disk");
   const log = eventLog();
@@ -36,13 +43,13 @@ export function labLom(el) {
     { key: "sa", label: "sin α" },
     { key: "sb", label: "sin β" },
   ], { empty: "Še ni meritev. Vklopi laser, nastavi vpadni kot, odčitaj odbojni in lomni kot in pritisni »Zapiši meritev«." });
-  const graph = dataGraph({ x: [0, 1], y: [0, 1], xStep: 0.2, yStep: 0.2, xLabel: "sin α", yLabel: "sin β", title: "sin β v odvisnosti od sin α" });
+  const graph = dataGraph({ x: [0, 1], y: [0, 1], xStep: 0.2, yStep: 0.2, xLabel: "sin α", yLabel: "sin β", title: "sin β v odvisnosti od sin α", formula: "<i>n</i>₁ sin α = <i>n</i>₂ sin β" });
   const calc = h("div", { class: "lab-top-calc", "aria-live": "polite" });
   const qBox = h("div");
   const serije = new Map(); // ključ snov:smer → { pts, ... }
   let odPloskve = false, cur = null, asked = false, rekliTIR = false;
 
-  const snovSel = select({ label: "snov na disku", options: Object.entries(SNOVI).map(([k2, v]) => [k2, v.name]), value: B.snov, onChange: (v) => ((B.snov = v), (smerRow.hidden = !SNOVI[v].n), change()) });
+  const snovSel = select({ label: "snov na disku", options: Object.entries(SNOVI).map(([k2, v]) => [k2, v.name]), value: B.snov, onChange: (v) => ((B.snov = v), (smerRow.hidden = !B.n), change()) });
   const smerSeg = seg("smer svetlobe", [["zrak", "iz zraka v snov"], ["snov", "iz snovi v zrak"]], B.smer, (v) => ((B.smer = v), change()));
   const smerRow = row("smer svetlobe", smerSeg);
   const laserT = toggle("laser vklopljen", false, (v) => {
@@ -66,17 +73,20 @@ export function labLom(el) {
       )),
       h("h4", { class: "lab-h" }, "Meritve"), table, calc,
       h("h4", { class: "lab-h" }, "Graf: sin β v odvisnosti od sin α"), graph, qBox,
-      notes(POENOSTAVITVE_OPTIKA.lom, `Snellov zakon ${tex(String.raw`n_1\sin\alpha = n_2\sin\beta`)}; odbojni zakon: odbojni kot = vpadni kot. Lomni količniki pri 650${NB}nm: akril (PMMA) 1,488 (Sultanova in sod. 2009), steklo N-BK7 1,515 (Schott), voda 1,331 (Daimon in Masumura 2007), zrak 1,0003 (Ciddor 1996), vsi z refractiveindex.info. Delež odbite svetlobe: Fresnelove enačbe, pri pravokotnem vpadu ${tex(String.raw`\left(\frac{n - 1}{n + 1}\right)^2 = 3{,}8${en("%")}`)} za akril. Ocene: velikost diska in polvalja, odbojnost zrcala, natančnost odčitka.`),
+      Object.assign(notes(POENOSTAVITVE_OPTIKA.lom, `Snellov zakon ${tex(String.raw`n_1\sin\alpha = n_2\sin\beta`)}; odbojni zakon: odbojni kot = vpadni kot. Lomni količniki pri 650${NB}nm: akril (PMMA) 1,488 (Sultanova in sod. 2009), steklo N-BK7 1,515 (Schott), voda 1,331 (Daimon in Masumura 2007), zrak 1,0003 (Ciddor 1996), vsi z refractiveindex.info. Delež odbite svetlobe: Fresnelove enačbe, pri pravokotnem vpadu ${tex(String.raw`\left(\frac{n - 1}{n + 1}\right)^2 = 3{,}8${en("%")}`)} za akril. Ocene: velikost diska in polvalja, odbojnost zrcala, natančnost odčitka.`), { className: "lab-notes lab-opt-viri" }), // viri z lomnimi količniki: med maturitetnim poskusom skriti
     ],
     tryText: "Izberi akrilni polvalj in izmeri lomni kot pri vpadnih kotih 10°, 20° … 80°. Iz naklona grafa izračunaj lomni količnik. Nato obrni smer (iz snovi v zrak) in poišči kot, pri katerem lomljeni žarek izgine.",
   });
   el.classList.add("lab");
+  // Končni rezultat izračuna učenec sam (lab.js → racun); izračun aplikacije se pokaže po pravilnem računu ali »Pokaži rešitev«.
+  const Rr = racun({ dec: 2, tol: 0.03, onOdkrij: () => (sync(), zap.shrani()) });
+  calc.after(Rr.el);
 
   function change() {
     cur = B.laser ? B.odcitaj({ odPloskve }) : null;
     if (cur?.popolni && B.smer === "snov" && !rekliTIR) {
       rekliTIR = true;
-      log.push(`<b>Popolni odboj:</b> lomljenega žarka ni več, vsa svetloba se odbije nazaj v snov. Mejni kot za ${SNOVI[B.snov].kratko} je okoli ${fixed(mejniKot(SNOVI[B.snov].n), 1)}${NB}°.`, "info");
+      log.push(`<b>Popolni odboj:</b> lomljenega žarka ni več, vsa svetloba se odbije nazaj v snov. Mejni kot je med zadnjim vpadnim kotom, pri katerem je bil lomljeni žarek še viden, in tem kotom.`, "info");
     }
     meters();
     draw();
@@ -85,24 +95,28 @@ export function labLom(el) {
     const lab = odPloskve ? "od ploskve" : "od pravokotnice";
     aL.set(B.laser ? fixed(cur.alfa, 0) : "", "°", B.laser ? lab : "laser je izklopljen");
     rL.set(cur ? fixed(cur.odboj, 1) : "", "°", cur ? `${Math.round(cur.Iodboj * 100)}${NB}% svetlobe` : "");
-    const zrc = !SNOVI[B.snov].n;
+    const zrc = !B.n;
     bL.set(cur && cur.lom != null ? fixed(cur.lom, 1) : "", "°", !cur ? "" : zrc ? "zrcalo ne lomi" : cur.popolni ? "popolni odboj" : `${Math.round(cur.Ilom * 100)}${NB}% svetlobe`);
   }
   function record() {
     if (!B.laser) return log.push("Najprej vklopi laser.", "warn");
-    const S = SNOVI[B.snov], smer = S.n ? B.smer : "zrak";
+    const S = SNOVI[B.snov], trdna = !!B.n, smer = trdna ? B.smer : "zrak";
     const key = `${B.snov}:${smer}`;
-    const name = S.n ? (smer === "zrak" ? `zrak → ${S.kratko}` : `${S.kratko} → zrak`) : "zrcalo";
+    const name = trdna ? (smer === "zrak" ? `zrak → ${S.kratko}` : `${S.kratko} → zrak`) : "zrcalo";
     const sa = Math.sin(cur.alfa * RAD), sb = cur.lom != null ? Math.sin(cur.lom * RAD) : null;
-    table.add({ snov: name, a: kot(cur.alfa, 0), r: kot(cur.odboj), b: !S.n ? "–" : cur.popolni ? "popolni odboj" : kot(cur.lom), sa: fixed(sa, 3), sb: sb == null ? "–" : fixed(sb, 3) });
+    table.add({ snov: name, a: kot(cur.alfa, 0), r: kot(cur.odboj), b: !trdna ? "–" : cur.popolni ? "popolni odboj" : kot(cur.lom), sa: fixed(sa, 3), sb: sb == null ? "–" : fixed(sb, 3) });
     if (odPloskve) log.push("Kote si meril od ploskve. Vpadni, odbojni in lomni kot merimo od <b>vpadne pravokotnice</b>, sicer Snellov zakon ne velja.", "bad");
     if (B.zamik > 0) log.push(`Laser je ${fixed(B.zamik, 1)}${NB}mm mimo središča: žarek ne zadene sredine ravne ploskve, zato se lomi še na okrogli ploskvi in odčitek je napačen. Zamik nastavi na 0.`, "bad");
-    if (S.n && sb != null) {
-      if (!serije.has(key)) serije.set(key, { name, smer, n: S.n, pts: [] });
+    // Serija ne hrani lomnega količnika snovi (shramba v brskalniku): n izračuna le račun iz izmerjenih točk.
+    if (trdna && sb != null) {
+      if (!serije.has(key)) serije.set(key, { name, smer, pts: [] });
       serije.get(key).pts.push([sa, sb]);
     }
-    if (!S.n && Math.abs(cur.odboj - cur.alfa) <= 0.5) log.push("Odbojni kot je enak vpadnemu (v okviru napake odčitka ±0,5°).", "ok");
+    if (!trdna && Math.abs(cur.odboj - cur.alfa) <= 0.5) log.push("Odbojni kot je enak vpadnemu (v okviru napake odčitka ±0,5°).", "ok");
     sync();
+    vprasaj();
+  }
+  function vprasaj() {
     if (!asked && [...serije.values()].some((x) => x.smer === "zrak" && x.pts.length >= 4)) {
       asked = true;
       qBox.append(conclusion({
@@ -118,12 +132,16 @@ export function labLom(el) {
   }
   function sync() {
     const out = [];
-    for (const x of serije.values()) {
+    const cilji = []; // kaj učenec izračuna sam (Rr)
+    for (const [kljuc, x] of serije) {
       if (x.pts.length < 2) continue;
       const kk = naklon(x.pts), n = x.smer === "zrak" ? 1 / kk : kk;
-      out.push(`<p>${x.name}: naklon ${tex(String.raw`\frac{\sin\beta}{\sin\alpha} = ${fixed(kk, 3)}`)} → ${tex(String.raw`n = ${x.smer === "zrak" ? String.raw`\frac{1}{${fixed(kk, 3)}} = ` : ""}${rez(fixed(n, 2))}`)} (iz ${x.pts.length} meritev).</p>`);
+      const ucbenik = (UCBENIK_N[kljuc.split(":")[0]] || []).map((v) => ({ v, kaj: "vrednost iz učbenika" }));
+      cilji.push({ key: x.name, ime: x.name, kaj: `Iz naklona premice na grafu izračunaj lomni količnik <i>n</i> (${x.name}).`, vrednost: n, nazivno: ucbenik });
+      out.push(Rr.odkrito(x.name) ? `<p>${x.name}: naklon ${tex(String.raw`\frac{\sin\beta}{\sin\alpha} = ${fixed(kk, 3)}`)} → ${tex(String.raw`n = ${x.smer === "zrak" ? String.raw`\frac{1}{${fixed(kk, 3)}} = ` : ""}${rez(fixed(n, 2))}`)} (iz ${x.pts.length} meritev).</p>` : `<p>${x.name}: ${x.pts.length} meritev. Iz naklona premice izračunaj lomni količnik <i>n</i> in ga preveri spodaj.</p>`);
     }
     calc.innerHTML = out.join("") + (out.length ? `<p class="muted">Iz zraka v snov je naklon 1/<i>n</i>, iz snovi v zrak pa <i>n</i>.</p>` : "");
+    Rr.nastavi(cilji);
     graph.draw([...serije.values()].map((x, i) => {
       const kk = x.pts.length >= 2 ? naklon(x.pts) : null;
       return { id: x.name, pts: [...x.pts], cls: RAZREDI[i % 3], shape: i % 2 ? "^" : "o", label: x.name, line: kk ? (xx) => kk * xx : undefined };
@@ -137,9 +155,12 @@ export function labLom(el) {
 
   // ---------------------------------------------------------------- risba (1 mm = 1,33 px)
   const P = ([x, y]) => [cx + x * k, cy - y * k];
+  // Napis snovi z lomnim količnikom ostane isti element čez risanja, da ga maturitetni poskus lahko skrije (.lab-mat-skrito).
+  // Neznana snov X ima napis brez lomnega količnika.
+  const nLbl = label(svg, W - 6, H - 6, "", "tick small lab-opt-n", "end");
   function draw() {
     svg.replaceChildren();
-    const S = SNOVI[B.snov], Rs = DISK.Rs * k;
+    const S = SNOVI[B.snov], nS = B.n, Rs = DISK.Rs * k;
     s("circle", { cx, cy, r: Rs + 14, class: "lab-opt-disc" }, svg);
     // skala: razdelki po 1°, daljši po 5° in 10°, številke 0–90 v vsaki četrtini (od pravokotnice)
     for (let d = 0; d < 360; d++) {
@@ -154,8 +175,8 @@ export function labLom(el) {
     // vpadna pravokotnica in ploskev
     s("line", { x1: cx, y1: cy - Rs, x2: cx, y2: cy + Rs, class: "lab-opt-normal" }, svg);
     s("line", { x1: cx - Rs, y1: cy, x2: cx + Rs, y2: cy, class: "lab-opt-axis" }, svg);
-    const R = (S.n ? DISK.R : DISK.Rz) * k;
-    if (S.n) s("path", { d: `M${cx - R},${cy} A${R},${R} 0 0 0 ${cx + R},${cy} Z`, class: `lab-opt-block ${B.snov}` }, svg);
+    const R = (nS ? DISK.R : DISK.Rz) * k;
+    if (nS) s("path", { d: `M${cx - R},${cy} A${R},${R} 0 0 0 ${cx + R},${cy} Z`, class: `lab-opt-block ${B.snov}` }, svg);
     else {
       s("rect", { x: cx - R, y: cy, width: 2 * R, height: 5, class: "lab-opt-mirror-back" }, svg);
       s("line", { x1: cx - R, y1: cy, x2: cx + R, y2: cy, class: "lab-opt-mirror" }, svg);
@@ -177,20 +198,31 @@ export function labLom(el) {
       }
     }
     s("text", { x: 0, y: 0, class: "tick small lab-opt-lbl", "text-anchor": "middle", transform: `translate(${cx - 5},${cy - Rs / 2 - 10}) rotate(-90)` }, svg, "vpadna pravokotnica");
-    label(svg, W - 6, H - 6, S.n ? `${S.kratko}, n = ${fixed(S.n, 3)}` : "ravno zrcalo", "tick small", "end");
+    nLbl.textContent = S.neznana ? S.kratko : nS ? `${S.kratko}, n = ${fixed(nS, 3)}` : "ravno zrcalo";
+    svg.append(nLbl);
     const yb = H - 10;
     s("path", { d: `M8,${yb - 4} V${yb} H${8 + 20 * k} V${yb - 4}`, class: "lab-scale" }, svg);
     label(svg, 8 + 10 * k, yb - 7, "2 cm", "tick small");
-    const zr = !S.n, smer = zr ? "zrak" : B.smer;
+    const zr = !nS, smer = zr ? "zrak" : B.smer;
     svg.setAttribute("aria-label", `Optični disk s skalo po 1°. ${S.name}${zr ? "" : smer === "zrak" ? ", svetloba iz zraka v snov" : ", svetloba iz snovi v zrak"}. ${B.laser ? `Vpadni kot ${B.alfa}°${cur?.popolni ? ", popolni odboj" : ""}.` : "Laser je izklopljen."}`);
   }
   change();
   sync();
+  zap.vezi(table, {
+    get: () => ({ racun: Rr.stanje(), serije: [...serije] }),
+    set: (d) => {
+      Rr.obnovi(d?.racun);
+      for (const [k, x] of Array.isArray(d?.serije) ? d.serije : []) if (typeof k === "string" && x && Array.isArray(x.pts)) serije.set(k, x);
+      sync();
+      vprasaj();
+    },
+  });
 }
 
 // ================================================================ optična klop: zbiralna leča
 export function labLeca(el) {
-  const B = new LecaBench({ seed: (Math.random() * 2 ** 31) | 0 });
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
+  const B = new LecaBench({ seed: zap.seed });
   const W = 400, H = 322, x0 = 12, kx = (W - 2 * x0) / KLOP.L; // tračnica: 1 mm = 0,376 px
   const yA = 70; // optična os na risbi klopi
   const svg = svgBox(W, H, "lab-bench lab-opt lab-opt-klop");
@@ -205,7 +237,7 @@ export function labLeca(el) {
     { key: "ia", label: "1/<i>a</i> [m⁻¹]" },
     { key: "ib", label: "1/<i>b</i> [m⁻¹]" },
   ], { empty: "Še ni meritev. Postavi predmet, lečo in zaslon, poišči ostro sliko in pritisni »Zapiši meritev«." });
-  const graph = dataGraph({ x: [0, 25], y: [0, 25], xStep: 5, yStep: 5, xLabel: "1/a [m⁻¹]", yLabel: "1/b [m⁻¹]", title: "1/b v odvisnosti od 1/a" });
+  const graph = dataGraph({ x: [0, 25], y: [0, 25], xStep: 5, yStep: 5, xLabel: "1/a [m⁻¹]", yLabel: "1/b [m⁻¹]", title: "1/b v odvisnosti od 1/a", formula: tex(String.raw`\frac{1}{f} = \frac{1}{a} + \frac{1}{b}`) });
   const calc = h("div", { class: "lab-top-calc", "aria-live": "polite" });
   const qBox = h("div");
   const meritve = new Map(); // f → [{ a, b }]
@@ -241,6 +273,9 @@ export function labLeca(el) {
     tryText: "Z lečo f = 100 mm postavi predmet 200 mm pred lečo in poišči ostro sliko. Kje je in kako velika je? Nato zapiši vsaj pet meritev pri različnih a in iz grafa 1/b od 1/a določi goriščno razdaljo. Kaj vidiš, ko je predmet bližje kot f?",
   });
   el.classList.add("lab");
+  // Končni rezultat izračuna učenec sam (lab.js → racun); izračun aplikacije se pokaže po pravilnem računu ali »Pokaži rešitev«.
+  const Rr = racun({ enota: "mm", dec: 1, tol: 0.015, onOdkrij: () => (sync(), zap.shrani()) });
+  calc.after(Rr.el);
 
   function move(kaj, v) {
     const x = B.premakni(kaj, v);
@@ -268,6 +303,9 @@ export function labLeca(el) {
     if (!meritve.has(f)) meritve.set(f, []);
     meritve.get(f).push({ a: r.a, b: r.b });
     sync();
+    vprasaj();
+  }
+  function vprasaj() {
     if (!asked && [...meritve.values()].some((m) => m.length >= 3)) {
       asked = true;
       qBox.append(conclusion({
@@ -283,11 +321,13 @@ export function labLeca(el) {
   }
   function sync() {
     const out = [];
+    const cilji = []; // kaj učenec izračuna sam (Rr)
     let i = 0;
     const ser = [];
     for (const [f, rows] of meritve) {
       const fm = fIzMeritev(rows), cls = RAZREDI[i % 3];
-      out.push(`<p>Leča ${f}${NB}mm: iz ${rows.length} ${rows.length === 1 ? "meritve" : "meritev"} ${tex(String.raw`f = \text{povprečje } \frac{ab}{a + b} = ${rez(fixed(fm, 1), "mm")}`)}, ${tex(String.raw`\frac{1}{f} = ${fixed(1000 / fm, 2)}${en("m⁻¹")}`)}.</p>`);
+      cilji.push({ key: `f${f}`, ime: `f = ${f} mm`, kaj: `Iz svojih meritev <i>a</i> in <i>b</i> izračunaj goriščno razdaljo leče z napisom ${f}${NB}mm.`, vrednost: fm, nazivno: [{ v: f, kaj: "napis na leči" }] });
+      out.push(Rr.odkrito(`f${f}`) ? `<p>Leča ${f}${NB}mm: iz ${rows.length} ${rows.length === 1 ? "meritve" : "meritev"} ${tex(String.raw`f = \text{povprečje } \frac{ab}{a + b} = ${rez(fixed(fm, 1), "mm")}`)}, ${tex(String.raw`\frac{1}{f} = ${fixed(1000 / fm, 2)}${en("m⁻¹")}`)}.</p>` : `<p>Leča ${f}${NB}mm: iz ${rows.length} ${rows.length === 1 ? "meritve" : "meritev"} izračunaj goriščno razdaljo in jo preveri spodaj.</p>`);
       ser.push({ id: `f${f}`, pts: rows.map((r) => [1000 / r.a, 1000 / r.b]), cls, shape: i % 2 ? "^" : "o", label: `f = ${f}${NB}mm`, line: (x) => 1000 / fm - x });
       i++;
     }
@@ -295,6 +335,7 @@ export function labLeca(el) {
     graph.setAxes({ x: [0, top], y: [0, top], xStep: top > 25 ? 10 : 5, yStep: top > 25 ? 10 : 5 });
     graph.draw(ser);
     calc.innerHTML = out.join("");
+    Rr.nastavi(cilji);
   }
   function clear() {
     table.clear();
@@ -379,6 +420,15 @@ export function labLeca(el) {
   }
   draw();
   sync();
+  zap.vezi(table, {
+    get: () => ({ racun: Rr.stanje(), meritve: [...meritve] }),
+    set: (d) => {
+      Rr.obnovi(d?.racun);
+      for (const [f, rows] of Array.isArray(d?.meritve) ? d.meritve : []) if (LECE.includes(+f) && Array.isArray(rows)) meritve.set(+f, rows.filter((x) => x && Number.isFinite(x.a) && Number.isFinite(x.b)));
+      sync();
+      vprasaj();
+    },
+  });
 }
 
 export { N_ZRAK, slika };

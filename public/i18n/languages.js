@@ -361,6 +361,15 @@ export function uiChain(code) {
   return out;
 }
 
+// Prevodi vmesnika, ki jih naložimo za izbrani jezik: veriga do prvega živega jezika in brez slovenščine (izvirnik je
+// public/i18n/sl.js). Živi jeziki imajo vse ključe (test/i18n.test.js), zato nadomestni slovarji za njimi niso potrebni:
+// nemški profil je ob prvem odprtju prej naložil de.json, en.json in sl.js (~250 KB), zdaj de.json in sl.js.
+// Primeri: de → [de], sr → [sr, hr], fr → [fr, en], sl → [].
+export function uiDicts(code) {
+  const chain = uiChain(code);
+  return chain.slice(0, chain.findIndex((c) => LIVE_UI_LANGUAGES.includes(c)) + 1).filter((c) => c !== "sl");
+}
+
 // Prvi jezik iz verige, ki ima prevod vmesnika.
 export function uiLanguage(code) {
   return uiChain(code).find((c) => UI_LANGUAGES.includes(c) || c === "sr-Latn");

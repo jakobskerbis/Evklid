@@ -321,15 +321,38 @@ Obrat implikacije $A \Rightarrow B$ je izjava $B \Rightarrow A$, kontrapozicija 
 
 Predstavljaj si delavnico z lučjo in dvema stikaloma. Stikalo $A$ je vklopljeno, ko je izjava $A$ pravilna, in luč sveti, ko je sestavljena izjava pravilna.
 
-```
-Konjunkcija A ∧ B (zaporedno):
-  vir ──[A]──[B]── luč
-
-Disjunkcija A ∨ B (vzporedno):
-        ┌──[A]──┐
-  vir ──┤       ├── luč
-        └──[B]──┘
-```
+:::risba skica
+opis: Dve vezji z virom, lučjo in stikaloma A in B. Zgoraj sta stikali vezani zaporedno, eno za drugim na isti žici: to je konjunkcija A ∧ B. Spodaj sta vezani vzporedno, vsako na svoji veji, ki se pred lučjo spet združita: to je disjunkcija A ∨ B.
+območje: 0; 0 .. 10; 7,4
+enota: 30
+napis: 0,3; 6,9 | zaporedno: A ∧ B | desno | debelo
+črta: 1,5; 5,5 -> 3; 5,5
+pravokotnik: 3; 5 .. 4; 6
+napis: 3,5; 5,5 | A | sredina
+črta: 4; 5,5 -> 5,5; 5,5
+pravokotnik: 5,5; 5 .. 6,5; 6
+napis: 6; 5,5 | B | sredina
+črta: 6,5; 5,5 -> 8,5; 5,5
+napis: 1,5; 5,5 | vir | levo
+krog: 8,9; 5,5 | 0,4 | oranžna
+napis: 8,9; 5 | luč | pod
+napis: 0,3; 3,9 | vzporedno: A ∨ B | desno | debelo
+črta: 1,5; 2 -> 3; 2
+črta: 3; 1 -> 3; 3
+črta: 3; 3 -> 4; 3
+pravokotnik: 4; 2,5 .. 5; 3,5
+napis: 4,5; 3 | A | sredina
+črta: 5; 3 -> 6; 3
+črta: 3; 1 -> 4; 1
+pravokotnik: 4; 0,5 .. 5; 1,5
+napis: 4,5; 1 | B | sredina
+črta: 5; 1 -> 6; 1
+črta: 6; 1 -> 6; 3
+črta: 6; 2 -> 8,5; 2
+napis: 1,5; 2 | vir | levo
+krog: 8,9; 2 | 0,4 | oranžna
+napis: 8,9; 1,5 | luč | pod
+:::
 
 - **Zaporedno:** luč sveti le, če sta vklopljeni obe stikali. To je $A \wedge B$.
 - **Vzporedno:** luč sveti, če je vklopljeno vsaj eno stikalo, tudi obe. To je $A \vee B$.

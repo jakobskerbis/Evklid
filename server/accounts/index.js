@@ -1,5 +1,7 @@
 // Starševski računi, soglasja, naročnine (Stripe), priporočila in tedenska poročila (Resend).
 // Vklop: EVKLID_ACCOUNTS=1. Brez tega aplikacija deluje kot prej (brez prijave).
+import { personalDailyQuestions } from "../placila/pravice.js";
+import { neprimernoIme, NEPRIMERNO_IME } from "../ime-oznaka.js";
 import crypto from "node:crypto";
 import "../env.js";
 import { BRAND, LEGACY } from "../brand.js";
@@ -13,7 +15,7 @@ import { openReport } from "../reports.js";
 import { unseal, auditSecret, openFlag, UNREADABLE } from "../crypto-polje.js";
 import { createHmac } from "node:crypto";
 import { exportOtherTables } from "../zasebnost.js";
-import { pilotSummary, pilotWtp, endAccountPilot } from "../pilot-naloge.js";
+import { pilotSummary, pilotWtp, endAccountPilot, adultParent } from "../pilot-naloge.js";
 import { aiCapFromNetEur, vatRateFor, eurVatFor } from "./plans.js";
 import { isPilotParent, isOwnerParent, pilotEndMs, emailList, privilegedEmail, PILOT_PROFILES, PILOT_LOCK_PROFILES, pilotLastDay } from "./pilot-meja.js";
 import { createPaidPeriods } from "../placila/placano.js";
@@ -31,7 +33,7 @@ import { Usage, BLOCK_TEXT } from "../usage.js";
 import { USTNO_QUESTIONS } from "../ustno.js";
 import { NOPAY_USD, nopayPoolUsd } from "../meje-ai.js";
 import { promoConfig, createPromo } from "./promo.js";
-import { minAgeOf, ageOn, parseBirthDate, ADULT_AGE, MIN_HOLDER_AGE, BIRTH_MISSING_PAY } from "./age.js";
+import { minAgeOf, ageOn, parseBirthDate, ADULT_AGE, MIN_HOLDER_AGE, BIRTH_MISSING_PAY, SELF_CONSENT_PREFIX } from "./age.js";
 import { guestModeOn, guestNet, guestPerDay, GuestInvites, GuestQuota, GUEST_SESSION_DAYS, netKey } from "./guest.js";
 import { eraseAccount, eraseProfiles, posnetekIzbrisa, zapisiIzbris } from "./izbris.js";
 import { runInactive, neaktivniVklopljeni } from "./neaktivni.js";
@@ -61,7 +63,7 @@ export const CONSENT_TEXT =
 
 // Soglasje dijaka, ki je dovolj star za lastno privolitev in ustvarja svoj profil.
 export const SELF_CONSENT_TEXT =
-  "Profil je moj. Prebral(a) sem Obvestilo o varstvu osebnih podatkov in soglašam, da Evklid obdeluje moje podatke " +
+  SELF_CONSENT_PREFIX + " Prebral(a) sem Obvestilo o varstvu osebnih podatkov in soglašam, da Evklid obdeluje moje podatke " +
   "(ime ali vzdevek, letnica rojstva, nastavitve, pogovori z AI inštruktorjem, fotografije nalog in napredek) za namen učenja.";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -208,13 +210,22 @@ export function mountAccounts(app, store, opts = {}) {
   const baseUrl = (req) => (env.EVKLID_BASE_URL || (req ? `${req.protocol}://${req.get("host")}` : `http://localhost:${env.PORT || 3000}`)).replace(/\/$/, "");
 
   // --- podatki ---
-  const getParent = (id) => db.prepare("SELECT * FROM parents WHERE id = ?").get(id);
+  // Vroče poizvedbe (pravice in meje se na eno sporočilo inštruktorju izračunajo večkrat: ~340 branj staršev) imajo
+  // stavek pripravljen enkrat (K-14, meritev 26. 11. 2026); prevajanje SQL na vsak klic je bilo ~15 % procesorja.
+  const stavek = (sql) => {
+    let st = null;
+    return () => (st ??= db.prepare(sql));
+  };
+  const qParent = stavek("SELECT * FROM parents WHERE id = ?");
+  const qChildIds = stavek("SELECT id FROM students WHERE parent_id = ? ORDER BY id");
+  const qOwner = stavek("SELECT parent_id FROM students WHERE id = ?");
+  const getParent = (id) => qParent().get(id);
   const parentByEmail = (email) => db.prepare("SELECT * FROM parents WHERE email = ?").get(String(email).trim());
   const parentByCustomer = (cid) => cid && db.prepare("SELECT * FROM parents WHERE stripe_customer_id = ?").get(cid);
-  const childIds = (parentId) => db.prepare("SELECT id FROM students WHERE parent_id = ? ORDER BY id").all(parentId).map((r) => r.id);
+  const childIds = (parentId) => qChildIds().all(parentId).map((r) => r.id);
   const birthYear = (id) => db.prepare("SELECT birth_year FROM students WHERE id = ?").get(id)?.birth_year ?? null;
   const children = (parentId) => childIds(parentId).map((id) => ({ ...store.getStudent(id), birth_year: birthYear(id) }));
-  const ownerOf = (studentId) => db.prepare("SELECT parent_id FROM students WHERE id = ?").get(studentId)?.parent_id;
+  const ownerOf = (studentId) => qOwner().get(studentId)?.parent_id;
   const update = (id, fields) => {
     const keys = Object.keys(fields);
     db.prepare(`UPDATE parents SET ${keys.map((k) => `${k} = ?`).join(", ")} WHERE id = ?`).run(...keys.map((k) => fields[k]), id);
@@ -450,7 +461,22 @@ export function mountAccounts(app, store, opts = {}) {
       n++;
     }
     if (n) log.info?.(`[vabilo] umaknjene kode: ${n} računov ni več v pilotu`);
-    return n;
+    return n + endMinorPilots();
+  }
+  // Pilot samo s polnoletnimi (N-11, pregled #1121): račun z znanim datumom rojstva imetnika, mlajšega od 18 let, ki je
+  // v pilot prišel pred tem pravilom, izstopi kot ob skrbnikovem »Odstrani« (oznaka, meja iz kode, fotografije).
+  // Ob zagonu in vsakih 30 min (purgePilotKv). Vrne število računov.
+  function endMinorPilots() {
+    const rows = db.prepare("SELECT id, birth_date FROM parents WHERE pilot_at IS NOT NULL AND birth_date IS NOT NULL").all().filter((p) => !adultParent(p));
+    for (const r of rows) {
+      inTx(() => {
+        const photos = endAccountPilot(db, r.id);
+        db.prepare("UPDATE parents SET pilot_invite_hash = NULL, pilot_invite_at = NULL WHERE id = ?").run(r.id);
+        audit(db, { parentId: r.id, actor: "system", action: "pilot_minor_ended", ok: false, target: photos ? `photos:${photos}` : null });
+      });
+    }
+    if (rows.length) log.info?.(`[vabilo] ${rows.length} računov mlajših od 18 let ni več v pilotu`);
+    return rows.length;
   }
   try {
     purgePilotKv(); // ob zagonu
@@ -828,7 +854,8 @@ export function mountAccounts(app, store, opts = {}) {
     const g = subGuarantee(studentId);
     // Preizkus in bonus (nopay): rep ni razporejen po dnevih (spreadOf), ob koncu repa poziv k naročnini.
     if (/^block\.freeTail(Topup|Birth)?$/.test(code) && (g?.nopay === "trial" || g?.nopay === "bonus")) code = "block.trialOut";
-    if (code === "block.freeMonth" || code === "block.freePool" || code === "block.unverifiedDay") return freeBlock(studentId, code);
+    // Konec preizkusa ali bonusa (#759): z istim namigom kot brezplačni paket, da kartica ponudi naročnino.
+    if (code === "block.freeMonth" || code === "block.freePool" || code === "block.unverifiedDay" || code === "block.trialOut") return freeBlock(studentId, code);
     return { error: BLOCK_TEXT[code], code };
   }
   // Paket pred testom: poraba nad mejo paketa (brez dela iz kredita), ki jo plača kredit; null brez paketa.
@@ -961,10 +988,19 @@ export function mountAccounts(app, store, opts = {}) {
   const moreHintCode = (studentId) =>
     guests.netOf(studentId) ? (getParent(ownerOf(studentId))?.is_guest ? "block.hintGuest" : "block.hintVerify") : upsell(studentId) ? ((ageOfStudent(studentId) ?? 0) >= 18 ? "block.hintAdult" : "block.hintParent") : null;
   // Odgovor 429 za brezplačni paket: { error, code, params?, hint? }; error je slovenska rezerva (razlog + namig).
+  // offer_reason (#759): zakaj ni ponudbe s ceno (ponudbe.js: lesson, school_hours, teacher_off, under_15; »school«
+  // za učenca iz šole). Kartica ga otroku ne pokaže kot poziv (pod 15 nič o staršu, pregled #1042); za podporo in
+  // poznejša besedila.
   function freeBlock(studentId, code, params) {
     const hint = moreHintCode(studentId);
     const text = params ? BLOCK_TEXT[code].replace("{n}", params.n) : BLOCK_TEXT[code];
-    return { error: hint ? `${text} ${BLOCK_TEXT[hint]}` : text, code, ...(params ? { params } : {}), ...(hint ? { hint } : {}) };
+    let offerReason = null;
+    if (!hint) {
+      const o = offersFor(studentId);
+      offerReason = o.reason || (schools.membership(studentId)?.inSchool ? "school" : null);
+    }
+    // block.trialOut že sam pozove k naročnini: namig gre samo v polje hint (kartica), ne še enkrat v besedilo (pregled #1042).
+    return { error: hint && code !== "block.trialOut" ? `${text} ${BLOCK_TEXT[hint]}` : text, code, ...(params ? { params } : {}), ...(hint ? { hint } : {}), ...(offerReason ? { offer_reason: offerReason } : {}) };
   }
 
   // Poraba brezplačnega profila ta mesec (gost: vse omrežje) in poraba izbrisanih profilov istega računa.
@@ -1327,7 +1363,10 @@ export function mountAccounts(app, store, opts = {}) {
     const k = kodaVabila(req);
     if (!k) return null;
     const { invite, code } = k;
-    const veljavna = (invite ? isInviteCode(invite) : signupCodeKind(code) === "invite") && !inviteUsed(db, code) && Date.now() < pilotEndMs();
+    // Mladoletni (datum rojstva v obrazcu, N-11) z vabilom ne obide meje: kode ne more porabiti.
+    const birth = parseBirthDate(req.body?.birth_date);
+    const adult = birth ? ageOn(birth) >= ADULT_AGE : true;
+    const veljavna = adult && (invite ? isInviteCode(invite) : signupCodeKind(code) === "invite") && !inviteUsed(db, code) && Date.now() < pilotEndMs();
     if (!veljavna) return null;
     const hash = inviteHash(code);
     return vabiloMimoMejeThrottle.blocked(hash) ? null : hash;
@@ -1460,6 +1499,13 @@ export function mountAccounts(app, store, opts = {}) {
       audit(db, { req, parentId, action: "pilot_invite_rejected", ok: false });
       return "invalid";
     }
+    // Pilot samo s polnoletnimi (j 2026-11-25, N-11): mlajši od 18 let (ali neveljaven datum) kode ne shrani (koda ostane
+    // neporabljena). Brez datuma rojstva koda počaka (claimPilotInvite).
+    const holder = getParent(parentId);
+    if (holder?.birth_date && !adultParent(holder)) {
+      audit(db, { req, parentId, action: "pilot_invite_minor", ok: false });
+      return "minor";
+    }
     update(parentId, { pilot_invite_hash: inviteHash(code) });
     audit(db, { req, parentId, action: "pilot_invite_pending" });
     return "pending";
@@ -1478,6 +1524,10 @@ export function mountAccounts(app, store, opts = {}) {
     };
     if (Date.now() >= pilotEndMs()) return drop("pilot_invite_ended");
     if (!inviteHashValid(p.pilot_invite_hash)) return drop("pilot_invite_revoked");
+    // Pilot samo s polnoletnimi (N-11): mlajši od 18 let kode ne porabi; brez datuma rojstva (star račun) koda počaka,
+    // da imetnik datum vpiše v Računu (ogled stanja jo nato porabi, spodaj).
+    if (!p.birth_date) return false;
+    if (!adultParent(p)) return drop("pilot_invite_minor");
     // Poraba kode in oznaka na računu skupaj (#819): brez pol porabljene kode ob napaki vmes.
     const claimed = inTx(() => {
       if (!claimInvite(db, p.pilot_invite_hash, parentId)) return false;
@@ -1767,6 +1817,7 @@ export function mountAccounts(app, store, opts = {}) {
     const iso = `${birth.y}-${String(birth.m).padStart(2, "0")}-${String(birth.d).padStart(2, "0")}`;
     const r = db.prepare("UPDATE parents SET birth_date = ?, birth_asked_at = ? WHERE id = ? AND birth_date IS NULL").run(iso, now, p.id);
     if (!r.changes) return taken();
+    claimPilotInvite(p.id, req); // čakajoča koda vabila (star račun brez datuma rojstva, N-11): zdaj se porabi ali odpade
     const minAge = minAgeOf(p.country, String(req.headers["cf-ipcountry"] || ""));
     res.json({ parent: publicParent(getParent(p.id)), ...(age < minAge ? { under_age: true, min_age: minAge } : {}) });
   });
@@ -1903,9 +1954,14 @@ export function mountAccounts(app, store, opts = {}) {
     res.json({ ok: true });
   });
 
-  // Država za ceno: Cloudflare (CF-IPCountry, npr. tunel ali gostovanje za Cloudflare), sicer
-  // država, shranjena ob registraciji, sicer Slovenija. Naročnina ostane v valuti, v kateri je sklenjena.
+  // Država za ceno: Cloudflare (CF-IPCountry), sicer država, shranjena ob registraciji, sicer Slovenija. Naročnina
+  // ostane v valuti, v kateri je sklenjena.
+  // K-13 (j, 26. 11. 2026, »Evri za vse do zanesljivega vira«): glavo in državo ob registraciji lahko pošlje odjemalec.
+  // Regijske cene veljajo samo z EVKLID_ZAUPAJ_CF=1, ki ga nastavi, kdor ima strežnik res za posrednikom Cloudflare
+  // (glavo nastavi Cloudflare, izvor sprejema samo od njega). Brez tega je cenik za vse v evrih (slovenske cene).
+  const cfZaupanja = env.EVKLID_ZAUPAJ_CF === "1";
   const countryOf = (req, p) => {
+    if (!cfZaupanja) return "SI";
     const cf = String(req.headers["cf-ipcountry"] || "").toUpperCase();
     return /^[A-Z]{2}$/.test(cf) && cf !== "XX" && cf !== "T1" ? cf : p?.country || "SI";
   };
@@ -2058,13 +2114,16 @@ export function mountAccounts(app, store, opts = {}) {
 
   // Cene in preizkus za stran za starše (starsi.html), brez prijave.
   // Isti podatki gredo tudi v pristajalno stran, ki jo strežnik pošlje že izrisano (server/pristajalna-takoj.js).
+  // Prijavljen račun (#759): valuta kot povezava za plačilo (pay-link, currencyOf računa), da se cena na kartici ob meji
+  // ujema s ceno na placaj.html; brez računa iz ?country= ali države zahteve.
   const pricesFor = (req, countryParam) => {
     const country = String(countryParam || "").toUpperCase();
-    const currency = currencyOf(req, /^[A-Z]{2}$/.test(country) ? { country } : null);
+    const own = req.parent && !req.parent.is_guest ? req.parent : null;
+    const currency = currencyOf(req, own || (/^[A-Z]{2}$/.test(country) ? { country } : null));
     // Garancija na pristajalni strani: samo ob vklopljenem stikalu in živih plačilih (garancija.js guaranteeAdvertised),
     // samo pri cenah v evrih (garancija velja za slovensko lestvico ocen 1–5).
     const guarantee = currency === "EUR" && guaranteeAdvertised(stripe) ? { weeks: GUARANTEE.weeks, min_days: GUARANTEE.minDays, enroll_days: GUARANTEE.enrollDays } : null;
-    return { currency, plans: plansFor(currency), trial_days: TRIAL_DAYS, free_daily_questions: freeDailyQuestions(), min_age: minAgeOf(String(req.headers["cf-ipcountry"] || ""), country), ...(guarantee ? { guarantee } : {}) };
+    return { currency, plans: plansFor(currency), trial_days: TRIAL_DAYS, free_daily_questions: freeDailyQuestions(), paid_daily_questions: { OS: personalDailyQuestions("OS"), SS: personalDailyQuestions("SS"), FAKS: personalDailyQuestions("FAKS") }, min_age: minAgeOf(String(req.headers["cf-ipcountry"] || ""), country), ...(guarantee ? { guarantee } : {}) };
   };
   app.get("/api/account/prices", (req, res) => res.json(pricesFor(req, req.query.country)));
 
@@ -2145,7 +2204,7 @@ export function mountAccounts(app, store, opts = {}) {
         weak_points: q("SELECT day, source, topic_id, subject, topic, n, wrong FROM skill_results WHERE student_id = ?", c.id),
         weak_points_seen: q("SELECT item, created_at FROM skill_seen WHERE student_id = ?", c.id),
         topics: q("SELECT * FROM topic_state WHERE student_id = ?", c.id),
-        tasks: q("SELECT topic_id, mode, level, attempts, hint_used, solved, first_try_correct, last_answer, created_at FROM tasks WHERE student_id = ?", c.id),
+        tasks: q("SELECT topic_id, mode, level, attempts, hint_used, solved, first_try_correct, last_answer, created_at, answered_at FROM tasks WHERE student_id = ?", c.id),
         xp: q("SELECT amount, reason, created_at FROM xp_events WHERE student_id = ?", c.id),
         // Prijave napak (server/reports.js): tudi opomba učenca so njegovi podatki.
         reports: q("SELECT message_id, reason, note, question, answer, device, created_at FROM message_reports WHERE student_id = ?", c.id).map(openReport),
@@ -2495,6 +2554,7 @@ export function mountAccounts(app, store, opts = {}) {
     }
     const name = cleanText(req.body?.name, 40);
     if (!name) return res.status(400).json({ error: "Vpiši ime ali vzdevek otroka." });
+    if (neprimernoIme(name)) return res.status(400).json({ error: NEPRIMERNO_IME, code: "ime_neprimerno" }); // #754
     const minor = isMinor(p);
     // Mladoletni imetnik (dijak, ki je račun ustvaril sam) ima samo svoj profil; za otroke soglaša starš.
     if (minor && childIds(p.id).length) {
@@ -2635,6 +2695,25 @@ export function mountAccounts(app, store, opts = {}) {
     const up = upgradeFor(p);
     const to = up?.options.find((o) => o.key === req.body?.plan);
     if (!to) return res.status(400).json({ error: "Ta nadgradnja ni mogoča." });
+    // K-13 (26. 11. 2026): nadgradnja takoj bremeni shranjeno kartico. Seja računa je skupna profilom na napravi,
+    // zato kot ob nakupu iste potrditve in zapis o njih, poleg tega geslo računa (kot izvoz; prijava z Apple: reauthHooks).
+    if (req.body?.adult !== true || req.body?.withdrawal !== true) return res.status(400).json({ error: "Pred plačilom so potrebne vse potrditve.", consent: true });
+    if (!termsAccepted(req.body)) return res.status(400).json(TERMS_ERROR);
+    const upKey = `upgrade${p.id}|${req.ip}`;
+    if (throttle.blocked(upKey)) return res.status(429).json({ error: "Preveč poskusov. Poskusi čez 15 minut." });
+    if (acrossThrottle.blocked(`acct${p.id}`)) return res.status(429).json({ error: ACCT_BLOCKED });
+    const reauth = async () => {
+      for (const fn of reauthHooks) if (await fn(req, p, { revoke: false })) return true;
+      return false;
+    };
+    if (!(await verifyPassword(String(req.body?.password || ""), p.password_hash)) && !(await reauth())) {
+      throttle.fail(upKey);
+      acrossThrottle.fail(`acct${p.id}`);
+      audit(db, { req, parentId: p.id, actor: "parent", action: "plan_upgrade", ok: false });
+      return res.status(401).json({ error: "Napačno geslo.", password: true });
+    }
+    // Zapis potrditev pred bremenitvijo (kot ob nakupu: zapis obstaja, tudi če plačilo nato ne uspe).
+    insertBillingConsent(db, { parentId: p.id, email: p.email, kind: "upgrade", lines: [ADULT_TEXT, WITHDRAWAL_TEXT], lang: req.body?.lang, item: subItem(to), odstop: WITHDRAWAL_VERSION });
     try {
       const sub = await stripe.request("GET", `/subscriptions/${p.sub_id}`);
       const item = sub.items?.data?.[0];
@@ -3068,7 +3147,7 @@ export function mountAccounts(app, store, opts = {}) {
   // --- tedensko poročilo ---
   // Profili »Zame« (učenec 15+ sam): poročilo ga nagovori neposredno, brez nasvetov za starše.
   // Po prvem stavku (»Profil je moj.«), da stara soglasja ostanejo prepoznana tudi po preimenovanju aplikacije v besedilu.
-  const selfPrefix = SELF_CONSENT_TEXT.slice(0, SELF_CONSENT_TEXT.indexOf(".") + 1);
+  const selfPrefix = SELF_CONSENT_PREFIX;
   const selfIds = (parentId) =>
     db.prepare("SELECT student_id FROM consents WHERE parent_id = ? AND substr(text, 1, ?) = ?").all(parentId, selfPrefix.length, selfPrefix).map((r) => r.student_id);
   // Račun ima profile in vsi so »Zame« (soglasje dal učenec sam): zasloni ga nagovorijo kot učenca, ne kot starša.

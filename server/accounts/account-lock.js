@@ -12,7 +12,10 @@ const OWNER_ONLY = [
   [/^\/account\/(pilot-wtp|privacy-seen|owner-code|terms)\/?$/i, "POST"], // vprašanje o plačilu, obvestilo o zasebnosti, koda imetnika: samo imetnik
   [/^\/account\/pilot-photos\/\d+\/?$/i, "DELETE"], // izbris fotografij pilota v Računu (pregled B3)
   [/^\/account\/ustno-glas\/?$/i, null], // stikalo starša »Dovoli odgovarjanje z glasom« (server/ustno-api.js): samo imetnik
+  // Vsa plačila (K-13, 26. 11. 2026): samo imetnik, ko je zaklep računa vklopljen. Odstop (/withdrawal) namenoma ne:
+  // gumb za odstop mora biti dosegljiv brez ovir, potrdilo gre na e-naslov imetnika.
   [/^\/billing\/(checkout|portal)\/?$/i, null],
+  [/^\/billing\/(upgrade|pass|credit|gift|podari)\/?$/i, "POST"], // GET /billing/credit (osvežitev po plačilu) ostane prost
   [/^\/admin(\/|$)/i, null],
   [/^\/kozmetika\/prijave\/(izvoz|[^/]+\/[^/]+\/stanje)\/?$/i, null], // izvoz prijav s skrbnikovo sejo (server/reports.js)
   [/^\/students\/?$/i, "POST"], // nov profil

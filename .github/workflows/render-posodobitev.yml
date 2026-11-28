@@ -1,5 +1,5 @@
-# Do nadaljnjega (j, 24. 11. 2026, TAKOJ_DO v scripts/render-objava.js): vsaka združitev se objavi takoj po zelenih testih.
-# Sicer: Render: nova različica Evklida samo ponoči (3.–5. ura po ljubljanskem času), ko se nihče ne uči
+# Do 10. 12. 2026 (TAKOJ_DO v scripts/render-objava.js) se vsaka združitev objavi takoj po zelenih testih.
+# Od začetka pilota (j, 26. 11. 2026): Render: nova različica Evklida samo ponoči (3.–5. ura po ljubljanskem času), ko se nihče ne uči
 # (ponovni zagon s trajnim diskom pomeni ~1 minuto izpada; j, 19. 11. 2026). Tek ob združitvi v main
 # počaka na nočno okno, če je to v naslednjih ~3 urah, sicer konča; nočna urnika (0:47 in 1:47 UTC, tj.
 # 1:47/2:47 pozimi, 2:47/3:47 poleti) in urnik vsako uro (rezerva) objavo opravijo v oknu.
@@ -10,7 +10,8 @@
 # zato [nujno] pride na Render nekaj minut po zelenih testih. Padli testi: ta commit se ne objavi.
 # Deluje, ko je v GitHubu nastavljena skrivnost RENDER_DEPLOY_HOOK (Render > evklid > Settings > Deploy Hook).
 # Ročni zagon (Actions > Render > Run workflow) objavi takoj, ko so testi zeleni; »brez_testov« (privzeto izklopljeno)
-# objavi tudi brez njih (samo v sili). Navodila: docs/posodobitve.md
+# objavi tudi brez njih (samo v sili). »vrni_na« (K-17) objavi starejši commit iz main (hitra vrnitev); nato samodejne
+# objave počakajo na nov commit v main. Navodila: docs/posodobitve.md
 name: Render
 on:
   push:
@@ -28,6 +29,10 @@ on:
         description: "Objavi tudi brez zelenih testov (samo v sili)"
         type: boolean
         default: false
+      vrni_na:
+        description: "Vrnitev (K-17): SHA starejšega dobrega commita iz main (vsaj 7 znakov); prazno = običajna objava vrha main"
+        type: string
+        default: ""
 permissions:
   contents: read
   actions: read # stanje testov (testi.yml) za commit
@@ -68,6 +73,8 @@ jobs:
           BREZ_TESTOV: ${{ github.event_name == 'workflow_dispatch' && inputs.brez_testov && '1' || '0' }}
           # Tudi urnik čaka: novi tek (cancel-in-progress) prekine čakajočega, zato mora čakati naprej sam.
           CAKAJ: ${{ github.event_name != 'workflow_dispatch' && '1' || '0' }}
+          VRNI_NA: ${{ github.event_name == 'workflow_dispatch' && inputs.vrni_na || '' }}
+          VEJA: ${{ github.ref }}
         run: node scripts/render-objava.js
       - uses: actions/cache/save@v6
         # always(): shrani tudi, če novejši tek prekliče ta tek takoj po sprožitvi.

@@ -66,7 +66,7 @@ details .card { margin-top: 8px; }
   .tabs::-webkit-scrollbar { display: none; }
   .tab { white-space: nowrap; flex: none; padding: 8px 10px; }
 }
-.overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.45); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 100; }
+.overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.45); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: var(--z-modal, 100); }
 .overlay-card { max-width: 420px; width: 100%; margin: 0; }
 /* Geslo profila: zaslon za odklep ali prvo geslo */
 #lock-overlay { z-index: 200; overflow-y: auto; align-items: flex-start; }
@@ -119,7 +119,21 @@ details .card { margin-top: 8px; }
 .pilot-sum { list-style: none; padding: 0; margin: 0 0 10px; display: grid; gap: 4px; }
 .pilot-table th, .pilot-table td { padding: 4px 8px; text-align: end; white-space: nowrap; }
 .pilot-table th:first-child, .pilot-table td:first-child { text-align: start; }
+/* Nič ne drsi vstran (j): glave stolpcev se lomijo med besedami (brez deljenja besed); preozka tabela postane
+   seznam kartic (public/pilot-tabele.js). */
+.pilot-table thead th, .pilot-table tbody tr > :first-child { white-space: normal; }
+.pilot-table thead th { vertical-align: bottom; }
 .pilot-scroll { overflow-x: auto; max-width: 100%; position: relative; }
+.pilot-scroll.stack { overflow-x: visible; }
+.pilot-scroll.stack table, .pilot-scroll.stack tbody, .pilot-scroll.stack tr { display: block; width: auto; }
+.pilot-scroll.stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.pilot-scroll.stack tr { padding: 6px 0; border-bottom: 1px solid var(--border); }
+.pilot-scroll.stack tr:last-child { border-bottom: 0; }
+/* Celica ostane blok (vsebina z več deli, npr. »Zelo 5 · Malo 3«, teče v eni vrstici); ime stolpca plava levo. */
+.pilot-scroll.stack th, .pilot-scroll.stack td { display: block; padding: 2px 8px; border: 0; white-space: normal; text-align: end; overflow-wrap: anywhere; }
+.pilot-scroll.stack td[data-label]::before { content: attr(data-label); float: left; float: inline-start; margin-inline-end: 12px; text-align: start; font-weight: 600; color: var(--muted); }
+.pilot-scroll.stack tr > :first-child { text-align: start; font-weight: 700; }
+.pilot-scroll.stack tr > :first-child::before { content: none; }
 .pilot-scroll + .pilot-scroll { margin-top: 10px; }
 .rast-title { margin: 18px 0 8px; font-size: 1.05rem; }
 .pilot-table td { font-variant-numeric: tabular-nums; }

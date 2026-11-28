@@ -7,6 +7,7 @@ import { t } from "./i18n-osnova.js";
 import { stopnja } from "./stopnja.js";
 import { icon } from "./icons.js";
 import { makeRowSortable } from "./vrstice.js";
+import { cuvaj3d } from "./3d/vgrajeno.js";
 
 export const UCI_TABS = ["textbook", "lab", "3d"];
 const KEY = "evklid.uciZavihek";
@@ -16,6 +17,7 @@ let tab = read();
 let hub = null; // { key, html } narisan 3D svet (key = jezik|slog|pot veje)
 let full = null; // { el, frame } odprt atlas ali model čez cel zaslon
 let fromLesson = false; // poskus je odprla povezava v lekciji: tipka Nazaj vrne v lekcijo
+let from3d = null; // { id, open }: lekcija iz 3D modela (»Lekcija«): tipka Nazaj iz nje spet odpre model
 let fromLab = null; // id lekcije, ki jo je odprla tema v poskusu (»Odpri temo v učbeniku«): tipka Nazaj iz nje vrne v poskus
 
 function read() {
@@ -47,7 +49,7 @@ export function setUciTab(name) {
   if (!UCI_TABS.includes(name)) return;
   if (name !== "textbook" && tab === "textbook") D?.stopReading?.(); // branje lekcije na glas ne teče naprej skrito
   if (name !== "lab") fromLesson = false;
-  if (name !== "textbook") fromLab = null;
+  if (name !== "textbook") (fromLab = null), (from3d = null);
   tab = name;
   save(name);
   for (const b of document.querySelectorAll("[data-uci-tab]")) {
@@ -114,6 +116,13 @@ export function initUci(deps) {
     if (!full || e.origin !== location.origin || e.source !== full.frame.contentWindow) return;
     const msg = e.data || {};
     if (msg.tip === "zapri3d") close3d();
+    if (msg.tip === "pripravljen") full.cuvaj.pripravljen();
+    if (msg.tip === "napaka") full.cuvaj.napaka();
+    // »Lekcija« v modelu: zapre okvir in odpre lekcijo; Nazaj iz nje znova odpre isti model (vrni = id modela).
+    if (msg.tip === "lekcija" && LEKCIJA_ID.test(msg.id || "")) {
+      close3d();
+      lekcijaIz3d(msg.id, vrnitev3d(msg.vrni, msg.oznaka)?.open);
+    }
     if (msg.tip === "vprasaj" && typeof msg.besedilo === "string" && msg.besedilo.trim()) {
       // vrni: naslov v okvirju (»atlas?izberi=…«, »celica-zivalska?del=…«): vrnitev iz klepeta odpre isti model in del.
       const vrni = vrnitev3d(msg.vrni, msg.oznaka);
@@ -136,6 +145,15 @@ export function uciBack({ textbookBack, labBack, lessonId = undefined }) {
   if (close3d()) return true;
   // Nazaj v veji drevesa 3D sveta gre za eno vejo višje (kot drobtinice), šele na vrhu zapusti zavihek.
   if (tab === "3d" && pot) { nastaviPot(pot.split("/").slice(0, -1).join("/")); return true; }
+  if (tab === "textbook" && from3d) {
+    // Lekcija iz 3D modela: Nazaj jo zapre in znova odpre isti model (le iz iste lekcije).
+    const z = from3d;
+    from3d = null;
+    const closed = textbookBack();
+    if (lessonId !== undefined && lessonId !== z.id) return closed;
+    z.open();
+    return true;
+  }
   if (tab === "textbook") {
     // Le iz iste lekcije (lessonId iz app.js); drugo lekcijo, odprto prek kazala, zapre običajno.
     const izLab = fromLab && (lessonId === undefined || lessonId === fromLab);
@@ -157,6 +175,17 @@ export function uciBack({ textbookBack, labBack, lessonId = undefined }) {
     return true;
   }
   return false;
+}
+
+// Id teme: »BIO-OS-8/…«, tudi fakultete in tekmovanja (»UNI-ULBF-ABIOCEL/…«, »FIZ-TEK-SS/…«), kot server/gradiva.js.
+const LEKCIJA_ID = /^[A-Z0-9]+(-[A-Z0-9]+)+\/[a-z0-9-]+$/;
+/** »Lekcija« v 3D modelu: odpre lekcijo; odpri (iz vrnitev3d) ob tipki Nazaj iz te lekcije spet odpre model. */
+export function lekcijaIz3d(id, odpri = null) {
+  if (!LEKCIJA_ID.test(id || "")) return false;
+  fromLab = null;
+  from3d = typeof odpri === "function" ? { id, open: odpri } : null;
+  D?.openLesson?.(id);
+  return true;
 }
 
 /** Povezava v lekciji je odprla poskus v zavihku Laboratorij (app.js, initTextbook → openLab). */
@@ -188,6 +217,7 @@ export function vrnitev3d(naslov, oznaka) {
 export function leaveUci() {
   fromLesson = false;
   fromLab = null;
+  from3d = null;
   close3d();
 }
 
@@ -228,6 +258,14 @@ function ikoneVrhaVnaprej() {
   }, 1500);
 }
 
+// »Poskusi znova« na kartici brez napake.js: neuspel uvoz modula ostane v brskalnikovem seznamu modulov (specifikacija;
+// Safari, Firefox, Chromium na CI), zato nov import() ne pomaga in stran osvežimo (kot napake.js pri modul: true);
+// druge napake samo naložijo znova (public/3d/sim.js enako).
+export function poskusiZnova3d(err, znova, osvezi = () => location.reload()) {
+  const uvoz = /importing a module script failed|dynamically imported module|module script/i.test(String(err?.message ?? ""));
+  return uvoz ? () => osvezi() : () => znova();
+}
+
 async function show3d() {
   const box = document.getElementById("uci-3d-content");
   if (!box) return;
@@ -239,8 +277,18 @@ async function show3d() {
     const [{ seznamModelov }, d] = await Promise.all([import("./3d/modeli.js"), drevoMod || import("./3d/drevo.js")]);
     drevoMod = d;
     modeli = await seznamModelov();
-  } catch {
-    box.innerHTML = `<p class="muted">${esc(t("a3.loadError"))}</p>`;
+  } catch (err) {
+    // Besedilo po vrsti napake (public/3d/napake.js) in »Poskusi znova«; če se še ta modul ne naloži, ostane »Preveri povezavo«.
+    const { napakaVsebina } = await import("./3d/napake.js").catch(() => ({}));
+    const kartica = document.createElement("div");
+    kartica.className = "uci-3d-napaka";
+    kartica.setAttribute("role", "alert");
+    if (napakaVsebina) kartica.append(...napakaVsebina(err, { t, znova: () => show3d(), razredGumba: "secondary" }));
+    else {
+      kartica.innerHTML = `<p>${esc(t("a3.loadError"))}</p><button type="button" class="secondary">${esc(t("a3.retry"))}</button>`;
+      kartica.querySelector("button").addEventListener("click", poskusiZnova3d(err, () => show3d()), { once: true });
+    }
+    box.replaceChildren(kartica);
     return;
   }
   const { DREVO, BARVE, poPoti, modeliVeje, vsiModeliDrevesa, ikonaVeje, ikoneVnaprej } = drevoMod;
@@ -328,7 +376,9 @@ export function open3d(id, title = "", param = null) {
   frame.title = title || t("a3.hubTitle");
   frame.allow = "fullscreen";
   // raven delov iz profila (OŠ/SŠ/študij): okvir je ločen dokument brez profila (public/3d/raven.js)
-  frame.src = `/3d?vgrajeno=1&raven=${ravenProfila()}#${encodeURIComponent(id)}${q ? `?${q}` : ""}`;
+  // ucenec: gumb »Lekcija« v modelu prebere teme (GET /api/students/:id/svet3d/:model/teme)
+  const sid = Number(D?.getStudent?.()?.id) || 0;
+  frame.src = `/3d?vgrajeno=1&raven=${ravenProfila()}${sid ? `&ucenec=${sid}` : ""}#${encodeURIComponent(id)}${q ? `?${q}` : ""}`;
   el.append(frame);
   document.body.append(el);
   document.body.classList.add("uci-3d-odprto");
@@ -343,16 +393,19 @@ export function open3d(id, title = "", param = null) {
   prilagodi();
   vv?.addEventListener("resize", prilagodi);
   vv?.addEventListener("scroll", prilagodi); // iOS premakne vidni del (tipkovnica): okvir mu sledi
-  full = { el, frame, from: document.activeElement, odjavi: () => (vv?.removeEventListener("resize", prilagodi), vv?.removeEventListener("scroll", prilagodi)) };
+  // Okvir se v 8 s ne oglasi (»pripravljen«): gumb »Zapri« čez okvir (public/3d/vgrajeno.js cuvaj3d).
+  const cuvaj = cuvaj3d(el, { zapri: close3d, t });
+  full = { el, frame, cuvaj, from: document.activeElement, odjavi: () => (vv?.removeEventListener("resize", prilagodi), vv?.removeEventListener("scroll", prilagodi)) };
   D?.onOverlay?.(true);
   frame.focus();
 }
 
 function close3d() {
   if (!full) return false;
-  const { el, from, odjavi } = full;
+  const { el, from, odjavi, cuvaj } = full;
   full = null;
   odjavi();
+  cuvaj.ustavi();
   el.remove(); // okvir se uniči skupaj s prizorom (pomnilnik grafične kartice)
   document.body.classList.remove("uci-3d-odprto");
   D?.onOverlay?.(false);

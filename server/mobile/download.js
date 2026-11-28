@@ -106,6 +106,8 @@ export function mountDownload(app, opts = {}) {
     return versionCache.version;
   };
 
+  const apkVersionText = (v) => (v ? String(v.versionName || v.versionCode || "") : "");
+
   // Kje je aplikacija za posamezno napravo (gumb »Namesti aplikacijo« v spletni aplikaciji in
   // preverjanje posodobitev v aplikaciji). apkVersion samo za APK na tem strežniku.
   const links = () => {
@@ -167,7 +169,8 @@ export function mountDownload(app, opts = {}) {
     const apkInfo = st
       ? [
           t("dl.apkSize", { mb: Math.max(1, Math.round(st.size / 1e6)) }),
-          fileVersion(st) ? t("dl.apkVersion", { version: fileVersion(st) }) : "",
+          // versionName (»1.0.0«), sicer versionCode; fileVersion vrne predmet, ne niza (prej »različica [object Object]«)
+          apkVersionText(fileVersion(st)) ? t("dl.apkVersion", { version: apkVersionText(fileVersion(st)) }) : "",
           // Datum z imenom meseca v jeziku strani (pregled 3, N1: »11/21/2026« je v angleščini dvoumen).
           t("dl.apkDate", { date: dateText(st.mtime, lang, { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Ljubljana" }) }),
         ]

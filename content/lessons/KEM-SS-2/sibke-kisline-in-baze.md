@@ -253,6 +253,18 @@ Beseda pufer prihaja iz nemške besede za **blažilnik**, kakršnega imajo žele
 + Ioni $\mathrm{HCO_3^-}$ pufra prestrežejo protone in nastane šibka kislina $\mathrm{H_2CO_3}$.
 > Pufer $\mathrm{H_2CO_3}/\mathrm{HCO_3^-}$ spremeni dodane ione $\mathrm{H_3O^+}$ v šibko kislino, razmerje se le malo spremeni, zato pH ostane skoraj enak.
 
+? Raztopina amonijaka ima koncentracijo $0{,}10\,\mathrm{mol/L}$, $K_\mathrm{b} = 1{,}8 \cdot 10^{-5}\,\mathrm{mol/L}$. Kolikšen je njen pH pri $25\,^\circ\mathrm{C}$?
+= 11,13 | 0,02
+~ 2,87 | To je pOH. pH je $14 - \mathrm{pOH}$.
+~ 13,00 | Amonijak je šibka baza: $[\mathrm{OH^-}]$ ni enaka koncentraciji baze, ampak $\sqrt{K_\mathrm{b} \cdot c}$.
+> $[\mathrm{OH^-}] = \sqrt{1{,}8 \cdot 10^{-5} \cdot 0{,}10} = 1{,}34 \cdot 10^{-3}\,\mathrm{mol/L}$, $\mathrm{pOH} = 2{,}87$, $\mathrm{pH} = 14 - 2{,}87 = 11{,}13$.
+
+? Pufer vsebuje ocetno kislino s koncentracijo $0{,}20\,\mathrm{mol/L}$ in acetatne ione s koncentracijo $0{,}10\,\mathrm{mol/L}$, $K_\mathrm{a} = 1{,}8 \cdot 10^{-5}\,\mathrm{mol/L}$. Kolikšen je njegov pH?
+= 4,44 | 0,02
+~ 5,05 | Razmerje si obrnil: $[\mathrm{H_3O^+}] = K_\mathrm{a} \cdot \dfrac{[\mathrm{HA}]}{[\mathrm{A^-}]}$, kislina je v števcu.
+~ 4,74 | To je $\mathrm{p}K_\mathrm{a}$. Enak pH bi imel pufer le pri enakih koncentracijah kisline in baze.
+> $[\mathrm{H_3O^+}] = 1{,}8 \cdot 10^{-5} \cdot \dfrac{0{,}20}{0{,}10} = 3{,}6 \cdot 10^{-5}\,\mathrm{mol/L}$, $\mathrm{pH} = -\log(3{,}6 \cdot 10^{-5}) = 4{,}44$. Kisline je več, zato je pH pod $\mathrm{p}K_\mathrm{a}$.
+
 :::simboli
 K_\mathrm{a} | konstanta kislosti | K_\mathrm{a} = \frac{[\mathrm{H_3O^+}] \cdot [\mathrm{A^-}]}{[\mathrm{HA}]} | mol/L | večja $K_\mathrm{a}$, močnejša kislina
 K_\mathrm{b} | konstanta bazičnosti | K_\mathrm{b} = \frac{[\mathrm{NH_4^+}] \cdot [\mathrm{OH^-}]}{[\mathrm{NH_3}]} | mol/L |

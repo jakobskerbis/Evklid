@@ -73,7 +73,7 @@ const { openDb } = await import("../server/db.js");
 const { createApp } = await import("../server/app.js");
 const { isMockMode, MODEL, MODEL_MID } = await import("../server/claude.js");
 const { callMaxUsd, imageCallReserveUsd } = await import("../server/meje-ai.js");
-const { READ_PROMPT, TASK_READ_PROMPT, readLangLine } = await import("../server/scan.js");
+const { READ_PROMPT, TASK_READ_PROMPT, readLangLine, SOLVE_ATTEMPTS } = await import("../server/scan.js");
 const { normalizeSettings } = await import("../server/settings.js");
 const { solve, prep } = await import("../public/scan/solvecore.js");
 const { soughtNeedsAi } = await import("../public/scan/odgovor.js");
@@ -87,8 +87,9 @@ const REZERVA = {
   prepis: imageCallReserveUsd(MODELI.prepis, 1200, 1, bajti(TASK_READ_PROMPT) + 300),
   // Navodila branja + vrstica jezika (v poti je v rezervi 500 bajtov prostora zanjo).
   branje: imageCallReserveUsd(MODELI.branje, 2000, 1, bajti(READ_PROMPT) + 500 + bajti(readLangLine("sl"))),
-  // Do dva klica (ponovitev ob napačni rešitvi), vsak z navodili, nalogo in podatki ter do 8000 izhodnimi žetoni.
-  resevanje: (body) => 2 * callMaxUsd(MODELI.resevanje, 6000 + bajti(body.text + (body.given || []).join("") + (body.sought || "")), 8000),
+  // Do SOLVE_ATTEMPTS klicev (samodejne ponovitve ob napačni rešitvi), vsak z navodili, nalogo, podatki in
+  // povratno informacijo prejšnjih poskusov ter do 8000 izhodnimi žetoni.
+  resevanje: (body) => SOLVE_ATTEMPTS * callMaxUsd(MODELI.resevanje, 6000 + 600 * SOLVE_ATTEMPTS + bajti(body.text + (body.given || []).join("") + (body.sought || "")), 8000),
 };
 // Najslabši primer slike: največja naloga (600 znakov), 10 podatkov po 160 znakov in iskano.
 const RESEVANJE_NAJVEC = REZERVA.resevanje({ text: "x".repeat(600), given: Array(10).fill("x".repeat(160)), sought: "x".repeat(160) });
@@ -107,6 +108,26 @@ if (PREIZKUS !== isMockMode()) {
 const slikaB64 = (s) => fs.readFileSync(path.join(nabor.mapa, s.datoteka)).toString("base64");
 const vrstaSlike = (s) => (/\.png$/i.test(s.datoteka) ? "image/png" : /\.webp$/i.test(s.datoteka) ? "image/webp" : "image/jpeg");
 const vseNaloge = (s) => [s, ...(s.ostale || [])];
+function oznakeBranja(naloge, problems) {
+  const ocene = [];
+  for (const n of naloge) {
+    let naj = null;
+    let tocke = -1;
+    for (const p of problems) {
+      const t = n.racun ? oceniBesedilo(n.racun.replace(/\*/g, ""), String(p?.text ?? "").replace(/\*/g, "")) : { stevila: 0, operatorji: 0 };
+      const o = oceniRacun(n, p);
+      const tt = (o.enakovredno ? 5 : 0) + t.stevila + t.operatorji + o.podatki;
+      if (tt > tocke) [naj, tocke] = [o, tt];
+    }
+    if (naj) ocene.push(naj);
+  }
+  return {
+    ugibano: ocene.filter((o) => o.ugibano).length,
+    oznaceno: ocene.reduce((a, o) => a + o.oznaceno, 0),
+    moznostiZgresene: ocene.reduce((a, o) => a + (o.moznostiZgresene || 0), 0),
+    odvecna: Math.max(0, problems.length - naloge.length),
+  };
+}
 
 // --preizkus: namesto modela vrne pričakovano iz naloge.json (pot, rezerve in ocena tečejo kot sicer, 0 $).
 function preizkusneFunkcije() {
@@ -190,6 +211,9 @@ async function meriSliko(s, x) {
       pricakovano: naloge.length,
       prva: problems.length ? oceniRacun(s, problems[0]) : null,
       vse: naloge.filter((n) => problems.some((p) => oceniRacun(n, p).ok)).length,
+      // P3-5: za vsako pričakovano nalogo njej najbližje branje; ugibano = napačno brez oznake [?]. Odvečna branja
+      // (vrstice postopka, ki jih model doda »za vsak primer«) niso ugibanje znakov, štejejo se posebej.
+      ...oznakeBranja(naloge, problems),
     };
   } catch (e) {
     x.napake.push(`branje: ${e.message}`);
@@ -204,7 +228,7 @@ async function meriSliko(s, x) {
     if (soughtNeedsAi(r, { sought: p.sought, goal: p.goal })) r = { ok: false, goals: r.goals || [] };
     if (r.ok) {
       const dobljeno = { answer_tex: r.answer?.tex || "" };
-      x.resitev = { vir: "lastni reševalnik", answer_tex: dobljeno.answer_tex, preverjeno: !!r.verified };
+      x.resitev = { vir: "lastni reševalnik", answer_tex: dobljeno.answer_tex, preverjeno: !!r.verified, status: r.status || (r.verified ? "verified" : "unverified") };
       x.ocena.resitev = { naloga: i, pravilno: oceniResitev(n, dobljeno), preverjeno: !!r.verified };
     } else {
       const goal = r.goal || p.goal || null;
@@ -215,7 +239,7 @@ async function meriSliko(s, x) {
       rezerviraj(REZERVA.resevanje(body), "reševanje", s.id);
       try {
         const { solution } = await post(`/api/students/${st.id}/scan/solve`, body);
-        x.resitev = { vir: "AI", answer_tex: solution.answer_tex || "", solutions: solution.solutions || [], value: solution.value || "", preverjeno: !!solution.verified, check: solution.check || null };
+        x.resitev = { vir: "AI", answer_tex: solution.answer_tex || "", solutions: solution.solutions || [], value: solution.value || "", preverjeno: !!solution.verified, status: solution.status || null, check: solution.check || null, poskusi: solution.attempts || 1 };
         x.ocena.resitev = { naloga: i, pravilno: oceniResitev(n, solution), preverjeno: !!solution.verified };
       } catch (e) {
         x.napake.push(`reševanje: ${e.message}`);
@@ -244,7 +268,7 @@ for (const s of slike) {
       `${s.id}: prepis ${o.prepis ? (o.prepis.ok ? "OK" : `ne (števila ${o.prepis.stevila}, operacije ${o.prepis.operatorji}, besede ${o.prepis.besede})`) : "–"}` +
         `${o.prepis ? `, slika ${o.prepis.figure ? "OK" : "ne"}, več ${o.prepis.more && o.prepis.tasks ? "OK" : "ne"}` : ""}; ` +
         `branje ${o.branje ? `${o.branje.prva?.ok ? "OK" : "ne"} (${o.branje.vse}/${o.branje.pricakovano} nalog)` : "–"}; ` +
-        `rešitev ${o.resitev ? `${o.resitev.pravilno === null ? "brez pričakovane" : o.resitev.pravilno ? "pravilna" : "NAPAČNA"} (${x.resitev?.vir || "napaka"}${o.resitev.preverjeno ? ", preverjena" : ""})` : "–"}; ` +
+        `rešitev ${o.resitev ? `${o.resitev.pravilno === null ? "brez pričakovane" : o.resitev.pravilno ? "pravilna" : "NAPAČNA"} (${x.resitev?.vir || "napaka"}${o.resitev.preverjeno ? ", preverjena" : ""}${x.resitev?.status ? `, status ${x.resitev.status}` : ""}${x.resitev?.poskusi > 1 ? `, poskusov ${x.resitev.poskusi}` : ""})` : "–"}; ` +
         `${x.usd.toFixed(4)} $, skupaj ${porabljeno().toFixed(4)} $${x.napake.length ? `; napake: ${x.napake.join(" | ")}` : ""}`,
     );
   }
@@ -268,7 +292,8 @@ console.log(
   `\nIZID: ${izid.length}/${slike.length} slik; Inštruktor (prepis) ${st((x) => x.ocena.prepis?.ok)}/${sPrepisom.length} pravilnih, ` +
     `slika ${st((x) => x.ocena.prepis?.figure)}/${sPrepisom.length}, več nalog ${st((x) => x.ocena.prepis?.more && x.ocena.prepis?.tasks)}/${sPrepisom.length}; ` +
     `Skeniraj (prva naloga) ${st((x) => x.ocena.branje?.prva?.ok)}/${zBranjem.length}, vse naloge ${st((x) => x.ocena.branje && x.ocena.branje.vse === x.ocena.branje.pricakovano)}/${zBranjem.length}; ` +
-    `rešitev ${st((x) => x.ocena.resitev?.pravilno)}/${zResitvijo.length} pravilnih (lastni reševalnik ${st((x) => x.resitev?.vir === "lastni reševalnik")}, AI ${st((x) => x.resitev?.vir === "AI")}, preverjenih ${st((x) => x.ocena.resitev?.preverjeno)}); ` +
+    `branje z ugibanjem ${st((x) => x.ocena.branje?.ugibano > 0)}/${zBranjem.length} slik (merilo 0), označenih znakov ${zBranjem.reduce((a, x) => a + (x.ocena.branje.oznaceno || 0), 0)} (brez prave možnosti ${zBranjem.reduce((a, x) => a + (x.ocena.branje.moznostiZgresene || 0), 0)}), odvečnih branj ${zBranjem.reduce((a, x) => a + (x.ocena.branje.odvecna || 0), 0)}; ` +
+    `rešitev ${st((x) => x.ocena.resitev?.pravilno)}/${zResitvijo.length} pravilnih (lastni reševalnik ${st((x) => x.resitev?.vir === "lastni reševalnik")}, AI ${st((x) => x.resitev?.vir === "AI")}, preverjenih ${st((x) => x.ocena.resitev?.preverjeno)}; statusi ${["verified", "partial", "numeric", "unverified", "wrong"].map((k) => `${k} ${st((x) => x.resitev?.status === k)}`).join(", ")}); ` +
     `strošek ${porabljeno().toFixed(4)} $${ustavljeno ? ` (ustavljeno pred mejo ${MAX_USD} $)` : ""}. Izid: ${OUT}`,
 );
 fs.rmSync(tmp, { recursive: true, force: true });

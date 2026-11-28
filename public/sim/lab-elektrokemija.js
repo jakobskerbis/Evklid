@@ -186,6 +186,7 @@ const TEK_OPTS = Object.entries(TEKOCINE_EL).map(([k, v]) => [k, v.name + (v.for
 const VODA_BARVA = [196, 222, 242]; // bistra tekočina v steklu je rahlo modrikasta (risba)
 export function labElektroliza(el) {
   const B = new ElektrolizaBench({ seed: seme() });
+  el._labBench = B; // maturitetni poskus (lab-matura.js): matura/lab-elektroliza.js (prava vrednost je konstanta F modela)
   const W = 400, H = 458, S = 6.4, ML = 0.641 * S; // 1 cm = 6,4 enote, 1 mL v cevi = 4,1 enote
   const svg = svgBox(W, H, "lab-bench lab-ek lab-ek-hof");
   gradienti(svg);
@@ -215,7 +216,15 @@ export function labElektroliza(el) {
   const elSeg = row("elektrodi", seg("elektrodi", [["pt", "platina"], ["grafit", "grafit"]], "pt", (v) => ((B.elektrode = v), log.push(`Elektrodi iz ${v === "pt" ? "platine" : "grafita"}.`, "info"), draw(true))));
   const indT = toggle("v tekočino kani univerzalni indikator", false, (v) => ((B.indikator = v), draw(true)));
   const fillBtn = button("Nalij tekočino skozi srednjo cev", () => fill(), "primary small");
-  const emptyBtn = button("Izprazni in speri aparat", () => (B.izprazni(), (said.bub = said.cl = said.hot = said.dist = said.cc = false), log.push("Aparat je prazen in spran.", "info"), sync(), draw(true)));
+  // Praznjenje izklopi napajalnik (model → izprazni): tudi stikalo in dnevnik to pokažeta (prej je ostalo vklopljeno).
+  const izprazni = () => {
+    const bil = B.vklop;
+    B.izprazni();
+    onT.querySelector("input").checked = false;
+    if (bil) log.push("Napajalnik je izklopljen.", "info");
+    (said.bub = said.cl = said.hot = said.dist = said.cc = false), log.push("Aparat je prazen in spran.", "info"), sync(), draw(true);
+  };
+  const emptyBtn = button("Izprazni in speri aparat", () => izprazni());
   const pipaT = [0, 1].map((i) => toggle(`pipa ${i ? "desno" : "levo"} odprta`, true, (v) => tap(i, v)));
   const polSeg = row("priključitev", seg("priključitev elektrod", [["L-", "levo −, desno +"], ["L+", "levo +, desno −"]], "L-", (v) => ((B.pol = v), log.push(v === "L-" ? "Leva elektroda je na negativnem polu (katoda), desna na pozitivnem (anoda)." : "Leva elektroda je zdaj na pozitivnem polu (anoda), desna na negativnem (katoda).", "info"), draw(true))));
   const amSel = select({ label: "območje ampermetra", options: [["20m", "20 mA"], ["200m", "200 mA"], ["10", "10 A (vtičnica 10A)"]], value: B.amRange, onChange: (v) => ((B.amRange = v), draw(true)) });
@@ -583,7 +592,7 @@ export function labGalvanski(el) {
     { key: "U", label: "<i>U</i> [V]" },
     { key: "E", label: "Δ<i>E</i>° [V]" },
   ], { empty: "Še ni meritev. Sestavi člen, poveži ga s solnim mostom in zapiši napetost." });
-  const graph = dataGraph({ x: [-1, 3.5], y: [-1, 3.5], xStep: 0.5, yStep: 0.5, xLabel: "ΔE° [V]", yLabel: "U [V]", title: "Izmerjena napetost v odvisnosti od razlike standardnih elektrodnih potencialov (rdeči minus črni vodnik)" });
+  const graph = dataGraph({ x: [-1, 3.5], y: [-1, 3.5], xStep: 0.5, yStep: 0.5, xLabel: "ΔE° [V]", yLabel: "U [V]", title: "Izmerjena napetost v odvisnosti od razlike standardnih elektrodnih potencialov (rdeči minus črni vodnik)", formula: tex(String.raw`U \approx \Delta E^\circ = E^\circ_\text{rdeči} - E^\circ_\text{črni}`) + `; za člen ${tex(String.raw`E^\circ_\text{člen} = E^\circ_\text{katoda} - E^\circ_\text{anoda}`)} (rdeči na katodi)` });
   const graphK = dataGraph({ x: [-3, 3], y: [-120, 120], xStep: 1, yStep: 20, xLabel: "lg(c rdeči / c črni)", yLabel: "U [mV]", title: "Koncentracijski členi: napetost v odvisnosti od desetiškega logaritma razmerja koncentracij" });
   const qBox = h("div");
   const pts = [], ptsK = [];

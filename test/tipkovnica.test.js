@@ -15,7 +15,7 @@ import { DEVICE_SETTINGS, deviceValue } from "../public/settings-registry.js";
 import { BUILTINS } from "../public/graph/math.js";
 import { evaluate } from "../public/graph/scicore.js";
 import { parseCommand, runCas } from "../public/graph/cas.js";
-import { UI_LANGUAGES } from "../public/i18n/languages.js";
+import { UI_LANGUAGES, LIVE_UI_LANGUAGES } from "../public/i18n/languages.js";
 import SL from "../public/i18n/sl.js";
 
 const ROOT = path.join(import.meta.dirname, "..");
@@ -201,7 +201,7 @@ test("kemija je samo enkrat: zavihek Kem ima vse iz čipa Σ, čipa Σ ni, kjer 
   const tk = read("public/tipkovnica.js");
   assert.match(tk, /tk-chg-b[^`]*◌<\/span><sup>/, "naboj je nadpisan ob ◌");
   // podzavihka imata svoja napisa (i18n), ne enakih kot tipki; tipka »H₂O« ostane oblikovanje formule
-  assert.deepEqual(KEM_GROUPS.map(([, l]) => l), ["tk.kem.el", "tk.kem.ion", "tk.kem.re", "tk.kem.pse"]);
+  assert.deepEqual(KEM_GROUPS.map(([, l]) => l), ["tk.kem.el", "tk.kem.ion", "tk.kem.re", "tk.kem.pse", "tk.moje"]);
   assert.match(tk, /subtabs\(KEM_GROUPS\.map\(\(\[id, label\]\) => \[id, t\(label\)\]\)/);
   assert.match(tk, /key\("H₂O", \{ a: "chem" \}/);
   assert.match(tk, /role="tab"[^`]*aria-label="\$\{esc\(label\)\}"/, "podzavihki imajo aria-label");
@@ -273,7 +273,7 @@ test("settings: registry keys for the tutor, defaults, stored per device", () =>
   assert.ok(!/fetch\(|\/api\//.test(src), "tipkovnica ne kliče strežnika");
 });
 
-test("i18n: every keyboard string is in Slovenian and all 32 UI languages, translated", () => {
+test("i18n: every keyboard string is in Slovenian and every live UI language, translated", () => {
   const src = read("public/tipkovnica.js") + read("public/tipkovnica-data.js");
   const used = new Set([...src.matchAll(/\bt\(\s*["'`]([a-zA-Z0-9_.]+)["'`]/g)].map((m) => m[1]));
   for (const m of src.matchAll(/"(tk\.[a-zA-Z0-9_.]+|sc\.grp\.[a-z]+)"/g)) used.add(m[1]);
@@ -282,8 +282,9 @@ test("i18n: every keyboard string is in Slovenian and all 32 UI languages, trans
   const tk = Object.keys(SL).filter((k) => k.startsWith("tk."));
   assert.ok(tk.length >= 20);
   for (const k of used) assert.ok(SL[k], `sl.js: ${k}`);
-  const files = UI_LANGUAGES.filter((c) => c !== "sl");
-  assert.equal(files.length, 32);
+  // nove nize dobijo le živi jeziki (j, 24. 11.; CLAUDE.md), ostali so zamrznjeni in padejo nazaj prek uiChain
+  assert.equal(UI_LANGUAGES.length, 33);
+  const files = LIVE_UI_LANGUAGES.filter((c) => c !== "sl");
   for (const code of files) {
     const d = JSON.parse(read(`public/i18n/ui/${code}.json`));
     for (const k of [...used, ...tk]) assert.ok(d[k], `${code}: ${k}`);

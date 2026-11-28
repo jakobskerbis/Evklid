@@ -100,6 +100,43 @@
   .composer-row #input { padding-inline: 6px; }
 }
 
+/* Ležeč telefon (UX PR 2, UX-100/101): nizek zaslon ima za klepet le ~360 px. Glava v eni vrstici (oznake pogovora ob
+   naslovu, ne pod njim), obrazec za prijavo napake ali predlog funkcije ne podaljša strani (drsi sam, največ 30 %
+   višine), da sporočila ostanejo vidna in stran ne drsi pod vrstico za pisanje. Pod 700 px širine se oznake prelomijo
+   kot prej (v eno vrstico ne gredo cele, j 2026-11-04: brez »Mat…«). */
+@media (orientation: landscape) and (max-height: 500px) and (min-width: 700px) {
+  /* Seznam pogovorov kot na telefonu (gumb ☰ v glavi): ob 270 px stolpcu bi bile oznake v glavi odrezane (»…matika«). */
+  .chat-view:not(.in-okno) { grid-template-columns: minmax(0, 1fr); position: relative; }
+  .chat-view:not(.in-okno) > .sidebar:not(.open) { display: none; }
+  .chat-view:not(.in-okno) > .sidebar.open { display: block; position: absolute; inset: 0; z-index: 5; padding-top: 60px; border-inline-end: 0; }
+  .chat-view:not(.in-okno) #toggle-sidebar { display: inline-grid; place-items: center; border-color: transparent; background: none; box-shadow: none; }
+  .chat-head { flex-wrap: nowrap; position: relative; z-index: 6; }
+  .chat-view:has(.sidebar.open) #chat-state { display: none; }
+  body > #view-chat:not(.in-okno) .chat-head { padding-block: max(4px, var(--varno-zg, env(safe-area-inset-top, 0px))) 4px; }
+  .chat-head h1 { flex: 1 1 0; min-width: 48px; }
+  .chat-head #chat-state { order: 0; flex: none; flex-wrap: nowrap; margin-inline: 0; padding: 0; }
+}
+/* Med pisanjem z Evklidovo tipkovnico desno (tipkovnica.css) je klepet širok le 280–370 px: oznake pogovora bi bile
+   odrezane (»Matematika · Voden«) ali bi glava imela tri vrstice (640 × 360: 130 px od 360), orodja pa bi zdrsnila pod
+   tipkovnico (844 × 390: kalkulator na 374–418 px, tipkovnica od 371 px). Zato se med pisanjem skrijejo oznake in
+   stranska dejanja (seznam pogovorov, prijava napake, predlog funkcije); ostanejo Nazaj, naslov, oznaka AI, skeniranje
+   in kalkulator. ⌄ zapre tipkovnico in vse se vrne. */
+@media (orientation: landscape) and (max-height: 500px) and (min-width: 600px) {
+  body.tk-open .chat-head { flex-wrap: nowrap; }
+  body.tk-open .chat-head :is(#chat-state, #toggle-sidebar, #chat-bug, #chat-idea) { display: none; }
+  /* Vrstica za pisanje kot na telefonu pokončno: »Pošlji« samo z ikono, sicer je prazno polje ozko (106 px), namig
+     se prelomi in gumbi zdrsnejo pod polje. */
+  body.tk-open #composer button.send span { display: none; }
+  body.tk-open #composer button.send { padding: 6px 10px; }
+}
+@media (orientation: landscape) and (max-height: 500px) {
+  #view-chat .chat > .bug-box { flex: none; max-height: 30dvh; overflow-y: auto; overscroll-behavior: contain; grid-template-columns: minmax(0, 1fr) auto; }
+  /* Gumba Pošlji in Prekliči desno ob polju (ne pod njim), da je obrazec na 360 px visokem zaslonu viden cel. */
+  #view-chat .chat > .bug-box > :is(p, .rep-err) { grid-column: 1 / -1; }
+  #view-chat .chat > .bug-box > textarea { grid-column: 1; grid-row: 2; min-height: 48px; }
+  #view-chat .chat > .bug-box > .rep-actions { grid-column: 2; grid-row: 2; align-self: end; flex-wrap: nowrap; }
+}
+
 /* ---------- Spodnja vrstica se umakne pri branju in gledanju (j, 2026-10-31) ----------
    Telefon in tablica na dotik, vsi slogi: v klepetu z inštruktorjem (prazen ali s sporočili), v temi (lekcija, naloge,
    vaja, simulacije), pri karticah za ponavljanje, v odprti lekciji Učbenika, v odprtem poskusu Laboratorija (več prostora
@@ -115,7 +152,7 @@
     :has(> #view-cards:not([hidden]):not(.in-okno)), :has(> #view-graph:not([hidden]):not(.in-okno)),
     :has(> #view-uci:not([hidden]):not(.in-okno) > #view-textbook:not([hidden]) .tb-lesson-grid),
     :has(> #view-uci:not([hidden]):not(.in-okno) > #view-lab.lab-open:not([hidden]))) > .tabbar {
-    position: fixed; inset-inline: 0; bottom: 0; z-index: 30;
+    position: fixed; inset-inline: 0; bottom: 0; z-index: var(--z-noga, 30);
     transform: translateY(var(--tb-y, 100%)); visibility: var(--tb-vis, hidden);
     transition: transform 0.22s ease, visibility 0s linear var(--tb-vd, 0.22s);
   }
@@ -142,7 +179,7 @@
    Zasloni za branje zgoraj imajo močnejše pravilo (--tb-y) in ostanejo po starem. Med vodičem (kaže na zavihke) je
    vrstica vedno na mestu. */
 @media (max-width: 760px), (max-width: 1240px) and (hover: none) and (pointer: coarse) {
-  body:is(.tb-mir, .tb-vraca):not(:has(> #tour:not([hidden]))) > .tabbar { position: fixed; inset-inline: 0; bottom: 0; z-index: 30; transition: transform 0.22s ease; }
+  body:is(.tb-mir, .tb-vraca):not(:has(> #tour:not([hidden]))) > .tabbar { position: fixed; inset-inline: 0; bottom: 0; z-index: var(--z-noga, 30); transition: transform 0.22s ease; }
   body.tb-mir:not(:has(> #tour:not([hidden]))) > .tabbar { transform: translateY(100%); visibility: hidden; transition: transform 0.22s ease, visibility 0s linear 0.22s; }
 }
 @media (prefers-reduced-motion: reduce) { .tabbar, .tb-stepper { transition: none !important; } }
@@ -153,6 +190,9 @@
 /* Gumbi z izbirami pod odgovorom inštruktorja: glavni cilj dotika, 44 px (docs/oblikovanje.md). */
 @media (hover: none) and (pointer: coarse) {
   .choice-row .choice-btn { min-height: 44px !important; }
+  /* Izbire v glavi klepeta (predmet, način, razred) na dotik vsaj 40 px tudi na iPadu in ležečem telefonu, ne le
+     pokončno do 760 px (prej 25 px; glava ostane ena vrstica, gumbi v njej so 40–44 px). */
+  .chat-head #chat-state .chip-pick .dd-btn { min-height: 40px; }
 }
 
 /* Koš v seznamu pogovorov: brisanje je z enim dotikom (brez potrditve), zato je na dotik vedno viden,

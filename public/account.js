@@ -363,7 +363,7 @@ function busy(form, on) {
 }
 function showError(form, err) {
   const box = errorBox(form);
-  box.textContent = err.message;
+  box.textContent = err.data?.code === "ime_neprimerno" ? t("set.nameBad") : err.message; // #754
   box.hidden = false;
 }
 
@@ -620,8 +620,12 @@ function sameMarkup(box, html) {
 
 async function renderLanding() {
   const prices = await loadLandingPrices();
-  // Med čakanjem na cene je obiskovalec morda že odšel na prijavo ali registracijo.
-  if (status?.logged_in || hashMode()) return;
+  // Med čakanjem na cene je obiskovalec morda že odšel na prijavo ali registracijo. Z gumbom, ki ga je prevzel account.js
+  // (goAuth), je obrazec že tu; z gumbom strani s strežnika (navadno sidro, še brez poslušalca) pa ga izrišemo tu, sicer
+  // ostane prazen zaslon (popstate ga ne izriše, ker body še ni auth-mode; pregled PR #1203).
+  if (status?.logged_in) return;
+  const m = hashMode();
+  if (m) return void (prikazan !== m && !(m === "register" && prikazan === "ask-parent") && renderAuthMode(m));
   const name = document.querySelector(".topbar .brand-name")?.textContent || "";
   const html = landingHtml(t, { name, prices, store: isStoreApp(), loc: locale() }); // aplikacija iz trgovine: brez cene (P2)
   const box = $("#view-auth");
@@ -830,7 +834,7 @@ function renderLogin(mode = "login") {
         if (r.code_kind === "referral") toast(t("code.refOk"));
         store.set(INVITE_KEY, null);
         // Koda vabila v pilot (#819): vpisana v vrstico ali s strani /vabilo; po potrditvi e-naslova račun samodejno v pilotu (#751).
-        if (r.invite) toast(t({ pending: "vab.regPending", ended: "vab.regEnded" }[r.invite] || "vab.regBad"));
+        if (r.invite) toast(t({ pending: "vab.regPending", ended: "vab.regEnded", minor: "vab.regMinor" }[r.invite] || "vab.regBad"));
         if (r.promo_until) toast(`Aktivacijska koda velja ✓ Poln dostop do ${date(r.promo_until)}.`);
         if (r.promo_pending) toast(t("acct.promoAfterVerify"));
         if (r.promo_error) toast(`Račun je ustvarjen, koda pa ni bila sprejeta: ${r.promo_error}`);

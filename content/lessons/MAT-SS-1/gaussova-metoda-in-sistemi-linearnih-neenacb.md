@@ -71,6 +71,8 @@ točka: 3 | | prazna
 
 Če se intervala ne prekrivata, sistem nima rešitve.
 
+V simulaciji spodaj (»Rešitve neenačb kot intervali«) izberi ∩ in nastavi interval A od $-1$ do $3$ (levo krajišče vključeno, desno ne). Nato drsnik »B od« počasi premikaj v desno in opazuj, pri kateri vrednosti presek postane prazna množica. Zakaj se to zgodi že pri $3$? ($3$ ne spada v $A$, ker desno krajišče ni vključeno.)
+
 **5. Neenačba z dvema neznankama.** Premica $y = 2$ razdeli ravnino na dva dela. Točke z $y > 2$ so nad njo, točke z $y < 2$ pod njo. Vsak del imenujemo **polravnina**, premica je njen **rob**. Splošno: rešitev neenačbe $ax + by < c$ je polravnina, ki jo omejuje premica $ax + by = c$.
 
 Katero polravnino vzamemo, odloči **testna točka**, ki ni na premici, najraje $(0, 0)$. Če ustreza neenačbi, je rešitev polravnina s to točko, sicer druga. Rob rišemo **polno**, če velja $\le$ ali $\ge$ (točke na robu so rešitve), in **črtkano** pri $<$ ali $>$ (niso rešitve).
@@ -186,7 +188,7 @@ Reši sistem $x - y + z = 1$, $2x + y - z = 5$, $4x - y + z = 7$.
 **Iščemo:** vse rešitve
 
 :::formula
-Gaussova metoda; vrstica $0 = 0$ pomeni neskončno rešitev, vrstica $0 = c$ s $c \neq 0$ nobene.
+Gaussova metoda; vrstica $0 = c$ s $c \neq 0$ pomeni, da rešitve ni; vrstica $0 = 0$ brez take vrstice pomeni neskončno rešitev.
 :::
 
 **Rešitev:**
@@ -205,7 +207,7 @@ Dobiš $0 = 0$, zato je rešitev neskončno. Izberemo $z = t$: $y = 1 + t$ in $x
 
 - **Desna stran ostane pozabljena.** Pri (2) $- 3 \cdot$ (1) nekdo pomnoži s $3$ le levo stran. Enačba je celota: trikratnik prve je $3x + 3y + 3z = 90$, odštejemo vse, tudi $90$.
 - **Izločanje z napačno enačbo.** Ko je $x$ že odstranjen iz druge in tretje, nekdo $y$ iz tretje odstrani s pomočjo prve enačbe. Tako se $x$ vrne. Za drugi krog uporabi novo drugo enačbo, ki $x$ nima.
-- **»$0 = 0$ pomeni, da je rešitev $0$.«** Vrstica $0 = 0$ ne pove ničesar o neznankah; pomeni neskončno rešitev. Rešitve ni pri $0 = c$, kjer je $c \neq 0$.
+- **»$0 = 0$ pomeni, da je rešitev $0$.«** Vrstica $0 = 0$ ne pove ničesar o neznankah; če ni nobene vrstice $0 = c$ s $c \neq 0$, pomeni neskončno rešitev. Rešitve ni pri $0 = c$, kjer je $c \neq 0$.
 - **Unija namesto preseka.** Pri $x > -2$ in $x \le 4$ ni rešitev »vsa števila«. Sistem zahteva oba pogoja hkrati, zato vzamemo presek $(-2, 4]$.
 - **Polravnina na pamet, rob na pamet.** Pri $2x - y > 4$ znak $>$ ne pomeni »nad premico« (izrazi $y$ in znak se obrne). Vedno uporabi testno točko. Rob pri $<$ in $>$ je črtkan, ker njegove točke niso rešitve.
 
@@ -216,7 +218,7 @@ Dobiš $0 = 0$, zato je rešitev neskončno. Izberemo $z = t$: $y = 1 + t$ in $x
 - Z ekvivalentnimi preoblikami spravi sistem v **trikotno obliko**: odstrani $x$ iz 2. in 3. enačbe, nato $y$ iz 3.
 - Nato vstavljaj nazaj od $z$ do $x$ in naredi preizkus.
 - Vrstica $0 = c$ ($c \neq 0$): sistem **nima rešitve**.
-- Vrstica $0 = 0$: **neskončno rešitev**; eno neznanko izberemo kot parameter $t$.
+- Vrstica $0 = 0$ (in ni nobene vrstice $0 = c$ s $c \neq 0$): **neskončno rešitev**; eno neznanko izberemo kot parameter $t$.
 
 **Neenačbe:**
 
@@ -230,7 +232,7 @@ Dobiš $0 = 0$, zato je rešitev neskončno. Izberemo $z = t$: $y = 1 + t$ in $x
 
 **Formule**
 - Trikotna oblika: $x$ odstrani iz 2. in 3., nato $y$ iz 3. enačbe (na pamet)
-- $0 = c$, $c \ne 0$: ni rešitve; $0 = 0$: neskončno rešitev (na pamet)
+- $0 = c$, $c \ne 0$: ni rešitve; sicer $0 = 0$: neskončno rešitev (na pamet)
 - Sistem neenačb: rešitev je presek (na pamet)
 - $ax + by = c$ je rob; $\le$, $\ge$ polno, $<$, $>$ črtkano (na pamet)
 
@@ -352,7 +354,7 @@ Sistem neenačb je kot več zaporednih sit na vhodu v dvorano. Prvo sito prepust
 
 Zakaj Gaussova metoda ne izgubi ali doda rešitev? Če trojka ustreza enačbama (1) in (2), ustreza tudi (2) $- k \cdot$ (1). Obratno: iz (1) in nove (2) dobimo nazaj staro (2) $=$ nova (2) $+ k \cdot$ (1). Stari in novi sistem imata zato isto množico rešitev.
 
-Geometrijsko vsaka linearna enačba s tremi neznankami opisuje ravnino v prostoru. Rešitev sistema je skupna točka treh ravnin. Ravnine se lahko sekajo v eni točki (ena rešitev), nimajo skupne točke (vrstica $0 = c$) ali imajo skupno premico (vrstica $0 = 0$, rešitve z enim parametrom).
+Geometrijsko vsaka linearna enačba s tremi neznankami opisuje ravnino v prostoru. Rešitev sistema je skupna točka treh ravnin. Ravnine se lahko sekajo v eni točki (ena rešitev), nimajo skupne točke (vrstica $0 = c$) ali imajo skupno premico (vrstica $0 = 0$, rešitve z enim parametrom); če vse tri sovpadajo, je skupna kar vsa ravnina (dva parametra).
 
 Testna točka deluje, ker ima izraz $ax + by - c$ na vsej polravnini isti predznak. Če bi ga zamenjal, bi moral vmes doseči $0$, to pa se zgodi le na premici.
 

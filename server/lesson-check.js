@@ -2,7 +2,7 @@
 // Uporabljata ga scripts/check-lesson.js in testi.
 import katex from "katex";
 import { napakaIzraza } from "../public/mat/izris.js";
-import { parseLesson, expandFormulaBlocks } from "./textbook.js";
+import { parseLesson, expandFormulaBlocks, simsFor } from "./textbook.js";
 import { drawingErrors, DRAW_RE } from "./risbe.js";
 import { parseAnswerLine } from "../public/preveri-se.js";
 import { getTopic } from "./curriculum.js";
@@ -12,6 +12,14 @@ import { najdiNastevanja } from "./nastevanje.js";
 import { SYMBOLS_BLOCK_RE, parseSymbolsBlock, symbolsIn, SYMBOLS, SUBJECT_TABLES } from "../public/formula-data.js";
 
 export const LESSON_STATES = ["osnutek", "preverjeno", "pregledano"];
+
+// Datum strokovnega pregleda: pravi koledarski datum LLLL-MM-DD, ne v prihodnosti (UTC).
+export function veljavenDatumPregleda(d, danes = new Date()) {
+  if (typeof d !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(d)) return false;
+  const t = Date.parse(`${d}T00:00:00Z`);
+  if (!Number.isFinite(t) || new Date(t).toISOString().slice(0, 10) !== d) return false;
+  return t <= Date.UTC(danes.getUTCFullYear(), danes.getUTCMonth(), danes.getUTCDate());
+}
 
 const REQUIRED = [
   [/^zakaj/i, "Zakaj se tega učimo"],
@@ -59,7 +67,9 @@ export function checkLessonSource(src, topicId) {
   // Meje besed po Unicode (\b je samo ASCII: »Ana Čaić« bi sicer veljala za AI).
   if (/(?<![\p{L}\p{N}])(ai|opus|sonnet|haiku|fable|claude|gpt|program)(?![\p{L}\p{N}])/iu.test(meta.pregledal || "")) err("»pregledal:« je samo za človeka; pregled AI je stanje »preverjeno«");
   if (meta.pregledal != null && !meta.pregledal) warn("polje »pregledal:« je prazno");
-  if (meta.stanje === "pregledano" && !meta.pregledal) warn("lekcija s stanjem »pregledano« naj ima v glavi »pregledal: <ime učitelja>«");
+  // Strokovni pregled mora biti dokazan v glavi (N-03, server/oznake-vsebine.js): ime učitelja in datum pregleda.
+  if (meta.stanje === "pregledano" && !meta.pregledal) err("lekcija s stanjem »pregledano« mora imeti v glavi »pregledal: <ime učitelja>«");
+  if (meta.stanje === "pregledano" && !veljavenDatumPregleda(meta.pregledano)) err("lekcija s stanjem »pregledano« mora imeti v glavi »pregledano: LLLL-MM-DD« (datum pregleda, ne v prihodnosti)");
   if (meta.pregledal && meta.stanje !== "pregledano") warn("lekcija ima »pregledal:«, stanje pa ni »pregledano«");
 
   for (const [re, name] of REQUIRED) if (!sections.some((s) => re.test(s.title))) err(`manjka razdelek »## ${name}«`);
@@ -149,14 +159,25 @@ export function checkLessonSource(src, topicId) {
   const stripped = expandFormulaBlocks(body, "plain");
   for (const e of drawingErrors(body)) err(e);
   // Slika iz znakov v bloku ``` brez oznake jezika je v aplikaciji in PDF videti kot surov izpis (j, 10. 11. 2026).
-  const ascii = untaggedFences(body).filter((b) => /[■●○▲▼│┌└├─═█▓▒░]|\|-{2,}|-{3,}\||<-{2,}|-{2,}>/.test(b)).length;
+  const untagged = untaggedFences(body);
+  const ascii = untagged.filter((b) => /[■●○▲▼│┌└├─═█▓▒░]|\|-{2,}|-{3,}\||<-{2,}|-{2,}>/.test(b)).length;
   if (ascii) warn(`Slike iz znakov v blokih (${ascii}): \`\`\` – zamenjaj jih z risbo »:::risba« (content/lessons/README.md, razdelek Risbe)`);
+  // Blok ``` je samo za kodo in izpis ukazov, vedno z oznako jezika (README, Risbe); vsak drug blok brez oznake je
+  // risba, tabela ali shema iz znakov, ki se izpiše kot surovo besedilo.
+  if (untagged.length > ascii) warn(`Bloki \`\`\` brez oznake jezika (${untagged.length - ascii}): risbo zapiši z »:::risba«, preglednico kot tabelo Markdown, kodo z oznako jezika (\`\`\`python)`);
   if (/^[ \t]*:::/m.test(stripped)) err("nezaprt ali napačno zapisan blok »:::formula … :::« ali »:::premisli … :::« (vsak začetek in konec v svoji vrstici)");
   // Merila docs/kakovost.md §1: vmesna vprašanja v razlagi in razlaga vsakega napačnega odgovora.
   const thinks = bodyLesson.match(/^[ \t]*:::[ \t]*premisli[ \t]*$/gm) || [];
   if (thinks.length < 2) warn(`v razlagi sta priporočeni 2 vmesni vprašanji »:::premisli« (${thinks.length})`);
   const noWhy = checks.reduce((n, c) => n + (c.type ? 0 : c.options.filter((_, i) => i !== c.correct && !c.optionWhy?.[i]).length), 0);
   if (checks.length && noWhy) warn(`${noWhy} napačnih možnosti v »Preveri se« nima razlage »~ …«`);
+  // §1.9: simulacija pod lekcijo (public/sim/katalog.js ali »demo:« v glavi) dobi vsaj en stavek, kaj naj učenec v njej poskusi.
+  const sims = topicId && getTopic(topicId) ? simsFor(topicId, lesson) : [];
+  if (sims.length && !/simulacij/i.test(bodyLesson)) {
+    // Simulacija iz »demo:« ima splošen naslov »Interaktivni poskus«; raje imenujemo tisto iz kataloga.
+    const t = (sims.find((d) => d.title !== "Interaktivni poskus") || sims[0]).title;
+    warn(`pod lekcijo je simulacija »${t}«, besedilo pa ne pove, kaj naj učenec v njej naredi (docs/kakovost.md §1.9): dodaj stavek »V simulaciji spodaj (»${t}«) nastavi/poskusi … in opazuj …«`);
+  }
 
   // Kviz (content/lessons/README.md, »Preveri se«): izbira – natanko en »+«, vsaj 3 možnosti, brez ponavljanja;
   // vpiši število – natanko en »= vrednost | toleranca«, »~ vrednost | zakaj«; razvrsti – 3 do 6 vrstic »1.« … po vrsti.

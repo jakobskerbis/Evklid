@@ -71,7 +71,7 @@ Dve paraboli imata lahko dve, eno ali nobene skupne točke; odloča spet diskrim
 :::premisli
 Kaj se zgodi, če imata paraboli enak vodilni koeficient, na primer $y = x^2 + 1$ in $y = x^2 - 2x + 5$? Ali sta »vzporedni«?
 ---
-Nista. Pri izenačevanju se člen $x^2$ odšteje in ostane linearna enačba $2x = 4$. Paraboli se sekata v natanko eni točki, $(2, 5)$. Brez presečišča bi bili le, če bi se odštel tudi člen z $x$.
+Nista. Pri izenačevanju se člen $x^2$ odšteje in ostane linearna enačba $2x = 4$. Paraboli se sekata v natanko eni točki, $(2, 5)$. Brez presečišča bi bili le, če bi se odštel tudi člen z $x$, prosta člena pa bi ostala različna. Če bi bila enaka tudi prosta člena, bi bili paraboli enaki.
 :::
 
 **5. Sistem kvadratnih neenačb (višja raven).** **Sistem neenačb** sestavljajo neenačbe, ki morajo veljati hkrati. Rešitev sistema so števila, ki izpolnijo *vse* neenačbe, torej **presek** rešitev posameznih neenačb. Mamljivo je rešitvi združiti; to bi bila unija in bi dala preveč števil.
@@ -99,6 +99,8 @@ interval: -1 .. 3 | rešitev sistema | modra
 točka: -1 | −1 | prazna
 točka: 3 | 3
 :::
+
+V simulaciji spodaj (»Parabola in njena lega glede na os«) nastavi a = 1, b = −2, c = −3 in znak »≤ 0«: rešitev je $[-1, 3]$. Nato nastavi a = −1, b = 4, c = 5 in znak »> 0«: rešitev je $(-1, 5)$. Opazuj, da je presek obeh, $(-1, 3]$, rešitev sistema z zgornje slike.
 
 ## Rešeni primeri
 
@@ -208,7 +210,7 @@ $$D = (b - k)^2 - 4a(c - n)$$
 - $D = 0$: **tangenta**, dotikališče.
 - $D < 0$: **mimobežnica**, ni presečišč.
 
-- Dve paraboli presekaš enako; pri enakem vodilnem koeficientu dobiš linearno enačbo in največ eno presečišče.
+- Dve paraboli presekaš enako; pri enakem vodilnem koeficientu dobiš linearno enačbo in največ eno presečišče (razen če sta paraboli enaki).
 - **Ničle** parabole so le presečišča z osjo $x$.
 
 **Sistem kvadratnih neenačb** (višja raven):

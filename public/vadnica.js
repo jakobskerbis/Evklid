@@ -15,7 +15,7 @@ import { accountsOn, accountStatus } from "./account.js";
 import { povabiPoUspehu } from "./povabi.js";
 import { SUBJECT_NAMES } from "./programs.js";
 import { jeOs, TRACK, stopnja } from "./stopnja.js";
-import { validDate } from "./goal-data.js";
+import { validDate, uradniDatum } from "./goal-data.js";
 import { matLevel, examName as siExamName, SI_EXAMS, loadPapers, mountPapers, paperLabel } from "./exam-papers.js";
 import { levelLabel } from "./level-picker.js";
 import { fmtDate, countdown } from "./goal.js";
@@ -23,6 +23,7 @@ import { partLabel, partKey } from "./our-paper-key.js";
 import { refreshBubble } from "./okna.js";
 import { poSliki } from "./kliki.js";
 import { $, COMP_LEVEL_NAMES, EXTRA_SESSIONS, NODE, api, calcMode, calcSubject, choiceHtml, diffBadge, escapeHtml, examMode, extraSession, fbText, fillInput, isCompTopic, keptPaper, loadConversations, localStorageGet, localStorageSet, markFirstTask, markTopic, mayPlot, meBackHtml, offTabbarViews, openCalcOverlay, openConversation, openLesson, openLocalPaper, ourMod, plotFromText, prepBack, pripraviIzris, refreshXp, regionalExams, renderGoal, renderMath, renderRich, send, setActiveMode, setBack, setTaskFx, showView, siExams, state, studentUpdated, toast, topicCache, topicRich, unlockedHtml, withFormulaSubject, currentView, pathData, pathUnitsFor, prefetchPractice, takePractice, topicEntry, kopija } from "./app.js";
+import { LOCILO } from "./datum.js";
 
 // Tema iz pomnilnika takoj (po sliki tapa); sicer pogled takoj z »Nalagam …« in oba klica hkrati (kliki.js teme).
 let topicSeq = 0;
@@ -74,7 +75,7 @@ async function openTopic(topicId) {
   const canPractice = !!hasPractice?.practice;
   $("#topic-content").innerHTML = `<div class="topic-grid">
     <div class="card topic-head">
-      <span class="eyebrow">${escapeHtml(tp.pathLabel)} · ${escapeHtml(tp.unit)}</span>
+      <span class="eyebrow">${escapeHtml(tp.pathLabel)}${LOCILO}${escapeHtml(tp.unit)}</span>
       <h1>${escapeHtml(tp.name)}</h1>
       <p class="goals">${icon("target")}<span>${escapeHtml(tp.goals)}</span></p>
       ${aheadHint}
@@ -190,7 +191,7 @@ async function startSession(kind, body = {}) {
   // Izpiti (zunaj Slovenije): isti mehanizem, a z izpitnimi naslovi.
   if (examMode() && kind === "tek") cfg = { ...cfg, icon: "target", title: t("exam.train"), intro: t("exam.trainText") };
   if (examMode() && kind === "contest") cfg = { ...cfg, title: t("exam.mock"), intro: t("exam.mockIntro") };
-  setActiveMode({ review: "review", daily: "daily", "test-prep": "test" }[kind] || null);
+  setActiveMode({ review: "review", daily: "daily", "test-prep": "test", "priprava-kviz": "test" }[kind] || null);
   if (kind === "review" && state.pathKey) body = { path: state.pathKey, ...body }; // le izbrani predmet
   let out;
   try {
@@ -222,7 +223,7 @@ function sessionDoneCard(mode, n, xp = null) {
   const extra = extraSession(mode);
   if (extra?.doneHtml) return extra.doneHtml(n, xp);
   return `<div class="card result celebrate"><div class="result-icon">${icon("trophy")}</div><h2>${SESSION_DONE[mode] || t("common.done")}!</h2>
-    <p>${t("result.firstTry", { correct: n.correct, total: n.total })}${n.xp ? ` · +${n.xp.gained} XP` : ""}</p>
+    <p>${t("result.firstTry", { correct: n.correct, total: n.total })}${n.xp ? `${LOCILO}+${n.xp.gained} XP` : ""}</p>
     <button class="primary big" id="fb-back">${state.backTo === "competition" || state.backTo === "exams" ? prepBack() : t("result.toPath")}</button>${rewardHtml(mode, n, xp)}</div>`;
 }
 // Igra kot nagrada (public/games/reward.js): po dnevnem treningu ali doseženem dnevnem cilju ponudba ene igre
@@ -238,7 +239,7 @@ function rewardHtml(mode, n, xp) {
 // Slike pri nalogah (graf premice, številska premica): public/slike-nalog.js.
 
 // Na širokem zaslonu je med serijo nalog desno razlaga teme trenutne naloge (ne pri preizkusu znanja in tekmovanju).
-const SIDE_MODES = ["review", "daily", "unit", "test", "tek", "list"];
+const SIDE_MODES = ["review", "daily", "unit", "test", "tek", "list", "priprava"];
 async function showSideExplanation(task, ctx) {
   const side = $("#session-side");
   if (!side) return;
@@ -776,7 +777,7 @@ async function loadCompetition(key = state.compKey) {
         <ol class="path">${u.topics
           .map((tp) => {
             const st = tp.due ? "due" : tp.status;
-            const sub = NODE[st][1] + (tp.practice && tp.status === "learning" ? ` · ${COMP_LEVEL_NAMES[tp.level]}` : "");
+            const sub = NODE[st][1] + (tp.practice && tp.status === "learning" ? `${LOCILO}${COMP_LEVEL_NAMES[tp.level]}` : "");
             return `<li><button class="node ${st}" data-open="${tp.id}"><span class="node-dot">${icon(NODE[st][0])}</span>
               <span class="node-text"><span class="node-name">${escapeHtml(tp.name)}</span><span class="node-sub">${sub}</span></span></button></li>`;
           })
@@ -822,12 +823,15 @@ const siGoal = () => (jeOs(state.student?.settings) ? "npz" : "matura");
 function readinessHtml(c) {
   const s = state.student.settings;
   const r = c.readiness || { percent: 0, weakest: [] };
-  const date = s.goal === siGoal() && validDate(s.goal_date) ? s.goal_date : "";
+  // Brez lastnega datuma velja uradni datum izpita (goal-data.js uradniDatum), dokler učenec ne shrani svojega.
+  const own = s.goal === siGoal() && validDate(s.goal_date) ? s.goal_date : "";
+  const official = own ? "" : uradniDatum(c.exam, c.subject);
+  const date = own || official;
   const d = new Date();
   const min = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   // Raven mature iz matematike (izbrana ob profilu, »4. letnik VR«) se vidi ob imenu izpita (Geminijev pregled 17. 11.).
   const raven = c.exam === "MATURA" && c.subject === "MAT" ? c.raven || null : null;
-  const name = siExamName(c.exam) + (raven ? ` · ${t(raven === "VR" ? "lp.vr" : "lp.or")}` : "");
+  const name = siExamName(c.exam) + (raven ? `${LOCILO}${t(raven === "VR" ? "lp.vr" : "lp.or")}` : "");
   const dateForm = `<div class="er-form" ${date ? "hidden" : ""}>
       <label class="goal-date"><span>${t("ready.date")}</span><input type="date" id="er-date" value="${date}" min="${min}"></label>
       <button type="button" class="primary" data-er-save>${t("common.save")}</button>
@@ -847,12 +851,29 @@ function readinessHtml(c) {
       <div class="er-text"><span class="eyebrow">${t("ready.title")}</span><h2>${escapeHtml(name)}</h2><p class="muted small-note">${t("ready.pctNote")}</p></div>
     </div>
     <div class="er-date">
-      ${date ? `<p class="er-when">${icon("calendar")}<span><b>${escapeHtml(fmtDate(date))}</b> · ${escapeHtml(countdown(date))}</span><button type="button" class="text-btn" data-er-edit>${t("ready.changeDate")}</button></p>` : ""}
+      ${date ? `<p class="er-when">${icon("calendar")}<span><b>${escapeHtml(fmtDate(date))}</b>${LOCILO}${escapeHtml(countdown(date))}${official ? `<small class="muted er-official">${t(c.exam === "MATURA" || c.exam === "POKLICNA" ? "ready.officialMatura" : "ready.official")}</small>` : ""}</span><button type="button" class="text-btn" data-er-edit>${t("ready.changeDate")}</button></p>` : ""}
       ${dateForm}
     </div>
     <h3 class="er-weak-title">${t("ready.weakTitle")}</h3>
     ${weak}
   </section>`;
+}
+
+// Tvoje poskusne pole (server/poskusna-pola.js simHistory): zadnji rezultati s šibkimi temami in gumbom Vadi.
+// Brez rezultatov kartica pove, kje se poskusni izpit začne (gumb »Poskusni izpit« pri naši poli spodaj).
+function simsHtml(sims = []) {
+  const year = (id) => (String(id).match(/-(\d{4})-/) || [])[1] || "";
+  const raven = (id) => (/-VR-/.test(id) ? `${LOCILO}${t("lp.vr")}` : /-OR-/.test(id) ? `${LOCILO}${t("lp.or")}` : "");
+  const rows = sims
+    .map(
+      (r) => `<li><div class="sim-row"><span>${escapeHtml(new Date(r.date).toLocaleDateString(locale()))}</span><span class="sim-paper">${escapeHtml(`${year(r.paper)}${raven(r.paper)}${r.pola ? `${LOCILO}${t("pp.oursPola", { n: r.pola }).replace(/ /g, "\u00a0")}` : ""}`)}</span><b>${r.points} / ${r.maxPoints}</b><span class="bar"><i style="width:${Math.max(0, Math.min(100, r.percent))}%"></i></span></div>${
+        r.weak.length
+          ? `<div class="sim-weak">${r.weak.map((w) => `<button type="button" class="secondary small" data-er-practice="${escapeHtml(w.id)}">${icon("pencil")}<span>${escapeHtml(w.name)}${LOCILO}${w.got}/${w.max}</span></button>`).join("")}</div>`
+          : ""
+      }</li>`,
+    )
+    .join("");
+  return `<section class="card exam-sims" tabindex="-1"><h2>${icon("list-checks")}${t("pi.histTitle")}</h2>${rows ? `<ul class="sim-list">${rows}</ul>` : `<p class="muted small-note">${t("pi.histEmpty")}</p>`}</section>`;
 }
 
 // Raven mature iz matematike na strani »NPZ in matura« (j, 20. 11.): izbira pri Preteklih polah velja za celo stran
@@ -902,7 +923,7 @@ async function loadExams(key = state.examKey, exam = null) {
       ${c.subjects.length > 1 ? seg(c.subjects.map((x) => [x.key, SUBJECT_NAMES[x.subject] || x.name]), c.key, "data-exam-subject") : ""}
     </div>
     ${si ? readinessHtml(c) : ""}
-    <details class="card exam-about"><summary>${icon("info")}<span><b>${escapeHtml(c.full)}</b> · ${escapeHtml(c.country)}</span></summary><p lang="${c.lang || "en"}">${escapeHtml(c.about)}</p></details>
+    <details class="card exam-about"><summary>${icon("info")}<span><b>${escapeHtml(c.full)}</b>${LOCILO}${escapeHtml(c.country)}</span></summary><p lang="${c.lang || "en"}">${escapeHtml(c.about)}</p></details>
     <div class="card xp-card comp-hero">
       <div class="hero">
         <div class="hero-icon">${icon("target")}</div>
@@ -925,7 +946,7 @@ async function loadExams(key = state.examKey, exam = null) {
     </section>
     ${
       si
-        ? `<section class="card exam-official exam-papers"><h2>${icon("file-text")}${t("pp.title")}</h2><p class="muted">${t("pp.text")}</p><div id="exam-papers" class="pp-picker"><p class="muted">${t("common.loading")}</p></div></section>`
+        ? `${simsHtml(c.sims)}<section class="card exam-official exam-papers"><h2>${icon("file-text")}${t("pp.title")}</h2><p class="muted">${t("pp.text")}</p><div id="exam-papers" class="pp-picker"><p class="muted">${t("common.loading")}</p></div></section>`
         : c.official
           ? `<section class="card exam-official"><h2>${icon("file-text")}${t("gr.pastTitle")}</h2><p class="muted">${t("gr.pastText", { src: escapeHtml(c.official.source) })}</p><a class="btn-secondary" href="${escapeHtml(c.official.url)}" target="_blank" rel="noopener">${icon("external-link")}${t("gr.pastOpen")}</a></section>`
           : ""
@@ -973,6 +994,7 @@ async function showPapers(c) {
     },
     onTutor: paperTutor,
     onOurs: openOurs,
+    onSim: openSim,
     onLocal: (entry, file, subjectName) => openLocalPaper(entry, file, subjectName),
     onReopen: (entry, subjectName) => {
       const k = keptPaper;
@@ -1035,7 +1057,7 @@ async function openOurs(entry, subjectName, focus = null) {
       focus,
       // Vrnitev iz klepeta (← ali Nazaj) odpre isto polo pri isti nalogi (UX maturanta 5; app.js chatReturnBack).
       onTutor: (task, part) => oursTutor(entry, title, task, part, { view: currentView, open: () => poPaperBusy(() => openOurs(entry, subjectName, paper.tasks.indexOf(task))) }),
-      // Šibke točke: deli z odprto rešitvijo ali oznako »Imam prav« (strežnik vsak del šteje enkrat).
+      // Šibke točke: deli, preverjeni ob koncu pole (»Imam prav«, izbirni odgovor); strežnik vsak del šteje enkrat.
       onChecked: (parts) => api(`/api/students/${state.student.id}/paper-check`, { method: "POST", body: { paper: entry.id, parts } }).catch(() => {}),
     });
   } catch (err) {
@@ -1043,6 +1065,55 @@ async function openOurs(entry, subjectName, focus = null) {
   } finally {
     paperBusy = false;
   }
+}
+// »Poskusni izpit« na naši poli (public/our-paper.js openExamSim, server/poskusna-pola.js): ena izpitna pola s pravim
+// časom; začeta pola (čas, točke) ostane v tej napravi, dokler je učenec ne shrani. Po shranitvi se stran osveži
+// (Tvoje poskusne pole).
+async function openSim(entry, subjectName) {
+  if (!entry?.ours || paperZaseden()) return;
+  paperBusy = true;
+  try {
+    const [paper, op] = await Promise.all([api(`/api/exam-papers/ours/${encodeURIComponent(entry.id)}`), ourMod.load(), pripraviIzris()]);
+    const key = `evklid.sim.${state.student.id}.${entry.id}`;
+    const sid = state.student.id;
+    op.openExamSim(paper, {
+      title: t("pi.paperTitle", { paper: paperLabel(entry, subjectName) }),
+      rich: (md) => withFormulaSubject(entry.subject, () => renderRich(String(md ?? "")), null, ""),
+      store: {
+        get: () => {
+          try {
+            return JSON.parse(localStorageGet(key) || "null");
+          } catch {
+            return null;
+          }
+        },
+        set: (v) => localStorageSet(key, JSON.stringify(v)),
+        clear: () => localStorageSet(key, ""),
+      },
+      onSave: async ({ pola, points, seconds }) => {
+        try {
+          const res = await api(`/api/students/${sid}/exam-sim`, { method: "POST", body: { paper: entry.id, pola, points, seconds } });
+          if (state.student?.id === sid && currentView === "exams") loadExams(state.examKey);
+          return res;
+        } catch (err) {
+          toast(err.message);
+          throw err;
+        }
+      },
+      onPractice: (topicId) => practiceTopic(topicId),
+      fokusPo: () => $("#exams-content .exam-sims"),
+    });
+  } catch (err) {
+    toast(err.message);
+  } finally {
+    paperBusy = false;
+  }
+}
+// »Vadi« pri šibki temi (Pripravljenost, Poskusne pole): odpre temo in prvo nalogo; nazaj vodi na stran NPZ in matura.
+async function practiceTopic(id) {
+  setBack("exams");
+  const pretest = await openTopic(id);
+  if (!pretest && $("#t-practice")) nextPractice();
 }
 // Počaka, da se konča odpiranje pogovora (paperBusy, največ 5 s), nato fn: hiter ← med odpiranjem klepeta iz pole.
 async function poPaperBusy(fn) {
@@ -1165,9 +1236,7 @@ document.addEventListener("click", async (e) => {
   }
   const pr = e.target.closest("[data-er-practice]");
   if (pr) {
-    setBack("exams");
-    const pretest = await openTopic(pr.dataset.erPractice);
-    if (!pretest && $("#t-practice")) nextPractice();
+    await practiceTopic(pr.dataset.erPractice);
   }
 });
 
@@ -1294,7 +1363,7 @@ function showContestResult(c, timeUp = false) {
       ${timeUp ? `<p class="muted">${t("comp.timeUp")}</p>` : ""}
       <h2 class="score-line">${t("comp.score", { points: `<span class="count-up" data-to="${Number(c.points) || 0}">0</span>`, max: c.maxPoints })}</h2>
       <div class="score-bar" aria-hidden="true"><div style="--pct:${Math.max(0, Math.min(100, pct))}%"></div></div>
-      <p>${t("comp.summary", { correct: c.correct, total: c.total, minutes: c.minutes })}${c.xp ? ` · +${c.xp.gained} XP` : ""}</p>
+      <p>${t("comp.summary", { correct: c.correct, total: c.total, minutes: c.minutes })}${c.xp ? `${LOCILO}+${c.xp.gained} XP` : ""}</p>
       ${c.scaled ? `<p>${t("exam.scaled", { value: c.scaled.value, min: c.scaled.min, max: c.scaled.max })}</p>` : ""}
       ${c.grade ? `<p>${t("exam.grade", { grade: escapeHtml(c.grade) })}</p>` : ""}
       ${c.wrong && c.items.some((x) => x.earned < 0) ? `<p class="muted">${t("exam.wrongPenalty", { n: c.wrong })}</p>` : ""}
