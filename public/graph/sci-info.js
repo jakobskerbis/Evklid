@@ -163,17 +163,8 @@ export function infoFor(text, r, { profile = null, comma = true, env: base = nul
     const els = [...m.counts];
     add("sc.infoAtoms", els.map(([e, c]) => `\\mathrm{${e}}\\!:\\,${c}`).join(",\\ "));
     if (els.length > 1) add("sc.infoMassFrac", els.map(([e, c]) => `w(\\mathrm{${e}}) = ${num(Number(((100 * c * MASSES[e]) / m.M).toFixed(2)))}\\,\\%`).join(",\\ "));
-    // SO4^2-, SO₄²⁻, NH4+ (brez ^: le predznak; Fe3+ je kot v periodnem sistemu Fe₃)
-    // brez ^ (NH4+, OH-): le predznak; ob števki le pri več elementih (Fe3+ je kot v periodnem sistemu Fe₃)
-    const plain = /[+-]$/.test(f) && !/\^/.test(f) && (/[A-Za-z)\]]\s*[+-]$/.test(f) || m.counts.size > 1);
-    const q = /(?:\^\s*(\d*)\s*([+-])|([⁰¹²³⁴⁵⁶⁷⁸⁹]*)([⁺⁻])|([+-]))$/.exec(f);
-    if (q && q[5] && !plain) q.length = 0;
-    if (q?.length) {
-      const sup = "⁰¹²³⁴⁵⁶⁷⁸⁹";
-      const n = q[1] ?? [...(q[3] || "")].map((c) => sup.indexOf(c)).join("");
-      const sign = (q[2] || q[4] || q[5]) === "+" || q[4] === "⁺" ? "+" : "-";
-      add("sc.infoCharge", `${n || ""}${sign}`);
-    }
+    // naboj iona po istem pravilu kot periodni sistem (splitCharge): Fe3+ in Fe³⁺ sta en atom Fe z nabojem 3+
+    if (m.charge) add("sc.infoCharge", `${Math.abs(m.charge) > 1 ? Math.abs(m.charge) : ""}${m.charge > 0 ? "+" : "-"}`);
     return rows.length ? { rows, plot: null } : null;
   }
   if (!r || r.error) return null;

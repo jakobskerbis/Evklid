@@ -6,6 +6,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { formulaToCalc, vRadianih } from "../public/graph/formula-calc.js";
 import { chemSub, chemText, chemTex, chemNumbers } from "../public/graph/molska.js";
 import { analyze, previewTex } from "../public/graph/scisolve.js";
+import { complete, liveTex } from "../public/graph/sci-vnos.js";
 import { evaluate } from "../public/graph/scicore.js";
 import { molarMass } from "../public/graph/toolscore.js";
 import { MASSES } from "../public/graph/pse-data.js";
@@ -189,6 +190,41 @@ test("M(H2SO4) v kalkulatorju je molska masa, tudi sredi računa in v enačbi", 
   assert.equal(run("2M(H2O)").value, 2 * M2);
   assert.equal(chemText("CuSO4.5H2O"), "M(CuSO₄·5H₂O)");
   assert.equal(chemTex("CuSO4·5H2O"), "\\mathrm{CuSO_{4}\\cdot 5H_{2}O}");
+});
+
+test("pregled 28. 11.: M(Fe3+) v kalkulatorju je M(Fe), naboj ostane v zapisu", () => {
+  const run = (text) => {
+    const k = chemSub(text);
+    return k ? k.fix(analyze(k.text, { vars: k.vars, funcs: {} })) : analyze(text, { vars: {}, funcs: {} });
+  };
+  const fe = molarMass("Fe", MASSES).M;
+  for (const f of ["M(Fe3+)", "M(Fe^3+)", "M(Fe³⁺)"]) {
+    assert.equal(run(f).value, fe, f);
+    assert.equal(run(f).tex, "M(\\mathrm{Fe}^{3+})", f);
+  }
+  assert.equal(run("M(Al3+)").value, molarMass("Al", MASSES).M);
+  assert.equal(run("M(NH4+)").value, molarMass("NH4", MASSES).M);
+  assert.equal(run("M(NH4+)").tex, "M(\\mathrm{NH_{4}}^{+})");
+  assert.equal(run("M(SO4^2−)").value, molarMass("SO4", MASSES).M);
+  assert.equal(run("2·M(Fe3+)").value, 2 * fe);
+  assert.equal(chemTex("Fe3+"), "\\mathrm{Fe}^{3+}");
+  assert.equal(chemTex("SO₄²⁻"), "\\mathrm{SO_{4}}^{2-}");
+  assert.equal(chemTex("FeCl3"), "\\mathrm{FeCl_{3}}");
+  assert.equal(chemText("Fe3+"), "M(Fe)");
+  assert.equal(chemText("Fe³⁺"), "M(Fe)");
+  assert.equal(chemText("Al3+"), "M(Al)");
+  assert.equal(chemText("FeCl3"), "M(FeCl₃)");
+  // vnos med tipkanjem: znak pred zaklepajem molske mase je naboj (prej »M(Fe·3+□)«), drugje ostane okvirček
+  assert.equal(complete("M(Fe3+)", "7777").text, "M(Fe3+)");
+  assert.equal(liveTex(complete("M(Fe3+)", "7777").text), "M(\\mathrm{Fe}^{3+})");
+  assert.equal(complete("M(SO4^2−)", "7777").text, "M(SO4^2−)");
+  assert.equal(complete("(2+)", "7777").text, "(2+7777)");
+  assert.equal(complete("M(x+)", "7777").text, "M(x+7777)");
+  // aritmetika ni naboj: M(2 + 3) in M(x − 1) ostaneta spomin krat oklepaj
+  assert.equal(chemSub("M(C+H)"), null);
+  assert.equal(chemSub("M(x-1)"), null);
+  assert.equal(chemSub("M(C^-1)"), null); // potenca spremenljivke C, ne ogljikov ion
+  assert.equal(run("M(Hg22+)").value, 2 * molarMass("Hg", MASSES).M); // Hg₂²⁺
 });
 
 test("periodni sistem vpiše celo formulo v kalkulator", () => {

@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { evaluate, prepare, exactTex, formatNumber, convert, toFraction, CONSTANTS, QUANTITIES, mixedTex, primeFactors, factorsTex, dmsOf } from "../public/graph/scicore.js";
 import { analyze, solutionTex, intervalsTex, systemTex, polyCoeffs, previewTex } from "../public/graph/scisolve.js";
-import { stats, evalComplex, polyRoots, M, readMatrix, convertBase, molarMass, solveRatio } from "../public/graph/toolscore.js";
+import { stats, evalComplex, polyRoots, M, readMatrix, convertBase, molarMass, solveRatio, splitCharge } from "../public/graph/toolscore.js";
 import { ELEMENTS, MASSES, CATEGORIES, shells, fullConfig, EXTRA } from "../public/graph/pse-data.js";
 import { balance, parseSpecies, stoich, phOf, phAll, solveConc, dilution, massFraction, saltFormula, solubility, SOL_CATIONS, SOL_ANIONS } from "../public/graph/chemcore.js";
 import { normal, studentT, chi2, binomial, poisson, geometric, hypergeometric, probability, phiInv } from "../public/graph/probcore.js";
@@ -278,6 +278,8 @@ test("kemija: urejanje enačb reakcij in ionov", () => {
   assert.equal(parseSpecies("SO4^2-", MASSES).charge, -2);
   assert.equal(parseSpecies("SO₄²⁻", MASSES).charge, -2);
   assert.ok(parseSpecies("e-", MASSES).electron);
+  assert.deepEqual([...parseSpecies("2Fe3+", MASSES).counts], [["Fe", 1]]); // koeficient in naboj, en atom Fe
+  assert.equal(parseSpecies("2Fe3+", MASSES).charge, 3);
   // 2 H2 + O2 -> 2 H2O: pri 2 mol H2 in 2 mol O2 je omejujoči H2
   const st = stoich([2, 1, 2], 2, { 0: 2, 1: 2 });
   assert.equal(st.limiting, 0);
@@ -870,4 +872,49 @@ test("razmerje a : b = c : d z neznanko na katerem koli mestu", () => {
   assert.deepEqual(solveRatio([0, 3, 4, NaN]), { error: "zero" });
   assert.deepEqual(solveRatio([2, 3, NaN, NaN]), { error: "count" });
   assert.deepEqual(solveRatio([2, 3, 4, 6]), { error: "count" });
+});
+
+test("pregled 28. 11.: naboj iona ne spremeni sestave (Fe3+ je en atom Fe, ne Fe₃)", () => {
+  const fe = molarMass("Fe", MASSES).M;
+  const al = molarMass("Al", MASSES).M;
+  const one = (f, el, M, q) => {
+    const r = molarMass(f, MASSES);
+    assert.deepEqual([...r.counts], [[el, 1]], f);
+    assert.equal(r.M, M, f);
+    assert.equal(r.charge, q, f);
+  };
+  for (const f of ["Fe3+", "Fe^3+", "Fe³⁺", "Fe^{3+}", "Fe 3+"]) one(f, "Fe", fe, 3);
+  for (const f of ["Al3+", "Al³⁺", "Al^3+"]) one(f, "Al", al, 3);
+  one("O2-", "O", molarMass("O", MASSES).M, -2);
+  // večatomni ion: števka ostane indeks, naboj je le predznak
+  const nh4 = molarMass("NH4+", MASSES);
+  assert.deepEqual([...nh4.counts], [["N", 1], ["H", 4]]);
+  assert.equal(nh4.charge, 1);
+  for (const f of ["SO4^2-", "SO4^2−", "SO₄²⁻", "SO4^{2-}"]) {
+    const r = molarMass(f, MASSES);
+    assert.deepEqual([...r.counts], [["S", 1], ["O", 4]], f);
+    assert.equal(r.charge, -2, f);
+  }
+  near(molarMass("SO4^2−", MASSES).M, 96.056, 1e-4);
+  // brez naboja nič novega; izrecni spodnji indeks ostane indeks
+  assert.deepEqual([...molarMass("H2O", MASSES).counts], [["H", 2], ["O", 1]]);
+  assert.deepEqual([...molarMass("FeCl3", MASSES).counts], [["Fe", 1], ["Cl", 3]]);
+  near(molarMass("FeCl3", MASSES).M, 162.195, 1e-3);
+  assert.equal(molarMass("FeCl3", MASSES).charge, 0);
+  assert.deepEqual([...molarMass("Fe₃+", MASSES).counts], [["Fe", 3]]);
+  assert.deepEqual([...molarMass("H2+", MASSES).counts], [["H", 2]]); // H nima naboja 2+
+  // kompleks: [Fe(CN)6]3- ima en Fe in naboj 3−
+  const k = molarMass("[Fe(CN)6]3-", MASSES);
+  assert.deepEqual([...k.counts], [["Fe", 1], ["C", 6], ["N", 6]]);
+  assert.equal(k.charge, -3);
+  assert.deepEqual(splitCharge("MnO4-"), { body: "MnO4", charge: -1 });
+  // dve števki pred znakom: zadnja je naboj (peroksid, živo srebro(I), sulfat, karbonat)
+  assert.deepEqual(splitCharge("O22-"), { body: "O2", charge: -2 });
+  assert.deepEqual(splitCharge("Hg22+"), { body: "Hg2", charge: 2 });
+  assert.deepEqual([...molarMass("SO42-", MASSES).counts], [["S", 1], ["O", 4]]);
+  assert.equal(molarMass("CO32-", MASSES).charge, -2);
+  near(molarMass("O22-", MASSES).M, 2 * molarMass("O", MASSES).M, 1e-9);
+  assert.deepEqual(splitCharge("H2O"), { body: "H2O", charge: 0 });
+  // modul reakcij uporablja isto pravilo
+  assert.deepEqual(balance("Fe3+ + e- -> Fe2+", MASSES).coef, [1, 1, 1]);
 });

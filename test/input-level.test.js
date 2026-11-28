@@ -30,6 +30,8 @@ test("kemijske formule dobijo indekse in naboje", () => {
   assert.equal(chemFormat("2H2 + O2 → 2H2O"), "2H₂ + O₂ → 2H₂O");
   assert.equal(chemFormat("Ca(OH)2 in H2SO4"), "Ca(OH)₂ in H₂SO₄");
   assert.equal(chemFormat("Fe3+ in SO4 2-"), "Fe³⁺ in SO₄²⁻");
+  // pregled 28. 11.: števka večatomnega iona je indeks (NH₄⁺, ne NH⁴⁺), kompleks ima naboj za ]
+  assert.equal(chemFormat("NH4+ MnO4- H2+ [Fe(CN)6]3-"), "NH₄⁺ MnO₄⁻ H₂⁺ [Fe(CN)₆]³⁻");
   assert.equal(chemFormat("Na+ Cl- NaCl"), "Na⁺ Cl⁻ NaCl");
   assert.equal(chemFormat("C6H12O6 + 6O2"), "C₆H₁₂O₆ + 6O₂");
   assert.equal(chemFormat("CuSO4·5H2O"), "CuSO₄·5H₂O");

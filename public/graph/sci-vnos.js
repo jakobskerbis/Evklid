@@ -201,6 +201,17 @@ export function complete(text, hole) {
       }
     }
   }
+  // M(Fe3+), M(NH4+), M(SO4^2-): znak pred zaklepajem molske mase je naboj iona, ne operator brez desnega operanda
+  const chemClose = new Set();
+  for (const m of src.matchAll(/(?<![A-Za-z_α-ωΑ-Ω])M\s*\(/g)) {
+    let d = 0;
+    let j = m.index + m[0].length - 1;
+    for (; j < src.length; j++) {
+      if (src[j] === "(") d++;
+      else if (src[j] === ")" && --d === 0) break;
+    }
+    if (j < src.length && /[+\-−–⁺⁻]$/.test(src.slice(m.index, j)) && chemSub(src.slice(m.index, j + 1))) chemClose.add(j);
+  }
   let out = "";
   const shift = new Array(s.length + 1).fill(0); // koliko znakov okvirčkov je pred položajem i (brez tistih NA i)
   let added = 0;
@@ -211,7 +222,8 @@ export function complete(text, hole) {
     while (k >= 0 && /\s/.test(s[k])) k--;
     const p = k >= 0 ? s[k] : "";
     let want = false;
-    if (i === s.length || CLOSERS.includes(c) || c === ";") want = !!p && (OPENERS.includes(p) || p === ";" || OPSX.includes(p)) && !(i === s.length && !OPSX.includes(p));
+    if (chemClose.has(i)) want = false;
+    else if (i === s.length || CLOSERS.includes(c) || c === ";") want = !!p && (OPENERS.includes(p) || p === ";" || OPSX.includes(p)) && !(i === s.length && !OPSX.includes(p));
     // operator ali pripona brez levega operanda (izbrisan: »/2«, »²«, »,5«, »2x+=7«, »∑_(=1)«): okvirček pred njim (AUDIT-034)
     else if (LEFT.includes(c) && !(POSTFIX.includes(c) && POSTFIX.includes(s[i - 1] || "\u0000"))) want = !p || OPENERS.includes(p) || p === ";" || OPSX.includes(p);
     // predznak je lahko brez levega operanda, razen za vejico, piko ali indeksom (»2,+1«, »x_+x_2«); za vejico ali piko

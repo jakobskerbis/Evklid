@@ -97,7 +97,12 @@ test("pregled 27. 11.: dvojni pol ni luknja, brez lažnih ničel, ekstrem pri 0,
   assert.match(row(info("x*sin(x)"), "sc.infoRoots").tex, /\\ldots$/);
   assert.equal(row(info("sin(x)^2+cos(x)^2"), "sc.infoPeriod"), undefined);
   assert.equal(row(info("M(NH4+)", { r: { kind: "value", value: 18 } }), "sc.infoCharge").tex, "+");
-  assert.equal(row(info("M(Fe3+)", { r: { kind: "value", value: 167 } }), "sc.infoCharge"), undefined);
+  // pregled 28. 11.: Fe3+ je en atom Fe z nabojem 3+ (prej Fe₃ brez naboja, 167,5 g/mol)
+  const fe = info("M(Fe3+)", { r: { kind: "value", value: 55.845 } });
+  assert.equal(row(fe, "sc.infoCharge").tex, "3+");
+  assert.equal(row(fe, "sc.infoAtoms").tex, "\\mathrm{Fe}\\!:\\,1");
+  assert.match(row(fe, "sc.infoMolar").tex, /^M = 55\{,\}845/);
+  assert.equal(row(info("M(SO4^2−)", { r: { kind: "value", value: 96 } }), "sc.infoCharge").tex, "2-");
 });
 
 test("hitro: podatki za kotno funkcijo v manj kot 200 ms (prej do 1,2 s)", () => {

@@ -105,6 +105,9 @@ function chemWord(word) {
   let charge = "";
   const c = /^(.*?[A-Za-z)\]])(\d?[+\-−])$/.exec(core);
   if (c) [, core, charge] = c;
+  // števka pred znakom je naboj le enoatomnemu ionu (Fe3+, ne H2+) in kompleksu ([Fe(CN)6]3-); sicer je indeks:
+  // NH4+ je NH₄⁺, ne NH⁴⁺ (isto pravilo kot molska masa v periodnem sistemu, splitCharge v graph/toolscore.js)
+  if (/^\d/.test(charge) && !/^\d*(?!H$)[A-Z][a-z]?$/.test(core) && !/\]$/.test(core)) [core, charge] = [core + charge[0], charge.slice(1)];
   const parts = core.split("·").map((p) => {
     const coef = /^\d*/.exec(p)[0];
     const f = formulaPart(p.slice(coef.length));

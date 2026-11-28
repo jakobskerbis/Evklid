@@ -1348,16 +1348,50 @@ export function logic32(a, b, op) {
 
 // ---------- molska masa ----------
 
+const SUP_Q = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁺": "+", "⁻": "-" };
+
 /**
- * Razčleni kemijsko formulo (H2SO4, Ca(OH)2, CuSO4·5H2O, [Fe(CN)6]3-) v število atomov po elementih.
- * masses: { simbol: Ar }. Vrne { counts: Map, M } ali { error, at }.
+ * Loči naboj iona od formule; eno pravilo za molsko maso, periodni sistem, znanstveni kalkulator in reakcije.
+ * »Fe^3+«, »Fe³⁺«, »SO4^2-«, »SO₄²⁻«: naboj je za ^ ali nadpisan. Brez ^ je števka pred znakom naboj le
+ * enoatomnemu ionu (Fe3+, Al3+, O2-; ne H2+) in kompleksu v oglatem oklepaju ([Fe(CN)6]3-); večatomnemu ionu je
+ * naboj samo + ali − (NH4+: štirje vodiki, naboj +1). Pri dveh števkah ali več je zadnja naboj (SO42-, O22-).
+ * Vrne { body, charge } (charge 0, če naboja ni).
+ */
+export function splitCharge(text) {
+  let s = String(text ?? "").replace(/\s+/g, "").replace(/[−–]/g, "-");
+  let charge = 0;
+  const sup = /[⁰¹²³⁴⁵⁶⁷⁸⁹]*[⁺⁻]$/.exec(s);
+  if (sup) {
+    const t = [...sup[0]].map((c) => SUP_Q[c]).join("");
+    charge = (t.endsWith("-") ? -1 : 1) * (Number(t.slice(0, -1)) || 1);
+    return { body: s.slice(0, -sup[0].length), charge };
+  }
+  const hat = /\^\{?(\d*)([+-])\}?$|\^\{?([+-])(\d*)\}?$/.exec(s);
+  if (hat) {
+    const n = Number(hat[1] || hat[4]) || 1;
+    return { body: s.slice(0, hat.index), charge: (hat[2] || hat[3]) === "-" ? -n : n };
+  }
+  const tail = /(\d*)([+-])$/.exec(s);
+  if (!tail) return { body: s, charge: 0 };
+  const sign = tail[2] === "-" ? -1 : 1;
+  // dve števki ali več pred znakom: zadnja je naboj, prejšnje indeks (O22- je O₂²⁻, SO42- je SO₄²⁻, Hg22+ je Hg₂²⁺)
+  if (tail[1].length > 1) return { body: s.slice(0, tail.index + tail[1].length - 1), charge: sign * Number(tail[1].slice(-1)) };
+  const body = s.slice(0, tail.index);
+  // enoatomni ion (tudi s koeficientom: 2Fe3+) ali kompleks [Fe(CN)6]3-: števka je naboj; vodik nima naboja 2+,
+  // zato je H2+ ion H₂⁺
+  if (tail[1] && (/^\d*(?!H$)[A-Z][a-z]?$/.test(body) || /\]$/.test(body))) return { body, charge: sign * Number(tail[1]) };
+  return { body: s.slice(0, -1), charge: sign };
+}
+
+/**
+ * Razčleni kemijsko formulo (H2SO4, Ca(OH)2, CuSO4·5H2O, [Fe(CN)6]3-, Fe3+) v število atomov po elementih.
+ * Naboj iona (splitCharge) mase ne spremeni: M(Fe³⁺) = M(Fe). masses: { simbol: Ar }.
+ * Vrne { counts: Map, M, charge } ali { error, at }.
  */
 export function molarMass(formula, masses) {
-  const s = String(formula ?? "")
-    .replace(/[₀-₉]/g, (c) => String(c.charCodeAt(0) - 0x2080))
-    .replace(/\s+/g, "")
-    .replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻]+$/, "") // naboj iona na koncu
-    .replace(/\^\d*[+-]$|[+-]$/, ""); // naboj: SO4^2- ali NH4+
+  // naboj pred pretvorbo indeksov: izrecni spodnji indeks ostane indeks (Fe₃⁺ ima tri atome Fe, Fe3+ enega)
+  const { body, charge } = splitCharge(formula);
+  const s = body.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "").replace(/[₀-₉]/g, (c) => String(c.charCodeAt(0) - 0x2080)); // Fe³ brez znaka
   if (!s) return null;
   const parts = s.split(/[·*•.]/);
   const total = new Map();
@@ -1411,5 +1445,5 @@ export function molarMass(formula, masses) {
   if (!total.size) return null;
   let Mm = 0;
   for (const [e, c] of total) Mm += c * masses[e];
-  return { counts: total, M: Mm };
+  return { counts: total, M: Mm, charge };
 }
