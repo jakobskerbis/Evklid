@@ -185,6 +185,23 @@ test("navpične asimptote: ostali poli, robovi in vgnezdeni imenovalci", () => {
   // vgnezden imenovalec: 1/√(sin x) ima pola z ene strani pri 2kπ in π + 2kπ (pri 3π/2 f ni definirana)
   assert.equal(as("tan(x)+1/sqrt(sin(x))"), "x_{1} = k \\cdot 2\\pi,\\ x_{2} = \\tfrac{\\pi}{2} + k \\cdot 2\\pi,\\ x_{3} = \\pi + k \\cdot 2\\pi,\\ k \\in \\mathbb{Z}");
   assert.equal(row(info("1/ln(abs(x))"), "sc.infoDomain").tex, "x \\in (-\\infty;\\,0) \\cup (0;\\,\\infty),\\ x \\neq -1,\\ 1");
+  // pregled #1227: deljenje veže le naslednji člen (1/2 sin x = ½ sin x, 1/x(x + 1) = (x + 1)/x)
+  for (const s of ["1/2sin(x)", "1/2cos(x)", "1:2x", "1÷2x"]) {
+    assert.deepEqual(info(s).plot?.holes ?? [], [], s);
+    assert.equal(as(s), null, s);
+  }
+  assert.equal(as("1/2tan(x)"), "x = \\tfrac{\\pi}{2} + k\\pi,\\ k \\in \\mathbb{Z}");
+  assert.equal(as("1/x(x+1)"), "x = 0,\\ y = 1");
+  // deljenje s potenco oklepaja: imenovalec ostane (x − 1)², definicijsko območje in asimptota ostaneta
+  assert.equal(as("1/(x-1)^2"), "x = 1,\\ y = 0");
+  assert.equal(row(info("(x+2)/(x-1)^2"), "sc.infoDomain").tex, "x \\neq 1");
+  assert.equal(as("1/(2*sin(x)-1)^2"), "x_{1} = \\tfrac{\\pi}{6} + k \\cdot 2\\pi,\\ x_{2} = \\tfrac{5\\pi}{6} + k \\cdot 2\\pi,\\ k \\in \\mathbb{Z}");
+  // enakomerno razmaknjeni poli v enem zapisu; 1/(tan x − 1) ima pol pri π/4 + kπ (ne pri π/2 + kπ)
+  assert.equal(as("1/sin(x)"), "x = k\\pi,\\ k \\in \\mathbb{Z}");
+  assert.equal(as("tan(x)+cot(x)"), "x = k \\cdot \\tfrac{\\pi}{2},\\ k \\in \\mathbb{Z}");
+  assert.equal(as("1/(tan(x)-1)"), "x = \\tfrac{\\pi}{4} + k\\pi,\\ k \\in \\mathbb{Z}");
+  assert.equal(as("tan(tan(x))"), null); // poli se kopičijo ob π/2: seznam ne bi bil popoln
+  assert.equal(as("1/sin(tan(x))"), null);
   // brez zanesljivega imenovalca (velik vrh brez ničle imenovalca) ali z logaritmom: raje nič
   assert.equal(as("1/(sin(x)^2+0,000001)"), null);
   assert.equal(as("ln(sin(x))"), null);

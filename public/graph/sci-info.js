@@ -42,21 +42,91 @@ function argsOf(s, re) {
   }
   return out;
 }
-/** Imenovalci: vse za »/«, »÷« ali »:« (oklepaj ali en člen, tudi z gnezdenim klicem: 1/√(sin(x))). */
-function denominators(s) {
-  const out = [];
+/**
+ * Imenovalci: zapis za »/«, »÷« ali »:« (oklepaj, število, klic z gnezdenjem: 1/√(sin(x)), ali člen), ki ga potrdi
+ * drevo izraza: deljenje veže le naslednji člen (1/2sin x = ½ · sin x, imenovalec je 2, ne 2 sin x; pregled #1227).
+ * { list, missing }: missing, ko kakšnega imenovalca z x iz drevesa ne znamo zapisati (takrat ne ugibamo).
+ */
+function denominators(s, env = {}) {
+  const ast = [];
+  let L = null;
+  try {
+    L = compileLine(s, { ...env, vars: { ...(env.vars || {}), x: 0 } });
+  } catch {}
+  const hasX = (n) => n && typeof n === "object" && (n.k === "var" ? n.name === "x" : Object.values(n).some((v) => (Array.isArray(v) ? v.some(hasX) : hasX(v))));
+  const walk = (n) => {
+    if (!n || typeof n !== "object") return;
+    if (n.k === "/" && hasX(n.b)) ast.push(n.b);
+    for (const v of Object.values(n)) Array.isArray(v) ? v.forEach(walk) : walk(v);
+  };
+  if (L?.ast) walk(L.ast);
+  if (!ast.length) return { list: [], missing: false };
+  const xs = [0.37, 1.29, 2.71, -0.83, 5.3, -3.7, 0.61, -0.29, 3.3, 7.9, -9.1, 12.6];
+  const runNode = (n) => {
+    try {
+      const code = L.run(n);
+      return (x) => {
+        L.scope.x = x;
+        try {
+          const v = code(L.scope);
+          return typeof v === "number" ? v : NaN;
+        } catch {
+          return NaN;
+        }
+      };
+    } catch {
+      return null;
+    }
+  };
+  const nodeFns = ast.map(runNode);
+  const same = (g, h) => {
+    let n = 0;
+    for (const x of xs) {
+      const [a, b] = [g(x), h(x)];
+      if (Number.isNaN(a) !== Number.isNaN(b)) return false;
+      if (Number.isNaN(a)) continue;
+      if (Math.abs(a - b) > 1e-9 * Math.max(1, Math.abs(a))) return false;
+      n++;
+    }
+    return n >= 3;
+  };
+  const found = new Set();
+  const list = [];
   for (let i = 0; i < s.length; i++) {
     if (!"/÷:".includes(s[i])) continue;
     let j = i + 1;
     while (s[j] === " ") j++;
-    let g = s[j] === "(" ? group(s, j) : /^[\p{L}\d.,√^]+/u.exec(s.slice(j))?.[0];
-    if (g && s[j] !== "(" && s[j + g.length] === "(") {
-      const arg = group(s, j + g.length);
-      g = arg == null ? null : `${g}(${arg})`;
+    const vars = [];
+    // potenca za osnovo, ki se konča pri end: 1/sin(x)^2, 1/(x − 1)^2 (deljenje s potenco)
+    const pow = (end) => /^\^\s*(?:\d+|[\p{L}])/u.exec(s.slice(end))?.[0] ?? (s[end] === "^" && s[end + 1] === "(" && group(s, end + 1) != null ? `^(${group(s, end + 1)})` : null);
+    const withPow = (base, end) => {
+      const pw = pow(end);
+      if (pw) vars.push(`${base}${pw}`);
+      vars.push(base);
+    };
+    if (s[j] === "(") {
+      const g = group(s, j);
+      if (g != null) withPow(`(${g})`, j + g.length + 2);
+    } else {
+      const num = /^\d[\d.,]*/.exec(s.slice(j))?.[0];
+      if (num) vars.push(num);
+      const w = /^[\p{L}\d.,√^]+/u.exec(s.slice(j))?.[0];
+      if (w) {
+        const arg = s[j + w.length] === "(" ? group(s, j + w.length) : null;
+        if (arg != null) withPow(`${w}(${arg})`, j + w.length + arg.length + 2);
+        vars.push(w);
+      }
     }
-    if (g && /x/.test(g)) out.push(g);
+    for (const g of vars) {
+      if (!g || !/x/.test(g)) continue;
+      const k = nodeFns.findIndex((h, m) => h && !found.has(m) && same(fnOf(g, env), h));
+      if (k < 0) continue;
+      found.add(k);
+      list.push(g);
+      break;
+    }
   }
-  return out;
+  return { list, missing: found.size < ast.length };
 }
 
 /**
@@ -236,7 +306,12 @@ export function infoFor(text, r, { profile = null, comma = true, env: base = nul
       // navpične asimptote le pri točkah, kjer gre f res proti ±∞ (revizija 28. 11.: 1/tan x ima x = kπ, ne π/2 + kπ;
       // cos x · tan x nima nobene); odstranljive prekinitve so prazne točke grafa
       const vp = P ? safe(() => polesPeriodic(s, f, P, env)) : null;
-      if (vp?.poles.length) one("sc.infoAsym", periodicTex(vp.poles, P, env, nt, num));
+      if (vp?.poles.length) {
+        // enakomerno razmaknjeni poli v enem zapisu: 1/sin x → x = kπ (ne x₁ = 2kπ, x₂ = π + 2kπ)
+        const m = vp.poles.length;
+        const even = m > 1 && vp.poles.every((a, i) => Math.abs(a - vp.poles[0] - (i * P) / m) < 1e-9 * Math.max(1, P));
+        one("sc.infoAsym", even ? periodicTex([vp.poles[0]], P / m, env, nt, num) : periodicTex(vp.poles, P, env, nt, num));
+      }
       if (vp) holes.push(...vp.holes);
     }
     if (topic === "ana" && calc) {
@@ -345,7 +420,9 @@ function periodicTex(roots, P, env, nt, num) {
 function domainOf(s, env, nt, sep) {
   const excl = [];
   const cond = [];
-  for (const d of denominators(s)) {
+  const dens = denominators(s, env);
+  if (dens.missing) return null;
+  for (const d of dens.list) {
     const a = safe(() => analyze(`(${d})=0`, env));
     if (!a || a.periodic || (a.kind !== "solve" && a.kind !== "bool")) return null;
     if (a.kind === "solve") excl.push(...(a.roots || []).filter(Number.isFinite));
@@ -537,8 +614,10 @@ function polesPeriodic(s, f, P, env) {
   const eqs = [
     ...argsOf(s, /(?<![A-Za-z])(?:tan|tg|sec)/).map((a) => `cos(${a})=0`),
     ...argsOf(s, /(?<![A-Za-z])(?:cot|ctg|csc)/).map((a) => `sin(${a})=0`),
-    ...denominators(s).map((d) => `(${d})=0`),
   ];
+  const dens = denominators(s, env);
+  if (dens.missing) return null;
+  eqs.push(...dens.list.map((d) => `(${d})=0`));
   const mod = (x) => {
     const m = ((x % P) + P) % P;
     return Math.abs(m - P) < 1e-9 * Math.max(1, P) ? 0 : m;
@@ -556,9 +635,12 @@ function polesPeriodic(s, f, P, env) {
       }
     }
   }
+  // kandidati, ki so si preblizu za preverjanje spodaj (tan(tan x) ima neskončno polov ob π/2): raje nič
+  const N = 2000;
+  const sorted = [...cand].sort((a, b) => a - b);
+  if (sorted.length > 200 || sorted.some((a, i) => (i ? a - sorted[i - 1] : a + P - sorted.at(-1)) < (2 * P) / N && sorted.length > 1)) return null;
   const poles = cand.filter((a) => divergesAt(f, a)).sort((a, b) => a - b);
   // varovalka: vsak visok lokalni vrh |f| na periodi mora biti tik ob najdenem polu (sicer kakšen pol manjka)
-  const N = 2000;
   const X = (i) => (P * (i + 0.37)) / N;
   const ys = [];
   for (let i = 0; i < N; i++) ys.push(Math.abs(f(X(i))));
