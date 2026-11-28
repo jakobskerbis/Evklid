@@ -154,7 +154,7 @@ Manj, ker bi $6$ strun po $2\,\text{€}$ stalo $12\,\text{€}$, kar je več ko
 - Enačba ima znak $=$ in neznanko; obe strani imata enako vrednost, kot tehtnica v ravnovesju.
 - Rešitev je število, ki ga vstaviš za neznanko, da enakost drži.
 - Sklepanje: greš nazaj z obratno operacijo. Plus in minus sta obratna, krat in deljeno tudi.
-- Pri $x - a = b$ je $x = b + a$, pri $x : a = b$ je $x = b \cdot a$. Rešitev je tu večja od $b$ (pri deljenju, če je $a$ večji od $1$).
+- Pri $x - a = b$ je $x = b + a$, pri $x : a = b$ je $x = b \cdot a$. Rešitev je tu večja od $b$ (pri odštevanju, če je $a$ večji od $0$; pri deljenju, če je $a$ večji od $1$ in $b$ večji od $0$).
 - Preizkušanje: vstavljaš števila in iz vsakega poskusa razbereš, ali naprej večje ali manjše.
 - Pri dveh operacijah ($2 \cdot x + 3 = 27$) gremo nazaj v obratnem vrstnem redu: najprej $-3$, nato $:2$.
 - Vsako rešitev preveri s preizkusom v prvotni enačbi.
