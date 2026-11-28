@@ -399,6 +399,37 @@ body.graph-open { overflow: hidden; }
   .sc-fn { gap: 4px; }
   .sc-key { font-size: 0.85rem; }
 }
+/* Telefon ležeče (nizek zaslon, pregled 28. 11. 2026): tipke v stolpcu so bile višje od zaslona in »Izračunaj«,
+   0 in vejica so padli pod rob. Zgodovina zgoraj, vrstica in zapis v eni vrsti, funkcijske tipke in številke
+   druga ob drugi (štiri vrste); vse ostane na zaslonu. Pokončno, tablica in računalnik ostanejo kot prej. */
+@media (orientation: landscape) and (max-height: 480px) {
+  .sc:not(.sc-pisi-on) { grid-template-columns: fit-content(60%) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(0, auto) auto; grid-template-areas: "hist hist" "bar entry" "keys keys"; column-gap: 0; }
+  .sc:not(.sc-pisi-on) > .split-handle { display: none !important; }
+  .sc:not(.sc-pisi-on) .sc-screen { display: contents; }
+  .sc:not(.sc-pisi-on) :is(.sc-bar, .sc-history, .sc-entry) { background: var(--surface); }
+  .sc:not(.sc-pisi-on) .sc-history { grid-area: hist; padding: 2px 12px; }
+  /* račun in izid v eni vrsti, gumbi zadnjega izida levo: izid ostane viden tudi v nizki zgodovini */
+  .sc:not(.sc-pisi-on) .sc-h-row { flex-direction: row; flex-wrap: wrap; justify-content: flex-end; align-items: center; column-gap: 12px; padding: 2px 0; }
+  .sc:not(.sc-pisi-on) .sc-h-row > .sc-acts { order: -1; margin-inline-end: auto; padding: 0; }
+  .sc:not(.sc-pisi-on) .sc-h-row > .sc-h-note { flex-basis: 100%; }
+  .sc:not(.sc-pisi-on) .sc-bar { grid-area: bar; min-width: 0; border-bottom: 0; border-top: 1px solid var(--border); padding: 4px 8px; }
+  /* visok zapis (sistem enačb, matrika) ne potisne tipk z zaslona: vrsta zapisa se skrči, zapis drsi (brez vidnega drsnika) */
+  .sc:not(.sc-pisi-on) .sc-entry { grid-area: entry; min-width: 0; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; align-items: center; gap: 12px; padding: 2px 12px 4px; }
+  .sc:not(.sc-pisi-on) .sc-entry::-webkit-scrollbar { display: none; }
+  .sc:not(.sc-pisi-on) .sc-line, .sc:not(.sc-pisi-on) .sc-input { flex: 1 1 auto; min-width: 0; }
+  .sc:not(.sc-pisi-on) .sc-live { flex: 0 1 auto; min-width: 0; max-width: 45%; min-height: 0; }
+  .sc:not(.sc-pisi-on) .sc-keys { grid-area: keys; flex-direction: row; align-items: stretch; gap: 8px; padding: 6px 8px calc(6px + var(--varno-sp, env(safe-area-inset-bottom, 0px))); }
+  .sc:not(.sc-pisi-on) .sc-fn { flex: 6 1 0; gap: 4px; }
+  .sc:not(.sc-pisi-on) .sc-num { flex: 5 1 0; gap: 4px; }
+  .sc:not(.sc-pisi-on) :is(.sc-key, .sc-key.n) { min-height: 40px; }
+}
+/* najnižji telefoni (iPhone SE 1. gen., 568 × 320): nekoliko nižje tipke, da ostane vrsta za izid */
+@media (orientation: landscape) and (max-height: 340px) {
+  .sc:not(.sc-pisi-on) :is(.sc-key, .sc-key.n) { min-height: 34px; }
+  .sc:not(.sc-pisi-on) .sc-history { padding-block: 0; }
+  .sc:not(.sc-pisi-on) .sc-h-row { padding: 0; }
+  .sc:not(.sc-pisi-on) .sc-act { min-height: 34px; }
+}
 
 /* gumbi »Kalkulator« v Učni poti, vadnici in Inštruktorju */
 .path-label-row, .topic-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
