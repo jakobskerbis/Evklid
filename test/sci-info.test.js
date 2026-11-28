@@ -200,6 +200,13 @@ test("navpične asimptote: ostali poli, robovi in vgnezdeni imenovalci", () => {
   assert.equal(as("1/sin(x)"), "x = k\\pi,\\ k \\in \\mathbb{Z}");
   assert.equal(as("tan(x)+cot(x)"), "x = k \\cdot \\tfrac{\\pi}{2},\\ k \\in \\mathbb{Z}");
   assert.equal(as("1/(tan(x)-1)"), "x = \\tfrac{\\pi}{4} + k\\pi,\\ k \\in \\mathbb{Z}");
+  // ² ³ s tipkovnice in imenovalci, definirani šele daleč od 0; eksponent z x ne ugibamo (brez lažnega x ≠ −20)
+  assert.equal(as("1/x²"), "x = 0,\\ y = 0");
+  assert.equal(as("1/(x-1)²"), "x = 1,\\ y = 0");
+  assert.equal(as("1/sin(x)²"), "x = k\\pi,\\ k \\in \\mathbb{Z}");
+  assert.equal(as("1/sqrt(x-20)"), "x = 20");
+  assert.equal(as("1/ln(x-10)"), "x = 11");
+  assert.equal(row(info("1/(x-3)^x"), "sc.infoDomain"), undefined);
   assert.equal(as("tan(tan(x))"), null); // poli se kopičijo ob π/2: seznam ne bi bil popoln
   assert.equal(as("1/sin(tan(x))"), null);
   // brez zanesljivega imenovalca (velik vrh brez ničle imenovalca) ali z logaritmom: raje nič

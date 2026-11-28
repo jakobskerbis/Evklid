@@ -61,7 +61,9 @@ function denominators(s, env = {}) {
   };
   if (L?.ast) walk(L.ast);
   if (!ast.length) return { list: [], missing: false };
+  // vzorci blizu 0 in daleč (√(x − 20), ln(x − 1000) sta definirana šele daleč od 0)
   const xs = [0.37, 1.29, 2.71, -0.83, 5.3, -3.7, 0.61, -0.29, 3.3, 7.9, -9.1, 12.6];
+  for (let k = 4; k <= 20; k++) xs.push(0.37 * 2 ** k, -0.41 * 2 ** k);
   const runNode = (n) => {
     try {
       const code = L.run(n);
@@ -84,7 +86,7 @@ function denominators(s, env = {}) {
     for (const x of xs) {
       const [a, b] = [g(x), h(x)];
       if (Number.isNaN(a) !== Number.isNaN(b)) return false;
-      if (Number.isNaN(a)) continue;
+      if (Number.isNaN(a) || !Number.isFinite(a) || !Number.isFinite(b)) continue;
       if (Math.abs(a - b) > 1e-9 * Math.max(1, Math.abs(a))) return false;
       n++;
     }
@@ -98,7 +100,8 @@ function denominators(s, env = {}) {
     while (s[j] === " ") j++;
     const vars = [];
     // potenca za osnovo, ki se konča pri end: 1/sin(x)^2, 1/(x − 1)^2 (deljenje s potenco)
-    const pow = (end) => /^\^\s*(?:\d+|[\p{L}])/u.exec(s.slice(end))?.[0] ?? (s[end] === "^" && s[end + 1] === "(" && group(s, end + 1) != null ? `^(${group(s, end + 1)})` : null);
+    // (le številski eksponent, tudi ² ³ s tipkovnice; x^x ali (x − 3)^x ne ugibamo)
+    const pow = (end) => /^(?:\^\s*\d+(?:[.,]\d+)?|[⁰¹²³⁴⁵⁶⁷⁸⁹]+)/u.exec(s.slice(end))?.[0] ?? (/^\^\s*\(\s*-?\d+(?:[.,]\d+)?\s*\)/.exec(s.slice(end))?.[0] || null);
     const withPow = (base, end) => {
       const pw = pow(end);
       if (pw) vars.push(`${base}${pw}`);
@@ -114,7 +117,7 @@ function denominators(s, env = {}) {
       if (w) {
         const arg = s[j + w.length] === "(" ? group(s, j + w.length) : null;
         if (arg != null) withPow(`${w}(${arg})`, j + w.length + arg.length + 2);
-        vars.push(w);
+        withPow(w, j + w.length); // 1/x² (² s tipkovnice)
       }
     }
     for (const g of vars) {
