@@ -1029,6 +1029,11 @@
    "h": "260a0395fb75",
    "o": "D"
   },
+  "FIZ-SS-3/duseno-in-vsiljeno-nihanje#p1": {
+   "h": "8b0a309f169d",
+   "o": "D",
+   "r": "Samostojno vprašanje o vsakdanjem pojavu (resonanca pralnega stroja), odgovor ne potrebuje lekcije."
+  },
   "FIZ-SS-3/elektromagnetno-valovanje#p0": {
    "h": "bdf259ae40ed",
    "o": "D"
@@ -1087,6 +1092,16 @@
    "h": "3dc5f2105fa3",
    "o": "D"
   },
+  "FIZ-SS-3/stojece-valovanje#p0": {
+   "h": "4f8517d74b70",
+   "o": "D",
+   "r": "Samostojno konceptualno vprašanje o robnih pogojih stoječega valovanja."
+  },
+  "FIZ-SS-3/stojece-valovanje#p1": {
+   "h": "f756d32181a1",
+   "o": "D",
+   "r": "Samostojno vprašanje o odvisnosti frekvence strune od sile, enolični odgovor."
+  },
   "FIZ-SS-3/valovanje#p1": {
    "h": "11555a3c551e",
    "o": "D"
@@ -1119,6 +1134,16 @@
   "FIZ-SS-4/jedro-in-radioaktivnost#p1": {
    "h": "103cf891ee68",
    "o": "D"
+  },
+  "FIZ-SS-4/jedrske-reakcije-in-reaktor#p1": {
+   "h": "663084d0026c",
+   "o": "D",
+   "r": "Samostojno vprašanje o vlogi kontrolnih palic in faktorju k."
+  },
+  "FIZ-SS-4/meritve-grafi-in-porocilo#p1": {
+   "h": "6050fd37e1b5",
+   "o": "D",
+   "r": "Samostojno vprašanje o sistematični napaki pri nihalu, opis situacije je v vprašanju."
   },
   "FIZ-SS-4/mesane-maturitetne-naloge#p1": {
    "h": "2351935faa4f",
@@ -1490,6 +1515,10 @@
    "h": "9e26d47dede0",
    "o": "D"
   },
+  "KEM-SS-1/topnost-in-sestava-raztopin#p1": {
+   "h": "3dda3e0c3464",
+   "o": "D"
+  },
   "KEM-SS-1/urejanje-enacb#p0": {
    "h": "837fe086f6da",
    "o": "I",
@@ -1513,6 +1542,18 @@
   },
   "KEM-SS-2/alkalijske-kovine-in-halogeni#p1": {
    "h": "52fd4ac7edb1",
+   "o": "D"
+  },
+  "KEM-SS-2/elektroliti-in-ionske-reakcije#p0": {
+   "h": "4c80c847ba18",
+   "o": "D"
+  },
+  "KEM-SS-2/elektroliti-in-ionske-reakcije#p1": {
+   "h": "ef270b29e279",
+   "o": "D"
+  },
+  "KEM-SS-2/elektroliti-in-ionske-reakcije#p2": {
+   "h": "8d58d08c2a22",
    "o": "D"
   },
   "KEM-SS-2/elementi-v-bioloskih-sistemih#n2": {
@@ -1660,6 +1701,11 @@
    "h": "1267c0867260",
    "o": "D"
   },
+  "KEM-SS-4/anorganske-snovi-v-industriji-in-okolju#p0": {
+   "h": "7d94f022f6bf",
+   "o": "I",
+   "r": "sklic na celico iz lekcije (kloralkalna elektroliza ni imenovana)"
+  },
   "KEM-SS-4/kemijsko-racunanje#p1": {
    "h": "841f9b8b4ac3",
    "o": "I",
@@ -1668,6 +1714,15 @@
   "KEM-SS-4/organska-kemija#p1": {
    "h": "4ef77d62cc2f",
    "o": "D"
+  },
+  "KEM-SS-4/prehodni-elementi-in-koordinacijske-spojine#p0": {
+   "h": "25ab1fc6377a",
+   "o": "D"
+  },
+  "KEM-SS-4/prehodni-elementi-in-koordinacijske-spojine#p2": {
+   "h": "3dde0ca28e69",
+   "o": "I",
+   "r": "ne pove imena spojine (sklic na prejšnji korak lekcije)"
   },
   "KEM-SS-4/splosna-in-anorganska-kemija#p2": {
    "h": "19a5865e33af",
@@ -2091,8 +2146,9 @@
    "o": "D"
   },
   "MAT-OS-8/realna-stevila#p0": {
-   "h": "a85d2fc9a75a",
-   "o": "D"
+   "h": "444e038388dc",
+   "o": "D",
+   "r": "Točke so pravilne in jasne; »zaokrožil« je natančnejše od »odrezal« (zadnja števka 9 je zaokrožena)."
   },
   "MAT-OS-8/uporaba-pitagorovega-izreka#p0": {
    "h": "25057eeda871",
@@ -2995,8 +3051,9 @@
    "r": "sklic na Laro in parabolo iz zgodbe lekcije"
   },
   "MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#p1": {
-   "h": "313299f5e2e9",
-   "o": "D"
+   "h": "585499f8cab5",
+   "o": "D",
+   "r": "Samostojno vprašanje; dodan pogoj za enake paraboli (popravek po Leanu, 26. 11. 2026)."
   },
   "MAT-SS-2/presecisca-parabol-in-sistemi-kvadratnih-neenacb#p3": {
    "h": "33ae0d19e7eb",
@@ -3330,8 +3387,9 @@
    "o": "D"
   },
   "MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#p1": {
-   "h": "a671c322442a",
-   "o": "D"
+   "h": "d631dc55983a",
+   "o": "D",
+   "r": "Samostojno vprašanje; pojasnilo »a ne asimptota sama« le natančneje omeji premico (j 26. 11. 2026, popravek po Leanu)."
   },
   "MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente#p3": {
    "h": "1806b4f8156a",

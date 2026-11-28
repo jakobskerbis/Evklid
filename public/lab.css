@@ -81,6 +81,19 @@
 .lab-vod-cilj { outline: 2px dashed var(--accent); outline-offset: 3px; border-radius: 6px; }
 @media (prefers-reduced-motion: reduce) { .lab-vod-proga > span { transition: none; } }
 
+/* Maturitetni poskus (public/sim/lab-matura.js): kartica naloge namesto kartice korakov. Med nalogo so izračunani
+   rezultati poskusa skriti (.lab-mat-skrito), po oddaji spet vidni. */
+.lab-mat-skrito { display: none !important; }
+/* Med maturitetnim poskusom ni pomoči inštruktorja (lab-matura.js → mount.dataset.matura). */
+.lab-stage:has(.lab-mount[data-matura="tece"]) .lab-ask { display: none; }
+.lab-mat-polja { display: grid; gap: 8px; margin: 8px 0 4px; }
+.lab-mat-polja .lab-tit-in { width: 8em; }
+.lab-mat-polja select { min-height: 40px; }
+.lab-mat-tock, .lab-mat-ocena { margin: 4px 0; padding-inline-start: 1.2em; }
+.lab-mat-tock li, .lab-mat-ocena li { margin: 3px 0; }
+.lab-mat-ocena li.ok b { color: var(--ok); }
+.lab-mat-ocena li.bad b { color: var(--danger); }
+
 /* »Preveri se« po poskusu (povezave C4): vaja iste teme v Vadnici. */
 .lab-check { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; justify-content: space-between; }
 .lab-check p { display: flex; align-items: center; gap: 8px; margin: 0; flex: 1 1 220px; }

@@ -45,7 +45,7 @@ Vklop: `EVKLID_NEAKTIVNI=1` v Render → Environment (v `render.yaml` zakomentir
 Koda: `server/accounts/neaktivni.js`, test `test/neaktivni.test.js`. Teče enkrat na dan po 10.00 (Ljubljana).
 
 - **Dejavnost:** prijava (nova seja), vsak klic API s sejo (`parents.last_active_at`, enkrat na dan; tudi v izvozu),
-  vprašanja, dogodki učenja, točke, rezultati vaj in iger (`skill_results`) in odprtje profila na napravi (tudi
+  vprašanja, dogodki učenja, točke, rezultati vaj, iger in orodij (`skill_results`) in odprtje profila na napravi (tudi
   otrokova uporaba na računu starša).
 - **12 mesecev brez dejavnosti:** eno kratko servisno e-sporočilo v slovenščini na e-naslov imetnika računa (»Evklid:
   ali še uporabljate svoj račun?«, povezava za prijavo in za izbris v zavihku Račun, datum izbrisa, noga z

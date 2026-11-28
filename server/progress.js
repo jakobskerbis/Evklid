@@ -9,12 +9,13 @@ import { generateTask, hasGenerator, publicTask, hintSteps } from "./practice/in
 import { checkAnswer } from "./practice/check.js";
 import * as MATH from "../public/graph/math.js";
 import { CONTEST, TRAINING_TASKS, isCompetitionPath, topicsForYear } from "./competition.js";
-import { isExamPath, mockPlan, scaledScore, examGrade, ravenKeeps } from "./exams.js";
+import { isExamPath, mockPlan, scaledScore, examGrade, ravenKeeps, ravenProfila } from "./exams.js";
 import { toChoice } from "./practice/choice.js";
 import { taskLanguage, localName } from "./exams.js";
 import { levelProgress, cleanXpGoal } from "../public/xp-levels.js";
 import { nowParts } from "./schedule.js";
 import { schoolYear } from "./games.js";
+import { aktivnaPriprava, nastaviTest, odstraniTest } from "./priprava/aktivna.js";
 
 // Tekmovalni trening in poskusno tekmovanje veljata tudi za priprave na izpite.
 const isPrepPath = (key) => isCompetitionPath(key) || isExamPath(key);
@@ -22,7 +23,7 @@ const isPrepPath = (key) => isCompetitionPath(key) || isExamPath(key);
 const pretestTier = (known) => (known >= 3 ? "višja" : known === 2 ? "srednja" : "osnovna");
 
 // Naloge z enim poskusom in brez namigov (preizkusi, tekmovanja, test predznanja).
-const ONE_SHOT = ["placement", "contest", "pretest"];
+export const ONE_SHOT = ["placement", "contest", "pretest"];
 
 export const RULES = {
   levelUpStreak: 3, // 3 pravilni zapored -> težje
@@ -76,6 +77,36 @@ function shuffle(a) {
   return b;
 }
 
+// Ocena teme (0–1), ena za pripravljenost na izpit (examReadiness) in načrt priprave na test (priprava/nacrt.js):
+// obvladana 1 (za ponovitev 0,8), v učenju 0,2–0,6 po stopnji, nova 0. izkazano (priprava na test: »pripravljenost mora
+// temeljiti na dejansko izkazanem znanju«): tema, ki jo je učenec samo označil kot obvladano (source manual), šteje 0,4,
+// dokler je ne potrdi z nalogami po oznaki (manual_proven); obvladana tema, ki je zgrešila ponovitev in je od tedaj ni
+// pravilno rešila (review_failed), 0,6. Pripravljenost na izpit zaenkrat ostaja brez tega (ročna oznaka na Učni poti tam
+// šteje; odloči j). s: vrstica iz STANJE_OCENE (ali null), now: datetime v UTC (nowSql).
+export function topicScore(s, now, { izkazano = false } = {}) {
+  if (!s) return 0;
+  if (s.status === "mastered") {
+    if (izkazano && s.source === "manual" && !s.manual_proven) return 0.4;
+    if (izkazano && s.review_failed) return 0.6;
+    return s.review_due && s.review_due <= now ? 0.8 : 1;
+  }
+  if (s.status === "learning") return 0.2 * Math.min(3, s.level || 1);
+  return 0;
+}
+// Stanje teme za topicScore (samo obvladane teme z mastered_at sprožijo podpoizvedbi; naloge vaje, ponavljanja in lista):
+// - review_failed: obstaja zgrešena ponovitev po obvladanju, po kateri ni nobene pravilne naloge teme v prvem poskusu;
+// - manual_proven: po ročni oznaki vsaj reviewPerTopic pravilnih ponovitev ali masteryCorrect pravilnih nalog.
+const PO_OBVLADANJU = "u.student_id = ts.student_id AND u.topic_id = ts.topic_id AND u.created_at >= ts.mastered_at AND u.mode IN ('practice','review','list')";
+export const STANJE_OCENE = `SELECT ts.status, ts.level, ts.review_due, ts.source, ts.mastered_at,
+  CASE WHEN ts.status = 'mastered' AND ts.mastered_at IS NOT NULL THEN EXISTS (
+    SELECT 1 FROM tasks u WHERE ${PO_OBVLADANJU} AND u.mode = 'review' AND u.first_try_correct = 0
+      AND NOT EXISTS (SELECT 1 FROM tasks v WHERE v.student_id = u.student_id AND v.topic_id = u.topic_id AND v.id > u.id
+        AND v.mode IN ('practice','review','list') AND v.first_try_correct = 1)) END AS review_failed,
+  CASE WHEN ts.status = 'mastered' AND ts.source = 'manual' AND ts.mastered_at IS NOT NULL THEN (
+    SELECT SUM(u.mode = 'review') >= ${RULES.reviewPerTopic} OR COUNT(*) >= ${RULES.masteryCorrect}
+    FROM tasks u WHERE ${PO_OBVLADANJU} AND u.first_try_correct = 1) END AS manual_proven
+  FROM topic_state ts WHERE ts.student_id = ? AND ts.topic_id = ?`;
+
 export class Progress {
   constructor(store) {
     this.store = store;
@@ -101,7 +132,7 @@ export class Progress {
   // »NPZ in matura« (#891). Druge poti in »še ne vem«: null (vse teme).
   profileRaven(studentId, pathKey) {
     if (!/^MAT-SS-\d$/.test(String(pathKey || ""))) return null;
-    return / (VR|OR)$/.exec(String(this.store.getStudent?.(studentId)?.settings?.curriculum_level || "").trim())?.[1] || null;
+    return ravenProfila(pathKey, this.store.getStudent?.(studentId)?.settings?.curriculum_level);
   }
 
   // ---------- stanje teme ----------
@@ -659,17 +690,16 @@ export class Progress {
 
   // Pripravljenost na izpit (NPZ, matura): delež snovi izpita, ki jo učenec že zna, in tri najšibkejše teme.
   // Tema izpita šteje kot njena osnovna tema na Učni poti (MAT-EX-NPZ9/… ↔ MAT-OS-8/…): velja boljše stanje.
-  // Ocena teme: obvladana 1 (za ponovitev 0,8), v učenju 0,2–0,6 po stopnji, nova 0.
-  // Šibke so teme z najnižjo oceno; ob enaki oceni najprej tiste z več napačnimi prvimi odgovori.
+  // Ocena teme: topicScore (brez strogega načina; ročna oznaka šteje). Šibke so teme z najnižjo oceno; ob enaki oceni najprej tiste z več napačnimi prvimi odgovori.
   examReadiness(studentId, pathKey, raven = null) {
     if (!isExamPath(pathKey)) return null;
     const path = getPath(pathKey);
     const forRaven = ravenKeeps(raven);
     const now = nowSql();
-    const stateOf = this.db.prepare("SELECT status, level, review_due FROM topic_state WHERE student_id = ? AND topic_id = ?");
+    const stateOf = this.db.prepare(STANJE_OCENE);
     const tries = this.db.prepare("SELECT COUNT(*) AS n, SUM(CASE WHEN first_try_correct = 0 THEN 1 ELSE 0 END) AS wrong FROM tasks WHERE student_id = ? AND topic_id = ? AND first_try_correct IS NOT NULL");
     const ui = this.uiLang(studentId);
-    const scoreOf = (s) => (!s ? 0 : s.status === "mastered" ? (s.review_due && s.review_due <= now ? 0.8 : 1) : s.status === "learning" ? 0.2 * Math.min(3, s.level || 1) : 0);
+    const scoreOf = (s) => topicScore(s, now);
     const topics = [];
     path.units.forEach((u, ui0) =>
       u.topics.forEach((t0, ti) => {
@@ -743,39 +773,43 @@ export class Progress {
   }
 
   // ---------- priprava na test ----------
+  // Načrt testa je aktivna priprava (server/priprava/aktivna.js, docs/priprava.md PR 2b).
   testPlan(studentId) {
-    const r = this.db.prepare("SELECT * FROM test_plans WHERE student_id = ?").get(studentId);
-    if (!r) return null;
-    const units = JSON.parse(r.units);
-    const path = getPath(r.path_key);
-    const daysLeft = Math.round((Date.parse(r.test_date) - Date.parse(nowParts().date)) / 86400000); // slovenski dan, kot v urniku
+    const r = aktivnaPriprava(this.db, studentId);
+    if (!r?.pot || !r.datum_testa) return null;
+    let units = [];
+    try {
+      units = JSON.parse(r.sklopi || "[]");
+    } catch {}
+    const path = getPath(r.pot);
+    const daysLeft = Math.round((Date.parse(r.datum_testa) - Date.parse(nowParts().date)) / 86400000); // slovenski dan, kot v urniku
     return {
-      path: r.path_key,
+      path: r.pot,
       subject: path?.subject || null,
       units,
       unitTitles: units.map((i) => path?.units[i]?.title).filter(Boolean),
-      date: r.test_date,
+      date: r.datum_testa,
       daysLeft,
       // Test iz urnika (server/schedule.js): priprava mu sledi sama, dokler je učenec ne spremeni.
-      eventId: r.event_id || null,
+      eventId: r.dogodek_id || null,
+      // Priprava, v katero gredo viri in izseki tega testa (/api/students/:id/priprave/:pid).
+      pripravaId: r.id,
     };
   }
-  setTestPlan(studentId, pathKey, units, date, eventId = null) {
+  // naslov: ime testa iz urnika (sicer ime učne poti); shrani se šifrirano kot naslov priprave.
+  setTestPlan(studentId, pathKey, units, date, eventId = null, naslov = null) {
     const path = getPath(pathKey);
-    const clean = [...new Set((units || []).map(Number))].filter((i) => Number.isInteger(i) && path?.units[i]);
-    if (!path || !clean.length || !/^\d{4}-\d{2}-\d{2}$/.test(String(date))) return null;
-    this.db
-      .prepare(
-        `INSERT INTO test_plans (student_id, path_key, units, test_date, event_id) VALUES (?, ?, ?, ?, ?)
-         ON CONFLICT(student_id) DO UPDATE SET path_key = excluded.path_key, units = excluded.units, test_date = excluded.test_date, event_id = excluded.event_id, created_at = datetime('now')`,
-      )
-      .run(studentId, pathKey, JSON.stringify(clean), date, eventId);
+    const clean = [...new Set((Array.isArray(units) ? units : []).map(Number))].filter((i) => Number.isInteger(i) && path?.units[i]);
+    // Pravi koledarski dan (2026-13-45 ne), kot pri /priprave.
+    const d = String(date);
+    if (!path || !clean.length || !/^\d{4}-\d{2}-\d{2}$/.test(d) || !(Date.parse(`${d}T00:00:00Z`) >= 0) || new Date(`${d}T00:00:00Z`).toISOString().slice(0, 10) !== d) return null;
+    nastaviTest(this.db, studentId, { pot: pathKey, sklopi: clean, datum: date, dogodek: eventId, naslov: naslov || path.label, predmet: path.subject || null });
     // Stare nedokončane seje priprave zapremo, nova upošteva nov načrt.
     this.db.prepare("UPDATE sessions SET finished = 1 WHERE student_id = ? AND kind = 'test' AND finished = 0").run(studentId);
     return this.testPlan(studentId);
   }
   clearTestPlan(studentId) {
-    this.db.prepare("DELETE FROM test_plans WHERE student_id = ?").run(studentId);
+    odstraniTest(this.db, studentId);
   }
   // Mešane naloge iz izbranih sklopov; bližje kot je test, težje so.
   startTest(studentId) {
@@ -800,13 +834,14 @@ export class Progress {
   // skills: id-ji tem z generatorji (veščine, ki jih je učenec potrdil na seznamu). Naloge so samo naše (Vadnica),
   // od lažjih k težjim: prva tretjina stopnja 1, druga 2, zadnja 3; veščine se izmenjujejo. V seji so shranjeni samo
   // id-ji tem (nikoli besedilo izvirnih nalog).
-  startList(studentId, skills, length) {
+  // extra: dodatni parametri seje (priprava na test: { priprava: id }, server/priprava/poti.js kviz).
+  startList(studentId, skills, length, extra = {}) {
     const ids = [...new Set(skills)].filter((id) => getTopic(id) && hasGenerator(id)).slice(0, LIST.maxSkills);
     if (!ids.length || !LIST.lengths.includes(length)) return null;
     // Več veščin kot nalog: v vajo pride toliko (naključnih) veščin, kolikor je nalog; povzetek pozna samo te.
     const order = shuffle(ids).slice(0, length);
     const plan = Array.from({ length }, (_, i) => ({ topic: order[i % order.length], mode: "list", level: 1 + Math.min(2, Math.floor((3 * i) / length)) }));
-    return this.sessionNext(this.createSession(studentId, "list", plan, { skills: order }));
+    return this.sessionNext(this.createSession(studentId, "list", plan, { ...extra, skills: order }));
   }
   // Povzetek po veščinah: »ok« (vsaj 2 nalogi in vsaj 3/4 v prvem poskusu), »more« (pod tem) ali »few« (ena sama
   // pravilna naloga: premalo za oceno). apply (enkrat, ob koncu seje): šibka tema, ki je bila obvladana že pred to
@@ -823,10 +858,21 @@ export class Progress {
       const before = st.status === "mastered" && st.mastered_at && st.mastered_at < sess.created_at;
       if (apply && rows.length && status === "more") {
         if (before) this.advanceReview(sess.student_id, id, false);
-        else if (st.status === "new") {
+        // Kviz priprave: zgrešena nova tema ostane nova (v načrtu ostane nova snov; napačen odgovor ne dvigne pripravljenosti).
+        else if (st.status === "new" && !sess.params.priprava) {
           st.status = "learning";
           this.saveState(st);
         }
+      } else if (apply && rows.length && sess.params.priprava && st.status !== "mastered") {
+        // Kviz priprave na test: izkazano znanje premakne stanje teme (načrt in pripravljenost), obvladanje pa ostane
+        // pravilo checkMastery. »ok« (vsaj 2 nalogi, ≥ 3/4 v prvem poskusu): stopnja višje (nova → učim se, vsaj
+        // stopnja 2; števca zaporednih odgovorov od začetka, kot ob vsaki spremembi stopnje); »few« (ena pravilna): nova →
+        // učim se.
+        if (status === "ok") {
+          const level = st.status === "new" ? Math.max(2, st.level || 1) : Math.min(3, (st.level || 1) + 1);
+          Object.assign(st, { status: "learning", ...(level !== st.level ? { level, streak: 0, wrong_streak: 0 } : {}) });
+        } else if (st.status === "new") st.status = "learning";
+        this.saveState(st);
       }
       return { id, name: localTopic(getTopic(id), lang)?.name || getTopic(id)?.name || id, correct, total: rows.length, status, ok: status === "ok", review: status === "more" && !!before };
     });
@@ -959,9 +1005,11 @@ export class Progress {
     const firstTry = row.attempts === 0;
     this.db
       .prepare(
-        `UPDATE tasks SET attempts = ?, solved = ?, last_answer = ?, first_try_correct = COALESCE(first_try_correct, ?) WHERE id = ?`,
+        `UPDATE tasks SET attempts = ?, solved = ?, last_answer = ?, first_try_correct = COALESCE(first_try_correct, ?),
+         answered_at = CASE WHEN ? THEN COALESCE(answered_at, datetime('now')) ELSE answered_at END WHERE id = ?`,
       )
-      .run(attempts, correct ? 1 : 0, String(input).slice(0, 200), firstTry ? (correct ? 1 : 0) : null, taskId);
+      // Čas prvega odgovora (N-09) samo ob prvem odgovoru: naloga, začeta pred to različico, ga ne dobi ob drugem.
+      .run(attempts, correct ? 1 : 0, String(input).slice(0, 200), firstTry ? (correct ? 1 : 0) : null, firstTry ? 1 : 0, taskId);
 
     const topic = getTopic(row.topic_id);
     // Analitika za šibke točke (enako kot META iz klepeta); test predznanja ne šteje,
@@ -1083,6 +1131,12 @@ export class Progress {
       if (out.next.finished && row.mode === "pretest") out.pretest = this.pretestScore(studentId, row.session_id);
     }
     return out;
+  }
+
+  // Pomoč inštruktorja pri nalogi iz Vadnice (»Vprašaj inštruktorja«, tudi pred prvim odgovorom): naloga ni več
+  // samostojna, kot pri namigu. Rešene naloge ne spremeni.
+  markHelped(studentId, taskId) {
+    this.db.prepare("UPDATE tasks SET hint_used = 1 WHERE id = ? AND student_id = ? AND solved = 0").run(taskId, studentId);
   }
 
   // Lestev namigov pred odgovorom (practice/index.js hintSteps); uporaba namiga zmanjša XP.

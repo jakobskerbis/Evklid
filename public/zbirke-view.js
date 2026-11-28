@@ -146,7 +146,7 @@ function passCard() {
       <div><h2>${icon("award")} ${esc(t("zb.pass"))}</h2><p class="muted">${esc(t(p.season.endsWith("-2") ? "zb.season2" : "zb.season1", { season: seasonLabel(p.season) }))}</p></div>
       <b class="zb-tier">${esc(t("zb.tier", { tier: p.tier, tiers: p.tiers }))}</b>
     </div>
-    <div class="zb-bar" role="progressbar" aria-valuemin="0" aria-valuemax="${p.tiers}" aria-valuenow="${p.tier}"><span style="width:${done ? 100 : Math.round((inTier / p.perTier) * 100)}%"></span></div>
+    <div class="zb-bar" role="progressbar" aria-valuemin="0" aria-valuemax="${p.tiers}" aria-valuenow="${p.tier}" aria-label="${esc(t("zb.tier", { tier: p.tier, tiers: p.tiers }))}"><span style="width:${done ? 100 : Math.round((inTier / p.perTier) * 100)}%"></span></div>
     <p class="zb-next">${esc(done ? t("zb.passDone") : t("zb.toNext", { xp: p.perTier - inTier }))}${!done && next ? ` · ${esc(t("zb.nextReward", { tier: next.tier }))}` : ""}</p>
     <ol class="zb-track">${cells}</ol>
     <p class="muted small">${esc(t("zb.passHint", { cap: p.dayCap }))} ${esc(t("zb.streakFreeze"))}</p>

@@ -77,7 +77,7 @@ export function upgradeZapis(state, comma = true) {
 // Pri zapisu 2 je to ista priprava kot v znanstvenem kalkulatorju (calcText: tisočice, nejasna števila, znanstveni
 // zapis 2e3, ∫(f; a; b)); names: imena, ki jih graf definira (E = … → »3E-2« je 3·E − 2).
 // Zapis 2 (še ne pretvorjen graf): le decimalna vejica in »;«.
-const lineText = (text, v, comma, names) => (v >= 3 ? calcText(String(text ?? ""), { comma, names }) : v === 2 ? argSeparators(String(text ?? ""), comma) : String(text ?? ""));
+const lineText = (text, v, comma, names) => (v >= 3 ? calcText(String(text ?? ""), { comma, names, freeInt: false }) : v === 2 ? argSeparators(String(text ?? ""), comma) : String(text ?? ""));
 // »(2,3)« v slovenskem zapisu je število 2,3 v oklepaju; morda je mišljena točka (2; 3): namig, pomen ostane.
 const POINT_LIKE = /^\s*\(\s*([+\-−]?\d+),(\d+)\s*\)\s*$/;
 // »2e3x«: e za številom, ki mu sledi črka ali oklepaj, je Eulerjevo število (calcText), ne znanstveni zapis.
@@ -126,6 +126,26 @@ function definitionOf(text) {
 }
 
 const err = (code, info = {}) => ({ code, info });
+
+/**
+ * TeX ene vrstice, kot ga izriše buildModel (za vnos s kazalcem v calc.js, sci-vnos.js entryBase). Vrže napako, če
+ * se besedilo ne razčleni.
+ */
+export function rowTex(text, state, { comma = true } = {}) {
+  const items = state.items || [];
+  const zv = state.zapis === 2 || state.zapis === ZAPIS ? state.zapis : 0;
+  const readComma = zv >= 2 && typeof state.vejica === "boolean" ? state.vejica : comma;
+  const namesE = new Set(items.some((it) => it.type === "expr" && /^\s*E\s*(?:\([^()]*\)\s*)?=(?!=)/.test(String(it.text ?? ""))) ? ["E"] : []);
+  const funcNames = new Set();
+  for (const it of items) {
+    if (it.type !== "expr") continue;
+    try {
+      const d = definitionOf(lineText(it.text, zv, readComma, namesE));
+      if (d) funcNames.add(d.name);
+    } catch {}
+  }
+  return toTex(parse(lineText(text, zv, readComma, namesE), { funcs: funcNames }), { comma, sep: zv >= 2 && readComma ? ";" : "," });
+}
 
 /**
  * Zgradi model iz stanja grafa.
@@ -800,7 +820,8 @@ export function specialPoints(fn, a, b, n = 600) {
     if (Math.abs(y - y0) < span * 1e-12 && Math.abs(y - y2) < span * 1e-12) continue;
     add({ x, y, type: isMax ? "max" : "min" });
     // dotik osi x (npr. x² pri 0): je tudi ničla
-    if (Math.abs(y) < span * 1e-7) add({ x, y: 0, type: "root" });
+    // pogoj tudi glede na lokalno velikost (sicer bi pri širokem oknu (x²−1)²+5 na ±100 dobil »ničli« pri ±1)
+    if (Math.abs(y) < span * 1e-7 && Math.abs(y) < 1e-9 * (1 + Math.abs(y0) + Math.abs(y2))) add({ x, y: 0, type: "root" });
   }
   if (a <= 0 && b >= 0) {
     const y = f(0);
@@ -809,16 +830,23 @@ export function specialPoints(fn, a, b, n = 600) {
   return out.sort((p, q) => p.x - q.x);
 }
 
-/** Presečišča dveh funkcij y = f(x), y = g(x) na [a, b]. */
-export function intersections(f, g, a, b, n = 600) {
+/**
+ * Presečišča dveh funkcij y = f(x), y = g(x) na [a, b]: menjava predznaka razlike in dotik, kjer razlika ne
+ * spremeni predznaka (sin x in y = 1, parabola in njena tangenta; AUDIT-019). Dotik velja z isto mejo kot
+ * dotik osi x pri ničlah (specialPoints): najmanjša |f − g| pod 10⁻⁷ razpona razlike.
+ */
+export function intersections(f, g, a, b, n = 600, touch = true) {
   const d = (x) => toNum(f(x)) - toNum(g(x));
   const out = [];
   const h = (b - a) / n;
-  let x0 = a;
-  let d0 = d(a);
+  const xs = [];
+  const ds = [];
+  for (let i = 0; i <= n; i++) {
+    xs.push(a + i * h);
+    ds.push(d(xs[i]));
+  }
   for (let i = 1; i <= n; i++) {
-    const x1 = a + i * h;
-    const d1 = d(x1);
+    const [x0, x1, d0, d1] = [xs[i - 1], xs[i], ds[i - 1], ds[i]];
     if (Number.isFinite(d0) && Number.isFinite(d1)) {
       if (d0 === 0) out.push(x0);
       else if (d0 < 0 !== d1 < 0 && d1 !== 0) {
@@ -826,9 +854,25 @@ export function intersections(f, g, a, b, n = 600) {
         if (r !== null && Math.abs(d(r)) < 1e-6 * (1 + Math.abs(toNum(f(r))))) out.push(r);
       }
     }
-    x0 = x1;
-    d0 = d1;
   }
+  if (ds[n] === 0) out.push(xs[n]);
+  // dotik: lokalni minimum |f − g| brez menjave predznaka
+  const fin = ds.filter(Number.isFinite);
+  const span = fin.length ? Math.max(1e-9, Math.max(...fin) - Math.min(...fin)) : 1;
+  for (let i = 1; touch && i < n; i++) {
+    const [d0, d1, d2] = [ds[i - 1], ds[i], ds[i + 1]];
+    if (![d0, d1, d2].every(Number.isFinite) || d1 === 0 || d0 === 0 || d2 === 0) continue;
+    if (d0 < 0 !== d1 < 0 || d1 < 0 !== d2 < 0) continue; // menjavo predznaka že ima zgornja zanka
+    const s = d1 > 0 ? 1 : -1;
+    if (!(s * d1 <= s * d0 && s * d1 <= s * d2 && (s * d1 < s * d0 || s * d1 < s * d2))) continue;
+    if (Math.abs(d2 - d0) > span * 0.5) continue; // skok, ne gladek dotik
+    const x = golden(d, xs[i - 1], xs[i + 1], -s);
+    const dx = d(x);
+    if (!Number.isFinite(dx) || Math.abs(dx) > Math.abs(d1) + span * 1e-12) continue;
+    // majhna razlika glede na celotno razliko in glede na lokalno velikost f in g (skoraj-dotik na širokem oknu ni dotik)
+    if (Math.abs(dx) < span * 1e-7 && Math.abs(dx) < 1e-9 * (1 + Math.abs(toNum(f(x))) + Math.abs(toNum(g(x))) + Math.abs(d0) + Math.abs(d2))) out.push(x);
+  }
+  out.sort((p, q) => p - q);
   return out.filter((x, i) => i === 0 || x - out[i - 1] > h / 4).map((x) => ({ x, y: toNum(f(x)), type: "int" }));
 }
 

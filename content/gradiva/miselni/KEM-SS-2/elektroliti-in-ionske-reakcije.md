@@ -1,0 +1,33 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Elektroliti
+  - ioni prevajajo tok
+  - močni: $\mathrm{NaCl}$, $\mathrm{HCl}$; šibki: $\mathrm{CH_3COOH}$
+  - neelektroliti: sladkor, etanol
+  - več ionov v litru: večja prevodnost
+- Ionska enačba
+  - raztopljeni močni elektroliti kot ioni $\mathrm{(aq)}$
+  - oborina $\mathrm{(s)}$, plin $\mathrm{(g)}$, voda $\mathrm{(l)}$ s formulo
+  - ioni opazovalci odpadejo
+- Trije razlogi
+  - oborina, plin ali voda
+  - sicer reakcije ni
+- Pravila topnosti
+  - $\mathrm{Na^+}$, $\mathrm{K^+}$, $\mathrm{NH_4^+}$, nitrati: topni
+  - $\mathrm{AgCl}$, $\mathrm{BaSO_4}$: oborini
+- Masa oborine
+  - $n = c \cdot V$, omejitveni reaktant
+  - $m = n \cdot M$
+  - napaka: $\mathrm{CaCl_2}$ da dva $\mathrm{Cl^-}$
+- Imena
+  - sulfat in sulfit, nitrat in nitrit
+  - $\mathrm{NaHCO_3}$: natrijev hidrogenkarbonat
+  - $\mathrm{CuSO_4 \cdot 5\,H_2O}$: pentahidrat
+- Protoliza ionov soli
+  - $\mathrm{NH_4Cl}$ kisla, $\mathrm{NaCl}$ nevtralna
+  - $\mathrm{CH_3COONa}$, $\mathrm{Na_2CO_3}$ bazični
+  - $\mathrm{HCO_3^-}$ proton odda ali sprejme
+- Lakmus
+  - v kislem rdeč, v bazičnem moder

@@ -1,6 +1,7 @@
 // Jedro znanstvenega kalkulatorja in pretvornika enot: brez DOM, zato ga lahko preizkusimo v Node.
 // Izraze razčleni in izračuna isti razčlenjevalnik kot grafični kalkulator (math.js).
 import { precise } from "./natancnost.js";
+import { hasUnits, unitTokens, parseUnit, knownUnit, unitParts, unitPieces, composeUnit, siUnit, sameDims, dimless, unitTex, OFFSET_TEMP, DIMS, OPEN, CLOSE } from "./enote.js";
 import { parse, compile, toTex, freeVars, diff, simplify, substitute, BUILTINS, MathError, calcText, calcRewrite, splitTop, integrateInfo, walk, withIntegralBudget, integralTrace, withIntegralValues } from "./math.js";
 
 const ANS = "A_{ans}"; // »Ans« v izrazu; razčlenjevalnik bi »ans« razbil v a·n·s
@@ -29,8 +30,8 @@ export function prepare(text, { comma = true, names = null } = {}) {
   // »1.234,5« = 1234,5; nejasen zapis števila (»12 3456«, »1.2.3«) je napaka, ne tiho množenje (12 · 3456, 1,2 · 0,3).
   // Isto pravilo kot grafični kalkulator in preverjanje odgovorov (numberText v math.js).
   // Znanstveni zapis, ∫(f; a; b) in manjkajoči zaklepaji: skupna priprava z grafičnim kalkulatorjem (calcText).
-  let s = String(text ?? "").trim().replace(/(?<![A-Za-z])Ans(?![A-Za-z])/g, ANS);
-  s = calcText(s, { comma, names, close: true });
+  let s = unitVars(String(text ?? "").trim()).replace(/(?<![A-Za-z])Ans(?![A-Za-z])/g, ANS);
+  s = calcText(s, { comma, names, close: true, freeInt: true }); // ∫(sin(t); 0; x) je po t (AUDIT-085)
   s = s.replace(DMS_RUN, (m) => `(${m.replace(/([°′])\s*(?=\d)/g, "$1+")})`);
   // ′ in ″ sta minuta in sekunda le za številom; f′(2) in (x³)′ ostaneta odvod (math.js ′ → ')
   // Enota se veže na število ali črko tik pred njo, močneje kot funkcija, potenca in deljenje (kot ° v grafičnem
@@ -41,6 +42,47 @@ export function prepare(text, { comma = true, names = null } = {}) {
     .replace(/(\d+(?:\.\d+)?)\s*′/g, `($1 ${MIN})`)
     .replace(/(\d+(?:\.\d+)?)\s*″/g, `($1 ${SEC})`);
   return s;
+}
+
+// ---------- enote (public/graph/enote.js) ----------
+// Žeton ⟦km⟧ je v izrazu skrita spremenljivka U_{uu…} (vrednost: faktor do SI). Število tik pred enoto je z njo v
+// oklepaju (kot ° zgoraj): 10 m / 2 s = (10 m)/(2 s) = 5 m/s, ne 10 m/2 · s. Za ^ ne (2^3 m = 8 m, ne 2^(3 m)).
+const UNIT_NAMES = new Map(); // simbol → koda imena
+const UNIT_SYMS = new Map(); // koda → simbol
+const unitCode = (sym) => {
+  if (!UNIT_NAMES.has(sym)) {
+    let n = UNIT_NAMES.size;
+    let code = "";
+    do {
+      code = String.fromCharCode(65 + (n % 26)) + code; // velike črke: male (U_{uuch}) bi math.js prebral kot cosh
+      n = Math.floor(n / 26) - 1;
+    } while (n >= 0);
+    UNIT_NAMES.set(sym, code);
+    UNIT_SYMS.set(code, sym);
+  }
+  return UNIT_NAMES.get(sym);
+};
+/** Ime spremenljivke enote (po razčlenitvi, U_uu…). */
+export const unitVarName = (sym) => `U_uu${unitCode(sym)}`;
+const NUM_UNIT = new RegExp(`((?<![\\p{L}\\d_.,^])(?<!\\^[−\\-+])(?:\\d{1,3}(?:[ \u00a0]\\d{3})+|\\d+)(?:[.,]\\d+)?(?:E[+\\-−]?\\d+|[×·]10\\^\\(?[+\\-−]?\\d+\\)?)?)?\\s*${OPEN}([^${OPEN}${CLOSE}]*)${CLOSE}`, "gu");
+function unitVars(s) {
+  if (!s.includes(OPEN)) return s;
+  return s.replace(NUM_UNIT, (m, num, sym) => (num ? `(${num} U_{uu${unitCode(sym)}})` : ` U_{uu${unitCode(sym)}} `));
+}
+
+// Enota za nečim, kar ni število (10 m / 2^(3) s, 10 m / (2+3) s, 10 m / x s): math.js prebere »a/b s« kot (a/b)·s,
+// enota pa sodi k zadnjemu členu pred njo, tako kot pri številu: a/(b s). Potenca ostane cela (2^3 m = 8 m).
+const isUnitVar = (n) => n?.k === "var" && n.name.startsWith("U_uu");
+function attachUnit(a, u) {
+  if (a.k === "/" || a.k === "*") return { ...a, b: attachUnit(a.b, u) };
+  return { k: "*", a, b: u, imp: true };
+}
+function bindUnits(n) {
+  if (!n || typeof n !== "object") return n;
+  if (Array.isArray(n)) return n.map(bindUnits);
+  const out = {};
+  for (const [k, v] of Object.entries(n)) out[k] = v && typeof v === "object" ? bindUnits(v) : v;
+  return out.k === "*" && out.imp && isUnitVar(out.b) ? attachUnit(out.a, out.b) : out;
 }
 
 /** Je besedilo prirejanje »a = 5«? Vrne ime spremenljivke ali null. */
@@ -90,11 +132,24 @@ export function lineTex(ast, comma = true) {
     .replace(/\s*(?:\\cdot\s*)?G_\{sec\}/g, "^{\\prime\\prime}")
     .replace(/(?<=^|[{\s+\-=(,])\\left\(([\d{},.]+|[A-Za-z]|\\(?:pi|theta|alpha|beta|gamma|varphi|phi))\^\{(\\circ|\\prime|\\prime\\prime)\}\\right\)(?!\s*\^)/g, "$1^{$2}") // (30°) → 30° (ne za funkcijo, števko ali pred potenco)
     .replace(/(\^\{\\circ\}|\^\{\\prime\})\s*\+\s*(?=[\d{},.]+\^\{\\prime(?:\\prime)?\}(?!\s*(?:\\cdot|\^|\\times)))/g, "$1") // 30° + 15′ → 30°15′ (ne 30° + 15′·2)
-    .replace(/\\cdot\s*10\^/g, "\\cdot 10^");
+    .replace(/\\cdot\s*10\^/g, "\\cdot 10^")
+    .replace(/U_\{uu([A-Z]+)\}/g, (m, code) => (UNIT_SYMS.has(code) ? unitTex(UNIT_SYMS.get(code)) : m));
 }
 
 const FN_NAME = /^\s*([A-Za-z])\s*\(\s*([A-Za-z])\s*\)\s*=(?!=)/;
 /** Je vrstica definicija funkcije »f(x) = …«? Vrne { name, param, body } ali null. */
+// Kotne funkcije v vrstici ali v uporabnikovi funkciji, ki jo vrstica kliče (f(x) = sin x): le takrat je enota kota
+// (DEG/RAD) za rezultat pomembna (brez meje pred imenom: xsinx je x·sin x; f'(2) je odvod uporabnikove f). Brez njih opomba »Računano v radianih« zmede (taylor(3x² − 6x + 3; x) v DEG).
+const ANGLE_FN = /(?:a?sin|a?cos|a?tan|a?cot|arc(?:sin|cos|tan|cot|tg|ctg)|tg|ctg|sec|csc)(?!h)|°/;
+export function usesAngles(text, funcs = {}, depth = 0) {
+  const src = String(text ?? "");
+  if (ANGLE_FN.test(src)) return true;
+  if (depth > 5) return false;
+  for (const [name, f] of Object.entries(funcs || {}))
+    if (f && typeof f.body === "string" && new RegExp(`${name.replace(/[^\w]/g, "")}\\s*['′″]*\\s*\\(`).test(src) && usesAngles(f.body, funcs, depth + 1)) return true;
+  return false;
+}
+
 export function functionDef(text) {
   const m = FN_NAME.exec(String(text ?? ""));
   if (!m || BUILTINS.has(m[1]) || m[1] === "e" || m[1] === m[2]) return null;
@@ -128,7 +183,7 @@ export function compileLine(text, { vars = {}, ans = 0, deg = false, grad = fals
       d.body = () => NaN;
     }
   }
-  const ast = parse(src, { funcs: names });
+  const ast = src.includes("U_{uu") ? bindUnits(parse(src, { funcs: names })) : parse(src, { funcs: names });
   return { src, ast, scope, ctx, rw: (node) => rewrite(node, ctx), run: (node) => compile(rewrite(node, ctx), ctx) };
 }
 
@@ -167,11 +222,13 @@ export function integralsOf(node, ctx, scope) {
 const INT_LIVE_MS = 50; // integrali v predogledu med tipkanjem (sicer ga ne pokažemo)
 const INT_MS = 1000; // integrali ob Izračunaj
 const unwrapGrp = (n) => (n?.k === "grp" ? unwrapGrp(n.a) : n);
-const hasIntegral = (node) => {
+// AUDIT-070: tudi integral v telesu uporabniške funkcije (k(x) = ∫(sin(t); 0; x), nato k(1))
+const hasIntegral = (node, funcs = null, depth = 0) => {
   let yes = false;
   walk(node, (n) => {
     if (n.k === "int" && n.lo) yes = true;
     if (n.k === "sum" && unwrapGrp(n.hi)?.k === "const" && unwrapGrp(n.hi).name === "inf") yes = true; // neskončna vrsta: ista pot (ocena napake)
+    if (n.k === "ufn" && depth < 10 && funcs?.[n.f]?.ast && hasIntegral(funcs[n.f].ast, funcs, depth + 1)) yes = true;
   });
   return yes;
 };
@@ -260,6 +317,312 @@ export function unknownsOf(node, vars = {}) {
  * @returns {{ value:number, tex:string, assign?:string } | { error:{code, info} } | null}
  */
 export function evaluate(text, env = {}) {
+  if (hasUnits(text) || (env.ansUnit && /(?<![A-Za-z])Ans(?![A-Za-z])/.test(String(text ?? "")))) return evaluateUnits(String(text ?? ""), env);
+  return evaluatePlain(text, env);
+}
+
+// ---------- račun z enotami ----------
+// Vrednost izračuna navaden račun (evaluatePlain) z enotami kot faktorji do SI. Dimenzijo rezultata dobimo tako, da
+// račun ponovimo z drugačno velikostjo vsake osnovne enote (m, kg, s, A, K, mol): rezultat z dimenzijo d se spremeni
+// za faktor Π skalaᵢ^dᵢ. Če se ne spremeni tako (5 m + 3 s, sin(2 m), round(2,4 m)), enote v računu ne gredo skupaj.
+// Potence števila 2: množenje z njimi je v plavajoči vejici točno, zato se tudi račun z odštevanjem skoraj enakih
+// števil ((10¹⁶ m + 1 m) − 10¹⁶ m) spremeni natanko za faktor in ne da lažne napake.
+const SCALE = 2;
+const CHECK = [4, 0.5, 8, 0.25, 2, 16];
+const scaleOf = (d, sc) => (sc ? d.reduce((p, e, i) => p * sc[i] ** e, 1) : 1);
+const unitErr = (code, info = {}) => ({ error: { code, info } });
+const ANS_RE = /(?<![A-Za-z])Ans(?![A-Za-z])/;
+
+// Dimenzija iz zgradbe računa (brez računanja): { d, m } (m: simboli enot s potencami za zapis rezultata, npr. km¹ h⁻¹)
+// ali null, ko je ni mogoče določiti (eksponent s spremenljivko, uporabniška funkcija, enota v integralu): takrat
+// velja dimenzija iz ponovljenih računov. Očitne napake (5 m + 3 s, sin(2 m), round(2,5 km), 2^(1 m)) vrže takoj.
+const ZERO = () => ({ d: new Array(DIMS.length).fill(0), m: new Map() });
+class UnitError extends Error {
+  constructor(code, info = {}) {
+    super(code);
+    this.code = code;
+    this.info = info;
+  }
+}
+const UNIT_FREE_CALL = new Set(["abs", "min", "max"]);
+function constValue(n) {
+  switch (n?.k) {
+    case "num":
+      return n.v;
+    case "grp":
+      return constValue(n.a);
+    case "neg":
+      return -constValue(n.a);
+    case "+":
+    case "-":
+    case "*":
+    case "/": {
+      const a = constValue(n.a);
+      const b = constValue(n.b);
+      return n.k === "+" ? a + b : n.k === "-" ? a - b : n.k === "*" ? a * b : a / b;
+    }
+    default:
+      return NaN;
+  }
+}
+const powDims = (x, e) => {
+  const d = x.d.map((v) => v * e);
+  if (!d.every((v) => Math.abs(v - Math.round(v)) < 1e-9)) throw new UnitError("unitPower");
+  let m = null;
+  if (x.m) {
+    m = new Map();
+    for (const [k, v] of x.m) {
+      const p = v * e;
+      if (Math.abs(p - Math.round(p)) > 1e-9) {
+        m = null;
+        break;
+      }
+      m.set(k, Math.round(p));
+    }
+  }
+  return { d: d.map(Math.round), m };
+};
+const mergeMaps = (a, b, sign) => {
+  if (!a || !b) return null;
+  const m = new Map(a);
+  for (const [k, v] of b) m.set(k, (m.get(k) || 0) + sign * v);
+  return m;
+};
+function unitStatic(n, leaf) {
+  const rec = (x) => unitStatic(x, leaf);
+  const hasU = (x) => {
+    let found = false;
+    walk(x, (y) => y.k === "var" && leaf(y.name) && !dimless(leaf(y.name).d) && (found = true));
+    return found;
+  };
+  switch (n?.k) {
+    case "num":
+    case "const":
+      return ZERO();
+    case "var":
+      return leaf(n.name) || ZERO();
+    case "grp":
+    case "neg":
+    case "rad":
+      return rec(n.a);
+    case "+":
+    case "-": {
+      const a = rec(n.a);
+      const b = rec(n.b);
+      if (a && b && !sameDims(a.d, b.d)) throw new UnitError("unitMismatch");
+      return a && b ? a : null;
+    }
+    case "*":
+    case "/": {
+      const a = rec(n.a);
+      const b = rec(n.b);
+      if (!a || !b) return null;
+      const s = n.k === "*" ? 1 : -1;
+      return { d: a.d.map((v, i) => v + s * b.d[i]), m: mergeMaps(a.m, b.m, s) };
+    }
+    case "^": {
+      const e = rec(n.b);
+      if (e && !dimless(e.d)) throw new UnitError("unitFunc");
+      const a = rec(n.a);
+      if (!a || !e) return null;
+      if (dimless(a.d)) return ZERO();
+      const p = constValue(n.b);
+      return Number.isFinite(p) ? powDims(a, p) : null;
+    }
+    case "call": {
+      const args = n.args.map(rec);
+      const withU = args.some((x) => !x || !dimless(x.d));
+      if (!withU) return ZERO();
+      if (n.f === "Pol" || n.f === "Rec") throw new UnitError("unitCalcOnly");
+      if (n.f === "sqrt" || n.f === "cbrt" || n.f === "root") {
+        if (n.args.slice(1).some(hasU)) throw new UnitError("unitFunc");
+        const k = n.f === "sqrt" ? 2 : n.f === "cbrt" ? 3 : constValue(n.args[1]);
+        return args[0] && Number.isFinite(k) && k ? powDims(args[0], 1 / k) : null;
+      }
+      if (!UNIT_FREE_CALL.has(n.f)) throw new UnitError("unitFunc");
+      if (args.some((x) => !x)) return null;
+      if (args.some((x) => !sameDims(x.d, args[0].d))) throw new UnitError("unitMismatch");
+      return args[0];
+    }
+    case "fact":
+    case "pct": {
+      const a = rec(n.a);
+      if (!a) return null;
+      if (!dimless(a.d)) throw new UnitError("unitFunc");
+      return ZERO();
+    }
+    case "sum": {
+      // ∑ ima dimenzijo člena (števec je brez enote); ∏ le iz ponovljenih računov
+      if (!hasU(n)) return ZERO();
+      if (hasU(n.lo) || hasU(n.hi)) throw new UnitError("unitFunc");
+      return n.f === "sum" ? unitStatic(n.a, (name) => (name === n.v ? ZERO() : leaf(name))) : null;
+    }
+    case "int": {
+      // ∫ f dx: dimenzija f krat dimenzija x (meji); x ima v f dimenzijo meja
+      if (!hasU(n)) return ZERO();
+      const lo = rec(n.lo);
+      const hi = rec(n.hi);
+      if (!lo || !hi) return null;
+      if (!sameDims(lo.d, hi.d) && !dimless(lo.d) && !dimless(hi.d)) throw new UnitError("unitMismatch");
+      const x = dimless(lo.d) ? hi : lo;
+      const f = unitStatic(n.a, (name) => (name === n.v ? x : leaf(name)));
+      return f ? { d: f.d.map((v, i) => v + x.d[i]), m: mergeMaps(f.m, x.m, 1) } : null;
+    }
+    default:
+      // uporabniške funkcije, odvodi …: z enoto v sebi le iz ponovljenih računov
+      return hasU(n) ? null : ZERO();
+  }
+}
+
+function evaluateUnits(text, env) {
+  const toks = unitTokens(text);
+  const bad = toks.find((t) => !knownUnit(t.sym));
+  if (bad) return unitErr("unitUnknown", { u: bad.sym });
+  // enačbe, neenačbe, prirejanje, več vrstic: z enotami le račun (rešitev bi bila število brez enote)
+  // (na vrhnji ravni: ∑_(n=1)^(5), ∫(x; 0; 2) in nCr(5; 2) so del računa)
+  if (splitTop(text, "=<>≤≥;\n").length > 1) return unitErr("unitCalcOnly");
+  const sides = text.split("→");
+  if (sides.length > 2) return unitErr("unitTarget");
+  const left = sides[0];
+  let target = null;
+  if (sides.length === 2) {
+    const m = new RegExp(`^\\s*${OPEN}([^${OPEN}${CLOSE}]*)${CLOSE}\\s*$`).exec(sides[1]);
+    if (!m || !left.trim()) return unitErr("unitTarget");
+    target = m[1];
+  }
+  const usesAns = !!env.ansUnit && ANS_RE.test(left);
+  const temp = toks.some((t) => t.sym in OFFSET_TEMP) || target in OFFSET_TEMP || (usesAns && env.ansUnit in OFFSET_TEMP);
+  if (temp) return temperature(left, target, env);
+  const ansU = usesAns ? parseUnit(env.ansUnit) : null;
+  if (usesAns && !ansU) return unitErr("unitTemp");
+  const leftToks = toks.filter((t) => t.start < left.length);
+  const syms = [...new Set(leftToks.map((t) => t.sym))];
+  const varUnits = Object.entries(env.varUnits || {}).map(([name, sym]) => [name, parseUnit(sym), sym]).filter(([name, u]) => u && Number.isFinite(env.vars?.[name]));
+  const run = (sc) => {
+    const vars = { ...(env.vars || {}) };
+    for (const sym of syms) {
+      const u = parseUnit(sym);
+      vars[unitVarName(sym)] = u.f * scaleOf(u.d, sc);
+    }
+    for (const [name, u] of varUnits) vars[name] = env.vars[name] * u.f * scaleOf(u.d, sc);
+    const ans = ansU ? env.ans * ansU.f * scaleOf(ansU.d, sc) : env.ans;
+    // ponovitve s spremenjenimi enotami: le za dimenzijo (kratka časovna meja)
+    return evaluatePlain(left, sc ? { ...env, vars, ans, live: true } : { ...env, vars, ans });
+  };
+  const r0 = run(null);
+  if (!r0 || r0.error || typeof r0.value !== "number") return r0;
+  // dimenzija iz zgradbe računa (tudi pri rezultatu 0, naključnih številih in ocenjenih integralih)
+  const leaves = new Map(syms.map((sym) => [unitVarName(sym), { d: parseUnit(sym).d, m: unitPieces(sym) }]));
+  if (ansU) leaves.set(ANS_VAR, { d: ansU.d, m: unitPieces(env.ansUnit) });
+  for (const [name, u, sym] of varUnits) leaves.set(name, { d: u.d, m: unitPieces(sym) });
+  let st = null;
+  try {
+    const line = compileLine(left, env);
+    st = line && unitStatic(line.rw(line.ast), (name) => leaves.get(name));
+  } catch (e) {
+    if (e instanceof UnitError) return unitErr(e.code, e.info);
+    st = null;
+  }
+  if (!Number.isFinite(r0.value)) return { value: null, tex: r0.tex }; // kot brez enot: »ni definirano«
+  const v0 = r0.value;
+  const tex = target ? `${r0.tex}\\rightarrow${unitTex(target)}` : r0.tex;
+  let d = st?.d;
+  if (!d) {
+    // dimenzija iz ponovljenih računov: rezultat z dimenzijo d se spremeni za Π skalaᵢ^dᵢ
+    if (v0 === 0) {
+      // 0 ne pove dimenzije; če ponovitve niso 0, enote ne gredo skupaj
+      for (let i = 0; i < DIMS.length; i++) {
+        const sc = new Array(DIMS.length).fill(1);
+        sc[i] = SCALE;
+        if (run(sc)?.value !== 0) return unitErr("unitMismatch");
+      }
+      d = target ? parseUnit(target).d : new Array(DIMS.length).fill(0);
+    } else {
+      d = [];
+      for (let i = 0; i < DIMS.length; i++) {
+        const sc = new Array(DIMS.length).fill(1);
+        sc[i] = SCALE;
+        const r = run(sc);
+        const x = Math.log(r?.value / v0) / Math.log(SCALE);
+        if (!Number.isFinite(x)) return unitErr("unitMismatch");
+        const k = Math.round(x);
+        if (Math.abs(x - k) > 1e-6) return unitErr(Math.abs(2 * x - Math.round(2 * x)) < 1e-6 ? "unitPower" : "unitMismatch");
+        d.push(k);
+      }
+      const r = run(CHECK);
+      if (!(Math.abs(r?.value / (v0 * scaleOf(d, CHECK)) - 1) < 1e-7)) return unitErr("unitMismatch");
+    }
+  }
+  // enota rezultata: enota iz vnosa (5 km + 300 m = 5,3 km; 72 km/h · 2 h = 144 km), sicer izpeljana enota SI
+  // z imenom (N, J, W, V, A …), sicer sestavljena iz enot v računu (150 km / 2 h = 75 km/h; 5 cm · 3 cm = 15 cm²)
+  let sym = "";
+  if (!dimless(d)) {
+    const cand = [...leftToks.map((t) => t.sym), ...(usesAns ? [env.ansUnit] : []), ...varUnits.map((x) => x[2])];
+    const si = siUnit(d);
+    const composed = st?.m ? composeUnit(st.m) : null;
+    sym =
+      [...cand, ...cand.flatMap(unitParts)].find((c) => sameDims(parseUnit(c).d, d)) ??
+      (si && /^[A-Za-zΩ]+$/u.test(si) ? si : null) ??
+      (composed && sameDims(parseUnit(composed).d, d) ? composed : null) ??
+      si;
+    if (!sym) return unitErr("unitPower");
+  }
+  let f = sym ? parseUnit(sym).f : 1;
+  if (target) {
+    const u = parseUnit(target);
+    if (!u) return unitErr("unitTarget");
+    if (!sameDims(u.d, d)) return unitErr("unitConvert", { from: sym, to: target });
+    sym = target;
+    f = u.f;
+  }
+  if (!sym) {
+    // enote se pokrajšajo (5 km / 300 m = 16,67): navadno število
+    const out = { value: v0, tex };
+    if (r0.precision) out.precision = true;
+    if (r0.est) Object.assign(out, { approx: true, est: true });
+    return out;
+  }
+  const out = { value: cleanValue(v0 / f), tex, unit: { sym, d, f }, approx: true };
+  if (r0.est) out.est = true;
+  if (r0.precision) out.precision = true;
+  return out;
+}
+// 72 km/h → m/s = 20,000000000000004 → 20; 1/3 ostane cel (Ans · 3 = 1)
+function cleanValue(x) {
+  const p = Number(x.toPrecision(15));
+  return Math.abs(p - x) <= 4 * Number.EPSILON * Math.abs(x) ? p : x;
+}
+
+// 20 °C → K, 68 °F → °C, 300 K → °C: le število (ali račun brez enot) z eno enoto temperature in pretvorba.
+// Tudi Ans → °F, ko je bil prejšnji rezultat temperatura.
+function temperature(left, target, env) {
+  const tempOk = (u) => u === "K" || u in OFFSET_TEMP;
+  let r;
+  let from;
+  let inner;
+  if (/^\s*Ans\s*$/.test(left) && tempOk(env.ansUnit)) {
+    if (!Number.isFinite(env.ans)) return unitErr("unitTemp");
+    if (!target) return { value: env.ans, tex: "\\mathrm{Ans}", unit: { sym: env.ansUnit, d: [0, 0, 0, 0, 1, 0], f: 1 }, approx: true };
+    if (!tempOk(target)) return unitErr("unitTemp");
+    r = { value: env.ans };
+    from = env.ansUnit;
+    inner = "\\mathrm{Ans}\\,";
+  } else {
+    const m = new RegExp(`^(.*?)${OPEN}(°C|°F|K)${CLOSE}\\s*$`, "s").exec(left);
+    if (!m || hasUnits(m[1]) || !m[1].trim() || !tempOk(target) || (env.ansUnit && ANS_RE.test(m[1]))) return unitErr("unitTemp");
+    r = evaluatePlain(m[1], env);
+    if (!r || r.error) return r;
+    if (!Number.isFinite(r.value)) return { value: null, tex: r.tex };
+    from = m[2];
+    inner = /^-?[\d{},.]+$/.test(r.tex) ? r.tex : `\\left(${r.tex}\\right)`;
+  }
+  const toK = (v, u) => (u === "K" ? v : v * OFFSET_TEMP[u].a + OFFSET_TEMP[u].b);
+  const fromK = (k, u) => (u === "K" ? k : (k - OFFSET_TEMP[u].b) / OFFSET_TEMP[u].a);
+  const value = Number(fromK(toK(r.value, from), target).toPrecision(13)); // 20 °F = −6,666666666667 °C (zamik da šum v 15. mestu)
+  return { value, tex: `${inner}${unitTex(from)}\\rightarrow${unitTex(target)}`, unit: { sym: target, d: [0, 0, 0, 0, 1, 0], f: 1 }, approx: true };
+}
+
+function evaluatePlain(text, env = {}) {
   const { vars = {}, comma = true } = env;
   try {
     const line = compileLine(text, env);
@@ -272,7 +635,7 @@ export function evaluate(text, env = {}) {
     if (fv.length) return { error: { code: "missing", info: { names: fv } } };
     // določeni integrali: s časovno mejo in s podatki o vsakem (ne obstaja, ni zanesljiv, ocena napake)
     const rwe = rw(expr);
-    const withInt = hasIntegral(rwe);
+    const withInt = hasIntegral(rwe, line.ctx?.funcs);
     let value;
     let infos = [];
     if (withInt) ({ result: value, infos } = withIntegralBudget(env.live ? INT_LIVE_MS : INT_MS, () => integralTrace(() => run(expr)(scope))));

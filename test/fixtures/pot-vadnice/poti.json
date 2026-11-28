@@ -1,0 +1,316 @@
+{
+ "opis": "Sprejemni preizkus poti Vadnica → »Vprašaj inštruktorja« (pregled pripravljenosti pilota 26. 11. 2026, poseg 2): 10 maturitetnih konceptov iz oblik A/B (content/pilot-preizkus/matura-mat.json), 18 poti s tipično napako (seznam mistakes generatorja), 6 s pravilnim standardnim in 6 s pravilnim nestandardnim postopkom. Koraki so učenčevi (napisal Claude Opus 26. 11. 2026, preverjeno s test/pot-vadnice.test.js); napacen_korak je referenca samo za ocenjevalca.",
+ "drugo_sporocilo": "Še vedno ne vidim, v katerem koraku sem se zmotil.",
+ "naloge": {
+  "lin-enacbe": {
+   "topic": "MAT-SS-1/linearne-enacbe",
+   "level": 2,
+   "seed": 5001,
+   "year": 12,
+   "generator": "mat-ss1-matura-linearne-enacbe",
+   "besedilo_odtis": "d525ed6a75f5f190"
+  },
+  "koreni": {
+   "topic": "MAT-SS-2/koreni",
+   "level": 2,
+   "seed": 5001,
+   "year": 12,
+   "generator": "dod-mat-ss12-koreni",
+   "besedilo_odtis": "e73c4f01ea335bd2"
+  },
+  "stozec": {
+   "topic": "MAT-SS-3/povrsina-in-prostornina-teles",
+   "level": 2,
+   "seed": 5001,
+   "year": 12,
+   "generator": "mat-ss3-matura-telesa",
+   "besedilo_odtis": "09fd643dca6f570d"
+  },
+  "skalarni-produkt": {
+   "topic": "MAT-SS-3/skalarni-produkt",
+   "level": 2,
+   "seed": 5001,
+   "year": 12,
+   "generator": "dod-mat-ss34-skalarni-produkt",
+   "besedilo_odtis": "90042d19db182f97"
+  },
+  "smerni-koeficient": {
+   "topic": "MAT-SS-1/linearna-funkcija",
+   "level": 1,
+   "seed": 5001,
+   "year": 12,
+   "generator": "mat-ss1-matura-linearna-funkcija",
+   "besedilo_odtis": "1cafc677d9113afa"
+  },
+  "kvadratna-funkcija": {
+   "topic": "MAT-SS-2/kvadratna-funkcija",
+   "level": 2,
+   "seed": 5001,
+   "year": 12,
+   "generator": "dod-mat-ss12-kvadratna-funkcija",
+   "besedilo_odtis": "55666346af4687d9"
+  },
+  "logaritem": {
+   "topic": "MAT-SS-2/logaritem",
+   "level": 2,
+   "seed": 5004,
+   "year": 12,
+   "generator": "dod-mat-ss12-logaritem",
+   "besedilo_odtis": "9d81713386f11076"
+  },
+  "tangens-kota": {
+   "topic": "MAT-SS-3/kotne-funkcije-poljubnega-kota",
+   "level": 2,
+   "seed": 5001,
+   "year": 12,
+   "generator": "dod-mat-ss34-kotne-funkcije-poljubnega-kota",
+   "besedilo_odtis": "40b87a912077a205"
+  },
+  "zaporedje": {
+   "topic": "MAT-SS-4/aritmeticno-in-geometrijsko-zaporedje",
+   "level": 2,
+   "seed": 5001,
+   "year": 12,
+   "generator": "dod-mat-ss34-aritmeticno-in-geometrijsko-zaporedje",
+   "besedilo_odtis": "37d78738e4b26eeb"
+  },
+  "verjetnost": {
+   "topic": "MAT-SS-4/verjetnost",
+   "level": 2,
+   "seed": 5004,
+   "year": 12,
+   "generator": "mat-ss4-matura-verjetnost",
+   "besedilo_odtis": "bb8522b225770b6c"
+  }
+ },
+ "poti": [
+  {
+   "id": "lin-1",
+   "naloga": "lin-enacbe",
+   "vrsta": "napaka",
+   "odgovor": "-20",
+   "koraki": "Pomnožim z 12: 6(x + 1) − 2x + 8 = 3(x − 2)\n6x + 6 − 2x + 8 = 3x − 6\n4x + 14 = 3x − 6\nx = −20",
+   "napacen_korak": "1. vrstica: −2(x + 4) je zapisal kot −2x + 8 namesto −2x − 8 (minus pred ulomkom spremeni predznak vsem členom števca)."
+  },
+  {
+   "id": "lin-2",
+   "naloga": "lin-enacbe",
+   "vrsta": "napaka",
+   "odgovor": "-1",
+   "koraki": "Pomnožim z 12: (x + 1) − (x + 4) = (x − 2)\n−3 = x − 2\nx = −1",
+   "napacen_korak": "1. vrstica: pri množenju z 12 števcev ni pomnožil s faktorji 6, 2 in 3."
+  },
+  {
+   "id": "lin-3",
+   "naloga": "lin-enacbe",
+   "vrsta": "standard",
+   "odgovor": "-4",
+   "koraki": "Pomnožim z 12: 6(x + 1) − 2(x + 4) = 3(x − 2)\n6x + 6 − 2x − 8 = 3x − 6\n4x − 2 = 3x − 6\nx = −4"
+  },
+  {
+   "id": "kor-1",
+   "naloga": "koreni",
+   "vrsta": "napaka",
+   "odgovor": "0",
+   "koraki": "√50 = √2, ker je √50 = √25 · √2\n√8 = √2\n√2 − 2√2 + √2 = 0\nK = 0",
+   "napacen_korak": "1. in 2. vrstica: pri delnem korenjenju je izpustil faktor pred korenom (√50 = 5√2, √8 = 2√2)."
+  },
+  {
+   "id": "kor-2",
+   "naloga": "koreni",
+   "vrsta": "napaka",
+   "odgovor": "27",
+   "koraki": "√50 = 25√2\n√8 = 4√2\n25√2 − 2√2 + 4√2 = 27√2\nK = 27",
+   "napacen_korak": "1. in 2. vrstica: pred koren je dal kvadrat (25, 4) namesto korena iz njega (5, 2)."
+  },
+  {
+   "id": "kor-3",
+   "naloga": "koreni",
+   "vrsta": "standard",
+   "odgovor": "5",
+   "koraki": "√50 = 5√2, √8 = 2√2\n5√2 − 2√2 + 2√2 = 5√2\nK = 5"
+  },
+  {
+   "id": "sto-1",
+   "naloga": "stozec",
+   "vrsta": "napaka",
+   "odgovor": "593,8 cm²",
+   "koraki": "P = πr² + πrv\nP = π · 81 + π · 9 · 12\nP = 254,5 + 339,3 = 593,8 cm²",
+   "napacen_korak": "1. vrstica: v plašč je vstavil višino v namesto stranice s (s = 15 cm)."
+  },
+  {
+   "id": "sto-2",
+   "naloga": "stozec",
+   "vrsta": "napaka",
+   "odgovor": "424,1 cm²",
+   "koraki": "s = √(9² + 12²) = 15 cm\nP = π · r · s = π · 9 · 15 = 424,1 cm²",
+   "napacen_korak": "2. vrstica: izračunal je le plašč, osnovne ploskve πr² ni prištel."
+  },
+  {
+   "id": "sto-3",
+   "naloga": "stozec",
+   "vrsta": "standard",
+   "odgovor": "678,6 cm²",
+   "koraki": "s = √(81 + 144) = 15 cm\nO = π · 9² ≈ 254,47 cm²\npl = π · 9 · 15 ≈ 424,12 cm²\nP = O + pl ≈ 678,6 cm²"
+  },
+  {
+   "id": "ska-1",
+   "naloga": "skalarni-produkt",
+   "vrsta": "napaka",
+   "odgovor": "67,1",
+   "koraki": "a · b = 0 · (−3) + 4 · (−1) + 1 · (−2) = 6\n|a| = √17, |b| = √14\ncos φ = 6 / (√17 · √14) ≈ 0,3889\nφ ≈ 67,1°",
+   "napacen_korak": "1. vrstica: skalarni produkt je −4 − 2 = −6, ne 6 (napačen predznak)."
+  },
+  {
+   "id": "ska-2",
+   "naloga": "skalarni-produkt",
+   "vrsta": "napaka",
+   "odgovor": "1,97",
+   "koraki": "a · b = −6\n|a| = √17, |b| = √14\ncos φ ≈ −0,3889\nφ = arccos(−0,3889) ≈ 1,97",
+   "napacen_korak": "4. vrstica: kot je izračunal v radianih (računalo v načinu RAD); v stopinjah je drug."
+  },
+  {
+   "id": "ska-3",
+   "naloga": "skalarni-produkt",
+   "vrsta": "standard",
+   "odgovor": "112,9",
+   "koraki": "a · b = 0 − 4 − 2 = −6\n|a| = √(0 + 16 + 1) = √17, |b| = √(9 + 1 + 4) = √14\ncos φ = −6 / (√17 · √14) ≈ −0,3889\nφ ≈ 112,9°"
+  },
+  {
+   "id": "smk-1",
+   "naloga": "smerni-koeficient",
+   "vrsta": "napaka",
+   "odgovor": "-6/7",
+   "koraki": "k = (x₂ − x₁) / (y₂ − y₁)\nk = (5 − (−1)) / (−6 − 1) = 6 / (−7)\nk = −6/7",
+   "napacen_korak": "1. vrstica: zamenjal je števec in imenovalec (k je razlika y deljeno z razliko x)."
+  },
+  {
+   "id": "smk-2",
+   "naloga": "smerni-koeficient",
+   "vrsta": "napaka",
+   "odgovor": "7/6",
+   "koraki": "k = (−6 − 1) / (−1 − 5)\nk = −7 / −6 = 7/6",
+   "napacen_korak": "1. vrstica: v števcu je odštel y_B − y_A, v imenovalcu pa x_A − x_B (različen vrstni red)."
+  },
+  {
+   "id": "smk-3",
+   "naloga": "smerni-koeficient",
+   "vrsta": "nestandard",
+   "odgovor": "-7/6",
+   "koraki": "Premica y = kx + n gre skozi obe točki:\n1 = −k + n\n−6 = 5k + n\nOdštejem prvo enačbo od druge: −7 = 6k\nk = −7/6"
+  },
+  {
+   "id": "kvf-1",
+   "naloga": "kvadratna-funkcija",
+   "vrsta": "napaka",
+   "odgovor": "3",
+   "koraki": "f(x) = a(x + 1)(x − 5)\nf(0) = a · 1 · 5 = 15\na = 3",
+   "napacen_korak": "2. vrstica: pri x = 0 je (0 − 5) = −5, ne 5, zato −5a = 15."
+  },
+  {
+   "id": "kvf-2",
+   "naloga": "kvadratna-funkcija",
+   "vrsta": "napaka",
+   "odgovor": "15",
+   "koraki": "N(0, 15) pomeni, da je c = 15\nVodilni koeficient je a = 15",
+   "napacen_korak": "2. vrstica: začetno vrednost c je zamenjal z vodilnim koeficientom a."
+  },
+  {
+   "id": "kvf-3",
+   "naloga": "kvadratna-funkcija",
+   "vrsta": "nestandard",
+   "odgovor": "-3",
+   "koraki": "f(x) = ax² + bx + c, c = 15\nf(−1) = a − b + 15 = 0\nf(5) = 25a + 5b + 15 = 0\nIz prve: b = a + 15\n25a + 5(a + 15) + 15 = 0\n30a = −90\na = −3"
+  },
+  {
+   "id": "log-1",
+   "naloga": "logaritem",
+   "vrsta": "napaka",
+   "odgovor": "-1,86",
+   "koraki": "3 log₅ 10 − log₅ 200 = log₅ (10/200)\n= log₅ 0,05\n≈ −1,86",
+   "napacen_korak": "1. vrstica: izpustil je koeficient 3 (3 log₅ 10 = log₅ 10³ = log₅ 1000)."
+  },
+  {
+   "id": "log-2",
+   "naloga": "logaritem",
+   "vrsta": "napaka",
+   "odgovor": "-1,18",
+   "koraki": "3 log₅ 10 = log₅ 30\nlog₅ 30 − log₅ 200 = log₅ (30/200) = log₅ 0,15\n≈ −1,18",
+   "napacen_korak": "1. vrstica: 3 log₅ 10 ni log₅ 30, ampak log₅ 10³."
+  },
+  {
+   "id": "log-3",
+   "naloga": "logaritem",
+   "vrsta": "nestandard",
+   "odgovor": "1",
+   "koraki": "log₅ 200 = log₅ (2 · 100) = log₅ 2 + 2 log₅ 10\n3 log₅ 10 − log₅ 2 − 2 log₅ 10 = log₅ 10 − log₅ 2\n= log₅ (10/2) = log₅ 5 = 1"
+  },
+  {
+   "id": "tan-1",
+   "naloga": "tangens-kota",
+   "vrsta": "napaka",
+   "odgovor": "0",
+   "koraki": "210° je v 3. kvadrantu.\nV 3. kvadrantu je tangens negativen.\ntan 210° = −tan 30° = −√3/3",
+   "napacen_korak": "2. vrstica: v 3. kvadrantu je tangens pozitiven (sinus in kosinus sta oba negativna)."
+  },
+  {
+   "id": "tan-2",
+   "naloga": "tangens-kota",
+   "vrsta": "napaka",
+   "odgovor": "2",
+   "koraki": "210° = 180° + 30°\ntan 210° = −tan 60° = −√3",
+   "napacen_korak": "2. vrstica: referenčni kot je 30°, ne 60°, in tangens je v 3. kvadrantu pozitiven."
+  },
+  {
+   "id": "tan-3",
+   "naloga": "tangens-kota",
+   "vrsta": "nestandard",
+   "odgovor": "3",
+   "koraki": "sin 210° = −1/2, cos 210° = −√3/2\ntan 210° = sin 210° / cos 210° = (−1/2) / (−√3/2)\n= 1/√3 = √3/3"
+  },
+  {
+   "id": "zap-1",
+   "naloga": "zaporedje",
+   "vrsta": "napaka",
+   "odgovor": "156",
+   "koraki": "d = (36 − 16) / 4 = 5\na₂₉ = a₄ + 28d = 16 + 140 = 156",
+   "napacen_korak": "2. vrstica: a₄ ni prvi člen; od a₄ do a₂₉ je 25 korakov, ne 28."
+  },
+  {
+   "id": "zap-2",
+   "naloga": "zaporedje",
+   "vrsta": "standard",
+   "odgovor": "141",
+   "koraki": "d = (36 − 16) / (8 − 4) = 5\na₁ = 16 − 3 · 5 = 1\na₂₉ = 1 + 28 · 5 = 141"
+  },
+  {
+   "id": "zap-3",
+   "naloga": "zaporedje",
+   "vrsta": "nestandard",
+   "odgovor": "141",
+   "koraki": "d = 20 / 4 = 5\nOd a₈ do a₂₉ je 21 korakov.\na₂₉ = 36 + 21 · 5 = 141"
+  },
+  {
+   "id": "ver-1",
+   "naloga": "verjetnost",
+   "vrsta": "napaka",
+   "odgovor": "28/143",
+   "koraki": "Nasprotni dogodek: vse tri kroglice so modre.\nC(8, 3) = 56, C(13, 3) = 286\nP = 56/286 = 28/143",
+   "napacen_korak": "3. vrstica: izračunal je verjetnost nasprotnega dogodka, ni je odštel od 1."
+  },
+  {
+   "id": "ver-2",
+   "naloga": "verjetnost",
+   "vrsta": "standard",
+   "odgovor": "115/143",
+   "koraki": "C(13, 3) = 286, C(8, 3) = 56\nP(vse modre) = 56/286\nP = 1 − 56/286 = 230/286 = 115/143"
+  },
+  {
+   "id": "ver-3",
+   "naloga": "verjetnost",
+   "vrsta": "nestandard",
+   "odgovor": "115/143",
+   "koraki": "Natanko 1 rdeča: 5 · C(8, 2) = 5 · 28 = 140\nNatanko 2 rdeči: C(5, 2) · 8 = 80\nVse 3 rdeče: C(5, 3) = 10\nP = (140 + 80 + 10) / 286 = 230/286 = 115/143"
+  }
+ ]
+}

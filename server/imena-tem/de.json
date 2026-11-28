@@ -233,7 +233,9 @@
   "FIZ-SS-3/indukcija": "Elektromagnetische Induktion",
   "FIZ-SS-3/izmenicni-tok-in-nihajni-krog": "Wechselstrom und Schwingkreis",
   "FIZ-SS-3/nihanje": "Schwingungen",
+  "FIZ-SS-3/duseno-in-vsiljeno-nihanje": "Gedämpfte und erzwungene Schwingungen",
   "FIZ-SS-3/valovanje": "Wellen",
+  "FIZ-SS-3/stojece-valovanje": "Stehende Wellen",
   "FIZ-SS-3/zvok": "Schall",
   "FIZ-SS-3/elektromagnetno-valovanje": "Elektromagnetische Wellen",
   "FIZ-SS-3/geometrijska-optika": "Geometrische Optik",
@@ -241,8 +243,10 @@
   "FIZ-SS-4/fotoefekt-in-foton": "Fotoeffekt und Photon",
   "FIZ-SS-4/atom": "Atom",
   "FIZ-SS-4/jedro-in-radioaktivnost": "Atomkern und Radioaktivität",
+  "FIZ-SS-4/jedrske-reakcije-in-reaktor": "Kernreaktionen und Kernreaktor",
   "FIZ-SS-4/osoncje-in-gibanje-planetov": "Sonnensystem und Planetenbewegung",
   "FIZ-SS-4/zvezde-in-vesolje": "Sterne und Universum",
+  "FIZ-SS-4/meritve-grafi-in-porocilo": "Messungen, Diagramme und Versuchsprotokoll",
   "FIZ-SS-4/mesane-maturitetne-naloge": "Gemischte Prüfungsaufgaben",
   "KEM-OS-8/varno-delo-v-laboratoriju": "Sicheres Arbeiten im Labor",
   "KEM-OS-8/snovi-in-njihove-lastnosti": "Stoffe und ihre Eigenschaften",
@@ -281,6 +285,7 @@
   "KEM-SS-1/stehiometrija": "Stöchiometrie",
   "KEM-SS-1/plini": "Gase",
   "KEM-SS-1/raztopine": "Lösungen",
+  "KEM-SS-1/topnost-in-sestava-raztopin": "Löslichkeit und Zusammensetzung von Lösungen",
   "KEM-SS-1/urejanje-enacb": "Reaktionsgleichungen ausgleichen",
   "KEM-SS-1/energija-pri-reakcijah": "Energetik chemischer Reaktionen",
   "KEM-SS-2/hitrost-reakcij": "Reaktionsgeschwindigkeit",
@@ -289,6 +294,7 @@
   "KEM-SS-2/ph": "pH-Wert",
   "KEM-SS-2/sibke-kisline-in-baze": "Schwache Säuren und Basen",
   "KEM-SS-2/titracija": "Titration",
+  "KEM-SS-2/elektroliti-in-ionske-reakcije": "Elektrolyte und Ionenreaktionen",
   "KEM-SS-2/oksidacijska-stevila": "Oxidationszahlen",
   "KEM-SS-2/redoks-reakcije": "Redoxreaktionen",
   "KEM-SS-2/galvanski-cleni-in-elektroliza": "Galvanische Zellen und Elektrolyse",
@@ -304,6 +310,8 @@
   "KEM-SS-3/organske-reakcije": "Organische Reaktionen",
   "KEM-SS-3/ogljikovi-hidrati-lipidi-beljakovine": "Kohlenhydrate, Lipide, Proteine",
   "KEM-SS-3/polimeri": "Polymere",
+  "KEM-SS-4/prehodni-elementi-in-koordinacijske-spojine": "Übergangselemente und Koordinationsverbindungen",
+  "KEM-SS-4/anorganske-snovi-v-industriji-in-okolju": "Anorganische Stoffe in Industrie und Umwelt",
   "KEM-SS-4/splosna-in-anorganska-kemija": "Allgemeine und anorganische Chemie",
   "KEM-SS-4/organska-kemija": "Organische Chemie",
   "KEM-SS-4/kemijsko-racunanje": "Chemisches Rechnen"
@@ -388,6 +396,7 @@
   "Hitrost in ravnotežje": "Reaktionsgeschwindigkeit und Gleichgewicht",
   "Kisline in baze": "Säuren und Basen",
   "Redoks in elektrokemija": "Redoxreaktionen und Elektrochemie",
-  "Organska kemija": "Organische Chemie"
+  "Organska kemija": "Organische Chemie",
+  "Anorganska kemija": "Anorganische Chemie"
  }
 }

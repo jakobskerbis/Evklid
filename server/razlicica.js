@@ -41,8 +41,11 @@ export function vendorVersion() {
 // (pot, velikost in čas spremembe vsake datoteke). Ob objavi ali spremembi katere koli datoteke je nova,
 // zato telefon shranjenih kopij ne uporabi več in vsako datoteko prenese znova (takojšnje odpiranje iz
 // predpomnilnika samo za isto različico, j 6. 11. 2026). Izračun ob zagonu strežnika (~600 datotek, nekaj ms).
-export function staticVersion(dir = path.join(root, "public")) {
-  const h = crypto.createHash("sha256").update(appVersion());
+// sol: kar poleg datotek spremeni postreženo vsebino (skrčene datoteke JS in različica esbuild, server/skrci.js), da
+// vklop ali izklop EVKLID_SKRCI brez nove gradnje (Render »Save and deploy«) da novo različico in service worker
+// ne streže več starih kopij.
+export function staticVersion(dir = path.join(root, "public"), sol = "") {
+  const h = crypto.createHash("sha256").update(appVersion()).update(sol);
   const walk = (d) => {
     let list = [];
     try { list = fs.readdirSync(d, { withFileTypes: true }); } catch { return; }
@@ -62,12 +65,12 @@ export function staticVersion(dir = path.join(root, "public")) {
 // ob zagonu: domači strežnik (scripts/nadzor.js) nove datoteke zapiše takoj, znova pa se zažene šele v mirnem
 // trenutku (do 20 min), razvoj (--watch) pa ob spremembi public/ sploh ne. Izračun je poceni (nekaj ms), zato
 // ga ponovimo največ vsakih ms milisekund ob zahtevi (pregled PR #481 A2, P2-1).
-export function liveStaticVersion(dir = path.join(root, "public"), ms = 5000) {
-  let value = staticVersion(dir);
+export function liveStaticVersion(dir = path.join(root, "public"), ms = 5000, sol = "") {
+  let value = staticVersion(dir, sol);
   let at = Date.now();
   return () => {
     if (Date.now() - at >= ms) {
-      value = staticVersion(dir);
+      value = staticVersion(dir, sol);
       at = Date.now();
     }
     return value;

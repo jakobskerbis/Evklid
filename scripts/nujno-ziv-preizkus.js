@@ -31,21 +31,28 @@ const pocakaj = (ms) => new Promise((r) => setTimeout(r, ms));
 // Poraba se ne zapisuje nikamor (v aplikaciji gre v Števec porabe); varovalka je izklopljena kot pri pregledu vsakega
 // sporočila pod mejo (možnost B): tam neznan odgovor NE odpre okna, zavrnitev modela pa šteje kot »stiska«.
 const BREZ_ZAPISA = { log() {}, kvGet: () => 0, kvSet() {}, creditOut: () => false };
-// Isti klic kot v server/nujno.js (rok ROK_MS, brez ponovitev).
-export const klicApi = (body) => getClient().messages.create(body, { timeout: ROK_MS, maxRetries: 0 });
+// Isti klic kot v server/nujno.js (rok ROK_MS, brez ponovitev SDK; takojšnja ponovitev ob napaki povezave dobi ostanek roka).
+export const klicApi = (body, ms = ROK_MS) => getClient().messages.create(body, { timeout: ms, maxRetries: 0 });
 const kodaNapake = (err) => (err?.status ? `HTTP ${err.status}` : /timeout|timed out/i.test(`${err?.name} ${err?.message}`) ? "rok" : err?.name || "napaka");
 
 /**
  * En primer skozi pravo funkcijo. `create` je en poskus klica API (v testu lažen).
- * @returns {Promise<{id, pricakovano, dobljeno, oblika, stop, ms, usd, napaka, ponovitev}>}
+ * povezava: kolikokrat je server/nujno.js po napaki povezave takoj poskusil znova (v istem roku); uspela ponovitev
+ * pobriše napako, kot jo pobriše aplikacija.
+ * @returns {Promise<{id, pricakovano, dobljeno, oblika, stop, ms, usd, napaka, ponovitev, povezava}>}
  */
 export async function enPrimer(p, { create = klicApi, premor = 2000 } = {}) {
-  const z = { id: p.id, pricakovano: p.vrsta ?? null, dobljeno: null, oblika: true, stop: null, ms: null, usd: 0, napaka: null, ponovitev: 0 };
-  const createFn = async (body) => {
+  const z = { id: p.id, pricakovano: p.vrsta ?? null, dobljeno: null, oblika: true, stop: null, ms: null, usd: 0, napaka: null, ponovitev: 0, povezava: 0 };
+  const createFn = async (body, ms) => {
+    if (z.napaka) {
+      z.povezava++;
+      z.napaka = null;
+      z.status = null;
+    }
     for (let poskus = 0; ; poskus++) {
       const t = performance.now();
       try {
-        const out = await create(body);
+        const out = await create(body, ms);
         z.ms = performance.now() - t;
         z.stop = out?.stop_reason || null;
         if (out?.usage) z.usd = costUsd(out.model || body.model, out.usage);
@@ -119,6 +126,7 @@ export function povzemi(primeri, izidi) {
     napake,
     delezNapak: delez(napake.length, izidi.length),
     ponovitev: izidi.reduce((n, z) => n + (z.ponovitev || 0), 0),
+    povezava: izidi.reduce((n, z) => n + (z.povezava || 0), 0),
     mediana: kvantil(casi, 0.5),
     p95: kvantil(casi, 0.95),
     usd,
@@ -157,7 +165,7 @@ export function izpis(s) {
   v.push(`Napačna vrsta:       ${s.napacnaVrsta.length} (alarm je bil, a z drugo vrsto; ni del praga)`);
   v.push(`Neznana oblika:      ${s.neznanaOblika.length} (aplikacija iz odgovora ne razbere vrste; pod mejo takrat ne odpre okna)`);
   v.push(`Zavrnitve:           ${s.zavrnitve.length} (stop_reason refusal; aplikacija jih šteje kot stisko); stop_reason: ${Object.entries(s.stop).map(([k, n]) => `${k} ${n}`).join(", ") || "–"}`);
-  v.push(`Neuspeli klici:      ${s.napake.length} (${pct(s.delezNapak)}; rok ali napaka API – učenec bi ostal brez pregleda); ponovitev zaradi omejitve hitrosti: ${s.ponovitev}`);
+  v.push(`Neuspeli klici:      ${s.napake.length} (${pct(s.delezNapak)}; rok ali napaka API – učenec bi ostal brez pregleda); ponovitev zaradi omejitve hitrosti: ${s.ponovitev}; takojšnja ponovitev ob napaki povezave: ${s.povezava}`);
   v.push(`Čas odgovora:        mediana ${ms(s.mediana)}, p95 ${ms(s.p95)}`);
   v.push(`Strošek:             ${usd(s.usd)} skupaj, ${usd(s.usdNaSporocilo)} na sporočilo`);
   v.push(`Z lokalnim zaznavalnikom (kot v aplikaciji): ta sam ujame ${s.skupaj.lokalnoUjetih} od ${s.nujnih} nujnih; skupaj zgrešenih ${s.skupaj.zgresenih}, lažnih alarmov ${s.skupaj.laznih} od ${s.obicajnih}`, "");

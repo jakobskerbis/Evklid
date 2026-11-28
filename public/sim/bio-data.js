@@ -985,7 +985,9 @@ export const SETS = {
   },
   "s3-imunost": {
     q: "Za katero vrsto obrambe ali imunosti gre?",
-    cats: [["preg", "pregrada"], ["nesp", "nespecifična obramba"], ["spec", "specifična obramba"], ["imuniz", "imunizacija"]],
+    // Pregrade so del nespecifične obrambe: kategoriji ločita prvo linijo (pregrade) od druge (celice in vnetje v telesu),
+    // sicer ima »solna kislina v želodcu« dva pravilna odgovora (meritev K-08).
+    cats: [["preg", "pregrada (prva obrambna linija)"], ["nesp", "nespecifična obramba v telesu (druga linija)"], ["spec", "specifična obramba"], ["imuniz", "imunizacija"]],
     items: [
       ["koža in sluznice", "preg", "Prva obrambna linija."],
       ["solna kislina v želodcu", "preg", "Kemična pregrada."],

@@ -246,7 +246,7 @@ test("splet v aplikaciji: trgovina brez nakupov, APK osveži Račun ob vrnitvi s
         return el.querySelectorAll("form, [data-pass-now], [data-pass-link]").length;
       });
     const UNPAID = ["#plan-form", "#gift-form", "#podari-form", ".credit-go", "#promo-form"];
-    const PAID = ["[data-upgrade]", "#portal-btn"];
+    const PAID = ["#plan-upgrade-form", "#portal-btn"];
     const STORE = `${CHROME} EvklidApp/1.4.0 store`;
     const APK = `${CHROME} EvklidApp/1.4.0 direct`;
     const counts = async (ua, sels) => {

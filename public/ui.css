@@ -810,16 +810,31 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
 .katex [data-fx], .katex [data-fx] * { pointer-events: auto; }
 .katex .pstrut { pointer-events: none !important; }
 /* Klikljiv znak je napisan modro, brez podčrte (j, 30. 10.: čistejši videz). */
-[data-fx][role="button"] { cursor: pointer; border-radius: 3px; padding: 0 0.08em; margin: 0 -0.08em; color: var(--accent); background-image: none; }
-[data-fx][role="button"]:hover, [data-fx].fx-open { background: var(--accent-soft); }
-[data-fx][role="button"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 0; }
+/* Površina za dotik ≥ 24 px (WCAG 2.5.8): formula-info.js fitTargets nastavi prozoren rob --fx-t/r/b/l, negativni
+   margin ga izniči v postavitvi. Ozadje (padding-box) in obroč fokusa ostaneta na znaku, notranji zaobljeni rob 3 px. */
+@property --fx-t { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@property --fx-r { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@property --fx-b { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@property --fx-l { syntax: "<length>"; inherits: false; initial-value: 0px; }
+[data-fx][role="button"] {
+  cursor: pointer; color: var(--accent); background-image: none; background-clip: padding-box;
+  padding: 0 0.08em; border: 0 solid transparent;
+  border-width: var(--fx-t, 0px) var(--fx-r, 0px) var(--fx-b, 0px) var(--fx-l, 0px);
+  margin: calc(-1 * var(--fx-t, 0px)) calc(-0.08em - var(--fx-r, 0px)) calc(-1 * var(--fx-b, 0px)) calc(-0.08em - var(--fx-l, 0px));
+  border-radius: calc(3px + var(--fx-l, 0px)) calc(3px + var(--fx-r, 0px)) calc(3px + var(--fx-r, 0px)) calc(3px + var(--fx-l, 0px)) / calc(3px + var(--fx-t, 0px)) calc(3px + var(--fx-t, 0px)) calc(3px + var(--fx-b, 0px)) calc(3px + var(--fx-b, 0px));
+}
+/* Prisilne barve (Windows Visoki kontrast) prozoren rob pobarvajo z barvo besedila: tam brez razširitve. */
+@media (forced-colors: active) { [data-fx][role="button"] { --fx-t: 0px !important; --fx-r: 0px !important; --fx-b: 0px !important; --fx-l: 0px !important; } }
+[data-fx][role="button"]:hover, [data-fx].fx-open { background-color: var(--accent-soft); }
+[data-fx][role="button"]:focus-visible { outline: none; position: relative; }
+[data-fx][role="button"]:focus-visible::after { content: ""; position: absolute; inset: 0; border-radius: 3px; outline: 2px solid var(--accent); pointer-events: none; }
 /* Ista črka z drugim pomenom na isti strani (a kot realni del z in a kot pospešek) ima svojo barvo,
    da se pred dotikom vidi, katera je katera (formula-card.js claimMarks). Barve --fx-tone-N so v style.css
    (Čist) in theme.js tonesOf (drugi slogi, lasten poudarek): kontrast ≥ 4,5, prvi ton nasproti poudarka. */
 [data-fx][role="button"][data-fx-tone="1"], .fx-pop[data-tone="1"] .fx-title .katex { color: var(--fx-tone-1); }
 [data-fx][role="button"][data-fx-tone="2"], .fx-pop[data-tone="2"] .fx-title .katex { color: var(--fx-tone-2); }
 [data-fx][role="button"][data-fx-tone="3"], .fx-pop[data-tone="3"] .fx-title .katex { color: var(--fx-tone-3); }
-[data-fx][role="button"][data-fx-tone]:hover, [data-fx][data-fx-tone].fx-open { background: color-mix(in srgb, currentColor 14%, transparent); }
+[data-fx][role="button"][data-fx-tone]:hover, [data-fx][data-fx-tone].fx-open { background-color: color-mix(in srgb, currentColor 14%, transparent); }
 .fx-pop {
   position: absolute; z-index: 1200; background: var(--surface); color: var(--text);
   border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: var(--shadow-lg);
@@ -896,7 +911,7 @@ html.lite[data-era] .chat-view .sidebar::before { display: none; }
 }
 
 /* Strežnik ni dosegljiv ob odprtju (public/app.js bootFailed) */
-.boot-down { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 16px; background: var(--bg); }
+.boot-down { position: fixed; inset: 0; z-index: var(--z-zagon, 1000); display: grid; place-items: center; padding: 16px; background: var(--bg); }
 .boot-down .card { max-width: 360px; text-align: center; display: grid; gap: 14px; justify-items: center; }
 .boot-down .card svg { width: 40px; height: 40px; color: var(--muted, #8b949e); }
 .boot-down p { margin: 0; }

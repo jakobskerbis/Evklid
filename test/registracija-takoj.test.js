@@ -170,3 +170,130 @@ test("v brskalniku: obrazec pred app.js, vpisano ostane, registracija pred app.j
     server.close();
   }
 });
+
+// Pristajalna stran (prvi obisk v produkciji): »Začni brezplačno« ali »Prijava« pred zagonom aplikacije odpre obrazec, ko je
+// account.js prenesen, ne šele po app.js (meritev 27. 11. 2026, telefon, počasen 4G: ~4,2 s → ~1,9 s po odprtju strani).
+// Slogi za druge zaslone pridejo šele za moduli obrazca (public/zacetek.js slogi), da jim ne vzamejo povezave.
+test("v brskalniku: pristajalna stran odpre obrazec pred app.js; slogi drugih zaslonov za moduli obrazca", { skip: !playwright && "Playwright ni nameščen", timeout: 120_000 }, async () => {
+  const { server, base } = start();
+  const browser = await playwright.chromium.launch();
+  const open = async ({ zadrziRacun = false } = {}) => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, locale: "sl-SI", timezoneId: "Europe/Ljubljana", serviceWorkers: "block" });
+    const p = await ctx.newPage();
+    const errors = [];
+    p.on("pageerror", (e) => errors.push(e.message));
+    const zahteve = [];
+    p.on("request", (r) => zahteve.push(new URL(r.url()).pathname));
+    let spusti;
+    const app = new Promise((ok) => (spusti = ok));
+    let appPoslan = false;
+    await p.route(/\/app\.js$/, async (r) => {
+      await app;
+      appPoslan = true;
+      await r.continue();
+    });
+    let spustiRacun;
+    const racun = new Promise((ok) => (spustiRacun = ok));
+    if (zadrziRacun)
+      await p.route(/\/account\.js$/, async (r) => {
+        await racun;
+        await r.continue();
+      });
+    await p.goto(base + "/");
+    await p.waitForSelector("#view-auth .land", { state: "visible", timeout: 20_000 });
+    return { ctx, p, errors, zahteve, spusti, spustiRacun, appPoslan: () => appPoslan };
+  };
+  const vidnaForma = (p) => p.waitForSelector('#auth-form button[type="submit"]', { state: "visible", timeout: 20_000 });
+  try {
+    // 1. Registracija s pristajalne strani: obrazec pred app.js, isti kot na /#registracija; app.js ga prevzame brez izrisa.
+    {
+      const { ctx, p, errors, spusti, appPoslan } = await open();
+      await p.click('#view-auth a[data-land="register"]');
+      await vidnaForma(p);
+      assert.equal(appPoslan(), false, "app.js še ni prenesen");
+      assert.equal(new URL(p.url()).hash, "#registracija");
+      const st = await p.evaluate(() => ({ auth: document.body.classList.contains("auth-mode"), pristajalna: document.documentElement.hasAttribute("data-pristajalna"), naslov: document.querySelector("#view-auth h1")?.textContent.trim(), skrito: getComputedStyle(document.body).visibility }));
+      assert.deepEqual(st, { auth: true, pristajalna: false, naslov: "Nov račun", skrito: "visible" });
+      await p.locator('#auth-form [name="email"]').fill("ana@primer.si");
+      await p.evaluate(() => (document.querySelector("#auth-form").dataset.prej = "1"));
+      spusti();
+      await p.waitForFunction(() => !document.getElementById("account-tab").hidden, null, { timeout: 30_000 });
+      assert.equal(await p.locator('#auth-form[data-prej="1"] [name="email"]').inputValue(), "ana@primer.si", "app.js obrazca ne izriše znova");
+      // Nazaj: pristajalna stran, kot prej.
+      await p.goBack();
+      await p.waitForSelector("#view-auth .land", { state: "visible", timeout: 10_000 });
+      assert.deepEqual(errors, []);
+      await ctx.close();
+    }
+    // 2. Prijava s pristajalne strani: obrazec za prijavo pred app.js.
+    {
+      const { ctx, p, errors, appPoslan } = await open();
+      await p.click('#view-auth a[data-land="login"]');
+      await vidnaForma(p);
+      assert.equal(appPoslan(), false);
+      assert.equal(new URL(p.url()).hash, "#prijava");
+      assert.equal(await p.locator('#auth-form [name="password"]').count(), 1);
+      assert.deepEqual(errors, []);
+      await ctx.close();
+    }
+    // 3. Dotik, preden je account.js tu: obrazec se pokaže, ko pride; slogi drugih zaslonov šele za njim (ne pred njim).
+    {
+      const { ctx, p, errors, zahteve, spustiRacun, appPoslan } = await open({ zadrziRacun: true });
+      await p.click('#view-auth a[data-land="register"]');
+      await p.waitForTimeout(1000);
+      assert.equal(zahteve.includes("/textbook.css"), false, "slogi drugih zaslonov ne pred moduli obrazca");
+      assert.equal(await p.locator("#auth-form").count(), 0);
+      spustiRacun();
+      await vidnaForma(p);
+      assert.equal(appPoslan(), false);
+      await p.waitForFunction(() => [...document.styleSheets].some((s) => /textbook\.css/.test(s.href || "")), null, { timeout: 10_000 });
+      assert.deepEqual(errors, []);
+      await ctx.close();
+    }
+    // 4. Brez dotika in brez account.js: slogi drugih zaslonov pridejo najkasneje ~3 s po izrisu (zacetek.js), pristajalna stran ostane.
+    {
+      const { ctx, p, zahteve } = await open({ zadrziRacun: true });
+      await p.waitForFunction(() => [...document.styleSheets].some((s) => /textbook\.css/.test(s.href || "")), null, { timeout: 10_000 });
+      assert.ok(zahteve.includes("/textbook.css"));
+      assert.equal(await p.locator("#view-auth .land").isVisible(), true);
+      await ctx.close();
+    }
+    // 6. Dotik, Nazaj, preden je account.js tu, in nov dotik: obrazec še vedno pred app.js (pregled PR #1203).
+    {
+      const { ctx, p, errors, spustiRacun, appPoslan } = await open({ zadrziRacun: true });
+      await p.click('#view-auth a[data-land="register"]');
+      await p.goBack();
+      await p.waitForFunction(() => location.hash === "");
+      await p.click('#view-auth a[data-land="register"]');
+      spustiRacun();
+      await vidnaForma(p);
+      assert.equal(appPoslan(), false);
+      assert.deepEqual(errors, []);
+      await ctx.close();
+    }
+    // 5. Dotik, ko app.js že teče, a pristajalna stran še čaka cene (account.js renderLanding, do 1,5 s): obrazec, ne prazen zaslon.
+    {
+      const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, locale: "sl-SI", timezoneId: "Europe/Ljubljana", serviceWorkers: "block" });
+      const p = await ctx.newPage();
+      const errors = [];
+      p.on("pageerror", (e) => errors.push(e.message));
+      let stevec = 0;
+      await p.route(/\/api\/account\/prices/, async (r) => {
+        if (stevec++ === 0) await new Promise((ok) => setTimeout(ok, 1400)); // samo klic renderLanding (strežnik je cene že dal v stran)
+        await r.continue();
+      });
+      await p.goto(base + "/");
+      await p.waitForFunction(() => !document.getElementById("account-tab").hidden, null, { timeout: 30_000 });
+      await p.click('#view-auth a[data-land="register"]');
+      await vidnaForma(p);
+      await p.waitForTimeout(1500); // cene so prišle: obrazec ostane
+      assert.equal(await p.locator("#auth-form").isVisible(), true);
+      assert.equal(new URL(p.url()).hash, "#registracija");
+      assert.deepEqual(errors, []);
+      await ctx.close();
+    }
+  } finally {
+    await browser.close();
+    server.close();
+  }
+});

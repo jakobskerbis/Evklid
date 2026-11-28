@@ -73,9 +73,9 @@ export function showFeedback() {
   if (!form.name) form.name = ctx.getStudent()?.name || "";
   root.innerHTML = `
     <p class="muted fb-intro">${esc(t("fb.intro"))}</p>
-    <div class="seg fb-tabs" role="tablist">
-      <button type="button" data-tab="form" class="${tab === "form" ? "active" : ""}">${icon("clipboard-check")}${esc(t("fb.tabForm"))}</button>
-      <button type="button" data-tab="chat" class="${tab === "chat" ? "active" : ""}">${icon("message-circle")}${esc(t("fb.tabChat"))}</button>
+    <div class="seg fb-tabs" role="group">
+      <button type="button" data-tab="form" class="${tab === "form" ? "active" : ""}" aria-pressed="${tab === "form"}">${icon("clipboard-check")}${esc(t("fb.tabForm"))}</button>
+      <button type="button" data-tab="chat" class="${tab === "chat" ? "active" : ""}" aria-pressed="${tab === "chat"}">${icon("message-circle")}${esc(t("fb.tabChat"))}</button>
     </div>
     <div class="fb-body"></div>
     <div class="fb-admin"></div>`;

@@ -28,7 +28,7 @@ const topicName = (id) => {
 };
 const subjectName = (code) => SUBJECT_NAMES[code] || code || "Drugo";
 // Kje so bile napake (viri šibkih točk, server/weaknesses.js), od največ napak.
-const SOURCE_SL = { chat: "v klepetu", practice: "pri vajah", game: "v igrah", lesson: "pri vprašanjih v učbeniku", paper: "na vadbenih polah", cards: "pri karticah", kviz: "v kvizu v razredu" };
+const SOURCE_SL = { chat: "v klepetu", practice: "pri vajah", game: "v igrah", lesson: "pri vprašanjih v učbeniku", paper: "na vadbenih polah", cards: "pri karticah", kviz: "v kvizu v razredu", scan: "pri skeniranih nalogah", lab: "v laboratoriju", atlas: "v kvizu 3D atlasa", ustno: "pri ustnem spraševanju" };
 export const sourceWords = (sources = {}) =>
   Object.entries(sources)
     .filter(([k, v]) => SOURCE_SL[k] && v.wrong > 0)
@@ -139,7 +139,7 @@ export function childWeek(db, student, { now = Date.now() } = {}) {
     .filter((t) => t.judged >= 3 && t.rate < 0.5)
     .sort((a, b) => a.rate - b.rate)
     .map((t) => ({ name: t.name, topic_id: t.topic_id, detail: `${t.first_ok} od ${t.judged} pravilno v prvem poskusu` }));
-  // Šibke teme iz vseh drugih virov (klepet, igre, učbenik, pole, kartice, kviz; server/weaknesses.js).
+  // Šibke teme iz vseh drugih virov (klepet, igre, učbenik, pole, kartice, kviz, orodja; server/weaknesses.js).
   const hardChat = weakTopicsFor({ db }, student, 30)
     .filter((w) => !hardPractice.some((h) => (w.topic_id && h.topic_id === w.topic_id) || h.name.toLowerCase() === String(w.topic).toLowerCase()))
     .filter((w, i, all) => all.findIndex((x) => String(x.topic).toLowerCase() === String(w.topic).toLowerCase()) === i) // ista tema pri dveh predmetih

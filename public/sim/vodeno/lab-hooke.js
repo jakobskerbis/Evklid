@@ -4,7 +4,7 @@
 import { stevilo, celica, kjer } from "../lab-vodeno-pomoc.js";
 
 const G = 9.81; // kot G_SOLA v lab-model-sile.js: F = m g v tabeli
-const OPOZORILO = /Gledal si (od zgoraj|od spodaj)|Vzmet še niha/;
+export const OPOZORILO = /Gledal si (od zgoraj|od spodaj)|Vzmet še niha/;
 
 // Začetni odčitek (record v lab-sile.js) je zapisan, ko oko ni bilo v višini kazalca ali je vzmet nihala, če sta opozorili
 // tik pred vrstico »Začetni odčitek«. Pred začetnim odčitkom vsak »Zapiši« konča z vrstico (začetni odčitek ali »Najprej
@@ -15,12 +15,12 @@ export function cistZacetni(dn) {
   return k >= 0 && !(k > 0 && OPOZORILO.test(dn[k - 1]));
 }
 
-const masa = (r) => stevilo(celica(r, /^m\b/));
-const podaljsek = (r) => stevilo(celica(r, /^podaljšek/));
-const mehka = (c) => kjer(c, /^vzmet/, /mehka/);
+export const masa = (r) => stevilo(celica(r, /^m\b/));
+export const podaljsek = (r) => stevilo(celica(r, /^podaljšek/));
+export const mehka = (c) => kjer(c, /^vzmet/, /mehka/);
 
 // Najnovejša meritev pri vsaki masi (> 0 g) na mehki vzmeti: ponovljena meritev nadomesti napačno.
-function zadnjePoMasi(c) {
+export function zadnjePoMasi(c) {
   const po = new Map();
   for (const r of mehka(c)) if (masa(r) > 0 && Number.isFinite(podaljsek(r))) po.set(masa(r), r);
   return [...po.values()];

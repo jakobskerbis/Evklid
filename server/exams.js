@@ -158,6 +158,10 @@ export function examRaven(key, settings, asked = null) {
   return / (VR|OR)$/.exec(String(settings?.curriculum_level || "").trim())?.[1] || null;
 }
 export const ravenKeeps = (raven) => (t) => raven !== "OR" || !VR_ONLY.test(String(t?.goals || ""));
+// Raven mature iz profila (»4. letnik OR«) za šolske poti matematike v gimnaziji; druge poti in »še ne vem«: null.
+// Ena pravila za Učno pot, test (progress.js profileRaven) in obseg priprave na test (priprava/teme.js).
+export const ravenProfila = (pathKey, curriculumLevel) =>
+  /^MAT-SS-\d$/.test(String(pathKey || "")) ? / (VR|OR)$/.exec(String(curriculumLevel || "").trim())?.[1] || null : null;
 
 // Načrt poskusnega izpita: vprašanja po skupinah formata, teme po utežeh sklopov,
 // ista tema ne pride dvakrat zapored in se ne ponovi, dokler ni prišla vsaka.

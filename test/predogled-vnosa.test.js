@@ -7,7 +7,7 @@ import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
-import { predogledHtml } from "../public/predogled-vnosa.js";
+import { predogledHtml, izborHtml } from "../public/predogled-vnosa.js";
 
 const require = createRequire(import.meta.url);
 let playwright = null;
@@ -25,6 +25,28 @@ test("predogled: besedilo ostane besedilo (escaped), zapis formule postane formu
   }
 });
 
+test("AUDIT-084: izbran del polja dobi ozadje le sam; izbor čez pol ulomka ni mogoč posebej (null: celo polje)", () => {
+  globalThis.katex = { renderToString: (t) => `[${t}]` };
+  try {
+    // okence □ v nalogi skenerja: označeno le okence
+    assert.equal(izborHtml("2·x^(2)-□·x-5=0", 8, 9), "2·[\\displaystyle x^{2}]-<span class=\"vnos-izbor\">□</span>·x-5=0");
+    assert.equal(izborHtml("(□)/(4)", 1, 2), "[\\displaystyle \\frac{\\htmlClass{vnos-izbor}{□}}{4}]");
+    assert.equal(izborHtml("√(□+4)", 2, 3), "[\\displaystyle \\sqrt{\\htmlClass{vnos-izbor}{□}+4}]");
+    // izbor čez celo formulo: vsa formula
+    assert.equal(izborHtml("(3)/(4)", 0, 7), "[\\displaystyle \\htmlClass{vnos-izbor}{\\frac{3}{4}}]");
+    // izbor, ki spremeni razbitje (le števec z oklepaji) ali razbije oklepaje (»3)/(«): null
+    assert.equal(izborHtml("(3)/(4)", 0, 3), null);
+    assert.equal(izborHtml("(3)/(4)", 2, 5), null);
+    assert.equal(izborHtml("abc", 1, 1), null);
+    // pregled: ∫(f;a;b) se izriše v drugem vrstnem redu, izbor brez vidnega dela (zadnji »)« limite): celo polje
+    assert.equal(izborHtml("∫(x^(2);0;1)", 7, 12), null);
+    assert.equal(izborHtml("lim_(x→0)((sin x)/(x))", 21, 22), null);
+    assert.equal(izborHtml("a<b", 1, 2), "a<span class=\"vnos-izbor\">&lt;</span>b");
+  } finally {
+    delete globalThis.katex;
+  }
+});
+
 const PUB = path.resolve("public");
 const NM = path.resolve("node_modules");
 const TYPES = { ".js": "text/javascript", ".css": "text/css", ".html": "text/html" };
@@ -32,6 +54,7 @@ const PAGE = `<!doctype html><html lang="sl"><meta charset="utf-8"><meta name="v
 <link rel="stylesheet" href="/vendor/katex/katex.min.css"><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/ui.css">
 <div class="card" style="margin:16px"><textarea id="koraki"></textarea><form class="answer-row"><input id="answer"><button class="primary">Preveri</button></form></div>
 <div class="sc"><input id="kalk"></div><div id="klepet" style="padding:8px"><textarea id="input" rows="1" data-izris-v-polju style="width:100%;font-size:16px;padding:8px;box-sizing:border-box;resize:none"></textarea></div>
+<div class="card scan-confirm" style="margin:16px"><div class="scan-input-wrap"><input id="skener" data-izris-v-polju style="width:100%;font-size:16px;padding:8px;box-sizing:border-box"></div><input id="skener-brez"></div>
 <script src="/vendor/katex/katex.min.js"></script>
 <script type="module">
 import { initPredogledVnosa } from "/predogled-vnosa.js";
@@ -211,6 +234,46 @@ for (const [kind, browser] of browsers) {
     await p.evaluate(() => (document.getElementById("input").value = "(1)/(2)"));
     s = await st();
     assert.ok(!s.hidden && s.izrisan, "vrednost iz kode (predlog) se spet izriše");
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+
+  test(`AUDIT-084 skener (${kind}): polje z data-izris-v-polju v .scan-confirm ima izris, izbran □ označi le □`, async () => {
+    const ctx = await browser.newContext({ viewport: { width: 360, height: 740 } });
+    const p = await ctx.newPage();
+    const errors = [];
+    p.on("pageerror", (e) => errors.push(e.message));
+    await p.goto(`http://127.0.0.1:${server.address().port}/t.html`);
+    await p.waitForFunction(() => window.ready);
+    const st = (id, izbor) =>
+      p.evaluate(
+        async ([id, izbor]) => {
+          const i = document.getElementById(id);
+          i.value = "2·x^(2)-□·x-5=0";
+          i.dispatchEvent(new Event("input", { bubbles: true }));
+          if (izbor) {
+            i.focus();
+            i.setSelectionRange(...izbor);
+          }
+          await new Promise((r) => setTimeout(r, 50));
+          const o = i.parentElement.querySelector(".vnos-izris");
+          return {
+            izris: !!o && !o.hidden,
+            izrisan: i.classList.contains("vnos-izrisan"),
+            celo: !!o?.classList.contains("izbor"),
+            del: [...(o?.querySelectorAll(".vnos-izbor") || [])].map((x) => x.textContent),
+          };
+        },
+        [id, izbor],
+      );
+    assert.deepEqual(await st("skener-brez"), { izris: false, izrisan: false, celo: false, del: [] }, "druga polja v potrditvi skenerja ostanejo brez izrisa");
+    let s = await st("skener");
+    assert.ok(s.izris && s.izrisan, `naloga v polju je izrisana: ${JSON.stringify(s)}`);
+    s = await st("skener", [8, 9]);
+    assert.deepEqual([s.celo, s.del], [false, ["□"]], `izbran le □: ${JSON.stringify(s)}`);
+    // izbor čez pol potence »^(«: označi se celo polje kot prej
+    s = await st("skener", [3, 5]);
+    assert.deepEqual([s.celo, s.del], [true, []], JSON.stringify(s));
     assert.deepEqual(errors, []);
     await ctx.close();
   });

@@ -35,7 +35,7 @@ if (slug === cur.slug) throw new Error(`Aplikacija se že imenuje ${cur.name}.`)
 
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const stem = cur.slug.replace(/[aeiou]$/, ""); // koren za sklone: kompreno → kompren
-const SKIP_DIRS = new Set([".git", ".claude", "node_modules", "data", "vendor"]);
+const SKIP_DIRS = new Set([".git", ".claude", "node_modules", "data", "vendor", ".lake"]);
 const SKIP_FILES = new Set(["brand.json", "test/ime.test.js", "scripts/preimenuj.js"]);
 const TEXT = /\.(js|cjs|mjs|json|md|html|css|bat|cmd|command|yaml|yml|txt|svg|webmanifest|py|csv)$|^(Dockerfile|\.env\.example)$/;
 // Ime repozitorija in j-jeve mape (<slug>-main, <slug>-sim) se ne menjata sama: repozitorij preimenuje j na GitHubu,

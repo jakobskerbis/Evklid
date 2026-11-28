@@ -202,3 +202,30 @@ test("plottableFromText: \\iff splits two forms, a bare domain x > 0 next to a c
   assert.ok(!found.some((s) => /^x\s*>/.test(s)), JSON.stringify(found));
   assert.deepEqual(plottableFromText("Rešitev: $x > 0$"), ["x > 0"]);
 });
+
+// AUDIT-019: dotik brez menjave predznaka (sin x in y = 1, parabola in tangenta, dvojna ničla razlike)
+test("intersections: dotikališča (tangentna presečišča) najdemo, skoraj-dotika ne", () => {
+  const xs = (f, g, a = -10, b = 10) => intersections(f, g, a, b).map((p) => p.x);
+  const s = xs((x) => Math.sin(x), () => 1);
+  assert.equal(s.length, 3, String(s));
+  for (const [i, m] of [-1, 0, 1].entries()) near(s[i], Math.PI / 2 + 2 * Math.PI * m, 1e-6);
+  const t = xs((x) => x * x, (x) => 2 * x - 1); // tangenta v (1, 1)
+  assert.equal(t.length, 1);
+  near(t[0], 1, 1e-6);
+  const c = xs((x) => (x - 2) ** 2 * (x + 1), () => 0); // dvojna ničla v 2, navadna v −1
+  assert.equal(c.length, 2, String(c));
+  near(c[0], -1, 1e-6);
+  near(c[1], 2, 1e-6);
+  assert.deepEqual(xs((x) => x * x + 1e-3, () => 0), []); // skoraj dotik ni presečišče
+  assert.deepEqual(xs((x) => x * x, () => -1), []);
+  assert.deepEqual(xs((x) => 1 / x ** 2, () => 0), []); // pol ni dotik
+  // navadna presečišča ostanejo
+  assert.equal(xs((x) => x * x, (x) => x + 2).length, 2);
+  // široko okno: skoraj-dotik ni dotik, čeprav je razpon f − g ogromen (pregled E)
+  assert.deepEqual(intersections((x) => x ** 4, (x) => 2 * x * x - 1.3, -100, 100, 1200), []);
+  assert.deepEqual(xs((x) => (x * x - 1) ** 2 + 5, () => 0, -100, 100), []);
+  assert.deepEqual(intersections((x) => (x * x - 1) ** 2 + 0.5, () => 0, -50, 50, 2000), []);
+  assert.equal(specialPoints((x) => (x * x - 1) ** 2 + 5, -100, 100).filter((p) => p.type === "root").length, 0);
+  // brez dotikov (za »Prilagodi«, da se okno ne razširi do ±50)
+  assert.deepEqual(intersections((x) => Math.sin(x), () => 1, -50, 50, 2000, false), []);
+});

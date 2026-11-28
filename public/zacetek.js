@@ -573,8 +573,10 @@
       return null;
     }
   }
+  var rod = 0;
   function pozabiVnaprej() {
     seme = {};
+    rod++;
   }
   function vnaprejZacni(url) {
     var s0 = izSemena(url);
@@ -594,34 +596,90 @@
     } catch (e) {}
     return pred[url] || null;
   }
+  var paket = null;
+  var PAKET = /^\/api\/(account\/status|config|students|students\/\d+\/(conversations|path|xp|modes|level-up|schedule|pilot|anketa-teden|daily)|programs)$|^\/api\/(students\/\d+\/modes|paths)\?/;
   function vnaprej(url) {
     var s0 = izSemena(url);
     if (s0) return s0;
+    if (paket && PAKET.test(url) && Date.now() - predOd < 15000)
+      return paket.then(function () {
+        return izSemena(url) || vnaprej(url);
+      });
     var p = pred[url];
     delete pred[url];
     return p && Date.now() - predOd < 15000 ? p : null;
+  }
+  function podatek(url) {
+    return paket
+      ? paket.then(function () {
+          return izSemena(url) || pred[url] || null;
+        })
+      : pred[url] || null;
+  }
+  var ovito = false;
+  function ovij() {
+    var f0 = window.fetch;
+    if (ovito || typeof f0 !== "function") return;
+    ovito = true;
+    window.fetch = function (u, o) {
+      try {
+        var m = String((o && o.method) || (u && typeof u === "object" && u.method) || "GET").toUpperCase();
+        if (m !== "GET" && m !== "HEAD") pozabiVnaprej();
+      } catch (e) {}
+      return f0.apply(this, arguments);
+    };
+  }
+  function sejaj(z) {
+    if (!z || typeof z !== "object" || !z.d || typeof z.d !== "object") return null;
+    for (var u in z.d) if (Object.prototype.hasOwnProperty.call(z.d, u) && /^\/api\//.test(u) && z.d[u] != null) seme[u] = JSON.stringify(z.d[u]);
+    semeDo = Date.now() + 60000;
+    ovij();
+    return z;
   }
   function zacetni() {
     try {
       var el = document.getElementById("evklid-zacetni");
       if (!el) return null;
       el.parentNode.removeChild(el);
-      var z = JSON.parse(el.textContent || "null");
-      if (!z || typeof z !== "object" || !z.d || typeof z.d !== "object") return null;
-      for (var u in z.d) if (Object.prototype.hasOwnProperty.call(z.d, u) && /^\/api\//.test(u) && z.d[u] != null) seme[u] = JSON.stringify(z.d[u]);
-      semeDo = Date.now() + 60000;
-      var f0 = window.fetch;
-      if (typeof f0 === "function")
-        window.fetch = function (u, o) {
-          try {
-            var m = String((o && o.method) || (u && typeof u === "object" && u.method) || "GET").toUpperCase();
-            if (m !== "GET" && m !== "HEAD") pozabiVnaprej();
-          } catch (e) {}
-          return f0.apply(this, arguments);
-        };
-      return z;
+      return sejaj(JSON.parse(el.textContent || "null"));
     } catch (e) {
       return null;
+    }
+  }
+  function vnaprejPaket(sid) {
+    var posamezno = function () {
+      paket = null;
+      vnaprejZacni("/api/account/status");
+      vnaprejZacni("/api/config");
+      vnaprejZacni("/api/students");
+      vnaprejZacni("/api/students/" + sid + "/conversations");
+    };
+    ovij();
+    var r0 = rod;
+    try {
+      paket = fetch("/api/zacetni-podatki", { headers: { "Content-Type": "application/json" } })
+        .then(function (r) {
+          if (r.ok && r.status === 200) return r.json();
+          try {
+            r.body.cancel().catch(function () {});
+          } catch (e) {}
+          return null;
+        })
+        .catch(function () {
+          return null;
+        })
+        .then(function (z) {
+          if (rod !== r0) return void (paket = null);
+          var ok = null;
+          try {
+            ok = sejaj(z);
+          } catch (e) {}
+          if (!ok) return posamezno();
+          paket = null;
+          if (!Object.prototype.hasOwnProperty.call(seme, "/api/students/" + sid + "/conversations")) vnaprejZacni("/api/students/" + sid + "/conversations");
+        });
+    } catch (e) {
+      posamezno();
     }
   }
   var zp = zacetni();
@@ -665,10 +723,23 @@
         pasovi(!!cfg.mock, Array.isArray(cfg.test_notice) ? cfg.test_notice.join(",") : "");
       });
     if (cfg && cfg.admin) vnaprejZacni("/api/usage");
-    var stanje = vnaprejZacni("/api/account/status");
-    vnaprejZacni("/api/config");
-    var profili = sid && /^\d+$/.test(sid) ? vnaprejZacni("/api/students") : null;
-    if (profili) vnaprejZacni("/api/students/" + sid + "/conversations");
+    var stanje, profili;
+    var swStran = false;
+    try {
+      swStran = !!(navigator.serviceWorker && navigator.serviceWorker.controller);
+    } catch (e) {}
+    // evklid.racun (public/account.js): ta naprava je bila prijavljena v račun. Brez računov (domači strežnik) klica ni:
+    // vrnil bi 404 (napaka v konzoli ob vsakem ponovnem obisku) in en krog pred istimi štirimi klici.
+    if (!zp && swStran && sid && /^\d+$/.test(sid) && shramba("evklid.racun")) {
+      vnaprejPaket(sid);
+      stanje = podatek("/api/account/status");
+      profili = podatek("/api/students");
+    } else {
+      stanje = vnaprejZacni("/api/account/status");
+      vnaprejZacni("/api/config");
+      profili = sid && /^\d+$/.test(sid) ? vnaprejZacni("/api/students") : null;
+      if (profili) vnaprejZacni("/api/students/" + sid + "/conversations");
+    }
     if (pos && stanje)
       stanje.then(function (s) {
         if (s && s.enabled && !s.logged_in) pozabi();
@@ -754,6 +825,11 @@
       }
     );
   }
+  function slogiZdaj() {
+    if (!slogiPoKoncu) return;
+    slogiPoKoncu = false;
+    slogi(false, true);
+  }
   var obrazecCaka = false;
   function obrazecObiskovalca(pm) {
     moduli();
@@ -813,8 +889,10 @@
         }
       });
       poIzrisu.then(function () {
-        slogi(false, true);
         moduli();
+        slogiPoKoncu = true;
+        window.evklidZacetek.slogi = slogiZdaj;
+        setTimeout(slogiZdaj, 3000);
       });
       html.setAttribute("data-pristajalna", "");
       html.lang = pm.getAttribute("content");

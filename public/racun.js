@@ -7,6 +7,7 @@ import { t, locale, currentLang, currentRegion, deviceRegion } from "./i18n-zasl
 import { guaranteeLine, guaranteeBox, podariBox, adminCards, bindGuarantee } from "./garancija-ui.js";
 import { consentFields, termsField, setTermsVersion, isStoreApp, consentsOk, consentMessage, consentBody, markCheckout, linkBox, bindLinkBox } from "./pay-ui.js";
 import { icon } from "./icons.js";
+import { fitPilotTables } from "./pilot-tabele.js";
 import { renderPilotAdmin, proofHtml, wireProof, proofBody, paintAccountPilot, paintAccountWtp } from "./pilot-naloge.js";
 import { renderAdminReports } from "./prijave.js";
 import { clearPrivate, deviceData } from "./offline.js";
@@ -75,8 +76,17 @@ function upgradeBox(acc) {
   const up = acc.upgrade;
   if (!up?.options?.length || acc.parent.minor) return "";
   if (acc.parent.birth_missing) return `<div class="plan-upgrade"><p class="muted">${esc(t("birth.payMissing"))}</p></div>`;
-  return `<div class="plan-upgrade"><p><b>${esc(t("up.title"))}</b><br><span class="muted">${esc(t("up.text"))}</span></p>
-    <div class="form-actions">${up.options.map((o) => `<button type="button" class="secondary" data-upgrade="${esc(o.key)}">${esc(t("up.btn", { name: planName(o) }))} · ${money(o.amount, o.currency)} ${esc(t(o.interval === "year" ? "mob.perYear" : "mob.perMonth"))}</button>`).join("")}</div></div>`;
+  // K-13: nadgradnja takoj bremeni kartico. Najprej izbira stopnje, nato iste potrditve kot ob nakupu in geslo računa
+  // (kot #plan-form: novalidate, napaka v .form-error). Račun brez gesla (Apple): ob oddaji povezava za nastavitev gesla.
+  const per = (o) => t(o.interval === "year" ? "mob.perYear" : "mob.perMonth");
+  return `<form class="form plan-upgrade" id="plan-upgrade-form" novalidate><p><b>${esc(t("up.title"))}</b><br><span class="muted">${esc(t("up.text"))}</span></p>
+    <div class="plans">${up.options.map((o) => `<label class="plan"><input type="radio" name="plan" value="${esc(o.key)}" data-label="${esc(`${t("up.btn", { name: planName(o) })} · ${money(o.amount, o.currency)} ${per(o)}`)}"> <span><b>${esc(t("up.btn", { name: planName(o) }))}</b> · ${money(o.amount, o.currency)} ${esc(per(o))}</span></label>`).join("")}</div>
+    <div class="plan-upgrade-rest" hidden>
+      <p class="form-error" role="alert" hidden></p>
+      ${consentFields()}
+      ${acc.parent.has_password === false ? "" : `<label>${esc(t("lock.accountPw"))} <input name="password" type="password" maxlength="200" autocomplete="current-password"></label>`}
+      <div class="form-actions"><button class="primary" type="submit"></button></div>
+    </div></form>`;
 }
 
 function plansPicker(acc) {
@@ -323,6 +333,7 @@ async function loadPilot(days = 30, school = "", focusId = "") {
     ${g ? growthHtml(g, loc) : ""}
     ${o ? deliHtml(o, loc) : ""}
     ${k ? anketaHtml(k, loc) : ""}`;
+  fitPilotTables(out);
   // Kartica se izriše znova: fokus ostane na izbiri, ki jo je uporabnik spremenil (tipkovnica).
   if (focusId) setTimeout(() => $(`#${focusId}`)?.focus());
   const reload = (e) => loadPilot($("#pilot-days").value, $("#pilot-school")?.value || "", e.target.id);
@@ -372,6 +383,8 @@ function growthHtml(g, loc) {
       <li><b>${pct(g.activation)}</b> ${esc(t("rast.activated", of(g.activation)))}</li>
       <li><b>${pct(g.d1)}</b> ${esc(t("rast.d1", of(g.d1)))}</li>
       <li><b>${pct(g.d7)}</b> ${esc(t("rast.d7", of(g.d7)))} · ${esc(t("rast.goal", { pct: pc(g.goal.target) }))} <b>${esc(t(`rast.goal.${g.goal.status}`))}</b></li>
+      ${g.d14 ? `<li><b>${pct(g.d14)}</b> ${esc(t("rast.d14", of(g.d14)))}</li>` : ""}
+      ${g.d30 ? `<li><b>${pct(g.d30)}</b> ${esc(t("rast.d30", of(g.d30)))}</li>` : ""}
       <li><b>${nf(g.weeklyActive)}</b> ${esc(t("rast.wau"))}</li>
       ${g.activeProfiles != null ? `<li><b>${nf(g.activeProfiles)}</b> ${esc(t("rast.activeProfiles"))}</li>` : ""}
     </ul>
@@ -874,7 +887,7 @@ async function renderAccount() {
     <div class="card">
       <h2>${icon("award")} Povabi prijatelje</h2>
       ${storeApp ? `<p>Pošlji povezavo prijatelju, ki bi mu Evklid pomagal.</p>` : acc.self_only ? `<p>Ko se prijatelj, ki ga povabiš, naroči in prvič plača na spletu, <b>oba dobita en mesec brezplačno</b>.</p>` : `<p>Ko se družina, ki jo povabiš, naroči in prvič plača na spletu, <b>obe družini dobita en mesec brezplačno</b>.</p>`}
-      <div class="inline"><input id="ref-url" readonly value="${esc(acc.referral.url)}"><button id="ref-copy" type="button">Kopiraj</button></div>
+      <div class="inline"><input id="ref-url" readonly aria-label="Povezava za povabilo" value="${esc(acc.referral.url)}"><button id="ref-copy" type="button">Kopiraj</button></div>
       <p class="muted">Tvoja koda: <b>${esc(acc.referral.code)}</b>${acc.referral.rewards ? ` · prisluženi meseci: ${acc.referral.rewards}` : ""}</p>
     </div>
     ${storeApp || !acc.self_only ? "" : podariBox(acc)}
@@ -994,20 +1007,31 @@ async function renderAccount() {
     }
   });
   // Nadgradnja: Stripe zaračuna razliko za preostanek obdobja, višja stopnja je odprta takoj.
-  document.querySelectorAll("[data-upgrade]").forEach((b) =>
-    b.addEventListener("click", async () => {
-      b.disabled = true;
-      try {
-        await api("/api/billing/upgrade", { method: "POST", body: { plan: b.dataset.upgrade } });
-        toast(t("up.done"));
-        await onReadyCb?.({ keepView: true });
-        renderAccount();
-      } catch (err) {
-        b.disabled = false;
-        toast(err.message);
-      }
-    }),
-  );
+  $("#plan-upgrade-form")?.addEventListener("change", (e) => {
+    if (e.target.name !== "plan") return;
+    const f = e.currentTarget;
+    $(".plan-upgrade-rest", f).hidden = false;
+    $("button[type=submit]", f).textContent = e.target.dataset.label;
+  });
+  $("#plan-upgrade-form")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = e.target;
+    const plan = f.querySelector("input[name=plan]:checked")?.value;
+    if (!plan) return; // gumb za oddajo je viden šele po izbiri stopnje
+    if (await noPassword("nadgradnjo paketa")) return;
+    if (!consentsOk(f)) return showError(f, new Error(consentMessage(f, "payp.consentMissing")));
+    const btn = $("button[type=submit]", f);
+    btn.disabled = true;
+    try {
+      await api("/api/billing/upgrade", { method: "POST", body: { plan, password: f.password?.value || "", ...consentBody() } });
+      toast(t("up.done"));
+      await onReadyCb?.({ keepView: true });
+      renderAccount();
+    } catch (err) {
+      btn.disabled = false;
+      showError(f, err.data?.password ? new Error(t("lock.wrong")) : err);
+    }
+  });
   // Nepotrjen e-naslov (#747): zaslon »Potrdi e-naslov« (Pošlji znova, Sem potrdil(a), Nazaj na učenje).
   $("#verify-open")?.addEventListener("click", async () => {
     setStatus(await api("/api/account/status"));

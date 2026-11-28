@@ -4,7 +4,7 @@
 // »Začetna masa bučke s snovmi …« (reakcija se je začela), »Apnica se je pomotnila …«, »Trska je ugasnila …«.
 import { stevilo } from "../lab-vodeno-pomoc.js";
 
-const NALIL = /Z merilnim valjem si v bučko nalil ([\d,]+) mL\. Tekočina: (.+)\./;
+export const NALIL = /Z merilnim valjem si v bučko nalil ([\d,]+) mL\. Tekočina: (.+)\./;
 const SODA = /Na tehtalni ladjici si stehtal ([\d,]+) g sode/;
 const vsota = (dn, re) => dn.map((t) => t.match(re)).filter(Boolean).reduce((s, m) => s + stevilo(m[1]), 0);
 

@@ -114,3 +114,16 @@ test("registracija nad mejo: razred 30 učencev z enega omrežja, vsak s svojo k
     assert.equal((await register({ invite: CODE })).status, 429, "po 10 napačnih tudi veljavna ne obide meje");
   });
 });
+
+// Pilot samo s polnoletnimi (N-11, pregled #1121): mladoletni kode ne more porabiti, zato z njo ne obide meje omrežja
+// (sicer bi ista koda dajala obvoz brez konca).
+test("registracija: mladoleten z veljavno kodo vabila ne obide meje omrežja, polnoleten jo", async () => {
+  await withServer(ENV, async ({ register }) => {
+    for (let i = 0; i < 5; i++) assert.equal((await register()).status, 201);
+    const y = new Date().getFullYear();
+    assert.equal((await register({ invite: CODE, birth_date: `${y - 16}-01-15` })).status, 429);
+    const ok = await register({ invite: CODE, birth_date: `${y - 30}-01-15` });
+    assert.equal(ok.status, 201, JSON.stringify(ok.body));
+    assert.equal(ok.body.invite, "pending");
+  });
+});

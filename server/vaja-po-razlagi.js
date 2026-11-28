@@ -1,0 +1,56 @@
+// Vaja po razlagi iz generatorjev (P1-3, del A; j 25. 11. 2026, načrt treh prioritet): po razlagi učenec dobi gumb
+// »Podobna naloga«, ki odpre nalogo iz Vadnice za isto temo. Nalogo ustvari generator in odgovor preveri koda
+// (server/practice/check.js prek progress.answer), zato vaje ne izmisli model in rezultat šteje v napredek in šibke
+// točke kot vsaka naloga iz Vadnice (P1-4).
+// Inštruktor gumb zahteva z blokom <<ODPRI vaja="tema">> (server/odpri.js). Pravilo v pozivu, kdaj ga napisati, doda
+// profil B (#539); do tedaj je stikalo EVKLID_VAJA_PO_RAZLAGI izklopljeno in gumba ni.
+// Tema se išče strožje kot pri gumbu za lekcijo (pregled #1088): najprej natančno ime teme učenčeve stopnje
+// (topicForName); sicer, le pri poizvedbi z vsaj dvema besedama, prva lekcija, ki ima v naslovu VSE besede poizvedbe in
+// nobena druga lekcija ne (ali jo prehiti za MIN_LEAD). Ena sama beseda (»enačba«, »kvadratna«, »ulomki«) brez
+// natančnega imena teme ne da gumba. Na koncu morajo biti vse besede poizvedbe v imenu teme. Tema brez generatorja → nič. Nikoli napačna tema: raje brez gumba.
+// Nadomesti: nič. Podobne naloge si je do zdaj izmislil model v odgovoru; ta modul jih ne podvaja, ampak preusmeri v
+// obstoječo Vadnico (progress.nextPractice), ki ostane edino mesto za naloge.
+import { rankLessons, topicForName, terms } from "./lekcija-za-vprasanje.js";
+import { hasGenerator } from "./practice/index.js";
+import { getTopic, pathKeyFor } from "./curriculum.js";
+
+export const vajaVklopljena = () => process.env.EVKLID_VAJA_PO_RAZLAGI === "1";
+
+const MIN_LEAD = 1.2; // kot server/lekcija-za-vprasanje.js topicForName
+
+// Cele besede: koren iz terms() je za ime teme prekratek (»elektrika« in »Elektromagnet« imata isti koren »elekt«,
+// meritev K-08). Beseda poizvedbe ustreza besedi imena, če se ujemata vsaj do zadnjih treh črk daljše (sklon ali
+// število: »enačba« in »enačbe«, »ulomkov« in »ulomki«, »logaritma« in »logaritem«).
+// Brez strešic kot terms() (»sestevanje« je »seštevanje«); NFD razstavi č v c + kvačico, ki jo odstranimo.
+const besedeIzBesedila = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/\p{M}/gu, "").match(/\p{L}+/gu) || [];
+const skupniZacetek = (a, b) => {
+  let i = 0;
+  while (i < a.length && i < b.length && a[i] === b[i]) i++;
+  return i;
+};
+const istaBeseda = (a, b) => skupniZacetek(a, b) >= Math.max(a.length, b.length) - 3;
+
+/** Tema učenčeve stopnje z generatorjem nalog za poizvedbo (ime teme ali snovi) ali null. */
+export function temaZVajo(q, settings) {
+  const besede = new Set(terms(q));
+  if (!besede.size) return null;
+  let id = topicForName(q, settings);
+  if (!id && besede.size >= 2) {
+    const [prvi, drugi] = rankLessons(q, settings);
+    const vse = (r) => r && r.inTitle >= besede.size;
+    if (vse(prvi) && (!vse(drugi) || prvi.score >= drugi.score * MIN_LEAD)) id = prvi.d.id;
+  }
+  if (!id || !hasGenerator(id)) return null;
+  // Samo tema iste šole (nižji razredi da, ker je to ponovitev): dijak ne dobi naloge iz OŠ (meritev K-08).
+  const sola = (k) => String(k || "").split("/")[0].split("-")[1];
+  if (sola(id) !== sola(pathKeyFor(settings))) return null;
+  const tema = getTopic(id);
+  if (!tema) return null;
+  const title = tema.name || tema.title || id;
+  // Zadnja varovalka: vse besede poizvedbe morajo biti v imenu teme (»sistem enačb« pri BIO ni »Sistematika«).
+  const vNaslovu = new Set(terms(title));
+  if (![...besede].every((b) => vNaslovu.has(b))) return null;
+  const imeBesede = besedeIzBesedila(title);
+  const vsebinske = besedeIzBesedila(q).filter((w) => terms(w).length); // brez veznikov in predlogov
+  return vsebinske.every((w) => imeBesede.some((t) => istaBeseda(w, t))) ? { topicId: id, title } : null;
+}

@@ -82,14 +82,14 @@ export function createTools(root, opts) {
         const L = ["a", "b", "c", "d"];
         const sep = (x) => `<span class="tl-ratio-sep" aria-hidden="true">${x}</span>`;
         box.innerHTML = card(`<div class="tl-formula">${texHtml("a : b = c : d")}</div>
-          <div class="tl-ratio">${L.map((l, i) => `<label class="tl-field"><span>${texHtml(l)}</span><input class="tl-ra" data-i="${i}" inputmode="decimal" autocomplete="off" placeholder="x" value="${esc(st.ratio[i])}"></label>${i === 1 ? sep("=") : i < 3 ? sep(":") : ""}`).join("")}</div>
+          <div class="tl-ratio">${L.map((l, i) => `<label class="tl-field"><span>${texHtml(l)}</span><input class="tl-ra" data-i="${i}" aria-label="${l}" inputmode="decimal" autocomplete="off" placeholder="x" value="${esc(st.ratio[i])}"></label>${i === 1 ? sep("=") : i < 3 ? sep(":") : ""}`).join("")}</div>
           <p class="muted tl-note">${esc(t("sc.eq.ratioHint"))}</p>`);
       } else if (st.kind === "poly") {
         const d = st.deg;
         const terms = LET.slice(0, d + 1).map((l, i) => (d - i > 1 ? `${l}x^{${d - i}}` : d - i === 1 ? `${l}x` : l));
         box.innerHTML = card(`<label class="tl-field tl-inline"><span>${esc(t("sc.eq.degree"))}</span><select class="tl-deg">${[1, 2, 3, 4].map((k) => `<option${k === d ? " selected" : ""}>${k}</option>`).join("")}</select></label>
           <div class="tl-formula">${texHtml(`${terms.join(" + ")} = 0`)}</div>
-          <div class="tl-coefs">${LET.slice(0, d + 1).map((l, i) => `<label class="tl-field"><span>${texHtml(l)}</span><input class="tl-co" data-i="${i}" inputmode="decimal" value="${esc(st.poly[i] ?? "0")}"></label>`).join("")}</div>`);
+          <div class="tl-coefs">${LET.slice(0, d + 1).map((l, i) => `<label class="tl-field"><span>${texHtml(l)}</span><input class="tl-co" data-i="${i}" aria-label="${l}" inputmode="decimal" value="${esc(st.poly[i] ?? "0")}"></label>`).join("")}</div>`);
       } else {
         const n = st.n;
         const vars = ["x", "y", "z", "w"].slice(0, n);

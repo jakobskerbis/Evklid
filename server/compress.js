@@ -49,7 +49,14 @@ const encode = (buf, enc) =>
 // izpuščena datoteka se ob naslednjem zahtevku spet stisne (zlib v ozadju), nikoli ne odpove.
 const defaultStaticMax = () => (Number(process.env.EVKLID_STATIC_MB) > 0 ? Number(process.env.EVKLID_STATIC_MB) : 16) * 1024 * 1024;
 
-export function compressedStatic(mounts, { maxBytes = defaultStaticMax() } = {}) {
+// skrci(buf, datoteka): neobvezno, pred stiskanjem vrne skrčeno vsebino ali null (server/skrci.js); samo predpona »/«.
+// Knjižnice (/vendor/) se ne spreminjajo: teden v predpomnilniku brskalnika. Izjema three (3D): njen naslov je brez
+// različice, three.module.js pa uvozi ./three.core.js, zato bi stara kopija enega ob novi drugega (po posodobitvi three)
+// dala »Indirectly exported binding name … is not found« (iPad 27. 11. 2026). Tam brskalnik vsakič preveri (ETag, 304);
+// odprtje 3D je vseeno hitro, ker datoteke da service worker (public/sw.js cacheFirst).
+export const vendorCache = (prefix) => (prefix.startsWith("/vendor/three/") ? "no-cache" : prefix.startsWith("/vendor") ? "public, max-age=604800" : "no-cache");
+
+export function compressedStatic(mounts, { maxBytes = defaultStaticMax(), skrci = null } = {}) {
   const cache = new Map(); // "enc:datoteka" -> { mtime, body, etag } (vrstni red = nazadnje uporabljen na koncu)
   const pending = new Map(); // "enc:datoteka" -> Promise (ista datoteka se stiska samo enkrat naenkrat)
   let bytes = 0;
@@ -89,7 +96,7 @@ export function compressedStatic(mounts, { maxBytes = defaultStaticMax() } = {})
     return null;
   };
 
-  const compressed = (file, st, enc) => {
+  const compressed = (file, st, enc, prefix = "/") => {
     const key = `${enc}:${file}`;
     const hit = cache.get(key);
     if (hit && hit.mtime === st.mtimeMs) {
@@ -100,8 +107,11 @@ export function compressedStatic(mounts, { maxBytes = defaultStaticMax() } = {})
     const running = pending.get(key);
     if (running && running.mtime === st.mtimeMs) return running.promise;
     const raw = fs.readFileSync(file);
-    const etag = `"${crypto.createHash("sha1").update(raw).digest("base64url").slice(0, 20)}-${enc}"`;
-    const promise = encode(raw, enc)
+    const krci = skrci && prefix === "/";
+    // Skrčena vsebina je odvisna tudi od načina krčenja (skrci.oznaka, različica esbuild): ta je v zgoščeni vrednosti.
+    const etag = `"${crypto.createHash("sha1").update(raw).update(krci ? String(skrci.oznaka || "") : "").digest("base64url").slice(0, 20)}-${enc}${krci ? "-s" : ""}"`;
+    const promise = (krci ? skrci(raw, file).then((b) => b || raw, () => raw) : Promise.resolve(raw))
+      .then((buf) => encode(buf, enc))
       .then((body) => {
         const entry = { mtime: st.mtimeMs, body, etag };
         remember(key, entry);
@@ -128,7 +138,7 @@ export function compressedStatic(mounts, { maxBytes = defaultStaticMax() } = {})
     if (!found || found === "skip") return next();
     let hit;
     try {
-      hit = await compressed(found.file, found.st, enc);
+      hit = await compressed(found.file, found.st, enc, found.prefix);
     } catch {
       return next(); // stiskanje ni uspelo: datoteko pošlje express.static nestisnjeno
     }
@@ -136,7 +146,7 @@ export function compressedStatic(mounts, { maxBytes = defaultStaticMax() } = {})
     if (typeof res.vary === "function") res.vary("Accept-Encoding");
     else res.setHeader("Vary", "Accept-Encoding");
     res.setHeader("ETag", hit.etag);
-    res.setHeader("Cache-Control", found.prefix.startsWith("/vendor") ? "public, max-age=604800" : "no-cache");
+    res.setHeader("Cache-Control", vendorCache(found.prefix));
     if (req.headers["if-none-match"] === hit.etag) return res.status(304).end();
     res.setHeader("Content-Type", TYPES[path.extname(found.file).toLowerCase()]);
     res.setHeader("Content-Encoding", enc);
@@ -152,7 +162,7 @@ export function compressedStatic(mounts, { maxBytes = defaultStaticMax() } = {})
       const found = locate(url);
       if (!found || found === "skip") continue;
       try {
-        await compressed(found.file, found.st, enc);
+        await compressed(found.file, found.st, enc, found.prefix);
         n++;
       } catch {}
     }

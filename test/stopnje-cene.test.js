@@ -55,6 +55,8 @@ import { levelAdvice } from "../server/advice.js";
 import { listPaths, listPrograms, listProgramPaths, getPath } from "../server/curriculum.js";
 import { costUsd, modeParams } from "../server/claude.js";
 import { Stripe } from "../server/accounts/stripe.js";
+// K-13: nadgradnja zahteva potrditve kot nakup in geslo računa (vsi testni računi tu: geslo1234).
+const UP = { adult: true, withdrawal: true, terms: true, password: "geslo1234" };
 import { creditUsdFor, CREDIT_PACKS, Credits } from "../server/placila/krediti.js";
 
 const YEAR = new Date().getFullYear();
@@ -394,7 +396,7 @@ test("nadgradnja med mesecem: zajamčeni AI ta mesec po dnevih (stari paket do n
     const before = api.guaranteeFor(ana);
     const full = planGuarantee(planByKey("evklid_ss_month")).usd;
     assert.ok(full > before);
-    assert.equal((await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_ss_month" } })).status, 200);
+    assert.equal((await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_ss_month", ...UP } })).status, 200);
     const up = JSON.parse(db.prepare("SELECT value FROM kv WHERE key = ?").get(`ai_upgrade_${pid}`).value);
     assert.equal(up.from, "evklid_1_month");
     // Okno meje je obdobje naročnine (pregled #462 L1), ne koledarski mesec.
@@ -424,11 +426,11 @@ test("nadgradnja dvakrat v mesecu: dnevi pred prvo ostanejo pri prvotnem deležu
     const ss = planGuarantee(planByKey("evklid_ss_month")).usd;
     const faks = planGuarantee(planByKey("evklid_faks_month")).usd;
     const rec = () => JSON.parse(db.prepare("SELECT value FROM kv WHERE key = ?").get(`ai_upgrade_${pid}`).value);
-    assert.equal((await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_ss_month" } })).status, 200);
+    assert.equal((await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_ss_month", ...UP } })).status, 200);
     const first = rec();
     assert.equal(first.usd, os);
     assert.equal(first.sub, "sub_a");
-    assert.equal((await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_faks_month" } })).status, 200);
+    assert.equal((await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_faks_month", ...UP } })).status, 200);
     const second = rec();
     assert.equal(second.from, "evklid_ss_month");
     const win = api.aiWindowOf(pid);
@@ -452,8 +454,20 @@ test("nadgradnja: višja stopnja takoj z doplačilom razlike (proracija Stripa),
     assert.equal(acc.family_ok, true);
     assert.deepEqual(acc.upgrade.options.map((o) => o.key), ["evklid_ss_month", "evklid_faks_month"]);
     assert.ok(!api.lessonInteractive(ana, TOPIC.SS), "paket OŠ: SŠ zaprta");
-    assert.equal((await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_1_year" } })).status, 400);
-    const up = await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_ss_month" } });
+    assert.equal((await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_1_year", ...UP } })).status, 400);
+    // K-13: brez potrditev ali z napačnim geslom ni bremenitve (Stripe ne dobi zahteve za spremembo naročnine).
+    const brez = await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_ss_month", password: "geslo1234" } });
+    assert.equal(brez.status, 400);
+    assert.equal(brez.body.consent, true);
+    const napacno = await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_ss_month", ...UP, password: "napacno99" } });
+    assert.equal(napacno.status, 401);
+    assert.equal((await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_ss_month", ...UP, password: "" } })).status, 401);
+    assert.ok(!stripe.calls.some((c) => c.path.startsWith("/v1/subscriptions/") && c.method === "POST"), "brez gesla ni klica Stripa");
+    assert.equal(db.prepare("SELECT COUNT(*) AS n FROM billing_consents WHERE kind = 'upgrade'").get().n, 0);
+    const up = await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_ss_month", ...UP } });
+    const zapis = db.prepare("SELECT * FROM billing_consents WHERE kind = 'upgrade'").get();
+    assert.equal(zapis.parent_id, pid);
+    assert.match(zapis.item, /Naročnina/);
     assert.equal(up.status, 200, JSON.stringify(up.body));
     const post = stripe.calls.find((c) => c.path === "/v1/subscriptions/sub_a" && c.method === "POST");
     assert.equal(post.body.proration_behavior, "always_invoice");
@@ -469,7 +483,7 @@ test("nadgradnja: višja stopnja takoj z doplačilom razlike (proracija Stripa),
     assert.equal(acc.children.find((c) => c.id === ana).level_locked, true);
     assert.deepEqual(acc.upgrade.options.map((o) => o.key), ["evklid_druzina_student_month"]);
     assert.ok(!api.lessonInteractive(ana, TOPIC.FAKS));
-    assert.equal((await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_druzina_student_month" } })).status, 200);
+    assert.equal((await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_druzina_student_month", ...UP } })).status, 200);
     assert.ok(api.lessonInteractive(ana, TOPIC.FAKS));
     assert.equal(db.prepare("SELECT sub_plan FROM parents WHERE id = ?").get(pid).sub_plan, "evklid_druzina_student_month");
   });
@@ -478,7 +492,7 @@ test("nadgradnja: višja stopnja takoj z doplačilom razlike (proracija Stripa),
     async ({ call, kid, subscribe }) => {
       kid("Ana", "OS");
       subscribe("evklid_1_month");
-      assert.equal((await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_ss_month" } })).status, 503);
+      assert.equal((await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_ss_month", ...UP } })).status, 503);
     },
     { stripeKey: "sk_live_x" },
   );
@@ -660,7 +674,7 @@ test("nadgradnja: zavrnjena kartica pusti stari paket (pending_if_incomplete), v
     const ana = kid("Ana", "OS");
     subscribe("evklid_1_month");
     stripe.subs.sub_a.declined = true;
-    const up = await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_ss_month" } });
+    const up = await call("/api/billing/upgrade", { method: "POST", body: { plan: "evklid_ss_month", ...UP } });
     assert.equal(up.status, 402, JSON.stringify(up.body));
     const post = stripe.calls.find((c) => c.path === "/v1/subscriptions/sub_a" && c.method === "POST");
     assert.equal(post.body.payment_behavior, "pending_if_incomplete");
@@ -1488,4 +1502,38 @@ test("#759 strežnik: konec preizkusa z namigom ponudbe, offer_reason pod 15, ce
       db.prepare("UPDATE students SET parent_id = NULL WHERE id = ?").run(sid);
     }
   });
+});
+
+test("K-13: vsa plačila so dejanja imetnika računa (zaklep računa), odstop ostane dosegljiv", async () => {
+  const { ownerOnly } = await import("../server/accounts/account-lock.js");
+  for (const p of ["checkout", "portal", "upgrade", "pass", "credit", "gift", "podari"]) assert.ok(ownerOnly(`/billing/${p}`, "POST"), p);
+  assert.ok(!ownerOnly("/billing/pass/confirm", "POST"));
+  assert.ok(!ownerOnly("/billing/credit", "GET"), "osvežitev dokupa po plačilu ne zahteva gesla");
+  assert.ok(!ownerOnly("/withdrawal", "POST"), "gumb za odstop brez ovir");
+});
+test("K-13: država za cene samo iz zanesljivega vira (EVKLID_ZAUPAJ_CF=1), sicer evri", async () => {
+  const cenik = async (zaupaj, headers, q = "") => {
+    const prej = process.env.EVKLID_ZAUPAJ_CF;
+    if (zaupaj) process.env.EVKLID_ZAUPAJ_CF = "1";
+    else delete process.env.EVKLID_ZAUPAJ_CF;
+    try {
+      const app = express();
+      mountAccounts(app, openDb(":memory:"), { accounts: true, scheduler: false, stripeKey: "sk_test_x", fetchFn: fakeStripe().fetchFn, log: { error() {} } });
+      const server = app.listen(0);
+      try {
+        return (await (await fetch(`http://127.0.0.1:${server.address().port}/api/account/prices${q}`, { headers })).json()).currency;
+      } finally {
+        server.close();
+      }
+    } finally {
+      if (prej === undefined) delete process.env.EVKLID_ZAUPAJ_CF;
+      else process.env.EVKLID_ZAUPAJ_CF = prej;
+    }
+  };
+  // Glavo in ?country= lahko pošlje vsak: brez zanesljivega vira ostane cena v evrih.
+  assert.equal(await cenik(false, { "cf-ipcountry": "IN" }), "EUR");
+  assert.equal(await cenik(false, {}, "?country=IN"), "EUR");
+  // Za posrednikom Cloudflare (glavo nastavi Cloudflare) regijska cena ostane.
+  assert.equal(await cenik(true, { "cf-ipcountry": "IN" }), "INR");
+  assert.equal(await cenik(true, { "cf-ipcountry": "SI" }), "EUR");
 });

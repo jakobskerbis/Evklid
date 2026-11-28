@@ -214,6 +214,9 @@ export function warnIfNoKey(log = console) {
   log.warn?.("[evklid] OPOZORILO: EVKLID_DATA_KEY ni nastavljen, pogovori se v bazi shranjujejo nešifrirani (docs/varnost-podatkov.md).");
 }
 
+// Ključi v tabeli kv, katerih vrednosti so šifrirane s seal()/sealJson().
+export const SEALED_KV = ["stiska_obvestilo", "stiska_starsi", "nujno_stevci"];
+
 // Šifrirani stolpci. Nešifrirano ostane, kar SQL uporablja za iskanje ali je skupno vsem (glej dokument):
 // students.name (iskanje podvojenih), answer_cache (skupni, brez osebnih podatkov), knowledge_items (samo id-ji predmetov).
 export const SEALED = [
@@ -238,12 +241,21 @@ export const SEALED = [
   // binarno (sealBytes) v priprava_izvirniki in jih ta seznam ne zajame.
   { table: "priprave", cols: ["naslov"] },
   { table: "priprava_viri", cols: ["ime"] },
+  { table: "priprava_izseki", cols: ["naslov", "besedilo", "negotovo"] },
+  { table: "priprava_prepisi", cols: ["besedilo"] },
+  { table: "priprava_postavke", cols: ["vsebina"] },
   // Oznaka dogodka učenja (stiska, nevarna vsebina …; j 18. 11. 2026). »none« ostane berljiv (where), rok hrambe
   // oznak 90 dni: server/zasebnost.js RETENTION.flagDays.
   // pad: dopolnitev pred šifriranjem (sealFlag); clearIf: ob stiski se ob selitvi pobriše tudi tema (kot v addEvent).
   { table: "events", cols: ["flag"], where: "flag <> 'none'", pad: FLAG_PAD, clearIf: { value: "distress", cols: ["topic", "topic_id"] } },
   // Pregled oznake (vrsta okna ob stiski, pregledano_ob; server/stiska-obvestilo.js), dopolnjen kot oznaka.
   { table: "events", cols: ["pregled"], where: "pregled IS NOT NULL", pad: PREGLED_PAD, label: "events.pregled" },
+  // Ustni izpit (server/ustno-api.js): odgovori učenca s citati njegovih besed (K-13, 26. 11. 2026).
+  { table: "ustno_seje", cols: ["stanje"] },
+  // Šifrirane vrednosti v kv (K-13): čakajoča obvestila ob stiski in čas zadnjega obvestila staršem
+  // (server/stiska-obvestilo.js), števci varnostnega pregleda (server/nujno.js STEVCI_KV). Ostali ključi v kv niso
+  // šifrirani in jih ta vrstica ne zajame. Nov šifriran ključ v kv dodaj sem (test/sifrirano-vse.test.js).
+  { table: "kv", cols: ["value"], where: `key IN (${SEALED_KV.map((k) => `'${k}'`).join(", ")})`, label: "kv (stiska, nujno)" },
 ];
 
 const hasTable = (db, t) => !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?").get(t);

@@ -6,7 +6,7 @@
 // prijavo, Račun in stran za starše. Beleži napake strani in konzole, neuspele zahteve in odgovore
 // ≥ 400, vodoravno drsenje in vidne neprevedene ključe (npr. »nav.path«).
 // Zagon: node scripts/preveri-aplikacijo.cjs [--posnetki <mapa>] [--brez-racunov] [--samo racunalnik|telefon|racuni]
-//   [--brskalnik chromium|webkit] [--jezik sl|en|de|it|hu]
+//   [--brskalnik chromium|webkit|firefox] [--jezik sl|en|de|it|hu]
 //   [--zaslon ŠxV] [--dotik] [--mobilno] [--tema temna] [--meritve] (druge naprave)
 //   [--naprave [seznam]] (vse naprave in legi naenkrat, s kazalom: scripts/posnetki-naprave.cjs)
 // (--samo: en del, CI jih zažene tri hkrati; računi tečejo samo brez --samo ali z --samo racuni).
@@ -45,6 +45,9 @@ const ONLY = arg("--samo");
 const ACCOUNTS = !args.includes("--brez-racunov");
 const BRSKALNIK = arg("--brskalnik") || "chromium";
 const WEBKIT = BRSKALNIK === "webkit";
+// Firefox (K-12, matrika naprav): Playwright v Firefoxu ne pozna isMobile (mobilni pogled), zato samo računalnik ali
+// zaslon na dotik brez mobilnega pogleda.
+const FIREFOX = BRSKALNIK === "firefox";
 const JEZIK = arg("--jezik") || "sl";
 // Jezik → nastavitve naprave (navigator.languages, časovni pas): aplikacija iz njih izbere jezik in šolski sistem.
 // Samo živi jeziki brez č, š, ž (public/i18n/languages.js LIVE_UI_LANGUAGES; hrvaščina jih ima, zato je tu ni).
@@ -107,6 +110,7 @@ async function startServer(extraEnv = {}) {
     ...process.env,
     PORT: String(port),
     EVKLID_MOCK: "1",
+    EVKLID_SKRCI: "1", // skrčene datoteke JS kot na produkciji (server/skrci.js)
     EVKLID_MOCK_DELAY_MS: "0",
     EVKLID_NEWS: "0",
     EVKLID_DB: path.join(dir, "t.db"),
@@ -188,15 +192,18 @@ function answersFor(a) {
 
 // ---------- brskalnik ----------
 let KEYS = [];
+let NEIZRISANO = null; // scripts/popis-formul.js neizrisanoVDom (iskanje neizrisane matematike na zaslonu)
 async function newPage(browser, phone, label, base) {
   const ctx = await browser.newContext({
     viewport: ZASLON || (phone ? { width: 360, height: 740 } : { width: 1280, height: 800 }),
     hasTouch: phone || DOTIK,
-    isMobile: phone || MOBILNO,
+    ...(FIREFOX ? {} : { isMobile: phone || MOBILNO }),
     colorScheme: TEMNA ? "dark" : "light",
     deviceScaleFactor: 1,
     // WebKit na telefonu: iPhone 13 (zaslon, dotik, uporabniški niz Safarija); posnetki ostanejo v merilu 1.
-    ...(phone && WEBKIT ? { ...playwright.devices["iPhone 13"], deviceScaleFactor: 1 } : {}),
+    // Z --zaslon (matrika naprav, K-12) pa velja izbrani zaslon; iPhonov uporabniški niz samo z --mobilno (iPad je brez).
+    ...(phone && WEBKIT && !ZASLON ? { ...playwright.devices["iPhone 13"], deviceScaleFactor: 1 } : {}),
+    ...(WEBKIT && ZASLON && MOBILNO ? { userAgent: playwright.devices["iPhone 13"].userAgent } : {}),
     ...NAPRAVA[JEZIK],
     reducedMotion: "reduce",
     serviceWorkers: "block",
@@ -334,8 +341,17 @@ async function screen(p, name) {
   if (r.down > 1) problem(`${p.label} ${name}`, `cela stran je za ${r.down} px višja od zaslona (drsi stran namesto pogleda)`);
   if (r.raw.length) problem(`${p.label} ${name}`, `neprevedeni ključi: ${r.raw.join(", ")}`);
   if (r.mini?.length) problem(`${p.label} ${name}`, `mali navpični drsnik (▲▼) v: ${r.mini.slice(0, 5).join(", ")} (docs/oblikovanje.md)`);
+  // Neizrisana matematika (N-07, j 25. 11. 2026: vsa matematika v KaTeX): napaka izrisa, surov LaTeX ali $…$ zunaj formul.
+  // V kalkulatorju (lastnik je druga seja, CLAUDE.md) samo opozorilo za register AUDIT.
+  for (const z of NEIZRISANO ? await p.evaluate(NEIZRISANO).catch(() => []) : []) {
+    const what = `neizrisana matematika (${z.vrsta}) v ${z.kje}: »${z.odlomek}«`;
+    if (z.kalk) opozorila.push({ where: `${p.label} ${name}`, what: `${what} – za register AUDIT (kalkulator)` });
+    else problem(`${p.label} ${name}`, what);
+  }
   const pokrito = await bubbleCovers(p);
   if (pokrito.length) problem(`${p.label} ${name}`, `mehurček inštruktorja prekriva: ${pokrito.join(", ")}`);
+  const obvestilo = await toastCovers(p);
+  if (obvestilo.length) problem(`${p.label} ${name}`, `obvestilo prekriva: ${obvestilo.join(", ")}`);
   if (SHOTS) {
     const file = path.join(SHOTS, `${String(++shotN).padStart(3, "0")}-${p.label}-${name}.png`.replace(/[^\w.\-]+/g, "_"));
     await p.screenshot({ path: file }).catch(() => {});
@@ -391,7 +407,15 @@ async function meritve(p, posnetek) {
       .evaluate(async (src) => {
         if (!window.axe) (0, eval)(src);
         const r = await window.axe.run(document, { runOnly: { type: "tag", values: ["wcag2a", "wcag21a", "wcag2aa", "wcag21aa", "wcag22aa"] }, resultTypes: ["violations"] });
-        return r.violations.map((v) => ({ id: v.id, vpliv: v.impact, n: v.nodes.length, primer: v.nodes[0]?.target?.join(" ") }));
+        // K-11 (WCAG 2.2 AA): vsa mesta (do 10) in pri kontrastu barvi in razmerje, da poročilo pove, kaj popraviti.
+        return r.violations.map((v) => ({
+          id: v.id,
+          vpliv: v.impact,
+          n: v.nodes.length,
+          primer: v.nodes[0]?.target?.join(" "),
+          mesta: v.nodes.slice(0, 10).map((x) => x.target?.join(" ")),
+          ...(v.id === "color-contrast" ? { kontrast: v.nodes.slice(0, 10).map((x) => { const d = x.any?.[0]?.data; return d ? `${d.fgColor} na ${d.bgColor}: ${d.contrastRatio} (potrebno ${d.expectedContrastRatio})` : null; }) } : {}),
+        }));
       }, AXE)
       .catch((e) => [{ id: "axe-napaka", primer: e.message.slice(0, 120) }]);
   }
@@ -426,6 +450,32 @@ async function bubbleCovers(p) {
         out.push(`${el.nodeName.toLowerCase()}${el.className && typeof el.className === "string" ? "." + el.className.trim().split(/\s+/).slice(0, 2).join(".") : ""}${el.getAttribute("aria-label") ? ` »${el.getAttribute("aria-label").slice(0, 30)}«` : ""}`);
       }
       return [...new Set(out)].slice(0, 4);
+    })
+    .catch(() => []);
+}
+// Obvestilo (#toast, UX PR 1): ne sme prekriti polja, gumba ali površine data-ne-prekrij. Tapi gredo skozenj
+// (pointer-events: none), zato elementsFromPoint ne pomaga: šteje presek pravokotnikov z vidnimi kontrolniki.
+async function toastCovers(p) {
+  return p
+    .evaluate(() => {
+      const t = document.querySelector("#toast");
+      if (!t || t.hidden || !t.getClientRects().length) return [];
+      const r = t.getBoundingClientRect();
+      const sel = "main.view:not([hidden]) :is(button, a[href], input:not([type=hidden]), select, textarea, [role=button], [role=switch]), [data-ne-prekrij]";
+      // Šteje samo vidni del: kar je odrinjeno pod glavo, odreže rob pogleda (main.view).
+      const vidni = (el) => {
+        const s = el.getBoundingClientRect();
+        const v = (el.closest(".okno") || el.closest("main.view"))?.getBoundingClientRect();
+        return v ? { left: s.left, right: s.right, top: Math.max(s.top, v.top), bottom: Math.min(s.bottom, v.bottom) } : s;
+      };
+      return [...new Set([...document.querySelectorAll(sel)]
+        // Tudi v oknih in spodnjem listu: obvestilo je nad njimi (--z-okno < --z-obvestilo).
+        .filter((el) => !el.closest("[hidden], [inert]") && el.checkVisibility())
+        .filter((el) => {
+          const s = vidni(el);
+          return Math.min(r.right, s.right) - Math.max(r.left, s.left) >= 6 && Math.min(r.bottom, s.bottom) - Math.max(r.top, s.top) >= 6;
+        })
+        .map((el) => `${el.nodeName.toLowerCase()}${el.id ? "#" + el.id : ""}`))].slice(0, 4);
     })
     .catch(() => []);
 }
@@ -630,11 +680,23 @@ async function intro(p, name, { interests = false, tour = "preskoci", away = fal
 
 // Odgovor na nalogo prek vmesnika: izbira ali vpis.
 async function answerTask(p, db, value) {
-  const choice = p.locator("#practice .task .choices .choice");
-  if (await choice.count()) await choice.nth(Number(value)).click();
-  else {
-    await p.fill("#answer", value);
-    await p.locator("#practice .answer-row button.primary").click();
+  // Čestitka za novo raven po prejšnjem odgovoru (xp-fx.js, z zamikom zvezdic) lahko pride šele zdaj: v Safariju
+  // (WebKit) pozneje kot v Chromu. Učenec jo zapre z »Naprej«; brez tega klik na izbiro čaka 30 s (K-12, Mac 1440).
+  const odgovori = async () => {
+    const choice = p.locator("#practice .task .choices .choice");
+    if (await choice.count()) await choice.nth(Number(value)).click({ timeout: 5000 });
+    else {
+      await p.fill("#answer", value, { timeout: 5000 });
+      await p.locator("#practice .answer-row button.primary").click({ timeout: 5000 });
+    }
+  };
+  await closeLevelUp(p);
+  try {
+    await odgovori();
+  } catch (e) {
+    // Čestitka se je odprla med odgovarjanjem (kot v click()): zapri in odgovori znova.
+    if (!(await closeLevelUp(p))) throw e;
+    await odgovori();
   }
   await p.locator("#feedback .fb:not(.info), #feedback .fb.info:not(:has-text('Preverjam'))").first().waitFor({ timeout: 5000 });
   await settle(p);
@@ -1131,9 +1193,12 @@ async function okna(p, label) {
     const b = await p.locator("#chat-bubble .cb-main").boundingBox();
     const vw = p.viewportSize().width;
     const vh = p.viewportSize().height;
-    await p.mouse.move(b.x + 28, b.y + 28);
+    // Prime sredino: na nizkem zaslonu je mehurček jeziček, širok 24 px (UX PR 1).
+    const cx = b.x + b.width / 2;
+    const cy = b.y + b.height / 2;
+    await p.mouse.move(cx, cy);
     await p.mouse.down();
-    for (let i = 1; i <= 12; i++) await p.mouse.move(b.x + 28 + (vw / 2 - 40 - b.x - 28) * (i / 12), b.y + 28 + (vh - 100 - b.y - 28) * (i / 12));
+    for (let i = 1; i <= 12; i++) await p.mouse.move(cx + (vw / 2 - 40 - cx) * (i / 12), cy + (vh - 100 - cy) * (i / 12));
     await settle(p, 150);
     if (!(await p.locator("#chat-bubble.magnet").count())) throw new Error("X ne privlači mehurčka");
     await screen(p, `mehurcek-x-${label}`);
@@ -1229,6 +1294,41 @@ async function examsView(p, label) {
   await expectVisible(p, "#exams-content .exam-ready", "NPZ in matura: pripravljenost");
   await expectVisible(p, '#exam-papers .pp-row a[href^="https://www.ric.si/mma/"]', "pretekle pole");
   await screen(p, `npz-matura-pole-${label}`);
+  // Poskusni izpit na naši poli (public/our-paper.js openExamSim): uvod → pisanje z uro → ocena po točkovniku →
+  // rezultat po temah; po zaprtju je rezultat na strani (Tvoje poskusne pole).
+  await click(p, "#exam-papers .pp-sim", { wait: 500 });
+  await expectVisible(p, ".pv.op-sim [data-sim-start]", "poskusni izpit: uvod", 8000);
+  await screen(p, `poskusni-izpit-uvod-${label}`);
+  await click(p, ".pv.op-sim [data-sim-start]", { wait: 300 });
+  await expectVisible(p, ".pv.op-sim .op-timer", "poskusni izpit: ura");
+  if (await p.locator(".pv.op-sim .op-sol, .pv.op-sim [data-op-show]").count()) throw new Error("poskusni izpit: rešitve so vidne med pisanjem");
+  await screen(p, `poskusni-izpit-pisanje-${label}`);
+  await click(p, ".pv.op-sim [data-sim-finish]", { wait: 300 });
+  await expectVisible(p, ".pv.op-sim .op-pick [data-sim-pt]", "poskusni izpit: ocena po točkovniku");
+  await click(p, ".pv.op-sim .op-pick [data-sim-pt]:last-child", { wait: 100 });
+  await screen(p, `poskusni-izpit-ocena-${label}`);
+  await click(p, ".pv.op-sim [data-sim-save]", { wait: 800 });
+  await expectVisible(p, ".pv.op-sim .op-sim-result", "poskusni izpit: rezultat", 8000);
+  await screen(p, `poskusni-izpit-rezultat-${label}`);
+  await p.keyboard.press("Escape");
+  await p.waitForTimeout(300);
+  if (await p.locator(".pv").count()) throw new Error("Esc ne zapre poskusnega izpita");
+  await expectVisible(p, "#exams-content .exam-sims .sim-list li", "Tvoje poskusne pole", 8000);
+  // Naša pola (public/our-paper.js openOurPaper): izbirni odgovor z dotikom, rešitve samo na koncu (»Preveri rešitve«).
+  await click(p, "#exam-papers .pp-ours", { wait: 500 });
+  await expectVisible(p, ".pv.op [data-op-finish]", "naša pola: Preveri rešitve", 8000);
+  if (await p.locator(".pv.op .op-sol, .pv.op [data-op-show]").count()) throw new Error("naša pola: rešitve so vidne pred koncem");
+  if (await p.locator(".pv.op [data-op-ch]").count()) {
+    await click(p, ".pv.op [data-op-ch]", { wait: 100 });
+    if ((await p.locator(".pv.op [data-op-ch]").first().getAttribute("aria-pressed")) !== "true") throw new Error("naša pola: dotik ne izbere odgovora");
+  }
+  await screen(p, `nasa-pola-izbira-${label}`);
+  await click(p, ".pv.op [data-op-finish]", { wait: 300 });
+  await expectVisible(p, ".pv.op .op-sol", "naša pola: rešitve na koncu");
+  await screen(p, `nasa-pola-resitve-${label}`);
+  await p.keyboard.press("Escape");
+  await p.waitForTimeout(300);
+  if (await p.locator(".pv").count()) throw new Error("Esc ne zapre naše pole");
   await click(p, "#exams-content [data-er-practice]", { wait: 500 });
   await expectVisible(p, "#view-topic #practice .task", "vaja šibke teme");
   await click(p, "#back-to-path", { wait: 300 });
@@ -2458,13 +2558,16 @@ async function tujJezik(browser, app, phone) {
   process.removeAllListeners("warning");
   sqlite = require("node:sqlite");
   KEYS = Object.keys((await import(pathToFileURL(path.join(ROOT, "public/i18n/sl.js")))).default);
+  NEIZRISANO = (await import(pathToFileURL(path.join(ROOT, "scripts/popis-formul.js")))).neizrisanoVDom;
   if (SHOTS) fs.mkdirSync(SHOTS, { recursive: true });
-  if (!["chromium", "webkit"].includes(BRSKALNIK)) throw new Error(`--brskalnik: chromium ali webkit (ne »${BRSKALNIK}«)`);
+  if (!["chromium", "webkit", "firefox"].includes(BRSKALNIK)) throw new Error(`--brskalnik: chromium, webkit ali firefox (ne »${BRSKALNIK}«)`);
+  // Firefox v Playwrightu nima mobilnega pogleda: brez --zaslon le del za računalnik (sicer bi telefon tekel brez isMobile).
+  if (FIREFOX && (MOBILNO || (!ZASLON && ONLY !== "racunalnik"))) throw new Error("--brskalnik firefox: brez mobilnega pogleda (--mobilno, telefon brez --zaslon); uporabi --samo racunalnik ali --zaslon");
   if (!NAPRAVA[JEZIK]) throw new Error(`--jezik: ${Object.keys(NAPRAVA).join(", ")} (ne »${JEZIK}«)`);
   if (JEZIK !== "sl" && ONLY === "racuni") throw new Error("--jezik: računi se preverjajo samo v slovenščini");
   // Z --zaslon (scripts/posnetki-naprave.cjs) teče Chromium v slovenščini: sicer polje za datum kaže mm/dd/llll
   // in zunanji recenzent to prijavi kot napako lokalizacije (pregled 3, PR #1079). Brez --zaslon kot prej.
-  const browser = await playwright[BRSKALNIK].launch(ZASLON && !WEBKIT ? { args: ["--lang=sl-SI"] } : {});
+  const browser = await playwright[BRSKALNIK].launch(ZASLON && BRSKALNIK === "chromium" ? { args: ["--lang=sl-SI"] } : {});
   try {
     if (ONLY && !["racunalnik", "telefon", "racuni"].includes(ONLY)) throw new Error(`--samo: racunalnik, telefon ali racuni (ne »${ONLY}«)`);
     const app = ONLY === "racuni" ? null : await startServer(); // del »racuni« ima samo svoj strežnik

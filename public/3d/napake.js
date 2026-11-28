@@ -79,7 +79,18 @@ export function napakaBesedilo(err, { naVoljo = typeof navigator !== "undefined"
 
 // Osveži stran mimo starih kopij: service worker pobriše kopije različice, ki ni več na strežniku (public/sw.js
 // »app-stale«, kot public/app.js dropStaleCopies), nato ponovno nalaganje. Tako star modul ob novi strani ne ostane.
-export async function osveziMimoStarih({ okno = typeof window !== "undefined" ? window : null } = {}) {
+// knjiznice: neskladje izvozov (vrsta »posodobitev«) je lahko v sami knjižnici (iPad 27. 11. 2026: star three.module.js
+// ob novem three.core.js), ki je »app-stale« ne pobriše, zato iz predpomnilnika knjižnic (»…-vendor…«) pobrišemo še kopije
+// three (/vendor/three/); service worker jih prenese znova s strežnika. Ostale knjižnice (KaTeX, pisave, pdf.js) ostanejo
+// za delo brez povezave, prav tako ob napaki omrežja (tedaj knjiznice ni).
+export async function osveziMimoStarih({ okno = typeof window !== "undefined" ? window : null, knjiznice = false } = {}) {
+  try {
+    const shrambe = knjiznice ? okno?.caches : null;
+    for (const ime of shrambe ? (await shrambe.keys()).filter((k) => /-vendor(-\d+)?$/.test(k)) : []) {
+      const c = await shrambe.open(ime);
+      for (const req of await c.keys()) if (new URL(req.url).pathname.startsWith("/vendor/three/")) await c.delete(req);
+    }
+  } catch {}
   try {
     const sw = okno?.navigator?.serviceWorker?.controller;
     const stanje = sw ? await fetch("/healthz/stanje", { cache: "no-store" }).then((r) => jsonAliNic(r)) : null;
@@ -155,7 +166,7 @@ export function napakaVsebina(err, { t, znova = null, razredGumba = "a3-pill" } 
     a.href = u.href;
     out.push(a);
   }
-  const akcija = n.modul ? () => osveziMimoStarih() : n.vrsta !== "webgl" && n.vrsta !== "brskalnik" ? znova : null;
+  const akcija = n.modul ? () => osveziMimoStarih({ knjiznice: n.vrsta === "posodobitev" }) : n.vrsta !== "webgl" && n.vrsta !== "brskalnik" ? znova : null;
   if (typeof akcija === "function") {
     const b = el("button", razredGumba, t("a3.retry"));
     b.type = "button";

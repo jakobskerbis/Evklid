@@ -32,7 +32,7 @@
 .zb-tabs { margin: 6px 0 12px; }
 .zb-tabs button { display: inline-flex; align-items: center; gap: 6px; }
 .zb-tabs button svg.i { width: 16px; height: 16px; }
-.zb-tabs small { opacity: 0.75; font-weight: 700; }
+.zb-tabs small { font-weight: 700; } /* brez prosojnosti: na izbranem zavihku bi bila 3,5 : 1 (axe, K-11) */
 .zb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
 .zb-sub { margin: 18px 2px 8px; font-size: 1rem; }
 /* Barva roba iz .gm-r-* (games.css); navadni predmeti sivo. */

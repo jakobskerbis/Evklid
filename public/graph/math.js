@@ -305,7 +305,25 @@ export function splitTop(s, seps = ";") {
 }
 
 // »∫(f, a, b)« (po argSeparators) → »∫_(a)^(b) (f) dx« (zapis, ki ga razume razčlenjevalnik)
-function rewriteIntegrals(s) {
+// AUDIT-070: spremenljivka integrala v ∫(f; a; b): x, sicer edina enočrkovna spremenljivka v f (∫(sin(t); 0; x) je po t)
+// (∫(x·t; 0; x): x je v meji, zato je spremenljivka t)
+// Črka za števko ali konstanto je spremenljivka (∫(2t; 0; 1), ∫(3t²; 0; 2), ∫(2πt; 0; 1)); »d/dx« ni črka d; konstanti
+// π in τ ter indeks vsote ∑_(n=1)^(5) nista spremenljivki integrala (∫(τ; 0; 1) = 2π, ∫(∑_(n=1)^(5) n; 0; 1) je po x).
+export function intVar(f, names, lims = "") {
+  const known = (c) => names && (names.has ? names.has(c) : c in names);
+  const bound = new Set([...String(f).matchAll(/[∑∏]_\(\s*([A-Za-zα-ωΑ-Ω])\s*=/g)].map((m) => m[1]));
+  const letters = (u) =>
+    new Set((u.replace(/d\/dx/g, " ").replace(/[πτ]/g, " ").match(/(?<![A-Za-zα-ωΑ-Ω_])[A-Za-zα-ωΑ-Ω](?![A-Za-zα-ωΑ-Ω_\d(])/g) || []).filter((c) => !"ei".includes(c) && !known(c) && !bound.has(c)));
+  const ids = letters(f);
+  const inLims = letters(lims);
+  const free = [...ids].filter((c) => !inLims.has(c));
+  if (ids.has("x") && !inLims.has("x")) return "x";
+  if (free.length === 1) return free[0];
+  // k(t) = ∫(sin(t); 0; t): edina črka je tudi v meji – po njej (kot ∫_0^x f(x) dx)
+  if (ids.size === 1) return [...ids][0];
+  return "x";
+}
+function rewriteIntegrals(s, names = null, freeInt = false) {
   for (let guard = 0; guard < 20; guard++) {
     const i = s.indexOf("∫(");
     if (i < 0) break;
@@ -317,7 +335,7 @@ function rewriteIntegrals(s) {
     }
     const args = splitTop(s.slice(i + 2, j), ",");
     if (args.length !== 3) break;
-    s = `${s.slice(0, i)}(∫_(${args[1]})^(${args[2]}) (${args[0]}) dx)${s.slice(j + 1)}`;
+    s = `${s.slice(0, i)}(∫_(${args[1]})^(${args[2]}) (${args[0]}) d${freeInt ? intVar(args[0], names, `${args[1]} ${args[2]}`) : "x"})${s.slice(j + 1)}`;
   }
   return s;
 }
@@ -330,11 +348,15 @@ function rewriteIntegrals(s) {
  *   decimalno ločilo. Drugače je e Eulerjevo število (»2e^x«, »2e3x« = 2·e·3·x, »2e-x«), E pa spremenljivka.
  *   »E« ostane spremenljivka tudi, kadar je E v names (graf z vrstico »E = …«, spremenljivka E v kalkulatorju):
  *   takrat je »3E-2« 3·E − 2. Število je v oklepaju (AUDIT-041): x/1e8 = x/10⁸, 2e3^2 = (2·10³)², −1e2 = −100,
- * - ∫(f; a; b) je določeni integral od a do b,
+ * - ∫(f; a; b) je določeni integral od a do b. Spremenljivka integrala je privzeto vedno x (freeInt: false), kot pred
+ *   AUDIT-085: tako berejo vrstico graf (črka brez definicije je parameter, za katerega graf ponudi drsnik:
+ *   ∫(a; 0; x) = a·x; drsnik a = 3 da 3x) in strežnik pri preverjanju odgovorov (server/live-check.js,
+ *   server/sodba-koraka.js, server/practice/check.js: ∫(a; 0; 3) = 3a). Le znanstveni kalkulator (scicore prepare)
+ *   poda freeInt: true: spremenljivka je x ali edina druga črka v f, ki ni v names (AUDIT-085: k(x) = ∫(sin(t); 0; x)),
  * - close: manjkajoče zaklepaje doda na konec (znanstveni kalkulator; grafični jih pokaže kot napako).
  * Pomen zapisa po razčlenitvi poenoti še calcRewrite (odstotki, round na decimalke).
  */
-export function calcText(s, { comma = true, names = null, close = false } = {}) {
+export function calcText(s, { comma = true, names = null, close = false, freeInt = false } = {}) {
   let out = numberText(s, comma);
   const bigE = !(names && (names.has ? names.has("E") : "E" in names));
   out = out.replace(/(?<![A-Za-z_\d.])(\d+(?:\.\d+)?|\.\d+)([eE])([+\-−]?)(\d+)(?![\d.A-Za-zα-ωΑ-Ω_(])/g, (m, a, e, sign, d) =>
@@ -348,7 +370,7 @@ export function calcText(s, { comma = true, names = null, close = false } = {}) 
     }
     out += ")".repeat(open);
   }
-  return rewriteIntegrals(out);
+  return rewriteIntegrals(out, names, freeInt);
 }
 
 /**
@@ -2777,9 +2799,25 @@ export function diff(node, v, ctx = {}) {
       return { k: "pw", cases: n.cases.map(([c, x]) => [c, d(x)]), other: n.other ? d(n.other) : null };
     case "der":
       return d(simplify(diff(n.a, n.v, ctx)));
-    case "int":
-      if (!n.lo && n.v === v) return n.a; // osnovni izrek analize
-      throw new MathError("noDiff", { f: "∫" });
+    case "int": {
+      if (!n.lo) {
+        if (n.v === v) return n.a; // osnovni izrek analize
+        throw new MathError("noDiff", { f: "∫" });
+      }
+      // AUDIT-070: Leibnizovo pravilo d/dv ∫_a(v)^b(v) f(t, v) dt = f(b, v)·b′ − f(a, v)·a′ + ∫_a^b ∂f/∂v dt
+      // (d/dx ∫_0^x sin t dt = sin x; meje g(x) po verižnem pravilu)
+      // Integral po isti spremenljivki, po kateri odvajamo (∫_0^2 f(x) dx, odvod po x), ostane brez odvoda kot prej:
+      // skener naloge »∫_0^2 (3x² − 2x + 1) dx« ne sme brati kot odvoda (f′(x) = 0), CAS in kalkulator ga ne potrebujeta
+      const t = n.v;
+      if (t === v) throw new MathError("noDiff", { f: "∫" });
+      const at = (lim) => substitute(n.a, { [t]: lim });
+      let out = null;
+      const plus = (x) => (out = out ? add(out, x) : x);
+      if (depends(n.hi, v)) plus(isNum(simplify(d(n.hi)), 1) ? at(n.hi) : mulN(at(n.hi), d(n.hi)));
+      if (depends(n.lo, v)) plus(neg(isNum(simplify(d(n.lo)), 1) ? at(n.lo) : mulN(at(n.lo), d(n.lo))));
+      if (t !== v && depends(n.a, v)) plus({ k: "int", a: d(n.a), v: t, lo: n.lo, hi: n.hi });
+      return out || N(0);
+    }
     default:
       throw new MathError("noDiff", { f: n.k });
   }
@@ -2943,7 +2981,8 @@ export function toTex(node, opt = {}) {
       const ua = unwrap(n.a);
       const b = wrap(n.b, unwrap(n.b).k === "*" ? 2 : 2.5);
       const ub = unwrap(n.b);
-      const numNext = ub.k === "num" || (ub.k === "^" && unwrap(ub.a).k === "num") || ub.k === "neg" || (ub.k === "*" && unwrap(ub.a).k === "num");
+      // izrecno množenje pred številko (5·(10³ m), 2·3!) in med enotama (m·s, scicore.js): brez pike bi se stikali
+      const numNext = ub.k === "num" || (ub.k === "^" && unwrap(ub.a).k === "num") || ub.k === "neg" || (ub.k === "*" && unwrap(ub.a).k === "num") || (/^\d/.test(b) && (!n.imp || /\d\}*$/.test(a))) || (!n.imp && ub.k === "var" && ub.name.startsWith("U_uu"));
       const piece = ub.k === "pw" && ub.cases.every(([, v]) => isNum(v, 1)) && !ub.other;
       if (piece) return `${a}\\left\\{${ub.cases.map(([c]) => T(c)).join(",\\ ")}\\right\\}`;
       const dot = numNext || (ua.k === "num" && ub.k === "num") || ub.k === "/";

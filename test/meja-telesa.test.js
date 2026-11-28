@@ -23,6 +23,11 @@ test("A9 meja telesa: 100 kb privzeto, večja samo za fotografije in dolgo vsebi
       const r = await call(pot, { method: "POST", body: { image: `data:image/png;base64,${"A".repeat(3_000_000)}` } });
       assert.notEqual(r.status, 413, pot);
     }
+    // Okno »Piši« kalkulatorja: slika zapisa do 2 MB ni 413 (pregled: 100 kB je premalo za gosto pisavo), 4 MB je 413.
+    const calc = await call(`/api/students/${kid.id}/calc/read`, { method: "POST", body: { image: `data:image/png;base64,${"A".repeat(1_500_000)}` } });
+    assert.notEqual(calc.status, 413);
+    const calcPrevec = await call(`/api/students/${kid.id}/calc/read`, { method: "POST", body: { image: `data:image/png;base64,${"A".repeat(4_000_000)}` } });
+    assert.equal(calcPrevec.status, 413);
     // Graf s sličico (do 200 000 znakov podatkov + 80 000 sličica) ostane mogoč.
     const graf = await call(`/api/students/${kid.id}/graphs`, { method: "POST", body: { title: "g", data: { items: [{ type: "expr", text: besedilo(150_000) }] } } });
     assert.notEqual(graf.status, 413);

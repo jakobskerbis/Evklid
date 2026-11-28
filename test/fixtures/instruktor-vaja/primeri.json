@@ -1,0 +1,2363 @@
+[
+ {
+  "id": "V001",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "6. razred",
+  "predmet": "MAT",
+  "poizvedba": "deljivost",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "MAT-OS-6/deljivost"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V002",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "6. razred",
+  "predmet": "MAT",
+  "poizvedba": "sklepni račun",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "MAT-OS-6/sklepni-racun"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V003",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "6. razred",
+  "predmet": "MAT",
+  "poizvedba": "simetrija",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "MAT-OS-6/simetrija"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V004",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "7. razred",
+  "predmet": "MAT",
+  "poizvedba": "odstotni račun",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "MAT-OS-7/odstotni-racun"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V005",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "7. razred",
+  "predmet": "MAT",
+  "poizvedba": "seštevanje ulomkov",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "MAT-OS-7/sestevanje-in-odstevanje-ulomkov"
+  ],
+  "opomba": "Skrajšano ime teme."
+ },
+ {
+  "id": "V006",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "MAT",
+  "poizvedba": "Pitagorov izrek",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "MAT-OS-8/pitagorov-izrek",
+   "MAT-OS-8/uporaba-pitagorovega-izreka"
+  ],
+  "opomba": "Ime teme; uporaba izreka je ista snov."
+ },
+ {
+  "id": "V007",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "MAT",
+  "poizvedba": "razstavljanje izrazov",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "MAT-OS-8/razstavljanje"
+  ],
+  "opomba": "Ime teme z dodano besedo."
+ },
+ {
+  "id": "V008",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "MAT",
+  "poizvedba": "obseg in ploščina kroga",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "MAT-OS-8/obseg-in-ploscina-kroga"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V009",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "MAT",
+  "poizvedba": "linearna funkcija",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "MAT-OS-9/linearna-funkcija",
+   "MAT-OS-9/graf-linearne-funkcije"
+  ],
+  "opomba": "Ime teme; graf linearne funkcije je ista snov."
+ },
+ {
+  "id": "V010",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "MAT",
+  "poizvedba": "Talesov izrek",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "MAT-OS-9/talesov-izrek"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V011",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "MAT",
+  "poizvedba": "valj",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "MAT-OS-9/valj"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V012",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "MAT",
+  "poizvedba": "sistemi linearnih enačb",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "MAT-SS-1/sistemi-linearnih-enacb",
+   "MAT-SS-1/gaussova-metoda-in-sistemi-linearnih-neenacb"
+  ],
+  "opomba": "Ime teme; Gaussova metoda rešuje iste sisteme."
+ },
+ {
+  "id": "V013",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "MAT",
+  "poizvedba": "Heronova formula",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "MAT-SS-1/heronova-formula-ter-polmera-ocrtanega-in-vcrtanega-kroga"
+  ],
+  "opomba": "Začetek imena teme."
+ },
+ {
+  "id": "V014",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "MAT",
+  "poizvedba": "dvojiški sestav",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "MAT-SS-1/dvojiski-stevilski-sestav"
+  ],
+  "opomba": "Skrajšano ime teme."
+ },
+ {
+  "id": "V015",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "MAT",
+  "poizvedba": "kvadratna enačba",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "MAT-SS-2/kvadratna-enacba"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V016",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "MAT",
+  "poizvedba": "logaritem",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "MAT-SS-2/logaritem"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V017",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "MAT",
+  "poizvedba": "kompleksna števila",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "MAT-SS-2/kompleksna-stevila"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V018",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "MAT",
+  "poizvedba": "adicijski izreki",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "MAT-SS-3/adicijski-izreki"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V019",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "MAT",
+  "poizvedba": "skalarni produkt",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "MAT-SS-3/skalarni-produkt"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V020",
+  "sola": "SREDNJA_SOLA",
+  "razred": "4. letnik",
+  "predmet": "MAT",
+  "poizvedba": "binomski izrek",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "MAT-SS-4/binomski-izrek"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V021",
+  "sola": "SREDNJA_SOLA",
+  "razred": "4. letnik",
+  "predmet": "MAT",
+  "poizvedba": "obrestni račun",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "MAT-SS-4/obrestni-racun"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V022",
+  "sola": "SREDNJA_SOLA",
+  "razred": "4. letnik",
+  "predmet": "MAT",
+  "poizvedba": "določeni integral",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "MAT-SS-4/doloceni-integral"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V023",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "6. razred",
+  "predmet": "MAT",
+  "poizvedba": "seštevanje in deljenje decimalk",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "MAT-OS-6/racunanje-z-decimalnimi-stevili"
+  ],
+  "opomba": "Decimalke so decimalna števila."
+ },
+ {
+  "id": "V024",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "6. razred",
+  "predmet": "MAT",
+  "poizvedba": "površina in prostornina kvadra",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "MAT-OS-6/kocka-in-kvader"
+  ],
+  "opomba": "Računanje s kvadrom spada v temo kocka in kvader."
+ },
+ {
+  "id": "V025",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "7. razred",
+  "predmet": "MAT",
+  "poizvedba": "izračun popusta in podražitve",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "MAT-OS-7/odstotni-racun"
+  ],
+  "opomba": "Popust in podražitev sta odstotni račun."
+ },
+ {
+  "id": "V026",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "7. razred",
+  "predmet": "MAT",
+  "poizvedba": "povprečje podatkov",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "MAT-OS-7/aritmeticna-sredina"
+  ],
+  "opomba": "Povprečje je aritmetična sredina."
+ },
+ {
+  "id": "V027",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "7. razred",
+  "predmet": "MAT",
+  "poizvedba": "risanje trikotnika s šestilom",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "MAT-OS-7/konstrukcije-trikotnikov"
+  ],
+  "opomba": "Načrtovanje trikotnika je konstrukcija."
+ },
+ {
+  "id": "V028",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "MAT",
+  "poizvedba": "računanje z negativnimi števili",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "MAT-OS-8/racunanje-s-celimi-stevili"
+  ],
+  "opomba": "Negativna števila so cela števila."
+ },
+ {
+  "id": "V029",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "MAT",
+  "poizvedba": "zapis zelo velikih števil s potencami",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "MAT-OS-8/zapis-z-desetiskimi-potencami"
+  ],
+  "opomba": "Gre za zapis z desetiškimi potencami."
+ },
+ {
+  "id": "V030",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "MAT",
+  "poizvedba": "reševanje enačb z eno neznanko",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "MAT-OS-8/linearne-enacbe"
+  ],
+  "opomba": "V 8. razredu so to linearne enačbe."
+ },
+ {
+  "id": "V031",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "MAT",
+  "poizvedba": "notranji koti mnogokotnika",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "MAT-OS-8/veckotniki"
+  ],
+  "opomba": "Mnogokotnik je večkotnik."
+ },
+ {
+  "id": "V032",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "MAT",
+  "poizvedba": "reševanje enačb z ulomki",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "MAT-OS-9/linearne-enacbe-z-ulomki"
+  ],
+  "opomba": "Enačbe z ulomki v 9. razredu."
+ },
+ {
+  "id": "V033",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "MAT",
+  "poizvedba": "izračun verjetnosti dogodka",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "MAT-OS-9/verjetnost"
+  ],
+  "opomba": "Tema verjetnost."
+ },
+ {
+  "id": "V034",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "MAT",
+  "poizvedba": "anketa in obdelava rezultatov",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "MAT-OS-9/statisticna-raziskava"
+  ],
+  "opomba": "Anketa je statistična raziskava."
+ },
+ {
+  "id": "V035",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "MAT",
+  "poizvedba": "zrcaljenje, vrtež in vzporedni premik",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "MAT-SS-1/togi-premiki"
+  ],
+  "opomba": "To so togi premiki."
+ },
+ {
+  "id": "V036",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "MAT",
+  "poizvedba": "ničle in teme parabole",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "MAT-SS-2/kvadratna-funkcija"
+  ],
+  "opomba": "Ničle in teme so lastnosti kvadratne funkcije."
+ },
+ {
+  "id": "V037",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "MAT",
+  "poizvedba": "enačbe s koreni",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "MAT-SS-2/iracionalne-enacbe"
+  ],
+  "opomba": "Enačbe s koreni so iracionalne enačbe."
+ },
+ {
+  "id": "V038",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "MAT",
+  "poizvedba": "enačbe s sinusom in kosinusom",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "MAT-SS-3/trigonometrijske-enacbe"
+  ],
+  "opomba": "To so trigonometrijske enačbe."
+ },
+ {
+  "id": "V039",
+  "sola": "SREDNJA_SOLA",
+  "razred": "4. letnik",
+  "predmet": "MAT",
+  "poizvedba": "mesečno odplačevanje kredita",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "MAT-SS-4/anuitete-in-amortizacijski-nacrt"
+  ],
+  "opomba": "Odplačevanje kredita so anuitete."
+ },
+ {
+  "id": "V040",
+  "sola": "SREDNJA_SOLA",
+  "razred": "4. letnik",
+  "predmet": "MAT",
+  "poizvedba": "iskanje ekstremov funkcije",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "MAT-SS-4/uporaba-odvoda"
+  ],
+  "opomba": "Ekstremi so uporaba odvoda."
+ },
+ {
+  "id": "V041",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "6. razred",
+  "predmet": "MAT",
+  "poizvedba": "pravila deljivosti s 3",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "MAT-OS-6/deljivost"
+  ],
+  "opomba": "Pravilo deljivosti spada v deljivost."
+ },
+ {
+  "id": "V042",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "6. razred",
+  "predmet": "MAT",
+  "poizvedba": "Vennov diagram",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "MAT-OS-6/mnozice-in-diagrami"
+  ],
+  "opomba": "Vennov diagram prikazuje množice."
+ },
+ {
+  "id": "V043",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "7. razred",
+  "predmet": "MAT",
+  "poizvedba": "razcep na prafaktorje",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "MAT-OS-7/prastevila-in-razcep"
+  ],
+  "opomba": "Razcep na praštevila."
+ },
+ {
+  "id": "V044",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "7. razred",
+  "predmet": "MAT",
+  "poizvedba": "sokota in sovršna kota",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "MAT-OS-7/vrste-kotov-in-pari-kotov"
+  ],
+  "opomba": "Pari kotov."
+ },
+ {
+  "id": "V045",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "7. razred",
+  "predmet": "MAT",
+  "poizvedba": "višinska točka trikotnika",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "MAT-OS-7/znacilne-tocke-trikotnika"
+  ],
+  "opomba": "Višinska točka je značilna točka trikotnika."
+ },
+ {
+  "id": "V046",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "MAT",
+  "poizvedba": "kvadrat binoma",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "MAT-OS-8/mnozenje-izrazov"
+  ],
+  "opomba": "Kvadriranje binoma je množenje izrazov."
+ },
+ {
+  "id": "V047",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "MAT",
+  "poizvedba": "diagonala kvadrata",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "MAT-OS-8/pitagorov-izrek",
+   "MAT-OS-8/uporaba-pitagorovega-izreka"
+  ],
+  "opomba": "Diagonalo izračunamo s Pitagorovim izrekom."
+ },
+ {
+  "id": "V048",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "MAT",
+  "poizvedba": "iracionalna števila",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "MAT-OS-8/realna-stevila"
+  ],
+  "opomba": "Iracionalna števila so del realnih števil."
+ },
+ {
+  "id": "V049",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "MAT",
+  "poizvedba": "plašč stožca",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "MAT-OS-9/stozec"
+  ],
+  "opomba": "Plašč je del površine stožca."
+ },
+ {
+  "id": "V050",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "MAT",
+  "poizvedba": "razmerje podobnosti",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "MAT-OS-9/podobni-trikotniki"
+  ],
+  "opomba": "Koeficient podobnosti trikotnikov."
+ },
+ {
+  "id": "V051",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "MAT",
+  "poizvedba": "prostornina piramide",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "MAT-OS-9/piramida"
+  ],
+  "opomba": "Tema piramida."
+ },
+ {
+  "id": "V052",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "MAT",
+  "poizvedba": "resničnostna tabela",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "MAT-SS-1/osnove-logike"
+  ],
+  "opomba": "Resničnostne tabele so osnove logike."
+ },
+ {
+  "id": "V053",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "MAT",
+  "poizvedba": "diskriminanta",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "MAT-SS-2/kvadratna-enacba",
+   "MAT-SS-2/kvadratna-funkcija"
+  ],
+  "opomba": "Diskriminanta določa rešitve enačbe in ničle funkcije."
+ },
+ {
+  "id": "V054",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "MAT",
+  "poizvedba": "Vietovo pravilo",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "MAT-SS-2/kvadratna-enacba"
+  ],
+  "opomba": "Vietovo pravilo povezuje rešitve kvadratne enačbe."
+ },
+ {
+  "id": "V055",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "MAT",
+  "poizvedba": "Hornerjev algoritem",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "MAT-SS-3/polinomi"
+  ],
+  "opomba": "Hornerjev algoritem za deljenje polinomov."
+ },
+ {
+  "id": "V056",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "MAT",
+  "poizvedba": "asimptote racionalne funkcije",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "MAT-SS-3/racionalne-funkcije"
+  ],
+  "opomba": "Asimptote so del teme racionalne funkcije."
+ },
+ {
+  "id": "V057",
+  "sola": "SREDNJA_SOLA",
+  "razred": "4. letnik",
+  "predmet": "MAT",
+  "poizvedba": "integracija po delih",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij"
+  ],
+  "opomba": "Po delih = per partes."
+ },
+ {
+  "id": "V058",
+  "sola": "SREDNJA_SOLA",
+  "razred": "4. letnik",
+  "predmet": "MAT",
+  "poizvedba": "Bernoullijeva formula",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "MAT-SS-4/zaporedje-neodvisnih-poskusov"
+  ],
+  "opomba": "Bernoullijeva formula za neodvisne poskuse."
+ },
+ {
+  "id": "V059",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "MAT",
+  "poizvedba": "smerni koeficient premice",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "MAT-OS-9/linearna-funkcija",
+   "MAT-OS-9/graf-linearne-funkcije",
+   "MAT-OS-9/premica-v-ravnini"
+  ],
+  "opomba": "Smerni koeficient nastopa v treh temah."
+ },
+ {
+  "id": "V060",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "MAT",
+  "poizvedba": "kvadrat in kvadratni koren",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "MAT-OS-8/kvadrat-stevila",
+   "MAT-OS-8/kvadratni-koren"
+  ],
+  "opomba": "Fraza zajema dve temi."
+ },
+ {
+  "id": "V061",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "7. razred",
+  "predmet": "MAT",
+  "poizvedba": "sorazmerje",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "MAT-OS-7/premo-sorazmerje",
+   "MAT-OS-7/obratno-sorazmerje",
+   "MAT-OS-7/razmerje"
+  ],
+  "opomba": "Lahko premo, obratno sorazmerje ali enakost razmerij."
+ },
+ {
+  "id": "V062",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "7. razred",
+  "predmet": "MAT",
+  "poizvedba": "ploščina likov",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "MAT-OS-7/obseg-in-ploscina-trikotnika",
+   "MAT-OS-7/obseg-in-ploscina-stirikotnikov"
+  ],
+  "opomba": "V 7. razredu trikotniki in štirikotniki."
+ },
+ {
+  "id": "V063",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "MAT",
+  "poizvedba": "prostornina teles",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "MAT-OS-9/prizma",
+   "MAT-OS-9/valj",
+   "MAT-OS-9/piramida",
+   "MAT-OS-9/stozec",
+   "MAT-OS-9/krogla"
+  ],
+  "opomba": "Ustreza vsako telo 9. razreda."
+ },
+ {
+  "id": "V064",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "MAT",
+  "poizvedba": "razstavljanje",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "MAT-SS-1/razstavljanje-izrazov",
+   "MAT-SS-1/razstavljanje-vsote-in-razlike-potenc"
+  ],
+  "opomba": "Dve temi o razstavljanju."
+ },
+ {
+  "id": "V065",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "MAT",
+  "poizvedba": "eksponentne in logaritemske enačbe",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "MAT-SS-2/eksponentne-enacbe",
+   "MAT-SS-2/logaritemska-funkcija-in-enacbe"
+  ],
+  "opomba": "Fraza zajema dve temi."
+ },
+ {
+  "id": "V066",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "MAT",
+  "poizvedba": "parabola",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "MAT-SS-3/elipsa-hiperbola-parabola",
+   "MAT-SS-3/stoznice-v-premaknjeni-legi-in-tangente"
+  ],
+  "opomba": "V 3. letniku je parabola stožnica."
+ },
+ {
+  "id": "V067",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "MAT",
+  "poizvedba": "kotne funkcije",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "MAT-SS-3/kotne-funkcije-poljubnega-kota",
+   "MAT-SS-3/grafi-kotnih-funkcij"
+  ],
+  "opomba": "Splošno o kotnih funkcijah 3. letnika."
+ },
+ {
+  "id": "V068",
+  "sola": "SREDNJA_SOLA",
+  "razred": "4. letnik",
+  "predmet": "MAT",
+  "poizvedba": "integral",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "MAT-SS-4/nedoloceni-integral",
+   "MAT-SS-4/doloceni-integral",
+   "MAT-SS-4/integracija-per-partes-in-racionalnih-funkcij"
+  ],
+  "opomba": "Ustreza vsaka tema o integralu."
+ },
+ {
+  "id": "V069",
+  "sola": "SREDNJA_SOLA",
+  "razred": "4. letnik",
+  "predmet": "MAT",
+  "poizvedba": "verjetnost in kombinatorika",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "MAT-SS-4/kombinatorika",
+   "MAT-SS-4/verjetnost"
+  ],
+  "opomba": "Fraza zajema dve temi."
+ },
+ {
+  "id": "V070",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "6. razred",
+  "predmet": "MAT",
+  "poizvedba": "enačbe in neenačbe",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "MAT-OS-6/preproste-enacbe",
+   "MAT-OS-6/preproste-neenacbe"
+  ],
+  "opomba": "Fraza zajema dve temi."
+ },
+ {
+  "id": "V071",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "6. razred",
+  "predmet": "MAT",
+  "poizvedba": "števila",
+  "vrsta": "splosno",
+  "sprejemljive": [],
+  "opomba": "Preveč splošno."
+ },
+ {
+  "id": "V072",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "7. razred",
+  "predmet": "MAT",
+  "poizvedba": "ulomki",
+  "vrsta": "splosno",
+  "sprejemljive": [],
+  "opomba": "Pet tem o ulomkih, ni jasno katera."
+ },
+ {
+  "id": "V073",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "MAT",
+  "poizvedba": "enačbe",
+  "vrsta": "splosno",
+  "sprejemljive": [],
+  "opomba": "Več vrst enačb v 2. letniku."
+ },
+ {
+  "id": "V074",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "MAT",
+  "poizvedba": "geometrija",
+  "vrsta": "splosno",
+  "sprejemljive": [],
+  "opomba": "Preveč splošno."
+ },
+ {
+  "id": "V075",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "MAT",
+  "poizvedba": "izrazi",
+  "vrsta": "splosno",
+  "sprejemljive": [],
+  "opomba": "Algebrski ali ulomljeni izrazi, nejasno."
+ },
+ {
+  "id": "V076",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "MAT",
+  "poizvedba": "funkcije",
+  "vrsta": "splosno",
+  "sprejemljive": [],
+  "opomba": "Preveč splošno."
+ },
+ {
+  "id": "V077",
+  "sola": "SREDNJA_SOLA",
+  "razred": "4. letnik",
+  "predmet": "MAT",
+  "poizvedba": "priprava na maturo",
+  "vrsta": "splosno",
+  "sprejemljive": [
+   "MAT-SS-4/mesane-maturitetne-naloge",
+   "MAT-SS-4/vadbena-maturitetna-pola"
+  ],
+  "opomba": "Splošno, a obstajata maturitetni temi."
+ },
+ {
+  "id": "V078",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "MAT",
+  "poizvedba": "računanje",
+  "vrsta": "splosno",
+  "sprejemljive": [],
+  "opomba": "Preveč splošno."
+ },
+ {
+  "id": "V079",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "MAT",
+  "poizvedba": "Ohmov zakon",
+  "vrsta": "drug_predmet",
+  "sprejemljive": [],
+  "opomba": "Fizika, ni v poti MAT."
+ },
+ {
+  "id": "V080",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "MAT",
+  "poizvedba": "valovanje",
+  "vrsta": "drug_predmet",
+  "sprejemljive": [],
+  "opomba": "Fizika, ni v poti MAT."
+ },
+ {
+  "id": "V081",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "MAT",
+  "poizvedba": "molska masa",
+  "vrsta": "drug_predmet",
+  "sprejemljive": [],
+  "opomba": "Kemija, ni v poti MAT."
+ },
+ {
+  "id": "V082",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "7. razred",
+  "predmet": "MAT",
+  "poizvedba": "fotosinteza",
+  "vrsta": "drug_predmet",
+  "sprejemljive": [],
+  "opomba": "Biologija, ni v poti MAT."
+ },
+ {
+  "id": "V083",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "MAT",
+  "poizvedba": "razpolovni čas",
+  "vrsta": "drug_predmet",
+  "sprejemljive": [
+   "MAT-SS-2/eksponentna-funkcija",
+   "MAT-SS-2/eksponentne-enacbe"
+  ],
+  "opomba": "Razpad je eksponentna funkcija, ki je v poti."
+ },
+ {
+  "id": "V084",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "MAT",
+  "poizvedba": "gostota snovi",
+  "vrsta": "drug_predmet",
+  "sprejemljive": [],
+  "opomba": "Fizika, ni v poti MAT."
+ },
+ {
+  "id": "V085",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "6. razred",
+  "predmet": "MAT",
+  "poizvedba": "Pitagorov izrek",
+  "vrsta": "drug_razred",
+  "sprejemljive": [],
+  "opomba": "Snov 8. razreda."
+ },
+ {
+  "id": "V086",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "MAT",
+  "poizvedba": "kvadratna enačba",
+  "vrsta": "drug_razred",
+  "sprejemljive": [],
+  "opomba": "Snov 2. letnika SŠ."
+ },
+ {
+  "id": "V087",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "MAT",
+  "poizvedba": "odvod",
+  "vrsta": "drug_razred",
+  "sprejemljive": [],
+  "opomba": "Snov 4. letnika."
+ },
+ {
+  "id": "V088",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "7. razred",
+  "predmet": "MAT",
+  "poizvedba": "linearna funkcija",
+  "vrsta": "drug_razred",
+  "sprejemljive": [],
+  "opomba": "Snov 9. razreda."
+ },
+ {
+  "id": "V089",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "MAT",
+  "poizvedba": "podobni trikotniki",
+  "vrsta": "drug_razred",
+  "sprejemljive": [
+   "MAT-SS-2/podobnost"
+  ],
+  "opomba": "Tema podobnost 2. letnika pokrije podobne trikotnike."
+ },
+ {
+  "id": "V090",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "MAT",
+  "poizvedba": "logaritem",
+  "vrsta": "drug_razred",
+  "sprejemljive": [],
+  "opomba": "Snov 2. letnika."
+ },
+ {
+  "id": "V091",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "FIZ",
+  "poizvedba": "lom svetlobe",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "FIZ-OS-8/lom-svetlobe"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V092",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "FIZ",
+  "poizvedba": "vzgon",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "FIZ-OS-8/vzgon"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V093",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "FIZ",
+  "poizvedba": "prosti pad",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "FIZ-OS-9/prosti-pad"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V094",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "FIZ",
+  "poizvedba": "Ohmov zakon",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "FIZ-OS-9/upor-in-ohmov-zakon"
+  ],
+  "opomba": "Del imena teme."
+ },
+ {
+  "id": "V095",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "FIZ",
+  "poizvedba": "gibalna količina",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "FIZ-SS-1/gibalna-kolicina"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V096",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "FIZ",
+  "poizvedba": "navpični met",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "FIZ-SS-1/prosti-pad-in-navpicni-met"
+  ],
+  "opomba": "Del imena teme."
+ },
+ {
+  "id": "V097",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "FIZ",
+  "poizvedba": "plinska enačba",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "FIZ-SS-2/plinska-enacba"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V098",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "FIZ",
+  "poizvedba": "Coulombov zakon",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "FIZ-SS-2/elektricni-naboj-in-coulombov-zakon"
+  ],
+  "opomba": "Del imena teme."
+ },
+ {
+  "id": "V099",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "FIZ",
+  "poizvedba": "stoječe valovanje",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "FIZ-SS-3/stojece-valovanje"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V100",
+  "sola": "SREDNJA_SOLA",
+  "razred": "4. letnik",
+  "predmet": "FIZ",
+  "poizvedba": "fotoefekt",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "FIZ-SS-4/fotoefekt-in-foton"
+  ],
+  "opomba": "Del imena teme."
+ },
+ {
+  "id": "V101",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "FIZ",
+  "poizvedba": "gibanje s stalno hitrostjo",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "FIZ-OS-8/enakomerno-gibanje"
+  ],
+  "opomba": "Stalna hitrost = enakomerno gibanje."
+ },
+ {
+  "id": "V102",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "FIZ",
+  "poizvedba": "slika v ravnem zrcalu",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "FIZ-OS-8/odboj-svetlobe"
+  ],
+  "opomba": "Zrcaljenje je odboj svetlobe."
+ },
+ {
+  "id": "V103",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "FIZ",
+  "poizvedba": "segrevanje vode",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "FIZ-OS-9/toplota"
+  ],
+  "opomba": "Q = mcΔT spada v toploto."
+ },
+ {
+  "id": "V104",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "FIZ",
+  "poizvedba": "poraba elektrike v gospodinjstvu",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "FIZ-OS-9/elektricno-delo-in-moc"
+  ],
+  "opomba": "Poraba v kWh je električno delo."
+ },
+ {
+  "id": "V105",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "FIZ",
+  "poizvedba": "gibanje s stalnim pospeškom",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "FIZ-SS-1/enakomerno-pospeseno-gibanje"
+  ],
+  "opomba": "Stalni pospešek = enakomerno pospešeno."
+ },
+ {
+  "id": "V106",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "FIZ",
+  "poizvedba": "gibanje po krožnici",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "FIZ-SS-2/enakomerno-krozenje"
+  ],
+  "opomba": "Kroženje."
+ },
+ {
+  "id": "V107",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "FIZ",
+  "poizvedba": "slika pri zbiralni leči",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "FIZ-SS-3/geometrijska-optika"
+  ],
+  "opomba": "Leče so geometrijska optika."
+ },
+ {
+  "id": "V108",
+  "sola": "SREDNJA_SOLA",
+  "razred": "4. letnik",
+  "predmet": "FIZ",
+  "poizvedba": "razpad jeder",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "FIZ-SS-4/jedro-in-radioaktivnost"
+  ],
+  "opomba": "Razpad jeder je radioaktivnost."
+ },
+ {
+  "id": "V109",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "FIZ",
+  "poizvedba": "Arhimedov zakon",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "FIZ-OS-8/vzgon"
+  ],
+  "opomba": "Arhimedov zakon opisuje vzgon."
+ },
+ {
+  "id": "V110",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "FIZ",
+  "poizvedba": "hidrostatični tlak",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "FIZ-OS-8/tlak"
+  ],
+  "opomba": "Tlak v tekočini."
+ },
+ {
+  "id": "V111",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "FIZ",
+  "poizvedba": "izkoristek motorja",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "FIZ-OS-9/moc-in-izkoristek"
+  ],
+  "opomba": "Izkoristek."
+ },
+ {
+  "id": "V112",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "FIZ",
+  "poizvedba": "zaporedna vezava upornikov",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "FIZ-OS-9/elektricni-krog",
+   "FIZ-OS-9/upor-in-ohmov-zakon"
+  ],
+  "opomba": "Vezave so v električnem krogu, upor računamo z Ohmovim zakonom."
+ },
+ {
+  "id": "V113",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "FIZ",
+  "poizvedba": "Hookov zakon",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "FIZ-SS-1/proznost"
+  ],
+  "opomba": "Hookov zakon opisuje prožnost."
+ },
+ {
+  "id": "V114",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "FIZ",
+  "poizvedba": "navor",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "FIZ-SS-1/navor-in-ravnovesje"
+  ],
+  "opomba": "Del imena teme."
+ },
+ {
+  "id": "V115",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "FIZ",
+  "poizvedba": "Lorentzova sila",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "FIZ-SS-3/magnetna-sila"
+  ],
+  "opomba": "Sila na naboj v magnetnem polju."
+ },
+ {
+  "id": "V116",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "FIZ",
+  "poizvedba": "Dopplerjev pojav",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "FIZ-SS-3/zvok",
+   "FIZ-SS-3/valovanje"
+  ],
+  "opomba": "Dopplerjev pojav pri zvoku in valovanju."
+ },
+ {
+  "id": "V117",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "FIZ",
+  "poizvedba": "toplota in temperatura",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "FIZ-OS-9/temperatura-in-notranja-energija",
+   "FIZ-OS-9/toplota"
+  ],
+  "opomba": "Fraza zajema dve temi."
+ },
+ {
+  "id": "V118",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "FIZ",
+  "poizvedba": "sile na klancu",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "FIZ-SS-1/sile",
+   "FIZ-SS-1/trenje",
+   "FIZ-SS-1/newtonovi-zakoni"
+  ],
+  "opomba": "Klanec: razstavljanje sil, trenje, 2. Newtonov zakon."
+ },
+ {
+  "id": "V119",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "FIZ",
+  "poizvedba": "električni naboj in polje",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "FIZ-SS-2/elektricni-naboj-in-coulombov-zakon",
+   "FIZ-SS-2/elektricno-polje"
+  ],
+  "opomba": "Fraza zajema dve temi."
+ },
+ {
+  "id": "V120",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "FIZ",
+  "poizvedba": "resonanca",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "FIZ-SS-3/duseno-in-vsiljeno-nihanje",
+   "FIZ-SS-3/izmenicni-tok-in-nihajni-krog"
+  ],
+  "opomba": "Mehanska ali električna resonanca."
+ },
+ {
+  "id": "V121",
+  "sola": "SREDNJA_SOLA",
+  "razred": "4. letnik",
+  "predmet": "FIZ",
+  "poizvedba": "jedrska energija",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "FIZ-SS-4/jedrske-reakcije-in-reaktor",
+   "FIZ-SS-4/jedro-in-radioaktivnost"
+  ],
+  "opomba": "Reaktor ali vezavna energija jedra."
+ },
+ {
+  "id": "V122",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "FIZ",
+  "poizvedba": "sile",
+  "vrsta": "splosno",
+  "sprejemljive": [],
+  "opomba": "Več tem o silah."
+ },
+ {
+  "id": "V123",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "FIZ",
+  "poizvedba": "elektrika",
+  "vrsta": "splosno",
+  "sprejemljive": [],
+  "opomba": "Preveč splošno."
+ },
+ {
+  "id": "V124",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "FIZ",
+  "poizvedba": "toplota",
+  "vrsta": "splosno",
+  "sprejemljive": [],
+  "opomba": "Več tem o toploti."
+ },
+ {
+  "id": "V125",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "FIZ",
+  "poizvedba": "gibanje",
+  "vrsta": "splosno",
+  "sprejemljive": [],
+  "opomba": "Več tem o gibanju."
+ },
+ {
+  "id": "V126",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "FIZ",
+  "poizvedba": "kemijska reakcija",
+  "vrsta": "drug_predmet",
+  "sprejemljive": [],
+  "opomba": "Kemija."
+ },
+ {
+  "id": "V127",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "FIZ",
+  "poizvedba": "molska masa",
+  "vrsta": "drug_predmet",
+  "sprejemljive": [],
+  "opomba": "Kemija."
+ },
+ {
+  "id": "V128",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "FIZ",
+  "poizvedba": "odvod funkcije",
+  "vrsta": "drug_predmet",
+  "sprejemljive": [],
+  "opomba": "Matematika."
+ },
+ {
+  "id": "V129",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "FIZ",
+  "poizvedba": "Ohmov zakon",
+  "vrsta": "drug_razred",
+  "sprejemljive": [],
+  "opomba": "Snov 9. razreda."
+ },
+ {
+  "id": "V130",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "FIZ",
+  "poizvedba": "lom svetlobe",
+  "vrsta": "drug_razred",
+  "sprejemljive": [],
+  "opomba": "Optika je v 3. letniku."
+ },
+ {
+  "id": "V131",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "KEM",
+  "poizvedba": "ionska vez",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "KEM-OS-8/ionska-vez"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V132",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "KEM",
+  "poizvedba": "urejanje kemijskih enačb",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "KEM-OS-8/urejanje-kemijskih-enacb"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V133",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "KEM",
+  "poizvedba": "pH lestvica",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "KEM-OS-8/ph-lestvica"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V134",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "KEM",
+  "poizvedba": "množina snovi",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "KEM-OS-9/mnozina-snovi",
+   "KEM-OS-9/racunanje-z-mnozino-snovi"
+  ],
+  "opomba": "Ime teme; računanje z množino je ista snov."
+ },
+ {
+  "id": "V135",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "KEM",
+  "poizvedba": "alkoholi",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "KEM-OS-9/alkoholi"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V136",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "KEM",
+  "poizvedba": "stehiometrija",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "KEM-SS-1/stehiometrija"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V137",
+  "sola": "SREDNJA_SOLA",
+  "razred": "4. letnik",
+  "predmet": "KEM",
+  "poizvedba": "koordinacijske spojine",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "KEM-SS-4/prehodni-elementi-in-koordinacijske-spojine"
+  ],
+  "opomba": "Del imena teme."
+ },
+ {
+  "id": "V138",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "KEM",
+  "poizvedba": "redoks reakcije",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "KEM-SS-2/redoks-reakcije"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V139",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "KEM",
+  "poizvedba": "izomerija",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "KEM-SS-3/izomerija"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V140",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "KEM",
+  "poizvedba": "sestavljanje formul iz ionov",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "KEM-OS-8/formule-spojin"
+  ],
+  "opomba": "Pisanje formul spojin."
+ },
+ {
+  "id": "V141",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "KEM",
+  "poizvedba": "priprava raztopine",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "KEM-OS-9/raztopine"
+  ],
+  "opomba": "Tema raztopine."
+ },
+ {
+  "id": "V142",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "KEM",
+  "poizvedba": "ogljikovodiki z dvojno vezjo",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "KEM-OS-9/alkani-alkeni-alkini"
+  ],
+  "opomba": "To so alkeni."
+ },
+ {
+  "id": "V143",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "KEM",
+  "poizvedba": "privlačne sile med molekulami",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "KEM-SS-1/medmolekulske-sile"
+  ],
+  "opomba": "Medmolekulske sile."
+ },
+ {
+  "id": "V144",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "KEM",
+  "poizvedba": "dejavniki hitrosti reakcije",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "KEM-SS-2/hitrost-reakcij"
+  ],
+  "opomba": "Hitrost reakcij."
+ },
+ {
+  "id": "V145",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "KEM",
+  "poizvedba": "elektrokemijski členi",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "KEM-SS-2/galvanski-cleni-in-elektroliza"
+  ],
+  "opomba": "Galvanski členi."
+ },
+ {
+  "id": "V146",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "KEM",
+  "poizvedba": "aldehidi in ketoni",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "KEM-SS-3/karbonilne-spojine"
+  ],
+  "opomba": "Aldehidi in ketoni so karbonilne spojine."
+ },
+ {
+  "id": "V147",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "KEM",
+  "poizvedba": "valenčni elektroni",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "KEM-OS-8/razporeditev-elektronov"
+  ],
+  "opomba": "Elektroni v zunanji lupini."
+ },
+ {
+  "id": "V148",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "KEM",
+  "poizvedba": "molska masa",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "KEM-OS-9/mnozina-snovi",
+   "KEM-OS-9/racunanje-z-mnozino-snovi"
+  ],
+  "opomba": "Molska masa je del množine snovi."
+ },
+ {
+  "id": "V149",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "KEM",
+  "poizvedba": "Avogadrovo število",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "KEM-SS-1/mnozina-snovi"
+  ],
+  "opomba": "Avogadrova konstanta je del množine snovi."
+ },
+ {
+  "id": "V150",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "KEM",
+  "poizvedba": "molska prostornina plina",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "KEM-SS-1/plini"
+  ],
+  "opomba": "Tema plini."
+ },
+ {
+  "id": "V151",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "KEM",
+  "poizvedba": "Le Chatelierjevo načelo",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "KEM-SS-2/kemijsko-ravnotezje"
+  ],
+  "opomba": "Načelo o premiku ravnotežja."
+ },
+ {
+  "id": "V152",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "KEM",
+  "poizvedba": "konstanta kisline",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "KEM-SS-2/sibke-kisline-in-baze"
+  ],
+  "opomba": "Ka opisuje šibke kisline."
+ },
+ {
+  "id": "V153",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "KEM",
+  "poizvedba": "esterifikacija",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "KEM-SS-3/karboksilne-kisline-in-derivati"
+  ],
+  "opomba": "Estri so derivati karboksilnih kislin."
+ },
+ {
+  "id": "V154",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "KEM",
+  "poizvedba": "kisline, baze in soli",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "KEM-OS-8/kisline-in-baze",
+   "KEM-OS-8/nevtralizacija-in-soli"
+  ],
+  "opomba": "Fraza zajema dve temi."
+ },
+ {
+  "id": "V155",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "KEM",
+  "poizvedba": "raztopine in topnost",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "KEM-SS-1/raztopine",
+   "KEM-SS-1/topnost-in-sestava-raztopin"
+  ],
+  "opomba": "Fraza zajema dve temi."
+ },
+ {
+  "id": "V156",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "KEM",
+  "poizvedba": "pH šibkih kislin",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "KEM-SS-2/ph",
+   "KEM-SS-2/sibke-kisline-in-baze"
+  ],
+  "opomba": "Fraza zajema dve temi."
+ },
+ {
+  "id": "V157",
+  "sola": "SREDNJA_SOLA",
+  "razred": "4. letnik",
+  "predmet": "KEM",
+  "poizvedba": "kovine",
+  "vrsta": "dvoumno",
+  "sprejemljive": [],
+  "opomba": "Ustrezalo bi več širokih tem, nobena dobro."
+ },
+ {
+  "id": "V158",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "KEM",
+  "poizvedba": "spojine",
+  "vrsta": "splosno",
+  "sprejemljive": [],
+  "opomba": "Preveč splošno."
+ },
+ {
+  "id": "V159",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "KEM",
+  "poizvedba": "reakcije",
+  "vrsta": "splosno",
+  "sprejemljive": [],
+  "opomba": "Preveč splošno."
+ },
+ {
+  "id": "V160",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "KEM",
+  "poizvedba": "organska kemija",
+  "vrsta": "splosno",
+  "sprejemljive": [],
+  "opomba": "Ves 3. letnik je organska kemija."
+ },
+ {
+  "id": "V161",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "KEM",
+  "poizvedba": "elementi",
+  "vrsta": "splosno",
+  "sprejemljive": [],
+  "opomba": "Preveč splošno."
+ },
+ {
+  "id": "V162",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "KEM",
+  "poizvedba": "električni tok",
+  "vrsta": "drug_predmet",
+  "sprejemljive": [],
+  "opomba": "Fizika."
+ },
+ {
+  "id": "V163",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "KEM",
+  "poizvedba": "celično dihanje",
+  "vrsta": "drug_predmet",
+  "sprejemljive": [],
+  "opomba": "Biologija."
+ },
+ {
+  "id": "V164",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "KEM",
+  "poizvedba": "zgradba beljakovin",
+  "vrsta": "drug_predmet",
+  "sprejemljive": [
+   "KEM-SS-3/ogljikovi-hidrati-lipidi-beljakovine"
+  ],
+  "opomba": "Beljakovine so tudi v kemiji 3. letnika."
+ },
+ {
+  "id": "V165",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "KEM",
+  "poizvedba": "alkani",
+  "vrsta": "drug_razred",
+  "sprejemljive": [],
+  "opomba": "Snov 9. razreda."
+ },
+ {
+  "id": "V166",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "BIO",
+  "poizvedba": "celični organeli",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "BIO-OS-8/celicni-organeli"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V167",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "BIO",
+  "poizvedba": "dihala",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "BIO-OS-8/dihala"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V168",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "BIO",
+  "poizvedba": "naravni izbor",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "BIO-OS-9/naravni-izbor"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V169",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "BIO",
+  "poizvedba": "dedovanje lastnosti",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "BIO-OS-9/dedovanje-lastnosti"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V170",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "BIO",
+  "poizvedba": "fotosinteza",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "BIO-SS-1/fotosinteza"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V171",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "BIO",
+  "poizvedba": "Mendlovo dedovanje",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "BIO-SS-1/mendlovo-dedovanje"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V172",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "BIO",
+  "poizvedba": "glive",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "BIO-SS-2/glive"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V173",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "BIO",
+  "poizvedba": "imunski sistem",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "BIO-SS-3/imunski-sistem"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V174",
+  "sola": "SREDNJA_SOLA",
+  "razred": "4. letnik",
+  "predmet": "BIO",
+  "poizvedba": "populacijska genetika",
+  "vrsta": "ime",
+  "sprejemljive": [
+   "BIO-SS-4/populacijska-genetika"
+  ],
+  "opomba": "Ime teme."
+ },
+ {
+  "id": "V175",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "BIO",
+  "poizvedba": "srce in žile",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "BIO-OS-8/kri-in-krvozilje"
+  ],
+  "opomba": "Krvožilje."
+ },
+ {
+  "id": "V176",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "BIO",
+  "poizvedba": "delovanje ledvic",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "BIO-OS-8/izlocala"
+  ],
+  "opomba": "Ledvice so izločala."
+ },
+ {
+  "id": "V177",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "BIO",
+  "poizvedba": "razvrščanje organizmov v skupine",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "BIO-OS-9/sistematika"
+  ],
+  "opomba": "Razvrščanje je sistematika."
+ },
+ {
+  "id": "V178",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "BIO",
+  "poizvedba": "prepis in prevod",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "BIO-SS-1/od-dna-do-beljakovine"
+  ],
+  "opomba": "Transkripcija in translacija."
+ },
+ {
+  "id": "V179",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "BIO",
+  "poizvedba": "kako rastline prevajajo vodo",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "BIO-SS-2/prehrana-in-transport-pri-rastlinah"
+  ],
+  "opomba": "Transport pri rastlinah."
+ },
+ {
+  "id": "V180",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "BIO",
+  "poizvedba": "prenos živčnega impulza",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "BIO-SS-3/zivcna-celica-in-sinapsa"
+  ],
+  "opomba": "Živčna celica in sinapsa."
+ },
+ {
+  "id": "V181",
+  "sola": "SREDNJA_SOLA",
+  "razred": "4. letnik",
+  "predmet": "BIO",
+  "poizvedba": "uravnavanje notranjega okolja",
+  "vrsta": "parafraza",
+  "sprejemljive": [
+   "BIO-SS-4/homeostaza"
+  ],
+  "opomba": "To je homeostaza."
+ },
+ {
+  "id": "V182",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "BIO",
+  "poizvedba": "mitoza",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "BIO-OS-8/celicna-delitev"
+  ],
+  "opomba": "Mitoza je celična delitev."
+ },
+ {
+  "id": "V183",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "BIO",
+  "poizvedba": "Punnettov kvadrat",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "BIO-OS-9/dedovanje-lastnosti",
+   "BIO-OS-9/dedovanje-pri-cloveku"
+  ],
+  "opomba": "Uporablja se v obeh temah o dedovanju."
+ },
+ {
+  "id": "V184",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "BIO",
+  "poizvedba": "mejoza",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "BIO-SS-1/mejoza-in-spolno-razmnozevanje"
+  ],
+  "opomba": "Del imena teme."
+ },
+ {
+  "id": "V185",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "BIO",
+  "poizvedba": "Krebsov cikel",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "BIO-SS-1/celicno-dihanje-in-vrenje"
+  ],
+  "opomba": "Krebsov cikel je del celičnega dihanja."
+ },
+ {
+  "id": "V186",
+  "sola": "SREDNJA_SOLA",
+  "razred": "4. letnik",
+  "predmet": "BIO",
+  "poizvedba": "Hardy-Weinbergovo ravnovesje",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "BIO-SS-4/populacijska-genetika"
+  ],
+  "opomba": "Osrednji pojem populacijske genetike."
+ },
+ {
+  "id": "V187",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "BIO",
+  "poizvedba": "prehranjevalna veriga",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "BIO-SS-3/pretok-energije-in-krozenje-snovi"
+  ],
+  "opomba": "Pretok energije po verigi."
+ },
+ {
+  "id": "V188",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "BIO",
+  "poizvedba": "fotoperiodizem",
+  "vrsta": "podtema",
+  "sprejemljive": [
+   "BIO-SS-2/odzivi-rastlin-na-okolje"
+  ],
+  "opomba": "Odziv rastlin na dolžino dneva."
+ },
+ {
+  "id": "V189",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "BIO",
+  "poizvedba": "živčevje in čutila",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "BIO-OS-8/zivcevje-in-hormoni",
+   "BIO-OS-8/cutila"
+  ],
+  "opomba": "Fraza zajema dve temi."
+ },
+ {
+  "id": "V190",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "BIO",
+  "poizvedba": "geni in dedovanje",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "BIO-SS-1/geni-aleli-in-mutacije",
+   "BIO-SS-1/mendlovo-dedovanje"
+  ],
+  "opomba": "Fraza zajema dve temi."
+ },
+ {
+  "id": "V191",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "BIO",
+  "poizvedba": "kri in dihanje",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "BIO-SS-2/kri-in-obtocila",
+   "BIO-SS-2/dihanje"
+  ],
+  "opomba": "Fraza zajema dve temi."
+ },
+ {
+  "id": "V192",
+  "sola": "SREDNJA_SOLA",
+  "razred": "3. letnik",
+  "predmet": "BIO",
+  "poizvedba": "koža in čutila",
+  "vrsta": "dvoumno",
+  "sprejemljive": [
+   "BIO-SS-3/koza-in-krovne-strukture",
+   "BIO-SS-3/cutila"
+  ],
+  "opomba": "Fraza zajema dve temi."
+ },
+ {
+  "id": "V193",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "BIO",
+  "poizvedba": "celica",
+  "vrsta": "splosno",
+  "sprejemljive": [],
+  "opomba": "Več tem o celici."
+ },
+ {
+  "id": "V194",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "9. razred",
+  "predmet": "BIO",
+  "poizvedba": "živa bitja",
+  "vrsta": "splosno",
+  "sprejemljive": [],
+  "opomba": "Preveč splošno."
+ },
+ {
+  "id": "V195",
+  "sola": "SREDNJA_SOLA",
+  "razred": "2. letnik",
+  "predmet": "BIO",
+  "poizvedba": "rastline",
+  "vrsta": "splosno",
+  "sprejemljive": [],
+  "opomba": "Štiri teme o rastlinah."
+ },
+ {
+  "id": "V196",
+  "sola": "SREDNJA_SOLA",
+  "razred": "4. letnik",
+  "predmet": "BIO",
+  "poizvedba": "genetika",
+  "vrsta": "splosno",
+  "sprejemljive": [],
+  "opomba": "Več tem o genetiki."
+ },
+ {
+  "id": "V197",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "BIO",
+  "poizvedba": "kemijske vezi",
+  "vrsta": "drug_predmet",
+  "sprejemljive": [],
+  "opomba": "Kemija."
+ },
+ {
+  "id": "V198",
+  "sola": "SREDNJA_SOLA",
+  "razred": "1. letnik",
+  "predmet": "BIO",
+  "poizvedba": "Newtonovi zakoni",
+  "vrsta": "drug_predmet",
+  "sprejemljive": [],
+  "opomba": "Fizika."
+ },
+ {
+  "id": "V199",
+  "sola": "SREDNJA_SOLA",
+  "razred": "4. letnik",
+  "predmet": "BIO",
+  "poizvedba": "standardni odklon",
+  "vrsta": "drug_predmet",
+  "sprejemljive": [
+   "BIO-SS-4/statistika-v-biologiji"
+  ],
+  "opomba": "Statistika je tudi v biologiji 4. letnika."
+ },
+ {
+  "id": "V200",
+  "sola": "OSNOVNA_SOLA",
+  "razred": "8. razred",
+  "predmet": "BIO",
+  "poizvedba": "Mendlovo dedovanje",
+  "vrsta": "drug_razred",
+  "sprejemljive": [],
+  "opomba": "Dedovanje je v 9. razredu."
+ }
+]

@@ -5,6 +5,7 @@ import { jsonAliNic } from "./odgovor.js";
 import { icon, hydrateIcons } from "./icons.js";
 import { greekFactHtml, wireGreekFacts } from "./greek.js";
 import { t, locale, currentLang, currentRegion, regionFor, setLanguage, deviceRegion, naloziVse } from "./i18n-osnova.js";
+import { uiChain } from "./i18n/languages.js";
 import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj, izsiljevanje, opomba, ogrej as ogrejNujno } from "./nujno.js";
 import { systemForCountry, isRegional, SCHOOL_SYSTEMS, brezUcnegaNacrta } from "./regions.js";
 import { mountLanguageCard } from "./language.js";
@@ -16,6 +17,7 @@ import { captureSource, currentSource } from "./vir.js";
 import { showFull, closeFull, fullOpen } from "./razpri.js";
 import { makeSplitter } from "./razdelilnik.js";
 import { nastaviNogo } from "./noga.js";
+import { initObrat } from "./obrat.js";
 import { initOkna, isFloating, openWindow, closeWindow, focusWindow, refreshBubble, chatReply, restoreWindows, windowsOn, tabHint, floatingViews, syncTabbarH, setTabbarH } from "./okna.js";
 import { initProfileMenu, refreshProfileButton, closeProfileMenu } from "./profile-menu.js";
 import { initQuickStart, closeQuickStart } from "./quick-start.js";
@@ -1412,6 +1414,14 @@ function odpriNastavitev(el) {
   });
   // Neveljavno polje v zaprti skupini (npr. prazno ime): skupina se odpre, da brskalnik lahko pokaže napako.
   $("#settings-form").addEventListener("invalid", (e) => odpriNastavitev(e.target), true);
+  // Stikalo »Podrobna razlaga« (j, 27. 11. 2026): shrani se z gumbom Shrani kot druge nastavitve.
+  $("#settings-form").addEventListener("click", (e) => {
+    const sw = e.target.closest("[data-detailed]");
+    if (!sw) return;
+    const on = sw.getAttribute("aria-checked") !== "true";
+    sw.setAttribute("aria-checked", String(on));
+    $("#settings-form").detailed.value = on ? "1" : "0";
+  });
 })();
 function openSchoolSettings() {
   showView("settings");
@@ -2703,7 +2713,9 @@ const input = $("#input");
 function autoGrow(stick, again) {
   const box = $("#messages");
   const atBottom = typeof stick === "boolean" ? stick : box.scrollHeight - box.scrollTop - box.clientHeight < 80;
-  const max = Math.max(80, Math.round((window.visualViewport?.height || window.innerHeight) * 0.4));
+  // Ležeč telefon (UX PR 2): dolgo vprašanje (npr. iz 3D sveta ali poskusa) ne vzame sporočil, polje največ tri vrstice.
+  const lezece = matchMedia("(orientation: landscape) and (max-height: 500px)").matches;
+  const max = lezece ? 72 : Math.max(80, Math.round((window.visualViewport?.height || window.innerHeight) * 0.4));
   input.style.maxHeight = `${max}px`;
   input.style.height = "auto";
   // Formule (ulomek, koren …) se izrišejo kar v polju (public/predogled-vnosa.js): višina po izrisu, ne po surovem zapisu.
@@ -2749,7 +2761,13 @@ input.addEventListener("vnos-izris-visina", () => autoGrow());
       text = `${words.join(" ")} …`;
     }
     shown = text;
-    if (input.placeholder !== text) input.placeholder = text;
+    if (input.placeholder === text) return;
+    const krajsi = text.length < input.placeholder.length;
+    input.placeholder = text;
+    // Prazno polje je visoko kot namig: autoGrow (rAF) teče pred ResizeObserverjem, zato je izmeril še dolg, prelomljen
+    // namig (ležeče ob odprtju tipkovnice: 66 px in »multi«). Krajši namig izmerimo znova; daljšega ne, sicer bi se
+    // v zelo ozkem oknu »multi« (širše polje, daljši namig) in ozko polje menjala v neskončnost.
+    if (krajsi && !input.value) requestAnimationFrame(() => input.offsetParent && autoGrow());
   };
   if (window.ResizeObserver) new ResizeObserver(fit).observe(input);
   new MutationObserver(() => input.placeholder !== shown && fit()).observe(input, { attributes: true, attributeFilter: ["placeholder"] });
@@ -2811,13 +2829,27 @@ poZagonu(() => vnaprejGotovo.then(() => whenIdle(() =>
 // Evklidova tipkovnica (public/tipkovnica.js): na dotik za vsa polja, Σ jo odpre na plasti simbolov (tudi na računalniku).
 initKeyboard();
 initDrsniki();
+// Izgovor formul (public/mat/govor.js): gumb, ki je samo formula (izbira odgovora), dobi ime za bralnik zaslona.
+// Naloži se po prvem izrisu (ni del prvega odprtja Učne poti).
+poZagonu(() => import("./mat/govor.js").then((m) => m.initIzgovor(currentLang, uiChain)).catch(() => {}));
 document.addEventListener("input", (e) => hasFormula(e.target.value || "") && import("./predogled-vnosa.js").then((m) => m.initPredogledVnosa(e.target)), true);
 setKeyboardContext({ settings: () => state.student?.settings, chapter: calcChapter });
 mountKeyboardSettings($("#tipkovnica-card"));
 // Predlogi nad tipkovnico (TUTOR_CHIPS) so v tipkovnica-data.js, ki pride s tipkovnico (tipkovnica-lena.js).
 obTipkovnici(() =>
-  import("./tipkovnica-data.js")
-    .then(({ TUTOR_CHIPS }) => configureKeyboard(input, { layers: ["abc", "num", "fx", "sym", "kem"], start: "abc", enter: "send", ctx: TUTOR_CHIPS }))
+  Promise.all([import("./tipkovnica-data.js"), import("./graph/tipke-poglavja.js")])
+    .then(([{ tutorChips }, { chapterProfile }]) => {
+      // tipke nad tipkovnico po temi naloge (kot v kalkulatorju); tema se zamenja ob novi nalogi, ne med tipkanjem
+      let last = null;
+      const ctx = () => {
+        const topic = calcChapter();
+        const phone = matchMedia("(max-width: 600px)").matches;
+        const key = `${topic?.id || ""}|${topic?.unit || ""}|${phone}`;
+        if (last?.key !== key) last = { key, list: tutorChips(topic, chapterProfile(topic), phone) };
+        return last.list;
+      };
+      configureKeyboard(input, { layers: ["abc", "num", "fx", "sym", "kem"], start: "abc", enter: "send", ctx });
+    })
     .catch(() => {}),
 );
 $("#sym-btn").addEventListener("click", () => toggleKeyboard(input, { layer: "sym" }));
@@ -3194,6 +3226,8 @@ async function fillSettingsForm() {
   f.gender.value = s.gender || "";
   f.data_mode.value = s.data_mode || "auto";
   f.games.checked = !gamesOn(s);
+  f.detailed.value = s.detailed ? "1" : "0";
+  f.querySelector("[data-detailed]").setAttribute("aria-checked", String(!!s.detailed));
   f.xp_goal.value = String(s.xp_goal || 50);
   fillDialectOptions(f, s);
   f.subject.innerHTML = subjectOptions(null, s.subject, schoolSubjectsFor(s.educational_track, s.curriculum_level, isRegional(s.school_system)));
@@ -3259,6 +3293,7 @@ $("#settings-form").addEventListener("submit", async (e) => {
         dialect: f.dialect.value,
         data_mode: f.data_mode.value,
         games: f.games.checked ? "off" : "on",
+        detailed: f.detailed.value === "1",
         xp_goal: Number(f.xp_goal.value),
         ...readGoalFields($("#settings-goal")),
       },
@@ -3514,12 +3549,7 @@ async function loadProgress() {
       st.settings.goal_reminder && st.settings.goal_date ? `<div class="goal-reminder preview">${reminderCardHtml(st, { preview: true })}</div>` : ""
     }`;
   const p = await api(`/api/students/${state.student.id}/progress`);
-  const weak = $("#weak-list");
-  const items = [
-    ...p.manual_weaknesses.map((w) => `<li>${escapeHtml(w)}</li>`),
-    ...p.weak.map((w) => `<li class="auto" title="${t("prog.errRate", { n: Math.round(w.rate * 100) })}">${escapeHtml(w.topic)} (${w.subject ?? "?"})</li>`),
-  ];
-  weak.innerHTML = items.length ? items.join("") : `<li>${t("common.noData")}</li>`;
+  import("./vrzeli.js").then((m) => m.narisiVrzeli(state.student.id, { vadi: (id) => (setBack("path"), openTopic(id).then((x) => !x && $("#t-practice") && nextPractice())) })).catch(() => {}); // »Kaj še ne znam« (P1-8)
   // Delovni list za doma iz šibkih tem (iz nalog v Vadnici; strežnik pove, če je zaklenjen).
   const sheetBtn = $("#weak-sheet");
   $("#weak-sheet-msg").hidden = true;
@@ -3840,55 +3870,28 @@ async function goNew({ skipHint = false } = {}) {
   if (m.newTopic.practice && !pretest) await nextPractice({ stay: true });
 }
 
-async function showTestPrep(edit = false) {
+// Priprava na test (public/priprava/priprava.js, docs/priprava.md PR 7): test, zapiski, teme, prvi kviz, »Danes« z
+// načrtom, pripravljenostjo iz izkazanega znanja in razlago teme iz zapiskov. Modul, slog in besedila ob prvem odprtju.
+const pripravaMod = lenModul("./priprava/priprava.js");
+function showTestPrep(edit = false) {
   setActiveMode("test");
-  const { plan } = await api(`/api/students/${state.student.id}/test-plan`);
-  showView("topic");
-  const box = $("#topic-content");
-  if (plan && !edit && plan.daysLeft >= 0) {
-    const when = plan.daysLeft === 0 ? t("test.today") : plan.daysLeft === 1 ? t("test.tomorrow") : t("test.inDays", { n: plan.daysLeft });
-    box.innerHTML = `<h1 class="with-icon">${icon("clipboard-check")} ${t("mode.test")}</h1>
-      <div class="card"><p>${t("test.when", { when, date: escapeHtml(new Date(plan.date).toLocaleDateString(locale())) })}</p>
-      <p class="muted">${t("test.material", { list: (plan.subject && state.pathSubject && plan.subject !== state.pathSubject ? `${escapeHtml(SUBJECT_NAMES[plan.subject] || plan.subject)} – ` : "") + plan.unitTitles.map(escapeHtml).join(", ") })}</p>
-      <p class="muted">${t("test.howto")}</p>
-      <div class="actions"><button class="primary" id="tp-start">${t("test.startToday")}</button><button id="tp-edit">${t("common.change")}</button></div></div>`;
-    $("#tp-start").addEventListener("click", () => startSession("test-prep"));
-    $("#tp-edit").addEventListener("click", () => showTestPrep(true));
-    return;
+  if (!pripravaMod.now()) {
+    showView("topic");
+    viewNote("#topic-content", "common.loading");
   }
-  const p = await api(`/api/students/${state.student.id}/path?key=${encodeURIComponent(state.pathKey || "")}`);
-  const today = new Date().toISOString().slice(0, 10);
-  const chosen = new Set(plan?.path === p.key ? plan.units : []);
-  box.innerHTML = `<h1 class="with-icon">${icon("clipboard-check")} ${t("mode.test")}</h1>
-    <form id="tp-form" class="card">
-      <p><b>${t("test.which")}</b> <span class="muted">(${escapeHtml(p.label || "")})</span></p>
-      <div class="tp-units">${p.units
-        .map((u, i) =>
-          u.hasPractice
-            ? `<label class="check"><input type="checkbox" name="unit" value="${i}" ${chosen.has(i) ? "checked" : ""}> ${escapeHtml(u.title)}</label>`
-            : "",
-        )
-        .join("")}</div>
-      <p><label><b>${t("test.date")}</b><br><input type="date" name="date" min="${today}" value="${plan?.date && plan.date >= today ? plan.date : ""}" required></label></p>
-      <div class="actions"><button class="primary">${t("test.saveStart")}</button>${plan ? `<button type="button" id="tp-del">${t("test.remove")}</button>` : ""}</div>
-      <div id="tp-err" class="muted"></div>
-    </form>`;
-  $("#tp-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const f = new FormData(e.target);
-    const units = f.getAll("unit").map(Number);
-    if (!units.length) return ($("#tp-err").textContent = t("test.pickUnit"));
-    try {
-      await api(`/api/students/${state.student.id}/test-plan`, { method: "POST", body: { path: p.key, units, date: f.get("date") } });
-      startSession("test-prep");
-    } catch (err) {
-      $("#tp-err").textContent = err.message;
-    }
-  });
-  $("#tp-del")?.addEventListener("click", async () => {
-    await api(`/api/students/${state.student.id}/test-plan`, { method: "DELETE" });
-    showTestPrep(true);
-  });
+  return pripravaMod.load().then(
+    (m) =>
+      m.odpri(
+        {
+          api, renderMath, toast, showView, setActiveMode, setBack, startSession, addSession, openTopic, nextPractice, learnWithTutor, openLesson,
+          getStudent: () => state.student,
+          pathKey: () => state.pathKey,
+          box: () => $("#topic-content"),
+        },
+        { uredi: edit },
+      ),
+    () => pripravaMod.now() || viewNote("#topic-content", "off.noConnection", true),
+  );
 }
 
 document.querySelectorAll("#modebar [data-mode]").forEach((b) =>
@@ -4433,6 +4436,7 @@ async function openFromTutor({ view, mode } = {}) {
   }
   calc();
 }
+initObrat(); // bralni položaj ob obratu zaslona (UX PR 2)
 initOkna({
   showView,
   initView: (name) => (name === "account" ? renderAccount() : initView(name)),
@@ -4475,7 +4479,7 @@ function splitOpts(name) {
     topic: { side: "end", min: 320, max: 900, otherMin: 400, grid: () => $("#topic-content > .topic-grid, #topic-content > .session-grid") },
     lesson: { side: "end", min: 320, max: 900, otherMin: 400, grid: () => $("#view-textbook > .tb-lesson-grid.has-side") },
     gc: { side: "start", min: 280, max: 640, otherMin: 320, varName: "--gc-panel" },
-    sc: { side: "end", min: 320, max: 720, otherMin: 280 },
+    sc: { side: "end", min: 320, max: (a) => Math.max(720, Math.round(a * 0.75)), otherMin: 280 }, // desni del: zaslon in tipkovnica
   }[name];
   return { ...base, key: name, varName: `--split-${name}`, ...o };
 }
@@ -4615,6 +4619,7 @@ initUci({
 initTextbook({
   api,
   renderRich,
+  renderMath,
   escapeHtml,
   getStudent: () => state.student,
   openTopic,
@@ -4657,6 +4662,8 @@ initOpen({
   },
   openFormulas: () => openFromTutor({ view: "graph", mode: "formulas" }),
   openGraph: (exprs) => openGraphOverlay(exprs, t("nav.chat")),
+  openPractice: (id) => (setBack("path"), openTopic(id).then((x) => !x && currentView === "topic" && state.topic?.id === id && $("#t-practice") && nextPractice())), // »Podobna naloga« (vr.vaja): kot »Preveri se« v laboratoriju
+  openCalc: (mode) => openFromTutor({ view: "graph", mode: mode || (calcSubject() === "KEM" ? "pse" : null) }), // kalkulator iz pogovora (P1-9 A); brez načina kot gumb v glavi
 });
 
 // ---------- zagon ----------
