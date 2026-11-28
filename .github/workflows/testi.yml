@@ -1,6 +1,7 @@
 # Testi ob vsakem PR in vsaki združitvi v main (j 2026-11-06: »Da, nastavi«).
-# Štirje posli za objavo: »testi« (npm test v 4 delih hkrati), »preveri« (v 3 delih hkrati) (scripts/preveri-aplikacijo.cjs, klik skozi
-# vso aplikacijo na računalniku in telefonu), »hrosci« (scripts/najdi-hrosce.mjs, brez strežnika) in »tipi« (TypeScript mobilne aplikacije). Vsi v preizkusnem načinu (EVKLID_MOCK=1): brez pravih
+# Pet poslov za objavo: »testi« (npm test v 4 delih hkrati), »preveri« (v 3 delih hkrati) (scripts/preveri-aplikacijo.cjs, klik skozi
+# vso aplikacijo na računalniku in telefonu), »hrosci« (scripts/najdi-hrosce.mjs, brez strežnika), »tipi« (TypeScript mobilne aplikacije)
+# in »lekcije« (scripts/check-lesson.js --strogo, samo ob spremembi lekcij ali preverjevalnika). Vsi v preizkusnem načinu (EVKLID_MOCK=1): brez pravih
 # ključev, brez klicev AI, Stripe ali e-pošte, brez .env. Ob napaki se naložijo dnevniki in posnetki
 # (Actions > zagon > Artifacts). Agenti berejo izid z
 #   gh api repos/jakobskerbis/evklid/commits/<sha>/check-runs
@@ -295,7 +296,7 @@ jobs:
 
   # Četrti posel (j 2026-11-20): preverjanje tipov mobilne aplikacije (TypeScript, tudi skupne datoteke iz public/
   # in server/practice/, ki jih aplikacija uvozi), ~1 min. Brez namestitvenih skript (--ignore-scripts).
-  # Render in posodobitev telefonov (ota.yml) čakata na vse štiri posle.
+  # Render in posodobitev telefonov (ota.yml) čakata na vseh pet poslov.
   tipi:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -315,3 +316,63 @@ jobs:
       - name: Tipi (mobile, tsc --noEmit)
         timeout-minutes: 5
         run: npm --prefix mobile run typecheck
+
+  # Peti posel (#7): vse lekcije skozi scripts/check-lesson.js -q --strogo (oblika, LaTeX, vsak številski korak in vsaka
+  # trditev <<RACUN s SymPy; brez SymPy pade, ne le opozori). Učitelji lahko lekcije urejajo neposredno, zato ne zadošča
+  # ročni zagon iz docs/pregled.md. Push v main: vedno ves korpus (~2 min, hkrati z drugimi posli). Filter po spremembah bi
+  # zgrešil odvisnosti preverjevalnika, preklican zagon na main (cancel-in-progress) pa bi naslednjemu commitu pustil
+  # nepreverjene lekcije pred objavo. PR: samo, ko spremeni lekcije, preverjevalnik ali njegove neposredne uvoze; sicer
+  # posel samo prevzame kodo in izračuna razliko (~15 s), da je vedno prisoten (objava ga bere). Ves korpus tudi vsako noč.
+  lekcije:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        timeout-minutes: 5
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      # PR: GitHub preveri združitveni commit, njegov prvi starš je vrh osnovne veje. Če razlike ni mogoče izračunati, preveri vse.
+      - name: Ali je treba preveriti lekcije
+        id: spremembe
+        timeout-minutes: 3
+        env:
+          DOGODEK: ${{ github.event_name }}
+        run: |
+          if [ "$DOGODEK" != "pull_request" ]; then
+            echo "$DOGODEK: preverim vse lekcije."; echo "da=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if ! datoteke=$(git diff --name-only HEAD^1 HEAD); then
+            echo "Razlike ni mogoče izračunati: preverim vse lekcije."; echo "da=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          # Lekcije, preverjevalnik in njegovi neposredni uvozi (server/lesson-check.js, racun.js, textbook.js) ter paketi (katex).
+          vzorec='^(content/lessons/|scripts/(check-lesson\.js|namesti-sympy\.cjs)$|server/(lesson-check|lesson-math|lesson-identity|racun|cas|textbook|risbe|nastevanje|curriculum[^/]*|region-curricula)\.js$|server/cas/|public/(mat/izris|risbe-izris|preveri-se|formula-data|graph/chemcore|graph/pse-data)\.js$|package(-lock)?\.json$|\.github/workflows/testi\.yml$)'
+          zadetki=$(printf '%s\n' "$datoteke" | grep -E "$vzorec" || true)
+          if [ -n "$zadetki" ]; then
+            echo "Spremenjeno ($(printf '%s\n' "$zadetki" | wc -l) datotek), npr.:"; printf '%s\n' "$zadetki" | head -5
+            echo "da=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Lekcije in preverjevalnik niso spremenjeni: preverjanje preskočeno."
+            echo "da=false" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.spremembe.outputs.da == 'true'
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        timeout-minutes: 5
+        with:
+          node-version: 22
+          cache: npm
+      # npm ci namesti tudi SymPy (postinstall: scripts/namesti-sympy.cjs v .pylib), a ob napaki pip ne pade; tu še 2 poskusa.
+      - name: npm ci in SymPy
+        if: steps.spremembe.outputs.da == 'true'
+        timeout-minutes: 10
+        run: |
+          npm ci --no-audit --no-fund
+          for poskus in 1 2; do
+            PYTHONPATH=.pylib python3 -c "import sympy" 2>/dev/null && exit 0
+            echo "::warning::SymPy ni nameščen, poskus $poskus"; sleep 15; node scripts/namesti-sympy.cjs
+          done
+          PYTHONPATH=.pylib python3 -c "import sympy" || { echo "::error::SymPy ni nameščen niti po 3 poskusih (scripts/namesti-sympy.cjs)"; exit 1; }
+      - name: Vse lekcije (check-lesson --strogo)
+        if: steps.spremembe.outputs.da == 'true'
+        timeout-minutes: 10
+        run: node scripts/check-lesson.js -q --strogo
