@@ -80,7 +80,8 @@ test("risba simulacije (svg role=img) dobi ime", () => {
   assert.match(src, /svg\[role="img"\]:not\(\[aria-label\]\):not\(\[aria-labelledby\]\)/);
   assert.match(src, /focusableTargets\(el, naslov\)/);
   // naslov ni v opts: opts so del ključa shranjenih meritev laboratorija (labId), ki se ne sme spremeniti
-  assert.match(src, /export async function mountSim\(id, el, opts = \{\}, naslov = ""\)/);
+  // (peti argument { prvic } je samo za nov poskus po neuspelem uvozu, sim/index.js uvoziPogon)
+  assert.match(src, /export async function mountSim\(id, el, opts = \{\}, naslov = ""(, \{ prvic = true \} = \{\})?\)/);
   assert.match(read("textbook.js"), /mountSim\(d\.id, m, d\.opts, d\.title\)/);
   assert.match(read("laboratorij.js"), /mountSim\(x\.id, m, x\.opts, x\.title\)/);
   assert.match(read("odpri.js"), /mountSim\(x\.id, body, x\.opts \|\| \{\}, x\.title\)/);
