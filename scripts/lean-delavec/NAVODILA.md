@@ -1,0 +1,88 @@
+# Delavec Lean na prenosniku: navodila
+
+Delavec je majhen program na tvojem prenosniku. Vsakih 20 sekund vpraša evklid.app, ali je kakšna matematična
+trditev za dokaz (npr. »za vsako realno število x je (x + 1)² = x² + 2x + 1«). Če je, jo dokaže z Leanom in pošlje
+izid nazaj. Nič drugega ne dobi: ne imen, ne pogovorov, ne podatkov učencev. Prenosnik ničesar ne odpira navzven:
+samo on kliče evklid.app.
+
+Delavec teče kot poseben omejen uporabnik **evklid-lean** (ne kot ti). Tako Lean ne more brati tvojih datotek. Teče
+v ozadju, tudi ko nisi prijavljen; okna zanj ni.
+
+Ko je prenosnik ugasnjen, aplikacija dela naprej, le pri trditvah piše »ni preverjeno z Lean«.
+
+Potrebuješ: Windows 10 ali 11, okoli 10 GB prostora na disku C:, internet. Prvič traja dolgo (prenos okoli 7 GB).
+
+## Namestitev (enkrat)
+
+1. Mapo `lean-delavec` dobiš od Claude ali z GitHuba (`scripts/lean-delavec` v repozitoriju Evklid), običajno kot
+   datoteko `.zip`. **Najprej jo razpakiraj: desni klik na `.zip` → Izvleči vse → Izvleči.** Kje je, ni pomembno:
+   program se sam skopira v `C:\Evklid\lean-delavec` (ne na namizje in ne v OneDrive).
+2. Odpri razpakirano mapo `lean-delavec` in **dvakrat klikni `zazeni.bat`**.
+   - Če okno izpiše **MAPA NI RAZPAKIRANA**, si kliknil v `.zip`: zapri okno in naredi 1. korak.
+   - Če Windows pokaže modro okno »Windows je zaščitil vaš računalnik«, klikni **Več informacij** → **Vseeno zaženi**.
+   - Windows vpraša »Ali želite tej aplikaciji dovoliti, da spremeni napravo?« → **Da**.
+3. Počakaj. Program sam prenese Node, Git, Lean in Mathlib (vsak prenos preveri s kontrolno vsoto SHA-256).
+   Mathlib je velik: to lahko traja od pol ure do nekaj ur. Okno pusti odprto.
+   - **Ne klikaj v okno.** Klik ustavi izpis (in prenos počaka). Če se je izpis ustavil, pritisni **Esc**.
+4. Okno izpiše **NOV ŽETON** (dolga vrsta črk in števk). To je geslo med prenosnikom in evklid.app. Žetona ne
+   pošiljaj nikomur in ga ne prilepi v klepet.
+5. Žeton vpiši na Render:
+   - Odpri <https://dashboard.render.com> → storitev **evklid** → **Environment** → **Add Environment Variable**.
+   - Žeton kopiraš tako: v Raziskovalcu odpri `C:\Evklid\lean-delavec`, desni klik na `nastavitve.json` →
+     **Odpri z** → **Beležnica**. Označi besedilo med narekovaji za `"zeton":` (brez narekovajev), **Ctrl+C**.
+     Beležnico zapri brez shranjevanja.
+   - Key: `EVKLID_LEAN_TOKEN`, Value: prilepi žeton (**Ctrl+V**) → **Save Changes**.
+   - Render se znova zažene (nekaj minut).
+   - **Dokler žetona ni na Renderju, je v dnevniku vrstica »NAPAKA … HTTP 404«. To je pričakovano**, ni treba
+     ničesar narediti; izgine, ko se Render znova zažene.
+6. Okno na koncu izpiše **KONČANO**. Zapri ga. Delavec zdaj teče v ozadju in se sam zažene ob vsakem vklopu.
+   **Počakaj 2–5 minut** (prvi preizkus Leana traja), nato preveri dnevnik (»Kako vidim, da dela«).
+7. Pokrov: program na polnilcu nastavi »ko zapreš pokrov: ne naredi nič«, da prenosnik ne zaspi. Preveriš v
+   **Nadzorna plošča** → **Možnosti porabe energije** → **Izberite, kaj naredi zapiranje pokrova** → stolpec
+   »Priključen« → **Ne naredi ničesar**. Na bateriji zapiranje pokrova prenosnik še vedno uspava.
+
+## Kako vidim, da dela
+
+- Odpri `C:\Evklid\lean-delavec\delo\dnevnik.txt` (z Beležnico). Vrstica »naloga … proved (ring)« pomeni, da je Lean
+  trditev dokazal.
+- `C:\Evklid\lean-delavec\delo\stanje.json`: `"stanje": "caka"` (čaka nalogo) ali `"dela"`, `"utrip"` je čas
+  zadnjega klica.
+- Ob vsakem zagonu delavec enkrat preizkusi Lean: vrstica »preizkus Lean: proved« v `dnevnik.txt` pomeni, da Lean
+  deluje. Pojavi se 2–5 minut po zagonu.
+- Če zadnja vrstica »preizkus Lean: …« **ni točno »preizkus Lean: proved«** (npr. »napaka«, »timeout«, »failed«,
+  »rejected«), Lean ne deluje prav: pošlji Claudu `dnevnik.txt`.
+- Claude lahko preveri na strežniku: `/healthz/stanje` → `leanDelavec.naVoljo: true`.
+
+## Kako ga ustavim
+
+Dvakrat klikni **`ustavi.bat`** (v `C:\Evklid\lean-delavec`) in klikni **Da**. Delavec se ustavi in se ob vklopu ne
+zažene več. Znova ga vklopiš z dvoklikom na `zazeni.bat` (hitro, nič se ne prenaša znova).
+Dokler delavec teče, prenosnik ne zaspi sam od sebe (zaslon sme ugasniti).
+
+## Posodobitev
+
+1. Claude ti da novo mapo `lean-delavec` (ali jo prenesi z GitHuba), kamorkoli. `.zip` najprej razpakiraj (desni
+   klik → **Izvleči vse**).
+2. Dvakrat klikni `zazeni.bat` v novi razpakirani mapi. Program ustavi delavca, skopira nove datoteke v `C:\Evklid\lean-delavec`
+   (žeton v `nastavitve.json` in prenesen Mathlib ostaneta) in ga znova zažene. Če se je spremenila različica Leana ali
+   Mathliba, ju sam prenese znova.
+
+## Odstranitev
+
+1. Dvakrat klikni `ustavi.bat` (v `C:\Evklid\lean-delavec`) in klikni **Da**.
+2. Klikni **Start**, vpiši `powershell`, desni klik na **Windows PowerShell** → **Zaženi kot skrbnik** → **Da**.
+3. V modro okno prilepi to vrstico in pritisni **Enter** (izbriše opravilo, mapo profila `C:\Users\evklid-lean`,
+   uporabnika, pravilo požarnega zidu in `C:\Evklid`):
+   `schtasks /Delete /TN "Evklid Lean delavec" /F; Get-CimInstance Win32_UserProfile | Where-Object LocalPath -like '*\evklid-lean' | Remove-CimInstance; net user evklid-lean /delete; Remove-NetFirewallRule -DisplayName "Evklid Lean brez omrezja"; cmd /c rmdir /s /q C:\Evklid`
+   Če okno izpiše rdeče besedilo (npr. pri `Remove-CimInstance`: profil je še v uporabi), znova zaženi računalnik in
+   vrstico prilepi še enkrat (v skrbniškem PowerShellu).
+4. Na Renderju izbriši `EVKLID_LEAN_TOKEN` (Environment → koš ob vrstici → **Save Changes**).
+
+## Če gre kaj narobe
+
+- Okno izpiše **NAPAKA**: naredi sliko okna in jo pošlji Claudu, nato znova dvakrat klikni `zazeni.bat`.
+- V `delo\dnevnik.txt` je vrstica **NAPAKA** ali vrstica »preizkus Lean: …«, ki ni »preizkus Lean: proved«: pošlji
+  Claudu `dnevnik.txt` (razen »HTTP 404« pred 5. korakom).
+- Delavec se sam znova zažene, če se kdaj ustavi; ob izpadu interneta počaka in poskusi znova.
+- Nov žeton: zaženi `ustavi.bat`, izbriši `C:\Evklid\lean-delavec\nastavitve.json`, zaženi `zazeni.bat` in nov
+  žeton vpiši na Render (5. korak).

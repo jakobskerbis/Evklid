@@ -127,6 +127,7 @@ import { casStanje } from "./cas.js";
 import { stanjePreverjevalnikov } from "./preverjevalniki.js";
 import { startStiskaObvestila, mountStiske, prejemnikStarsa } from "./stiska-obvestilo.js";
 import { AI_JSON } from "./ai-oznaka.js";
+import { createLeanVrsta, mountLeanDelavec, mountLeanBranje } from "./lean-vrsta.js";
 import { createVrsta } from "./vrsta-ai.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -338,7 +339,7 @@ export function createApp(store, opts = {}) {
   // Pomnilnik (točka D4): vzorci RSS po 10 s, Straža opozori nad 85 % meje gostovanja (server/pomnilnik.js).
   const pomnilnik = createPomnilnik({ zacni: opts.pomnilnik !== false });
   app.locals.pomnilnik = pomnilnik;
-  const stanje = (cas = casStanje(), ai = zdravje?.ai() ?? null) => ({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null, pomnilnik: pomnilnik.stanje(), aiStrosek: aiCostAlert?.status() ?? null, varnostniPregled: varnostStanje(app.locals.usage), sifriranje: encryptionOn(), mock: isMockMode(), ai, zagoni: zdravje?.zagoni() ?? null, disk: zdravje?.disk() ?? null, cas, preverjevalniki: stanjePreverjevalnikov({ cas, ai }) });
+  const stanje = (cas = casStanje(), ai = zdravje?.ai() ?? null) => ({ id: INSTANCE, razlicica: version, datoteke: filesVersion(), aktivni: activity.active, mirujeMs: activity.lastSend ? Date.now() - activity.lastSend : null, gorMs: Math.round(process.uptime() * 1000), posta: accounts?.mailer?.status?.() ?? null, kopije: backups?.status() ?? null, kopijeZunaj: cloudBackups?.status() ?? null, preverjanjeKopij: backupChecks?.status() ?? null, pdfUcbenika: app.locals.pdfStore?.status() ?? null, pomnilnik: pomnilnik.stanje(), aiStrosek: aiCostAlert?.status() ?? null, varnostniPregled: varnostStanje(app.locals.usage), sifriranje: encryptionOn(), mock: isMockMode(), ai, zagoni: zdravje?.zagoni() ?? null, disk: zdravje?.disk() ?? null, cas, preverjevalniki: stanjePreverjevalnikov({ cas, ai }), leanDelavec: app.locals.leanVrsta?.stanje() ?? null });
   app.get("/healthz/stanje", (_req, res) => {
     res.set("Cache-Control", "no-store");
     res.json(stanje());
@@ -369,11 +370,16 @@ export function createApp(store, opts = {}) {
   });
   app.use(mobileClient); // mobilna aplikacija: seja v glavi namesto piškotka (server/mobile)
   app.use(blockStoreAppPurchases); // aplikacija iz trgovine: brez nakupa s kartico (server/mobile/trgovina.js)
+  // Vrsta preverjanj z Lean (docs/lean.md, L5): delavec na prenosniku z žetonom EVKLID_LEAN_TOKEN, pred prijavo računov.
+  const leanVrsta = createLeanVrsta(store.db);
+  app.locals.leanVrsta = leanVrsta;
+  mountLeanDelavec(app, leanVrsta);
   mountInviteApi(app, { db: store.db }); // koda vabila v pilot (javno, pred prijavo; server/vabila.js; porabljene kode #751)
   const accounts = mountAccounts(app, store, opts); // starševski računi in plačila (EVKLID_ACCOUNTS=1)
   app.use((req, res, next) => (req.nekanonicnaApi ? res.status(404).json({ error: "Pot ne obstaja." }) : next())); // točka A1
   mountMobile(app, accounts, { scheduler: opts.scheduler, fetchFn: opts.fetchFn, ...opts.mobile }); // prijava z Apple, nakupi v trgovinah, obvestila, /prenesi
   if (gateNeeded()) app.use(passwordGate(process.env.EVKLID_PASSWORD)); // skupno geslo (samo brez računov, glej gate.js)
+  mountLeanBranje(app, leanVrsta); // izid naloge Lean po id (za prijavo, ko so računi vklopljeni)
   mountWebApp(app); // manifest v jeziku vmesnika, povezava za Google Play
   app.use("/api", (req, res, next) => {
     activity.active++;
