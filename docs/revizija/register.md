@@ -4,7 +4,7 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 [README.md](README.md).
 
 **Zadnji pregledani `main`:** `3e2a78dbc742b3c2b0f174ed42ac57be4591d212` (25. 11. 2026)
-**Naslednji prosti ID:** AUDIT-102
+**Naslednji prosti ID:** AUDIT-103
 
 | ID | Prioriteta | Področje | Kratek opis | Status | Pregledani commit | Komentar | PR popravka |
 |---|---|---|---|---|---|---|---|
@@ -109,6 +109,7 @@ Ureja ga samo Claude (commiti `[skip ci]` v veji `review/chatgpt-audit`). Pravil
 | AUDIT-099 | P3 | Vnos, izris v polju (skener) | Ulomek `(a)/(b)` v izrisu polja poveča polje z 48 na 59 px, zato vrstica med tipkanjem poskoči. Lastnik: nit »Prevzemi kalkulator« | NOVO | `b7b9853` | Claude (nit »Prevzemi kalkulator«, vir nit »Naredi skener zanesljiv«, PR #1191), 26. 11. | – |
 | AUDIT-100 | P3 | Vnos, izris v polju (skener) | Izris v polju (`hasFormula`) ne izriše golih ulomkov in funkcij (»x/4«, »(x+1)/2«, `abs`, `log`), zato skener še potrebuje svoj prekrivni sloj zunaj polja. Lastnik: nit »Prevzemi kalkulator« | NOVO | `b7b9853` | Claude (nit »Prevzemi kalkulator«, vir nit »Naredi skener zanesljiv«, PR #1191), 26. 11. | – |
 | AUDIT-101 | P2 | Skener, preverjanje brez SymPy | Decimalna vejica v oklepaju (`arcsin(0,5)` = 30°, `(2,5+1)·2`) in sistem kot par `(2,1)` sta brez SymPy dobila lažno »Napačno«. Odpravljeno s #1194 (`5227f70`, združen 26. 11. 16.02 UTC); test v `test/scan-funkcije.test.js` (oznaka prej napačno AUDIT-096, v #1199 popravljena). Lastnik: nit »Naredi skener zanesljiv« | PRIPRAVLJENO ZA PONOVNI PREGLED | `5227f70` | Claude (nit »Naredi skener zanesljiv«), 26. 11.; oznaka AUDIT-101 na `main` z #1199 (`47de59b`, test/scan-funkcije.test.js in public/scan/verify.js); ostane živo preverjanje s prijavljenim računom | [#1194](https://github.com/jakobskerbis/Evklid/pull/1194), [#1199](https://github.com/jakobskerbis/Evklid/pull/1199) |
+| AUDIT-102 | P2 | Kalkulator, okno »Piši« na telefonu ležeče | Z odprtim oknom »Piši« na telefonu ležeče (740 × 360) sta tipkovnica in površina pod zaslonom (»=« pri y = 536, površina pri y = 588). Vzrok: `public/graph/pisi.js:88` `narrow = r.width < 700` ne upošteva višine. Pravilo PR #1229 (graph.css, ležeče do 480 px) namenoma izpusti `.sc-pisi-on`. Ob tem: zelo visok zapis (sistem 4 enačb) v ležeči vrsti zapisa drsi, kazalka ni samodejno vidna (sci.js bi moral pomakniti do kazalke ali pomanjšati kot pri `.sc-c`). Lastnik: seja kalkulatorja | NOVO | `bc9972b` | Claude (nit »Popravi tipko Izračunaj na ležečem telefonu«, neodvisni pregled PR #1229), 28. 11. | – |
 
 ## Zgodovina statusov
 
