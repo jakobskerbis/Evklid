@@ -42,14 +42,6 @@ function serve() {
   return new Promise((ok) => server.listen(0, "127.0.0.1", () => ok(server)));
 }
 
-const engines = [];
-for (const name of ["chromium", "webkit"]) {
-  try {
-    if (playwright) engines.push([name, await playwright[name].launch()]);
-  } catch {}
-}
-const skip = engines.length ? false : "Playwright ni nameščen";
-
 // [ime, začetna velikost, velikost ob »Izračunaj« (zasuk) ali null, pričakovana postavitev]
 const CASES = [
   ["zasuk 360×740 → 740×360", [360, 740], [740, 360], "lezece"],
@@ -85,14 +77,20 @@ async function tap(page, ins, where, engine) {
   return k;
 }
 
-test("znanstveni kalkulator: telefon ležeče, »Izračunaj« na zaslonu (dotik)", { skip }, async (t) => {
-  const server = await serve();
-  const url = `http://127.0.0.1:${server.address().port}/t-sci.html`;
-  t.after(async () => {
-    for (const [, b] of engines) await b.close();
-    server.close();
-  });
-  for (const [engine, browser] of engines) {
+// vsak brskalnik svoj test: če se WebKit ne zažene, CI to pokaže kot preskočen test (ne tiho izpusti)
+for (const engine of ["chromium", "webkit"]) {
+  test(`${engine}: znanstveni kalkulator na telefonu ležeče, »Izračunaj« na zaslonu (dotik)`, { timeout: 300000 }, async (t) => {
+    let browser = null;
+    try {
+      browser = playwright && (await playwright[engine].launch());
+    } catch {}
+    if (!browser) return t.skip(`${engine} ni nameščen`);
+    const server = await serve();
+    const url = `http://127.0.0.1:${server.address().port}/t-sci.html`;
+    t.after(async () => {
+      await browser.close();
+      server.close();
+    });
     for (const [name, start, end, want] of CASES) {
       const where = `${engine} ${name}`;
       const ctx = await browser.newContext({ viewport: { width: start[0], height: start[1] }, hasTouch: true, isMobile: engine === "chromium" });
@@ -158,5 +156,5 @@ test("znanstveni kalkulator: telefon ležeče, »Izračunaj« na zaslonu (dotik)
       assert.deepEqual(errors, [], where);
       await ctx.close();
     }
-  }
-});
+  });
+}

@@ -403,7 +403,7 @@ body.graph-open { overflow: hidden; }
    0 in vejica so padli pod rob. Zgodovina zgoraj, vrstica in zapis v eni vrsti, funkcijske tipke in številke
    druga ob drugi (štiri vrste); vse ostane na zaslonu. Pokončno, tablica in računalnik ostanejo kot prej. */
 @media (orientation: landscape) and (max-height: 480px) {
-  .sc:not(.sc-pisi-on) { grid-template-columns: fit-content(60%) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(0, auto) auto; grid-template-areas: "hist hist" "bar entry" "keys keys"; column-gap: 0; }
+  .sc:not(.sc-pisi-on) { grid-template-columns: fit-content(max(60%, 400px)) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(0, auto) auto; grid-template-areas: "hist hist" "bar entry" "keys keys"; column-gap: 0; }
   .sc:not(.sc-pisi-on) > .split-handle { display: none !important; }
   .sc:not(.sc-pisi-on) .sc-screen { display: contents; }
   .sc:not(.sc-pisi-on) :is(.sc-bar, .sc-history, .sc-entry) { background: var(--surface); }
@@ -412,9 +412,16 @@ body.graph-open { overflow: hidden; }
   .sc:not(.sc-pisi-on) .sc-h-row { flex-direction: row; flex-wrap: wrap; justify-content: flex-end; align-items: center; column-gap: 12px; padding: 2px 0; }
   .sc:not(.sc-pisi-on) .sc-h-row > .sc-acts { order: -1; margin-inline-end: auto; padding: 0; }
   .sc:not(.sc-pisi-on) .sc-h-row > .sc-h-note { flex-basis: 100%; }
+  /* prazna zgodovina: »Preizkusi:« in primeri v eni vrstici, ki se pomika (navodilo je v polju »Vpiši račun«), nič odrezanega */
+  .sc:not(.sc-pisi-on) .sc-empty { max-width: none; width: 100%; margin: auto 0 0; padding: 2px 0; display: flex; align-items: center; gap: 8px; }
+  .sc:not(.sc-pisi-on) .sc-empty > p:not(.sc-try) { display: none; }
+  .sc:not(.sc-pisi-on) .sc-try { margin: 0 !important; flex: none; }
+  .sc:not(.sc-pisi-on) .sc-examples { flex: 1 1 auto; min-width: 0; flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; scrollbar-width: none; }
+  .sc:not(.sc-pisi-on) .sc-examples::-webkit-scrollbar { display: none; }
+  .sc:not(.sc-pisi-on) .sc-ex { flex-shrink: 0; white-space: nowrap; }
   .sc:not(.sc-pisi-on) .sc-bar { grid-area: bar; min-width: 0; border-bottom: 0; border-top: 1px solid var(--border); padding: 4px 8px; }
   /* visok zapis (sistem enačb, matrika) ne potisne tipk z zaslona: vrsta zapisa se skrči, zapis drsi (brez vidnega drsnika) */
-  .sc:not(.sc-pisi-on) .sc-entry { grid-area: entry; min-width: 0; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; align-items: center; gap: 12px; padding: 2px 12px 4px; }
+  .sc:not(.sc-pisi-on) .sc-entry { grid-area: entry; min-width: 0; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; align-items: center; align-items: safe center; gap: 12px; padding: 2px 12px 4px; }
   .sc:not(.sc-pisi-on) .sc-entry::-webkit-scrollbar { display: none; }
   .sc:not(.sc-pisi-on) .sc-line, .sc:not(.sc-pisi-on) .sc-input { flex: 1 1 auto; min-width: 0; }
   .sc:not(.sc-pisi-on) .sc-live { flex: 0 1 auto; min-width: 0; max-width: 45%; min-height: 0; }
