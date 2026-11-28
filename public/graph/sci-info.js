@@ -728,9 +728,10 @@ export function plotSvg(fn, roots = [], { w = 280, h = 130, env = {}, holes = []
   // pika kot pot ničelne dolžine z okroglim koncem: ostane okrogla tudi pri raztegnjenem viewBox
   const dot = (x, y, cls) => `<path class="${cls}" d="M${X(x).toFixed(1)} ${Y(y).toFixed(1)}h0"/>`;
   // periodična: ničle in prazne točke se ponovijo na vsaki periodi v oknu
-  const ks = per ? [-2, -1, 0, 1, 2] : [0];
+  // (x najprej v [−P/2; P/2], nato −P, 0, P: vse kopije v oknu [−P; P], tudi za ničlo daleč od 0)
+  const copies = (x) => (per ? [-1, 0, 1].map((k) => x - period * Math.round(x / period) + k * period) : [x]);
   const inWin = (x) => x >= lo - 1e-9 * (hi - lo) && x <= hi + 1e-9 * (hi - lo);
-  const dots = [...new Set(roots.flatMap((x) => ks.map((k) => x + k * period)).filter(inWin).map((x) => dot(x, 0, "dot")))].join("");
-  const empty = [...new Set(holes.flatMap(([x, y]) => ks.map((k) => [x + k * period, y])).filter(([x]) => inWin(x)).map(([x, y]) => dot(x, y, "hole") + dot(x, y, "hole-in")))].join("");
+  const dots = [...new Set(roots.flatMap(copies).filter(inWin).map((x) => dot(x, 0, "dot")))].join("");
+  const empty = [...new Set(holes.flatMap(([x, y]) => copies(x).map((c) => [c, y])).filter(([x]) => inWin(x)).map(([x, y]) => dot(x, y, "hole") + dot(x, y, "hole-in")))].join("");
   return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">${ax}${ay}<path d="${d}"/>${dots}${empty}</svg>`;
 }

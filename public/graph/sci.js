@@ -212,7 +212,10 @@ export function createScientific(root, opts) {
     root.classList.toggle("sc-tall", w >= 861 && h > w);
     // pokončno, tablica in telefon (j, 28. 11.): podatki (graf, ničle, perioda …) tudi tu, nad zapisom, če je prostor
     root.classList.toggle("sc-p", w >= 300 && h >= 560 && h > w);
+    const pn0 = root.classList.contains("sc-pn");
     root.classList.toggle("sc-pn", w < 600 && h > w); // telefon pokončno: nižji podatki, ključ nad vrednostjo (graph.css)
+    // število vrstic podatkov je odvisno od .sc-pn: ob menjavi (razdeljen zaslon, plavajoče okno) znova izriši
+    if (pn0 !== root.classList.contains("sc-pn") && infoArgs && !$(".sc-info").hidden) renderInfo(...infoArgs);
     root.style.setProperty("--sc-h", `${Math.round(h)}px`);
     keysNeed = 0; // nova velikost: prostor za tipke izmerimo znova
     fitEntry();
@@ -300,11 +303,13 @@ export function createScientific(root, opts) {
     for (const v of $(".sc-info").querySelectorAll(".sc-info-v")) {
       const kv = v.querySelector(".katex");
       if (!kv) continue;
+      kv.style.fontSize = "";
+      const base = parseFloat(getComputedStyle(kv).fontSize); // velikost brez pomanjšanja
       pomanjsaj(kv, v.clientWidth, () => v.scrollWidth);
-      // telefon: ozek stolpec, dolge ničle (x₁ = k · 360°, x₂ = …) se pomanjšajo do polovice, ne le do 80 %
+      // telefon: ozek stolpec, dolge ničle (x₁ = k · 360°, x₂ = …) se pomanjšajo do 60 % osnove, ne le do 80 %
       if (pn && v.scrollWidth > v.clientWidth + 1) {
         const fs = parseFloat(getComputedStyle(kv).fontSize);
-        kv.style.fontSize = `${Math.max(fs * 0.6, fs * (v.clientWidth / v.scrollWidth) * 0.98).toFixed(2)}px`;
+        kv.style.fontSize = `${Math.max(base * 0.6, fs * (v.clientWidth / v.scrollWidth) * 0.98).toFixed(2)}px`;
       }
     }
   };
@@ -317,7 +322,7 @@ export function createScientific(root, opts) {
       const info = $(".sc-info");
       const on0 = root.classList.contains("sc-info-on") && !info.hidden;
       const pn = root.classList.contains("sc-pn");
-      const ih = (pn ? INFO_H_PN : INFO_H) + 8;
+      const ih = pn ? INFO_H_PN + 6 : INFO_H + 8; // višina in spodnji rob (graph.css)
       const base = $(".sc-entry").offsetHeight - (on0 ? ih : 0);
       infoRoom = root.clientHeight - $(".sc-bar").offsetHeight - $(".sc-keys").offsetHeight - base - ih >= (pn ? 80 : 160);
       root.classList.toggle("sc-info-on", !info.hidden && infoRoom && !!$(".sc-preview .katex"));
