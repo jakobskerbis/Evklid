@@ -462,7 +462,7 @@ const GENS = [
           const h = (GZ * t * t) / 2;
           return T(
             `${n} spusti kamen v globoko brezno. Koliko metrov pade kamen v prvih $${qty(tx(t), "s")}$? ${noAir} Zaokroži na eno decimalko.`,
-            num(h, 1, [M(GZ * t * t, "Pozabil si faktor ½ v formuli h = g t²/2."), M(GZ * t, "To je hitrost po tem času, ne pot."), M((GZ * t) / 2, "Čas moraš kvadrirati.")], "m"),
+            num(h, 1, [M(GZ * t * t, "Pozabil si faktor $\\frac{1}{2}$ v formuli $h = \\frac{g t^2}{2}$."), M(GZ * t, "To je hitrost po tem času, ne pot."), M((GZ * t) / 2, "Čas moraš kvadrirati.")], "m"),
             "Pot pri prostem padu iz mirovanja: $h = \\frac{1}{2} g t^2$.",
             [dat("t", tx(t), "s"), gD()],
             ["h"],
@@ -726,7 +726,7 @@ const GENS = [
           const Tv = m2 * (GZ - a);
           return T(
             `${intro} Kolikšna je sila vrvi med gibanjem? Zaokroži na dve decimalki.`,
-            num(Tv, 2, [M(m2 * GZ, "Utež pospešuje navzdol, zato je sila vrvi manjša od njene teže."), M(m2 * a, "Na utež delujeta teža in sila vrvi: m₂a = m₂g − F_v."), M(kt * m1 * GZ, "To je le sila trenja; klada tudi pospešuje.")], "N"),
+            num(Tv, 2, [M(m2 * GZ, "Utež pospešuje navzdol, zato je sila vrvi manjša od njene teže."), M(m2 * a, "Na utež delujeta teža in sila vrvi: $m_2 a = m_2 g - F_v$."), M(kt * m1 * GZ, "To je le sila trenja; klada tudi pospešuje.")], "N"),
             "Najprej izračunaj pospešek sistema, nato zapiši 2. Newtonov zakon samo za visečo utež.",
             given,
             ["F_v"],
@@ -802,7 +802,7 @@ const GENS = [
           const what = c.what;
           return T(
             `${what} ima koeficient $k = ${qty(kv, "N/m")}$. Stisnemo jo za $x = ${qty(tx(x), "m")}$. Kolikšna je prožnostna energija stisnjene vzmeti? Zaokroži ${dw(d)}.`,
-            num(W, d, [M(kv * x * x, "Pozabil si faktor ½ v formuli W_pr = k x²/2."), M((kv * x) / 2, "Skrček moraš kvadrirati."), M(kv * x, "To je sila vzmeti (N), ne energija.")], "J"),
+            num(W, d, [M(kv * x * x, "Pozabil si faktor $\\frac{1}{2}$ v formuli $W_{pr} = \\frac{k x^2}{2}$."), M((kv * x) / 2, "Skrček moraš kvadrirati."), M(kv * x, "To je sila vzmeti (N), ne energija.")], "J"),
             "Prožnostna energija je sorazmerna s kvadratom skrčka.",
             [dat("k", kv, "N/m"), dat("x", tx(x), "m")],
             ["W_{pr}"],
@@ -929,7 +929,7 @@ const GENS = [
         const x = (mg + Math.sqrt(mg * mg + 2 * kv * mg * h)) / kv;
         return T(
           `Utež z maso $${qty(tx(m), "kg")}$ spustimo z višine $${qty(tx(h), "m")}$ nad navpično vzmetjo s koeficientom $${qty(kv, "N/m")}$. Za koliko centimetrov se vzmet največ skrči? Zaokroži na eno decimalko.`,
-          num(x * 100, 1, [M(Math.sqrt((2 * mg * h) / kv) * 100, "Med stiskanjem vzmeti utež pade še za x, zato je izguba W_p enaka m g (h + x)."), M(x, "Rezultat je v metrih; pretvori ga v centimetre."), M(((mg + Math.sqrt(mg * mg + kv * mg * h)) / kv) * 100, "Iz m g (h + x) = k x²/2 dobiš k x² − 2 m g x − 2 m g h = 0.")], "cm"),
+          num(x * 100, 1, [M(Math.sqrt((2 * mg * h) / kv) * 100, "Med stiskanjem vzmeti utež pade še za $x$, zato je izguba $W_p$ enaka $m g (h + x)$."), M(x, "Rezultat je v metrih; pretvori ga v centimetre."), M(((mg + Math.sqrt(mg * mg + kv * mg * h)) / kv) * 100, "Iz $m g (h + x) = \\frac{k x^2}{2}$ dobiš $k x^2 - 2 m g x - 2 m g h = 0$.")], "cm"),
           "Ko je vzmet najbolj stisnjena, utež miruje; utež pade skupno za $h + x$.",
           [dat("m", tx(m), "kg"), dat("h", tx(h), "m"), dat("k", kv, "N/m"), gD()],
           ["x\\ [\\mathrm{cm}]"],
