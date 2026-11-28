@@ -26,7 +26,8 @@ import { fmt } from "../server/practice/check.js";
 const FIXTURE = new URL("../test/fixtures/pot-vadnice/poti.json", import.meta.url);
 
 // Naloga poti: ista kot generateTask s temo, ravnjo, semenom in letnikom iz nabora.
-export const nalogaPoti = (n) => generateTask(n.topic, n.level, n.seed, "sl", n.year);
+// Generator je pripet: nov generator iste teme (npr. gim-*-dop) ne sme zamenjati naloge zamrznjenega nabora.
+export const nalogaPoti = (n) => generateTask(n.topic, n.level, n.seed, "sl", n.year, n.generator);
 
 // Pravilen odgovor v zapisu, kot ga vpiše učenec (popravek po pomoči).
 export function pravilenOdgovor(a) {

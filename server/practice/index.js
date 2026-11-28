@@ -157,11 +157,18 @@ export function plainCommas(t, slovensko = true) {
 // lang: jezik besedila pri dvojezičnih generatorjih ("hi" = hindijsko, sicer angleško
 // ali slovensko); drugi generatorji ga prezrejo. Isto seme da v vseh jezikih isto nalogo.
 // year: leto šolanja učenca (izbira generatorjev s minYear/maxYear); drugi generatorji ga prezrejo.
-export function generateTask(topicId, level = 1, seed = crypto.randomInt(2 ** 31), lang = "en", year = null) {
+// generatorId (neobvezno): naloga točno tega generatorja teme. Žreb generatorja vseeno porabi eno število,
+// zato sta seme in besedilo enaka kot takrat, ko je žreb izbral ta generator (zamrznjeni nabori, npr. AUDIT-094).
+export function generateTask(topicId, level = 1, seed = crypto.randomInt(2 ** 31), lang = "en", year = null, generatorId = null) {
   const gens = gensForYear(topicId, year);
   if (!gens.length) return null;
   const r = makeRng(seed);
-  const [g, genTopic] = r.pick(gens);
+  let [g, genTopic] = r.pick(gens);
+  if (generatorId && g.id !== generatorId) {
+    const izbran = gens.find(([x]) => x.id === generatorId);
+    if (!izbran) return null;
+    [g, genTopic] = izbran;
+  }
   // Nekaj poskusov, če bi generator vrnil neveljavno nalogo.
   for (let i = 0; i < 5; i++) {
     const t = g.gen(level, r, genTopic, lang, year);
