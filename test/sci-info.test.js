@@ -1,7 +1,7 @@
 // Podatki v praznem delu zaslona kalkulatorja (public/graph/sci-info.js; načrt z dopolnitvami ChatGPT, 27. 11. 2026).
 import test from "node:test";
 import assert from "node:assert/strict";
-import { infoFor, plotSvg, INFO_FIRST } from "../public/graph/sci-info.js";
+import { infoFor, plotSvg, INFO_FIRST, divergesAt, fnOf } from "../public/graph/sci-info.js";
 import { analyze } from "../public/graph/scisolve.js";
 
 const env = { vars: {}, funcs: {}, ans: 0, deg: false };
@@ -145,4 +145,101 @@ test("pregled: decimalne in iracionalne limite niso ulomki, bližnji vrhovi brez
   const rg = (s) => row(info(s), "sc.infoRange")?.tex ?? null;
   assert.equal(rg("sin(x)+0,01sin(300x)"), null);
   assert.equal(rg("2cos(x)+1"), "[-1;\\,3]");
+});
+
+// Revizija 28. 11. 2026 (P1): navpična asimptota le, kjer gre celoten izraz vsaj z ene strani proti ±∞
+test("navpične asimptote: 1/tan x pri kπ, cos x · tan x brez, |x|/x le vodoravni", () => {
+  const as = (s, o) => row(info(s, o), "sc.infoAsym")?.tex ?? null;
+  // 1/tan x: pol pri kπ; pri π/2 + kπ ni definirana, limita je 0 (prazna točka, ne asimptota in ne ničla)
+  const c = info("1/tan(x)");
+  assert.equal(row(c, "sc.infoAsym").tex, "x = k\\pi,\\ k \\in \\mathbb{Z}");
+  assert.equal(row(c, "sc.infoRoots").text, "sc.infoNoRoots");
+  assert.ok(c.plot.holes.some(([x, y]) => Math.abs(x - Math.PI / 2) < 1e-9 && y === 0), JSON.stringify(c.plot.holes));
+  assert.equal(as("1÷tan(x)"), "x = k\\pi,\\ k \\in \\mathbb{Z}");
+  // cos x · tan x = sin x na svoji domeni: odstranljive prekinitve pri π/2 + kπ, brez navpičnih asimptot
+  const ct = info("cos(x)*tan(x)");
+  assert.equal(row(ct, "sc.infoAsym"), undefined);
+  assert.ok(ct.plot.holes.some(([x, y]) => Math.abs(x - Math.PI / 2) < 1e-9 && y === 1), JSON.stringify(ct.plot.holes));
+  assert.match(plotSvg(ct.plot.fn, ct.plot.roots, { holes: ct.plot.holes }), /class="hole"/);
+  // |x|/x: skok −1 → 1 pri 0, ni asimptote x = 0; vodoravni y = −1 in y = 1 ostaneta
+  assert.equal(as("abs(x)/x"), "y = -1,\\ y = 1");
+  assert.equal(row(info("abs(x)/x"), "sc.infoDomain").tex, "x \\neq 0");
+  // kontrole
+  assert.equal(as("tan(x)"), "x = \\tfrac{\\pi}{2} + k\\pi,\\ k \\in \\mathbb{Z}");
+  assert.equal(as("1/x"), "x = 0,\\ y = 0");
+  assert.equal(as("(x^2-1)/(x-1)"), null);
+  assert.deepEqual(info("(x^2-1)/(x-1)").plot.holes, [[1, 2]]);
+  // v stopinjah in pri analizi enako pravilo
+  assert.equal(as("1/tan(x)", { deg: true }), "x = k \\cdot 180^{\\circ},\\ k \\in \\mathbb{Z}");
+  assert.equal(as("cos(x)*tan(x)", { deg: true }), null);
+  assert.equal(as("1/tan(x)", { profile: "ana" }), "x = k\\pi,\\ k \\in \\mathbb{Z}");
+});
+
+test("navpične asimptote: ostali poli, robovi in vgnezdeni imenovalci", () => {
+  const as = (s) => row(info(s), "sc.infoAsym")?.tex ?? null;
+  assert.equal(as("cot(x)"), "x = k\\pi,\\ k \\in \\mathbb{Z}");
+  assert.equal(as("tan(x)^2"), "x = \\tfrac{\\pi}{2} + k\\pi,\\ k \\in \\mathbb{Z}");
+  assert.equal(as("1/sin(x)^2"), "x = k\\pi,\\ k \\in \\mathbb{Z}");
+  assert.equal(as("sin(2x)/sin(x)"), null); // = 2 cos x, luknje pri kπ
+  assert.equal(as("ln(x)"), "x = 0");
+  assert.equal(as("1/ln(x)"), "x = 1");
+  assert.equal(as("1/sqrt(x-2)"), "x = 2");
+  assert.equal(as("sqrt(x-2)"), null);
+  assert.equal(as("(x^2-4)/(x^2-x-2)"), "x = -1,\\ y = 1"); // pri 2 prazna točka
+  assert.equal(as("exp(1/x)"), "x = 0,\\ y = 1"); // le z desne proti +∞
+  // vgnezden imenovalec: 1/√(sin x) ima pola z ene strani pri 2kπ in π + 2kπ (pri 3π/2 f ni definirana)
+  assert.equal(as("tan(x)+1/sqrt(sin(x))"), "x_{1} = k \\cdot 2\\pi,\\ x_{2} = \\tfrac{\\pi}{2} + k \\cdot 2\\pi,\\ x_{3} = \\pi + k \\cdot 2\\pi,\\ k \\in \\mathbb{Z}");
+  assert.equal(row(info("1/ln(abs(x))"), "sc.infoDomain").tex, "x \\in (-\\infty;\\,0) \\cup (0;\\,\\infty),\\ x \\neq -1,\\ 1");
+  // pregled #1227: deljenje veže le naslednji člen (1/2 sin x = ½ sin x, 1/x(x + 1) = (x + 1)/x)
+  for (const s of ["1/2sin(x)", "1/2cos(x)", "1:2x", "1÷2x"]) {
+    assert.deepEqual(info(s).plot?.holes ?? [], [], s);
+    assert.equal(as(s), null, s);
+  }
+  assert.equal(as("1/2tan(x)"), "x = \\tfrac{\\pi}{2} + k\\pi,\\ k \\in \\mathbb{Z}");
+  assert.equal(as("1/x(x+1)"), "x = 0,\\ y = 1");
+  // deljenje s potenco oklepaja: imenovalec ostane (x − 1)², definicijsko območje in asimptota ostaneta
+  assert.equal(as("1/(x-1)^2"), "x = 1,\\ y = 0");
+  assert.equal(row(info("(x+2)/(x-1)^2"), "sc.infoDomain").tex, "x \\neq 1");
+  assert.equal(as("1/(2*sin(x)-1)^2"), "x_{1} = \\tfrac{\\pi}{6} + k \\cdot 2\\pi,\\ x_{2} = \\tfrac{5\\pi}{6} + k \\cdot 2\\pi,\\ k \\in \\mathbb{Z}");
+  // enakomerno razmaknjeni poli v enem zapisu; 1/(tan x − 1) ima pol pri π/4 + kπ (ne pri π/2 + kπ)
+  assert.equal(as("1/sin(x)"), "x = k\\pi,\\ k \\in \\mathbb{Z}");
+  assert.equal(as("tan(x)+cot(x)"), "x = k \\cdot \\tfrac{\\pi}{2},\\ k \\in \\mathbb{Z}");
+  assert.equal(as("1/(tan(x)-1)"), "x = \\tfrac{\\pi}{4} + k\\pi,\\ k \\in \\mathbb{Z}");
+  // ² ³ s tipkovnice in imenovalci, definirani šele daleč od 0; eksponent z x ne ugibamo (brez lažnega x ≠ −20)
+  assert.equal(as("1/x²"), "x = 0,\\ y = 0");
+  assert.equal(as("1/(x-1)²"), "x = 1,\\ y = 0");
+  assert.equal(as("1/sin(x)²"), "x = k\\pi,\\ k \\in \\mathbb{Z}");
+  assert.equal(as("1/sqrt(x-20)"), "x = 20");
+  assert.equal(as("1/ln(x-10)"), "x = 11");
+  assert.equal(row(info("1/(x-3)^x"), "sc.infoDomain"), undefined);
+  // 1/x⁻¹ (tipka x⁻¹) = x, a pri 0 ni definirana: x ≠ 0, ni ničle, prazna točka (0, 0)
+  const inv = info("1/x⁻¹");
+  assert.equal(row(inv, "sc.infoDomain").tex, "x \\neq 0");
+  assert.equal(row(inv, "sc.infoRoots").text, "sc.infoNoRoots");
+  assert.deepEqual(inv.plot.holes, [[0, 0]]);
+  assert.equal(as("1/sqrt(x-1000000)"), "x = 1000000");
+  // 1/sin(x)⁻¹ = sin x, a pri kπ ni definirana: ničel ni, le prazne točke
+  assert.equal(row(info("1/sin(x)⁻¹"), "sc.infoRoots").text, "sc.infoNoRoots");
+  assert.equal(as("tan(tan(x))"), null); // poli se kopičijo ob π/2: seznam ne bi bil popoln
+  assert.equal(as("1/sin(tan(x))"), null);
+  // brez zanesljivega imenovalca (velik vrh brez ničle imenovalca) ali z logaritmom: raje nič
+  assert.equal(as("1/(sin(x)^2+0,000001)"), null);
+  assert.equal(as("ln(sin(x))"), null);
+});
+
+test("divergesAt: pol, logaritem, enostranski pol; skok, prazna točka in nihanje niso asimptote", () => {
+  const env = { vars: {}, funcs: {}, ans: 0, deg: false, live: true };
+  const d = (s, a) => divergesAt(fnOf(s, env), a);
+  assert.equal(d("1/x", 0), true);
+  assert.equal(d("1/x^2", 0), true);
+  assert.equal(d("ln(x)", 0), true);
+  assert.equal(d("exp(1/x)", 0), true);
+  assert.equal(d("tan(x)", Math.PI / 2), true);
+  assert.equal(d("1/tan(x)", Math.PI / 2), false);
+  assert.equal(d("cos(x)*tan(x)", Math.PI / 2), false);
+  assert.equal(d("abs(x)/x", 0), false);
+  assert.equal(d("(x^2-1)/(x-1)", 1), false);
+  assert.equal(d("sin(x)/x", 0), false);
+  assert.equal(d("sin(1/x)", 0), false);
+  assert.equal(d("sqrt(x)", 0), false);
 });
