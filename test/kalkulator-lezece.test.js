@@ -75,10 +75,12 @@ const keyBox = (page, ins) =>
     return { x, y, top: b.top, bottom: b.bottom, h: b.height, hit: !!hit?.closest(`.sc-key[data-ins="${ins}"]`) };
   }, ins);
 
-async function tap(page, ins, where) {
+// WebKit (Playwright) dotik na tipko ne sproži klika (kot v tipka-v-rezi.test.js): tam klik na isto točko
+async function tap(page, ins, where, engine) {
   const k = await keyBox(page, ins);
   assert.ok(k.hit && k.bottom <= page.viewportSize().height + 0.5, `${where}: tipka ${ins} je na zaslonu in jo dotik zadene (${JSON.stringify(k)})`);
-  await page.touchscreen.tap(k.x, k.y);
+  if (engine === "webkit") await page.mouse.click(k.x, k.y);
+  else await page.touchscreen.tap(k.x, k.y);
   await page.waitForTimeout(60);
   return k;
 }
@@ -99,7 +101,7 @@ test("znanstveni kalkulator: telefon ležeče, »Izračunaj« na zaslonu (dotik)
       page.on("pageerror", (e) => errors.push(e.message));
       await page.goto(url);
       await page.waitForFunction(() => window.ready);
-      for (const ins of ["7", "+", "8"]) await tap(page, ins, where);
+      for (const ins of ["7", "+", "8"]) await tap(page, ins, where, engine);
       if (end) {
         await page.setViewportSize({ width: end[0], height: end[1] });
         await page.waitForTimeout(250);
@@ -141,7 +143,7 @@ test("znanstveni kalkulator: telefon ležeče, »Izračunaj« na zaslonu (dotik)
         const k = await keyBox(page, ins);
         assert.ok(k.hit && k.bottom <= vh + 0.5, `${where}: tipka ${ins} dosegljiva (${JSON.stringify(k)})`);
       }
-      const eq = await tap(page, "#eq", where);
+      const eq = await tap(page, "#eq", where, engine);
       await page.waitForTimeout(150);
       const res = await page.evaluate(() => {
         const row = document.querySelector(".sc-history .sc-h-row.last .sc-h-res");
