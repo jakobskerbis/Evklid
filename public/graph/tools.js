@@ -33,7 +33,9 @@ export function createTools(root, opts) {
   const num = (v, mode = "auto") => formatNumber(Number.isFinite(v) ? Number(v.toPrecision(8)) : v, { mode, comma: comma() });
   const insText = (v) => formatNumber(v, { comma: comma() }).text.replace(" · 10^", "E").replace("−", "-");
   const subj = () => (TOOL_GROUPS[opts.subject?.()] ? opts.subject() : "MAT");
-  let tool = TOOLS.includes(remember.get("evklid.tool")) ? remember.get("evklid.tool") : TOOL_GROUPS[subj()][0][1][0];
+  // zapomnjeno orodje, če ga ima učenčev predmet; sicer prvo orodje predmeta (izbran je vedno učenčev predmet)
+  const mine = (k) => TOOL_GROUPS[subj()].some(([, l]) => l.includes(k));
+  let tool = mine(remember.get("evklid.tool")) ? remember.get("evklid.tool") : TOOL_GROUPS[subj()][0][1][0];
   const views = {};
   // izbrani predmet in tema v izbiri (ne nujno učenčev predmet: učenec lahko pogleda orodja drugega predmeta)
   let place = toolPlace(tool, subj());
@@ -52,14 +54,24 @@ export function createTools(root, opts) {
     q: root.querySelector(".tl-search input"),
   };
   const chip = (attr, k, label, on) => `<button type="button" role="tab" ${attr}="${k}" class="${on ? "active" : ""}" aria-selected="${on}">${esc(label)}</button>`;
-  /** Zadetki iskanja: ime orodja, teme ali predmeta (v jeziku vmesnika), vsako orodje enkrat. */
+  /**
+   * Zadetki iskanja: ime orodja, teme ali predmeta (v jeziku vmesnika), vsako orodje enkrat, s predmetom in temo
+   * zadetka (»kemija enačbe« odpre Enačbe pri kemiji); najprej pri izbranem predmetu, nato po vrsti.
+   */
   function matches(q) {
     const words = fold(q).split(/\s+/).filter(Boolean);
-    return TOOLS.filter((k) => {
-      const where = Object.entries(TOOL_GROUPS).flatMap(([s, g]) => g.filter(([, l]) => l.includes(k)).map(([id]) => `${t(`subj.${s}`)} ${t(`sc.tg.${id}`)}`));
-      const hay = fold(`${t(`sc.tool.${k}`)} ${where.join(" ")}`);
-      return words.every((w) => hay.includes(w));
-    });
+    const subjects = [place.subj, ...Object.keys(TOOL_GROUPS).filter((s) => s !== place.subj)];
+    const out = [];
+    for (const k of TOOLS)
+      for (const s of subjects) {
+        const g = TOOL_GROUPS[s].find(([, l]) => l.includes(k));
+        const hay = g && fold(`${t(`sc.tool.${k}`)} ${t(`subj.${s}`)} ${t(`sc.tg.${g[0]}`)}`);
+        if (hay && words.every((w) => hay.includes(w))) {
+          out.push({ k, subj: s, topic: g[0] });
+          break;
+        }
+      }
+    return out;
   }
   // izbira: predmet, teme predmeta, orodja izbrane teme; med iskanjem le zadetki iz vseh predmetov
   function drawNav() {
@@ -72,8 +84,8 @@ export function createTools(root, opts) {
     const groups = TOOL_GROUPS[place.subj];
     nav.topics.hidden = searching;
     nav.topics.innerHTML = groups.map(([id]) => chip("data-topic", id, t(`sc.tg.${id}`), id === place.topic)).join("");
-    const list = searching ? matches(query) : (groups.find(([id]) => id === place.topic) || groups[0])[1];
-    nav.pick.innerHTML = list.map((k) => chip("data-tool", k, t(`sc.tool.${k}`), k === tool)).join("");
+    const list = searching ? matches(query) : (groups.find(([id]) => id === place.topic) || groups[0])[1].map((k) => ({ k, ...place }));
+    nav.pick.innerHTML = list.map(({ k, subj: s, topic }) => chip("data-tool", k, t(`sc.tool.${k}`), k === tool).replace("<button ", `<button data-subj="${s}" data-topic="${topic}" `)).join("");
     nav.pick.hidden = !list.length;
     nav.none.hidden = !!list.length;
   }
@@ -107,7 +119,10 @@ export function createTools(root, opts) {
       drawNav();
     } else if (e.key === "Enter") {
       const first = query.trim() && matches(query)[0];
-      if (first) show(first, { clear: true });
+      if (first) {
+        place = { subj: first.subj, topic: first.topic };
+        show(first.k, { clear: true });
+      }
     }
   });
 
@@ -468,7 +483,9 @@ export function createTools(root, opts) {
   }
   nav.pick.addEventListener("click", (e) => {
     const b = e.target.closest("[data-tool]");
-    if (b) show(b.dataset.tool, { clear: true });
+    if (!b) return;
+    if (b.dataset.subj) place = { subj: b.dataset.subj, topic: b.dataset.topic };
+    show(b.dataset.tool, { clear: true });
   });
   body.addEventListener("click", (e) => {
     const b = e.target.closest(".tl-ins");
@@ -706,12 +723,14 @@ export function createFormulas(root, opts) {
   root.classList.add("fm");
   const seg = (cls, label, items) =>
     `<div class="seg ${cls}" role="tablist" aria-label="${esc(label)}">${items.map(([k, txt]) => `<button type="button" role="tab" data-k="${k}">${esc(txt)}</button>`).join("")}</div>`;
-  root.innerHTML = `<div class="fm-wrap"><div class="fm-bar"><div class="fm-sel">${seg("fm-subj", t("set.subject"), SUBJ.map((s) => [s, t(`subj.${s}`)]))}${seg("fm-lvl", t("set.school"), Object.entries(LVL).map(([l, key]) => [l, t(key)]))}</div><label class="tl-search fm-search">${opts.icon("search")}<input type="search" autocomplete="off" spellcheck="false" placeholder="${esc(t("sc.fmSearch"))}" aria-label="${esc(t("sc.fmSearch"))}"></label></div><p class="muted fm-none" hidden>${esc(t("sc.fmNone"))}</p><div class="fm-toc-bar" hidden><div class="chip-row fm-toc"></div></div><div class="fm-body textbook-md"></div></div>`;
+  root.innerHTML = `<div class="fm-wrap"><div class="fm-bar"><div class="fm-sel">${seg("fm-subj", t("set.subject"), SUBJ.map((s) => [s, t(`subj.${s}`)]))}${seg("fm-lvl", t("set.school"), Object.entries(LVL).map(([l, key]) => [l, t(key)]))}</div></div><div class="fm-stick"><label class="tl-search fm-search">${opts.icon("search")}<input type="search" autocomplete="off" spellcheck="false" placeholder="${esc(t("sc.fmSearch"))}" aria-label="${esc(t("sc.fmSearch"))}"></label><div class="fm-toc-bar" hidden><div class="chip-row fm-toc"></div></div></div><p class="muted fm-none" hidden>${esc(t("sc.fmNone"))}</p><div class="fm-body textbook-md"></div></div>`;
   const body = root.querySelector(".fm-body");
   // Kazalo je v svoji prilepljeni vrstici z ozadjem: bledenje roba drsne vrstice (drsniki.css, maska) bi sicer
   // zbledelo tudi ozadje kazala in pod njim bi se videl naslov kartice (j 12. 11. 2026).
   const tocBar = root.querySelector(".fm-toc-bar");
   const toc = tocBar.firstElementChild;
+  // iskanje in kazalo sta skupaj prilepljena na vrh: iskati se da tudi sredi dolgega lista
+  const stick = root.querySelector(".fm-stick");
   const q = root.querySelector(".fm-search input");
   const none = root.querySelector(".fm-none");
 
@@ -731,13 +750,17 @@ export function createFormulas(root, opts) {
       const all = !words.length || (head && hit(head));
       let any = all;
       let named = false; // zadnja formula z imenom je zadetek: nadaljevanja pod njo tudi
+      let owner = null; // vrstica z imenom nad nadaljevanji: ob zadetku v nadaljevanju se pokaže tudi ime
       for (const el of sec.querySelectorAll(":scope > .fm-list > .fm-item, :scope > :not(h2, .fm-list)")) {
         let on = all;
         if (!all) {
           if (el.classList.contains("fm-head")) on = false;
-          else if (el.classList.contains("fm-cont")) on = named || hit(el);
-          else on = named = hit(el);
+          else if (el.classList.contains("fm-cont")) {
+            on = named || hit(el);
+            if (on && owner) owner.hidden = false;
+          } else on = named = hit(el);
         }
+        if (el.classList.contains("fm-item") && !el.classList.contains("fm-cont")) owner = el;
         el.hidden = !on;
         any ||= on;
       }
@@ -746,6 +769,7 @@ export function createFormulas(root, opts) {
     }
     none.hidden = !words.length || !!shown || !body.querySelector(".fm-sec");
     tocBar.hidden = !!words.length || body.querySelectorAll(".fm-sec[id]").length < 2;
+    if (!words.length) spy();
   }
   let fTimer = 0;
   q.addEventListener("input", () => {
@@ -899,6 +923,7 @@ export function createFormulas(root, opts) {
   async function show(b) {
     const my = ++gen;
     book = BOOKS.includes(b) ? b : "MAT-OS";
+    none.hidden = true;
     markActive();
     // Vsaka pot spodaj zamenja vsebino lista: skic, ki se še niso naložile, ne opazujemo več.
     if (skIo) for (const x of body.querySelectorAll(".fm-skica")) skIo.unobserve(x);
@@ -950,7 +975,7 @@ export function createFormulas(root, opts) {
   // in označen bi bil zadnji čip. Takrat ne označujemo; ob prikazu pokliče resize() (pregled B2 P2-2).
   function spy() {
     if (tocBar.hidden || !root.getClientRects().length) return;
-    const top = tocBar.getBoundingClientRect().bottom + 8;
+    const top = stick.getBoundingClientRect().bottom + 8;
     let cur = null;
     for (const x of body.querySelectorAll(".fm-sec[id]")) if (x.getBoundingClientRect().top <= top + 1) cur = x.id;
     cur ??= body.querySelector(".fm-sec[id]")?.id;
@@ -986,7 +1011,7 @@ export function createFormulas(root, opts) {
     if (!sec) return;
     // kazalo je prilepljeno na vrh pomičnega okna, zato ciljamo tik podenj
     // (do dna lista, če je ciljna kartica zadnja in nižja od zaslona)
-    const goal = () => Math.min(root.scrollHeight - root.clientHeight, root.scrollTop + sec.getBoundingClientRect().top - root.getBoundingClientRect().top - tocBar.offsetHeight - 8);
+    const goal = () => Math.min(root.scrollHeight - root.clientHeight, root.scrollTop + sec.getBoundingClientRect().top - root.getBoundingClientRect().top - stick.offsetHeight - 8);
     if (Math.abs(goal() - root.scrollTop) < 2) return;
     // Kartice daleč od zaslona imajo do izrisa le ocenjeno višino (content-visibility v graph.css). Med pomikom
     // in po njem se kartice ob poti izrišejo s pravo višino (tudi skice, sirina.js), zato se cilj premakne.

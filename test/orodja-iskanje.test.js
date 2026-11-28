@@ -92,13 +92,23 @@ test("Orodja: predmet → tema → orodja, iskanje čez vse predmete; Formule: i
     s = await state();
     assert.deepEqual([s.subj, s.topic, s.active], ["KEM", "rxn", "rxn"]);
     assert.equal(await p.inputValue("#view-graph .tl-search input"), "");
+    // predmet v iskanju šteje: »kemija enačbe« odpre Enačbe pri kemiji (pregled 28. 11.)
+    await p.click('#view-graph .tl-subj [data-subj="MAT"]');
+    await p.fill("#view-graph .tl-search input", "kemija enacbe");
+    await p.click('#view-graph .tl-pick [data-tool="eq"]');
+    s = await state();
+    assert.deepEqual([s.subj, s.topic, s.active], ["KEM", "kcalc", "eq"]);
     await p.fill("#view-graph .tl-search input", "xyzq");
     assert.equal(await p.evaluate(() => !document.querySelector("#view-graph .tl-none").hidden), true);
-    // fizika: enote; predmet brez izbranega orodja odpre prvo orodje predmeta
+    // fizika ima enačbe pri gibanju: orodje ostane; predmet brez izbranega orodja odpre svoje prvo orodje
     await p.fill("#view-graph .tl-search input", "");
     await p.click('#view-graph .tl-subj [data-subj="FIZ"]');
     s = await state();
-    assert.deepEqual([s.subj, s.topic, s.active], ["FIZ", "meas", "units"]);
+    assert.deepEqual([s.subj, s.topic, s.active], ["FIZ", "mech", "eq"]);
+    await p.click('#view-graph .tl-pick [data-tool="vec"]');
+    await p.click('#view-graph .tl-subj [data-subj="KEM"]');
+    s = await state();
+    assert.deepEqual([s.subj, s.topic, s.active], ["KEM", "rxn", "rxn"]);
 
     // Formule: iskanje »pitagor« pusti le kartice z zadetkom, kazalo se skrije; prazno iskanje vrne vse
     await p.evaluate(() => document.querySelector('#view-graph [data-calc-mode="formulas"]').click());
