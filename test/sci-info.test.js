@@ -268,6 +268,11 @@ test("koti v podatkih s π tudi v DEG in GRA; enakomerne rešitve v enem zapisu;
   assert.equal(row(info("tan(x)", { deg: true }), "sc.infoAsym").tex, "x = \\tfrac{\\pi}{2} + k\\pi,\\ k \\in \\mathbb{Z}");
   assert.equal(row(info("sin(x)=0.5", { deg: true }), "sc.infoSolutions").tex, "x_{1} = \\tfrac{\\pi}{6} + 2k\\pi,\\ x_{2} = \\tfrac{5\\pi}{6} + 2k\\pi,\\ k \\in \\mathbb{Z}");
   assert.equal(row(info("sin(3x)", { deg: true }), "sc.infoPeriod").tex, "\\tfrac{2\\pi}{3}");
+  // cele stopinje so ulomki π, ne decimalke (pregled 28. 11.)
+  const t1 = info("tan(x-1)", { deg: true });
+  assert.equal(row(t1, "sc.infoRoots").tex, "x = \\tfrac{\\pi}{180} + k\\pi,\\ k \\in \\mathbb{Z}");
+  assert.equal(row(t1, "sc.infoAsym").tex, "x = \\tfrac{91\\pi}{180} + k\\pi,\\ k \\in \\mathbb{Z}");
+  assert.equal(row(info("sin(x+25)", { deg: true }), "sc.infoRoots").tex, "x = \\tfrac{31\\pi}{36} + k\\pi,\\ k \\in \\mathbb{Z}");
   const e = { vars: {}, funcs: {}, ans: 0, grad: true };
   const g = infoFor("cos(x)", analyze("cos(x)", { ...e, comma: true, live: true }), { comma: true, env: e });
   assert.equal(row(g, "sc.infoPeriod").tex, "2\\pi");

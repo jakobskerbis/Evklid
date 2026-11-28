@@ -4,7 +4,7 @@
 // Vrstice so po pomembnosti za trenutni vnos: prve tri so vidne, ostale pod »Več«. Vse izračuna kalkulator sam
 // (CAS in numerika), brez strežnika. Brez DOM razen SVG-niza (testi v test/sci-info.test.js).
 import { analyze, solutionTex, polyCoeffs } from "./scisolve.js";
-import { evaluate, compileLine, formatNumber, primeFactors, factorsTex, exactTex, mixedTex, usesAngles } from "./scicore.js";
+import { evaluate, compileLine, formatNumber, primeFactors, factorsTex, exactTex, mixedTex, usesAngles, toFraction } from "./scicore.js";
 import { molarMass } from "./toolscore.js";
 import { MASSES } from "./pse-data.js";
 import { siUnit, unitTexInner, OFFSET_TEMP } from "./enote.js";
@@ -408,7 +408,16 @@ export function periodOf(fn, env) {
 }
 // Koti v podatkih vedno v radianih z π (j 28. 11.: »ničle itd pri periodičnih funkcijah s pi, ne s stopinjami«):
 // v DEG in GRA je x v stopinjah oz. gradih, zapis pa je isti kot v radianih (180° → π, 200g → π).
-const angleTex = (P, env, nt) => nt(env.deg ? (P * Math.PI) / 180 : env.grad ? (P * Math.PI) / 200 : P);
+// Cel kot v stopinjah ali gradih je vedno ulomek π (1° = π/180, pregled 28. 11.: tan(x − 1) → π/180 + kπ, ne 0,01745 …).
+const angleTex = (P, env, nt) => {
+  const half = env.deg ? 180 : env.grad ? 200 : 0;
+  if (!half) return nt(P);
+  const f = toFraction(Math.round(P * 1e7) / 1e7 / half, 2 * half); // kot iz reševanja: 0,99999999999° → 1°
+  if (!f || !f.p) return nt((P * Math.PI) / half);
+  const a = Math.abs(f.p);
+  const num = `${a === 1 ? "" : a}\\pi`;
+  return `${f.p < 0 ? "-" : ""}${f.q === 1 ? num : `\\frac{${num}}{${f.q}}`}`;
+};
 /** x = a + kP za vsako rešitev v eni periodi [0, P). */
 function periodicTex(roots, P, env, nt, num) {
   const mod = (x) => {
@@ -424,8 +433,8 @@ function periodicTex(roots, P, env, nt, num) {
   // 2π → 2kπ, 2π/3 → 2kπ/3 (kot v učbeniku), sicer k · P
   const pi = /^(\d*)\\pi$/.exec(pt);
   const fr = /^\\frac\{(\d*)\\pi\}\{(\d+)\}$/.exec(pt);
-  const kP = pi ? `${pi[1]}k\\pi` : fr ? `\\frac{${fr[1]}k\\pi}{${fr[2]}}` : /^\d/.test(pt) && pt !== "1" ? `k \\cdot ${pt}` : `k \\cdot ${pt}`;
-  const at = (a) => (a ? `${angleTex(a, env, nt, num)} + ${kP}` : kP);
+  const kP = pi ? `${pi[1]}k\\pi` : fr ? `\\frac{${fr[1]}k\\pi}{${fr[2]}}` : `k \\cdot ${pt}`;
+  const at = (a) => (Math.abs(a) > 1e-9 * Math.max(1, P) ? `${angleTex(a, env, nt, num)} + ${kP}` : kP);
   return `${one.map((a, i) => `x${one.length > 1 ? `_{${i + 1}}` : ""} = ${at(a)}`).join(",\\ ")},\\ k \\in \\mathbb{Z}`;
 }
 
@@ -699,8 +708,8 @@ export function axisLabel(plot, angle, funcs = {}, comma = true) {
   const unit = angle === "deg" ? "°" : angle === "grad" ? "ᵍ" : "";
   const P = plot.period;
   if (!(Number.isFinite(P) && P > 0)) return `x [${unit || "rad"}]`;
-  const dec = (x) => String(+x.toFixed(4)).replace(".", comma ? "," : ".");
-  let v = unit ? `${dec(P)}${unit}` : null;
+  const dec = (x, d = 4) => String(+x.toFixed(d)).replace(".", comma ? "," : ".");
+  let v = unit ? `${dec(P, 1)}${unit}` : null;
   if (!v) {
     const r = P / Math.PI;
     for (let d = 1; d <= 12 && !v; d++) {
