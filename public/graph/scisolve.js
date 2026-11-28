@@ -839,7 +839,12 @@ function solveOne(F, v, { comma, unit = "rad", src, pr = null, vf = null }) {
   const near0 = criticalPoints(F, -R, R);
   const step = (2 * R) / SAMPLES;
   let roots = withoutHoles(F, near0, 2 * step).roots;
-  if (roots.length > 12) roots = roots.filter((x) => Math.abs(x) <= 20).slice(0, 12);
+  // veliko rešitev (nihanje): 12 najbližjih 0, na obeh straneh; meja je isti kot (20 rad) v vseh enotah, prej 20 tudi
+  // v stopinjah: sin(3x/2) = 0 v DEG je imela le x = 0, cos(3x/2) = 0 nobene (pregled 28. 11.)
+  if (roots.length > 12) {
+    const lim = unit === "rad" ? 20 : (20 * PERIOD[unit]) / (2 * Math.PI);
+    roots = roots.filter((x) => Math.abs(x) <= lim).sort((a, b) => Math.abs(a) - Math.abs(b) || a - b).slice(0, 12).sort((a, b) => a - b);
+  }
   // zunaj ±R iščemo samo, kjer funkcija blizu 0 ne niha (sin x = x/1000 ima stotine rešitev: ostane, kot je bilo)
   else if (near0.length <= 12) {
     const fp = farPoints(F, R);
