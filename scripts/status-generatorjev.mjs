@@ -230,7 +230,8 @@ export function nalogeGeneratorja(g, semena) {
       for (let seme = 1; seme <= semena; seme++) {
         let t;
         try {
-          t = generateTask(tema, raven, seme, undefined, leto);
+          // generator je pripet: druga generatorja iste teme (npr. gim-*-dop) mu ne odvzameta nalog
+          t = generateTask(tema, raven, seme, undefined, leto, g.id);
         } catch {
           continue;
         }
