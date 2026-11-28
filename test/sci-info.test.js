@@ -207,6 +207,12 @@ test("navpične asimptote: ostali poli, robovi in vgnezdeni imenovalci", () => {
   assert.equal(as("1/sqrt(x-20)"), "x = 20");
   assert.equal(as("1/ln(x-10)"), "x = 11");
   assert.equal(row(info("1/(x-3)^x"), "sc.infoDomain"), undefined);
+  // 1/x⁻¹ (tipka x⁻¹) = x, a pri 0 ni definirana: x ≠ 0, ni ničle, prazna točka (0, 0)
+  const inv = info("1/x⁻¹");
+  assert.equal(row(inv, "sc.infoDomain").tex, "x \\neq 0");
+  assert.equal(row(inv, "sc.infoRoots").text, "sc.infoNoRoots");
+  assert.deepEqual(inv.plot.holes, [[0, 0]]);
+  assert.equal(as("1/sqrt(x-1000000)"), "x = 1000000");
   assert.equal(as("tan(tan(x))"), null); // poli se kopičijo ob π/2: seznam ne bi bil popoln
   assert.equal(as("1/sin(tan(x))"), null);
   // brez zanesljivega imenovalca (velik vrh brez ničle imenovalca) ali z logaritmom: raje nič

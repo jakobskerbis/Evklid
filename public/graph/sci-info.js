@@ -56,14 +56,20 @@ function denominators(s, env = {}) {
   const hasX = (n) => n && typeof n === "object" && (n.k === "var" ? n.name === "x" : Object.values(n).some((v) => (Array.isArray(v) ? v.some(hasX) : hasX(v))));
   const walk = (n) => {
     if (!n || typeof n !== "object") return;
-    if (n.k === "/" && hasX(n.b)) ast.push(n.b);
+    if (n.k === "/" && hasX(n.b)) {
+      ast.push(n.b);
+      // deljenje z negativno potenco (1/x⁻¹ = x): osnova 0 tudi izključi točko
+      let e = n.b.k === "^" ? n.b.b : null;
+      while (e?.k === "grp") e = e.a;
+      if (e && (e.k === "neg" || (e.k === "num" && e.v < 0)) && hasX(n.b.a)) ast.push(n.b.a);
+    }
     for (const v of Object.values(n)) Array.isArray(v) ? v.forEach(walk) : walk(v);
   };
   if (L?.ast) walk(L.ast);
   if (!ast.length) return { list: [], missing: false };
   // vzorci blizu 0 in daleč (√(x − 20), ln(x − 1000) sta definirana šele daleč od 0)
   const xs = [0.37, 1.29, 2.71, -0.83, 5.3, -3.7, 0.61, -0.29, 3.3, 7.9, -9.1, 12.6];
-  for (let k = 4; k <= 20; k++) xs.push(0.37 * 2 ** k, -0.41 * 2 ** k);
+  for (let k = 4; k <= 30; k += k < 20 ? 1 : 2) xs.push(0.37 * 2 ** k, -0.41 * 2 ** k);
   const runNode = (n) => {
     try {
       const code = L.run(n);
@@ -101,7 +107,7 @@ function denominators(s, env = {}) {
     const vars = [];
     // potenca za osnovo, ki se konča pri end: 1/sin(x)^2, 1/(x − 1)^2 (deljenje s potenco)
     // (le številski eksponent, tudi ² ³ s tipkovnice; x^x ali (x − 3)^x ne ugibamo)
-    const pow = (end) => /^(?:\^\s*\d+(?:[.,]\d+)?|[⁰¹²³⁴⁵⁶⁷⁸⁹]+)/u.exec(s.slice(end))?.[0] ?? (/^\^\s*\(\s*-?\d+(?:[.,]\d+)?\s*\)/.exec(s.slice(end))?.[0] || null);
+    const pow = (end) => /^(?:\^\s*\d+(?:[.,]\d+)?|⁻?[⁰¹²³⁴⁵⁶⁷⁸⁹]+)/u.exec(s.slice(end))?.[0] ?? (/^\^\s*\(\s*-?\d+(?:[.,]\d+)?\s*\)/.exec(s.slice(end))?.[0] || null);
     const withPow = (base, end) => {
       const pw = pow(end);
       if (pw) vars.push(`${base}${pw}`);
@@ -113,7 +119,7 @@ function denominators(s, env = {}) {
     } else {
       const num = /^\d[\d.,]*/.exec(s.slice(j))?.[0];
       if (num) vars.push(num);
-      const w = /^[\p{L}\d.,√^]+/u.exec(s.slice(j))?.[0];
+      const w = /^[\p{L}\d.,√^]+/u.exec(s.slice(j))?.[0]?.replace(/\^$/, ""); // x^(−2): potenca posebej
       if (w) {
         const arg = s[j + w.length] === "(" ? group(s, j + w.length) : null;
         if (arg != null) withPow(`${w}(${arg})`, j + w.length + arg.length + 2);
@@ -125,8 +131,7 @@ function denominators(s, env = {}) {
       const k = nodeFns.findIndex((h, m) => h && !found.has(m) && same(fnOf(g, env), h));
       if (k < 0) continue;
       found.add(k);
-      list.push(g);
-      break;
+      list.push(g); // brez prekinitve: x⁻¹ in njena osnova x sta oba imenovalca
     }
   }
   return { list, missing: found.size < ast.length };
