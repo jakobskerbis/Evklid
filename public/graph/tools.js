@@ -11,7 +11,7 @@ import { ELEMENTS, CATEGORIES, MASSES, shells, EXTRA } from "./pse-data.js";
 import { esc, texHtml, usesComma, remember } from "./tools-kit.js";
 import { chemTools } from "./tools-chem.js";
 import { formulaToCalc, vRadianih, formulaPlot } from "./formula-calc.js";
-import { chemText } from "./molska.js";
+import { chemText, chemTex } from "./molska.js";
 import { probTool } from "./tools-prob.js";
 import { anaTools } from "./tools-ana.js";
 import { testsTool, tvmTool, tableTool } from "./tools-test.js";
@@ -542,12 +542,11 @@ export function createPse(root, opts) {
     const r = molarMass(f, MASSES);
     if (!r) return (out.innerHTML = "");
     if (r.error) return (out.innerHTML = `<p class="tl-err">${icon("info")}<span>${esc(r.error === "element" ? t("sc.badElement", { sym: r.sym }) : t("sc.badFormula"))}</span></p>`);
-    const texF = f.replace(/\s+/g, "").replace(/(\d+)/g, (m, d, i, s) => (i === 0 || /[·*•.]/.test(s[i - 1]) ? m : `_{${m}}`)).replace(/[·*•]/g, "\\cdot ").replace(/\^/g, "^");
     const rows = [...r.counts].map(([sym, n]) => {
       const ar = MASSES[sym];
       return `<tr><td>${esc(sym)}</td><td>${n}</td><td>${dec(ar, 3)}</td><td>${dec(n * ar, 3)}</td><td>${dec((100 * n * ar) / r.M, 2)} %</td></tr>`;
     });
-    out.innerHTML = `<div class="pse-mm-res">${texHtml(`M(\\mathrm{${texF}}) = ${dec(r.M, 2).replace(",", "{,}")}\\ \\mathrm{g/mol}`)}</div>
+    out.innerHTML = `<div class="pse-mm-res">${texHtml(`M(${chemTex(f)}) = ${dec(r.M, 2).replace(",", "{,}")}\\ \\mathrm{g/mol}`)}</div>
       <table class="pse-tab"><thead><tr><th></th><th>N</th><th>${texHtml("A_r")}</th><th>${texHtml("N \\cdot A_r")}</th><th>${texHtml("w")}</th></tr></thead><tbody>${rows.join("")}</tbody></table>
       ${opts.onInsert ? `<div class="actions pse-act"><button type="button" class="secondary small pse-mm-ins">${icon("calculator")}<span>${esc(t("sc.toCalc"))}</span></button></div>` : ""}`;
     // cela formula v kalkulator: M(H₂SO₄) se tam izračuna kot molska masa in jo lahko uporabiš v računu

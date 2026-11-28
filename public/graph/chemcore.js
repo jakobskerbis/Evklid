@@ -1,47 +1,20 @@
 // Kemijska računala: urejanje enačb reakcij, stehiometrija, pH, koncentracije, redčenje,
 // tabela topnosti. Brez DOM (preizkusi v test/tools.test.js).
-import { molarMass } from "./toolscore.js";
+import { molarMass, splitCharge } from "./toolscore.js";
 
 // ---------- zapis zvrsti (molekula ali ion) ----------
 
-const SUP = { "⁰": "0", "¹": "1", "²": "2", "³": "3", "⁴": "4", "⁵": "5", "⁶": "6", "⁷": "7", "⁸": "8", "⁹": "9", "⁺": "+", "⁻": "-" };
-
 /**
  * Razčleni zvrst: »H2SO4«, »Fe^3+«, »Fe3+«, »SO4^2-«, »NH4+«, »e-«, »CuSO4·5H2O«, »H2O(l)«.
- * Naboj brez »^« je enoatomnim ionom števka pred znakom (Fe3+), večatomnim pa samo + ali − (NH4+).
+ * Naboj brez »^« je enoatomnim ionom števka pred znakom (Fe3+), večatomnim pa samo + ali − (NH4+) (splitCharge).
  * Vrne { formula, charge, counts: Map, M } ali { error, sym? }.
  */
 export function parseSpecies(text, masses) {
   let s = String(text ?? "").trim().replace(/[−–]/g, "-");
   s = s.replace(/\((aq|s|l|g)\)$/i, "").trim();
-  // nadpisani naboj
-  const sup = /[⁰¹²³⁴⁵⁶⁷⁸⁹]*[⁺⁻]$/.exec(s);
-  let charge = 0;
-  if (sup) {
-    const t = [...sup[0]].map((c) => SUP[c]).join("");
-    charge = (t.endsWith("-") ? -1 : 1) * (Number(t.slice(0, -1)) || 1);
-    s = s.slice(0, -sup[0].length);
-  } else {
-    const hat = /\^\{?(\d*)([+-])\}?$|\^\{?([+-])(\d*)\}?$/.exec(s);
-    if (hat) {
-      const n = Number(hat[1] || hat[4]) || 1;
-      charge = (hat[2] || hat[3]) === "-" ? -n : n;
-      s = s.slice(0, hat.index);
-    } else {
-      const tail = /(\d*)([+-])$/.exec(s);
-      if (tail) {
-        const body = s.slice(0, tail.index);
-        // enoatomni ion: Fe3+, S2-, Al3+
-        if (/^[A-Z][a-z]?$/.test(body) && tail[1]) {
-          charge = (tail[2] === "-" ? -1 : 1) * Number(tail[1]);
-          s = body;
-        } else {
-          charge = tail[2] === "-" ? -1 : 1;
-          s = s.slice(0, -1);
-        }
-      }
-    }
-  }
+  // naboj: isto pravilo kot molska masa v periodnem sistemu in M(…) v kalkulatorju (toolscore.js)
+  let charge;
+  ({ body: s, charge } = splitCharge(s));
   s = s.replace(/^\d+(?=[A-Z([])/, ""); // koeficient, ki ga je kdo vpisal
   if (s === "e") return { formula: "e", charge: -1, counts: new Map(), M: 0, electron: true };
   if (!s) return { error: "syntax" };

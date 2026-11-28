@@ -2,19 +2,25 @@
 // tudi sredi računa: m = 0,5 · M(H₂SO₄), 2 = n · M(NaCl). Brez DOM (preizkusi v test/formula-calc.test.js).
 // Kalkulator M(…) ne pozna, zato vsako formulo zamenjamo s spremenljivko M_kem0, M_kem1 … z vrednostjo iz
 // periodnega sistema in v zapisu rezultata (TeX) spet pokažemo M(H₂SO₄). M brez oklepaja ostane spomin (MR).
-import { molarMass } from "./toolscore.js";
+import { molarMass, splitCharge } from "./toolscore.js";
 import { MASSES } from "./pse-data.js";
 
-const KEM = /^[A-Z([][A-Za-z0-9₀-₉()[\]·•*×.]*$/;
+// formula in na koncu morda naboj iona: Fe3+, Fe^3+, Fe³⁺, SO4^2−, NH4+ (M(Fe³⁺) = M(Fe), naboj mase ne spremeni)
+const KEM = /^[A-Z([][A-Za-z0-9₀-₉()[\]·•*×.]*(?:\^\{?\d*[+\-−–]\}?|\^\{?[+\-−–]\d*\}?|[⁰¹²³⁴⁵⁶⁷⁸⁹]*[⁺⁻]|\d*[+\-−–])?$/;
 
-/** TeX kemijske formule: H2SO4 → \mathrm{H_{2}SO_{4}}, CuSO4·5H2O → \mathrm{CuSO_{4}\cdot 5H_{2}O}. */
+/**
+ * TeX kemijske formule: H2SO4 → \mathrm{H_{2}SO_{4}}, CuSO4·5H2O → \mathrm{CuSO_{4}\cdot 5H_{2}O},
+ * Fe3+ → \mathrm{Fe}^{3+}, NH4+ → \mathrm{NH_{4}}^{+} (naboj po splitCharge).
+ */
 export function chemTex(f) {
-  const s = String(f)
+  const { body, charge } = splitCharge(f);
+  const q = charge ? `^{${Math.abs(charge) > 1 ? Math.abs(charge) : ""}${charge > 0 ? "+" : "-"}}` : "";
+  const s = body
     .replace(/[₀-₉]/g, (c) => String(c.charCodeAt(0) - 0x2080))
     .replace(/[·•*×.]/g, "·")
     .replace(/(\d+)/g, (m, d, i, str) => (i === 0 || str[i - 1] === "·" ? m : `_{${m}}`))
     .replace(/·/g, "\\cdot ");
-  return `\\mathrm{${s}}`;
+  return `\\mathrm{${s}}${q}`;
 }
 
 /**
@@ -73,14 +79,12 @@ export function chemSub(text) {
 const SUB = "₀₁₂₃₄₅₆₇₈₉";
 /**
  * Besedilo za vnos v kalkulator iz periodnega sistema: »H2SO4« → »M(H₂SO₄)«, »CuSO4·5H2O« → »M(CuSO₄·5H₂O)«.
- * Naboj iona za ^ (SO4^2-) ali sam + / − na koncu (NH4+) odpade, ker ne spremeni molske mase (Fe3+ se kot v
- * periodnem sistemu bere kot Fe₃). Vrne null, če kalkulator formule ne bi prebral.
+ * Naboj iona (Fe3+, SO4^2-, NH4+; splitCharge) odpade, ker ne spremeni molske mase: Fe3+ → M(Fe), en atom
+ * železa. Vrne null, če kalkulator formule ne bi prebral.
  */
 export function chemText(formula) {
-  const f = String(formula ?? "")
-    .replace(/\s+/g, "")
-    .replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻]+$/, "")
-    .replace(/\^\d*[+-]$|[+-]$/, "")
+  const f = splitCharge(formula)
+    .body.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]+$/, "")
     .replace(/[*•×]/g, "·")
     .replace(/\.(?=\d*[A-Z])/g, "·")
     .replace(/[₀-₉]/g, (c) => String(c.charCodeAt(0) - 0x2080))
