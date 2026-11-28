@@ -480,7 +480,8 @@ export function nalogeGeneratorja(g, semena) {
     for (let seme = 1; seme <= semena; seme++) {
       let t;
       try {
-        t = generateTask(g.topics[0], raven, seme, undefined, g.maxYear ?? undefined);
+        // generator je pripet: drugi generatorji iste teme mu ne odvzamejo nalog
+        t = generateTask(g.topics[0], raven, seme, undefined, g.maxYear ?? undefined, g.id);
       } catch {
         continue;
       }

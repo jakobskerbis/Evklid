@@ -21,6 +21,13 @@ import { DODATNE_FIZ_SS } from "./generators/dodatne-fiz-ss.js";
 import { DODATNE_KEM_SS } from "./generators/dodatne-kem-ss.js";
 import { DODATNE_VRZELI_MAT } from "./generators/dodatne-vrzeli-mat.js";
 import { DODATNE_VRZELI_FIZ_KEM } from "./generators/dodatne-vrzeli-fiz-kem.js";
+import { GIMNAZIJA_MAT_SS1 } from "./generators/gimnazija-mat-ss1.js";
+import { GIMNAZIJA_MAT_SS2 } from "./generators/gimnazija-mat-ss2.js";
+import { GIMNAZIJA_MAT_SS3 } from "./generators/gimnazija-mat-ss3.js";
+import { GIMNAZIJA_MAT_SS4 } from "./generators/gimnazija-mat-ss4.js";
+import { GIMNAZIJA_FIZ_SS1 } from "./generators/gimnazija-fiz-ss1.js";
+import { GIMNAZIJA_FIZ_SS23 } from "./generators/gimnazija-fiz-ss23.js";
+import { GIMNAZIJA_KEM_SS } from "./generators/gimnazija-kem-ss.js";
 import { NAR_GENERATORS } from "./generators/nar.js";
 import { BIO_GENERATORS } from "./generators/bio.js";
 import { TEK_MAT_OS } from "./generators/tek-mat-os.js";
@@ -60,6 +67,14 @@ export const GENERATORS = [
   // teme, dodane po primerjavi z učnimi načrti (2026-10-30)
   ...DODATNE_VRZELI_MAT,
   ...DODATNE_VRZELI_FIZ_KEM,
+  // Gimnazija: drugi tip naloge za teme z enim samim generatorjem (2026-11-25).
+  ...GIMNAZIJA_MAT_SS1,
+  ...GIMNAZIJA_MAT_SS2,
+  ...GIMNAZIJA_MAT_SS3,
+  ...GIMNAZIJA_MAT_SS4,
+  ...GIMNAZIJA_FIZ_SS1,
+  ...GIMNAZIJA_FIZ_SS23,
+  ...GIMNAZIJA_KEM_SS,
   // naravoslovje OŠ 6. in 7. razred
   ...NAR_GENERATORS,
   ...BIO_GENERATORS,
@@ -142,11 +157,18 @@ export function plainCommas(t, slovensko = true) {
 // lang: jezik besedila pri dvojezičnih generatorjih ("hi" = hindijsko, sicer angleško
 // ali slovensko); drugi generatorji ga prezrejo. Isto seme da v vseh jezikih isto nalogo.
 // year: leto šolanja učenca (izbira generatorjev s minYear/maxYear); drugi generatorji ga prezrejo.
-export function generateTask(topicId, level = 1, seed = crypto.randomInt(2 ** 31), lang = "en", year = null) {
+// generatorId (neobvezno): naloga točno tega generatorja teme. Žreb generatorja vseeno porabi eno število,
+// zato sta seme in besedilo enaka kot takrat, ko je žreb izbral ta generator (zamrznjeni nabori, npr. AUDIT-094).
+export function generateTask(topicId, level = 1, seed = crypto.randomInt(2 ** 31), lang = "en", year = null, generatorId = null) {
   const gens = gensForYear(topicId, year);
   if (!gens.length) return null;
   const r = makeRng(seed);
-  const [g, genTopic] = r.pick(gens);
+  let [g, genTopic] = r.pick(gens);
+  if (generatorId && g.id !== generatorId) {
+    const izbran = gens.find(([x]) => x.id === generatorId);
+    if (!izbran) return null;
+    [g, genTopic] = izbran;
+  }
   // Nekaj poskusov, če bi generator vrnil neveljavno nalogo.
   for (let i = 0; i < 5; i++) {
     const t = g.gen(level, r, genTopic, lang, year);
