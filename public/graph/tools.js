@@ -18,18 +18,9 @@ import { testsTool, tvmTool, tableTool } from "./tools-test.js";
 import { statsTool } from "./tools-stats.js";
 import { sheetTool } from "./tools-sheet.js";
 import { trialsTool } from "./tools-trials.js";
+import { TOOL_GROUPS, toolPlace, fold } from "./tools-groups.js";
 
-const TOOLS = ["units", "eq", "calc", "stats", "sheet", "tests", "prob", "trials", "vec", "matrix", "plot3", "ode", "err", "complex", "base", "tvm", "table", "rxn", "conc", "solub"];
-// vrstni red čipov po predmetu: najprej orodja, ki jih predmet največ rabi
-const ORDER = {
-  KEM: ["rxn", "conc", "solub", "units", "err", "stats", "eq"],
-  FIZ: ["units", "err", "eq", "vec", "calc", "ode", "stats"],
-  MAT: ["eq", "calc", "table", "stats", "sheet", "tests", "prob", "trials", "vec", "matrix", "plot3", "ode", "complex", "base", "tvm"],
-};
-const toolOrder = (subj) => {
-  const first = ORDER[subj] || ORDER.MAT;
-  return [...first, ...TOOLS.filter((k) => !first.includes(k))];
-};
+const TOOLS = [...new Set(Object.values(TOOL_GROUPS).flatMap((g) => g.flatMap(([, l]) => l)))];
 
 /**
  * Zbirka orodij z izbiro zgoraj.
@@ -41,15 +32,84 @@ export function createTools(root, opts) {
   // v orodjih dovolj 8 veljavnih mest (5,0990195 namesto 5,09901951359)
   const num = (v, mode = "auto") => formatNumber(Number.isFinite(v) ? Number(v.toPrecision(8)) : v, { mode, comma: comma() });
   const insText = (v) => formatNumber(v, { comma: comma() }).text.replace(" · 10^", "E").replace("−", "-");
-  const subj = () => opts.subject?.() || "MAT";
-  let tool = TOOLS.includes(remember.get("evklid.tool")) ? remember.get("evklid.tool") : toolOrder(subj())[0];
+  const subj = () => (TOOL_GROUPS[opts.subject?.()] ? opts.subject() : "MAT");
+  let tool = TOOLS.includes(remember.get("evklid.tool")) ? remember.get("evklid.tool") : TOOL_GROUPS[subj()][0][1][0];
   const views = {};
+  // izbrani predmet in tema v izbiri (ne nujno učenčev predmet: učenec lahko pogleda orodja drugega predmeta)
+  let place = toolPlace(tool, subj());
+  let query = "";
 
   root.classList.add("tl");
-  root.innerHTML = `<div class="tl-top"><div class="chip-row tl-pick" role="tablist" aria-label="${esc(t("sc.toolsMode"))}">${toolOrder(subj()).map(
-    (k) => `<button type="button" role="tab" data-tool="${k}">${esc(t(`sc.tool.${k}`))}</button>`,
-  ).join("")}</div></div><div class="tl-body"></div>`;
+  root.innerHTML = `<div class="tl-top"><div class="tl-nav"><div class="seg tl-subj" role="tablist" aria-label="${esc(t("set.subject"))}">${Object.keys(TOOL_GROUPS)
+    .map((s) => `<button type="button" role="tab" data-subj="${s}">${esc(t(`subj.${s}`))}</button>`)
+    .join("")}</div><label class="tl-search">${icon("search")}<input type="search" autocomplete="off" spellcheck="false" placeholder="${esc(t("sc.toolSearch"))}" aria-label="${esc(t("sc.toolSearch"))}"></label></div><div class="chip-row tl-topics" role="tablist" aria-label="${esc(t("sc.toolTopics"))}"></div><div class="chip-row tl-pick" role="tablist" aria-label="${esc(t("sc.toolsMode"))}"></div><p class="muted tl-none" hidden>${esc(t("sc.toolNone"))}</p></div><div class="tl-body"></div>`;
   const body = root.querySelector(".tl-body");
+  const nav = {
+    subj: root.querySelector(".tl-subj"),
+    topics: root.querySelector(".tl-topics"),
+    pick: root.querySelector(".tl-pick"),
+    none: root.querySelector(".tl-none"),
+    q: root.querySelector(".tl-search input"),
+  };
+  const chip = (attr, k, label, on) => `<button type="button" role="tab" ${attr}="${k}" class="${on ? "active" : ""}" aria-selected="${on}">${esc(label)}</button>`;
+  /** Zadetki iskanja: ime orodja, teme ali predmeta (v jeziku vmesnika), vsako orodje enkrat. */
+  function matches(q) {
+    const words = fold(q).split(/\s+/).filter(Boolean);
+    return TOOLS.filter((k) => {
+      const where = Object.entries(TOOL_GROUPS).flatMap(([s, g]) => g.filter(([, l]) => l.includes(k)).map(([id]) => `${t(`subj.${s}`)} ${t(`sc.tg.${id}`)}`));
+      const hay = fold(`${t(`sc.tool.${k}`)} ${where.join(" ")}`);
+      return words.every((w) => hay.includes(w));
+    });
+  }
+  // izbira: predmet, teme predmeta, orodja izbrane teme; med iskanjem le zadetki iz vseh predmetov
+  function drawNav() {
+    const searching = !!query.trim();
+    nav.subj.querySelectorAll("[data-subj]").forEach((b) => {
+      const on = !searching && b.dataset.subj === place.subj;
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-selected", String(on));
+    });
+    const groups = TOOL_GROUPS[place.subj];
+    nav.topics.hidden = searching;
+    nav.topics.innerHTML = groups.map(([id]) => chip("data-topic", id, t(`sc.tg.${id}`), id === place.topic)).join("");
+    const list = searching ? matches(query) : (groups.find(([id]) => id === place.topic) || groups[0])[1];
+    nav.pick.innerHTML = list.map((k) => chip("data-tool", k, t(`sc.tool.${k}`), k === tool)).join("");
+    nav.pick.hidden = !list.length;
+    nav.none.hidden = !!list.length;
+  }
+  nav.subj.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-subj]");
+    if (!b) return;
+    query = nav.q.value = "";
+    const g = TOOL_GROUPS[b.dataset.subj];
+    // ob menjavi predmeta tema z izbranim orodjem, če ga predmet ima; sicer prva tema in njeno prvo orodje
+    const keep = g.find(([, l]) => l.includes(tool));
+    place = { subj: b.dataset.subj, topic: (keep || g[0])[0] };
+    if (keep) drawNav();
+    else show(g[0][1][0]);
+  });
+  nav.topics.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-topic]");
+    if (!b) return;
+    const l = TOOL_GROUPS[place.subj].find(([id]) => id === b.dataset.topic)[1];
+    place = { ...place, topic: b.dataset.topic };
+    if (l.includes(tool)) drawNav();
+    else show(l[0]);
+  });
+  nav.q.addEventListener("input", () => {
+    query = nav.q.value;
+    drawNav();
+  });
+  nav.q.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && nav.q.value) {
+      e.preventDefault();
+      query = nav.q.value = "";
+      drawNav();
+    } else if (e.key === "Enter") {
+      const first = query.trim() && matches(query)[0];
+      if (first) show(first, { clear: true });
+    }
+  });
 
   // ---- skupni gradniki ----
   const insertBtn = (v) => (Number.isFinite(v) ? `<button type="button" class="ghost icon-only tl-ins" data-v="${esc(insText(v))}" title="${esc(t("sc.toCalc"))}" aria-label="${esc(t("sc.toCalc"))}">${icon("calculator")}</button>` : "");
@@ -387,13 +447,17 @@ export function createTools(root, opts) {
     matrix: matrix_,
     base: base_,
   };
-  function show(k) {
+  function show(k, { clear = false } = {}) {
+    if (!TOOLS.includes(k)) return;
     tool = k;
     remember.set("evklid.tool", k);
-    root.querySelectorAll(".tl-pick [data-tool]").forEach((b) => {
-      b.classList.toggle("active", b.dataset.tool === k);
-      b.setAttribute("aria-selected", String(b.dataset.tool === k));
-    });
+    // izbrano orodje je v izbrani temi; iz iskanja (ali od drugod) skoči v svoj predmet in temo
+    const g = TOOL_GROUPS[place.subj].find(([id]) => id === place.topic);
+    if (!g?.[1].includes(k) || clear) {
+      if (!g?.[1].includes(k)) place = toolPlace(k, place.subj);
+      query = nav.q.value = "";
+    }
+    drawNav();
     if (!views[k]) {
       views[k] = document.createElement("div");
       views[k].className = `tl-view tl-${k}`;
@@ -402,9 +466,9 @@ export function createTools(root, opts) {
     body.replaceChildren(views[k]);
     views[k]._api?.resize?.();
   }
-  root.querySelector(".tl-pick").addEventListener("click", (e) => {
+  nav.pick.addEventListener("click", (e) => {
     const b = e.target.closest("[data-tool]");
-    if (b) show(b.dataset.tool);
+    if (b) show(b.dataset.tool, { clear: true });
   });
   body.addEventListener("click", (e) => {
     const b = e.target.closest(".tl-ins");
@@ -418,11 +482,14 @@ export function createTools(root, opts) {
       views[tool]?._api?.resize?.();
     },
     reload() {
-      // ob drugem predmetu preuredimo čipe (kemija: najprej enačbe reakcij)
+      // ob drugem predmetu učenca izbira pokaže njegov predmet (orodje ostane, če ga predmet ima)
       if (subj() === lastSubj) return;
       lastSubj = subj();
-      const pick = root.querySelector(".tl-pick");
-      for (const k of toolOrder(lastSubj)) pick.append(pick.querySelector(`[data-tool="${k}"]`));
+      const g = TOOL_GROUPS[lastSubj];
+      const keep = g.find(([, l]) => l.includes(tool));
+      place = { subj: lastSubj, topic: (keep || g[0])[0] };
+      if (keep) drawNav();
+      else show(g[0][1][0]);
     },
     show,
     /** »Pretvori enote« iz znanstvenega kalkulatorja: pretvornik z vpisano vrednostjo. */
@@ -639,12 +706,59 @@ export function createFormulas(root, opts) {
   root.classList.add("fm");
   const seg = (cls, label, items) =>
     `<div class="seg ${cls}" role="tablist" aria-label="${esc(label)}">${items.map(([k, txt]) => `<button type="button" role="tab" data-k="${k}">${esc(txt)}</button>`).join("")}</div>`;
-  root.innerHTML = `<div class="fm-wrap"><div class="fm-bar"><div class="fm-sel">${seg("fm-subj", t("set.subject"), SUBJ.map((s) => [s, t(`subj.${s}`)]))}${seg("fm-lvl", t("set.school"), Object.entries(LVL).map(([l, key]) => [l, t(key)]))}</div></div><div class="fm-toc-bar" hidden><div class="chip-row fm-toc"></div></div><div class="fm-body textbook-md"></div></div>`;
+  root.innerHTML = `<div class="fm-wrap"><div class="fm-bar"><div class="fm-sel">${seg("fm-subj", t("set.subject"), SUBJ.map((s) => [s, t(`subj.${s}`)]))}${seg("fm-lvl", t("set.school"), Object.entries(LVL).map(([l, key]) => [l, t(key)]))}</div><label class="tl-search fm-search">${opts.icon("search")}<input type="search" autocomplete="off" spellcheck="false" placeholder="${esc(t("sc.fmSearch"))}" aria-label="${esc(t("sc.fmSearch"))}"></label></div><p class="muted fm-none" hidden>${esc(t("sc.fmNone"))}</p><div class="fm-toc-bar" hidden><div class="chip-row fm-toc"></div></div><div class="fm-body textbook-md"></div></div>`;
   const body = root.querySelector(".fm-body");
   // Kazalo je v svoji prilepljeni vrstici z ozadjem: bledenje roba drsne vrstice (drsniki.css, maska) bi sicer
   // zbledelo tudi ozadje kazala in pod njim bi se videl naslov kartice (j 12. 11. 2026).
   const tocBar = root.querySelector(".fm-toc-bar");
   const toc = tocBar.firstElementChild;
+  const q = root.querySelector(".fm-search input");
+  const none = root.querySelector(".fm-none");
+
+  // Iskanje po listu (j 28. 11.: »naj imajo formule in orodja tudi iskanje«): ime formule, formula (TeX) in naslov
+  // razdelka, brez šumnikov in velikih črk. Zadetek v naslovu pokaže ves razdelek, zadetek v imenu formule tudi
+  // njena nadaljevanja (vrstice brez imena). Med iskanjem kazala ni.
+  const hay = (el) => fold(el.textContent);
+  function filter() {
+    const words = fold(q.value).split(/\s+/).filter(Boolean);
+    const hit = (el) => {
+      const h = hay(el);
+      return words.every((w) => h.includes(w));
+    };
+    let shown = 0;
+    for (const sec of body.querySelectorAll(".fm-sec")) {
+      const head = sec.querySelector(":scope > h2");
+      const all = !words.length || (head && hit(head));
+      let any = all;
+      let named = false; // zadnja formula z imenom je zadetek: nadaljevanja pod njo tudi
+      for (const el of sec.querySelectorAll(":scope > .fm-list > .fm-item, :scope > :not(h2, .fm-list)")) {
+        let on = all;
+        if (!all) {
+          if (el.classList.contains("fm-head")) on = false;
+          else if (el.classList.contains("fm-cont")) on = named || hit(el);
+          else on = named = hit(el);
+        }
+        el.hidden = !on;
+        any ||= on;
+      }
+      sec.hidden = !any;
+      if (any) shown++;
+    }
+    none.hidden = !words.length || !!shown || !body.querySelector(".fm-sec");
+    tocBar.hidden = !!words.length || body.querySelectorAll(".fm-sec[id]").length < 2;
+  }
+  let fTimer = 0;
+  q.addEventListener("input", () => {
+    clearTimeout(fTimer);
+    fTimer = setTimeout(filter, 120);
+  });
+  q.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && q.value) {
+      e.preventDefault();
+      q.value = "";
+      filter();
+    }
+  });
 
   // Markdown zbirke razdelimo na kartice po naslovih; dvostolpčne tabele postanejo vrstice »ime + formula«,
   // da se na telefonu ime postavi nad formulo in se formula ne lomi sredi izraza.
@@ -825,6 +939,7 @@ export function createFormulas(root, opts) {
     const secs = [...body.querySelectorAll(".fm-sec[id]")];
     toc.innerHTML = secs.map((x) => `<button type="button" data-sec="${x.id}">${esc(x.querySelector("h2").textContent)}</button>`).join("");
     tocBar.hidden = secs.length < 2;
+    if (q.value.trim()) filter(); // iskanje ostane ob menjavi lista
     spy();
   }
 
