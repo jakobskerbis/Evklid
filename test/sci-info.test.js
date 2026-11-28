@@ -296,6 +296,9 @@ test("DEG in GRA: sin(3x/2) = 0 in cos(3x/2) = 0 imata vse rešitve (prej le x =
   const rad = sol("sin(3x/2)=0", "rad");
   assert.equal(rad.length, 12);
   assert.ok(rad.some((r) => Math.abs(r - (8 * Math.PI) / 3) < 1e-6) && rad.some((r) => Math.abs(r + (8 * Math.PI) / 3) < 1e-6));
+  // več kot 1000 točk z leve (seznam odrezan): znova na simetričnem oknu, ne −510,5 … −499,5
+  assert.deepEqual(sol("x-floor(x)=0.5", "deg").map((x) => +x.toFixed(6)), [-5.5, -4.5, -3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5, 4.5, 5.5]);
+  assert.ok(sol("sin(x^2)=0", "deg").some((r) => Math.abs(r - Math.sqrt(180)) < 1e-6));
   // podatki: x = 2kπ/3 in π/3 + 2kπ/3
   assert.equal(row(info("sin(3x/2)", { deg: true }), "sc.infoRoots").tex, "x = \\tfrac{2k\\pi}{3},\\ k \\in \\mathbb{Z}");
   assert.equal(row(info("cos(3x/2)", { deg: true }), "sc.infoRoots").tex, "x = \\tfrac{\\pi}{3} + \\tfrac{2k\\pi}{3},\\ k \\in \\mathbb{Z}");
