@@ -1,6 +1,6 @@
 // Gradniki virtualnega laboratorija: zaslon merilnika, tabela meritev, graf, vprašanje o sklepu, dnevnik dogodkov.
 // Modeli so v lab-model.js; tu je samo prikaz. Besedila so slovenska kot v ostalih simulacijah učbenika.
-import { h, s, fmt, svgBox, axes, tex } from "./kit.js";
+import { h, s, fmt, decZapis, svgBox, axes, tex, button } from "./kit.js";
 import SL from "../i18n/sl.js";
 import { icon } from "../icons.js";
 
@@ -33,13 +33,24 @@ export function lcd(name, { cls = "" } = {}) {
   const note = h("span", { class: "lab-lcd-note" });
   const el = h("div", { class: `lab-lcd ${cls}`, role: "group", "aria-label": name }, h("span", { class: "lab-lcd-name" }, name), h("span", { class: "lab-lcd-screen" }, val, unit), note);
   el.set = (text, u = "", n = "") => {
-    const t = String(text).replace(".", ",").replace("-", "−");
+    const t = decZapis(text);
     if (val.textContent !== t) val.textContent = t;
     if (unit.textContent !== u) unit.textContent = u;
     if (note.textContent !== n) note.textContent = n;
     el.classList.toggle("off", text === "" || text == null);
   };
   return el;
+}
+
+// Lepe meje osi grafa: najmanjša »okrogla« zgornja meja nad max in korak (1, 2, 2,5 ali 5 · 10ⁿ), največ 6 razdelkov.
+export function lepaOs(max) {
+  const m = Math.max(max, 1e-6) * 1.08;
+  const e = 10 ** Math.floor(Math.log10(m / 5));
+  for (const k of [1, 2, 2.5, 5, 10, 20]) {
+    const st = k * e;
+    if (m / st <= 6) return { top: Math.ceil(m / st) * st, step: st };
+  }
+  return { top: m, step: m / 5 };
 }
 
 // Tabela meritev. cols: [{ key, label }]. add(row) doda vrstico (vrednosti so že nizi za prikaz).
@@ -57,6 +68,8 @@ export function dataTable(cols, { empty = "Še ni meritev. Odčitaj merilnik in 
   // quiet: samodejni zapis (vsakih 30 s) premakne le okvir tabele, ne cele strani, da stran ne skače med delom.
   el.add = (r, { quiet = false } = {}) => (rows.push(r), draw(), quiet ? (el.scrollTop = el.scrollHeight) : el.querySelector("tbody tr:last-child")?.scrollIntoView?.({ block: "nearest" }));
   el.clear = () => ((rows.length = 0), draw());
+  // Shranjene vrstice ob ponovnem odprtju (shramba): brez pomikanja strani.
+  el.obnovi = (list) => ((rows.length = 0), rows.push(...list), draw());
   // Besedilo prazne tabele po korakih poskusa: »Še ni meritev. Natoči …« ne sme ostati, ko je voda že v posodi.
   el.setEmpty = (text) => { if (none.textContent !== text) none.textContent = text; };
   el.rows = rows;
@@ -156,21 +169,398 @@ export function dataGraph({ W = 340, H = 220, x, y, xLabel, yLabel, xStep, yStep
   return wrap;
 }
 
+// Šibke točke učenca (docs/sibke-tocke.md, #1094): prvi izbor pri »Sklep« in prvi številčni »Preveri moj račun« javita
+// dogodek »evklid:lab-preverjeno« { vrsta, ok } z elementa (mehurček do poskusa); public/laboratorij.js ga pošlje na
+// POST /api/students/:id/tool-check. Napovedi ne štejejo (napačna napoved pred meritvijo je namen napovedi, ne šibkost).
+// Nikoli vpisana vrednost, nikoli po »Pokaži rešitev«, ponovni poskusi ne štejejo.
+export const LAB_PREVERJENO = "evklid:lab-preverjeno";
+// Tema za šibke točke po poskusu: le teme, kjer sklep in račun res preverjata snov teme (pregled 3); poskus brez vnosa
+// ali učenec, ki nobene teh tem nima na svoji ravni šolanja (rang > 2, server/laboratorij.js), ne pošlje nič.
+export const SIBKE_TEME = {
+  "lab-titracija": ["KEM-SS-2/titracija", "KEM-OS-8/nevtralizacija-in-soli"],
+  "lab-ohm": ["FIZ-OS-9/upor-in-ohmov-zakon", "FIZ-SS-2/elektricni-tok"],
+  "lab-prosti-pad": ["FIZ-OS-9/prosti-pad", "FIZ-SS-1/prosti-pad-in-navpicni-met"],
+  "lab-newton2": ["FIZ-OS-9/newtonovi-zakoni", "FIZ-SS-1/newtonovi-zakoni"],
+  "lab-co2": ["KEM-SS-1/stehiometrija", "KEM-OS-9/racunanje-z-mnozino-snovi"],
+  "lab-hooke": ["FIZ-SS-1/proznost", "FIZ-OS-8/sila-in-merjenje-sile"],
+  "lab-grelnik": ["FIZ-OS-9/moc-in-izkoristek"],
+  "lab-elektroliza": ["KEM-SS-2/galvanski-cleni-in-elektroliza"],
+  "lab-lom": ["FIZ-OS-8/lom-svetlobe", "FIZ-SS-3/geometrijska-optika"],
+  "lab-hitrost": ["KEM-SS-2/hitrost-reakcij"],
+};
+// Kratek stalen id iz besedila vprašanja (vrstni red sklepov je odvisen od učenčevih meritev).
+const kratekId = (t) => {
+  let x = 5381;
+  for (const ch of String(t)) x = ((x * 33) ^ ch.codePointAt(0)) >>> 0; // besedilo z oznakami HTML, kot ga piše poskus
+  return x.toString(36);
+};
+// Telo za tool-check iz dogodka: x = poskus s seznama Laboratorija ({ key, topics: [{ id, rank }] }, najbližja tema prva).
+// item je stalen id vprašanja (»ohm:sklep:1x2y3z«, »ohm:racun«) v znakih TOOL_ITEM (server/weaknesses.js).
+export function sibkaTocka(x, detail) {
+  const dovoljene = SIBKE_TEME[x?.key], ok = detail?.ok;
+  if (!dovoljene || typeof ok !== "boolean") return null;
+  const tema = (x.topics || []).filter((t) => dovoljene.includes(t.id) && t.rank <= 2).sort((a, b) => a.rank - b.rank || dovoljene.indexOf(a.id) - dovoljene.indexOf(b.id))[0];
+  if (!tema) return null;
+  const item = `${x.key.replace(/^lab-/, "")}:${String(detail?.vrsta || "")}`.replace(/[^A-Za-z0-9_:./-]/g, "_").slice(0, 80);
+  return { source: "lab", topic: tema.id, item, ok };
+}
+const javi = (el, vrsta, ok) => el.isConnected && (el.dispatchEvent(new CustomEvent(LAB_PREVERJENO, { bubbles: true, detail: { vrsta, ok } })), true);
+
 // Vprašanje o sklepu: ena pravilna možnost, pri vsaki razlaga.
+// Po prvi izbiri so možnosti zaklenjene (učenec ne more klikati vseh po vrsti in brati vseh razlag); »Poskusi znova«
+// pod razlago jih spet odklene. Zaklenjene ostanejo dosegljive s tipko Tab (aria-disabled, ne disabled), da bralnik prebere izbiro.
 // q = { text, options: [{ t, ok, why }] }
 export function conclusion(q) {
   const why = h("p", { class: "lab-why", "aria-live": "polite", hidden: true });
   const opts = q.options.map((o, i) =>
     h("button", { type: "button", class: "lab-opt", "data-i": i, onclick: (ev) => pick(ev.currentTarget, o) }, h("span", { html: o.t })),
   );
+  const list = h("div", { class: "lab-opts" }, ...opts);
+  const again = button("Poskusi znova", () => reset());
+  again.classList.add("lab-again");
+  again.hidden = true;
+  let javljeno = false; // le prva izbira (po »Poskusi znova« učenec že pozna razlago)
   const pick = (b, o) => {
+    if (list.classList.contains("lab-zaklenjeno")) return;
+    list.classList.add("lab-zaklenjeno");
+    if (!javljeno) javljeno = javi(b, `sklep:${kratekId(q.id || q.text)}`, !!o.ok);
+    for (const x of opts) x.setAttribute("aria-disabled", "true");
     b.classList.add(o.ok ? "ok" : "bad");
     b.setAttribute("aria-pressed", "true");
     why.hidden = false;
     why.className = `lab-why ${o.ok ? "ok" : "bad"}`;
     why.innerHTML = `<b>${o.ok ? "Pravilno." : "Ne čisto."}</b> ${o.why}`;
+    again.hidden = false;
   };
-  return h("section", { class: "lab-q" }, h("h4", {}, "Sklep"), h("p", { class: "lab-q-text", html: q.text }), h("div", { class: "lab-opts" }, ...opts), why);
+  const reset = () => {
+    list.classList.remove("lab-zaklenjeno");
+    for (const x of opts) x.classList.remove("ok", "bad"), x.removeAttribute("aria-pressed"), x.removeAttribute("aria-disabled");
+    why.hidden = true;
+    why.textContent = "";
+    again.hidden = true;
+    opts[0]?.focus();
+  };
+  return h("section", { class: "lab-q" }, h("h4", {}, "Sklep"), h("p", { class: "lab-q-text", html: q.text }), list, why, again);
+}
+
+// Shranjene meritve (profil A, 2026-11-25: tabela in graf sta se ob odhodu ali osvežitvi izgubila). Vsak poskus ima svoj ključ
+// evklid.lab.meritve.<učenec>.<poskus> (poskus: el.dataset.labId, ki ga nastavi sim/index.js mountSim; brez njega se nič ne shrani).
+// Shrani se seme naključnih odstopanj (isti upornik, ista vzmet), vrstice tabele in stanje, ki ga poda poskus (točke grafa …).
+// Uporaba: const zap = shramba(el); new Bench({ seed: zap.seed }); … na koncu zap.vezi(table, { get, set }); po spremembi zap.shrani().
+// »Začni znova« (pri obnovljenih meritvah) in »Ponastavi« meritve pozabita. Shramba brskalnika je lahko zaprta (zasebno okno): try/catch.
+// Meritve so osebni podatki profila (public/offline.js PRIVATE_KEYS, clearProfile, deviceData). Ključ velja za profil, ki je bil
+// izbran ob postavitvi poskusa: ob menjavi profila se Laboratorij nariše znova (app.js selectStudent → showLab: seznam), tema
+// pa se zapre (Učna pot). Če bi poskus vseeno ostal na zaslonu, po menjavi ne shrani nič več (meritve ne gredo drugemu profilu).
+const MER = "evklid.lab.meritve.";
+const lsGet = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+const lsDel = (k) => { try { localStorage.removeItem(k); } catch {} };
+export const kljucMeritev = (labId) => (labId ? `${MER}${lsGet("studentId") || "0"}.${labId}` : null);
+// kljuc: ključ, ki ga je shramba določila ob postavitvi (el._labKljuc); po menjavi profila ne pobriše meritev drugega profila.
+export const pozabiMeritve = (labId, kljuc) => { const k = kljuc || kljucMeritev(labId); if (k) lsDel(k); };
+// JSON bi NaN (npr. »OL« na merilniku) zapisal kot null, ta pa bi bil na grafu točka pri 0: zapišemo ga kot "#NaN".
+const NEKONCNO = { "#NaN": NaN, "#Infinity": Infinity, "#-Infinity": -Infinity };
+export const vJson = (x) => JSON.stringify(x, (k, v) => (typeof v === "number" && !Number.isFinite(v) ? `#${v}` : v));
+export const izJsona = (t) => JSON.parse(t, (k, v) => (typeof v === "string" && v in NEKONCNO ? NEKONCNO[v] : v));
+
+export function shramba(el) {
+  const key = kljucMeritev(el?.dataset?.labId), profil = lsGet("studentId") || "0";
+  if (el) el._labKljuc = key; // »Ponastavi« (sim/index.js) pozabi ta ključ, ne ključa profila, ki je izbran zdaj
+  let data = null;
+  try { data = key ? izJsona(lsGet(key) || "null") : null; } catch {}
+  if (!data || data.v !== 1 || !Array.isArray(data.rows)) data = null;
+  else data.rows = data.rows.filter((r) => r && typeof r === "object" && !Array.isArray(r));
+  let table = null, get = () => ({}), vezano = false, cakam = false, bar = null;
+  const zap = {
+    data,
+    seed: Number.isInteger(data?.seed) ? data.seed : (Math.random() * 2 ** 31) | 0,
+    obnovljeno: false, // vrstice s prejšnjega obiska so v tabeli (poskus jih ob novem nizu meritev pobriše)
+    shrani() {
+      if (!key || !vezano || cakam || (lsGet("studentId") || "0") !== profil) return;
+      cakam = true; // več sprememb v istem kliku (vrstica, nato točke grafa) zapiše enkrat, ko je stanje celo
+      queueMicrotask(() => {
+        cakam = false;
+        let extra = {};
+        try { extra = get() || {}; } catch {}
+        lsSet(key, vJson({ ...extra, v: 1, seed: zap.seed, rows: table?.rows ?? [] }));
+      });
+    },
+    pozabi: () => key && lsDel(key),
+    vezi(t, { get: g, set } = {}) {
+      table = t;
+      if (g) get = g;
+      try {
+        if (data && data.rows.length) {
+          t.obnovi?.(data.rows);
+          zap.obnovljeno = true;
+          // mountSim (sim/index.js) vedno poda el._labZnova: poskus se postavi znova brez meritev. Brez njega (poskus zunaj
+          // mountSim) pozabimo shranjeno in tabelo pobrišemo, a stanja poskusa (točke grafa) ne moremo vrniti: ne shranjujemo več.
+          const znova = button("Začni znova", () => {
+            zap.pozabi();
+            if (typeof el._labZnova === "function") return el._labZnova();
+            vezano = false;
+            t.clear();
+            bar?.remove();
+          });
+          bar = h("p", { class: "lab-obnova", role: "status" }, h("span", {}, "Meritve s prejšnjega obiska so obnovljene."), znova);
+          t.before?.(bar);
+        }
+        if (data) set?.(data);
+      } catch (err) {
+        // Pokvarjen ali star zapis (druga oblika podatkov) ne sme ustaviti poskusa: pozabimo ga in poskus postavimo znova.
+        console.error("Laboratorij: shranjenih meritev ni bilo mogoče obnoviti", err);
+        zap.pozabi();
+        bar?.remove();
+        setTimeout(() => (typeof el._labZnova === "function" ? el._labZnova() : t.clear?.()));
+        return zap;
+      }
+      const add = t.add, clear = t.clear;
+      t.add = (...a) => { const r = add(...a); zap.shrani(); return r; };
+      t.clear = (...a) => { const r = clear(...a); zap.obnovljeno = false; bar?.remove(); zap.shrani(); return r; };
+      vezano = true;
+      return zap;
+    },
+  };
+  return zap;
+}
+
+// Napoved pred meritvijo (profil A, 2026-11-25): učenec napove, preden meri, na koncu vidi »Tvoja napoved · Izmerjeno«.
+// Skupni gradnik vseh poskusov (tudi vodenega načina). napoved(o) vrne { el, primerjava, osvezi, stanje, obnovi, vrednost }:
+//   o.id          ime napovedi v poskusu (ključ v shranjenem stanju), npr. "tok-6V"
+//   o.vprasanje   besedilo vprašanja (HTML) ali funkcija, ki ga vrne (npr. z imenom izbrane posode)
+//   o.enota       število: enota za vnos (npr. "mA"; "-krat" se izpiše brez presledka); o.dec decimalke pri izpisu (privzeto 1);
+//                 o.primer besedilo v praznem polju (npr. "npr. 37"; ne pravi odgovor); o.abs: dovoljeno odstopanje v enoti
+//                 (npr. 2 za ±2 °C) namesto ±10 %
+//   o.moznosti    izbira namesto števila: [[vrednost, besedilo]] ali funkcija, ki jih vrne
+//   o.kljuc()     postavitev, za katero velja napoved (npr. vrsta prve posode); ko se spremeni, se napoved pobriše
+//   o.odprto()    ali učenec še lahko napove (privzeto vedno); ko vrne false, se okvir zapre: napoved ostane, vnos izgine
+//   o.izmerjeno() null ali { vrednost, besedilo (HTML), ujema? }; ujema privzeto: število ±10 % (ali ±o.abs), izbira enaka vrednost
+// N.caka: učenec še ni napovedal, a še lahko (poskus do napovedi skrije odčitek, ki bi napoved izdal).
+// el gre na vrh kontrol (pred prvo meritvijo), primerjava k rezultatom. Poskus po vsaki spremembi pokliče osvezi().
+// Stanje za shrambo: stanje() → { v, t, zaprto }, obnovi(s). Ni odvisen od nobenega poskusa.
+// Število iz vnosa: decimalna vejica, presledki, minus (−). Za številom je lahko enota, a samo enota poskusa (»97 Ω«, »9,6 m/s²«,
+// »37 °C«, »2-krat«); druga enota ali odstotek (»50 %«) ni število v tej enoti, zato null.
+const normEnota = (u) => String(u ?? "").replace(/\s| /g, "").replace(/^-/, "").replace(/\^?2(?!\d)/g, "²").replace(/\^?3(?!\d)/g, "³").replace(/[·*]/g, "").replace(/^ohm(ov|a)?$/i, "Ω").toLowerCase();
+export const parseStevilo = (x, enota = "") => {
+  let t = String(x ?? "").trim().replace(/\s| /g, "").replace("−", "-").replace(",", ".");
+  const e = normEnota(enota), m = /^([-+]?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?)(\D.*)$/i.exec(t);
+  if (m && e && normEnota(m[2]) === e) t = m[1];
+  if (!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(t)) return null;
+  const v = Number(t);
+  return Number.isFinite(v) ? v : null;
+};
+// Ali je razlika približno faktor 10ⁿ (n ≥ 1): napaka pri pretvorbi enot (mA ↔ A, mm ↔ m, kPa ↔ Pa).
+export const faktorDeset = (x, prava) => {
+  const r = Math.abs(Math.log10(Math.abs(x / prava)));
+  const n = Math.round(r);
+  return x && prava && n >= 1 && Math.abs(r - n) < 0.15 ? n : 0;
+};
+export function napoved(o) {
+  const stevilo = !o.moznosti;
+  const moznosti = () => (typeof o.moznosti === "function" ? o.moznosti() : o.moznosti) || [];
+  const enota = (o.enota || "").replace(/^-/, ""); // »-krat«: brez presledka za številom (2-krat), v oznaki polja »krat«
+  const vprasanje = () => (typeof o.vprasanje === "function" ? o.vprasanje() : o.vprasanje);
+  let v = null, txt = "", zaprto = false, kljuc = null;
+  const tekst = h("p", { class: "lab-q-text", html: vprasanje() });
+  const moja = h("p", { class: "lab-napoved-moja", "aria-live": "polite" });
+  const vnos = h("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "lab-tit-in", "aria-label": `tvoja napoved${enota ? ` v ${enota}` : ""}`, placeholder: o.primer || "" });
+  const zapisi = button("Zapiši napoved", () => zapisiStevilo(), "primary small");
+  vnos.addEventListener("keydown", (e) => e.key === "Enter" && zapisiStevilo());
+  const polje = stevilo
+    ? h("div", { class: "lab-tit-field" }, h("span", { class: "demo-slider-label" }, `tvoja napoved${enota ? ` [${enota}]` : ""}`), vnos, zapisi)
+    : h("div", { class: "lab-opts", role: "group", "aria-label": "tvoja napoved" });
+  // okvir kot vprašanje »Sklep«, a ne .lab-q: vodeni način (lab-vodeno.js) in njegov test štejeta sklepe po .lab-q
+  const el = h("section", { class: "lab-okvir lab-napoved", "data-napoved": o.id || "" }, h("h4", {}, "Napoved"), tekst, polje, moja);
+  const prim = h("dl", { class: "lab-primerjava-vrednosti" });
+  const sodba = h("p", { class: "lab-why" });
+  const primerjava = h("section", { class: "lab-okvir lab-primerjava", hidden: true }, h("h4", {}, "Tvoja napoved · Izmerjeno"), prim, sodba);
+  const zEnoto = (x) => `${fmt(x, o.dec ?? 1)}${!o.enota ? "" : o.enota.startsWith("-") ? o.enota : ` ${o.enota}`}`;
+  const izpis = (x) => (stevilo ? zEnoto(x) : txt);
+  const zdaj = () => (o.kljuc ? String(o.kljuc()) : null);
+  function zapisiStevilo() {
+    const x = parseStevilo(vnos.value, o.enota);
+    if (x == null) return (zadnje.moja = null), (moja.textContent = `Vpiši število${enota ? ` v ${enota}` : ""} (npr. 4,5).`);
+    v = x;
+    txt = izpis(x);
+    kljuc = zdaj();
+    osvezi();
+  }
+  function izberi(val, label) {
+    v = val;
+    txt = label;
+    kljuc = zdaj();
+    osvezi();
+  }
+  let sigMoz = "";
+  const zadnje = {};
+  function osvezi() {
+    if (!zaprto && (o.odprto ? !o.odprto() : false)) zaprto = true;
+    const m = zaprto ? null : o.izmerjeno?.();
+    if (m) zaprto = true; // meritev je že tu: napovedovati ni več smiselno
+    // Napoved velja za postavitev, pri kateri je bila dana (o.kljuc, npr. katera posoda je prva): ko se ta spremeni, je ni več.
+    if (!zaprto && v != null && o.kljuc && zdaj() !== kljuc) (v = null), (txt = ""), (vnos.value = "");
+    const vp = vprasanje();
+    if (zadnje.vp !== vp) (zadnje.vp = vp), (tekst.innerHTML = vp);
+    polje.hidden = zaprto;
+    if (!stevilo && !zaprto) {
+      const list = moznosti(), cur = v == null ? null : list.find(([val]) => val === v);
+      if (v != null) cur ? (txt = cur[1]) : (v = null); // izbrane možnosti ni več
+      // gumbe zgradimo znova le, ko se spremenijo možnosti; izbira spremeni samo aria-pressed (fokus ostane na gumbu)
+      const sig = JSON.stringify(list);
+      if (sig !== sigMoz) {
+        sigMoz = sig;
+        polje.replaceChildren(...list.map(([val, label]) => {
+          const b = h("button", { type: "button", class: "lab-opt", onclick: () => izberi(val, label) }, label);
+          b._v = val;
+          return b;
+        }));
+      }
+      for (const b of polje.children) if (b.getAttribute("aria-pressed") !== String(b._v === v)) b.setAttribute("aria-pressed", String(b._v === v));
+    }
+    const html = v != null ? `Tvoja napoved: <b>${txt}</b>${zaprto ? "" : ". Lahko jo še spremeniš, dokler ne začneš meriti."}` : zaprto ? "Napovedi nisi zapisal, preden si meril." : "";
+    // aria-live: pišemo le spremembe (poskus lahko kliče osvezi vsakih 100 ms); primerjamo z zadnjim zapisom, ne z innerHTML (&nbsp;)
+    const pisi = (x, k, val) => zadnje[k] !== val && ((zadnje[k] = val), (x.innerHTML = val));
+    pisi(moja, "moja", html);
+    const iz = o.izmerjeno?.();
+    primerjava.hidden = !iz || v == null;
+    if (primerjava.hidden) return;
+    const vr = `<div><dt>Tvoja napoved</dt><dd>${txt}</dd></div><div><dt>Izmerjeno</dt><dd>${iz.besedilo}</dd></div>`;
+    pisi(prim, "prim", vr);
+    const d = stevilo ? Math.abs(v - iz.vrednost) : 0;
+    const ok = iz.ujema ?? (!stevilo ? v === iz.vrednost : o.abs != null ? d <= o.abs + 1e-9 : d <= 0.1 * Math.abs(iz.vrednost) + 1e-9);
+    // Razlika: pri temperaturi v kelvinih (»Razlika je 15,7 °C«), sicer v odstotkih; pri faktorju ~10ⁿ namig na enote.
+    const n = stevilo && Number.isFinite(iz.vrednost) ? faktorDeset(v, iz.vrednost) : 0;
+    const razlika = !stevilo || !Number.isFinite(iz.vrednost) ? "" : n ? `Napoved se razlikuje za faktor ~${10 ** n}: preveri enote. ` : o.abs != null ? `Razlika je ${zEnoto(d)}. ` : iz.vrednost ? `Razlika je ${fmt((100 * d) / Math.abs(iz.vrednost), 0)} %. ` : "";
+    const cls = `lab-why ${ok ? "ok" : "bad"}`, sod = ok ? "<b>Napoved se ujema z meritvijo.</b>" : `<b>Napoved se ne ujema z meritvijo.</b> ${razlika}Razmisli, kaj si pri napovedi spregledal.`;
+    if (sodba.className !== cls) sodba.className = cls;
+    pisi(sodba, "sod", sod);
+  }
+  osvezi();
+  return {
+    el, primerjava, osvezi,
+    get vrednost() { return v; },
+    // učenec še ni napovedal, a lahko (poskus lahko do napovedi skrije odčitek, ki bi napoved izdal)
+    get caka() { return !zaprto && v == null; },
+    stanje: () => ({ v, t: txt, zaprto, k: kljuc }),
+    obnovi(s) {
+      if (!s || typeof s !== "object") return;
+      if ((stevilo && Number.isFinite(s.v)) || (!stevilo && typeof s.v === "string")) (v = s.v), (txt = typeof s.t === "string" ? s.t : izpis(s.v)), (kljuc = typeof s.k === "string" ? s.k : zdaj());
+      zaprto = !!s.zaprto;
+      osvezi();
+    },
+  };
+}
+
+// Račun iz meritev (profil A, 2026-11-25): končni rezultat (upor iz naklona, izkoristek, g …) izračuna učenec sam.
+// Aplikacija ga preveri z vrednostjo iz učenčevih meritev (ne s podatkom iz učbenika) in pokaže svoj izračun šele
+// po pravilnem računu ali po »Pokaži rešitev«. Primerjava je lokalna (ne server/practice/check.js).
+// preveriRacun(vnos, pricakovano, { tol, abs, enota, nazivno }) → null (ni število) ali { ok, x, p, odmik, nazivno? };
+// tol relativno (0,05 = 5 %), abs absolutno; za številom je lahko enota poskusa (»97 Ω«).
+// nazivno: [{ v, kaj }] napis na sestavnem delu ali vrednost iz učbenika (upornik 100 Ω, leča 100 mm, g = 9,81 m/s²).
+// Vnos je taka vrednost (ok = false), če je v 0,5 % od nje, bližje njej kot vrednosti iz meritev, zunaj ozkega pasu okoli
+// vrednosti iz meritev (tol/2) in se meritve od nje razlikujejo za več kot 1 %. Pošten račun blizu napisa (npr. 99,6 Ω iz ene
+// vrstice ob premici 98,5 Ω, g = 9,77 ob 9,70) tako ni zavrnjen.
+export function preveriRacun(vnos, pricakovano, { tol = 0.05, abs = 0, enota = "", nazivno = [] } = {}) {
+  const x = parseStevilo(vnos, enota);
+  if (x == null || !Number.isFinite(pricakovano)) return null;
+  const d = Math.abs(x - pricakovano), odmik = pricakovano ? d / Math.abs(pricakovano) : d;
+  const n = nazivno.find((q) => Number.isFinite(q?.v) && q.v && Math.abs(x / q.v - 1) <= 0.005 && Math.abs(pricakovano / q.v - 1) > 0.01 &&
+    Math.abs(x - q.v) < d && odmik > tol / 2);
+  if (n) return { ok: false, x, p: pricakovano, odmik, nazivno: n };
+  return { ok: d <= Math.max(abs, tol * Math.abs(pricakovano)) + 1e-12, x, p: pricakovano, odmik };
+}
+// Odziv brez številke (sicer učenec iz »razlikuje se za 15 %« v dveh poskusih izračuna rešitev): le približno, koliko je daleč.
+export function odzivRacuna(r, tol = 0.05) {
+  if (r.nazivno) return `To je ${r.nazivno.kaj}, ne rezultat tvojih meritev. Izračunaj ga iz svojih meritev.`;
+  const n = faktorDeset(r.x, r.p);
+  if (n) return `Tvoj rezultat se razlikuje za faktor ~${10 ** n}: preveri pretvorbo enot.`;
+  if (r.odmik <= Math.max(2 * tol, 0.06)) return "Tvoj rezultat je blizu, a še ne dovolj natančen. Preveri zaokroževanje in račun.";
+  if (r.odmik <= 0.3) return "Tvoj rezultat se precej razlikuje od vrednosti iz tvojih meritev. Preveri račun in enote.";
+  return "Tvoj rezultat je daleč od vrednosti iz tvojih meritev. Preveri, katere količine si vzel, in enote.";
+}
+// racun({ enota, tol, abs, dec, onOdkrij }) → { el, nastavi(cilji), odkrito(key), stanje(), obnovi(s) }
+//   cilji: [{ key, kaj (HTML: kaj izračunaš), vrednost (iz meritev), nazivno? }] (prazno: okvir je skrit); privzeto zadnji cilj.
+//   Cilj, ki ga ni več med cilji (meritve izbrisane), ni več odkrit.
+//   onOdkrij(key): poskus ponovno nariše izračun (zdaj s številko)
+export function racun({ enota = "", tol = 0.05, abs = 0, dec = 2, onOdkrij } = {}) {
+  let cilji = [], izbran = null;
+  const odkrito = new Set();
+  const javljeno = new Set(); // cilji, pri katerih je bilo prvo preverjanje (ali »Pokaži rešitev«) že
+
+  const izbira = h("select", { class: "lab-racun-sel", "aria-label": "kaj računaš" });
+  izbira.addEventListener("change", () => ((izbran = izbira.value), pokazi()));
+  const izbiraVrsta = h("label", { class: "demo-slider", hidden: true }, h("span", { class: "demo-slider-label" }, "kaj računaš"), izbira);
+  const kaj = h("p", { class: "lab-q-text" });
+  const vnos = h("input", { type: "text", inputmode: "decimal", autocomplete: "off", class: "lab-tit-in", "aria-label": `tvoj rezultat${enota ? ` v ${enota}` : ""}` });
+  vnos.addEventListener("keydown", (e) => e.key === "Enter" && preveri());
+  const odziv = h("p", { class: "lab-why", "aria-live": "polite", hidden: true });
+  let zacasen = false; // »Ne čisto« ali »Vpiši število«: ne velja več, ko učenec piše nov vnos (rešitev ostane)
+  vnos.addEventListener("input", () => zacasen && (odziv.hidden = true));
+  const el = h("section", { class: "lab-okvir lab-racun", hidden: true }, // ne .lab-q: vodeni način šteje sklepe po .lab-q
+    h("h4", {}, "Tvoj račun"),
+    izbiraVrsta, kaj,
+    h("div", { class: "lab-tit-field" }, h("span", { class: "demo-slider-label" }, `tvoj rezultat${enota ? ` [${enota}]` : ""}`), vnos),
+    h("div", { class: "demo-buttons" }, button("Preveri moj račun", () => preveri(), "primary small"), button("Pokaži rešitev", () => odkrij(false))),
+    odziv);
+  const cilj = () => cilji.find((c) => c.key === izbran);
+  const izpis = (x) => `${fixed(x, dec)}${enota ? `\u00a0${enota}` : ""}`; // fixed: 15,0 N/m, 9,80 m/s² (ne 15 in 9,8)
+  function pokazi() {
+    const c = cilj();
+    if (!c) return;
+    kaj.innerHTML = c.kaj;
+    odziv.hidden = true;
+  }
+  function odkrij(pravilno) {
+    const c = cilj();
+    if (!c) return;
+    odkrito.add(c.key);
+    javljeno.add(c.key); // po »Pokaži rešitev« preverjanje ne šteje več
+    zacasen = false;
+    odziv.hidden = false;
+    odziv.className = `lab-why ${pravilno ? "ok" : ""}`;
+    odziv.innerHTML = pravilno
+      ? `<b>Pravilno.</b> Iz tvojih meritev dobiš ${izpis(c.vrednost)}. Izračun je zdaj tudi zgoraj.`
+      : `Rešitev iz tvojih meritev: <b>${izpis(c.vrednost)}</b>. Postopek je v izračunu zgoraj.`;
+    onOdkrij?.(c.key);
+  }
+  function preveri() {
+    const c = cilj();
+    if (!c) return;
+    const r = preveriRacun(vnos.value, c.vrednost, { tol, abs, enota, nazivno: c.nazivno || [] });
+    odziv.hidden = false;
+    zacasen = true;
+    if (!r) return (odziv.className = "lab-why"), (odziv.textContent = `Vpiši število${enota ? ` v ${enota}` : ""} (npr. 98,5).`);
+    // Šibke točke: en »racun« na poskus (cilji so isti račun pri drugem uporniku, seriji …); zdrs za faktor 10ⁿ (enote,
+    // odstotki) je zapis, ne snov, zato ne šteje; po »Pokaži rešitev« (tudi obnovljeni) ne šteje.
+    if (!javljeno.has(c.key) && !odkrito.has(c.key) && (r.ok || !faktorDeset(r.x, r.p)) && javi(el, "racun", r.ok)) javljeno.add(c.key);
+    if (r.ok) return odkrij(true);
+    odziv.className = "lab-why bad";
+    odziv.innerHTML = `<b>Ne čisto.</b> ${odzivRacuna(r, tol)}`;
+  }
+  return {
+    el,
+    odkrito: (key) => odkrito.has(key),
+    // cilji iz meritev; okvir je viden, ko je kaj računati. Izbira ostane, dokler je med cilji, sicer zadnji cilj.
+    nastavi(list) {
+      const prej = JSON.stringify(cilji.map((c) => [c.key, c.kaj])), prejV = cilj()?.vrednost;
+      // izbrisane meritve: rešitev ni več odkrita (nove meritve istega poskusa spet računaš sam)
+      for (const k of [...odkrito]) if (!list.some((c) => c.key === k)) odkrito.delete(k);
+      cilji = list.filter((c) => Number.isFinite(c.vrednost));
+      if (cilj() && cilj().vrednost !== prejV && !odkrito.has(izbran)) odziv.hidden = true; // nova meritev: star odziv ne velja
+      el.hidden = !cilji.length;
+      if (!cilji.length) return (vnos.value = ""), (odziv.hidden = true);
+      if (!cilji.some((c) => c.key === izbran)) (izbran = cilji.at(-1).key), (vnos.value = "");
+      if (prej !== JSON.stringify(cilji.map((c) => [c.key, c.kaj]))) {
+        izbira.replaceChildren(...cilji.map((c) => h("option", { value: c.key }, c.ime || c.key)));
+        izbira.value = izbran;
+        izbiraVrsta.hidden = cilji.length < 2;
+        pokazi();
+      }
+    },
+    get pricakovano() { return cilj()?.vrednost ?? null; },
+    stanje: () => [...odkrito],
+    obnovi: (s) => Array.isArray(s) && s.forEach((k) => typeof k === "string" && (odkrito.add(k), javljeno.add(k))),
+  };
 }
 
 // Dnevnik dogodkov (kaj se je zgodilo v laboratoriju), najnovejši zgoraj.
@@ -380,7 +770,7 @@ export const num = (x, d) => fmt(x, d);
 // Število z vedno enakim številom decimalk (kot ga pokaže merilnik): 6,00 in ne 6.
 export const fixed = (x, d) => {
   const t = (Math.abs(x) < 0.5 * 10 ** -d ? 0 : x).toFixed(d);
-  return t.replace(".", ",").replace("-", "−");
+  return decZapis(t);
 };
 export { tex };
 // Formule v besedilu poskusov so KaTeX s pravimi ulomki (j, 12. 11. 2026: »Popravi take formule povsod«), ne

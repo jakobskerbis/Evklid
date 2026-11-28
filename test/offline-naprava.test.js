@@ -60,6 +60,9 @@ const fill = () => {
   set("evklid.scheduleNotified", "{}");
   set("evklid.ours.7.mat-2024", { score: 3 });
   set("evklid.levelup.7.2026", "1");
+  set("evklid.lab.meritve.7.lab-ohm", { v: 1, seed: 5, rows: [{ U: "6,0", I: "60,4" }] });
+  set("evklid.lab.meritve.0.lab-hooke", { v: 1, seed: 6, rows: [] });
+  set("evklid.lab.matura.7", { "lab-ohm": { tocke: 8, max: 10, t: 1 } });
   set("teacherClasses", [{ code: "ABC", key: "skrivni-kljuc" }]);
   set("evklid_invite_name", "Ana");
   set("studentId", "7");
@@ -130,6 +133,11 @@ test("P7: izvoz podatkov na napravi samo za profile računa", () => {
   assert.deepEqual(Object.keys(d.offline_answers), ["7"]);
   assert.deepEqual(d.calculator["7"], { graph: { expr: "x^2" }, sci: { hist: ["1+1"] } });
   assert.equal(d.task_work["123"], "2x = 4");
+  ls.setItem("evklid.lab.meritve.99.lab-ohm", JSON.stringify({ v: 1, rows: [] }));
+  assert.deepEqual(d.lab_measurements, { 7: { "lab-ohm": { v: 1, seed: 5, rows: [{ U: "6,0", I: "60,4" }] } } }, "meritve v laboratoriju samo za profile računa");
+  assert.deepEqual(off.deviceData([7]).lab_measurements["99"], undefined);
+  ls.setItem("evklid.lab.matura.99", "{}");
+  assert.deepEqual(off.deviceData([7]).lab_matura, { 7: { "lab-ohm": { tocke: 8, max: 10, t: 1 } } }, "maturitetni poskus samo za profile računa");
   assert.ok(!JSON.stringify(d).includes("skrivni-kljuc"), "učiteljev ključ ne gre v izvoz");
   assert.deepEqual(off.deviceData([]).scanner_history, {});
 });
@@ -138,10 +146,13 @@ test("P7: izbris profila pobriše njegove podatke na napravi", () => {
   fill();
   ls.setItem("evklid.scan.70", "[]");
   off.clearProfile(7);
-  for (const k of ["evklid.offline.pack.7", "evklid.offline.queue.7", "evklid.scan.7", "evklid.graph.7", "evklid.sci.7", "evklid.goalSeen.7", "evklid.ours.7.mat-2024", "evklid.levelup.7.2026"]) {
+  ls.setItem("evklid.lab.meritve.70.lab-ohm", "{}");
+  for (const k of ["evklid.offline.pack.7", "evklid.offline.queue.7", "evklid.scan.7", "evklid.graph.7", "evklid.sci.7", "evklid.goalSeen.7", "evklid.ours.7.mat-2024", "evklid.levelup.7.2026", "evklid.lab.meritve.7.lab-ohm", "evklid.lab.matura.7"]) {
     assert.equal(ls.getItem(k), null, k);
   }
   assert.ok(ls.getItem("evklid.scan.70"), "profil 70 ostane");
+  assert.ok(ls.getItem("evklid.lab.meritve.70.lab-ohm"), "meritve profila 70 ostanejo");
+  assert.ok(ls.getItem("evklid.lab.meritve.0.lab-hooke"), "meritve brez profila niso od profila 7");
   assert.deepEqual(JSON.parse(ls.getItem("evklid.offline.students")), []);
 });
 

@@ -3,7 +3,7 @@
 j, 4. 11. 2026 (ideje 1, 4, 6, 7, 11, 25, 26 s seznama »30 idej«): inštruktor ni le še en klepetalnik, ampak učencu
 sredi pogovora pokaže Evklidova orodja.
 
-- Model zapiše bloke na koncu odgovora (prompt, razdelek »Orodja aplikacije«): `<<ODPRI poskus|3d|ucbenik|igra|formula="…">>`,
+- Model zapiše bloke na koncu odgovora (prompt, razdelek »Orodja aplikacije«): `<<ODPRI poskus|3d|ucbenik|igra|formula|vaja|kalkulator="…">>`,
   `<<GRAF [...]>>`, `<<SKICA {...}>>`. Iskalne besede so slovenske, model ne pozna id-jev.
 - `server/odpri.js` blok prebere in poišče vsebino: simulacije in poskusi (`public/sim/katalog.js`), 3D modeli
   (`public/3d/modeli/*/index.js`) in strukture atlasa (`public/3d/atlas-imena.json`), lekcije (`rankLessons`), igre
@@ -20,6 +20,31 @@ sredi pogovora pokaže Evklidova orodja.
   oznako (`x = 1`, `y = x + 1`). Neobvezno okno v bloku, `<<GRAF ["y = 1/x", {"x": [-3, 3], "y": [-4, 4]}]>>` (ena
   ali obe osi), ostane nespremenjeno; inštruktorjev prompt ga (še) ne omenja. Ob krožnici, parametrični ali polarni
   krivulji ali območju ostane običajno okno.
+- **Kalkulator** (P1-9, del A; j 25. 11. 2026, načrt treh prioritet): `<<ODPRI kalkulator="znanstveni">>` → gumb
+  »Kalkulator: Znanstveni«, ki odpre kalkulator v tem načinu (`openFromTutor`, kot gumb v glavi pogovora; na
+  računalniku z okni v oknu desno). `findCalc` v `server/odpri.js` prepozna znanstveni/funkcijski, grafični/graf,
+  orodja/enote/pretvornik, periodni sistem/PSE, formule/zbirka; samo »kalkulator« ali »računalo« → zadnji uporabljeni
+  način (pri kemiji periodni sistem, kot gumb v glavi pogovora). Neznana
+  beseda ali dva načina hkrati → ni gumba. Kalkulatorja samega to ne spreminja (lastnik kalkulatorja je druga seja).
+  Kdaj inštruktor blok napiše, je v pozivu (profil B, razdelek »Orodja aplikacije« v obeh pozivih): ko naj učenec
+  sam računa, riše ali pretvarja (npr. ko v načinu A postavita račun), nikoli namesto razlage.
+- **Podobna naloga** (P1-3, del A; j 25. 11. 2026, načrt treh prioritet): `<<ODPRI vaja="kvadratna enačba">>` →
+  `server/vaja-po-razlagi.js` poišče temo učenčeve stopnje z generatorjem nalog (najprej `topicForName`; pri vsaj dveh
+  besedah sicer prva lekcija, ki ima vse besede v naslovu in nobena druga s tem ne konkurira; ena sama beseda brez
+  točnega imena teme, dvoumna poizvedba, beseda poizvedbe, ki je ni v imenu teme, ali tema brez generatorja → ni
+  gumba, nikoli napačna tema). Gumb »Podobna naloga«
+  (`vr.vaja`) odpre temo v Vadnici in začne vajo (kot »Preveri se« v laboratoriju): nalogo ustvari generator, odgovor
+  preveri koda (`progress.answer`), rezultat gre v napredek in šibke točke. Kdaj inštruktor blok napiše, je v pozivu
+  (profil B): ko je učenec razlago razumel ali računsko nalogo rešil (po rešeni nalogi najraje `vaja`), ne v načinu A
+  pred rešitvijo trenutne naloge, ne med nalogo s pole, pri isti temi največ enkrat. Gumb je še vedno samo s stikalom
+  `EVKLID_VAJA_PO_RAZLAGI=1` (privzeto izklopljeno; vklop odloči j), brez njega blok ne da gumba. »Nazaj« iz teme
+  vodi na Učno pot (kot iz laboratorija), ne nazaj v pogovor; pogovor ostane v zgodovini.
+- **Lekcija za prvo vprašanje** (P1-9, del B; j 25. 11. 2026): ko `lessonForQuestion` (server/lekcija-za-vprasanje.js)
+  najde lekcijo za prvo vprašanje prostega pogovora, dobi inštruktor skrito opombo in aplikacija pod prvim odgovorom
+  pokaže gumb lekcije (`{ kind: "lesson", id, title }`, kot `findLesson`), brez podvajanja z blokom `ucbenik` modela;
+  ne pri zavrnitvi, popravku ali opozorilu. Odgovor v zgodovini nosi skrit zapis `<orodje>App record … »ime« (id)`
+  (`lessonRecord` v server/app.js, kot `actionNote`), iz katerega se gumb sestavi ob ponovnem odprtju; velja le zapis
+  za prvim blokom besedila (ki ga doda aplikacija). Opomba inštruktorju pove, da je gumb že pod odgovorom.
 - Preizkus brez API ključa: v klepet napiši »pokaži poskus« (vnaprej pripravljen odgovor v `server/claude.js`).
 
 ## Obratna smer: iz poskusa ali 3D modela v klepet in nazaj (j, 24. 11. 2026, faza A načrta »povezan učni prostor«)

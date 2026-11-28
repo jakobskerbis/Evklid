@@ -2,8 +2,8 @@
 // elektromagnetna indukcija (lab-indukcija). Modeli: lab-model-magnetizem.js (brez DOM). CSS: predpona lab-mag-.
 // Risbe so v stalnem merilu (merilna črta), oprema v pravih razmerjih; čas teče v realnem času (pospešek časa in posnetek ×0,1
 // sta označena v risbi). Risba se nariše znova ob vsakem koraku ure (10-krat na sekundo) ali sličici poskusa.
-import { h, s, svgBox, select, segmented, button, toggle, slider, layout, label, axes, stage as stageBox, controls as controlsBox } from "./kit.js";
-import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez } from "./lab.js";
+import { h, s, svgBox, select, segmented, button, toggle, slider, layout, label, axes, stage as stageBox, controls as controlsBox, decZapis } from "./kit.js";
+import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba, racun } from "./lab.js";
 import { ElektromagnetBench, TULJAVE, JEDRA, NAVITJE, GRETJE, TESLA_RANGES, AM_RANGES, NAPAJALNIK_EM, KOMPAS, HALL, TehtnicaBench, MAGNETI, VODNIKI, IndukcijaBench, MAGNET_IND, CEV, SENZOR, GALVANOMETER, G_SOLA, naklonSkoziIzhodisce, POENOSTAVITVE_MAGNETIZEM } from "./lab-model-magnetizem.js";
 
 const seme = () => (Math.random() * 2 ** 31) | 0;
@@ -167,7 +167,7 @@ function multimeter(g, svg, x, y, w, hh, { text = "", unit = "", kot = 0, ime = 
   s("rect", { x: x + w * 0.08, y: y + hh * 0.05, width: w * 0.84, height: hh * 0.9, rx: w * 0.08, fill: u(svg, "ohisje") }, g);
   const lx = x + w * 0.15, ly = y + hh * 0.1, lw = w * 0.7, lh = hh * 0.2;
   s("rect", { x: lx, y: ly, width: lw, height: lh, rx: 2, class: "lab-mag-lcdbg" }, g);
-  label(g, lx + lw - 3, ly + lh * 0.55, text.replace(".", ",").replace("-", "−"), "lab-mag-lcdtxt", "end").setAttribute("style", `font-size:${(w * 0.17).toFixed(1)}px`);
+  label(g, lx + lw - 3, ly + lh * 0.55, decZapis(text), "lab-mag-lcdtxt", "end").setAttribute("style", `font-size:${(w * 0.17).toFixed(1)}px`);
   if (unit) label(g, lx + lw - 3, ly + lh * 0.88, unit, "lab-mag-lcdunit", "end").setAttribute("style", `font-size:${(w * 0.09).toFixed(1)}px`);
   const cx = x + w / 2, cy = y + hh * 0.56, R = w * 0.25;
   s("circle", { cx, cy, r: R + 3, fill: "#20252a", stroke: "#59616a", "stroke-width": 1 }, g);
@@ -191,8 +191,8 @@ function napajalnik(g, svg, x, y, { on, U, I, cc, Uset, Umax, Iset, Imax, ime })
   s("rect", { x: x + 6, y: y + 8, width: 52, height: 22, rx: 2, fill: "#1a1d1a" }, g);
   s("rect", { x: x + 64, y: y + 8, width: 52, height: 22, rx: 2, fill: "#1a1d1a" }, g);
   if (on) {
-    label(g, x + 54, y + 20, U.toFixed(1).replace(".", ","), "lab-mag-seg red", "end");
-    label(g, x + 112, y + 20, I.toFixed(2).replace(".", ","), "lab-mag-seg grn", "end");
+    label(g, x + 54, y + 20, fixed(U, 1), "lab-mag-seg red", "end");
+    label(g, x + 112, y + 20, fixed(I, 2), "lab-mag-seg grn", "end");
   }
   label(g, x + 32, y + 37, "V", "lab-mag-panel");
   label(g, x + 90, y + 37, "A", "lab-mag-panel");
@@ -291,7 +291,8 @@ const JED_KRATKO = { zrak: "brez", palica: "palica", zebelj: "žebelj", u: "U-je
 // brez sorazmernosti B ∝ N I, μ0 in nasičenja.
 export function labElektromagnet(el, opts = {}) {
   const OS = opts.raven === "os";
-  const B = new ElektromagnetBench({ seed: seme() });
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
+  const B = new ElektromagnetBench({ seed: zap.seed });
   B.prikljuceno = false; // učenec krog sestavi sam: krokodilčka sta na začetku odložena na mizi
   const W = 400, H = 320, S = 5, xc = 95, yc = 175, yMiza = 300; // 1 cm = 5 enot
   const Y = (z) => yc - z * 100 * S;
@@ -307,8 +308,8 @@ export function labElektromagnet(el, opts = {}) {
     { key: "B", label: "<i>B</i> [mT]" },
     { key: "n", label: "sponke" },
   ], { empty: "Še ni meritev. Sestavi krog, nastavi teslameter na nič, vklopi napajalnik in zapisuj tok in gostoto polja." });
-  const gBI = dataGraph({ x: [0, 3], y: [0, 50], xStep: 0.5, yStep: 10, xLabel: "I [A]", yLabel: "B [mT]", title: "Gostota magnetnega polja v odvisnosti od toka" });
-  const gBN = dataGraph({ x: [0, 1000], y: [0, 50], xStep: 200, yStep: 10, xLabel: "N", yLabel: "B [mT]", title: "Gostota magnetnega polja v odvisnosti od števila ovojev" });
+  const gBI = dataGraph({ x: [0, 3], y: [0, 50], xStep: 0.5, yStep: 10, xLabel: "I [A]", yLabel: "B [mT]", title: "Gostota magnetnega polja v odvisnosti od toka", formula: OS ? "" : tex(String.raw`B \propto N I`) + ` (dolga tuljava: ${tex(String.raw`B = \frac{\mu_0 N I}{l}`)}; ta je kratka, polje v sredini je manjše)` });
+  const gBN = dataGraph({ x: [0, 1000], y: [0, 50], xStep: 200, yStep: 10, xLabel: "N", yLabel: "B [mT]", title: "Gostota magnetnega polja v odvisnosti od števila ovojev", formula: OS ? "" : tex(String.raw`B \propto N I`) + ` (dolga tuljava: ${tex(String.raw`B = \frac{\mu_0 N I}{l}`)}; ta je kratka, polje v sredini je manjše)` });
   const gBz = dataGraph({ x: [-10, 15], y: [0, 50], xStep: 5, yStep: 10, xLabel: "z [cm]", yLabel: "B [mT]", title: "Gostota magnetnega polja vzdolž osi tuljave", origin: false });
   const calc = h("div", { class: "lab-mag-calc", "aria-live": "polite" });
   const qBox = h("div");
@@ -319,7 +320,7 @@ export function labElektromagnet(el, opts = {}) {
 
   const tSel = select({ label: "tuljava", options: TUL_OPTS, value: B.tuljava, onChange: (v) => ((B.tuljava = v), (B.sponke = 0), log.push(`Na stojalo si vpel tuljavo s ${TULJAVE[v].N} ovoji.`, "info"), sync()) });
   const jSel = select({ label: "jedro", options: JED_OPTS, value: B.jedro, onChange: (v) => setJedro(v) });
-  const razSeg = row("ploščici pod jarmom", seg("plastični ploščici pod jarmom", [["0", "brez"], ["0.5", "0,5 mm"], ["1", "1 mm"], ["2", "2 mm"]], String(B.razmik), (v) => ((B.razmik = +v), log.push(+v ? `Med kraka in jarem si vložil plastični ploščici debeline ${num(+v, +v < 1 ? 1 : 0)}${nb}mm.` : "Jarem se krakov dotika neposredno (reža je le ~0,03 mm).", "info"), sync())));
+  const razSeg = row("ploščici pod jarmom", seg("plastični ploščici pod jarmom", [["0", "brez"], ["0.5", `${num(0.5, 1)} mm`], ["1", "1 mm"], ["2", "2 mm"]], String(B.razmik), (v) => ((B.razmik = +v), log.push(+v ? `Med kraka in jarem si vložil plastični ploščici debeline ${num(+v, +v < 1 ? 1 : 0)}${nb}mm.` : "Jarem se krakov dotika neposredno (reža je le ~0,03 mm).", "info"), sync())));
   const amPosSeg = row("ampermeter", seg("vezava ampermetra", [["zaporedno", "zaporedno"], ["vzporedno", "vzporedno s tuljavo"]], B.amPos, (v) => ((B.amPos = v), (said.kratek = false), log.push(v === "zaporedno" ? "Ampermeter je vezan zaporedno s tuljavo: skozi oba teče isti tok." : "Ampermeter si vezal vzporedno s tuljavo.", v === "zaporedno" ? "info" : "warn"))));
   const amSel = select({ label: "vtičnica in območje ampermetra", options: [["10", "10 A (vtičnica 10A)"], ["200m", "200 mA (vtičnica mA)"], ["20m", "20 mA (vtičnica mA)"]], value: B.amRange, onChange: (v) => (B.amRange = v) });
   const prT = toggle("vodnika priključena na tuljavo", false, (v) => ((B.prikljuceno = v), log.push(v ? "Krokodilčka sta na priključkih tuljave: krog je sklenjen." : "Snel si krokodilčka s tuljave: krog je odprt.", "info")));
@@ -436,7 +437,7 @@ export function labElektromagnet(el, opts = {}) {
     const z = B.jedro === "u" ? `reža ${num(B.razmik, B.razmik < 1 ? 1 : 0)}${nb}mm` : `${num(B.sonda.z * 100, 1)}${nb}cm`;
     const Bv = ni || t.over ? NaN : t.value;
     const nS = B.sponke;
-    table.add({ N: String(B.coil.N), jedro: JED_KRATKO[B.jedro], z, I: a.over ? "OL" : num(I, rA.dec + (rA.unit === "mA" ? 3 : 0)), B: ni ? "–" : t.over ? "OL" : t.text.replace(".", ","), n: String(nS) });
+    table.add({ N: String(B.coil.N), jedro: JED_KRATKO[B.jedro], z, I: a.over ? "OL" : num(I, rA.dec + (rA.unit === "mA" ? 3 : 0)), B: ni ? "–" : t.over ? "OL" : decZapis(t.text), n: String(nS) });
     meas.push({ N: B.coil.N, jedro: B.jedro, z: B.jedro === "u" ? null : B.sonda.z * 100, I: Math.abs(I), B: Math.abs(Bv), n: nS });
     redraw();
   }
@@ -635,7 +636,7 @@ export function labElektromagnet(el, opts = {}) {
     label(g, x + 8, y + 9, "TESLAMETER", "lab-mag-panel-sv", "start");
     s("rect", { x: x + 8, y: y + 16, width: 84, height: 28, rx: 2, class: "lab-mag-lcdbg" }, g);
     const t = B.readT(), ni = B.jedro === "u" && !B.vReziMogoce;
-    label(g, x + 88, y + 31, ni ? "– – –" : t.over ? "OL" : t.text.replace(".", ",").replace("-", "−"), "lab-mag-lcdbig", "end");
+    label(g, x + 88, y + 31, ni ? "– – –" : t.over ? "OL" : decZapis(t.text), "lab-mag-lcdbig", "end");
     label(g, x + 88, y + 41, "mT", "lab-mag-lcdunit", "end");
     // izbirnik območja
     const kx = x + 118, ky = y + 30, idx = ["20", "200", "2000"].indexOf(B.sonda.range);
@@ -664,11 +665,19 @@ export function labElektromagnet(el, opts = {}) {
     readouts();
     draw();
   }, 100);
+  zap.vezi(table, {
+    get: () => ({ meas }),
+    set: (d) => {
+      meas.push(...(Array.isArray(d?.meas) ? d.meas : []).filter((m) => m && typeof m === "object"));
+      redraw();
+    },
+  });
 }
 
 // ================================================================ 2. sila na vodnik: tokovna tehtnica
 export function labSilaVodnik(el) {
-  const B = new TehtnicaBench({ seed: seme() });
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
+  const B = new TehtnicaBench({ seed: zap.seed });
   const W = 400, H = 300, S = 6, yMiza = 286, xm = 120; // 1 cm = 6 enot
   const svg = svgBox(W, H, "lab-bench lab-mag lab-mag-tt");
   const log = eventLog();
@@ -680,8 +689,8 @@ export function labSilaVodnik(el) {
     { key: "dm", label: "Δ<i>m</i> [g]" },
     { key: "F", label: "<i>F</i> [mN]" },
   ], { empty: "Še ni meritev. Tariraj tehtnico, nastavi tok in zapiši spremembo odčitka." });
-  const gI = dataGraph({ x: [0, 5], y: [0, 20], xStep: 1, yStep: 5, xLabel: "I [A]", yLabel: "F [mN]", title: "Sila na vodnik v odvisnosti od toka" });
-  const gL = dataGraph({ x: [0, 8], y: [0, 20], xStep: 2, yStep: 5, xLabel: "L [cm]", yLabel: "F [mN]", title: "Sila na vodnik v odvisnosti od dolžine vodnika v polju" });
+  const gI = dataGraph({ x: [0, 5], y: [0, 20], xStep: 1, yStep: 5, xLabel: "I [A]", yLabel: "F [mN]", title: "Sila na vodnik v odvisnosti od toka", formula: "<i>F</i> = <i>I</i> · <i>L</i> · <i>B</i>" });
+  const gL = dataGraph({ x: [0, 8], y: [0, 20], xStep: 2, yStep: 5, xLabel: "L [cm]", yLabel: "F [mN]", title: "Sila na vodnik v odvisnosti od dolžine vodnika v polju", formula: "<i>F</i> = <i>I</i> · <i>L</i> · <i>B</i>" });
   const calc = h("div", { class: "lab-mag-calc", "aria-live": "polite" });
   const qBox = h("div");
   const meas = [];
@@ -721,6 +730,9 @@ export function labSilaVodnik(el) {
     tryText: "Tariraj tehtnico in povečuj tok od 0 do 5 A po 1 A. Nariši F(I) in iz naklona izračunaj B. Nato pri 3 A zamenjaj tiskanine (1, 2, 4, 8 cm). Kaj se zgodi, ko zamenjaš smer toka ali nosilec zasukaš za 90°?",
   });
   el.classList.add("lab");
+  // Končni rezultat izračuna učenec sam (lab.js → racun); izračun aplikacije se pokaže po pravilnem računu ali »Pokaži rešitev«.
+  const Rr = racun({ enota: "mT", dec: 1, tol: 0.05, onOdkrij: () => (redraw(), zap.shrani()) });
+  calc.after(Rr.el);
 
   function events() {
     for (const e of B.events.splice(0)) {
@@ -738,7 +750,7 @@ export function labSilaVodnik(el) {
   }
   function record() {
     const t = B.read(), a = B.readA(), rA = AM_RANGES[B.amRange];
-    if (!B.tarirano || Math.abs(t.value) > 20) once("tara", `Tehtnica ni tarirana: odčitek ${t.text.replace(".", ",")}${nb}g vsebuje maso nosilca z magneti. Tariraj, ko tok ne teče, in meri znova.`, "bad");
+    if (!B.tarirano || Math.abs(t.value) > 20) once("tara", `Tehtnica ni tarirana: odčitek ${decZapis(t.text)}${nb}g vsebuje maso nosilca z magneti. Tariraj, ko tok ne teče, in meri znova.`, "bad");
     const I = a.over ? NaN : a.value / rA.k;
     const dm = t.value, F = (dm / 1000) * G_SOLA * 1000; // mN
     table.add({ n: String(B.nMag), L: num(B.L * 100, 0), I: a.over ? "OL" : num(I, rA.unit === "A" ? 2 : 3), dm: num(dm, 2), F: num(F, 2) });
@@ -759,17 +771,23 @@ export function labSilaVodnik(el) {
     gL.setAxes({ x: [0, 8], y: [0, b2.top], xStep: 2, yStep: b2.step });
     gL.draw(serije(gr2));
     const out = [];
+    const cilji = []; // kaj učenec izračuna sam (Rr)
     for (const [name, pts] of gr1) {
       if (pts.length < 2) continue;
       const k = naklonSkoziIzhodisce(pts), L = parseFloat(name) / 100;
-      out.push(`<p><b>${name}</b>: naklon <i>F</i>(<i>I</i>) je ${num(k, 2)}${nb}mN/A, zato je ${tex(String.raw`B = \frac{k}{L} = \frac{${num(k / 1000, 5)}${en("N/A")}}{${num(L, 2)}${en("m")}} = ${rez(num(k / 1000 / L, 3), "T")}`)}.</p>`);
+      cilji.push({ key: `I:${name}`, ime: `F(I), ${name}`, kaj: `Iz naklona premice <i>F</i>(<i>I</i>) izračunaj gostoto magnetnega polja <i>B</i> v militeslih (${name}).`, vrednost: k / L }); // mN/(A·m) = mT
+      out.push(Rr.odkrito(`I:${name}`) ? `<p><b>${name}</b>: naklon <i>F</i>(<i>I</i>) je ${num(k, 2)}${nb}mN/A, zato je ${tex(String.raw`B = \frac{k}{L} = \frac{${num(k / 1000, 5)}${en("N/A")}}{${num(L, 2)}${en("m")}} = ${num(k / 1000 / L, 4)}${en("T")} = ${rez(fixed(k / L, 1), "mT")}`)}.</p>` : `<p><b>${name}</b>: izračunaj <i>B</i> iz naklona grafa <i>F</i>(<i>I</i>) in ga preveri spodaj.</p>`);
     }
     for (const [name, pts] of gr2) {
       if (pts.length < 2) continue;
       const k = naklonSkoziIzhodisce(pts), I = parseFloat(name.replace(",", "."));
-      if (I > 0) out.push(`<p><b>${name}</b>: naklon <i>F</i>(<i>L</i>) je ${num(k, 2)}${nb}mN/cm, zato je ${tex(String.raw`B = \frac{k}{I} = ${rez(num((k * 100) / 1000 / I, 3), "T")}`)}.</p>`);
+      if (I > 0) {
+        cilji.push({ key: `L:${name}`, ime: `F(L), ${name}`, kaj: `Iz naklona premice <i>F</i>(<i>L</i>) izračunaj gostoto magnetnega polja <i>B</i> v militeslih (${name}).`, vrednost: (k * 100) / I }); // mN/m na A = mT
+        out.push(Rr.odkrito(`L:${name}`) ? `<p><b>${name}</b>: naklon <i>F</i>(<i>L</i>) je ${num(k, 2)}${nb}mN/cm, zato je ${tex(String.raw`B = \frac{k}{I} = \frac{${num(k / 10, 4)}${en("N/m")}}{${num(I, 1)}${en("A")}} = ${rez(fixed((k * 100) / I, 1), "mT")}`)}.</p>` : `<p><b>${name}</b>: izračunaj <i>B</i> iz naklona grafa <i>F</i>(<i>L</i>) in ga preveri spodaj.</p>`);
+      }
     }
     calc.innerHTML = out.join("");
+    Rr.nastavi(cilji);
     const max = Math.max(0, ...[...gr1.values(), ...gr2.values()].map((p) => p.length));
     if (max >= 4 && !asked) {
       asked = true;
@@ -795,7 +813,7 @@ export function labSilaVodnik(el) {
     s("path", { d: `M${bx},${yMiza} L${bx + 4},${by} H${bx + bw - 4} L${bx + bw},${yMiza} Z`, fill: "url(#" + svg.uid + "-plosca)", stroke: "#7d858e", "stroke-width": 1 }, svg);
     s("rect", { x: bx + 30, y: by + 8, width: 60, height: 17, rx: 2, class: "lab-mag-lcdbg" }, svg);
     const tr = B.read();
-    label(svg, bx + 80, by + 17, tr.text.replace(".", ",").replace("-", "−"), "lab-mag-lcdbal", "end");
+    label(svg, bx + 80, by + 17, decZapis(tr.text), "lab-mag-lcdbal", "end");
     label(svg, bx + 83, by + 18, "g", "lab-mag-lcdunit", "start");
     for (const [x, t] of [[bx + 10, "ON"], [bx + bw - 22, "TARE"]]) {
       s("rect", { x, y: by + 11, width: 13, height: 9, rx: 2, fill: "#3a4148" }, svg);
@@ -919,11 +937,20 @@ export function labSilaVodnik(el) {
     readouts();
     draw();
   }, 100);
+  zap.vezi(table, {
+    get: () => ({ racun: Rr.stanje(), meas }),
+    set: (d) => {
+      Rr.obnovi(d?.racun);
+      meas.push(...(Array.isArray(d?.meas) ? d.meas : []).filter((m) => m && typeof m === "object"));
+      redraw();
+    },
+  });
 }
 
 // ================================================================ 3. elektromagnetna indukcija
 export function labIndukcija(el) {
-  const B = new IndukcijaBench({ seed: seme() });
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
+  const B = new IndukcijaBench({ seed: zap.seed });
   B.prikljuceno = false; // učenec tuljavo priključi sam (sicer senzor kaže le brum odprtega vhoda)
   const W = 400, H = 330, S = 4.2, yMiza = 312, xt = 58; // 1 cm = 4,2 enote
   const yTop = yMiza - (CEV.L + CEV.pena) * 100 * S; // vrh cevi (cev stoji na blazinici)
@@ -1029,7 +1056,7 @@ export function labIndukcija(el) {
   function readouts() {
     const R = B.run;
     if (!R || R.galv) {
-      uL.set(R?.galv ? num(sample(R, R.t) * 100, 0) : "0,000", R?.galv ? "%" : "V", R?.galv ? "odklon galvanometra" : `±${B.range}${nb}V · ${B.fs >= 1000 ? `${B.fs / 1000}${nb}kHz` : `${B.fs}${nb}Hz`}`);
+      uL.set(R?.galv ? num(sample(R, R.t) * 100, 0) : fixed(0, 3), R?.galv ? "%" : "V", R?.galv ? "odklon galvanometra" : `±${B.range}${nb}V · ${B.fs >= 1000 ? `${B.fs / 1000}${nb}kHz` : `${B.fs}${nb}Hz`}`);
       p1L.set("–", "V");
       p2L.set("–", "V");
       return;
@@ -1272,4 +1299,11 @@ export function labIndukcija(el) {
   readouts();
   redraw();
   drawTrace();
+  zap.vezi(table, {
+    get: () => ({ meas }),
+    set: (d) => {
+      meas.push(...(Array.isArray(d?.meas) ? d.meas : []).filter((m) => m && typeof m === "object"));
+      redraw();
+    },
+  });
 }

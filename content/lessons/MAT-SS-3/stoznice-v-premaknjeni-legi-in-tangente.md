@@ -48,6 +48,8 @@ $$\frac{(x - x_0)^2}{a^2} + \frac{(y - y_0)^2}{b^2} = 1$$
 
 Kot pri krožnici je v oklepaju minus koordinata središča. Oblika, polosi in ekscentričnost $e = \sqrt{a^2 - b^2}$ ostanejo enake; premakneta se le središče in gorišči. Za $a > b$ sta gorišči $F_{1,2}(x_0 \pm e, y_0)$. Krožnica je poseben primer z $a = b = r$.
 
+V simulaciji spodaj (»Elipsa, hiperbola in parabola«) nastavi elipso z a = 3 in b = 2, kot je črtkana elipsa na sliki, in povleci točko T po njej. Opazuj, da vsota razdalj do gorišč ostane $2a = 6$. Nato nastavi b = 3: gorišči se združita v središču in dobiš krožnico.
+
 :::premisli
 Napovej, kje je središče elipse $\frac{(x + 1)^2}{4} + \frac{(y - 5)^2}{25} = 1$ in na kateri premici ležita njeni gorišči.
 ---
@@ -135,7 +137,7 @@ točka: 6; 4 | P_1 | nad
 točka: -8; -3 | P_2 | pod
 :::
 
-Grafično presečišči odčitaš s skice. Skica tudi pove, koliko rešitev mora dati račun. Pri hiperboli in paraboli je postopek enak. Le pri premici, vzporedni z asimptoto hiperbole ali z osjo parabole, je enačba linearna in da eno samo presečišče.
+Grafično presečišči odčitaš s skice. Skica tudi pove, koliko rešitev mora dati račun. Pri hiperboli in paraboli je postopek enak. Le pri premici, vzporedni z asimptoto hiperbole (a ne asimptoti sami, ki hiperbole sploh ne seka) ali z osjo parabole, je enačba linearna in da eno samo presečišče.
 
 **6. Tangenta v točki stožnice (višja raven).** Za točko $T_1(x_1, y_1)$, ki **leži** na stožnici, je pravilo kratko: v vsakem kvadratu en faktor zamenjaj s koordinato točke. Pri elipsi je enačba tangente
 
@@ -147,10 +149,10 @@ $$(y_1 - y_0)(y - y_0) = p\big((x - x_0) + (x_1 - x_0)\big)$$
 
 Pri stožnici s središčem oziroma temenom v izhodišču se pravilo skrči: tangenta elipse je $\frac{x_1 x}{a^2} + \frac{y_1 y}{b^2} = 1$, hiperbole $\frac{x_1 x}{a^2} - \frac{y_1 y}{b^2} = 1$, parabole $y^2 = 2px$ pa $y_1 y = p(x + x_1)$.
 
-**7. Tangenta z diskriminanto (višja raven).** Kadar poznaš smer tangente ali točko zunaj stožnice, uporabi isti postopek kot pri krožnici. Premico $y = kx + n$ vstaviš v enačbo stožnice in dobiš kvadratno enačbo za $x$. Diskriminanta pove lego: $D > 0$ sekanta, $D = 0$ tangenta, $D < 0$ mimobežnica. Za stožnice s središčem oziroma temenom v izhodišču ta račun vedno da pogoj tangentnosti: pri elipsi $a^2k^2 + b^2 = n^2$, pri hiperboli $a^2k^2 - b^2 = n^2$, pri paraboli $y^2 = 2px$ pogoj $p = 2kn$.
+**7. Tangenta z diskriminanto (višja raven).** Kadar poznaš smer tangente ali točko zunaj stožnice, uporabi isti postopek kot pri krožnici. Premico $y = kx + n$ vstaviš v enačbo stožnice in dobiš kvadratno enačbo za $x$. Diskriminanta pove lego: $D > 0$ sekanta, $D = 0$ tangenta, $D < 0$ mimobežnica. Za stožnice s središčem oziroma temenom v izhodišču ta račun da pogoj tangentnosti: pri elipsi $a^2k^2 + b^2 = n^2$, pri hiperboli $a^2k^2 - b^2 = n^2$ (za premice, ki niso vzporedne asimptoti, torej $a^2k^2 \ne b^2$; sicer pogoj da $n = 0$, to je asimptoto, ki ni tangenta), pri paraboli $y^2 = 2px$ pogoj $p = 2kn$.
 
 :::premisli
-Premica, vzporedna asimptoti hiperbole, seka hiperbolo v natanko eni točki. Zakaj kljub temu ni tangenta?
+Premica, vzporedna asimptoti hiperbole (a ne asimptota sama), seka hiperbolo v natanko eni točki. Zakaj kljub temu ni tangenta?
 ---
 Ko jo vstaviš, se člena z $x^2$ odštejeta in ostane linearna enačba. Diskriminante sploh ni, ena rešitev pomeni presečišče, ne dotika: premica gre z ene strani veje na drugo. Tangenta je le premica, pri kateri ima kvadratna enačba dvojno rešitev.
 :::

@@ -54,7 +54,7 @@ consequences of mistakes and answers a conclusion question. Brief: j, point 8 of
 | `public/sim/lab-model-elektrika.js` | models, no DOM: `VezBench` (series/parallel/mixed netlist, reuses the `lab-model.js` meters, fuse, resistors, lamp, supply), `tester`, `MATERIALI` |
 | `public/sim/lab-elektrika.js` | `labVezava` (engine `lab-vezava`), `labPrevodnost` (engine `lab-prevodnost`); circuit parts `drawMeter`, `drawResistor`, `drawLamp` shared with `labOhm` (`lab-fiz.js`) |
 | `public/sim/lab-model-toplota.js` | heat models, no DOM: `Voda` (water + vessel, two nodes, losses through wall, bottom and surface incl. evaporation), `POSODE`, thermometer and balance, `GrelnikBench`, `MesanjeBench`, `FazeBench` (enthalpy model ice/brine/water/steam), `OhlajanjeBench`, `vrelisce` (Antoine), `talisceSoli` (CRC table) |
-| `public/sim/lab-toplota.js` | `labGrelnik` (engine `lab-grelnik`), `labMesanje` (`lab-mesanje`), `labFaze` (`lab-faze`), `labOhlajanje` (`lab-ohlajanje`); time-speed control (×1 … ×300), auto-record at round times |
+| `public/sim/lab-toplota.js` | `labGrelnik` (engine `lab-grelnik`), `labMesanje` (`lab-mesanje`), `labFaze` (`lab-faze`), `labOhlajanje` (`lab-ohlajanje`), `labBoyle` (`lab-boyle`); time-speed control (×1 … ×300), auto-record at round times |
 | `public/sim/lab-model-optika.js` | optics models, no DOM: `sledi` (2D ray tracer on the optical disc: flat face, curved face, mirror, Fresnel split of every ray), `snell`, `mejniKot`, `fresnel`, `LomBench`, `LecaBench` (thin lens, blur circle, depth of focus), `slika`, `nejasnost`, `fIzMeritev` |
 | `public/sim/lab-optika.js` | `labLom` (engine `lab-lom`), `labLeca` (`lab-leca`); no clock, the drawing is redrawn on every change |
 | `public/sim/lab-model-sile.js` | »Silomer in uteži«, no DOM: `HookeBench` (springs, M3 masses, elastic–plastic spring, swinging, parallax), `GostotaBench` (balance ±0,1 g, 100 mL cylinder class B, samples, meniscus), `VzgonBench` (5 N spring scale, level rise, bottom contact), `TlakBench` (membrane probe, water U-tube, leak), `G_LJ`, `TEKOCINE`, `naklonSkoziIzhodisce` |
@@ -64,7 +64,7 @@ consequences of mistakes and answers a conclusion question. Brief: j, point 8 of
 | `public/sim/lab-model-elektrokemija.js` | electrochemistry models, no DOM: `ElektrolizaBench` (Hofmann apparatus: Tafel kinetics on Pt/graphite, competing O₂/Cl₂ at the anode, arm pH, gas dissolution, ρgΔh and water vapour in the tubes, Joule heating, fuse), `GalvanBench` (half-cells, Nernst, Mg mixed potential, foreign salts, bridge resistance, loads), `KovineBench` (metal + acid rate law, displacement by diffusion, heat, foam, gas syringe), `faradayMol`, `nernst`, `hH2SO4`, `barvaRaztopine` (Beer–Lambert), `KOVINE`, `SOLI`, `TEKOCINE_EL`; reuses the multimeter, fuse, supply, `rng`/`gauss` (`lab-model.js`), thermometer and `pNas` (`lab-model-toplota.js`), LED (`lab-model-elektrika.js`), indicator colours (`lab-model-indikatorji.js`) |
 | `public/sim/lab-elektrokemija.js` | `labElektroliza` (engine `lab-elektroliza`), `labGalvanski` (`lab-galvanski`), `labKovine` (`lab-kovine`); drawing helpers for glass (thickness, highlight), metals with sheen, DMM, bench supply, crocodile clips, stand and clamp, bubbles (CSS animation, phase from the clock, still under reduced motion), magnifiers; CSS prefix `lab-ek-` |
 | `public/sim/lab-model-gibanje.js` | motion models, no DOM: `ProgaBench` (aluminium track 1,2 m, cart with wheel inertia and rolling resistance, blocks or shim, table tilt and spirit level, light gates with beam height and edge jitter, 4-channel gate timer in »from release« or »gate 1 → 2« mode, holding magnet / hand / push, bumper; with `skripec: true` a string over a pulley to a hanger with 10 g masses, string angle, hanger landing on the floor), `PadBench` (free fall with drag ½ρcAv², buoyancy and added mass, magnet or clamp release delay, gate offset and chord), `PREDMETI`, `CASOVNIK`/`casovnikRead`, `gostotaZraka`, `koncnaHitrost`, `pospesekKlanec`, `pospesekNewton`, `zastira`; reuses `rng`/`gauss`, `M_ZRAK` (`lab-model.js`), `G_LJ`, M3 masses and line fits (`lab-model-sile.js`) |
-| `public/sim/lab-gibanje.js` | `labKlanec` (engine `lab-klanec`), `labProstiPad` (`lab-prosti-pad`), `labNewton2` (`lab-newton2`); one SVG per bench, moving parts are groups whose `transform` changes per frame (rAF; 10 fps under reduced motion, same real time); slow-motion replay ×0,1 labelled in the drawing; magnifiers: cross-section at the gate (flag vs beam height), top view of beam and fall line; CSS prefix `lab-gib-` |
+| `public/sim/lab-gibanje.js` | `labKlanec` (engine `lab-klanec`), `labProstiPad` (`lab-prosti-pad`), `labNewton2` (`lab-newton2`), `labNihalo` (`lab-nihalo`); one SVG per bench, moving parts are groups whose `transform` changes per frame (rAF; 10 fps under reduced motion, same real time); slow-motion replay ×0,1 labelled in the drawing; magnifiers: cross-section at the gate (flag vs beam height), top view of beam and fall line; CSS prefix `lab-gib-` |
 | `public/sim/lab-model-magnetizem.js` | electromagnetism models, no DOM: thick-coil on-axis field `bTuljavaOs` (Montgomery), thin `bSolenoid`, numeric `bBiotSavart` (helix, for the test), magnetised cylinder `bValj`, demagnetising factor `razmagnetilni` (Osborn), B–H curve `bZelezo`/`hZelezo`, open core `magnetizacijaPalice`; `ElektromagnetBench` (coils 250/500/1000 turns, air/soft-iron rod/steel nail/U-core with yoke and spacers, CV/CC supply, ammeter in series or parallel with fuses, coil heating with R(T) and thermal cut-out, Hall teslameter with zero, orientation and ranges, clips with remanence, compass), `TehtnicaBench` (current balance: magnets in a steel holder on a 0,01 g balance, PCB wire loops 1–8 cm, height and angle, tare and drift), `IndukcijaBench` (NdFeB magnet falling or pushed through a coil, flux by reciprocity, 12-bit voltage sensor with ranges and sampling, hum, jam, ballistic galvanometer), `POENOSTAVITVE_MAGNETIZEM`; reuses `rng`/`gauss`/`makeMeter`/`meterRead`/`fuseRate`/`AM_RANGES` (`lab-model.js`) and `G_LJ`, line fits (`lab-model-sile.js`) |
 | `public/sim/lab-magnetizem.js` | `labElektromagnet` (engine `lab-elektromagnet`), `labSilaVodnik` (`lab-sila-vodnik`), `labIndukcija` (`lab-indukcija`); one SVG per bench with a fixed scale and scale bar, copper windings drawn turn by turn, bench supply, DMM, teslameter, data logger and laptop trace; top-view inset of the magnet gap; falling magnet animated in real time (rAF) with a ×0,1 replay; CSS prefix `lab-mag-` |
 | `public/sim/lab-model-reakcije.js` | reaction models, no DOM: `Osnova` (goggles, unthermostated water bath, stopwatch with human reaction time), `MarmorBench` (CaCO₃ + HCl on a 0,01 g balance: rate ∝ area·[H⁺], limiting reagent, dissolved CO₂, heavy CO₂ in the flask, cotton wool, spray, foam), `MagnezijBench` (wraps `KovineBench`), `Brizga` (100 mL syringe with plunger friction, leaking stopper, pop at 110 mL), `TiosulfatBench` (»disappearing cross«), `PeroksidBench` (H₂O₂ with MnO₂, KI, catalase; splint, filtering), `KalorimeterBench` (polystyrene cup or beaker via `Voda`, lid, stirring and layers, digital or glass thermometer, neutralisation, dissolving, Mg, thermometric titration), `ekstrapolacija`, `entalpija`, `PlamenBench` (NIST lines, molecular bands, CIE 1931 colour, cobalt glass, loop cleaning), `POENOSTAVITVE_REAKCIJE`; reuses `KovineBench`/`KINETIKA`/`OBLIKE`/`KOVINE`/`laboratorij`/`TOPNOST` (`lab-model-elektrokemija.js`), `Voda`/`POSODE`/thermometer/`pNas` (`lab-model-toplota.js`), `rng`/`gauss`/`M`/`CO2_TOPNOST`/`BUCKA` (`lab-model.js`) |
@@ -230,6 +230,11 @@ Tests: ideal plateau length m L_f / P (±1,5 s); real heat during melting = m L_
 Same `Voda` model (Newton cooling through the wall plus evaporation from an open surface), three thermometers, speed ×10/×60/×300, auto-record every minute, graph T(t)
 with three series, conclusion question (thermos, lid, evaporation). Tests: porcelain 90 → 55–68 °C in 10 min (ocena), lid and thermos slower, closed thermos k constant ±15 %, full closed thermos (350 g) loses 8–12 K in 6 h (calibration). Meters: thermometer at −20…120 °C within ±0,5 (500 seeds and the worst-case sum), balance ±0,2 g.
 
+### `lab-boyle` – Boyle's law with a syringe and a pressure sensor (FIZ-SS-2 plinska enačba; KEM-SS-1 plini)
+Model `BoyleBench` in `lab-model-toplota.js`. Plastic syringe 60 mL (1 mL scale, inner Ø ~26,7 mm, scale error ~1 %, ocena) on a three-way valve and an absolute pressure sensor 0–210 kPa (above that OL; resolution 0,1 kPa, zero offset ±0,5 kPa, noise ~0,04 kPa, ocena); dead volume ~1,5 mL (ocena); air pressure ~98 kPa (Ljubljana) ±1 kPa with weather.
+Ideal gas p = nRT/V with V = k·V_scale + V_dead. A fast push is partly adiabatic (12 % of T·V^(γ−1) = const., γ = 1,4, ocena: 40 → 20 mL heats ~11 K, p ~4 % above steady), then relaxes to room temperature with τ ≈ 1,5 s; the reading counts as steady when it changes by < 0,2 kPa. Push force ≤ ~150 N (ocena). The student computes the mean pV (J).
+Tests (`test/laboratorij-nihalo-boyle.test.js`): pV constant and halving V doubles p (ideal); with dead volume, scale error and offset pV within a few % (several seeds); brief heating on fast compression; force and sensor limits; registration and shared lab parts; browser run.
+
 ### Forces: shared data (`lab-model-sile.js`)
 The model uses g = 9,806 m/s² (Ljubljana: GRS 80 formula at 46,05° plus free-air correction for 295 m), the student computes with 9,81. Liquids at 20 °C: water 0,9982,
 4 % NaCl 1,0268, ethanol 0,7893 (CRC), sunflower oil 0,920 (Engineering ToolBox); meniscus heights 1,3–2 mm (ocena). A data test checks every density, the M3 table, cylinder class B and the spring-scale budget against these sources. Analog scales are read in a magnifier (`lupa`).
@@ -291,7 +296,8 @@ yellow-brown vs temperature; conclusion after 15 min. Tests: 37 °C in 5 ± 1 mi
 ### `lab-lom` – reflection and refraction on the optical disc (FIZ-OS-8 odboj svetlobe, lom svetlobe; FIZ-SS-3 geometrijska optika)
 Optical disc with a 1° scale (radius 120 mm, ocena), red 650 nm class 2 laser (safety note on switch-on: never into the eye), plane mirror (R 90 %, ocena) or a
 semicircular block (radius 50 mm, ocena) of acrylic PMMA n = 1,4881 (Sultanova 2009), glass N-BK7 1,5145 (Schott) or water 1,3314 (Daimon & Masumura 2007), air 1,00028
-(Ciddor 1996; all at 650 nm, refractiveindex.info). Light from air into the block through the flat face, or from the block into air (enters radially through the curved face).
+(Ciddor 1996; all at 650 nm, refractiveindex.info), or the unknown material X (matura task »Lomni količnik neznane snovi«): its n is drawn from the bench seed, uniformly
+1,42–1,62 and rounded to 4 decimals (`nNeznane`, `LomBench.nX`, a separate rng so the other draws of a seed stay the same); the disc label shows only »snov X«, no note or source names its n. Light from air into the block through the flat face, or from the block into air (enters radially through the curved face).
 Every ray is traced in 2D and split by the Fresnel equations (unpolarised), so the weak reflected ray (3,85 % at normal incidence for PMMA) is drawn faint and its share is shown.
 Reading: the disc is set to a mark within ±0,25° (ocena), angles are read to 0,5° with an eye error ≤ 0,24° (total ±0,5°). Table α, odbojni, β, sin α, sin β; graph sin β vs sin α
 with a fit through the origin, slope 1/n (air → block) or n (block → air); total internal reflection above the critical angle (PMMA 42,2°). Mistakes: angles measured from the surface,
@@ -372,6 +378,11 @@ pulley at hook height or 5 cm higher/lower (string angle); the hanger starts 82 
 Table m, F = m_o g, v₁, v₂, a = (v₂² − v₁²)/2s (gate 1 → 2) or 2s/t² (from release); graphs a(F) per total mass (general line: the intercept shows friction) and a(1/m) per force; friction check with the string off and a push (Δt₁ vs Δt₂); two conclusion questions (a ∝ F/m; why masses move from the cart to the hanger).
 Tests: formula within 0,5 % (4 mass combinations); constant total mass when moving masses, each mass in one place (moving one keeps the exact set), a(F) through the origin when compensated (|b| < 0,02 m/s²) and an intercept without; a ∝ 1/m within 6 %; hanger lands after 82 cm (a from v² < 95 %); pulley 5 cm high lowers a near the pulley by ~1 %; string off: no motion; push test even only with the right shim; M3 masses (200 seeds).
 
+### `lab-nihalo` – simple pendulum, period and g (FIZ-SS-3 nihanje; FIZ-TEK-OS načrtovanje poskusa in obdelava meritev)
+Model `NihaloBench` in `lab-model-gibanje.js`. String 20–150 cm (length from the pivot to the ball's centre, 1 mm scale), balls: steel Ø 25 mm 64 g and Ø 31,5 mm 128 g (exactly twice the mass), beech Ø 25 mm 6 g. Solved without the small-angle approximation (RK4, 1 ms) as a physical pendulum: I = (m + ½ρV)l² + ⅖mr², buoyancy, drag ½ρcA with c = 0,5 (ocena), pivot damping τ = 900 s (ocena).
+Exact period without drag t₀ = 2π√(l/g)/AGM(1, cos(θ₀/2)) (Carvalhaes & Suppes, Am. J. Phys. 76, 1150 (2008)). Errors: pivot ±2 mm, length reading ±1,5 mm, protractor ±1°, stopwatch 0,01 s with reaction spread σ 0,04 s (all ocena). The student finds g = 4π²/k from the slope k of t₀²(l).
+Tests (`test/laboratorij-nihalo-boyle.test.js`): exact period, small-angle limit and amplitude correction; g from t₀²(l) with realistic noise within 2 % (several seeds); period independent of mass and growing with amplitude; registration and shared lab parts; browser run.
+
 ### Electromagnetism: shared data (`lab-model-magnetizem.js`)
 μ0 = 1,25663706212·10⁻⁶ (CODATA 2018). Earth's field in Ljubljana 48 µT, inclination 63° (NOAA WMM2025 for 2026, rounded: vertical 42,8 µT, horizontal 21,8 µT). Copper ρ 1,72·10⁻⁸ Ω m, α = 0,0039 /K (CRC).
 Coils from a demountable-transformer kit (LD Didactic 562 13/14/15): 250 turns 0,6 Ω 5 A, 500 turns 2,5 Ω 2,5 A, 1000 turns 9,5 Ω 1,25 A; winding 6 cm long, radii 2,4–3,4 cm (ocena from the bobbin). Heating: one block, C 250 J/K, R_th 3,5 K/W (~70 K at Imax), thermal cut-out 120 °C, reclose 90 °C, lacquer smell above 105 °C (all ocena).
@@ -432,8 +443,89 @@ Table: sample, colour (student), lines read (SŠ), ion (student), ✓/✗; E = h
 Mistakes: dirty loop (yellow masks everything), luminous flame (salt share < 20 %), loop not dipped in HCl (weak colour), K with Na without cobalt glass, no goggles.
 Tests: lines within 0,1 nm of NIST and the reading within 1,5 nm; hues (Li/Sr red, Na yellow-orange, Ca orange, Ba green, Cu blue-green, K violet); Na share > 95 % in Na + K, K > 60 % through cobalt glass; dirty loop Na > 60 %, 2–4 cleanings, clean Li > 70 %, luminous flame < 20 %; no HCl dip; K evaporates first; unknowns contain one Na + K (20 seeds); E(Na D) = 2,105 eV; fuzz (no NaN) for all three engines, also for a paused step (dt = 0).
 
+## Vodeni poskus (guided mode) and usage counts
+
+Plan: j 21. 11. 2026 (doc https://claude.ai/artifact/PsKsB3QjtVqVHf76UXjMme), phase 1 started 25. 11. 2026. In the
+Laboratorij tab (`public/laboratorij.js` → `zazeni`) an experiment with steps in `public/sim/lab-vodeno-koraki.js`
+gets a »Vodeno | Prosto« switch and, in »Vodeno«, a step card at the top of `.demo-controls`
+(`public/sim/lab-vodeno.js` → `vodi`). First open is »Vodeno«; the choice is remembered per device
+(`localStorage` `evklid.lab.nacin`). »Prosto« is the lab as before. Guided now (the plan's 10): phase 1 `lab-titracija` (10 steps), `lab-ohm` (9),
+`lab-prosti-pad` (7) in `lab-vodeno-koraki.js`; phase 2 (25. 11. 2026) `lab-co2`, `lab-elektroliza`, `lab-grelnik`,
+`lab-hitrost` (SŠ key only), `lab-hooke`, `lab-lom`, `lab-newton2`, each in `public/sim/vodeno/<key>.js` (default export,
+listed in `FAZA2`), with its play in `test/vodeno/<key>.js` (`VODENO_SAMO=<keys>` plays only those). Shared `done`
+helpers: `public/sim/lab-vodeno-pomoc.js`. Not in lessons (sims embedded in a lesson stay free).
+- A step unlocks itself from what the student really did, read from the DOM like the tutor snapshot
+  (`lab.js` → `stanjePoskusa`): settings, the measurement table, every event-log line since the guide started (kept by a
+  MutationObserver, the log itself shows only 5) and the number of correctly answered »Sklep« questions. Engines need no
+  code for it. `poudari` outlines the control the step needs (`.lab-vod-cilj`); `zakaj` is shown after the step.
+- `c.dnevnik` is every log text since the guide started (oldest first), for steps that must check what one action
+  logged together (titration pipetting: no »mokra pipeta« or »splaknil z vzorcem« warning before the newest
+  »S propipeto si«, AUDIT-075). `c.racun()` is true when »Preveri moj račun« (`lab.js` → `racun`) shows a correct answer
+  (`.lab-racun .lab-why.ok`; »Pokaži rešitev« does not count): calculation steps use `c.racun() && <value check>`.
+- A prediction (`lab.js` → `napoved`, `data-napoved=<id>`) is a step with `done: (c) => c.napoved(id)`: true once the
+  student wrote one or measured first (box closed), and true when the engine has no such box. Now: `lab-ohm` step 2
+  (`tok-6V`). The titration prediction is about acetic acid, which the guided HCl titration does not use.
+- »↺ Ponastavi« rebuilds the engine, so the guide starts again at step 1 (new `.demo-controls` element).
+- A new guided experiment = a `KORAKI` entry. `test/laboratorij-vodeno.test.js` checks every `poudari` text exists in
+  the engine and plays every guided experiment to the end in Chromium with the clicks a student would make, so a
+  changed engine that breaks a step fails the test.
+- Prediction before measuring, a locked conclusion and »Preveri moj račun« are profil A's shared parts in `lab.js`
+  (A1–A3). The static test also searches `lab.js` for `poudari` texts when the engine calls `napoved(` or `racun(`.
+- Usage counts (`server/laboratorij.js`): `POST /api/students/:id/lab/uporaba` `{ key, nacin: vodeno|prosto|brez,
+  dogodek: odprt|preklop|koncano }` → table `lab_uporaba (dan, poskus, nacin, dogodek, n)`, only daily counts, no student,
+  device or IP (not personal data); the same event of the same student and experiment counts once per 10 s. Read:
+  `GET /api/admin/laboratorij?days=30` (admin, or local without accounts).
+
+## Šibke točke (weak points)
+The first »Sklep« pick and the first numeric »Preveri moj račun« dispatch `evklid:lab-preverjeno` { vrsta, ok }
+(public/sim/lab.js `LAB_PREVERJENO`; retries, »Poskusi znova«, a factor-10ⁿ slip and anything after »Pokaži rešitev«,
+also a restored one, do not). Predictions never count. public/laboratorij.js turns it into
+`POST /api/students/:id/tool-check` (`sibkaTocka`: source `lab`, a topic from `SIBKE_TEME` on the student's own school
+level, item `ohm:racun` or `ohm:sklep:<hash of the question>`, never the typed value) for the profile that opened the
+experiment; limits (lab 2 per topic per day) in docs/sibke-tocke.md. Only the 10 main experiments are listed.
+
+## Maturitetni poskus (matura mode)
+
+Plan phase 3 (25. 11. 2026). An experiment with a task in `public/sim/lab-matura-naloge.js` (one file per experiment in
+`public/sim/matura/<key>.js`) gets a third button »Matura« in the switch; its card (`public/sim/lab-matura.js` →
+`maturaKartica`) replaces the step card. »Začni nalogo« forgets the measurements and rebuilds the engine with a new seed
+(`mount._labZnova`), so every task has a new unknown (e.g. the HCl concentration). The student measures without steps
+and submits a number, a unit and an absolute uncertainty. The program scores it (`oceni`), no AI:
+- measurements, 4 points: `meritve: [{ kaj, tock, ok(c) }]`, read from the same context as guided steps (`c.dnevnik`,
+  `c.vrstice`, …), counted only since the task started;
+- result, 4 points by relative error to the true value: ≤ tol 4, ≤ 2·tol 3, ≤ 3·tol 2, ≤ 5·tol 1. The true value comes
+  from the engine's model (`el._labBench = B` in the engine, `resnica(B)` in the task). `tol` is calibrated: a careful
+  student simulated in the model must land within tol in ≥ 95 % of seeds (`test/laboratorij-matura.test.js`);
+- the result counts only if it comes from the student's own data: `izMeritev(c)` computes the same quantity from the
+  table/log by the task's method; a result more than 2·tol away from it (or no usable data) scores 0 for the result, so a
+  known value (g, F, Eₐ, a resistor label) typed without measuring earns nothing. Where the true value is a model
+  constant (`stalnica: true`: prosti-pad g, elektroliza F, hitrost Eₐ) the window is tol, so typing the textbook value
+  after any run does not beat honest work. After submitting, the card shows »Iz tvojih meritev« next to the true value.
+  `izMeritev(c)` also gets `c.B` (the bench): lab-elektroliza takes p and T from it, because `kontekst` does not read
+  the displays (without B, e.g. in unit tests, the lab's average 98,0 kPa and 22 °C);
+- unit, 1 point (`enote: [[name, factor to the right unit | null], …]`, first is right; mmol/L is converted);
+- uncertainty, 1 point: the true value lies within result ± max(Δ, tol·result) (the model's hidden systematic errors,
+  such as the magnet delay or pipette calibration, are not the student's fault) and 0,2·tol ≤ Δ/result ≤ 4·tol
+  (a leading ± is accepted).
+Unit and uncertainty count only when the result comes from the student's own data (not more than 2·tol from `izMeritev`), so a
+guess without measurements scores nothing. Optional task fields: `zgledNap` (example uncertainty on the card), `merOpomba`
+(printed after »Iz tvojih meritev«). Leaving »Matura« while a task runs abandons it (the next start gives a new sample),
+so the free mode cannot be used to see computed results or the true value. While a task runs, »Vprašaj inštruktorja« is
+hidden (`mount.dataset.matura`, public/lab.css). The best score per task is stored per profile in
+`evklid.lab.matura.<studentId>` (personal data: cleared with `clearPrivate`/`clearProfile`, included in `deviceData`).
+During the task `.lab-racun`, `.lab-q` and the task's `skrij` selectors (anything showing a computed result or the true
+value) get `.lab-mat-skrito`; after submitting everything shows again with the points, the true value and the student's
+result. The method (equations, averaging, graph) is not scored: that is the tutor's job in phase 4 (profil B, j's card).
+Tasks (unknown, tol): titracija c(HCl) from the seed (2,5 %), ohm R of the 100 Ω resistor (1 %), prosti-pad g (2,5 %),
+newton2 accelerated mass (2,5 %), hooke k of the soft spring (1 %), lom n of »snov X« drawn 1,42–1,62 from the seed
+(1 %), grelnik efficiency of the student's own run (2 %), co2 mass of a hidden NaHCO₃ sample (8 %), hitrost Eₐ of the
+thiosulfate reaction (3 %), elektroliza F (4,5 %). Each task's simulation and browser play: `test/matura/<key>.js`
+(loaded by `test/laboratorij-matura.test.js`). »↺ Ponastavi« during a task keeps the task running and reruns `priprava`.
+The best score stays on the device (`localStorage` `evklid.lab.matura.<studentId>`); the server only counts submissions
+(`nacin: matura`, `dogodek: oddano`, no points, no student). »Matura« is not remembered as the default mode.
+
 ## Next (from j's list)
-FIZ: pendulum and stopwatch; motion part B: collisions of two carts on the track (momentum, magnets/Velcro), uniform motion with a motion sensor, nested coffee filters (v_t ∝ √m), a(θ) on the incline to find μr; optics: concave mirror on the optical bench (`lab-zrcalo`, reuses `LecaBench` with 1/a + 1/b = 2/R), diverging lens with a converging one, dispersion with a prism (white light), lens defects; forces: series/parallel springs and a digital force sensor, Pascal's vessels, a typed reading (student enters the value) in `lab-hooke`/`lab-gostota`. KEM: electroplating (copper on a key, mass vs charge, reuses `ElektrolizaBench` kinetics), corrosion of iron (nails in water, salt water, oil, with zinc/copper contact), Daniell cell with a Zn | Cu series battery for an LED, electrolysis of CuSO₄ with copper electrodes (mass change).
+FIZ: motion part B: collisions of two carts on the track (momentum, magnets/Velcro), uniform motion with a motion sensor, nested coffee filters (v_t ∝ √m), a(θ) on the incline to find μr; optics: concave mirror on the optical bench (`lab-zrcalo`, reuses `LecaBench` with 1/a + 1/b = 2/R), diverging lens with a converging one, dispersion with a prism (white light), lens defects; forces: series/parallel springs and a digital force sensor, Pascal's vessels, a typed reading (student enters the value) in `lab-hooke`/`lab-gostota`. KEM: electroplating (copper on a key, mass vs charge, reuses `ElektrolizaBench` kinetics), corrosion of iron (nails in water, salt water, oil, with zinc/copper contact), Daniell cell with a Zn | Cu series battery for an LED, electrolysis of CuSO₄ with copper electrodes (mass change).
 NAR: the same engines on more NAR-OS-6/7 topics. Indicators: enzyme pH dependence (amylase at pH 4/7/9, reuses `SlinaBench`), the 0 °C tube warmed to 37 °C, a home version of `lab-ph` with only red cabbage, Sudan III for fats, pH meter alkaline error. Heat: specific heat of metals (hot metal block into a calorimeter, reuses `MesanjeBench`),
 solidification curve (cooling of stearic acid / salol), a separate stopwatch for `lab-grelnik` (now started by the switch), stirring as a choice in `lab-faze`. Each one: model + test first, then UI, then the three reviews.
 Electromagnetism: transformer with the demountable U-core (U₂/U₁ = N₂/N₁, reuses the coils and `JEDRA.u`), eddy-current brake (magnet in a copper tube vs the acrylic one; not done), Earth's field with a tangent galvanometer, iron core in `lab-indukcija` hand mode (not done).

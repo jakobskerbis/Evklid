@@ -11,11 +11,16 @@ const RAD = Math.PI / 180;
 // Akril (PMMA): n = 1,4881 pri 650 nm (Sultanova in sod. 2009, Sellmeierjeva enačba z refractiveindex.info; pri 587,6 nm 1,4905).
 // Steklo BK7: n = 1,5145 pri 650 nm (Schott N-BK7, Sellmeierjeva enačba; n_C = 1,51432 pri 656,3 nm).
 // Voda pri 20 °C: n = 1,3314 pri 650 nm (Daimon in Masumura 2007; Hale in Querry 1973).
+// Neznana snov X (maturitetni poskus): prozorna trdna snov, n iz semena klopi (LomBench.nX), enakomerno v NX = 1,42–1,62
+// (ocena: od fluoridnih in boratnih stekel ~1,43 prek akrila, polikarbonata 1,58 in polistirena 1,59 do kronskih in
+// lahkih flintovih stekel ~1,62; refractiveindex.info). Njen n ni v SNOVI (n: null), da ga noben napis ne pokaže.
 export const N_ZRAK = 1.00028;
+export const NX = [1.42, 1.62];
 export const SNOVI = {
   pmma: { name: "polvalj iz akrila (PMMA)", kratko: "akril", n: 1.4881 },
   bk7: { name: "polvalj iz stekla (BK7)", kratko: "steklo", n: 1.5145 },
   voda: { name: "voda v polkrožni posodi", kratko: "voda", n: 1.3314 },
+  x: { name: "polvalj iz neznane snovi X", kratko: "snov X", n: null, neznana: true },
   zrcalo: { name: "ravno zrcalo", kratko: "zrcalo", n: null },
 };
 
@@ -63,8 +68,10 @@ function krog(p, u, R) {
 }
 
 // Sledi laserskemu žarku po disku. Vrne odseke { p0, p1, I } in zadetke na skali { path, I, kot (od pravokotnice), zgoraj, x }.
-export function sledi({ snov = "pmma", smer = "zrak", alfa = 30, zamik = 0 }) {
-  const S = SNOVI[snov], Rs = DISK.Rs, R = S.n ? DISK.R : DISK.Rz;
+// n: lomni količnik polvalja; za neznano snov X ga poda klop (LomBench.n), sicer je iz SNOVI.
+export function sledi({ snov = "pmma", smer = "zrak", alfa = 30, zamik = 0, n = SNOVI[snov].n }) {
+  if (SNOVI[snov].neznana && !(n > 1)) throw new Error(`sledi: snov ${snov} potrebuje lomni količnik n`);
+  const S = { n }, Rs = DISK.Rs, R = S.n ? DISK.R : DISK.Rz;
   const a = alfa * RAD, zgoraj = smer === "zrak" || !S.n;
   // laser je na robu diska pri kotu α od pravokotnice (levo), usmerjen v središče; zamik ga premakne vzporedno
   const u = zgoraj ? [Math.sin(a), -Math.cos(a)] : [Math.sin(a), Math.cos(a)];
@@ -115,9 +122,17 @@ export function sledi({ snov = "pmma", smer = "zrak", alfa = 30, zamik = 0 }) {
   return { odseki, zadetki, lom, odboj, p0, u };
 }
 
+// Lomni količnik neznane snovi X iz semena: iz posebnega generatorja (seme premešano s stalnico), da ostala zaporedja
+// naključnih števil (napaka nastavitve diska in odčitka) ostanejo taka kot prej. Zaokrožen na 4 decimalke.
+export const nNeznane = (seed) => {
+  const r = rng((Math.imul((seed >>> 0) ^ 0x51ed270b, 0x2c1b3c6d) ^ 0x6a09e667) >>> 0);
+  return Math.round((NX[0] + (NX[1] - NX[0]) * r()) * 1e4) / 1e4;
+};
+
 export class LomBench {
   constructor({ seed = 1, idealno = false } = {}) {
     this.r = rng(seed);
+    this.nX = nNeznane(seed);
     this.idealno = idealno;
     this.snov = "pmma";
     this.smer = "zrak";
@@ -133,8 +148,12 @@ export class LomBench {
   get alfaPravi() {
     return this.alfa + this.napaka;
   }
+  // Lomni količnik izbrane snovi na disku (null: zrcalo).
+  get n() {
+    return SNOVI[this.snov].neznana ? this.nX : SNOVI[this.snov].n;
+  }
   sledi() {
-    return sledi({ snov: this.snov, smer: SNOVI[this.snov].n ? this.smer : "zrak", alfa: this.alfaPravi, zamik: this.zamik });
+    return sledi({ snov: this.snov, smer: this.n ? this.smer : "zrak", alfa: this.alfaPravi, zamik: this.zamik, n: this.n });
   }
   // Odčitek na skali: na pol razdelka, z napako očesa. odPloskve: napačno, kot od ploskve (90° − kot).
   beri(kot) {
@@ -148,7 +167,7 @@ export class LomBench {
     return {
       alfa: odPloskve ? 90 - this.alfa : this.alfa,
       odboj: f(T.odboj), lom: f(T.lom),
-      popolni: !!SNOVI[this.snov].n && !T.lom,
+      popolni: !!this.n && !T.lom,
       Iodboj: T.odboj?.I ?? 0, Ilom: T.lom?.I ?? 0,
     };
   }
@@ -230,6 +249,7 @@ export const POENOSTAVITVE_OPTIKA = {
   lom: [
     "Laserski žarek je tanka črta (v resnici je širok približno 1 mm). Svetloba je nepolarizirana; laserska dioda je v resnici delno polarizirana, zato se odbije malo drugačen delež.",
     "Lomni količniki veljajo za rdečo svetlobo 650 nm: akril 1,488, steklo BK7 1,515, voda 1,331 (pri 20 °C), zrak 1,0003. Za modro svetlobo so malo večji.",
+    "Neznana snov X je prozorna trdna snov. Njen lomni količnik je ob vsakem novem začetku drugačen, med 1,42 in 1,62, in ga izmeriš sam.",
     "Tanko steno plastične posode za vodo smo zanemarili. Polvalj nič svetlobe ne vpije.",
     "Kot odčitaš na pol stopinje natančno (±0,5°). Ko zasučeš disk na razdelek, je pravi kot lahko do 0,25° drugačen.",
     "Koliko svetlobe se odbije, izračunamo s Fresnelovimi enačbami. Zrcalo odbije 90 % (ocena), drugo vpije.",

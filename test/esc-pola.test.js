@@ -71,14 +71,15 @@ test("naša pola: Esc zapre polo, ko je fokus na body, in ohrani označene točk
   await page.keyboard.press("Escape");
   assert.equal(await page.evaluate(() => window.odprta()), false, "Esc s fokusom v poli");
 
-  // Učenec označi »Imam prav«, fokus nato pristane na body (element s fokusom izgine): Esc vseeno zapre.
+  // Učenec odpre rešitve (na koncu), označi »Imam prav«, fokus nato pristane na body (element s fokusom izgine): Esc vseeno zapre.
   await page.evaluate(() => window.odpri());
+  await page.click("[data-op-finish]");
   await page.click("[data-op-got]");
   await page.evaluate(() => document.activeElement.blur());
   assert.equal(await page.evaluate(() => document.activeElement === document.body), true);
   await page.keyboard.press("Escape");
   assert.equal(await page.evaluate(() => window.odprta()), false, "Esc s fokusom na body");
-  assert.deepEqual(await page.evaluate(() => window.shranjeno), { "1a": true }, "označene točke ostanejo");
+  assert.deepEqual(await page.evaluate(() => window.shranjeno), { "1a": true, _konec: true }, "označene točke ostanejo");
   assert.deepEqual(await page.evaluate(() => window.oddano), [{ key: "1a", ok: true }], "kot gumb ×: šibke točke");
   // Ob ponovnem odprtju je oznaka še tam.
   await page.evaluate(() => window.odpri());

@@ -4,7 +4,8 @@ import { t, applyI18n } from "/i18n.js";
 import { icon } from "/icons.js";
 import { seznamModelov, naloziModel, seznamDatotek } from "./modeli.js";
 import { najdi } from "./iskanje.js";
-import { vgrajeno, starsu, vprasajInstruktorja } from "./vgrajeno.js";
+import { napakaVsebina, napakaBesedilo, preveriPodporo } from "./napake.js";
+import { vgrajeno, starsu, vprasajInstruktorja, javiStarsu } from "./vgrajeno.js";
 import { jsonAliNic } from "/odgovor.js";
 import { preparatModela, pogledDela } from "/mikroskop/mapa.js";
 import { DREVO, BARVE, poPoti, modeliVeje, vsiModeliDrevesa, ikonaVeje, slogIkon, ikoneVnaprej } from "./drevo.js";
@@ -448,9 +449,40 @@ async function mikroskop(param, moj) {
   return m;
 }
 
+// Izpad povezave (npr. minuta med objavo): »Ni povezave« z gumbom »Poskusi znova« in en samodejni poskus čez 4 s
+// (en na naslov do naslednjega uspeha, da daljši izpad ne sproži poskusa vsake 4 s v nedogled).
+let poskusiZnova = null;
+let samodejnoZa = null;
+function niPovezave(moj) {
+  const p = mk("div", "k3-napaka");
+  p.setAttribute("role", "alert");
+  p.append(mk("p", "", t("a3.noConnection")));
+  const b = mk("button", "a3-pill");
+  b.type = "button";
+  b.textContent = t("a3.retry");
+  b.addEventListener("click", () => usmeri());
+  p.append(b);
+  glavni.replaceChildren(p);
+  clearTimeout(poskusiZnova);
+  if (samodejnoZa === location.hash) return;
+  samodejnoZa = location.hash;
+  poskusiZnova = setTimeout(() => moj === zaporedje && usmeri(), 4000);
+}
+
 async function model(id, param, moj) {
-  const mod = await naloziModel(id);
+  let mod;
+  try {
+    mod = await naloziModel(id);
+  } catch (e) {
+    if (moj !== zaporedje) return null;
+    if (e?.povezava) {
+      niPovezave(moj);
+      return null;
+    }
+    throw e;
+  }
   if (moj !== zaporedje) return null;
+  samodejnoZa = null;
   if (!mod) {
     const p = mk("div", "k3-napaka");
     p.append(mk("p", "", t("a3.notFound")));
@@ -620,18 +652,28 @@ async function usmeri() {
   aktivno = null;
   const { id, param } = razberi();
   try {
+    // Atlas, model in mikroskop rabijo three.js (Safari 16.4+): star brskalnik dobi »posodobi« namesto prazne strani.
+    if (id) await preveriPodporo();
     const r = !id ? await zbirka(param) : id === "atlas" ? await atlas(param, moj) : id === "mikroskop" ? await mikroskop(param, moj) : await model(id, param, moj);
     if (moj === zaporedje) aktivno = r; // zastarela pot (medtem nov naslov) ne prepiše prizora, ki je zdaj odprt
+    // Okvir aplikacije skrije svoj »Zapri« (uci-se.js cuvaj3d); kartica brez prizora (niPovezave, »ne obstaja«) je napaka:
+    // »Zapri« ostane, sicer bi učenec v okvirju brez povezave ostal ujet.
+    if (moj === zaporedje) javiStarsu(glavni.querySelector(":scope > .k3-napaka") ? "napaka" : "pripravljen");
   } catch (err) {
     console.error("3D:", err);
     if (moj !== zaporedje) return;
     const p = mk("div", "k3-napaka");
-    p.append(mk("p", "", t(err?.koda === "webgl" ? "a3.noWebgl" : "a3.loadError")));
+    p.setAttribute("role", "alert");
+    // Vrsta napake (povezava, star brskalnik, pomnilnik, drugo) in »Poskusi znova«: po napaki povezave pot naloži še
+    // enkrat; drugače celo stran, ker brskalnik modul, ki je ob izvajanju vrgel napako, zapomni in ga ne naloži znova.
+    const znova = () => (napakaBesedilo(err).vrsta === "povezava" ? usmeri() : location.reload());
+    p.append(...napakaVsebina(err, { t, znova }));
     const b = mk("a", "a3-pill");
     naZbirko(b);
     b.textContent = t("a3.hubTitle");
     p.append(b);
     glavni.replaceChildren(p);
+    javiStarsu("napaka"); // okvir aplikacije pokaže »Zapri«, tudi če kartica nima poti nazaj
   }
 }
 

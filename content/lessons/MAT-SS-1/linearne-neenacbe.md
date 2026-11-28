@@ -44,6 +44,8 @@ $x = -5$ je rešitev, ker $5 > 3$. $x = 0$ ni, ker $0 > 3$ ne drži. Rešitve so
 
 *Hitro preveri:* kaj dobiš iz $-2x < 8$? ($x > -4$, ker deliš z negativnim številom.)
 
+V simulaciji spodaj (»Linearne neenačbe«) pusti b = 1, c = 7 in znak <, drsnik a pa premakni na $-2$. Neenačba $-2x + 1 < 7$ ima rešitev $x > -3$: znak se je pri deljenju z $-2$ obrnil. Z drsnikom »preizkusi x« preveri, da je $x = 0$ rešitev, $x = -5$ pa ne.
+
 **4. Zapis rešitve kot interval.** Množico rešitev zapišemo na številski premici in z intervalom:
 
 | Neenačba | Interval |
@@ -312,9 +314,9 @@ Predstavljaj si dvigalo z napisom »največ $600\,\text{kg}$«. Ti tehtaš $70\,
 
 $$70 + 45x \le 600$$
 
-Odštejemo $70$: $45x \le 530$. Delimo s $45$: $x \le 11{,}78\ldots$ Ker škatel ne moremo deliti, je največ $11$ škatel. Preveri: $70 + 45 \cdot 11 = 565 \le 600$ ✓, $70 + 45 \cdot 12 = 610 > 600$ ✗.
+Odštejemo $70$: $45x \le 530$. Delimo s $45$: $x \le 11{,}77\ldots$ Ker škatel ne moremo deliti, je največ $11$ škatel. Preveri: $70 + 45 \cdot 11 = 565 \le 600$ ✓, $70 + 45 \cdot 12 = 610 > 600$ ✗.
 
-Iz tega se vidi, da matematična rešitev ($x \le 11{,}78\ldots$) in rešitev v resničnem svetu ($x \in \{0, 1, \dots, 11\}$) nista vedno enaki. Pri besedilnih nalogah vedno premisli, ali je rešitev smiselna.
+Iz tega se vidi, da matematična rešitev ($x \le 11{,}77\ldots$) in rešitev v resničnem svetu ($x \in \{0, 1, \dots, 11\}$) nista vedno enaki. Pri besedilnih nalogah vedno premisli, ali je rešitev smiselna.
 
 Analogija za obrnitev znaka: na termometru je $5\,^\circ\mathrm{C}$ topleje od $2\,^\circ\mathrm{C}$, $-5\,^\circ\mathrm{C}$ pa hladneje od $-2\,^\circ\mathrm{C}$. Množenje z $-1$ prezrcali števila čez $0$, zato se vrstni red obrne.
 

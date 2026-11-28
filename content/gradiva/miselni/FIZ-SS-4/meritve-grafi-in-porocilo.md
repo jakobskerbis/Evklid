@@ -1,0 +1,27 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vsota in razlika
+  - $\Delta x = \Delta a + \Delta b$
+  - pazi: pri razliki napaki ne odštevaj
+- Produkt in količnik
+  - $\delta_x = \delta_a + \delta_b$
+  - primer: $\mathrm{ITM} = (21{,}6 \pm 0{,}4)\,\mathrm{kg/m^2}$
+- Potenca
+  - $\delta_x = n\,\delta_a$
+  - nihalo: $\delta_g = \delta_l + 2\,\delta_T$
+- Zapis rezultata
+  - napaka na eno veljavno mesto
+  - $g = (9{,}9 \pm 0{,}3)\,\mathrm{m/s^2}$
+- Graf meritev
+  - spreminjana količina na vodoravni osi
+  - daljice napak, okroglo merilo
+  - premica najboljšega prileganja, točk ne poveži
+- Naklon in linearizacija
+  - dve oddaljeni točki na premici, z enotami
+  - $T^2$ proti $l$: $g = 4\pi^2 / k$
+  - brizga: $p$ proti $1/V$
+- Poročilo za maturo
+  - namen, pripomočki, potek, tabela
+  - graf, izračun z napako, sklep

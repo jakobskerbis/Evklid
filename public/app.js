@@ -5,8 +5,9 @@ import { jsonAliNic } from "./odgovor.js";
 import { icon, hydrateIcons } from "./icons.js";
 import { greekFactHtml, wireGreekFacts } from "./greek.js";
 import { t, locale, currentLang, currentRegion, regionFor, setLanguage, deviceRegion, naloziVse } from "./i18n-osnova.js";
+import { uiChain } from "./i18n/languages.js";
 import { zaznajNujno, stevilke, vrstice, klici, telHref, drzavaNaprave, izoliraj, izsiljevanje, opomba, ogrej as ogrejNujno } from "./nujno.js";
-import { systemForCountry, isRegional, SCHOOL_SYSTEMS } from "./regions.js";
+import { systemForCountry, isRegional, SCHOOL_SYSTEMS, brezUcnegaNacrta } from "./regions.js";
 import { mountLanguageCard } from "./language.js";
 import { dialectsFor } from "./dialects.js";
 
@@ -16,6 +17,7 @@ import { captureSource, currentSource } from "./vir.js";
 import { showFull, closeFull, fullOpen } from "./razpri.js";
 import { makeSplitter } from "./razdelilnik.js";
 import { nastaviNogo } from "./noga.js";
+import { initObrat } from "./obrat.js";
 import { initOkna, isFloating, openWindow, closeWindow, focusWindow, refreshBubble, chatReply, restoreWindows, windowsOn, tabHint, floatingViews, syncTabbarH, setTabbarH } from "./okna.js";
 import { initProfileMenu, refreshProfileButton, closeProfileMenu } from "./profile-menu.js";
 import { initQuickStart, closeQuickStart } from "./quick-start.js";
@@ -363,6 +365,7 @@ import { jeFaks, jeSs, jeOs, stopnja, brezUvoda } from "./stopnja.js";
 import { chatIdeas as pickIdeas } from "./predlogi.js";
 import { GUIDE } from "./vodic.js";
 import { FREE_LIMIT_CODES, showLimitCard } from "./meja-placilo.js";
+import { LOCILO, celDatum, zdruzi } from "./datum.js";
 
 const $ = (sel) => document.querySelector(sel);
 // Delo ob nedejavnosti glavne niti (priprava naslednjih zaslonov), da ne zakasni dotikov.
@@ -578,7 +581,9 @@ function syncChatReturn() {
 // gumb »Nazaj na: …« vrnejo na isto mesto (back = { view, open, oznaka }).
 // back.kontekst: posnetek stanja (sourceType, sourceId, …), ki gre z naslednjim vpisanim sporočilom kot skrit blok.
 function askTutorFrom(text, back = null) {
-  state.chatReturn = back?.view && back.view !== "chat" ? { view: back.view, open: back.open || (() => {}), conv: state.conversationId ?? "nov", oznaka: back.oznaka || "" } : null;
+  // poskus: ključ odprtega poskusa (povezave C1): inštruktorjev gumb za isti poskus ga nastavi, ne odpre znova.
+  const poskus = back?.kontekst?.sourceType === "lab" && typeof back.kontekst.sourceId === "string" ? back.kontekst.sourceId : "";
+  state.chatReturn = back?.view && back.view !== "chat" ? { view: back.view, open: back.open || (() => {}), conv: state.conversationId ?? "nov", oznaka: back.oznaka || "", poskus } : null;
   showView("chat");
   ucniKontekstConv = state.conversationId ?? "nov";
   state.ucniKontekst = back?.kontekst && typeof back.kontekst === "object" ? back.kontekst : null;
@@ -768,6 +773,7 @@ function showView(name) {
   currentView = name;
   syncCompetitionTab();
   if (name === "path" || name === "competition" || name === "exams") setBack(name);
+  else if (name === "uci" && state.backTo === "uci") setBack("path"); // vrnitev v poskus porabi »← Laboratorij« (tema iz lekcije ne vodi v Laboratorij)
   if (name !== "topic") stopContestTimer();
   document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("active", t.dataset.view === name));
   // Na telefonu so Napredek, Lige, Nastavitve in Račun pod zavihkom »Jaz«.
@@ -776,6 +782,8 @@ function showView(name) {
   else if (meView(name)) $('#tabbar [data-view="me"]').classList.add("active");
   // Računalnik: kar ni med glavnimi zavihki zgoraj, je pod »Jaz« (j, 17. 11. 2026).
   if (podJazZgoraj(name)) $("#me-tab-top").classList.add("active");
+  // Bralnik zaslona: izbrani zavihek obeh menijev je trenutna stran (aria-current, ne vloga tab; A9).
+  document.querySelectorAll(".topbar .tabs .tab, #tabbar .tab").forEach((t) => (t.classList.contains("active") ? t.setAttribute("aria-current", "page") : t.removeAttribute("aria-current")));
   pinSnapshot(); // posnetek zadnjega zaslona (zagon) ostane na svojem mestu, pravi pogled se pripravi pod njim
   document.querySelectorAll(".view").forEach((v) => {
     if (!v.classList.contains("in-okno") && !v.hasAttribute("data-posnetek")) v.hidden = v.id !== `view-${name}`;
@@ -1231,7 +1239,7 @@ function backStep(wasOverlay) {
   // Telefon: s podstrani »Jaz« nazaj na »Jaz« (tudi s Kalkulatorja, saj tja vodi tudi gumb ← v njegovi glavi).
   // Tema ali naloge s Tekmovanj ali iz »NPZ in matura«: nazaj na ta seznam.
   // Urnik, NPZ/matura, Tekmovanja: tja, od koder je učenec prišel (kot gumb »←«, meBackTarget).
-  const up = subMe && (tabbarShown() || podJazZgoraj(currentView)) ? (BACK_ORIGIN.includes(currentView) ? meBackTarget(currentView) : "me") : currentView === "topic" && ["competition", "exams"].includes(state.backTo) ? state.backTo : "path";
+  const up = subMe && (tabbarShown() || podJazZgoraj(currentView)) ? (BACK_ORIGIN.includes(currentView) ? meBackTarget(currentView) : "me") : currentView === "topic" && ["competition", "exams", "uci"].includes(state.backTo) ? state.backTo : "path";
   if (up !== "path") {
     showView(up); // zapis v zgodovini doda showView (syncHistory)
     return true;
@@ -1345,7 +1353,7 @@ async function loadMeOverview() {
       ${
         events.length
           ? `<div class="list-card">${events
-              .map((e) => row("schedule", "clipboard-check", escapeHtml(e.name), `${escapeHtml(new Date(`${e.date}T12:00:00`).toLocaleDateString(locale(), { weekday: "short", day: "numeric", month: "numeric" }))} · ${when(e.daysLeft)}`))
+              .map((e) => row("schedule", "clipboard-check", escapeHtml(e.name), `${escapeHtml(celDatum(new Date(`${e.date}T12:00:00`).toLocaleDateString(locale(), { weekday: "short", day: "numeric", month: "numeric" })))}${LOCILO}${when(e.daysLeft)}`))
               .join("")}</div>`
           : `<p class="muted">${t("sch.noEvents")}</p><button type="button" class="secondary" data-me="schedule">${icon("plus")} ${t("sch.addTest")}</button>`
       }
@@ -1381,12 +1389,46 @@ document.querySelectorAll("#view-me [data-go], #settings-account [data-go]").for
 // Klik na kartico s profilom (in »Druga šola ali stopnja …« v glavi Inštruktorja): Nastavitve, na mestu šole in
 // letnika (pod njimi je povezava na Račun). Tam veljajo vsa pravila izbire (stopnja, program, šolski sistem).
 $("#me-head")?.addEventListener("click", () => openSchoolSettings());
+// Nastavitve v skupinah (<details data-skupina>, index.html): odprta je Učenje, druge skupine si naprava zapomni
+// (localStorage evklid.nastavitveSkupine). Pred skokom na polje se odprejo vse skupine nad njim.
+const SKUPINE_KEY = "evklid.nastavitveSkupine";
+function odpriNastavitev(el) {
+  for (let d = el?.closest("details"); d; d = d.parentElement?.closest("details")) d.open = true;
+  return el;
+}
+(() => {
+  let shranjeno = {};
+  try {
+    shranjeno = JSON.parse(localStorageGet(SKUPINE_KEY) || "{}");
+  } catch {}
+  if (!shranjeno || typeof shranjeno !== "object") shranjeno = {};
+  document.querySelectorAll("#view-settings details[data-skupina]").forEach((d) => {
+    if (typeof shranjeno[d.dataset.skupina] === "boolean") d.open = shranjeno[d.dataset.skupina];
+    // Shrani le, kar odpre ali zapre učenec (dotik ali tipka na glavi), ne skoka iz povezave (odpriNastavitev).
+    d.querySelector(":scope > summary").addEventListener("click", () =>
+      setTimeout(() => {
+        shranjeno[d.dataset.skupina] = d.open;
+        localStorageSet(SKUPINE_KEY, JSON.stringify(shranjeno));
+      }),
+    );
+  });
+  // Neveljavno polje v zaprti skupini (npr. prazno ime): skupina se odpre, da brskalnik lahko pokaže napako.
+  $("#settings-form").addEventListener("invalid", (e) => odpriNastavitev(e.target), true);
+  // Stikalo »Podrobna razlaga« (j, 27. 11. 2026): shrani se z gumbom Shrani kot druge nastavitve.
+  $("#settings-form").addEventListener("click", (e) => {
+    const sw = e.target.closest("[data-detailed]");
+    if (!sw) return;
+    const on = sw.getAttribute("aria-checked") !== "true";
+    sw.setAttribute("aria-checked", String(on));
+    $("#settings-form").detailed.value = on ? "1" : "0";
+  });
+})();
 function openSchoolSettings() {
   showView("settings");
-  const el = $("#settings-form .level-field") || $("#settings-form");
+  const el = odpriNastavitev($("#settings-form .level-field")) || $("#settings-form");
   requestAnimationFrame(() => {
     el?.scrollIntoView({ behavior: "smooth", block: "start" });
-    const card = $("#settings-form");
+    const card = $('#settings-form [data-skupina="sola"]') || $("#settings-form");
     card?.classList.remove("flash-target");
     void card?.offsetWidth;
     card?.classList.add("flash-target");
@@ -1601,7 +1643,7 @@ initProfileMenu({
   describe: (s) => {
     const st = s.settings || {};
     const program = isUni(st) ? programsCache().find((p) => p.id === st.study_program)?.label : null;
-    return [program || SUBJECT_NAMES[st.subject], levelLabel(st.curriculum_level)].filter(Boolean).join(" · ");
+    return zdruzi([program || SUBJECT_NAMES[st.subject], levelLabel(st.curriculum_level, st.school_system)]);
   },
 });
 
@@ -1754,10 +1796,10 @@ function renderState(convState) {
     program && `<span class="chip">${escapeHtml(program)}</span>`,
     // Zadnja izbira »Druga šola ali stopnja …« odpre Jaz → Šola in letnik (prehod OŠ ↔ SŠ ↔ fakulteta, drug sistem; #792).
     // SŠ: letnik in raven matematike v enem seznamu (»3. letnik OR«), da glava na telefonu (360 px) ne gre čez rob.
-    levelLabel(s.curriculum_level) &&
+    levelLabel(s.curriculum_level, s.school_system) &&
       // Ime seznama pove tudi raven; trenutna raven ima kljukico (data-checked), pred »Druga šola …« je črta (data-sep; dropdown.js).
       pick("level", ravni.length ? `${t("set.school")}, ${t("tbk.level")}` : t("set.school"), (() => {
-        const years = levels.length ? levels.map((x, i) => opt(i, x.label, x.current)).join("") : opt("", levelLabel(s.curriculum_level), true);
+        const years = levels.length ? levels.map((x, i) => opt(i, x.label, x.current)).join("") : opt("", levelLabel(s.curriculum_level, s.school_system), true);
         const grp = (label, html) => `<optgroup label="${escapeHtml(label)}">${html}</optgroup>`;
         const raven = (x, i) => opt(`r${i}`, x.label, false, x.current ? " data-checked" : "");
         return (ravni.length ? grp(t("tbk.year"), years) + grp(t("tbk.level"), ravni.map(raven).join("")) : years) + opt("other", t("chat.levelOther"), false, " data-sep");
@@ -2671,7 +2713,9 @@ const input = $("#input");
 function autoGrow(stick, again) {
   const box = $("#messages");
   const atBottom = typeof stick === "boolean" ? stick : box.scrollHeight - box.scrollTop - box.clientHeight < 80;
-  const max = Math.max(80, Math.round((window.visualViewport?.height || window.innerHeight) * 0.4));
+  // Ležeč telefon (UX PR 2): dolgo vprašanje (npr. iz 3D sveta ali poskusa) ne vzame sporočil, polje največ tri vrstice.
+  const lezece = matchMedia("(orientation: landscape) and (max-height: 500px)").matches;
+  const max = lezece ? 72 : Math.max(80, Math.round((window.visualViewport?.height || window.innerHeight) * 0.4));
   input.style.maxHeight = `${max}px`;
   input.style.height = "auto";
   // Formule (ulomek, koren …) se izrišejo kar v polju (public/predogled-vnosa.js): višina po izrisu, ne po surovem zapisu.
@@ -2717,7 +2761,13 @@ input.addEventListener("vnos-izris-visina", () => autoGrow());
       text = `${words.join(" ")} …`;
     }
     shown = text;
-    if (input.placeholder !== text) input.placeholder = text;
+    if (input.placeholder === text) return;
+    const krajsi = text.length < input.placeholder.length;
+    input.placeholder = text;
+    // Prazno polje je visoko kot namig: autoGrow (rAF) teče pred ResizeObserverjem, zato je izmeril še dolg, prelomljen
+    // namig (ležeče ob odprtju tipkovnice: 66 px in »multi«). Krajši namig izmerimo znova; daljšega ne, sicer bi se
+    // v zelo ozkem oknu »multi« (širše polje, daljši namig) in ozko polje menjala v neskončnost.
+    if (krajsi && !input.value) requestAnimationFrame(() => input.offsetParent && autoGrow());
   };
   if (window.ResizeObserver) new ResizeObserver(fit).observe(input);
   new MutationObserver(() => input.placeholder !== shown && fit()).observe(input, { attributes: true, attributeFilter: ["placeholder"] });
@@ -2779,13 +2829,27 @@ poZagonu(() => vnaprejGotovo.then(() => whenIdle(() =>
 // Evklidova tipkovnica (public/tipkovnica.js): na dotik za vsa polja, Σ jo odpre na plasti simbolov (tudi na računalniku).
 initKeyboard();
 initDrsniki();
+// Izgovor formul (public/mat/govor.js): gumb, ki je samo formula (izbira odgovora), dobi ime za bralnik zaslona.
+// Naloži se po prvem izrisu (ni del prvega odprtja Učne poti).
+poZagonu(() => import("./mat/govor.js").then((m) => m.initIzgovor(currentLang, uiChain)).catch(() => {}));
 document.addEventListener("input", (e) => hasFormula(e.target.value || "") && import("./predogled-vnosa.js").then((m) => m.initPredogledVnosa(e.target)), true);
 setKeyboardContext({ settings: () => state.student?.settings, chapter: calcChapter });
 mountKeyboardSettings($("#tipkovnica-card"));
 // Predlogi nad tipkovnico (TUTOR_CHIPS) so v tipkovnica-data.js, ki pride s tipkovnico (tipkovnica-lena.js).
 obTipkovnici(() =>
-  import("./tipkovnica-data.js")
-    .then(({ TUTOR_CHIPS }) => configureKeyboard(input, { layers: ["abc", "num", "fx", "sym", "kem"], start: "abc", enter: "send", ctx: TUTOR_CHIPS }))
+  Promise.all([import("./tipkovnica-data.js"), import("./graph/tipke-poglavja.js")])
+    .then(([{ tutorChips }, { chapterProfile }]) => {
+      // tipke nad tipkovnico po temi naloge (kot v kalkulatorju); tema se zamenja ob novi nalogi, ne med tipkanjem
+      let last = null;
+      const ctx = () => {
+        const topic = calcChapter();
+        const phone = matchMedia("(max-width: 600px)").matches;
+        const key = `${topic?.id || ""}|${topic?.unit || ""}|${phone}`;
+        if (last?.key !== key) last = { key, list: tutorChips(topic, chapterProfile(topic), phone) };
+        return last.list;
+      };
+      configureKeyboard(input, { layers: ["abc", "num", "fx", "sym", "kem"], start: "abc", enter: "send", ctx });
+    })
     .catch(() => {}),
 );
 $("#sym-btn").addEventListener("click", () => toggleKeyboard(input, { layer: "sym" }));
@@ -3162,6 +3226,8 @@ async function fillSettingsForm() {
   f.gender.value = s.gender || "";
   f.data_mode.value = s.data_mode || "auto";
   f.games.checked = !gamesOn(s);
+  f.detailed.value = s.detailed ? "1" : "0";
+  f.querySelector("[data-detailed]").setAttribute("aria-checked", String(!!s.detailed));
   f.xp_goal.value = String(s.xp_goal || 50);
   fillDialectOptions(f, s);
   f.subject.innerHTML = subjectOptions(null, s.subject, schoolSubjectsFor(s.educational_track, s.curriculum_level, isRegional(s.school_system)));
@@ -3178,7 +3244,7 @@ async function fillSettingsForm() {
   if (state.pickUniversity) {
     state.pickUniversity = false;
     levelPicker.set({ ...s, educational_track: "UNIVERZA", study_program: "", curriculum_level: "" });
-    $("#settings-level").scrollIntoView({ block: "center" });
+    odpriNastavitev($("#settings-level")).scrollIntoView({ block: "center" });
   }
 }
 // Jezik aplikacije in inštruktorja: shrani se v profil učenca in na napravo.
@@ -3227,6 +3293,7 @@ $("#settings-form").addEventListener("submit", async (e) => {
         dialect: f.dialect.value,
         data_mode: f.data_mode.value,
         games: f.games.checked ? "off" : "on",
+        detailed: f.detailed.value === "1",
         xp_goal: Number(f.xp_goal.value),
         ...readGoalFields($("#settings-goal")),
       },
@@ -3352,7 +3419,7 @@ async function applyLevel(settings) {
   state.pathKey = null;
   const up = stageUp(before, updated.settings);
   if (up) state.welcome = { stage: up };
-  else toast(t("path.levelNow", { level: levelLabel(updated.settings.curriculum_level) }), "circle-arrow-up");
+  else toast(t("path.levelNow", { level: levelLabel(updated.settings.curriculum_level, updated.settings.school_system) }), "circle-arrow-up");
   showView("path");
 }
 
@@ -3385,7 +3452,7 @@ $("#delete-student").addEventListener("click", async () => {
 
 // Cilj: vrstica na Učni poti, značka v zgornji vrstici in dnevni opomnik (public/goal.js, OPOMNIK_URA).
 function goalLevelText(st) {
-  return [jeFaks(st) ? t("lp.uni") : jeSs(st) ? t("lp.ss") : t("lp.os"), levelLabel(st.curriculum_level)].filter(Boolean).join(" ");
+  return [jeFaks(st) ? t("lp.uni") : jeSs(st) ? t("lp.ss") : t("lp.os"), levelLabel(st.curriculum_level, st.school_system)].filter(Boolean).join(" ");
 }
 function renderGoal() {
   const st = state.student;
@@ -3398,7 +3465,7 @@ function renderGoal() {
   chip.hidden = !hasGoal(s);
   if (hasGoal(s)) {
     // V zgornji vrstici le cilj in odštevanje (datum je v vrstici na Učni poti).
-    chip.querySelector("b").textContent = [goalName(s.goal), countdown(s.goal_date)].filter(Boolean).join(" · ");
+    chip.querySelector("b").textContent = zdruzi([goalName(s.goal), countdown(s.goal_date)]);
     chip.title = t("goal.change");
   }
   const rem = $("#goal-reminder");
@@ -3445,6 +3512,7 @@ $("#goal-modes")?.addEventListener("click", (e) => {
 document.addEventListener("click", (e) => {
   if (e.target.closest("[data-goal-edit], #goal-chip")) {
     showView("settings");
+    odpriNastavitev($("#settings-goal"));
     setTimeout(() => $("#settings-goal")?.closest("fieldset")?.scrollIntoView({ block: "center", behavior: "smooth" }), 60);
     return;
   }
@@ -3481,12 +3549,7 @@ async function loadProgress() {
       st.settings.goal_reminder && st.settings.goal_date ? `<div class="goal-reminder preview">${reminderCardHtml(st, { preview: true })}</div>` : ""
     }`;
   const p = await api(`/api/students/${state.student.id}/progress`);
-  const weak = $("#weak-list");
-  const items = [
-    ...p.manual_weaknesses.map((w) => `<li>${escapeHtml(w)}</li>`),
-    ...p.weak.map((w) => `<li class="auto" title="${t("prog.errRate", { n: Math.round(w.rate * 100) })}">${escapeHtml(w.topic)} (${w.subject ?? "?"})</li>`),
-  ];
-  weak.innerHTML = items.length ? items.join("") : `<li>${t("common.noData")}</li>`;
+  import("./vrzeli.js").then((m) => m.narisiVrzeli(state.student.id, { vadi: (id) => (setBack("path"), openTopic(id).then((x) => !x && $("#t-practice") && nextPractice())) })).catch(() => {}); // »Kaj še ne znam« (P1-8)
   // Delovni list za doma iz šibkih tem (iz nalog v Vadnici; strežnik pove, če je zaklenjen).
   const sheetBtn = $("#weak-sheet");
   $("#weak-sheet-msg").hidden = true;
@@ -3807,55 +3870,28 @@ async function goNew({ skipHint = false } = {}) {
   if (m.newTopic.practice && !pretest) await nextPractice({ stay: true });
 }
 
-async function showTestPrep(edit = false) {
+// Priprava na test (public/priprava/priprava.js, docs/priprava.md PR 7): test, zapiski, teme, prvi kviz, »Danes« z
+// načrtom, pripravljenostjo iz izkazanega znanja in razlago teme iz zapiskov. Modul, slog in besedila ob prvem odprtju.
+const pripravaMod = lenModul("./priprava/priprava.js");
+function showTestPrep(edit = false) {
   setActiveMode("test");
-  const { plan } = await api(`/api/students/${state.student.id}/test-plan`);
-  showView("topic");
-  const box = $("#topic-content");
-  if (plan && !edit && plan.daysLeft >= 0) {
-    const when = plan.daysLeft === 0 ? t("test.today") : plan.daysLeft === 1 ? t("test.tomorrow") : t("test.inDays", { n: plan.daysLeft });
-    box.innerHTML = `<h1 class="with-icon">${icon("clipboard-check")} ${t("mode.test")}</h1>
-      <div class="card"><p>${t("test.when", { when, date: escapeHtml(new Date(plan.date).toLocaleDateString(locale())) })}</p>
-      <p class="muted">${t("test.material", { list: (plan.subject && state.pathSubject && plan.subject !== state.pathSubject ? `${escapeHtml(SUBJECT_NAMES[plan.subject] || plan.subject)} – ` : "") + plan.unitTitles.map(escapeHtml).join(", ") })}</p>
-      <p class="muted">${t("test.howto")}</p>
-      <div class="actions"><button class="primary" id="tp-start">${t("test.startToday")}</button><button id="tp-edit">${t("common.change")}</button></div></div>`;
-    $("#tp-start").addEventListener("click", () => startSession("test-prep"));
-    $("#tp-edit").addEventListener("click", () => showTestPrep(true));
-    return;
+  if (!pripravaMod.now()) {
+    showView("topic");
+    viewNote("#topic-content", "common.loading");
   }
-  const p = await api(`/api/students/${state.student.id}/path?key=${encodeURIComponent(state.pathKey || "")}`);
-  const today = new Date().toISOString().slice(0, 10);
-  const chosen = new Set(plan?.path === p.key ? plan.units : []);
-  box.innerHTML = `<h1 class="with-icon">${icon("clipboard-check")} ${t("mode.test")}</h1>
-    <form id="tp-form" class="card">
-      <p><b>${t("test.which")}</b> <span class="muted">(${escapeHtml(p.label || "")})</span></p>
-      <div class="tp-units">${p.units
-        .map((u, i) =>
-          u.hasPractice
-            ? `<label class="check"><input type="checkbox" name="unit" value="${i}" ${chosen.has(i) ? "checked" : ""}> ${escapeHtml(u.title)}</label>`
-            : "",
-        )
-        .join("")}</div>
-      <p><label><b>${t("test.date")}</b><br><input type="date" name="date" min="${today}" value="${plan?.date && plan.date >= today ? plan.date : ""}" required></label></p>
-      <div class="actions"><button class="primary">${t("test.saveStart")}</button>${plan ? `<button type="button" id="tp-del">${t("test.remove")}</button>` : ""}</div>
-      <div id="tp-err" class="muted"></div>
-    </form>`;
-  $("#tp-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const f = new FormData(e.target);
-    const units = f.getAll("unit").map(Number);
-    if (!units.length) return ($("#tp-err").textContent = t("test.pickUnit"));
-    try {
-      await api(`/api/students/${state.student.id}/test-plan`, { method: "POST", body: { path: p.key, units, date: f.get("date") } });
-      startSession("test-prep");
-    } catch (err) {
-      $("#tp-err").textContent = err.message;
-    }
-  });
-  $("#tp-del")?.addEventListener("click", async () => {
-    await api(`/api/students/${state.student.id}/test-plan`, { method: "DELETE" });
-    showTestPrep(true);
-  });
+  return pripravaMod.load().then(
+    (m) =>
+      m.odpri(
+        {
+          api, renderMath, toast, showView, setActiveMode, setBack, startSession, addSession, openTopic, nextPractice, learnWithTutor, openLesson,
+          getStudent: () => state.student,
+          pathKey: () => state.pathKey,
+          box: () => $("#topic-content"),
+        },
+        { uredi: edit },
+      ),
+    () => pripravaMod.now() || viewNote("#topic-content", "off.noConnection", true),
+  );
 }
 
 document.querySelectorAll("#modebar [data-mode]").forEach((b) =>
@@ -3928,7 +3964,7 @@ async function loadPath(key = state.pathKey) {
   $("#path-note").hidden = !prog && !isRegional(sys) && !early;
   if (early) $("#path-note").textContent = t("path.earlyNote", { grade: levelLabel(st.curriculum_level) });
   // Regijski šolski sistem: učna pot je preslikana na snov te države (osnutek).
-  if (!prog && isRegional(sys)) $("#path-note").textContent = t("path.regionNote", { system: SCHOOL_SYSTEMS[sys].name });
+  if (!prog && isRegional(sys)) $("#path-note").textContent = brezUcnegaNacrta(sys) ? obvestiloBrezNacrta(SCHOOL_SYSTEMS[sys]) : t("path.regionNote", { system: SCHOOL_SYSTEMS[sys].name });
   $("#lang-note").hidden = currentLang() === "sl" || isRegional(sys);
   if (prog) {
     $("#path-note").innerHTML = `${t(prog.degree === "EMŠ" ? "path.emsNote" : "path.uniNote", { faculty: escapeHtml(prog.facultyName), program: escapeHtml(prog.name), year: escapeHtml(prog.sourceYear || "") })} ${prog.source ? `<a href="${escapeHtml(prog.source)}" target="_blank" rel="noopener">${t("path.uniSource")}</a>.` : ""}`;
@@ -4002,6 +4038,16 @@ const regionalExams = () => !!state.student && isRegional(state.student.settings
 const siExams = () => !!state.student && !regionalExams() && Object.hasOwn(SI_EXAMS, state.student.settings.educational_track || "");
 // Izpitni naslovi (trening, poskusni izpit, rezultat): regijski »Izpiti« ali serija iz razdelka »NPZ in matura«.
 const examMode = () => regionalExams() || state.backTo === "exams";
+// Država brez lastnega učnega načrta (public/regions.js brezUcnegaNacrta): odkrito obvestilo, da učenec uporablja slovenski
+// učni načrt po letih šolanja, in da priprave na zaključni izpit (finalExam brez prep) še ni. Ime države v jeziku vmesnika (Intl).
+function obvestiloBrezNacrta(s) {
+  let ime = "";
+  try {
+    ime = s.country ? new Intl.DisplayNames([locale()], { type: "region" }).of(s.country) || "" : "";
+  } catch {}
+  return [t("path.noCurriculum", { country: ime ? ` (${ime})` : "" }), s.finalExam && !s.finalExam.prep ? t("path.noExam", { exam: s.finalExam.name }) : ""].filter(Boolean).join(" ");
+}
+
 const prepLabel = () => (regionalExams() ? t("nav.exams") : t("nav.competition"));
 const prepBack = () => (examMode() ? t("exam.back") : t("result.toCompetitions"));
 // Telefon: četrto mesto po cilju (public/goal-data.js → goalTabbarView): »NPZ« ali »Matura«, ko je cilj NPZ ali
@@ -4099,7 +4145,7 @@ const takePractice = vadi.take;
 // Gumb »nazaj« na temi oziroma pri seriji nalog vodi tja, od koder je učenec prišel.
 function setBack(view) {
   state.backTo = view;
-  $("#back-to-path").innerHTML = `${icon("arrow-left")}${view === "competition" ? prepLabel() : view === "exams" ? t("nav.examsSi") : view === "zapiski" ? t("cards.notes") : t("nav.path")}`;
+  $("#back-to-path").innerHTML = `${icon("arrow-left")}${view === "competition" ? prepLabel() : view === "exams" ? t("nav.examsSi") : view === "zapiski" ? t("cards.notes") : view === "uci" ? t("nav.lab") : t("nav.path")}`;
 }
 
 // Seje modulov, ki se naložijo šele ob odprtju (»Vaja iz testa«, public/zapiski/vaja.js): modul doda naslov, uvod,
@@ -4390,6 +4436,7 @@ async function openFromTutor({ view, mode } = {}) {
   }
   calc();
 }
+initObrat(); // bralni položaj ob obratu zaslona (UX PR 2)
 initOkna({
   showView,
   initView: (name) => (name === "account" ? renderAccount() : initView(name)),
@@ -4432,7 +4479,7 @@ function splitOpts(name) {
     topic: { side: "end", min: 320, max: 900, otherMin: 400, grid: () => $("#topic-content > .topic-grid, #topic-content > .session-grid") },
     lesson: { side: "end", min: 320, max: 900, otherMin: 400, grid: () => $("#view-textbook > .tb-lesson-grid.has-side") },
     gc: { side: "start", min: 280, max: 640, otherMin: 320, varName: "--gc-panel" },
-    sc: { side: "end", min: 320, max: 720, otherMin: 280 },
+    sc: { side: "end", min: 320, max: (a) => Math.max(720, Math.round(a * 0.75)), otherMin: 280 }, // desni del: zaslon in tipkovnica
   }[name];
   return { ...base, key: name, varName: `--split-${name}`, ...o };
 }
@@ -4534,10 +4581,18 @@ initPilot({
 initLab({
   api,
   escapeHtml,
+  toast,
   getStudent: () => state.student,
   openLesson: (id) => {
     lessonFromLab(id);
     openLesson(id);
+  },
+  // »Preveri se« po poskusu (povezave C4): vaja iste teme v Vadnici; ← in Nazaj vrneta v isti poskus.
+  practice: async (id) => {
+    const testPredznanja = await openTopic(id); // nova tema: najprej test predznanja (kot »Vadi« v lekciji)
+    if (currentView !== "topic" || state.topic?.id !== id) return; // medtem odprto kaj drugega
+    setBack("uci");
+    if (!testPredznanja && $("#t-practice")) nextPractice();
   },
   askTutor: (text, oznaka, kontekst) => {
     const izLekcije = labIsFromLesson();
@@ -4564,6 +4619,7 @@ initUci({
 initTextbook({
   api,
   renderRich,
+  renderMath,
   escapeHtml,
   getStudent: () => state.student,
   openTopic,
@@ -4593,8 +4649,21 @@ initOpen({
     loadGames().then((m) => m.openReward(concepts)).catch(() => null);
   },
   openLab: () => openFromTutor({ view: "lab" }),
+  // Povezave C1: inštruktorjev gumb s »nastavi« za poskus, iz katerega je učenec prišel: vrne ga v ta odprti poskus
+  // (meritve ostanejo) in vrne okvir poskusa, da odpri.js premakne drsnike; sicer null (poskus v oknu kot doslej).
+  odprtiPoskus: (key, { vrni = false } = {}) => {
+    const r = state.chatReturn;
+    if (!key || !r || r.view !== "lab" || r.poskus !== key || !returnConvOk(r)) return null;
+    // Klepet v oknu: učenec je medtem morda odprl drug poskus ali seznam; drsnike premaknemo le v istem poskusu.
+    const mount = document.querySelector("#lab-content .lab-mount");
+    if (mount?.dataset.labKey !== key) return null;
+    if (!vrni) return true;
+    return chatReturnBack({ okno: true }) ? mount : null;
+  },
   openFormulas: () => openFromTutor({ view: "graph", mode: "formulas" }),
   openGraph: (exprs) => openGraphOverlay(exprs, t("nav.chat")),
+  openPractice: (id) => (setBack("path"), openTopic(id).then((x) => !x && currentView === "topic" && state.topic?.id === id && $("#t-practice") && nextPractice())), // »Podobna naloga« (vr.vaja): kot »Preveri se« v laboratoriju
+  openCalc: (mode) => openFromTutor({ view: "graph", mode: mode || (calcSubject() === "KEM" ? "pse" : null) }), // kalkulator iz pogovora (P1-9 A); brez načina kot gumb v glavi
 });
 
 // ---------- zagon ----------

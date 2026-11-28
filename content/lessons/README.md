@@ -14,7 +14,8 @@ aplikacija spremembo pobere ob naslednjem odprtju lekcije.
 stanje: osnutek        # osnutek | preverjeno | pregledano (glej »Stanje lekcije« spodaj)
 demo: pitagora         # neobvezno: dodatna simulacija (simulacije za vsako temo so v public/sim/katalog.js)
 avtor: učitelj / AI    # neobvezno, za evidenco
-pregledal: Ana Novak   # neobvezno: učitelj (človek), ki je lekcijo pregledal; samo pri »pregledano«
+pregledal: Ana Novak   # samo pri »pregledano«: učitelj (človek), ki je lekcijo pregledal
+pregledano: 2026-12-01 # samo pri »pregledano«: datum pregleda
 ---
 
 ## Zakaj se tega učimo
@@ -87,13 +88,19 @@ t | čas | | s
 
 ## Stanje lekcije
 
-| `stanje:` | Kdaj | Kaj vidi učenec |
+| `stanje:` | Kdaj | Kaj vidi učenec (oznaka, `server/oznake-vsebine.js`) |
 |---|---|---|
-| `osnutek` | lekcija je napisana, pregledi še niso končani | rumeno opozorilo »Osnutek: lekcijo mora še pregledati učitelj …« |
-| `preverjeno` | `check-lesson.js` je brez napak (preračunani računi) in pregledovalci AI so lekcijo pregledali | modro opombo »Račune sta preverila program in AI. Učitelj lekcije še ni pregledal. …« |
-| `pregledano` | lekcijo je pregledal učitelj (človek) | nič |
+| `osnutek` | lekcija je napisana, pregledi še niso končani | »Osnutek« |
+| `preverjeno` | `check-lesson.js` je brez napak (preračunani računi) in pregledovalci AI so lekcijo pregledali | »Strojno preverjeno«, če program ob prikazu preračuna vsaj en račun ali identiteto brez napake; »Pregledal AI«, če nima česa preračunati; »Osnutek«, če najde napako |
+| `pregledano` | lekcijo je pregledal učitelj (človek) | poleg tega »Strokovno pregledano« |
 
-`pregledano` je samo za lekcije, ki jih je pregledal človek; njegovo ime zapiši v `pregledal:` (učencu se ne izpiše).
+Oznake so poštene (N-03): vsaka ima dokaz v podatkih. Program lekcijo preveri na besedilu, ki ga učenec vidi, zato
+lekcija z napako v računu nikoli ne dobi »Strojno preverjeno«. Dokler lekcija nima »Strokovno pregledano«, učenec vidi,
+da je učitelj še ni pregledal. »Formalno dokazano: N« pokaže, ko ima lekcija dokaze Lean (`lean/Evklid/Lekcije/…`,
+`docs/lean.md`) in se po dokazu ni spremenila (sha256 v glavi dokaza); vedno s številom trditev, nikoli za celo lekcijo.
+
+`pregledano` je samo za lekcije, ki jih je pregledal človek: v glavi morata biti `pregledal: <ime učitelja>` (učencu
+se ne izpiše) in `pregledano: LLLL-MM-DD` (datum pregleda); brez njiju `check-lesson.js` javi napako.
 AI ni nikoli `pregledal:` (`check-lesson.js` to javi kot napako); pregled AI je stanje `preverjeno`. Nova lekcija
 ostane `osnutek`, dokler niso končani vsi trije pregledi (`docs/pregled.md` §2).
 

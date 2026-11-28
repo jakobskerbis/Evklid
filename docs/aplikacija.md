@@ -82,6 +82,24 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
   (`SEJA_POZNEJE`), so v `<template data-evklid-slogi>` do konca zagona (`withSessionStyles`); skener, zbirke in lige
   (`ZASLONI_POZNEJE`) app.js naloži po zagonu (`lenModul`, `zasloniPozneje`). Pasici sta znani iz `/api/config`.
   Izklop: `EVKLID_ZACETNI_PODATKI=0`. Test `test/zacetni-podatki.test.js`.
+- Vstopna stran iz predpomnilnika (N-08b, j 26. 11. 2026): kopija različice service workerja se odpre takoj
+  (`public/sw.js entryPage`), omrežje jo preveri v ozadju po 3 s (`revalidateEntry`: osebna stran se prekine ob glavah,
+  javna z oznako različice se shrani, nova različica pobriše stare kopije, 401 prijave z geslom ali preusmeritev
+  (stara povezava tunela → lastna domena) pobriše kopijo; rok 15 s,
+  `ENTRY_ROK`). Povezava s skupnim geslom (`/?geslo=`) gre vedno na strežnik. Prej je čakala omrežje do 1 s.
+- Skrčene datoteke JS (N-08c, j 26. 11. 2026): `server/skrci.js` (esbuild `minifyWhitespace` + `minifySyntax`, imena
+  ostanejo) pred stiskanjem v `server/compress.js`, samo `public/` (ne vendor, ne `sw.js`). Vklop na produkciji in v
+  `scripts/preveri-aplikacijo.cjs`, izklop `EVKLID_SKRCI=0`. Prenos prvega odprtja ~27 % manjši. Test `test/skrci.test.js`.
+- Ponovni obisk prijavljenega (N-08, 25. 11. 2026): service worker postreže shranjeno vstopno stran (brez začetnih
+  podatkov, ker je osebna stran `no-store`), zato `zacetek.js` (`vnaprejPaket`, samo ko stran nadzira service worker,
+  podatkov v strani ni in je bila naprava že prijavljena, `evklid.racun`; brez računov ni klica) iste podatke zahteva v enem klicu `GET /api/zacetni-podatki` (`zacetniPodatkiKlic`: isti
+  `zberi` kot za stran; samo `Sec-Fetch-Site: same-origin` ali brez, ne navigacija, ne `X-App-Client`, ne predhodno
+  nalaganje, piškotka seje in naprave; `no-store`, brez ETag; brez podatkov 204). Klic app.js za naslov iz paketa
+  (`PAKET`) počaka paket; česar v paketu ni, gre na strežnik. Neuspeh paketa (204, napaka, star strežnik) → isti štirje
+  klici kot prej; sprememba (klic, ki ni GET) pred odgovorom paket zavrže. Vsebina naslednjih tem z Učne poti
+  (`kliki.js temeVnaprej`) je prenos v ozadju (`ozadje`), ki ga `finishStart` ne čaka. Meritev (telefon, CPU 4×,
+  Slow 4G, strežnik 0,5 CPU): app.js pripravljen ob ponovnem obisku 4,7 → 3,3 s. Testi `test/zacetek-paket.test.js`,
+  `test/pot-zagon.test.js`, `test/zacetni-podatki.test.js`.
 - Pristajalna stran takoj (j 19. 11. 2026, zunanji pregled »LCP ~18 s na počasnem 4G«): obiskovalec brez seje
   (brez piškotka `sm_session`, ne aplikacija `EvklidApp/`, računi vklopljeni) dobi pristajalno stran že v HTML
   (`server/pristajalna-takoj.js landingPage`, `server/vstopna-stran.js withLanding`): isti izris kot v brskalniku
@@ -120,6 +138,15 @@ morda še enkrat prijaviti (to piše tudi v navodilih).
   `/i18n/sl.js`, drugi jeziki brez jedra) je takoj za moduli obrazca (nemščina 3,1 → 1,8 s na telefonu). Lokalno (HTTP/1.1 kot meritev
   iz ZDA, 5 hladnih zagonov, mediana): računalnik s 150 ms zakasnitve 2,42 → 1,16 s, telefon (9 Mbit/s, 170 ms, CPU 4×)
   3,19 → 1,51 s; test `test/registracija-takoj.test.js`.
+- Obrazec s pristajalne strani (27. 11. 2026, cilj prvi obisk ≤ 2,5 s): dotik »Začni brezplačno« ali »Prijava« (navadni sidri
+  `#registracija`, `#prijava`) je prej čakal `app.js` in ~60 modulov. `zagon.js` (`obrazecSPristajalne`) na strani z
+  `html[data-pristajalna]` ob sidru obrazca (tudi, če se ga je obiskovalec dotaknil še pred skriptom) nastavi
+  `evklidZacetek.obrazec` in z `account.js obrazecVnaprej` izriše obrazec kot na `/#registracija` (isti izris do piksla,
+  `app.js` ga prevzame brez ponovnega izrisa). Slogi za druge zaslone se na pristajalni strani ne vklopijo takoj po prvem izrisu,
+  ampak ko so moduli obrazca tu (`zagon.js` po uvozu `account.js` pokliče `evklidZacetek.slogi`; varovalo 3 s, sicer v
+  `konec`): prej so jim na počasni povezavi vzeli ~0,7 s. Meritev `scripts/hitrost-prvi-obisk.cjs` (z računi, kot v
+  produkciji; `docs/meritve/prvi-obisk-2026-11-27.md`); test `test/registracija-takoj.test.js`. Dotik sidra, ko `app.js` že teče,
+  a `renderLanding` še čaka cene (do 1,5 s): `renderLanding` izriše obrazec sidra (prej prazen zaslon, napaka že na `main`).
 - Opis aplikacije (`/manifest.webmanifest`) je v jeziku vmesnika (`server/webapp.js`).
 - Posnetki zaslona za okno »Namesti« so v `public/icons/screen-*.png`; ob večji spremembi videza
   jih je dobro posneti znova (telefon 390 × 844 pri 2×, računalnik 1440 × 900).

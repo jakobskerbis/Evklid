@@ -1,0 +1,33 @@
+{
+  "paper": "NPZ9-MAT-2023-redni",
+  "parts": {
+    "1a": "MAT-OS-8/racionalna-stevila",
+    "1b": "MAT-OS-7/mnozenje-in-deljenje-ulomkov",
+    "2a": "MAT-OS-8/potence-z-naravnimi-eksponenti",
+    "2b": "MAT-OS-8/kvadrat-stevila",
+    "2c": "MAT-OS-8/potence-z-naravnimi-eksponenti",
+    "2d": "MAT-OS-8/kvadratni-koren",
+    "2e": "MAT-OS-8/kvadratni-koren",
+    "3a": "MAT-OS-6/racunanje-z-decimalnimi-stevili",
+    "3b": "MAT-OS-7/odstotni-racun",
+    "4a": "MAT-OS-8/uporaba-pitagorovega-izreka",
+    "4b": "MAT-OS-8/krozni-lok-in-krozni-izsek",
+    "5a": "MAT-OS-6/racunanje-z-decimalnimi-stevili",
+    "5b": "MAT-OS-7/primerjanje-in-urejanje-ulomkov",
+    "5c": "MAT-OS-7/mnozenje-in-deljenje-ulomkov",
+    "5d": "MAT-OS-7/mnozenje-in-deljenje-ulomkov",
+    "6a": "MAT-OS-9/koordinatni-sistem-in-odvisnost-kolicin",
+    "6b": "MAT-OS-9/koordinatni-sistem-in-odvisnost-kolicin",
+    "6c": "MAT-OS-9/koordinatni-sistem-in-odvisnost-kolicin",
+    "6d": "MAT-OS-9/koordinatni-sistem-in-odvisnost-kolicin",
+    "6e": "MAT-OS-7/obseg-in-ploscina-trikotnika",
+    "7a": "MAT-OS-8/mnozenje-izrazov",
+    "7b": "MAT-OS-9/linearne-enacbe-z-ulomki",
+    "8a": "MAT-OS-9/prizma",
+    "8b": "MAT-OS-9/prizma",
+    "9a": "MAT-OS-9/statisticna-raziskava",
+    "9b": "MAT-OS-7/aritmeticna-sredina",
+    "9c": "MAT-OS-9/statisticna-raziskava",
+    "9d": "MAT-OS-9/statisticna-raziskava"
+  }
+}

@@ -158,6 +158,7 @@ export function odpriModel(el, mod, opts = {}) {
   btnPonastavi.addEventListener("click", () => zgradiVse(true));
   const btnTeci = mk("button", "k3-krog");
   btnTeci.type = "button";
+  btnTeci.hidden = true; // pokaže ga dokoncaj, ko ima model korak (sicer ob napaki prazen krog v orodni vrstici)
   btnTeci.addEventListener("click", () => nastaviTek(!tece));
   // Povečava z gumbi (poleg koleščka in prstov): miška brez koleščka, sledilna ploščica, dostopnost.
   const povecava = (f, ikona, kljuc) => {
@@ -1060,6 +1061,7 @@ export function odpriModel(el, mod, opts = {}) {
       nalagEl = null;
       return;
     }
+    if (nalagEl?.classList.contains("napaka")) return; // pozen napredek ne prepiše kartice z napako
     if (!nalagEl) {
       nalagEl = mk("div", "k3-nalaganje");
       nalagEl.setAttribute("role", "status");
@@ -1073,8 +1075,28 @@ export function odpriModel(el, mod, opts = {}) {
     console.error("3D model", err);
     nalaganje(0);
     nalagEl.classList.add("napaka");
-    nalagEl.firstChild.textContent = t("a3.loadError");
-    nalagEl.lastChild.hidden = true;
+    nalagEl.setAttribute("role", "alert");
+    // Brez modela ni kaj vrteti: namig »Povleci za vrtenje …« skrijemo.
+    oder.querySelector(".k3-namig")?.remove();
+    oder.classList.remove("k3-namig-viden");
+    // Besedilo po vrsti napake (napake.js); »Poskusi znova« zgradi model še enkrat (prizor ostane). napake.js uvozimo šele
+    // tu: brez njega (izpad povezave) se pregledovalnik vseeno naloži (sim.js), kartica pa ima vsaj a3.loadError in gumb.
+    const kartica = nalagEl;
+    const znova = () => {
+      nalaganje(null);
+      zgradiVse(false);
+    };
+    import("./napake.js")
+      .then(
+        ({ napakaVsebina }) => napakaVsebina(err, { t, znova, razredGumba: "a3-pill a3-mali" }),
+        () => {
+          const b = mk("button", "a3-pill a3-mali", t("a3.retry"));
+          b.type = "button";
+          b.addEventListener("click", znova, { once: true });
+          return [mk("p", "", t("a3.loadError")), b];
+        },
+      )
+      .then((vsebina) => nalagEl === kartica && kartica.replaceChildren(...vsebina));
   }
 
   // »Podrobnosti organa«: gumb pod odrom in list z besedilom (model.podrobnosti = { naslov, odseki: [{ naslov, besedilo }] }).
@@ -1145,7 +1167,9 @@ export function odpriModel(el, mod, opts = {}) {
 
   function dokoncaj(m, ponastavi) {
     model = m;
-    nalaganje(null);
+    // Model iz datoteke (organ): plast »Nalaganje« ostane, dokler se senčilniki ne prevedejo (kit.pripravi spodaj).
+    const nalagal = !!nalagEl && !nalagEl.classList.contains("napaka");
+    if (!nalagal) nalaganje(null);
     el.classList.toggle("k3-organ", model.postavitev === "organ");
     // Celice (oder: "celica"): temno vijoličen oder kot v ciljnem videzu celic (public/3d/celice-videz.js).
     el.classList.toggle("k3-celica", model.oder === "celica");
@@ -1196,6 +1220,15 @@ export function odpriModel(el, mod, opts = {}) {
       if (model.postavitev === "organ" && !ponastavi) requestAnimationFrame(() => requestAnimationFrame(() => !unicen && model === m && leti()));
     }
     kit.narisi();
+    // Senčilniki vseh delov se prevedejo hkrati, preden se model prvič nariše (scena.js pripravi): stran ne zamrzne.
+    const pripravljen = kit.pripravi ? kit.pripravi() : Promise.resolve();
+    if (nalagal) nalaganje(1);
+    // Model brez datoteke (celice): plast »Nalaganje« le, če prevajanje traja dlje (prazen oder brez znaka sicer zmede).
+    const zakasnjeno = nalagal ? null : setTimeout(() => !unicen && model === m && !nalagEl && nalaganje(1), 150);
+    pripravljen.then(() => {
+      clearTimeout(zakasnjeno);
+      if (!unicen && model === m && nalagEl && !nalagEl.classList.contains("napaka")) nalaganje(null);
+    });
     // Del iz naslova (»#organ-srce?del=levi prekat«, gumb inštruktorja public/odpri.js): po id-ju ali imenu.
     if (zacetek.del && !ponastavi) {
       // del (tudi »membrana« → Celična membrana, sinonimi »mitralna zaklopka«) pred skupino (»zaklopke«, »organeli« …;

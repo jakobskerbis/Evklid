@@ -79,6 +79,32 @@ export function unseal(value, fallback = UNREADABLE) {
   }
 }
 
+// Binarni zapis (izvirniki priprave na test, server/priprava/shramba.js): isti algoritem in ključi kot seal(), brez
+// base64, da 15 MB datoteka v bazi ne zraste za tretjino. Zapis: »enc1:<keyId>:« | iv 12 B | tag 16 B | šifrirano.
+// Brez ključa vrne null (nešifrirano ne shranimo); neberljiv zapis (manjka ključ, poškodba) odšifriranje vrne null.
+export function sealBytes(buf) {
+  const k = keys();
+  if (!k) return null;
+  const iv = crypto.randomBytes(12);
+  const c = crypto.createCipheriv("aes-256-gcm", k.key, iv);
+  const body = Buffer.concat([c.update(buf), c.final()]);
+  return Buffer.concat([Buffer.from(`${PREFIX}${k.id}:`, "latin1"), iv, c.getAuthTag(), body]);
+}
+export function unsealBytes(value) {
+  try {
+    const buf = Buffer.isBuffer(value) ? value : Buffer.from(value ?? []);
+    const head = PREFIX.length + 9;
+    if (buf.length < head + 28 || buf.subarray(0, PREFIX.length).toString("latin1") !== PREFIX || buf[head - 1] !== 0x3a) return null;
+    const key = keys()?.all.get(buf.subarray(PREFIX.length, head - 1).toString("latin1"));
+    if (!key) return null;
+    const d = crypto.createDecipheriv("aes-256-gcm", key, buf.subarray(head, head + 12));
+    d.setAuthTag(buf.subarray(head + 12, head + 28));
+    return Buffer.concat([d.update(buf.subarray(head + 28)), d.final()]);
+  } catch {
+    return null;
+  }
+}
+
 // Ali je zapis berljiv s trenutnimi ključi (za --preveri).
 export function canOpen(value) {
   if (!isEncrypted(value)) return true;
@@ -188,6 +214,9 @@ export function warnIfNoKey(log = console) {
   log.warn?.("[evklid] OPOZORILO: EVKLID_DATA_KEY ni nastavljen, pogovori se v bazi shranjujejo nešifrirani (docs/varnost-podatkov.md).");
 }
 
+// Ključi v tabeli kv, katerih vrednosti so šifrirane s seal()/sealJson().
+export const SEALED_KV = ["stiska_obvestilo", "stiska_starsi", "nujno_stevci"];
+
 // Šifrirani stolpci. Nešifrirano ostane, kar SQL uporablja za iskanje ali je skupno vsem (glej dokument):
 // students.name (iskanje podvojenih), answer_cache (skupni, brez osebnih podatkov), knowledge_items (samo id-ji predmetov).
 export const SEALED = [
@@ -208,12 +237,25 @@ export const SEALED = [
   { table: "pilot_mnenja", cols: ["liked", "bothers"] },
   // Učenčevi zapiski (server/zapiski.js): naslov in prepis rokopisa.
   { table: "zapiski", cols: ["naslov", "prepis"] },
+  // Priprava na test iz zapiskov (server/priprava/): naslov priprave in ime naložene datoteke. Izvirniki so šifrirani
+  // binarno (sealBytes) v priprava_izvirniki in jih ta seznam ne zajame.
+  { table: "priprave", cols: ["naslov"] },
+  { table: "priprava_viri", cols: ["ime"] },
+  { table: "priprava_izseki", cols: ["naslov", "besedilo", "negotovo"] },
+  { table: "priprava_prepisi", cols: ["besedilo"] },
+  { table: "priprava_postavke", cols: ["vsebina"] },
   // Oznaka dogodka učenja (stiska, nevarna vsebina …; j 18. 11. 2026). »none« ostane berljiv (where), rok hrambe
   // oznak 90 dni: server/zasebnost.js RETENTION.flagDays.
   // pad: dopolnitev pred šifriranjem (sealFlag); clearIf: ob stiski se ob selitvi pobriše tudi tema (kot v addEvent).
   { table: "events", cols: ["flag"], where: "flag <> 'none'", pad: FLAG_PAD, clearIf: { value: "distress", cols: ["topic", "topic_id"] } },
   // Pregled oznake (vrsta okna ob stiski, pregledano_ob; server/stiska-obvestilo.js), dopolnjen kot oznaka.
   { table: "events", cols: ["pregled"], where: "pregled IS NOT NULL", pad: PREGLED_PAD, label: "events.pregled" },
+  // Ustni izpit (server/ustno-api.js): odgovori učenca s citati njegovih besed (K-13, 26. 11. 2026).
+  { table: "ustno_seje", cols: ["stanje"] },
+  // Šifrirane vrednosti v kv (K-13): čakajoča obvestila ob stiski in čas zadnjega obvestila staršem
+  // (server/stiska-obvestilo.js), števci varnostnega pregleda (server/nujno.js STEVCI_KV). Ostali ključi v kv niso
+  // šifrirani in jih ta vrstica ne zajame. Nov šifriran ključ v kv dodaj sem (test/sifrirano-vse.test.js).
+  { table: "kv", cols: ["value"], where: `key IN (${SEALED_KV.map((k) => `'${k}'`).join(", ")})`, label: "kv (stiska, nujno)" },
 ];
 
 const hasTable = (db, t) => !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?").get(t);
@@ -237,6 +279,22 @@ export function encryptionStats(db) {
       }
       out.push(s);
     }
+  }
+  // Izvirniki priprave na test (binarno, sealBytes): po glavi ključa; neberljiv = ključa ni med sedanjimi in starimi.
+  if (hasTable(db, "priprava_izvirniki")) {
+    const s = { table: "priprava_izvirniki", col: "podatki", encrypted: 0, plain: 0, unreadable: 0, oldKey: 0 };
+    const cur = currentKeyId();
+    const all = keys()?.all;
+    for (const r of db.prepare("SELECT substr(podatki, 1, 14) AS h FROM priprava_izvirniki").iterate()) {
+      const h = Buffer.from(r.h ?? []).toString("latin1");
+      if (!h.startsWith(PREFIX) || h[13] !== ":") s.plain++;
+      else if (!all?.has(h.slice(5, 13))) s.unreadable++;
+      else {
+        s.encrypted++;
+        if (cur && h.slice(5, 13) !== cur) s.oldKey++;
+      }
+    }
+    out.push(s);
   }
   return out;
 }

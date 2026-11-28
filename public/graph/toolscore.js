@@ -782,7 +782,8 @@ function certifiedRoots(p, approx) {
   }
   if (ups.length !== nc / 2) return null;
   for (const u of ups) {
-    const err = u.err <= 4e-16 * C.abs(u.z) ? 0 : u.err;
+    // napaka glede na manjši del: Im ≈ 3·10⁻¹⁴ ob Re = 4/3 ima lahko napako 10⁻¹⁹ (AUDIT-068), to ni »točno«
+    const err = u.err <= 4e-16 * Math.min(C.abs(u.z), Math.abs(u.z[1])) ? 0 : u.err;
     out.push({ z: [u.z[0], -u.z[1]], cx: true, err }, { z: u.z, cx: true, err });
   }
   return out;

@@ -47,7 +47,7 @@ Petkotnik: $D_5 = \dfrac{5 \cdot 2}{2} = 5$. Šestkotnik: $D_6 = \dfrac{6 \cdot 
 
 **5. Preizkusi v simulaciji.** V simulaciji spodaj (»Mnogokotniki: koti in diagonale«) spreminjaj število oglišč od $3$ do $8$. Za vsak večkotnik si zapiši vsoto notranjih kotov in število vseh diagonal. Opazi: vsota kotov vsakič zraste za enako ($180^\circ$), število diagonal pa raste vse hitreje ($0$, $2$, $5$, $9$, $14$, $20$).
 
-**6. Pravilni večkotnik.** Večkotnik je **pravilen**, če ima vse stranice enako dolge **in** vse notranje kote enako velike. Primeri so enakostranični trikotnik, kvadrat in pravilni šestkotnik (celica v satovju). Romb ima enake stranice, a ne vseh kotov enakih, zato ni pravilen.
+**6. Pravilni večkotnik.** Večkotnik je **pravilen**, če ima vse stranice enako dolge **in** vse notranje kote enako velike. Primeri so enakostranični trikotnik, kvadrat in pravilni šestkotnik (celica v satovju). Romb, ki ni kvadrat, ima enake stranice, a ne vseh kotov enakih, zato ni pravilen.
 
 V pravilnem $n$-kotniku je vseh $n$ kotov enakih, zato vsoto razdelimo na $n$ enakih delov:
 
@@ -154,7 +154,7 @@ $n = 10$, to je desetkotnik. Preizkus: $8 \cdot 180^\circ = 1440^\circ$.
 - **Vsota je $n \cdot 180^\circ$.** Za petkotnik bi tako dobil $900^\circ$. Napačno je, ker diagonale iz enega oglišča dajo le $n - 2$ trikotnikov; za trikotnik bi formula dala $540^\circ$, kar očitno ni res. Popravek: $S_n = (n - 2) \cdot 180^\circ$, za petkotnik $540^\circ$.
 - **Diagonale brez deljenja z $2$.** Za osemkotnik izračunaš $8 \cdot 5 = 40$. Tako vsako diagonalo šteješ iz obeh krajišč. Popravek: $D_8 = \dfrac{8 \cdot 5}{2} = 20$. Pazi tudi, da $n - 3$ ni število vseh diagonal, ampak le tistih iz enega oglišča.
 - **Notranji kot je $\dfrac{360^\circ}{n}$.** Za pravilni šestkotnik dobiš $60^\circ$. To je zunanji (in središčni) kot. Popravek: $\alpha = 180^\circ - \dfrac{360^\circ}{n}$, za šestkotnik $120^\circ$.
-- **Pravilen pomeni le enake stranice.** Romb ima enake stranice, a ni pravilen, ker njegovi koti niso vsi enaki. Popravek: pravilni večkotnik ima enake stranice **in** enake kote.
+- **Pravilen pomeni le enake stranice.** Romb, ki ni kvadrat, ima enake stranice, a ni pravilen, ker njegovi koti niso vsi enaki. Popravek: pravilni večkotnik ima enake stranice **in** enake kote.
 - **Vsak kot je vsota, deljena z $n$.** »V vsakem petkotniku meri kot $108^\circ$« velja le za pravilni petkotnik. Popravek: vsota $(n - 2) \cdot 180^\circ$ velja za vse večkotnike, deljenje z $n$ pa le za pravilne.
 
 ## Povzetek
@@ -181,7 +181,7 @@ Kot ob $A$ je razdeljen na tri dele, kota ob $C$ in $D$ pa na dva dela. Ko vse t
 
 ## Drugače: Iz vsakdanjega življenja
 
-**Sprehod okoli igrišča.** Predstavljaj si, da hodiš ob robu igrišča v obliki petkotnika. V vsakem oglišču se zasukaš za zunanji kot. Ko prideš na začetek, gledaš v isto smer kot na začetku, torej si se zasukal za cel krog, $360^\circ$. Zato je vsota zunanjih kotov vedno $360^\circ$, ne glede na število oglišč.
+**Sprehod okoli igrišča.** Predstavljaj si, da hodiš ob robu igrišča v obliki petkotnika. V vsakem oglišču se zasukaš za zunanji kot. Ko prideš na začetek, gledaš v isto smer kot na začetku, torej si se zasukal za cel krog, $360^\circ$. Zato je vsota zunanjih kotov konveksnega večkotnika vedno $360^\circ$, ne glede na število oglišč.
 
 **Tlakovanje.** Ploščice se okoli ene točke stikajo brez vrzeli, če njihovi koti skupaj dajo $360^\circ$. Kvadrat ($90^\circ$) gre štirikrat, enakostranični trikotnik ($60^\circ$) šestkrat, pravilni šestkotnik ($120^\circ$) trikrat. Pravilni petkotnik ima kot $108^\circ$, in $360 : 108$ ni celo število, zato ostanejo vrzeli. Čebele s šestkotniki zapolnijo ploskev brez lukenj in porabijo malo voska.
 
@@ -229,7 +229,7 @@ Formula za vsoto notranjih kotov velja tudi za nekonveksne večkotnike, le pahlj
 ~ Tako bi bilo, če bi lik razpadel na $n$ trikotnikov. Diagonale iz enega oglišča dajo le $n - 2$ trikotnikov.
 + $(n - 2) \cdot 180^\circ$
 - $360^\circ$
-~ To je vsota notranjih kotov le pri štirikotniku, pri vsakem večkotniku pa vsota zunanjih kotov.
+~ To je vsota notranjih kotov le pri štirikotniku, pri vsakem konveksnem večkotniku pa vsota zunanjih kotov.
 > Diagonale iz enega oglišča razdelijo $n$-kotnik na $n - 2$ trikotnikov, vsak prispeva $180^\circ$.
 
 ? Romb ima vse stranice dolge $5\,\text{cm}$ in en kot $70^\circ$. Ali je pravilen večkotnik?

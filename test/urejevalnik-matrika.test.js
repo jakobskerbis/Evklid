@@ -23,7 +23,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
 import katex from "katex";
-import { entryBase, caretTex, caretStops, stopsTex, stripCaret, backspace, deleteForward, stepCaret, analyzeLive, liveTex, TRUST, HOLE, CARET } from "../public/graph/sci-vnos.js";
+import { entryBase, caretTex, caretStops, stopsTex, stripCaret, backspace, deleteForward, stepCaret, analyzeLive, liveTex, TRUST, HOLE, CARET, pressKey } from "../public/graph/sci-vnos.js";
 import { analyze } from "../public/graph/scisolve.js";
 
 const env = { vars: {}, funcs: {}, ans: 0, deg: false, grad: false, comma: true };
@@ -114,7 +114,8 @@ for (const t of TEMPLATES) {
     for (let p = 0; p <= t.length; p++) {
       const tex = caretTex(b, p);
       assert.equal(tex.split(CARET).length - 1, 1, `@${p}: en kazalec`);
-      assert.equal(stripCaret(tex), plain, `@${p}: kazalec ne spremeni zapisa`);
+      // kazalec na začetku indeksa korena: indeks je ena skupina (\sqrt[{{kazalec}8}]), zapis je isti
+      assert.equal(stripCaret(tex).replace(/\\sqrt\[\{([^{}\]]*)\}\]/g, "\\sqrt[$1]"), plain, `@${p}: kazalec ne spremeni zapisa`);
       render(tex);
     }
     // merilne točke za dotik: nikoli sredi imena ali odpirala, vsaka ima svoj atom v izrisu
@@ -184,6 +185,332 @@ const VALUES = [
   ["det([[1; 2]; [3; 4]])", -2], ["2,5+1", 3.5], ["0,1+0,2", 0.3], ["2^(10)", 1024], ["(1+2)/(3+4)", 3 / 7], ["1/(2/3)", 1.5], ["ln(e)", 1],
   ["log(100)", 2], ["5!", 120], ["12%", 0.12], ["gcd(12;18)", 6], ["lcm(4;6)", 12], ["mod(7;3)", 1], ["round(2,5)", 3], ["√(√(16))", 2],
 ];
+// AUDIT-067 (j, evklid.app): xʸ v praznem integrandu ∫(□;0;1) je dal ∫(^(;0;1) – »^(« je požrl ločili in meje.
+// Vsaka tipka predloge na vsakem mestu kazalca (prazne in polne reže) vsake predloge: zapis se izriše, brez surovih
+// ločil (»;« v zapisu), zunanje predloge ohranijo reže (število »;«, zaprtost); ali pa se tipka ne zgodi (null).
+// zaklepaj na mestu brez odprte skupine (ne stopi čez obstoječi zaklepaj)
+const stray = (t, p, k) => {
+  if (k !== ")" && k !== "]") return false;
+  if (t[p] === k) return false;
+  let d = 0;
+  for (let i = 0; i < p; i++) d += "([".includes(t[i]) ? 1 : ")]".includes(t[i]) ? -1 : 0;
+  return d <= 0;
+};
+// »;« v [ ali navadnem oklepaju (matrika na roko, točka (1; 2)) je ločilo, ki ga zapis pokaže: eno več je dovoljeno
+const plainSemi = (t, p, k) => {
+  if (k !== ";") return 0;
+  const st = [];
+  for (let i = 0; i < p; i++) {
+    if ("([".includes(t[i])) st.push(i);
+    else if (")]".includes(t[i])) st.pop();
+  }
+  const o = st.at(-1);
+  if (o === undefined) return 0;
+  if (t[o] === "[" || !/[A-Za-zčšž√∛∫^_]\s*$|d\/dx$/.test(t.slice(0, o))) return 1;
+  // uporabniška funkcija f(2; 3) (napaka arity kot na main), ne predloga s stalnimi režami
+  return /(?<![A-Za-z])[a-z]$/.test(t.slice(0, o)) ? 1 : 0;
+};
+// »;« brez proste in brez zunanje reže gre noter kot na main (log(8; 2) pokaže napako arity, ne log(82)): zapis je surov
+const semiAsMain = (t, p, k, r) => k === ";" && r?.text === `${t.slice(0, p)};${t.slice(p)}`;
+const KEYS_T = ["²", "^(", "√(", "⁻¹", "sin(", "∫(@;;)", "d/dx(@)", ";", "×10^(", "!", "%", "°", "(", ")", "abs(", "nCr(@;)"];
+const katexOk = (tex) => {
+  try {
+    render(tex);
+    return true;
+  } catch {
+    return false;
+  }
+};
+function slotsAt(t, p) {
+  const st = [];
+  for (let i = 0; i < p; i++) {
+    if ("([".includes(t[i])) st.push(i);
+    else if (")]".includes(t[i])) st.pop();
+  }
+  return st.map((o) => {
+    let d = 0, sep = 0, cl = -1;
+    for (let j = o; j < t.length && cl < 0; j++) {
+      if ("([".includes(t[j])) d++;
+      else if (")]".includes(t[j])) d === 1 ? (cl = j) : d--;
+      else if (t[j] === ";" && d === 1) sep++;
+    }
+    return `${o}:${sep}:${cl >= 0}`;
+  }).join(",");
+}
+// surova ločila; »;« med argumenti funkcij, ki jih zapis tako loči (\gcd(12;18), \max(1;2), taylor(f; x; 0; 5)), ni surov
+const OWN_SEMI = /(?:\\(?:gcd|min|max)|\\operatorname\{(?:lcm|mod|round|nPr|Pol|Rec|mean|median|stdev|stdevp|total|taylor)\}|\\mathrm\{RanInt\})\s*\\left\($/;
+const texSemi = (tex) => {
+  const s = tex.replace(/\\text\{[^}]*\}/g, "");
+  const st = [];
+  let n = 0;
+  for (let i = 0; i < s.length; i++) {
+    if (s.startsWith("\\left", i)) st.push(OWN_SEMI.test(s.slice(0, i + 6)));
+    else if (s.startsWith("\\right", i)) st.pop();
+    else if (s[i] === ";" && !st.at(-1)) n++;
+  }
+  return n;
+};
+test(`tipke predlog v vsaki reži vsake predloge: zunanja predloga ostane (AUDIT-067)`, () => {
+  let n = 0, done = 0;
+  for (const T of TEMPLATES) {
+    const b0 = entryBase(T, env);
+    if (!b0?.ok) continue;
+    const stops = new Set([...stopsTex(b0).matchAll(/evk-p=(\d+)/g)].map((m) => Number(m[1])));
+    for (const p of stops)
+      for (const k of KEYS_T) {
+        n++;
+        const r = pressKey(T, p, k, env, { check: katexOk });
+        if (!r) continue;
+        done++;
+        const w = `${T} @${p} ${k} → ${r.text}`;
+        // zaklepaj brez odprtega oklepaja gre noter kot na main (pregled 2/3): zapis je surov, kot je bil tam
+        if (stray(T, p, k) || semiAsMain(T, p, k, r)) continue;
+        const b = entryBase(r.text, env);
+        assert.ok(b?.ok && !BAD.test(b.tex) && katexOk(caretTex(b, r.pos)), `${w}: ne izriše`);
+        assert.ok(texSemi(b.tex) <= texSemi(b0.tex) + plainSemi(T, p, k), `${w}: surovo ločilo v ${b.tex}`);
+        // ) sme zapreti le še odprto skupino (natipkan oklepaj); ; doda režo samo, kjer jo predloga sprejme
+        // zaprto skupino sme ) le zapreti prej (premakne njen zaklepaj, kot na main √((2+3)×4)); zunanje predloge ostanejo
+        const outer = (x) => x.split(",").slice(0, -1).join(",");
+        if (k === ")") assert.ok(r.text === T || !slotsAt(T, p).endsWith(":true") || (outer(slotsAt(r.text, p)) === outer(slotsAt(T, p)) && r.text.length === T.length), `${w}: ) zapre že zaprto skupino`);
+        else if (k !== ";") assert.equal(slotsAt(r.text, p), slotsAt(T, p), `${w}: reže zunanje predloge`);
+      }
+  }
+  assert.ok(n > 10000 && done > 0.85 * n, `${done}/${n} tipk izvedenih`);
+  // tipke, ki morajo uspeti (ne le ne pokvariti): prazne in polne reže
+  for (const [t, p, k, want] of [
+    ["∫(;0;1)", 2, "^(", "∫(^();0;1)"], ["∫(;0;1)", 2, "√(", "∫(√();0;1)"], ["∫(x;0;1)", 2, "sin(", "∫(sin(x);0;1)"],
+    ["∫(x;0;1)", 3, "^(", "∫(x^();0;1)"], ["∫(x;0;1)", 5, "×10^(", "∫(x;0×10^();1)"], ["∫(;;)", 2, "∫(@;;)", "∫(∫(;;);;)"],
+    ["nCr(5;2)", 4, "√(", "nCr(√(5);2)"], ["d/dx(x³)", 7, ";", "d/dx(x³;)"], ["x+y=3; x−y=1", 4, "√(", "x+y=√(3); x−y=1"],
+    ["sin(x)", 6, "²", "sin(x)²"], ["2+3", 1, "^(", "2^(+3"], ["", 0, "√(", "√("],
+  ]) assert.equal(pressKey(t, p, k, env, { check: katexOk })?.text, want, `${t} @${p} ${k}`);
+  // ; v predlogi brez proste reže se ne zgodi
+  // ; v predlogi brez proste reže in brez zunanje reže gre noter kot na main (napaka arity, števke se ne zlepijo)
+  for (const [t, p] of [["sin(x)", 5], ["nCr(5;2)", 6], ["2^(5)", 3]]) assert.equal(pressKey(t, p, ";", env)?.text, `${t.slice(0, p)};${t.slice(p)}`, `${t} @${p} ;`);
+});
+
+// Pregled #1017: naravna zaporedja tipk z lastnimi oklepaji in »;« (zaslonska tipka ali tipkovnica gre po isti poti):
+// ) stopi čez samodejni zaklepaj in nikoli ne zapre zunanje predloge, ; gre v naslednjo režo (kot ▶).
+test("zaporedja tipk v predlogah: lastni oklepaji in ; (AUDIT-067)", () => {
+  const run = (keys) => {
+    let t = "";
+    let p = 0;
+    for (const k of keys) {
+      const r = pressKey(t, p, k, env, { check: katexOk });
+      const st = stray(t, p, k) || semiAsMain(t, p, k, r);
+      if (r) ({ text: t, pos: p } = r);
+      const b = t.trim() && entryBase(t, env);
+      assert.ok(st || !t.trim() || (b?.ok && katexOk(caretTex(b, p)) && texSemi(b.tex) === 0), `${keys.join(" ")}: po »${k}« ${t} @${p}`);
+    }
+    return t;
+  };
+  for (const [keys, want] of [
+    [["∫(@;;)", "(", "x", "+", "1", ")"], "∫((x+1);;)"],
+    [["∫(@;;)", "(", "x", "+", "1", ")", "×", "2"], "∫((x+1)×2;;)"],
+    [["d/dx(@)", "sin(", "x", ")", ";"], "d/dx(sin(x);)"],
+    [["∫(@;;)", "x", ";", "0", ";", "1"], "∫(x;0;1)"],
+    [["∫(@;;)", "sin(", "x", ")", ";", "0", ";", "π"], "∫(sin(x);0;π)"],
+    [["∫(@;;)", "sin(", "x", ";", "0", ";", "1"], "∫(sin(x);0;1)"],
+    [["∫(@;;)", "^(", "x", ")", ";", "0", ";", "1"], "∫(^(x);0;1)"],
+    [["∫(@;;)", "x", "^(", "2", ")", ";", "0", ";", "1"], "∫(x^(2);0;1)"],
+    [["(", "1", "+", "2", ")", "^(", "2", ")"], "(1+2)^(2)"],
+    [["nCr(@;)", "5", ";", "2", ")"], "nCr(5;2)"],
+    [["d/dx(@)", "x", "³", ";", "2"], "d/dx(x³;2)"],
+    [["√(", "x", "+", "1", ")"], "√(x+1)"],
+    // odvečen zaklepaj gre noter kot na main (pregled 2/3)
+    [["√(", "x", "+", "1", ")", ")", ")"], "√(x+1)))"],
+    [["2", "×", "(", "3", "+", "4", ")"], "2×(3+4)"],
+  ])
+    assert.equal(run(keys), want, keys.join(" "));
+  // ; in ) na vsakem mestu vsake predloge: nikoli surov zapis
+  for (const T of TEMPLATES) {
+    const b0 = entryBase(T, env);
+    if (!b0?.ok || texSemi(b0.tex)) continue;
+    for (const p of new Set([...stopsTex(b0).matchAll(/evk-p=(\d+)/g)].map((m) => Number(m[1]))))
+      for (const k of [";", ")", "(", "]"]) {
+        const r = pressKey(T, p, k, env, { check: katexOk });
+        if (!r || stray(T, p, k) || semiAsMain(T, p, k, r)) continue;
+        const b = entryBase(r.text, env);
+        assert.ok(b?.ok && katexOk(caretTex(b, r.pos)) && texSemi(b.tex) <= plainSemi(T, p, k), `${T} @${p} ${k} → ${r.text}`);
+      }
+  }
+});
+
+// AUDIT-071: ukaz CAS (limita, integriraj, det, inverz, taylor, reši …) ali odvod z redom sredi izraza se izriše kot
+// matematika (prej »2·l i m i t a(x; x; 0)«, »1d/dx((x³; 2))«), s kazalcem na vsakem mestu; števke, črke in operatorji
+// z zaslonske tipkovnice na vsakem mestu vsake predloge: čist zapis ali pa se tipka ne zgodi.
+const COMPOSED = [
+  "2·limita(x; x; 0)", "1d/dx(x³;2)", "√(integriraj(x²))", "2+det([[1; 2]; [3; 4]])", "x·inverz([[1; 2]; [3; 4]])",
+  "3·limita(; x; )", "1+integriraj(t²; t)", "2·taylor(sin(x); x; 0; 5)", "poenostavi(x+x)+1", "2reši(x²=4; x)",
+  "limita(x; x; 0)+limita(x; x; 1)", "(limita(1/x; x; ∞))²", "2·d/dx(x³;2)+1", "−det([[; ]; [; ]])", "1limita(",
+  "2+integriraj(", "x+razvij((x+1)²)", "taylor(sin(x); x; 0; 5)",
+];
+test("ukazi sredi izraza: zapis brez surovih ločil in imen, kazalec povsod (AUDIT-071)", () => {
+  for (const t of COMPOSED) {
+    const b = entryBase(t, env);
+    assert.ok(b?.ok, `${t}: ne izriše`);
+    assert.equal(texSemi(b.tex), 0, `${t}: surovo ločilo v ${b.tex}`);
+    assert.doesNotMatch(b.tex, /\b[a-zčšž] [a-zčšž] [a-zčšž]\b/, `${t}: ime ukaza kot črke v ${b.tex}`);
+    for (let p = 0; p <= t.length; p++) {
+      const c = caretTex(b, p);
+      assert.ok(katexOk(c), `${t} @${p}: KaTeX`);
+      assert.equal((c.match(/sc-caret/g) || []).length, 1, `${t} @${p}: en kazalec`);
+    }
+  }
+  for (const T of [...TEMPLATES, ...COMPOSED]) {
+    const b0 = entryBase(T, env);
+    if (!b0?.ok) continue;
+    for (const p of new Set([...stopsTex(b0).matchAll(/evk-p=(\d+)/g)].map((m) => Number(m[1]))))
+      for (const k of ["1", "x", "+", "−", "×", "=", ",", "π"]) {
+        const r = pressKey(T, p, k, env, { check: katexOk });
+        if (!r) continue;
+        const b = entryBase(r.text, env);
+        assert.ok(b?.ok && katexOk(caretTex(b, r.pos)) && texSemi(b.tex) <= texSemi(b0.tex), `${T} @${p} ${k} → ${r.text}`);
+      }
+  }
+});
+
+// Pregled ponovne združitve (26. 11. 2026): varovalo tipk (AUDIT-067/071) ne sme zavrniti tipke, ki je na main delala.
+test("ponovna združitev: predloge z lastnim »;«, ; v seznamih, ⁿ√ za črko, ( pred ukazom, taylor z »;«", () => {
+  const run = (keys, t = "", p = 0) => {
+    for (const k of keys) {
+      const r = pressKey(t, p, k, env, { check: katexOk });
+      assert.ok(r, `${keys.join(" ")}: tipka »${k}« zavrnjena pri ${t} @${p}`);
+      ({ text: t, pos: p } = r);
+      const b = entryBase(t, env);
+      assert.ok(b?.ok && katexOk(caretTex(b, p)), `${keys.join(" ")}: po »${k}« ${t} @${p} ne izriše`);
+    }
+    return t;
+  };
+  // 1. predloge, ki v zapisu same ločijo argumente s »;« (\gcd(12; 18)): na praznem, za 2+, v reži ∫
+  assert.equal(run(["gcd(@;)", "1", "2", ";", "1", "8"]), "gcd(12;18)");
+  for (const k of ["gcd(@;)", "lcm(@;)", "mod(@;)", "round(@;)", "nPr(@;)", "randint(@;)", "Pol(@;)", "Rec(@;)"]) {
+    const c = k.replace("@", "");
+    assert.equal(run([k]), c, k);
+    assert.equal(run([k], "2+", 2), `2+${c}`, `2+ ${k}`);
+    assert.equal(run([k], "∫(;0;1)", 2), `∫(${c};0;1)`, `∫ ${k}`);
+  }
+  // 2. ; v funkcijah seznamov (zaslonska tipka in tipkovnica gresta po isti poti)
+  for (const f of ["max", "min", "mean", "median", "stdev", "stdevp", "total"]) assert.equal(run([`${f}(@)`, "1", ";", "2", ";", "3"]), `${f}(1;2;3)`, f);
+  // ; v funkciji z eno režo ostane zavrnjen
+  assert.equal(pressKey("sin(x)", 5, ";", env, { check: katexOk })?.text, "sin(x;)"); // brez zunanje reže kot na main (napaka arity)
+  // 4. ⁿ√ za črko; kazalec po tipki je v korenjencu, zapis se izriše na vsakem mestu
+  assert.equal(run(["x", "root(@;)"]), "xroot(;)");
+  assert.equal(run(["root(@;)"], "2x+1=0", 2), "2xroot(;)+1=0");
+  const br = entryBase("xroot(;)", env);
+  for (let p = 0; p <= 8; p++) assert.ok(katexOk(caretTex(br, p)), `xroot(;) @${p}`);
+  assert.match(caretTex(br, 6), /\\sqrt\[[^\]]*\]\{\{?\\htmlClass\{sc-caret\}/, "kazalec v korenjencu");
+  // 5. ( pred ukazom z matriko in pred limito: oklepaj je viden (\left( … \right.) in zapis veljaven
+  assert.equal(run(["2", "·", "(", "det([[@; ]; [; ]])"]), "2·(det([[; ]; [; ]])");
+  assert.equal(run(["2", "·", "(", "inverz([[@; ]; [; ]])"]), "2·(inverz([[; ]; [; ]])");
+  assert.equal(run(["("], "det([[1;2];[3;4]])", 0), "(det([[1;2];[3;4]])");
+  for (const t of ["(det([[1;2];[3;4]])", "2·(limita(sin(x)/x; x; 0)", "2·(inverz([[1;2];[3;4]])"]) {
+    const b = entryBase(t, env);
+    assert.ok(b?.ok && b.tex.includes("\\left(") && katexOk(b.tex), `${t}: ${b?.tex}`);
+  }
+  // 6. taylor: argumente loči »;« kot na tipki (vejica bi bila dvoumna z 0{,}5)
+  const tt = liveTex("taylor(sin(x); x; 0,5; 3)", env);
+  assert.match(tt, /;\\ x;\\ 0\{,\}5;\\ 3/, tt);
+});
+
+// Pregled 2 in 3 (26. 11. 2026, primerjava z main na ~49k tipkah): nobena tipka ni slabša kot na main.
+test("pregled 2/3: zaklepaj se premakne, ; v matriki in točki, d t na koncu, predogled = Izračunaj, ▶ za limito", () => {
+  const seq = (t, p, keys) => {
+    for (const k of keys) {
+      if (typeof k === "number") {
+        p = k;
+        continue;
+      }
+      const r = pressKey(t, p, k, env, { check: katexOk });
+      assert.ok(r, `${keys.join(" ")}: tipka »${k}« zavrnjena pri ${t} @${p}`);
+      ({ text: t, pos: p } = r);
+    }
+    return t;
+  };
+  // 1. »(« ali funkcija pred vsebino reže zapre na koncu reže; »)« kasneje premakne ta zaklepaj (kot na main)
+  assert.equal(seq("√(2+3×4)", 2, ["(", 6, ")"]), "√((2+3)×4)");
+  assert.equal(seq("sin(2+3×4)", 4, ["(", 8, ")"]), "sin((2+3)×4)");
+  assert.equal(seq("∫(x+1×x;0;1)", 2, ["(", 6, ")"]), "∫((x+1)×x;0;1)");
+  assert.equal(seq("√(2+3)", 2, ["sin(", 7, ")"]), "√(sin(2)+3)");
+  assert.equal(seq("e^(2+3×4)", 3, ["(", 7, ")"]), "e^((2+3)×4)");
+  // zaklepaj predloge z več režami se ne premakne (∫ ne izgubi mej)
+  assert.equal(pressKey("∫(x+1;0;1)", 5, ")", env, { check: katexOk }), null);
+  // 6. zaklepaj brez odprtega oklepaja gre noter kot na main
+  assert.equal(pressKey("x+1", 3, ")", env, { check: katexOk })?.text, "x+1)");
+  // 2. matrika na roko in točka: »;« v [ in navadnem oklepaju
+  assert.equal(seq("", 0, ["det(", "[", "[", "1", ";", "2", "]", ";", "[", "3", ";", "4", "]", "]", ")"]), "det([[1;2];[3;4]])");
+  assert.equal(seq("", 0, ["det([[@; ]; [; ]])", "1", ";", "2", ";", "3", ";", "4"]), "det([[1; 2]; [3; 4]])");
+  assert.equal(seq("(1", 2, [";", "2"]), "(1;2");
+  // pregled 3: tudi angleška imena ukazov imajo reže
+  assert.equal(pressKey("limit(x)", 7, ";", env, { check: katexOk })?.text, "limit(x;)");
+  assert.equal(pressKey("integrate(x)", 11, ";", env, { check: katexOk })?.text, "integrate(x;)");
+  assert.equal(pressKey("lim(x)", 5, ";", env, { check: katexOk })?.text, "lim(x;)");
+  assert.equal(pressKey("inv(x)", 5, ";", env, { check: katexOk })?.text, "inv(x;)");
+  // 3. integral po t: kazalec na koncu je za »dt«, ne med d in t
+  for (const [t, end] of [["∫(t²;0;2)", "dt"], ["k(x)=∫(sin(t);0;x)", "dt"], ["∫(sin(θ);0;π)", "d\\theta"], ["∫(x²;0;1)", "dx"]]) {
+    const c = caretTex(entryBase(t, env), t.length);
+    assert.ok(c.split(CARET).join("|").endsWith(`${end}|`), `${t}: ${c}`);
+  }
+  // 4. predogled kot Izračunaj: ukaz sredi izraza je napaka (ne »Pritisni =«), odvod v točki ima vrednost
+  for (const t of ["poenostavi(x)+1", "razvij((x+1)²)·2", "1+integriraj(x)", "1+razstavi(x²−1)"]) {
+    assert.equal(analyzeLive(t, env)?.error?.code, "casTrailing", t);
+    assert.equal(analyze(t, env)?.error?.code, "casTrailing", t);
+  }
+  for (const t of ["2·limita(sin(x)/x; x; 0)", "(1;2)", "gcd(12;"]) assert.notEqual(analyzeLive(t, env)?.kind, "solve", t);
+  assert.equal(analyzeLive("x²=4", env)?.kind, "solve");
+  assert.equal(analyzeLive("d/dx(x³;2)+1", env)?.value, 13);
+  // 5. ▶ se ustavi tudi za limito sredi izraza ((limita(x;x;0)|)²)
+  const t5 = "(limita(x;x;0))²";
+  const b5 = entryBase(t5, env);
+  const seen = [];
+  for (let p = 0, k = 0; k < 40 && p < t5.length; k++) seen.push((p = stepCaret(b5, t5, p, 1)));
+  assert.ok(seen.includes(14), seen.join(","));
+});
+
+// Pregled 3 (adversarialni, 26. 11. 2026): »;« v funkcijah več argumentov, ki jih SEMIS_MAX ne našteva (prej avg(126)),
+// ∑ in ∏ v prazni reži predloge, ) za zadnjo celico det.
+test("pregled 3: ; v vsaki funkciji več argumentov, ∑ v reži, ) iz matrike", () => {
+  const seq = (t, p, keys, e = env) => {
+    for (const k of keys) {
+      const r = pressKey(t, p, k, e, { check: katexOk });
+      assert.ok(r, `${keys.join(" ")}: tipka »${k}« zavrnjena pri ${t} @${p}`);
+      ({ text: t, pos: p } = r);
+    }
+    return { t, p };
+  };
+  const typed = (s, e) => seq("", 0, [s.slice(0, s.indexOf("(") + 1), ...s.slice(s.indexOf("(") + 1).split("")], e).t;
+  const ef = { ...env, funcs: { f: { param: "x", body: "x²" } } };
+  for (const [s, want] of [["avg(1;2;6)", 3], ["binom(5;2)", 10], ["ncr(5;2)", 10], ["npr(5;2)", 20], ["var(1;2;3)", 1], ["length(1;2)", 2], ["count(1;2)", 2], ["sort(3;1)", null], ["f(2;3)", "arity"]]) {
+    const t = typed(s.slice(0, -1), ef);
+    assert.equal(t, s.slice(0, -1), s);
+    const r = analyze(s, ef);
+    if (want === "arity") assert.equal(r?.error?.code, "arity", s);
+    else if (want !== null) assert.equal(r?.value, want, s);
+  }
+  // funkcija z enim argumentom še vedno ne sprejme »;«
+  // funkcija z enim argumentom: v zunanjo režo, sicer »;« kot na main (napaka arity), nikoli log(82)
+  for (const [t, p, want] of [["log(8)", 5, "log(8;"], ["sin(1)", 5, "sin(1;"], ["SIN(1)", 5, "SIN(1;"]]) {
+    const r = pressKey(t, p, ";", env, { check: katexOk });
+    assert.equal(r?.text, `${want})`, t);
+    const r2 = pressKey(r.text, r.pos, "2", env, { check: katexOk });
+    if (t !== "SIN(1)") assert.equal(analyze(r2.text, env)?.error?.code, "arity", r2.text);
+  }
+  assert.deepEqual(pressKey("∫(sin(t);0;1)", 7, ";", env, { check: katexOk }), { text: "∫(sin(t);0;1)", pos: 9 });
+  // uporabniška funkcija v reži ∫: »;« gre v naslednjo režo
+  const eF = { ...env, funcs: { f: { param: "x", body: "x²" } } };
+  assert.deepEqual(seq("", 0, ["∫(@;;)", "f(", "x", ";", "0", ";", "2"], eF), { t: "∫(f(x);0;2)", p: 10 });
+  // ∑ in ∏ v prazni reži: vstavita se, naslednje tipke gredo v prave reže
+  assert.deepEqual(seq("", 0, ["∫(@;;)", "∑_(n=1)^(@) ", "3", ";", "0", ";", "1"]), { t: "∫(∑_(n=1)^(3) ;0;1)", p: 18 });
+  assert.equal(seq("∫(;0;1)", 2, ["∏_(n=1)^(@) "]).t, "∫(∏_(n=1)^() ;0;1)");
+  assert.equal(seq("∫(x;;1)", 4, ["∑_(n=1)^(@) "]).t, "∫(x;∑_(n=1)^() ;1)");
+  assert.equal(seq("nCr(;)", 4, ["∑_(n=1)^(@) "]).t, "nCr(∑_(n=1)^() ;)");
+  for (const t of ["∫(∑_(n=1)^(3) ;0;1)", "nCr(∑_(n=1)^() ;)", "2+∑_(n=1)^() "]) {
+    const b = entryBase(t, env);
+    for (let p = 0; p <= t.length; p++) assert.ok(b?.ok && katexOk(caretTex(b, p)), `${t} @${p}`);
+  }
+  // ) za zadnjo celico 2 × 2 det stopi iz predloge
+  assert.equal(seq("", 0, ["det([[@; ]; [; ]])", "1", ";", "2", ";", "3", ";", "4", ")", "+", "1"]).t, "det([[1; 2]; [3; 4]])+1");
+});
+
 test("vnos, zapis in izračun se ujemajo (decimalna vejica, predloge)", () => {
   for (const [t, v] of VALUES) {
     const r = analyze(t, env);

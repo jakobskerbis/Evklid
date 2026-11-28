@@ -1116,7 +1116,7 @@ export class GraphView {
     for (const p of this.pois) {
       const px = this.X(p.x);
       const py = this.Y(p.y);
-      const on = this.shown.some((s) => Math.abs(s.x - p.x) < 1e-9 && Math.abs(s.y - p.y) < 1e-9);
+      const on = this.shown.some((s) => Math.abs(s.x - p.x) < 1e-9 && Math.abs(s.y - p.y) < 1e-9) || !!this.hooks.labelled?.(p);
       ctx.fillStyle = on ? C.text : C.poi;
       ctx.strokeStyle = C.bg;
       ctx.lineWidth = 2;
@@ -1485,7 +1485,7 @@ export class GraphView {
     const fns = model.items.filter((o) => !o.src?.hidden && (o.kind === "y" || o.plot === "y") && o.fn);
     for (let i = 0; i < fns.length; i++)
       for (let j = i + 1; j < fns.length; j++)
-        for (const p of intersections((x) => toNum(fns[i].fn(x)), (x) => toNum(fns[j].fn(x)), -50, 50, 2000)) xs.push(p.x), ys.push(p.y);
+        for (const p of intersections((x) => toNum(fns[i].fn(x)), (x) => toNum(fns[j].fn(x)), -50, 50, 2000, false)) xs.push(p.x), ys.push(p.y);
     const fin = (a) => a.filter(Number.isFinite);
     const X = fin(xs);
     const Y = fin(ys);

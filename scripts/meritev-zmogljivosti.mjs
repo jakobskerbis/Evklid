@@ -26,6 +26,7 @@
 //              --kroga 2 (še drugo odprtje istega zaslona). Podrobnosti pri klikiVBrskalniku.
 // Zastavice: --json <datoteka> (vsi rezultati), --md <datoteka> (povzetek v Markdown), --brskalnik chromium,webkit,
 //   --stopnje 1,10,50, --uporabniki 50, --brez-taskset, --hitro (manj ponovitev, za preizkus skripte),
+//   --tople-povezave (poti 0.2: pred meritvijo odpre c povezav, kot za posrednikom Renderja),
 //   --obdrzi (začasna mapa z bazami ostane, npr. za scripts/meritev-produkcija.mjs na sintetični bazi).
 //
 // Strežnik teče v svojem procesu (server/index.js), z računi (EVKLID_ACCOUNTS=1), v preizkusnem načinu (EVKLID_MOCK=1,
@@ -64,6 +65,10 @@ const SAMO = new Set(
 );
 for (const d of SAMO) if (!DELI.includes(d)) throw new Error(`neznan del »${d}« (možni: ${DELI.join(", ")})`);
 const HITRO = args.includes("--hitro");
+// --tople-povezave: pred vsako meritvijo poti c hkratnih /healthz odpre c povezav HTTP (kot pri Renderju, kjer posrednik
+// drži odprte povezave do strežnika). Brez zastavice nove povezave nastajajo med nasičenjem; strežnik jih takrat sprejme
+// šele ob naslednjem krogu zanke dogodkov, kar doda rep več sekund (K-14, docs/meritve/obremenitev-2026-11-26.md).
+const TOPLE = args.includes("--tople-povezave");
 const STOPNJE = (arg("--stopnje") || "1,10,50").split(",").map(Number);
 const N_UPORABNIKOV = Math.max(Number(arg("--uporabniki")) || 50, ...STOPNJE);
 // Obremenitev (D6): stopnje sočasnih učencev (isti --stopnje kot pri poteh; z --samo obremenitev privzeto 20,40,60,80), trajanje stopnje, meje cgroup, premor med dejanji učenca, zamik kosov
@@ -116,8 +121,13 @@ const cistoOkolje = Object.fromEntries(
 );
 const OKOLJE = {
   ...cistoOkolje,
+  // Nastavitve glibc iz render.yaml (vrnejo sproščen pomnilnik sistemu), da je RSS kot v produkciji (K-14).
+  MALLOC_ARENA_MAX: "2",
+  MALLOC_TRIM_THRESHOLD_: "131072",
+  MALLOC_MMAP_THRESHOLD_: "131072",
   EVKLID_MOCK: "1",
   EVKLID_MOCK_DELAY_MS: "0", // brez umetnega čakanja med kosi odgovora: merimo samo čas strežnika
+  EVKLID_SKRCI: process.env.MERITEV_SKRCI === "0" ? "0" : "1", // skrčene datoteke JS kot na produkciji (server/skrci.js); primerjava brez: MERITEV_SKRCI=0
   EVKLID_ACCOUNTS: "1",
   EVKLID_NEWS: "0",
   EVKLID_PASSWORD: "",
@@ -276,9 +286,13 @@ function ukazNode(nodeArgs) {
 // Strežnik (server/index.js) v svojem procesu; vrne sejo z ukazi IPC.
 // cgroup: seznam datotek cgroup.procs; lupina vanje zapiše svoj pid in se nato zamenja s strežnikom (exec), zato
 // meje veljajo od prvega bajta procesa Node.
+// Meja kopice V8 iz »npm start« (package.json), kot v produkciji: brez nje V8 v vsebniku s 512 MB ne čuti meje in
+// pospravlja prepozno (K-14, docs/meritve/obremenitev-2026-11-26.md).
+const KOPICA_MB = /--max-old-space-size=(?:\$\{EVKLID_KOPICA_MB:-)?(\d+)/.exec(JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8")).scripts?.start || "")?.[1];
+const KOPICA = KOPICA_MB ? [`--max-old-space-size=${KOPICA_MB}`] : [];
 async function zazeniStreznik(dbFile, { predlog = true, okolje = {}, cgroup = null } = {}) {
   const port = await hitrost.freePort();
-  const nodeArgs = ["--disable-warning=ExperimentalWarning", ...(predlog ? ["--import", pathToFileURL(PREDLOG_DAT).href] : []), "server/index.js"];
+  const nodeArgs = ["--disable-warning=ExperimentalWarning", ...KOPICA, ...(predlog ? ["--import", pathToFileURL(PREDLOG_DAT).href] : []), "server/index.js"];
   let [cmd, argv] = ukazNode(nodeArgs);
   if (cgroup?.length) {
     // Poti skupine kot argumenti (ne vstavljene v ukaz): lupina vpiše svoj PID v vsako, nato exec strežnika.
@@ -498,6 +512,7 @@ const steviloZahtev = (pot, c) => {
 const ROK_MS = HITRO ? 10_000 : 30_000; // ena meritev (pot × hkratnost) izda nove zahteve največ toliko časa
 async function obremeni(seja, pot, c, n) {
   const fn = POTI[pot];
+  if (TOPLE) await Promise.all(Array.from({ length: c }, () => seja.uporabniki[0].z("/healthz")));
   await seja.ukaz({ meritev: "ponastavi" });
   const casi = [];
   const statusi = {};

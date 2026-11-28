@@ -330,7 +330,7 @@ c) Izračunajte natančno prostornino kocke, katere rob je dolg $D$, in jo nato 
 1. a) $c^3 = 128$. Eksponent $3$ je lih, zato ima enačba natanko eno realno rešitev $c = \sqrt[3]{128}$.
 2. a) $128 = 64 \cdot 2 = 4^3 \cdot 2$, zato je $c = \sqrt[3]{4^3 \cdot 2} = 4\sqrt[3]{2}\,\text{cm}$.
 3. b) Z računalom (tipka za $n$-ti koren ali potenca $128^{1/3}$): $c \approx 5{,}039684$, torej $c \approx 5{,}04\,\text{cm}$.
-4. b) $D = c\sqrt{2} \approx 5{,}039684 \cdot 1{,}414214 \approx 7{,}127190$, torej $D \approx 7{,}13\,\text{cm}$.
+4. b) $D = c\sqrt{2} = 4\sqrt[3]{2} \cdot \sqrt{2} \approx 7{,}127190$, torej $D \approx 7{,}13\,\text{cm}$.
 5. c) $D^3 = \left(c\sqrt{2}\right)^3 = c^3 \cdot \left(\sqrt{2}\right)^3 = 128 \cdot 2\sqrt{2} = 256\sqrt{2}\,\text{cm}^3$.
 6. c) $256\sqrt{2} \approx 362{,}0387$, torej približno $362\,\text{cm}^3$.
 7. Odgovor: $c = 4\sqrt[3]{2}\,\text{cm} \approx 5{,}04\,\text{cm}$; $D \approx 7{,}13\,\text{cm}$; prostornina večje kocke je $256\sqrt{2}\,\text{cm}^3 \approx 362\,\text{cm}^3$.

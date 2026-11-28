@@ -156,6 +156,74 @@ test("mapa modelov telesa: telo-hd samo na računalniku z visoko kakovostjo, tel
   assert.equal(mapaTelesa(), "telo");
 });
 
+// iPad s tipkovnico, sledilno ploščico ali miško javi »pointer: fine«, Safari pa nima deviceMemory: prej je dobil
+// »visoka« in telo-hd ter mu je zmanjkalo pomnilnika. maxTouchPoints > 1 (ali any-pointer: coarse) pomeni dotik.
+test("kakovost naprave: tablica na dotik s finim kazalcem dobi nizko kakovost in telo, računalnik visoko", async () => {
+  const { kakovostNaprave, mapaTelesaNaprave, naDotik } = await import("../public/3d/modeli.js");
+  const prej = { navigator: Object.getOwnPropertyDescriptor(globalThis, "navigator"), matchMedia: globalThis.matchMedia, screen: globalThis.screen };
+  const naprava = (nav, poizvedbe = {}) => {
+    Object.defineProperty(globalThis, "navigator", { value: nav, configurable: true, writable: true });
+    globalThis.matchMedia = (q) => ({ matches: !!poizvedbe[q] });
+  };
+  try {
+    globalThis.screen = { width: 2732 / 2, height: 2048 / 2 };
+    // iPad Pro 12,9" z Magic Keyboard v Safariju: fin kazalec, brez deviceMemory, 8 jeder
+    naprava({ maxTouchPoints: 5, hardwareConcurrency: 8 }, { "(pointer: fine)": true });
+    assert.equal(naDotik(), true);
+    assert.equal(kakovostNaprave(), "nizka");
+    assert.equal(mapaTelesaNaprave(kakovostNaprave()), "telo");
+    assert.equal(mapaTelesaNaprave("visoka"), "telo", "tudi ročna visoka kakovost na tablici ostane pri telo");
+    // drugi kazalec je prst (any-pointer: coarse), čeprav maxTouchPoints ni znan
+    naprava({ hardwareConcurrency: 8 }, { "(any-pointer: coarse)": true });
+    assert.equal(kakovostNaprave(), "nizka");
+    // računalnik z miško, velik zaslon
+    globalThis.screen = { width: 1920, height: 1080 };
+    naprava({ maxTouchPoints: 0, hardwareConcurrency: 8, deviceMemory: 8 }, { "(pointer: fine)": true, "(any-pointer: fine)": true });
+    assert.equal(naDotik(), false);
+    assert.equal(kakovostNaprave(), "visoka");
+    assert.equal(mapaTelesaNaprave(kakovostNaprave()), "telo-hd");
+    // maxTouchPoints 1 (nekateri računalniki z enim »dotikom« peresa) še ni dotik
+    naprava({ maxTouchPoints: 1, hardwareConcurrency: 8 }, {});
+    assert.equal(kakovostNaprave(), "visoka");
+  } finally {
+    if (prej.navigator) Object.defineProperty(globalThis, "navigator", prej.navigator);
+    else delete globalThis.navigator;
+    globalThis.matchMedia = prej.matchMedia;
+    globalThis.screen = prej.screen;
+  }
+});
+
+test("meja točk platna: velik iPad ne dobi 5,6 M točk, računalnik ostane oster, nikoli pod 1", async () => {
+  const { locljivostPlatna, NAJVEC_TOCK } = await import("../public/3d/modeli.js");
+  const tock = (g, w, h) => w * g * (h * g);
+  // iPad Pro 12,9" ležeče (1366 × 1024 CSS, gostota 2; nizka kakovost dovoli 1,5)
+  const ipad = locljivostPlatna(1.5, 1366, 1024, "nizka");
+  assert.ok(tock(ipad, 1366, 1024) <= NAJVEC_TOCK.nizka, `iPad ${ipad}`);
+  assert.ok(ipad >= 1);
+  // telefon: meja ne seže
+  assert.equal(locljivostPlatna(1.5, 390, 844, "nizka"), 1.5);
+  // računalnik 1440p z gostoto 2 pri visoki kakovosti
+  const pc = locljivostPlatna(2, 2560, 1300, "visoka");
+  assert.ok(tock(pc, 2560, 1300) <= NAJVEC_TOCK.visoka * 1.01 || pc === 1, `pc ${pc}`);
+  assert.equal(locljivostPlatna(2, 4000, 2000, "visoka"), 1, "pod gostoto 1 ne gremo");
+  assert.equal(locljivostPlatna(0.8, 4000, 2000, "visoka"), 0.8, "gostota zaslona pod 1 ostane");
+  assert.equal(locljivostPlatna(1, 1280, 800, "visoka"), 1);
+});
+
+test("računalnik (brez dotika) ohrani videz: polna gostota in 4× MSAA tudi na velikem zaslonu", async () => {
+  const { locljivostPlatna, vzorciMSAA } = await import("../public/3d/modeli.js");
+  // MacBook Retina čez cel zaslon: 1440 × 900 CSS, gostota 2 → 5,2 M točk
+  assert.equal(locljivostPlatna(2, 1440, 900, "visoka", false), 2);
+  assert.equal(vzorciMSAA(1440 * 2 * 900 * 2, false), 4);
+  // zaslon 2560 × 1440 z gostoto 1
+  assert.equal(locljivostPlatna(1, 2560, 1440, "visoka", false), 1);
+  assert.equal(vzorciMSAA(2560 * 1440, false), 4);
+  // ista platna na tablici: meja in brez MSAA
+  assert.ok(locljivostPlatna(2, 1440, 900, "visoka", true) < 2);
+  assert.equal(vzorciMSAA(2560 * 1440, true), 0);
+  assert.equal(vzorciMSAA(1e6, true), 4);
+});
+
 // Pogodba za modele iz kode: info, zgradi(THREE, ctx) in kar vrne. Graditelji brez DOM (canvas za napise) se v Node
 // ne zgradijo do konca; zanje preverimo le info.
 async function preveriGraditelja(file) {
@@ -260,13 +328,20 @@ test("CSP: /3d doda samo 'wasm-unsafe-eval', drugje ostane stroga", async () => 
     const jedro = await get("/vendor/three/build/three.module.js");
     assert.equal(jedro.status, 200);
     assert.match(jedro.headers.get("content-type"), /javascript/);
-    // Izdelana knjižnica (~0,7 MB + jedro) gre stisnjena in za en teden v predpomnilnik, kot ostale knjižnice.
+    // Izdelana knjižnica (~0,7 MB + jedro) gre stisnjena. Brskalnik jo vsakič preveri (no-cache + ETag, 304), ne teden kot
+    // ostale knjižnice: naslov je brez različice, zato bi stara kopija three.module.js ob novem three.core.js po posodobitvi
+    // three zlomila 3D (iPad 27. 11. 2026, »Indirectly exported binding name 'CubeUVReflectionMapping' is not found«).
     const stisnjeno = await get("/vendor/three/build/three.core.js", { headers: { "accept-encoding": "br, gzip" } });
     assert.equal(stisnjeno.status, 200);
     assert.match(stisnjeno.headers.get("content-encoding") || "", /^(br|gzip)$/);
-    assert.match(stisnjeno.headers.get("cache-control") || "", /max-age=[1-9]/);
+    assert.equal(stisnjeno.headers.get("cache-control"), "no-cache");
+    assert.ok(stisnjeno.headers.get("etag"), "three.core.js z ETag (preverjanje brez prenosa)");
+    assert.equal(jedro.headers.get("cache-control"), "no-cache");
+    const katex = await get("/vendor/katex/katex.min.js", { headers: { "accept-encoding": "br, gzip" } });
+    assert.match(katex.headers.get("cache-control") || "", /max-age=[1-9]/, "ostale knjižnice ostanejo teden v predpomnilniku");
     const gltf = await get("/vendor/three/examples/jsm/loaders/GLTFLoader.js");
     assert.equal(gltf.status, 200);
+    assert.equal(gltf.headers.get("cache-control"), "no-cache", "dodatek se mora ujemati z jedrom three");
     assert.match(gltf.headers.get("content-type"), /javascript/);
     const src = await gltf.text();
     assert.ok(!/from\s*['"]three['"]/.test(src), "dodatek še uvaža golo 'three'");

@@ -163,7 +163,7 @@ $\dfrac{4 \cdot \sqrt{4}}{8} = \dfrac{4 \cdot 2}{8} = 1$. Preverjanje v prvotnem
 - **Ulomek v eksponentu kot deljenje.** $8^{\frac{1}{3}} = \dfrac{8}{3}$ je napačno. Eksponent $\dfrac{1}{3}$ pomeni kubični koren, zato je $8^{\frac{1}{3}} = \sqrt[3]{8} = 2$.
 - **Negativni eksponent kot negativno število.** $25^{-\frac{1}{2}} = -5$ ni res. Minus v eksponentu pomeni obratno vrednost: $25^{-\frac{1}{2}} = \dfrac{1}{25^{\frac{1}{2}}} = \dfrac{1}{5}$. Potenca s pozitivno osnovo je vedno pozitivna.
 - **Zamenjava števca in imenovalca.** $a^{\frac{2}{3}} = \sqrt{a^3}$ je napačno. Imenovalec je stopnja korena, števec eksponent: $a^{\frac{2}{3}} = \sqrt[3]{a^2}$. Preizkus z $a = 8$: $\sqrt[3]{64} = 4$, toda $\sqrt{512} \approx 22{,}6$.
-- **Seštevanje potenc kot množenje.** $a^{\frac{1}{2}} + a^{\frac{1}{3}} = a^{\frac{5}{6}}$ ni res. Eksponente seštevamo le pri **množenju** potenc z isto osnovo. Vsote $\sqrt{a} + \sqrt[3]{a}$ ne moremo zapisati kot eno potenco.
+- **Seštevanje potenc kot množenje.** $a^{\frac{1}{2}} + a^{\frac{1}{3}} = a^{\frac{5}{6}}$ ni res. Eksponente seštevamo le pri **množenju** potenc z isto osnovo. Za vsoto $\sqrt{a} + \sqrt[3]{a}$ ni pravila, ki bi jo zapisalo kot eno potenco z osnovo $a$.
 - **Negativna osnova.** Zapis $(-27)^{\frac{1}{3}}$ ni definiran, ker bi zapis z drugim ulomkom, na primer $(-27)^{\frac{2}{6}}$, dal drug rezultat. Kadar potrebuješ kubični koren negativnega števila, ga piši s korenom: $\sqrt[3]{-27} = -3$.
 
 ## Povzetek

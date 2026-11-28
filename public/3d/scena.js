@@ -7,6 +7,8 @@ import * as THREE from "/vendor/three/build/three.module.js";
 import { OrbitControls } from "/vendor/three/examples/jsm/controls/OrbitControls.js";
 import { RoomEnvironment } from "/vendor/three/examples/jsm/environments/RoomEnvironment.js";
 import { zavrtiOkoli } from "./vrtenje.js";
+import { kakovostNaprave, locljivostPlatna, vzorciMSAA as vzorciZaTocke, naDotik } from "./modeli.js";
+import { t } from "/i18n.js";
 
 export { THREE };
 
@@ -28,20 +30,9 @@ const shramba = {
 // Manj gibanja (sistemska nastavitev): brez samodejnega vrtenja, preleti so takojšnji.
 export const gibanje = () => !(typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches);
 
-// Kakovost: »visoka« samo na računalniku ali močni tablici; telefon dobi »nizka« (60 sličic na sekundo pred lepoto).
-// Ročna izbira: ?kakovost=nizka|visoka ali shramba evklid.3d.kakovost.
-export function kakovostNaprave() {
-  const q = typeof location !== "undefined" ? new URLSearchParams(location.search).get("kakovost") : null;
-  const izbrana = q || shramba.get("evklid.3d.kakovost");
-  if (izbrana === "nizka" || izbrana === "visoka") return izbrana;
-  const nav = typeof navigator !== "undefined" ? navigator : {};
-  const dotik = typeof matchMedia === "function" && matchMedia("(pointer: coarse)").matches;
-  const jedra = nav.hardwareConcurrency || 4;
-  const pomnilnik = nav.deviceMemory || 8;
-  const lahki = nav.connection?.saveData === true;
-  if (lahki || dotik || jedra < 4 || pomnilnik < 4) return "nizka";
-  return "visoka";
-}
+// Kakovost (»visoka« samo na računalniku brez zaslona na dotik) in meja točk platna: modeli.js (brez three.js, zato jo
+// preveri test v Node).
+export { kakovostNaprave };
 
 // Studijski videz organov (IBL iz HDRI, moker lak, presevnost): povsod razen na šibkih napravah (deviceMemory ≤ 2,
 // varčevanje s podatki, varčni način aplikacije »lite«). Tam ostanejo RoomEnvironment in prejšnji materiali.
@@ -148,6 +139,7 @@ export function shranjenNacin() {
 export function ustvariSceno(el, opts = {}) {
   const kakovost = opts.kakovost || kakovostNaprave();
   const visoka = kakovost === "visoka";
+  const dotik = naDotik(); // meja točk in brez MSAA samo na tablici in telefonu (modeli.js locljivostPlatna)
   const gib = opts.gibanje ?? gibanje();
   el.classList.add("k3-oder");
   const canvas = document.createElement("canvas");
@@ -178,15 +170,22 @@ export function ustvariSceno(el, opts = {}) {
   el.style.backgroundColor = `#${new THREE.Color(opts.ozadje ?? 0x0e131c).getHexString()}`;
   renderer.localClippingEnabled = true;
   const najvecjaLocljivost = Math.min(window.devicePixelRatio || 1, visoka ? 2 : 1.5);
-  let locljivost = najvecjaLocljivost;
-  renderer.setPixelRatio(locljivost);
+  let locljivost = najvecjaLocljivost; // želena gostota; dejanska je lahko nižja zaradi meje točk (locljivostPlatna)
+  let gostota = locljivost;
+  renderer.setPixelRatio(gostota);
 
   const scene = new THREE.Scene();
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  const okolje = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  let pmrem = new THREE.PMREMGenerator(renderer);
+  let okoljeRT = pmrem.fromScene(new RoomEnvironment(), 0.04); // ob obnovi konteksta WebGL nova (obnoviKontekst)
+  let okolje = okoljeRT.texture;
   const jakostSobe = opts.okolje ?? 0.72;
   let aktivnoOkolje = okolje; // RoomEnvironment ali studijski HDRI (nastaviOkolje)
-  let studio = null; // { tex, jakost } ali obljuba med nalaganjem
+  let studio = null; // { tex, rt, jakost } ali obljuba med nalaganjem
+  // Cilj izrisa PMREM sprostimo skupaj z njegovo teksturo (dispose teksture sam ne sprosti cilja).
+  const sprostiRT = (rt) => {
+    rt?.texture.dispose();
+    rt?.dispose();
+  };
   scene.environment = okolje;
   scene.environmentIntensity = jakostSobe;
   // Rahla usmerjena luč od zgoraj spredaj: oblika dobi globino tudi brez senc.
@@ -218,9 +217,9 @@ export function ustvariSceno(el, opts = {}) {
         .then(({ HDRLoader }) => new HDRLoader().setDataType(THREE.HalfFloatType).loadAsync(STUDIO_HDR))
         .then((hdr) => {
           hdr.mapping = THREE.EquirectangularReflectionMapping;
-          const tex = unicen ? null : pmrem.fromEquirectangular(hdr).texture;
+          const rt = unicen ? null : pmrem.fromEquirectangular(hdr);
           hdr.dispose();
-          return (studio = { tex, jakost: opts.okoljeStudio ?? 0.7 });
+          return (studio = { tex: rt?.texture ?? null, rt, jakost: opts.okoljeStudio ?? 0.7 });
         })
         .catch((err) => {
           console.warn("studijsko okolje:", err);
@@ -236,7 +235,7 @@ export function ustvariSceno(el, opts = {}) {
   camera.position.set(0, 0, 3.6);
   const controls = new OrbitControls(camera, canvas);
   // Preizkusi (scripts/atlas/posnetki-organa.cjs MERE=1: merilne črte čez prerez): kamera in scena, samo s ?preizkus=1
-  if (typeof location !== "undefined" && /[?&]preizkus=1(&|$)/.test(location.search)) globalThis.__scena = { camera, scene, canvas };
+  if (typeof location !== "undefined" && /[?&]preizkus=1(&|$)/.test(location.search)) globalThis.__scena = { camera, scene, canvas, renderer };
   controls.enableDamping = gib;
   controls.dampingFactor = 0.09;
   controls.rotateSpeed = 0.85;
@@ -248,6 +247,47 @@ export function ustvariSceno(el, opts = {}) {
 
   let dirty = true;
   const narisi = () => (dirty = true);
+  // Prevajanje senčilnikov pred prvim izrisom novega modela (prenosnik z Windows, j 25. 11.: »počasno je nalaganje
+  // modelov«). Organ ima do ~27 programov (vsako tkivo svoj); prvi izris jih je prevajal enega za drugim in ves ta čas
+  // držal stran. compileAsync jih pošlje gonilniku hkrati (KHR_parallel_shader_compile: vzporedno na več jedrih, stran
+  // med tem teče), izris počaka, da so nared. Videz je enak, samo vrstni red dela je drug. Brez razširitve (ali ob
+  // napaki) three počaka na programe po vrsti kot prej. Vrne obljubo, ko lahko rišemo.
+  let pripravljam = 0;
+  function pripravi() {
+    if (unicen || typeof renderer.compileAsync !== "function") return Promise.resolve();
+    pripravljam++;
+    const konec = () => {
+      pripravljam = Math.max(0, pripravljam - 1);
+      narisi();
+    };
+    // Varovalka: če gonilnik nikoli ne javi konca, po 20 s rišemo vseeno (kot prej, prvi izris počaka na prevajanje).
+    // Z okluzijo (GTAO) riše composer v svoj cilj (brez preslikave tonov): programi morajo biti za isti cilj.
+    const prejCilj = renderer.getRenderTarget();
+    renderer.setRenderTarget(aoVkljucen && composer ? composer.readBuffer : null);
+    // three prevede tudi skrite dele (pokrovi reza, skrite plasti); ti se prevedejo šele, ko se pokažejo (kot prej),
+    // zato jim material za čas klica odvzamemo: tako je dela točno toliko kot pri prvem izrisu, le hkrati.
+    const vidni = new Set();
+    scene.traverseVisible((o) => vidni.add(o));
+    const skriti = [];
+    scene.traverse((o) => {
+      if (!o.material) return;
+      const m = Array.isArray(o.material) ? o.material.some((x) => x.visible) : o.material.visible;
+      if (!vidni.has(o) || !m) skriti.push([o, o.material]);
+    });
+    let p;
+    try {
+      for (const [o] of skriti) o.material = null;
+      p = renderer.compileAsync(scene, camera).catch((err) => console.warn("3D senčilniki:", err));
+    } catch (err) {
+      // compile() teče takoj (pred obljubo): napaka (npr. onBeforeCompile) ne sme za vedno ustaviti risanja
+      console.warn("3D senčilniki:", err);
+      p = Promise.resolve();
+    } finally {
+      for (const [o, m] of skriti) o.material = m;
+      renderer.setRenderTarget(prejCilj);
+    }
+    return Promise.race([p, new Promise((r) => setTimeout(r, 20000))]).then(konec);
+  }
   controls.addEventListener("change", narisi);
 
   // Prosto vrtenje (opts.prostoVrtenje, j 4. 11.: »okoli točke, ne osi«): model se obrača okoli središča v vse smeri
@@ -488,7 +528,7 @@ export function ustvariSceno(el, opts = {}) {
           this.kvad.dispose();
         }
       }
-      const rt = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 });
+      const rt = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: vzorciMSAA() });
       composer = new EffectComposer(renderer, rt);
       composer.addPass(new NeprosojniPass(scene, camera));
       gtao = new OkluzijaPass(scene, camera, 1, 1);
@@ -511,6 +551,8 @@ export function ustvariSceno(el, opts = {}) {
       velikost(true);
       aoVkljucen = true;
       narisi();
+      // Z okluzijo riše composer v svoj cilj (drugi programi): prevedemo jih hkrati, ne enega za drugim ob izrisu.
+      pripravi();
     } catch (err) {
       console.warn("3D: okluzija ni na voljo", err);
       composer = null;
@@ -525,6 +567,7 @@ export function ustvariSceno(el, opts = {}) {
   let w = 0;
   let h = 1;
   let zamikZg = 0;
+  const vzorciMSAA = () => vzorciZaTocke(w * h * gostota * gostota, dotik);
   // prisilno: nov composer ali ločljivost; sicer brez dela, če se velikost odra ni spremenila (posodobiVelikost ob izbiri)
   function velikost(prisilno = false) {
     const r = el.getBoundingClientRect();
@@ -533,6 +576,8 @@ export function ustvariSceno(el, opts = {}) {
     if (nw === w && nh === h && prisilno !== true) return;
     w = nw;
     h = nh;
+    gostota = locljivostPlatna(locljivost, w, h, kakovost, dotik);
+    renderer.setPixelRatio(gostota);
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     // zamik slike navzdol (px): na telefonu lebdijo gumbi in stikala organa levo zgoraj čez oder; model narišemo nižje in
@@ -540,8 +585,17 @@ export function ustvariSceno(el, opts = {}) {
     if (zamikZg > 0 && h > 200) camera.setViewOffset(w, h + 2 * zamikZg, 0, 0, w, h);
     else camera.clearViewOffset();
     camera.updateProjectionMatrix();
-    composer?.setPixelRatio(locljivost);
-    composer?.setSize(w, h);
+    if (composer) {
+      // Veliko platno: brez MSAA (štirikrat manj pomnilnika); vzorci se uporabijo ob ponovni pripravi ciljev v setSize.
+      const n = vzorciMSAA();
+      if (composer.renderTarget1.samples !== n) {
+        composer.renderTarget1.samples = composer.renderTarget2.samples = n;
+        composer.renderTarget1.dispose();
+        composer.renderTarget2.dispose();
+      }
+      composer.setPixelRatio(gostota);
+      composer.setSize(w, h);
+    }
     narisi();
   }
   const ro = new ResizeObserver(() => velikost());
@@ -894,6 +948,7 @@ export function ustvariSceno(el, opts = {}) {
     const dt = Math.min(0.1, Math.max(0, (now - zadnji) / 1000)); // prvi okvir: čas iz rAF je lahko pred zadnji
     zadnji = now;
     if (++stevec % 60 === 0 && !el.isConnected) return unici();
+    if (izgubljen) return; // brez konteksta ni risanja (obnoviKontekst nastavi dirty)
     let risi = dirty;
     if (korakLeta(dt)) {
       risi = true;
@@ -905,6 +960,11 @@ export function ustvariSceno(el, opts = {}) {
     for (const f of koraki) if (f(dt, now / 1000) !== false) risi = true;
     if (stalno > 0) risi = true;
     if (!risi) {
+      prejRisal = false;
+      return;
+    }
+    // Senčilniki novega modela se še prevajajo (pripravi): risanje bi čakalo nanje in ustavilo stran, zato počakamo.
+    if (pripravljam > 0) {
       prejRisal = false;
       return;
     }
@@ -923,9 +983,8 @@ export function ustvariSceno(el, opts = {}) {
           if (aoVkljucen) {
             aoVkljucen = false;
             composer = null;
-          } else if (locljivost > 1) {
-            locljivost = Math.max(1, locljivost - 0.25);
-            renderer.setPixelRatio(locljivost);
+          } else if (gostota > 1) {
+            locljivost = Math.max(1, gostota - 0.25);
             velikost(true);
           }
         }
@@ -934,6 +993,66 @@ export function ustvariSceno(el, opts = {}) {
     prejRisal = true;
   }
   raf = requestAnimationFrame(zanka);
+
+  // Izgubljen kontekst WebGL (iPad po menjavi aplikacije ali ob pomanjkanju pomnilnika): three.js sam pokliče
+  // preventDefault, da se kontekst lahko obnovi; brez tega ostane oder črn. Do obnove ne rišemo; če traja, kartica z
+  // »Znova naloži«. Ob obnovi three.js znova naloži geometrije in teksture, okolja (PMREM, studijski HDRI) pa so bila
+  // izrisana v grafični pomnilnik in jih moramo narediti znova.
+  let izgubljen = false;
+  let karticaIzgube = null;
+  let rokKartice = 0;
+  function obIzgubi(e) {
+    e.preventDefault();
+    if (unicen) return;
+    izgubljen = true;
+    clearTimeout(rokKartice);
+    rokKartice = setTimeout(() => {
+      if (!izgubljen || unicen || karticaIzgube) return;
+      karticaIzgube = document.createElement("div");
+      karticaIzgube.className = "k3-nalaganje napaka k3-izguba";
+      karticaIzgube.setAttribute("role", "status");
+      const p = document.createElement("p");
+      p.textContent = t("a3.contextLost");
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "a3-pill a3-mali";
+      b.textContent = t("a3.reload");
+      b.addEventListener("click", () => location.reload());
+      karticaIzgube.append(p, b);
+      el.append(karticaIzgube);
+    }, 600);
+  }
+  function obnoviKontekst() {
+    if (unicen) return;
+    izgubljen = false;
+    clearTimeout(rokKartice);
+    karticaIzgube?.remove();
+    karticaIzgube = null;
+    const bilStudio = !!studio?.tex && aktivnoOkolje === studio.tex && studio.tex !== okolje;
+    const staro = { pmrem, okoljeRT, studioRT: studio?.rt };
+    pmrem = new THREE.PMREMGenerator(renderer); // stari je imel vire v izgubljenem kontekstu
+    okoljeRT = pmrem.fromScene(new RoomEnvironment(), 0.04);
+    okolje = okoljeRT.texture;
+    studio = null;
+    aktivnoOkolje = okolje;
+    if (scene.environment) scene.environment = okolje;
+    if (bilStudio) nastaviOkolje("studio");
+    // Stare predmete sprostimo (njihovi viri GPU so z izgubljenim kontekstom že izginili, ostali so poslušalci in
+    // zapisi v izrisovalniku); napaka pri tem ne sme ustaviti obnove.
+    try {
+      sprostiRT(staro.studioRT);
+      sprostiRT(staro.okoljeRT);
+      staro.pmrem.dispose();
+    } catch (err) {
+      console.warn("3d: sprostitev po obnovi konteksta:", err);
+    }
+    casi.length = 0;
+    prejRisal = false;
+    velikost(true);
+    narisi();
+  }
+  canvas.addEventListener("webglcontextlost", obIzgubi);
+  canvas.addEventListener("webglcontextrestored", obnoviKontekst);
   // Med preletom ali animacijo tudi vrstica s točkami teče gladko.
   const naKorak = (f) => (koraki.add(f), () => koraki.delete(f));
   const stalnoRisi = (on) => {
@@ -945,10 +1064,13 @@ export function ustvariSceno(el, opts = {}) {
     if (unicen) return;
     unicen = true;
     cancelAnimationFrame(raf);
+    clearTimeout(rokKartice);
+    canvas.removeEventListener("webglcontextlost", obIzgubi);
+    canvas.removeEventListener("webglcontextrestored", obnoviKontekst);
     ro.disconnect();
     controls.dispose();
-    okolje.dispose();
-    if (studio?.tex && studio.tex !== okolje) studio.tex.dispose();
+    sprostiRT(okoljeRT);
+    sprostiRT(studio?.rt);
     pmrem.dispose();
     composer?.dispose?.();
     renderer.dispose();
@@ -972,6 +1094,7 @@ export function ustvariSceno(el, opts = {}) {
     canvas,
     plast,
     narisi,
+    pripravi,
     poleti,
     nacinVrtenja,
     hodi: (n) => (gumbHoje = Math.sign(n) || 0),
@@ -1005,6 +1128,9 @@ export function ustvariSceno(el, opts = {}) {
     // prelet kamere (poleti) še teče
     get leti() {
       return !!let_;
+    },
+    get izgubljen() {
+      return izgubljen;
     },
     posodobiVelikost: () => velikost(), // takoj po spremembi postavitve (okno dela ob odru), pred kadriranjem
     unici,

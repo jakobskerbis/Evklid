@@ -276,6 +276,17 @@ Ogljik si predstavljaj kot kuharja s štirimi rokami. Z vsako roko nekaj drži: 
 + 2-metilbutan
 > Najdaljša veriga gre skozi etilno skupino in ima 4 atome C (butan). Na njej ostane ena skupina $-\mathrm{CH_3}$ na mestu 2: 2-metilbutan.
 
+? Koliko atomov vodika ima alkin z $8$ atomi ogljika?
+= 14
+~ 18 | To je alkan, $\mathrm{C}_n\mathrm{H}_{2n+2}$. Trojna vez pomeni $4$ atome H manj.
+~ 16 | To je alken, $\mathrm{C}_n\mathrm{H}_{2n}$. Alkini imajo še $2$ atoma H manj.
+> Alkini: $\mathrm{C}_n\mathrm{H}_{2n-2}$, torej $2 \cdot 8 - 2 = 14$. Formula je $\mathrm{C_8H_{14}}$.
+
+? Alken z odprto verigo ima molsko maso $56\,\mathrm{g/mol}$ ($A_r(\mathrm{C}) = 12$, $A_r(\mathrm{H}) = 1$). Koliko atomov ogljika ima molekula?
+= 4
+~ 4,67 | Molsko maso si delil le z $12$. Alken ima formulo $\mathrm{C}_n\mathrm{H}_{2n}$, vsaka enota $\mathrm{CH_2}$ tehta $14$.
+> $\mathrm{C}_n\mathrm{H}_{2n}$: $12n + 2n = 14n = 56$, $n = 4$. To je buten, $\mathrm{C_4H_8}$.
+
 :::simboli
 n | število atomov ogljika v molekuli | | – | alkani CₙH₂ₙ₊₂, alkeni CₙH₂ₙ, alkini CₙH₂ₙ₋₂
 :::

@@ -146,11 +146,24 @@ test("»Pokaži na grafu«: integral, odvod, enačba in divergenten integral v g
       assert.equal(last.tools, undefined, where);
       assert.ok(s.items.some((x) => x.type === "note" && x.text.startsWith(msg)), `${where}: opomba ${msg}`);
 
-      // sprememba nastavitve grafa (DEG) dobi kratko opombo
+      // sprememba nastavitve grafa (DEG) se vidi na stikalu DEG/RAD v glavi grafa, brez opombe (predlog 1, j 27. 11.)
       await run("sin(x)=0,5");
       s = await show();
       assert.equal(s.settings.deg, true, where);
-      assert.ok(s.items.some((x) => x.type === "note" && x.text.includes("gc.fromSci.setDeg")), where);
+      assert.ok(!s.items.some((x) => x.type === "note" && x.text.includes("gc.fromSci.setDeg")), where);
+      assert.ok(await page.isVisible('#g .gc-angle [data-deg="1"].active'), `${where}: DEG je vklopljen`);
+      // stikalo v glavi: RAD izklopi stopinje, razveljavi vrne DEG
+      await tap('#g .gc-angle [data-deg="0"]');
+      assert.equal(await page.evaluate(() => window.graph.state.settings.deg), false, where);
+      assert.ok(await page.isVisible('#g .gc-angle [data-deg="0"].active'), where);
+      // ena razveljavitev vrne DEG (en sam vnos v zgodovini), ponovna uveljavitev spet RAD
+      await tap('#g [data-act="undo"]');
+      assert.equal(await page.evaluate(() => window.graph.state.settings.deg), true, `${where}: razveljavi`);
+      assert.ok(await page.isVisible('#g .gc-angle [data-deg="1"].active'), where);
+      await tap('#g [data-act="redo"]');
+      assert.equal(await page.evaluate(() => window.graph.state.settings.deg), false, `${where}: uveljavi znova`);
+      await tap('#g .gc-angle [data-deg="1"]');
+      assert.equal(await page.evaluate(() => window.graph.state.settings.deg), true, where);
 
       // osnovna šola: integral brez gumba, enačba z njim
       await page.evaluate(() => (window.stage = "OS"));
@@ -159,6 +172,52 @@ test("»Pokaži na grafu«: integral, odvod, enačba in divergenten integral v g
       await run("2x+3=7");
       assert.equal(await page.locator('.sc-h-row.last [data-act="graf"]').count(), 1, where);
       await page.evaluate(() => (window.stage = null));
+
+      // hitri gumbi pod funkcijo (predlog 2): ničle in ekstremi v vidnem delu, ena razveljavitev vrne prejšnje
+      await page.evaluate(() => {
+        document.getElementById("s").hidden = true;
+        document.getElementById("g").hidden = false;
+        window.graph.resize();
+      });
+      await page.evaluate(() => window.graph.loadState({ v: 1, zapis: 3, vejica: true, items: [{ id: "q1", type: "expr", text: "y = x^3 - 3x", color: 0 }], view: { xmin: -10, xmax: 10, ymin: -7, ymax: 7 }, settings: {} }));
+      await tap('#g .gc-row[data-id="q1"] .gc-math');
+      await page.locator('#g .gc-row[data-id="q1"] .gc-q[data-q="roots"]').waitFor({ state: "visible" });
+      await tap('#g .gc-row[data-id="q1"] .gc-q[data-q="roots"]');
+      await tap('#g .gc-row[data-id="q1"] .gc-q[data-q="ext"]');
+      const keyp = await page.locator('#g .gc-row[data-id="q1"] .gc-keyp').allInnerTexts();
+      assert.match(keyp[0], /x = −1,732; x = 0; x = 1,732/, `${where}: ničle ${keyp[0]}`);
+      assert.match(keyp[1], /\(−1; 2\).*\(1; −2\)/, `${where}: ekstremi ${keyp[1]}`);
+      assert.equal(await page.locator('#g .gc-row[data-id="q1"] .gc-q[aria-pressed="true"]').count(), 2, where);
+      await tap('#g [data-act="undo"]');
+      assert.deepEqual(await page.evaluate(() => window.graph.state.items[0].tools), { roots: true }, where);
+      // gumb se odstrani s križcem, »Ponastavi« vrne vse (j 27. 11.)
+      await tap('#g .gc-row[data-id="q1"] .gc-qx[data-q="roots"]'); // vklopljen gumb: skritje izklopi ničle
+      assert.deepEqual(await page.evaluate(() => window.graph.state.items[0].tools), { roots: false }, where);
+      await tap('#g .gc-row[data-id="q1"] .gc-qx[data-q="table"]');
+      assert.equal(await page.locator('#g .gc-row[data-id="q1"] .gc-q[data-q="table"], #g .gc-row[data-id="q1"] .gc-q[data-q="roots"]').count(), 0, where);
+      await tap('#g .gc-row[data-id="q1"] .gc-qreset');
+      assert.equal(await page.locator('#g .gc-row[data-id="q1"] .gc-q[data-q]').count(), 5, where);
+      assert.equal(await page.evaluate(() => localStorage.getItem("evklid.grafHitriSkriti")), null, where);
+
+      // nova krivulja zunaj pogleda (predlog 3): po premoru pri tipkanju pogled pokaže krivuljo, »Nazaj« ga vrne
+      const v0 = await page.evaluate(() => ({ ...window.graph.state.view }));
+      await tap('#g .gc-row[data-id="q1"] .gc-math, #g .gc-row[data-id="q1"] .gc-preview');
+      await page.fill('#g .gc-row[data-id="q1"] .gc-input', "y = x^2 + 50");
+      await page.locator("#g .gc-fitnote").waitFor({ state: "visible" });
+      // premik pogleda je animiran (220 ms, plot.js animateTo): počakamo na konec, ne beremo vmesnega pogleda
+      // (CI na #1227 je dvakrat prebral pogled sredi animacije, ymax 18,6 in 23,0)
+      await page.waitForFunction(() => window.graph.state.view.ymin < 50 && window.graph.state.view.ymax > 50, null, { timeout: 5000 }).catch(() => {});
+      const v1 = await page.evaluate(() => ({ ...window.graph.state.view }));
+      assert.ok(v1.ymin < 50 && v1.ymax > 50, `${where}: pogled ${JSON.stringify(v1)}`);
+      await tap('#g [data-act="fitback"]');
+      await page.waitForFunction((v0) => Math.abs(window.graph.state.view.xmin - v0.xmin) < 1e-6 && window.graph.state.view.ymax < 20, v0);
+      assert.ok(await page.locator("#g .gc-fitnote").isHidden(), where);
+      // nalaganje drugega grafa pobriše ponujeni »Nazaj« (ne premakne novega grafa na star pogled)
+      await tap('#g .gc-row[data-id="q1"] .gc-math, #g .gc-row[data-id="q1"] .gc-preview');
+      await page.fill('#g .gc-row[data-id="q1"] .gc-input', "y = x^2 + 200");
+      await page.locator("#g .gc-fitnote").waitFor({ state: "visible" });
+      await page.evaluate(() => window.graph.loadState({ v: 1, zapis: 3, vejica: true, items: [{ id: "q2", type: "expr", text: "y = x", color: 0 }], view: { xmin: -10, xmax: 10, ymin: -7, ymax: 7 }, settings: {} }));
+      assert.ok(await page.locator("#g .gc-fitnote").isHidden(), `${where}: nalaganje skrije »Nazaj«`);
 
       // brez vodoravnega drsenja
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), where);

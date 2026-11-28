@@ -1,10 +1,11 @@
 // Virtualni laboratorij, toplota: grelec in izkoristek (lab-grelnik), mešanje tople in hladne vode (lab-mesanje),
-// taljenje ledu in vrenje vode (lab-faze), ohlajanje čaja v različnih posodah (lab-ohlajanje).
+// taljenje ledu in vrenje vode (lab-faze), ohlajanje čaja v različnih posodah (lab-ohlajanje), Boylov zakon z brizgo (lab-boyle).
 // Modeli: lab-model-toplota.js (brez DOM). Čas teče v realnem času, učenec ga lahko pospeši.
-import { h, s, fmt, svgBox, slider, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox, texBlock } from "./kit.js";
-import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez } from "./lab.js";
+import { h, s, fmt, decZapis, svgBox, slider, select, segmented, button, toggle, layout, label, stage as stageBox, controls as controlsBox, texBlock } from "./kit.js";
+import { ticker, lcd, dataTable, dataGraph, conclusion, eventLog, notes, fixed, tex, en, rez, shramba, napoved, racun, lepaOs } from "./lab.js";
 import { drawMeter } from "./lab-fiz.js";
-import { GrelnikBench, MesanjeBench, FazeBench, OhlajanjeBench, izkoristek, geometrija, POSODE, VODA, GRELEC, NAPAJALNIK_T, KRAJI, SKODELICE, CAJ, T_IDEALNA, tlakNaVisini, vrelisce, POENOSTAVITVE_TOPLOTA } from "./lab-model-toplota.js";
+import { naklonSkoziIzhodisce } from "./lab-model-sile.js";
+import { GrelnikBench, MesanjeBench, FazeBench, OhlajanjeBench, BoyleBench, BRIZGA, SENZOR_P, izkoristek, geometrija, POSODE, VODA, GRELEC, NAPAJALNIK_T, KRAJI, SKODELICE, CAJ, T_IDEALNA, tlakNaVisini, vrelisce, POENOSTAVITVE_TOPLOTA } from "./lab-model-toplota.js";
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const grp = (title, ...kids) => h("fieldset", { class: "lab-tit-grp" }, h("legend", {}, title), ...kids);
@@ -20,8 +21,9 @@ const hint = (text) => h("p", { class: "lab-tit-hint", html: text });
 const ura = (t) => {
   const m = Math.floor(t / 60), sec = t - 60 * m;
   if (m >= 10) return `${m}:${String(Math.floor(sec)).padStart(2, "0")}`; // po 10 min brez desetink, da gre na zaslon
-  return `${m}:${sec.toFixed(1).padStart(4, "0").replace(".", ",")}`;
+  return `${m}:${decZapis(sec.toFixed(1).padStart(4, "0"))}`;
 };
+const zadnji = (list, f) => list.reduce((a, x) => Math.max(a, f(x)), 0);
 const minSek = (t) => ((t = Math.round(t)), `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`); // najprej zaokroži, sicer 22:60
 // Barva vode po temperaturi (od modrikaste hladne do rožnate vroče).
 // Modra do ~45 °C bledi, nad tem postaja rožnato oranžna (brez sivih in zelenih vmesnih barv).
@@ -80,7 +82,9 @@ function ura0(el, B, { speed, auto, running, record, tick }) {
 
 // ================================================================ grelec: Q = m c ΔT in W = U I t
 export function labGrelnik(el) {
-  const B = new GrelnikBench({ seed: (Math.random() * 2 ** 31) | 0 });
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js); nov vklop grelca jih zamenja z novimi
+  const B = new GrelnikBench({ seed: zap.seed });
+  el._labBench = B; // maturitetni poskus (lab-matura.js): pravi izkoristek iz B.m0, B.T0, B.Tvrh in B.E
   const W = 400, H = 282;
   const svg = svgBox(W, H, "lab-bench lab-top lab-top-grel");
   const log = eventLog();
@@ -96,7 +100,7 @@ export function labGrelnik(el) {
   const qBox = h("div");
   const meas = []; // { t, U, I, T, on, mes }
   const auto = { on: true, every: 30, next: 30 };
-  let speed = 1, mStud = null, nEv = 0, ccSaid = false, asked = false;
+  let speed = 1, mStud = null, nEv = 0, ccSaid = false, asked = false, tOn0 = null; // tOn0: čas segrevanja obnovljenih meritev
 
   const mSl = slider({ label: "masa vode", min: 100, max: 350, step: 10, value: 200, unit: "g" });
   const pourBtn = button("Natoči svežo vodo", () => pour());
@@ -128,6 +132,9 @@ export function labGrelnik(el) {
     tryText: "Segrej 200 g vode z grelcem 12 V približno 5 minut (izberi ×10) in izračunaj izkoristek. Nato poskus ponovi s pokrovom in z mešanjem. Kdaj je izkoristek večji in zakaj? Kaj se zgodi, če grelec vklopiš, ko ni v vodi?",
   });
   el.classList.add("lab");
+  // Končni rezultat izračuna učenec sam (lab.js → racun); izračun aplikacije se pokaže po pravilnem računu ali »Pokaži rešitev«.
+  const Rr = racun({ enota: "%", dec: 1, tol: 0.03, onOdkrij: () => (sync(), zap.shrani()) });
+  calc.after(Rr.el);
 
   function pour() {
     if (B.on) setOn(false);
@@ -142,13 +149,15 @@ export function labGrelnik(el) {
   function weigh() {
     const r = B.readM();
     mStud = r.value;
+    zap.shrani();
     balL.set(r.text, "g", "masa vode");
-    log.push(`Tehtnica: ${r.text.replace(".", ",")} g vode.`, "ok");
+    log.push(`Tehtnica: ${decZapis(r.text)} g vode.`, "ok");
     if (B.voda.m < 0.14) log.push("Voda komaj pokrije grelno spiralo. Natoči je več.", "warn");
     sync();
   }
   function setOn(v) {
     if (v && !B.tekla) {
+      if (zap.obnovljeno) (meas.length = 0), table.clear(), (tOn0 = null); // nov poskus: obnovljene meritve so bile prejšnji
       record(true); // začetna temperatura pri t = 0
       B.tekla = true;
       auto.next = auto.every;
@@ -156,6 +165,7 @@ export function labGrelnik(el) {
     B.on = v;
     onBtn.textContent = v ? "Izklopi grelec" : "Vklopi grelec";
     log.push(v ? "Grelec je vklopljen, štoparica teče." : `Grelec je izklopljen (segreval je ${fixed(B.tOn, 1)} s). Premešaj vodo in odčitaj najvišjo temperaturo.`, v ? "info" : "ok");
+    zap.shrani();
     readMeters(), draw();
   }
   let lastU = null, lastI = null, lastT = null;
@@ -179,7 +189,7 @@ export function labGrelnik(el) {
     redraw(), sync();
   }
   function redraw() {
-    const tMax = Math.max(600, Math.ceil((B.t + 1) / 300) * 300);
+    const tMax = Math.max(600, Math.ceil((Math.max(B.t, zadnji(meas, (m) => m.t)) + 1) / 300) * 300);
     const Ts = meas.map((m) => m.T).filter(Number.isFinite);
     const lo = Math.floor((Math.min(B.voda.T, ...Ts) - 2) / 5) * 5, hi = Math.max(lo + 20, Math.ceil((Math.max(B.voda.T, ...Ts) + 3) / 5) * 5);
     graph.setAxes({ x: [0, tMax], y: [lo, hi], xStep: tMax > 1200 ? 300 : tMax > 600 ? 120 : 60, yStep: hi - lo > 50 ? 10 : 5 });
@@ -196,16 +206,22 @@ export function labGrelnik(el) {
     if (!med.length) out.push("<li>Med segrevanjem zapiši vsaj eno meritev napetosti in toka.</li>");
     if (B.on) out.push("<li>Ko se voda segreje za 10–20 °C, izklopi grelec.</li>");
     else if (B.tekla && !po.length) out.push("<li>Po izklopu premešaj vodo in zapiši najvišjo temperaturo.</li>");
-    if (out.length) return (calc.innerHTML = `<ul>${out.join("")}</ul>`);
+    if (out.length) return Rr.nastavi([]), (calc.innerHTML = `<ul>${out.join("")}</ul>`);
     const U = med.reduce((a, m) => a + m.U, 0) / med.length, I = med.reduce((a, m) => a + m.I, 0) / med.length;
-    const T1 = zac.T, T2 = Math.max(...po.map((m) => m.T)), m = mStud / 1000, t = B.tOn;
+    const T1 = zac.T, T2 = Math.max(...po.map((m) => m.T)), m = mStud / 1000, t = B.tekla ? B.tOn : tOn0 ?? B.tOn;
     const r = izkoristek({ m, T1, T2, U, I, t });
     const dT = T2 - T1;
-    calc.innerHTML = `${texBlock(String.raw`W = UIt = ${fixed(U, 2)}${en("V")} \cdot ${fixed(I, 2)}${en("A")} \cdot ${fixed(t, 1)}${en("s")} = ${rez(fixed(r.W / 1000, 2), "kJ")}`)}
-      ${texBlock(String.raw`Q = mc\,\Delta T = ${fixed(m, 4)}${en("kg")} \cdot 4182${en("J/(kg·K)")} \cdot (${fixed(T2, 1)} - ${fixed(T1, 1)})${en("K")} = ${rez(fixed(r.Q / 1000, 2), "kJ")}`)}
-      ${texBlock(String.raw`\eta = \dfrac{Q}{W} = ${rez(fmt(100 * r.eta, 0), "%")}`)}
-      ${dT < 3 ? `<p class="lab-top-warn">Δ<i>T</i> je samo ${fixed(dT, 1)} K. Napaka razlike dveh odčitkov je ~0,2 K, to je že ${fmt((100 * 0.2) / Math.max(dT, 0.1), 0)} %. Manj vode ali daljše segrevanje da natančnejši rezultat.</p>` : ""}
+    // vsak korak v svoji vrstici: na telefonu (360 px) cela vrstica W = UIt = … ne gre v okvir
+    const izracun = `${texBlock(String.raw`\begin{aligned} W &= UIt \\ &= ${fixed(U, 2)}${en("V")} \cdot ${fixed(I, 2)}${en("A")} \cdot ${fixed(t, 1)}${en("s")} \\ &= ${rez(fixed(r.W / 1000, 2), "kJ")} \end{aligned}`)}
+      ${texBlock(String.raw`\begin{aligned} \Delta T &= ${fixed(T2, 1)}${en("°C")} - ${fixed(T1, 1)}${en("°C")} \\ &= ${fixed(dT, 1)}${en("K")} \\[4pt] Q &= mc\,\Delta T \\ &= ${fixed(m, 4)}${en("kg")} \cdot 4182\,\tfrac{\mathrm{J}}{\mathrm{kg\,K}} \cdot ${fixed(dT, 1)}${en("K")} \\ &= ${rez(fixed(r.Q / 1000, 2), "kJ")} \end{aligned}`)}
+      ${texBlock(String.raw`\eta = \dfrac{Q}{W} = ${rez(fixed(100 * r.eta, 1), "%")}`)}`;
+    const opozorila = `${dT < 3 ? `<p class="lab-top-warn">Δ<i>T</i> je samo ${fixed(dT, 1)} K. Napaka razlike dveh odčitkov je ~0,2 K, to je že ${fmt((100 * 0.2) / Math.max(dT, 0.1), 0)} %. Manj vode ali daljše segrevanje da natančnejši rezultat.</p>` : ""}
       ${po.every((x) => !x.mes) ? `<p class="lab-top-warn">Končne temperature nisi zapisal med mešanjem. Voda brez mešanja ni enako topla povsod.</p>` : ""}`;
+    Rr.nastavi([{ key: "eta", ime: "izkoristek", kaj: "Iz svojih meritev izračunaj delo <i>W</i>, toploto <i>Q</i> in izkoristek grelca η (v odstotkih).", vrednost: 100 * r.eta }]);
+    // podatki za račun so za namigom: najprej jih poišče v tabeli sam (pregled A3)
+    const odprt = calc.querySelector("details.lab-top-podatki")?.open ? " open" : "";
+    const podatki = `<details class="lab-top-podatki"${odprt}><summary>Namig: podatki iz tvojih meritev</summary><p><i>m</i> = ${fixed(m, 4)}\u00a0kg, <i>T</i>₁ = ${fixed(T1, 1)}\u00a0°C, <i>T</i>₂ = ${fixed(T2, 1)}\u00a0°C (najvišja po izklopu), <i>U</i> = ${fixed(U, 2)}\u00a0V in <i>I</i> = ${fixed(I, 2)}\u00a0A (povprečje med segrevanjem), <i>t</i> = ${fixed(t, 1)}\u00a0s, <i>c</i> = 4182\u00a0J/(kg·K).</p></details>`;
+    calc.innerHTML = (Rr.odkrito("eta") ? izracun : podatki) + opozorila;
     if (!asked && r.eta > 0 && r.eta < 1.2) {
       asked = true;
       qBox.append(conclusion({
@@ -302,6 +318,15 @@ export function labGrelnik(el) {
     svg.setAttribute("aria-label", `Potopni grelec ${B.potopljen ? "v čaši z vodo" : "na mizi ob čaši, ni v vodi"}${B.pokvarjen ? ", pokvarjen" : ""}; napajalnik ${B.on ? "vklopljen" : "izklopljen"}; ampermeter zaporedno, voltmeter vzporedno z grelcem; termometer v vodi${B.pokrov ? ", čaša je pokrita" : ""}${B.mesaj ? ", voda se meša" : ""}.`);
   }
 
+  zap.vezi(table, {
+    get: () => ({ racun: Rr.stanje(), meas, mStud, tOn: B.tekla ? B.tOn : tOn0 }),
+    set: (d) => {
+      Rr.obnovi(d?.racun);
+      if (Array.isArray(d?.meas)) meas.push(...d.meas.filter((m) => m && Number.isFinite(m.t) && Number.isFinite(m.T)));
+      if (Number.isFinite(d?.mStud)) (mStud = d.mStud), balL.set(fixed(mStud, 1), "g", "masa vode");
+      if (Number.isFinite(d?.tOn)) tOn0 = d.tOn;
+    },
+  });
   readMeters();
   redraw();
   draw();
@@ -310,7 +335,8 @@ export function labGrelnik(el) {
 
 // ================================================================ mešanje tople in hladne vode
 export function labMesanje(el) {
-  const B = new MesanjeBench({ seed: (Math.random() * 2 ** 31) | 0 });
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
+  const B = new MesanjeBench({ seed: zap.seed });
   const W = 400, H = 250;
   const svg = svgBox(W, H, "lab-bench lab-top lab-top-mes");
   const log = eventLog();
@@ -328,15 +354,17 @@ export function labMesanje(el) {
   const qBox = h("div");
   const pts = [];
   const auto = { on: true, every: 2, next: 2 };
-  let speed = 1, trial = null, asked = false;
+  let speed = 1, trial = null, asked = false, prvi = null; // prvi: prvi zapisani poskus (za primerjavo z napovedjo)
   const st = { m1: 100, T1: 80, m2: 100, T2: 20, tehtaj: true };
 
   const posSeg = seg("posoda", [["stiropor", "lonček iz stiropora"], ["casa400", "steklena čaša"]], B.posoda, (v) => ((B.posoda = v), B.faza === "prazno" || log.push("Posodo zamenjaš pri novem poskusu.", "info"), draw()));
   const lidT = toggle("pokrov s luknjo za termometer", true, (v) => ((B.pokrov = v), draw()));
-  const m2Sl = slider({ label: "hladna voda m₂", min: 50, max: 150, step: 10, value: 100, unit: "g", onInput: (v) => ((st.m2 = v), draw()) });
-  const T2Sl = slider({ label: "hladna voda T₂", min: 10, max: 25, step: 1, value: 20, unit: "°C", onInput: (v) => ((st.T2 = v), draw()) });
-  const m1Sl = slider({ label: "topla voda m₁", min: 50, max: 150, step: 10, value: 100, unit: "g", onInput: (v) => ((st.m1 = v), draw()) });
-  const T1Sl = slider({ label: "topla voda T₁", min: 40, max: 80, step: 5, value: 80, unit: "°C", onInput: (v) => ((st.T1 = v), draw()) });
+  // nova mešanica (mase, temperature): napoved za prejšnjo ne velja več (napoved → kljuc)
+  const noviPodatki = () => (draw(), N.osvezi());
+  const m2Sl = slider({ label: "hladna voda m₂", min: 50, max: 150, step: 10, value: 100, unit: "g", onInput: (v) => ((st.m2 = v), noviPodatki()) });
+  const T2Sl = slider({ label: "hladna voda T₂", min: 10, max: 25, step: 1, value: 20, unit: "°C", onInput: (v) => ((st.T2 = v), noviPodatki()) });
+  const m1Sl = slider({ label: "topla voda m₁", min: 50, max: 150, step: 10, value: 100, unit: "g", onInput: (v) => ((st.m1 = v), noviPodatki()) });
+  const T1Sl = slider({ label: "topla voda T₁", min: 40, max: 80, step: 5, value: 80, unit: "°C", onInput: (v) => ((st.T1 = v), noviPodatki()) });
   const wT = toggle("vodo stehtam (sicer natočim do oznake)", true, (v) => (st.tehtaj = v));
   const coldBtn = button("Natoči hladno vodo", () => cold(), "primary small");
   const mixBtn = button("Zlij toplo vodo v posodo", () => mix(), "primary small");
@@ -359,15 +387,29 @@ export function labMesanje(el) {
     tryText: "Zmešaj 100 g vode z 80 °C in 100 g vode z 20 °C v lončku iz stiropora s pokrovom. Napovej končno temperaturo, nato poskus ponovi v stekleni čaši brez pokrova. Kaj se zgodi, če zapišeš temperaturo, preden premešaš?",
   });
   el.classList.add("lab");
+  // Napoved pred zlivanjem: po zlivanju izračun (samo voda) že pokaže rezultat.
+  const N = napoved({
+    id: "T-zmesi",
+    vprasanje: "Kolikšna bo temperatura zmesi, ko zliješ toplo vodo k hladni? Nastavi mase in temperature, nato napovej, preden zliješ.",
+    enota: "°C",
+    primer: "npr. 37",
+    abs: 2,
+    kljuc: () => `${st.m1}:${st.T1}:${trial?.k2 ?? `${st.m2}:${st.T2}`}`, // ko je hladna voda v posodi, štejeta njena drsnika ob nalivanju
+    odprto: () => !trial?.T1 && !prvi,
+    izmerjeno: () => prvi && { vrednost: prvi.T, besedilo: `${fixed(prvi.T, 1)}\u00a0°C (${fmt(prvi.m1, 0)}\u00a0g s ${fixed(prvi.T1, 1)}\u00a0°C in ${fmt(prvi.m2, 0)}\u00a0g s ${fixed(prvi.T2, 1)}\u00a0°C)` },
+  });
+  m2Sl.closest("fieldset").after(N.el); // pod drsniki za vodo: vprašanje pravi, naj jih najprej nastaviš
+  qBox.before(N.primerjava);
 
   function cold() {
     if (B.faza === "zmes") return log.push("V posodi je že zmes. Za nov poskus pritisni »Nov poskus«.", "warn");
     const m = B.nalijHladno(st.m2, st.T2);
-    trial = { pos: B.posoda, pokrov: B.pokrov, m2: st.tehtaj ? B.readM(m).value : st.m2, m2w: st.tehtaj };
+    trial = { pos: B.posoda, pokrov: B.pokrov, m2: st.tehtaj ? B.readM(m).value : st.m2, m2w: st.tehtaj, k2: `${st.m2}:${st.T2}` };
     if (st.tehtaj) balL.set(B.readM(m).text, "g", "hladna voda");
     else balL.set("", "", "ne tehtaš");
     pts.length = 0;
     log.push(`V posodi je hladna voda (${st.tehtaj ? `${fixed(trial.m2, 1)} g` : `do oznake ${st.m2} mL`}). Počakaj, da se termometer ustali.`, "info");
+    N.osvezi(); // ponovno nalivanje z drugimi drsniki: druga mešanica
     stanje(), redraw(), draw();
   }
   function mix() {
@@ -379,8 +421,10 @@ export function labMesanje(el) {
     if (st.tehtaj) balL.set(B.readM(r.m1).text, "g", "topla voda");
     pts.length = 0;
     pts.push([0, B.readT().value]);
+    zap.shrani();
     auto.next = auto.every;
     log.push(`Topla voda (${fixed(trial.T1, 1)} °C) je v posodi. Hladna je imela ${fixed(trial.T2, 1)} °C.`, "info");
+    N.osvezi();
     redraw(), draw(), sync();
   }
   function record() {
@@ -393,8 +437,13 @@ export function labMesanje(el) {
     else if (B.t > 240) log.push("Dolgo si čakal: zmes se je medtem že ohladila, zato je izmerjena temperatura nižja.", "warn");
     if (!trial.m2w) log.push("Vode nisi stehtal: maso si ocenil po oznaki, ki je natančna le na ~5 %.", "warn");
     trial.done = { T, Tc, ok: B.premesano >= 5 };
+    if (!prvi && trial.done.ok) prvi = { T, m1: trial.m1, T1: trial.T1, m2: trial.m2, T2: trial.T2 }; // za napoved le veljavna meritev (premešano)
+    N.osvezi();
     sync();
-    if (trial.done.ok && !asked) {
+    if (trial.done.ok) vprasaj();
+  }
+  function vprasaj() {
+    if (!asked) {
       asked = true;
       qBox.append(conclusion({
         text: "Zakaj je izmerjena končna temperatura malo nižja od izračunane?",
@@ -419,7 +468,7 @@ export function labMesanje(el) {
     stanje();
     if (!trial?.T1) return (calc.innerHTML = "");
     const Tc = T_IDEALNA(trial.m1, trial.T1, trial.m2, trial.T2);
-    calc.innerHTML = `<p>Napoved (samo voda):</p>${texBlock(String.raw`T = \dfrac{m_1T_1 + m_2T_2}{m_1 + m_2} = \dfrac{${fixed(trial.m1, 1)}${en("g")} \cdot ${fixed(trial.T1, 1)}${en("°C")} + ${fixed(trial.m2, 1)}${en("g")} \cdot ${fixed(trial.T2, 1)}${en("°C")}}{${fixed(trial.m1 + trial.m2, 1)}${en("g")}} = ${rez(fixed(Tc, 1), "°C")}`)}${trial.done ? `<p>Izmeril si ${fixed(trial.done.T, 1)} °C, to je ${fixed(Math.abs(trial.done.T - Tc), 1)} °C ${trial.done.T < Tc ? "manj" : "več"}, kot kaže izračun.</p>` : ""}`;
+    calc.innerHTML = `<p>Izračun (samo voda):</p>${texBlock(String.raw`T = \dfrac{m_1T_1 + m_2T_2}{m_1 + m_2} = \dfrac{${fixed(trial.m1, 1)}${en("g")} \cdot ${fixed(trial.T1, 1)}${en("°C")} + ${fixed(trial.m2, 1)}${en("g")} \cdot ${fixed(trial.T2, 1)}${en("°C")}}{${fixed(trial.m1 + trial.m2, 1)}${en("g")}} = ${rez(fixed(Tc, 1), "°C")}`)}${trial.done ? `<p>Izmeril si ${fixed(trial.done.T, 1)} °C, to je ${fixed(Math.abs(trial.done.T - Tc), 1)} °C ${trial.done.T < Tc ? "manj" : "več"}, kot kaže izračun.</p>` : ""}`;
   }
   function reset() {
     B.faza = "prazno";
@@ -433,7 +482,7 @@ export function labMesanje(el) {
     stanje(), redraw(), draw();
   }
   function redraw() {
-    const tMax = Math.max(120, Math.ceil(B.t / 60) * 60);
+    const tMax = Math.max(120, Math.ceil(Math.max(B.t, zadnji(pts, (p) => p[0])) / 60) * 60);
     // Os T od 0 °C do vsaj 5 °C nad izračunom in najvišjo meritvijo: hladna voda, zmes in izračun so vedno na grafu.
     const top = Math.max(trial?.T1 ? T_IDEALNA(trial.m1, trial.T1, trial.m2, trial.T2) : 0, ...pts.map((p) => p[1]));
     const yMax = Math.max(40, Math.ceil((top + 5) / 10) * 10);
@@ -444,7 +493,7 @@ export function labMesanje(el) {
   }
   ura0(el, B, {
     speed: () => speed, auto, running: () => B.faza === "zmes",
-    record: () => pts.push([B.t, B.readT().value]),
+    record: () => (pts.push([B.t, B.readT().value]), zap.shrani()),
     tick: () => {
       const r = B.readT();
       thL.set(B.faza === "prazno" ? "" : r.text, "°C", B.faza === "prazno" ? "posoda je prazna" : B.mesaj ? "mešaš" : "sonda pri dnu");
@@ -488,6 +537,18 @@ export function labMesanje(el) {
     merilo(svg, 300, yB + 30, 24, "2 cm");
     svg.setAttribute("aria-label", `Kalorimeter: ${P.name}${B.pokrov ? " s pokrovom" : ""}. ${B.faza === "prazno" ? "Posoda je prazna." : B.faza === "hladna" ? "V posodi je hladna voda." : `V posodi je zmes${B.plasti > 0.5 ? ", topla voda je še zgoraj" : ""}.`}`);
   }
+  // obnovljeno: zadnji poskus (krivulja in izračun) ostane, dokler ne natočiš nove vode
+  zap.vezi(table, {
+    get: () => ({ trial, pts, prvi, napoved: N.stanje() }),
+    set: (d) => {
+      if (d?.prvi && ["T", "m1", "T1", "m2", "T2"].every((k) => Number.isFinite(d.prvi[k]))) prvi = d.prvi;
+      if (d?.trial && Number.isFinite(d.trial.m1) && Number.isFinite(d.trial.T1) && Number.isFinite(d.trial.m2) && Number.isFinite(d.trial.T2)) trial = d.trial;
+      if (Array.isArray(d?.pts)) pts.push(...d.pts.filter((p) => Array.isArray(p) && p.every(Number.isFinite)));
+      N.obnovi(d?.napoved); // zadnja, ko so poskus in meritve že obnovljeni
+      if (trial?.done?.ok) vprasaj();
+      sync();
+    },
+  });
   redraw();
   draw();
   thL.set("", "°C", "posoda je prazna");
@@ -495,7 +556,8 @@ export function labMesanje(el) {
 
 // ================================================================ taljenje ledu in vrenje vode
 export function labFaze(el) {
-  const B = new FazeBench({ seed: (Math.random() * 2 ** 31) | 0 });
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js); nov vklop kuhalnika jih zamenja z novimi
+  const B = new FazeBench({ seed: zap.seed });
   const W = 400, H = 262;
   const svg = svgBox(W, H, "lab-bench lab-top lab-top-faze");
   const log = eventLog();
@@ -551,6 +613,7 @@ export function labFaze(el) {
   }
   function setOn(v) {
     if (v && B.W < 0.02) return log.push("V čaši skoraj ni več vode. Pripravi novo čašo z ledom.", "warn");
+    if (v && !B.tekla && zap.obnovljeno) (meas.length = 0), table.clear();
     if (v && !B.tekla) record(true), (B.tekla = true), (auto.next = auto.every);
     B.on = v;
     onBtn.textContent = v ? "Izklopi kuhalnik" : "Vklopi kuhalnik";
@@ -559,13 +622,14 @@ export function labFaze(el) {
   function record(isAuto) {
     const r = B.readT();
     if (!Number.isFinite(r.value)) return;
+    if (zap.obnovljeno) (meas.length = 0), table.clear(); // obnovljene meritve so od prejšnjega obiska: nova čaša, nov niz
     meas.push([B.t / 60, r.value]);
     table.add({ t: minSek(B.t), T: fixed(r.value, 1), v: B.stanje }, { quiet: isAuto });
     if (!isAuto && B.polozaj === "dno" && B.Pk > 20 && !asked.has("dno-hint")) asked.add("dno-hint"), log.push("Sonda se dotika dna, ki je na kuhalniku toplejše od vode. Termometer kaže preveč.", "warn");
     redraw();
   }
   function redraw() {
-    const tMax = Math.max(20, Math.ceil(B.t / 60 / 10) * 10);
+    const tMax = Math.max(20, Math.ceil(Math.max(B.t / 60, zadnji(meas, (p) => p[0])) / 10) * 10);
     graph.setAxes({ x: [0, tMax], xStep: tMax > 40 ? 10 : tMax > 20 ? 5 : 2 });
     graph.draw(meas.length ? [{ id: "T", pts: [...meas], cls: "a", label: "termometer" }] : []);
   }
@@ -658,13 +722,24 @@ export function labFaze(el) {
     merilo(svg, 20, 238, 24, "2 cm");
     svg.setAttribute("aria-label", `Čaša na kuhalniku (${B.on ? `stopnja ${B.stopnja}` : "izklopljen"}). V čaši: ${B.stanje}, ${fmt(B.led * 1000, 0)} g ledu in ${fmt(B.ml * 1000, 0)} g vode${B.sol ? ", s soljo" : ""}. Sonda termometra je ${B.polozaj === "dno" ? "na dnu" : "v sredini"}.`);
   }
+  zap.vezi(table, {
+    get: () => ({ meas }),
+    set: (d) => Array.isArray(d?.meas) && meas.push(...d.meas.filter((p) => Array.isArray(p) && p.length === 2 && p.every(Number.isFinite))),
+  });
   redraw();
   draw();
 }
 
 // ================================================================ ohlajanje čaja v različnih posodah
+// Temperatura čaja v prvi napolnjeni posodi ob času tMin [min]: prva meritev ob tMin ali pozneje. Za napoved.
+export function poPolUre(meas, imena, tMin = 30) {
+  const i = imena.findIndex(Boolean), p = i < 0 ? null : meas[i]?.find((q) => q[0] >= tMin - 1e-6);
+  return p ? { vrednost: p[1], besedilo: `${fixed(p[1], 1)}\u00a0°C (posoda ${i + 1}: ${imena[i]}, po ${fmt(p[0], 0)}\u00a0min)` } : null;
+}
+
 export function labOhlajanje(el) {
-  const B = new OhlajanjeBench({ seed: (Math.random() * 2 ** 31) | 0 });
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js); novo nalivanje jih zamenja z novimi
+  const B = new OhlajanjeBench({ seed: zap.seed });
   const W = 400, H = 242;
   const svg = svgBox(W, H, "lab-bench lab-top lab-top-ohl");
   const log = eventLog();
@@ -681,7 +756,7 @@ export function labOhlajanje(el) {
   const qBox = h("div");
   const meas = [[], [], []];
   const auto = { on: true, every: 60, next: 60 };
-  let speed = 60, asked = false;
+  let speed = 60, asked = false, imena = [null, null, null], nalite = null; // imena in vrste posod ob nalivanju (tudi za obnovljene meritve)
   const opts = [["", "brez posode"], ...Object.entries(SKODELICE).map(([k, x]) => [k, x.name])];
   const sels = [0, 1, 2].map((i) => select({ label: `posoda ${i + 1}`, options: opts, value: B.vrste[i], onChange: (v) => ((B.vrste[i] = v || null), draw()) }));
   const pourBtn = button(`Nalij čaj (${CAJ.T} °C, ${CAJ.m * 1000} g)`, () => pour(), "primary small");
@@ -701,12 +776,32 @@ export function labOhlajanje(el) {
     tryText: "Nalij čaj v porcelansko skodelico s pokrovčkom in brez njega ter v termovko. Napovej, v kateri bo čez pol ure najtoplejši. Zakaj se čaj na začetku ohlaja hitreje kot pozneje? Kaj naredi pokrovček?",
   });
   el.classList.add("lab");
+  // Napoved pred nalivanjem: temperatura v prvi izbrani posodi po 30 minutah (število, ±3 °C). Velja za posodo, ki je bila
+  // izbrana ob napovedi: če jo zamenjaš, se napoved pobriše (o.kljuc).
+  const prva = () => B.vrste.findIndex(Boolean);
+  const N = napoved({
+    id: "T-po-30-min",
+    vprasanje: () => {
+      const i = prva();
+      return i < 0 ? "Izberi vsaj eno posodo, nato napovej temperaturo čaja v njej po 30 minutah." : `Kolikšna bo temperatura čaja v posodi ${i + 1} (${SKODELICE[B.vrste[i]].name}) 30 minut po nalivanju? Čaj ima ob nalivanju ${CAJ.T}\u00a0°C, soba 20\u00a0°C. Napovej, preden naliješ.`;
+    },
+    enota: "°C",
+    primer: "npr. 65",
+    abs: 3,
+    kljuc: () => `${prva()}:${B.vrste[prva()]}`,
+    odprto: () => !B.cups && !meas.some((m) => m.length),
+    izmerjeno: () => poPolUre(meas, imena, 30),
+  });
+  el.querySelector(".demo-controls")?.prepend(N.el);
+  qBox.before(N.primerjava);
 
   function pour() {
     if (!B.vrste.some(Boolean)) return log.push("Izberi vsaj eno posodo.", "warn");
     B.nalij();
     B.cups.forEach((c, i) => c && (B.th[i].Tp = c.T)); // sonda je takoj v čaju: zapis pri t = 0 ni prazen (sicer NaN, »1 izven grafa«)
     meas.forEach((m) => (m.length = 0));
+    imena = B.vrste.map((v, i) => (B.cups[i] && v ? SKODELICE[v].name : null));
+    nalite = [...B.vrste];
     table.clear();
     auto.next = auto.every;
     record(true);
@@ -719,7 +814,10 @@ export function labOhlajanje(el) {
     r.forEach((x, i) => x && meas[i].push([B.t / 60, x.value]));
     table.add({ t: isAuto ? String(Math.round(B.t / 60)) : fixed(B.t / 60, 1), T0: r[0] ? fixed(r[0].value, 1) : "–", T1: r[1] ? fixed(r[1].value, 1) : "–", T2: r[2] ? fixed(r[2].value, 1) : "–" }, { quiet: isAuto });
     redraw();
-    if (B.t >= 20 * 60 && !asked) {
+    if (B.t >= 20 * 60) vprasaj();
+  }
+  function vprasaj() {
+    if (!asked) {
       asked = true;
       qBox.append(conclusion({
         text: "Zakaj se čaj v zaprti termovki skoraj ne ohladi, v odprti skodelici pa hitro?",
@@ -733,13 +831,14 @@ export function labOhlajanje(el) {
     }
   }
   function redraw() {
-    const tMax = Math.max(60, Math.ceil(B.t / 60 / 30) * 30);
+    const tMax = Math.max(60, Math.ceil(Math.max(B.t / 60, ...meas.map((m) => zadnji(m, (p) => p[0]))) / 30) * 30);
     graph.setAxes({ x: [0, tMax], xStep: tMax > 120 ? 30 : 10 });
-    graph.draw(meas.map((pts, i) => (B.cups?.[i] ? { id: `c${i}`, pts: [...pts], cls: CLS[i], shape: i === 1 ? "^" : "o", label: `${i + 1}: ${SKODELICE[B.vrste[i]].name}` } : null)).filter(Boolean));
+    graph.draw(meas.map((pts, i) => (imena[i] ? { id: `c${i}`, pts: [...pts], cls: CLS[i], shape: i === 1 ? "^" : "o", label: `${i + 1}: ${imena[i]}` } : null)).filter(Boolean));
   }
   ura0(el, B, {
     speed: () => speed, auto, running: () => B.teče, record,
     tick: () => {
+      N.osvezi(); // izbira posod spremeni vprašanje (in pobriše napoved za drugo posodo), nalivanje jo zapre, meritev po 30 min jo primerja
       thL.forEach((L, i) => {
         const r = B.readT(i);
         L.set(r ? r.text : "", "°C", B.vrste[i] ? SKODELICE[B.vrste[i]].name : "brez posode");
@@ -782,6 +881,256 @@ export function labOhlajanje(el) {
     merilo(svg, 360, 226, 18, "2 cm");
     svg.setAttribute("aria-label", `Tri posode s čajem: ${B.vrste.map((k, i) => `${i + 1} ${k ? SKODELICE[k].name : "brez posode"}`).join(", ")}.`);
   }
+  zap.vezi(table, {
+    get: () => ({ meas, imena, vrste: nalite, napoved: N.stanje() }),
+    set: (d) => {
+      // napoved obnovimo zadnjo: izbira posod spremeni ključ napovedi (kljuc) in bi jo sicer pobrisala
+      if (!Array.isArray(d?.meas) || !Array.isArray(d.imena)) return N.obnovi(d?.napoved);
+      // posode, v katere je bil čaj nalit: izbira in risba se ujemata z obnovljenimi meritvami
+      const vrste = Array.isArray(d.vrste) ? d.vrste : d.imena.map((n) => Object.keys(SKODELICE).find((k) => SKODELICE[k].name === n)); // starejši zapis: po imenu
+      vrste.slice(0, 3).forEach((v, i) => sels[i].set(Object.hasOwn(SKODELICE, v ?? "") ? v : ""));
+      nalite = [...B.vrste];
+      d.meas.slice(0, 3).forEach((m, i) => Array.isArray(m) && meas[i].push(...m.filter((p) => Array.isArray(p) && p.every(Number.isFinite))));
+      imena = [0, 1, 2].map((i) => (typeof d.imena[i] === "string" ? d.imena[i] : null));
+      N.obnovi(d?.napoved);
+      if (zadnji(meas.flat(), (p) => p[0]) >= 20) vprasaj();
+    },
+  });
   redraw();
   draw();
+}
+
+// ================================================================ Boylov zakon: brizga in senzor tlaka
+// Napoved »prostornino razpoloviš«: razmerje tlakov pri prvem paru meritev istega poskusa, pri katerem je
+// prostornina na skali natanko pol manjša (±2 %). Meritve, zapisane pred ustalitvijo, šele, če drugih ni. Za napoved.
+const pisi = (x, t) => x && x.textContent !== t && (x.textContent = t);
+export function razmerjeTlakov(meas) {
+  const pari = [];
+  for (const a of meas) for (const b of meas) if (a.s === b.s && Math.abs(a.V / b.V - 2) <= 0.04 && Number.isFinite(a.p) && Number.isFinite(b.p) && a.p > 0) pari.push({ a, b, r: b.p / a.p, ok: !a.nestalno && !b.nestalno });
+  const P = pari.find((x) => x.ok) || pari[0];
+  return P ? { V1: P.a.V, V2: P.b.V, p1: P.a.p, p2: P.b.p, vrednost: P.r } : null;
+}
+
+export function labBoyle(el) {
+  const zap = shramba(el); // meritve ostanejo ob vrnitvi (lab.js)
+  const B = new BoyleBench({ seed: zap.seed });
+  const W = 400, H = 250, S = 2.6, xb0 = 62, yc = 74, rb = 19.5; // 2,6 px na mL (≈ 1,46 px na mm), polmer valja brizge
+  const svg = svgBox(W, H, "lab-bench lab-top lab-boy");
+  const log = eventLog();
+  const pL = lcd("senzor tlaka"), vL = lcd("prostornina na skali");
+  const table = dataTable([
+    { key: "s", label: "poskus" },
+    { key: "V", label: "<i>V</i> [mL]" },
+    { key: "p", label: "<i>p</i> [kPa]" },
+  ], { empty: "Še ni meritev. Nastavi začetno prostornino, zapri ventil, nato premikaj bat in zapisuj tlak." });
+  const gV = dataGraph({ x: [0, 60], y: [0, 220], xStep: 10, yStep: 40, xLabel: "V [mL]", yLabel: "p [kPa]", title: "Tlak v odvisnosti od prostornine" });
+  const gI = dataGraph({ x: [0, 100], y: [0, 220], xStep: 20, yStep: 40, xLabel: "1/V [1/L]", yLabel: "p [kPa]", title: "Tlak v odvisnosti od obratne vrednosti prostornine" });
+  const calc = h("div", { class: "lab-top-calc", "aria-live": "polite" });
+  const qBox = h("div");
+  const meas = []; // { s, ime, V, p, nestalno }
+  let graf = "p1V", poskus = 0, asked = false, odcitek = B.read(), doOdcitka = 0, mejaJavljena = false;
+  let bat, zrak, puscica, silaTxt, lcdTxt;
+
+  const vSl = slider({ label: "prostornina na skali", min: 5, max: 60, step: 1, value: 60, unit: "mL", onInput: (v) => premakni(v) });
+  const ventBtn = button("Zapri ventil", () => ventil(), "primary small");
+  const recBtn = button("Zapiši meritev", () => record(), "primary small");
+  const clrBtn = button("Izbriši meritve", () => (table.clear(), (meas.length = 0), redraw()));
+  const grSeg = seg("graf", [["pV", "p(V)"], ["p1V", "p(1/V)"]], "p1V", (v) => ((graf = v), redraw()));
+
+  layout(el, {
+    extra: [
+      h("div", { class: "lab-tit-top" }, stageBox(svg, h("div", { class: "lab-meters" }, pL, vL)), controlsBox(
+        grp("1. Brizga in ventil", hint("Ko je ventil odprt proti zraku, bat zrak le vleče v brizgo ali ga potiska ven. Nastavi začetno prostornino in zapri ventil: zrak v brizgi, cevki in senzorju je zdaj zaprt."), vSl, buttons(ventBtn)),
+        grp("2. Merjenje", hint("Bat premikaj po korakih in po vsakem počakaj nekaj sekund: zrak se ob stiskanju segreje, zato tlak še malo pada. Ko se ustali, ga zapiši."), buttons(recBtn, clrBtn)),
+        log,
+      )),
+      h("h4", { class: "lab-h" }, "Meritve"), table,
+      h("h4", { class: "lab-h" }, "Graf"), row("prikaži", grSeg), gV, gI, calc, qBox,
+      notes(POENOSTAVITVE_TOPLOTA.boyle, `Boylov zakon: pri stalni temperaturi in stalni množini plina je ${tex(String.raw`pV = \text{konst.}`)} (iz ${tex("pV = nRT")}). Hitra sprememba: ${tex(String.raw`TV^{\kappa - 1} = \text{konst.}`)}, κ = 1,40 za zrak. Toplotna difuzivnost zraka 2,2·10⁻⁵ m²/s (20 °C). Zračni tlak: standardna atmosfera (ISO 2533) za 295 m. 1 kPa · 1 L = 1 J. Ocene: zrak v cevki in senzorju, delež adiabatne spremembe, napaka skale in senzorja, največja sila roke.`),
+    ],
+    tryText: "Bat izvleci na 40 mL in zapri ventil. Zapiši tlak, nato bat po 5 mL potiskaj do 20 mL; po vsakem koraku počakaj, da se tlak ustali. Nariši p(1/V) in izračunaj pV. Kaj se zgodi s tlakom, ko bat izvlečeš na 60 mL?",
+  });
+  el.classList.add("lab");
+  // Končni rezultat izračuna učenec sam (lab.js → racun); izračun aplikacije se pokaže po pravilnem računu ali »Pokaži rešitev«.
+  const Rr = racun({ enota: "J", dec: 2, tol: 0.03, onOdkrij: () => (redraw(), zap.shrani()) });
+  calc.after(Rr.el);
+  // Napoved pred prvo meritvijo (Preizkusi: od 40 mL do 20 mL).
+  const N = napoved({
+    id: "boyle-polovica",
+    vprasanje: "Zaprti zrak stisneš na pol manjšo prostornino (npr. s 40 mL na 20 mL) in počakaš, da se tlak ustali. Kolikokrat večji bo tlak? Napovej, preden začneš meriti.",
+    enota: "-krat",
+    primer: "npr. 3",
+    dec: 2,
+    odprto: () => meas.length === 0,
+    izmerjeno: () => {
+      const r = razmerjeTlakov(meas);
+      return r && { vrednost: r.vrednost, besedilo: `${fmt(r.vrednost, 2)}-krat (${r.V1} mL → ${r.V2} mL: ${fixed(r.p1, 1)} kPa → ${fixed(r.p2, 1)} kPa)` };
+    },
+  });
+  el.querySelector(".demo-controls")?.prepend(N.el);
+  qBox.before(N.primerjava);
+
+  function premakni(v) {
+    const prej = B.V, V = B.premakni(v);
+    if (V !== v) {
+      vSl.set(V, true);
+      if (!mejaJavljena) log.push(`Bata ne moreš potisniti dlje kot do ${V}${" "}mL: sila nanj bi bila že ~${Math.round(BRIZGA.sila)}${" "}N. Senzor meri le do ${SENZOR_P.max}${" "}kPa.`, "warn");
+      mejaJavljena = true;
+    } else if (V > prej) mejaJavljena = false;
+    doOdcitka = 0;
+    drawBat();
+  }
+  function ventil() {
+    if (B.zaprto) {
+      B.odpri();
+      ventBtn.textContent = "Zapri ventil";
+      log.push("Ventil je odprt: v brizgi je spet zračni tlak.", "info");
+    } else {
+      B.zapri();
+      poskus++;
+      ventBtn.textContent = "Odpri ventil";
+      log.push(`Ventil je zaprt pri ${B.V}${" "}mL (poskus ${poskus}). Zdaj premikaj bat.`, "info");
+    }
+    doOdcitka = 0;
+    draw();
+  }
+  function record() {
+    if (!B.zaprto) return log.push("Ventil je odprt: v brizgi je zračni tlak, ne glede na prostornino. Zapri ventil, da bo zrak zaprt.", "warn");
+    const R = odcitek;
+    table.add({ s: String(poskus), V: String(B.V), p: R.over ? "OL" : fixed(R.value, 1) });
+    if (R.over) return log.push(`Senzor kaže OL: tlak je večji od ${SENZOR_P.max}${" "}kPa. Bata ne potisni tako daleč.`, "bad");
+    const nestalno = !B.ustaljeno;
+    if (nestalno) log.push("Tlak se še spreminja: zrak se je ob premiku bata segrel (ali ohladil) in se še vrača na sobno temperaturo. Počakaj nekaj sekund in zapiši znova.", "warn");
+    meas.push({ s: poskus, ime: `poskus ${poskus}`, V: B.V, p: R.value, nestalno });
+    redraw();
+  }
+  function redraw() {
+    gV.hidden = graf !== "pV";
+    gI.hidden = graf === "pV";
+    const top = lepaOs(Math.max(120, ...meas.map((r) => r.p)));
+    const ser = [...skupineP(meas).entries()];
+    gV.setAxes({ y: [0, top.top], yStep: top.step });
+    const xi = lepaOs(Math.max(30, ...meas.map((r) => 1000 / r.V)));
+    gI.setAxes({ x: [0, xi.top], xStep: xi.step, y: [0, top.top], yStep: top.step });
+    const out = [], cilji = [], sez = [];
+    ser.forEach(([ime, L], i) => {
+      const pv = L.map((r) => (r.p * r.V) / 1000), C = pv.reduce((a, b) => a + b, 0) / pv.length; // J
+      const dovolj = L.length >= 3 && new Set(L.map((r) => r.V)).size >= 3;
+      const k = dovolj ? naklonSkoziIzhodisce(L.map((r) => [1000 / r.V, r.p])) : NaN; // naklon p(1/V): kPa·L = J
+      sez.push({ ime, L, C, k, cls: "abc"[i % 3], shape: i % 6 < 3 ? "o" : "^" });
+      if (!dovolj) return;
+      cilji.push({ key: ime, ime, kaj: `Za vsako meritev (${ime}) izračunaj produkt <i>pV</i> in vzemi povprečje. Vpiši ga v J (1${" "}kPa · 1${" "}L = 1${" "}J).`, vrednost: C });
+      const Vs = [...L].sort((a, b) => a.V - b.V), mal = (Vs[0].p * Vs[0].V) / 1000, vel = (Vs[Vs.length - 1].p * Vs[Vs.length - 1].V) / 1000;
+      const trend = Vs[Vs.length - 1].V / Vs[0].V >= 1.5 && (vel - mal) / C > 0.015 ? ` <i>pV</i> je pri majhnih prostorninah malo manjši: zrak v nastavku, cevki in senzorju (~1,5${" "}mL) skala ne pokaže, zato je prava prostornina malo večja od odčitane.` : "";
+      const nest = L.some((r) => r.nestalno) ? " Meritve, ki si jih zapisal, preden se je tlak ustalil, odstopajo." : "";
+      out.push(Rr.odkrito(ime)
+        ? `<p><b>${ime}</b>: <i>pV</i> od ${fixed(Math.min(...pv), 2)} do ${fixed(Math.max(...pv), 2)}${" "}J, povprečje <b>${fixed(C, 2)}${" "}J</b>. Naklon premice <i>p</i>(1/<i>V</i>) je ${fixed(k, 2)}${" "}kPa·L = ${fixed(k, 2)}${" "}J.${trend}${nest}</p>`
+        : `<p><b>${ime}</b>: izračunaj povprečni produkt <i>pV</i> in ga preveri spodaj. Enako vrednost ima naklon premice <i>p</i>(1/<i>V</i>).</p>`);
+    });
+    gV.draw(sez.map((S) => ({ id: S.ime, pts: S.L.map((r) => [r.V, r.p]), cls: S.cls, shape: S.shape, label: S.ime, line: Number.isFinite(S.k) ? (x) => (x > 0 ? (S.C * 1000) / x : NaN) : null })));
+    gI.draw(sez.map((S) => ({ id: S.ime, pts: S.L.map((r) => [1000 / r.V, r.p]), cls: S.cls, shape: S.shape, label: S.ime, line: Number.isFinite(S.k) ? (x) => S.k * x : null })));
+    if (!out.length && meas.length) out.push("<p>Za graf in <i>pV</i> zapiši vsaj tri meritve pri različnih prostorninah z zaprtim ventilom.</p>");
+    calc.innerHTML = out.join("");
+    Rr.nastavi(cilji);
+    N.osvezi();
+    if (!asked && sez.some((S) => S.L.length >= 5 && Math.max(...S.L.map((r) => r.V)) / Math.min(...S.L.map((r) => r.V)) >= 1.8)) {
+      asked = true;
+      qBox.append(conclusion({
+        text: "Kaj pokažeta grafa <i>p</i>(<i>V</i>) in <i>p</i>(1/<i>V</i>)?",
+        options: [
+          { t: "Tlak je obratno sorazmeren s prostornino: točke <i>p</i>(1/<i>V</i>) ležijo na premici skozi izhodišče, produkt <i>pV</i> je stalen.", ok: true, why: `Pri stalni temperaturi in stalni množini plina velja Boylov zakon ${tex(String.raw`pV = \text{konst.}`)}: ko prostornino razpoloviš, se tlak podvoji. Graf <i>p</i>(<i>V</i>) je hiperbola, <i>p</i>(1/<i>V</i>) premica. Pri tvojih meritvah je <i>pV</i> stalen na nekaj odstotkov; malo manjši je pri majhnih prostorninah, ker zraka v cevki do senzorja skala ne pokaže.` },
+          { t: "Tlak je sorazmeren s prostornino: večja prostornina, večji tlak.", ok: false, why: "Ko si bat izvlekel (večja prostornina), je tlak padel. Tlak in prostornina se spreminjata nasprotno." },
+          { t: "Tlak narašča enakomerno: za vsak mililiter manj se poveča za enako vrednost.", ok: false, why: "To bi bila premica <i>p</i>(<i>V</i>). Tvoje točke na <i>p</i>(<i>V</i>) niso na premici: pri majhnih prostorninah tlak narašča vse hitreje. Premica je šele <i>p</i>(1/<i>V</i>)." },
+          { t: "Produkt <i>pV</i> raste, ko zrak stiskaš, ker se pri tem segreje.", ok: false, why: "Ob hitrem stiskanju se zrak res za kratek čas segreje in tlak je malo višji, a v nekaj sekundah se vrne na sobno temperaturo. Če počakaš, da se tlak ustali, je <i>pV</i> stalen." },
+        ],
+      }));
+    }
+  }
+  const zaslon = () => `${decZapis(odcitek.text)}${odcitek.over ? "" : " kPa"}`;
+  function skupineP(list) {
+    const m = new Map();
+    for (const r of list) (m.get(r.ime) || m.set(r.ime, []).get(r.ime)).push(r);
+    return m;
+  }
+
+  // ura: zrak se vrača na sobno temperaturo; senzor se osveži dvakrat na sekundo (zadnja števka niha)
+  ticker(el, (dt) => {
+    B.step(dt);
+    doOdcitka -= dt;
+    if (doOdcitka > 0) return;
+    doOdcitka = 0.5;
+    odcitek = B.read();
+    const spr = !odcitek.over && !B.ustaljeno; // isto merilo kot opozorilo ob »Zapiši meritev«
+    pL.set(odcitek.text, odcitek.over ? "" : "kPa", odcitek.over ? "nad 210 kPa" : spr ? "se spreminja" : B.zaprto ? "ventil zaprt" : "ventil odprt");
+    pisi(lcdTxt, zaslon());
+    sila();
+  }, 100);
+
+  // Sila roke na ploščico bata: puščica z začetkom na ploščici, v levo (potiskaš) ali desno (vlečeš).
+  function sila() {
+    const F = B.sila, L = Math.abs(F) < 1.5 ? 0 : Math.min(50, 6 + Math.abs(F) * 0.3), xt = xb0 + B.V * S + 158, y = yc + rb + 8;
+    puscica?.setAttribute("d", !L ? "" : F > 0 ? `M${xt},${y} H${xt - L} m6,-4 l-6,4 l6,4` : `M${xt},${y} H${xt + L} m-6,-4 l6,4 l-6,4`);
+    if (silaTxt) pisi(silaTxt, L ? `${F > 0 ? "potiskaš" : "vlečeš"} bat s ~${Math.round(Math.abs(F))} N` : "");
+  }
+  function drawBat() {
+    const xs = xb0 + B.V * S;
+    bat?.setAttribute("transform", `translate(${(xs - xb0 - 60 * S).toFixed(1)},0)`);
+    zrak?.setAttribute("width", Math.max(0, xs - xb0 + 6).toFixed(1));
+    vL.set(String(B.V), "mL", B.zaprto ? "zrak zaprt" : "ventil odprt");
+    sila();
+  }
+  function draw() {
+    svg.replaceChildren();
+    const x60 = xb0 + 60 * S;
+    s("line", { x1: 0, y1: H - 8, x2: W, y2: H - 8, class: "lab-tit-bench" }, svg);
+    // nastavek brizge in cevka do ventila
+    s("rect", { x: 36, y: yc - 4, width: xb0 - 36 - 6, height: 8, rx: 2, class: "lab-boy-valj" }, svg);
+    s("path", { d: `M38,${yc} H24 V138`, class: "lab-boy-cevka" }, svg);
+    // valj brizge s skalo (1 mL, številke na 10 mL)
+    zrak = s("rect", { x: xb0 - 6, y: yc - rb + 1.5, width: 0, height: 2 * rb - 3, class: "lab-boy-zrak" }, svg);
+    s("rect", { x: xb0 - 6, y: yc - rb, width: x60 - xb0 + 16, height: 2 * rb, rx: 4, class: "lab-boy-valj" }, svg);
+    s("rect", { x: x60 + 10, y: yc - rb - 12, width: 6, height: 2 * rb + 24, rx: 2, class: "lab-boy-krilca" }, svg);
+    for (let v = 0; v <= 60; v++) {
+      const x = xb0 + v * S, d = v % 10 === 0 ? 9 : v % 5 === 0 ? 6 : 3.5;
+      s("line", { x1: x, y1: yc - rb, x2: x, y2: yc - rb + d, class: "lab-boy-crtica" }, svg);
+      if (v % 10 === 0) label(svg, x, yc - rb - 8, String(v), "tick small");
+    }
+    label(svg, x60 + 26, yc - rb - 8, "mL", "tick small", "start");
+    // bat: gumijasti čep, drog in ploščica za palec (gibljivo: le transform)
+    bat = s("g", {}, svg);
+    s("rect", { x: x60 - 2, y: yc - rb + 1.5, width: 8, height: 2 * rb - 3, rx: 2, class: "lab-boy-cep" }, bat);
+    s("rect", { x: x60 + 6, y: yc - 3, width: 150, height: 6, class: "lab-boy-drog" }, bat);
+    s("rect", { x: x60 + 156, y: yc - rb - 2, width: 5, height: 2 * rb + 4, rx: 1.5, class: "lab-boy-drog" }, bat);
+    puscica = s("path", { class: "lab-boy-sila" }, svg);
+    silaTxt = s("text", { x: W - 8, y: yc + rb + 30, class: "lab-boy-silatxt", "text-anchor": "end" }, svg, "");
+    // tripotni ventil: pot proti zraku je odprta ali zaprta
+    s("circle", { cx: 24, cy: 146, r: 9, class: "lab-boy-ventil" }, svg);
+    s("path", { d: `M24,137 V155${B.zaprto ? "" : " M24,146 H6"}`, class: "lab-boy-pot" }, svg);
+    s("path", { d: "M15,146 H4", class: "lab-boy-cevka" }, svg);
+    s("rect", { x: 30, y: 142, width: 22, height: 8, rx: 3, transform: B.zaprto ? "" : "rotate(60 24 146)", class: "lab-boy-rocka" }, svg); // ročka ventila
+    label(svg, 58, 146, B.zaprto ? "ventil zaprt" : "ventil odprt proti zraku", "tick small", "start");
+    // senzor tlaka z zaslonom
+    s("path", { d: "M24,155 V178", class: "lab-boy-cevka" }, svg);
+    s("rect", { x: 8, y: 178, width: 176, height: 52, rx: 5, class: "lab-boy-ohisje" }, svg);
+    label(svg, 16, 188, "SENZOR TLAKA 0–210 kPa", "lab-boy-panel", "start");
+    s("rect", { x: 16, y: 195, width: 160, height: 28, rx: 3, class: "lab-gib-lcdbg" }, svg);
+    lcdTxt = s("text", { x: 168, y: 215, class: "lab-gib-lcdtxt lab-boy-lcd", "text-anchor": "end" }, svg, "");
+    label(svg, W - 8, H - 18, `soba ~${Math.round(B.Tsoba - 273.15)} °C, zračni tlak ~98 kPa`, "tick small", "end");
+    merilo(svg, W - 60, H - 52, 29, "2 cm"); // nad napisom o sobi (ne čez njega)
+    lcdTxt.textContent = zaslon();
+    drawBat();
+    svg.setAttribute("aria-label", `Brizga 60 mL, bat na ${B.V} mL, s cevko in ventilom na senzorju tlaka. Ventil je ${B.zaprto ? "zaprt" : "odprt proti zraku"}.`);
+  }
+  draw();
+  redraw();
+  zap.vezi(table, {
+    get: () => ({ racun: Rr.stanje(), meas, poskus, napoved: N.stanje() }),
+    set: (d) => {
+      Rr.obnovi(d?.racun);
+      meas.push(...(Array.isArray(d?.meas) ? d.meas : []).filter((m) => m && typeof m === "object" && Number.isFinite(m.V) && Number.isFinite(m.p) && typeof m.ime === "string"));
+      poskus = Number.isInteger(d?.poskus) ? d.poskus : poskus;
+      N.obnovi(d?.napoved); // zadnja, ko so meritve že obnovljene
+      redraw();
+    },
+  });
 }

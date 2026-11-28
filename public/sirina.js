@@ -677,7 +677,8 @@ export function mestoFormule(k) {
   // .sc: znanstveni kalkulator ima svojo postavitev (vrstica zgodovine in vnos se pomikata vstran, matriko pomanjša
   // sam). Zlaganje je tam formulo v zgodovini ob vsaki spremembi velikosti zložilo in razložilo (utripanje), vnos pa
   // znova izrisalo brez oznake kazalca (rdeč »\htmlClass«; j 14. 11. 2026).
-  if (k.closest("table, .md-vod, svg, math-field, textarea, input, [contenteditable], .sk-chip, .k3-izpis, .sc")) return null;
+  // .scan-input-izris: formula čez polje »Naloga« v skenerju (public/scan/scan.js) je ena vrstica v višini polja.
+  if (k.closest("table, .md-vod, svg, math-field, textarea, input, [contenteditable], .sk-chip, .k3-izpis, .sc, .scan-input-izris")) return null;
   if (k.closest(".textbook")) return k.parentElement?.closest(VRSTE) || null;
   return blok(k);
 }

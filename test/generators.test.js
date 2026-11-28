@@ -37,17 +37,29 @@ function checkTask(t, where) {
   }
 }
 
+// Razredi, v katerih generator res pride na vrsto: brez zgornje meje null (kot doslej), sicer vsak dovoljeni razred
+// (naloge so v 1. razredu drugačne kot v 4.). Brez tega generatorji z maxYear (tek-mladi-*, 1.–4. razred) niso bili
+// nikoli preizkušeni (AUDIT-079: 682/688).
+const yearsFor = (g) => (g.maxYear == null ? [null] : Array.from({ length: g.maxYear - (g.minYear ?? 1) + 1 }, (_, i) => (g.minYear ?? 1) + i));
+
 test("vsi generatorji vrnejo veljavne naloge pri vseh težavnostih", () => {
+  const reached = new Set();
   for (const g of GENERATORS) {
-    for (const level of [1, 2, 3]) {
-      for (let seed = 1; seed <= SEEDS; seed++) {
-        const t = generateTask(g.topics[0], level, seed * 7919 + level);
-        checkTask(t, `${g.id} L${level} seed ${seed}`);
-        // Dvojezični generatorji (indijski izpiti): tudi hindijska naloga.
-        if (g.langs?.includes("hi")) checkTask(generateTask(g.topics[0], level, seed * 7919 + level, "hi"), `${g.id} L${level} seed ${seed} hi`);
+    for (const year of yearsFor(g)) {
+      for (const level of [1, 2, 3]) {
+        for (let seed = 1; seed <= SEEDS; seed++) {
+          const t = generateTask(g.topics[0], level, seed * 7919 + level, "en", year);
+          checkTask(t, `${g.id}${year ? ` ${year}. r.` : ""} L${level} seed ${seed}`);
+          reached.add(t.generator);
+          // Dvojezični generatorji (indijski izpiti): tudi hindijska naloga.
+          if (g.langs?.includes("hi")) checkTask(generateTask(g.topics[0], level, seed * 7919 + level, "hi", year), `${g.id}${year ? ` ${year}. r.` : ""} L${level} seed ${seed} hi`);
+        }
       }
     }
   }
+  // Vsak generator je vsaj enkrat ustvaril nalogo (ne le drug generator iste teme).
+  const missed = GENERATORS.map((g) => g.id).filter((id) => !reached.has(id));
+  assert.deepEqual(missed, [], `generatorji brez preizkušene naloge: ${missed.join(", ")}`);
 });
 
 test("naloge iz fizike in kemije imajo podatke in formulo", () => {

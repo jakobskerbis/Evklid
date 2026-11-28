@@ -5,32 +5,19 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import net from "node:net";
 import { spawn } from "node:child_process";
 import { DatabaseSync } from "node:sqlite";
+import { zazeniStreznik } from "./zagon-streznika.js";
 
-function zazeni(dir, extra = {}) {
-  const port = 39000 + Math.floor(Math.random() * 900);
-  const env = { ...process.env, PORT: String(port), EVKLID_MOCK: "1", EVKLID_NEWS: "0", EVKLID_PDF: "0", EVKLID_DB: path.join(dir, "t.db"), EVKLID_PASSWORD: "", EVKLID_ACCOUNTS: "0", ANTHROPIC_API_KEY: "", EVKLID_BACKUPS: "0", EVKLID_CAS: "0", ...extra };
+// Vrata izbere sistem (PORT=0, test/zagon-streznika.js): prej naključna 39000–39899 so v CI trčila z drugimi testi.
+async function zazeni(dir, extra = {}) {
+  const env = { ...process.env, EVKLID_MOCK: "1", EVKLID_NEWS: "0", EVKLID_PDF: "0", EVKLID_DB: path.join(dir, "t.db"), EVKLID_PASSWORD: "", EVKLID_ACCOUNTS: "0", ANTHROPIC_API_KEY: "", EVKLID_BACKUPS: "0", EVKLID_CAS: "0", ...extra };
   for (const k of ["EVKLID_DATA_KEY", "NODE_ENV", "EVKLID_BASE_URL", "RENDER", "EVKLID_ADMIN_EMAILS", "RESEND_API_KEY"]) delete env[k];
-  // Brez SymPy (EVKLID_CAS=0) in brez cevi za stdout: podproces ubitega strežnika bi sicer držal cev odprto.
-  const srv = spawn(process.execPath, ["--disable-warning=ExperimentalWarning", "server/index.js"], { env, stdio: ["ignore", "ignore", "pipe"] });
-  let izpis = "";
-  srv.stderr.on("data", (d) => (izpis += d));
-  const konec = new Promise((resolve) => srv.on("exit", (code, signal) => resolve({ code, signal, izpis })));
-  const base = `http://127.0.0.1:${port}`;
-  // Do 40 s: na zasedenem CI (4 vzporedni deli) je tretji zagon po SIGKILL včasih trajal več kot 15 s (PR #1029).
-  let koncan = false;
-  konec.then(() => (koncan = true));
-  const pripravljen = (async () => {
-    for (let i = 0; i < 400 && !koncan; i++) {
-      try {
-        return await (await fetch(`${base}/healthz/stanje`)).json();
-      } catch {
-        await new Promise((r) => setTimeout(r, 100));
-      }
-    }
-    throw new Error(`strežnik se ni zagnal: ${izpis}`);
-  })();
+  // Brez SymPy (EVKLID_CAS=0): podproces ubitega strežnika bi sicer držal cev za izpis odprto.
+  const { srv, base, konec } = await zazeniStreznik(env);
+  if (!base) throw new Error(`strežnik se ni zagnal: ${(await konec).stderr}`);
+  const pripravljen = fetch(`${base}/healthz/stanje`).then((r) => r.json());
   return { srv, base, konec, pripravljen };
 }
 
@@ -38,19 +25,19 @@ test("zagon: čista zaustavitev (SIGTERM) ni štet, ubit proces (SIGKILL) je nep
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-zagon-"));
   const oznaka = path.join(dir, "zagon.json");
   try {
-    let s = zazeni(dir);
+    let s = await zazeni(dir);
     assert.deepEqual((await s.pripravljen).zagoni, { nepricakovani: 0, zadnji: null, razlog: null });
     assert.ok(fs.existsSync(oznaka), "oznaka teka med delovanjem");
     s.srv.kill("SIGTERM");
     assert.equal((await s.konec).code, 0);
     assert.ok(!fs.existsSync(oznaka), "čista zaustavitev pobriše oznako");
 
-    s = zazeni(dir);
+    s = await zazeni(dir);
     assert.equal((await s.pripravljen).zagoni.nepricakovani, 0);
     s.srv.kill("SIGKILL"); // kot Render ob premalo pomnilnika
     await s.konec;
 
-    s = zazeni(dir);
+    s = await zazeni(dir);
     const st = await s.pripravljen;
     assert.equal(st.zagoni.nepricakovani, 1);
     assert.equal(st.zagoni.razlog, "neznan");
@@ -68,7 +55,7 @@ test("SIGTERM sredi odgovora: po roku zaustavitve učenec dobi obvestilo o posod
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-zaustavitev-"));
   try {
     // Počasen preizkusni odgovor (300 ms na kos) in kratek rok zaustavitve, da odgovor ob roku še teče.
-    const s = zazeni(dir, { EVKLID_MOCK_DELAY_MS: "300", EVKLID_ZAUSTAVITEV_MS: "600" });
+    const s = await zazeni(dir, { EVKLID_MOCK_DELAY_MS: "300", EVKLID_ZAUSTAVITEV_MS: "600" });
     await s.pripravljen;
     const post = async (p, body) => (await fetch(s.base + p, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })).json();
     const ucenec = await post("/api/students", { name: "Ana", settings: { educational_track: "OSNOVNA_SOLA", curriculum_level: "8. razred", subject: "MAT" } });
@@ -182,6 +169,34 @@ test("npm start: SIGTERM procesu npm doseže strežnik, ki se čisto zaustavi (o
     try {
       process.kill(-npm.pid, "SIGKILL");
     } catch {}
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+// AUDIT-077: Express 5 ob napaki poslušanja pokliče povratni klic z napako (address() je null). Prej je sekundarni
+// TypeError (»reading 'port'«) zakril pravi vzrok; zdaj je v izpisu EADDRINUSE, izhod 1, brez »Evklid teče«.
+test("zasedena vrata: izpis pove EADDRINUSE, strežnik konča z 1 in ne javi uspešnega zagona", async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "evklid-vrata-"));
+  const zaseden = net.createServer();
+  await new Promise((resolve) => zaseden.listen(0, resolve));
+  const port = zaseden.address().port;
+  try {
+    const env = { ...process.env, PORT: String(port), EVKLID_MOCK: "1", EVKLID_NEWS: "0", EVKLID_PDF: "0", EVKLID_DB: path.join(dir, "t.db"), EVKLID_PASSWORD: "", EVKLID_ACCOUNTS: "0", ANTHROPIC_API_KEY: "", EVKLID_BACKUPS: "0", EVKLID_CAS: "0" };
+    for (const k of ["EVKLID_DATA_KEY", "NODE_ENV", "EVKLID_BASE_URL", "RENDER", "EVKLID_ADMIN_EMAILS", "RESEND_API_KEY"]) delete env[k];
+    const srv = spawn(process.execPath, ["--disable-warning=ExperimentalWarning", "server/index.js"], { env, stdio: ["ignore", "pipe", "pipe"] });
+    let out = "";
+    let err = "";
+    srv.stdout.on("data", (d) => (out += d));
+    srv.stderr.on("data", (d) => (err += d));
+    const ubij = setTimeout(() => srv.kill("SIGKILL"), 30_000);
+    const code = await new Promise((resolve) => srv.on("close", (c) => resolve(c))); // close: stderr do konca prebran
+    clearTimeout(ubij);
+    assert.equal(code, 1, `izhod ${code}\n${err}`);
+    assert.match(err, /EADDRINUSE/);
+    assert.doesNotMatch(err, /reading 'port'/);
+    assert.doesNotMatch(out, /Evklid teče/);
+  } finally {
+    zaseden.close();
     fs.rmSync(dir, { recursive: true, force: true });
   }
 });

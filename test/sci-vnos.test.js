@@ -164,3 +164,52 @@ test("∫(f;a;b), limita(f;x;a), integriraj(f): vsaka vidna reža ima svoj polo�
   assert.equal(where("∏_(n=1)^(5) n", 0), "‸\\prod_{n=1}^{5}n");
   for (let p = 0; p <= 13; p++) assert.ok(!where("∑_(n=1)^(5) n", p).includes("}‸^"), `∑ @${p}`);
 });
+
+test("root in logb: drugi argument je v zapisu pred prvim, kazalec sledi zapisu (AUDIT-022)", () => {
+  const at = (s) => {
+    const b = entryBase(s, { comma: true });
+    return [...Array(s.length + 1).keys()].map((p) => b.place(p).at);
+  };
+  // logb(8;2) → \log_{2}\left(8\right): »8« je za »2«, konec besedila za zaklepajem
+  const l = at("logb(8;2)");
+  assert.ok(l[5] > l[7], "8 je v zapisu za osnovo 2");
+  assert.equal(l[9], Math.max(...l));
+  // root(16;4) → \sqrt[4]{16}: indeks pred korenjencem
+  const r = at("root(16;4)");
+  assert.ok(r[8] < r[5], "4 je pred 16");
+  assert.equal(r[10], Math.max(...r));
+  assert.equal(r[0], 0, "pred korenom je kazalec pred \\sqrt");
+});
+
+// j, 27. 11. (iPad): »na ulomkih ne morem vnesti več členov«: 3, ÷, ◀, x, +, 1 je dalo 3x + 1/□ namesto (3x+1)/□.
+test("ulomek: + ali − na koncu števca ostane nad ulomkovo črto", async () => {
+  const { pressKey } = await import("../public/graph/sci-vnos.js");
+  const env = { vars: {}, funcs: {}, ans: 0, deg: true, comma: true };
+  const run = (keys) => {
+    let [t, s] = ["", 0];
+    for (const k of keys) {
+      if (k === "◀") {
+        s--;
+        continue;
+      }
+      const r = pressKey(t, s, k, env);
+      assert.ok(r, `${keys.join(" ")}: ${k} zavrnjen pri ${t}`);
+      [t, s] = [r.text, r.pos];
+    }
+    return [t, s];
+  };
+  assert.deepEqual(run(["3", "÷", "◀", "x", "+", "1"]), ["(3x+1)÷", 5]);
+  assert.deepEqual(run(["3", "x", "÷", "◀", "−", "2"]), ["(3x−2)÷", 5]);
+  assert.deepEqual(run(["2", "+", "3", "x", "÷", "◀", "+", "1"]), ["2+(3x+1)÷", 7]); // števec je le 3x
+  assert.deepEqual(run(["3", "÷", "◀", "x", "+", "1", "+", "y"]), ["(3x+1+y)÷", 7]); // že v oklepaju: nov člen gre noter
+  // brez spremembe: za ulomkom (6 ÷ 2 + 1 = 4), prazen števec (− je predznak), sredi števca
+  assert.deepEqual(run(["6", "÷", "2", "+", "1"]), ["6÷2+1", 5]);
+  assert.deepEqual(run(["÷", "◀", "−", "2"]), ["−2÷", 2]);
+  assert.deepEqual(run(["3", "x", "÷", "◀", "◀", "+", "1"]), ["3+1x÷", 3]);
+  // enomestni minus pred števcem je del števca (pregled F): −3+1 nad črto, ne −(3+1)
+  assert.deepEqual(run(["−", "3", "÷", "◀", "+", "1"]), ["(−3+1)÷", 5]);
+  assert.deepEqual(run(["x", "=", "−", "3", "÷", "◀", "+", "1"]), ["x=(−3+1)÷", 7]);
+  assert.deepEqual(run(["2", "+", "−", "3", "÷", "◀", "+", "1"]), ["2+(−3+1)÷", 7]);
+  // sredi d/dx( (dotik): brez ovijanja
+  assert.equal(pressKey("d/dx(x)", 1, "+", env)?.text?.startsWith("(d"), false);
+});

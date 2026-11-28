@@ -34,13 +34,14 @@ export const pathUrl = (sid, key) => `/api/students/${sid}/path?key=${encodeURIC
 
 // Vsebina teme (/api/topic, javna in enaka v seji): ena zahteva na temo in jezik; neuspeh se ne zapomni.
 // Stanje teme (sklop, vaje, status) iz zadnje Učne poti učenca: velja, dokler ni nobene spremembe (gen) in za istega učenca.
+// vnaprej: prenos v ozadju (temeVnaprej), ki ga konec zagona ne čaka (app.js finishStart šteje samo klice pogleda).
 export function teme({ api, kopija, jezik, ucenec, gen }) {
   const vsebine = new Map(); // url -> { p, v } (v: prispel odgovor)
-  function entry(id) {
+  function entry(id, vnaprej = false) {
     const url = `/api/topic?id=${encodeURIComponent(id)}&lang=${encodeURIComponent(jezik())}`;
     let e = vsebine.get(url);
     if (!e) {
-      e = { p: api(url), v: null };
+      e = { p: vnaprej ? api(url, { ozadje: true }) : api(url), v: null };
       e.p.then((v) => (e.v = v), () => vsebine.get(url) === e && vsebine.delete(url));
       if (vsebine.size >= 60) vsebine.delete(vsebine.keys().next().value);
       vsebine.set(url, e);
@@ -129,10 +130,12 @@ export function topli({ get, gen, ucenec = () => null }) {
 }
 
 // Verjetne naslednje teme z Učne poti (naslednja, za ponovitev, v učenju): vsebina v mirovanju, nato še izris razlage.
+// Prenos v ozadju (N-08, meritev 25. 11. 2026): kot klic pogleda je zadržal konec zagona (zamenjavo posnetka ali Učne
+// poti s strežnika s pravo) za ~0,7 s na počasnem 4G, čeprav je bila Učna pot že izrisana.
 export function temeVnaprej(root, { entry, whenIdle, izrisi }) {
   const ids = [...root.querySelectorAll(".node.current[data-open], .node.due[data-open], .node.learning[data-open]")]
     .map((b) => b.dataset.open)
     .filter((id, i, a) => a.indexOf(id) === i)
     .slice(0, 4);
-  whenIdle(() => ids.forEach((id) => entry(id).p.then((tp) => tp?.explanation && whenIdle(() => izrisi(tp)), () => {})));
+  whenIdle(() => ids.forEach((id) => entry(id, true).p.then((tp) => tp?.explanation && whenIdle(() => izrisi(tp)), () => {})));
 }

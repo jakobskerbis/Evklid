@@ -8,6 +8,7 @@ import { DEFAULT_SETTINGS, normalizeSettings, mergeSettings, normalizeWeaknessLi
 import { privzetiCilj } from "../public/goal-data.js";
 import { Flashcards } from "./flashcards.js";
 import { seal, unseal, sealJson, unsealJson, UNREADABLE, sealFlag, openFlag, sealPregled } from "./crypto-polje.js";
+import { migratePriprava } from "./priprava/shema.js";
 
 // Šibke točke: kako dolgo hranimo dnevne vsote (skill_results) in oznake »že šteto« (skill_seen).
 export const SKILL_KEEP_DAYS = 365;
@@ -150,14 +151,7 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
     CREATE INDEX IF NOT EXISTS idx_sessions ON sessions(student_id, kind, finished);
-    -- Načrt priprave na test (en na učenca)
-    CREATE TABLE IF NOT EXISTS test_plans (
-      student_id INTEGER PRIMARY KEY REFERENCES students(id) ON DELETE CASCADE,
-      path_key TEXT NOT NULL,
-      units TEXT NOT NULL,                       -- indeksi sklopov
-      test_date TEXT NOT NULL,                   -- YYYY-MM-DD
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
+    -- Načrt priprave na test: tabela priprave (server/priprava/shema.js; nekdanja test_plans se tam preseli)
     -- Odgovori na naloge, rešene brez povezave (da se ista naloga ne prešteje dvakrat)
     CREATE TABLE IF NOT EXISTS offline_results (
       student_id INTEGER NOT NULL REFERENCES students(id) ON DELETE CASCADE,
@@ -325,6 +319,10 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   if (!studentCols.includes("level_changed_at")) db.exec("ALTER TABLE students ADD COLUMN level_changed_at TEXT");
   // Od kod je profil prišel (server/rast.js): kratka oznaka iz povezave, »priporocilo« ali »razred«; brez piškotkov in IP.
   if (!studentCols.includes("vir")) db.exec("ALTER TABLE students ADD COLUMN vir TEXT");
+  // Čas prvega odgovora na nalogo (N-09, samostojnost v pilotu: ali je učenec med izdajo naloge in prvim odgovorom
+  // vprašal inštruktorja). Starejše naloge ga nimajo in v meritvi ne štejejo.
+  const taskCols = db.prepare("PRAGMA table_info(tasks)").all().map((c) => c.name);
+  if (!taskCols.includes("answered_at")) db.exec("ALTER TABLE tasks ADD COLUMN answered_at TEXT");
   // Začetni test predznanja teme: koliko stopenj (0–3) je učenec rešil zapored od lažje proti težji.
   const stateCols = db.prepare("PRAGMA table_info(topic_state)").all().map((c) => c.name);
   if (!stateCols.includes("pretest")) db.exec("ALTER TABLE topic_state ADD COLUMN pretest INTEGER");
@@ -352,9 +350,6 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
   // Kartice iz zapiskov (server/zapiski.js): zapisek (izbris zapiska izbriše tudi kartice) in oznaka preverjeno (1) / nepreverjeno (0).
   if (!cardCols.includes("zapisek_id")) db.exec("ALTER TABLE flashcards ADD COLUMN zapisek_id INTEGER REFERENCES zapiski(id) ON DELETE CASCADE");
   if (!cardCols.includes("checked")) db.exec("ALTER TABLE flashcards ADD COLUMN checked INTEGER");
-  // Priprava na test, ki jo je nastavil test iz urnika (server/schedule.js).
-  const planCols = db.prepare("PRAGMA table_info(test_plans)").all().map((c) => c.name);
-  if (!planCols.includes("event_id")) db.exec("ALTER TABLE test_plans ADD COLUMN event_id TEXT");
   // Starejše baze: events.conversation_id je bil NOT NULL, vaje (brez pogovora) pa zapisujejo NULL.
   const convIdCol = db.prepare("PRAGMA table_info(events)").all().find((c) => c.name === "conversation_id");
   if (convIdCol?.notnull) {
@@ -442,6 +437,8 @@ export function openDb(file = process.env.EVKLID_DB || `data/${BRAND.slug}.db`) 
       throw err;
     }
   }
+  // Priprava na test iz zapiskov (server/priprava/shema.js, docs/priprava.md): tabele priprave, viri, izvirniki.
+  migratePriprava(db);
   const store = new Store(db);
   store.file = file; // za dnevne varnostne kopije (server/kopije.js)
   return store;
@@ -476,7 +473,9 @@ export class Store {
     return this.db.prepare("SELECT * FROM students ORDER BY id").all().map(parseStudent);
   }
   getStudent(id) {
-    return parseStudent(this.db.prepare("SELECT * FROM students WHERE id = ?").get(id));
+    // Stavek pripravljen enkrat na bazo: getStudent je na sporočilo inštruktorju klican ~70-krat (K-14).
+    this._qStudent ??= this.db.prepare("SELECT * FROM students WHERE id = ?");
+    return parseStudent(this._qStudent.get(id));
   }
   // Isti učenec (ime in nastavitve), ustvarjen v zadnji minuti: dvojni klik ali ponovljena zahteva.
   recentDuplicate(name, settings = DEFAULT_SETTINGS) {

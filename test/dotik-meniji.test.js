@@ -120,7 +120,7 @@ test("touch-browser checks", { skip }, async (t) => {
     // Telefon polje ob odpiranju tipkovnice za hip odfokusira: naslednji dotik ne vrne naše tipkovnice.
     await jp.evaluate(() => document.querySelector(".gc-input").blur());
     await jp.waitForTimeout(100);
-    await jp.tap(".gc-row .gc-main"); // vrstica z izrazom: dotik odpre urejanje
+    await jp.tap(".gc-row .gc-math"); // zapis vrstice z izrazom: dotik odpre urejanje (pod njim so zdaj hitri gumbi)
     await jp.waitForTimeout(100);
     assert.equal(await jp.evaluate(() => document.activeElement?.classList.contains("gc-input")), true, "dotik vrstice odpre urejanje");
     assert.equal(await jp.evaluate(() => document.querySelector("#tipkovnica").hidden), true, "🌐 ostane po izgubi fokusa");
@@ -128,7 +128,7 @@ test("touch-browser checks", { skip }, async (t) => {
     // Dotik izven kalkulatorja konča način 🌐; naslednji dotik polja spet pokaže našo tipkovnico.
     await jp.evaluate(() => document.querySelector(".gc-input").blur());
     await jp.tap("#ven");
-    await jp.tap(".gc-row .gc-main");
+    await jp.tap(".gc-row .gc-math");
     await jp.waitForSelector(`${kb}:not([hidden])`);
     assert.equal(await jp.getAttribute(".gc-input", "inputmode"), "none");
     assert.deepEqual(errors, []);

@@ -1,0 +1,28 @@
+---
+avtor: AI
+stanje: osnutek
+---
+- Vzroki dušenja
+  - zračni upor, trenje v ležajih
+  - notranje trenje, upor žic v nihajnem krogu
+- Pojemanje amplitude
+  - $x_0(t) = x_0(0) \cdot e^{-t/\tau}$
+  - v vsakem $t_{1/2}$ polovica amplitude
+  - napaka: linearno pada do nič
+- Energija
+  - $W = \frac{1}{2} k x_0^2$
+  - pol amplitude, četrtina energije
+  - $10\,\%$ manj amplitude: $19\,\%$ manj energije
+- Lastna frekvenca
+  - $\nu_0 = \frac{1}{2\pi}\sqrt{\frac{k}{m}}$
+  - določa jo nihalo samo
+- Vsiljeno nihanje
+  - niha s frekvenco vzbujevalnika $\nu$
+  - napaka: niha z lastno frekvenco
+- Resonanca
+  - $\nu \approx \nu_0$: največja amplituda
+  - šibko dušenje: visok, ozek vrh
+  - močno dušenje: nizek, širok vrh
+- Primeri
+  - gugalnica, brv, blažilniki v avtu
+  - radio: nihajni krog izbere postajo

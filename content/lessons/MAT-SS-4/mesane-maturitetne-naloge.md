@@ -254,7 +254,7 @@ d) Kontrolor preizkuša žarnice eno za drugo. Verjetnost, da je prva pokvarjena
 **Rešitev:**
 
 1. a) Gre za zaporedje $10$ neodvisnih poskusov z verjetnostjo $0{,}04$ za pokvarjeno žarnico: $P = \binom{10}{1} \cdot 0{,}04 \cdot 0{,}96^9$.
-2. a) $P = 10 \cdot 0{,}04 \cdot 0{,}692534\ldots = 0{,}277013\ldots \approx 0{,}2770$.
+2. a) $P = 10 \cdot 0{,}04 \cdot 0{,}692533\ldots = 0{,}277013\ldots \approx 0{,}2770$.
 3. b) Nasprotni dogodek je »nobena žarnica ni pokvarjena«, njegova verjetnost je $0{,}96^{10} = 0{,}664832\ldots$.
 4. b) $P = 1 - 0{,}96^{10} = 0{,}335167\ldots \approx 0{,}3352$.
 5. c) Za $n$ žarnic zahtevamo $1 - 0{,}96^n > 0{,}5$, torej $0{,}96^n < 0{,}5$.

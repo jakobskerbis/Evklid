@@ -12,6 +12,8 @@ export const qty = (v, u) => `${v}\\ ${unitTex(u)}`;
 export const dat = (sym, v, u) => `${sym} = ${u ? qty(v, u) : v}`;
 const needsRounding = (x, d) => d != null && Math.abs(x - roundHalfUp(x, d)) > 1e-9;
 // Rezultat: "= 4{,}5\ \mathrm{cm}" oz. "\approx 4{,}51\ \mathrm{cm}", kadar je zaokrožen.
+// Vmesni korak: »= 12{,}50« ali »\\approx 12{,}35« z d decimalkami (tudi končne ničle), da se ujema z naslednjim korakom.
+export const korak = (x, d) => `${needsRounding(x, d) ? "\\approx" : "="} ${tx(x, d)}`;
 export const res = (x, d, u) => {
   const v = needsRounding(x, d) ? tx(x, d) : tx(roundHalfUp(x, 10));
   return `${needsRounding(x, d) ? "\\approx" : "="} ${u ? qty(v, u) : v}`;

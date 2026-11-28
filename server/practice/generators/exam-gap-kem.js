@@ -289,7 +289,7 @@ const exgPolymers = {
         answer: numM(w, 2, [[(m / Mr) * 18, L("Two water molecules are released per repeating unit.", "हर पुनरावर्ती इकाई पर दो जल अणु निकलते हैं।")], [(m / (Mr + 36)) * 36, L("The polymer mass already excludes the water; divide by the mass of the repeating unit.", "बहुलक के द्रव्यमान में जल शामिल नहीं है; पुनरावर्ती इकाई के द्रव्यमान से भाग दीजिए।")]]),
         data: { given: [q("m", m, "kg"), q("M_0", Mr, "g/mol")], find: ["m_{\\mathrm{H_2O}}"] },
         hint: L("Find the amount (kmol) of repeating units first.", "पहले पुनरावर्ती इकाइयों की मात्रा (kmol) ज्ञात कीजिए।"),
-        formula: "m_{\\mathrm{H_2O}} = 2 \\cdot 18 \\cdot \\dfrac{m}{M_0}",
+        formula: "m_{\\mathrm{H_2O}} = 2 \\cdot 18\\ \\mathrm{g/mol} \\cdot \\dfrac{m}{M_0}",
         solution: `$n = \\dfrac{${en(m)}}{${Mr}} ${ev(m / Mr, 4)}\\ \\text{kmol}$\n$n_{\\mathrm{H_2O}} = 2n ${ev((2 * m) / Mr, 4)}\\ \\text{kmol}$\n$m_{\\mathrm{H_2O}} = ${fx((2 * m) / Mr, 4)} \\cdot 18 ${ev(w, 2)}\\ \\text{kg}$`,
       });
     }
