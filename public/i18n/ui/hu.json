@@ -1147,6 +1147,7 @@
   "sc.cas.solveFor": "Fejezd ki: {v}",
   "sc.cas.symHint": "Betűs kifejezés: válaszd ki, mit csináljak vele.",
   "sc.cas.eqHint": "Betűs egyenlet: válaszd ki, melyik betűt fejezzem ki.",
+  "sc.cas.taylorSame": "A polinom már önmaga Taylor-polinomja. Más pont körüli kifejtéshez add meg a pontot, pl. taylor(f; x; 1).",
   "sc.cas.radians": "Radiánban számolva.",
   "sc.radiansPart": "A ∫ és a d/dx radiánban, a többi fokban számolva.",
   "sc.radiansPartGrad": "A ∫ és a d/dx radiánban, a többi újfokban számolva.",
