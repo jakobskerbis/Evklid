@@ -321,6 +321,12 @@ export function infoFor(text, r, { profile = null, comma = true, env: base = nul
         one("sc.infoAsym", even ? periodicTex([vp.poles[0]], P / m, env, nt, num) : periodicTex(vp.poles, P, env, nt, num));
       }
       if (vp) holes.push(...vp.holes);
+      // izključene točke niso ničle (1/sin(x)⁻¹ = sin x, a pri kπ ni definirana)
+      const out = (x) => vp?.excl.some((e) => Math.abs((((x - e) % P) + P) % P) < 1e-7 || Math.abs((((x - e) % P) + P) % P - P) < 1e-7);
+      if (vp && roots.some(out)) {
+        roots = roots.filter((x) => !out(x));
+        if (R.roots) R.roots = roots.length ? { key: "sc.infoRoots", tex: periodicTex(roots, P, env, nt, num).replace(/\\frac/g, "\\tfrac") } : { key: "sc.infoRoots", text: "sc.infoNoRoots" };
+      }
     }
     if (topic === "ana" && calc) {
       const d2 = safe(() => analyze(`d/dx(d/dx(${s}))`, env));
@@ -666,7 +672,7 @@ function polesPeriodic(s, f, P, env) {
         const h = hole(f, x);
         if (h) holes.push(h);
       }
-  return { poles, holes };
+  return { poles, holes, excl: cand };
 }
 
 /** Asimptote: navpične pri polih (izključene točke brez prazne točke, rob logaritma), vodoravne pri ±∞. */
