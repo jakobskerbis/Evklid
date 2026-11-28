@@ -1153,6 +1153,7 @@
   "sc.cas.solveFor": "Riješi po {v}",
   "sc.cas.symHint": "Izraz sa slovima: odaberi što da učinim s njim.",
   "sc.cas.eqHint": "Jednadžba sa slovima: odaberi koje slovo da izrazim.",
+  "sc.cas.taylorPoly": "Polinom je već sam svoj Taylorov polinom. Za razvoj oko druge točke dodaj točku, npr. taylor(f; x; 1).",
   "sc.cas.radians": "Izračunano u radijanima.",
   "sc.radiansPart": "∫ i d/dx računaju se u radijanima, ostalo u stupnjevima.",
   "sc.radiansPartGrad": "∫ i d/dx računaju se u radijanima, ostalo u gradima.",

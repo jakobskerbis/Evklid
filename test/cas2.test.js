@@ -205,4 +205,18 @@ test("analiza v načinu DEG: računano v radianih, to pove opomba", () => {
   assert.equal(r.rad, true);
   assert.equal(analyze("integriraj(sin(x))", {}).rad, undefined);
   assert.doesNotMatch(analyze("taylor(sin(x); x; 0; 5)").resTex, /ldots/);
+  // brez kotov enota ni pomembna: brez opombe (j 28. 11., taylor(3x² − 6x + 3; x) v DEG); uporabnikova f s kosinusom jo ima
+  assert.equal(analyze("taylor(3x^2-6x+3; x)", { deg: true }).rad, undefined);
+  assert.equal(analyze("integriraj(x^2; x)", { grad: true }).rad, undefined);
+  assert.equal(analyze("taylor(f(x); x)", { deg: true, funcs: { f: { param: "x", body: "cos(x)" } } }).rad, true);
+});
+
+test("taylor polinoma okoli 0 je isti polinom: opomba namesto golega ponavljanja", () => {
+  const r = analyze("taylor(3x^2-6x+3; x)", {});
+  assert.equal(r.same, true);
+  assert.equal(r.resTex, "3 - 6x + 3x^{2}");
+  const r1 = analyze("taylor(3x^2-6x+3; x; 1)", {});
+  assert.equal(r1.same, undefined);
+  assert.equal(r1.resTex, "3\\left(x - 1\\right)^{2}");
+  assert.equal(analyze("taylor(e^x; x)", {}).same, undefined);
 });

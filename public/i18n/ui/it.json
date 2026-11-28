@@ -1147,6 +1147,7 @@
   "sc.cas.solveFor": "Risolvi per {v}",
   "sc.cas.symHint": "Espressione con lettere: scegli che cosa farne.",
   "sc.cas.eqHint": "Equazione con lettere: scegli quale lettera ricavare.",
+  "sc.cas.taylorPoly": "Un polinomio è già il proprio polinomio di Taylor. Per sviluppare in un altro punto aggiungilo, ad es. taylor(f; x; 1).",
   "sc.cas.radians": "Calcolato in radianti.",
   "sc.radiansPart": "∫ e d/dx sono calcolati in radianti, il resto in gradi.",
   "sc.radiansPartGrad": "∫ e d/dx sono calcolati in radianti, il resto in gradi centesimali.",

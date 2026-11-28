@@ -6,7 +6,7 @@
 // (rešitve enačbe vstavimo nazaj v enačbo). Česar ne prestane preverjanja, ne pokažemo.
 // π in e sta simbola (transcendentni števili), zato x·π − π = π(x − 1); pri preverjanju dobita svojo vrednost.
 import { Q, P, AlgebraError, gcdInt, lcmInt, withLimit } from "../scan/algebra.js";
-import { compileLine, lineTex, splitTop, HIDDEN_VARS } from "./scicore.js";
+import { compileLine, lineTex, splitTop, HIDDEN_VARS, usesAngles } from "./scicore.js";
 import { runCalc, CALC_OPS } from "./calculus.js";
 import { runAtoms, atomInfo, ATOM_TEX, isAtom } from "./casalg.js";
 import { MAT_OPS, runMatrix } from "./casmat.js";
@@ -817,9 +817,9 @@ export function runCas(cmd, env = {}) {
   }
   if (MAT_OPS.has(cmd.op)) return runMatrix(cmd, line, env);
   if (CALC_OPS.has(cmd.op)) {
-    // analiza je vedno v radianih; v načinu DEG/GRA to povemo pod rezultatom
+    // analiza je vedno v radianih; v načinu DEG/GRA to povemo pod rezultatom, a le, če izraz ima kote
     const r = runCalc(cmd, env);
-    return (env.deg || env.grad) && !r.error ? { ...r, rad: true } : r;
+    return (env.deg || env.grad) && !r.error && usesAngles(cmd.inner, env.funcs) ? { ...r, rad: true } : r;
   }
   const innerTex = lineTex(line.ast, comma);
   const name = `\\operatorname{${cmd.name}}`;

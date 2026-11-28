@@ -1147,6 +1147,7 @@
   "sc.cas.solveFor": "Solve for {v}",
   "sc.cas.symHint": "Expression with letters: choose what to do with it.",
   "sc.cas.eqHint": "Equation with letters: choose which letter to solve for.",
+  "sc.cas.taylorPoly": "A polynomial is already its own Taylor polynomial. To expand around another point, add it, e.g. taylor(f; x; 1).",
   "sc.cas.radians": "Calculated in radians.",
   "sc.radiansPart": "∫ and d/dx are computed in radians, the rest in degrees.",
   "sc.radiansPartGrad": "∫ and d/dx are computed in radians, the rest in gradians.",

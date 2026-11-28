@@ -1443,6 +1443,7 @@ export default {
   "sc.cas.solveFor": "Izrazi {v}",
   "sc.cas.symHint": "Izraz s črkami: izberi, kaj naj naredim z njim.",
   "sc.cas.eqHint": "Enačba s črkami: izberi, katero črko naj izrazim.",
+  "sc.cas.taylorPoly": "Polinom je že sam svoj Taylorjev polinom. Za razvoj okoli druge točke dodaj točko, npr. taylor(f; x; 1).",
   "sc.cas.radians": "Računano v radianih.",
   "sc.radiansPart": "∫ in d/dx sta računana v radianih, ostalo v stopinjah.",
   "sc.radiansPartGrad": "∫ in d/dx sta računana v radianih, ostalo v gradih.",
