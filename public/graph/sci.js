@@ -210,6 +210,9 @@ export function createScientific(root, opts) {
     if (!w || !h) return;
     root.classList.toggle("sc-c", w >= 861 && h >= 600 && w > h);
     root.classList.toggle("sc-tall", w >= 861 && h > w);
+    // pokončno, tablica in telefon (j, 28. 11.): podatki (graf, ničle, perioda …) tudi tu, nad zapisom, če je prostor
+    root.classList.toggle("sc-p", w >= 300 && h >= 560 && h > w);
+    root.classList.toggle("sc-pn", w < 600 && h > w); // telefon pokončno: nižji podatki, ključ nad vrednostjo (graph.css)
     root.style.setProperty("--sc-h", `${Math.round(h)}px`);
     keysNeed = 0; // nova velikost: prostor za tipke izmerimo znova
     fitEntry();
@@ -220,17 +223,21 @@ export function createScientific(root, opts) {
   // prostor za tipke (keysNeed) se izmeri le ob spremembi velikosti.
   let keysNeed = 0;
   const INFO_H = 132; // graph.css .sc-info (stalna višina: tipke ne skačejo ob vsakem pritisku)
+  const INFO_H_PN = 112; // graph.css .sc-pn .sc-info (telefon pokončno)
   // Podatki o zapisu v praznem delu zaslona (j, 27. 11.): po poglavju (analiza: 1. in 2. odvod, nedoločeni integral;
   // drugje razstavljeno …), za število prafaktorji in znanstveni zapis; računa se po premoru tipkanja (sci-info.js)
   let infoTimer = 0;
   let infoMore = false; // »Več«: vse vrstice v treh stolpcih namesto grafa (ostane do zaprtja)
   let infoRoom = false; // fitEntry: ali je nad zapisom prostor za podatke (sicer jih sploh ne računamo)
   let infoLast = { key: "", d: null }; // »Več« in ponoven izris ne računata znova
+  // postavitev s podatki: široko ležeče (.sc-c) ali tablica pokončno (.sc-p), ne s pripetim oknom »Piši«
+  const infoLayout = () => root.matches(".sc-c, .sc-p");
+  const pisiDocked = () => root.matches(".sc-pisi-r, .sc-pisi-l, .sc-pisi-b");
   function scheduleInfo(text, r) {
     clearTimeout(infoTimer);
     const box = $(".sc-info");
-    if (!r || !root.classList.contains("sc-c") || root.matches(".sc-pisi-r, .sc-pisi-l, .sc-pisi-b")) {
-      if (!text || !root.classList.contains("sc-c")) box.hidden = true;
+    if (!r || !infoLayout() || pisiDocked()) {
+      if (!text || !infoLayout()) box.hidden = true;
       else box.classList.add("sc-info-empty");
       return;
     }
@@ -238,9 +245,16 @@ export function createScientific(root, opts) {
     box.classList.add("sc-info-empty");
     infoTimer = setTimeout(() => renderInfo(text, r), 300);
   }
+  let infoArgs = null; // zadnji izris podatkov (znova ob svežem slovarju)
+  // stran s starejšim slovarjem od tega modula (i18n-osnova.js dopolniSlovar): napisi podatkov znova, ko pridejo
+  if (typeof document !== "undefined")
+    document.addEventListener("evklid:slovar", () => {
+      if (infoArgs && root.isConnected && !$(".sc-info").hidden) renderInfo(...infoArgs);
+    });
   function renderInfo(text, r) {
     const box = $(".sc-info");
     if (input.value !== text) return;
+    infoArgs = [text, r];
     if (!infoRoom) return (box.hidden = true);
     const e = env();
     const key = JSON.stringify([text, profile, comma(), e.deg, e.grad, e.vars]);
@@ -255,13 +269,14 @@ export function createScientific(root, opts) {
       if (box.hidden) return;
       return box.classList.add("sc-info-empty");
     }
-    const svg = d.plot && !infoMore ? plotSvg(d.plot.fn, d.plot.roots, { env: env(), holes: d.plot.holes }) : "";
+    const svg = d.plot && !infoMore ? plotSvg(d.plot.fn, d.plot.roots, { env: env(), holes: d.plot.holes, period: d.plot.period }) : "";
     const g = box.querySelector(".sc-info-g");
     g.hidden = !svg;
-    g.innerHTML = svg ? `${svg}${opts.openGraph ? `<button type="button" class="ghost small sc-info-graf">${icon("chart-spline")}<span>${esc(t("sc.infoOpenGraph"))}</span></button>` : ""}` : "";
+    g.innerHTML = svg ? `${svg}${opts.openGraph ? `<button type="button" class="ghost small sc-info-graf" aria-label="${esc(t("sc.infoOpenGraph"))}" title="${esc(t("sc.infoOpenGraph"))}">${icon("chart-spline")}<span>${esc(t("sc.infoOpenGraph"))}</span></button>` : ""}` : "";
     g.querySelector(".sc-info-graf")?.addEventListener("click", () => opts.openGraph(r.plot?.length ? r.plot : [`y = ${d.plot.fn}`]));
-    const rows = infoMore ? d.rows : d.rows.slice(0, INFO_FIRST);
-    const more = d.rows.length > INFO_FIRST;
+    const first = root.classList.contains("sc-pn") ? 2 : INFO_FIRST; // telefon: ključ nad vrednostjo, dve vrstici
+    const rows = infoMore ? d.rows : d.rows.slice(0, first);
+    const more = d.rows.length > first;
     const list = box.querySelector(".sc-info-rows");
     list.classList.toggle("sc-info-all", infoMore);
     list.innerHTML =
@@ -280,17 +295,33 @@ export function createScientific(root, opts) {
   }
   // dolgi zapisi v vrsticah (odvod) se pomanjšajo na širino stolpca
   const fitInfo = () => {
-    if (root.classList.contains("sc-info-on"))
-      for (const v of $(".sc-info").querySelectorAll(".sc-info-v")) {
-        const kv = v.querySelector(".katex");
-        if (kv) pomanjsaj(kv, v.clientWidth, () => v.scrollWidth);
+    if (!root.classList.contains("sc-info-on")) return;
+    const pn = root.classList.contains("sc-pn");
+    for (const v of $(".sc-info").querySelectorAll(".sc-info-v")) {
+      const kv = v.querySelector(".katex");
+      if (!kv) continue;
+      pomanjsaj(kv, v.clientWidth, () => v.scrollWidth);
+      // telefon: ozek stolpec, dolge ničle (x₁ = k · 360°, x₂ = …) se pomanjšajo do polovice, ne le do 80 %
+      if (pn && v.scrollWidth > v.clientWidth + 1) {
+        const fs = parseFloat(getComputedStyle(kv).fontSize);
+        kv.style.fontSize = `${Math.max(fs * 0.6, fs * (v.clientWidth / v.scrollWidth) * 0.98).toFixed(2)}px`;
       }
+    }
   };
   const fitEntry = () => {
     // pripeto okno »Piši« ima svojo mrežo (graph.css): zapis tam raste, zgodovina se skrči
-    if (!root.classList.contains("sc-c") || root.matches(".sc-pisi-r, .sc-pisi-l, .sc-pisi-b")) {
-      root.classList.remove("sc-info-on");
-      return root.style.removeProperty("--sc-fit");
+    if (!root.classList.contains("sc-c") || pisiDocked()) {
+      root.style.removeProperty("--sc-fit");
+      if (!infoLayout() || pisiDocked()) return root.classList.remove("sc-info-on");
+      // pokončno: zapis ostane kot je, podatki nad njim le, če zgodovini ostane vsaj 160 px
+      const info = $(".sc-info");
+      const on0 = root.classList.contains("sc-info-on") && !info.hidden;
+      const pn = root.classList.contains("sc-pn");
+      const ih = (pn ? INFO_H_PN : INFO_H) + 8;
+      const base = $(".sc-entry").offsetHeight - (on0 ? ih : 0);
+      infoRoom = root.clientHeight - $(".sc-bar").offsetHeight - $(".sc-keys").offsetHeight - base - ih >= (pn ? 80 : 160);
+      root.classList.toggle("sc-info-on", !info.hidden && infoRoom && !!$(".sc-preview .katex"));
+      return fitInfo();
     }
     const entry = $(".sc-entry");
     const prev = $(".sc-preview");

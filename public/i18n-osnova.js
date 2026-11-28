@@ -150,6 +150,25 @@ function pluralForm(n) {
   return plural.get(lang).select(n);
 }
 
+// Ključ, ki ga ni niti v celem slovarju: stran izvaja starejši slovar kot leni modul, ki je pravkar prišel z omrežja
+// (stran je bila odprta pred objavo; service worker za njeno različico nima kopije modula). j 28. 11., iPad: podatki
+// znanstvenega kalkulatorja so kazali »SC.INFOPERIOD«. Enkrat na stran naložimo svež slovar (drug naslov: mimo
+// kopij service workerja in že naloženega modula) in dodamo le manjkajoče ključe; dogodek »evklid:slovar« pove
+// odprtim zaslonom, naj se izrišejo znova. Ključi brez pike (koda napake strežnika, gradiva.js) ne sprožijo ničesar.
+let svez = null;
+function dopolniSlovar(key) {
+  if (svez || typeof document === "undefined" || !/^[a-z][\w-]*\.[\w.-]+$/i.test(key)) return;
+  svez = import(`./i18n/sl.js?svez=${Date.now()}`)
+    .then(({ default: nov }) => {
+      let dodanih = 0;
+      for (const [k, v] of Object.entries(nov || {})) if (SL[k] === undefined) (SL[k] = v), dodanih++;
+      if (!dodanih) return;
+      applyI18n();
+      document.dispatchEvent(new CustomEvent("evklid:slovar"));
+    })
+    .catch(() => null);
+}
+
 export function t(key, vars = {}) {
   let v;
   for (const d of dicts) {
@@ -160,6 +179,7 @@ export function t(key, vars = {}) {
   }
   if (v === undefined) {
     if (!vse) manjka.add(key);
+    else dopolniSlovar(key);
     return key;
   }
   // Množinske oblike: { one, two, few, other } po pravilih jezika, število je {n}.

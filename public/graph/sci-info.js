@@ -262,7 +262,7 @@ export function infoFor(text, r, { profile = null, comma = true, env: base = nul
     }
     if (p && p.length === 3 && p[0]) add("sc.infoVertex", `T(${nt(-p[1] / (2 * p[0]))}${sep}${nt(p[2] - (p[1] * p[1]) / (4 * p[0]))})`);
     if (P) add("sc.infoPeriod", angleTex(P, env, nt, num));
-    return rows.length ? { rows, plot: { fn, roots: roots.filter((x) => Math.abs(x) < 1e6), holes: [] } } : null;
+    return rows.length ? { rows, plot: { fn, roots: roots.filter((x) => Math.abs(x) < 1e6), holes: [], period: P } } : null;
   }
 
   // funkcija f(x)
@@ -340,7 +340,7 @@ export function infoFor(text, r, { profile = null, comma = true, env: base = nul
     // definicijsko območje ℝ pri polinomu ni novica: le pri ulomkih, korenih, logaritmih
     if (topic === "poly" && R["sc.infoDomain"] && !dom?.excl?.length && !dom?.cond) delete R["sc.infoDomain"];
     for (const k of ORDER) if (R[k] || (k === "sc.infoRoots" && R.roots)) rows.push(R[k] || R.roots);
-    return rows.length ? { rows, plot: { fn: s, roots: roots.filter((x) => Math.abs(x) < 1e6), holes } } : null;
+    return rows.length ? { rows, plot: { fn: s, roots: roots.filter((x) => Math.abs(x) < 1e6), holes, period: P } } : null;
   }
   return null;
 }
@@ -684,9 +684,11 @@ function asymptotesTex(f, dom, holes, nt, num = nt) {
 }
 
 /** Mali graf funkcije (SVG niz): okno okoli ničel, vsaj [−5, 5]; y po vzorcih, brez skokov čez pole; prazne točke. */
-export function plotSvg(fn, roots = [], { w = 280, h = 130, env = {}, holes = [] } = {}) {
-  const lo = Math.min(-5, ...roots.map((x) => x - 2), ...holes.map((p) => p[0] - 2));
-  const hi = Math.max(5, ...roots.map((x) => x + 2), ...holes.map((p) => p[0] + 2));
+export function plotSvg(fn, roots = [], { w = 280, h = 130, env = {}, holes = [], period = 0 } = {}) {
+  // periodična (kotna) funkcija: dve periodi okoli 0 (j, 28. 11.: sin x v DEG je bil na [−5°; 5°] ravna črta)
+  const per = Number.isFinite(period) && period > 0;
+  const lo = per ? -period : Math.min(-5, ...roots.map((x) => x - 2), ...holes.map((p) => p[0] - 2));
+  const hi = per ? period : Math.max(5, ...roots.map((x) => x + 2), ...holes.map((p) => p[0] + 2));
   const f = fnOf(fn, env);
   const xs = [];
   const ys = [];
@@ -725,7 +727,10 @@ export function plotSvg(fn, roots = [], { w = 280, h = 130, env = {}, holes = []
   const ay = `<line class="ax" x1="0" y1="${Y(0).toFixed(1)}" x2="${w}" y2="${Y(0).toFixed(1)}"/>`;
   // pika kot pot ničelne dolžine z okroglim koncem: ostane okrogla tudi pri raztegnjenem viewBox
   const dot = (x, y, cls) => `<path class="${cls}" d="M${X(x).toFixed(1)} ${Y(y).toFixed(1)}h0"/>`;
-  const dots = roots.filter((x) => x >= lo && x <= hi).map((x) => dot(x, 0, "dot")).join("");
-  const empty = holes.map(([x, y]) => dot(x, y, "hole") + dot(x, y, "hole-in")).join("");
+  // periodična: ničle in prazne točke se ponovijo na vsaki periodi v oknu
+  const ks = per ? [-2, -1, 0, 1, 2] : [0];
+  const inWin = (x) => x >= lo - 1e-9 * (hi - lo) && x <= hi + 1e-9 * (hi - lo);
+  const dots = [...new Set(roots.flatMap((x) => ks.map((k) => x + k * period)).filter(inWin).map((x) => dot(x, 0, "dot")))].join("");
+  const empty = [...new Set(holes.flatMap(([x, y]) => ks.map((k) => [x + k * period, y])).filter(([x]) => inWin(x)).map(([x, y]) => dot(x, y, "hole") + dot(x, y, "hole-in")))].join("");
   return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">${ax}${ay}<path d="${d}"/>${dots}${empty}</svg>`;
 }

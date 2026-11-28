@@ -243,3 +243,20 @@ test("divergesAt: pol, logaritem, enostranski pol; skok, prazna točka in nihanj
   assert.equal(d("sin(1/x)", 0), false);
   assert.equal(d("sqrt(x)", 0), false);
 });
+
+test("mali graf kotne funkcije: dve periodi okoli 0 tudi v DEG (j 28. 11.: sin x je bil ravna črta)", () => {
+  const d = info("sin(x)", { deg: true });
+  assert.equal(d.plot.period, 360);
+  const svg = plotSvg(d.plot.fn, d.plot.roots, { env: { ...env, deg: true }, holes: d.plot.holes, period: d.plot.period });
+  // ničle −360°, −180°, 0°, 180°, 360° (vsaka enkrat)
+  assert.equal((svg.match(/class="dot"/g) || []).length, 5);
+  const pts = [...svg.matchAll(/[ML](-?[\d.]+) (-?[\d.]+)/g)].map((x) => [+x[1], +x[2]]);
+  const ys = pts.map((p) => p[1]);
+  assert.ok(Math.min(...pts.map((p) => p[0])) < 1 && Math.max(...pts.map((p) => p[0])) > 279, "čez vso širino");
+  assert.ok(Math.max(...ys) - Math.min(...ys) > 80, "val, ne ravna črta");
+  // RAD: perioda 2π, enako dve periodi
+  const r = info("cos(2x)");
+  assert.ok(Math.abs(r.plot.period - Math.PI) < 1e-9);
+  // nekotna funkcija ostane na oknu okoli ničel
+  assert.equal(info("x^2-4").plot.period, 0);
+});
