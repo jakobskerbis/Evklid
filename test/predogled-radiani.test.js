@@ -86,7 +86,7 @@ test("opomba »Računano v radianih« v DEG pod ∫ in d/dx (predogled in rezult
   await page.fill(".sc-input", "taylor(3x^2-6x+3; x)");
   await page.press(".sc-input", "Enter");
   assert.doesNotMatch(await page.locator(".sc-h-row.last").innerText(), /sc\.cas\.radians/);
-  assert.match(await page.locator(".sc-h-row.last").innerText(), /sc\.cas\.taylorPoly/);
+  assert.match(await page.locator(".sc-h-row.last").innerText(), /sc\.cas\.taylorSame/);
   await page.click('[data-angle="rad"]');
   await page.fill(".sc-input", "∫(x;0;1)");
   await page.press(".sc-input", "Enter");

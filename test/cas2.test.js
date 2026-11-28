@@ -209,6 +209,9 @@ test("analiza v načinu DEG: računano v radianih, to pove opomba", () => {
   assert.equal(analyze("taylor(3x^2-6x+3; x)", { deg: true }).rad, undefined);
   assert.equal(analyze("integriraj(x^2; x)", { grad: true }).rad, undefined);
   assert.equal(analyze("taylor(f(x); x)", { deg: true, funcs: { f: { param: "x", body: "cos(x)" } } }).rad, true);
+  // pregled: x·sin x brez znaka, f'(a), kot v točki limite ali središču taylorja
+  assert.equal(analyze("integriraj(xsinx; x)", { deg: true }).rad, true);
+  assert.equal(analyze("limita(x; x; sin(30))", { deg: true }).rad, true);
 });
 
 test("taylor polinoma okoli 0 je isti polinom: opomba namesto golega ponavljanja", () => {

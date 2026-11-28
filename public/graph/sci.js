@@ -727,7 +727,7 @@ export function createScientific(root, opts) {
         if (r.none && r.op === "limit") e.none = true; // limita ne obstaja (pri reši je none prazna množica)
         if (r.cond) e.note = { key: "sc.cas.cond", tex: r.cond };
         else if (r.rad) e.note = { key: "sc.cas.radians" };
-        else if (r.same) e.note = { key: "sc.cas.taylorPoly" }; // polinom okoli 0: rezultat je isti polinom
+        else if (r.same) e.note = { key: "sc.cas.taylorSame" }; // polinom okoli 0: rezultat je isti polinom
         if (r.steps) {
           e.steps = true;
           e.stepsText = r.inner;
@@ -936,7 +936,7 @@ export function createScientific(root, opts) {
     // DEG/GRA: ∫ in d/dx sta v radianih (AUDIT-055) – opomba tudi v predogledu, kot pod rezultatom
     if (radNote(text, r) && live.innerHTML) live.insertAdjacentHTML("beforeend", ` <span class="sc-live-hint">${esc(t(radKey(text)))}</span>`);
   }
-  const radNote = (text, r) => st.angle !== "rad" && ["value", "deriv"].includes(r?.kind) && /∫|d\/d|'/.test(text) && usesAngles(text, st.funcs);
+  const radNote = (text, r) => st.angle !== "rad" && ["value", "deriv"].includes(r?.kind) && /∫|d\/d|['′]/.test(text) && usesAngles(text, st.funcs);
   // cela vrstica je ∫ ali d/dx: »Računano v radianih«; sicer le ∫ in d/dx, ostanek v stopinjah ali gradih
   const radKey = (text) => {
     const e = env();

@@ -139,14 +139,14 @@ export function lineTex(ast, comma = true) {
 const FN_NAME = /^\s*([A-Za-z])\s*\(\s*([A-Za-z])\s*\)\s*=(?!=)/;
 /** Je vrstica definicija funkcije »f(x) = …«? Vrne { name, param, body } ali null. */
 // Kotne funkcije v vrstici ali v uporabnikovi funkciji, ki jo vrstica kliče (f(x) = sin x): le takrat je enota kota
-// (DEG/RAD) za rezultat pomembna. Brez njih opomba »Računano v radianih« zmede (taylor(3x² − 6x + 3; x) v DEG).
-const ANGLE_FN = /(?<![A-Za-z])(?:a?sin|a?cos|a?tan|a?cot|arc(?:sin|cos|tan|cot|tg|ctg)|tg|ctg|sec|csc)(?!h)|°/;
+// (DEG/RAD) za rezultat pomembna (brez meje pred imenom: xsinx je x·sin x; f'(2) je odvod uporabnikove f). Brez njih opomba »Računano v radianih« zmede (taylor(3x² − 6x + 3; x) v DEG).
+const ANGLE_FN = /(?:a?sin|a?cos|a?tan|a?cot|arc(?:sin|cos|tan|cot|tg|ctg)|tg|ctg|sec|csc)(?!h)|°/;
 export function usesAngles(text, funcs = {}, depth = 0) {
   const src = String(text ?? "");
   if (ANGLE_FN.test(src)) return true;
   if (depth > 5) return false;
   for (const [name, f] of Object.entries(funcs || {}))
-    if (f && typeof f.body === "string" && new RegExp(`(?<![A-Za-z])${name.replace(/[^\w]/g, "")}\\s*\\(`).test(src) && usesAngles(f.body, funcs, depth + 1)) return true;
+    if (f && typeof f.body === "string" && new RegExp(`${name.replace(/[^\w]/g, "")}\\s*['′″]*\\s*\\(`).test(src) && usesAngles(f.body, funcs, depth + 1)) return true;
   return false;
 }
 

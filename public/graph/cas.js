@@ -819,7 +819,7 @@ export function runCas(cmd, env = {}) {
   if (CALC_OPS.has(cmd.op)) {
     // analiza je vedno v radianih; v načinu DEG/GRA to povemo pod rezultatom, a le, če izraz ima kote
     const r = runCalc(cmd, env);
-    return (env.deg || env.grad) && !r.error && usesAngles(cmd.inner, env.funcs) ? { ...r, rad: true } : r;
+    return (env.deg || env.grad) && !r.error && usesAngles([cmd.inner, ...(cmd.args || [])].join(";"), env.funcs) ? { ...r, rad: true } : r;
   }
   const innerTex = lineTex(line.ast, comma);
   const name = `\\operatorname{${cmd.name}}`;
