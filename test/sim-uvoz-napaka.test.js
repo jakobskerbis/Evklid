@@ -29,14 +29,16 @@ test("uvoziPogon: po neuspehu en nov poskus z drugim naslovom; SyntaxError brez 
   assert.match(klici[1], /\/sim\/lab-sile\.js\?r=\d+$/);
   const sintaksa = Object.assign(new SyntaxError("The requested module './kit.js' does not provide an export named 'x'"));
   let n = 0;
-  await assert.rejects(uvoziPogon("lab-sile.js", { uvozi: async () => (n++, Promise.reject(sintaksa)), spi: async () => {} }), SyntaxError);
+  await assert.rejects(uvoziPogon("lab-sintaksa.js", { uvozi: async () => (n++, Promise.reject(sintaksa)), spi: async () => {} }), SyntaxError);
   assert.equal(n, 1);
   // drugi poskus z gumba (prvic: false): en sam uvoz z novim naslovom, brez čakanja
   const drugi = [];
-  await uvoziPogon("lab-sile.js", { prvic: false, uvozi: async (u) => (drugi.push(u), {}) });
+  await uvoziPogon("lab-drugi.js", { prvic: false, uvozi: async (u) => (drugi.push(u), {}) });
   assert.equal(drugi.length, 1);
   assert.match(drugi[0], /\?r=\d+$/);
-  assert.notEqual(drugi[0], klici[1]);
+  assert.notEqual(drugi[0].split("?r=")[1], klici[1].split("?r=")[1]);
+  // uspešno naložen modul: naslednje odprtje ga dobi takoj, brez novega uvoza in čakanja
+  assert.equal(await uvoziPogon("lab-sile.js", { uvozi: async () => assert.fail("ponoven uvoz") }), mod);
 });
 
 async function zOdrom(t, fn) {

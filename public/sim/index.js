@@ -202,22 +202,28 @@ export const hasEngine = (id) => Object.hasOwn(ENGINES, id) || TRI_D.test(id);
 // strani. Zdaj: en hiter nov poskus z drugim naslovom (?r=, service worker ga hrani pod istim ključem, sw.js appFileKey),
 // nato kartica »Povezava je prekinjena« z gumbom »Poskusi znova« namesto praznega okvirja in obvestila z napako.
 let uvozN = 0; // vsak nov poskus ima svoj naslov, ker brskalnik neuspelega ne prenese znova
+const nalozeni = new Map(); // pot → naložen modul (po uspelem novem poskusu naslednje odprtje ne čaka in ne prenaša znova)
 export async function uvoziPogon(pot, { uvozi = (u) => import(u), cakaj = 1000, spi = (ms) => new Promise((r) => setTimeout(r, ms)), prvic = true } = {}) {
+  if (nalozeni.has(pot)) return nalozeni.get(pot);
   const url = new URL(pot, import.meta.url).href;
+  let mod;
   try {
-    return await uvozi(prvic ? url : `${url}?r=${++uvozN}`);
+    mod = await uvozi(prvic ? url : `${url}?r=${++uvozN}`);
   } catch (err) {
     if (!prvic || err?.name === "SyntaxError") throw err; // SyntaxError: datoteka je prišla, nov prenos ne pomaga
     await spi(cakaj);
-    return uvozi(`${url}?r=${++uvozN}`);
+    mod = await uvozi(`${url}?r=${++uvozN}`);
   }
+  nalozeni.set(pot, mod);
+  return mod;
 }
 
 // Kartica ob neuspelem uvozu. »Poskusi znova« naloži znova z drugim naslovom; če uvoz spet spodleti, strežnik pa
 // odgovarja (/healthz), je spodletela skupna odvisnost (kit.js, lab.js), ki ostane v seznamu modulov pod istim
 // naslovom, zato stran osvežimo mimo starih kopij (3d/napake.js osveziMimoStarih, kot 3D prikaz).
-async function karticaNapake(el, znova) {
+async function karticaNapake(el, znova, ziv) {
   const t = await import("../i18n.js").then((m) => m.t, () => null);
+  if (!ziv()) return;
   const besedilo = (k, sl) => {
     const v = t?.(k);
     return v && v !== k ? v : sl;
@@ -230,7 +236,7 @@ async function karticaNapake(el, znova) {
   box.append(p, b);
   el.replaceChildren(box);
 }
-const streznikDeluje = () => fetch("/healthz", { cache: "no-store" }).then((r) => r.ok, () => false);
+const streznikDeluje = () => fetch("/healthz", { cache: "no-store" }).then((r) => (r.body?.cancel().catch(() => {}), r.ok), () => false);
 const osvezi = () => import("../3d/napake.js").then((m) => m.osveziMimoStarih(), () => location.reload());
 
 // Nariše simulacijo v el. Vrne true, če je uspelo. naslov: ime risbe za bralnik zaslona (ni del opts, ker so opts
@@ -242,14 +248,20 @@ export async function mountSim(id, el, opts = {}, naslov = "", { prvic = true } 
   if (m3) opts = { ...(opts || {}), model: m3[1], noReset: true }; // pregledovalnik ima svoj »Ponastavi«
   const e = ENGINES[m3 ? "3d" : id];
   if (!e) return false;
+  // Zadnji klic za ta el: med čakanjem na uvoz (nov poskus, kartica) je lahko v istem okvirju že druga simulacija
+  // (zbirka, gradiva »znova«), ki je pozni uvoz ne sme prepisati.
+  const zeton = (el._simZeton = {});
   let mod;
   try {
     mod = await uvoziPogon(e[0], { prvic });
   } catch (err) {
     console.error(`Simulacija ${id}:`, err);
+    if (el._simZeton !== zeton) return false;
     if (!prvic && (await streznikDeluje())) return osvezi().then(() => false);
-    return new Promise((konec) => karticaNapake(el, () => mountSim(id, el, opts, naslov, { prvic: false }).then(konec)));
+    if (el._simZeton !== zeton) return false;
+    return new Promise((konec) => karticaNapake(el, () => mountSim(id, el, opts, naslov, { prvic: false }).then(konec), () => el._simZeton === zeton));
   }
+  if (el._simZeton !== zeton) return false;
   const fn = mod[e[1]] || mod.DEMOS?.[e[1]];
   if (typeof fn !== "function") return false;
   el.replaceChildren();
