@@ -196,14 +196,60 @@ export const ENGINES = {
 const TRI_D = /^3d-([a-z0-9]+(?:-[a-z0-9]+)*)$/;
 export const hasEngine = (id) => Object.hasOwn(ENGINES, id) || TRI_D.test(id);
 
+// Uvoz datoteke simulacije (j 28. 11. 2026, Android, Laboratorij »Hookov zakon«: prazen poskus in »Failed to fetch
+// dynamically imported module …/sim/lab-sile.js«). Med objavo nove različice strežnik približno minuto vrača 502 in
+// uvoz spodleti; brskalnik si neuspel modul lahko zapomni (seznam modulov; Safari, starejši Chromium), zato je ostal prazen vsak poskus do osvežitve
+// strani. Zdaj: en hiter nov poskus z drugim naslovom (?r=, service worker ga hrani pod istim ključem, sw.js appFileKey),
+// nato kartica »Povezava je prekinjena« z gumbom »Poskusi znova« namesto praznega okvirja in obvestila z napako.
+let uvozN = 0; // vsak nov poskus ima svoj naslov, ker brskalnik neuspelega ne prenese znova
+export async function uvoziPogon(pot, { uvozi = (u) => import(u), cakaj = 1000, spi = (ms) => new Promise((r) => setTimeout(r, ms)), prvic = true } = {}) {
+  const url = new URL(pot, import.meta.url).href;
+  try {
+    return await uvozi(prvic ? url : `${url}?r=${++uvozN}`);
+  } catch (err) {
+    if (!prvic || err?.name === "SyntaxError") throw err; // SyntaxError: datoteka je prišla, nov prenos ne pomaga
+    await spi(cakaj);
+    return uvozi(`${url}?r=${++uvozN}`);
+  }
+}
+
+// Kartica ob neuspelem uvozu. »Poskusi znova« naloži znova z drugim naslovom; če uvoz spet spodleti, strežnik pa
+// odgovarja (/healthz), je spodletela skupna odvisnost (kit.js, lab.js), ki ostane v seznamu modulov pod istim
+// naslovom, zato stran osvežimo mimo starih kopij (3d/napake.js osveziMimoStarih, kot 3D prikaz).
+async function karticaNapake(el, znova) {
+  const t = await import("../i18n.js").then((m) => m.t, () => null);
+  const besedilo = (k, sl) => {
+    const v = t?.(k);
+    return v && v !== k ? v : sl;
+  };
+  const p = Object.assign(document.createElement("p"), { className: "muted", textContent: besedilo("a3.noConnection", "Povezava je prekinjena. Poskusi znova čez nekaj sekund.") });
+  const b = Object.assign(document.createElement("button"), { type: "button", className: "secondary", textContent: besedilo("a3.retry", "Poskusi znova") });
+  b.addEventListener("click", () => ((b.disabled = true), znova()), { once: true });
+  const box = Object.assign(document.createElement("div"), { className: "sim-napaka" });
+  box.setAttribute("role", "alert");
+  box.append(p, b);
+  el.replaceChildren(box);
+}
+const streznikDeluje = () => fetch("/healthz", { cache: "no-store" }).then((r) => r.ok, () => false);
+const osvezi = () => import("../3d/napake.js").then((m) => m.osveziMimoStarih(), () => location.reload());
+
 // Nariše simulacijo v el. Vrne true, če je uspelo. naslov: ime risbe za bralnik zaslona (ni del opts, ker so opts
-// del ključa shranjenih meritev laboratorija).
-export async function mountSim(id, el, opts = {}, naslov = "") {
+// del ključa shranjenih meritev laboratorija). Če se datoteka simulacije ne naloži, el pokaže kartico z gumbom
+// »Poskusi znova« (.sim-napaka); mountSim tedaj ne vrže napake, ampak počaka na uspešen nov poskus in šele nato vrne true
+// (laboratorij.js nato priključi vodeni način, odpri.js nastavi vrednosti).
+export async function mountSim(id, el, opts = {}, naslov = "", { prvic = true } = {}) {
   const m3 = TRI_D.exec(id);
   if (m3) opts = { ...(opts || {}), model: m3[1], noReset: true }; // pregledovalnik ima svoj »Ponastavi«
   const e = ENGINES[m3 ? "3d" : id];
   if (!e) return false;
-  const mod = await import(new URL(e[0], import.meta.url).href);
+  let mod;
+  try {
+    mod = await uvoziPogon(e[0], { prvic });
+  } catch (err) {
+    console.error(`Simulacija ${id}:`, err);
+    if (!prvic && (await streznikDeluje())) return osvezi().then(() => false);
+    return new Promise((konec) => karticaNapake(el, () => mountSim(id, el, opts, naslov, { prvic: false }).then(konec)));
+  }
   const fn = mod[e[1]] || mod.DEMOS?.[e[1]];
   if (typeof fn !== "function") return false;
   el.replaceChildren();

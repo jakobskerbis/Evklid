@@ -537,6 +537,8 @@ a.ref-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px;
 .demo .demo-check { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; }
 .demo .demo-check input { width: 20px; height: 20px; }
 .demo .demo-reset { display: block; margin: 8px 0 0 auto; }
+.sim-napaka { padding: 16px 0; color: var(--muted); } /* public/sim/index.js karticaNapake: datoteka simulacije se ni naložila */
+.sim-napaka p { margin: 0 0 10px; }
 .demo .drag:focus { outline: none; }
 .demo .drag:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .demo .drag:focus-visible .pt, .demo .drag:focus-visible circle:not(.hit) { stroke: var(--accent); stroke-width: 3; }
