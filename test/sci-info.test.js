@@ -303,3 +303,64 @@ test("DEG in GRA: sin(3x/2) = 0 in cos(3x/2) = 0 imata vse rešitve (prej le x =
   assert.equal(row(info("sin(3x/2)", { deg: true }), "sc.infoRoots").tex, "x = \\tfrac{2k\\pi}{3},\\ k \\in \\mathbb{Z}");
   assert.equal(row(info("cos(3x/2)", { deg: true }), "sc.infoRoots").tex, "x = \\tfrac{\\pi}{3} + \\tfrac{2k\\pi}{3},\\ k \\in \\mathbb{Z}");
 });
+
+// premiki in raztezki osnovne funkcije za vse vrste funkcij (j 28. 11.: »naj mali graf kaže tudi premike … za vse
+// funkcije, ne samo kotne«): f(x) = a · g(b(x − p)) + q
+test("premik: 2 sin(3x − 2) → osnovna sin x, v⃗ = (2/3; 0), a = 2, b = 3; v DEG premik s π (π/270)", () => {
+  const d = info("2sin(3x-2)");
+  assert.deepEqual(keys(d).slice(0, 3), ["sc.infoRoots", "sc.infoShift", "sc.infoStretch"]);
+  assert.equal(row(d, "sc.infoShift").tex, "y = \\sin x,\\ \\vec{v} = (\\tfrac{2}{3};\\,0)");
+  assert.equal(row(d, "sc.infoStretch").tex, "a = 2,\\ b = 3");
+  assert.equal(d.plot.ghost, "sin(x)");
+  const g = info("2sin(3x-2)", { deg: true });
+  assert.equal(row(g, "sc.infoShift").tex, "y = \\sin x,\\ \\vec{v} = (\\tfrac{\\pi}{270};\\,0)");
+});
+
+test("premik pri vseh vrstah funkcij: parabola, koren, absolutna, eksponentna, logaritem, ulomek, kubična", () => {
+  const cases = [
+    ["(x-3)^2+4", "y = x^{2}", "(3;\\,4)"],
+    ["√(x+2)-1", "y = \\sqrt{x}", "(-2;\\,-1)"],
+    ["|x-1|+2", "y = |x|", "(1;\\,2)"],
+    ["2^(x-1)+3", "y = 2^{x}", "(1;\\,3)"],
+    ["ln(x-2)", "y = \\ln x", "(2;\\,0)"],
+    ["1/(x-1)+2", "y = \\tfrac{1}{x}", "(1;\\,2)"],
+    ["(x+1)^3-2", "y = x^{3}", "(-1;\\,-2)"],
+    ["log_(2)(x+4)", "y = \\log_{2} x", "(-4;\\,0)"],
+  ];
+  for (const [s, parent, v] of cases) {
+    const d = info(s);
+    assert.equal(row(d, "sc.infoShift")?.tex, `${parent},\\ \\vec{v} = ${v}`, s);
+    assert.equal(d.rows[1].key, "sc.infoShift", s); // takoj za prvo vrstico
+    assert.ok(d.plot.ghost && d.plot.shift, s);
+  }
+});
+
+test("raztezek brez premika in zrcaljenje: 5/x → a = 5; √(4 − x) → b = −1; −2|3x + 6| → a = −6, v⃗ = (−2; 0)", () => {
+  assert.equal(row(info("5/x"), "sc.infoStretch").tex, "a = 5");
+  assert.equal(row(info("5/x"), "sc.infoParent").tex, "y = \\tfrac{1}{x}");
+  assert.equal(row(info("5/x"), "sc.infoShift"), undefined);
+  const r = info("sqrt(4-x)");
+  assert.equal(row(r, "sc.infoStretch").tex, "b = -1");
+  assert.equal(row(r, "sc.infoShift").tex, "y = \\sqrt{x},\\ \\vec{v} = (4;\\,0)");
+  const a = info("-2|3x+6|");
+  assert.equal(row(a, "sc.infoStretch").tex, "a = -6");
+  assert.equal(row(a, "sc.infoShift").tex, "y = |x|,\\ \\vec{v} = (-2;\\,0)");
+});
+
+test("brez premika: osnovna funkcija sama in funkcije, ki niso te oblike (pravilno ali nič)", () => {
+  for (const s of ["sin(x)", "x^2", "e^x", "x^3+x", "sin(x)+cos(x)", "x*sin(x)", "2x+1", "x^4-2x^2"]) {
+    const d = info(s);
+    assert.ok(!d || !keys(d).some((k) => k === "sc.infoParent" || k === "sc.infoShift"), s);
+    assert.ok(!d?.plot?.ghost, s);
+  }
+});
+
+test("mali graf: osnovna funkcija črtkano, vektor premika iz izhodišča, okno zajame premik", () => {
+  const d = info("√(x-8)+1");
+  const svg = plotSvg(d.plot.fn, d.plot.roots, { env, holes: d.plot.holes, period: d.plot.period, ghost: d.plot.ghost, shift: d.plot.shift });
+  assert.match(svg, /<path class="ghost" d="M/);
+  assert.match(svg, /<path class="shift" d="M[\d.]+ [\d.]+L/);
+  assert.match(svg, /class="shift-end"/);
+  // okno do vsaj 11 (8 + 3): konec puščice (8; 1) je v oknu
+  assert.ok(!plotSvg(d.plot.fn, d.plot.roots, { env }).includes("ghost"));
+});

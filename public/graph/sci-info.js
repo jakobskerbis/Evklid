@@ -4,7 +4,7 @@
 // Vrstice so po pomembnosti za trenutni vnos: prve tri so vidne, ostale pod »Več«. Vse izračuna kalkulator sam
 // (CAS in numerika), brez strežnika. Brez DOM razen SVG-niza (testi v test/sci-info.test.js).
 import { analyze, solutionTex, polyCoeffs } from "./scisolve.js";
-import { evaluate, compileLine, formatNumber, primeFactors, factorsTex, exactTex, mixedTex, usesAngles, toFraction } from "./scicore.js";
+import { evaluate, compileLine, formatNumber, primeFactors, factorsTex, exactTex, mixedTex, usesAngles } from "./scicore.js";
 import { molarMass } from "./toolscore.js";
 import { MASSES } from "./pse-data.js";
 import { siUnit, unitTexInner, OFFSET_TEMP } from "./enote.js";
@@ -337,10 +337,23 @@ export function infoFor(text, r, { profile = null, comma = true, env: base = nul
       log: ["sc.infoDomain", "sc.infoRoots", "sc.infoAsym", "sc.infoY0", "sc.infoDeriv"],
       poly: ["sc.infoFactor", "sc.infoDomain", "sc.infoRoots", "sc.infoVertex", "sc.infoExtrema", "sc.infoY0", "sc.infoAsym", "sc.infoDeriv"],
     }[topic];
-    // definicijsko območje ℝ pri polinomu ni novica: le pri ulomkih, korenih, logaritmih
-    if (topic === "poly" && R["sc.infoDomain"] && !dom?.excl?.length && !dom?.cond) delete R["sc.infoDomain"];
+    // definicijsko območje ℝ pri polinomu ali eksponentni funkciji ni novica: le pri ulomkih, korenih, logaritmih
+    if ((topic === "poly" || topic === "log") && R["sc.infoDomain"] && !dom?.excl?.length && !dom?.cond) delete R["sc.infoDomain"];
     for (const k of ORDER) if (R[k] || (k === "sc.infoRoots" && R.roots)) rows.push(R[k] || R.roots);
-    return rows.length ? { rows, plot: { fn: s, roots: roots.filter((x) => Math.abs(x) < 1e6), holes, period: P } } : null;
+    // premik in raztezek osnovne funkcije (j 28. 11.): takoj za prvo vrstico; na malem grafu osnovna črtkano
+    const tr = step ? null : safe(() => transformOf(s, env, f));
+    const moved = tr && (tr.p || tr.q || tr.a !== 1 || tr.b !== 1);
+    if (moved) {
+      // osnovna funkcija in vektor premika v eni vrstici (na telefonu sta vidni le dve vrstici)
+      const v = tr.p || tr.q ? `,\\ \\vec{v} = (${tr.angle ? angleTex(tr.p, env, nt) : nt(tr.p)}${sep}${nt(tr.q)})` : "";
+      const tx = [{ key: v ? "sc.infoShift" : "sc.infoParent", tex: `y = ${tr.parent}${v}`.replace(/\\frac/g, "\\tfrac") }];
+      const st = [tr.a !== 1 && `a = ${nt(tr.a)}`, tr.b !== 1 && `b = ${nt(tr.b)}`].filter(Boolean);
+      if (st.length) tx.push({ key: "sc.infoStretch", tex: st.join(",\\ ").replace(/\\frac/g, "\\tfrac") });
+      rows.splice(Math.min(1, rows.length), 0, ...tx);
+    }
+    const plot = { fn: s, roots: roots.filter((x) => Math.abs(x) < 1e6), holes, period: P };
+    if (moved) Object.assign(plot, { ghost: tr.ghost, shift: [tr.p, tr.q] });
+    return rows.length ? { rows, plot } : null;
   }
   return null;
 }
@@ -412,7 +425,10 @@ export function periodOf(fn, env) {
 const angleTex = (P, env, nt) => {
   const half = env.deg ? 180 : env.grad ? 200 : 0;
   if (!half) return nt(P);
-  const f = toFraction(Math.round(P * 1e7) / 1e7 / half, 2 * half); // kot iz reševanja: 0,99999999999° → 1°
+  // kot iz reševanja: 0,99999999999° → 1°; ulomek stopinje (2/3° → π/270) z imenovalcem do 2·180 oz. 2·200
+  const r = P / half;
+  let f = null;
+  for (let q = 1; q <= 2 * half && !f; q++) if (Math.abs(r * q - Math.round(r * q)) < 1e-7) f = { p: Math.round(r * q), q };
   if (!f || !f.p) return nt((P * Math.PI) / half);
   const a = Math.abs(f.p);
   const num = `${a === 1 ? "" : a}\\pi`;
@@ -721,12 +737,114 @@ export function axisLabel(plot, angle, funcs = {}, comma = true) {
   return `x: −${v} … ${v}`;
 }
 
+/** Osnovne funkcije za premike: TeX in zapis za mali graf (ime, kot ga je napisal uporabnik: tg, ctg …). */
+const PARENT = { sin: "\\sin x", cos: "\\cos x", tan: "\\tan x", tg: "\\tan x", cot: "\\cot x", ctg: "\\cot x", sqrt: "\\sqrt{x}", abs: "|x|", ln: "\\ln x", log: "\\log x", exp: "e^{x}" };
+const ANGLE = new Set(["sin", "cos", "tan", "tg", "cot", "ctg"]);
+const near9 = (u, v) => Math.abs(u - v) <= 1e-8 * (1 + Math.abs(v));
+
+/**
+ * Premik in raztezek osnovne funkcije (j 28. 11.: »naj mali graf kaže tudi premike … za vse funkcije, ne samo kotne«):
+ * f(x) = a · g(b(x − p)) + q za osnovno g (xⁿ, sin, cos, tan, cot, √x, |x|, eˣ, nˣ, ln, log, logₙ, 1/x, 1/xⁿ).
+ * { parent (TeX), ghost (zapis g za mali graf), a, b, p, q, angle } ali null. Vsako prepoznavo preverimo na vzorcih
+ * (»pravilno ali nič«): f = sin x + cos x ali x · sin x nimata te oblike in vrstic ni.
+ */
+export function transformOf(text, env, f = fnOf(text, env)) {
+  const s = String(text || "");
+  const dec = (b) => b.replace(/[.,]/, env.comma === false ? "." : "{,}");
+  const clean = (v) => {
+    const r = Math.round(v);
+    return Math.abs(v - r) < 1e-9 * Math.max(1, Math.abs(v)) ? r : Number(v.toPrecision(12));
+  };
+  // polinom stopnje n ≥ 2: a(x − p)ⁿ + q (vsaka parabola; kubična le, če je premaknjena x³)
+  const poly = safe(() => polyCoeffs(f));
+  if (poly) {
+    const n = poly.length - 1;
+    if (n < 2 || !poly[0]) return null;
+    const a = poly[0];
+    const p = -poly[1] / (n * a);
+    const q = f(p);
+    if (!Number.isFinite(q) || ![-3.7, -1.2, 0.4, 1.9, 4.6, 9.3].every((x) => near9(a * (x - p) ** n + q, f(x)))) return null;
+    return { parent: `x^{${n}}`, ghost: `x^${n}`, a: clean(a), b: 1, p: clean(p), q: clean(q), angle: false };
+  }
+  // kandidati: vsak klic osnovne funkcije z notranjim izrazom; prvi, ki se ujema, velja
+  const cands = [];
+  const named = /(?<![A-Za-z_])(sin|cos|tan|tg|cot|ctg|sqrt|abs|ln|log|exp)\s*(?:(\()|(\d*[.,]?\d*\s*x)(?![\w(^²³]))/g;
+  for (const m of s.matchAll(named)) {
+    const inner = m[2] ? group(s, m.index + m[0].length - 1) : m[3];
+    if (inner != null) cands.push({ name: m[1], inner, G: (u) => `${m[1]}(${u})`, parent: PARENT[m[1]] });
+  }
+  for (const m of s.matchAll(/(?<![A-Za-z])log_\s*(?:\((\d+(?:[.,]\d+)?)\)|(\d+))\s*\(/g)) {
+    const inner = group(s, m.index + m[0].length - 1);
+    const b = m[1] || m[2];
+    if (inner != null) cands.push({ name: "logb", inner, G: (u) => `log_(${b})(${u})`, parent: `\\log_{${dec(b)}} x` });
+  }
+  for (const m of s.matchAll(/√\s*(?:(\()|(x)(?![\w(^²³]))/g)) {
+    const inner = m[1] ? group(s, m.index + m[0].length - 1) : "x";
+    if (inner != null) cands.push({ name: "sqrt", inner, G: (u) => `sqrt(${u})`, parent: PARENT.sqrt });
+  }
+  const bars = [...s.matchAll(/\|/g)].map((m) => m.index);
+  if (bars.length === 2) cands.push({ name: "abs", inner: s.slice(bars[0] + 1, bars[1]), G: (u) => `abs(${u})`, parent: PARENT.abs, fold: 1 });
+  for (const m of s.matchAll(/(?<![A-Za-z\d.,)])(e|\d+(?:[.,]\d+)?)\s*\^\s*(?:(\()|(-?\d*[.,]?\d*\s*x)(?![\w(^²³]))/g)) {
+    const inner = m[2] ? group(s, m.index + m[0].length - 1) : m[3];
+    const b = m[1];
+    if (inner != null && b !== "0" && b !== "1") cands.push({ name: "pow", inner, G: (u) => `${b}^(${u})`, parent: b === "e" ? "e^{x}" : `${dec(b)}^{x}` });
+  }
+  for (const m of s.matchAll(/[/÷]\s*(?:(\()|(x)(?![\w(^²³]))/g)) {
+    const at = m.index + m[0].length - 1;
+    const inner = m[1] ? group(s, at) : "x";
+    if (inner == null) continue;
+    const rest = s.slice(m[1] ? at + inner.length + 2 : at + 1);
+    const pw = /^\s*(?:\^\s*\(?\s*(\d+)\s*\)?|([²³]))/.exec(rest);
+    const n = pw ? Number(pw[1] || (pw[2] === "²" ? 2 : 3)) : 1;
+    if (!(n >= 1 && n <= 9)) continue;
+    cands.push({ name: "rec", inner, G: (u) => (n > 1 ? `1/(${u})^${n}` : `1/(${u})`), parent: n > 1 ? `\\frac{1}{x^{${n}}}` : "\\frac{1}{x}", fold: n });
+  }
+  const unit = env.deg ? 180 / Math.PI : env.grad ? 200 / Math.PI : 1;
+  for (const c of cands) {
+    if (!/x/.test(c.inner)) continue;
+    // notranji izraz mora biti linearen: b · x + c
+    const U = fnOf(c.inner, env);
+    const c0 = U(0);
+    const b = U(1) - c0;
+    if (!Number.isFinite(c0) || !Number.isFinite(b) || Math.abs(b) < 1e-12) continue;
+    if (![2, -1.5, 3.7, -4.2, 11.3].every((t) => near9(c0 + b * t, U(t)))) continue;
+    const p = -c0 / b;
+    const angle = ANGLE.has(c.name);
+    const G = fnOf(c.G(c.inner), env);
+    // vzorci okoli p na obeh straneh (koren in logaritem sta definirana le na eni), v stopinjah širše
+    const sc = (angle ? unit : 1) / Math.abs(b);
+    const pts = [];
+    let bad = false;
+    for (const t of [-6.1, -2.9, -2.3, -1.7, -1.1, -0.7, -0.45, -0.2, 0.15, 0.35, 0.6, 0.95, 1.4, 1.9, 2.6, 3.3, 4.1, 7.3]) {
+      const x = p + t * sc;
+      const [y, g] = [f(x), G(x)];
+      if (Number.isFinite(y) !== Number.isFinite(g)) bad = true;
+      if (Number.isFinite(y) && Number.isFinite(g) && Math.abs(g) < 1e6) pts.push([g, y]);
+    }
+    if (bad || pts.length < 6) continue;
+    const mg = pts.reduce((u, [g]) => u + g, 0) / pts.length;
+    const my = pts.reduce((u, [, y]) => u + y, 0) / pts.length;
+    const vg = pts.reduce((u, [g]) => u + (g - mg) ** 2, 0);
+    if (!(vg > 1e-12)) continue;
+    const a = pts.reduce((u, [g, y]) => u + (g - mg) * (y - my), 0) / vg;
+    const q = my - a * mg;
+    if (!(Math.abs(a) > 1e-12) || !pts.every(([g, y]) => near9(a * g + q, y))) continue;
+    // |b(x − p)| = |b| · |x − p|, 1/(b(x − p))ⁿ = b⁻ⁿ/(x − p)ⁿ: raztezek le v smeri y
+    const A = c.fold === 1 && c.name === "abs" ? a * Math.abs(b) : c.fold ? a / b ** c.fold : a;
+    const B = c.fold ? 1 : b;
+    return { parent: c.parent, ghost: c.G("x"), a: clean(A), b: clean(B), p: clean(p), q: clean(q), angle };
+  }
+  return null;
+}
+
 /** Mali graf funkcije (SVG niz): okno okoli ničel, vsaj [−5, 5]; y po vzorcih, brez skokov čez pole; prazne točke. */
-export function plotSvg(fn, roots = [], { w = 280, h = 130, env = {}, holes = [], period = 0 } = {}) {
+export function plotSvg(fn, roots = [], { w = 280, h = 130, env = {}, holes = [], period = 0, ghost = null, shift = null } = {}) {
   // periodična (kotna) funkcija: dve periodi okoli 0 (j, 28. 11.: sin x v DEG je bil na [−5°; 5°] ravna črta)
   const per = Number.isFinite(period) && period > 0;
-  const lo = per ? -period : Math.min(-5, ...roots.map((x) => x - 2), ...holes.map((p) => p[0] - 2));
-  const hi = per ? period : Math.max(5, ...roots.map((x) => x + 2), ...holes.map((p) => p[0] + 2));
+  // premaknjena funkcija: okno zajame tudi izhodišče osnovne in premik (√(x − 8) ni le rob okna)
+  const sx = shift && Number.isFinite(shift[0]) && Math.abs(shift[0]) < 1e4 ? [shift[0] - 3, shift[0] + 3] : [];
+  const lo = per ? -period : Math.min(-5, ...roots.map((x) => x - 2), ...holes.map((p) => p[0] - 2), ...sx);
+  const hi = per ? period : Math.max(5, ...roots.map((x) => x + 2), ...holes.map((p) => p[0] + 2), ...sx);
   const f = fnOf(fn, env);
   const xs = [];
   const ys = [];
@@ -748,18 +866,34 @@ export function plotSvg(fn, roots = [], { w = 280, h = 130, env = {}, holes = []
   y1 = Math.max(y1 + pad, 0 + pad);
   const X = (x) => ((x - lo) / (hi - lo)) * w;
   const Y = (y) => h - ((y - y0) / (y1 - y0)) * h;
-  let d = "";
-  let pen = false;
-  for (let i = 0; i <= N; i++) {
-    const y = ys[i];
-    const jump = i && Number.isFinite(ys[i - 1]) && Math.abs(y - ys[i - 1]) > (y1 - y0) * 1.5;
-    if (!Number.isFinite(y) || jump) {
-      pen = false;
-      if (!Number.isFinite(y)) continue;
+  const line = (vs) => {
+    let d = "";
+    let pen = false;
+    for (let i = 0; i <= N; i++) {
+      const y = vs[i];
+      const jump = i && Number.isFinite(vs[i - 1]) && Math.abs(y - vs[i - 1]) > (y1 - y0) * 1.5;
+      if (!Number.isFinite(y) || jump) {
+        pen = false;
+        if (!Number.isFinite(y)) continue;
+      }
+      const py = Math.max(-h, Math.min(2 * h, Y(y)));
+      d += `${pen ? "L" : "M"}${X(xs[i]).toFixed(1)} ${py.toFixed(1)}`;
+      pen = true;
     }
-    const py = Math.max(-h, Math.min(2 * h, Y(y)));
-    d += `${pen ? "L" : "M"}${X(xs[i]).toFixed(1)} ${py.toFixed(1)}`;
-    pen = true;
+    return d;
+  };
+  const d = line(ys);
+  // osnovna funkcija črtkano
+  let under = "";
+  if (ghost) {
+    const g = fnOf(ghost, env);
+    const gd = line(xs.map((x) => g(x)));
+    if (gd) under += `<path class="ghost" d="${gd}"/>`;
+    // vektor premika v⃗ = (p, q) iz izhodišča (pri sin x, xⁿ, |x|, √x in 1/x konča v premaknjeni značilni točki)
+    if (shift && (shift[0] || shift[1]) && shift.every(Number.isFinite)) {
+      const [bx, by] = shift;
+      if (bx >= lo && bx <= hi && by >= y0 && by <= y1 && lo <= 0 && hi >= 0) under += `<path class="shift" d="M${X(0).toFixed(1)} ${Y(0).toFixed(1)}L${X(bx).toFixed(1)} ${Y(by).toFixed(1)}"/><path class="shift-end" d="M${X(bx).toFixed(1)} ${Y(by).toFixed(1)}h0"/>`;
+    }
   }
   const ax = lo <= 0 && hi >= 0 ? `<line class="ax" x1="${X(0).toFixed(1)}" y1="0" x2="${X(0).toFixed(1)}" y2="${h}"/>` : "";
   const ay = `<line class="ax" x1="0" y1="${Y(0).toFixed(1)}" x2="${w}" y2="${Y(0).toFixed(1)}"/>`;
@@ -771,5 +905,5 @@ export function plotSvg(fn, roots = [], { w = 280, h = 130, env = {}, holes = []
   const inWin = (x) => x >= lo - 1e-9 * (hi - lo) && x <= hi + 1e-9 * (hi - lo);
   const dots = [...new Set(roots.flatMap(copies).filter(inWin).map((x) => dot(x, 0, "dot")))].join("");
   const empty = [...new Set(holes.flatMap(([x, y]) => copies(x).map((c) => [c, y])).filter(([x]) => inWin(x)).map(([x, y]) => dot(x, y, "hole") + dot(x, y, "hole-in")))].join("");
-  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">${ax}${ay}<path d="${d}"/>${dots}${empty}</svg>`;
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">${ax}${ay}${under}<path d="${d}"/>${dots}${empty}</svg>`;
 }

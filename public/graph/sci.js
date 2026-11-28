@@ -272,7 +272,7 @@ export function createScientific(root, opts) {
       if (box.hidden) return;
       return box.classList.add("sc-info-empty");
     }
-    const svg = d.plot && !infoMore ? plotSvg(d.plot.fn, d.plot.roots, { env: env(), holes: d.plot.holes, period: d.plot.period }) : "";
+    const svg = d.plot && !infoMore ? plotSvg(d.plot.fn, d.plot.roots, { env: env(), holes: d.plot.holes, period: d.plot.period, ghost: d.plot.ghost, shift: d.plot.shift }) : "";
     const g = box.querySelector(".sc-info-g");
     g.hidden = !svg;
     const axis = svg ? axisLabel(d.plot, st.angle, st.funcs, comma()) : null; // stopinje ali radiani na osi x
